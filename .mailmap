@@ -1,0 +1,17 @@
+# Use this file to define mappings between email addresses and author names used in your repo
+#
+# In the example below the same author appears several times with different credentials:
+# ~/Documents/Dev/team-42 $ git shortlog -sne
+#    22  Douglas Adams <dga42@uclive.ac.nz>
+#    9   Arthur Dent <ard@uclive.ac.nz>
+#    7   Arthur dent <ard@uclive.ac.nz>
+#    2   Arthur Dent <fuzzystarfish@myhomeaccount.kawaii.nz>
+#    1   The Dolphins <fish@thanks.fr>
+#    1   SENG302 <seng302@canterbury.ac.nz>
+#
+# Define mappings like so:
+# Arthur Dent <ard@uclive.ac.nz> <fuzzystarfish@myhomeaccount.kawaii.nz>
+#
+# See the following pages for more information:
+# https://www.kernel.org/pub/software/scm/git/docs/git-shortlog.html
+# http://stacktoheap.com/blog/2013/01/06/using-mailmap-to-fix-authors-list-in-git/
