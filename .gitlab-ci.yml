@@ -3,7 +3,24 @@ junit:
   script:
     - mvn -B clean test
 
-generate_artifacts:
+recent-artifacts:
   stage: deploy
   script:
     - mvn -B clean site package
+  artifacts:
+    paths:
+      - target/*.jar
+    expire_in:
+      - 1 week
+  except:
+    - tags
+
+release-artifacts:
+  stage: deploy
+  script:
+    - mvn -B clean site package
+  artifacts:
+    paths:
+    - target/*.jar
+  only:
+    - tags
