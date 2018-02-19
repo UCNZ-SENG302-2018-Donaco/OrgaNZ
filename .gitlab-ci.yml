@@ -10,8 +10,7 @@ recent-artifacts:
   artifacts:
     paths:
       - target/*.jar
-    expire_in:
-      - 1 week
+    expire_in: 1 week
   except:
     - tags
 
