@@ -28,38 +28,84 @@ public class Donor {
         this.uid = uid;
     }
 
+    public String getDonorInfoString() {
+        return String.format("User: %s. Name: %s, date of birth: %tF, date of death: %tF, gender: %s, height: %scm, weight: %skg, blood type: %s, current address: %s, region: %s, created on: %s, modified on: %s", uid, name, dateOfBirth, dateOfDeath, gender, height, weight, bloodType, currentAddress, region, created_on, modified_on);
+    }
+
     public String getName() {
         return name;
     }
 
-    public int getUid() {
-        return uid;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public LocalDate getDateOfBirth() {
         return dateOfBirth;
     }
 
-    public String getDonorInfoString() {
-        return String.format("User: %s. Name: %s, date of birth: %tF, date of death: %tF, gender: %s, height: %scm, weight: %skg, blood type: %s, current address: %s, region: %s, created on: %s, modified on: %s", uid, name, dateOfBirth, dateOfDeath, gender, height, weight, bloodType, currentAddress, region, created_on, modified_on);
+    public void setDateOfBirth(LocalDate dateOfBirth) {
+        this.dateOfBirth = dateOfBirth;
     }
 
-    public void setIntField(String fieldName, int value) throws NoSuchFieldException, IllegalAccessException {
-        Field field = getClass().getDeclaredField(fieldName);
-        field.setInt(this, value);
-        modified_on = LocalDateTime.now();
+    public LocalDate getDateOfDeath() {
+        return dateOfDeath;
     }
 
-    public void setDateField(String fieldName, LocalDate value) throws NoSuchFieldException, IllegalAccessException {
-        Field field = getClass().getDeclaredField(fieldName);
-        field.set(this, value);
-        modified_on = LocalDateTime.now();
+    public void setDateOfDeath(LocalDate dateOfDeath) {
+        this.dateOfDeath = dateOfDeath;
     }
 
-    public void setStringField(String fieldName, String value) throws NoSuchFieldException, IllegalAccessException {
-        Field field = getClass().getDeclaredField(fieldName);
-        field.set(this, value);
-        modified_on = LocalDateTime.now();
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    public int getWeight() {
+        return weight;
+    }
+
+    public void setWeight(int weight) {
+        this.weight = weight;
+    }
+
+    public String getBloodType() {
+        return bloodType;
+    }
+
+    public void setBloodType(String bloodType) {
+        this.bloodType = bloodType;
+    }
+
+    public String getCurrentAddress() {
+        return currentAddress;
+    }
+
+    public void setCurrentAddress(String currentAddress) {
+        this.currentAddress = currentAddress;
+    }
+
+    public String getRegion() {
+        return region;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
+    }
+
+    public int getUid() {
+        return uid;
     }
 
     /**
