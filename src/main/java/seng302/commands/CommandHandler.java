@@ -8,16 +8,56 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static seng302.App.getManager;
 
-public class Commands {
+public class CommandHandler {
+
+    private DonorManager donorManager;
+
+    public CommandHandler (DonorManager donorManager) {
+        this.donorManager = donorManager;
+    }
+
+    public void parseCommand(String input) {
+        ArrayList<String> inputs = new ArrayList<>();
+
+        //Regex matcher that separates on space but allows for double quoted strings to be considered single strings
+        Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(input);
+        while (m.find())
+            inputs.add(m.group(1).replace("\"", ""));
+        if (inputs.size() == 0) {
+            return;
+        }
+
+        String command = inputs.get(0);
+        inputs.remove(0);
+
+        switch (command) {
+            case "createuser":
+                createuser(inputs);
+                break;
+            case "help":
+                help(inputs);
+                break;
+            case "printall":
+                printAllDonorInfo();
+                break;
+            case "setattribute":
+                setAttribute(inputs);
+                break;
+            case "printuser":
+                printUser(inputs);
+                break;
+            default:
+                System.out.println("Command not found");
+        }
+    }
 
 
-    public static void createuser(ArrayList<String> inputs) {
-        System.out.println("createuser");
-        System.out.println(inputs.size());
-        DonorManager manager = getManager();
+    public void createuser(ArrayList<String> inputs) {
 
         if (inputs.size() != 2) {
             System.out.println("Invalid input expects form \"createuser {name} {dd/mm/yyyy}\"");
@@ -36,7 +76,7 @@ public class Commands {
             return;
         }
 
-        if (manager.collisionExists(name, date)) {
+        if (donorManager.collisionExists(name, date)) {
             System.out.println("A user already exists with that Name and DOB, would you like to proceed? (y/n)");
             Scanner scanner = new Scanner(System.in);
             String response = scanner.next();
@@ -46,36 +86,36 @@ public class Commands {
 
         }
 
-        int uid = manager.getUid();
+        int uid = donorManager.getUid();
 
         Donor donor = new Donor(name, date, uid);
 
-        manager.addDonor(donor);
+        donorManager.addDonor(donor);
     }
 
-    public static void help(ArrayList<String> inputs) {
-
-        DonorManager manager = getManager();
+    public void help(ArrayList<String> inputs) {
 
         System.out.println("help");
         System.out.println(inputs.size());
-        System.out.println(manager.getDonors().size());
+        System.out.println(donorManager.getDonors().size());
 
     }
 
-    public static void printAllDonorInfo() {
-        DonorManager manager = getManager();
+    public void printAllDonorInfo() {
 
-        ArrayList<Donor> donors = manager.getDonors();
+        ArrayList<Donor> donors = donorManager.getDonors();
 
-        for (Donor donor : donors) {
-            System.out.println(donor.getDonorInfoString());
+        if (donors.size() == 0) {
+            System.out.println("No donors exist");
+        } else {
+            for (Donor donor : donors) {
+                System.out.println(donor.getDonorInfoString());
+            }
         }
     }
 
-    public static void printUser(ArrayList<String> inputs) {
+    public void printUser(ArrayList<String> inputs) {
         System.out.println("printuser");
-        DonorManager manager = getManager();
 
         if (inputs.size() != 1) {
             System.out.println("Invalid input expects form \"printuser {uid}\"");
@@ -92,7 +132,7 @@ public class Commands {
             System.out.println("Invalid user ID, please enter a number");
             return;
         }
-        Donor donor = manager.getDonorByID(uid);
+        Donor donor = donorManager.getDonorByID(uid);
         if (donor == null) {
             System.out.println("No donor exists with that user ID");
             return;
@@ -100,9 +140,8 @@ public class Commands {
         System.out.println(donor.getDonorInfoString());
     }
 
-    public static void setAttribute(ArrayList<String> inputs) {
+    public void setAttribute(ArrayList<String> inputs) {
         System.out.println("setattr");
-        DonorManager manager = getManager();
 
         if (inputs.size() != 3) {
             System.out.println("Invalid input expects form \"setattribute {uid} {attribute} {value}\"");
@@ -115,7 +154,7 @@ public class Commands {
 
         int uid = Integer.parseInt(user);
 
-        Donor donor = manager.getDonorByID(uid);
+        Donor donor = donorManager.getDonorByID(uid);
 
         if (donor == null) {
             System.out.println("No donor exists with that user ID");
