@@ -21,12 +21,24 @@ public class CommandParser {
         String command = inputs.get(0);
         inputs.remove(0);
 
-        switch(command) {
-            case "createuser": Commands.createuser(inputs);
-                            break;
-            case "help":    Commands.help(inputs);
-                            break;
-            default: System.out.println("Command not found");
+        switch (command) {
+            case "createuser":
+                Commands.createuser(inputs);
+                break;
+            case "help":
+                Commands.help(inputs);
+                break;
+            case "printall":
+                Commands.printAllDonorInfo();
+                break;
+            case "setattribute":
+                Commands.setAttribute(inputs);
+                break;
+            case "printuser":
+                Commands.printUser(inputs);
+                break;
+            default:
+                System.out.println("Command not found");
         }
     }
 }

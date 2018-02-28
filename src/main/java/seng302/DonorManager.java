@@ -25,6 +25,11 @@ public class DonorManager {
         donors.remove(donor);
     }
 
+    public void updateDonor(Donor donor) {
+        donors.remove(donor);
+        donors.add(donor);
+    }
+
     public int getUid() {
         return uid++;
     }
@@ -36,5 +41,10 @@ public class DonorManager {
             }
         }
         return false;
+    }
+
+    public Donor getDonorByID(int id) {
+        return donors.stream()
+                .filter(d -> d.getUid() == id).findFirst().orElse(null);
     }
 }
