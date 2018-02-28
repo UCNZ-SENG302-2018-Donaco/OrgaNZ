@@ -1,9 +1,23 @@
 package seng302;
 
-public class App 
+import java.util.Scanner;
+
+public class App
 {
+    public static DataStorage dataStorage;
+
     public static void main( String[] args )
     {
-        System.out.println( "Welcome to SENG302" );
+        String input;
+
+        dataStorage = new DataStorage();
+
+        CommandParser commandParser = new CommandParser();
+
+        Scanner sc = new Scanner(System.in);
+
+        while (!(input = sc.nextLine()).equals("exit")) {
+            commandParser.parseCommand(input);
+        }
     }
 }
