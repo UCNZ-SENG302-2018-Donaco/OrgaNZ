@@ -19,7 +19,7 @@ public class Commands {
         DonorManager manager = getManager();
 
         if (inputs.size() != 2) {
-            System.out.println("Invalid input expects form \"createuser {Name} {dd/mm/yyyy}\"");
+            System.out.println("Invalid input expects form \"createuser {name} {dd/mm/yyyy}\"");
             return;
         }
 
@@ -31,12 +31,12 @@ public class Commands {
         try {
             date = LocalDate.parse(dateStr, formatter);
         } catch (DateTimeParseException e) {
-            System.out.println("Invalid input expects form \"createuser {Name} {dd/mm/yyyy}\"");
+            System.out.println("Invalid input expects form \"createuser {name} {dd/mm/yyyy}\"");
             return;
         }
 
         if (manager.collisionExists(name, date)) {
-            System.out.println("A user already exists with that Name and DOB, would you like to proceed?");
+            System.out.println("A user already exists with that Name and DOB, would you like to proceed? (y/n)");
             Scanner scanner = new Scanner(System.in);
             String response = scanner.next();
             if (!response.equals("y")) {

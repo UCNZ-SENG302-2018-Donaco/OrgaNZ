@@ -14,8 +14,10 @@ public class CommandParser {
         //Regex matcher that separates on space but allows for double quoted strings to be considered single strings
         Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(input);
         while (m.find())
-            inputs.add(m.group(1));
-
+            inputs.add(m.group(1).replace("\"", ""));
+        if (inputs.size() == 0) {
+            return;
+        }
         String command = inputs.get(0);
         inputs.remove(0);
 
@@ -25,8 +27,6 @@ public class CommandParser {
             case "help":    Commands.help(inputs);
                             break;
             default: System.out.println("Command not found");
-
-
         }
     }
 }
