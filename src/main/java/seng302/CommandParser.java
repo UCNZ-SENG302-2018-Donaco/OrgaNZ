@@ -20,7 +20,7 @@ public class CommandParser {
         inputs.remove(0);
 
         switch(command) {
-            case "adduser": Commands.adduser(inputs);
+            case "createuser": Commands.createuser(inputs);
                             break;
             case "help":    Commands.help(inputs);
                             break;

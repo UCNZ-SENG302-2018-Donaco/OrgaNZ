@@ -4,13 +4,13 @@ import java.util.Scanner;
 
 public class App
 {
-    public static DataStorage dataStorage;
+    public static DonorManager donorManager;
 
     public static void main( String[] args )
     {
         String input;
 
-        dataStorage = new DataStorage();
+        donorManager = new DonorManager();
 
         CommandParser commandParser = new CommandParser();
 
@@ -19,5 +19,9 @@ public class App
         while (!(input = sc.nextLine()).equals("exit")) {
             commandParser.parseCommand(input);
         }
+    }
+
+    public static DonorManager getManager() {
+        return donorManager;
     }
 }

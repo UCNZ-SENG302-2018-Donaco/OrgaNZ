@@ -27,4 +27,12 @@ public class Donor {
         this.uid = uid;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public LocalDate getDateOfBirth() {
+        return dateOfBirth;
+    }
+
 }
