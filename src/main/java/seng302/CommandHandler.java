@@ -1,4 +1,4 @@
-package seng302.commands;
+package seng302;
 
 import seng302.DonorManager;
 import seng302.Donor;

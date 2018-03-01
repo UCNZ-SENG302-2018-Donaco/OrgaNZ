@@ -1,7 +1,5 @@
 package seng302;
 
-import seng302.commands.CommandHandler;
-
 import java.util.Scanner;
 
 public class App
