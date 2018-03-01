@@ -162,31 +162,38 @@ public class CommandHandler {
         }
 
         try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
             switch (attribute) {
                 case "name":
+                    donor.setName(value);
+                    break;
                 case "bloodType":
+                    donor.setBloodType(value);
+                    break;
                 case "currentAddress":
+                    donor.setCurrentAddress(value);
+                    break;
                 case "region":
-                    donor.setStringField(attribute, value);
+                    donor.setRegion(value);
                     break;
                 case "height":
+                    donor.setHeight(Integer.parseInt(value));
+                    break;
                 case "weight":
-                    donor.setIntField(attribute, Integer.parseInt(value));
+                    donor.setWeight(Integer.parseInt(value));
                     break;
                 case "dateOfBirth":
+                    donor.setDateOfBirth(LocalDate.parse(value, formatter));
+                    break;
                 case "dateOfDeath":
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                    LocalDate date;
-                    date = LocalDate.parse(value, formatter);
-
-                    donor.setDateField(attribute, date);
+                    donor.setDateOfDeath(LocalDate.parse(value, formatter));
                     break;
                 default:
                     System.out.println("Invalid attribute");
             }
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            System.out.println("Error");
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid value, please enter a whole number");
         } catch (DateTimeParseException e) {
             System.out.println("Invalid date format");
         }
