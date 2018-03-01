@@ -86,18 +86,6 @@ public class CommandHandlerTest {
     }
 
 
-    @Test
-    public void createuser_invalidFieldCountHigh() {
-        doNothing().when(spyDonorManager).addDonor(any());
-        ArrayList<String> inputs = new ArrayList<>();
-        inputs.add("TestName");
-        inputs.add("01/01/2000");
-        inputs.add("too many");
-
-        spyCommandHandler.createuser(inputs);
-        verify(spyDonorManager, times(0)).addDonor(any());
-        assertEquals("Invalid input expects form \"createuser {name} {dd/mm/yyyy}\"\n", outContent.toString());
-    }
 
     @Test
     public void createuser_invalidFieldCountLow() {
@@ -110,6 +98,18 @@ public class CommandHandlerTest {
         assertEquals("Invalid input expects form \"createuser {name} {dd/mm/yyyy}\"\n", outContent.toString());
     }
 
+    @Test
+    public void createuser_invalidFieldCountHigh() {
+        doNothing().when(spyDonorManager).addDonor(any());
+        ArrayList<String> inputs = new ArrayList<>();
+        inputs.add("TestName");
+        inputs.add("01/01/2000");
+        inputs.add("too many");
+
+        spyCommandHandler.createuser(inputs);
+        verify(spyDonorManager, times(0)).addDonor(any());
+        assertEquals("Invalid input expects form \"createuser {name} {dd/mm/yyyy}\"\n", outContent.toString());
+    }
 
     @Test
     public void createuser_duplicateAccept() {

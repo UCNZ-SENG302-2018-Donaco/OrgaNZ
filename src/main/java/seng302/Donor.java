@@ -11,10 +11,10 @@ public class Donor {
     private String name;
     private LocalDate dateOfBirth;
     private LocalDate dateOfDeath;
-    private String gender;
+    private Gender gender;
     private int height;
     private int weight;
-    private String bloodType;
+    private BloodType bloodType;
     private String currentAddress;
     private String region;
 
@@ -26,6 +26,7 @@ public class Donor {
         this.name = name;
         this.dateOfBirth = dateOfBirth;
         this.uid = uid;
+        this.gender = Gender.UNSPECIFIED;
     }
 
     public String getDonorInfoString() {
@@ -56,11 +57,11 @@ public class Donor {
         this.dateOfDeath = dateOfDeath;
     }
 
-    public String getGender() {
+    public Gender getGender() {
         return gender;
     }
 
-    public void setGender(String gender) {
+    public void setGender(Gender gender) {
         this.gender = gender;
     }
 
@@ -80,11 +81,11 @@ public class Donor {
         this.weight = weight;
     }
 
-    public String getBloodType() {
+    public BloodType getBloodType() {
         return bloodType;
     }
 
-    public void setBloodType(String bloodType) {
+    public void setBloodType(BloodType bloodType) {
         this.bloodType = bloodType;
     }
 

@@ -168,14 +168,17 @@ public class CommandHandler {
                 case "name":
                     donor.setName(value);
                     break;
-                case "bloodType":
-                    donor.setBloodType(value);
-                    break;
                 case "currentAddress":
                     donor.setCurrentAddress(value);
                     break;
                 case "region":
                     donor.setRegion(value);
+                    break;
+                case "gender":
+                    donor.setGender(Gender.fromString(value));
+                    break;
+                case "bloodType":
+                    donor.setBloodType(BloodType.fromString(value));
                     break;
                 case "height":
                     donor.setHeight(Integer.parseInt(value));
@@ -196,6 +199,8 @@ public class CommandHandler {
             System.out.println("Invalid value, please enter a whole number");
         } catch (DateTimeParseException e) {
             System.out.println("Invalid date format");
+        } catch (IllegalArgumentException e) {
+            System.out.println("Invalid input");
         }
 
 
