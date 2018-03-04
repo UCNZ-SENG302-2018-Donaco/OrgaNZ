@@ -1,6 +1,4 @@
-package seng302;
-
-import picocli.CommandLine.ITypeConverter;
+package seng302.Utilities;
 
 public enum Gender {
     MALE ("Male"),

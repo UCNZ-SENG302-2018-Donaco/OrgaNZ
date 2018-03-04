@@ -1,4 +1,4 @@
-package seng302;
+package seng302.Utilities;
 
 public enum BloodType {
     A_NEG ("A-"),
