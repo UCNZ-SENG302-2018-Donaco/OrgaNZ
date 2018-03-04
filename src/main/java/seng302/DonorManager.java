@@ -34,9 +34,11 @@ public class DonorManager {
         return uid++;
     }
 
-    public boolean collisionExists(String name, LocalDate dateOfBirth) {
+    public boolean collisionExists(String firstName, String lastName, LocalDate dateOfBirth) {
         for (Donor donor : donors) {
-            if (donor.getName().equals(name) && donor.getDateOfBirth().isEqual(dateOfBirth)) {
+            if (donor.getFirstName().equals(firstName) &&
+                    donor.getLastName().equals(lastName) &&
+                    donor.getDateOfBirth().isEqual(dateOfBirth)) {
                 return true;
             }
         }
