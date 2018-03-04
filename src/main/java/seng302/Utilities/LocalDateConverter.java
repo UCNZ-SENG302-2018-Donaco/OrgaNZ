@@ -1,9 +1,8 @@
-package seng302.Util;
+package seng302.Utilities;
 
 import picocli.CommandLine;
 import picocli.CommandLine.ITypeConverter;
 
-import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
