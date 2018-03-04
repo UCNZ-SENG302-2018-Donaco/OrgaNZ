@@ -1,5 +1,7 @@
 package seng302;
 
+import picocli.CommandLine.ITypeConverter;
+
 public enum Gender {
     MALE ("Male"),
     FEMALE ("Female"),
@@ -22,6 +24,7 @@ public enum Gender {
                 return g;
             }
         }
-        throw new IllegalArgumentException("No blood type of type " + text + "found");
+        throw new IllegalArgumentException("Unsupported gender");
     }
 }
+
