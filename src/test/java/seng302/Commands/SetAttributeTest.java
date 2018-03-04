@@ -19,8 +19,6 @@ import static org.mockito.Mockito.*;
 public class SetAttributeTest {
 
     private DonorManager spyDonorManager;
-
-
     private SetAttribute spySetAttribute;
 
     @Before
