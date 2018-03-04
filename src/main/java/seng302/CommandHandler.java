@@ -1,17 +1,14 @@
 package seng302;
 
-import seng302.DonorManager;
-import seng302.Donor;
+import seng302.Utilities.BloodType;
+import seng302.Utilities.Gender;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
-import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static seng302.App.getManager;
 
 public class CommandHandler {
 
@@ -59,38 +56,38 @@ public class CommandHandler {
 
     public void createuser(ArrayList<String> inputs) {
 
-        if (inputs.size() != 2) {
-            System.out.println("Invalid input expects form \"createuser {name} {dd/mm/yyyy}\"");
-            return;
-        }
-
-        String name = inputs.get(0);
-        String dateStr = inputs.get(1);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-        LocalDate date;
-
-        try {
-            date = LocalDate.parse(dateStr, formatter);
-        } catch (DateTimeParseException e) {
-            System.out.println("Invalid input expects form \"createuser {name} {dd/mm/yyyy}\"");
-            return;
-        }
-
-        if (donorManager.collisionExists(name, date)) {
-            System.out.println("A user already exists with that Name and DOB, would you like to proceed? (y/n)");
-            Scanner scanner = new Scanner(System.in);
-            String response = scanner.next();
-            if (!response.equals("y")) {
-                return;
-            }
-
-        }
-
-        int uid = donorManager.getUid();
-
-        Donor donor = new Donor(name, date, uid);
-
-        donorManager.addDonor(donor);
+//        if (inputs.size() != 2) {
+//            System.out.println("Invalid input expects form \"createuser {name} {dd/mm/yyyy}\"");
+//            return;
+//        }
+//
+//        String name = inputs.get(0);
+//        String dateStr = inputs.get(1);
+//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+//        LocalDate date;
+//
+//        try {
+//            date = LocalDate.parse(dateStr, formatter);
+//        } catch (DateTimeParseException e) {
+//            System.out.println("Invalid input expects form \"createuser {name} {dd/mm/yyyy}\"");
+//            return;
+//        }
+//
+////        if (donorManager.collisionExists(name, date)) {
+////            System.out.println("A user already exists with that Name and DOB, would you like to proceed? (y/n)");
+////            Scanner scanner = new Scanner(System.in);
+////            String response = scanner.next();
+////            if (!response.equals("y")) {
+////                return;
+////            }
+//
+//        }
+//
+//        int uid = donorManager.getUid();
+//
+//        Donor donor = new Donor(name, date, uid);
+//
+//        donorManager.addDonor(donor);
     }
 
     public void help(ArrayList<String> inputs) {
@@ -166,7 +163,7 @@ public class CommandHandler {
 
             switch (attribute) {
                 case "name":
-                    donor.setName(value);
+                    //donor.setName(value);
                     break;
                 case "currentAddress":
                     donor.setCurrentAddress(value);
