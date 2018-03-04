@@ -40,7 +40,7 @@ public class CreateUser implements Runnable {
     private boolean force;
 
     public void run() {
-        if (manager.collisionExists(firstName, lastName, dateOfBirth) && !force) {
+        if (!force && manager.collisionExists(firstName, lastName, dateOfBirth)) {
             System.out.println("Duplicate user found, use --force to create anyway");
             return;
         }
