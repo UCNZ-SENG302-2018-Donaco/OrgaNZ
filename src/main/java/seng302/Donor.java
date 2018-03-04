@@ -1,6 +1,10 @@
 package seng302;
 
-import java.lang.reflect.Field;
+import seng302.Utilities.BloodType;
+import seng302.Utilities.Gender;
+
+import static java.util.Optional.ofNullable;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -8,37 +12,68 @@ public class Donor {
 
     private final LocalDateTime created_on;
     private LocalDateTime modified_on;
-    private String name;
-    private LocalDate dateOfBirth;
-    private LocalDate dateOfDeath;
-    private Gender gender;
-    private int height;
-    private int weight;
-    private BloodType bloodType;
+
+    private String firstName;
+    private String lastName;
+    private String middleName;
+
     private String currentAddress;
     private String region;
 
+    private Gender gender;
+    private BloodType bloodType;
+
+    private int height;
+    private int weight;
+
+    private LocalDate dateOfBirth;
+    private LocalDate dateOfDeath;
+
     private int uid;
 
-    public Donor(String name, LocalDate dateOfBirth, int uid) {
+    public Donor(String firstName, String middleName, String lastName, LocalDate dateOfBirth, int uid) {
         created_on = LocalDateTime.now();
         modified_on = LocalDateTime.now();
-        this.name = name;
-        this.dateOfBirth = dateOfBirth;
+
         this.uid = uid;
-        this.gender = Gender.UNSPECIFIED;
+
+        gender = Gender.UNSPECIFIED;
+        this.firstName = firstName;
+        this.middleName = middleName;
+        this.lastName = lastName;
+        this.dateOfBirth = dateOfBirth;
     }
 
     public String getDonorInfoString() {
-        return String.format("User: %s. Name: %s, date of birth: %tF, date of death: %tF, gender: %s, height: %scm, weight: %skg, blood type: %s, current address: %s, region: %s, created on: %s, modified on: %s", uid, name, dateOfBirth, dateOfDeath, gender, height, weight, bloodType, currentAddress, region, created_on, modified_on);
+        return String.format("User: %s. Name: %s %s %s, date of birth: %tF, date of death: %tF, gender: %s," +
+                        " height: %scm, weight: %skg, blood type: %s, current address: %s, region: %s," +
+                        " created on: %s, modified on: %s",
+                uid, firstName, ofNullable(middleName).orElse(""), lastName, dateOfBirth, dateOfDeath, gender,
+                height, weight, bloodType, currentAddress, region, created_on, modified_on);
     }
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public String getMiddleName() {
+        return middleName;
+    }
+
+    public void setMiddleNames(String middleNames) {
+        this.middleName = middleNames;
     }
 
     public LocalDate getDateOfBirth() {
@@ -111,6 +146,7 @@ public class Donor {
 
     /**
      * Donor objects are identified by their uid
+     *
      * @param obj
      * @return
      */
