@@ -2,11 +2,15 @@ package seng302;
 
 import seng302.Utilities.BloodType;
 import seng302.Utilities.Gender;
+import seng302.Utilities.Organ;
+import seng302.Utilities.OrganAlreadyRegisteredException;
 
 import static java.util.Optional.ofNullable;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Donor {
 
@@ -29,6 +33,8 @@ public class Donor {
     private LocalDate dateOfBirth;
     private LocalDate dateOfDeath;
 
+    private Map<Organ, Boolean> organStatus;
+
     private int uid;
 
     public Donor(String firstName, String middleName, String lastName, LocalDate dateOfBirth, int uid) {
@@ -42,6 +48,39 @@ public class Donor {
         this.middleName = middleName;
         this.lastName = lastName;
         this.dateOfBirth = dateOfBirth;
+
+        initOrgans();
+    }
+
+    private void initOrgans() {
+        organStatus = new HashMap<>();
+        for (Organ o: Organ.values()) {
+            organStatus.put(o, false);
+        }
+    }
+
+    public void setOrganStatus(Organ organ, boolean value) throws OrganAlreadyRegisteredException {
+        if (value && organStatus.get(organ)) {
+            throw new OrganAlreadyRegisteredException("That organ is already registered");
+        }
+        organStatus.replace(organ, value);
+    }
+
+    public Map<Organ, Boolean> getOrganStatus() {
+        return organStatus;
+    }
+
+    public String getDonorOrganStatusString() {
+        StringBuilder builder = new StringBuilder();
+        for (Map.Entry<Organ, Boolean> entry : organStatus.entrySet()) {
+            if (entry.getValue()) {
+                if (builder.length() != 0) {
+                    builder.append(", ");
+                }
+                builder.append(entry.getKey().toString());
+            }
+        }
+        return String.format("User: %s. Name: %s %s %s, Donation status: %s", uid, firstName, ofNullable(middleName).orElse(""), lastName, builder.toString());
     }
 
     public String getDonorInfoString() {
