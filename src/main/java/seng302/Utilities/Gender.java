@@ -1,4 +1,4 @@
-package seng302;
+package seng302.Utilities;
 
 public enum Gender {
     MALE ("Male"),
@@ -22,6 +22,7 @@ public enum Gender {
                 return g;
             }
         }
-        throw new IllegalArgumentException("No blood type of type " + text + "found");
+        throw new IllegalArgumentException("Unsupported gender");
     }
 }
+
