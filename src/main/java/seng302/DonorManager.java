@@ -13,6 +13,10 @@ public class DonorManager {
         uid = 1;
     }
 
+    public void setDonors(ArrayList<Donor> donors) {
+        this.donors = donors;
+    }
+
     public void addDonor(Donor donor) {
         donors.add(donor);
     }

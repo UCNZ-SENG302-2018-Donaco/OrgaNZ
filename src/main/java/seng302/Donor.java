@@ -1,5 +1,6 @@
 package seng302;
 
+import org.json.simple.JSONObject;
 import seng302.Utilities.BloodType;
 import seng302.Utilities.Gender;
 import seng302.Utilities.Organ;
@@ -36,6 +37,12 @@ public class Donor {
     private Map<Organ, Boolean> organStatus;
 
     private int uid;
+
+    public Donor() {
+
+        created_on = LocalDateTime.now();
+        modified_on = LocalDateTime.now();
+    }
 
     public Donor(String firstName, String middleName, String lastName, LocalDate dateOfBirth, int uid) {
         created_on = LocalDateTime.now();

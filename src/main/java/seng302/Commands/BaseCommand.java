@@ -12,7 +12,10 @@ import java.io.File;
                 PrintUser.class,
                 PrintUserOrgan.class,
                 SetOrganStatus.class,
-                Help.class})
+                Help.class,
+                Save.class,
+                Load.class
+        })
 
 public class BaseCommand implements Runnable {
 
