@@ -10,10 +10,13 @@ import java.io.File;
                 SetAttribute.class,
                 PrintAllInfo.class,
                 PrintUser.class,
-                PrintUserOrgan.class
-                , SetOrganStatus.class})
+                PrintUserOrgan.class,
+                SetOrganStatus.class,
+                Help.class})
 
 public class BaseCommand implements Runnable {
+
+
 
     public void run() {
         System.out.println("Invalid command");
