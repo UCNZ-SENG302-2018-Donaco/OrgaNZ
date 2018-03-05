@@ -33,4 +33,3 @@ public class PrintUserOrgan implements Runnable {
         System.out.println(donor.getDonorOrganStatusString());
     }
 }
-
