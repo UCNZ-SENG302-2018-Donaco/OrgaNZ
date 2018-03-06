@@ -9,6 +9,14 @@ import seng302.Utilities.*;
 
 import java.time.LocalDate;
 
+/**
+ * Command line to set attributes of a Donor, by using their ID as a reference key.
+ *
+ *@author Dylan Carlyle, Jack Steel
+ *@version sprint 1.
+ *date 05/03/2018
+ */
+
 @Command(name = "setattribute", description = "Set the attributes of an existing user.", sortOptions = false)
 public class SetAttribute implements Runnable {
 
@@ -18,7 +26,7 @@ public class SetAttribute implements Runnable {
         manager = App.getManager();
     }
 
-    public SetAttribute(DonorManager manager) {
+    SetAttribute(DonorManager manager) {
         this.manager = manager;
     }
 

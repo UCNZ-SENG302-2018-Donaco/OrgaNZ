@@ -10,11 +10,19 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * Class to handle the commands coming through.
+ *
+ *@author Dylan Carlyle, Jack Steel
+ *@version sprint 1.
+ *date 05/03/2018
+ */
+
 public class CommandHandler {
 
     private DonorManager donorManager;
 
-    public CommandHandler (DonorManager donorManager) {
+    CommandHandler(DonorManager donorManager) {
         this.donorManager = donorManager;
     }
 
@@ -54,7 +62,7 @@ public class CommandHandler {
     }
 
 
-    public void createuser(ArrayList<String> inputs) {
+    private void createuser(ArrayList<String> inputs) {
 
 //        if (inputs.size() != 2) {
 //            System.out.println("Invalid input expects form \"createuser {name} {dd/mm/yyyy}\"");
@@ -90,7 +98,7 @@ public class CommandHandler {
 //        donorManager.addDonor(donor);
     }
 
-    public void help(ArrayList<String> inputs) {
+    private void help(ArrayList<String> inputs) {
 
         System.out.println("help");
         System.out.println(inputs.size());
@@ -98,7 +106,7 @@ public class CommandHandler {
 
     }
 
-    public void printAllDonorInfo() {
+    private void printAllDonorInfo() {
 
         ArrayList<Donor> donors = donorManager.getDonors();
 
@@ -111,7 +119,7 @@ public class CommandHandler {
         }
     }
 
-    public void printUser(ArrayList<String> inputs) {
+    private void printUser(ArrayList<String> inputs) {
         System.out.println("printuser");
 
         if (inputs.size() != 1) {
@@ -137,7 +145,7 @@ public class CommandHandler {
         System.out.println(donor.getDonorInfoString());
     }
 
-    public void setAttribute(ArrayList<String> inputs) {
+    private void setAttribute(ArrayList<String> inputs) {
         System.out.println("setattr");
 
         if (inputs.size() != 3) {

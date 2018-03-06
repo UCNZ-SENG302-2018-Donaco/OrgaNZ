@@ -3,6 +3,15 @@ package seng302;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
+/**
+ * The class to handle the Donor inputs, including adding,
+ * setting attributes and updating the values of the donor.
+ *
+ *@author Dylan Carlyle, Jack Steel
+ *@version sprint 1.
+ *date 05/03/2018
+ */
+
 public class DonorManager {
 
     private ArrayList<Donor> donors;

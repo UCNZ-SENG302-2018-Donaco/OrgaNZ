@@ -15,6 +15,14 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 
+/**
+ * Command line to load the information of all the donors from a JSON file,
+ *
+ *@author Dylan Carlyle, Jack Steel
+ *@version sprint 1.
+ *date 05/03/2018
+ */
+
 @Command(name = "load", description = "Load donors from file", sortOptions = false)
 public class Load implements Runnable {
 

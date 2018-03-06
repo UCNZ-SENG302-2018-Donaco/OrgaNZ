@@ -9,6 +9,14 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * The main class that runs the whole program. Calls the Base command and the Donor manager.
+ *
+ *@author Dylan Carlyle, Jack Steel
+ *@version sprint 1.
+ *date 06/03/2018
+ */
+
 public class App
 {
     private static DonorManager donorManager;

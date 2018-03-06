@@ -11,6 +11,14 @@ import java.time.LocalDate;
 
 import static java.util.Optional.ofNullable;
 
+/**
+ * Command line to create a Donor with basic information, including their DOB and full name.
+ *
+ *@author Dylan Carlyle, Jack Steel
+ *@version sprint 1.
+ *date 05/03/2018
+ */
+
 @Command(name = "createuser", description = "Creates a user.")
 public class CreateUser implements Runnable {
 
@@ -20,7 +28,7 @@ public class CreateUser implements Runnable {
         manager = App.getManager();
     }
 
-    public CreateUser(DonorManager manager) {
+    CreateUser(DonorManager manager) {
         this.manager = manager;
     }
 

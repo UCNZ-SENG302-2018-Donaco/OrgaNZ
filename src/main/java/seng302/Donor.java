@@ -13,6 +13,14 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * The main donor class.
+ *
+ *@author Dylan Carlyle, Jack Steel
+ *@version sprint 1.
+ *date 05/03/2018
+ */
+
 public class Donor {
 
     private final LocalDateTime created_on;
@@ -106,7 +114,7 @@ public class Donor {
         this.firstName = firstName;
     }
 
-    public String getLastName() {
+    String getLastName() {
         return lastName;
     }
 
@@ -122,7 +130,7 @@ public class Donor {
         this.middleName = middleNames;
     }
 
-    public LocalDate getDateOfBirth() {
+    LocalDate getDateOfBirth() {
         return dateOfBirth;
     }
 
@@ -193,8 +201,6 @@ public class Donor {
     /**
      * Donor objects are identified by their uid
      *
-     * @param obj
-     * @return
      */
     @Override
     public boolean equals(Object obj) {

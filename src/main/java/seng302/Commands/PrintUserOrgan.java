@@ -7,6 +7,14 @@ import seng302.App;
 import seng302.Donor;
 import seng302.DonorManager;
 
+/**
+ * Command line to print the donation information of a user.
+ *
+ *@author Dylan Carlyle, Jack Steel
+ *@version sprint 1.
+ *date 05/03/2018
+ */
+
 @Command(name = "printuserorgan", description = "Print a single user with their organ information.", sortOptions = false)
 public class PrintUserOrgan implements Runnable {
 

@@ -11,6 +11,14 @@ import java.time.LocalDate;
 
 import static seng302.Utilities.Organ.*;
 
+/**
+ * Command line to set the status of their organs in terms of what they would like to donate.
+ *
+ *@author Dylan Carlyle, Jack Steel
+ *@version sprint 1.
+ *date 05/03/2018
+ */
+
 @Command(name = "setorganstatus", description = "Set the organ donation choices of an existing user.", sortOptions = false)
 public class SetOrganStatus implements Runnable {
 

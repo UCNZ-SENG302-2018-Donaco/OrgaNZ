@@ -7,6 +7,14 @@ import seng302.App;
 import seng302.Donor;
 import seng302.DonorManager;
 
+/**
+ * Command line to print all of the information of a single user.
+ *
+ *@author Dylan Carlyle, Jack Steel
+ *@version sprint 1.
+ *date 06/03/2018
+ */
+
 @Command(name = "printuser", description = "Print a single user with their personal information.", sortOptions = false)
 public class PrintUser implements Runnable {
 
@@ -16,7 +24,7 @@ public class PrintUser implements Runnable {
         manager = App.getManager();
     }
 
-    public PrintUser(DonorManager manager) {
+    PrintUser(DonorManager manager) {
         this.manager = manager;
     }
 

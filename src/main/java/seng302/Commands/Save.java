@@ -14,6 +14,14 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
 
+/**
+ * Command line to save the current information of the Donors onto a JSON file using the GSON API.
+ *
+ *@author Dylan Carlyle, Jack Steel
+ *@version sprint 1.
+ *date 06/03/2018
+ */
+
 @Command(name = "save", description = "Save donors to file", sortOptions = false)
 public class Save implements Runnable {
 
