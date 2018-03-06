@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>seng302</groupId>
     <artifactId>app</artifactId>
@@ -74,7 +73,32 @@
                     </execution>
                 </executions>
             </plugin>
-        </plugins>
+        
+            <plugin>
+               <groupId>org.jacoco</groupId>
+               <artifactId>jacoco-maven-plugin</artifactId>
+               <version>0.8.0</version>
+               <configuration>
+                  <destFile>${basedir}/target/coverage-reports/jacoco-unit.exec</destFile>
+                  <dataFile>${basedir}/target/coverage-reports/jacoco-unit.exec</dataFile>
+               </configuration>
+               <executions>
+                  <execution>
+                     <id>jacoco-initialize</id>
+                     <goals>
+                        <goal>prepare-agent</goal>
+                     </goals>
+                  </execution>
+                  <execution>
+                     <id>jacoco-site</id>
+                     <phase>package</phase>
+                     <goals>
+                        <goal>report</goal>
+                     </goals>
+                  </execution>
+               </executions>
+            </plugin>
+</plugins>
     </build>
     <reporting>
         <plugins>

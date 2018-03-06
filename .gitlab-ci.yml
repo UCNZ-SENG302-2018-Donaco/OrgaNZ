@@ -28,6 +28,6 @@ release-artifacts:
   artifacts:
     paths:
     - target/*.jar
+    - target/site/jacoco/*
   only:
     - tags
-
