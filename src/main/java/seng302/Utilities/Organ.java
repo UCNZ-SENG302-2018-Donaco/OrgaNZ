@@ -1,5 +1,8 @@
 package seng302.Utilities;
 
+/**
+ * Enum for organs. Allows for to/from string conversion
+ */
 public enum Organ {
     LIVER ("Liver"),
     KIDNEY ("Kidney"),
@@ -24,6 +27,12 @@ public enum Organ {
         return text;
     }
 
+    /**
+     * Get an Organ object from a string
+     * @param text Text to convert
+     * @return The matching organ
+     * @throws IllegalArgumentException Thrown when no matching organ is found
+     */
     public static Organ fromString(String text) {
         for (Organ o: Organ.values()) {
             if (o.toString().equalsIgnoreCase(text)) {

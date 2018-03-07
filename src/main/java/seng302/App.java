@@ -23,8 +23,6 @@ public class App
 
     public static void main( String[] args )
     {
-
-
         String input;
 
         donorManager = new DonorManager();

@@ -2,6 +2,9 @@ package seng302.Utilities;
 
 import picocli.CommandLine;
 
+/**
+ * Converter used by PicoCLI options to select genders from strings
+ */
 public class GenderConverter implements CommandLine.ITypeConverter<Gender> {
 
     @Override
