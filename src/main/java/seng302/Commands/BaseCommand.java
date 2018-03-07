@@ -14,15 +14,17 @@ import java.io.File;
  */
 
 @Command(name = "DonorCLI", description = "DonorCLI is a command based management tool for the team-21 donor registration system.",
-        subcommands = {CreateUser.class,
+        subcommands = {
+                CreateUser.class,
                 SetAttribute.class,
+                SetOrganStatus.class,
+                DeleteUser.class,
                 PrintAllInfo.class,
                 PrintUser.class,
                 PrintUserOrgan.class,
-                SetOrganStatus.class,
-                Help.class,
                 Save.class,
-                Load.class
+                Load.class,
+                Help.class
         })
 
 public class BaseCommand implements Runnable {
