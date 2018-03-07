@@ -26,7 +26,6 @@ public class App
         String input;
 
         donorManager = new DonorManager();
-        CommandHandler commandHandler = new CommandHandler(donorManager);
 
         Scanner sc = new Scanner(System.in);
 
@@ -42,10 +41,6 @@ public class App
             }
             String[] currArgs = inputs.toArray(new String[0]);
             CommandLine.run(command, System.out, currArgs);
-
-            //CommandLine c = new CommandLine(command).parse(currArgs).get(1);
-            //System.out.println(c.getCommandName());
-            //commandHandler.parseCommand(input);
         }
     }
 
