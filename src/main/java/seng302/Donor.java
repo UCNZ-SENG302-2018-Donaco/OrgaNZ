@@ -52,6 +52,14 @@ public class Donor {
         modified_on = LocalDateTime.now();
     }
 
+    /**
+     * Create a new donor object
+     * @param firstName First name string
+     * @param middleName Middle name(s). May be null
+     * @param lastName Last name string
+     * @param dateOfBirth LocalDate formatted date of birth
+     * @param uid A unique user ID. Should be queried to ensure uniqueness
+     */
     public Donor(String firstName, String middleName, String lastName, LocalDate dateOfBirth, int uid) {
         created_on = LocalDateTime.now();
         modified_on = LocalDateTime.now();
@@ -74,6 +82,12 @@ public class Donor {
         }
     }
 
+    /**
+     * Set a single organs donation status
+     * @param organ The organ to be set
+     * @param value Boolean value to set the status too
+     * @throws OrganAlreadyRegisteredException Thrown if the organ is set to true when it already is
+     */
     public void setOrganStatus(Organ organ, boolean value) throws OrganAlreadyRegisteredException {
         if (value && organStatus.get(organ)) {
             throw new OrganAlreadyRegisteredException("That organ is already registered");
@@ -85,6 +99,10 @@ public class Donor {
         return organStatus;
     }
 
+    /**
+     * Get the donors organ donation status, with a formatted string listing the organs to be donated
+     * @return A formatted string listing the organs to be donated
+     */
     public String getDonorOrganStatusString() {
         StringBuilder builder = new StringBuilder();
         for (Map.Entry<Organ, Boolean> entry : organStatus.entrySet()) {
@@ -95,9 +113,17 @@ public class Donor {
                 builder.append(entry.getKey().toString());
             }
         }
-        return String.format("User: %s. Name: %s %s %s, Donation status: %s", uid, firstName, ofNullable(middleName).orElse(""), lastName, builder.toString());
+        if (builder.length() == 0) {
+            return String.format("User: %s. Name: %s %s %s, no organs registered for donation", uid, firstName, ofNullable(middleName).orElse(""), lastName);
+        } else {
+            return String.format("User: %s. Name: %s %s %s, Donation status: %s", uid, firstName, ofNullable(middleName).orElse(""), lastName, builder.toString());
+        }
     }
 
+    /**
+     * Get a formatted string with the donors user information. Does not include organ donation status
+     * @return Formatted string with the donors user information. Does not include organ donation status
+     */
     public String getDonorInfoString() {
         return String.format("User: %s. Name: %s %s %s, date of birth: %tF, date of death: %tF, gender: %s," +
                         " height: %scm, weight: %skg, blood type: %s, current address: %s, region: %s," +
