@@ -114,7 +114,7 @@ public class Donor {
         this.firstName = firstName;
     }
 
-    String getLastName() {
+    public String getLastName() {
         return lastName;
     }
 
@@ -130,7 +130,7 @@ public class Donor {
         this.middleName = middleNames;
     }
 
-    LocalDate getDateOfBirth() {
+    public LocalDate getDateOfBirth() {
         return dateOfBirth;
     }
 
