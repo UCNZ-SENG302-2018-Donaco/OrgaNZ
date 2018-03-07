@@ -30,8 +30,7 @@ public class SetAttributeTest {
     }
 
     @Test
-    public void updateuser_invalid_format_id() {
-        doNothing().when(spyDonorManager).addDonor(any());
+    public void setattribute_invalid_format_id() {
         String[] inputs = {"-u", "notint"};
 
         CommandLine.run(spySetAttribute, System.out, inputs);
@@ -40,7 +39,7 @@ public class SetAttributeTest {
     }
 
     @Test
-    public void updateuser_invalid_option() {
+    public void setattribute_invalid_option() {
         String[] inputs = {"-u", "1", "--notanoption"};
 
         CommandLine.run(spySetAttribute, System.out, inputs);
@@ -49,7 +48,7 @@ public class SetAttributeTest {
     }
 
     @Test
-    public void updateuser_non_existent_id() {
+    public void setattribute_non_existent_id() {
         when(spyDonorManager.getDonorByID(anyInt())).thenReturn(null);
         String[] inputs = {"-u", "2"};
 
@@ -60,7 +59,7 @@ public class SetAttributeTest {
     }
 
     @Test
-    public void updateuser_valid_name() {
+    public void setattribute_valid_name() {
         Donor donor = new Donor("First", null, "Last", LocalDate.of(1970,1, 1), 1);
         when(spyDonorManager.getDonorByID(anyInt())).thenReturn(donor);
         String[] inputs = {"-u", "1", "--firstname", "NewFirst"};
@@ -75,7 +74,7 @@ public class SetAttributeTest {
     }
 
     @Test
-    public void updateuser_valid_blood_type() {
+    public void setattribute_valid_blood_type() {
         Donor donor = new Donor("First", null, "Last", LocalDate.of(1970,1, 1), 1);
         when(spyDonorManager.getDonorByID(anyInt())).thenReturn(donor);
         String[] inputs = {"-u", "1", "--bloodtype", "O+"};
@@ -90,7 +89,7 @@ public class SetAttributeTest {
     }
 
     @Test
-    public void updateuser_invalid_blood_type() {
+    public void setattribute_invalid_blood_type() {
         String[] inputs = {"-u", "1", "--bloodtype", "O"};
 
         CommandLine.run(spySetAttribute, System.out, inputs);
@@ -99,7 +98,7 @@ public class SetAttributeTest {
     }
 
     @Test
-    public void updateuser_valid_gender() {
+    public void setattribute_valid_gender() {
         Donor donor = new Donor("First", null, "Last", LocalDate.of(1970,1, 1), 1);
         when(spyDonorManager.getDonorByID(anyInt())).thenReturn(donor);
         String[] inputs = {"-u", "1", "--gender", "Male"};
@@ -114,7 +113,7 @@ public class SetAttributeTest {
     }
 
     @Test
-    public void updateuser_invalid_gender() {
+    public void setattribute_invalid_gender() {
         String[] inputs = {"-u", "1", "--gender", "Neg"};
 
         CommandLine.run(spySetAttribute, System.out, inputs);
@@ -123,7 +122,7 @@ public class SetAttributeTest {
     }
 
     @Test
-    public void updateuser_valid_date() {
+    public void setattribute_valid_date() {
         Donor donor = new Donor("First", null, "Last", LocalDate.of(1970,1, 1), 1);
         when(spyDonorManager.getDonorByID(anyInt())).thenReturn(donor);
         String[] inputs = {"-u", "1", "--dateofdeath", "20/01/2038"};
@@ -139,7 +138,7 @@ public class SetAttributeTest {
 
 
     @Test
-    public void updateuser_invalid_date() {
+    public void setattribute_invalid_date() {
         String[] inputs = {"-u", "1", "--dateofdeath", "20/13/2038"};
 
         CommandLine.run(spySetAttribute, System.out, inputs);
