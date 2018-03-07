@@ -3,6 +3,7 @@ package seng302.Commands;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import org.json.simple.parser.ParseException;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import seng302.App;
@@ -38,16 +39,12 @@ public class Load implements Runnable {
 
     @Override
     public void run() {
-        try (Reader reader = new FileReader("savefile.json")) {
-            Gson gson = new Gson();
-            ArrayList<Donor> donors;
-            Type collectionType = new TypeToken<ArrayList<Donor>>(){}.getType();
-            donors = gson.fromJson(reader, collectionType);
-            manager.setDonors(donors);
-            System.out.println(donors);
-            reader.close();
+        try {
+            manager.loadFromFile();
+        } catch (FileNotFoundException e) {
+            System.out.println("No save file found");
         } catch (IOException e) {
-            System.out.println("Could not save to file");
+            System.out.println("Could not load from file");
         }
     }
 }
