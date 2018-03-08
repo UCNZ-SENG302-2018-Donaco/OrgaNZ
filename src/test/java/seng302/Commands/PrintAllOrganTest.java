@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -62,7 +63,7 @@ public class PrintAllOrganTest {
 
         CommandLine.run(spyPrintAllOrgan, System.out, inputs);
 
-        assertThat(outContent.toString(), containsString("User: 1. Name: First mid Last, Donation status: Kidney, Liver"));
+        assertTrue(outContent.toString().contains("User: 1. Name: First mid Last, Donation status: Kidney, Liver") || outContent.toString().contains("User: 1. Name: First mid Last, Donation status: Liver, Kidney"));
     }
 
     @Test
@@ -85,7 +86,7 @@ public class PrintAllOrganTest {
 
         CommandLine.run(spyPrintAllOrgan, System.out, inputs);
 
-        assertThat(outContent.toString(), containsString("User: 1. Name: First mid Last, Donation status: Kidney, Liver"));
+        assertTrue(outContent.toString().contains("User: 1. Name: First mid Last, Donation status: Kidney, Liver") || outContent.toString().contains("User: 1. Name: First mid Last, Donation status: Liver, Kidney"));
         assertThat(outContent.toString(), containsString("User: 2. Name: FirstTwo  LastTwo, Donation status: Connective tissue"));
         assertThat(outContent.toString(), containsString("User: 3. Name: FirstThree  LastThree, no organs registered for donation"));
     }
