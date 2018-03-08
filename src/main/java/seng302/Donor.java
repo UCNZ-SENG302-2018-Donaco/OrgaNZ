@@ -1,6 +1,5 @@
 package seng302;
 
-import org.json.simple.JSONObject;
 import seng302.Utilities.BloodType;
 import seng302.Utilities.Gender;
 import seng302.Utilities.Organ;
@@ -10,6 +9,7 @@ import static java.util.Optional.ofNullable;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,6 +43,8 @@ public class Donor {
     private LocalDate dateOfDeath;
 
     private Map<Organ, Boolean> organStatus;
+
+    private ArrayList<String> updateLog = new ArrayList<>();
 
     private int uid;
 
@@ -82,6 +84,11 @@ public class Donor {
         }
     }
 
+    private void addUpdate(String function) {
+        LocalDateTime timestamp = LocalDateTime.now();
+        updateLog.add(String.format("%s; updated %s", timestamp, function));
+    }
+
     /**
      * Set a single organs donation status
      * @param organ The organ to be set
@@ -92,6 +99,7 @@ public class Donor {
         if (value && organStatus.get(organ)) {
             throw new OrganAlreadyRegisteredException("That organ is already registered");
         }
+        addUpdate(organ.toString());
         organStatus.replace(organ, value);
     }
 
@@ -120,6 +128,14 @@ public class Donor {
         }
     }
 
+    public String getUpdatesString() {
+        StringBuilder out = new StringBuilder(String.format("User: %s. Name: %s %s %s, updates:\n", uid, firstName, ofNullable(middleName).orElse(""), lastName));
+        for (String update : updateLog) {
+            out.append(update).append('\n');
+        }
+        return out.toString();
+    }
+
     /**
      * Get a formatted string with the donors user information. Does not include organ donation status
      * @return Formatted string with the donors user information. Does not include organ donation status
@@ -137,6 +153,7 @@ public class Donor {
     }
 
     public void setFirstName(String firstName) {
+        addUpdate("firstName");
         this.firstName = firstName;
     }
 
@@ -145,6 +162,7 @@ public class Donor {
     }
 
     public void setLastName(String lastName) {
+        addUpdate("lastName");
         this.lastName = lastName;
     }
 
@@ -152,8 +170,9 @@ public class Donor {
         return middleName;
     }
 
-    public void setMiddleNames(String middleNames) {
-        this.middleName = middleNames;
+    public void setMiddleName(String middleName) {
+        addUpdate("middleNames");
+        this.middleName = middleName;
     }
 
     public LocalDate getDateOfBirth() {
@@ -161,6 +180,7 @@ public class Donor {
     }
 
     public void setDateOfBirth(LocalDate dateOfBirth) {
+        addUpdate("dateOfBirth");
         this.dateOfBirth = dateOfBirth;
     }
 
@@ -169,6 +189,7 @@ public class Donor {
     }
 
     public void setDateOfDeath(LocalDate dateOfDeath) {
+        addUpdate("dateOfDeath");
         this.dateOfDeath = dateOfDeath;
     }
 
@@ -177,6 +198,7 @@ public class Donor {
     }
 
     public void setGender(Gender gender) {
+        addUpdate("gender");
         this.gender = gender;
     }
 
@@ -185,6 +207,7 @@ public class Donor {
     }
 
     public void setHeight(int height) {
+        addUpdate("height");
         this.height = height;
     }
 
@@ -193,6 +216,7 @@ public class Donor {
     }
 
     public void setWeight(int weight) {
+        addUpdate("weight");
         this.weight = weight;
     }
 
@@ -201,6 +225,7 @@ public class Donor {
     }
 
     public void setBloodType(BloodType bloodType) {
+        addUpdate("bloodType");
         this.bloodType = bloodType;
     }
 
@@ -209,6 +234,7 @@ public class Donor {
     }
 
     public void setCurrentAddress(String currentAddress) {
+        addUpdate("currentAddress");
         this.currentAddress = currentAddress;
     }
 
@@ -217,6 +243,7 @@ public class Donor {
     }
 
     public void setRegion(String region) {
+        addUpdate("region");
         this.region = region;
     }
 

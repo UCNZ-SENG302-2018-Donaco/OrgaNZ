@@ -22,6 +22,7 @@ import java.io.File;
                 PrintAllInfo.class,
                 PrintUser.class,
                 PrintUserOrgan.class,
+                GetChanges.class,
                 Save.class,
                 Load.class,
                 Help.class
