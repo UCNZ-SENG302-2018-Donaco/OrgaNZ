@@ -3,9 +3,24 @@
     <groupId>seng302</groupId>
     <artifactId>app</artifactId>
     <packaging>jar</packaging>
-    <version>0.0</version>
+    <version>1.0</version>
     <name>app</name>
-    <url>https://eng-git.canterbury.ac.nz/SENG302-2016/team-0</url>
+    <url>https://eng-git.canterbury.ac.nz/SENG302-2016/team-21</url>
+
+    <developers>
+    <developer>
+        <name>Jack Steel</name>
+        <email>jes143@uclive.ac.nz</email>
+        <organization>University of Canterbury</organization>
+        <organizationUrl>http://www.canterbury.ac.nz</organizationUrl>
+    </developer>
+    <developer>
+        <name>Dylan Carlyle</name>
+        <email>dca87@uclive.ac.nz</email>
+        <organization>University of Canterbury</organization>
+        <organizationUrl>http://www.canterbury.ac.nz</organizationUrl>
+    </developer>
+    </developers>
 
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
