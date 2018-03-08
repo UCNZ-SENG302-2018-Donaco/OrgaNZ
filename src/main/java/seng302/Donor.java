@@ -128,6 +128,10 @@ public class Donor {
         }
     }
 
+    /**
+     * Returns a preformatted string of the users change history
+     * @return Formatted string with newlines
+     */
     public String getUpdatesString() {
         StringBuilder out = new StringBuilder(String.format("User: %s. Name: %s %s %s, updates:\n", uid, firstName, ofNullable(middleName).orElse(""), lastName));
         for (String update : updateLog) {
