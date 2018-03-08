@@ -31,7 +31,8 @@ public class Load implements Runnable {
     @Override
     public void run() {
         try {
-            manager.loadFromFile();
+            manager.loadFromFile(new File("savefile.json"));
+            System.out.println(String.format("Loaded %s users from file",manager.getDonors().size()));
         } catch (FileNotFoundException e) {
             System.out.println("No save file found");
         } catch (IOException e) {

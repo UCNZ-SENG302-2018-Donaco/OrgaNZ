@@ -28,6 +28,10 @@ public class DonorManager {
         uid = 1;
     }
 
+    public DonorManager(ArrayList<Donor> donors) {
+        this.donors = donors;
+    }
+
     private void setDonors(ArrayList<Donor> donors) {
         this.donors = donors;
     }
@@ -105,15 +109,14 @@ public class DonorManager {
      * Saves the current donors list to a savefile.json in the application directory
      * @throws IOException Throws IOExceptions
      */
-    public void saveToFile() throws IOException {
-        Writer writer = new FileWriter("savefile.json");
+    public void saveToFile(File file) throws IOException {
+        Writer writer = new FileWriter(file);
         Gson gson = new GsonBuilder()
                 .setPrettyPrinting()
                 .enableComplexMapKeySerialization()
                 .create();
 
         gson.toJson(donors, writer);
-        System.out.println(gson.toJson(donors));
         writer.close();
     }
 
@@ -121,8 +124,8 @@ public class DonorManager {
      * Loads the donors from a file called savefile.json in the application directory. Overwrites any current donors
      * @throws IOException Throws IOExceptions
      */
-    public void loadFromFile() throws IOException {
-        Reader reader = new FileReader("savefile.json");
+    public void loadFromFile(File file) throws IOException {
+        Reader reader = new FileReader(file);
         Gson gson = new Gson();
         ArrayList<Donor> donors;
         Type collectionType = new TypeToken<ArrayList<Donor>>() {}.getType();
@@ -133,6 +136,5 @@ public class DonorManager {
                 uid = donor.getUid() + 1;
             }
         }
-        System.out.println(donors);
     }
 }

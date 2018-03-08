@@ -6,6 +6,7 @@ import seng302.App;
 import seng302.Donor;
 import seng302.DonorManager;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
@@ -38,7 +39,8 @@ public class Save implements Runnable {
             return;
         }
         try {
-            manager.saveToFile();
+            manager.saveToFile(new File("savefile.json"));
+            System.out.println(String.format("Saved %s users to file",manager.getDonors().size()));
         } catch (IOException e) {
             System.out.println("Could not save to file");
         }
