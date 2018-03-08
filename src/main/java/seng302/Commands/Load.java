@@ -1,20 +1,11 @@
 package seng302.Commands;
 
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import org.json.simple.parser.ParseException;
 import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
 import seng302.App;
-import seng302.Donor;
 import seng302.DonorManager;
 
 import java.io.*;
-import java.lang.reflect.Array;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.Collection;
 
 /**
  * Command line to load the information of all the donors from a JSON file,

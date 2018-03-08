@@ -78,7 +78,7 @@ public class SetAttribute implements Runnable {
             donor.setFirstName(firstName);
         }
         if (middleName != null) {
-            donor.setMiddleNames(middleName);
+            donor.setMiddleName(middleName);
         }
         if (lastName != null) {
             donor.setLastName(lastName);
