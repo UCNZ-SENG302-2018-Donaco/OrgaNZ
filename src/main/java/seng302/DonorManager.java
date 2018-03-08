@@ -106,7 +106,8 @@ public class DonorManager {
     }
 
     /**
-     * Saves the current donors list to a savefile.json in the application directory
+     * Saves the current donors list to a specified file
+     * @param file The file to be saved to
      * @throws IOException Throws IOExceptions
      */
     public void saveToFile(File file) throws IOException {
@@ -121,7 +122,8 @@ public class DonorManager {
     }
 
     /**
-     * Loads the donors from a file called savefile.json in the application directory. Overwrites any current donors
+     * Loads the donors from a specified file. Overwrites any current donors
+     * @param file The file to be loaded from
      * @throws IOException Throws IOExceptions
      */
     public void loadFromFile(File file) throws IOException {
