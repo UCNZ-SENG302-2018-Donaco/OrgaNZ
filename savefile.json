@@ -4,20 +4,20 @@
       "date": {
         "year": 2018,
         "month": 3,
-        "day": 5
+        "day": 8
       },
       "time": {
-        "hour": 15,
-        "minute": 32,
-        "second": 44,
-        "nano": 353000000
+        "hour": 12,
+        "minute": 49,
+        "second": 19,
+        "nano": 658000000
       }
     },
     "modified_on": {
       "date": {
         "year": 2018,
         "month": 3,
-        "day": 5
+        "day": 8
       },
       "time": {
         "hour": 15,
@@ -208,16 +208,11 @@
       "day": 27
     },
     "organStatus": {
-      "LIVER": false,
-      "SKIN": false,
-      "HEART": false,
       "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "CORNEA": false,
       "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
       "LUNG": false,
       "KIDNEY": false,
+      "BONE": false,
       "INTESTINE": false,
       "BONE": false
     },
@@ -264,17 +259,11 @@
     },
     "organStatus": {
       "LIVER": false,
-      "SKIN": false,
-      "HEART": false,
-      "CONNECTIVE_TISSUE": false,
       "PANCREAS": false,
+      "HEART": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "LUNG": false,
-      "KIDNEY": false,
-      "INTESTINE": false,
-      "BONE": false
+      "SKIN": false,
+      "BONE_MARROW": false
     },
     "updateLog": [
       "2018-03-08T13:25:22.768; updated bloodType",
