@@ -1,17 +1,12 @@
 package seng302.Commands;
 
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
 import seng302.App;
 import seng302.Donor;
 import seng302.DonorManager;
 
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
 import java.util.ArrayList;
 
 /**
@@ -38,22 +33,12 @@ public class Save implements Runnable {
     @Override
     public void run() {
         ArrayList<Donor> donors = manager.getDonors();
-
-
         if (donors.size() == 0) {
             System.out.println("No donors exist, nothing to save");
             return;
         }
         try {
-            Writer writer = new FileWriter("savefile.json");
-            Gson gson = new GsonBuilder()
-                    .setPrettyPrinting()
-                    .enableComplexMapKeySerialization()
-                    .create();
-
-            gson.toJson(donors, writer);
-            System.out.println(gson.toJson(donors));
-            writer.close();
+            manager.saveToFile();
         } catch (IOException e) {
             System.out.println("Could not save to file");
         }

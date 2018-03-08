@@ -1,9 +1,6 @@
 package seng302.Commands;
 
-import picocli.CommandLine;
 import picocli.CommandLine.Command;
-
-import java.io.File;
 
 /**
  * The main command hub used to access the other commands within the program such as save, help, createuser etc.
@@ -20,8 +17,10 @@ import java.io.File;
                 SetOrganStatus.class,
                 DeleteUser.class,
                 PrintAllInfo.class,
-                PrintUser.class,
+                PrintAllOrgan.class,
+                PrintUserInfo.class,
                 PrintUserOrgan.class,
+                GetChanges.class,
                 Save.class,
                 Load.class,
                 Help.class

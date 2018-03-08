@@ -15,16 +15,16 @@ import seng302.DonorManager;
  *date 06/03/2018
  */
 
-@Command(name = "printuser", description = "Print a single user with their personal information.", sortOptions = false)
-public class PrintUser implements Runnable {
+@Command(name = "printuserinfo", description = "Print a single user with their personal information.", sortOptions = false)
+public class PrintUserInfo implements Runnable {
 
     private DonorManager manager;
 
-    public PrintUser() {
+    public PrintUserInfo() {
         manager = App.getManager();
     }
 
-    PrintUser(DonorManager manager) {
+    PrintUserInfo(DonorManager manager) {
         this.manager = manager;
     }
 

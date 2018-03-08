@@ -31,6 +31,8 @@ public class App
 
         BaseCommand command = new BaseCommand();
 
+        CommandLine.usage(command, System.out);
+
         while (!(input = sc.nextLine()).equals("exit")) {
 
             //Regex matcher that separates on space but allows for double quoted strings to be considered single strings
