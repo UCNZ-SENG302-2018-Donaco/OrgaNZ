@@ -20,6 +20,18 @@
         <organization>University of Canterbury</organization>
         <organizationUrl>http://www.canterbury.ac.nz</organizationUrl>
     </developer>
+    <developer>
+        <name>Alex Tompkins</name>
+        <email>ato47@uclive.ac.nz</email>
+        <organization>University of Canterbury</organization>
+        <organizationUrl>http://www.canterbury.ac.nz</organizationUrl>
+    </developer>
+    <developer>
+        <name>James Toohey</name>
+        <email>jto59@uclive.ac.nz</email>
+        <organization>University of Canterbury</organization>
+        <organizationUrl>http://www.canterbury.ac.nz</organizationUrl>
+    </developer>
     </developers>
 
     <properties>
