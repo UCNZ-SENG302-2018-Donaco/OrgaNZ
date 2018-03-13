@@ -49,4 +49,12 @@ public class App
     public static DonorManager getManager() {
         return donorManager;
     }
+
+    public static void setManger(DonorManager manager) {
+    	donorManager = manager;
+	}
+
+    public static void init() {
+        donorManager = new DonorManager();
+    }
 }

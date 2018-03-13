@@ -1,3 +1,104 @@
 [
-
+  {
+    "type": "LOAD",
+    "details": "The systems state was loaded from savefile.json",
+    "timestamp": {
+      "date": {
+        "year": 2018,
+        "month": 3,
+        "day": 14
+      },
+      "time": {
+        "hour": 10,
+        "minute": 5,
+        "second": 5,
+        "nano": 302000000
+      }
+    }
+  },
+  {
+    "type": "PRINT ALL INFO",
+    "details": "All donors information printed.",
+    "timestamp": {
+      "date": {
+        "year": 2018,
+        "month": 3,
+        "day": 14
+      },
+      "time": {
+        "hour": 10,
+        "minute": 5,
+        "second": 16,
+        "nano": 888000000
+      }
+    }
+  },
+  {
+    "type": "SAVE",
+    "details": "The systems current state was saved.",
+    "timestamp": {
+      "date": {
+        "year": 2018,
+        "month": 3,
+        "day": 14
+      },
+      "time": {
+        "hour": 10,
+        "minute": 5,
+        "second": 21,
+        "nano": 294000000
+      }
+    }
+  },
+  {
+    "type": "CREATE",
+    "details": "Donor profile ID: 7 created.",
+    "timestamp": {
+      "date": {
+        "year": 2018,
+        "month": 3,
+        "day": 14
+      },
+      "time": {
+        "hour": 10,
+        "minute": 5,
+        "second": 55,
+        "nano": 976000000
+      }
+    }
+  },
+  {
+    "type": "PRINT ALL INFO",
+    "details": "All donors information printed.",
+    "timestamp": {
+      "date": {
+        "year": 2018,
+        "month": 3,
+        "day": 14
+      },
+      "time": {
+        "hour": 10,
+        "minute": 6,
+        "second": 5,
+        "nano": 748000000
+      }
+    }
+  },
+  {
+    "type": "SAVE",
+    "details": "The systems current state was saved.",
+    "timestamp": {
+      "date": {
+        "year": 2018,
+        "month": 3,
+        "day": 14
+      },
+      "time": {
+        "hour": 10,
+        "minute": 6,
+        "second": 10,
+        "nano": 160000000
+      }
+    }
+  }
 ]
