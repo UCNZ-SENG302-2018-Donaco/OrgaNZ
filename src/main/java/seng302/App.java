@@ -2,10 +2,9 @@ package seng302;
 
 import picocli.CommandLine;
 import seng302.Commands.BaseCommand;
+import seng302.Utilities.ConsoleScanner;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,13 +26,13 @@ public class App
 
         donorManager = new DonorManager();
 
-        Scanner sc = new Scanner(System.in);
+        ConsoleScanner scanIn = new ConsoleScanner();
 
         BaseCommand command = new BaseCommand();
 
         CommandLine.usage(command, System.out);
 
-        while (!(input = sc.nextLine()).equals("exit")) {
+        while (!(input = scanIn.readLine()).equals("exit")) {
 
             //Regex matcher that separates on space but allows for double quoted strings to be considered single strings
             ArrayList<String> inputs = new ArrayList<>();
