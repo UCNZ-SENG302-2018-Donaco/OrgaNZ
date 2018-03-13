@@ -2,10 +2,12 @@ package seng302.Commands;
 
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Command;
+import seng302.Action;
 import seng302.App;
 import seng302.Donor;
 import seng302.DonorManager;
 import seng302.Utilities.*;
+import seng302.Utilities.JSONConverter;
 
 import java.time.LocalDate;
 
@@ -57,5 +59,7 @@ public class CreateUser implements Runnable {
         Donor donor = new Donor(firstName, middleNames, lastName, dateOfBirth, uid);
         manager.addDonor(donor);
         System.out.println(String.format("New donor %s %s %s created with userID %s", firstName, ofNullable(middleNames).orElse(""), lastName, uid));
+        Action create = new Action("CREATE", "Donor profile ID: " + uid + " created.");
+        JSONConverter.updateActionHistory(create, "action_history.json");
     }
 }

@@ -2,6 +2,7 @@ package seng302.Commands;
 
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
+import seng302.Action;
 import seng302.App;
 import seng302.Donor;
 import seng302.DonorManager;
@@ -108,5 +109,7 @@ public class SetAttribute implements Runnable {
             donor.setDateOfDeath(dateOfDeath);
         }
         manager.updateDonor(donor);
+        Action setAttribute = new Action("ATTRIBUTE UPDATE", "DETAILS were updated for user " + uid);
+        JSONConverter.updateActionHistory(setAttribute, "action_history.json");
     }
 }
