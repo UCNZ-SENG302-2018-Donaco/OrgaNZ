@@ -2,9 +2,11 @@ package seng302.Commands;
 
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
+import seng302.Action;
 import seng302.App;
 import seng302.Donor;
 import seng302.DonorManager;
+import seng302.Utilities.JSONConverter;
 
 import java.util.ArrayList;
 
@@ -39,6 +41,8 @@ public class PrintAllInfo implements Runnable {
             for (Donor donor : donors) {
                 System.out.println(donor.getDonorInfoString());
             }
+            Action printAllInfo = new Action("PRINT ALL INFO", "All donors information printed.");
+            JSONConverter.updateActionHistory(printAllInfo, "action_history.json");
         }
     }
 }
