@@ -1,3 +1,36 @@
 [
-
+  {
+    "type": "CREATE",
+    "details": "Donor profile ID: 1 created.",
+    "timestamp": {
+      "date": {
+        "year": 2018,
+        "month": 3,
+        "day": 14
+      },
+      "time": {
+        "hour": 10,
+        "minute": 0,
+        "second": 57,
+        "nano": 47000000
+      }
+    }
+  },
+  {
+    "type": "SAVE",
+    "details": "The systems current state was saved.",
+    "timestamp": {
+      "date": {
+        "year": 2018,
+        "month": 3,
+        "day": 14
+      },
+      "time": {
+        "hour": 10,
+        "minute": 0,
+        "second": 59,
+        "nano": 264000000
+      }
+    }
+  }
 ]
