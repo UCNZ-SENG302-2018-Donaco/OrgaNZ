@@ -1,18 +1,18 @@
-package seng302.Command;
+package seng302.Actions;
 
 import seng302.Donor;
 import seng302.DonorManager;
 
 import java.time.LocalDate;
 
-public class CreateUserCommand implements Command {
+public class CreateUserAction implements Action {
 
 
     private Donor donor;
     private DonorManager manager;
 
 
-    public CreateUserCommand (String firstName, String middleNames, String lastName, LocalDate dateOfBirth, int uid, DonorManager manager) {
+    public CreateUserAction(String firstName, String middleNames, String lastName, LocalDate dateOfBirth, int uid, DonorManager manager) {
 
         donor = new Donor(firstName, middleNames, lastName, dateOfBirth, uid);
 

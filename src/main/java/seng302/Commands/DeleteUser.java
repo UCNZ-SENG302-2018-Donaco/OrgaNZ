@@ -2,11 +2,11 @@ package seng302.Commands;
 
 import picocli.CommandLine;
 import picocli.CommandLine.Option;
-import seng302.Action;
+import seng302.HistoryItem;
+import seng302.Actions.Action;
+import seng302.Actions.ActionInvoker;
+import seng302.Actions.DeleteUserAction;
 import seng302.App;
-import seng302.Command.Command;
-import seng302.Command.CommandInvoker;
-import seng302.Command.DeleteUserCommand;
 import seng302.Donor;
 import seng302.DonorManager;
 import seng302.Utilities.JSONConverter;
@@ -17,15 +17,16 @@ import java.util.Scanner;
 public class DeleteUser implements Runnable {
 
     private DonorManager manager;
-    private CommandInvoker invoker;
+    private ActionInvoker invoker;
 
     public DeleteUser() {
         manager = App.getManager();
         invoker = App.getInvoker();
     }
 
-    public DeleteUser(DonorManager manager) {
+    public DeleteUser(DonorManager manager, ActionInvoker invoker) {
         this.manager = manager;
+        this.invoker = invoker;
     }
 
     @Option(names = {"-u", "--uid"}, description = "User ID", required = true)
@@ -41,12 +42,12 @@ public class DeleteUser implements Runnable {
             String response = scanner.next();
 
             if (response.equals("y")) {
-                Command command = new DeleteUserCommand(donor, manager);
-                invoker.execute(command);
+                Action action = new DeleteUserAction(donor, manager);
+                invoker.execute(action);
 
                 System.out.println("Donor " + uid + " removed. This removal will only be permanent once the 'save' command is used");
-                Action printAllOrgan = new Action("DELETE", "Donor " + uid + " deleted.");
-                JSONConverter.updateActionHistory(printAllOrgan, "action_history.json");
+                HistoryItem printAllOrgan = new HistoryItem("DELETE", "Donor " + uid + " deleted.");
+                JSONConverter.updateHistory(printAllOrgan, "action_history.json");
             } else {
                 System.out.println("User not removed");
             }

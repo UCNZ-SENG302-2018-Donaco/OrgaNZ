@@ -4,6 +4,7 @@ package seng302.Commands;
 import org.junit.Before;
 import org.junit.Test;
 import picocli.CommandLine;
+import seng302.Actions.ActionInvoker;
 import seng302.DonorManager;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -12,14 +13,13 @@ public class CreateUserTest {
 
     private DonorManager spyDonorManager;
 
-
     private CreateUser spyCreateUser;
 
     @Before
     public void init() {
         spyDonorManager = spy(new DonorManager());
 
-        spyCreateUser = spy(new CreateUser(spyDonorManager));
+        spyCreateUser = spy(new CreateUser(spyDonorManager, new ActionInvoker()));
 
     }
 

@@ -1,13 +1,13 @@
-package seng302.Command;
+package seng302.Actions;
 
 import seng302.Donor;
 import seng302.DonorManager;
 
-public class DeleteUserCommand implements Command {
+public class DeleteUserAction implements Action {
 	private Donor donor;
 	private DonorManager manager;
 
-	public DeleteUserCommand (Donor donor, DonorManager manager) {
+	public DeleteUserAction(Donor donor, DonorManager manager) {
 		this.donor = donor;
 		this.manager = manager;
 	}

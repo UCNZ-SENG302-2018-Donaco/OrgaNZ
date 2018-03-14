@@ -2,13 +2,11 @@ package seng302.Commands;
 
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
-import seng302.Action;
+import seng302.HistoryItem;
 import seng302.App;
 import seng302.Donor;
 import seng302.DonorManager;
 import seng302.Utilities.*;
-
-import java.time.LocalDate;
 
 import static seng302.Utilities.Organ.*;
 
@@ -166,7 +164,7 @@ public class SetOrganStatus implements Runnable {
         }
 
         manager.updateDonor(donor);
-        Action setOrganStatus = new Action("SET ORGAN STATUS", "The organ status was updated for " + uid);
-        JSONConverter.updateActionHistory(setOrganStatus, "action_history.json");
+        HistoryItem setOrganStatus = new HistoryItem("SET ORGAN STATUS", "The organ status was updated for " + uid);
+        JSONConverter.updateHistory(setOrganStatus, "action_history.json");
     }
 }

@@ -1,6 +1,6 @@
-package seng302.Command;
+package seng302.Actions;
 
-public interface Command {
+public interface Action {
     public void execute();
     public void unExecute();
 }

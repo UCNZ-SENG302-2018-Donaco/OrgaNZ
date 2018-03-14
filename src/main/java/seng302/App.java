@@ -1,7 +1,7 @@
 package seng302;
 
 import picocli.CommandLine;
-import seng302.Command.CommandInvoker;
+import seng302.Actions.ActionInvoker;
 import seng302.Commands.BaseCommand;
 import seng302.Utilities.ConsoleScanner;
 
@@ -20,14 +20,14 @@ import java.util.regex.Pattern;
 public class App
 {
     private static DonorManager donorManager;
-    private static CommandInvoker commandInvoker;
+    private static ActionInvoker actionInvoker;
 
     public static void main( String[] args )
     {
         String input;
 
         donorManager = new DonorManager();
-        commandInvoker = new CommandInvoker();
+        actionInvoker = new ActionInvoker();
 
         ConsoleScanner scanIn = new ConsoleScanner();
 
@@ -52,7 +52,7 @@ public class App
         return donorManager;
     }
 
-    public static CommandInvoker getInvoker() {
-        return commandInvoker;
+    public static ActionInvoker getInvoker() {
+        return actionInvoker;
     }
 }
