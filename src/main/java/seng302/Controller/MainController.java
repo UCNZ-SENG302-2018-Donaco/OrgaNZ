@@ -4,12 +4,21 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.StackPane;
 
 /**
  * Main controller class for the application window.
  */
 public class MainController {
+
+
+	public AnchorPane InitialScreen;
+	public Button createUserBtn;
+	public Button loginBtn;
+	public Label initialLbl;
 	/** Holder of a switchable page. */
 	@FXML
 	private StackPane pageHolder;
