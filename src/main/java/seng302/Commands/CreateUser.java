@@ -1,13 +1,15 @@
 package seng302.Commands;
 
+import picocli.CommandLine;
 import picocli.CommandLine.Option;
-import picocli.CommandLine.Command;
 import seng302.Action;
 import seng302.App;
-import seng302.Donor;
+import seng302.Command.Command;
+import seng302.Command.CommandInvoker;
+import seng302.Command.CreateUserCommand;
 import seng302.DonorManager;
-import seng302.Utilities.*;
 import seng302.Utilities.JSONConverter;
+import seng302.Utilities.LocalDateConverter;
 
 import java.time.LocalDate;
 
@@ -21,13 +23,15 @@ import static java.util.Optional.ofNullable;
  *date 05/03/2018
  */
 
-@Command(name = "createuser", description = "Creates a user.")
+@CommandLine.Command(name = "createuser", description = "Creates a user.")
 public class CreateUser implements Runnable {
 
     private DonorManager manager;
+    private CommandInvoker invoker;
 
     public CreateUser() {
         manager = App.getManager();
+        invoker = App.getInvoker();
     }
 
     CreateUser(DonorManager manager) {
@@ -56,8 +60,10 @@ public class CreateUser implements Runnable {
         }
         int uid = manager.getUid();
 
-        Donor donor = new Donor(firstName, middleNames, lastName, dateOfBirth, uid);
-        manager.addDonor(donor);
+        Command command = new CreateUserCommand(firstName, middleNames, lastName, dateOfBirth, uid, manager);
+
+        invoker.execute(command);
+
         System.out.println(String.format("New donor %s %s %s created with userID %s", firstName, ofNullable(middleNames).orElse(""), lastName, uid));
         Action create = new Action("CREATE", "Donor profile ID: " + uid + " created.");
         JSONConverter.updateActionHistory(create, "action_history.json");

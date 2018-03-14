@@ -23,7 +23,8 @@ import picocli.CommandLine.Command;
                 GetChanges.class,
                 Save.class,
                 Load.class,
-                Help.class
+                Help.class,
+                Undo.class
         })
 
 public class BaseCommand implements Runnable {

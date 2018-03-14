@@ -14,7 +14,7 @@ public class CreateUserCommand implements Command {
 
     public CreateUserCommand (String firstName, String middleNames, String lastName, LocalDate dateOfBirth, int uid, DonorManager manager) {
 
-        Donor donor = new Donor(firstName, middleNames, lastName, dateOfBirth, uid);
+        donor = new Donor(firstName, middleNames, lastName, dateOfBirth, uid);
 
         this.manager = manager;
     }
@@ -23,7 +23,6 @@ public class CreateUserCommand implements Command {
     @Override
     public void execute() {
         manager.addDonor(donor);
-
     }
 
     @Override
