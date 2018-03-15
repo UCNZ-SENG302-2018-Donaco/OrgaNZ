@@ -69,7 +69,7 @@
                         <Font size="16.0" />
                      </font>
                   </Label>
-                  <Label fx:id="successLbl" text=" " textFill="RED" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                  <Label fx:id="successLbl" text=" " textFill="RED" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                   <TextField fx:id="firstNameFld" prefHeight="35.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                   <TextField fx:id="middleNamefld" prefHeight="35.0" promptText="(optional)" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   <TextField fx:id="lastNamefld" prefHeight="35.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />

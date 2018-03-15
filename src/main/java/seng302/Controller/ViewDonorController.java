@@ -1,18 +1,18 @@
 package seng302.Controller;
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.AnchorPane;
 
+import javafx.scene.layout.GridPane;
 import seng302.AppUI;
 import seng302.Donor;
+import seng302.Utilities.Page;
+import seng302.Utilities.PageNavigator;
 
-public class viewDonorController {
-
-	@FXML
-	private AnchorPane donorValues;
+public class ViewDonorController {
 
 	@FXML
 	private Label creationDate, lastModified, noDonorLabel;
@@ -21,13 +21,18 @@ public class viewDonorController {
 	private TextField id, fname, lname, mname, dob, dod, gender, height, weight, btype, address, region;
 
 	@FXML
+    private void initialize() {
+	    setFieldsDisabled(true);
+    }
+
+	@FXML
 	private void searchDonor() {
 		int id_value;
 		try {
 			id_value = Integer.parseInt(id.getText());
 		} catch (Exception e) {
 			noDonorLabel.setVisible(true);
-			donorValues.setVisible(false);
+			setFieldsDisabled(true);
 			return;
 		}
 
@@ -38,10 +43,10 @@ public class viewDonorController {
 		Donor donor = AppUI.getManager().getDonorByID(id_value);
 		if (donor == null) {
 			noDonorLabel.setVisible(true);
-			donorValues.setVisible(false);
+            setFieldsDisabled(true);
 		} else {
 			noDonorLabel.setVisible(false);
-			donorValues.setVisible(true);
+            setFieldsDisabled(false);
 
 			fname.setText(donor.getFirstName());
 			lname.setText(donor.getLastName());
@@ -61,10 +66,29 @@ public class viewDonorController {
 			//lastModified.setVisible(true);
 		}
 	}
+	
+    private void setFieldsDisabled(boolean disabled) {
+        fname.setDisable(disabled);
+        lname.setDisable(disabled);
+        mname.setDisable(disabled);
+        dob.setDisable(disabled);
+        dod.setDisable(disabled);
+        gender.setDisable(disabled);
+        height.setDisable(disabled);
+        weight.setDisable(disabled);
+        btype.setDisable(disabled);
+        address.setDisable(disabled);
+        region.setDisable(disabled);
+    }
 
 	@FXML
-	private void saveChanges() {
+	private void saveChanges(ActionEvent event) {
 
+	}
+
+	@FXML
+	private void goBack(ActionEvent event) {
+        PageNavigator.loadPage(Page.LANDING.getPath());
 	}
 
 	// Add something to view organs being donated.
