@@ -32,10 +32,13 @@ public class AppUI extends Application {
 		stage.show();
 
 		donorManager = new DonorManager();
+
+        // TODO DELETE TEST DATA
 		LocalDate d = LocalDate.of(1997,8,22);
 		int uid = donorManager.getUid();
 		Donor deleteme = new Donor("James", "v", "Toohey", d, uid);
 		donorManager.addDonor(deleteme);
+		// TODO DELETE TEST DATA
 	}
 
 	/**
@@ -66,6 +69,4 @@ public class AppUI extends Application {
 		// scene.getStylesheets().setAll(getClass().getResource("page.css").toExternalForm());
 		return scene;
 	}
-
-
 }

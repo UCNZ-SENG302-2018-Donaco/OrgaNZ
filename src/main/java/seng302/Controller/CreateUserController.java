@@ -3,11 +3,9 @@ package seng302.Controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import seng302.App;
 import seng302.AppUI;
 import seng302.Donor;
 import seng302.DonorManager;
@@ -15,29 +13,21 @@ import seng302.Utilities.Page;
 import seng302.Utilities.PageNavigator;
 
 public class CreateUserController {
-
-    public Button viewUserBtn;
-    @FXML
-    private Button createUserBtn;
     @FXML
     private DatePicker dobFld;
     @FXML
-    private TextField firstNameFld;
-    @FXML
-    private TextField middleNamefld;
-    @FXML
-    private TextField lastNamefld;
+    private TextField firstNameFld, middleNamefld, lastNamefld;
     @FXML
     private Label successLbl;
 
     private DonorManager manager;
 
+    private boolean force;
+
     @FXML
     private void initialize() {
         manager = AppUI.getManager();
     }
-
-    private boolean force;
 
     /**
      * Creates a user from the button being clicked.

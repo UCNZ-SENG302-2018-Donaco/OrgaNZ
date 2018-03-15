@@ -74,13 +74,13 @@
                   <TextField fx:id="middleNamefld" prefHeight="35.0" promptText="(optional)" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   <TextField fx:id="lastNamefld" prefHeight="35.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                   <DatePicker fx:id="dobFld" maxWidth="1.7976931348623157E308" prefHeight="35.0" promptText="(enter in dd/mm/yyyy)" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                  <Button fx:id="createUserBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#createUser" prefHeight="35.0" text="Create " GridPane.rowIndex="6" />
-                  <Button fx:id="viewUserBtn" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToViewDonor" prefHeight="35.0" text="View User" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                  <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#createUser" prefHeight="35.0" text="Create " GridPane.rowIndex="6" />
+                  <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToViewDonor" prefHeight="35.0" text="View User" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                </children>
             </GridPane>
          </center>
          <top>
-            <Label text="Create User" BorderPane.alignment="CENTER">
+            <Label text="Create user" BorderPane.alignment="CENTER">
                <font>
                   <Font size="24.0" />
                </font>

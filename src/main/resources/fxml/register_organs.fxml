@@ -21,7 +21,7 @@
         </Button>
         <BorderPane VBox.vgrow="ALWAYS">
             <top>
-                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Register/deregister Organs" textAlignment="CENTER" BorderPane.alignment="CENTER">
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Register/deregister organs" textAlignment="CENTER" BorderPane.alignment="CENTER">
                     <font>
                         <Font size="24.0" />
                     </font>

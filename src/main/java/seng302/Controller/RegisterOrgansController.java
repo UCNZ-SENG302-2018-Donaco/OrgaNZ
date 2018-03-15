@@ -12,7 +12,6 @@ import seng302.Utilities.OrganAlreadyRegisteredException;
 import seng302.Utilities.Page;
 import seng302.Utilities.PageNavigator;
 
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,22 +41,7 @@ public class RegisterOrgansController {
 		organCheckBoxes.put(Organ.CONNECTIVE_TISSUE, checkBoxConnTissue);
 		setCheckboxesDisabled();
 
-		// TODO TEST DATA REMOVE THESE //
-		manager = AppUI.getManager();
-		Donor testDonor1 = new Donor("Alex", "", "Tompkins", LocalDate.of(1998, 9, 5), 5);
-		manager.addDonor(testDonor1);
-		try {
-			manager.getDonorByID(5).setOrganStatus(Organ.KIDNEY, true);
-		} catch (OrganAlreadyRegisteredException exc) {}
-
-		manager = AppUI.getManager();
-		Donor testDonor2 = new Donor("Dummy", "", "Tompkins", LocalDate.of(1990, 1, 1), 6);
-		manager.addDonor(testDonor2);
-		try {
-			manager.getDonorByID(6).setOrganStatus(Organ.PANCREAS, true);
-			manager.getDonorByID(6).setOrganStatus(Organ.INTESTINE, true);
-		} catch (OrganAlreadyRegisteredException exc) {}
-		// REMOVE THESE //
+        manager = AppUI.getManager();
 	}
 
 	@FXML
