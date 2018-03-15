@@ -12,9 +12,9 @@ public class CreateUserAction implements Action {
     private DonorManager manager;
 
 
-    public CreateUserAction(String firstName, String middleNames, String lastName, LocalDate dateOfBirth, int uid, DonorManager manager) {
+    public CreateUserAction(Donor donor, DonorManager manager) {
 
-        donor = new Donor(firstName, middleNames, lastName, dateOfBirth, uid);
+        this.donor = donor;
 
         this.manager = manager;
     }

@@ -1,7 +1,8 @@
 package seng302.Commands;
 
-import picocli.CommandLine;
+import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
+import seng302.Donor;
 import seng302.HistoryItem;
 import seng302.Actions.Action;
 import seng302.Actions.ActionInvoker;
@@ -23,7 +24,7 @@ import static java.util.Optional.ofNullable;
  *date 05/03/2018
  */
 
-@CommandLine.Command(name = "createuser", description = "Creates a user.")
+@Command(name = "createuser", description = "Creates a user.")
 public class CreateUser implements Runnable {
 
     private DonorManager manager;
@@ -61,7 +62,9 @@ public class CreateUser implements Runnable {
         }
         int uid = manager.getUid();
 
-        Action action = new CreateUserAction(firstName, middleNames, lastName, dateOfBirth, uid, manager);
+        Donor donor = new Donor(firstName, middleNames, lastName, dateOfBirth, uid);
+
+        Action action = new CreateUserAction(donor, manager);
 
         invoker.execute(action);
 
