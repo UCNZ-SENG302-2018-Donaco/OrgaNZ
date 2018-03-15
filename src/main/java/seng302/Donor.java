@@ -255,6 +255,14 @@ public class Donor {
         return uid;
     }
 
+    public LocalDateTime getCreationdate() {
+		return created_on;
+	}
+
+	public LocalDateTime getModified_on() {
+		return modified_on;
+	}
+
     /**
      * Donor objects are identified by their uid
      *

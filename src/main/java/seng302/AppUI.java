@@ -10,6 +10,7 @@ import seng302.Utilities.Page;
 import seng302.Utilities.PageNavigator;
 
 import java.io.IOException;
+import java.time.LocalDate;
 
 public class AppUI extends Application {
 	private static Stage window;
@@ -31,6 +32,9 @@ public class AppUI extends Application {
 		stage.show();
 
 		donorManager = new DonorManager();
+		LocalDate d = LocalDate.of(1997,8,22);
+		Donor deleteme = new Donor("James", "v", "Toohey", d, 1);
+		donorManager.addDonor(deleteme);
 	}
 
 	/**
@@ -61,4 +65,6 @@ public class AppUI extends Application {
 		// scene.getStylesheets().setAll(getClass().getResource("page.css").toExternalForm());
 		return scene;
 	}
+
+
 }
