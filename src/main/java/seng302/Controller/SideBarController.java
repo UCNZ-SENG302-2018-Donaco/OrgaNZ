@@ -2,18 +2,10 @@ package seng302.Controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import seng302.Utilities.Page;
 import seng302.Utilities.PageNavigator;
 
 public class SideBarController {
-
-
-    public Button historyBtn;
-    public Button registerOrgansBtn;
-    public Button viewProfileBtn;
-    public Button LoadBtn;
-    public Button BmiBtn;
 
     /**
      * Redirects the GUI to the View Donor Page
@@ -22,6 +14,11 @@ public class SideBarController {
     @FXML
     private void goToViewDonor(ActionEvent event) {
         PageNavigator.loadPage(Page.VIEW_DONOR.getPath());
+    }
+
+    @FXML
+    private void goToRegisterOrgans(ActionEvent event) {
+        PageNavigator.loadPage(Page.REGISTER_ORGANS.getPath());
     }
 
     /**
@@ -33,5 +30,15 @@ public class SideBarController {
         PageNavigator.loadPage(Page.HISTORY.getPath());
     }
 
+    @FXML
+    private void save(ActionEvent event) {
+    }
 
+    @FXML
+    private void load(ActionEvent event) {
+    }
+
+    @FXML
+    private void logout(ActionEvent event) {
+    }
 }

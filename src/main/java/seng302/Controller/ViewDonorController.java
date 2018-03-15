@@ -3,17 +3,25 @@ package seng302.Controller;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import seng302.AppUI;
 import seng302.Donor;
 import seng302.Utilities.Gender;
 import seng302.Utilities.Page;
 import seng302.Utilities.PageNavigator;
 
+import java.io.IOException;
+
 public class ViewDonorController {
+    @FXML
+    private Pane sidebarPane;
+
 	@FXML
 	private Label creationDate, lastModified, noDonorLabel;
 	@FXML
@@ -25,8 +33,15 @@ public class ViewDonorController {
 
 	@FXML
     private void initialize() {
-	    gender.setItems(FXCollections.observableArrayList(Gender.values()));
+	    try {
+            VBox sidebar = FXMLLoader.load(getClass().getResource(Page.SIDEBAR.getPath()));
+            sidebarPane.getChildren().setAll(sidebar);
+        } catch (IOException exc) {
+            System.err.println("Couldn't load sidebar from fxml file.");
+            exc.printStackTrace();
+        }
 
+	    gender.setItems(FXCollections.observableArrayList(Gender.values()));
 	    setFieldsDisabled(true);
     }
 
