@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.CreateUserController">
+   <children>
+      <Button fx:id="createUserBtn" layoutX="500.0" layoutY="700.0" mnemonicParsing="false" text="Create " />
+      <DatePicker fx:id="dobFld" layoutX="600.0" layoutY="500.0" prefHeight="25.0" prefWidth="249.0" promptText="enter in dd/mm/yyyy" />
+      <Label layoutX="200.0" layoutY="500.0" text="Date Of Birth *">
+         <font>
+            <Font size="16.0" />
+         </font></Label>
+      <Label layoutX="200.0" layoutY="400.0" text="Last Name *">
+         <font>
+            <Font size="16.0" />
+         </font></Label>
+      <Label layoutX="200.0" layoutY="300.0" text="Middle Name ">
+         <font>
+            <Font size="16.0" />
+         </font></Label>
+      <Label layoutX="200.0" layoutY="200.0" text="First Name *">
+         <font>
+            <Font size="16.0" />
+         </font></Label>
+      <TextField fx:id="firstNameFld" layoutX="600.0" layoutY="200.0" prefHeight="25.0" prefWidth="249.0" />
+      <TextField fx:id="middleNamefld" layoutX="600.0" layoutY="300.0" prefHeight="25.0" prefWidth="249.0" promptText="optional" />
+      <TextField fx:id="lastNamefld" layoutX="600.0" layoutY="400.0" prefHeight="25.0" prefWidth="249.0" />
+      <Label layoutX="200.0" layoutY="116.0" text="Please Fill in the details below:">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+      <Label layoutX="200.0" layoutY="600.0" text="* equals required fields">
+         <font>
+            <Font size="16.0" />
+         </font>
+      </Label>
+   </children>
+</AnchorPane>
