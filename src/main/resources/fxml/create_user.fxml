@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
 <AnchorPane prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.CreateUserController">
    <children>
-      <Button fx:id="createUserBtn" layoutX="500.0" layoutY="700.0" mnemonicParsing="false" text="Create " />
+      <Button fx:id="createUserBtn" layoutX="500.0" layoutY="700.0" mnemonicParsing="false" onAction="#createUser" text="Create " />
       <DatePicker fx:id="dobFld" layoutX="600.0" layoutY="500.0" prefHeight="25.0" prefWidth="249.0" promptText="enter in dd/mm/yyyy" />
       <Label layoutX="200.0" layoutY="500.0" text="Date Of Birth *">
          <font>
@@ -37,5 +38,6 @@
             <Font size="16.0" />
          </font>
       </Label>
+      <Label fx:id="successLbl" layoutX="673.0" layoutY="705.0" text="Label" />
    </children>
 </AnchorPane>
