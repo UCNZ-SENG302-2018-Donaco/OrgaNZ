@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import picocli.CommandLine;
+import seng302.Actions.ActionInvoker;
 import seng302.Donor;
 import seng302.DonorManager;
 import seng302.Utilities.BloodType;
@@ -25,7 +26,7 @@ public class SetAttributeTest {
     public void init() {
         spyDonorManager = spy(new DonorManager());
 
-        spySetAttribute = spy(new SetAttribute(spyDonorManager));
+        spySetAttribute = spy(new SetAttribute(spyDonorManager, new ActionInvoker()));
 
     }
 
@@ -55,7 +56,6 @@ public class SetAttributeTest {
         CommandLine.run(spySetAttribute, System.out, inputs);
 
         verify(spySetAttribute, times(1)).run();
-        verify(spyDonorManager, times(0)).updateDonor(any());
     }
 
     @Test
@@ -64,13 +64,9 @@ public class SetAttributeTest {
         when(spyDonorManager.getDonorByID(anyInt())).thenReturn(donor);
         String[] inputs = {"-u", "1", "--firstname", "NewFirst"};
 
-        ArgumentCaptor<Donor> captor = ArgumentCaptor.forClass(Donor.class);
-
         CommandLine.run(spySetAttribute, System.out, inputs);
 
-        verify(spyDonorManager).updateDonor(captor.capture());
-
-        assertEquals("NewFirst", captor.getValue().getFirstName());
+        assertEquals("NewFirst", donor.getFirstName());
     }
 
     @Test
@@ -79,13 +75,9 @@ public class SetAttributeTest {
         when(spyDonorManager.getDonorByID(anyInt())).thenReturn(donor);
         String[] inputs = {"-u", "1", "--bloodtype", "O+"};
 
-        ArgumentCaptor<Donor> captor = ArgumentCaptor.forClass(Donor.class);
-
         CommandLine.run(spySetAttribute, System.out, inputs);
 
-        verify(spyDonorManager).updateDonor(captor.capture());
-
-        assertEquals(BloodType.O_POS, captor.getValue().getBloodType());
+        assertEquals(BloodType.O_POS, donor.getBloodType());
     }
 
     @Test
@@ -102,14 +94,9 @@ public class SetAttributeTest {
         Donor donor = new Donor("First", null, "Last", LocalDate.of(1970,1, 1), 1);
         when(spyDonorManager.getDonorByID(anyInt())).thenReturn(donor);
         String[] inputs = {"-u", "1", "--gender", "Male"};
-
-        ArgumentCaptor<Donor> captor = ArgumentCaptor.forClass(Donor.class);
-
         CommandLine.run(spySetAttribute, System.out, inputs);
 
-        verify(spyDonorManager).updateDonor(captor.capture());
-
-        assertEquals(Gender.MALE, captor.getValue().getGender());
+        assertEquals(Gender.MALE, donor.getGender());
     }
 
     @Test
@@ -127,13 +114,9 @@ public class SetAttributeTest {
         when(spyDonorManager.getDonorByID(anyInt())).thenReturn(donor);
         String[] inputs = {"-u", "1", "--dateofdeath", "20/01/2038"};
 
-        ArgumentCaptor<Donor> captor = ArgumentCaptor.forClass(Donor.class);
-
         CommandLine.run(spySetAttribute, System.out, inputs);
 
-        verify(spyDonorManager).updateDonor(captor.capture());
-
-        assertEquals(LocalDate.of(2038, 1, 20), captor.getValue().getDateOfDeath());
+        assertEquals(LocalDate.of(2038, 1, 20), donor.getDateOfDeath());
     }
 
 

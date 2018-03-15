@@ -66,7 +66,6 @@ public class SetOrganStatusTest {
         CommandLine.run(spySetOrganStatus, System.out, inputs);
 
         verify(spySetOrganStatus, times(1)).run();
-        verify(spyDonorManager, times(0)).updateDonor(any());
     }
 
     @Test
@@ -75,13 +74,9 @@ public class SetOrganStatusTest {
         when(spyDonorManager.getDonorByID(anyInt())).thenReturn(donor);
         String[] inputs = {"-u", "1", "--liver"};
 
-        ArgumentCaptor<Donor> captor = ArgumentCaptor.forClass(Donor.class);
-
         CommandLine.run(spySetOrganStatus, System.out, inputs);
 
-        verify(spyDonorManager).updateDonor(captor.capture());
-
-        assertEquals(true, captor.getValue().getOrganStatus().get(Organ.LIVER));
+        assertEquals(true, donor.getOrganStatus().get(Organ.LIVER));
     }
 
     @Test
@@ -93,13 +88,9 @@ public class SetOrganStatusTest {
         when(spyDonorManager.getDonorByID(anyInt())).thenReturn(donor);
         String[] inputs = {"-u", "1", "--liver=false"};
 
-        ArgumentCaptor<Donor> captor = ArgumentCaptor.forClass(Donor.class);
-
         CommandLine.run(spySetOrganStatus, System.out, inputs);
 
-        verify(spyDonorManager).updateDonor(captor.capture());
-
-        assertEquals(false, captor.getValue().getOrganStatus().get(Organ.LIVER));
+        assertEquals(false, donor.getOrganStatus().get(Organ.LIVER));
     }
 
     @Test
@@ -125,14 +116,10 @@ public class SetOrganStatusTest {
         when(spyDonorManager.getDonorByID(anyInt())).thenReturn(donor);
         String[] inputs = {"-u", "1", "--liver", "--kidney"};
 
-        ArgumentCaptor<Donor> captor = ArgumentCaptor.forClass(Donor.class);
-
         CommandLine.run(spySetOrganStatus, System.out, inputs);
 
-        verify(spyDonorManager).updateDonor(captor.capture());
-
-        assertEquals(true, captor.getValue().getOrganStatus().get(Organ.LIVER));
-        assertEquals(true, captor.getValue().getOrganStatus().get(Organ.KIDNEY));
+        assertEquals(true, donor.getOrganStatus().get(Organ.LIVER));
+        assertEquals(true, donor.getOrganStatus().get(Organ.KIDNEY));
     }
 
     @Test
@@ -146,15 +133,11 @@ public class SetOrganStatusTest {
         when(spyDonorManager.getDonorByID(anyInt())).thenReturn(donor);
         String[] inputs = {"-u", "1", "--liver", "--kidney", "--bone=false"};
 
-        ArgumentCaptor<Donor> captor = ArgumentCaptor.forClass(Donor.class);
-
         CommandLine.run(spySetOrganStatus, System.out, inputs);
-
-        verify(spyDonorManager).updateDonor(captor.capture());
 
         assertThat(outContent.toString(), containsString("Liver is already registered for donation"));
 
-        assertEquals(true, captor.getValue().getOrganStatus().get(Organ.KIDNEY));
-        assertEquals(false, captor.getValue().getOrganStatus().get(Organ.BONE));
+        assertEquals(true, donor.getOrganStatus().get(Organ.KIDNEY));
+        assertEquals(false, donor.getOrganStatus().get(Organ.BONE));
     }
 }

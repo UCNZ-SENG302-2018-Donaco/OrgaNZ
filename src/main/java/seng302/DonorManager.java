@@ -61,15 +61,6 @@ public class DonorManager {
     }
 
     /**
-     * Update a donor
-     * @param donor Donor to be updated
-     */
-    public void updateDonor(Donor donor) {
-        donors.remove(donor);
-        donors.add(donor);
-    }
-
-    /**
      * Get the next user ID
      * @return Next userID to be used
      */

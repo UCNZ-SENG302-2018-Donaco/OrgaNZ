@@ -72,7 +72,6 @@ public class DonorManagerTest {
         manager = new DonorManager(donors);
 
         donor.setFirstName("New");
-        manager.updateDonor(donor);
 
         assertTrue(manager.getDonors().contains(donor));
         assertEquals(manager.getDonorByID(1).getFirstName(), "New");
