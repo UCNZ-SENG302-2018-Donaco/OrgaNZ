@@ -14,7 +14,7 @@
 
 <VBox prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.RegisterOrgansController">
     <children>
-        <Button mnemonicParsing="false" onAction="#goBack" prefHeight="30.0" prefWidth="120.0" style="-fx-base: rgba(173,216,230, 0.8);" text="Cancel">
+        <Button mnemonicParsing="false" onAction="#goBack" prefHeight="30.0" prefWidth="120.0" style="-fx-base: rgba(173,216,230, 0.8);" text="Back">
             <VBox.margin>
                 <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
             </VBox.margin>

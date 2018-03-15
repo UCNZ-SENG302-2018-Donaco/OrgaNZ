@@ -62,4 +62,9 @@ public class CreateUserController {
     private void goToViewDonor(ActionEvent event) {
         PageNavigator.loadPage(Page.VIEW_DONOR.getPath());
     }
+
+    @FXML
+    private void goBack(ActionEvent event) {
+        PageNavigator.loadPage(Page.LANDING.getPath());
+    }
 }
