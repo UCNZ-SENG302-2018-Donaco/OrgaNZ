@@ -1,27 +1,32 @@
 package seng302.Controller;
 
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
-
-import javafx.scene.layout.GridPane;
 import seng302.AppUI;
 import seng302.Donor;
+import seng302.Utilities.Gender;
 import seng302.Utilities.Page;
 import seng302.Utilities.PageNavigator;
 
 public class ViewDonorController {
-
 	@FXML
 	private Label creationDate, lastModified, noDonorLabel;
-
 	@FXML
-	private TextField id, fname, lname, mname, dob, dod, gender, height, weight, btype, address, region;
+	private TextField id, fname, lname, mname, height, weight, btype, address, region;
+	@FXML
+	private DatePicker dob, dod;
+	@FXML
+    private ChoiceBox<Gender> gender;
 
 	@FXML
     private void initialize() {
+	    gender.setItems(FXCollections.observableArrayList(Gender.values()));
+
 	    setFieldsDisabled(true);
     }
 
@@ -51,9 +56,9 @@ public class ViewDonorController {
 			fname.setText(donor.getFirstName());
 			lname.setText(donor.getLastName());
 			mname.setText(donor.getMiddleName());
-			dob.setText(donor.getDateOfBirth().toString());
-			//dod.setText(donor.getDateOfDeath().toString());
-			//gender.setText(donor.getGender().toString());
+			dob.setValue(donor.getDateOfBirth());
+			dod.setValue(donor.getDateOfDeath());
+			gender.setValue(donor.getGender());
 			//height.setText(String.valueOf(donor.getHeight()));
 			//weight.setText(String.valueOf(donor.getHeight()));
 			//btype.setText(donor.getBloodType().toString());
