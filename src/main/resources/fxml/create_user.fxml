@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
+
 <?import javafx.scene.text.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -33,11 +33,12 @@
             <Font size="24.0" />
          </font>
       </Label>
-      <Label layoutX="200.0" layoutY="600.0" text="* equals required fields">
+      <Label layoutX="200.0" layoutY="703.0" text="* equals required fields">
          <font>
             <Font size="16.0" />
          </font>
       </Label>
-      <Label fx:id="successLbl" layoutX="673.0" layoutY="705.0" text="Label" />
+      <Label fx:id="successLbl" layoutX="706.0" layoutY="703.0" text=" " />
+      <Button fx:id="viewUserBtn" layoutX="592.0" layoutY="700.0" mnemonicParsing="false" onAction="#goToViewDonor" text="View user" />
    </children>
 </AnchorPane>

@@ -1,6 +1,7 @@
 package seng302.Controller;
 
 
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
@@ -10,9 +11,12 @@ import seng302.App;
 import seng302.AppUI;
 import seng302.Donor;
 import seng302.DonorManager;
+import seng302.Utilities.Page;
+import seng302.Utilities.PageNavigator;
 
 public class CreateUserController {
 
+    public Button viewUserBtn;
     @FXML
     private Button createUserBtn;
     @FXML
@@ -52,5 +56,10 @@ public class CreateUserController {
         Donor donor = new Donor(firstNameFld.getText(), middleNamefld.getText(), lastNamefld.getText(), dobFld.getValue(), uid);
         manager.addDonor(donor);
         successLbl.setText("Successfully created Donor " + firstNameFld.getText() + " " + middleNamefld.getText() + " " + lastNamefld.getText() + " with ID " + uid);
+    }
+
+    @FXML
+    private void goToViewDonor(ActionEvent event) {
+        PageNavigator.loadPage(Page.VIEW_DONOR.getPath());
     }
 }

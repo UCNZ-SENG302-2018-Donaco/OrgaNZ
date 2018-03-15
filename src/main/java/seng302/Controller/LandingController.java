@@ -28,6 +28,10 @@ public class LandingController {
 		PageNavigator.loadPage(Page.LOGIN.getPath());
 	}
 
+	/**
+	 * Redirects the GUI to the View Donor Page
+	 * @param event when view button is clicked
+	 */
 	@FXML
 	private void goToViewDonor(ActionEvent event) {
 		PageNavigator.loadPage(Page.VIEW_DONOR.getPath());

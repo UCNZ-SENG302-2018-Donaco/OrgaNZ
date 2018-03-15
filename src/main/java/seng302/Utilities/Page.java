@@ -5,7 +5,8 @@ public enum Page {
 	LANDING("/fxml/landing.fxml"),
 	LOGIN("/fxml/login.fxml"),
 	CREATE_USER("/fxml/create_user.fxml"),
-	VIEW_DONOR("/fxml/view_donor.fxml");
+	VIEW_DONOR("/fxml/view_donor.fxml"),
+	HISTORY("/fxml/history.fxml");
 
 	private String path;
 
