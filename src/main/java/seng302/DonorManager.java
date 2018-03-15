@@ -32,7 +32,7 @@ public class DonorManager {
         this.donors = donors;
     }
 
-    private void setDonors(ArrayList<Donor> donors) {
+    public void setDonors(ArrayList<Donor> donors) {
         this.donors = donors;
     }
 
@@ -77,6 +77,12 @@ public class DonorManager {
         return uid++;
     }
 
+	/**
+	 * Set the user ID
+	 * @param uid Value to set the user IF
+	 */
+	public void setUid(int uid) { this.uid = uid; }
+
     /**
      * Checks if a user already exists with that first + last name and date of birth
      * @param firstName First name
@@ -103,40 +109,5 @@ public class DonorManager {
     public Donor getDonorByID(int id) {
         return donors.stream()
                 .filter(d -> d.getUid() == id).findFirst().orElse(null);
-    }
-
-    /**
-     * Saves the current donors list to a specified file
-     * @param file The file to be saved to
-     * @throws IOException Throws IOExceptions
-     */
-    public void saveToFile(File file) throws IOException {
-        Writer writer = new FileWriter(file);
-        Gson gson = new GsonBuilder()
-                .setPrettyPrinting()
-                .enableComplexMapKeySerialization()
-                .create();
-
-        gson.toJson(donors, writer);
-        writer.close();
-    }
-
-    /**
-     * Loads the donors from a specified file. Overwrites any current donors
-     * @param file The file to be loaded from
-     * @throws IOException Throws IOExceptions
-     */
-    public void loadFromFile(File file) throws IOException {
-        Reader reader = new FileReader(file);
-        Gson gson = new Gson();
-        ArrayList<Donor> donors;
-        Type collectionType = new TypeToken<ArrayList<Donor>>() {}.getType();
-        donors = gson.fromJson(reader, collectionType);
-        setDonors(donors);
-        for (Donor donor : donors) {
-            if (donor.getUid() >= uid) {
-                uid = donor.getUid() + 1;
-            }
-        }
     }
 }
