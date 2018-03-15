@@ -13,9 +13,14 @@ import java.io.IOException;
 
 public class AppUI extends Application {
 	private static Stage window;
+	private static DonorManager donorManager;
 
 	public static Stage getWindow() {
 		return AppUI.window;
+	}
+
+	public static DonorManager getManager() {
+		return donorManager;
 	}
 
 	@Override
@@ -24,6 +29,8 @@ public class AppUI extends Application {
 		stage.setTitle("Organ Donor Management System");
 		stage.setScene(createScene(loadMainPane()));
 		stage.show();
+
+		donorManager = new DonorManager();
 	}
 
 	/**
