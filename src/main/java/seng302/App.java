@@ -26,8 +26,8 @@ public class App
     {
         String input;
 
-        donorManager = new DonorManager();
         actionInvoker = new ActionInvoker();
+        donorManager = new DonorManager();
 
         ConsoleScanner scanIn = new ConsoleScanner();
 

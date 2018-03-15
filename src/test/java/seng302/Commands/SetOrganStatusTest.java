@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import picocli.CommandLine;
+import seng302.Actions.ActionInvoker;
 import seng302.Donor;
 import seng302.DonorManager;
 import seng302.Utilities.BloodType;
@@ -33,7 +34,7 @@ public class SetOrganStatusTest {
     public void init() {
         spyDonorManager = spy(new DonorManager());
 
-        spySetOrganStatus = spy(new SetOrganStatus(spyDonorManager));
+        spySetOrganStatus = spy(new SetOrganStatus(spyDonorManager, new ActionInvoker()));
 
         System.setOut(new PrintStream(outContent));
         System.setErr(new PrintStream(errContent));

@@ -2,6 +2,8 @@ package seng302.Commands;
 
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
+import seng302.Actions.ActionInvoker;
+import seng302.Actions.ModifyDonorOrgansAction;
 import seng302.HistoryItem;
 import seng302.App;
 import seng302.Donor;
@@ -22,13 +24,16 @@ import static seng302.Utilities.Organ.*;
 public class SetOrganStatus implements Runnable {
 
     private DonorManager manager;
+    private ActionInvoker invoker;
 
     public SetOrganStatus() {
         manager = App.getManager();
+        invoker = App.getInvoker();
     }
 
-    public SetOrganStatus(DonorManager manager) {
+    public SetOrganStatus(DonorManager manager, ActionInvoker invoker) {
         this.manager = manager;
+        this.invoker = invoker;
     }
 
     @Option(names = {"--id", "-u"}, description = "User ID", required = true)
@@ -78,92 +83,48 @@ public class SetOrganStatus implements Runnable {
             System.out.println("No donor exists with that user ID");
             return;
         }
+
+        ModifyDonorOrgansAction action = new ModifyDonorOrgansAction(donor);
+
         if (liver != null) {
-            try {
-                donor.setOrganStatus(LIVER, liver);
-            } catch (OrganAlreadyRegisteredException e) {
-                System.out.println("Liver is already registered for donation");
-            }
+            action.addChange(LIVER, donor.getOrganStatus().get(LIVER), liver);
         }
         if (kidney != null) {
-            try {
-                donor.setOrganStatus(KIDNEY, kidney);
-            } catch (OrganAlreadyRegisteredException e) {
-                System.out.println("Kidney is already registered for donation");
-            }
+            action.addChange(KIDNEY, donor.getOrganStatus().get(KIDNEY), kidney);
         }
         if (pancreas != null) {
-            try {
-                donor.setOrganStatus(PANCREAS, pancreas);
-            } catch (OrganAlreadyRegisteredException e) {
-                System.out.println("Pancreas is already registered for donation");
-            }
+            action.addChange(PANCREAS, donor.getOrganStatus().get(PANCREAS), pancreas);
         }
         if (heart != null) {
-            try {
-                donor.setOrganStatus(HEART, heart);
-            } catch (OrganAlreadyRegisteredException e) {
-                System.out.println("Heart is already registered for donation");
-            }
+            action.addChange(HEART, donor.getOrganStatus().get(HEART), heart);
         }
         if (lung != null) {
-            try {
-                donor.setOrganStatus(LUNG, lung);
-            } catch (OrganAlreadyRegisteredException e) {
-                System.out.println("Lung is already registered for donation");
-            }
+            action.addChange(LUNG, donor.getOrganStatus().get(LUNG), lung);
         }
         if (intestine != null) {
-            try {
-                donor.setOrganStatus(INTESTINE, intestine);
-            } catch (OrganAlreadyRegisteredException e) {
-                System.out.println("Intestine is already registered for donation");
-            }
+            action.addChange(INTESTINE, donor.getOrganStatus().get(INTESTINE), intestine);
         }
         if (cornea != null) {
-            try {
-                donor.setOrganStatus(CORNEA, cornea);
-            } catch (OrganAlreadyRegisteredException e) {
-                System.out.println("Cornea is already registered for donation");
-            }
+            action.addChange(CORNEA, donor.getOrganStatus().get(CORNEA), cornea);
         }
         if (middleear != null) {
-            try {
-                donor.setOrganStatus(MIDDLE_EAR, middleear);
-            } catch (OrganAlreadyRegisteredException e) {
-                System.out.println("Middle ear is already registered for donation");
-            }
+            action.addChange(MIDDLE_EAR, donor.getOrganStatus().get(MIDDLE_EAR), middleear);
         }
         if (skin != null) {
-            try {
-                donor.setOrganStatus(SKIN, skin);
-            } catch (OrganAlreadyRegisteredException e) {
-                System.out.println("Skin is already registered for donation");
-            }
+            action.addChange(SKIN, donor.getOrganStatus().get(SKIN), skin);
         }
         if (bone != null) {
-            try {
-                donor.setOrganStatus(BONE, bone);
-            } catch (OrganAlreadyRegisteredException e) {
-                System.out.println("Bone is already registered for donation");
-            }
+            action.addChange(BONE, donor.getOrganStatus().get(BONE), bone);
         }
         if (bonemarrow != null) {
-            try {
-                donor.setOrganStatus(BONE_MARROW, bonemarrow);
-            } catch (OrganAlreadyRegisteredException e) {
-                System.out.println("Bone marrow is already registered for donation");
-            }
+            action.addChange(BONE_MARROW, donor.getOrganStatus().get(BONE_MARROW), bonemarrow);
         }
         if (connectivetissue != null) {
-            try {
-                donor.setOrganStatus(CONNECTIVE_TISSUE, connectivetissue);
-            } catch (OrganAlreadyRegisteredException e) {
-                System.out.println("Connective tissue is already registered for donation");
-            }
+            action.addChange(CONNECTIVE_TISSUE, donor.getOrganStatus().get(CONNECTIVE_TISSUE), connectivetissue);
         }
 
-        manager.updateDonor(donor);
+        invoker.execute(action);
+
         HistoryItem setOrganStatus = new HistoryItem("SET ORGAN STATUS", "The organ status was updated for " + uid);
         JSONConverter.updateHistory(setOrganStatus, "action_history.json");
     }

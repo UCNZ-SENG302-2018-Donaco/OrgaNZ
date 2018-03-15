@@ -3,11 +3,11 @@ package seng302.Actions;
 import seng302.Donor;
 import seng302.DonorManager;
 
-public class DeleteUserAction implements Action {
+public class DeleteDonorAction implements Action {
 	private Donor donor;
 	private DonorManager manager;
 
-	public DeleteUserAction(Donor donor, DonorManager manager) {
+	public DeleteDonorAction(Donor donor, DonorManager manager) {
 		this.donor = donor;
 		this.manager = manager;
 	}

@@ -6,7 +6,7 @@ import seng302.Donor;
 import seng302.HistoryItem;
 import seng302.Actions.Action;
 import seng302.Actions.ActionInvoker;
-import seng302.Actions.CreateUserAction;
+import seng302.Actions.CreateDonorAction;
 import seng302.App;
 import seng302.DonorManager;
 import seng302.Utilities.JSONConverter;
@@ -64,7 +64,7 @@ public class CreateUser implements Runnable {
 
         Donor donor = new Donor(firstName, middleNames, lastName, dateOfBirth, uid);
 
-        Action action = new CreateUserAction(donor, manager);
+        Action action = new CreateDonorAction(donor, manager);
 
         invoker.execute(action);
 

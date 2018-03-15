@@ -5,14 +5,14 @@ import seng302.DonorManager;
 
 import java.time.LocalDate;
 
-public class CreateUserAction implements Action {
+public class CreateDonorAction implements Action {
 
 
     private Donor donor;
     private DonorManager manager;
 
 
-    public CreateUserAction(Donor donor, DonorManager manager) {
+    public CreateDonorAction(Donor donor, DonorManager manager) {
 
         this.donor = donor;
 

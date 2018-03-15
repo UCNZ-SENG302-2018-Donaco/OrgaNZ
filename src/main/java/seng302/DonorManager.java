@@ -3,6 +3,8 @@ package seng302;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
+import seng302.Actions.ActionInvoker;
+import seng302.Actions.LoadAction;
 
 import java.io.*;
 import java.lang.reflect.Type;
@@ -22,17 +24,27 @@ public class DonorManager {
 
     private ArrayList<Donor> donors;
     private int uid;
+    private ActionInvoker invoker;
 
     public DonorManager() {
         donors = new ArrayList<>();
         uid = 1;
+        invoker = App.getInvoker();
+    }
+
+    public DonorManager(ActionInvoker invoker) {
+        donors = new ArrayList<>();
+        uid = 1;
+        this.invoker = invoker;
     }
 
     public DonorManager(ArrayList<Donor> donors) {
         this.donors = donors;
+        uid = calculateNextId();
+        invoker = App.getInvoker();
     }
 
-    private void setDonors(ArrayList<Donor> donors) {
+    public void setDonors(ArrayList<Donor> donors) {
         this.donors = donors;
     }
 
@@ -120,14 +132,26 @@ public class DonorManager {
     public void loadFromFile(File file) throws IOException {
         Reader reader = new FileReader(file);
         Gson gson = new Gson();
-        ArrayList<Donor> donors;
         Type collectionType = new TypeToken<ArrayList<Donor>>() {}.getType();
-        donors = gson.fromJson(reader, collectionType);
-        setDonors(donors);
+
+        ArrayList<Donor> newDonors = gson.fromJson(reader, collectionType);
+
+        ArrayList<Donor> oldDonors = new ArrayList<>(donors);
+
+        LoadAction action = new LoadAction(oldDonors, newDonors, this);
+
+        invoker.execute(action);
+
+        uid = calculateNextId();
+    }
+
+    private int calculateNextId() {
+        int id = 1;
         for (Donor donor : donors) {
-            if (donor.getUid() >= uid) {
-                uid = donor.getUid() + 1;
+            if (donor.getUid() >= id) {
+                id = donor.getUid() + 1;
             }
         }
+        return id;
     }
 }

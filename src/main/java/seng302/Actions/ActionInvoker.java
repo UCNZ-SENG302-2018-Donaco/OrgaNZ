@@ -17,7 +17,7 @@ public class ActionInvoker {
     public void redo() {
         if (canRedo()) {
             Action action = redoStack.pop();
-            action.unExecute();
+            action.execute();
             undoStack.push(action);
         }
     }
@@ -25,6 +25,7 @@ public class ActionInvoker {
     public void execute(Action action) {
         action.execute();
         undoStack.push(action);
+        redoStack.empty();
     }
 
     public boolean canUndo() {

@@ -1,11 +1,11 @@
 package seng302.Commands;
 
-import picocli.CommandLine;
+import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import seng302.HistoryItem;
 import seng302.Actions.Action;
 import seng302.Actions.ActionInvoker;
-import seng302.Actions.DeleteUserAction;
+import seng302.Actions.DeleteDonorAction;
 import seng302.App;
 import seng302.Donor;
 import seng302.DonorManager;
@@ -13,7 +13,7 @@ import seng302.Utilities.JSONConverter;
 
 import java.util.Scanner;
 
-@CommandLine.Command(name = "deleteuser", description = "Deletes a user.")
+@Command(name = "deleteuser", description = "Deletes a user.")
 public class DeleteUser implements Runnable {
 
     private DonorManager manager;
@@ -42,7 +42,7 @@ public class DeleteUser implements Runnable {
             String response = scanner.next();
 
             if (response.equals("y")) {
-                Action action = new DeleteUserAction(donor, manager);
+                Action action = new DeleteDonorAction(donor, manager);
                 invoker.execute(action);
 
                 System.out.println("Donor " + uid + " removed. This removal will only be permanent once the 'save' command is used");
