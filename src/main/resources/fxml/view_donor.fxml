@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.viewDonorController">
+   <children>
+      <Label layoutX="504.0" layoutY="52.0" text="View/Edit Donor">
+         <font>
+            <Font size="24.0" />
+         </font>
+      </Label>
+      <TextField fx:id="id" layoutX="490.0" layoutY="131.0" prefHeight="25.0" prefWidth="92.0" promptText="ID Number" />
+      <Button fx:id="search_button" layoutX="609.0" layoutY="131.0" mnemonicParsing="false" onAction="#searchDonor" text="Search" />
+      <AnchorPane fx:id="donorValues" layoutX="282.0" layoutY="202.0">
+         <children>
+            <Button layoutX="263.0" layoutY="447.0" mnemonicParsing="false" text="Save Changes" />
+            <TextField layoutX="122.0" layoutY="302.0" />
+            <Label layoutX="419.0" layoutY="307.0" text="Region" />
+            <TextField layoutX="122.0" layoutY="80.0" />
+            <Label layoutX="419.0" layoutY="250.0" text="Address" />
+            <TextField layoutX="530.0" layoutY="191.0" />
+            <TextField layoutX="530.0" layoutY="302.0" />
+            <Label layoutX="422.0" layoutY="141.0" text="Weight" />
+            <Label layoutY="366.0" text="Gender" />
+            <Label layoutX="1.0" layoutY="250.0" text="Date of Birth" />
+            <TextField layoutX="530.0" layoutY="136.0" />
+            <TextField layoutX="122.0" layoutY="136.0" />
+            <Label layoutX="446.0" text="Last Update" />
+            <Label layoutY="85.0" text="First Name" />
+            <Label layoutY="196.0" text="Middle Name" />
+            <TextField layoutX="122.0" layoutY="191.0" />
+            <Label layoutX="1.0" layoutY="307.0" text="Date of Death" />
+            <Label layoutX="41.0" text="Creation Date" />
+            <Label layoutX="424.0" layoutY="85.0" text="Height" />
+            <Label layoutY="141.0" text="Last Name" />
+            <TextField layoutX="122.0" layoutY="361.0" />
+            <TextField layoutX="530.0" layoutY="80.0" />
+            <TextField layoutX="122.0" layoutY="245.0" />
+            <TextField layoutX="530.0" layoutY="245.0" />
+            <Label layoutX="423.0" layoutY="196.0" text="Blood type" />
+         </children>
+      </AnchorPane>
+   </children>
+</AnchorPane>
