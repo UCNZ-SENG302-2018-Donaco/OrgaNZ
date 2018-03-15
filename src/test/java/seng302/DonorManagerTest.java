@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import seng302.Actions.ActionInvoker;
 
 import java.io.File;
 import java.time.LocalDate;
@@ -165,7 +166,7 @@ public class DonorManagerTest {
 
         manager.saveToFile(file);
 
-        manager = new DonorManager();
+        manager = new DonorManager(new ActionInvoker());
 
         manager.loadFromFile(file);
 
