@@ -41,7 +41,7 @@ public class Save implements Runnable {
             return;
         }
         try {
-            manager.saveToFile(new File("savefile.json"));
+            JSONConverter.saveToFile(new File("savefile.json"));
             System.out.println(String.format("Saved %s users to file",manager.getDonors().size()));
             HistoryItem save = new HistoryItem("SAVE", "The systems current state was saved.");
             JSONConverter.updateHistory(save, "action_history.json");

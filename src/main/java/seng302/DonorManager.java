@@ -1,13 +1,7 @@
 package seng302;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
 import seng302.Actions.ActionInvoker;
-import seng302.Actions.LoadAction;
 
-import java.io.*;
-import java.lang.reflect.Type;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
@@ -80,6 +74,12 @@ public class DonorManager {
         return uid++;
     }
 
+	/**
+	 * Set the user ID
+	 * @param uid Value to set the user IF
+	 */
+	public void setUid(int uid) { this.uid = uid; }
+
     /**
      * Checks if a user already exists with that first + last name and date of birth
      * @param firstName First name
@@ -108,43 +108,6 @@ public class DonorManager {
                 .filter(d -> d.getUid() == id).findFirst().orElse(null);
     }
 
-    /**
-     * Saves the current donors list to a specified file
-     * @param file The file to be saved to
-     * @throws IOException Throws IOExceptions
-     */
-    public void saveToFile(File file) throws IOException {
-        Writer writer = new FileWriter(file);
-        Gson gson = new GsonBuilder()
-                .setPrettyPrinting()
-                .enableComplexMapKeySerialization()
-                .create();
-
-        gson.toJson(donors, writer);
-        writer.close();
-    }
-
-    /**
-     * Loads the donors from a specified file. Overwrites any current donors
-     * @param file The file to be loaded from
-     * @throws IOException Throws IOExceptions
-     */
-    public void loadFromFile(File file) throws IOException {
-        Reader reader = new FileReader(file);
-        Gson gson = new Gson();
-        Type collectionType = new TypeToken<ArrayList<Donor>>() {}.getType();
-
-        ArrayList<Donor> newDonors = gson.fromJson(reader, collectionType);
-
-        ArrayList<Donor> oldDonors = new ArrayList<>(donors);
-
-        LoadAction action = new LoadAction(oldDonors, newDonors, this);
-
-        invoker.execute(action);
-
-        uid = calculateNextId();
-    }
-
     private int calculateNextId() {
         int id = 1;
         for (Donor donor : donors) {
@@ -154,4 +117,5 @@ public class DonorManager {
         }
         return id;
     }
+
 }

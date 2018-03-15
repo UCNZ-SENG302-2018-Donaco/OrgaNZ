@@ -55,4 +55,12 @@ public class App
     public static ActionInvoker getInvoker() {
         return actionInvoker;
     }
+
+    public static void setManger(DonorManager manager) {
+    	donorManager = manager;
+	}
+
+    public static void init() {
+        donorManager = new DonorManager();
+    }
 }

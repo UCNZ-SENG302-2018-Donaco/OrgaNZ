@@ -33,7 +33,7 @@ public class Load implements Runnable {
     @Override
     public void run() {
         try {
-            manager.loadFromFile(new File("savefile.json"));
+            JSONConverter.loadFromFile(new File("savefile.json"));
             System.out.println(String.format("Loaded %s users from file",manager.getDonors().size()));
             HistoryItem load = new HistoryItem("LOAD", "The systems state was loaded from " + "savefile.json"); // Are we going to allow them to load from different files?
             JSONConverter.updateHistory(load, "action_history.json");
