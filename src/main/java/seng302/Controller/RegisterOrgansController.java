@@ -16,8 +16,6 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
-import static seng302.Utilities.Organ.*;
-
 public class RegisterOrgansController {
 	@FXML
 	private CheckBox checkBoxLiver, checkBoxKidney, checkBoxPancreas, checkBoxHeart, checkBoxLung, checkBoxIntestine,
@@ -31,34 +29,34 @@ public class RegisterOrgansController {
 
 	@FXML
 	private void initialize() {
-		organCheckBoxes.put(LIVER, checkBoxLiver);
-		organCheckBoxes.put(KIDNEY, checkBoxKidney);
-		organCheckBoxes.put(PANCREAS, checkBoxPancreas);
-		organCheckBoxes.put(HEART, checkBoxHeart);
-		organCheckBoxes.put(LUNG, checkBoxLung);
-		organCheckBoxes.put(INTESTINE, checkBoxIntestine);
-		organCheckBoxes.put(CORNEA, checkBoxCornea);
-		organCheckBoxes.put(MIDDLE_EAR, checkBoxMiddleEar);
-		organCheckBoxes.put(SKIN, checkBoxSkin);
-		organCheckBoxes.put(BONE, checkBoxBone);
-		organCheckBoxes.put(BONE_MARROW, checkBoxBoneMarrow);
-		organCheckBoxes.put(CONNECTIVE_TISSUE, checkBoxConnTissue);
+		organCheckBoxes.put(Organ.LIVER, checkBoxLiver);
+		organCheckBoxes.put(Organ.KIDNEY, checkBoxKidney);
+		organCheckBoxes.put(Organ.PANCREAS, checkBoxPancreas);
+		organCheckBoxes.put(Organ.HEART, checkBoxHeart);
+		organCheckBoxes.put(Organ.LUNG, checkBoxLung);
+		organCheckBoxes.put(Organ.INTESTINE, checkBoxIntestine);
+		organCheckBoxes.put(Organ.CORNEA, checkBoxCornea);
+		organCheckBoxes.put(Organ.MIDDLE_EAR, checkBoxMiddleEar);
+		organCheckBoxes.put(Organ.SKIN, checkBoxSkin);
+		organCheckBoxes.put(Organ.BONE, checkBoxBone);
+		organCheckBoxes.put(Organ.BONE_MARROW, checkBoxBoneMarrow);
+		organCheckBoxes.put(Organ.CONNECTIVE_TISSUE, checkBoxConnTissue);
 		setCheckboxesDisabled();
 
-		// TEST DATA REMOVE THESE //
+		// TODO TEST DATA REMOVE THESE //
 		manager = AppUI.getManager();
 		Donor testDonor1 = new Donor("Alex", "", "Tompkins", LocalDate.of(1998, 9, 5), 5);
 		manager.addDonor(testDonor1);
 		try {
-			manager.getDonorByID(5).setOrganStatus(KIDNEY, true);
+			manager.getDonorByID(5).setOrganStatus(Organ.KIDNEY, true);
 		} catch (OrganAlreadyRegisteredException exc) {}
 
 		manager = AppUI.getManager();
 		Donor testDonor2 = new Donor("Dummy", "", "Tompkins", LocalDate.of(1990, 1, 1), 6);
 		manager.addDonor(testDonor2);
 		try {
-			manager.getDonorByID(6).setOrganStatus(PANCREAS, true);
-			manager.getDonorByID(6).setOrganStatus(INTESTINE, true);
+			manager.getDonorByID(6).setOrganStatus(Organ.PANCREAS, true);
+			manager.getDonorByID(6).setOrganStatus(Organ.INTESTINE, true);
 		} catch (OrganAlreadyRegisteredException exc) {}
 		// REMOVE THESE //
 	}
