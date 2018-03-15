@@ -2,7 +2,9 @@ package seng302.Utilities;
 
 public enum Page {
 	MAIN("/fxml/main.fxml"),
-	LANDING("/fxml/landing.fxml");
+	LANDING("/fxml/landing.fxml"),
+	LOGIN("/fxml/login.fxml"),
+	CREATE_USER("/fxml/create_user.fxml");
 
 	private String path;
 
@@ -10,7 +12,7 @@ public enum Page {
 		this.path = path;
 	}
 
-	public String getPath(Page page) {
-		return page.path;
+	public String getPath() {
+		return this.path;
 	}
 }
