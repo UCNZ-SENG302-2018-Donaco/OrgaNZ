@@ -12,7 +12,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.RegisterOrgansController">
+<VBox prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.RegisterOrgansController">
     <children>
         <Button mnemonicParsing="false" onAction="#goBack" prefHeight="30.0" prefWidth="120.0" style="-fx-base: rgba(173,216,230, 0.8);" text="Cancel">
             <VBox.margin>
@@ -41,7 +41,6 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                     <BorderPane.margin>
                         <Insets bottom="40.0" left="100.0" right="100.0" />
@@ -49,7 +48,7 @@
                     <children>
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="All organs being donated for this user:">
                             <font>
-                                <Font size="18.0" />
+                                <Font size="14.0" />
                             </font>
                         </Text>
                   <TextField fx:id="fieldUserID" onAction="#updateUserID" promptText="User ID" GridPane.columnIndex="1" />

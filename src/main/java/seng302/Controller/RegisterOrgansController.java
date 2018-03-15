@@ -25,7 +25,6 @@ public class RegisterOrgansController {
 	private TextField fieldUserID;
 	private DonorManager manager;
 	private Donor donor;
-	private Map<Organ, Boolean> originalStatus;
 
 	@FXML
 	private void initialize() {
@@ -71,9 +70,8 @@ public class RegisterOrgansController {
 
 		if (donor != null) {
 			setCheckBoxesEnabled();
-			originalStatus = donor.getOrganStatus();
 			for (Map.Entry<Organ, CheckBox> entry : organCheckBoxes.entrySet()) {
-				entry.getValue().setSelected(originalStatus.get(entry.getKey()));
+				entry.getValue().setSelected(donor.getOrganStatus().get(entry.getKey()));
 			}
 		} else {
 			setCheckboxesDisabled();
@@ -82,13 +80,13 @@ public class RegisterOrgansController {
 
 	@FXML
 	private void modifyOrgans(ActionEvent event) {
-		for (Map.Entry<Organ, CheckBox> entry : organCheckBoxes.entrySet()) {
+		for (Organ organ : organCheckBoxes.keySet()) {
 			try {
-				if (originalStatus.get(entry.getKey()) != entry.getValue().isSelected()) {
-					donor.setOrganStatus(entry.getKey(), entry.getValue().isSelected());
+				if (donor.getOrganStatus().get(organ) != organCheckBoxes.get(organ).isSelected()) {
+					donor.setOrganStatus(organ, organCheckBoxes.get(organ).isSelected());
 				}
 			} catch (OrganAlreadyRegisteredException exc) {
-				System.err.println(exc.getMessage() + " " + entry.getKey());
+				System.err.println(exc.getMessage() + " " + organ);
 			}
 		}
 	}
