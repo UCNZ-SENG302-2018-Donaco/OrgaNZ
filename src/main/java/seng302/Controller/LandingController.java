@@ -2,9 +2,6 @@ package seng302.Controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.layout.Pane;
 import seng302.Utilities.Page;
 import seng302.Utilities.PageNavigator;
 

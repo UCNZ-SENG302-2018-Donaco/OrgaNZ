@@ -4,8 +4,8 @@
 
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.StackPane?>
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.MainController">
+<AnchorPane prefHeight="800.0" prefWidth="1200.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.MainController">
     <children>
-        <StackPane fx:id="pageHolder" prefHeight="150.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+        <StackPane fx:id="pageHolder" prefHeight="800.0" prefWidth="1200.0" VBox.vgrow="ALWAYS" />
     </children>
 </AnchorPane>
