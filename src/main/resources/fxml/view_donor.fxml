@@ -22,11 +22,6 @@
             <HBox fx:id="sidebarPane" maxWidth="200.0" minWidth="200.0" prefWidth="200.0" />
             <VBox prefHeight="600.0" prefWidth="800.0">
                <children>
-                  <Button mnemonicParsing="false" onAction="#goBack" prefHeight="30.0" prefWidth="120.0" style="-fx-base: rgba(173,216,230, 0.8);" text="Back">
-                     <VBox.margin>
-                        <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
-                     </VBox.margin>
-                  </Button>
                   <BorderPane VBox.vgrow="ALWAYS">
                      <center>
                         <GridPane hgap="30.0" BorderPane.alignment="CENTER">
@@ -56,6 +51,9 @@
                               <TextField fx:id="fname" layoutX="122.0" layoutY="80.0" prefHeight="30.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                               <TextField fx:id="mname" layoutX="122.0" layoutY="191.0" prefHeight="30.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                               <TextField fx:id="lname" layoutX="122.0" layoutY="136.0" prefHeight="30.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                              <DatePicker fx:id="dob" maxWidth="1.7976931348623157E308" prefHeight="30.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+                              <DatePicker fx:id="dod" maxWidth="1.7976931348623157E308" prefHeight="30.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                              <ChoiceBox fx:id="gender" maxWidth="1.7976931348623157E308" prefHeight="30.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                               <TextField fx:id="height" layoutX="530.0" layoutY="80.0" prefHeight="30.0" GridPane.columnIndex="3" GridPane.rowIndex="2" />
                               <TextField fx:id="weight" layoutX="530.0" layoutY="136.0" prefHeight="30.0" GridPane.columnIndex="3" GridPane.rowIndex="3" />
                               <TextField fx:id="btype" layoutX="530.0" layoutY="191.0" prefHeight="30.0" GridPane.columnIndex="3" GridPane.rowIndex="4" />
@@ -77,9 +75,6 @@
                               <Label layoutX="419.0" layoutY="307.0" text="Region" GridPane.columnIndex="2" GridPane.rowIndex="6" />
                               <Label fx:id="creationDate" layoutX="146.0" text="DATE" textFill="#c60000" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                               <Label fx:id="lastModified" layoutX="539.0" text="DATE" textFill="#c60000" wrapText="true" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                              <DatePicker fx:id="dob" maxWidth="1.7976931348623157E308" prefHeight="30.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                              <DatePicker fx:id="dod" maxWidth="1.7976931348623157E308" prefHeight="30.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                              <ChoiceBox fx:id="gender" maxWidth="1.7976931348623157E308" prefHeight="30.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                            </children>
                         </GridPane>
                      </center>
@@ -88,6 +83,9 @@
                            <font>
                               <Font size="24.0" />
                            </font>
+                           <BorderPane.margin>
+                              <Insets top="50.0" />
+                           </BorderPane.margin>
                         </Label>
                      </top>
                   </BorderPane>

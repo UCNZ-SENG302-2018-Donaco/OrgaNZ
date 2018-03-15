@@ -40,5 +40,6 @@ public class SideBarController {
 
     @FXML
     private void logout(ActionEvent event) {
+        PageNavigator.loadPage(Page.LANDING.getPath());
     }
 }

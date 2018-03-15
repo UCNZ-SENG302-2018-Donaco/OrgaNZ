@@ -2,8 +2,11 @@ package seng302.Controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import seng302.AppUI;
 import seng302.Donor;
 import seng302.DonorManager;
@@ -12,10 +15,14 @@ import seng302.Utilities.OrganAlreadyRegisteredException;
 import seng302.Utilities.Page;
 import seng302.Utilities.PageNavigator;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 public class RegisterOrgansController {
+    @FXML
+    Pane sidebarPane;
+
 	@FXML
 	private CheckBox checkBoxLiver, checkBoxKidney, checkBoxPancreas, checkBoxHeart, checkBoxLung, checkBoxIntestine,
 			checkBoxCornea, checkBoxMiddleEar, checkBoxSkin, checkBoxBone, checkBoxBoneMarrow, checkBoxConnTissue;
@@ -27,6 +34,16 @@ public class RegisterOrgansController {
 
 	@FXML
 	private void initialize() {
+        // IMPORTING SIDEBAR //
+        try {
+            VBox sidebar = FXMLLoader.load(getClass().getResource(Page.SIDEBAR.getPath()));
+            sidebarPane.getChildren().setAll(sidebar);
+        } catch (IOException exc) {
+            System.err.println("Couldn't load sidebar from fxml file.");
+            exc.printStackTrace();
+        }
+        // FINISHED IMPORT //
+
 		organCheckBoxes.put(Organ.LIVER, checkBoxLiver);
 		organCheckBoxes.put(Organ.KIDNEY, checkBoxKidney);
 		organCheckBoxes.put(Organ.PANCREAS, checkBoxPancreas);
@@ -86,10 +103,5 @@ public class RegisterOrgansController {
 		for (CheckBox box : organCheckBoxes.values()) {
 			box.setDisable(false);
 		}
-	}
-
-	@FXML
-	private void goBack(ActionEvent event) {
-		PageNavigator.loadPage(Page.LANDING.getPath());
 	}
 }

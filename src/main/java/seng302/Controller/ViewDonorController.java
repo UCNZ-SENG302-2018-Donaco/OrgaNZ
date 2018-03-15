@@ -33,6 +33,7 @@ public class ViewDonorController {
 
 	@FXML
     private void initialize() {
+	    // IMPORTING SIDEBAR //
 	    try {
             VBox sidebar = FXMLLoader.load(getClass().getResource(Page.SIDEBAR.getPath()));
             sidebarPane.getChildren().setAll(sidebar);
@@ -40,6 +41,7 @@ public class ViewDonorController {
             System.err.println("Couldn't load sidebar from fxml file.");
             exc.printStackTrace();
         }
+        // FINISHED IMPORT //
 
 	    gender.setItems(FXCollections.observableArrayList(Gender.values()));
 	    setFieldsDisabled(true);
@@ -104,11 +106,6 @@ public class ViewDonorController {
 	@FXML
 	private void saveChanges(ActionEvent event) {
 
-	}
-
-	@FXML
-	private void goBack(ActionEvent event) {
-        PageNavigator.loadPage(Page.LANDING.getPath());
 	}
 
 	// Add something to view organs being donated.
