@@ -36,4 +36,9 @@ public class LandingController {
 	private void goToViewDonor(ActionEvent event) {
 		PageNavigator.loadPage(Page.VIEW_DONOR.getPath());
 	}
+
+	@FXML
+	private void goToRegisterOrgans(ActionEvent event) {
+		PageNavigator.loadPage(Page.REGISTER_ORGANS.getPath());
+	}
 }
