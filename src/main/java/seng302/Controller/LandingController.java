@@ -13,19 +13,6 @@ import seng302.Utilities.PageNavigator;
  */
 public class LandingController {
 
-/*----------------------------------------------------
-Initial Pane
- ---------------------------------------------------*/
-
-	@FXML
-	public Pane InitialPane;
-	@FXML
-	public Button createUserBtn;
-	@FXML
-	public Button loginBtn;
-	@FXML
-	public Label initialLbl;
-
 	/**
 	 * Redirects the GUI to create user page
 	 * @param event when create user button is clicked
@@ -42,5 +29,10 @@ Initial Pane
 	@FXML
 	private void goToLogin(ActionEvent event) {
 		PageNavigator.loadPage(Page.LOGIN.getPath());
+	}
+
+	@FXML
+	private void goToViewDonor(ActionEvent event) {
+		PageNavigator.loadPage(Page.VIEW_DONOR.getPath());
 	}
 }
