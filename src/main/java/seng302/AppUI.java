@@ -33,7 +33,8 @@ public class AppUI extends Application {
 
 		donorManager = new DonorManager();
 		LocalDate d = LocalDate.of(1997,8,22);
-		Donor deleteme = new Donor("James", "v", "Toohey", d, 1);
+		int uid = donorManager.getUid();
+		Donor deleteme = new Donor("James", "v", "Toohey", d, uid);
 		donorManager.addDonor(deleteme);
 	}
 
