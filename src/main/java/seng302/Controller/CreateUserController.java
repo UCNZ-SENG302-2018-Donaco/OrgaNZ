@@ -8,13 +8,14 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import seng302.Actions.Action;
+import seng302.Actions.ActionInvoker;
+import seng302.Actions.CreateDonorAction;
 import seng302.State;
 import seng302.Donor;
 import seng302.DonorManager;
 import seng302.Utilities.Page;
 import seng302.Utilities.PageNavigator;
-
-import java.util.Optional;
 
 public class CreateUserController {
     @FXML
@@ -25,10 +26,12 @@ public class CreateUserController {
     private Label successLbl;
 
     private DonorManager manager;
+    private ActionInvoker invoker;
 
     @FXML
     private void initialize() {
         manager = State.getManager();
+        invoker = State.getInvoker();
     }
 
     /**
@@ -51,8 +54,8 @@ public class CreateUserController {
 
         int uid = manager.getUid();
         Donor donor = new Donor(firstNameFld.getText(), middleNamefld.getText(), lastNamefld.getText(), dobFld.getValue(), uid);
-        manager.addDonor(donor);
-        System.out.println("This user was added: \n" + donor.getDonorInfoString());
+        Action action = new CreateDonorAction(donor, manager);
+        invoker.execute(action);
 
         PageNavigator.showAlert(AlertType.INFORMATION,
                 "Success",
