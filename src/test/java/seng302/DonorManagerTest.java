@@ -4,6 +4,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
+import seng302.Actions.ActionInvoker;
 
 import java.io.File;
 import java.time.LocalDate;
@@ -72,7 +73,6 @@ public class DonorManagerTest {
         manager = new DonorManager(donors);
 
         donor.setFirstName("New");
-        manager.updateDonor(donor);
 
         assertTrue(manager.getDonors().contains(donor));
         assertEquals(manager.getDonorByID(1).getFirstName(), "New");
@@ -121,57 +121,11 @@ public class DonorManagerTest {
 
     @Test
     public void getDonorByIDDoesNotExistTest() {
-        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970,1, 1), 1);
+        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
         ArrayList<Donor> donors = new ArrayList<>();
         donors.add(donor);
         manager = new DonorManager(donors);
 
         assertTrue(manager.getDonorByID(2) == null);
     }
-
-    @Test
-    public void saveToFileTest() throws Exception {
-        File file = folder.newFile("testfile.json");
-
-        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970,1, 1), 1);
-        ArrayList<Donor> donors = new ArrayList<>();
-        donors.add(donor);
-        manager = new DonorManager(donors);
-
-        manager.saveToFile(file);
-
-        StringBuilder builder = new StringBuilder();
-
-        Scanner scanner = new Scanner(file);
-        while (scanner.hasNextLine()) {
-            String line = scanner.nextLine();
-            builder.append(line);
-        }
-
-        String json = builder.toString();
-
-        assertTrue(json.contains("\"firstName\": \"First\""));
-        assertTrue(json.contains("\"lastName\": \"Last\""));
-    }
-
-
-    @Test
-    public void loadFromFileTest() throws Exception {
-        File file = folder.newFile("testfile.json");
-
-        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970,1, 1), 1);
-        ArrayList<Donor> donors = new ArrayList<>();
-        donors.add(donor);
-        manager = new DonorManager(donors);
-
-        manager.saveToFile(file);
-
-        manager = new DonorManager();
-
-        manager.loadFromFile(file);
-
-        assertTrue(manager.getDonors().size() == 1);
-        assertEquals("First", manager.getDonors().get(0).getFirstName());
-    }
-
 }

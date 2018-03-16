@@ -97,7 +97,7 @@ public class Donor {
      */
     public void setOrganStatus(Organ organ, boolean value) throws OrganAlreadyRegisteredException {
         if (value && organStatus.get(organ)) {
-            throw new OrganAlreadyRegisteredException("That organ is already registered");
+            throw new OrganAlreadyRegisteredException(organ.toString() + " is already registered for donation");
         }
         addUpdate(organ.toString());
         organStatus.replace(organ, value);

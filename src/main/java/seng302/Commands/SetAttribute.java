@@ -2,7 +2,9 @@ package seng302.Commands;
 
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
-import seng302.Action;
+import seng302.Actions.ActionInvoker;
+import seng302.Actions.ModifyDonorAction;
+import seng302.HistoryItem;
 import seng302.App;
 import seng302.Donor;
 import seng302.DonorManager;
@@ -22,13 +24,16 @@ import java.time.LocalDate;
 public class SetAttribute implements Runnable {
 
     private DonorManager manager;
+    private ActionInvoker invoker;
 
     public SetAttribute() {
         manager = App.getManager();
+        invoker = App.getInvoker();
     }
 
-    SetAttribute(DonorManager manager) {
+    SetAttribute(DonorManager manager, ActionInvoker invoker) {
         this.manager = manager;
+        this.invoker = invoker;
     }
 
     @Option(names = {"--id", "-u"}, description = "User ID", required = true)
@@ -75,41 +80,44 @@ public class SetAttribute implements Runnable {
             System.out.println("No donor exists with that user ID");
             return;
         }
+
+        ModifyDonorAction action = new ModifyDonorAction(donor);
+
         if (firstName != null) {
-            donor.setFirstName(firstName);
+            action.addChange("setFirstName", donor.getFirstName(), firstName);
         }
         if (middleName != null) {
-            donor.setMiddleName(middleName);
+            action.addChange("setMiddleName", donor.getMiddleName(), middleName);
         }
         if (lastName != null) {
-            donor.setLastName(lastName);
+            action.addChange("setLastName", donor.getLastName(), lastName);
         }
         if (address != null) {
-            donor.setCurrentAddress(address);
+            action.addChange("setCurrentAddress", donor.getCurrentAddress(), address);
         }
         if (region != null) {
-            donor.setRegion(region);
+            action.addChange("setRegion", donor.getRegion(), region);
         }
         if (gender != null) {
-            donor.setGender(gender);
+            action.addChange("setGender", donor.getGender(), gender);
         }
         if (bloodType != null) {
-            donor.setBloodType(bloodType);
+            action.addChange("setBloodType", donor.getBloodType(), bloodType);
         }
         if (height != 0) {
-            donor.setHeight(height);
+            action.addChange("setHeight", donor.getHeight(), height);
         }
         if (weight != 0) {
-            donor.setWeight(weight);
+            action.addChange("setWeight", donor.getWeight(), weight);
         }
         if (dateOfBirth != null) {
-            donor.setDateOfBirth(dateOfBirth);
+            action.addChange("setDateOfBirth", donor.getDateOfBirth(), dateOfBirth);
         }
         if (dateOfDeath != null) {
-            donor.setDateOfDeath(dateOfDeath);
+            action.addChange("setDateOfDeath", donor.getDateOfDeath(), dateOfDeath);
         }
-        manager.updateDonor(donor);
-        Action setAttribute = new Action("ATTRIBUTE UPDATE", "DETAILS were updated for user " + uid);
-        JSONConverter.updateActionHistory(setAttribute, "action_history.json");
+        invoker.execute(action);
+        HistoryItem setAttribute = new HistoryItem("ATTRIBUTE UPDATE", "DETAILS were updated for user " + uid);
+        JSONConverter.updateHistory(setAttribute, "action_history.json");
     }
 }
