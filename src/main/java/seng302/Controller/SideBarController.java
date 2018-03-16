@@ -41,6 +41,23 @@ public class SideBarController {
 
     @FXML
     private void save(ActionEvent event) {
+        try {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Save Donors File");
+            fileChooser.setInitialDirectory(
+                    new File(Paths.get(AppUI.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParent().toString())
+            );
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json"));
+            File file = fileChooser.showSaveDialog(AppUI.getWindow());
+
+            JSONConverter.saveToFile(file);
+            // TODO Make alert with number of donors saved
+            HistoryItem save = new HistoryItem("SAVE", "The systems current state was saved.");
+            JSONConverter.updateHistory(save, "action_history.json");
+        } catch (URISyntaxException | IOException exc) {
+            // TODO Make alert when save fails
+            System.err.println(exc.getMessage());
+        }
     }
 
     @FXML
@@ -52,14 +69,14 @@ public class SideBarController {
                     new File(Paths.get(AppUI.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParent().toString())
             );
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json"));
-
             File file = fileChooser.showOpenDialog(AppUI.getWindow());
+
             JSONConverter.loadFromFile(file);
-            // TODO Make alert with number of users imported
-            //System.out.println(String.format("Loaded %s users from file",manager.getDonors().size()));
+            // TODO Make alert with number of donors loaded
             HistoryItem load = new HistoryItem("LOAD", "The systems state was loaded from " + file.getName());
             JSONConverter.updateHistory(load, "action_history.json");
         } catch (URISyntaxException | IOException exc) {
+            // TODO Make alert when load fails
             System.err.println(exc.getMessage());
         }
     }
