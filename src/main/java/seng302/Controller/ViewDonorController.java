@@ -21,7 +21,8 @@ import java.io.IOException;
 public class ViewDonorController {
     @FXML
     private Pane sidebarPane;
-
+    @FXML
+	private Pane inputsPane;
 	@FXML
 	private Label creationDate, lastModified, noDonorLabel;
 	@FXML
@@ -90,17 +91,7 @@ public class ViewDonorController {
 	}
 	
     private void setFieldsDisabled(boolean disabled) {
-        fname.setDisable(disabled);
-        lname.setDisable(disabled);
-        mname.setDisable(disabled);
-        dob.setDisable(disabled);
-        dod.setDisable(disabled);
-        gender.setDisable(disabled);
-        height.setDisable(disabled);
-        weight.setDisable(disabled);
-        btype.setDisable(disabled);
-        address.setDisable(disabled);
-        region.setDisable(disabled);
+        inputsPane.setVisible(!disabled);
     }
 
 	@FXML
