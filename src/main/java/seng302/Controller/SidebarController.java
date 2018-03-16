@@ -3,8 +3,10 @@ package seng302.Controller;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.stage.FileChooser;
+import seng302.Actions.ActionInvoker;
 import seng302.AppUI;
 import seng302.HistoryItem;
+import seng302.State;
 import seng302.Utilities.JSONConverter;
 import seng302.Utilities.Page;
 import seng302.Utilities.PageNavigator;
@@ -14,7 +16,12 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
 
-public class SideBarController {
+public class SidebarController {
+    private ActionInvoker invoker;
+
+    public SidebarController() {
+        invoker = State.getInvoker();
+    }
 
     /**
      * Redirects the GUI to the View Donor Page
@@ -84,5 +91,15 @@ public class SideBarController {
     @FXML
     private void logout(ActionEvent event) {
         PageNavigator.loadPage(Page.LANDING.getPath());
+    }
+
+    @FXML
+    private void undo(ActionEvent event) {
+        invoker.undo();
+    }
+
+    @FXML
+    private void redo(ActionEvent event) {
+        invoker.redo();
     }
 }
