@@ -11,7 +11,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.LandingController">
+<VBox prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.LandingController">
    <children>
        <BorderPane VBox.vgrow="ALWAYS">
            <bottom>
@@ -25,7 +25,7 @@
                    </rowConstraints>
                    <children>
                     <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToCreateUser" text="Create User" />
-                    <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Login" GridPane.columnIndex="1" />
+                    <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToLogin" text="Login" GridPane.columnIndex="1" />
                    </children>
                    <BorderPane.margin>
                        <Insets />

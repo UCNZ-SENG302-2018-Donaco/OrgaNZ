@@ -2,6 +2,8 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
@@ -26,6 +28,14 @@
                                     </BorderPane.margin>
                                 </Text>
                             </top>
+                     <center>
+                        <TableView prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                          <columns>
+                            <TableColumn prefWidth="75.0" text="Time" />
+                            <TableColumn prefWidth="600.0" text="Command " />
+                          </columns>
+                        </TableView>
+                     </center>
                         </BorderPane>
                     </children>
                 </VBox>

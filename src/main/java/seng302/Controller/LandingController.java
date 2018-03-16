@@ -2,6 +2,7 @@ package seng302.Controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import seng302.Utilities.Page;
 import seng302.Utilities.PageNavigator;
 
@@ -9,6 +10,7 @@ import seng302.Utilities.PageNavigator;
  * Controls the Landing Screen View.
  */
 public class LandingController {
+
 
 	/**
 	 * Redirects the GUI to create user page
