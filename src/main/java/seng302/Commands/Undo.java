@@ -2,7 +2,7 @@ package seng302.Commands;
 
 import picocli.CommandLine.Command;
 import seng302.Actions.ActionInvoker;
-import seng302.App;
+import seng302.State;
 
 @Command(name = "undo", description = "Undo a change.")
 public class Undo implements Runnable {
@@ -11,7 +11,7 @@ public class Undo implements Runnable {
 
 
     public Undo() {
-        invoker = App.getInvoker();
+        invoker = State.getInvoker();
     }
 
     public Undo(ActionInvoker invoker) {

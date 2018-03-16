@@ -2,8 +2,17 @@ package seng302.Controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.stage.FileChooser;
+import seng302.AppUI;
+import seng302.HistoryItem;
+import seng302.Utilities.JSONConverter;
 import seng302.Utilities.Page;
 import seng302.Utilities.PageNavigator;
+
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Paths;
 
 public class SideBarController {
 
@@ -35,7 +44,24 @@ public class SideBarController {
     }
 
     @FXML
-    private void load(ActionEvent event) {
+    private void load(ActionEvent event) throws URISyntaxException {
+        try {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Load Donors File");
+            fileChooser.setInitialDirectory(
+                    new File(Paths.get(AppUI.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParent().toString())
+            );
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json"));
+
+            File file = fileChooser.showOpenDialog(AppUI.getWindow());
+            JSONConverter.loadFromFile(file);
+            // TODO Make alert with number of users imported
+            //System.out.println(String.format("Loaded %s users from file",manager.getDonors().size()));
+            HistoryItem load = new HistoryItem("LOAD", "The systems state was loaded from " + file.getName());
+            JSONConverter.updateHistory(load, "action_history.json");
+        } catch (URISyntaxException | IOException exc) {
+            System.err.println(exc.getMessage());
+        }
     }
 
     @FXML

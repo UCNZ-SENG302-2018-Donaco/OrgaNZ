@@ -10,7 +10,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import seng302.AppUI;
+import seng302.State;
 import seng302.Donor;
 import seng302.Utilities.Gender;
 import seng302.Utilities.Page;
@@ -63,7 +63,7 @@ public class ViewDonorController {
 		//displayInformation(id_value);
 
 
-		Donor donor = AppUI.getManager().getDonorByID(id_value);
+		Donor donor = State.getManager().getDonorByID(id_value);
 		if (donor == null) {
 			noDonorLabel.setVisible(true);
             setFieldsDisabled(true);

@@ -14,14 +14,9 @@ import java.time.LocalDate;
 
 public class AppUI extends Application {
 	private static Stage window;
-	private static DonorManager donorManager;
 
 	public static Stage getWindow() {
 		return AppUI.window;
-	}
-
-	public static DonorManager getManager() {
-		return donorManager;
 	}
 
 	@Override
@@ -31,13 +26,13 @@ public class AppUI extends Application {
 		stage.setScene(createScene(loadMainPane()));
 		stage.show();
 
-		donorManager = new DonorManager();
+		State.init();
 
         // TODO DELETE TEST DATA
 		LocalDate d = LocalDate.of(1997,8,22);
-		int uid = donorManager.getUid();
+		int uid = State.getManager().getUid();
 		Donor deleteme = new Donor("James", "v", "Toohey", d, uid);
-		donorManager.addDonor(deleteme);
+		State.getManager().addDonor(deleteme);
 		// TODO DELETE TEST DATA
 	}
 

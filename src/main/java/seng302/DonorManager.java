@@ -18,24 +18,15 @@ public class DonorManager {
 
     private ArrayList<Donor> donors;
     private int uid;
-    private ActionInvoker invoker;
 
     public DonorManager() {
         donors = new ArrayList<>();
         uid = 1;
-        invoker = App.getInvoker();
-    }
-
-    public DonorManager(ActionInvoker invoker) {
-        donors = new ArrayList<>();
-        uid = 1;
-        this.invoker = invoker;
     }
 
     public DonorManager(ArrayList<Donor> donors) {
         this.donors = donors;
         uid = calculateNextId();
-        invoker = App.getInvoker();
     }
 
     public void setDonors(ArrayList<Donor> donors) {

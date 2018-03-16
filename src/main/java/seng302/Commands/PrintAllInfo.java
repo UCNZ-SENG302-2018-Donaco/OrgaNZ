@@ -2,9 +2,9 @@ package seng302.Commands;
 
 import picocli.CommandLine.Command;
 import seng302.HistoryItem;
-import seng302.App;
 import seng302.Donor;
 import seng302.DonorManager;
+import seng302.State;
 import seng302.Utilities.JSONConverter;
 
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ public class PrintAllInfo implements Runnable {
     private DonorManager manager;
 
     public PrintAllInfo() {
-        manager = App.getManager();
+        manager = State.getManager();
     }
 
     PrintAllInfo(DonorManager manager) {

@@ -6,7 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import seng302.AppUI;
+import seng302.State;
 import seng302.Donor;
 import seng302.DonorManager;
 import seng302.Utilities.Page;
@@ -26,7 +26,7 @@ public class CreateUserController {
 
     @FXML
     private void initialize() {
-        manager = AppUI.getManager();
+        manager = State.getManager();
     }
 
     /**

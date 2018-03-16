@@ -5,7 +5,7 @@ import picocli.CommandLine.Option;
 import seng302.Actions.ActionInvoker;
 import seng302.Actions.ModifyDonorAction;
 import seng302.HistoryItem;
-import seng302.App;
+import seng302.State;
 import seng302.Donor;
 import seng302.DonorManager;
 import seng302.Utilities.*;
@@ -27,8 +27,8 @@ public class SetAttribute implements Runnable {
     private ActionInvoker invoker;
 
     public SetAttribute() {
-        manager = App.getManager();
-        invoker = App.getInvoker();
+        manager = State.getManager();
+        invoker = State.getInvoker();
     }
 
     SetAttribute(DonorManager manager, ActionInvoker invoker) {

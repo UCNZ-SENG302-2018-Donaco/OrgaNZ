@@ -7,7 +7,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
-import seng302.AppUI;
+import seng302.State;
 import seng302.Donor;
 import seng302.DonorManager;
 import seng302.Utilities.Organ;
@@ -58,7 +58,7 @@ public class RegisterOrgansController {
 		organCheckBoxes.put(Organ.CONNECTIVE_TISSUE, checkBoxConnTissue);
 		setCheckboxesDisabled();
 
-        manager = AppUI.getManager();
+        manager = State.getManager();
 	}
 
 	@FXML
