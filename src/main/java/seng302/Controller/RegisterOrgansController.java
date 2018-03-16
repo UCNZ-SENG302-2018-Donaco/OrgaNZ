@@ -7,13 +7,13 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
+import seng302.Actions.ActionInvoker;
+import seng302.Actions.ModifyDonorOrgansAction;
 import seng302.State;
 import seng302.Donor;
 import seng302.DonorManager;
 import seng302.Utilities.Organ;
-import seng302.Utilities.OrganAlreadyRegisteredException;
 import seng302.Utilities.Page;
-import seng302.Utilities.PageNavigator;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -30,6 +30,7 @@ public class RegisterOrgansController {
 	@FXML
 	private TextField fieldUserID;
 	private DonorManager manager;
+	private ActionInvoker invoker;
 	private Donor donor;
 
 	@FXML
@@ -59,6 +60,7 @@ public class RegisterOrgansController {
 		setCheckboxesDisabled();
 
         manager = State.getManager();
+        invoker = State.getInvoker();
 	}
 
 	@FXML
@@ -81,15 +83,21 @@ public class RegisterOrgansController {
 
 	@FXML
 	private void modifyOrgans(ActionEvent event) {
+	    ModifyDonorOrgansAction action = new ModifyDonorOrgansAction(donor);
+	    boolean hasChanged = false;
+
 		for (Organ organ : organCheckBoxes.keySet()) {
-			try {
-				if (donor.getOrganStatus().get(organ) != organCheckBoxes.get(organ).isSelected()) {
-					donor.setOrganStatus(organ, organCheckBoxes.get(organ).isSelected());
-				}
-			} catch (OrganAlreadyRegisteredException exc) {
-				System.err.println(exc.getMessage() + " " + organ);
-			}
+		    boolean oldStatus = donor.getOrganStatus().get(organ);
+            boolean newStatus = organCheckBoxes.get(organ).isSelected();
+
+            if (oldStatus != newStatus) {
+                action.addChange(organ, oldStatus, newStatus);
+                hasChanged = true;
+            }
 		}
+		if (hasChanged) {
+            invoker.execute(action);
+        }
 	}
 
 	private void setCheckboxesDisabled() {
