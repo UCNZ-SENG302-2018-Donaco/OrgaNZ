@@ -7,38 +7,56 @@ import seng302.Utilities.OrganAlreadyRegisteredException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * A reversible donor organ modification Action
+ */
 public class ModifyDonorOrgansAction implements Action {
-    private Map<Organ, Boolean> executors = new HashMap<>();
-    private Map<Organ, Boolean> unExecutors = new HashMap<>();
+    private Map<Organ, Boolean> changes = new HashMap<>();
     private Donor donor;
 
-
+    /**
+     * Create a new Action
+     *
+     * @param donor The donor to be modified
+     */
     public ModifyDonorOrgansAction(Donor donor) {
         this.donor = donor;
     }
 
-    public void addChange(Organ organ, Boolean oldValue, Boolean newValue) {
-        executors.put(organ, newValue);
-        unExecutors.put(organ, oldValue);
+    /**
+     * Add a organ change to the donor
+     * @param organ The organ to be updated
+     * @param newValue The new value
+     */
+    public void addChange(Organ organ, Boolean newValue) {
+        changes.put(organ, newValue);
     }
+
 
     @Override
     public void execute() {
-        for (Map.Entry<Organ, Boolean> entry : executors.entrySet()) {
-            try {
-                donor.setOrganStatus(entry.getKey(), entry.getValue());
-            } catch (OrganAlreadyRegisteredException e) {
-                unExecutors.remove(entry.getKey());
-                System.out.println(e.getMessage());
-            }
-        }
+        runChanges(false);
     }
 
     @Override
     public void unExecute() {
-        for (Map.Entry<Organ, Boolean> entry : unExecutors.entrySet()) {
+        runChanges(true);
+    }
+
+    /**
+     * Loops through the list of changes and applies them to the donor
+     *
+     * @param isUndo If true, negate all booleans
+     */
+    private void runChanges(boolean isUndo) {
+        for (Map.Entry<Organ, Boolean> entry : changes.entrySet()) {
             try {
-                donor.setOrganStatus(entry.getKey(), entry.getValue());
+                Organ organ = entry.getKey();
+                boolean newState = entry.getValue();
+                if (isUndo) {
+                    newState = !newState;
+                }
+                donor.setOrganStatus(organ, newState);
             } catch (OrganAlreadyRegisteredException e) {
                 e.printStackTrace();
             }
