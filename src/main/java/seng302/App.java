@@ -39,7 +39,7 @@ public class App
                 inputs.add(m.group(1).replace("\"", ""));
             }
             String[] currArgs = inputs.toArray(new String[0]);
-            CommandLine.run(command, System.out, currArgs);
+        CommandLine.run(command, System.out, currArgs);
         }
     }
 }

@@ -61,10 +61,10 @@ public class SetAttribute implements Runnable {
     private BloodType bloodType;
 
     @Option(names = "--height", description = "Height (cm)")
-    private int height;
+    private double height;
 
     @Option(names = "--weight", description = "Weight (kg)")
-    private int weight;
+    private double weight;
 
     @Option(names = "--dateofbirth", description = "Date of birth (dd/mm/yyyy)", converter = LocalDateConverter.class)
     private LocalDate dateOfBirth;
