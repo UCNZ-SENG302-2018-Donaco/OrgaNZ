@@ -3,7 +3,7 @@ package seng302.Controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
@@ -26,8 +26,6 @@ public class CreateUserController {
 
     private DonorManager manager;
 
-    private boolean force;
-
     @FXML
     private void initialize() {
         manager = State.getManager();
@@ -40,26 +38,12 @@ public class CreateUserController {
     private void createUser() {
 
         //doesn't work just yet...
-        if (!force && manager.collisionExists(firstNameFld.getText(), middleNamefld.getText(), dobFld.getValue())) {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setTitle("Duplicate warning");
-            alert.setHeaderText("Duplicate User warning");
-            alert.setContentText("Duplicate user found, would you still like to create?");
-
-            Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == ButtonType.OK){
-                // ... user chose OK
-                int uid = manager.getUid();
-                Donor donor = new Donor(firstNameFld.getText(), middleNamefld.getText(), lastNamefld.getText(), dobFld.getValue(), uid);
-                manager.addDonor(donor);
-                Alert alert0 = new Alert(Alert.AlertType.INFORMATION);
-                alert0.setTitle("Success");
-                alert0.setHeaderText("User Created");
-                alert0.setContentText("Successfully created Donor " + firstNameFld.getText() + " " + middleNamefld.getText() + " " + lastNamefld.getText() + " with ID " + uid);
-                alert0.showAndWait();
-                PageNavigator.loadPage(Page.VIEW_DONOR.getPath());
-
-            } else {
+        if (manager.collisionExists(firstNameFld.getText(), middleNamefld.getText(), dobFld.getValue())) {
+            ButtonType option = PageNavigator.showAlert(AlertType.CONFIRMATION,
+                    "Duplicate User Warning",
+                    "This user is a duplicate of one that already exists. Would you still like to create it?")
+                    .get();
+            if (option != ButtonType.OK) {
                 // ... user chose CANCEL or closed the dialog
                 return;
             }
@@ -68,11 +52,13 @@ public class CreateUserController {
         int uid = manager.getUid();
         Donor donor = new Donor(firstNameFld.getText(), middleNamefld.getText(), lastNamefld.getText(), dobFld.getValue(), uid);
         manager.addDonor(donor);
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Success");
-        alert.setHeaderText("User Created");
-        alert.setContentText("Successfully created Donor " + firstNameFld.getText() + " " + middleNamefld.getText() + " " + lastNamefld.getText() + " with ID " + uid);
-        alert.showAndWait();
+        System.out.println("This user was added: \n" + donor.getDonorInfoString());
+
+        PageNavigator.showAlert(AlertType.INFORMATION,
+                "Success",
+                String.format("Successfully created donor %s %s %s with ID %d.",
+                        donor.getFirstName(), donor.getMiddleName(), donor.getLastName(), uid));
+
         PageNavigator.loadPage(Page.VIEW_DONOR.getPath());
     }
 
