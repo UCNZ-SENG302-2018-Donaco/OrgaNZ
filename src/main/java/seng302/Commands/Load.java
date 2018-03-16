@@ -2,7 +2,7 @@ package seng302.Commands;
 
 
 import picocli.CommandLine.Command;
-import seng302.Action;
+import seng302.HistoryItem;
 import seng302.App;
 import seng302.DonorManager;
 import seng302.Utilities.JSONConverter;
@@ -35,8 +35,8 @@ public class Load implements Runnable {
         try {
             JSONConverter.loadFromFile(new File("savefile.json"));
             System.out.println(String.format("Loaded %s users from file",manager.getDonors().size()));
-            Action load = new Action("LOAD", "The systems state was loaded from " + "savefile.json"); // Are we going to allow them to load from different files?
-            JSONConverter.updateActionHistory(load, "action_history.json");
+            HistoryItem load = new HistoryItem("LOAD", "The systems state was loaded from " + "savefile.json"); // Are we going to allow them to load from different files?
+            JSONConverter.updateHistory(load, "action_history.json");
         } catch (FileNotFoundException e) {
             System.out.println("No save file found");
         } catch (IOException e) {

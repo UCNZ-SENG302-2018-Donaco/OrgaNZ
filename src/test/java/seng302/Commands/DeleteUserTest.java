@@ -3,17 +3,14 @@ package seng302.Commands;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 import picocli.CommandLine;
+import seng302.Actions.ActionInvoker;
 import seng302.Donor;
 import seng302.DonorManager;
-import seng302.Utilities.BloodType;
-import seng302.Utilities.Gender;
 
 import java.io.ByteArrayInputStream;
 import java.time.LocalDate;
 
-import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -25,8 +22,7 @@ public class DeleteUserTest {
     @Before
     public void init() {
         spyDonorManager = spy(new DonorManager());
-
-        spyDeleteUser = spy(new DeleteUser(spyDonorManager));
+        spyDeleteUser = spy(new DeleteUser(spyDonorManager, new ActionInvoker()));
 
     }
 

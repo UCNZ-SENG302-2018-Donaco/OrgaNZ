@@ -3,7 +3,7 @@ package seng302.Commands;
 
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
-import seng302.Action;
+import seng302.HistoryItem;
 import seng302.App;
 import seng302.Donor;
 import seng302.DonorManager;
@@ -41,7 +41,7 @@ public class PrintUserOrgan implements Runnable {
             return;
         }
         System.out.println(donor.getDonorOrganStatusString());
-        Action printUserOrgan = new Action("PRINT USER ORGAN", "The organ information was printed for donor " + uid);
-        JSONConverter.updateActionHistory(printUserOrgan, "action_history.json");
+        HistoryItem printUserOrgan = new HistoryItem("PRINT USER ORGAN", "The organ information was printed for donor " + uid);
+        JSONConverter.updateHistory(printUserOrgan, "action_history.json");
     }
 }

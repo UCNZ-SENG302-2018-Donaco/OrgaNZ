@@ -1,11 +1,7 @@
 package seng302;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
+import seng302.Actions.ActionInvoker;
 
-import java.io.*;
-import java.lang.reflect.Type;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
@@ -22,14 +18,24 @@ public class DonorManager {
 
     private ArrayList<Donor> donors;
     private int uid;
+    private ActionInvoker invoker;
 
     public DonorManager() {
         donors = new ArrayList<>();
         uid = 1;
+        invoker = App.getInvoker();
+    }
+
+    public DonorManager(ActionInvoker invoker) {
+        donors = new ArrayList<>();
+        uid = 1;
+        this.invoker = invoker;
     }
 
     public DonorManager(ArrayList<Donor> donors) {
         this.donors = donors;
+        uid = calculateNextId();
+        invoker = App.getInvoker();
     }
 
     public void setDonors(ArrayList<Donor> donors) {
@@ -58,15 +64,6 @@ public class DonorManager {
      */
     public void removeDonor(Donor donor) {
         donors.remove(donor);
-    }
-
-    /**
-     * Update a donor
-     * @param donor Donor to be updated
-     */
-    public void updateDonor(Donor donor) {
-        donors.remove(donor);
-        donors.add(donor);
     }
 
     /**
@@ -110,4 +107,15 @@ public class DonorManager {
         return donors.stream()
                 .filter(d -> d.getUid() == id).findFirst().orElse(null);
     }
+
+    private int calculateNextId() {
+        int id = 1;
+        for (Donor donor : donors) {
+            if (donor.getUid() >= id) {
+                id = donor.getUid() + 1;
+            }
+        }
+        return id;
+    }
+
 }
