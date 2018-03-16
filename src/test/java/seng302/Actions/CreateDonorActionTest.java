@@ -67,6 +67,4 @@ public class CreateDonorActionTest {
         assertEquals(baseDonor, manager.getDonors().get(1));
         assertEquals(2, manager.getDonors().size());
     }
-
-
 }
