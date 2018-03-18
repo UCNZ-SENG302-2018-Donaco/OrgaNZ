@@ -21,8 +21,9 @@ import java.util.Map;
 
 public class RegisterOrgansController {
     @FXML
-    Pane sidebarPane;
-
+    private Pane sidebarPane;
+    @FXML
+    private Pane idPane;
 	@FXML
 	private CheckBox checkBoxLiver, checkBoxKidney, checkBoxPancreas, checkBoxHeart, checkBoxLung, checkBoxIntestine,
 			checkBoxCornea, checkBoxMiddleEar, checkBoxSkin, checkBoxBone, checkBoxBoneMarrow, checkBoxConnTissue;
@@ -53,6 +54,20 @@ public class RegisterOrgansController {
 
         manager = State.getManager();
         invoker = State.getInvoker();
+
+        Integer currentUserId = (Integer) State.getPageParam("currentUserId");
+        if (currentUserId != null) {
+            fieldUserID.setText(currentUserId.toString());
+            updateUserID(null);
+        }
+
+        String currentUserType = (String) State.getPageParam("currentUserType");
+        if (currentUserType == null) {
+
+        } else if (currentUserType.equals("donor")) {
+            idPane.setVisible(false);
+            idPane.setManaged(false);
+        }
 	}
 
 	@FXML
