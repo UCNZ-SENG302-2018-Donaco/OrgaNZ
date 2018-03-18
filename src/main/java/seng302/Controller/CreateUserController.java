@@ -22,8 +22,6 @@ public class CreateUserController {
     private DatePicker dobFld;
     @FXML
     private TextField firstNameFld, middleNamefld, lastNamefld;
-    @FXML
-    private Label successLbl;
 
     private DonorManager manager;
     private ActionInvoker invoker;
