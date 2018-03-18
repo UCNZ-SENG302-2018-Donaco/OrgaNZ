@@ -27,7 +27,7 @@ public class ViewDonorController {
 	private Pane inputsPane;
 	@FXML
 	private Label creationDate, lastModified, noDonorLabel, fnameLabel, mnameLabel, lnameLabel, dobLabel, dodLabel,
-	heightLabel, weightLabel, btypeLabel;
+	heightLabel, weightLabel, btypeLabel, ageDisplayLabel, ageLabel, BMILabel;
 	@FXML
 	private TextField id, fname, lname, mname, height, weight, btype, address, region;
 	@FXML
@@ -36,6 +36,7 @@ public class ViewDonorController {
     private ChoiceBox<Gender> gender;
 
 	private Donor viewedDonor;
+	private BloodType bloodType;
 
 
 	@FXML
@@ -99,8 +100,11 @@ public class ViewDonorController {
 			address.setText(viewedDonor.getCurrentAddress());
 			region.setText(viewedDonor.getRegion());
 
-			creationDate.setText(viewedDonor.getCreationdate().toString());;
+			creationDate.setText(viewedDonor.getCreationdate().toString());
 			lastModified.setText(viewedDonor.getModified_on().toString());
+
+			displayBMI();
+			displayAge();
 		}
 	}
 
@@ -119,16 +123,27 @@ public class ViewDonorController {
 	 */
 	@FXML
 	private void saveChanges() {
+		if (checkMandatoryFields() && checkNonMandatoryFields()) {
+			updateChanges();
+			displayBMI();
+			displayAge();
+		}
+	}
 
+	/**
+	 * Checks that all mandatory fields have valid arguments inside. Otherwise display red text on the invalidly entered
+	 * labels.
+	 * @return true if all mandatory fields have valid input.
+	 */
+	private boolean checkMandatoryFields() {
 		boolean update = true;
-		BloodType b = BloodType.O_NEG;
-
 		if (fname.getText().equals("")) {
 			fnameLabel.setTextFill(Color.RED);
 			update = false;
 		} else {
 			fnameLabel.setTextFill(Color.BLACK);
 		}
+
 		if (lname.getText().equals("")) {
 			lnameLabel.setTextFill(Color.RED);
 			update = false;
@@ -141,7 +156,16 @@ public class ViewDonorController {
 		} else {
 			dobLabel.setTextFill(Color.BLACK);
 		}
+		return update;
+	}
 
+
+	/**
+	 * Checks that non mandatory fields have either valid input, or no input. Otherwise red text is shown.
+	 * @return true if all non mandatory fields have valid/no input.
+	 */
+	private boolean checkNonMandatoryFields() {
+		boolean update = true;
 		if (dod.getValue() == null || dod.getValue().isBefore(LocalDate.now())) {
 			dodLabel.setTextFill(Color.BLACK);
 		} else {
@@ -177,7 +201,7 @@ public class ViewDonorController {
 		}
 		if(!btype.getText().equals("")) {
 			try {
-				b = BloodType.fromString(btype.getText());
+				bloodType = BloodType.fromString(btype.getText());
 				fnameLabel.setTextFill(Color.BLACK);
 
 			} catch(IllegalArgumentException ex){
@@ -185,24 +209,52 @@ public class ViewDonorController {
 				update = false;
 			}
 		}
-		if (update) {
-			ModifyDonorAction action = new ModifyDonorAction(viewedDonor);
+		return update;
+	}
 
-			action.addChange("setFirstName", viewedDonor.getFirstName(), fname.getText());
-			action.addChange("setLastName", viewedDonor.getLastName(), lname.getText());
-			action.addChange("setMiddleName", viewedDonor.getMiddleName(), mname.getText());
-			action.addChange("setDateOfBirth", viewedDonor.getDateOfBirth(), dob.getValue());
-			action.addChange("setDateOfDeath", viewedDonor.getDateOfDeath(), dod.getValue());
-			action.addChange("setGender", viewedDonor.getGender(), gender.getValue());
-			action.addChange("setHeight", viewedDonor.getHeight(), Double.parseDouble(height.getText()));
-			action.addChange("setWeight", viewedDonor.getWeight(), Double.parseDouble(weight.getText()));
-			action.addChange("setBloodType", viewedDonor.getBloodType(), b);
-			action.addChange("setCurrentAddress", viewedDonor.getCurrentAddress(), address.getText());
-			action.addChange("setRegion", viewedDonor.getRegion(), region.getText());
+	/**
+	 * Records the changes updated as a ModifyDonorAction to trace the change in record.
+	 */
+	private void updateChanges() {
+		ModifyDonorAction action = new ModifyDonorAction(viewedDonor);
 
-			State.getInvoker().execute(action);
+		action.addChange("setFirstName", viewedDonor.getFirstName(), fname.getText());
+		action.addChange("setLastName", viewedDonor.getLastName(), lname.getText());
+		action.addChange("setMiddleName", viewedDonor.getMiddleName(), mname.getText());
+		action.addChange("setDateOfBirth", viewedDonor.getDateOfBirth(), dob.getValue());
+		action.addChange("setDateOfDeath", viewedDonor.getDateOfDeath(), dod.getValue());
+		action.addChange("setGender", viewedDonor.getGender(), gender.getValue());
+		action.addChange("setHeight", viewedDonor.getHeight(), Double.parseDouble(height.getText()));
+		action.addChange("setWeight", viewedDonor.getWeight(), Double.parseDouble(weight.getText()));
+		action.addChange("setBloodType", viewedDonor.getBloodType(), bloodType);
+		action.addChange("setCurrentAddress", viewedDonor.getCurrentAddress(), address.getText());
+		action.addChange("setRegion", viewedDonor.getRegion(), region.getText());
+
+		State.getInvoker().execute(action);
+	}
+
+	/**
+	 * Displays the currently viewed donors BMI.
+	 */
+	private void displayBMI() {
+		if (viewedDonor.getDateOfDeath() == null) {
+			BMILabel.setText(String.format("%.01f", viewedDonor.getBMI()));
+		} else {
+			BMILabel.setText(String.format("%.01f", viewedDonor.getBMI()));
 		}
+	}
 
+	/**
+	 * Displays either the current age, or age at death of the donor depending on if the date of death field has been
+	 * filled in.
+	 */
+	private void displayAge() {
+		if (viewedDonor.getDateOfDeath() == null) {
+			ageDisplayLabel.setText("Age");
+		} else {
+			ageDisplayLabel.setText("Age at Death");
+		}
+		ageLabel.setText(String.valueOf(viewedDonor.getAge()));
 	}
 
 	@FXML
