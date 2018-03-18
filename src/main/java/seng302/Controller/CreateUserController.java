@@ -60,6 +60,8 @@ public class CreateUserController {
                 String.format("Successfully created donor %s %s %s with ID %d.",
                         donor.getFirstName(), donor.getMiddleName(), donor.getLastName(), uid));
 
+        State.setPageParam("currentUserId", uid);
+        State.setPageParam("currentUserType", "donor");
         PageNavigator.loadPage(Page.VIEW_DONOR.getPath());
     }
 

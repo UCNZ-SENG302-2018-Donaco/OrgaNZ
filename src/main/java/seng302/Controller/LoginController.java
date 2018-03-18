@@ -19,7 +19,7 @@ public class LoginController {
 
     @FXML
     private void signIn(ActionEvent event) {
-
-        State.setPageParam("currentUser", Integer.parseInt(idTextField.getText()));
+        State.setPageParam("currentUserId", Integer.parseInt(idTextField.getText()));
+        State.setPageParam("currentUserType", "donor");
         PageNavigator.loadPage(Page.VIEW_DONOR.getPath());}
 }

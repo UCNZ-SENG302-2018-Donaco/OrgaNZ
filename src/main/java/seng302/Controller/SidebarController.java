@@ -2,6 +2,9 @@ package seng302.Controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import seng302.Actions.ActionInvoker;
 import seng302.AppUI;
@@ -18,6 +21,16 @@ import java.nio.file.Paths;
 
 public class SidebarController {
     private ActionInvoker invoker;
+
+    public static void loadSidebar(Pane sidebarPane) {
+        try {
+            VBox sidebar = FXMLLoader.load(SidebarController.class.getResource(Page.SIDEBAR.getPath()));
+            sidebarPane.getChildren().setAll(sidebar);
+        } catch (IOException exc) {
+            System.err.println("Couldn't load sidebar from fxml file.");
+            exc.printStackTrace();
+        }
+    }
 
     public SidebarController() {
         invoker = State.getInvoker();
@@ -90,6 +103,7 @@ public class SidebarController {
 
     @FXML
     private void logout(ActionEvent event) {
+        State.clearPageParams();
         PageNavigator.loadPage(Page.LANDING.getPath());
     }
 

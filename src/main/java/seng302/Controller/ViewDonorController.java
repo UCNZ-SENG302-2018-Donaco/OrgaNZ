@@ -29,6 +29,8 @@ public class ViewDonorController {
     @FXML
     private Pane sidebarPane;
     @FXML
+	private Pane idPane;
+    @FXML
 	private Pane inputsPane;
 	@FXML
 	private Label creationDate, lastModified, noDonorLabel, fnameLabel, mnameLabel, lnameLabel, dobLabel, dodLabel,
@@ -45,18 +47,24 @@ public class ViewDonorController {
 
 	@FXML
     private void initialize() {
-	    // IMPORTING SIDEBAR //
-	    try {
-            VBox sidebar = FXMLLoader.load(getClass().getResource(Page.SIDEBAR.getPath()));
-            sidebarPane.getChildren().setAll(sidebar);
-        } catch (IOException exc) {
-            System.err.println("Couldn't load sidebar from fxml file.");
-            exc.printStackTrace();
-        }
-        // FINISHED IMPORT //
+        SidebarController.loadSidebar(sidebarPane);
 
 	    gender.setItems(FXCollections.observableArrayList(Gender.values()));
-	    setFieldsDisabled(true);
+		setFieldsDisabled(true);
+
+		Integer currentUserId = (Integer) State.getPageParam("currentUserId");
+		if (currentUserId != null) {
+			id.setText(currentUserId.toString());
+			searchDonor();
+		}
+
+		String currentUserType = (String) State.getPageParam("currentUserType");
+		if (currentUserType == null) {
+
+		} else if (currentUserType.equals("donor")) {
+			idPane.setVisible(false);
+			idPane.setManaged(false);
+		}
     }
 
 	/**

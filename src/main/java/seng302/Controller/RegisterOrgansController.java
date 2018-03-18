@@ -35,15 +35,7 @@ public class RegisterOrgansController {
 
 	@FXML
 	private void initialize() {
-        // IMPORTING SIDEBAR //
-        try {
-            VBox sidebar = FXMLLoader.load(getClass().getResource(Page.SIDEBAR.getPath()));
-            sidebarPane.getChildren().setAll(sidebar);
-        } catch (IOException exc) {
-            System.err.println("Couldn't load sidebar from fxml file.");
-            exc.printStackTrace();
-        }
-        // FINISHED IMPORT //
+		SidebarController.loadSidebar(sidebarPane);
 
 		organCheckBoxes.put(Organ.LIVER, checkBoxLiver);
 		organCheckBoxes.put(Organ.KIDNEY, checkBoxKidney);
