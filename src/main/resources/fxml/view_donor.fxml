@@ -92,7 +92,7 @@
                                     <Label fx:id="regionLabel" layoutX="419.0" layoutY="307.0" text="Region" GridPane.columnIndex="2" GridPane.rowIndex="5" />
                                     <Label fx:id="creationDate" layoutX="146.0" text="DATE" textFill="#0200c4" wrapText="true" GridPane.columnIndex="1" />
                                     <Label fx:id="lastModified" layoutX="539.0" text="DATE" textFill="#0200c4" wrapText="true" GridPane.columnIndex="3" />
-                                    <Button mnemonicParsing="false" onAction="#organView" text="Organs" GridPane.columnIndex="2" GridPane.rowIndex="6" />
+                                    <Button mnemonicParsing="false" onAction="#viewOrgansForDonor" text="Organs" GridPane.columnIndex="2" GridPane.rowIndex="6" />
                                  </children>
                                  <VBox.margin>
                                     <Insets />

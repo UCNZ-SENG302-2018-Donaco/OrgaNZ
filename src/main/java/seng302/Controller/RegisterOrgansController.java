@@ -2,20 +2,16 @@ package seng302.Controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import seng302.Actions.ActionInvoker;
 import seng302.Actions.ModifyDonorOrgansAction;
 import seng302.State;
 import seng302.Donor;
 import seng302.DonorManager;
 import seng302.Utilities.Organ;
-import seng302.Utilities.Page;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -55,16 +51,22 @@ public class RegisterOrgansController {
         manager = State.getManager();
         invoker = State.getInvoker();
 
-        Integer currentUserId = (Integer) State.getPageParam("currentUserId");
-        if (currentUserId != null) {
-            fieldUserID.setText(currentUserId.toString());
-            updateUserID(null);
-        }
+
 
         String currentUserType = (String) State.getPageParam("currentUserType");
         if (currentUserType == null) {
-
+            Integer viewUserId = (Integer) State.getPageParam("viewUserId");
+            State.removePageParam("viewUserId");
+            if (viewUserId != null) {
+                fieldUserID.setText(viewUserId.toString());
+                updateUserID(null);
+            }
         } else if (currentUserType.equals("donor")) {
+            Integer currentUserId = (Integer) State.getPageParam("currentUserId");
+            if (currentUserId != null) {
+                fieldUserID.setText(currentUserId.toString());
+                updateUserID(null);
+            }
             idPane.setVisible(false);
             idPane.setManaged(false);
         }

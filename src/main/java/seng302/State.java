@@ -34,6 +34,10 @@ public final class State {
         pageContext.put(key, value);
     }
 
+    public static void removePageParam(String key) {
+        pageContext.remove(key);
+    }
+
     public static void clearPageParams() {
         pageContext.clear();
     }

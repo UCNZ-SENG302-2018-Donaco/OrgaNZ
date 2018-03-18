@@ -1,29 +1,22 @@
 package seng302.Controller;
 
 import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import seng302.State;
 import javafx.scene.paint.Color;
 import seng302.Actions.ModifyDonorAction;
-import seng302.AppUI;
 import seng302.Donor;
 import seng302.Utilities.BloodType;
 import seng302.Utilities.Gender;
 import seng302.Utilities.Page;
 import seng302.Utilities.PageNavigator;
 
-import java.io.IOException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.chrono.ChronoLocalDate;
 
 public class ViewDonorController {
     @FXML
@@ -52,16 +45,20 @@ public class ViewDonorController {
 	    gender.setItems(FXCollections.observableArrayList(Gender.values()));
 		setFieldsDisabled(true);
 
-		Integer currentUserId = (Integer) State.getPageParam("currentUserId");
-		if (currentUserId != null) {
-			id.setText(currentUserId.toString());
-			searchDonor();
-		}
-
 		String currentUserType = (String) State.getPageParam("currentUserType");
 		if (currentUserType == null) {
-
+			Integer viewUserId = (Integer) State.getPageParam("viewUserId");
+			State.removePageParam("viewUserId");
+			if (viewUserId != null) {
+				id.setText(viewUserId.toString());
+				searchDonor();
+			}
 		} else if (currentUserType.equals("donor")) {
+			Integer currentUserId = (Integer) State.getPageParam("currentUserId");
+			if (currentUserId != null) {
+				id.setText(currentUserId.toString());
+				searchDonor();
+			}
 			idPane.setVisible(false);
 			idPane.setManaged(false);
 		}
@@ -209,7 +206,8 @@ public class ViewDonorController {
 	}
 
 	@FXML
-	public void organView() {
-		// Here is your button Alex XD
+	public void viewOrgansForDonor() {
+		State.setPageParam("viewUserId", viewedDonor.getUid());
+		PageNavigator.loadPage(Page.REGISTER_ORGANS.getPath());
 	}
 }
