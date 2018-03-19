@@ -11,6 +11,10 @@ import seng302.DonorManager;
 import seng302.Utilities.*;
 
 import java.time.LocalDate;
+import java.util.AbstractMap.SimpleEntry;
+import java.util.HashMap;
+import java.util.Map.Entry;
+import java.util.Map;
 
 /**
  * Command line to set attributes of a Donor, by using their ID as a reference key.
@@ -61,10 +65,10 @@ public class SetAttribute implements Runnable {
     private BloodType bloodType;
 
     @Option(names = "--height", description = "Height (cm)")
-    private int height;
+    private Integer height;
 
     @Option(names = "--weight", description = "Weight (kg)")
-    private int weight;
+    private Integer weight;
 
     @Option(names = "--dateofbirth", description = "Date of birth (dd/mm/yyyy)", converter = LocalDateConverter.class)
     private LocalDate dateOfBirth;
@@ -82,39 +86,29 @@ public class SetAttribute implements Runnable {
         }
 
         ModifyDonorAction action = new ModifyDonorAction(donor);
+        Map<String, Entry<Object, Object>> states = new HashMap<>();
+        states.put("setFirstName", new SimpleEntry<>(donor.getFirstName(), firstName));
+        states.put("setMiddleName", new SimpleEntry<>(donor.getMiddleName(), middleName));
+        states.put("setLastName", new SimpleEntry<>(donor.getLastName(), lastName));
+        states.put("setCurrentAddress", new SimpleEntry<>(donor.getCurrentAddress(), address));
+        states.put("setRegion", new SimpleEntry<>(donor.getRegion(), region));
+        states.put("setGender", new SimpleEntry<>(donor.getGender(), gender));
+        states.put("setBloodType", new SimpleEntry<>(donor.getBloodType(), bloodType));
+        states.put("setHeight", new SimpleEntry<>(donor.getHeight(), height));
+        states.put("setWeight", new SimpleEntry<>(donor.getWeight(), weight));
+        states.put("setDateOfBirth", new SimpleEntry<>(donor.getDateOfBirth(), dateOfBirth));
+        states.put("setDateOfDeath", new SimpleEntry<>(donor.getDateOfDeath(), dateOfDeath));
 
-        if (firstName != null) {
-            action.addChange("setFirstName", donor.getFirstName(), firstName);
-        }
-        if (middleName != null) {
-            action.addChange("setMiddleName", donor.getMiddleName(), middleName);
-        }
-        if (lastName != null) {
-            action.addChange("setLastName", donor.getLastName(), lastName);
-        }
-        if (address != null) {
-            action.addChange("setCurrentAddress", donor.getCurrentAddress(), address);
-        }
-        if (region != null) {
-            action.addChange("setRegion", donor.getRegion(), region);
-        }
-        if (gender != null) {
-            action.addChange("setGender", donor.getGender(), gender);
-        }
-        if (bloodType != null) {
-            action.addChange("setBloodType", donor.getBloodType(), bloodType);
-        }
-        if (height != 0) {
-            action.addChange("setHeight", donor.getHeight(), height);
-        }
-        if (weight != 0) {
-            action.addChange("setWeight", donor.getWeight(), weight);
-        }
-        if (dateOfBirth != null) {
-            action.addChange("setDateOfBirth", donor.getDateOfBirth(), dateOfBirth);
-        }
-        if (dateOfDeath != null) {
-            action.addChange("setDateOfDeath", donor.getDateOfDeath(), dateOfDeath);
+        for (Entry<String, Entry<Object, Object>> entry : states.entrySet()) {
+            if (entry.getValue().getValue() == null) {
+                continue;
+            }
+            try {
+                action.addChange(entry.getKey(), entry.getValue().getKey(), entry.getValue().getValue());
+            } catch (NoSuchMethodException | NoSuchFieldException e) {
+                e.printStackTrace();
+            }
+
         }
         invoker.execute(action);
         HistoryItem setAttribute = new HistoryItem("ATTRIBUTE UPDATE", "DETAILS were updated for user " + uid);
