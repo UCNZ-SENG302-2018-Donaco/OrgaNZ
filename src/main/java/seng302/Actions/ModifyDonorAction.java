@@ -45,10 +45,6 @@ public class ModifyDonorAction implements Action {
         throw new NoSuchMethodException("Donor does not contain that method");
     }
 
-    private void checkMethod(String field, Object value1, Object value2) {
-
-    }
-
     @Override
     public void execute() {
         runChanges(executors);
@@ -60,7 +56,7 @@ public class ModifyDonorAction implements Action {
     }
 
     /**
-     * Loops through a map of String, Objects and applies the ava.beans.Statement to it using the String as the setter and the Object as the parameter
+     * Loops through a map of String, Objects and applies the Java.beans.Statement to it using the String as the setter and the Object as the parameter
      * @param map A map of String, Objects
      */
     private void runChanges(Map<String, Object> map) {

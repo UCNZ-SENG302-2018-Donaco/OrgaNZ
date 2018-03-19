@@ -4,6 +4,7 @@ import seng302.Utilities.BloodType;
 import seng302.Utilities.Gender;
 import seng302.Utilities.Organ;
 import seng302.Utilities.OrganAlreadyRegisteredException;
+import seng302.Utilities.Region;
 
 import static java.util.Optional.ofNullable;
 
@@ -31,7 +32,7 @@ public class Donor {
     private String middleName;
 
     private String currentAddress;
-    private String region;
+    private Region region;
 
     private Gender gender;
     private BloodType bloodType;
@@ -242,11 +243,11 @@ public class Donor {
         this.currentAddress = currentAddress;
     }
 
-    public String getRegion() {
+    public Region getRegion() {
         return region;
     }
 
-    public void setRegion(String region) {
+    public void setRegion(Region region) {
         addUpdate("region");
         this.region = region;
     }

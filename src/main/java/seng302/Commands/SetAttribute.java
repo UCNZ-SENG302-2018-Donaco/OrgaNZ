@@ -55,8 +55,8 @@ public class SetAttribute implements Runnable {
     @Option(names = "--currentaddress", description = "Current address")
     private String address;
 
-    @Option(names = "--region", description = "Region")
-    private String region;
+    @Option(names = "--region", description = "Region", converter = RegionConverter.class)
+    private Region region;
 
     @Option(names = "--gender", description = "Gender", converter = GenderConverter.class)
     private Gender gender;
