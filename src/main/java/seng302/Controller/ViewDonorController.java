@@ -2,10 +2,7 @@ package seng302.Controller;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import seng302.State;
 import javafx.scene.paint.Color;
@@ -202,7 +199,7 @@ public class ViewDonorController {
 		if(!btype.getText().equals("")) {
 			try {
 				bloodType = BloodType.fromString(btype.getText());
-				fnameLabel.setTextFill(Color.BLACK);
+				btypeLabel.setTextFill(Color.BLACK);
 
 			} catch(IllegalArgumentException ex){
 				btypeLabel.setTextFill(Color.RED);
@@ -231,6 +228,12 @@ public class ViewDonorController {
 		action.addChange("setRegion", viewedDonor.getRegion(), region.getText());
 
 		State.getInvoker().execute(action);
+
+		PageNavigator.showAlert(Alert.AlertType.INFORMATION,
+				"Success",
+				String.format("Successfully updated donor %s %s %s.",
+						viewedDonor.getFirstName(), viewedDonor.getMiddleName(),
+						viewedDonor.getLastName(), viewedDonor.getUid()));
 	}
 
 	/**
