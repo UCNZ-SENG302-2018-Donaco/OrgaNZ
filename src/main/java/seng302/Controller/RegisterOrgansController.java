@@ -100,7 +100,7 @@ public class RegisterOrgansController {
             boolean newStatus = organCheckBoxes.get(organ).isSelected();
 
             if (oldStatus != newStatus) {
-                action.addChange(organ, oldStatus, newStatus);
+                action.addChange(organ, newStatus);
                 hasChanged = true;
             }
 		}

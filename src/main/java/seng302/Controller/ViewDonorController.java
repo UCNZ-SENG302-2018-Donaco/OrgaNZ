@@ -216,21 +216,25 @@ public class ViewDonorController {
 	 * Records the changes updated as a ModifyDonorAction to trace the change in record.
 	 */
 	private void updateChanges() {
-		ModifyDonorAction action = new ModifyDonorAction(viewedDonor);
+		try {
+			ModifyDonorAction action = new ModifyDonorAction(viewedDonor);
 
-		action.addChange("setFirstName", viewedDonor.getFirstName(), fname.getText());
-		action.addChange("setLastName", viewedDonor.getLastName(), lname.getText());
-		action.addChange("setMiddleName", viewedDonor.getMiddleName(), mname.getText());
-		action.addChange("setDateOfBirth", viewedDonor.getDateOfBirth(), dob.getValue());
-		action.addChange("setDateOfDeath", viewedDonor.getDateOfDeath(), dod.getValue());
-		action.addChange("setGender", viewedDonor.getGender(), gender.getValue());
-		action.addChange("setHeight", viewedDonor.getHeight(), Double.parseDouble(height.getText()));
-		action.addChange("setWeight", viewedDonor.getWeight(), Double.parseDouble(weight.getText()));
-		action.addChange("setBloodType", viewedDonor.getBloodType(), bloodType);
-		action.addChange("setCurrentAddress", viewedDonor.getCurrentAddress(), address.getText());
-		action.addChange("setRegion", viewedDonor.getRegion(), region.getText());
+			action.addChange("setFirstName", viewedDonor.getFirstName(), fname.getText());
+			action.addChange("setLastName", viewedDonor.getLastName(), lname.getText());
+			action.addChange("setMiddleName", viewedDonor.getMiddleName(), mname.getText());
+			action.addChange("setDateOfBirth", viewedDonor.getDateOfBirth(), dob.getValue());
+			action.addChange("setDateOfDeath", viewedDonor.getDateOfDeath(), dod.getValue());
+			action.addChange("setGender", viewedDonor.getGender(), gender.getValue());
+			action.addChange("setHeight", viewedDonor.getHeight(), Double.parseDouble(height.getText()));
+			action.addChange("setWeight", viewedDonor.getWeight(), Double.parseDouble(weight.getText()));
+			action.addChange("setBloodType", viewedDonor.getBloodType(), bloodType);
+			action.addChange("setCurrentAddress", viewedDonor.getCurrentAddress(), address.getText());
+			action.addChange("setRegion", viewedDonor.getRegion(), region.getText());
 
-		State.getInvoker().execute(action);
+			State.getInvoker().execute(action);
+		} catch (NoSuchFieldException | NoSuchMethodException exc) {
+			exc.printStackTrace();
+		}
 	}
 
 	/**

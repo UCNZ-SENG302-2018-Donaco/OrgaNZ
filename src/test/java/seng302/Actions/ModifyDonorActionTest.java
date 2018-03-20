@@ -20,7 +20,7 @@ public class ModifyDonorActionTest {
     @Before
     public void init() {
         invoker = new ActionInvoker();
-        manager = new DonorManager(invoker);
+        manager = new DonorManager();
         baseDonor = new Donor("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
         manager.addDonor(baseDonor);
     }
