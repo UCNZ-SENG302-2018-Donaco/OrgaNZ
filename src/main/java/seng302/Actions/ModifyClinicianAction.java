@@ -2,6 +2,7 @@ package seng302.Actions;
 
 import seng302.Clinician;
 import seng302.Donor;
+import seng302.Utilities.PrimitiveConverter;
 
 import java.beans.Statement;
 import java.lang.reflect.Method;
@@ -28,15 +29,20 @@ public class ModifyClinicianAction implements Action {
 
     /**
      * Add a modification to the clinician
-     * @param field The setter field of the donor. Must match a valid setter in the Clinician object
+     * @param field The setter field of the clinician. Must match a valid setter in the Clinician object
      * @param oldValue The object the field initially had. Should be taken from the Clinicians equivalent getter
      * @param newValue The object the field should be update to. Must match the setters Object type
      */
     public void addChange(String field, Object oldValue, Object newValue) throws NoSuchMethodException, NoSuchFieldException {
         for (Method m : clinicianMethods) {
             if (m.getName().equals(field)) {
-                if (m.getParameterCount() != 1 || (oldValue != null && m.getParameterTypes()[0] != oldValue.getClass()) || ( oldValue != null && oldValue.getClass() != newValue.getClass())) {
-                    throw new NoSuchFieldException("Invalid fields");
+                if (m.getParameterCount() != 1) {
+                    throw new NoSuchFieldException("Method expects more than one field");
+                }
+                PrimitiveConverter converter = new PrimitiveConverter();
+                Class<?> expectedClass = converter.convertToWrapper(m.getParameterTypes()[0]);
+                if ((newValue != null && newValue.getClass() != expectedClass) || (oldValue != null && oldValue.getClass() != expectedClass)) {
+                    throw new NoSuchFieldException("Method expects a different field type than the one given");
                 }
                 executors.put(field, newValue);
                 unExecutors.put(field, oldValue);
