@@ -99,7 +99,7 @@ public class ViewDonorController {
 			weight.setText(String.valueOf(viewedDonor.getWeight()));
 			if(viewedDonor.getBloodType() != null) {btype.setText(viewedDonor.getBloodType().toString());}
 			address.setText(viewedDonor.getCurrentAddress());
-			region.setText(viewedDonor.getRegion());
+			if(viewedDonor.getRegion() != null) {region.setText(viewedDonor.getRegion().toString());}
 
 			creationDate.setText(viewedDonor.getCreationdate().toString());
 			lastModified.setText(viewedDonor.getModified_on().toString());

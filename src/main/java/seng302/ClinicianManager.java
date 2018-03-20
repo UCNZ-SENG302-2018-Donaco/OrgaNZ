@@ -23,7 +23,7 @@ public class ClinicianManager {
     public ClinicianManager() {
         clinicians = new ArrayList<>();
         clinicians.add(new Clinician("admin", null, "admin", "admin", Region.UNSPECIFIED, 0, "admin"));
-        invoker = App.getInvoker();
+        invoker = State.getInvoker();
     }
 
     public ClinicianManager(ActionInvoker invoker) {
@@ -35,7 +35,7 @@ public class ClinicianManager {
     public ClinicianManager(ArrayList<Clinician> clinicians) {
         this.clinicians = clinicians;
         clinicians.add(new Clinician("admin", null, "admin", "admin", Region.UNSPECIFIED, 0, "admin"));
-        invoker = App.getInvoker();
+        invoker = State.getInvoker();
     }
 
     public void setClinicians(ArrayList<Clinician> clinicians) {
