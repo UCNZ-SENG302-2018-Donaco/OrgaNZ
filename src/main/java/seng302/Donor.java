@@ -293,13 +293,24 @@ public class Donor {
 		return age;
 	}
 
+    /**
+     * Takes a string and checks if each space separated string section matches one of the names
+     * @param searchParam The string to be checked
+     * @return True if all sections of the passed string match any of the names of the donor
+     */
 	public boolean nameContains(String searchParam) {
 	    String lowerSearch = searchParam.toLowerCase();
-	    String fullName = firstName.toLowerCase() + " ";
-	    if (middleName != null && !middleName.equals(""))
-	        fullName += middleName.toLowerCase() + " ";
-	    fullName += lastName.toLowerCase();
-	    return fullName.contains(lowerSearch);
+	    String[] splitSearchItems = lowerSearch.split("\\s+");
+
+	    boolean isMatch = true;
+	    for (String string : splitSearchItems) {
+            if (!firstName.toLowerCase().contains(string) && (middleName == null || !middleName.toLowerCase().contains(string)) && !lastName.toLowerCase().contains(string)) {
+	            isMatch = false;
+	            break;
+            }
+        }
+
+	    return isMatch;
     }
 
     /**

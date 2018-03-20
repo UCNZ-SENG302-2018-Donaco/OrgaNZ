@@ -33,7 +33,7 @@ public class AppUI extends Application {
 		int uid = State.getDonorManager().getUid();
 		Donor deleteme = new Donor("James", "v", "Toohey", d, uid);
 		State.getDonorManager().addDonor(deleteme);
-        State.getDonorManager().addDonor(new Donor("Jack", "Edward", "Steel", LocalDate.of(1997,4,21), 2));
+        State.getDonorManager().addDonor(new Donor("Jack", null, "Steel", LocalDate.of(1997,4,21), 2));
         State.getDonorManager().addDonor(new Donor("Alex", "Edward", "IDK", LocalDate.of(1997,4,21), 2));
 		// TODO DELETE TEST DATA
 	}
