@@ -20,9 +20,17 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
 
+/**
+ * Controller for the sidebar pane imported into every page in the main part of the GUI.
+ */
 public class SidebarController {
     private ActionInvoker invoker;
 
+    /**
+     * Method that can be called from other controllers to load the sidebar into that page.
+     * Will set the sidebar as the child of the pane given.
+     * @param sidebarPane The container pane for the sidebar, given by the importer.
+     */
     public static void loadSidebar(Pane sidebarPane) {
         try {
             VBox sidebar = FXMLLoader.load(SidebarController.class.getResource(Page.SIDEBAR.getPath()));
@@ -33,13 +41,16 @@ public class SidebarController {
         }
     }
 
+    /**
+     * Gets the ActionInvoker from the current state.
+     */
     public SidebarController() {
         invoker = State.getInvoker();
     }
 
     /**
-     * Redirects the GUI to the View Donor Page
-     * @param event when view profile button is clicked
+     * Redirects the GUI to the View Donor page.
+     * @param event When the view donor button is clicked.
      */
     @FXML
     private void goToViewDonor(ActionEvent event) {
@@ -47,6 +58,10 @@ public class SidebarController {
         PageNavigator.loadPage(Page.VIEW_DONOR.getPath());
     }
 
+    /**
+     * Redirects the GUI to the Register Organs page.
+     * @param event When the register organs button is clicked.
+     */
     @FXML
     private void goToRegisterOrgans(ActionEvent event) {
         State.removePageParam("viewUserId");
@@ -54,14 +69,18 @@ public class SidebarController {
     }
 
     /**
-     * Redirects the GUI to the History Page
-     * @param event when history button is clicked
+     * Redirects the GUI to the History page.
+     * @param event When the history button is clicked.
      */
     @FXML
     private void goToHistory(ActionEvent event) {
         PageNavigator.loadPage(Page.HISTORY.getPath());
     }
 
+    /**
+     * Opens a save file dialog to choose where to save all donors in the system to a file.
+     * @param event When the save button is clicked.
+     */
     @FXML
     private void save(ActionEvent event) {
         try {
@@ -77,7 +96,9 @@ public class SidebarController {
                 // TODO Make alert with number of donors saved
                 HistoryItem save = new HistoryItem("SAVE", "The systems current state was saved.");
                 JSONConverter.updateHistory(save, "action_history.json");
-                PageNavigator.showAlert(Alert.AlertType.INFORMATION, "Save Successful", "Successfully saved Donors to " + file.getName());
+                PageNavigator.showAlert(Alert.AlertType.INFORMATION,
+                        "Save Successful",
+                        "Successfully saved Donors to " + file.getName());
             }
         } catch (URISyntaxException | IOException exc) {
             // TODO Make alert when save fails
@@ -86,13 +107,11 @@ public class SidebarController {
     }
 
     /**
-     * Loads the file required for the Donors.
-     *
-     * @param event button clicked and opens a filechooser window.
-     * @throws URISyntaxException
+     * Opens a load file dialog to choose a file to load all donors from.
+     * @param event When the load button is clicked.
      */
     @FXML
-    private void load(ActionEvent event) throws URISyntaxException {
+    private void load(ActionEvent event) {
         try {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Load Donors File");
@@ -107,7 +126,9 @@ public class SidebarController {
                 // TODO Make alert with number of donors loaded
                 HistoryItem load = new HistoryItem("LOAD", "The systems state was loaded from " + file.getName());
                 JSONConverter.updateHistory(load, "action_history.json");
-                PageNavigator.showAlert(Alert.AlertType.INFORMATION, "Load Successful", "Successfully loaded Donors from " + file.getName());
+                PageNavigator.showAlert(Alert.AlertType.INFORMATION,
+                        "Load Successful",
+                        "Successfully loaded Donors from " + file.getName());
             }
         } catch (URISyntaxException | IOException exc) {
             // TODO Make alert when load fails
@@ -116,12 +137,20 @@ public class SidebarController {
         }
     }
 
+    /**
+     * Logs out the current user and sends them to the Landing page.
+     * @param event When the logout button is clicked.
+     */
     @FXML
     private void logout(ActionEvent event) {
         State.clearPageParams();
         PageNavigator.loadPage(Page.LANDING.getPath());
     }
 
+    /**
+     * Undo-s the most recent action performed in the system, and refreshes the current page to reflect the change.
+     * @param event When the undo button is clicked.
+     */
     @FXML
     private void undo(ActionEvent event) {
         if (invoker.canUndo()) {
@@ -134,6 +163,10 @@ public class SidebarController {
         }
     }
 
+    /**
+     * Redo-s the most recent action performed in the system, and refreshes the current page to reflect the change.
+     * @param event When the redo button is clicked.
+     */
     @FXML
     private void redo(ActionEvent event) {
         if (invoker.canRedo()) {

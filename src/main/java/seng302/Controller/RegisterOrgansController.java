@@ -15,6 +15,9 @@ import seng302.Utilities.Organ;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Controller for the register organs page.
+ */
 public class RegisterOrgansController {
     @FXML
     private Pane sidebarPane;
@@ -26,10 +29,20 @@ public class RegisterOrgansController {
 	private final Map<Organ, CheckBox> organCheckBoxes = new HashMap<>();
 	@FXML
 	private TextField fieldUserID;
+
 	private DonorManager manager;
 	private ActionInvoker invoker;
 	private Donor donor;
 
+    /**
+     * Initializes the UI for this page.
+     * - Loads the sidebar.
+     * - Adds all checkboxes with their respective Organ to the organCheckBoxes map.
+     * - Disables all checkboxes.
+     * - Gets the DonorManager and ActionInvoker from the current state.
+     * - If a donor is logged in, populates with their info and removes ability to view a different donor.
+     * - If the viewUserId is set, populates with their info.
+     */
 	@FXML
 	private void initialize() {
 		SidebarController.loadSidebar(sidebarPane);
@@ -69,6 +82,10 @@ public class RegisterOrgansController {
         }
 	}
 
+    /**
+     * Updates the current donor to the one specified in the userID field, and populates with their info.
+     * @param event When ENTER is pressed with focus on the userID field.
+     */
 	@FXML
 	private void updateUserID(ActionEvent event) {
 		try {
@@ -88,6 +105,10 @@ public class RegisterOrgansController {
 		}
 	}
 
+    /**
+     * Checks which organs check boxes have been changed, and applies those changes with a ModifyDonorOrgansAction.
+     * @param event When any organ checkbox changes state.
+     */
 	@FXML
 	private void modifyOrgans(ActionEvent event) {
 	    ModifyDonorOrgansAction action = new ModifyDonorOrgansAction(donor);
@@ -107,6 +128,9 @@ public class RegisterOrgansController {
         }
 	}
 
+    /**
+     * Sets the state of all checkboxes to not selected, then disables them.
+     */
 	private void setCheckboxesDisabled() {
 		for (CheckBox box : organCheckBoxes.values()) {
 			box.setSelected(false);
@@ -114,6 +138,9 @@ public class RegisterOrgansController {
 		}
 	}
 
+    /**
+     * Enables all checkboxes.
+     */
 	private void setCheckBoxesEnabled() {
 		for (CheckBox box : organCheckBoxes.values()) {
 			box.setDisable(false);
