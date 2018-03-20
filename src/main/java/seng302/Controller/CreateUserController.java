@@ -38,8 +38,9 @@ public class CreateUserController {
     @FXML
     private void createUser() {
 
-        //doesn't work just yet...
-        if (manager.collisionExists(firstNameFld.getText(), middleNamefld.getText(), dobFld.getValue())) {
+        //Duplicate user warning alert
+        if (manager.collisionExists(firstNameFld.getText() , lastNamefld.getText(), dobFld.getValue())) {
+            System.out.println("Duplicate");
             ButtonType option = PageNavigator.showAlert(AlertType.CONFIRMATION,
                     "Duplicate User Warning",
                     "This user is a duplicate of one that already exists. Would you still like to create it?")
@@ -66,6 +67,11 @@ public class CreateUserController {
     }
 
 
+    /**
+     * Goes back to the landing page when button is clicked
+     *
+     * @param event button clicked and goes back.
+     */
     @FXML
     private void goBack(ActionEvent event) {
         PageNavigator.loadPage(Page.LANDING.getPath());

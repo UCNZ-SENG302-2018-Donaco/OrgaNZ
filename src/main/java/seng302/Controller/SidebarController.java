@@ -3,6 +3,7 @@ package seng302.Controller;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.control.Alert;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
@@ -38,7 +39,7 @@ public class SidebarController {
 
     /**
      * Redirects the GUI to the View Donor Page
-     * @param event when view button is clicked
+     * @param event when view profile button is clicked
      */
     @FXML
     private void goToViewDonor(ActionEvent event) {
@@ -52,7 +53,7 @@ public class SidebarController {
 
     /**
      * Redirects the GUI to the History Page
-     * @param event when view button is clicked
+     * @param event when history button is clicked
      */
     @FXML
     private void goToHistory(ActionEvent event) {
@@ -80,6 +81,12 @@ public class SidebarController {
         }
     }
 
+    /**
+     * Loads the file required for the Donors.
+     *
+     * @param event button clicked and opens a filechooser window.
+     * @throws URISyntaxException
+     */
     @FXML
     private void load(ActionEvent event) throws URISyntaxException {
         try {
@@ -95,9 +102,11 @@ public class SidebarController {
             // TODO Make alert with number of donors loaded
             HistoryItem load = new HistoryItem("LOAD", "The systems state was loaded from " + file.getName());
             JSONConverter.updateHistory(load, "action_history.json");
+            PageNavigator.showAlert(Alert.AlertType.INFORMATION, "load successful", "Successfully uploaded " + file.getName());
         } catch (URISyntaxException | IOException exc) {
             // TODO Make alert when load fails
-            System.err.println(exc.getMessage());
+            PageNavigator.showAlert(Alert.AlertType.WARNING, "Load Failed",
+                    "Warning: unrecognisable or invalid file. please make \n sure that you have selected the correct file type.");
         }
     }
 
