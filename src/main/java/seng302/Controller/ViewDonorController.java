@@ -2,6 +2,7 @@ package seng302.Controller;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
@@ -95,7 +96,7 @@ public class ViewDonorController {
 			dod.setValue(viewedDonor.getDateOfDeath());
 			gender.setValue(viewedDonor.getGender());
 			height.setText(String.valueOf(viewedDonor.getHeight()));
-			weight.setText(String.valueOf(viewedDonor.getHeight()));
+			weight.setText(String.valueOf(viewedDonor.getWeight()));
 			if(viewedDonor.getBloodType() != null) {btype.setText(viewedDonor.getBloodType().toString());}
 			address.setText(viewedDonor.getCurrentAddress());
 			region.setText(viewedDonor.getRegion());
@@ -202,7 +203,7 @@ public class ViewDonorController {
 		if(!btype.getText().equals("")) {
 			try {
 				bloodType = BloodType.fromString(btype.getText());
-				fnameLabel.setTextFill(Color.BLACK);
+				btypeLabel.setTextFill(Color.BLACK);
 
 			} catch(IllegalArgumentException ex){
 				btypeLabel.setTextFill(Color.RED);
@@ -231,7 +232,14 @@ public class ViewDonorController {
 			action.addChange("setCurrentAddress", viewedDonor.getCurrentAddress(), address.getText());
 			action.addChange("setRegion", viewedDonor.getRegion(), region.getText());
 
-			State.getInvoker().execute(action);
+		    State.getInvoker().execute(action);
+
+		    PageNavigator.showAlert(Alert.AlertType.INFORMATION,
+				"Success",
+				String.format("Successfully updated donor %s %s %s %d.",
+						viewedDonor.getFirstName(), viewedDonor.getMiddleName(),
+						viewedDonor.getLastName(), viewedDonor.getUid()));
+
 		} catch (NoSuchFieldException | NoSuchMethodException exc) {
 			exc.printStackTrace();
 		}
