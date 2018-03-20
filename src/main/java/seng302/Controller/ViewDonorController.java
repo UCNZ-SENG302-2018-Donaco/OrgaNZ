@@ -95,7 +95,7 @@ public class ViewDonorController {
 			dod.setValue(viewedDonor.getDateOfDeath());
 			gender.setValue(viewedDonor.getGender());
 			height.setText(String.valueOf(viewedDonor.getHeight()));
-			weight.setText(String.valueOf(viewedDonor.getHeight()));
+			weight.setText(String.valueOf(viewedDonor.getWeight()));
 			if(viewedDonor.getBloodType() != null) {btype.setText(viewedDonor.getBloodType().toString());}
 			address.setText(viewedDonor.getCurrentAddress());
 			region.setText(viewedDonor.getRegion());
