@@ -74,9 +74,10 @@
                                     <ChoiceBox fx:id="gender" maxWidth="1.7976931348623157E308" prefHeight="30.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                                     <TextField fx:id="height" layoutX="530.0" layoutY="80.0" prefHeight="30.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
                                     <TextField fx:id="weight" layoutX="530.0" layoutY="136.0" prefHeight="30.0" GridPane.columnIndex="3" GridPane.rowIndex="2" />
-                                    <TextField fx:id="btype" layoutX="530.0" layoutY="191.0" prefHeight="30.0" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                                    <ChoiceBox fx:id="btype" maxWidth="1.7976931348623157E308" prefHeight="30.0" GridPane.columnIndex="3" GridPane.rowIndex="3" />
                                     <TextField fx:id="address" layoutX="530.0" layoutY="245.0" prefHeight="30.0" GridPane.columnIndex="3" GridPane.rowIndex="4" />
                                     <TextField fx:id="region" layoutX="530.0" layoutY="302.0" prefHeight="30.0" GridPane.columnIndex="3" GridPane.rowIndex="5" />
+                                    <Button mnemonicParsing="false" onAction="#viewOrgansForDonor" text="Organs" GridPane.columnIndex="2" GridPane.rowIndex="7" />
                                     <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#saveChanges" prefHeight="30.0" text="Save Changes" GridPane.columnIndex="3" GridPane.rowIndex="7" />
                                     <Label layoutX="41.0" text="Creation Date" />
                                     <Label fx:id="fnameLabel" layoutY="85.0" text="First Name *" GridPane.rowIndex="1" />
@@ -94,10 +95,9 @@
                                     <Label fx:id="creationDate" layoutX="146.0" text="DATE" textFill="#0200c4" wrapText="true" GridPane.columnIndex="1" />
                                     <Label fx:id="lastModified" layoutX="539.0" text="DATE" textFill="#0200c4" wrapText="true" GridPane.columnIndex="3" />
                                     <Label fx:id="ageDisplayLabel" prefHeight="15.0" prefWidth="105.0" text="Age" GridPane.rowIndex="6" />
-                                    <Label fx:id="dodLabel2" text="BMI" GridPane.columnIndex="2" GridPane.rowIndex="6" />
                                     <Label fx:id="ageLabel" prefHeight="15.0" prefWidth="105.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                                    <Label fx:id="dodLabel2" text="BMI" GridPane.columnIndex="2" GridPane.rowIndex="6" />
                                     <Label fx:id="BMILabel" prefHeight="15.0" prefWidth="105.0" GridPane.columnIndex="3" GridPane.rowIndex="6" />
-                                    <Button mnemonicParsing="false" onAction="#viewOrgansForDonor" text="Organs" GridPane.columnIndex="2" GridPane.rowIndex="6" />
                                  </children>
                                  <VBox.margin>
                                     <Insets />
