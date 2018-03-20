@@ -67,6 +67,11 @@ public class CreateUserController {
     }
 
 
+    /**
+     * Goes back to the landing page when button is clicked
+     *
+     * @param event button clicked and goes back.
+     */
     @FXML
     private void goBack(ActionEvent event) {
         PageNavigator.loadPage(Page.LANDING.getPath());
