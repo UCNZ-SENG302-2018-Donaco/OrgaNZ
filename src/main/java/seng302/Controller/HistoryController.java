@@ -19,14 +19,11 @@ public class HistoryController {
     private final DateTimeFormatter datetimeformat = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm:ss");
 
     @FXML
-    public TableColumn<HistoryItem, String> timeCol;
+    private TableColumn<HistoryItem, String> timeCol, typeCol, commandCol;
     @FXML
-    public TableColumn<HistoryItem, String> typeCol;
+    private TableView<HistoryItem> historyTable;
     @FXML
-    public TableColumn<HistoryItem, String> commandCol;
-    public TableView historyTable;
-    @FXML
-    Pane sidebarPane;
+    private Pane sidebarPane;
 
     @FXML
     private void initialize() {
@@ -51,7 +48,4 @@ public class HistoryController {
         }
 
     }
-
-
-
 }
