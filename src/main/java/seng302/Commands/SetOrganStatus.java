@@ -10,6 +10,9 @@ import seng302.Donor;
 import seng302.DonorManager;
 import seng302.Utilities.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static seng302.Utilities.Organ.*;
 
 /**
@@ -86,41 +89,33 @@ public class SetOrganStatus implements Runnable {
 
         ModifyDonorOrgansAction action = new ModifyDonorOrgansAction(donor);
 
-        if (liver != null) {
-            action.addChange(LIVER, donor.getOrganStatus().get(LIVER), liver);
-        }
-        if (kidney != null) {
-            action.addChange(KIDNEY, donor.getOrganStatus().get(KIDNEY), kidney);
-        }
-        if (pancreas != null) {
-            action.addChange(PANCREAS, donor.getOrganStatus().get(PANCREAS), pancreas);
-        }
-        if (heart != null) {
-            action.addChange(HEART, donor.getOrganStatus().get(HEART), heart);
-        }
-        if (lung != null) {
-            action.addChange(LUNG, donor.getOrganStatus().get(LUNG), lung);
-        }
-        if (intestine != null) {
-            action.addChange(INTESTINE, donor.getOrganStatus().get(INTESTINE), intestine);
-        }
-        if (cornea != null) {
-            action.addChange(CORNEA, donor.getOrganStatus().get(CORNEA), cornea);
-        }
-        if (middleear != null) {
-            action.addChange(MIDDLE_EAR, donor.getOrganStatus().get(MIDDLE_EAR), middleear);
-        }
-        if (skin != null) {
-            action.addChange(SKIN, donor.getOrganStatus().get(SKIN), skin);
-        }
-        if (bone != null) {
-            action.addChange(BONE, donor.getOrganStatus().get(BONE), bone);
-        }
-        if (bonemarrow != null) {
-            action.addChange(BONE_MARROW, donor.getOrganStatus().get(BONE_MARROW), bonemarrow);
-        }
-        if (connectivetissue != null) {
-            action.addChange(CONNECTIVE_TISSUE, donor.getOrganStatus().get(CONNECTIVE_TISSUE), connectivetissue);
+        Map<Organ, Boolean> states = new HashMap<>();
+        states.put(LIVER, liver);
+        states.put(KIDNEY, kidney);
+        states.put(PANCREAS, pancreas);
+        states.put(HEART, heart);
+        states.put(LUNG, lung);
+        states.put(INTESTINE, intestine);
+        states.put(CORNEA, cornea);
+        states.put(MIDDLE_EAR, middleear);
+        states.put(SKIN, skin);
+        states.put(BONE, bone);
+        states.put(BONE_MARROW, bonemarrow);
+        states.put(CONNECTIVE_TISSUE, connectivetissue);
+
+        for (Map.Entry<Organ, Boolean> entry : states.entrySet()) {
+            Organ organ = entry.getKey();
+            Boolean newState = entry.getValue();
+            Boolean currState = donor.getOrganStatus().get(organ);
+            if (newState == null) {
+                continue;
+            } else if (newState && currState) {
+                System.out.println(organ.toString() + " is already registered for donation");
+            } else if (!newState && !currState) {
+                System.out.println(organ.toString() + " is already not registered for donation");
+            } else {
+                action.addChange(organ, newState);
+            }
         }
 
         invoker.execute(action);
