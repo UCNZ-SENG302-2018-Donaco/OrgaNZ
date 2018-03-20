@@ -18,9 +18,9 @@ import java.util.Map;
 /**
  * The main donor class.
  *
- *@author Dylan Carlyle, Jack Steel
- *@version sprint 1.
- *date 05/03/2018
+ * @author Dylan Carlyle, Jack Steel
+ * @version sprint 1.
+ * date 05/03/2018
  */
 
 public class Donor {
@@ -58,11 +58,12 @@ public class Donor {
 
     /**
      * Create a new donor object
-     * @param firstName First name string
-     * @param middleName Middle name(s). May be null
-     * @param lastName Last name string
+     *
+     * @param firstName   First name string
+     * @param middleName  Middle name(s). May be null
+     * @param lastName    Last name string
      * @param dateOfBirth LocalDate formatted date of birth
-     * @param uid A unique user ID. Should be queried to ensure uniqueness
+     * @param uid         A unique user ID. Should be queried to ensure uniqueness
      */
     public Donor(String firstName, String middleName, String lastName, LocalDate dateOfBirth, int uid) {
         created_on = LocalDateTime.now();
@@ -80,7 +81,7 @@ public class Donor {
 
     private void initOrgans() {
         organStatus = new HashMap<>();
-        for (Organ o: Organ.values()) {
+        for (Organ o : Organ.values()) {
             organStatus.put(o, false);
         }
     }
@@ -93,6 +94,7 @@ public class Donor {
 
     /**
      * Set a single organs donation status
+     *
      * @param organ The organ to be set
      * @param value Boolean value to set the status too
      * @throws OrganAlreadyRegisteredException Thrown if the organ is set to true when it already is
@@ -111,6 +113,7 @@ public class Donor {
 
     /**
      * Get the donors organ donation status, with a formatted string listing the organs to be donated
+     *
      * @return A formatted string listing the organs to be donated
      */
     public String getDonorOrganStatusString() {
@@ -132,6 +135,7 @@ public class Donor {
 
     /**
      * Returns a preformatted string of the users change history
+     *
      * @return Formatted string with newlines
      */
     public String getUpdatesString() {
@@ -144,6 +148,7 @@ public class Donor {
 
     /**
      * Get a formatted string with the donors user information. Does not include organ donation status
+     *
      * @return Formatted string with the donors user information. Does not include organ donation status
      */
     public String getDonorInfoString() {
@@ -258,64 +263,68 @@ public class Donor {
     }
 
     public LocalDateTime getCreationdate() {
-		return created_on;
-	}
+        return created_on;
+    }
 
-	public LocalDateTime getModified_on() {
-		return modified_on;
-	}
+    public LocalDateTime getModified_on() {
+        return modified_on;
+    }
 
-	/**
-	 * Calculates the BMI of the Donor based off their height and weight - BMI = weight/height^2.
-	 * If either field is 0, the result returned is 0.
-	 * @return the users calculated BMI.
-	 */
-	public double getBMI() {
-		if (weight == 0 || height == 0) {
-			BMI = 0;
-		} else {
-			BMI = weight / (height * 0.01 * height * 0.01);
-		}
-		return BMI;
-	}
+    /**
+     * Calculates the BMI of the Donor based off their height and weight - BMI = weight/height^2.
+     * If either field is 0, the result returned is 0.
+     *
+     * @return the users calculated BMI.
+     */
+    public double getBMI() {
+        if (weight == 0 || height == 0) {
+            BMI = 0;
+        } else {
+            BMI = weight / (height * 0.01 * height * 0.01);
+        }
+        return BMI;
+    }
 
-	/**
-	 * Calculates the users age based on their date of birth and date of death. If the date of death is null the age
-	 * is calculated base of the LocalDate.now().
-	 * @return age of the Donor.
-	 */
-	public int getAge() {
-    	if (dateOfDeath == null) {
-			age = Period.between(dateOfBirth, LocalDate.now()).getYears();
-		} else {
-    		age = Period.between(dateOfBirth, dateOfDeath).getYears();
-		}
-		return age;
-	}
+    /**
+     * Calculates the users age based on their date of birth and date of death. If the date of death is null the age
+     * is calculated base of the LocalDate.now().
+     *
+     * @return age of the Donor.
+     */
+    public int getAge() {
+        if (dateOfDeath == null) {
+            age = Period.between(dateOfBirth, LocalDate.now()).getYears();
+        } else {
+            age = Period.between(dateOfBirth, dateOfDeath).getYears();
+        }
+        return age;
+    }
 
     /**
      * Takes a string and checks if each space separated string section matches one of the names
+     *
      * @param searchParam The string to be checked
      * @return True if all sections of the passed string match any of the names of the donor
      */
-	public boolean nameContains(String searchParam) {
-	    String lowerSearch = searchParam.toLowerCase();
-	    String[] splitSearchItems = lowerSearch.split("\\s+");
+    public boolean nameContains(String searchParam) {
+        String lowerSearch = searchParam.toLowerCase();
+        String[] splitSearchItems = lowerSearch.split("\\s+");
 
-	    boolean isMatch = true;
-	    for (String string : splitSearchItems) {
-            if (!firstName.toLowerCase().contains(string) && (middleName == null || !middleName.toLowerCase().contains(string)) && !lastName.toLowerCase().contains(string)) {
-	            isMatch = false;
-	            break;
+        boolean isMatch = true;
+        for (String string : splitSearchItems) {
+            if (!firstName.toLowerCase().contains(string) &&
+                    (middleName == null || !middleName.toLowerCase().contains(string)) &&
+                    !lastName.toLowerCase().contains(string)) {
+                isMatch = false;
+                break;
             }
         }
 
-	    return isMatch;
+        return isMatch;
     }
 
     /**
      * Donor objects are identified by their uid
-     *
      */
     @Override
     public boolean equals(Object obj) {
