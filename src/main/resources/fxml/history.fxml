@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
 
-
-<VBox prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.HistoryController">
+<VBox prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.HistoryController">
     <children>
         <SplitPane dividerPositions="0.5" VBox.vgrow="ALWAYS">
             <items>
@@ -25,7 +29,7 @@
                                 </Text>
                             </top>
                      <center>
-                        <TableView prefHeight="520.0" prefWidth="565.0" BorderPane.alignment="CENTER">
+                        <TableView fx:id="historyTable" prefHeight="520.0" prefWidth="565.0" BorderPane.alignment="CENTER">
                           <columns>
                             <TableColumn fx:id="timeCol" prefWidth="166.0" text="Time" />
                               <TableColumn fx:id="typeCol" prefWidth="152.0" text="Type" />
