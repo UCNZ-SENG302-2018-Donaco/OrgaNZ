@@ -25,17 +25,17 @@ import static java.util.Optional.ofNullable;
  */
 
 @Command(name = "createuser", description = "Creates a user.")
-public class CreateUser implements Runnable {
+public class CreateDonor implements Runnable {
 
     private DonorManager manager;
     private ActionInvoker invoker;
 
-    public CreateUser() {
+    public CreateDonor() {
         manager = State.getManager();
         invoker = State.getInvoker();
     }
 
-    CreateUser(DonorManager manager, ActionInvoker invoker) {
+    CreateDonor(DonorManager manager, ActionInvoker invoker) {
         this.manager = manager;
         this.invoker = invoker;
     }
