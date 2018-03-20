@@ -19,9 +19,7 @@ import seng302.State;
 import seng302.Utilities.Gender;
 import seng302.Utilities.Region;
 
-import java.awt.event.KeyEvent;
 import java.util.ArrayList;
-import java.util.EventListener;
 
 public class SearchDonorsController {
 
@@ -37,11 +35,7 @@ public class SearchDonorsController {
     @FXML
     private TableColumn<Donor, Integer> idCol;
     @FXML
-    private TableColumn<Donor, String> fnameCol;
-    @FXML
-    private TableColumn<Donor, String> mnameCol;
-    @FXML
-    private TableColumn<Donor, String> lnameCol;
+    private TableColumn<Donor, String> nameCol;
     @FXML
     private TableColumn<Donor, Integer> ageCol;
     @FXML
@@ -60,16 +54,14 @@ public class SearchDonorsController {
         observableDonorList.setAll(donors);
 
         idCol.setCellValueFactory(new PropertyValueFactory<>("uid"));
-        fnameCol.setCellValueFactory(new PropertyValueFactory<>("firstName"));
-        mnameCol.setCellValueFactory(new PropertyValueFactory<>("middleName"));
-        lnameCol.setCellValueFactory(new PropertyValueFactory<>("lastName"));
+        nameCol.setCellValueFactory(new PropertyValueFactory<>("fullName"));
         ageCol.setCellValueFactory(new PropertyValueFactory<>("age"));
         genderCol.setCellValueFactory(new PropertyValueFactory<>("gender"));
         regionCol.setCellValueFactory(new PropertyValueFactory<>("region"));
 
         tableView.setItems(observableDonorList);
 
-        tableView.getColumns().setAll(idCol, fnameCol, mnameCol, lnameCol, ageCol, genderCol, regionCol);
+        tableView.getColumns().setAll(idCol, nameCol, ageCol, genderCol, regionCol);
 
         searchBox.textProperty().addListener(((o) -> refresh()));
     }

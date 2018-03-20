@@ -34,7 +34,7 @@ public class AppUI extends Application {
 		Donor deleteme = new Donor("James", "v", "Toohey", d, uid);
 		State.getDonorManager().addDonor(deleteme);
         State.getDonorManager().addDonor(new Donor("Jack", null, "Steel", LocalDate.of(1997,4,21), 2));
-        State.getDonorManager().addDonor(new Donor("Alex", "Edward", "IDK", LocalDate.of(1997,4,21), 2));
+        State.getDonorManager().addDonor(new Donor("Alex", "Edward", "IDK", LocalDate.of(1997,4,21), 3));
 		// TODO DELETE TEST DATA
 	}
 

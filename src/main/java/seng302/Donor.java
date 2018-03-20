@@ -127,9 +127,9 @@ public class Donor {
             }
         }
         if (builder.length() == 0) {
-            return String.format("User: %s. Name: %s %s %s, no organs registered for donation", uid, firstName, ofNullable(middleName).orElse(""), lastName);
+            return String.format("User: %s. Name: %s, no organs registered for donation", uid, getFullName());
         } else {
-            return String.format("User: %s. Name: %s %s %s, Donation status: %s", uid, firstName, ofNullable(middleName).orElse(""), lastName, builder.toString());
+            return String.format("User: %s. Name: %s, Donation status: %s", uid, getFullName(), builder.toString());
         }
     }
 
@@ -139,7 +139,7 @@ public class Donor {
      * @return Formatted string with newlines
      */
     public String getUpdatesString() {
-        StringBuilder out = new StringBuilder(String.format("User: %s. Name: %s %s %s, updates:\n", uid, firstName, ofNullable(middleName).orElse(""), lastName));
+        StringBuilder out = new StringBuilder(String.format("User: %s. Name: %s, updates:\n", uid, getFullName()));
         for (String update : updateLog) {
             out.append(update).append('\n');
         }
@@ -152,11 +152,20 @@ public class Donor {
      * @return Formatted string with the donors user information. Does not include organ donation status
      */
     public String getDonorInfoString() {
-        return String.format("User: %s. Name: %s %s %s, date of birth: %tF, date of death: %tF, gender: %s," +
+        return String.format("User: %s. Name: %s, date of birth: %tF, date of death: %tF, gender: %s," +
                         " height: %scm, weight: %skg, blood type: %s, current address: %s, region: %s," +
                         " created on: %s, modified on: %s",
-                uid, firstName, ofNullable(middleName).orElse(""), lastName, dateOfBirth, dateOfDeath, gender,
+                uid, getFullName(), dateOfBirth, dateOfDeath, gender,
                 height, weight, bloodType, currentAddress, region, created_on, modified_on);
+    }
+
+    public String getFullName() {
+        String fullName = firstName + " ";
+        if (middleName != null) {
+            fullName += middleName + " ";
+        }
+        fullName += lastName;
+        return fullName;
     }
 
     public String getFirstName() {

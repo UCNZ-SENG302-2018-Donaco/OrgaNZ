@@ -11,9 +11,7 @@
       <TableView fx:id="tableView" prefHeight="398.0" prefWidth="600.0">
         <columns>
           <TableColumn fx:id="idCol" prefWidth="75.0" text="ID" />
-          <TableColumn fx:id="fnameCol" prefWidth="75.0" text="First" />
-            <TableColumn fx:id="mnameCol" prefWidth="75.0" text="Middle" />
-            <TableColumn fx:id="lnameCol" prefWidth="75.0" text="Last" />
+            <TableColumn fx:id="nameCol" prefWidth="75.0" text="Name" />
             <TableColumn fx:id="ageCol" prefWidth="75.0" text="Age" />
             <TableColumn fx:id="genderCol" prefWidth="75.0" text="Gender" />
             <TableColumn fx:id="regionCol" prefWidth="75.0" text="Region" />

@@ -77,6 +77,6 @@ public class PrintAllInfoTest {
         CommandLine.run(spyPrintAllInfo, System.out, inputs);
 
         assertThat(outContent.toString(), containsString("User: 1. Name: First mid Last, date of birth: 1970-01-01, date of death: null"));
-        assertThat(outContent.toString(), containsString("User: 2. Name: FirstTwo  LastTwo, date of birth: 1971-02-02, date of death: null"));
+        assertThat(outContent.toString(), containsString("User: 2. Name: FirstTwo LastTwo, date of birth: 1971-02-02, date of death: null"));
     }
 }
