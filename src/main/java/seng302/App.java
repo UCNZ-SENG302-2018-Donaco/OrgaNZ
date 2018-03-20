@@ -19,16 +19,11 @@ import java.util.regex.Pattern;
 
 public class App
 {
-    private static DonorManager donorManager;
-    private static ActionInvoker actionInvoker;
-
     public static void main( String[] args )
     {
+        State.init();
+
         String input;
-
-        actionInvoker = new ActionInvoker();
-        donorManager = new DonorManager();
-
         ConsoleScanner scanIn = new ConsoleScanner();
 
         BaseCommand command = new BaseCommand();
@@ -44,23 +39,7 @@ public class App
                 inputs.add(m.group(1).replace("\"", ""));
             }
             String[] currArgs = inputs.toArray(new String[0]);
-            CommandLine.run(command, System.out, currArgs);
+        CommandLine.run(command, System.out, currArgs);
         }
-    }
-
-    public static DonorManager getManager() {
-        return donorManager;
-    }
-
-    public static ActionInvoker getInvoker() {
-        return actionInvoker;
-    }
-
-    public static void setManger(DonorManager manager) {
-    	donorManager = manager;
-	}
-
-    public static void init() {
-        donorManager = new DonorManager();
     }
 }

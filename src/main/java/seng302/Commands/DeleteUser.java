@@ -2,13 +2,13 @@ package seng302.Commands;
 
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
-import seng302.HistoryItem;
 import seng302.Actions.Action;
 import seng302.Actions.ActionInvoker;
 import seng302.Actions.DeleteDonorAction;
-import seng302.App;
 import seng302.Donor;
 import seng302.DonorManager;
+import seng302.HistoryItem;
+import seng302.State;
 import seng302.Utilities.JSONConverter;
 
 import java.util.Scanner;
@@ -20,8 +20,8 @@ public class DeleteUser implements Runnable {
     private ActionInvoker invoker;
 
     public DeleteUser() {
-        manager = App.getManager();
-        invoker = App.getInvoker();
+        manager = State.getManager();
+        invoker = State.getInvoker();
     }
 
     public DeleteUser(DonorManager manager, ActionInvoker invoker) {

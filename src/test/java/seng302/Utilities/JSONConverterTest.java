@@ -3,7 +3,7 @@ package seng302.Utilities;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
-import seng302.App;
+import seng302.State;
 import seng302.Donor;
 import seng302.DonorManager;
 
@@ -42,9 +42,9 @@ public class JSONConverterTest {
         Donor donor = new Donor("First", null, "Last", LocalDate.of(1970,1, 1), 1);
         ArrayList<Donor> donors = new ArrayList<>();
         donors.add(donor);
-		App.init();
-        DonorManager manager = new DonorManager(donors);
-        App.setManger(manager);
+		State.init();
+        DonorManager manager = State.getManager();
+        manager.setDonors(donors);
 
         JSONConverter.saveToFile(file);
 

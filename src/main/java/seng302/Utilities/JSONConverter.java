@@ -7,13 +7,17 @@ import com.google.gson.stream.JsonReader;
 import seng302.HistoryItem;
 import seng302.Donor;
 import seng302.DonorManager;
+import seng302.State;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import static seng302.App.getManager;
 
 /**
  * Uses GSON to convert Java objects into JSON files and from JSON files
@@ -34,7 +38,7 @@ public final class JSONConverter {
 	 */
 	public static void saveToFile(File file) throws IOException {
 		Writer writer = new FileWriter(file);
-		DonorManager donorManager = getManager();
+		DonorManager donorManager = State.getManager();
 		System.out.println(donorManager.getDonors());
 		gson.toJson(donorManager.getDonors(), writer);
 		writer.close();
@@ -51,7 +55,8 @@ public final class JSONConverter {
 		Type collectionType = new TypeToken<ArrayList<Donor>>() {}.getType();
 
 		donors = gson.fromJson(reader, collectionType);
-		DonorManager donorManager = getManager();
+		DonorManager donorManager = State.getManager();
+        System.out.println(donorManager.toString());
 		donorManager.setDonors(donors);
 
 		for (Donor donor : donors) {
@@ -63,7 +68,7 @@ public final class JSONConverter {
 
 
     /**
-     * Read's the action_history.json file into an ArrayList, appends the historyItem to the list and
+     * Read's the action_history.json file into an ArrayList, stateends the historyItem to the list and
      * calls the writeHistoryToJSON to save the update.
      * @param historyItem The HistoryItem to add to the JSON history file.
      */

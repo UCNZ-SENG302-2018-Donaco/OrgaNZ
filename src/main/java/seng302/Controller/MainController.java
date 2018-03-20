@@ -8,8 +8,10 @@ import javafx.scene.layout.StackPane;
 
 /**
  * Main controller class for the application window.
+ *
  */
 public class MainController {
+
 	/** Holder of a switchable page. */
 	@FXML
 	private StackPane pageHolder;

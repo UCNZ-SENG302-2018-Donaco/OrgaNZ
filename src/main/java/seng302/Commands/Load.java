@@ -3,7 +3,7 @@ package seng302.Commands;
 
 import picocli.CommandLine.Command;
 import seng302.HistoryItem;
-import seng302.App;
+import seng302.State;
 import seng302.DonorManager;
 import seng302.Utilities.JSONConverter;
 
@@ -23,7 +23,7 @@ public class Load implements Runnable {
     private DonorManager manager;
 
     public Load() {
-        manager = App.getManager();
+        manager = State.getManager();
     }
 
     public Load(DonorManager manager) {
