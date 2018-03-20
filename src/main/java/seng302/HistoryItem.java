@@ -17,4 +17,16 @@ public class HistoryItem {
         this.details = details;
         timestamp = LocalDateTime.now();
     }
+
+    public String getType() {
+        return type;
+    }
+
+    public String getDetails() {
+        return details;
+    }
+
+    public LocalDateTime getTimestamp() {
+        return timestamp;
+    }
 }

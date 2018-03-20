@@ -1,19 +1,30 @@
 package seng302.Controller;
 
+import javafx.beans.property.ReadOnlyStringWrapper;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
-import seng302.Utilities.Page;
+import seng302.HistoryItem;
+import seng302.Utilities.JSONConverter;
 
+import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 public class HistoryController {
+    private final DateTimeFormatter datetimeformat = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm:ss");
 
-    public TableColumn timeCol;
-    public TableColumn typeCol;
-    public TableColumn commandCol;
+    @FXML
+    public TableColumn<HistoryItem, String> timeCol;
+    @FXML
+    public TableColumn<HistoryItem, String> typeCol;
+    @FXML
+    public TableColumn<HistoryItem, String> commandCol;
+    public TableView historyTable;
     @FXML
     Pane sidebarPane;
 
@@ -21,10 +32,26 @@ public class HistoryController {
     private void initialize() {
         SidebarController.loadSidebar(sidebarPane);
 
+        timeCol.setCellValueFactory(
+                data -> new ReadOnlyStringWrapper(
+                        data.getValue().getTimestamp().format(datetimeformat))
+        );
+        typeCol.setCellValueFactory(
+                data -> new ReadOnlyStringWrapper(data.getValue().getType())
+        );
+        commandCol.setCellValueFactory(
+                data -> new ReadOnlyStringWrapper(data.getValue().getDetails())
+        );
+
+        try {
+            List<HistoryItem> history = JSONConverter.loadJSONtoHistory(new File("action_history.json"));
+            historyTable.setItems(FXCollections.observableArrayList(history));
+        } catch (IOException exc) {
+            System.out.println(exc.getMessage());
+        }
+
     }
 
-    public void loadHistory() {
 
-    }
 
 }
