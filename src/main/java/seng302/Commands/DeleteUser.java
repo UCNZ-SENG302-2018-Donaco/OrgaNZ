@@ -20,7 +20,7 @@ public class DeleteUser implements Runnable {
     private ActionInvoker invoker;
 
     public DeleteUser() {
-        manager = State.getManager();
+        manager = State.getDonorManager();
         invoker = State.getInvoker();
     }
 

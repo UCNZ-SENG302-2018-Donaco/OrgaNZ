@@ -31,7 +31,7 @@ public class CreateUser implements Runnable {
     private ActionInvoker invoker;
 
     public CreateUser() {
-        manager = State.getManager();
+        manager = State.getDonorManager();
         invoker = State.getInvoker();
     }
 

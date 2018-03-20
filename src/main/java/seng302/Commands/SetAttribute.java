@@ -31,7 +31,7 @@ public class SetAttribute implements Runnable {
     private ActionInvoker invoker;
 
     public SetAttribute() {
-        manager = State.getManager();
+        manager = State.getDonorManager();
         invoker = State.getInvoker();
     }
 

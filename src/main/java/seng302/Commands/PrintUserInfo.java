@@ -23,7 +23,7 @@ public class PrintUserInfo implements Runnable {
     private DonorManager manager;
 
     public PrintUserInfo() {
-        manager = State.getManager();
+        manager = State.getDonorManager();
     }
 
     PrintUserInfo(DonorManager manager) {

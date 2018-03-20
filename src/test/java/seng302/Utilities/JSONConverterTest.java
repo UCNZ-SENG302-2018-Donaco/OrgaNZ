@@ -43,7 +43,7 @@ public class JSONConverterTest {
         ArrayList<Donor> donors = new ArrayList<>();
         donors.add(donor);
 		State.init();
-        DonorManager manager = State.getManager();
+        DonorManager manager = State.getDonorManager();
         manager.setDonors(donors);
 
         JSONConverter.saveToFile(file);

@@ -23,7 +23,7 @@ public class Load implements Runnable {
     private DonorManager manager;
 
     public Load() {
-        manager = State.getManager();
+        manager = State.getDonorManager();
     }
 
     public Load(DonorManager manager) {

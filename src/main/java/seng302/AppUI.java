@@ -30,9 +30,9 @@ public class AppUI extends Application {
 
         // TODO DELETE TEST DATA
 		LocalDate d = LocalDate.of(1997,8,22);
-		int uid = State.getManager().getUid();
+		int uid = State.getDonorManager().getUid();
 		Donor deleteme = new Donor("James", "v", "Toohey", d, uid);
-		State.getManager().addDonor(deleteme);
+		State.getDonorManager().addDonor(deleteme);
 		// TODO DELETE TEST DATA
 	}
 

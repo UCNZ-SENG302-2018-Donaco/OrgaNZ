@@ -79,7 +79,7 @@ public class ViewDonorController {
 			return;
 		}
 
-		viewedDonor = State.getManager().getDonorByID(id_value);
+		viewedDonor = State.getDonorManager().getDonorByID(id_value);
 		if (viewedDonor == null) {
 			noDonorLabel.setVisible(true);
             setFieldsDisabled(true);

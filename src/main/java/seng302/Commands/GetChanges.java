@@ -23,7 +23,7 @@ public class GetChanges implements Runnable {
     private DonorManager manager;
 
     public GetChanges() {
-        manager = State.getManager();
+        manager = State.getDonorManager();
     }
 
     GetChanges(DonorManager manager) {

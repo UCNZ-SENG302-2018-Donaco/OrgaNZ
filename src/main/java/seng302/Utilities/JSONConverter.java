@@ -38,7 +38,7 @@ public final class JSONConverter {
 	 */
 	public static void saveToFile(File file) throws IOException {
 		Writer writer = new FileWriter(file);
-		DonorManager donorManager = State.getManager();
+		DonorManager donorManager = State.getDonorManager();
 		System.out.println(donorManager.getDonors());
 		gson.toJson(donorManager.getDonors(), writer);
 		writer.close();
@@ -55,7 +55,7 @@ public final class JSONConverter {
 		Type collectionType = new TypeToken<ArrayList<Donor>>() {}.getType();
 
 		donors = gson.fromJson(reader, collectionType);
-		DonorManager donorManager = State.getManager();
+		DonorManager donorManager = State.getDonorManager();
         System.out.println(donorManager.toString());
 		donorManager.setDonors(donors);
 
