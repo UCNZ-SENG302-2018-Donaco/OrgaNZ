@@ -19,4 +19,8 @@ public class HistoryController {
 
     }
 
+    public void loadHistory() {
+
+    }
+
 }
