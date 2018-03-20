@@ -15,27 +15,28 @@ import seng302.Donor;
 import seng302.Utilities.*;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class ViewDonorController {
+    private final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy\nh:mm:ss a");
+
     @FXML
-    private Pane sidebarPane;
+    private Pane sidebarPane, idPane, inputsPane;
     @FXML
-	private Pane idPane;
-    @FXML
-	private Pane inputsPane;
+	private Label creationDate, lastModified, noDonorLabel, fnameLabel, lnameLabel, dobLabel,
+            dodLabel, heightLabel, weightLabel, ageDisplayLabel, ageLabel, BMILabel;
 	@FXML
-	private Label creationDate, lastModified, noDonorLabel, fnameLabel, mnameLabel, lnameLabel, dobLabel, dodLabel,
-	heightLabel, weightLabel, btypeLabel, ageDisplayLabel, ageLabel, BMILabel, regionLabel;
-	@FXML
-	private TextField id, fname, lname, mname, height, weight, btype, address, region;
+	private TextField id, fname, lname, mname, height, weight, address;
 	@FXML
 	private DatePicker dob, dod;
 	@FXML
     private ChoiceBox<Gender> gender;
+	@FXML
+    private ChoiceBox<BloodType> btype;
+	@FXML
+    private ChoiceBox<Region> region;
 
 	private Donor viewedDonor;
-	private BloodType bloodType;
-	private Region eregion;
 
 
 	@FXML
@@ -43,6 +44,8 @@ public class ViewDonorController {
         SidebarController.loadSidebar(sidebarPane);
 
 	    gender.setItems(FXCollections.observableArrayList(Gender.values()));
+        btype.setItems(FXCollections.observableArrayList(BloodType.values()));
+        region.setItems(FXCollections.observableArrayList(Region.values()));
 		setFieldsDisabled(true);
 
 		String currentUserType = (String) State.getPageParam("currentUserType");
@@ -95,12 +98,16 @@ public class ViewDonorController {
 			gender.setValue(viewedDonor.getGender());
 			height.setText(String.valueOf(viewedDonor.getHeight()));
 			weight.setText(String.valueOf(viewedDonor.getWeight()));
-			if(viewedDonor.getBloodType() != null) {btype.setText(viewedDonor.getBloodType().toString());}
+			btype.setValue(viewedDonor.getBloodType());
+			region.setValue(viewedDonor.getRegion());
 			address.setText(viewedDonor.getCurrentAddress());
-			if(viewedDonor.getRegion() != null) {region.setText(viewedDonor.getRegion().toString());}
 
-			creationDate.setText(viewedDonor.getCreationdate().toString());
-			lastModified.setText(viewedDonor.getModified_on().toString());
+			creationDate.setText(viewedDonor.getCreationdate().format(dateTimeFormat));
+			if (viewedDonor.getModified_on() == null) {
+			    lastModified.setText("User has not been modified yet.");
+            } else {
+                lastModified.setText(viewedDonor.getModified_on().format(dateTimeFormat));
+            }
 
 			displayBMI();
 			displayAge();
@@ -198,26 +205,6 @@ public class ViewDonorController {
 			weightLabel.setTextFill(Color.RED);
 			update = false;
 		}
-        if(!btype.getText().equals("")) {
-            try {
-                bloodType = BloodType.fromString(btype.getText());
-                btypeLabel.setTextFill(Color.BLACK);
-
-            } catch(IllegalArgumentException ex){
-                btypeLabel.setTextFill(Color.RED);
-                update = false;
-            }
-        }
-        if(!region.getText().equals("")) {
-            try {
-                eregion = Region.fromString(region.getText());
-                regionLabel.setTextFill(Color.BLACK);
-
-            } catch(IllegalArgumentException ex){
-                regionLabel.setTextFill(Color.RED);
-                update = false;
-            }
-        }
 		return update;
 	}
 
@@ -236,9 +223,9 @@ public class ViewDonorController {
 			action.addChange("setGender", viewedDonor.getGender(), gender.getValue());
 			action.addChange("setHeight", viewedDonor.getHeight(), Double.parseDouble(height.getText()));
 			action.addChange("setWeight", viewedDonor.getWeight(), Double.parseDouble(weight.getText()));
-			action.addChange("setBloodType", viewedDonor.getBloodType(), bloodType);
+			action.addChange("setBloodType", viewedDonor.getBloodType(), btype.getValue());
+            action.addChange("setRegion", viewedDonor.getRegion(), region.getValue());
 			action.addChange("setCurrentAddress", viewedDonor.getCurrentAddress(), address.getText());
-			action.addChange("setRegion", viewedDonor.getRegion(), eregion);
 
 		    State.getInvoker().execute(action);
 

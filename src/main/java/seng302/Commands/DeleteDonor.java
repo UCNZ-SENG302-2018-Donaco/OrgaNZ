@@ -14,17 +14,17 @@ import seng302.Utilities.JSONConverter;
 import java.util.Scanner;
 
 @Command(name = "deleteuser", description = "Deletes a user.")
-public class DeleteUser implements Runnable {
+public class DeleteDonor implements Runnable {
 
     private DonorManager manager;
     private ActionInvoker invoker;
 
-    public DeleteUser() {
+    public DeleteDonor() {
         manager = State.getDonorManager();
         invoker = State.getInvoker();
     }
 
-    public DeleteUser(DonorManager manager, ActionInvoker invoker) {
+    public DeleteDonor(DonorManager manager, ActionInvoker invoker) {
         this.manager = manager;
         this.invoker = invoker;
     }

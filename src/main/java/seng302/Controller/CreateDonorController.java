@@ -16,7 +16,7 @@ import seng302.DonorManager;
 import seng302.Utilities.Page;
 import seng302.Utilities.PageNavigator;
 
-public class CreateUserController {
+public class CreateDonorController {
     @FXML
     private DatePicker dobFld;
     @FXML
@@ -35,13 +35,14 @@ public class CreateUserController {
      * Creates a user from the button being clicked.
      */
     @FXML
-    private void createUser() {
+    private void createDonor() {
 
-        //doesn't work just yet...
-        if (manager.collisionExists(firstNameFld.getText(), middleNamefld.getText(), dobFld.getValue())) {
+        //Duplicate user warning alert
+        if (manager.collisionExists(firstNameFld.getText() , lastNamefld.getText(), dobFld.getValue())) {
+            System.out.println("Duplicate");
             ButtonType option = PageNavigator.showAlert(AlertType.CONFIRMATION,
-                    "Duplicate User Warning",
-                    "This user is a duplicate of one that already exists. Would you still like to create it?")
+                    "Duplicate Donor Warning",
+                    "This donor is a duplicate of one that already exists. Would you still like to create it?")
                     .get();
             if (option != ButtonType.OK) {
                 // ... user chose CANCEL or closed the dialog
@@ -65,6 +66,11 @@ public class CreateUserController {
     }
 
 
+    /**
+     * Goes back to the landing page when button is clicked
+     *
+     * @param event button clicked and goes back.
+     */
     @FXML
     private void goBack(ActionEvent event) {
         PageNavigator.loadPage(Page.LANDING.getPath());

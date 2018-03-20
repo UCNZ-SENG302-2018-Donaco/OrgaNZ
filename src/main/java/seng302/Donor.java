@@ -53,9 +53,7 @@ public class Donor {
     private int uid;
 
     public Donor() {
-
         created_on = LocalDateTime.now();
-        modified_on = LocalDateTime.now();
     }
 
     /**
@@ -68,7 +66,6 @@ public class Donor {
      */
     public Donor(String firstName, String middleName, String lastName, LocalDate dateOfBirth, int uid) {
         created_on = LocalDateTime.now();
-        modified_on = LocalDateTime.now();
 
         this.uid = uid;
 
@@ -91,6 +88,7 @@ public class Donor {
     private void addUpdate(String function) {
         LocalDateTime timestamp = LocalDateTime.now();
         updateLog.add(String.format("%s; updated %s", timestamp, function));
+        modified_on = LocalDateTime.now();
     }
 
     /**

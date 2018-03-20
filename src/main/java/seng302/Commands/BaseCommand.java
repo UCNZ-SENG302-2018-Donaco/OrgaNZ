@@ -12,14 +12,14 @@ import picocli.CommandLine.Command;
 
 @Command(name = "DonorCLI", description = "DonorCLI is a command based management tool for the team-21 donor registration system.",
         subcommands = {
-                CreateUser.class,
+                CreateDonor.class,
                 SetAttribute.class,
                 SetOrganStatus.class,
-                DeleteUser.class,
+                DeleteDonor.class,
                 PrintAllInfo.class,
                 PrintAllOrgan.class,
-                PrintUserInfo.class,
-                PrintUserOrgan.class,
+                PrintDonorInfo.class,
+                PrintDonorOrgan.class,
                 GetChanges.class,
                 Save.class,
                 Load.class,

@@ -10,23 +10,23 @@ import seng302.DonorManager;
 import seng302.Utilities.JSONConverter;
 
 /**
- * Command line to print the donation information of a user.
+ * Command line to print all of the information of a single user.
  *
  *@author Dylan Carlyle, Jack Steel
  *@version sprint 1.
- *date 05/03/2018
+ *date 06/03/2018
  */
 
-@Command(name = "printuserorgan", description = "Print a single user with their organ information.", sortOptions = false)
-public class PrintUserOrgan implements Runnable {
+@Command(name = "printuserinfo", description = "Print a single user with their personal information.", sortOptions = false)
+public class PrintDonorInfo implements Runnable {
 
     private DonorManager manager;
 
-    public PrintUserOrgan() {
+    public PrintDonorInfo() {
         manager = State.getDonorManager();
     }
 
-    public PrintUserOrgan(DonorManager manager) {
+    PrintDonorInfo(DonorManager manager) {
         this.manager = manager;
     }
 
@@ -40,8 +40,9 @@ public class PrintUserOrgan implements Runnable {
             System.out.println("No donor exists with that user ID");
             return;
         }
-        System.out.println(donor.getDonorOrganStatusString());
-        HistoryItem printUserOrgan = new HistoryItem("PRINT USER ORGAN", "The organ information was printed for donor " + uid);
-        JSONConverter.updateHistory(printUserOrgan, "action_history.json");
+        System.out.println(donor.getDonorInfoString());
+        HistoryItem printUserInfo = new HistoryItem("PRINT DONOR INFO", "Information was printed about donor " + uid);
+        JSONConverter.updateHistory(printUserInfo, "action_history.json");
     }
 }
+

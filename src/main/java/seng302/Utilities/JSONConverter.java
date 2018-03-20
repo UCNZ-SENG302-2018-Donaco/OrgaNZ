@@ -18,6 +18,7 @@ import java.io.Writer;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 /**
  * Uses GSON to convert Java objects into JSON files and from JSON files
@@ -108,4 +109,13 @@ public final class JSONConverter {
             System.out.println(exc);
         }
     }
+
+    public static List<HistoryItem> loadJSONtoHistory(File filename) throws IOException {
+        Reader reader = new FileReader(filename);
+        ArrayList<HistoryItem> historyItemList;
+        Type historyCollection = new TypeToken<ArrayList<HistoryItem>>() {}.getType();
+        historyItemList = gson.fromJson(reader, historyCollection);
+        return historyItemList;
+    }
+
 }
