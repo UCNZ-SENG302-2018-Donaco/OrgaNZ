@@ -8,7 +8,9 @@ public enum Page {
 	SIDEBAR("/fxml/sidebar.fxml"),
 	VIEW_DONOR("/fxml/view_donor.fxml"),
 	REGISTER_ORGANS("/fxml/register_organs.fxml"),
-	HISTORY("/fxml/history.fxml");
+	HISTORY("/fxml/history.fxml"),
+	CLINICIAN_LOGIN("/fxml/clinician_login.fxml"),
+	CREATE_CLINICIAN("/fxml/create_clinician.fxml");
 
 	private String path;
 
