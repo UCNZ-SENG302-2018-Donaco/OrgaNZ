@@ -8,8 +8,8 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
-import seng302.State;
 import javafx.scene.paint.Color;
+import seng302.State;
 import seng302.Actions.ModifyDonorAction;
 import seng302.Donor;
 import seng302.Utilities.BloodType;
@@ -50,7 +50,6 @@ public class ViewDonorController {
 		String currentUserType = (String) State.getPageParam("currentUserType");
 		if (currentUserType == null) {
 			Integer viewUserId = (Integer) State.getPageParam("viewUserId");
-			State.removePageParam("viewUserId");
 			if (viewUserId != null) {
 				id.setText(viewUserId.toString());
 				searchDonor();
@@ -86,6 +85,7 @@ public class ViewDonorController {
 			noDonorLabel.setVisible(true);
             setFieldsDisabled(true);
 		} else {
+            State.setPageParam("viewUserId", id_value);
 			noDonorLabel.setVisible(false);
             setFieldsDisabled(false);
 

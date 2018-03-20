@@ -43,11 +43,13 @@ public class SidebarController {
      */
     @FXML
     private void goToViewDonor(ActionEvent event) {
+        State.removePageParam("viewUserId");
         PageNavigator.loadPage(Page.VIEW_DONOR.getPath());
     }
 
     @FXML
     private void goToRegisterOrgans(ActionEvent event) {
+        State.removePageParam("viewUserId");
         PageNavigator.loadPage(Page.REGISTER_ORGANS.getPath());
     }
 
@@ -70,11 +72,13 @@ public class SidebarController {
             );
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json"));
             File file = fileChooser.showSaveDialog(AppUI.getWindow());
-
-            JSONConverter.saveToFile(file);
-            // TODO Make alert with number of donors saved
-            HistoryItem save = new HistoryItem("SAVE", "The systems current state was saved.");
-            JSONConverter.updateHistory(save, "action_history.json");
+            if (file != null) {
+                JSONConverter.saveToFile(file);
+                // TODO Make alert with number of donors saved
+                HistoryItem save = new HistoryItem("SAVE", "The systems current state was saved.");
+                JSONConverter.updateHistory(save, "action_history.json");
+                PageNavigator.showAlert(Alert.AlertType.INFORMATION, "Save Successful", "Successfully saved Donors to " + file.getName());
+            }
         } catch (URISyntaxException | IOException exc) {
             // TODO Make alert when save fails
             System.err.println(exc.getMessage());
@@ -98,11 +102,13 @@ public class SidebarController {
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json"));
             File file = fileChooser.showOpenDialog(AppUI.getWindow());
 
-            JSONConverter.loadFromFile(file);
-            // TODO Make alert with number of donors loaded
-            HistoryItem load = new HistoryItem("LOAD", "The systems state was loaded from " + file.getName());
-            JSONConverter.updateHistory(load, "action_history.json");
-            PageNavigator.showAlert(Alert.AlertType.INFORMATION, "load successful", "Successfully uploaded " + file.getName());
+            if (file != null) {
+                JSONConverter.loadFromFile(file);
+                // TODO Make alert with number of donors loaded
+                HistoryItem load = new HistoryItem("LOAD", "The systems state was loaded from " + file.getName());
+                JSONConverter.updateHistory(load, "action_history.json");
+                PageNavigator.showAlert(Alert.AlertType.INFORMATION, "Load Successful", "Successfully loaded Donors from " + file.getName());
+            }
         } catch (URISyntaxException | IOException exc) {
             // TODO Make alert when load fails
             PageNavigator.showAlert(Alert.AlertType.WARNING, "Load Failed",
@@ -118,11 +124,25 @@ public class SidebarController {
 
     @FXML
     private void undo(ActionEvent event) {
-        invoker.undo();
+        if (invoker.canUndo()) {
+            invoker.undo();
+            PageNavigator.refreshPage();
+        } else {
+            PageNavigator.showAlert(Alert.AlertType.ERROR,
+                    "No Undoable Actions",
+                    "There are no actions left to undo.");
+        }
     }
 
     @FXML
     private void redo(ActionEvent event) {
-        invoker.redo();
+        if (invoker.canRedo()) {
+            invoker.redo();
+            PageNavigator.refreshPage();
+        } else {
+            PageNavigator.showAlert(Alert.AlertType.ERROR,
+                    "No Redoable Actions",
+                    "There are no actions left to redo.");
+        }
     }
 }
