@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.151" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.SearchDonorsController">
+   <children>
+      <TextField fx:id="searchBox" />
+      <TableView fx:id="tableView" prefHeight="398.0" prefWidth="600.0">
+        <columns>
+          <TableColumn fx:id="idCol" prefWidth="75.0" text="ID" />
+          <TableColumn fx:id="fnameCol" prefWidth="75.0" text="First" />
+            <TableColumn fx:id="mnameCol" prefWidth="75.0" text="Middle" />
+            <TableColumn fx:id="lnameCol" prefWidth="75.0" text="Last" />
+            <TableColumn fx:id="ageCol" prefWidth="75.0" text="Age" />
+            <TableColumn fx:id="genderCol" prefWidth="75.0" text="Gender" />
+            <TableColumn fx:id="regionCol" prefWidth="75.0" text="Region" />
+        </columns>
+      </TableView>
+   </children>
+</VBox>
