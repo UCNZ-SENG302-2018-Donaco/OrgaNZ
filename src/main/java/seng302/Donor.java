@@ -9,6 +9,7 @@ import static java.util.Optional.ofNullable;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.Period;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,11 +37,13 @@ public class Donor {
     private Gender gender;
     private BloodType bloodType;
 
-    private int height;
-    private int weight;
+    private double height;
+    private double weight;
+    private double BMI;
 
     private LocalDate dateOfBirth;
     private LocalDate dateOfDeath;
+    private int age;
 
     private Map<Organ, Boolean> organStatus;
 
@@ -206,20 +209,20 @@ public class Donor {
         this.gender = gender;
     }
 
-    public int getHeight() {
+    public double getHeight() {
         return height;
     }
 
-    public void setHeight(int height) {
+    public void setHeight(double height) {
         addUpdate("height");
         this.height = height;
     }
 
-    public int getWeight() {
+    public double getWeight() {
         return weight;
     }
 
-    public void setWeight(int weight) {
+    public void setWeight(double weight) {
         addUpdate("weight");
         this.weight = weight;
     }
@@ -254,6 +257,42 @@ public class Donor {
     public int getUid() {
         return uid;
     }
+
+    public LocalDateTime getCreationdate() {
+		return created_on;
+	}
+
+	public LocalDateTime getModified_on() {
+		return modified_on;
+	}
+
+	/**
+	 * Calculates the BMI of the Donor based off their height and weight - BMI = weight/height^2.
+	 * If either field is 0, the result returned is 0.
+	 * @return the users calculated BMI.
+	 */
+	public double getBMI() {
+		if (weight == 0 || height == 0) {
+			BMI = 0;
+		} else {
+			BMI = weight / (height * 0.01 * height * 0.01);
+		}
+		return BMI;
+	}
+
+	/**
+	 * Calculates the users age based on their date of birth and date of death. If the date of death is null the age
+	 * is calculated base of the LocalDate.now().
+	 * @return age of the Donor.
+	 */
+	public int getAge() {
+    	if (dateOfDeath == null) {
+			age = Period.between(dateOfBirth, LocalDate.now()).getYears();
+		} else {
+    		age = Period.between(dateOfBirth, dateOfDeath).getYears();
+		}
+		return age;
+	}
 
     /**
      * Donor objects are identified by their uid

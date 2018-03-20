@@ -2,13 +2,13 @@ package seng302.Commands;
 
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
-import seng302.Donor;
-import seng302.HistoryItem;
 import seng302.Actions.Action;
 import seng302.Actions.ActionInvoker;
 import seng302.Actions.CreateDonorAction;
-import seng302.App;
+import seng302.Donor;
 import seng302.DonorManager;
+import seng302.HistoryItem;
+import seng302.State;
 import seng302.Utilities.JSONConverter;
 import seng302.Utilities.LocalDateConverter;
 
@@ -31,8 +31,8 @@ public class CreateUser implements Runnable {
     private ActionInvoker invoker;
 
     public CreateUser() {
-        manager = App.getManager();
-        invoker = App.getInvoker();
+        manager = State.getManager();
+        invoker = State.getInvoker();
     }
 
     CreateUser(DonorManager manager, ActionInvoker invoker) {

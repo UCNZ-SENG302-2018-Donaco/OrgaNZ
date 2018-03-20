@@ -1,8 +1,12 @@
 package seng302.Utilities;
 
 import javafx.fxml.FXMLLoader;
-import java.io.IOException;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 import seng302.Controller.MainController;
+
+import java.io.IOException;
+import java.util.Optional;
 
 /**
  * Utility class for controlling navigation between pages.
@@ -32,4 +36,12 @@ public class PageNavigator {
 			e.printStackTrace();
 		}
 	}
+
+	public static Optional<ButtonType> showAlert(Alert.AlertType alertType, String title, String bodyText) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(title);
+        alert.setContentText(bodyText);
+        return alert.showAndWait();
+    }
 }
