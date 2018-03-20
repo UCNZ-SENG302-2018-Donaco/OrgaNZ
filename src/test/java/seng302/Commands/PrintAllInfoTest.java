@@ -70,7 +70,6 @@ public class PrintAllInfoTest {
         donors.add(donor);
         donors.add(donor2);
 
-
         when(spyDonorManager.getDonors()).thenReturn(donors);
         String[] inputs = {};
 

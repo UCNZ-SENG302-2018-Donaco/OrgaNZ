@@ -159,6 +159,11 @@ public class Donor {
                 height, weight, bloodType, currentAddress, region, created_on, modified_on);
     }
 
+    /**
+     * Get the full name of the donor concatenating their names
+     *
+     * @return The full name string
+     */
     public String getFullName() {
         String fullName = firstName + " ";
         if (middleName != null) {
