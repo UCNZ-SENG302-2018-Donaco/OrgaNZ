@@ -18,15 +18,15 @@ import seng302.Utilities.JSONConverter;
  */
 
 @Command(name = "printuserorgan", description = "Print a single user with their organ information.", sortOptions = false)
-public class PrintUserOrgan implements Runnable {
+public class PrintDonorOrgan implements Runnable {
 
     private DonorManager manager;
 
-    public PrintUserOrgan() {
+    public PrintDonorOrgan() {
         manager = State.getManager();
     }
 
-    public PrintUserOrgan(DonorManager manager) {
+    public PrintDonorOrgan(DonorManager manager) {
         this.manager = manager;
     }
 

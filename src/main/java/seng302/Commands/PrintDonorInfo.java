@@ -18,15 +18,15 @@ import seng302.Utilities.JSONConverter;
  */
 
 @Command(name = "printuserinfo", description = "Print a single user with their personal information.", sortOptions = false)
-public class PrintUserInfo implements Runnable {
+public class PrintDonorInfo implements Runnable {
 
     private DonorManager manager;
 
-    public PrintUserInfo() {
+    public PrintDonorInfo() {
         manager = State.getManager();
     }
 
-    PrintUserInfo(DonorManager manager) {
+    PrintDonorInfo(DonorManager manager) {
         this.manager = manager;
     }
 

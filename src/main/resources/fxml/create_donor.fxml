@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.CreateUserController">
+<VBox prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.CreateDonorController">
    <children>
       <Button mnemonicParsing="false" onAction="#goBack" prefHeight="30.0" prefWidth="120.0" style="-fx-base: rgba(173,216,230, 0.8);" text="Back">
          <VBox.margin>
@@ -74,7 +74,7 @@
                   <TextField fx:id="middleNamefld" prefHeight="35.0" promptText="(optional)" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   <TextField fx:id="lastNamefld" prefHeight="35.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                   <DatePicker fx:id="dobFld" maxWidth="1.7976931348623157E308" prefHeight="35.0" promptText="(enter in dd/mm/yyyy)" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                  <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#createUser" prefHeight="35.0" text="Create " GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                  <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#createDonor" prefHeight="35.0" text="Create " GridPane.columnIndex="1" GridPane.rowIndex="6" />
                </children>
             </GridPane>
          </center>
