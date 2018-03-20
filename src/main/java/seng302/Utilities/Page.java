@@ -8,7 +8,8 @@ public enum Page {
 	SIDEBAR("/fxml/sidebar.fxml"),
 	VIEW_DONOR("/fxml/view_donor.fxml"),
 	REGISTER_ORGANS("/fxml/register_organs.fxml"),
-	HISTORY("/fxml/history.fxml");
+	HISTORY("/fxml/history.fxml"),
+	SEARCH("/fxml/search_donors.fxml");
 
 	private String path;
 

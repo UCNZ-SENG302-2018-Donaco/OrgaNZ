@@ -29,6 +29,11 @@ public class LandingController {
 		PageNavigator.loadPage(Page.LOGIN.getPath());
 	}
 
+	@FXML
+	private void gotosearch(ActionEvent event) {
+		PageNavigator.loadPage(Page.SEARCH.getPath());
+	}
+
 	/**
 	 * Redirects the GUI to the View Donor Page
 	 * @param event when view button is clicked

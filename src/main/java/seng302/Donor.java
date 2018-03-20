@@ -293,6 +293,15 @@ public class Donor {
 		return age;
 	}
 
+	public boolean nameContains(String searchParam) {
+	    String lowerSearch = searchParam.toLowerCase();
+	    String fullName = firstName.toLowerCase() + " ";
+	    if (middleName != null && !middleName.equals(""))
+	        fullName += middleName.toLowerCase() + " ";
+	    fullName += lastName.toLowerCase();
+	    return fullName.contains(lowerSearch);
+    }
+
     /**
      * Donor objects are identified by their uid
      *

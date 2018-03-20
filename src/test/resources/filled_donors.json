@@ -8,22 +8,9 @@
       },
       "time": {
         "hour": 14,
-        "minute": 28,
-        "second": 12,
-        "nano": 864000000
-      }
-    },
-    "modified_on": {
-      "date": {
-        "year": 2018,
-        "month": 3,
-        "day": 20
-      },
-      "time": {
-        "hour": 14,
-        "minute": 28,
-        "second": 12,
-        "nano": 864000000
+        "minute": 41,
+        "second": 9,
+        "nano": 617000000
       }
     },
     "firstName": "First",
