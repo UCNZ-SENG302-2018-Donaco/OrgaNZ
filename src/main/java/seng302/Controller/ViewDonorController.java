@@ -12,10 +12,7 @@ import seng302.State;
 import javafx.scene.paint.Color;
 import seng302.Actions.ModifyDonorAction;
 import seng302.Donor;
-import seng302.Utilities.BloodType;
-import seng302.Utilities.Gender;
-import seng302.Utilities.Page;
-import seng302.Utilities.PageNavigator;
+import seng302.Utilities.*;
 
 import java.time.LocalDate;
 
@@ -28,7 +25,7 @@ public class ViewDonorController {
 	private Pane inputsPane;
 	@FXML
 	private Label creationDate, lastModified, noDonorLabel, fnameLabel, mnameLabel, lnameLabel, dobLabel, dodLabel,
-	heightLabel, weightLabel, btypeLabel, ageDisplayLabel, ageLabel, BMILabel;
+	heightLabel, weightLabel, btypeLabel, ageDisplayLabel, ageLabel, BMILabel, regionLabel;
 	@FXML
 	private TextField id, fname, lname, mname, height, weight, btype, address, region;
 	@FXML
@@ -38,6 +35,7 @@ public class ViewDonorController {
 
 	private Donor viewedDonor;
 	private BloodType bloodType;
+	private Region eregion;
 
 
 	@FXML
@@ -200,16 +198,26 @@ public class ViewDonorController {
 			weightLabel.setTextFill(Color.RED);
 			update = false;
 		}
-		if(!btype.getText().equals("")) {
-			try {
-				bloodType = BloodType.fromString(btype.getText());
-				btypeLabel.setTextFill(Color.BLACK);
+        if(!btype.getText().equals("")) {
+            try {
+                bloodType = BloodType.fromString(btype.getText());
+                btypeLabel.setTextFill(Color.BLACK);
 
-			} catch(IllegalArgumentException ex){
-				btypeLabel.setTextFill(Color.RED);
-				update = false;
-			}
-		}
+            } catch(IllegalArgumentException ex){
+                btypeLabel.setTextFill(Color.RED);
+                update = false;
+            }
+        }
+        if(!region.getText().equals("")) {
+            try {
+                eregion = Region.fromString(region.getText());
+                regionLabel.setTextFill(Color.BLACK);
+
+            } catch(IllegalArgumentException ex){
+                regionLabel.setTextFill(Color.RED);
+                update = false;
+            }
+        }
 		return update;
 	}
 
@@ -230,7 +238,7 @@ public class ViewDonorController {
 			action.addChange("setWeight", viewedDonor.getWeight(), Double.parseDouble(weight.getText()));
 			action.addChange("setBloodType", viewedDonor.getBloodType(), bloodType);
 			action.addChange("setCurrentAddress", viewedDonor.getCurrentAddress(), address.getText());
-			action.addChange("setRegion", viewedDonor.getRegion(), region.getText());
+			action.addChange("setRegion", viewedDonor.getRegion(), eregion);
 
 		    State.getInvoker().execute(action);
 
