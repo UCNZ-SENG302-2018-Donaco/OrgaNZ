@@ -19,6 +19,12 @@ public class LoginController {
     private ListView<Donor> donorList;
     private DonorManager donorManager;
 
+    /**
+     * Initializes the UI for this page.
+     * - Gets the donor manager from the current state.
+     * - Sets up the cell factory to show users with their id and name.
+     * - Adds all donors currently in the donor manager to the donor list.
+     */
     @FXML
     private void initialize() {
         donorManager = State.getManager();
@@ -34,7 +40,6 @@ public class LoginController {
                 }
             }
         });
-
         donorList.setItems(FXCollections.observableArrayList(donorManager.getDonors()));
     }
 

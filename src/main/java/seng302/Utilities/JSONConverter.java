@@ -32,6 +32,12 @@ public final class JSONConverter {
 
     private JSONConverter() {} // To ensure that this UTILITY class cannot be instantiated.
 
+    /**
+     * If the given file does not exist, creates an empty JSON array in that file.
+     * If the given file does exist, does nothing.
+     * @param file The file to check/create.
+     * @throws IOException If an error occurs while creating the file.
+     */
     public static void createEmptyJSONFileIfNotExists(File file) throws IOException {
         try {
             if (file.createNewFile()) {
