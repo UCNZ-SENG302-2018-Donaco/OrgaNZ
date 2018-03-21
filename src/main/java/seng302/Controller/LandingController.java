@@ -11,7 +11,7 @@ import seng302.Utilities.PageNavigator;
 public class LandingController {
 
 	/**
-	 * Redirects the GUI to create user page
+	 * Redirects the GUI to create donor page
 	 * @param event when create user button is clicked
 	 */
 	@FXML
@@ -20,7 +20,7 @@ public class LandingController {
 	}
 
 	/**
-	 * Redirects the GUI to login page
+	 * Redirects the GUI to donor login page
 	 * @param event when login button is clicked
 	 */
 	@FXML
@@ -28,11 +28,19 @@ public class LandingController {
 		PageNavigator.loadPage(Page.LOGIN.getPath());
 	}
 
+    /**
+     * Redirects the GUI to clinician login page
+     * @param event when login button is clicked
+     */
 	@FXML
 	private void goToClinicianLogin(ActionEvent event) {
 		PageNavigator.loadPage(Page.CLINICIAN_LOGIN.getPath());
 	}
 
+    /**
+     * Redirects the GUI to create clinician page
+     * @param event when login button is clicked
+     */
 	@FXML
 	private void goToCreateClinician(ActionEvent event) {
 		PageNavigator.loadPage(Page.CREATE_CLINICIAN.getPath());
