@@ -7,14 +7,19 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import seng302.Actions.ActionInvoker;
 import seng302.Actions.ModifyDonorOrgansAction;
+import seng302.HistoryItem;
 import seng302.State;
 import seng302.Donor;
 import seng302.DonorManager;
+import seng302.Utilities.JSONConverter;
 import seng302.Utilities.Organ;
 
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Controller for the register organs page.
+ */
 public class RegisterOrgansController {
     @FXML
     private Pane sidebarPane;
@@ -26,10 +31,20 @@ public class RegisterOrgansController {
 	private final Map<Organ, CheckBox> organCheckBoxes = new HashMap<>();
 	@FXML
 	private TextField fieldUserID;
+
 	private DonorManager manager;
 	private ActionInvoker invoker;
 	private Donor donor;
 
+    /**
+     * Initializes the UI for this page.
+     * - Loads the sidebar.
+     * - Adds all checkboxes with their respective Organ to the organCheckBoxes map.
+     * - Disables all checkboxes.
+     * - Gets the DonorManager and ActionInvoker from the current state.
+     * - If a donor is logged in, populates with their info and removes ability to view a different donor.
+     * - If the viewUserId is set, populates with their info.
+     */
 	@FXML
 	private void initialize() {
 		SidebarController.loadSidebar(sidebarPane);
@@ -51,12 +66,9 @@ public class RegisterOrgansController {
         manager = State.getDonorManager();
         invoker = State.getInvoker();
 
-
-
         String currentUserType = (String) State.getPageParam("currentUserType");
         if (currentUserType == null) {
             Integer viewUserId = (Integer) State.getPageParam("viewUserId");
-            State.removePageParam("viewUserId");
             if (viewUserId != null) {
                 fieldUserID.setText(viewUserId.toString());
                 updateUserID(null);
@@ -72,6 +84,10 @@ public class RegisterOrgansController {
         }
 	}
 
+    /**
+     * Updates the current donor to the one specified in the userID field, and populates with their info.
+     * @param event When ENTER is pressed with focus on the userID field.
+     */
 	@FXML
 	private void updateUserID(ActionEvent event) {
 		try {
@@ -81,15 +97,22 @@ public class RegisterOrgansController {
 		}
 
 		if (donor != null) {
+            State.setPageParam("viewUserId", donor.getUid());
 			setCheckBoxesEnabled();
 			for (Map.Entry<Organ, CheckBox> entry : organCheckBoxes.entrySet()) {
 				entry.getValue().setSelected(donor.getOrganStatus().get(entry.getKey()));
 			}
+			HistoryItem save = new HistoryItem("UPDATE ID", "The Donor's ID was updated to " + donor.getUid());
+			JSONConverter.updateHistory(save, "action_history.json");
 		} else {
 			setCheckboxesDisabled();
 		}
 	}
 
+    /**
+     * Checks which organs check boxes have been changed, and applies those changes with a ModifyDonorOrgansAction.
+     * @param event When any organ checkbox changes state.
+     */
 	@FXML
 	private void modifyOrgans(ActionEvent event) {
 	    ModifyDonorOrgansAction action = new ModifyDonorOrgansAction(donor);
@@ -106,9 +129,14 @@ public class RegisterOrgansController {
 		}
 		if (hasChanged) {
             invoker.execute(action);
+			HistoryItem save = new HistoryItem("UPDATE ORGANS", "The Donor's organs were updated: " + donor.getDonorOrganStatusString());
+			JSONConverter.updateHistory(save, "action_history.json");
         }
 	}
 
+    /**
+     * Sets the state of all checkboxes to not selected, then disables them.
+     */
 	private void setCheckboxesDisabled() {
 		for (CheckBox box : organCheckBoxes.values()) {
 			box.setSelected(false);
@@ -116,6 +144,9 @@ public class RegisterOrgansController {
 		}
 	}
 
+    /**
+     * Enables all checkboxes.
+     */
 	private void setCheckBoxesEnabled() {
 		for (CheckBox box : organCheckBoxes.values()) {
 			box.setDisable(false);

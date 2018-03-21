@@ -4,26 +4,13 @@
       "date": {
         "year": 2018,
         "month": 3,
-        "day": 20
+        "day": 22
       },
       "time": {
-        "hour": 14,
-        "minute": 28,
-        "second": 12,
-        "nano": 864000000
-      }
-    },
-    "modified_on": {
-      "date": {
-        "year": 2018,
-        "month": 3,
-        "day": 20
-      },
-      "time": {
-        "hour": 14,
-        "minute": 28,
-        "second": 12,
-        "nano": 864000000
+        "hour": 0,
+        "minute": 52,
+        "second": 32,
+        "nano": 525000000
       }
     },
     "firstName": "First",
@@ -39,18 +26,18 @@
     },
     "age": 0,
     "organStatus": {
-      "SKIN": false,
+      "MIDDLE_EAR": false,
+      "BONE_MARROW": false,
+      "HEART": false,
+      "BONE": false,
+      "KIDNEY": false,
+      "LIVER": false,
+      "INTESTINE": false,
       "CONNECTIVE_TISSUE": false,
       "LUNG": false,
-      "BONE_MARROW": false,
       "PANCREAS": false,
-      "KIDNEY": false,
       "CORNEA": false,
-      "INTESTINE": false,
-      "LIVER": false,
-      "HEART": false,
-      "MIDDLE_EAR": false,
-      "BONE": false
+      "SKIN": false
     },
     "updateLog": [],
     "uid": 1

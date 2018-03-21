@@ -6,9 +6,11 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import seng302.Controller.MainController;
+import seng302.Utilities.JSONConverter;
 import seng302.Utilities.Page;
 import seng302.Utilities.PageNavigator;
 
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 
@@ -27,6 +29,11 @@ public class AppUI extends Application {
 		stage.show();
 
 		State.init();
+
+		// Loads the initial donor data from the save file, or creates it if it does not yet exist. //
+		File saveFile = new File("savefile.json");
+        JSONConverter.createEmptyJSONFileIfNotExists(saveFile);
+        JSONConverter.loadFromFile(saveFile);
 
         // TODO DELETE TEST DATA
 		LocalDate d = LocalDate.of(1997,8,22);
