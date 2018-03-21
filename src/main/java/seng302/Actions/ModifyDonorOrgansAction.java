@@ -24,7 +24,7 @@ public class ModifyDonorOrgansAction implements Action {
     }
 
     /**
-     * Add a organ change to the donor
+     * Add a organ change to the donor. Should check the value is not already set before adding the change
      * @param organ The organ to be updated
      * @param newValue The new value
      */
