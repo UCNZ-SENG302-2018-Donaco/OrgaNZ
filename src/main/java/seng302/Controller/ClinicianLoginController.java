@@ -2,8 +2,10 @@ package seng302.Controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.paint.Color;
 import seng302.Clinician;
 import seng302.State;
 import seng302.Utilities.Page;
@@ -13,9 +15,11 @@ import sun.security.util.Password;
 public class ClinicianLoginController {
 
 	@FXML
-	private TextField staffID;
+	private TextField staffId;
 	@FXML
 	private PasswordField password;
+	@FXML
+	private int id;
 
 
 	@FXML
@@ -25,24 +29,62 @@ public class ClinicianLoginController {
 
 	private boolean validStaffIDinput() {
 		try {
-			Integer.parseInt(staffID.getText());
+			id = Integer.parseInt(staffId.getText()); // Staff ID
+			if (id < -1) {
+				return false;
+			} else {
+				return true;
+			}
+		} catch (NumberFormatException ex) {
+			return false;
 		}
+	}
+
+	private void staffIdDoesntExistAlert() {
+		PageNavigator.showAlert(Alert.AlertType.ERROR, "Staff ID Doesn't exist",
+				"This staff ID does not exist in the system.");
+	}
+
+	private void staffIdPasswordMismatchAlert() {
+		PageNavigator.showAlert(Alert.AlertType.ERROR, "Staff ID & Password do not match",
+				"This staff ID does not exist in the system.");
+	}
+
+	private void invalidStaffIdAlert() {
+		PageNavigator.showAlert(Alert.AlertType.ERROR, "Invalid Staff ID",
+				"Staff ID must be an integer.");
+	}
+
+	private void loginSuccessAlert() {
+		PageNavigator.showAlert(Alert.AlertType.CONFIRMATION, "Success",
+				"Successfully logged in.");
 	}
 
 	@FXML
 	private void signIn(ActionEvent event) {
+
+
 		if (validStaffIDinput()) {
+			if (State.getClinicianManager().getClinicianByStaffId(id) == null) {
+				staffIdDoesntExistAlert();
+			} else {
+				Clinician clinician = State.getClinicianManager().getClinicianByStaffId(id);
 
+				if (clinician.getPassword().equals(password.getText())) {
+
+					State.setPageParam("currentUserType", "clinician");
+					State.setPageParam("currentClinician", clinician);
+					//PageNavigator.loadPage(Page.VIEW_DONOR.getPath());
+
+					PageNavigator.loadPage(Page.VIEW_CLINICIAN.getPath());
+					loginSuccessAlert();
+				} else {
+					staffIdPasswordMismatchAlert();
+				}
+			}
+		} else {
+			invalidStaffIdAlert();
 		}
+	}
 
-		Clinician clinician = State.getClinicianManager().getClinicianByStaffId(staffID.getText());
-		if (clinician != null && clinician.getPassword().equals(password.getText())) {
-
-		}
-
-		//State.setPageParam("currentUserId", Integer.parseInt(idTextField.getText()));
-		State.setPageParam("currentUserType", "donor");
-
-
-		PageNavigator.loadPage(Page.VIEW_DONOR.getPath());}
 }

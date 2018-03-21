@@ -44,6 +44,7 @@ public class ViewClinicianController {
     }
 
     private void loadClinicianData() {
+        System.out.println(currentClinician.toString());
         fname.setText(currentClinician.getFirstName());
         mname.setText(currentClinician.getMiddleName());
         lname.setText(currentClinician.getLastName());
