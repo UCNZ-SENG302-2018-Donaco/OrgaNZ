@@ -40,10 +40,9 @@ public class CreateDonorController {
     @FXML
     private void createDonor() {
 
-        if (firstNameFld.getText() == "" | lastNamefld.getText() == "" | dobFld.getValue() == null) {
-            PageNavigator.showAlert(AlertType.ERROR, "Text field missing",
-                    "Please make sure that all the required fields are filled in properly")
-                    .get();
+        if (firstNameFld.getText().equals("") || lastNamefld.getText().equals("") || dobFld.getValue() == null) {
+            PageNavigator.showAlert(AlertType.ERROR, "Required Field Empty",
+                    "Please make sure that all the required fields are given.");
         }
         else {
             //Duplicate user warning alert
