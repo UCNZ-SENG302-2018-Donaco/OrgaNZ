@@ -16,11 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * The main donor class.
- *
- * @author Dylan Carlyle, Jack Steel
- * @version sprint 1.
- * date 05/03/2018
+ * The main Donor class.
  */
 
 public class Donor {

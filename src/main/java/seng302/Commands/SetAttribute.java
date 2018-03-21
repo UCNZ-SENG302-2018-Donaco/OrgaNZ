@@ -108,7 +108,6 @@ public class SetAttribute implements Runnable {
             } catch (NoSuchMethodException | NoSuchFieldException e) {
                 e.printStackTrace();
             }
-
         }
         invoker.execute(action);
         HistoryItem setAttribute = new HistoryItem("ATTRIBUTE UPDATE", "DETAILS were updated for user " + uid);

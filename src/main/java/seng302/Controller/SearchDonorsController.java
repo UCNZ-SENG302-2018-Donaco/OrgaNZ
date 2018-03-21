@@ -49,6 +49,34 @@ public class SearchDonorsController {
     private void initialize() {
         ArrayList<Donor> allDonors = State.getDonorManager().getDonors();
 
+        setupTable();
+
+        tableView.setOnSort((o) -> createPage(pagination.getCurrentPageIndex()));
+        searchBox.textProperty().addListener(((o) -> refresh()));
+
+        //Create a filtered list, that defaults to allow all using lambda function
+        filteredDonors = new FilteredList<>(FXCollections.observableArrayList(allDonors), donor -> true);
+        //Create a sorted list that links to the filtered list
+        sortedDonors = new SortedList<>(filteredDonors);
+        //Link the sorted list sort to the tableView sort
+        sortedDonors.comparatorProperty().bind(tableView.comparatorProperty());
+
+        //Set initial pagination
+        pagination.setPageCount(sortedDonors.size() / rowsPerPage + 1);
+        //On pagination update call createPage
+        pagination.setPageFactory(this::createPage);
+
+        //Initialize the observable list to all donors
+        observableDonorList.setAll(allDonors);
+        //Bind the tableView to the observable list
+        tableView.setItems(observableDonorList);
+    }
+
+    /**
+     * Initialize the table columns.
+     * The donor must have getters for these specific names specified in the PV Factories.
+     */
+    private void setupTable() {
         idCol.setCellValueFactory(new PropertyValueFactory<>("uid"));
         nameCol.setCellValueFactory(new PropertyValueFactory<>("fullName"));
         ageCol.setCellValueFactory(new PropertyValueFactory<>("age"));
@@ -56,38 +84,31 @@ public class SearchDonorsController {
         regionCol.setCellValueFactory(new PropertyValueFactory<>("region"));
 
         tableView.getColumns().setAll(idCol, nameCol, ageCol, genderCol, regionCol);
-
-
-        tableView.setOnSort((o) -> createPage(pagination.getCurrentPageIndex()));
-        searchBox.textProperty().addListener(((o) -> refresh()));
-
-        filteredDonors = new FilteredList<>(FXCollections.observableArrayList(allDonors), s -> true);
-        sortedDonors = new SortedList<>(filteredDonors);
-        sortedDonors.comparatorProperty().bind(tableView.comparatorProperty());
-
-        pagination.setPageCount(sortedDonors.size() / rowsPerPage + 1);
-        pagination.setCurrentPageIndex(0);
-        pagination.setPageFactory(this::createPage);
-
-        observableDonorList.setAll(allDonors);
-        tableView.setItems(observableDonorList);
     }
 
-    @FXML
+    /**
+     * Upon filtering update, refresh the filters to the new string and update pagination
+     */
     private void refresh() {
-        System.out.println("refresh called");
         String searchText = searchBox.getText();
         if (searchText == null || searchText.length() == 0) {
-            filteredDonors.setPredicate(s -> true);
+            filteredDonors.setPredicate(donor -> true);
         }
         else {
-            filteredDonors.setPredicate(s -> s.nameContains(searchText));
+            filteredDonors.setPredicate(donor -> donor.nameContains(searchText));
         }
 
+        //Set the pagination to the new filtered size
         pagination.setPageCount(filteredDonors.size() / rowsPerPage + 1);
+        //Reset pagination to page 0
         pagination.setCurrentPageIndex(0);
     }
 
+    /**
+     * Upon pagination, update the table to show the correct items
+     * @param pageIndex The page we're now on (starts at 0)
+     * @return An empty pane as pagination requires a non null return. Not used.
+     */
     private Node createPage(int pageIndex) {
         int fromIndex = pageIndex * rowsPerPage;
         int toIndex = Math.min(fromIndex + rowsPerPage, filteredDonors.size());
