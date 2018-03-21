@@ -130,6 +130,28 @@ public class Donor {
     }
 
     /**
+     * Get the donors organ donation status, with a formatted string listing the organs to be donated
+     *
+     * @return A formatted string listing the organs to be donated
+     */
+    public String getDonorOrgans() {
+        StringBuilder builder = new StringBuilder();
+        for (Map.Entry<Organ, Boolean> entry : organStatus.entrySet()) {
+            if (entry.getValue()) {
+                if (builder.length() != 0) {
+                    builder.append(", ");
+                }
+                builder.append(entry.getKey().toString());
+            }
+        }
+        if (builder.length() == 0) {
+            return String.format("User: %s. Name: %s, no organs registered for donation", uid, getFullName());
+        } else {
+            return String.format(" %s", builder.toString());
+        }
+    }
+
+    /**
      * Returns a preformatted string of the users change history
      *
      * @return Formatted string with newlines

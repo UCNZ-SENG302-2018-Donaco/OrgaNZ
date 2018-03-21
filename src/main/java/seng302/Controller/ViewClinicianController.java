@@ -10,7 +10,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import seng302.Actions.ModifyClinicianAction;
 import seng302.Clinician;
+import seng302.HistoryItem;
 import seng302.State;
+import seng302.Utilities.JSONConverter;
 import seng302.Utilities.PageNavigator;
 import seng302.Utilities.Region;
 
@@ -127,6 +129,9 @@ public class ViewClinicianController {
             action.addChange("setRegion", currentClinician.getRegion(), region.getValue());
 
             State.getInvoker().execute(action);
+
+            HistoryItem save = new HistoryItem("UPDATE CLINICIAN", "The Clinician's information was updated. New details are: " + currentClinician.getUpdateLog());
+            JSONConverter.updateHistory(save, "action_history.json");
 
             PageNavigator.showAlert(Alert.AlertType.INFORMATION,
                     "Success",

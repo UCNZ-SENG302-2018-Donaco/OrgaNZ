@@ -148,7 +148,7 @@ public class ClinicianSidebarController {
     private void logout(ActionEvent event) {
         State.clearPageParams();
         PageNavigator.loadPage(Page.LANDING.getPath());
-        HistoryItem save = new HistoryItem("LOGOUT", "The Donor logged out");
+        HistoryItem save = new HistoryItem("LOGOUT CLINICIAN", "The Clinician logged out.");
         JSONConverter.updateHistory(save, "action_history.json");
     }
 
