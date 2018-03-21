@@ -9,10 +9,7 @@ import seng302.*;
 import seng302.Actions.Action;
 import seng302.Actions.ActionInvoker;
 import seng302.Actions.CreateDonorAction;
-import seng302.Utilities.Gender;
-import seng302.Utilities.Page;
-import seng302.Utilities.PageNavigator;
-import seng302.Utilities.Region;
+import seng302.Utilities.*;
 
 public class CreateClinicianController {
 
@@ -91,6 +88,9 @@ public class CreateClinicianController {
 				Clinician clinician = new Clinician(fname.getText(), mname.getText(), lname.getText(),
 						workAddress.getText(),region.getValue(), Integer.parseInt(staffId.getText()), password.getText());
 				clinicianManager.addDonor(clinician);
+
+				HistoryItem save = new HistoryItem("CREATE CLINICIAN", "Clinician " + fname.getText() + " " + lname.getText() + " with staff ID " + staffId.getText() + " Created.");
+				JSONConverter.updateHistory(save, "action_history.json");
 
 				State.setPageParam("currentClinician", clinician);
 

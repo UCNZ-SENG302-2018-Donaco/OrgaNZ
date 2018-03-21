@@ -10,7 +10,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import seng302.Actions.ModifyClinicianAction;
 import seng302.Clinician;
+import seng302.HistoryItem;
 import seng302.State;
+import seng302.Utilities.JSONConverter;
 import seng302.Utilities.PageNavigator;
 import seng302.Utilities.Region;
 
@@ -28,9 +30,7 @@ public class ViewClinicianController {
     @FXML
     private ChoiceBox<Region> region;
 
-
     private Clinician currentClinician;
-
 
     @FXML
     private void initialize() {
@@ -51,16 +51,14 @@ public class ViewClinicianController {
         staffID.setText(String.valueOf(currentClinician.getStaffId()));
         region.setValue(currentClinician.getRegion());
         password.setText(currentClinician.getPassword());
-        creationDate.setText(currentClinician.getCreated_on().toString());
+        creationDate.setText(currentClinician.getCreated_on().format(dateTimeFormat));
         if (currentClinician.getModified_on() == null) {
             lastModified.setText("Not yet modified.");
         } else {
-            lastModified.setText(currentClinician.getModified_on().toString());
+            lastModified.setText(currentClinician.getModified_on().format(dateTimeFormat));
         }
         // Need last modified.
     }
-
-
 
     /**
      * Saves the changes a user makes to the viewed donor if all their inputs are valid. Otherwise the invalid fields
@@ -70,6 +68,7 @@ public class ViewClinicianController {
     private void saveChanges() {
         if (checkMandatoryFields()) {
             updateChanges();
+            lastModified.setText(currentClinician.getModified_on().format(dateTimeFormat));
         }
     }
 
@@ -110,7 +109,6 @@ public class ViewClinicianController {
         return update;
     }
 
-
     /**
      * Records the changes updated as a ModifyDonorAction to trace the change in record.
      */
@@ -126,6 +124,9 @@ public class ViewClinicianController {
             action.addChange("setRegion", currentClinician.getRegion(), region.getValue());
 
             State.getInvoker().execute(action);
+
+            HistoryItem save = new HistoryItem("UPDATE CLINICIAN", "The Clinician's information was updated. New details are: " + currentClinician.getUpdateLog());
+            JSONConverter.updateHistory(save, "action_history.json");
 
             PageNavigator.showAlert(Alert.AlertType.INFORMATION,
                     "Success",

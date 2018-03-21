@@ -99,12 +99,15 @@ public class SearchDonorsController {
                 if (donor == null) {
                     setTooltip(null);
                 } else {
-                    tooltip.setText(donor.getDonorOrganStatusString());
+                    tooltip.setText(
+                            donor.getFirstName() + " " + donor.getLastName() + ". Donor of: " + donor.getDonorOrgans()
+                                    + " with blood type " + donor.getBloodType());
                     setTooltip(tooltip);
                 }
             }
         });
     }
+
 
     /**
      * Upon filtering update, refresh the filters to the new string and update pagination

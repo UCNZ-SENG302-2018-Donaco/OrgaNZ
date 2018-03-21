@@ -26,18 +26,18 @@
     },
     "age": 0,
     "organStatus": {
-      "HEART": false,
-      "CORNEA": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "PANCREAS": false,
-      "CONNECTIVE_TISSUE": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
       "SKIN": false,
+      "CONNECTIVE_TISSUE": false,
+      "LUNG": false,
+      "BONE_MARROW": false,
+      "PANCREAS": false,
       "KIDNEY": false,
-      "BONE": false,
-      "LIVER": false
+      "CORNEA": false,
+      "INTESTINE": false,
+      "LIVER": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
+      "BONE": false
     },
     "updateLog": [],
     "uid": 1
