@@ -55,7 +55,7 @@ public class ClinicianSidebarController {
     @FXML
     private void goToViewClinician(ActionEvent event) {
         State.removePageParam("viewUserId");
-        PageNavigator.loadPage(Page.VIEW_DONOR.getPath());
+        PageNavigator.loadPage(Page.VIEW_CLINICIAN.getPath());
     }
 
     /**
