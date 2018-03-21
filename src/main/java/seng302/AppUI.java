@@ -6,9 +6,11 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import seng302.Controller.MainController;
+import seng302.Utilities.JSONConverter;
 import seng302.Utilities.Page;
 import seng302.Utilities.PageNavigator;
 
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 
@@ -29,12 +31,7 @@ public class AppUI extends Application {
 		State.init();
 
         // TODO DELETE TEST DATA
-		LocalDate d = LocalDate.of(1997,8,22);
-		int uid = State.getDonorManager().getUid();
-		Donor deleteme = new Donor("James", "v", "Toohey", d, uid);
-		State.getDonorManager().addDonor(deleteme);
-        State.getDonorManager().addDonor(new Donor("Jack", null, "Steel", LocalDate.of(1997,4,21), 2));
-        State.getDonorManager().addDonor(new Donor("Alex", "Edward", "IDK", LocalDate.of(1997,4,21), 3));
+        JSONConverter.loadFromFile(new File("./doc/examples/savefile.json"));
 		// TODO DELETE TEST DATA
 	}
 

@@ -1,21 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Pagination?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.151" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.SearchDonorsController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.161" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.SearchDonorsController">
    <children>
-      <TextField fx:id="searchBox" />
-      <TableView fx:id="tableView" prefHeight="398.0" prefWidth="600.0">
-        <columns>
-          <TableColumn fx:id="idCol" prefWidth="75.0" text="ID" />
-            <TableColumn fx:id="nameCol" prefWidth="75.0" text="Name" />
-            <TableColumn fx:id="ageCol" prefWidth="75.0" text="Age" />
-            <TableColumn fx:id="genderCol" prefWidth="75.0" text="Gender" />
-            <TableColumn fx:id="regionCol" prefWidth="75.0" text="Region" />
-        </columns>
-      </TableView>
+      <BorderPane prefHeight="200.0" prefWidth="200.0">
+         <center>
+            <TableView fx:id="tableView">
+              <columns>
+                <TableColumn fx:id="idCol" editable="false" prefWidth="75.0" text="ID" />
+                  <TableColumn fx:id="nameCol" editable="false" prefWidth="261.0" text="Name" />
+                  <TableColumn fx:id="ageCol" editable="false" prefWidth="64.0" text="Age" />
+                  <TableColumn fx:id="genderCol" editable="false" prefWidth="99.0" text="Gender" />
+                  <TableColumn fx:id="regionCol" editable="false" prefWidth="100.0" text="Region" />
+              </columns>
+               <BorderPane.margin>
+                  <Insets top="20.0" />
+               </BorderPane.margin>
+            </TableView>
+         </center>
+         <top>
+            <TextField fx:id="searchBox" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets top="20.0" />
+               </BorderPane.margin>
+            </TextField>
+         </top>
+      </BorderPane>
+      <Pagination fx:id="pagination" prefHeight="200.0" prefWidth="200.0" />
    </children>
 </VBox>
