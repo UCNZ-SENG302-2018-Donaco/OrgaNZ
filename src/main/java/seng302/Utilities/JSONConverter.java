@@ -32,6 +32,20 @@ public final class JSONConverter {
 
     private JSONConverter() {} // To ensure that this UTILITY class cannot be instantiated.
 
+    public static void createEmptyJSONFileIfNotExists(File file) throws IOException {
+        try {
+            if (file.createNewFile()) {
+                FileWriter writer = new FileWriter(file);
+                writer.write("[]\n");
+                writer.flush();
+                writer.close();
+            }
+        } catch (IOException exc) {
+            throw new IOException(String.format("An error occurred when creating this file: %s\n%s",
+                    file.getName(), exc.getMessage()));
+        }
+    }
+
 	/**
 	 * Saves the current donors list to a specified file
 	 * @param file The file to be saved to
@@ -67,7 +81,6 @@ public final class JSONConverter {
 		}
 	}
 
-
     /**
      * Read's the action_history.json file into an ArrayList, stateends the historyItem to the list and
      * calls the writeHistoryToJSON to save the update.
@@ -76,14 +89,9 @@ public final class JSONConverter {
     public static void updateHistory(HistoryItem historyItem, String filename) {
         File historyFile = new File(filename);
         try {
-            if (historyFile.createNewFile()) {
-                FileWriter historyWriter = new FileWriter(historyFile);
-                historyWriter.write("[]\n");
-                historyWriter.flush();
-                historyWriter.close();
-            }
+            createEmptyJSONFileIfNotExists(historyFile);
         } catch (IOException exc) {
-            System.out.println("An error occurred when creating the history file: " + exc.getMessage());
+            System.err.println(exc.getMessage());
         }
         try (JsonReader reader = new JsonReader(new FileReader(filename))) {
             HistoryItem[] historyItems = gson.fromJson(reader, HistoryItem[].class);
@@ -93,7 +101,7 @@ public final class JSONConverter {
             writeHistoryToJSON(historyList, filename);
 
         } catch (IOException | IllegalStateException exc) {
-            System.out.println("An error occurred when reading historyItem history from the JSON file: \n" + exc.getMessage());
+            System.err.println("An error occurred when reading historyItem history from the JSON file: \n" + exc.getMessage());
         }
     }
 
