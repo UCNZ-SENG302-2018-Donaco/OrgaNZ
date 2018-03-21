@@ -7,10 +7,12 @@ public enum Page {
 	CREATE_USER("/fxml/create_donor.fxml"),
 	SIDEBAR("/fxml/sidebar.fxml"),
 	VIEW_DONOR("/fxml/view_donor.fxml"),
+	VIEW_CLINICIAN("/fxml/view_clinician.fxml"),
 	REGISTER_ORGANS("/fxml/register_organs.fxml"),
 	HISTORY("/fxml/history.fxml"),
 	CLINICIAN_LOGIN("/fxml/clinician_login.fxml"),
 	CREATE_CLINICIAN("/fxml/create_clinician.fxml");
+
 
 	private String path;
 

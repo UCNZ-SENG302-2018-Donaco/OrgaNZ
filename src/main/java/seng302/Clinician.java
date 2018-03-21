@@ -9,6 +9,7 @@ import java.util.ArrayList;
 public class Clinician {
 
     private final LocalDateTime created_on;
+    private LocalDateTime lastModified;
     private ArrayList<String> updateLog = new ArrayList<>();
 
     private String firstName;

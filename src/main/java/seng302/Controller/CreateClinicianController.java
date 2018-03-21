@@ -82,6 +82,7 @@ public class CreateClinicianController {
 	private void createUser() {
 		if (checkMandatoryFields()) {
 			System.out.println("all valid");
+
 			if (clinicianManager.collisionExists(Integer.parseInt(staffId.getText()))) {
 				staffIdLabel.setTextFill(Color.RED);
 				PageNavigator.showAlert(Alert.AlertType.ERROR, "Staff ID in Use",
@@ -90,10 +91,13 @@ public class CreateClinicianController {
 				Clinician clinician = new Clinician(fname.getText(), mname.getText(), lname.getText(),
 						workAddress.getText(),region.getValue(), Integer.parseInt(staffId.getText()), password.getText());
 				clinicianManager.addDonor(clinician);
+
+				State.setPageParam("currentClinician", clinician);
+
 				PageNavigator.showAlert(Alert.AlertType.CONFIRMATION, "Clinician created",
 						String.format("Successfully created clinician with Staff ID %s.",
 						staffId.getText()));
-				PageNavigator.loadPage(Page.VIEW_DONOR.getPath());
+				PageNavigator.loadPage(Page.VIEW_CLINICIAN.getPath());
 			}
 		}
 	}
