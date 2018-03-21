@@ -20,7 +20,7 @@ public class DeleteDonor implements Runnable {
     private ActionInvoker invoker;
 
     public DeleteDonor() {
-        manager = State.getManager();
+        manager = State.getDonorManager();
         invoker = State.getInvoker();
     }
 

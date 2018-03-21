@@ -26,7 +26,7 @@ public class Save implements Runnable {
     private DonorManager manager;
 
     public Save() {
-        manager = State.getManager();
+        manager = State.getDonorManager();
     }
 
     public Save(DonorManager manager) {

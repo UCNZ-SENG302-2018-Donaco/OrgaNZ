@@ -63,7 +63,7 @@ public class RegisterOrgansController {
 		organCheckBoxes.put(Organ.CONNECTIVE_TISSUE, checkBoxConnTissue);
 		setCheckboxesDisabled();
 
-        manager = State.getManager();
+        manager = State.getDonorManager();
         invoker = State.getInvoker();
 
         String currentUserType = (String) State.getPageParam("currentUserType");

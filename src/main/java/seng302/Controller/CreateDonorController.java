@@ -35,7 +35,7 @@ public class CreateDonorController {
      */
     @FXML
     private void initialize() {
-        manager = State.getManager();
+        manager = State.getDonorManager();
         invoker = State.getInvoker();
     }
 

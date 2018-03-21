@@ -30,7 +30,7 @@ public class SetOrganStatus implements Runnable {
     private ActionInvoker invoker;
 
     public SetOrganStatus() {
-        manager = State.getManager();
+        manager = State.getDonorManager();
         invoker = State.getInvoker();
     }
 

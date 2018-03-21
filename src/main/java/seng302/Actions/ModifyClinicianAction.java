@@ -1,5 +1,6 @@
 package seng302.Actions;
 
+import seng302.Clinician;
 import seng302.Donor;
 import seng302.Utilities.PrimitiveConverter;
 
@@ -9,32 +10,31 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * A reversible donor modification Action
+ * A reversible clinician modification Action
  */
-public class ModifyDonorAction implements Action {
-
+public class ModifyClinicianAction implements Action {
     private Map<String, Object> executors = new HashMap<>();
     private Map<String, Object> unExecutors = new HashMap<>();
-    private Donor donor;
-    private Method[] donorMethods;
+    private Clinician clinician;
+    private Method[] clinicianMethods;
 
     /**
      * Create a new Action
-     * @param donor The donor to be modified
+     * @param clinician The clinician to be modified
      */
-    public ModifyDonorAction(Donor donor) {
-        this.donor = donor;
-        donorMethods = donor.getClass().getMethods();
+    public ModifyClinicianAction(Clinician clinician) {
+        this.clinician = clinician;
+        clinicianMethods = clinician.getClass().getMethods();
     }
 
     /**
-     * Add a modification to the donor
-     * @param field The setter field of the donor. Must match a valid setter in the Donor object
-     * @param oldValue The object the field initially had. Should be taken from the Donors equivalent getter
+     * Add a modification to the clinician
+     * @param field The setter field of the clinician. Must match a valid setter in the Clinician object
+     * @param oldValue The object the field initially had. Should be taken from the Clinicians equivalent getter
      * @param newValue The object the field should be update to. Must match the setters Object type
      */
     public void addChange(String field, Object oldValue, Object newValue) throws NoSuchMethodException, NoSuchFieldException {
-        for (Method m : donorMethods) {
+        for (Method m : clinicianMethods) {
             if (m.getName().equals(field)) {
                 if (m.getParameterCount() != 1) {
                     throw new NoSuchFieldException("Method expects more than one field");
@@ -70,7 +70,7 @@ public class ModifyDonorAction implements Action {
         for (Map.Entry<String, Object> entry : map.entrySet()) {
             try {
                 Object[] var = {entry.getValue()};
-                Statement s = new Statement(donor, entry.getKey(), var);
+                Statement s = new Statement(clinician, entry.getKey(), var);
                 s.execute();
             } catch (Exception e) {
                 e.printStackTrace();

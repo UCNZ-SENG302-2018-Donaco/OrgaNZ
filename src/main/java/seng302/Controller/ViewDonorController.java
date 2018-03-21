@@ -13,11 +13,7 @@ import seng302.HistoryItem;
 import seng302.State;
 import seng302.Actions.ModifyDonorAction;
 import seng302.Donor;
-import seng302.Utilities.BloodType;
-import seng302.Utilities.Gender;
-import seng302.Utilities.JSONConverter;
-import seng302.Utilities.Page;
-import seng302.Utilities.PageNavigator;
+import seng302.Utilities.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -34,15 +30,18 @@ public class ViewDonorController {
 	private Label creationDate, lastModified, noDonorLabel, fnameLabel, lnameLabel, dobLabel,
             dodLabel, heightLabel, weightLabel, ageDisplayLabel, ageLabel, BMILabel;
 	@FXML
-	private TextField id, fname, lname, mname, height, weight, address, region;
+	private TextField id, fname, lname, mname, height, weight, address;
 	@FXML
 	private DatePicker dob, dod;
 	@FXML
     private ChoiceBox<Gender> gender;
 	@FXML
     private ChoiceBox<BloodType> btype;
+	@FXML
+    private ChoiceBox<Region> region;
 
 	private Donor viewedDonor;
+
 
     /**
      * Initializes the UI for this page.
@@ -57,7 +56,8 @@ public class ViewDonorController {
         SidebarController.loadSidebar(sidebarPane);
 
 	    gender.setItems(FXCollections.observableArrayList(Gender.values()));
-	    btype.setItems(FXCollections.observableArrayList(BloodType.values()));
+        btype.setItems(FXCollections.observableArrayList(BloodType.values()));
+        region.setItems(FXCollections.observableArrayList(Region.values()));
 		setFieldsDisabled(true);
 
 		String currentUserType = (String) State.getPageParam("currentUserType");
@@ -93,7 +93,7 @@ public class ViewDonorController {
 			return;
 		}
 
-		viewedDonor = State.getManager().getDonorByID(id_value);
+		viewedDonor = State.getDonorManager().getDonorByID(id_value);
 		if (viewedDonor == null) {
 			noDonorLabel.setVisible(true);
             setFieldsDisabled(true);
@@ -111,8 +111,8 @@ public class ViewDonorController {
 			height.setText(String.valueOf(viewedDonor.getHeight()));
 			weight.setText(String.valueOf(viewedDonor.getWeight()));
 			btype.setValue(viewedDonor.getBloodType());
+			region.setValue(viewedDonor.getRegion());
 			address.setText(viewedDonor.getCurrentAddress());
-			region.setText(viewedDonor.getRegion());
 
 			creationDate.setText(viewedDonor.getCreationdate().format(dateTimeFormat));
 			if (viewedDonor.getModified_on() == null) {
@@ -245,8 +245,8 @@ public class ViewDonorController {
 			action.addChange("setHeight", viewedDonor.getHeight(), Double.parseDouble(height.getText()));
 			action.addChange("setWeight", viewedDonor.getWeight(), Double.parseDouble(weight.getText()));
 			action.addChange("setBloodType", viewedDonor.getBloodType(), btype.getValue());
+            action.addChange("setRegion", viewedDonor.getRegion(), region.getValue());
 			action.addChange("setCurrentAddress", viewedDonor.getCurrentAddress(), address.getText());
-			action.addChange("setRegion", viewedDonor.getRegion(), region.getText());
 
 		    State.getInvoker().execute(action);
 

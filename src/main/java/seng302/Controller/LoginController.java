@@ -29,7 +29,7 @@ public class LoginController {
      */
     @FXML
     private void initialize() {
-        donorManager = State.getManager();
+        donorManager = State.getDonorManager();
 
         donorList.setCellFactory(cell -> new ListCell<Donor>() {
             @Override

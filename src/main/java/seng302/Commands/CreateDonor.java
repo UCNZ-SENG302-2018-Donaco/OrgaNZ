@@ -31,7 +31,7 @@ public class CreateDonor implements Runnable {
     private ActionInvoker invoker;
 
     public CreateDonor() {
-        manager = State.getManager();
+        manager = State.getDonorManager();
         invoker = State.getInvoker();
     }
 

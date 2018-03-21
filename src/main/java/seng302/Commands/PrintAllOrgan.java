@@ -23,7 +23,7 @@ public class PrintAllOrgan implements Runnable {
     private DonorManager manager;
 
     public PrintAllOrgan() {
-        manager = State.getManager();
+        manager = State.getDonorManager();
     }
 
     PrintAllOrgan(DonorManager manager) {
