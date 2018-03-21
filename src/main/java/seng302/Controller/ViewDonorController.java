@@ -13,7 +13,12 @@ import seng302.HistoryItem;
 import seng302.State;
 import seng302.Actions.ModifyDonorAction;
 import seng302.Donor;
-import seng302.Utilities.*;
+import seng302.Utilities.BloodType;
+import seng302.Utilities.Gender;
+import seng302.Utilities.JSONConverter;
+import seng302.Utilities.Page;
+import seng302.Utilities.PageNavigator;
+import seng302.Utilities.Region;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;

@@ -47,4 +47,14 @@ public class LandingController {
 	private void goToRegisterOrgans(ActionEvent event) {
 		PageNavigator.loadPage(Page.REGISTER_ORGANS.getPath());
 	}
+
+	@FXML
+	private void goToClinicianLogin(ActionEvent event) {
+		PageNavigator.loadPage(Page.CLINICIAN_LOGIN.getPath());
+	}
+
+	@FXML
+	private void goToCreateClinician(ActionEvent event) {
+		PageNavigator.loadPage(Page.CREATE_CLINICIAN.getPath());
+	}
 }
