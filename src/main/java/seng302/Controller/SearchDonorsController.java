@@ -111,7 +111,6 @@ public class SearchDonorsController {
      * Every refresh triggers the pagination to update and go to page zero
      */
     private void refresh() {
-        System.out.println("refresh");
         String searchText = searchBox.getText();
         if (searchText == null || searchText.length() == 0) {
             filteredDonors.setPredicate(donor -> true);

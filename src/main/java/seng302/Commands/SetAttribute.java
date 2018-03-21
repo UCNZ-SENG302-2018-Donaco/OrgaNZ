@@ -86,6 +86,7 @@ public class SetAttribute implements Runnable {
         }
 
         ModifyDonorAction action = new ModifyDonorAction(donor);
+
         Map<String, Object[]> states = new HashMap<>();
         states.put("setFirstName", new String[]{donor.getFirstName(), firstName});
         states.put("setMiddleName", new String[]{donor.getMiddleName(), middleName});
