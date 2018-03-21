@@ -7,7 +7,9 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import seng302.Donor;
 import seng302.DonorManager;
+import seng302.HistoryItem;
 import seng302.State;
+import seng302.Utilities.JSONConverter;
 import seng302.Utilities.Page;
 import seng302.Utilities.PageNavigator;
 
@@ -51,6 +53,11 @@ public class LoginController {
     @FXML
     private void signIn(ActionEvent event) {
         Donor selectedDonor = donorList.getSelectionModel().getSelectedItem();
+
+        HistoryItem loginHistory = new HistoryItem("LOGIN", String.format("Donor %s %s (%d) logged in.",
+                selectedDonor.getFirstName(), selectedDonor.getLastName(), selectedDonor.getUid()));
+        JSONConverter.updateHistory(loginHistory, "action_history.json");
+
         State.setPageParam("currentUserId", selectedDonor.getUid());
         State.setPageParam("currentUserType", "donor");
         PageNavigator.loadPage(Page.VIEW_DONOR.getPath());

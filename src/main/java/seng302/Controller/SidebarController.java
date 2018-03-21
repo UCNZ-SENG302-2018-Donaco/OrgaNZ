@@ -123,12 +123,15 @@ public class SidebarController {
 
             if (file != null) {
                 JSONConverter.loadFromFile(file);
-                // TODO Make alert with number of donors loaded
+
                 HistoryItem load = new HistoryItem("LOAD", "The systems state was loaded from " + file.getName());
                 JSONConverter.updateHistory(load, "action_history.json");
+
+                State.clearPageParams();
                 PageNavigator.showAlert(Alert.AlertType.INFORMATION,
                         "Load Successful",
                         "Successfully loaded Donors from " + file.getName());
+                PageNavigator.loadPage(Page.LANDING.getPath());
             }
         } catch (URISyntaxException | IOException exc) {
             // TODO Make alert when load fails
