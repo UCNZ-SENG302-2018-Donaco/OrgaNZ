@@ -54,13 +54,15 @@ public class LoginController {
     private void signIn(ActionEvent event) {
         Donor selectedDonor = donorList.getSelectionModel().getSelectedItem();
 
-        HistoryItem loginHistory = new HistoryItem("LOGIN", String.format("Donor %s %s (%d) logged in.",
-                selectedDonor.getFirstName(), selectedDonor.getLastName(), selectedDonor.getUid()));
-        JSONConverter.updateHistory(loginHistory, "action_history.json");
+        if (selectedDonor != null) {
+            HistoryItem loginHistory = new HistoryItem("LOGIN", String.format("Donor %s %s (%d) logged in.",
+                    selectedDonor.getFirstName(), selectedDonor.getLastName(), selectedDonor.getUid()));
+            JSONConverter.updateHistory(loginHistory, "action_history.json");
 
-        State.setPageParam("currentUserId", selectedDonor.getUid());
-        State.setPageParam("currentUserType", "donor");
-        PageNavigator.loadPage(Page.VIEW_DONOR.getPath());
+            State.setPageParam("currentUserId", selectedDonor.getUid());
+            State.setPageParam("currentUserType", "donor");
+            PageNavigator.loadPage(Page.VIEW_DONOR.getPath());
+        }
     }
 
     /**

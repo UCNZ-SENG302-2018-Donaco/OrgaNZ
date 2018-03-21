@@ -30,9 +30,7 @@ public class ViewClinicianController {
     @FXML
     private ChoiceBox<Region> region;
 
-
     private Clinician currentClinician;
-
 
     @FXML
     private void initialize() {
@@ -46,7 +44,6 @@ public class ViewClinicianController {
     }
 
     private void loadClinicianData() {
-        System.out.println(currentClinician.toString());
         fname.setText(currentClinician.getFirstName());
         mname.setText(currentClinician.getMiddleName());
         lname.setText(currentClinician.getLastName());
@@ -62,8 +59,6 @@ public class ViewClinicianController {
         }
         // Need last modified.
     }
-
-
 
     /**
      * Saves the changes a user makes to the viewed donor if all their inputs are valid. Otherwise the invalid fields
@@ -113,7 +108,6 @@ public class ViewClinicianController {
 
         return update;
     }
-
 
     /**
      * Records the changes updated as a ModifyDonorAction to trace the change in record.
