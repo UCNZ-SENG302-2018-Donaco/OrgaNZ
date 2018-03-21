@@ -23,8 +23,8 @@
          <center>
             <GridPane hgap="50.0" BorderPane.alignment="CENTER">
                <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="210.0" minWidth="10.0" prefWidth="107.0" />
+                  <ColumnConstraints hgrow="SOMETIMES" maxWidth="325.0" minWidth="10.0" prefWidth="325.0" />
                </columnConstraints>
                <rowConstraints>
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -39,7 +39,7 @@
                   <Insets bottom="40.0" left="100.0" right="100.0" />
                </BorderPane.margin>
                <children>
-                  <Label text="Please fill in the details below:">
+                  <Label text="Please fill in the details below:" GridPane.columnIndex="1">
                      <font>
                         <Font size="16.0" />
                      </font>
@@ -70,9 +70,9 @@
                      </font>
                   </Label>
                   <Label fx:id="successLbl" text=" " textFill="RED" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                  <TextField fx:id="firstNameFld" prefHeight="35.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <TextField fx:id="firstNameFld" prefHeight="35.0" promptText="Bob" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                   <TextField fx:id="middleNamefld" prefHeight="35.0" promptText="(optional)" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                  <TextField fx:id="lastNamefld" prefHeight="35.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                  <TextField fx:id="lastNamefld" prefHeight="35.0" promptText="Allison" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                   <DatePicker fx:id="dobFld" maxWidth="1.7976931348623157E308" prefHeight="35.0" promptText="(enter in dd/mm/yyyy)" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                   <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#createDonor" prefHeight="35.0" text="Create " GridPane.columnIndex="1" GridPane.rowIndex="6" />
                </children>

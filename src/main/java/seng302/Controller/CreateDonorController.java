@@ -38,32 +38,39 @@ public class CreateDonorController {
     @FXML
     private void createDonor() {
 
-        //Duplicate user warning alert
-        if (manager.collisionExists(firstNameFld.getText() , lastNamefld.getText(), dobFld.getValue())) {
-            System.out.println("Duplicate");
-            ButtonType option = PageNavigator.showAlert(AlertType.CONFIRMATION,
-                    "Duplicate Donor Warning",
-                    "This donor is a duplicate of one that already exists. Would you still like to create it?")
+        if (firstNameFld.getText() == "" | lastNamefld.getText() == "" | dobFld.getValue() == null) {
+            PageNavigator.showAlert(AlertType.ERROR, "Text field missing",
+                    "Please make sure that all the required fields are filled in properly")
                     .get();
-            if (option != ButtonType.OK) {
-                // ... user chose CANCEL or closed the dialog
-                return;
-            }
         }
+        else {
+            //Duplicate user warning alert
+            if (manager.collisionExists(firstNameFld.getText(), lastNamefld.getText(), dobFld.getValue())) {
+                System.out.println("Duplicate");
+                ButtonType option = PageNavigator.showAlert(AlertType.CONFIRMATION,
+                        "Duplicate Donor Warning",
+                        "This donor is a duplicate of one that already exists. Would you still like to create it?")
+                        .get();
+                if (option != ButtonType.OK) {
+                    // ... user chose CANCEL or closed the dialog
+                    return;
+                }
+            }
 
-        int uid = manager.getUid();
-        Donor donor = new Donor(firstNameFld.getText(), middleNamefld.getText(), lastNamefld.getText(), dobFld.getValue(), uid);
-        Action action = new CreateDonorAction(donor, manager);
-        invoker.execute(action);
+            int uid = manager.getUid();
+            Donor donor = new Donor(firstNameFld.getText(), middleNamefld.getText(), lastNamefld.getText(), dobFld.getValue(), uid);
+            Action action = new CreateDonorAction(donor, manager);
+            invoker.execute(action);
 
-        PageNavigator.showAlert(AlertType.INFORMATION,
-                "Success",
-                String.format("Successfully created donor %s %s %s with ID %d.",
-                        donor.getFirstName(), donor.getMiddleName(), donor.getLastName(), uid));
+            PageNavigator.showAlert(AlertType.INFORMATION,
+                    "Success",
+                    String.format("Successfully created donor %s %s %s with ID %d.",
+                            donor.getFirstName(), donor.getMiddleName(), donor.getLastName(), uid));
 
-        State.setPageParam("currentUserId", uid);
-        State.setPageParam("currentUserType", "donor");
-        PageNavigator.loadPage(Page.VIEW_DONOR.getPath());
+            State.setPageParam("currentUserId", uid);
+            State.setPageParam("currentUserType", "donor");
+            PageNavigator.loadPage(Page.VIEW_DONOR.getPath());
+        }
     }
 
 
