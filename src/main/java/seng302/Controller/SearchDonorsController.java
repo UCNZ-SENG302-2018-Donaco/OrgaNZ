@@ -9,6 +9,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import seng302.Donor;
 import seng302.State;
@@ -23,6 +24,9 @@ public class SearchDonorsController {
 
     @FXML
     private TextField searchBox;
+
+    @FXML
+    private HBox sidebarPane;
 
     @FXML
     private TableView<Donor> tableView;
@@ -49,6 +53,8 @@ public class SearchDonorsController {
     private void initialize() {
         ArrayList<Donor> allDonors = State.getDonorManager().getDonors();
 
+        SidebarController.loadSidebar(sidebarPane);
+
         setupTable();
 
         tableView.setOnSort((o) -> createPage(pagination.getCurrentPageIndex()));
@@ -67,7 +73,7 @@ public class SearchDonorsController {
         pagination.setPageFactory(this::createPage);
 
         //Initialize the observable list to all donors
-        observableDonorList.setAll(allDonors);
+        observableDonorList.setAll(sortedDonors);
         //Bind the tableView to the observable list
         tableView.setItems(observableDonorList);
     }
@@ -88,8 +94,10 @@ public class SearchDonorsController {
 
     /**
      * Upon filtering update, refresh the filters to the new string and update pagination
+     * Every refresh triggers the pagination to update and go to page zero
      */
     private void refresh() {
+        System.out.println("refresh");
         String searchText = searchBox.getText();
         if (searchText == null || searchText.length() == 0) {
             filteredDonors.setPredicate(donor -> true);
@@ -98,10 +106,13 @@ public class SearchDonorsController {
             filteredDonors.setPredicate(donor -> donor.nameContains(searchText));
         }
 
-        //Set the pagination to the new filtered size
-        pagination.setPageCount(filteredDonors.size() / rowsPerPage + 1);
-        //Reset pagination to page 0
-        pagination.setCurrentPageIndex(0);
+        //If the pagination count wont change, force a refresh of the page, if it will, change it and that will trigger the update.
+        int newPageCount = filteredDonors.size() / rowsPerPage + 1;
+        if (pagination.getPageCount() == newPageCount) {
+            createPage(0);
+        } else {
+            pagination.setPageCount(newPageCount);
+        }
     }
 
     /**

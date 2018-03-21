@@ -21,7 +21,6 @@ public class Clinician {
     private String workAddress;
     private Region region;
 
-
     private int staffId;
     private String password;
 
