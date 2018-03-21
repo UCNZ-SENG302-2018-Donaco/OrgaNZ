@@ -1,12 +1,10 @@
 package seng302.Controller;
 
-
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.DatePicker;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import seng302.Actions.Action;
 import seng302.Actions.ActionInvoker;
@@ -19,6 +17,9 @@ import seng302.Utilities.JSONConverter;
 import seng302.Utilities.Page;
 import seng302.Utilities.PageNavigator;
 
+/**
+ * Controller for the create donor page.
+ */
 public class CreateDonorController {
     @FXML
     private DatePicker dobFld;
@@ -28,6 +29,10 @@ public class CreateDonorController {
     private DonorManager manager;
     private ActionInvoker invoker;
 
+    /**
+     * Initializes the UI for this page.
+     * - Gets the DonorManager and ActionInvoker from the current state.
+     */
     @FXML
     private void initialize() {
         manager = State.getManager();
@@ -35,11 +40,13 @@ public class CreateDonorController {
     }
 
     /**
-     * Creates a user from the button being clicked.
+     * Creates a new donor based on the information supplied in the fields.
+     * Shows appropriate alerts if the information is invalid, or if the donor already exists.
+     * Shows an alert if successful, then redirects to the view page for the new donor.
+     * @param event When the create button is clicked.
      */
     @FXML
-    private void createDonor() {
-
+    private void createDonor(ActionEvent event) {
         if (firstNameFld.getText().equals("") || lastNamefld.getText().equals("") || dobFld.getValue() == null) {
             PageNavigator.showAlert(AlertType.ERROR, "Required Field Empty",
                     "Please make sure that all the required fields are given.");
@@ -77,11 +84,9 @@ public class CreateDonorController {
         }
     }
 
-
     /**
-     * Goes back to the landing page when button is clicked
-     *
-     * @param event button clicked and goes back.
+     * Redirects the UI back to the landing page.
+     * @param event When the back button is clicked.
      */
     @FXML
     private void goBack(ActionEvent event) {

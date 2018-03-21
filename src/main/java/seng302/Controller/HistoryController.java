@@ -11,10 +11,12 @@ import seng302.Utilities.JSONConverter;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+/**
+ * Controller for the history page.
+ */
 public class HistoryController {
     private final DateTimeFormatter datetimeformat = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm:ss");
 
@@ -25,6 +27,12 @@ public class HistoryController {
     @FXML
     private Pane sidebarPane;
 
+    /**
+     * Initializes the UI for this page.
+     * - Loads the sidebar.
+     * - Sets up cell factories to generate the values for the history table.
+     * - Loads history data from file and populates the table with it.
+     */
     @FXML
     private void initialize() {
         SidebarController.loadSidebar(sidebarPane);

@@ -13,11 +13,18 @@ import seng302.HistoryItem;
 import seng302.State;
 import seng302.Actions.ModifyDonorAction;
 import seng302.Donor;
-import seng302.Utilities.*;
+import seng302.Utilities.BloodType;
+import seng302.Utilities.Gender;
+import seng302.Utilities.JSONConverter;
+import seng302.Utilities.Page;
+import seng302.Utilities.PageNavigator;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Controller for the view/edit donor page.
+ */
 public class ViewDonorController {
     private final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy\nh:mm:ss a");
 
@@ -37,6 +44,14 @@ public class ViewDonorController {
 
 	private Donor viewedDonor;
 
+    /**
+     * Initializes the UI for this page.
+     * - Loads the sidebar.
+     * - Adds all values to the gender and blood type dropdown lists.
+     * - Disables all fields.
+     * - If a donor is logged in, populates with their info and removes ability to view a different donor.
+     * - If the viewUserId is set, populates with their info.
+     */
 	@FXML
     private void initialize() {
         SidebarController.loadSidebar(sidebarPane);
@@ -233,7 +248,6 @@ public class ViewDonorController {
 			action.addChange("setRegion", viewedDonor.getRegion(), region.getText());
 
 		    State.getInvoker().execute(action);
-
 
 		    PageNavigator.showAlert(Alert.AlertType.INFORMATION,
 				"Success",
