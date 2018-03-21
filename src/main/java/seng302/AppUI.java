@@ -30,6 +30,11 @@ public class AppUI extends Application {
 
 		State.init();
 
+		// Loads the initial donor data from the save file, or creates it if it does not yet exist. //
+		File saveFile = new File("savefile.json");
+        JSONConverter.createEmptyJSONFileIfNotExists(saveFile);
+        JSONConverter.loadFromFile(saveFile);
+
         // TODO DELETE TEST DATA
         JSONConverter.loadFromFile(new File("./doc/examples/savefile.json"));
 		// TODO DELETE TEST DATA

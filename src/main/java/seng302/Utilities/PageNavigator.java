@@ -16,6 +16,7 @@ import java.util.Optional;
 public class PageNavigator {
 	/** The main application layout controller. */
 	private static MainController mainController;
+	private static String currentFxmlPath;
 
 	/**
 	 * Stores the main controller for later use in navigation tasks.
@@ -30,12 +31,22 @@ public class PageNavigator {
 	 */
 	public static void loadPage(String fxmlPath) {
 		try {
-			mainController.setPage(FXMLLoader.load(PageNavigator.class.getResource(fxmlPath)));
+		    currentFxmlPath = fxmlPath;
+			mainController.setPage(FXMLLoader.load(PageNavigator.class.getResource(currentFxmlPath)));
 		} catch (IOException e) {
 			// TODO probably do better error handling than this
 			e.printStackTrace();
 		}
 	}
+
+	public static void refreshPage() {
+        try {
+            mainController.setPage(FXMLLoader.load(PageNavigator.class.getResource(currentFxmlPath)));
+        } catch (IOException e) {
+            // TODO probably do better error handling than this
+            e.printStackTrace();
+        }
+    }
 
 	public static Optional<ButtonType> showAlert(Alert.AlertType alertType, String title, String bodyText) {
         Alert alert = new Alert(alertType);
