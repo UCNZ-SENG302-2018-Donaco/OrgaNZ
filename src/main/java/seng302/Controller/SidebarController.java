@@ -145,6 +145,8 @@ public class SidebarController {
     private void logout(ActionEvent event) {
         State.clearPageParams();
         PageNavigator.loadPage(Page.LANDING.getPath());
+        HistoryItem save = new HistoryItem("LOGOUT", "The Donor logged out");
+        JSONConverter.updateHistory(save, "action_history.json");
     }
 
     /**
@@ -156,6 +158,9 @@ public class SidebarController {
         if (invoker.canUndo()) {
             invoker.undo();
             PageNavigator.refreshPage();
+            //TODO show what was undone
+            HistoryItem save = new HistoryItem("UNDO", "Something was undone.");
+            JSONConverter.updateHistory(save, "action_history.json");
         } else {
             PageNavigator.showAlert(Alert.AlertType.ERROR,
                     "No Undoable Actions",
@@ -172,6 +177,8 @@ public class SidebarController {
         if (invoker.canRedo()) {
             invoker.redo();
             PageNavigator.refreshPage();
+            HistoryItem save = new HistoryItem("REDO", "Something was redone");
+            JSONConverter.updateHistory(save, "action_history.json");
         } else {
             PageNavigator.showAlert(Alert.AlertType.ERROR,
                     "No Redoable Actions",

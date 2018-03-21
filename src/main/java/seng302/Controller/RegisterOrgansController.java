@@ -7,9 +7,11 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import seng302.Actions.ActionInvoker;
 import seng302.Actions.ModifyDonorOrgansAction;
+import seng302.HistoryItem;
 import seng302.State;
 import seng302.Donor;
 import seng302.DonorManager;
+import seng302.Utilities.JSONConverter;
 import seng302.Utilities.Organ;
 
 import java.util.HashMap;
@@ -100,6 +102,8 @@ public class RegisterOrgansController {
 			for (Map.Entry<Organ, CheckBox> entry : organCheckBoxes.entrySet()) {
 				entry.getValue().setSelected(donor.getOrganStatus().get(entry.getKey()));
 			}
+			HistoryItem save = new HistoryItem("UPDATE ID", "The Donor's ID was updated to " + donor.getUid());
+			JSONConverter.updateHistory(save, "action_history.json");
 		} else {
 			setCheckboxesDisabled();
 		}
@@ -125,6 +129,8 @@ public class RegisterOrgansController {
 		}
 		if (hasChanged) {
             invoker.execute(action);
+			HistoryItem save = new HistoryItem("UPDATE ORGANS", "The Donor's organs were updated: " + donor.getDonorOrganStatusString());
+			JSONConverter.updateHistory(save, "action_history.json");
         }
 	}
 

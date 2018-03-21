@@ -9,13 +9,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import seng302.HistoryItem;
 import seng302.State;
 import seng302.Actions.ModifyDonorAction;
 import seng302.Donor;
-import seng302.Utilities.BloodType;
-import seng302.Utilities.Gender;
-import seng302.Utilities.Page;
-import seng302.Utilities.PageNavigator;
+import seng302.Utilities.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -108,6 +106,10 @@ public class ViewDonorController {
                 lastModified.setText(viewedDonor.getModified_on().format(dateTimeFormat));
             }
 
+			HistoryItem save = new HistoryItem("SEARCH DONOR",
+					"Donor " + viewedDonor.getFirstName() + " " + viewedDonor.getLastName() + " (" + viewedDonor.getUid() + ") was searched");
+			JSONConverter.updateHistory(save, "action_history.json");
+
 			displayBMI();
 			displayAge();
 		}
@@ -132,6 +134,10 @@ public class ViewDonorController {
 			updateChanges();
 			displayBMI();
 			displayAge();
+            //TODO show what in particular was updated
+            HistoryItem save = new HistoryItem("UPDATE DONOR INFO",
+                    "Updated changes to donor " + viewedDonor.getFirstName() + " " + viewedDonor.getLastName() + "updated donor info: " + viewedDonor.getDonorInfoString());
+            JSONConverter.updateHistory(save, "action_history.json");
 		}
 	}
 
@@ -227,6 +233,7 @@ public class ViewDonorController {
 			action.addChange("setRegion", viewedDonor.getRegion(), region.getText());
 
 		    State.getInvoker().execute(action);
+
 
 		    PageNavigator.showAlert(Alert.AlertType.INFORMATION,
 				"Success",

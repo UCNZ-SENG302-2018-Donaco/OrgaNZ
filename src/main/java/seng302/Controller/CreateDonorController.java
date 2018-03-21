@@ -11,9 +11,11 @@ import javafx.scene.control.TextField;
 import seng302.Actions.Action;
 import seng302.Actions.ActionInvoker;
 import seng302.Actions.CreateDonorAction;
+import seng302.HistoryItem;
 import seng302.State;
 import seng302.Donor;
 import seng302.DonorManager;
+import seng302.Utilities.JSONConverter;
 import seng302.Utilities.Page;
 import seng302.Utilities.PageNavigator;
 
@@ -61,6 +63,9 @@ public class CreateDonorController {
             Donor donor = new Donor(firstNameFld.getText(), middleNamefld.getText(), lastNamefld.getText(), dobFld.getValue(), uid);
             Action action = new CreateDonorAction(donor, manager);
             invoker.execute(action);
+            HistoryItem save = new HistoryItem("CREATE DONOR",
+                    "Donor " + firstNameFld.getText() + " " + lastNamefld.getText() + "was created with ID " + uid);
+            JSONConverter.updateHistory(save, "action_history.json");
 
             PageNavigator.showAlert(AlertType.INFORMATION,
                     "Success",
