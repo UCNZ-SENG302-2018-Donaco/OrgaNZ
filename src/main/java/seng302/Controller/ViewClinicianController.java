@@ -52,11 +52,11 @@ public class ViewClinicianController {
         staffID.setText(String.valueOf(currentClinician.getStaffId()));
         region.setValue(currentClinician.getRegion());
         password.setText(currentClinician.getPassword());
-        creationDate.setText(currentClinician.getCreated_on().toString());
+        creationDate.setText(currentClinician.getCreated_on().format(dateTimeFormat));
         if (currentClinician.getModified_on() == null) {
             lastModified.setText("Not yet modified.");
         } else {
-            lastModified.setText(currentClinician.getModified_on().toString());
+            lastModified.setText(currentClinician.getModified_on().format(dateTimeFormat));
         }
         // Need last modified.
     }
@@ -71,6 +71,7 @@ public class ViewClinicianController {
     private void saveChanges() {
         if (checkMandatoryFields()) {
             updateChanges();
+            lastModified.setText(currentClinician.getModified_on().format(dateTimeFormat));
         }
     }
 
