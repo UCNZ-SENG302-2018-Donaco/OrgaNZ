@@ -1,8 +1,12 @@
 package seng302.Controller;
 
+import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.TextField;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+import seng302.Donor;
+import seng302.DonorManager;
 import seng302.State;
 import seng302.Utilities.Page;
 import seng302.Utilities.PageNavigator;
@@ -12,16 +16,37 @@ import seng302.Utilities.PageNavigator;
  */
 public class LoginController {
     @FXML
-    private TextField idTextField;
+    private ListView<Donor> donorList;
+    private DonorManager donorManager;
+
+    @FXML
+    private void initialize() {
+        donorManager = State.getManager();
+
+        donorList.setCellFactory(cell -> new ListCell<Donor>() {
+            @Override
+            public void updateItem(Donor item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setText(null);
+                } else {
+                    setText(String.format("ID %d: %s %s", item.getUid(), item.getFirstName(), item.getLastName()));
+                }
+            }
+        });
+
+        donorList.setItems(FXCollections.observableArrayList(donorManager.getDonors()));
+    }
 
     /**
-     * Attempts to login with the given donor id.
+     * Attempts to login with the selected donor.
      * If successful, redirects to the view donor page for that donor.
      * @param event When the sign in button is clicked.
      */
     @FXML
     private void signIn(ActionEvent event) {
-        State.setPageParam("currentUserId", Integer.parseInt(idTextField.getText()));
+        Donor selectedDonor = donorList.getSelectionModel().getSelectedItem();
+        State.setPageParam("currentUserId", selectedDonor.getUid());
         State.setPageParam("currentUserType", "donor");
         PageNavigator.loadPage(Page.VIEW_DONOR.getPath());
     }
