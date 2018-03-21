@@ -7,10 +7,7 @@ import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Pagination;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -93,6 +90,20 @@ public class SearchDonorsController {
         regionCol.setCellValueFactory(new PropertyValueFactory<>("region"));
 
         tableView.getColumns().setAll(idCol, nameCol, ageCol, genderCol, regionCol);
+
+        tableView.setRowFactory(tv -> new TableRow<Donor>() {
+            private Tooltip tooltip = new Tooltip();
+            @Override
+            public void updateItem(Donor donor, boolean empty) {
+                super.updateItem(donor, empty);
+                if (donor == null) {
+                    setTooltip(null);
+                } else {
+                    tooltip.setText(donor.getDonorOrganStatusString());
+                    setTooltip(tooltip);
+                }
+            }
+        });
     }
 
     /**
