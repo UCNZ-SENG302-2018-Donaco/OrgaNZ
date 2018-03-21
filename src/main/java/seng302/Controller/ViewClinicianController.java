@@ -51,6 +51,11 @@ public class ViewClinicianController {
         region.setValue(currentClinician.getRegion());
         password.setText(currentClinician.getPassword());
         creationDate.setText(currentClinician.getCreated_on().toString());
+        if (currentClinician.getModified_on() == null) {
+            lastModified.setText("Not yet modified.");
+        } else {
+            lastModified.setText(currentClinician.getModified_on().toString());
+        }
         // Need last modified.
     }
 
@@ -123,9 +128,9 @@ public class ViewClinicianController {
 
             PageNavigator.showAlert(Alert.AlertType.INFORMATION,
                     "Success",
-                    String.format("Successfully updated donor %s %s %s %d.",
+                    String.format("Successfully updated clinician %s %s %s.",
                             currentClinician.getFirstName(), currentClinician.getMiddleName(),
-                            currentClinician.getLastName(), currentClinician.getStaffId()));
+                            currentClinician.getLastName()));
 
         } catch (NoSuchFieldException | NoSuchMethodException exc) {
             exc.printStackTrace();
