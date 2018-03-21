@@ -7,7 +7,10 @@ import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.Pagination;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -53,7 +56,7 @@ public class SearchDonorsController {
     private void initialize() {
         ArrayList<Donor> allDonors = State.getDonorManager().getDonors();
 
-        SidebarController.loadSidebar(sidebarPane);
+        ClinicianSidebarController.loadSidebar(sidebarPane);
 
         setupTable();
 

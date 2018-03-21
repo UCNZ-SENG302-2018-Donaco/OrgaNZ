@@ -12,6 +12,7 @@ import java.util.ArrayList;
 public class Clinician {
 
     private final LocalDateTime created_on;
+    private LocalDateTime modified_on;
     private ArrayList<String> updateLog = new ArrayList<>();
 
     private String firstName;
@@ -49,6 +50,7 @@ public class Clinician {
     private void addUpdate(String function) {
         LocalDateTime timestamp = LocalDateTime.now();
         updateLog.add(String.format("%s; updated %s", timestamp, function));
+        modified_on = LocalDateTime.now();
     }
 
     public LocalDateTime getCreated_on() {
@@ -120,5 +122,9 @@ public class Clinician {
     public void setPassword(String password) {
         this.password = password;
         addUpdate("password");
+    }
+    
+    public LocalDateTime getModified_on() {
+        return modified_on;
     }
 }
