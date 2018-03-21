@@ -149,6 +149,7 @@ public class ViewDonorController {
 			updateChanges();
 			displayBMI();
 			displayAge();
+			lastModified.setText(viewedDonor.getModified_on().format(dateTimeFormat));
             //TODO show what in particular was updated
             HistoryItem save = new HistoryItem("UPDATE DONOR INFO",
                     "Updated changes to donor " + viewedDonor.getFirstName() + " " + viewedDonor.getLastName() + "updated donor info: " + viewedDonor.getDonorInfoString());
