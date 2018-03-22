@@ -58,14 +58,19 @@ public class HistoryController implements SubController {
 
     }
 
+    private void init() {
+        if (mainController.getPageParam("currentUserType") == null ||
+                mainController.getPageParam("currentUserType").equals("donor")) {
+            mainController.loadDonorSidebar(sidebarPane);
+        } else {
+            mainController.loadClinicianSidebar(sidebarPane);
+        }
+    }
+
     @Override
     public void setMainController(MainController mainController) {
         this.mainController = mainController;
-        if (mainController.getPageParam("currentUserType").equals("clinician")) {
-            mainController.loadClinicianSidebar(sidebarPane);
-        } else if (mainController.getPageParam("currentUserType").equals("donor")) {
-            mainController.loadDonorSidebar(sidebarPane);
-        }
+        init();
     }
 
     @Override

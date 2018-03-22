@@ -58,7 +58,7 @@ public class ClinicianLoginController implements SubController {
 	}
 
 	private void loginSuccessAlert() {
-		PageNavigator.showAlert(Alert.AlertType.CONFIRMATION, "Success",
+		PageNavigator.showAlert(Alert.AlertType.INFORMATION, "Success",
 				"Successfully logged in.");
 	}
 

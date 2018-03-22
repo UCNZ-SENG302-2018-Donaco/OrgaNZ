@@ -24,13 +24,10 @@ public class PageNavigator {
 
     public static void loadPage(String fxmlPath, MainController controller) {
         try {
-            System.out.println("load");
-            System.out.println(controller);
             FXMLLoader loader = new FXMLLoader(PageNavigator.class.getResource(fxmlPath));
             Node loadedPage = loader.load();
             SubController subController = loader.getController();
             subController.setMainController(controller);
-            System.out.println(loadedPage);
             controller.setPage(loadedPage);
             controller.setCurrentFXMLPath(fxmlPath);
         } catch (IOException e) {

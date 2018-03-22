@@ -62,7 +62,6 @@ public class ViewClinicianController implements SubController {
 	 * Loads all of the currently logged in Clinician's details, except for their password.
 	 */
 	private void loadClinicianData() {
-        System.out.println(currentClinician.toString());
         fname.setText(currentClinician.getFirstName());
         mname.setText(currentClinician.getMiddleName());
         lname.setText(currentClinician.getLastName());
@@ -70,7 +69,7 @@ public class ViewClinicianController implements SubController {
         staffID.setText(String.valueOf(currentClinician.getStaffId()));
         region.setValue(currentClinician.getRegion());
 
-        creationDate.setText(currentClinician.getCreated_on().toString());
+        creationDate.setText(currentClinician.getCreated_on().format(dateTimeFormat));
         if (currentClinician.getModified_on() == null) {
             lastModified.setText("Not yet modified.");
         } else {
