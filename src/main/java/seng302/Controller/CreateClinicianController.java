@@ -90,7 +90,7 @@ public class CreateClinicianController implements SubController {
 				mainController.setPageParam("currentUserType", "clinician");
 				mainController.setPageParam("currentClinician", clinician);
 
-				PageNavigator.showAlert(Alert.AlertType.CONFIRMATION, "Clinician created",
+				PageNavigator.showAlert(Alert.AlertType.INFORMATION, "Clinician created",
 						String.format("Successfully created clinician with Staff ID %s.",
 						staffId.getText()));
 				PageNavigator.loadPage(Page.VIEW_CLINICIAN.getPath(), mainController);

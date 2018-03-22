@@ -27,6 +27,8 @@ public class RegisterOrgansController implements SubController {
 	public void setMainController(MainController mainController) {
 		this.mainController = mainController;
 		mainController.loadDonorSidebar(sidebarPane);
+
+		init();
 	}
 
 	@Override
@@ -77,23 +79,25 @@ public class RegisterOrgansController implements SubController {
 
         manager = State.getDonorManager();
         invoker = State.getInvoker();
+	}
 
-        String currentUserType = (String) mainController.getPageParam("currentUserType");
-        if (currentUserType == null) {
-            Integer viewUserId = (Integer) mainController.getPageParam("viewUserId");
-            if (viewUserId != null) {
-                fieldUserID.setText(viewUserId.toString());
-                updateUserID(null);
-            }
-        } else if (currentUserType.equals("donor")) {
-            Integer currentUserId = (Integer) mainController.getPageParam("currentUserId");
-            if (currentUserId != null) {
-                fieldUserID.setText(currentUserId.toString());
-                updateUserID(null);
-            }
-            idPane.setVisible(false);
-            idPane.setManaged(false);
-        }
+	private void init() {
+		String currentUserType = (String) mainController.getPageParam("currentUserType");
+		if (currentUserType == null) {
+			Integer viewUserId = (Integer) mainController.getPageParam("viewUserId");
+			if (viewUserId != null) {
+				fieldUserID.setText(viewUserId.toString());
+				updateUserID(null);
+			}
+		} else if (currentUserType.equals("donor")) {
+			Integer currentUserId = (Integer) mainController.getPageParam("currentUserId");
+			if (currentUserId != null) {
+				fieldUserID.setText(currentUserId.toString());
+				updateUserID(null);
+			}
+			idPane.setVisible(false);
+			idPane.setManaged(false);
+		}
 	}
 
     /**

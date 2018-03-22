@@ -22,7 +22,7 @@ import java.util.Map;
 public class MainController {
 	private Stage stage;
     private String currentFXMLPath;
-    private static Map<String, Object> pageContext = new HashMap<>();
+    private Map<String, Object> pageContext = new HashMap<>();
 
 	public void setStage(Stage stage){
 		this.stage = stage;
@@ -98,19 +98,19 @@ public class MainController {
         this.currentFXMLPath = currentFXMLPath;
     }
 
-    public static Object getPageParam(String key) {
+    public Object getPageParam(String key) {
         return pageContext.get(key);
     }
 
-    public static void setPageParam(String key, Object value) {
+    public void setPageParam(String key, Object value) {
         pageContext.put(key, value);
     }
 
-    public static void removePageParam(String key) {
+    public void removePageParam(String key) {
         pageContext.remove(key);
     }
 
-    public static void clearPageParams() {
+    public void clearPageParams() {
         pageContext.clear();
     }
 }

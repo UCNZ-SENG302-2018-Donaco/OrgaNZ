@@ -33,8 +33,10 @@ public class ViewDonorController implements SubController {
 
 	@Override
 	public void setMainController(MainController mainController) {
-		mainController.loadDonorSidebar(sidebarPane);
 		this.mainController = mainController;
+		mainController.loadDonorSidebar(sidebarPane);
+
+		init();
 	}
 
 	@Override
@@ -70,12 +72,13 @@ public class ViewDonorController implements SubController {
      */
 	@FXML
     private void initialize() {
-
 	    gender.setItems(FXCollections.observableArrayList(Gender.values()));
         btype.setItems(FXCollections.observableArrayList(BloodType.values()));
         region.setItems(FXCollections.observableArrayList(Region.values()));
 		setFieldsDisabled(true);
+    }
 
+    private void init() {
 		String currentUserType = (String) mainController.getPageParam("currentUserType");
 		if (currentUserType == null) {
 			Integer viewUserId = (Integer) mainController.getPageParam("viewUserId");
@@ -92,7 +95,7 @@ public class ViewDonorController implements SubController {
 			idPane.setVisible(false);
 			idPane.setManaged(false);
 		}
-    }
+	}
 
 	/**
 	 * Searches for a donor based off the id number supplied in the text field. The users fields will be displayed if

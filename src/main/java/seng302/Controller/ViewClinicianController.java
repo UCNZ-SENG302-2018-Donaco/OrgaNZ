@@ -24,6 +24,8 @@ public class ViewClinicianController implements SubController {
     public void setMainController(MainController mainController) {
         this.mainController = mainController;
         mainController.loadClinicianSidebar(sidebarPane);
+
+        init();
     }
 
     @Override
@@ -48,10 +50,11 @@ public class ViewClinicianController implements SubController {
     @FXML
     private void initialize() {
         region.setItems(FXCollections.observableArrayList(Region.values()));
-
         inputsPane.setVisible(true);
-        currentClinician = (Clinician) mainController.getPageParam("currentClinician");
+    }
 
+    private void init() {
+        currentClinician = (Clinician) mainController.getPageParam("currentClinician");
         loadClinicianData();
     }
 

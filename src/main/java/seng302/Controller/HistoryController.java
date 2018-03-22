@@ -61,7 +61,11 @@ public class HistoryController implements SubController {
     @Override
     public void setMainController(MainController mainController) {
         this.mainController = mainController;
-        mainController.loadDonorSidebar(sidebarPane);
+        if (mainController.getPageParam("currentUserType").equals("clinician")) {
+            mainController.loadClinicianSidebar(sidebarPane);
+        } else if (mainController.getPageParam("currentUserType").equals("donor")) {
+            mainController.loadDonorSidebar(sidebarPane);
+        }
     }
 
     @Override
