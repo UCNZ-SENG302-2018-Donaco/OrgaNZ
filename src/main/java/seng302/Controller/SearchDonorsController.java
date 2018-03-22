@@ -5,17 +5,23 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import seng302.Donor;
 import seng302.State;
 import seng302.Utilities.Gender;
+import seng302.Utilities.Page;
+import seng302.Utilities.PageNavigator;
 import seng302.Utilities.Region;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class SearchDonorsController {
@@ -103,6 +109,21 @@ public class SearchDonorsController {
                             donor.getFirstName() + " " + donor.getLastName() + ". Donor of: " + donor.getDonorOrgans()
                                     + " with blood type " + donor.getBloodType());
                     setTooltip(tooltip);
+                }
+            }
+        });
+
+        tableView.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2) {
+                    Donor donor = tableView.getSelectionModel().getSelectedItem();
+                    try {
+                        State.setPageParam("viewUserId", donor.getUid());
+                        PageNavigator.openNewWindow(Page.VIEW_DONOR.getPath());
+                    } catch (IOException exc) {
+                        exc.printStackTrace();
+                    }
                 }
             }
         });

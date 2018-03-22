@@ -92,6 +92,7 @@ public class CreateClinicianController {
 				HistoryItem save = new HistoryItem("CREATE CLINICIAN", "Clinician " + fname.getText() + " " + lname.getText() + " with staff ID " + staffId.getText() + " Created.");
 				JSONConverter.updateHistory(save, "action_history.json");
 
+				State.setPageParam("currentUserType", "clinician");
 				State.setPageParam("currentClinician", clinician);
 
 				PageNavigator.showAlert(Alert.AlertType.CONFIRMATION, "Clinician created",
