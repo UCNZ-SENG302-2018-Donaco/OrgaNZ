@@ -289,6 +289,9 @@ public class ViewDonorController {
 		ageLabel.setText(String.valueOf(viewedDonor.getAge()));
 	}
 
+	/**
+	 * Navigate to the page to display organs for the currently specified donor.
+	 */
 	@FXML
 	public void viewOrgansForDonor() {
 		State.setPageParam("viewUserId", viewedDonor.getUid());

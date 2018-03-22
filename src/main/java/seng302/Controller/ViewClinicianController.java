@@ -15,6 +15,10 @@ import seng302.Utilities.Region;
 
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Presents an interface displaying all information of the currently logged in Clinician. Clinicians are able to edit
+ * their details directly on this page.
+ */
 public class ViewClinicianController {
     private final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy\nh:mm:ss a");
 
@@ -32,10 +36,14 @@ public class ViewClinicianController {
     private Clinician currentClinician;
     private String updatedPassword;
 
-    @FXML
+	/**
+	 * Initialize the page.
+	 */
+	@FXML
     private void initialize() {
         ClinicianSidebarController.loadSidebar(sidebarPane);
         region.setItems(FXCollections.observableArrayList(Region.values()));
+		staffID.setDisable(true);
 
         inputsPane.setVisible(true);
         currentClinician = (Clinician) State.getPageParam("currentClinician");
