@@ -53,13 +53,17 @@ public class PageNavigator {
     }
 
     public static void openNewWindow(String fxmlPath) throws IOException {
-		FXMLLoader loader = new FXMLLoader();
-		Pane newPane = loader.load(PageNavigator.class.getResourceAsStream(fxmlPath));
+		Stage newStage = new Stage();
+		newStage.setTitle("Organ Donor Management System");
 
-		Stage newWindow = new Stage();
-		newWindow.setTitle("Organ Donor Management System");
-		newWindow.setScene(new Scene(newPane));
-		newWindow.show();
+		FXMLLoader loader = new FXMLLoader();
+		Pane mainPane = (Pane) loader.load(PageNavigator.class.getResourceAsStream(Page.MAIN.getPath()));
+		MainController mainController = loader.getController();
+		mainController.setStage(newStage);
+
+		Pane newPane = FXMLLoader.load(PageNavigator.class.getResource(fxmlPath));
+		newStage.setScene(new Scene(newPane));
+		newStage.show();
 	}
 
 	public static Optional<ButtonType> showAlert(Alert.AlertType alertType, String title, String bodyText) {
