@@ -23,9 +23,8 @@ public class AppUI extends Application {
 
 	@Override
 	public void start(Stage stage) throws Exception {
-		window = stage;
 		stage.setTitle("Organ Donor Management System");
-		stage.setScene(createScene(loadMainPane()));
+		stage.setScene(createScene(loadMainPane(stage)));
 		stage.show();
 
 		State.init();
@@ -45,11 +44,12 @@ public class AppUI extends Application {
 	 * @return The loaded pane.
 	 * @throws IOException Thrown if the pane could not be loaded.
 	 */
-	private Pane loadMainPane() throws IOException {
+	private Pane loadMainPane(Stage stage) throws IOException {
 		FXMLLoader loader = new FXMLLoader();
 
 		Pane mainPane = (Pane) loader.load(getClass().getResourceAsStream(Page.MAIN.getPath()));
 		MainController mainController = loader.getController();
+		mainController.setStage(stage);
 
 		PageNavigator.setMainController(mainController);
 		PageNavigator.loadPage(Page.LANDING.getPath());
