@@ -33,10 +33,6 @@ public class AppUI extends Application {
 		File saveFile = new File("savefile.json");
         JSONConverter.createEmptyJSONFileIfNotExists(saveFile);
         JSONConverter.loadFromFile(saveFile);
-
-        // TODO DELETE TEST DATA
-        JSONConverter.loadFromFile(new File("./doc/examples/savefile.json"));
-		// TODO DELETE TEST DATA
 	}
 
 	/**
