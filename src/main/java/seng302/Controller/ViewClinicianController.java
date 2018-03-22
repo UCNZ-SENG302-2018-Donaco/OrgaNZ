@@ -15,8 +15,20 @@ import seng302.Utilities.Region;
 
 import java.time.format.DateTimeFormatter;
 
-public class ViewClinicianController {
+public class ViewClinicianController implements SubController {
     private final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy\nh:mm:ss a");
+
+    private MainController mainController;
+
+    @Override
+    public void setMainController(MainController mainController) {
+        this.mainController = mainController;
+    }
+
+    @Override
+    public MainController getMainController() {
+        return this.mainController;
+    }
 
     @FXML
     private Pane sidebarPane, idPane, inputsPane;

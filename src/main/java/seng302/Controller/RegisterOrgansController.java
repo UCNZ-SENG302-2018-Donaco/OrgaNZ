@@ -20,8 +20,20 @@ import java.util.Map;
 /**
  * Controller for the register organs page.
  */
-public class RegisterOrgansController {
-    @FXML
+public class RegisterOrgansController implements SubController {
+	private MainController mainController;
+
+	@Override
+	public void setMainController(MainController mainController) {
+		this.mainController = mainController;
+	}
+
+	@Override
+	public MainController getMainController() {
+		return this.mainController;
+	}
+
+	@FXML
     private Pane sidebarPane;
     @FXML
     private Pane idPane;

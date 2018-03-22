@@ -26,8 +26,20 @@ import java.time.format.DateTimeFormatter;
 /**
  * Controller for the view/edit donor page.
  */
-public class ViewDonorController {
+public class ViewDonorController implements SubController {
     private final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy\nh:mm:ss a");
+
+	private MainController mainController;
+
+	@Override
+	public void setMainController(MainController mainController) {
+		this.mainController = mainController;
+	}
+
+	@Override
+	public MainController getMainController() {
+		return this.mainController;
+	}
 
     @FXML
     private Pane sidebarPane, idPane, inputsPane;
@@ -292,6 +304,6 @@ public class ViewDonorController {
 	@FXML
 	public void viewOrgansForDonor() {
 		State.setPageParam("viewUserId", viewedDonor.getUid());
-		PageNavigator.loadPage(Page.REGISTER_ORGANS.getPath());
+		PageNavigator.loadPage(Page.REGISTER_ORGANS.getPath(), mainController);
 	}
 }

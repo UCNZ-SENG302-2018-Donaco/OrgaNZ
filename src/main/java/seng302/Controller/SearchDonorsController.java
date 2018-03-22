@@ -24,7 +24,18 @@ import seng302.Utilities.Region;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class SearchDonorsController {
+public class SearchDonorsController implements SubController {
+    private MainController mainController;
+
+    @Override
+    public void setMainController(MainController mainController) {
+        this.mainController = mainController;
+    }
+
+    @Override
+    public MainController getMainController() {
+        return this.mainController;
+    }
 
     private int rowsPerPage = 30;
 
