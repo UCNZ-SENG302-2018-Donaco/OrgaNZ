@@ -7,7 +7,9 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import seng302.Clinician;
+import seng302.HistoryItem;
 import seng302.State;
+import seng302.Utilities.JSONConverter;
 import seng302.Utilities.Page;
 import seng302.Utilities.PageNavigator;
 import sun.security.util.Password;
@@ -78,6 +80,10 @@ public class ClinicianLoginController {
 
 					PageNavigator.loadPage(Page.VIEW_CLINICIAN.getPath());
 					loginSuccessAlert();
+
+                    HistoryItem save = new HistoryItem("LOGIN CLINICIAN",
+                            "The Clinician " + clinician.getFirstName() + " " + clinician.getLastName() + " logged in.");
+                    JSONConverter.updateHistory(save, "action_history.json");
 				} else {
 					staffIdPasswordMismatchAlert();
 				}
