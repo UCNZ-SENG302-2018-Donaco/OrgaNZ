@@ -48,12 +48,6 @@ public class LandingController implements SubController {
 		PageNavigator.loadPage(Page.CREATE_CLINICIAN.getPath(), mainController);
 	}
 
-	@FXML
-	private void gotosearch(ActionEvent event) {
-		PageNavigator.loadPage(Page.SEARCH.getPath(), mainController);
-	}
-
-
 	@Override
 	public void setMainController(MainController mainController) {
 		this.mainController = mainController;
