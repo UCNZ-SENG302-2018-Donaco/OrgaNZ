@@ -5,12 +5,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.paint.Color;
 import seng302.Clinician;
 import seng302.State;
 import seng302.Utilities.Page;
 import seng302.Utilities.PageNavigator;
-import sun.security.util.Password;
 
 public class ClinicianLoginController implements SubController {
 
@@ -54,7 +52,7 @@ public class ClinicianLoginController implements SubController {
 	}
 
 	private void loginSuccessAlert() {
-		PageNavigator.showAlert(Alert.AlertType.CONFIRMATION, "Success",
+		PageNavigator.showAlert(Alert.AlertType.INFORMATION, "Success",
 				"Successfully logged in.");
 	}
 

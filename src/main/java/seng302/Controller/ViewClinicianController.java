@@ -2,7 +2,11 @@ package seng302.Controller;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import seng302.Actions.ModifyClinicianAction;
@@ -62,7 +66,6 @@ public class ViewClinicianController implements SubController {
 	 * Loads all of the currently logged in Clinician's details, except for their password.
 	 */
 	private void loadClinicianData() {
-        System.out.println(currentClinician.toString());
         fname.setText(currentClinician.getFirstName());
         mname.setText(currentClinician.getMiddleName());
         lname.setText(currentClinician.getLastName());
@@ -70,7 +73,7 @@ public class ViewClinicianController implements SubController {
         staffID.setText(String.valueOf(currentClinician.getStaffId()));
         region.setValue(currentClinician.getRegion());
 
-        creationDate.setText(currentClinician.getCreated_on().toString());
+        creationDate.setText(currentClinician.getCreated_on().format(dateTimeFormat));
         if (currentClinician.getModified_on() == null) {
             lastModified.setText("Not yet modified.");
         } else {

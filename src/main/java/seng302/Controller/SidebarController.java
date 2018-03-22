@@ -2,10 +2,7 @@ package seng302.Controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import seng302.Actions.ActionInvoker;
 import seng302.AppUI;
@@ -52,7 +49,6 @@ public class SidebarController implements SubController {
      */
     @FXML
     private void goToViewDonor(ActionEvent event) {
-        mainController.removePageParam("viewUserId");
         PageNavigator.loadPage(Page.VIEW_DONOR.getPath(), mainController);
     }
 
@@ -62,7 +58,6 @@ public class SidebarController implements SubController {
      */
     @FXML
     private void goToRegisterOrgans(ActionEvent event) {
-        mainController.removePageParam("viewUserId");
         PageNavigator.loadPage(Page.REGISTER_ORGANS.getPath(), mainController);
     }
 
