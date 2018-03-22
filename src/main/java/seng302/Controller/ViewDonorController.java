@@ -85,12 +85,16 @@ public class ViewDonorController implements SubController {
 			if (viewUserId != null) {
 				id.setText(viewUserId.toString());
 				searchDonor();
+			} else {
+				mainController.setCurrentFXMLPath(Page.LANDING.toString());
 			}
 		} else if (currentUserType.equals("donor")) {
 			Integer currentUserId = (Integer) mainController.getPageParam("currentUserId");
 			if (currentUserId != null) {
 				id.setText(currentUserId.toString());
 				searchDonor();
+			} else {
+				mainController.setCurrentFXMLPath(Page.LANDING.toString());
 			}
 			idPane.setVisible(false);
 			idPane.setManaged(false);

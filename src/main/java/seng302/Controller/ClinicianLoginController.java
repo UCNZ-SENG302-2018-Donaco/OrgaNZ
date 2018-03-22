@@ -32,11 +32,7 @@ public class ClinicianLoginController implements SubController {
 	private boolean validStaffIDinput() {
 		try {
 			id = Integer.parseInt(staffId.getText()); // Staff ID
-			if (id < -1) {
-				return false;
-			} else {
-				return true;
-			}
+            return id >= -1;
 		} catch (NumberFormatException ex) {
 			return false;
 		}
