@@ -41,7 +41,7 @@ public class ClinicianSidebarController implements SubController {
      */
     @FXML
     private void goToViewClinician(ActionEvent event) {
-        State.removePageParam("viewUserId");
+        mainController.removePageParam("viewUserId");
         PageNavigator.loadPage(Page.VIEW_CLINICIAN.getPath(), mainController);
     }
 
@@ -51,7 +51,7 @@ public class ClinicianSidebarController implements SubController {
      */
     @FXML
     private void goToSearch(ActionEvent event) {
-        State.removePageParam("viewUserId");
+        mainController.removePageParam("viewUserId");
         PageNavigator.loadPage(Page.SEARCH.getPath(), mainController);
     }
 
@@ -114,7 +114,7 @@ public class ClinicianSidebarController implements SubController {
                 HistoryItem load = new HistoryItem("LOAD", "The systems state was loaded from " + file.getName());
                 JSONConverter.updateHistory(load, "action_history.json");
 
-                State.clearPageParams();
+                mainController.clearPageParams();
                 PageNavigator.showAlert(Alert.AlertType.INFORMATION,
                         "Load Successful",
                         "Successfully loaded Donors from " + file.getName());
@@ -133,7 +133,7 @@ public class ClinicianSidebarController implements SubController {
      */
     @FXML
     private void logout(ActionEvent event) {
-        State.clearPageParams();
+        mainController.clearPageParams();
         PageNavigator.loadPage(Page.LANDING.getPath(), mainController);
         HistoryItem save = new HistoryItem("LOGOUT CLINICIAN", "The Clinician logged out.");
         JSONConverter.updateHistory(save, "action_history.json");

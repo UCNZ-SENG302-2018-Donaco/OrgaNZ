@@ -50,7 +50,7 @@ public class ViewClinicianController implements SubController {
         region.setItems(FXCollections.observableArrayList(Region.values()));
 
         inputsPane.setVisible(true);
-        currentClinician = (Clinician) State.getPageParam("currentClinician");
+        currentClinician = (Clinician) mainController.getPageParam("currentClinician");
 
         loadClinicianData();
     }

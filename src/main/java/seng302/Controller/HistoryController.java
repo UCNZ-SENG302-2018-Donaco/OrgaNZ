@@ -58,7 +58,6 @@ public class HistoryController implements SubController {
 
     }
 
-
     @Override
     public void setMainController(MainController mainController) {
         this.mainController = mainController;
