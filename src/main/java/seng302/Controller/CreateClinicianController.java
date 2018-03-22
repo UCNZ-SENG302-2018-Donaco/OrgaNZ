@@ -3,13 +3,19 @@ package seng302.Controller;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
-import seng302.*;
-import seng302.Actions.Action;
-import seng302.Actions.ActionInvoker;
-import seng302.Actions.CreateDonorAction;
-import seng302.Utilities.*;
+import seng302.Clinician;
+import seng302.ClinicianManager;
+import seng302.HistoryItem;
+import seng302.State;
+import seng302.Utilities.JSONConverter;
+import seng302.Utilities.Page;
+import seng302.Utilities.PageNavigator;
+import seng302.Utilities.Region;
 
 public class CreateClinicianController implements SubController {
 
