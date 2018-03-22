@@ -4,13 +4,13 @@ Open JAR file
 
 Here are the current usable Commands:
 
-** Create a user. **
+##Create a user
 
 createuser [--force] -d=<dateOfBirth> -f=<firstName> -l=<lastName>
                   [-m=<middleNames>]
 
 
-** Set the attributes of an existing user. **
+##Set the attributes of an existing user
 
 setattribute [--bloodtype=<bloodType>] [--currentaddress=<address>]
                     [--dateofbirth=<dateOfBirth>] [--dateofdeath=<dateOfDeath>]
@@ -20,7 +20,7 @@ setattribute [--bloodtype=<bloodType>] [--currentaddress=<address>]
                     [--weight=<weight>] -u=<uid>
 
 
-** Set the organ donation choices of an existing user. **
+##Set the organ donation choices of an existing user
 
 setorganstatus [--bone] [--bonemarrow] [--connectivetissue] [--cornea]
                       [--heart] [--intestine] [--kidney] [--liver] [--lung]
@@ -28,39 +28,47 @@ setorganstatus [--bone] [--bonemarrow] [--connectivetissue] [--cornea]
 
 
 
-** Deletes a user. **
+##Deletes a user
 
 deleteuser -u=<uid>
 
 
 
-** Print all users with their personal information. **
+##Print all users with their personal information.
 
 printallinfo
 
 
-** Print a single user with their personal information. **
+##Print a single user with their personal information.
 
 printuser -u=<uid>
 
 
 
-** Print a single user with their organ information. **
+##Print a single user with their organ information.
 
 printuserorgan -u=<uid>
 
 
 
-** Save donors to file **
+##Save donors to file
 
 save
 
 
-** Load donors from file **
+##Load donors from file
 
 load
 
 
-** Get help on commands. **
+##Get help on commands.
 
 help [command]...
+
+##Undo
+
+undo
+
+##Redo
+
+redo

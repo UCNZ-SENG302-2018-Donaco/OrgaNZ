@@ -99,8 +99,8 @@
                   <TextField fx:id="staffId" prefHeight="35.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                   <TextField fx:id="workAddress" prefHeight="35.0" promptText="(optional)" GridPane.columnIndex="1" GridPane.rowIndex="5" />
                   <ChoiceBox fx:id="region" prefHeight="25.0" prefWidth="317.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                  <TextField fx:id="password" prefHeight="35.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                         <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#createUser" prefHeight="35.0" text="Create " GridPane.columnIndex="1" GridPane.rowIndex="9" />
+                  <PasswordField fx:id="password" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                     </children>
                 </GridPane>
             </center>
