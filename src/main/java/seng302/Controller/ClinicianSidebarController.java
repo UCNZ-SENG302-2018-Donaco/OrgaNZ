@@ -23,23 +23,10 @@ import java.nio.file.Paths;
 /**
  * Controller for the sidebar pane imported into every page in the clinician part of the GUI.
  */
-public class ClinicianSidebarController {
-    private ActionInvoker invoker;
+public class ClinicianSidebarController implements SubController {
 
-    /**
-     * Method that can be called from other controllers to load the sidebar into that page.
-     * Will set the sidebar as the child of the pane given.
-     * @param sidebarPane The container pane for the sidebar, given by the importer.
-     */
-    public static void loadSidebar(Pane sidebarPane) {
-        try {
-            VBox sidebar = FXMLLoader.load(SidebarController.class.getResource(Page.CLINICIAN_SIDEBAR.getPath()));
-            sidebarPane.getChildren().setAll(sidebar);
-        } catch (IOException exc) {
-            System.err.println("Couldn't load clinician sidebar from fxml file.");
-            exc.printStackTrace();
-        }
-    }
+    private MainController mainController;
+    private ActionInvoker invoker;
 
     /**
      * Gets the ActionInvoker from the current state.
@@ -55,7 +42,7 @@ public class ClinicianSidebarController {
     @FXML
     private void goToViewClinician(ActionEvent event) {
         State.removePageParam("viewUserId");
-        PageNavigator.loadPage(Page.VIEW_CLINICIAN.getPath());
+        PageNavigator.loadPage(Page.VIEW_CLINICIAN.getPath(), mainController);
     }
 
     /**
@@ -65,7 +52,7 @@ public class ClinicianSidebarController {
     @FXML
     private void goToSearch(ActionEvent event) {
         State.removePageParam("viewUserId");
-        PageNavigator.loadPage(Page.SEARCH.getPath());
+        PageNavigator.loadPage(Page.SEARCH.getPath(), mainController);
     }
 
     /**
@@ -74,7 +61,7 @@ public class ClinicianSidebarController {
      */
     @FXML
     private void goToHistory(ActionEvent event) {
-        PageNavigator.loadPage(Page.HISTORY.getPath());
+        PageNavigator.loadPage(Page.HISTORY.getPath(), mainController);
     }
 
     /**
@@ -131,7 +118,7 @@ public class ClinicianSidebarController {
                 PageNavigator.showAlert(Alert.AlertType.INFORMATION,
                         "Load Successful",
                         "Successfully loaded Donors from " + file.getName());
-                PageNavigator.loadPage(Page.LANDING.getPath());
+                PageNavigator.loadPage(Page.LANDING.getPath(), mainController);
             }
         } catch (URISyntaxException | IOException exc) {
             // TODO Make alert when load fails
@@ -147,7 +134,7 @@ public class ClinicianSidebarController {
     @FXML
     private void logout(ActionEvent event) {
         State.clearPageParams();
-        PageNavigator.loadPage(Page.LANDING.getPath());
+        PageNavigator.loadPage(Page.LANDING.getPath(), mainController);
         HistoryItem save = new HistoryItem("LOGOUT CLINICIAN", "The Clinician logged out.");
         JSONConverter.updateHistory(save, "action_history.json");
     }
@@ -160,7 +147,7 @@ public class ClinicianSidebarController {
     private void undo(ActionEvent event) {
         if (invoker.canUndo()) {
             invoker.undo();
-            PageNavigator.refreshPage();
+            PageNavigator.refreshPage(mainController);
             //TODO show what was undone
             HistoryItem save = new HistoryItem("UNDO", "Something was undone.");
             JSONConverter.updateHistory(save, "action_history.json");
@@ -179,7 +166,7 @@ public class ClinicianSidebarController {
     private void redo(ActionEvent event) {
         if (invoker.canRedo()) {
             invoker.redo();
-            PageNavigator.refreshPage();
+            PageNavigator.refreshPage(mainController);
             HistoryItem save = new HistoryItem("REDO", "Something was redone");
             JSONConverter.updateHistory(save, "action_history.json");
         } else {
@@ -187,5 +174,15 @@ public class ClinicianSidebarController {
                     "No Redoable Actions",
                     "There are no actions left to redo.");
         }
+    }
+
+    @Override
+    public void setMainController(MainController mainController) {
+        this.mainController = mainController;
+    }
+
+    @Override
+    public MainController getMainController() {
+        return mainController;
     }
 }

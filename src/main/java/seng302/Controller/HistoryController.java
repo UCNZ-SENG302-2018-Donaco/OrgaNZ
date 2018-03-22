@@ -17,7 +17,9 @@ import java.util.List;
 /**
  * Controller for the history page.
  */
-public class HistoryController {
+public class HistoryController implements SubController {
+
+    private MainController mainController;
     private final DateTimeFormatter datetimeformat = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm:ss");
 
     @FXML
@@ -35,7 +37,6 @@ public class HistoryController {
      */
     @FXML
     private void initialize() {
-        SidebarController.loadSidebar(sidebarPane);
 
         timeCol.setCellValueFactory(
                 data -> new ReadOnlyStringWrapper(
@@ -55,5 +56,17 @@ public class HistoryController {
             System.out.println(exc.getMessage());
         }
 
+    }
+
+
+    @Override
+    public void setMainController(MainController mainController) {
+        this.mainController = mainController;
+        mainController.loadDonorSidebar(sidebarPane);
+    }
+
+    @Override
+    public MainController getMainController() {
+        return mainController;
     }
 }

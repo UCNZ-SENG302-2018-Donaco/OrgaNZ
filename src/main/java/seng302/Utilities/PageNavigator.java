@@ -21,34 +21,31 @@ import java.util.Optional;
  */
 public class PageNavigator {
 	/** The main application layout controller. */
-	private static MainController mainController;
-	private static String currentFxmlPath;
-
-	/**
-	 * Stores the main controller for later use in navigation tasks.
-	 * @param mainController The main application layout controller.
-	 */
-	public static void setMainController(MainController mainController) {
-		PageNavigator.mainController = mainController;
-	}
 
     public static void loadPage(String fxmlPath, MainController controller) {
         try {
-            currentFxmlPath = fxmlPath;
-            FXMLLoader loader = new FXMLLoader(PageNavigator.class.getResource(currentFxmlPath));
+            System.out.println("load");
+            System.out.println(controller);
+            FXMLLoader loader = new FXMLLoader(PageNavigator.class.getResource(fxmlPath));
             Node loadedPage = loader.load();
             SubController subController = loader.getController();
             subController.setMainController(controller);
+            System.out.println(loadedPage);
             controller.setPage(loadedPage);
+            controller.setCurrentFXMLPath(fxmlPath);
         } catch (IOException e) {
             // TODO probably do better error handling than this
             e.printStackTrace();
         }
     }
 
-	public static void refreshPage() {
+	public static void refreshPage(MainController controller) {
         try {
-            mainController.setPage(FXMLLoader.load(PageNavigator.class.getResource(currentFxmlPath)));
+            FXMLLoader loader = new FXMLLoader(PageNavigator.class.getResource(controller.getCurrentFXMLPath()));
+            Node loadedPage = loader.load();
+            SubController subController = loader.getController();
+            subController.setMainController(controller);
+            controller.setPage(loadedPage);
         } catch (IOException e) {
             // TODO probably do better error handling than this
             e.printStackTrace();
@@ -64,10 +61,10 @@ public class PageNavigator {
 		MainController mainController = loader.getController();
 		mainController.setStage(newStage);
 
-		Pane newPane = FXMLLoader.load(PageNavigator.class.getResource(fxmlPath));
 		newStage.setScene(new Scene(mainPane));
-		mainController.setPage(newPane);
 		newStage.show();
+
+		loadPage(fxmlPath, mainController);
 	}
 
 	public static Optional<ButtonType> showAlert(Alert.AlertType alertType, String title, String bodyText) {

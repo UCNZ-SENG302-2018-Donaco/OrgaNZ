@@ -26,6 +26,7 @@ public class RegisterOrgansController implements SubController {
 	@Override
 	public void setMainController(MainController mainController) {
 		this.mainController = mainController;
+		mainController.loadDonorSidebar(sidebarPane);
 	}
 
 	@Override
@@ -59,7 +60,6 @@ public class RegisterOrgansController implements SubController {
      */
 	@FXML
 	private void initialize() {
-		SidebarController.loadSidebar(sidebarPane);
 
 		organCheckBoxes.put(Organ.LIVER, checkBoxLiver);
 		organCheckBoxes.put(Organ.KIDNEY, checkBoxKidney);

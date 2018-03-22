@@ -20,7 +20,9 @@ import seng302.Utilities.PageNavigator;
 /**
  * Controller for the create donor page.
  */
-public class CreateDonorController {
+public class CreateDonorController implements SubController {
+
+    private MainController mainController;
     @FXML
     private DatePicker dobFld;
     @FXML
@@ -80,7 +82,7 @@ public class CreateDonorController {
 
             State.setPageParam("currentUserId", uid);
             State.setPageParam("currentUserType", "donor");
-            PageNavigator.loadPage(Page.VIEW_DONOR.getPath());
+            PageNavigator.loadPage(Page.VIEW_DONOR.getPath(), mainController);
         }
     }
 
@@ -90,6 +92,18 @@ public class CreateDonorController {
      */
     @FXML
     private void goBack(ActionEvent event) {
-        PageNavigator.loadPage(Page.LANDING.getPath());
+        PageNavigator.loadPage(Page.LANDING.getPath(), mainController);
+    }
+
+
+
+    @Override
+    public void setMainController(MainController mainController) {
+        this.mainController = mainController;
+    }
+
+    @Override
+    public MainController getMainController() {
+        return mainController;
     }
 }

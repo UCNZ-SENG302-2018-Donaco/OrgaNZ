@@ -33,12 +33,15 @@ public class ViewDonorController implements SubController {
 
 	@Override
 	public void setMainController(MainController mainController) {
+		mainController.loadDonorSidebar(sidebarPane);
+		System.out.println("called");
+		System.out.println(mainController);
 		this.mainController = mainController;
 	}
 
 	@Override
 	public MainController getMainController() {
-		return this.mainController;
+		return mainController;
 	}
 
     @FXML
@@ -69,7 +72,6 @@ public class ViewDonorController implements SubController {
      */
 	@FXML
     private void initialize() {
-        SidebarController.loadSidebar(sidebarPane);
 
 	    gender.setItems(FXCollections.observableArrayList(Gender.values()));
         btype.setItems(FXCollections.observableArrayList(BloodType.values()));

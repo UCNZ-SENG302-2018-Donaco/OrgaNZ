@@ -11,7 +11,9 @@ import seng302.Actions.ActionInvoker;
 import seng302.Actions.CreateDonorAction;
 import seng302.Utilities.*;
 
-public class CreateClinicianController {
+public class CreateClinicianController implements SubController {
+
+	private MainController mainController;
 
 	@FXML
 	private TextField id, fname, lname, mname, staffId, workAddress, password;
@@ -98,7 +100,7 @@ public class CreateClinicianController {
 				PageNavigator.showAlert(Alert.AlertType.CONFIRMATION, "Clinician created",
 						String.format("Successfully created clinician with Staff ID %s.",
 						staffId.getText()));
-				PageNavigator.loadPage(Page.VIEW_CLINICIAN.getPath());
+				PageNavigator.loadPage(Page.VIEW_CLINICIAN.getPath(), mainController);
 			}
 		}
 	}
@@ -106,6 +108,18 @@ public class CreateClinicianController {
 
 	@FXML
 	private void goBack(ActionEvent event) {
-		PageNavigator.loadPage(Page.LANDING.getPath());
+		PageNavigator.loadPage(Page.LANDING.getPath(), mainController);
+	}
+
+
+
+	@Override
+	public void setMainController(MainController mainController) {
+		this.mainController = mainController;
+	}
+
+	@Override
+	public MainController getMainController() {
+		return mainController;
 	}
 }

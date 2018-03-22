@@ -40,21 +40,6 @@ public class SidebarController implements SubController {
     }
 
     /**
-     * Method that can be called from other controllers to load the sidebar into that page.
-     * Will set the sidebar as the child of the pane given.
-     * @param sidebarPane The container pane for the sidebar, given by the importer.
-     */
-    public static void loadSidebar(Pane sidebarPane) {
-        try {
-            VBox sidebar = FXMLLoader.load(SidebarController.class.getResource(Page.SIDEBAR.getPath()));
-            sidebarPane.getChildren().setAll(sidebar);
-        } catch (IOException exc) {
-            System.err.println("Couldn't load sidebar from fxml file.");
-            exc.printStackTrace();
-        }
-    }
-
-    /**
      * Gets the ActionInvoker from the current state.
      */
     public SidebarController() {
@@ -173,7 +158,7 @@ public class SidebarController implements SubController {
     private void undo(ActionEvent event) {
         if (invoker.canUndo()) {
             invoker.undo();
-            PageNavigator.refreshPage();
+            PageNavigator.refreshPage(mainController);
             //TODO show what was undone
             HistoryItem save = new HistoryItem("UNDO", "Something was undone.");
             JSONConverter.updateHistory(save, "action_history.json");
@@ -192,7 +177,7 @@ public class SidebarController implements SubController {
     private void redo(ActionEvent event) {
         if (invoker.canRedo()) {
             invoker.redo();
-            PageNavigator.refreshPage();
+            PageNavigator.refreshPage(mainController);
             HistoryItem save = new HistoryItem("REDO", "Something was redone");
             JSONConverter.updateHistory(save, "action_history.json");
         } else {

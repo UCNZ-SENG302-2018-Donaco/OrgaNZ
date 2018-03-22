@@ -30,6 +30,7 @@ public class SearchDonorsController implements SubController {
     @Override
     public void setMainController(MainController mainController) {
         this.mainController = mainController;
+        mainController.loadClinicianSidebar(sidebarPane);
     }
 
     @Override
@@ -69,8 +70,6 @@ public class SearchDonorsController implements SubController {
     @FXML
     private void initialize() {
         ArrayList<Donor> allDonors = State.getDonorManager().getDonors();
-
-        ClinicianSidebarController.loadSidebar(sidebarPane);
 
         setupTable();
 
