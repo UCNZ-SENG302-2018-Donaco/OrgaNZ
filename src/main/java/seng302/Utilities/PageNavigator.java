@@ -1,6 +1,7 @@
 package seng302.Utilities;
 
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
@@ -8,6 +9,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import seng302.AppUI;
 import seng302.Controller.MainController;
+import seng302.Controller.SubController;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -30,18 +32,19 @@ public class PageNavigator {
 		PageNavigator.mainController = mainController;
 	}
 
-	/**
-	 * @param fxmlPath the fxml file to be loaded.
-	 */
-	public static void loadPage(String fxmlPath) {
-		try {
-		    currentFxmlPath = fxmlPath;
-			mainController.setPage(FXMLLoader.load(PageNavigator.class.getResource(currentFxmlPath)));
-		} catch (IOException e) {
-			// TODO probably do better error handling than this
-			e.printStackTrace();
-		}
-	}
+    public static void loadPage(String fxmlPath, MainController controller) {
+        try {
+            currentFxmlPath = fxmlPath;
+            FXMLLoader loader = new FXMLLoader(PageNavigator.class.getResource(currentFxmlPath));
+            Node loadedPage = loader.load();
+            SubController subController = loader.getController();
+            subController.setMainController(controller);
+            controller.setPage(loadedPage);
+        } catch (IOException e) {
+            // TODO probably do better error handling than this
+            e.printStackTrace();
+        }
+    }
 
 	public static void refreshPage() {
         try {
@@ -62,7 +65,8 @@ public class PageNavigator {
 		mainController.setStage(newStage);
 
 		Pane newPane = FXMLLoader.load(PageNavigator.class.getResource(fxmlPath));
-		newStage.setScene(new Scene(newPane));
+		newStage.setScene(new Scene(mainPane));
+		mainController.setPage(newPane);
 		newStage.show();
 	}
 

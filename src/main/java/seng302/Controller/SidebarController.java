@@ -23,8 +23,21 @@ import java.nio.file.Paths;
 /**
  * Controller for the sidebar pane imported into every page in the main part of the GUI.
  */
-public class SidebarController {
+public class SidebarController implements SubController {
     private ActionInvoker invoker;
+
+    private MainController mainController;
+
+
+    @Override
+    public void setMainController(MainController mainController) {
+        this.mainController = mainController;
+    }
+
+    @Override
+    public MainController getMainController() {
+        return mainController;
+    }
 
     /**
      * Method that can be called from other controllers to load the sidebar into that page.
@@ -55,7 +68,7 @@ public class SidebarController {
     @FXML
     private void goToViewDonor(ActionEvent event) {
         State.removePageParam("viewUserId");
-        PageNavigator.loadPage(Page.VIEW_DONOR.getPath());
+        PageNavigator.loadPage(Page.VIEW_DONOR.getPath(), mainController);
     }
 
     /**
@@ -65,7 +78,7 @@ public class SidebarController {
     @FXML
     private void goToRegisterOrgans(ActionEvent event) {
         State.removePageParam("viewUserId");
-        PageNavigator.loadPage(Page.REGISTER_ORGANS.getPath());
+        PageNavigator.loadPage(Page.REGISTER_ORGANS.getPath(), mainController);
     }
 
     /**
@@ -74,7 +87,7 @@ public class SidebarController {
      */
     @FXML
     private void goToHistory(ActionEvent event) {
-        PageNavigator.loadPage(Page.HISTORY.getPath());
+        PageNavigator.loadPage(Page.HISTORY.getPath(), mainController);
     }
 
     /**
@@ -131,7 +144,7 @@ public class SidebarController {
                 PageNavigator.showAlert(Alert.AlertType.INFORMATION,
                         "Load Successful",
                         "Successfully loaded Donors from " + file.getName());
-                PageNavigator.loadPage(Page.LANDING.getPath());
+                PageNavigator.loadPage(Page.LANDING.getPath(), mainController);
             }
         } catch (URISyntaxException | IOException exc) {
             // TODO Make alert when load fails
@@ -147,7 +160,7 @@ public class SidebarController {
     @FXML
     private void logout(ActionEvent event) {
         State.clearPageParams();
-        PageNavigator.loadPage(Page.LANDING.getPath());
+        PageNavigator.loadPage(Page.LANDING.getPath(), mainController);
         HistoryItem save = new HistoryItem("LOGOUT", "The Donor logged out");
         JSONConverter.updateHistory(save, "action_history.json");
     }

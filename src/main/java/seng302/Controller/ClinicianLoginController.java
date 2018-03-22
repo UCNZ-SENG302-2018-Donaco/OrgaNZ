@@ -12,7 +12,9 @@ import seng302.Utilities.Page;
 import seng302.Utilities.PageNavigator;
 import sun.security.util.Password;
 
-public class ClinicianLoginController {
+public class ClinicianLoginController implements SubController {
+
+	private MainController mainController;
 
 	@FXML
 	private TextField staffId;
@@ -24,7 +26,7 @@ public class ClinicianLoginController {
 
 	@FXML
 	private void goBack(ActionEvent event) {
-		PageNavigator.loadPage(Page.LANDING.getPath());
+		PageNavigator.loadPage(Page.LANDING.getPath(), mainController);
 	}
 
 	private boolean validStaffIDinput() {
@@ -76,7 +78,7 @@ public class ClinicianLoginController {
 					State.setPageParam("currentClinician", clinician);
 					//PageNavigator.loadPage(Page.VIEW_DONOR.getPath());
 
-					PageNavigator.loadPage(Page.VIEW_CLINICIAN.getPath());
+					PageNavigator.loadPage(Page.VIEW_CLINICIAN.getPath(), mainController);
 					loginSuccessAlert();
 				} else {
 					staffIdPasswordMismatchAlert();
@@ -87,4 +89,13 @@ public class ClinicianLoginController {
 		}
 	}
 
+	@Override
+	public void setMainController(MainController mainController) {
+		this.mainController = mainController;
+	}
+
+	@Override
+	public MainController getMainController() {
+		return mainController;
+	}
 }
