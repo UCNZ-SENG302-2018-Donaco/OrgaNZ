@@ -2,10 +2,7 @@ package seng302.Controller;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import seng302.Actions.ModifyClinicianAction;
@@ -26,11 +23,14 @@ public class ViewClinicianController {
     @FXML
     private Label creationDate, lastModified, fnameLabel, lnameLabel, passwordLabel;
     @FXML
-    private TextField staffID, fname, lname, mname, workAddress, password;
+    private TextField staffID, fname, lname, mname, workAddress;
+    @FXML
+    private PasswordField password;
     @FXML
     private ChoiceBox<Region> region;
 
     private Clinician currentClinician;
+    private String updatedPassword;
 
     @FXML
     private void initialize() {
@@ -43,21 +43,24 @@ public class ViewClinicianController {
         loadClinicianData();
     }
 
-    private void loadClinicianData() {
+	/**
+	 * Loads all of the currently logged in Clinician's details, except for their password.
+	 */
+	private void loadClinicianData() {
+        System.out.println(currentClinician.toString());
         fname.setText(currentClinician.getFirstName());
         mname.setText(currentClinician.getMiddleName());
         lname.setText(currentClinician.getLastName());
         workAddress.setText(currentClinician.getWorkAddress());
         staffID.setText(String.valueOf(currentClinician.getStaffId()));
         region.setValue(currentClinician.getRegion());
-        password.setText(currentClinician.getPassword());
-        creationDate.setText(currentClinician.getCreated_on().format(dateTimeFormat));
+
+        creationDate.setText(currentClinician.getCreated_on().toString());
         if (currentClinician.getModified_on() == null) {
             lastModified.setText("Not yet modified.");
         } else {
             lastModified.setText(currentClinician.getModified_on().format(dateTimeFormat));
         }
-        // Need last modified.
     }
 
     /**
@@ -67,6 +70,7 @@ public class ViewClinicianController {
     @FXML
     private void saveChanges() {
         if (checkMandatoryFields()) {
+            updatedPassword = checkPassword();
             updateChanges();
             lastModified.setText(currentClinician.getModified_on().format(dateTimeFormat));
         }
@@ -78,35 +82,41 @@ public class ViewClinicianController {
      * @return true if all mandatory fields have valid input.
      */
     private boolean checkMandatoryFields() {
-        boolean update = true;
-        if (fname.getText().equals("")) {
-            fnameLabel.setTextFill(Color.RED);
-            update = false;
-        } else {
-            fnameLabel.setTextFill(Color.BLACK);
-        }
+		boolean update = true;
+		if (fname.getText().equals("")) {
+			fnameLabel.setTextFill(Color.RED);
+			update = false;
+		} else {
+			fnameLabel.setTextFill(Color.BLACK);
+		}
 
-        if (lname.getText().equals("")) {
-            lnameLabel.setTextFill(Color.RED);
-            update = false;
-        } else {
-            lnameLabel.setTextFill(Color.BLACK);
-        }
-        if (lname.getText().equals("")) {
-            lnameLabel.setTextFill(Color.RED);
-            update = false;
-        } else {
-            lnameLabel.setTextFill(Color.BLACK);
-        }
+		if (lname.getText().equals("")) {
+			lnameLabel.setTextFill(Color.RED);
+			update = false;
+		} else {
+			lnameLabel.setTextFill(Color.BLACK);
+		}
+		if (lname.getText().equals("")) {
+			lnameLabel.setTextFill(Color.RED);
+			update = false;
+		} else {
+			lnameLabel.setTextFill(Color.BLACK);
+		}
+		return update;
+	}
 
+
+	/**
+	 * Checks if the password has been update. If the PasswordField is left blank, the old password remains current.
+	 * Otherwise the current password is updated to the newly entered value in the field.
+	 * @return the users password.
+	 */
+	private String checkPassword() {
         if (password.getText().equals("")) {
-            passwordLabel.setTextFill(Color.RED);
-            update = false;
+            return currentClinician.getPassword();
         } else {
-            passwordLabel.setTextFill(Color.BLACK);
+            return password.getText();
         }
-
-        return update;
     }
 
     /**
@@ -120,7 +130,7 @@ public class ViewClinicianController {
             action.addChange("setLastName", currentClinician.getLastName(), lname.getText());
             action.addChange("setMiddleName", currentClinician.getMiddleName(), mname.getText());
             action.addChange("setWorkAddress", currentClinician.getWorkAddress(), workAddress.getText());
-            action.addChange("setPassword", currentClinician.getPassword(), password.getText());
+            action.addChange("setPassword", currentClinician.getPassword(), updatedPassword);
             action.addChange("setRegion", currentClinician.getRegion(), region.getValue());
 
             State.getInvoker().execute(action);
@@ -130,9 +140,8 @@ public class ViewClinicianController {
 
             PageNavigator.showAlert(Alert.AlertType.INFORMATION,
                     "Success",
-                    String.format("Successfully updated clinician %s %s %s.",
-                            currentClinician.getFirstName(), currentClinician.getMiddleName(),
-                            currentClinician.getLastName()));
+                    String.format("Successfully updated %s.",
+                            currentClinician.getFirstName()));
 
         } catch (NoSuchFieldException | NoSuchMethodException exc) {
             exc.printStackTrace();
