@@ -49,7 +49,6 @@ public class SidebarController implements SubController {
      */
     @FXML
     private void goToViewDonor(ActionEvent event) {
-        mainController.removePageParam("viewUserId");
         PageNavigator.loadPage(Page.VIEW_DONOR.getPath(), mainController);
     }
 
@@ -59,7 +58,6 @@ public class SidebarController implements SubController {
      */
     @FXML
     private void goToRegisterOrgans(ActionEvent event) {
-        mainController.removePageParam("viewUserId");
         PageNavigator.loadPage(Page.REGISTER_ORGANS.getPath(), mainController);
     }
 
