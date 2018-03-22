@@ -6,15 +6,19 @@ import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import seng302.Actions.ModifyClinicianAction;
-import seng302.Actions.ModifyDonorAction;
 import seng302.Clinician;
-import seng302.Donor;
+import seng302.HistoryItem;
 import seng302.State;
-import seng302.Utilities.*;
+import seng302.Utilities.JSONConverter;
+import seng302.Utilities.PageNavigator;
+import seng302.Utilities.Region;
 
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Presents an interface displaying all information of the currently logged in Clinician. Clinicians are able to edit
+ * their details directly on this page.
+ */
 public class ViewClinicianController {
     private final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy\nh:mm:ss a");
 
@@ -23,18 +27,23 @@ public class ViewClinicianController {
     @FXML
     private Label creationDate, lastModified, fnameLabel, lnameLabel, passwordLabel;
     @FXML
-    private TextField staffID, fname, lname, mname, workAddress, password;
+    private TextField staffID, fname, lname, mname, workAddress;
+    @FXML
+    private PasswordField password;
     @FXML
     private ChoiceBox<Region> region;
 
-
     private Clinician currentClinician;
+    private String updatedPassword;
 
-
-    @FXML
+	/**
+	 * Initialize the page.
+	 */
+	@FXML
     private void initialize() {
-        SidebarController.loadSidebar(sidebarPane);
+        ClinicianSidebarController.loadSidebar(sidebarPane);
         region.setItems(FXCollections.observableArrayList(Region.values()));
+		staffID.setDisable(true);
 
         inputsPane.setVisible(true);
         currentClinician = (Clinician) State.getPageParam("currentClinician");
@@ -42,24 +51,24 @@ public class ViewClinicianController {
         loadClinicianData();
     }
 
-    private void loadClinicianData() {
+	/**
+	 * Loads all of the currently logged in Clinician's details, except for their password.
+	 */
+	private void loadClinicianData() {
         fname.setText(currentClinician.getFirstName());
         mname.setText(currentClinician.getMiddleName());
         lname.setText(currentClinician.getLastName());
         workAddress.setText(currentClinician.getWorkAddress());
         staffID.setText(String.valueOf(currentClinician.getStaffId()));
         region.setValue(currentClinician.getRegion());
-        password.setText(currentClinician.getPassword());
-        creationDate.setText(currentClinician.getCreated_on().toString());
+
+        creationDate.setText(currentClinician.getCreated_on().format(dateTimeFormat));
         if (currentClinician.getModified_on() == null) {
             lastModified.setText("Not yet modified.");
         } else {
-            lastModified.setText(currentClinician.getModified_on().toString());
+            lastModified.setText(currentClinician.getModified_on().format(dateTimeFormat));
         }
-        // Need last modified.
     }
-
-
 
     /**
      * Saves the changes a user makes to the viewed donor if all their inputs are valid. Otherwise the invalid fields
@@ -68,7 +77,9 @@ public class ViewClinicianController {
     @FXML
     private void saveChanges() {
         if (checkMandatoryFields()) {
+            updatedPassword = checkPassword();
             updateChanges();
+            lastModified.setText(currentClinician.getModified_on().format(dateTimeFormat));
         }
     }
 
@@ -78,37 +89,42 @@ public class ViewClinicianController {
      * @return true if all mandatory fields have valid input.
      */
     private boolean checkMandatoryFields() {
-        boolean update = true;
-        if (fname.getText().equals("")) {
-            fnameLabel.setTextFill(Color.RED);
-            update = false;
-        } else {
-            fnameLabel.setTextFill(Color.BLACK);
-        }
+		boolean update = true;
+		if (fname.getText().equals("")) {
+			fnameLabel.setTextFill(Color.RED);
+			update = false;
+		} else {
+			fnameLabel.setTextFill(Color.BLACK);
+		}
 
-        if (lname.getText().equals("")) {
-            lnameLabel.setTextFill(Color.RED);
-            update = false;
-        } else {
-            lnameLabel.setTextFill(Color.BLACK);
-        }
-        if (lname.getText().equals("")) {
-            lnameLabel.setTextFill(Color.RED);
-            update = false;
-        } else {
-            lnameLabel.setTextFill(Color.BLACK);
-        }
+		if (lname.getText().equals("")) {
+			lnameLabel.setTextFill(Color.RED);
+			update = false;
+		} else {
+			lnameLabel.setTextFill(Color.BLACK);
+		}
+		if (lname.getText().equals("")) {
+			lnameLabel.setTextFill(Color.RED);
+			update = false;
+		} else {
+			lnameLabel.setTextFill(Color.BLACK);
+		}
+		return update;
+	}
 
+
+	/**
+	 * Checks if the password has been update. If the PasswordField is left blank, the old password remains current.
+	 * Otherwise the current password is updated to the newly entered value in the field.
+	 * @return the users password.
+	 */
+	private String checkPassword() {
         if (password.getText().equals("")) {
-            passwordLabel.setTextFill(Color.RED);
-            update = false;
+            return currentClinician.getPassword();
         } else {
-            passwordLabel.setTextFill(Color.BLACK);
+            return password.getText();
         }
-
-        return update;
     }
-
 
     /**
      * Records the changes updated as a ModifyDonorAction to trace the change in record.
@@ -121,16 +137,18 @@ public class ViewClinicianController {
             action.addChange("setLastName", currentClinician.getLastName(), lname.getText());
             action.addChange("setMiddleName", currentClinician.getMiddleName(), mname.getText());
             action.addChange("setWorkAddress", currentClinician.getWorkAddress(), workAddress.getText());
-            action.addChange("setPassword", currentClinician.getPassword(), password.getText());
+            action.addChange("setPassword", currentClinician.getPassword(), updatedPassword);
             action.addChange("setRegion", currentClinician.getRegion(), region.getValue());
 
             State.getInvoker().execute(action);
 
+            HistoryItem save = new HistoryItem("UPDATE CLINICIAN", "The Clinician's information was updated. New details are: " + currentClinician.getUpdateLog());
+            JSONConverter.updateHistory(save, "action_history.json");
+
             PageNavigator.showAlert(Alert.AlertType.INFORMATION,
                     "Success",
-                    String.format("Successfully updated clinician %s %s %s.",
-                            currentClinician.getFirstName(), currentClinician.getMiddleName(),
-                            currentClinician.getLastName()));
+                    String.format("Successfully updated %s.",
+                            currentClinician.getFirstName()));
 
         } catch (NoSuchFieldException | NoSuchMethodException exc) {
             exc.printStackTrace();

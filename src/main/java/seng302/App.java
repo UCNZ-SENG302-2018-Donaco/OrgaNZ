@@ -1,7 +1,6 @@
 package seng302;
 
 import picocli.CommandLine;
-import seng302.Actions.ActionInvoker;
 import seng302.Commands.BaseCommand;
 import seng302.Utilities.ConsoleScanner;
 

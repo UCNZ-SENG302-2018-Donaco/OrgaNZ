@@ -47,4 +47,58 @@ public class DonorTest {
 		donor.setDateOfDeath(dod);
 		assertEquals(10, donor.getAge());
 	}
+
+    @Test
+    public void CheckNameContainsValidTest() {
+        donor = new Donor("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        assertTrue(donor.nameContains("First"));
+    }
+
+    @Test
+    public void CheckNameContainsCaseInsensitivityValidTest() {
+        donor = new Donor("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        assertTrue(donor.nameContains("first"));
+    }
+
+    @Test
+    public void CheckNameContainsLastNameValidTest() {
+        donor = new Donor("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        assertTrue(donor.nameContains("La"));
+    }
+
+    @Test
+    public void CheckNameContainsMiddleNameValidTest() {
+        donor = new Donor("First", "middlename", "Last", LocalDate.of(1970, 1, 1), 1);
+        assertTrue(donor.nameContains("mid"));
+    }
+
+    @Test
+    public void CheckNameContainsNotValidTest() {
+        donor = new Donor("First", "middlename", "Last", LocalDate.of(1970, 1, 1), 1);
+        assertFalse(donor.nameContains("notin"));
+    }
+
+    @Test
+    public void CheckNameContainsMultipleChecksValidTest() {
+        donor = new Donor("First", "middlename", "Last", LocalDate.of(1970, 1, 1), 1);
+        assertTrue(donor.nameContains("F Last"));
+    }
+
+    @Test
+    public void CheckNameContainsMultipleChecksOneInvalidTest() {
+        donor = new Donor("First", "middlename", "Last", LocalDate.of(1970, 1, 1), 1);
+        assertFalse(donor.nameContains("F mid not"));
+    }
+
+    @Test
+    public void GetFullNameNoMiddleNameTest() {
+        donor = new Donor("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        assertEquals("First Last", donor.getFullName());
+    }
+
+    @Test
+    public void GetFullNameWithMiddleNameTest() {
+        donor = new Donor("First", "Mid Name", "Last", LocalDate.of(1970, 1, 1), 1);
+        assertEquals("First Mid Name Last", donor.getFullName());
+    }
 }

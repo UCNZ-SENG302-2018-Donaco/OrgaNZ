@@ -86,29 +86,29 @@ public class SetAttribute implements Runnable {
         }
 
         ModifyDonorAction action = new ModifyDonorAction(donor);
-        Map<String, Entry<Object, Object>> states = new HashMap<>();
-        states.put("setFirstName", new SimpleEntry<>(donor.getFirstName(), firstName));
-        states.put("setMiddleName", new SimpleEntry<>(donor.getMiddleName(), middleName));
-        states.put("setLastName", new SimpleEntry<>(donor.getLastName(), lastName));
-        states.put("setCurrentAddress", new SimpleEntry<>(donor.getCurrentAddress(), address));
-        states.put("setRegion", new SimpleEntry<>(donor.getRegion(), region));
-        states.put("setGender", new SimpleEntry<>(donor.getGender(), gender));
-        states.put("setBloodType", new SimpleEntry<>(donor.getBloodType(), bloodType));
-        states.put("setHeight", new SimpleEntry<>(donor.getHeight(), height));
-        states.put("setWeight", new SimpleEntry<>(donor.getWeight(), weight));
-        states.put("setDateOfBirth", new SimpleEntry<>(donor.getDateOfBirth(), dateOfBirth));
-        states.put("setDateOfDeath", new SimpleEntry<>(donor.getDateOfDeath(), dateOfDeath));
 
-        for (Entry<String, Entry<Object, Object>> entry : states.entrySet()) {
-            if (entry.getValue().getValue() == null) {
+        Map<String, Object[]> states = new HashMap<>();
+        states.put("setFirstName", new String[]{donor.getFirstName(), firstName});
+        states.put("setMiddleName", new String[]{donor.getMiddleName(), middleName});
+        states.put("setLastName", new String[]{donor.getLastName(), lastName});
+        states.put("setCurrentAddress", new String[]{donor.getCurrentAddress(), address});
+        states.put("setRegion", new Region[]{donor.getRegion(), region});
+        states.put("setGender", new Gender[]{donor.getGender(), gender});
+        states.put("setBloodType", new BloodType[]{donor.getBloodType(), bloodType});
+        states.put("setHeight", new Double[]{donor.getHeight(), height});
+        states.put("setWeight", new Double[]{donor.getWeight(), weight});
+        states.put("setDateOfBirth", new LocalDate[]{donor.getDateOfBirth(), dateOfBirth});
+        states.put("setDateOfDeath", new LocalDate[]{donor.getDateOfDeath(), dateOfDeath});
+
+        for (Entry<String, Object[]> entry : states.entrySet()) {
+            if (entry.getValue()[1] == null) {
                 continue;
             }
             try {
-                action.addChange(entry.getKey(), entry.getValue().getKey(), entry.getValue().getValue());
+                action.addChange(entry.getKey(), entry.getValue()[0], entry.getValue()[1]);
             } catch (NoSuchMethodException | NoSuchFieldException e) {
                 e.printStackTrace();
             }
-
         }
         invoker.execute(action);
         HistoryItem setAttribute = new HistoryItem("ATTRIBUTE UPDATE", "DETAILS were updated for user " + uid);

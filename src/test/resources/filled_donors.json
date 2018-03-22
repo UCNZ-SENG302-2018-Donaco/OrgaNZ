@@ -7,10 +7,10 @@
         "day": 22
       },
       "time": {
-        "hour": 0,
-        "minute": 52,
-        "second": 32,
-        "nano": 525000000
+        "hour": 12,
+        "minute": 22,
+        "second": 31,
+        "nano": 163000000
       }
     },
     "firstName": "First",
@@ -26,18 +26,18 @@
     },
     "age": 0,
     "organStatus": {
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "HEART": false,
-      "BONE": false,
-      "KIDNEY": false,
-      "LIVER": false,
-      "INTESTINE": false,
+      "SKIN": false,
       "CONNECTIVE_TISSUE": false,
       "LUNG": false,
+      "BONE_MARROW": false,
       "PANCREAS": false,
+      "KIDNEY": false,
       "CORNEA": false,
-      "SKIN": false
+      "INTESTINE": false,
+      "LIVER": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
+      "BONE": false
     },
     "updateLog": [],
     "uid": 1

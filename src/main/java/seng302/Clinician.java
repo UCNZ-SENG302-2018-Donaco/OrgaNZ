@@ -6,6 +6,9 @@ import seng302.Utilities.Region;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
+/**
+ * The main Clinician class.
+ */
 public class Clinician {
 
     private final LocalDateTime created_on;
@@ -19,10 +22,19 @@ public class Clinician {
     private String workAddress;
     private Region region;
 
-
     private int staffId;
     private String password;
 
+    /**
+     * Create a new Clinician object
+     * @param firstName     First name string
+     * @param middleName    Middle name(s). May be null
+     * @param lastName      Last name string
+     * @param workAddress   Address string
+     * @param region        Region from the Region ENUM
+     * @param staffId       The unique staffId. Should be checked using the ClinicianManager to ensure uniqueness
+     * @param password      The clinicians password for logins. Stored in plaintext
+     */
     public Clinician(String firstName, String middleName, String lastName, String workAddress, Region region, int staffId, String password) {
         created_on = LocalDateTime.now();
 

@@ -5,12 +5,22 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.layout.StackPane;
+import javafx.stage.Stage;
 
 /**
  * Main controller class for the application window.
  *
  */
 public class MainController {
+	private Stage stage;
+
+	public void setStage(Stage stage){
+		this.stage = stage;
+	}
+
+	public Stage getStage() {
+		return this.stage;
+	}
 
 	/** Holder of a switchable page. */
 	@FXML
