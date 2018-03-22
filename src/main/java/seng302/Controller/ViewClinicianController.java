@@ -2,7 +2,11 @@ package seng302.Controller;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import seng302.Actions.ModifyClinicianAction;
@@ -19,8 +23,23 @@ import java.time.format.DateTimeFormatter;
  * Presents an interface displaying all information of the currently logged in Clinician. Clinicians are able to edit
  * their details directly on this page.
  */
-public class ViewClinicianController {
+public class ViewClinicianController implements SubController {
     private final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy\nh:mm:ss a");
+
+    private MainController mainController;
+
+    @Override
+    public void setMainController(MainController mainController) {
+        this.mainController = mainController;
+        mainController.loadClinicianSidebar(sidebarPane);
+
+        init();
+    }
+
+    @Override
+    public MainController getMainController() {
+        return this.mainController;
+    }
 
     @FXML
     private Pane sidebarPane, idPane, inputsPane;
@@ -41,13 +60,14 @@ public class ViewClinicianController {
 	 */
 	@FXML
     private void initialize() {
-        ClinicianSidebarController.loadSidebar(sidebarPane);
         region.setItems(FXCollections.observableArrayList(Region.values()));
 		staffID.setDisable(true);
 
         inputsPane.setVisible(true);
-        currentClinician = (Clinician) State.getPageParam("currentClinician");
+    }
 
+    private void init() {
+        currentClinician = (Clinician) mainController.getPageParam("currentClinician");
         loadClinicianData();
     }
 

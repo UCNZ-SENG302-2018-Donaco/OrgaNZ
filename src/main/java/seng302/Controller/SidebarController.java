@@ -2,10 +2,7 @@ package seng302.Controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Alert;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import seng302.Actions.ActionInvoker;
 import seng302.AppUI;
@@ -23,22 +20,20 @@ import java.nio.file.Paths;
 /**
  * Controller for the sidebar pane imported into every page in the main part of the GUI.
  */
-public class SidebarController {
+public class SidebarController implements SubController {
     private ActionInvoker invoker;
 
-    /**
-     * Method that can be called from other controllers to load the sidebar into that page.
-     * Will set the sidebar as the child of the pane given.
-     * @param sidebarPane The container pane for the sidebar, given by the importer.
-     */
-    public static void loadSidebar(Pane sidebarPane) {
-        try {
-            VBox sidebar = FXMLLoader.load(SidebarController.class.getResource(Page.SIDEBAR.getPath()));
-            sidebarPane.getChildren().setAll(sidebar);
-        } catch (IOException exc) {
-            System.err.println("Couldn't load sidebar from fxml file.");
-            exc.printStackTrace();
-        }
+    private MainController mainController;
+
+
+    @Override
+    public void setMainController(MainController mainController) {
+        this.mainController = mainController;
+    }
+
+    @Override
+    public MainController getMainController() {
+        return mainController;
     }
 
     /**
@@ -54,8 +49,7 @@ public class SidebarController {
      */
     @FXML
     private void goToViewDonor(ActionEvent event) {
-        State.removePageParam("viewUserId");
-        PageNavigator.loadPage(Page.VIEW_DONOR.getPath());
+        PageNavigator.loadPage(Page.VIEW_DONOR.getPath(), mainController);
     }
 
     /**
@@ -64,8 +58,7 @@ public class SidebarController {
      */
     @FXML
     private void goToRegisterOrgans(ActionEvent event) {
-        State.removePageParam("viewUserId");
-        PageNavigator.loadPage(Page.REGISTER_ORGANS.getPath());
+        PageNavigator.loadPage(Page.REGISTER_ORGANS.getPath(), mainController);
     }
 
     /**
@@ -74,7 +67,7 @@ public class SidebarController {
      */
     @FXML
     private void goToHistory(ActionEvent event) {
-        PageNavigator.loadPage(Page.HISTORY.getPath());
+        PageNavigator.loadPage(Page.HISTORY.getPath(), mainController);
     }
 
     /**
@@ -127,11 +120,11 @@ public class SidebarController {
                 HistoryItem load = new HistoryItem("LOAD", "The systems state was loaded from " + file.getName());
                 JSONConverter.updateHistory(load, "action_history.json");
 
-                State.clearPageParams();
+                mainController.clearPageParams();
                 PageNavigator.showAlert(Alert.AlertType.INFORMATION,
                         "Load Successful",
                         "Successfully loaded Donors from " + file.getName());
-                PageNavigator.loadPage(Page.LANDING.getPath());
+                PageNavigator.loadPage(Page.LANDING.getPath(), mainController);
             }
         } catch (URISyntaxException | IOException exc) {
             // TODO Make alert when load fails
@@ -146,8 +139,8 @@ public class SidebarController {
      */
     @FXML
     private void logout(ActionEvent event) {
-        State.clearPageParams();
-        PageNavigator.loadPage(Page.LANDING.getPath());
+        mainController.clearPageParams();
+        PageNavigator.loadPage(Page.LANDING.getPath(), mainController);
         HistoryItem save = new HistoryItem("LOGOUT", "The Donor logged out");
         JSONConverter.updateHistory(save, "action_history.json");
     }
@@ -160,10 +153,10 @@ public class SidebarController {
     private void undo(ActionEvent event) {
         if (invoker.canUndo()) {
             invoker.undo();
-            PageNavigator.refreshPage();
             //TODO show what was undone
             HistoryItem save = new HistoryItem("UNDO", "Something was undone.");
             JSONConverter.updateHistory(save, "action_history.json");
+            PageNavigator.refreshPage(mainController);
         } else {
             PageNavigator.showAlert(Alert.AlertType.ERROR,
                     "No Undoable Actions",
@@ -179,9 +172,9 @@ public class SidebarController {
     private void redo(ActionEvent event) {
         if (invoker.canRedo()) {
             invoker.redo();
-            PageNavigator.refreshPage();
             HistoryItem save = new HistoryItem("REDO", "Something was redone");
             JSONConverter.updateHistory(save, "action_history.json");
+            PageNavigator.refreshPage(mainController);
         } else {
             PageNavigator.showAlert(Alert.AlertType.ERROR,
                     "No Redoable Actions",

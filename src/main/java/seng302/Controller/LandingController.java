@@ -8,7 +8,9 @@ import seng302.Utilities.PageNavigator;
 /**
  * Controls the Landing Screen View.
  */
-public class LandingController {
+public class LandingController implements SubController {
+
+	private MainController mainController;
 
 	/**
 	 * Redirects the GUI to create donor page
@@ -16,7 +18,7 @@ public class LandingController {
 	 */
 	@FXML
 	private void goToCreateDonor(ActionEvent event) {
-		PageNavigator.loadPage(Page.CREATE_USER.getPath());
+		PageNavigator.loadPage(Page.CREATE_USER.getPath(), mainController);
 	}
 
 	/**
@@ -25,7 +27,7 @@ public class LandingController {
 	 */
 	@FXML
 	private void goToDonorLogin(ActionEvent event) {
-		PageNavigator.loadPage(Page.LOGIN.getPath());
+		PageNavigator.loadPage(Page.LOGIN.getPath(), mainController);
 	}
 
     /**
@@ -34,7 +36,7 @@ public class LandingController {
      */
 	@FXML
 	private void goToClinicianLogin(ActionEvent event) {
-		PageNavigator.loadPage(Page.CLINICIAN_LOGIN.getPath());
+		PageNavigator.loadPage(Page.CLINICIAN_LOGIN.getPath(), mainController);
 	}
 
     /**
@@ -43,11 +45,16 @@ public class LandingController {
      */
 	@FXML
 	private void goToCreateClinician(ActionEvent event) {
-		PageNavigator.loadPage(Page.CREATE_CLINICIAN.getPath());
+		PageNavigator.loadPage(Page.CREATE_CLINICIAN.getPath(), mainController);
 	}
 
-	@FXML
-	private void gotosearch(ActionEvent event) {
-		PageNavigator.loadPage(Page.SEARCH.getPath());
+	@Override
+	public void setMainController(MainController mainController) {
+		this.mainController = mainController;
+	}
+
+	@Override
+	public MainController getMainController() {
+		return mainController;
 	}
 }

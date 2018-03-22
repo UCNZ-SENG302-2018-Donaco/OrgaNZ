@@ -20,8 +20,23 @@ import java.util.Map;
 /**
  * Controller for the register organs page.
  */
-public class RegisterOrgansController {
-    @FXML
+public class RegisterOrgansController implements SubController {
+	private MainController mainController;
+
+	@Override
+	public void setMainController(MainController mainController) {
+		this.mainController = mainController;
+		mainController.loadDonorSidebar(sidebarPane);
+
+		init();
+	}
+
+	@Override
+	public MainController getMainController() {
+		return this.mainController;
+	}
+
+	@FXML
     private Pane sidebarPane;
     @FXML
     private Pane idPane;
@@ -47,7 +62,6 @@ public class RegisterOrgansController {
      */
 	@FXML
 	private void initialize() {
-		SidebarController.loadSidebar(sidebarPane);
 
 		organCheckBoxes.put(Organ.LIVER, checkBoxLiver);
 		organCheckBoxes.put(Organ.KIDNEY, checkBoxKidney);
@@ -65,23 +79,25 @@ public class RegisterOrgansController {
 
         manager = State.getDonorManager();
         invoker = State.getInvoker();
+	}
 
-        String currentUserType = (String) State.getPageParam("currentUserType");
-        if (currentUserType == null) {
-            Integer viewUserId = (Integer) State.getPageParam("viewUserId");
-            if (viewUserId != null) {
-                fieldUserID.setText(viewUserId.toString());
-                updateUserID(null);
-            }
-        } else if (currentUserType.equals("donor")) {
-            Integer currentUserId = (Integer) State.getPageParam("currentUserId");
-            if (currentUserId != null) {
-                fieldUserID.setText(currentUserId.toString());
-                updateUserID(null);
-            }
-            idPane.setVisible(false);
-            idPane.setManaged(false);
-        }
+	private void init() {
+		String currentUserType = (String) mainController.getPageParam("currentUserType");
+		if (currentUserType == null) {
+			Integer viewUserId = (Integer) mainController.getPageParam("viewUserId");
+			if (viewUserId != null) {
+				fieldUserID.setText(viewUserId.toString());
+				updateUserID(null);
+			}
+		} else if (currentUserType.equals("donor")) {
+			Integer currentUserId = (Integer) mainController.getPageParam("currentUserId");
+			if (currentUserId != null) {
+				fieldUserID.setText(currentUserId.toString());
+				updateUserID(null);
+			}
+			idPane.setVisible(false);
+			idPane.setManaged(false);
+		}
 	}
 
     /**
@@ -97,7 +113,7 @@ public class RegisterOrgansController {
 		}
 
 		if (donor != null) {
-            State.setPageParam("viewUserId", donor.getUid());
+            mainController.setPageParam("viewUserId", donor.getUid());
 			setCheckBoxesEnabled();
 			for (Map.Entry<Organ, CheckBox> entry : organCheckBoxes.entrySet()) {
 				entry.getValue().setSelected(donor.getOrganStatus().get(entry.getKey()));

@@ -3,18 +3,28 @@ package seng302.Controller;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
-import javafx.scene.paint.Color;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
-import seng302.*;
-import seng302.Actions.ActionInvoker;
-import seng302.Utilities.*;
+import javafx.scene.control.TextField;
+import javafx.scene.paint.Color;
+import seng302.Clinician;
+import seng302.ClinicianManager;
+import seng302.HistoryItem;
+import seng302.State;
+import seng302.Utilities.JSONConverter;
+import seng302.Utilities.Page;
+import seng302.Utilities.PageNavigator;
+import seng302.Utilities.Region;
 
 /**
  * This controller provides the user with an interface allowing them to enter clinician details. This creates a
  * clinician login for them and takes them to the view clinician page.
  */
-public class CreateClinicianController {
+public class CreateClinicianController implements SubController {
+
+	private MainController mainController;
 
 	@FXML
 	private TextField id, fname, lname, mname, staffId, workAddress;
@@ -26,7 +36,6 @@ public class CreateClinicianController {
 	private ChoiceBox<Region> region;
 
 	private ClinicianManager clinicianManager;
-	private ActionInvoker invoker;
 
 	/**
 	 * Initialize the controller to display appropriate items.
@@ -34,7 +43,6 @@ public class CreateClinicianController {
 	@FXML
 	private void initialize() {
 		clinicianManager = State.getClinicianManager();
-		invoker = State.getInvoker();
 		region.setItems(FXCollections.observableArrayList(Region.values()));
 	}
 
@@ -104,13 +112,13 @@ public class CreateClinicianController {
 				HistoryItem save = new HistoryItem("CREATE CLINICIAN", "Clinician " + fname.getText() + " " + lname.getText() + " with staff ID " + staffId.getText() + " Created.");
 				JSONConverter.updateHistory(save, "action_history.json");
 
-				State.setPageParam("currentUserType", "clinician");
-				State.setPageParam("currentClinician", clinician);
+				mainController.setPageParam("currentUserType", "clinician");
+				mainController.setPageParam("currentClinician", clinician);
 
-				PageNavigator.showAlert(Alert.AlertType.CONFIRMATION, "Clinician created",
+				PageNavigator.showAlert(Alert.AlertType.INFORMATION, "Clinician created",
 						String.format("Successfully created clinician with Staff ID %s.",
 						staffId.getText()));
-				PageNavigator.loadPage(Page.VIEW_CLINICIAN.getPath());
+				PageNavigator.loadPage(Page.VIEW_CLINICIAN.getPath(), mainController);
 			}
 		}
 	}
@@ -122,6 +130,16 @@ public class CreateClinicianController {
 	 */
 	@FXML
 	private void goBack(ActionEvent event) {
-		PageNavigator.loadPage(Page.LANDING.getPath());
+		PageNavigator.loadPage(Page.LANDING.getPath(), mainController);
+	}
+
+	@Override
+	public void setMainController(MainController mainController) {
+		this.mainController = mainController;
+	}
+
+	@Override
+	public MainController getMainController() {
+		return mainController;
 	}
 }

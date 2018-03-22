@@ -26,8 +26,23 @@ import java.time.format.DateTimeFormatter;
 /**
  * Controller for the view/edit donor page.
  */
-public class ViewDonorController {
+public class ViewDonorController implements SubController {
     private final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy\nh:mm:ss a");
+
+	private MainController mainController;
+
+	@Override
+	public void setMainController(MainController mainController) {
+		this.mainController = mainController;
+		mainController.loadDonorSidebar(sidebarPane);
+
+		init();
+	}
+
+	@Override
+	public MainController getMainController() {
+		return mainController;
+	}
 
     @FXML
     private Pane sidebarPane, idPane, inputsPane;
@@ -57,22 +72,22 @@ public class ViewDonorController {
      */
 	@FXML
     private void initialize() {
-        SidebarController.loadSidebar(sidebarPane);
-
 	    gender.setItems(FXCollections.observableArrayList(Gender.values()));
         btype.setItems(FXCollections.observableArrayList(BloodType.values()));
         region.setItems(FXCollections.observableArrayList(Region.values()));
 		setFieldsDisabled(true);
+    }
 
-		String currentUserType = (String) State.getPageParam("currentUserType");
+    private void init() {
+		String currentUserType = (String) mainController.getPageParam("currentUserType");
 		if (currentUserType == null) {
-			Integer viewUserId = (Integer) State.getPageParam("viewUserId");
+			Integer viewUserId = (Integer) mainController.getPageParam("viewUserId");
 			if (viewUserId != null) {
 				id.setText(viewUserId.toString());
 				searchDonor();
 			}
 		} else if (currentUserType.equals("donor")) {
-			Integer currentUserId = (Integer) State.getPageParam("currentUserId");
+			Integer currentUserId = (Integer) mainController.getPageParam("currentUserId");
 			if (currentUserId != null) {
 				id.setText(currentUserId.toString());
 				searchDonor();
@@ -80,7 +95,7 @@ public class ViewDonorController {
 			idPane.setVisible(false);
 			idPane.setManaged(false);
 		}
-    }
+	}
 
 	/**
 	 * Searches for a donor based off the id number supplied in the text field. The users fields will be displayed if
@@ -102,7 +117,7 @@ public class ViewDonorController {
 			noDonorLabel.setVisible(true);
             setFieldsDisabled(true);
 		} else {
-            State.setPageParam("viewUserId", id_value);
+            mainController.setPageParam("viewUserId", id_value);
 			noDonorLabel.setVisible(false);
             setFieldsDisabled(false);
 
@@ -294,7 +309,7 @@ public class ViewDonorController {
 	 */
 	@FXML
 	public void viewOrgansForDonor() {
-		State.setPageParam("viewUserId", viewedDonor.getUid());
-		PageNavigator.loadPage(Page.REGISTER_ORGANS.getPath());
+		mainController.setPageParam("viewUserId", viewedDonor.getUid());
+		PageNavigator.loadPage(Page.REGISTER_ORGANS.getPath(), mainController);
 	}
 }

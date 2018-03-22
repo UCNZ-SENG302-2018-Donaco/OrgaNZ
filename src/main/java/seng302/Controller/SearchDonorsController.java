@@ -1,6 +1,5 @@
 package seng302.Controller;
 
-
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -8,7 +7,12 @@ import javafx.collections.transformation.SortedList;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.Pagination;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -24,7 +28,19 @@ import seng302.Utilities.Region;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class SearchDonorsController {
+public class SearchDonorsController implements SubController {
+    private MainController mainController;
+
+    @Override
+    public void setMainController(MainController mainController) {
+        this.mainController = mainController;
+        mainController.loadClinicianSidebar(sidebarPane);
+    }
+
+    @Override
+    public MainController getMainController() {
+        return this.mainController;
+    }
 
     private int rowsPerPage = 30;
 
@@ -58,8 +74,6 @@ public class SearchDonorsController {
     @FXML
     private void initialize() {
         ArrayList<Donor> allDonors = State.getDonorManager().getDonors();
-
-        ClinicianSidebarController.loadSidebar(sidebarPane);
 
         setupTable();
 
@@ -119,8 +133,7 @@ public class SearchDonorsController {
                 if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2) {
                     Donor donor = tableView.getSelectionModel().getSelectedItem();
                     try {
-                        State.setPageParam("viewUserId", donor.getUid());
-                        PageNavigator.openNewWindow(Page.VIEW_DONOR.getPath());
+                        PageNavigator.openNewWindow(Page.VIEW_DONOR.getPath(), "viewUserId", donor.getUid());
                     } catch (IOException exc) {
                         exc.printStackTrace();
                     }

@@ -16,7 +16,10 @@ import seng302.Utilities.PageNavigator;
 /**
  * Controller for the login page.
  */
-public class LoginController {
+public class LoginController implements SubController {
+
+    private MainController mainController;
+
     @FXML
     private ListView<Donor> donorList;
     private DonorManager donorManager;
@@ -59,9 +62,9 @@ public class LoginController {
                     selectedDonor.getFirstName(), selectedDonor.getLastName(), selectedDonor.getUid()));
             JSONConverter.updateHistory(loginHistory, "action_history.json");
 
-            State.setPageParam("currentUserId", selectedDonor.getUid());
-            State.setPageParam("currentUserType", "donor");
-            PageNavigator.loadPage(Page.VIEW_DONOR.getPath());
+            mainController.setPageParam("currentUserId", selectedDonor.getUid());
+            mainController.setPageParam("currentUserType", "donor");
+            PageNavigator.loadPage(Page.VIEW_DONOR.getPath(), mainController);
         }
     }
 
@@ -71,6 +74,16 @@ public class LoginController {
      */
     @FXML
     private void goBack(ActionEvent event) {
-        PageNavigator.loadPage(Page.LANDING.getPath());
+        PageNavigator.loadPage(Page.LANDING.getPath(), mainController);
+    }
+
+    @Override
+    public void setMainController(MainController mainController) {
+        this.mainController = mainController;
+    }
+
+    @Override
+    public MainController getMainController() {
+        return mainController;
     }
 }

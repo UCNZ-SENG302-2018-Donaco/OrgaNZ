@@ -5,20 +5,20 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.paint.Color;
 import seng302.Clinician;
 import seng302.HistoryItem;
 import seng302.State;
 import seng302.Utilities.JSONConverter;
 import seng302.Utilities.Page;
 import seng302.Utilities.PageNavigator;
-import sun.security.util.Password;
 
 /**
  * Controller to handle the login of Clinician users. It allows them to log into a valid Clinician that exists on the
  * system, e.g. the default clinician.
  */
-public class ClinicianLoginController {
+public class ClinicianLoginController implements SubController {
+
+	private MainController mainController;
 
 	@FXML
 	private TextField staffId;
@@ -34,7 +34,7 @@ public class ClinicianLoginController {
 	 */
 	@FXML
 	private void goBack(ActionEvent event) {
-		PageNavigator.loadPage(Page.LANDING.getPath());
+		PageNavigator.loadPage(Page.LANDING.getPath(), mainController);
 	}
 
 	/**
@@ -44,11 +44,7 @@ public class ClinicianLoginController {
 	private boolean validStaffIDinput() {
 		try {
 			id = Integer.parseInt(staffId.getText()); // Staff ID
-			if (id < -1) {
-				return false;
-			} else {
-				return true;
-			}
+            return id >= -1;
 		} catch (NumberFormatException ex) {
 			return false;
 		}
@@ -82,7 +78,7 @@ public class ClinicianLoginController {
 	 * Alert to display a successful login.
 	 */
 	private void loginSuccessAlert() {
-		PageNavigator.showAlert(Alert.AlertType.CONFIRMATION, "Success",
+		PageNavigator.showAlert(Alert.AlertType.INFORMATION, "Success",
 				"Successfully logged in.");
 	}
 
@@ -101,11 +97,11 @@ public class ClinicianLoginController {
 
 				if (clinician.getPassword().equals(password.getText())) {
 
-					State.setPageParam("currentUserType", "clinician");
-					State.setPageParam("currentClinician", clinician);
+					mainController.setPageParam("currentUserType", "clinician");
+					mainController.setPageParam("currentClinician", clinician);
 					//PageNavigator.loadPage(Page.VIEW_DONOR.getPath());
 
-					PageNavigator.loadPage(Page.VIEW_CLINICIAN.getPath());
+					PageNavigator.loadPage(Page.VIEW_CLINICIAN.getPath(), mainController);
 					loginSuccessAlert();
 
                     HistoryItem save = new HistoryItem("LOGIN CLINICIAN",
@@ -120,4 +116,13 @@ public class ClinicianLoginController {
 		}
 	}
 
+	@Override
+	public void setMainController(MainController mainController) {
+		this.mainController = mainController;
+	}
+
+	@Override
+	public MainController getMainController() {
+		return mainController;
+	}
 }
