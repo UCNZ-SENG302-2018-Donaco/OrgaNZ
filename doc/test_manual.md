@@ -66,9 +66,27 @@ These include:
 * Creation Date - {The date & time of when AppUI was ran in the current session}
 * Last Modified - Not yet modified
 
-The remaining fields must be blank.
+The remaining fields must be blank. If all these attributes are correct, the test passes.
 
 ## Story 15
 Note: All clinician updates are performed on the default clinician.
+
 #### AC1
-Log into he default clinician > Upon successful login, the passwords field should be set blank.
+Log into he default clinician > Upon successful login, the passwords field should be set blank > Change the password to test >
+Check at the bottom of the history tab that the type column displays "UPDATE CLINICIAN" beside the time the password was
+changed > Log out > Log in with the 'admin' password > A popup box saying that the StaffId and password do not match 
+should appear > Log in with'test' password > This should now take you back to the 'View/Edit Clinician' page for the 
+default clinician in order for this test to pass.
+
+#### AC2
+Log into the default clinician > Delete all fields from each text box (Region can remain unspecified & note that you 
+cannot edit the StaffID field) > First Name and last name should appear red, as they both have invalid inputs - they are mandatory fields >
+The password is blank by default as it contains the current password > Re-enter each text field with test String values, but
+ensure the password is set to a memorable name, e.g. 'test' > Log out > Log in with StaffId = 0 and your new password > These
+updates you made now must show in the 'View/Edit Clinician' page for this test to pass.
+
+#### AC3
+* After performing tests for either AC1 or AC2, check that the Last Modified date is set to the time when you last updated
+the default Clinician. If so, this first test passes.
+* Terminate any running AppUI programs > Run AppUi > Log into the default clinician > If Last Modified is set to "Not yet modified"
+the test passes. Otherwise it fails.
