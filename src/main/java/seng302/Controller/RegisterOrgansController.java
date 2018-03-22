@@ -78,15 +78,15 @@ public class RegisterOrgansController implements SubController {
         manager = State.getDonorManager();
         invoker = State.getInvoker();
 
-        String currentUserType = (String) State.getPageParam("currentUserType");
+        String currentUserType = (String) mainController.getPageParam("currentUserType");
         if (currentUserType == null) {
-            Integer viewUserId = (Integer) State.getPageParam("viewUserId");
+            Integer viewUserId = (Integer) mainController.getPageParam("viewUserId");
             if (viewUserId != null) {
                 fieldUserID.setText(viewUserId.toString());
                 updateUserID(null);
             }
         } else if (currentUserType.equals("donor")) {
-            Integer currentUserId = (Integer) State.getPageParam("currentUserId");
+            Integer currentUserId = (Integer) mainController.getPageParam("currentUserId");
             if (currentUserId != null) {
                 fieldUserID.setText(currentUserId.toString());
                 updateUserID(null);
@@ -109,7 +109,7 @@ public class RegisterOrgansController implements SubController {
 		}
 
 		if (donor != null) {
-            State.setPageParam("viewUserId", donor.getUid());
+            mainController.setPageParam("viewUserId", donor.getUid());
 			setCheckBoxesEnabled();
 			for (Map.Entry<Organ, CheckBox> entry : organCheckBoxes.entrySet()) {
 				entry.getValue().setSelected(donor.getOrganStatus().get(entry.getKey()));

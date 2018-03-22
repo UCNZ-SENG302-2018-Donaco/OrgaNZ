@@ -52,7 +52,7 @@ public class SidebarController implements SubController {
      */
     @FXML
     private void goToViewDonor(ActionEvent event) {
-        State.removePageParam("viewUserId");
+        mainController.removePageParam("viewUserId");
         PageNavigator.loadPage(Page.VIEW_DONOR.getPath(), mainController);
     }
 
@@ -62,7 +62,7 @@ public class SidebarController implements SubController {
      */
     @FXML
     private void goToRegisterOrgans(ActionEvent event) {
-        State.removePageParam("viewUserId");
+        mainController.removePageParam("viewUserId");
         PageNavigator.loadPage(Page.REGISTER_ORGANS.getPath(), mainController);
     }
 
@@ -125,7 +125,7 @@ public class SidebarController implements SubController {
                 HistoryItem load = new HistoryItem("LOAD", "The systems state was loaded from " + file.getName());
                 JSONConverter.updateHistory(load, "action_history.json");
 
-                State.clearPageParams();
+                mainController.clearPageParams();
                 PageNavigator.showAlert(Alert.AlertType.INFORMATION,
                         "Load Successful",
                         "Successfully loaded Donors from " + file.getName());
@@ -144,7 +144,7 @@ public class SidebarController implements SubController {
      */
     @FXML
     private void logout(ActionEvent event) {
-        State.clearPageParams();
+        mainController.clearPageParams();
         PageNavigator.loadPage(Page.LANDING.getPath(), mainController);
         HistoryItem save = new HistoryItem("LOGOUT", "The Donor logged out");
         JSONConverter.updateHistory(save, "action_history.json");

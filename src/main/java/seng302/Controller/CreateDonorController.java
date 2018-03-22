@@ -80,8 +80,8 @@ public class CreateDonorController implements SubController {
                     String.format("Successfully created donor %s %s %s with ID %d.",
                             donor.getFirstName(), donor.getMiddleName(), donor.getLastName(), uid));
 
-            State.setPageParam("currentUserId", uid);
-            State.setPageParam("currentUserType", "donor");
+            mainController.setPageParam("currentUserId", uid);
+            mainController.setPageParam("currentUserType", "donor");
             PageNavigator.loadPage(Page.VIEW_DONOR.getPath(), mainController);
         }
     }

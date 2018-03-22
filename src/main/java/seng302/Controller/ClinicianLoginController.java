@@ -74,8 +74,8 @@ public class ClinicianLoginController implements SubController {
 
 				if (clinician.getPassword().equals(password.getText())) {
 
-					State.setPageParam("currentUserType", "clinician");
-					State.setPageParam("currentClinician", clinician);
+					mainController.setPageParam("currentUserType", "clinician");
+					mainController.setPageParam("currentClinician", clinician);
 					//PageNavigator.loadPage(Page.VIEW_DONOR.getPath());
 
 					PageNavigator.loadPage(Page.VIEW_CLINICIAN.getPath(), mainController);

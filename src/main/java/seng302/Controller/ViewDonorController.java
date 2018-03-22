@@ -76,15 +76,15 @@ public class ViewDonorController implements SubController {
         region.setItems(FXCollections.observableArrayList(Region.values()));
 		setFieldsDisabled(true);
 
-		String currentUserType = (String) State.getPageParam("currentUserType");
+		String currentUserType = (String) mainController.getPageParam("currentUserType");
 		if (currentUserType == null) {
-			Integer viewUserId = (Integer) State.getPageParam("viewUserId");
+			Integer viewUserId = (Integer) mainController.getPageParam("viewUserId");
 			if (viewUserId != null) {
 				id.setText(viewUserId.toString());
 				searchDonor();
 			}
 		} else if (currentUserType.equals("donor")) {
-			Integer currentUserId = (Integer) State.getPageParam("currentUserId");
+			Integer currentUserId = (Integer) mainController.getPageParam("currentUserId");
 			if (currentUserId != null) {
 				id.setText(currentUserId.toString());
 				searchDonor();
@@ -114,7 +114,7 @@ public class ViewDonorController implements SubController {
 			noDonorLabel.setVisible(true);
             setFieldsDisabled(true);
 		} else {
-            State.setPageParam("viewUserId", id_value);
+            mainController.setPageParam("viewUserId", id_value);
 			noDonorLabel.setVisible(false);
             setFieldsDisabled(false);
 
@@ -303,7 +303,7 @@ public class ViewDonorController implements SubController {
 
 	@FXML
 	public void viewOrgansForDonor() {
-		State.setPageParam("viewUserId", viewedDonor.getUid());
+		mainController.setPageParam("viewUserId", viewedDonor.getUid());
 		PageNavigator.loadPage(Page.REGISTER_ORGANS.getPath(), mainController);
 	}
 }

@@ -62,8 +62,8 @@ public class LoginController implements SubController {
                     selectedDonor.getFirstName(), selectedDonor.getLastName(), selectedDonor.getUid()));
             JSONConverter.updateHistory(loginHistory, "action_history.json");
 
-            State.setPageParam("currentUserId", selectedDonor.getUid());
-            State.setPageParam("currentUserType", "donor");
+            mainController.setPageParam("currentUserId", selectedDonor.getUid());
+            mainController.setPageParam("currentUserType", "donor");
             PageNavigator.loadPage(Page.VIEW_DONOR.getPath(), mainController);
         }
     }

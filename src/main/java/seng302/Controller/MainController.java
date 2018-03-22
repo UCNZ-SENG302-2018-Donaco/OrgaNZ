@@ -10,9 +10,10 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import seng302.Utilities.Page;
-import seng302.Utilities.PageNavigator;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Main controller class for the application window.
@@ -21,6 +22,7 @@ import java.io.IOException;
 public class MainController {
 	private Stage stage;
     private String currentFXMLPath;
+    private static Map<String, Object> pageContext = new HashMap<>();
 
 	public void setStage(Stage stage){
 		this.stage = stage;
@@ -94,5 +96,21 @@ public class MainController {
 
     public void setCurrentFXMLPath(String currentFXMLPath) {
         this.currentFXMLPath = currentFXMLPath;
+    }
+
+    public static Object getPageParam(String key) {
+        return pageContext.get(key);
+    }
+
+    public static void setPageParam(String key, Object value) {
+        pageContext.put(key, value);
+    }
+
+    public static void removePageParam(String key) {
+        pageContext.remove(key);
+    }
+
+    public static void clearPageParams() {
+        pageContext.clear();
     }
 }
