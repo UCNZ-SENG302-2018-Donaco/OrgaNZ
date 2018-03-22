@@ -36,7 +36,6 @@ The BMI is calculated with a simple formula of: (weight / (height^2)). To test t
 
 
 ## Story 11
-
 #### AC1
 The steps on Story 10, AC1 can be used to create a Donor profile. Once completed, you will be redirected to the 
 "View Profile" panel. Donors are then able to edit their profile by clicking on any text field such as blood-type or
