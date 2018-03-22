@@ -158,10 +158,10 @@ public class SidebarController implements SubController {
     private void undo(ActionEvent event) {
         if (invoker.canUndo()) {
             invoker.undo();
-            PageNavigator.refreshPage(mainController);
             //TODO show what was undone
             HistoryItem save = new HistoryItem("UNDO", "Something was undone.");
             JSONConverter.updateHistory(save, "action_history.json");
+            PageNavigator.refreshPage(mainController);
         } else {
             PageNavigator.showAlert(Alert.AlertType.ERROR,
                     "No Undoable Actions",
@@ -177,9 +177,9 @@ public class SidebarController implements SubController {
     private void redo(ActionEvent event) {
         if (invoker.canRedo()) {
             invoker.redo();
-            PageNavigator.refreshPage(mainController);
             HistoryItem save = new HistoryItem("REDO", "Something was redone");
             JSONConverter.updateHistory(save, "action_history.json");
+            PageNavigator.refreshPage(mainController);
         } else {
             PageNavigator.showAlert(Alert.AlertType.ERROR,
                     "No Redoable Actions",
