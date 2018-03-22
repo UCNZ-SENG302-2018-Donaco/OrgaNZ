@@ -16,10 +16,10 @@ import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-public class PrintUserInfoTest {
+public class PrintDonorInfoTest {
 
     private DonorManager spyDonorManager;
-    private PrintUserInfo spyPrintUserInfo;
+    private PrintDonorInfo spyPrintDonorInfo;
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
 
@@ -27,7 +27,7 @@ public class PrintUserInfoTest {
     public void init() {
         spyDonorManager = spy(new DonorManager());
 
-        spyPrintUserInfo = spy(new PrintUserInfo(spyDonorManager));
+        spyPrintDonorInfo = spy(new PrintDonorInfo(spyDonorManager));
         System.setOut(new PrintStream(outContent));
         System.setErr(new PrintStream(errContent));
     }
@@ -37,18 +37,18 @@ public class PrintUserInfoTest {
         doNothing().when(spyDonorManager).addDonor(any());
         String[] inputs = {"-u", "notint"};
 
-        CommandLine.run(spyPrintUserInfo, System.out, inputs);
+        CommandLine.run(spyPrintDonorInfo, System.out, inputs);
 
-        verify(spyPrintUserInfo, times(0)).run();
+        verify(spyPrintDonorInfo, times(0)).run();
     }
 
     @Test
     public void printuserinfo_invalid_option() {
         String[] inputs = {"-u", "1", "--notanoption"};
 
-        CommandLine.run(spyPrintUserInfo, System.out, inputs);
+        CommandLine.run(spyPrintDonorInfo, System.out, inputs);
 
-        verify(spyPrintUserInfo, times(0)).run();
+        verify(spyPrintDonorInfo, times(0)).run();
     }
 
     @Test
@@ -56,9 +56,9 @@ public class PrintUserInfoTest {
         when(spyDonorManager.getDonorByID(anyInt())).thenReturn(null);
         String[] inputs = {"-u", "2"};
 
-        CommandLine.run(spyPrintUserInfo, System.out, inputs);
+        CommandLine.run(spyPrintDonorInfo, System.out, inputs);
 
-        verify(spyPrintUserInfo, times(1)).run();
+        verify(spyPrintDonorInfo, times(1)).run();
         assertThat(outContent.toString(), containsString("No donor exists with that user ID"));
     }
 
@@ -69,7 +69,7 @@ public class PrintUserInfoTest {
         when(spyDonorManager.getDonorByID(anyInt())).thenReturn(donor);
         String[] inputs = {"-u", "1"};
 
-        CommandLine.run(spyPrintUserInfo, System.out, inputs);
+        CommandLine.run(spyPrintDonorInfo, System.out, inputs);
 
         assertThat(outContent.toString(), containsString("User: 1. Name: First mid Last, date of birth: 1970-01-01, date of death: null"));
     }

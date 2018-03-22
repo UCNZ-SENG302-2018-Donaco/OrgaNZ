@@ -1,11 +1,16 @@
 package seng302.Commands;
 
-import picocli.CommandLine.Option;
 import picocli.CommandLine.Command;
-import seng302.App;
+import picocli.CommandLine.Option;
+import seng302.Actions.Action;
+import seng302.Actions.ActionInvoker;
+import seng302.Actions.CreateDonorAction;
 import seng302.Donor;
 import seng302.DonorManager;
-import seng302.Utilities.*;
+import seng302.HistoryItem;
+import seng302.State;
+import seng302.Utilities.JSONConverter;
+import seng302.Utilities.LocalDateConverter;
 
 import java.time.LocalDate;
 
@@ -20,16 +25,19 @@ import static java.util.Optional.ofNullable;
  */
 
 @Command(name = "createuser", description = "Creates a user.")
-public class CreateUser implements Runnable {
+public class CreateDonor implements Runnable {
 
     private DonorManager manager;
+    private ActionInvoker invoker;
 
-    public CreateUser() {
-        manager = App.getManager();
+    public CreateDonor() {
+        manager = State.getDonorManager();
+        invoker = State.getInvoker();
     }
 
-    CreateUser(DonorManager manager) {
+    CreateDonor(DonorManager manager, ActionInvoker invoker) {
         this.manager = manager;
+        this.invoker = invoker;
     }
 
     @Option(names = {"-f", "--firstname"}, description = "First name.", required = true)
@@ -55,7 +63,13 @@ public class CreateUser implements Runnable {
         int uid = manager.getUid();
 
         Donor donor = new Donor(firstName, middleNames, lastName, dateOfBirth, uid);
-        manager.addDonor(donor);
+
+        Action action = new CreateDonorAction(donor, manager);
+
+        invoker.execute(action);
+
         System.out.println(String.format("New donor %s %s %s created with userID %s", firstName, ofNullable(middleNames).orElse(""), lastName, uid));
+        HistoryItem create = new HistoryItem("CREATE", "Donor profile ID: " + uid + " created.");
+        JSONConverter.updateHistory(create, "action_history.json");
     }
 }

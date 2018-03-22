@@ -3,9 +3,11 @@ package seng302.Commands;
 
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
-import seng302.App;
+import seng302.HistoryItem;
+import seng302.State;
 import seng302.Donor;
 import seng302.DonorManager;
+import seng302.Utilities.JSONConverter;
 
 /**
  * Command line to print all of the information of a single user.
@@ -16,15 +18,15 @@ import seng302.DonorManager;
  */
 
 @Command(name = "printuserinfo", description = "Print a single user with their personal information.", sortOptions = false)
-public class PrintUserInfo implements Runnable {
+public class PrintDonorInfo implements Runnable {
 
     private DonorManager manager;
 
-    public PrintUserInfo() {
-        manager = App.getManager();
+    public PrintDonorInfo() {
+        manager = State.getDonorManager();
     }
 
-    PrintUserInfo(DonorManager manager) {
+    PrintDonorInfo(DonorManager manager) {
         this.manager = manager;
     }
 
@@ -39,6 +41,8 @@ public class PrintUserInfo implements Runnable {
             return;
         }
         System.out.println(donor.getDonorInfoString());
+        HistoryItem printUserInfo = new HistoryItem("PRINT DONOR INFO", "Information was printed about donor " + uid);
+        JSONConverter.updateHistory(printUserInfo, "action_history.json");
     }
 }
 

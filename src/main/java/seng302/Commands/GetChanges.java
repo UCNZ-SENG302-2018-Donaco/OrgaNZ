@@ -3,9 +3,11 @@ package seng302.Commands;
 
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
-import seng302.App;
+import seng302.HistoryItem;
+import seng302.State;
 import seng302.Donor;
 import seng302.DonorManager;
+import seng302.Utilities.JSONConverter;
 
 /**
  * Command line to print all of the information of a single user.
@@ -21,7 +23,7 @@ public class GetChanges implements Runnable {
     private DonorManager manager;
 
     public GetChanges() {
-        manager = App.getManager();
+        manager = State.getDonorManager();
     }
 
     GetChanges(DonorManager manager) {
@@ -39,6 +41,8 @@ public class GetChanges implements Runnable {
             return;
         }
         System.out.println(donor.getUpdatesString());
+        HistoryItem printAllHistory = new HistoryItem("PRINT UPDATE HISTORY", "All donor's history printed.");
+        JSONConverter.updateHistory(printAllHistory, "action_history.json");
     }
 }
 

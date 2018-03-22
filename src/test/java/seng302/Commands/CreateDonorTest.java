@@ -4,22 +4,22 @@ package seng302.Commands;
 import org.junit.Before;
 import org.junit.Test;
 import picocli.CommandLine;
+import seng302.Actions.ActionInvoker;
 import seng302.DonorManager;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-public class CreateUserTest {
+public class CreateDonorTest {
 
     private DonorManager spyDonorManager;
 
-
-    private CreateUser spyCreateUser;
+    private CreateDonor spyCreateDonor;
 
     @Before
     public void init() {
         spyDonorManager = spy(new DonorManager());
 
-        spyCreateUser = spy(new CreateUser(spyDonorManager));
+        spyCreateDonor = spy(new CreateDonor(spyDonorManager, new ActionInvoker()));
 
     }
 
@@ -28,7 +28,7 @@ public class CreateUserTest {
         doNothing().when(spyDonorManager).addDonor(any());
         String[] inputs = {"-f", "Jack", "-l", "Steel", "-d", "21/04/1997"};
 
-        CommandLine.run(spyCreateUser, System.out, inputs);
+        CommandLine.run(spyCreateDonor, System.out, inputs);
 
         verify(spyDonorManager, times(1)).addDonor(any());
     }
@@ -38,7 +38,7 @@ public class CreateUserTest {
         doNothing().when(spyDonorManager).addDonor(any());
         String[] inputs = {"-f", "Jack", "-l", "Steel", "-d", "21/04/197"};
 
-        CommandLine.run(spyCreateUser, System.out, inputs);
+        CommandLine.run(spyCreateDonor, System.out, inputs);
 
         verify(spyDonorManager, times(0)).addDonor(any());
     }
@@ -48,16 +48,16 @@ public class CreateUserTest {
     public void createuser_invalidFieldCountLow() {
         String[] inputs = {"-f", "Jack", "-l", "Steel"};
 
-        CommandLine.run(spyCreateUser, System.out, inputs);
+        CommandLine.run(spyCreateDonor, System.out, inputs);
 
-        verify(spyCreateUser, times(0)).run();
+        verify(spyCreateDonor, times(0)).run();
     }
 
     @Test
     public void createuser_invalidFieldCountHigh() {
         String[] inputs = {"-f", "Jack", "-l", "Steel", "-d", "21/04/1997", "extra"};
 
-        CommandLine.run(spyCreateUser, System.out, inputs);
+        CommandLine.run(spyCreateDonor, System.out, inputs);
 
         verify(spyDonorManager, times(0)).addDonor(any());
     }
@@ -68,7 +68,7 @@ public class CreateUserTest {
         doNothing().when(spyDonorManager).addDonor(any());
         String[] inputs = {"-f", "Jack", "-l", "Steel", "-d", "21/04/1997", "--force"};
 
-        CommandLine.run(spyCreateUser, System.out, inputs);
+        CommandLine.run(spyCreateDonor, System.out, inputs);
 
         verify(spyDonorManager, times(1)).addDonor(any());
     }
@@ -79,7 +79,7 @@ public class CreateUserTest {
         doNothing().when(spyDonorManager).addDonor(any());
         String[] inputs = {"-f", "Jack", "-l", "Steel", "-d", "21/04/1997"};
 
-        CommandLine.run(spyCreateUser, System.out, inputs);
+        CommandLine.run(spyCreateDonor, System.out, inputs);
 
         verify(spyDonorManager, times(0)).addDonor(any());
     }

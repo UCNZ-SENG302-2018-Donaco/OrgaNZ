@@ -1,10 +1,11 @@
 package seng302.Commands;
 
 import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
-import seng302.App;
+import seng302.HistoryItem;
 import seng302.Donor;
 import seng302.DonorManager;
+import seng302.State;
+import seng302.Utilities.JSONConverter;
 
 import java.util.ArrayList;
 
@@ -22,7 +23,7 @@ public class PrintAllInfo implements Runnable {
     private DonorManager manager;
 
     public PrintAllInfo() {
-        manager = App.getManager();
+        manager = State.getDonorManager();
     }
 
     PrintAllInfo(DonorManager manager) {
@@ -39,6 +40,8 @@ public class PrintAllInfo implements Runnable {
             for (Donor donor : donors) {
                 System.out.println(donor.getDonorInfoString());
             }
+            HistoryItem printAllInfo = new HistoryItem("PRINT ALL INFO", "All donors information printed.");
+            JSONConverter.updateHistory(printAllInfo, "action_history.json");
         }
     }
 }

@@ -2,8 +2,10 @@ package seng302.Commands;
 
 
 import picocli.CommandLine.Command;
-import seng302.App;
+import seng302.HistoryItem;
+import seng302.State;
 import seng302.DonorManager;
+import seng302.Utilities.JSONConverter;
 
 import java.io.*;
 
@@ -21,7 +23,7 @@ public class Load implements Runnable {
     private DonorManager manager;
 
     public Load() {
-        manager = App.getManager();
+        manager = State.getDonorManager();
     }
 
     public Load(DonorManager manager) {
@@ -31,8 +33,10 @@ public class Load implements Runnable {
     @Override
     public void run() {
         try {
-            manager.loadFromFile(new File("savefile.json"));
+            JSONConverter.loadFromFile(new File("savefile.json"));
             System.out.println(String.format("Loaded %s users from file",manager.getDonors().size()));
+            HistoryItem load = new HistoryItem("LOAD", "The systems state was loaded from " + "savefile.json"); // Are we going to allow them to load from different files?
+            JSONConverter.updateHistory(load, "action_history.json");
         } catch (FileNotFoundException e) {
             System.out.println("No save file found");
         } catch (IOException e) {

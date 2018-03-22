@@ -19,10 +19,10 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-public class PrintUserOrganTest {
+public class PrintDonorOrganTest {
 
     private DonorManager spyDonorManager;
-    private PrintUserOrgan spyPrintUserOrgan;
+    private PrintDonorOrgan spyPrintDonorOrgan;
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
 
@@ -30,7 +30,7 @@ public class PrintUserOrganTest {
     public void init() {
         spyDonorManager = spy(new DonorManager());
 
-        spyPrintUserOrgan = spy(new PrintUserOrgan(spyDonorManager));
+        spyPrintDonorOrgan = spy(new PrintDonorOrgan(spyDonorManager));
         System.setOut(new PrintStream(outContent));
         System.setErr(new PrintStream(errContent));
     }
@@ -40,18 +40,18 @@ public class PrintUserOrganTest {
         doNothing().when(spyDonorManager).addDonor(any());
         String[] inputs = {"-u", "notint"};
 
-        CommandLine.run(spyPrintUserOrgan, System.out, inputs);
+        CommandLine.run(spyPrintDonorOrgan, System.out, inputs);
 
-        verify(spyPrintUserOrgan, times(0)).run();
+        verify(spyPrintDonorOrgan, times(0)).run();
     }
 
     @Test
     public void printuserorgan_invalid_option() {
         String[] inputs = {"-u", "1", "--notanoption"};
 
-        CommandLine.run(spyPrintUserOrgan, System.out, inputs);
+        CommandLine.run(spyPrintDonorOrgan, System.out, inputs);
 
-        verify(spyPrintUserOrgan, times(0)).run();
+        verify(spyPrintDonorOrgan, times(0)).run();
     }
 
     @Test
@@ -59,9 +59,9 @@ public class PrintUserOrganTest {
         when(spyDonorManager.getDonorByID(anyInt())).thenReturn(null);
         String[] inputs = {"-u", "2"};
 
-        CommandLine.run(spyPrintUserOrgan, System.out, inputs);
+        CommandLine.run(spyPrintDonorOrgan, System.out, inputs);
 
-        verify(spyPrintUserOrgan, times(1)).run();
+        verify(spyPrintDonorOrgan, times(1)).run();
         assertThat(outContent.toString(), containsString("No donor exists with that user ID"));
     }
 
@@ -73,7 +73,7 @@ public class PrintUserOrganTest {
 
         String[] inputs = {"-u", "1"};
 
-        CommandLine.run(spyPrintUserOrgan, System.out, inputs);
+        CommandLine.run(spyPrintDonorOrgan, System.out, inputs);
 
         assertThat(outContent.toString(), containsString("User: 1. Name: First mid Last, no organs registered for donation"));
     }
@@ -87,7 +87,7 @@ public class PrintUserOrganTest {
 
         String[] inputs = {"-u", "1"};
 
-        CommandLine.run(spyPrintUserOrgan, System.out, inputs);
+        CommandLine.run(spyPrintDonorOrgan, System.out, inputs);
 
         assertThat(outContent.toString(), containsString("User: 1. Name: First mid Last, Donation status: Kidney"));
     }
@@ -101,7 +101,7 @@ public class PrintUserOrganTest {
 
         String[] inputs = {"-u", "1"};
 
-        CommandLine.run(spyPrintUserOrgan, System.out, inputs);
+        CommandLine.run(spyPrintDonorOrgan, System.out, inputs);
 
         assertTrue(outContent.toString().contains("User: 1. Name: First mid Last, Donation status: Kidney, Liver") || outContent.toString().contains("User: 1. Name: First mid Last, Donation status: Liver, Kidney"));
     }

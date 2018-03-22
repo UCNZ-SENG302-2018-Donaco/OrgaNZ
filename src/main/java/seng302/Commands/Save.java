@@ -2,9 +2,11 @@ package seng302.Commands;
 
 
 import picocli.CommandLine.Command;
-import seng302.App;
+import seng302.HistoryItem;
+import seng302.State;
 import seng302.Donor;
 import seng302.DonorManager;
+import seng302.Utilities.JSONConverter;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,7 +26,7 @@ public class Save implements Runnable {
     private DonorManager manager;
 
     public Save() {
-        manager = App.getManager();
+        manager = State.getDonorManager();
     }
 
     public Save(DonorManager manager) {
@@ -39,8 +41,10 @@ public class Save implements Runnable {
             return;
         }
         try {
-            manager.saveToFile(new File("savefile.json"));
+            JSONConverter.saveToFile(new File("savefile.json"));
             System.out.println(String.format("Saved %s users to file",manager.getDonors().size()));
+            HistoryItem save = new HistoryItem("SAVE", "The systems current state was saved.");
+            JSONConverter.updateHistory(save, "action_history.json");
         } catch (IOException e) {
             System.out.println("Could not save to file");
         }

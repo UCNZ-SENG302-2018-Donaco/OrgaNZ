@@ -3,9 +3,11 @@ package seng302.Commands;
 
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
-import seng302.App;
+import seng302.HistoryItem;
+import seng302.State;
 import seng302.Donor;
 import seng302.DonorManager;
+import seng302.Utilities.JSONConverter;
 
 /**
  * Command line to print the donation information of a user.
@@ -16,15 +18,15 @@ import seng302.DonorManager;
  */
 
 @Command(name = "printuserorgan", description = "Print a single user with their organ information.", sortOptions = false)
-public class PrintUserOrgan implements Runnable {
+public class PrintDonorOrgan implements Runnable {
 
     private DonorManager manager;
 
-    public PrintUserOrgan() {
-        manager = App.getManager();
+    public PrintDonorOrgan() {
+        manager = State.getDonorManager();
     }
 
-    public PrintUserOrgan(DonorManager manager) {
+    public PrintDonorOrgan(DonorManager manager) {
         this.manager = manager;
     }
 
@@ -39,5 +41,7 @@ public class PrintUserOrgan implements Runnable {
             return;
         }
         System.out.println(donor.getDonorOrganStatusString());
+        HistoryItem printUserOrgan = new HistoryItem("PRINT USER ORGAN", "The organ information was printed for donor " + uid);
+        JSONConverter.updateHistory(printUserOrgan, "action_history.json");
     }
 }

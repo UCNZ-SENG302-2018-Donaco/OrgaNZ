@@ -8,7 +8,7 @@ import picocli.CommandLine;
 public class BloodTypeConverter implements CommandLine.ITypeConverter<BloodType> {
 
     @Override
-    public BloodType convert(String value) throws Exception {
+    public BloodType convert(String value) throws CommandLine.TypeConversionException {
         try {
             return BloodType.fromString(value);
         } catch (IllegalArgumentException e) {

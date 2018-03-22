@@ -87,7 +87,7 @@ public class PrintAllOrganTest {
         CommandLine.run(spyPrintAllOrgan, System.out, inputs);
 
         assertTrue(outContent.toString().contains("User: 1. Name: First mid Last, Donation status: Kidney, Liver") || outContent.toString().contains("User: 1. Name: First mid Last, Donation status: Liver, Kidney"));
-        assertThat(outContent.toString(), containsString("User: 2. Name: FirstTwo  LastTwo, Donation status: Connective tissue"));
-        assertThat(outContent.toString(), containsString("User: 3. Name: FirstThree  LastThree, no organs registered for donation"));
+        assertThat(outContent.toString(), containsString("User: 2. Name: FirstTwo LastTwo, Donation status: Connective tissue"));
+        assertThat(outContent.toString(), containsString("User: 3. Name: FirstThree LastThree, no organs registered for donation"));
     }
 }
