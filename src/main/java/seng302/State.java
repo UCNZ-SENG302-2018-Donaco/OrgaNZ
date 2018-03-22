@@ -5,6 +5,9 @@ import seng302.Actions.ActionInvoker;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * A static class to store the current state of the system.
+ */
 public final class State {
     private static DonorManager donorManager;
     private static ClinicianManager clinicianManager;
@@ -12,6 +15,9 @@ public final class State {
 
     private State() {}
 
+    /**
+     * Initialises a new action invoker, donor manager and clinician manager.
+     */
     public static void init() {
         actionInvoker = new ActionInvoker();
         donorManager = new DonorManager();
@@ -22,7 +28,9 @@ public final class State {
         return donorManager;
     }
 
-    public static ClinicianManager getClinicianManager() { return clinicianManager; }
+    public static ClinicianManager getClinicianManager() {
+        return clinicianManager;
+    }
 
     public static ActionInvoker getInvoker() {
         return actionInvoker;

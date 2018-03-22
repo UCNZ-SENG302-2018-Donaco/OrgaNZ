@@ -12,8 +12,13 @@ import seng302.Utilities.PageNavigator;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDate;
 
+/**
+ * The main class that runs the JavaFX GUI.
+ * @author Dylan Carlyle, Jack Steel, Alex Tompkins, James Toohey
+ * @version sprint 2.
+ * date: 2018-03-22
+ */
 public class AppUI extends Application {
 	private static Stage window;
 
@@ -21,8 +26,14 @@ public class AppUI extends Application {
 		return AppUI.window;
 	}
 
+	/**
+	 * Starts the JavaFX GUI. Sets up the main stage and initialises the state of the system.
+	 * Loads from the save file or creates one if one does not yet exist.
+	 * @param stage The stage given by the JavaFX launcher.
+	 * @throws IOException If the save file cannot be loaded/created.
+	 */
 	@Override
-	public void start(Stage stage) throws Exception {
+	public void start(Stage stage) throws IOException {
 		stage.setTitle("Organ Donor Management System");
 		stage.setScene(createScene(loadMainPane(stage)));
 		stage.show();

@@ -10,12 +10,10 @@ import java.util.regex.Pattern;
 
 /**
  * The main class that runs the whole program. Calls the Base command and the Donor manager.
- *
- *@author Dylan Carlyle, Jack Steel
- *@version sprint 1.
- *date 06/03/2018
+ * @author Dylan Carlyle, Jack Steel, Alex Tompkins, James Toohey
+ * @version sprint 2.
+ * date: 2018-03-22
  */
-
 public class App
 {
     public static void main( String[] args )

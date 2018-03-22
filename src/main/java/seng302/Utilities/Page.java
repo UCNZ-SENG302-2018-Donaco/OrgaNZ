@@ -1,5 +1,9 @@
 package seng302.Utilities;
 
+/**
+ * An enum to represent pages in the GUI application.
+ * Includes a link to the FXML file for each page.
+ */
 public enum Page {
 	MAIN("/fxml/main.fxml"),
 	LANDING("/fxml/landing.fxml"),

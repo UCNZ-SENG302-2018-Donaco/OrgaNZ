@@ -7,7 +7,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import seng302.AppUI;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
 
