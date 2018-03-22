@@ -25,12 +25,10 @@ public class CreateClinicianController implements SubController {
 	private ChoiceBox<Region> region;
 
 	private ClinicianManager clinicianManager;
-	private ActionInvoker invoker;
 
 	@FXML
 	private void initialize() {
 		clinicianManager = State.getClinicianManager();
-		invoker = State.getInvoker();
 		region.setItems(FXCollections.observableArrayList(Region.values()));
 	}
 
@@ -71,11 +69,6 @@ public class CreateClinicianController implements SubController {
 		}
 		return update;
 	}
-
-	private void createClinician() {
-
-	}
-
 
 	@FXML
 	private void createUser() {
