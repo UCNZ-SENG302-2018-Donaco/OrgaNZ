@@ -34,8 +34,6 @@ public class ViewDonorController implements SubController {
 	@Override
 	public void setMainController(MainController mainController) {
 		mainController.loadDonorSidebar(sidebarPane);
-		System.out.println("called");
-		System.out.println(mainController);
 		this.mainController = mainController;
 	}
 
