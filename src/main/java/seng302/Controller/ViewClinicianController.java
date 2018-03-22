@@ -55,7 +55,6 @@ public class ViewClinicianController {
 	 * Loads all of the currently logged in Clinician's details, except for their password.
 	 */
 	private void loadClinicianData() {
-        System.out.println(currentClinician.toString());
         fname.setText(currentClinician.getFirstName());
         mname.setText(currentClinician.getMiddleName());
         lname.setText(currentClinician.getLastName());

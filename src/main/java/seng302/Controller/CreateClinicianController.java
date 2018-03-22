@@ -7,9 +7,7 @@ import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import javafx.scene.control.PasswordField;
 import seng302.*;
-import seng302.Actions.Action;
 import seng302.Actions.ActionInvoker;
-import seng302.Actions.CreateDonorAction;
 import seng302.Utilities.*;
 
 /**

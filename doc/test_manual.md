@@ -39,6 +39,27 @@ day. The calculated age will show where the "Age" label is.
 The BMI is calculated with a simple formula of: (weight / (height^2)). To test this, edit and save the 
 "Height" and "Weight" fields of a Donor in the "View Profile" panel, and then the BMI will be shown next to the BMI label.
 
+
+## Story 11
+
+
+## Story 12
+#### AC1
+Run AppUI > Log in as a Clinician with Staff Id = 0 and password = admin > Update the middle name to "test" and save 
+these changes > Check in the history tab that this has been made > Click undo > This should show an UNDO action at the
+bottom of the history table > Navigate back to View Clinician > If the default details are shown, the test passes,
+otherwise it fails. Continue with this test for Story 14;
+
+
+
+## Story 13
+#### AC1
+Following Story 13's manual test, navigate to the history page > Click Redo > This should come up at the bottom of the 
+history table showing a REDO action has occurred > Navigate to the View Clinicians page > the middle name should now 
+show "test" in this field for the test to pass, otherwise it fails.
+
+
+
 ## Story 14
 #### AC1
 Run AppUI > Navigate to 'Login as Clinician' > Enter the default clinician details; StaffID - 0, Password - admin.
@@ -68,6 +89,8 @@ These include:
 
 The remaining fields must be blank. If all these attributes are correct, the test passes.
 
+
+
 ## Story 15
 Note: All clinician updates are performed on the default clinician.
 
@@ -90,3 +113,11 @@ updates you made now must show in the 'View/Edit Clinician' page for this test t
 the default Clinician. If so, this first test passes.
 * Terminate any running AppUI programs > Run AppUi > Log into the default clinician > If Last Modified is set to "Not yet modified"
 the test passes. Otherwise it fails.
+
+
+
+## Story 16
+
+
+
+## Story 17
