@@ -82,7 +82,4 @@ public class JSONConverterTest {
 //        assertEquals("First", manager.getDonors().get(0).getFirstName());
 //    }
 
-	@Test
-	public void updateActionHistory() {
-	}
 }

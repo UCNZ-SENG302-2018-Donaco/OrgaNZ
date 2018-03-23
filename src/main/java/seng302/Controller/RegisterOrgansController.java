@@ -7,10 +7,10 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import seng302.Actions.ActionInvoker;
 import seng302.Actions.ModifyDonorOrgansAction;
-import seng302.HistoryItem;
-import seng302.State;
 import seng302.Donor;
 import seng302.DonorManager;
+import seng302.HistoryItem;
+import seng302.State;
 import seng302.Utilities.JSONConverter;
 import seng302.Utilities.Organ;
 
@@ -20,20 +20,14 @@ import java.util.Map;
 /**
  * Controller for the register organs page.
  */
-public class RegisterOrgansController implements SubController {
-	private MainController mainController;
+public class RegisterOrgansController extends SubController {
 
 	@Override
 	public void setMainController(MainController mainController) {
-		this.mainController = mainController;
+		super.setMainController(mainController);
 		mainController.loadDonorSidebar(sidebarPane);
 
 		init();
-	}
-
-	@Override
-	public MainController getMainController() {
-		return this.mainController;
 	}
 
 	@FXML

@@ -2,9 +2,6 @@ package seng302;
 
 import seng302.Actions.ActionInvoker;
 
-import java.util.HashMap;
-import java.util.Map;
-
 /**
  * A static class to store the current state of the system.
  */

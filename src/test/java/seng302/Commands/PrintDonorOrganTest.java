@@ -13,10 +13,8 @@ import java.io.PrintStream;
 import java.time.LocalDate;
 
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 public class PrintDonorOrganTest {
@@ -66,7 +64,7 @@ public class PrintDonorOrganTest {
     }
 
     @Test
-    public void printuserorgan_valid_no_organs() throws OrganAlreadyRegisteredException {
+    public void printuserorgan_valid_no_organs() {
         Donor donor = new Donor("First", "mid", "Last", LocalDate.of(1970,1, 1), 1);
 
         when(spyDonorManager.getDonorByID(anyInt())).thenReturn(donor);

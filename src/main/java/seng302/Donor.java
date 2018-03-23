@@ -1,12 +1,6 @@
 package seng302;
 
-import seng302.Utilities.BloodType;
-import seng302.Utilities.Gender;
-import seng302.Utilities.Organ;
-import seng302.Utilities.OrganAlreadyRegisteredException;
-import seng302.Utilities.Region;
-
-import static java.util.Optional.ofNullable;
+import seng302.Utilities.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -36,11 +30,9 @@ public class Donor {
 
     private double height;
     private double weight;
-    private double BMI;
 
     private LocalDate dateOfBirth;
     private LocalDate dateOfDeath;
-    private int age;
 
     private Map<Organ, Boolean> organStatus;
 
@@ -309,6 +301,7 @@ public class Donor {
      * @return the users calculated BMI.
      */
     public double getBMI() {
+        double BMI;
         if (weight == 0 || height == 0) {
             BMI = 0;
         } else {
@@ -324,6 +317,7 @@ public class Donor {
      * @return age of the Donor.
      */
     public int getAge() {
+        int age;
         if (dateOfDeath == null) {
             age = Period.between(dateOfBirth, LocalDate.now()).getYears();
         } else {

@@ -8,7 +8,7 @@ import picocli.CommandLine;
 public class RegionConverter implements CommandLine.ITypeConverter<Region> {
 
     @Override
-    public Region convert(String value) throws Exception {
+    public Region convert(String value) {
         try {
             return Region.fromString(value);
         } catch (IllegalArgumentException e) {

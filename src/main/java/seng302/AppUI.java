@@ -54,7 +54,7 @@ public class AppUI extends Application {
 	private Pane loadMainPane(Stage stage) throws IOException {
 		FXMLLoader loader = new FXMLLoader();
 
-		Pane mainPane = (Pane) loader.load(getClass().getResourceAsStream(Page.MAIN.getPath()));
+		Pane mainPane = loader.load(getClass().getResourceAsStream(Page.MAIN.getPath()));
 		MainController mainController = loader.getController();
 		mainController.setStage(stage);
 

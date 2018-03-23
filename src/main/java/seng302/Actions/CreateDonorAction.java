@@ -3,8 +3,6 @@ package seng302.Actions;
 import seng302.Donor;
 import seng302.DonorManager;
 
-import java.time.LocalDate;
-
 /**
  * A reversible donor creation action
  */

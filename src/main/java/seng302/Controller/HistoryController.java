@@ -17,9 +17,7 @@ import java.util.List;
 /**
  * Controller for the history page.
  */
-public class HistoryController implements SubController {
-
-    private MainController mainController;
+public class HistoryController extends SubController {
     private final DateTimeFormatter datetimeformat = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm:ss");
 
     @FXML
@@ -69,12 +67,7 @@ public class HistoryController implements SubController {
 
     @Override
     public void setMainController(MainController mainController) {
-        this.mainController = mainController;
+        super.setMainController(mainController);
         init();
-    }
-
-    @Override
-    public MainController getMainController() {
-        return mainController;
     }
 }

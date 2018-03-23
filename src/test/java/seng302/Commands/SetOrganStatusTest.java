@@ -8,8 +8,6 @@ import picocli.CommandLine;
 import seng302.Actions.ActionInvoker;
 import seng302.Donor;
 import seng302.DonorManager;
-import seng302.Utilities.BloodType;
-import seng302.Utilities.Gender;
 import seng302.Utilities.Organ;
 import seng302.Utilities.OrganAlreadyRegisteredException;
 
@@ -20,7 +18,6 @@ import java.time.LocalDate;
 import static org.hamcrest.CoreMatchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 public class SetOrganStatusTest {
@@ -111,7 +108,7 @@ public class SetOrganStatusTest {
     }
 
     @Test
-    public void setorganstatus_valid_multiple_updates() throws OrganAlreadyRegisteredException {
+    public void setorganstatus_valid_multiple_updates() {
         Donor donor = new Donor("First", null, "Last", LocalDate.of(1970,1, 1), 1);
 
         when(spyDonorManager.getDonorByID(anyInt())).thenReturn(donor);

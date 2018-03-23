@@ -20,21 +20,8 @@ import java.nio.file.Paths;
 /**
  * Controller for the sidebar pane imported into every page in the main part of the GUI.
  */
-public class SidebarController implements SubController {
+public class SidebarController extends SubController {
     private ActionInvoker invoker;
-
-    private MainController mainController;
-
-
-    @Override
-    public void setMainController(MainController mainController) {
-        this.mainController = mainController;
-    }
-
-    @Override
-    public MainController getMainController() {
-        return mainController;
-    }
 
     /**
      * Gets the ActionInvoker from the current state.

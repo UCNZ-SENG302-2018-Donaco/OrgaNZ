@@ -3,7 +3,6 @@ package seng302.Commands;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 import picocli.CommandLine;
 import seng302.Actions.ActionInvoker;
 import seng302.Donor;
@@ -14,7 +13,6 @@ import seng302.Utilities.Gender;
 import java.time.LocalDate;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 public class SetAttributeTest {

@@ -16,9 +16,7 @@ import seng302.Utilities.PageNavigator;
  * Controller to handle the login of Clinician users. It allows them to log into a valid Clinician that exists on the
  * system, e.g. the default clinician.
  */
-public class ClinicianLoginController implements SubController {
-
-	private MainController mainController;
+public class ClinicianLoginController extends SubController {
 
 	@FXML
 	private TextField staffId;
@@ -114,15 +112,5 @@ public class ClinicianLoginController implements SubController {
 		} else {
 			invalidStaffIdAlert();
 		}
-	}
-
-	@Override
-	public void setMainController(MainController mainController) {
-		this.mainController = mainController;
-	}
-
-	@Override
-	public MainController getMainController() {
-		return mainController;
 	}
 }

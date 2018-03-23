@@ -4,17 +4,16 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import seng302.Actions.ActionInvoker;
 import seng302.Actions.ModifyDonorAction;
-import seng302.HistoryItem;
-import seng302.State;
 import seng302.Donor;
 import seng302.DonorManager;
+import seng302.HistoryItem;
+import seng302.State;
 import seng302.Utilities.*;
 
 import java.time.LocalDate;
-import java.util.AbstractMap.SimpleEntry;
 import java.util.HashMap;
-import java.util.Map.Entry;
 import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * Command line to set attributes of a Donor, by using their ID as a reference key.

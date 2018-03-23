@@ -2,23 +2,14 @@ package seng302.Controller;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import seng302.HistoryItem;
-import seng302.State;
 import seng302.Actions.ModifyDonorAction;
 import seng302.Donor;
-import seng302.Utilities.BloodType;
-import seng302.Utilities.Gender;
-import seng302.Utilities.JSONConverter;
-import seng302.Utilities.Page;
-import seng302.Utilities.PageNavigator;
-import seng302.Utilities.Region;
+import seng302.HistoryItem;
+import seng302.State;
+import seng302.Utilities.*;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -26,22 +17,14 @@ import java.time.format.DateTimeFormatter;
 /**
  * Controller for the view/edit donor page.
  */
-public class ViewDonorController implements SubController {
+public class ViewDonorController extends SubController {
     private final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy\nh:mm:ss a");
-
-	private MainController mainController;
 
 	@Override
 	public void setMainController(MainController mainController) {
-		this.mainController = mainController;
+		super.setMainController(mainController);
 		mainController.loadDonorSidebar(sidebarPane);
-
 		init();
-	}
-
-	@Override
-	public MainController getMainController() {
-		return mainController;
 	}
 
     @FXML
@@ -309,7 +292,7 @@ public class ViewDonorController implements SubController {
 	 */
 	@FXML
 	public void viewOrgansForDonor() {
-		mainController.setPageParam("viewUserId", viewedDonor.getUid());
+        mainController.setPageParam("viewUserId", viewedDonor.getUid());
 		PageNavigator.loadPage(Page.REGISTER_ORGANS.getPath(), mainController);
 	}
 }

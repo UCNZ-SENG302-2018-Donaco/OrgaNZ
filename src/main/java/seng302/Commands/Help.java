@@ -1,9 +1,9 @@
 package seng302.Commands;
 
 import picocli.CommandLine;
+import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
 import picocli.CommandLine.ParentCommand;
-import picocli.CommandLine.Command;
 
 @Command(name = "help", description = "Get help on commands.", sortOptions = false)
 public class Help implements Runnable {

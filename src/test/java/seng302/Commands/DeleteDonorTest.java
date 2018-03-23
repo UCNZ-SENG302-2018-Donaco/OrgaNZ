@@ -11,7 +11,6 @@ import seng302.DonorManager;
 import java.io.ByteArrayInputStream;
 import java.time.LocalDate;
 
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 public class DeleteDonorTest {

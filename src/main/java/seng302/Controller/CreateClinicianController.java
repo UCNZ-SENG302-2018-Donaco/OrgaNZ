@@ -3,11 +3,7 @@ package seng302.Controller;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import seng302.Clinician;
 import seng302.ClinicianManager;
@@ -22,9 +18,7 @@ import seng302.Utilities.Region;
  * This controller provides the user with an interface allowing them to enter clinician details. This creates a
  * clinician login for them and takes them to the view clinician page.
  */
-public class CreateClinicianController implements SubController {
-
-	private MainController mainController;
+public class CreateClinicianController extends SubController {
 
 	@FXML
 	private TextField id, fname, lname, mname, staffId, workAddress;
@@ -131,15 +125,5 @@ public class CreateClinicianController implements SubController {
 	@FXML
 	private void goBack(ActionEvent event) {
 		PageNavigator.loadPage(Page.LANDING.getPath(), mainController);
-	}
-
-	@Override
-	public void setMainController(MainController mainController) {
-		this.mainController = mainController;
-	}
-
-	@Override
-	public MainController getMainController() {
-		return mainController;
 	}
 }

@@ -8,9 +8,7 @@ import seng302.Utilities.PageNavigator;
 /**
  * Controls the Landing Screen View.
  */
-public class LandingController implements SubController {
-
-	private MainController mainController;
+public class LandingController extends SubController {
 
 	/**
 	 * Redirects the GUI to create donor page
@@ -46,15 +44,5 @@ public class LandingController implements SubController {
 	@FXML
 	private void goToCreateClinician(ActionEvent event) {
 		PageNavigator.loadPage(Page.CREATE_CLINICIAN.getPath(), mainController);
-	}
-
-	@Override
-	public void setMainController(MainController mainController) {
-		this.mainController = mainController;
-	}
-
-	@Override
-	public MainController getMainController() {
-		return mainController;
 	}
 }

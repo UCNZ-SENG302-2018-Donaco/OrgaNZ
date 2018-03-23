@@ -2,7 +2,6 @@ package seng302.Commands;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 import picocli.CommandLine;
 import seng302.Donor;
 import seng302.DonorManager;
@@ -15,10 +14,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 public class PrintAllOrganTest {

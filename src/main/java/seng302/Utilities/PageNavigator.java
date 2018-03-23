@@ -53,7 +53,7 @@ public class PageNavigator {
 		newStage.setTitle("Organ Donor Management System");
 
 		FXMLLoader loader = new FXMLLoader();
-		Pane mainPane = (Pane) loader.load(PageNavigator.class.getResourceAsStream(Page.MAIN.getPath()));
+		Pane mainPane = loader.load(PageNavigator.class.getResourceAsStream(Page.MAIN.getPath()));
 		MainController mainController = loader.getController();
 		mainController.setStage(newStage);
 
@@ -68,7 +68,7 @@ public class PageNavigator {
         newStage.setTitle("Organ Donor Management System");
 
         FXMLLoader loader = new FXMLLoader();
-        Pane mainPane = (Pane) loader.load(PageNavigator.class.getResourceAsStream(Page.MAIN.getPath()));
+        Pane mainPane = loader.load(PageNavigator.class.getResourceAsStream(Page.MAIN.getPath()));
         MainController mainController = loader.getController();
         mainController.setStage(newStage);
         mainController.setPageParam(pageParam, value);

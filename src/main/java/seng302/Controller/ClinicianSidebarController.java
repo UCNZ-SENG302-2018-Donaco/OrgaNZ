@@ -20,9 +20,8 @@ import java.nio.file.Paths;
 /**
  * Controller for the sidebar pane imported into every page in the clinician part of the GUI.
  */
-public class ClinicianSidebarController implements SubController {
+public class ClinicianSidebarController extends SubController {
 
-    private MainController mainController;
     private ActionInvoker invoker;
 
     /**
@@ -171,15 +170,5 @@ public class ClinicianSidebarController implements SubController {
                     "No Redoable Actions",
                     "There are no actions left to redo.");
         }
-    }
-
-    @Override
-    public void setMainController(MainController mainController) {
-        this.mainController = mainController;
-    }
-
-    @Override
-    public MainController getMainController() {
-        return mainController;
     }
 }

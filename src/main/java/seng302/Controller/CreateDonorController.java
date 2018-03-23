@@ -9,10 +9,10 @@ import javafx.scene.control.TextField;
 import seng302.Actions.Action;
 import seng302.Actions.ActionInvoker;
 import seng302.Actions.CreateDonorAction;
-import seng302.HistoryItem;
-import seng302.State;
 import seng302.Donor;
 import seng302.DonorManager;
+import seng302.HistoryItem;
+import seng302.State;
 import seng302.Utilities.JSONConverter;
 import seng302.Utilities.Page;
 import seng302.Utilities.PageNavigator;
@@ -20,9 +20,8 @@ import seng302.Utilities.PageNavigator;
 /**
  * Controller for the create donor page.
  */
-public class CreateDonorController implements SubController {
+public class CreateDonorController extends SubController {
 
-    private MainController mainController;
     @FXML
     private DatePicker dobFld;
     @FXML
@@ -93,17 +92,5 @@ public class CreateDonorController implements SubController {
     @FXML
     private void goBack(ActionEvent event) {
         PageNavigator.loadPage(Page.LANDING.getPath(), mainController);
-    }
-
-
-
-    @Override
-    public void setMainController(MainController mainController) {
-        this.mainController = mainController;
-    }
-
-    @Override
-    public MainController getMainController() {
-        return mainController;
     }
 }

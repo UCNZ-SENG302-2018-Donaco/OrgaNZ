@@ -16,13 +16,10 @@ import seng302.Utilities.PageNavigator;
 /**
  * Controller for the login page.
  */
-public class LoginController implements SubController {
-
-    private MainController mainController;
+public class LoginController extends SubController {
 
     @FXML
     private ListView<Donor> donorList;
-    private DonorManager donorManager;
 
     /**
      * Initializes the UI for this page.
@@ -32,7 +29,7 @@ public class LoginController implements SubController {
      */
     @FXML
     private void initialize() {
-        donorManager = State.getDonorManager();
+        DonorManager donorManager = State.getDonorManager();
 
         donorList.setCellFactory(cell -> new ListCell<Donor>() {
             @Override
@@ -75,15 +72,5 @@ public class LoginController implements SubController {
     @FXML
     private void goBack(ActionEvent event) {
         PageNavigator.loadPage(Page.LANDING.getPath(), mainController);
-    }
-
-    @Override
-    public void setMainController(MainController mainController) {
-        this.mainController = mainController;
-    }
-
-    @Override
-    public MainController getMainController() {
-        return mainController;
     }
 }
