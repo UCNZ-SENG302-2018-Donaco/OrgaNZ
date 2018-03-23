@@ -86,9 +86,10 @@ public final class JSONConverter {
 	}
 
     /**
-     * Read's the action_history.json file into an ArrayList, stateends the historyItem to the list and
+     * Read's the action_history.json file into an ArrayList, appends the historyItem to the list and
      * calls the writeHistoryToJSON to save the update.
      * @param historyItem The HistoryItem to add to the JSON history file.
+     * @param filename The file location to be saved to
      */
     public static void updateHistory(HistoryItem historyItem, String filename) {
         File historyFile = new File(filename);
@@ -112,6 +113,7 @@ public final class JSONConverter {
     /**
      * Helper function for updateActionHistoryFromJSON; writes the historyHistoryItemList to a
      * JSON file.
+     * @param filename The file to save the history to
      * @param historyHistoryItemList An ArrayList of all history the system has recorded.
      */
     private static void writeHistoryToJSON(ArrayList<HistoryItem> historyHistoryItemList, String filename) {

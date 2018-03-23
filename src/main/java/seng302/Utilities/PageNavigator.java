@@ -19,7 +19,6 @@ import java.util.Optional;
  * All methods on the navigator are static to facilitate simple access from anywhere in the application.
  */
 public class PageNavigator {
-	/** The main application layout controller. */
 
     public static void loadPage(String fxmlPath, MainController controller) {
         try {
