@@ -2,14 +2,23 @@ package seng302.Controller;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import seng302.Actions.ModifyDonorAction;
 import seng302.Donor;
 import seng302.HistoryItem;
 import seng302.State;
-import seng302.Utilities.*;
+import seng302.Utilities.BloodType;
+import seng302.Utilities.Gender;
+import seng302.Utilities.JSONConverter;
+import seng302.Utilities.Page;
+import seng302.Utilities.PageNavigator;
+import seng302.Utilities.Region;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;

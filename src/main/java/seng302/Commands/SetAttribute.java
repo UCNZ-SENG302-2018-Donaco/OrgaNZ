@@ -8,7 +8,14 @@ import seng302.Donor;
 import seng302.DonorManager;
 import seng302.HistoryItem;
 import seng302.State;
-import seng302.Utilities.*;
+import seng302.Utilities.BloodType;
+import seng302.Utilities.BloodTypeConverter;
+import seng302.Utilities.Gender;
+import seng302.Utilities.GenderConverter;
+import seng302.Utilities.JSONConverter;
+import seng302.Utilities.LocalDateConverter;
+import seng302.Utilities.Region;
+import seng302.Utilities.RegionConverter;
 
 import java.time.LocalDate;
 import java.util.HashMap;

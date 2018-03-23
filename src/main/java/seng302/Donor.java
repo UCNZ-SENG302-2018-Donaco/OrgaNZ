@@ -1,6 +1,10 @@
 package seng302;
 
-import seng302.Utilities.*;
+import seng302.Utilities.BloodType;
+import seng302.Utilities.Gender;
+import seng302.Utilities.Organ;
+import seng302.Utilities.OrganAlreadyRegisteredException;
+import seng302.Utilities.Region;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
