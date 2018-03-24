@@ -26,13 +26,7 @@ import seng302.Utilities.Region;
 import java.util.ArrayList;
 
 public class SearchDonorsController extends SubController {
-    @Override
-    public void setMainController(MainController mainController) {
-        super.setMainController(mainController);
-        mainController.loadClinicianSidebar(sidebarPane);
-    }
-
-    private int rowsPerPage = 30;
+    private static final int ROWS_PER_PAGE = 30;
 
     @FXML
     private TextField searchBox;
@@ -61,6 +55,12 @@ public class SearchDonorsController extends SubController {
     private FilteredList<Donor> filteredDonors;
     private SortedList<Donor> sortedDonors;
 
+	@Override
+	public void setMainController(MainController mainController) {
+		super.setMainController(mainController);
+		mainController.loadClinicianSidebar(sidebarPane);
+	}
+
     @FXML
     private void initialize() {
         ArrayList<Donor> allDonors = State.getDonorManager().getDonors();
@@ -78,7 +78,7 @@ public class SearchDonorsController extends SubController {
         sortedDonors.comparatorProperty().bind(tableView.comparatorProperty());
 
         //Set initial pagination
-        pagination.setPageCount(sortedDonors.size() / rowsPerPage + 1);
+        pagination.setPageCount(sortedDonors.size() / ROWS_PER_PAGE + 1);
         //On pagination update call createPage
         pagination.setPageFactory(this::createPage);
 
@@ -145,7 +145,7 @@ public class SearchDonorsController extends SubController {
         }
 
         //If the pagination count wont change, force a refresh of the page, if it will, change it and that will trigger the update.
-        int newPageCount = filteredDonors.size() / rowsPerPage + 1;
+        int newPageCount = filteredDonors.size() / ROWS_PER_PAGE + 1;
         if (pagination.getPageCount() == newPageCount) {
             createPage(0);
         } else {
@@ -159,8 +159,8 @@ public class SearchDonorsController extends SubController {
      * @return An empty pane as pagination requires a non null return. Not used.
      */
     private Node createPage(int pageIndex) {
-        int fromIndex = pageIndex * rowsPerPage;
-        int toIndex = Math.min(fromIndex + rowsPerPage, filteredDonors.size());
+        int fromIndex = pageIndex * ROWS_PER_PAGE;
+        int toIndex = Math.min(fromIndex + ROWS_PER_PAGE, filteredDonors.size());
         observableDonorList.setAll(sortedDonors.subList(fromIndex, toIndex));
         return new Pane();
     }
