@@ -16,7 +16,7 @@ public class LandingController extends SubController {
 	 */
 	@FXML
 	private void goToCreateDonor(ActionEvent event) {
-		PageNavigator.loadPage(Page.CREATE_USER.getPath(), mainController);
+		PageNavigator.loadPage(Page.CREATE_USER, mainController);
 	}
 
 	/**
@@ -25,7 +25,7 @@ public class LandingController extends SubController {
 	 */
 	@FXML
 	private void goToDonorLogin(ActionEvent event) {
-		PageNavigator.loadPage(Page.LOGIN.getPath(), mainController);
+		PageNavigator.loadPage(Page.LOGIN, mainController);
 	}
 
     /**
@@ -34,7 +34,7 @@ public class LandingController extends SubController {
      */
 	@FXML
 	private void goToClinicianLogin(ActionEvent event) {
-		PageNavigator.loadPage(Page.CLINICIAN_LOGIN.getPath(), mainController);
+		PageNavigator.loadPage(Page.CLINICIAN_LOGIN, mainController);
 	}
 
     /**
@@ -43,6 +43,6 @@ public class LandingController extends SubController {
      */
 	@FXML
 	private void goToCreateClinician(ActionEvent event) {
-		PageNavigator.loadPage(Page.CREATE_CLINICIAN.getPath(), mainController);
+		PageNavigator.loadPage(Page.CREATE_CLINICIAN, mainController);
 	}
 }

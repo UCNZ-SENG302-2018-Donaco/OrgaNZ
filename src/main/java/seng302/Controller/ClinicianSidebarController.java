@@ -38,7 +38,7 @@ public class ClinicianSidebarController extends SubController {
     @FXML
     private void goToViewClinician(ActionEvent event) {
         mainController.removePageParam("viewUserId");
-        PageNavigator.loadPage(Page.VIEW_CLINICIAN.getPath(), mainController);
+        PageNavigator.loadPage(Page.VIEW_CLINICIAN, mainController);
     }
 
     /**
@@ -48,7 +48,7 @@ public class ClinicianSidebarController extends SubController {
     @FXML
     private void goToSearch(ActionEvent event) {
         mainController.removePageParam("viewUserId");
-        PageNavigator.loadPage(Page.SEARCH.getPath(), mainController);
+        PageNavigator.loadPage(Page.SEARCH, mainController);
     }
 
     /**
@@ -57,7 +57,7 @@ public class ClinicianSidebarController extends SubController {
      */
     @FXML
     private void goToHistory(ActionEvent event) {
-        PageNavigator.loadPage(Page.HISTORY.getPath(), mainController);
+        PageNavigator.loadPage(Page.HISTORY, mainController);
     }
 
     /**
@@ -114,7 +114,7 @@ public class ClinicianSidebarController extends SubController {
                 PageNavigator.showAlert(Alert.AlertType.INFORMATION,
                         "Load Successful",
                         "Successfully loaded Donors from " + file.getName());
-                PageNavigator.loadPage(Page.LANDING.getPath(), mainController);
+                PageNavigator.loadPage(Page.LANDING, mainController);
             }
         } catch (URISyntaxException | IOException exc) {
             // TODO Make alert when load fails
@@ -130,7 +130,7 @@ public class ClinicianSidebarController extends SubController {
     @FXML
     private void logout(ActionEvent event) {
         mainController.clearPageParams();
-        PageNavigator.loadPage(Page.LANDING.getPath(), mainController);
+        PageNavigator.loadPage(Page.LANDING, mainController);
         HistoryItem save = new HistoryItem("LOGOUT CLINICIAN", "The Clinician logged out.");
         JSONConverter.updateHistory(save, "action_history.json");
     }

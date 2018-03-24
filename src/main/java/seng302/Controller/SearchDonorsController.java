@@ -122,7 +122,7 @@ public class SearchDonorsController extends SubController {
             if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2) {
                 Donor donor = tableView.getSelectionModel().getSelectedItem();
                 try {
-                    PageNavigator.openNewWindow(Page.VIEW_DONOR.getPath(), "viewUserId", donor.getUid());
+                    PageNavigator.openNewWindow(Page.VIEW_DONOR, "viewUserId", donor.getUid());
                 } catch (IOException exc) {
                     exc.printStackTrace();
                 }

@@ -59,7 +59,7 @@ public class AppUI extends Application {
         MainController mainController = loader.getController();
         mainController.setStage(stage);
 
-        PageNavigator.loadPage(Page.LANDING.getPath(), mainController);
+        PageNavigator.loadPage(Page.LANDING, mainController);
 
         return mainPane;
     }

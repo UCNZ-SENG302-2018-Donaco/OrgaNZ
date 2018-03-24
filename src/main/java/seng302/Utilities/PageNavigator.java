@@ -20,14 +20,14 @@ import java.util.Optional;
  */
 public class PageNavigator {
 
-    public static void loadPage(String fxmlPath, MainController controller) {
+    public static void loadPage(Page page, MainController controller) {
         try {
-            FXMLLoader loader = new FXMLLoader(PageNavigator.class.getResource(fxmlPath));
+            FXMLLoader loader = new FXMLLoader(PageNavigator.class.getResource(page.getPath()));
             Node loadedPage = loader.load();
             SubController subController = loader.getController();
             subController.setMainController(controller);
             controller.setPage(loadedPage);
-            controller.setCurrentFXMLPath(fxmlPath);
+            controller.setCurrentPage(page);
         } catch (IOException e) {
             // TODO probably do better error handling than this
             e.printStackTrace();
@@ -36,7 +36,7 @@ public class PageNavigator {
 
 	public static void refreshPage(MainController controller) {
         try {
-            FXMLLoader loader = new FXMLLoader(PageNavigator.class.getResource(controller.getCurrentFXMLPath()));
+            FXMLLoader loader = new FXMLLoader(PageNavigator.class.getResource(controller.getCurrentPage().getPath()));
             Node loadedPage = loader.load();
             SubController subController = loader.getController();
             subController.setMainController(controller);
@@ -47,7 +47,7 @@ public class PageNavigator {
         }
     }
 
-    public static void openNewWindow(String fxmlPath) throws IOException {
+    public static void openNewWindow(Page page) throws IOException {
 		Stage newStage = new Stage();
 		newStage.setTitle("Organ Donor Management System");
 
@@ -59,10 +59,10 @@ public class PageNavigator {
 		newStage.setScene(new Scene(mainPane));
 		newStage.show();
 
-		loadPage(fxmlPath, mainController);
+		loadPage(page, mainController);
 	}
 
-    public static void openNewWindow(String fxmlPath, String pageParam, Object value) throws IOException {
+    public static void openNewWindow(Page page, String pageParam, Object value) throws IOException {
         Stage newStage = new Stage();
         newStage.setTitle("Organ Donor Management System");
 
@@ -75,7 +75,7 @@ public class PageNavigator {
         newStage.setScene(new Scene(mainPane));
         newStage.show();
 
-        loadPage(fxmlPath, mainController);
+        loadPage(page, mainController);
     }
 
 	public static Optional<ButtonType> showAlert(Alert.AlertType alertType, String title, String bodyText) {

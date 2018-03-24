@@ -32,7 +32,7 @@ public class ClinicianLoginController extends SubController {
 	 */
 	@FXML
 	private void goBack(ActionEvent event) {
-		PageNavigator.loadPage(Page.LANDING.getPath(), mainController);
+		PageNavigator.loadPage(Page.LANDING, mainController);
 	}
 
 	/**
@@ -97,9 +97,9 @@ public class ClinicianLoginController extends SubController {
 
 					mainController.setPageParam("currentUserType", "clinician");
 					mainController.setPageParam("currentClinician", clinician);
-					//PageNavigator.loadPage(Page.VIEW_DONOR.getPath());
+					//PageNavigator.loadPage(Page.VIEW_DONOR);
 
-					PageNavigator.loadPage(Page.VIEW_CLINICIAN.getPath(), mainController);
+					PageNavigator.loadPage(Page.VIEW_CLINICIAN, mainController);
 					loginSuccessAlert();
 
                     HistoryItem save = new HistoryItem("LOGIN CLINICIAN",

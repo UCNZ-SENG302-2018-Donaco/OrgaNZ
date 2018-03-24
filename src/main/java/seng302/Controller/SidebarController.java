@@ -36,7 +36,7 @@ public class SidebarController extends SubController {
      */
     @FXML
     private void goToViewDonor(ActionEvent event) {
-        PageNavigator.loadPage(Page.VIEW_DONOR.getPath(), mainController);
+        PageNavigator.loadPage(Page.VIEW_DONOR, mainController);
     }
 
     /**
@@ -45,7 +45,7 @@ public class SidebarController extends SubController {
      */
     @FXML
     private void goToRegisterOrgans(ActionEvent event) {
-        PageNavigator.loadPage(Page.REGISTER_ORGANS.getPath(), mainController);
+        PageNavigator.loadPage(Page.REGISTER_ORGANS, mainController);
     }
 
     /**
@@ -54,7 +54,7 @@ public class SidebarController extends SubController {
      */
     @FXML
     private void goToHistory(ActionEvent event) {
-        PageNavigator.loadPage(Page.HISTORY.getPath(), mainController);
+        PageNavigator.loadPage(Page.HISTORY, mainController);
     }
 
     /**
@@ -111,7 +111,7 @@ public class SidebarController extends SubController {
                 PageNavigator.showAlert(Alert.AlertType.INFORMATION,
                         "Load Successful",
                         "Successfully loaded Donors from " + file.getName());
-                PageNavigator.loadPage(Page.LANDING.getPath(), mainController);
+                PageNavigator.loadPage(Page.LANDING, mainController);
             }
         } catch (URISyntaxException | IOException exc) {
             // TODO Make alert when load fails
@@ -127,7 +127,7 @@ public class SidebarController extends SubController {
     @FXML
     private void logout(ActionEvent event) {
         mainController.clearPageParams();
-        PageNavigator.loadPage(Page.LANDING.getPath(), mainController);
+        PageNavigator.loadPage(Page.LANDING, mainController);
         HistoryItem save = new HistoryItem("LOGOUT", "The Donor logged out");
         JSONConverter.updateHistory(save, "action_history.json");
     }

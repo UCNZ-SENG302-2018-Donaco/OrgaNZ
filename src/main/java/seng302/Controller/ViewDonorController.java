@@ -302,6 +302,6 @@ public class ViewDonorController extends SubController {
 	@FXML
 	public void viewOrgansForDonor() {
         mainController.setPageParam("viewUserId", viewedDonor.getUid());
-		PageNavigator.loadPage(Page.REGISTER_ORGANS.getPath(), mainController);
+		PageNavigator.loadPage(Page.REGISTER_ORGANS, mainController);
 	}
 }

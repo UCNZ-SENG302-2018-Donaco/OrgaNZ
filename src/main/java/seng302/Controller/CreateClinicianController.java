@@ -116,7 +116,7 @@ public class CreateClinicianController extends SubController {
 				PageNavigator.showAlert(Alert.AlertType.INFORMATION, "Clinician created",
 						String.format("Successfully created clinician with Staff ID %s.",
 						staffId.getText()));
-				PageNavigator.loadPage(Page.VIEW_CLINICIAN.getPath(), mainController);
+				PageNavigator.loadPage(Page.VIEW_CLINICIAN, mainController);
 			}
 		}
 	}
@@ -128,6 +128,6 @@ public class CreateClinicianController extends SubController {
 	 */
 	@FXML
 	private void goBack(ActionEvent event) {
-		PageNavigator.loadPage(Page.LANDING.getPath(), mainController);
+		PageNavigator.loadPage(Page.LANDING, mainController);
 	}
 }

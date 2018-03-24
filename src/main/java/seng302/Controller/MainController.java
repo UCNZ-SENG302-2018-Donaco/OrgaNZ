@@ -21,7 +21,7 @@ import java.util.Map;
  */
 public class MainController {
 	private Stage stage;
-    private String currentFXMLPath;
+    private Page currentPage;
     private Map<String, Object> pageContext = new HashMap<>();
 
 	public void setStage(Stage stage){
@@ -90,12 +90,12 @@ public class MainController {
         }
     }
 
-    public String getCurrentFXMLPath() {
-        return currentFXMLPath;
+    public Page getCurrentPage() {
+        return currentPage;
     }
 
-    public void setCurrentFXMLPath(String currentFXMLPath) {
-        this.currentFXMLPath = currentFXMLPath;
+    public void setCurrentPage(Page currentPage) {
+        this.currentPage = currentPage;
     }
 
     public Object getPageParam(String key) {

@@ -61,7 +61,7 @@ public class LoginController extends SubController {
 
             mainController.setPageParam("currentUserId", selectedDonor.getUid());
             mainController.setPageParam("currentUserType", "donor");
-            PageNavigator.loadPage(Page.VIEW_DONOR.getPath(), mainController);
+            PageNavigator.loadPage(Page.VIEW_DONOR, mainController);
         }
     }
 
@@ -71,6 +71,6 @@ public class LoginController extends SubController {
      */
     @FXML
     private void goBack(ActionEvent event) {
-        PageNavigator.loadPage(Page.LANDING.getPath(), mainController);
+        PageNavigator.loadPage(Page.LANDING, mainController);
     }
 }
