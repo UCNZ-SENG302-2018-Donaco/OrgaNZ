@@ -107,6 +107,7 @@ public class SidebarController extends SubController {
                 HistoryItem load = new HistoryItem("LOAD", "The systems state was loaded from " + file.getName());
                 JSONConverter.updateHistory(load, "action_history.json");
 
+                State.logout();
                 mainController.clearPageParams();
                 PageNavigator.showAlert(Alert.AlertType.INFORMATION,
                         "Load Successful",
@@ -126,6 +127,7 @@ public class SidebarController extends SubController {
      */
     @FXML
     private void logout(ActionEvent event) {
+        State.logout();
         mainController.clearPageParams();
         PageNavigator.loadPage(Page.LANDING, mainController);
         HistoryItem save = new HistoryItem("LOGOUT", "The Donor logged out");

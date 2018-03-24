@@ -9,10 +9,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
-import seng302.Clinician;
-import seng302.ClinicianManager;
-import seng302.HistoryItem;
-import seng302.State;
+import seng302.*;
 import seng302.Utilities.JSONConverter;
 import seng302.Utilities.Page;
 import seng302.Utilities.PageNavigator;
@@ -110,8 +107,7 @@ public class CreateClinicianController extends SubController {
 				HistoryItem save = new HistoryItem("CREATE CLINICIAN", "Clinician " + fname.getText() + " " + lname.getText() + " with staff ID " + staffId.getText() + " Created.");
 				JSONConverter.updateHistory(save, "action_history.json");
 
-				mainController.setPageParam("currentUserType", "clinician");
-				mainController.setPageParam("currentClinician", clinician);
+				State.login(Session.UserType.CLINICIAN, clinician);
 
 				PageNavigator.showAlert(Alert.AlertType.INFORMATION, "Clinician created",
 						String.format("Successfully created clinician with Staff ID %s.",

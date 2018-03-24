@@ -21,7 +21,6 @@ import java.nio.file.Paths;
  * Controller for the sidebar pane imported into every page in the clinician part of the GUI.
  */
 public class ClinicianSidebarController extends SubController {
-
     private ActionInvoker invoker;
 
     /**
@@ -37,7 +36,6 @@ public class ClinicianSidebarController extends SubController {
      */
     @FXML
     private void goToViewClinician(ActionEvent event) {
-        mainController.removePageParam("viewUserId");
         PageNavigator.loadPage(Page.VIEW_CLINICIAN, mainController);
     }
 
@@ -47,7 +45,6 @@ public class ClinicianSidebarController extends SubController {
      */
     @FXML
     private void goToSearch(ActionEvent event) {
-        mainController.removePageParam("viewUserId");
         PageNavigator.loadPage(Page.SEARCH, mainController);
     }
 
@@ -110,6 +107,7 @@ public class ClinicianSidebarController extends SubController {
                 HistoryItem load = new HistoryItem("LOAD", "The systems state was loaded from " + file.getName());
                 JSONConverter.updateHistory(load, "action_history.json");
 
+                State.logout();
                 mainController.clearPageParams();
                 PageNavigator.showAlert(Alert.AlertType.INFORMATION,
                         "Load Successful",
@@ -129,6 +127,7 @@ public class ClinicianSidebarController extends SubController {
      */
     @FXML
     private void logout(ActionEvent event) {
+        State.logout();
         mainController.clearPageParams();
         PageNavigator.loadPage(Page.LANDING, mainController);
         HistoryItem save = new HistoryItem("LOGOUT CLINICIAN", "The Clinician logged out.");

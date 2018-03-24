@@ -7,6 +7,8 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.Pane;
 import seng302.HistoryItem;
+import seng302.Session;
+import seng302.State;
 import seng302.Utilities.JSONConverter;
 
 import java.io.File;
@@ -20,12 +22,18 @@ import java.util.List;
 public class HistoryController extends SubController {
     private final DateTimeFormatter datetimeformat = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm:ss");
 
+    private Session session;
+
     @FXML
     private TableColumn<HistoryItem, String> timeCol, typeCol, commandCol;
     @FXML
     private TableView<HistoryItem> historyTable;
     @FXML
     private Pane sidebarPane;
+
+    public HistoryController() {
+        session = State.getSession();
+    }
 
     /**
      * Initializes the UI for this page.
@@ -56,11 +64,11 @@ public class HistoryController extends SubController {
 
     }
 
-    private void init() {
-        if (mainController.getPageParam("currentUserType") == null ||
-                mainController.getPageParam("currentUserType").equals("donor")) {
+    private void getSidebar() {
+        if (session.getLoggedInUserType() == Session.UserType.DONOR ||
+        (boolean) mainController.getPageParam("isClinViewDonorWindow")) {
             mainController.loadDonorSidebar(sidebarPane);
-        } else {
+        } else if (session.getLoggedInUserType() == Session.UserType.CLINICIAN) {
             mainController.loadClinicianSidebar(sidebarPane);
         }
     }
@@ -68,6 +76,6 @@ public class HistoryController extends SubController {
     @Override
     public void setMainController(MainController mainController) {
         super.setMainController(mainController);
-        init();
+        getSidebar();
     }
 }

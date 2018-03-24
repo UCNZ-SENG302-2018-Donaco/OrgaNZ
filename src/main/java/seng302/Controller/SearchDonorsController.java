@@ -123,7 +123,8 @@ public class SearchDonorsController extends SubController {
 
                 MainController newMain = PageNavigator.openNewWindow();
                 if (newMain != null) {
-                    newMain.setPageParam("viewUserId", donor.getUid());
+                    newMain.setPageParam("viewUser", donor);
+                    newMain.setPageParam("isClinViewDonorWindow", true);
                     PageNavigator.loadPage(Page.VIEW_DONOR, newMain);
                 }
             }
