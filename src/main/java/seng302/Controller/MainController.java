@@ -24,23 +24,29 @@ public class MainController {
     private Page currentPage;
     private Map<String, Object> pageContext = new HashMap<>();
 
-	public void setStage(Stage stage){
-		this.stage = stage;
-	}
-
-	public Stage getStage() {
-		return this.stage;
-	}
-
 	/** Holder of a switchable page. */
 	@FXML
 	private StackPane pageHolder;
 
+    public Stage getStage() {
+        return this.stage;
+    }
+
+    public Page getCurrentPage() {
+        return currentPage;
+    }
+
+    public void setStage(Stage stage){
+        this.stage = stage;
+    }
+
 	/**
 	 * Replaces the page displayed in the page holder with a new page.
+     * @param page the new current Page.
 	 * @param node the page node to be swapped in.
 	 */
-	public void setPage(Node node) {
+	public void setPage(Page page, Node node) {
+        currentPage = page;
 		pageHolder.getChildren().setAll(node);
 	}
 
@@ -52,7 +58,6 @@ public class MainController {
 	private void closeWindow(ActionEvent event) {
 		Platform.exit();
 	}
-
 
     /**
      * Method that can be called from other controllers to load the sidebar into that page.
@@ -88,14 +93,6 @@ public class MainController {
             System.err.println("Couldn't load sidebar from fxml file.");
             exc.printStackTrace();
         }
-    }
-
-    public Page getCurrentPage() {
-        return currentPage;
-    }
-
-    public void setCurrentPage(Page currentPage) {
-        this.currentPage = currentPage;
     }
 
     public Object getPageParam(String key) {

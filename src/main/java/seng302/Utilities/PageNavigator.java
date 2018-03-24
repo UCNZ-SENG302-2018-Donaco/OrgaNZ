@@ -15,69 +15,70 @@ import java.util.Optional;
 
 /**
  * Utility class for controlling navigation between pages.
- *
  * All methods on the navigator are static to facilitate simple access from anywhere in the application.
  */
 public class PageNavigator {
-
+    /**
+     * Loads the given page in the given MainController.
+     * @param page the Page (enum including path to fxml file) to be loaded.
+     * @param controller the MainController to load this page on to.
+     */
     public static void loadPage(Page page, MainController controller) {
         try {
             FXMLLoader loader = new FXMLLoader(PageNavigator.class.getResource(page.getPath()));
             Node loadedPage = loader.load();
             SubController subController = loader.getController();
             subController.setMainController(controller);
-            controller.setPage(loadedPage);
-            controller.setCurrentPage(page);
+            controller.setPage(page, loadedPage);
         } catch (IOException e) {
-            // TODO probably do better error handling than this
-            e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Could not load page: " + page.toString(),
+                    "The page loader failed to load the layout for the page.");
+            refreshPage(controller);
         }
     }
 
+    /**
+     * Refreshes the current page in the given MainController.
+     * @param controller the MainController to refresh.
+     */
 	public static void refreshPage(MainController controller) {
+        Page page = controller.getCurrentPage();
+        loadPage(page, controller);
+    }
+
+    /**
+     * Opens a new window.
+     * @return The MainController for the new window, or null if the new window could not be created.
+     */
+	public static MainController openNewWindow() {
         try {
-            FXMLLoader loader = new FXMLLoader(PageNavigator.class.getResource(controller.getCurrentPage().getPath()));
-            Node loadedPage = loader.load();
-            SubController subController = loader.getController();
-            subController.setMainController(controller);
-            controller.setPage(loadedPage);
-        } catch (IOException e) {
-            // TODO probably do better error handling than this
-            e.printStackTrace();
+            Stage newStage = new Stage();
+            newStage.setTitle("Organ Donor Management System");
+
+            FXMLLoader loader = new FXMLLoader();
+            Pane mainPane = loader.load(PageNavigator.class.getResourceAsStream(Page.MAIN.getPath()));
+            MainController mainController = loader.getController();
+            mainController.setStage(newStage);
+
+            newStage.setScene(new Scene(mainPane));
+            newStage.show();
+
+            return mainController;
+        } catch (IOException exc) {
+            // Will throw if MAIN's fxml file could not be loaded.
+            showAlert(Alert.AlertType.ERROR, "New window could not be created",
+                    "The page loader failed to load the layout for the new window.");
+            return null;
         }
     }
 
-    public static void openNewWindow(Page page) throws IOException {
-		Stage newStage = new Stage();
-		newStage.setTitle("Organ Donor Management System");
-
-		FXMLLoader loader = new FXMLLoader();
-		Pane mainPane = loader.load(PageNavigator.class.getResourceAsStream(Page.MAIN.getPath()));
-		MainController mainController = loader.getController();
-		mainController.setStage(newStage);
-
-		newStage.setScene(new Scene(mainPane));
-		newStage.show();
-
-		loadPage(page, mainController);
-	}
-
-    public static void openNewWindow(Page page, String pageParam, Object value) throws IOException {
-        Stage newStage = new Stage();
-        newStage.setTitle("Organ Donor Management System");
-
-        FXMLLoader loader = new FXMLLoader();
-        Pane mainPane = loader.load(PageNavigator.class.getResourceAsStream(Page.MAIN.getPath()));
-        MainController mainController = loader.getController();
-        mainController.setStage(newStage);
-        mainController.setPageParam(pageParam, value);
-
-        newStage.setScene(new Scene(mainPane));
-        newStage.show();
-
-        loadPage(page, mainController);
-    }
-
+    /**
+     * Shows a pop-up alert of the given type.
+     * @param alertType the type of alert to show (can determine its style and button options).
+     * @param title the text to show as the title and heading of the alert.
+     * @param bodyText the text to show within the body of the alert.
+     * @return an Optional for the button that was clicked to dismiss the alert.
+     */
 	public static Optional<ButtonType> showAlert(Alert.AlertType alertType, String title, String bodyText) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);

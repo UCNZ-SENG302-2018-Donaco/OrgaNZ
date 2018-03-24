@@ -23,7 +23,6 @@ import seng302.Utilities.Page;
 import seng302.Utilities.PageNavigator;
 import seng302.Utilities.Region;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class SearchDonorsController extends SubController {
@@ -121,10 +120,11 @@ public class SearchDonorsController extends SubController {
         tableView.setOnMouseClicked(mouseEvent -> {
             if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2) {
                 Donor donor = tableView.getSelectionModel().getSelectedItem();
-                try {
-                    PageNavigator.openNewWindow(Page.VIEW_DONOR, "viewUserId", donor.getUid());
-                } catch (IOException exc) {
-                    exc.printStackTrace();
+
+                MainController newMain = PageNavigator.openNewWindow();
+                if (newMain != null) {
+                    newMain.setPageParam("viewUserId", donor.getUid());
+                    PageNavigator.loadPage(Page.VIEW_DONOR, newMain);
                 }
             }
         });
