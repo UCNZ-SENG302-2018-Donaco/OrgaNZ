@@ -1,7 +1,7 @@
 package seng302;
 
 
-import seng302.Utilities.Region;
+import seng302.Utilities.Enums.Region;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

@@ -1,10 +1,10 @@
 package seng302;
 
-import seng302.Utilities.BloodType;
-import seng302.Utilities.Gender;
-import seng302.Utilities.Organ;
-import seng302.Utilities.OrganAlreadyRegisteredException;
-import seng302.Utilities.Region;
+import seng302.Utilities.Enums.BloodType;
+import seng302.Utilities.Enums.Gender;
+import seng302.Utilities.Enums.Organ;
+import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
+import seng302.Utilities.Enums.Region;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

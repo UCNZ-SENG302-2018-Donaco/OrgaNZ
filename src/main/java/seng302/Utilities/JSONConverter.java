@@ -5,9 +5,9 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import seng302.Donor;
-import seng302.DonorManager;
+import seng302.State.DonorManager;
 import seng302.HistoryItem;
-import seng302.State;
+import seng302.State.State;
 
 import java.io.File;
 import java.io.FileReader;

@@ -1,7 +1,7 @@
 package seng302.Actions;
 
 import seng302.Donor;
-import seng302.DonorManager;
+import seng302.State.DonorManager;
 
 import java.util.ArrayList;
 

@@ -4,13 +4,13 @@
       "date": {
         "year": 2018,
         "month": 3,
-        "day": 22
+        "day": 29
       },
       "time": {
-        "hour": 15,
-        "minute": 35,
-        "second": 32,
-        "nano": 563000000
+        "hour": 1,
+        "minute": 0,
+        "second": 1,
+        "nano": 526000000
       }
     },
     "firstName": "First",
@@ -18,26 +18,24 @@
     "gender": "UNSPECIFIED",
     "height": 0.0,
     "weight": 0.0,
-    "BMI": 0.0,
     "dateOfBirth": {
       "year": 1970,
       "month": 1,
       "day": 1
     },
-    "age": 0,
     "organStatus": {
-      "PANCREAS": false,
-      "BONE_MARROW": false,
-      "LUNG": false,
-      "LIVER": false,
-      "KIDNEY": false,
-      "HEART": false,
-      "BONE": false,
-      "SKIN": false,
       "CORNEA": false,
+      "BONE": false,
+      "PANCREAS": false,
+      "CONNECTIVE_TISSUE": false,
+      "SKIN": false,
+      "LIVER": false,
+      "LUNG": false,
+      "BONE_MARROW": false,
+      "HEART": false,
+      "KIDNEY": false,
       "INTESTINE": false,
-      "MIDDLE_EAR": false,
-      "CONNECTIVE_TISSUE": false
+      "MIDDLE_EAR": false
     },
     "updateLog": [],
     "uid": 1

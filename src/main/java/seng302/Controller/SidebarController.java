@@ -8,11 +8,11 @@ import javafx.stage.FileChooser;
 import seng302.Actions.ActionInvoker;
 import seng302.AppUI;
 import seng302.HistoryItem;
-import seng302.Session;
-import seng302.State;
+import seng302.State.Session;
+import seng302.State.State;
 import seng302.Utilities.JSONConverter;
-import seng302.Utilities.Page;
-import seng302.Utilities.PageNavigator;
+import seng302.Utilities.View.Page;
+import seng302.Utilities.View.PageNavigator;
 
 import java.io.File;
 import java.io.IOException;

@@ -1,6 +1,6 @@
 package seng302.Actions;
 
-import seng302.Utilities.PrimitiveConverter;
+import seng302.Utilities.TypeConverters.PrimitiveConverter;
 
 import java.beans.Statement;
 import java.lang.reflect.Method;
@@ -21,7 +21,7 @@ public class ModifyObjectByFieldAction implements Action {
      * @throws NoSuchMethodException Thrown if the object does not have the field specified
      * @throws NoSuchFieldException Thrown if the object setter expected type does not match one of the value types
      */
-    ModifyObjectByFieldAction(Object toModify, String field, Object oldValue, Object newValue) throws NoSuchMethodException, NoSuchFieldException {
+    public ModifyObjectByFieldAction(Object toModify, String field, Object oldValue, Object newValue) throws NoSuchMethodException, NoSuchFieldException {
         Method[] objectMethods = toModify.getClass().getMethods();
         for (Method method : objectMethods) {
             if (method.getName().equals(field)) {
