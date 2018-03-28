@@ -50,7 +50,7 @@ public class PrintAllOrganTest {
 
     @Test
     public void printallorgan_single_donor() throws OrganAlreadyRegisteredException {
-        Donor donor = new Donor("First", "mid", "Last", LocalDate.of(1970,1, 1), 1);
+        Donor donor = new Donor("First", "mid", "Last", LocalDate.of(1970, 1, 1), 1);
         donor.setOrganStatus(Organ.LIVER, true);
         donor.setOrganStatus(Organ.KIDNEY, true);
 
@@ -62,14 +62,15 @@ public class PrintAllOrganTest {
 
         CommandLine.run(spyPrintAllOrgan, System.out, inputs);
 
-        assertTrue(outContent.toString().contains("User: 1. Name: First mid Last, Donation status: Kidney, Liver") || outContent.toString().contains("User: 1. Name: First mid Last, Donation status: Liver, Kidney"));
+        assertTrue(outContent.toString().contains("User: 1. Name: First mid Last, Donation status: Kidney, Liver")
+                || outContent.toString().contains("User: 1. Name: First mid Last, Donation status: Liver, Kidney"));
     }
 
     @Test
     public void printallorgan_multiple_donors() throws OrganAlreadyRegisteredException {
-        Donor donor = new Donor("First", "mid", "Last", LocalDate.of(1970,1, 1), 1);
-        Donor donor2 = new Donor("FirstTwo", null, "LastTwo", LocalDate.of(1971,2, 2), 2);
-        Donor donor3 = new Donor("FirstThree", null, "LastThree", LocalDate.of(1971,2, 2), 3);
+        Donor donor = new Donor("First", "mid", "Last", LocalDate.of(1970, 1, 1), 1);
+        Donor donor2 = new Donor("FirstTwo", null, "LastTwo", LocalDate.of(1971, 2, 2), 2);
+        Donor donor3 = new Donor("FirstThree", null, "LastThree", LocalDate.of(1971, 2, 2), 3);
         donor.setOrganStatus(Organ.LIVER, true);
         donor.setOrganStatus(Organ.KIDNEY, true);
         donor2.setOrganStatus(Organ.CONNECTIVE_TISSUE, true);
@@ -79,14 +80,16 @@ public class PrintAllOrganTest {
         donors.add(donor2);
         donors.add(donor3);
 
-
         when(spyDonorManager.getDonors()).thenReturn(donors);
         String[] inputs = {};
 
         CommandLine.run(spyPrintAllOrgan, System.out, inputs);
 
-        assertTrue(outContent.toString().contains("User: 1. Name: First mid Last, Donation status: Kidney, Liver") || outContent.toString().contains("User: 1. Name: First mid Last, Donation status: Liver, Kidney"));
-        assertThat(outContent.toString(), containsString("User: 2. Name: FirstTwo LastTwo, Donation status: Connective tissue"));
-        assertThat(outContent.toString(), containsString("User: 3. Name: FirstThree LastThree, no organs registered for donation"));
+        assertTrue(outContent.toString().contains("User: 1. Name: First mid Last, Donation status: Kidney, Liver")
+                || outContent.toString().contains("User: 1. Name: First mid Last, Donation status: Liver, Kidney"));
+        assertThat(outContent.toString(),
+                containsString("User: 2. Name: FirstTwo LastTwo, Donation status: Connective tissue"));
+        assertThat(outContent.toString(),
+                containsString("User: 3. Name: FirstThree LastThree, no organs registered for donation"));
     }
 }

@@ -28,7 +28,7 @@ public class DonorManagerTest {
 
     @Test
     public void addDonorTest() {
-        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970,1, 1), 1);
+        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
         manager.addDonor(donor);
         assertTrue(manager.getDonors().contains(donor));
     }
@@ -36,8 +36,8 @@ public class DonorManagerTest {
 
     @Test
     public void getDonorsTest() {
-        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970,1, 1), 1);
-        Donor donor2 = new Donor("FirstTwo", null, "LastTwo", LocalDate.of(1970,1, 1), 2);
+        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        Donor donor2 = new Donor("FirstTwo", null, "LastTwo", LocalDate.of(1970, 1, 1), 2);
         ArrayList<Donor> donors = new ArrayList<>();
         donors.add(donor);
         donors.add(donor2);
@@ -49,8 +49,8 @@ public class DonorManagerTest {
 
     @Test
     public void removeDonorTest() {
-        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970,1, 1), 1);
-        Donor donor2 = new Donor("FirstTwo", null, "LastTwo", LocalDate.of(1970,1, 1), 2);
+        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        Donor donor2 = new Donor("FirstTwo", null, "LastTwo", LocalDate.of(1970, 1, 1), 2);
         ArrayList<Donor> donors = new ArrayList<>();
         donors.add(donor);
         donors.add(donor2);
@@ -64,8 +64,8 @@ public class DonorManagerTest {
 
     @Test
     public void updateDonorTest() {
-        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970,1, 1), 1);
-        Donor donor2 = new Donor("FirstTwo", null, "LastTwo", LocalDate.of(1970,1, 1), 2);
+        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        Donor donor2 = new Donor("FirstTwo", null, "LastTwo", LocalDate.of(1970, 1, 1), 2);
         ArrayList<Donor> donors = new ArrayList<>();
         donors.add(donor);
         donors.add(donor2);
@@ -80,7 +80,7 @@ public class DonorManagerTest {
 
     @Test
     public void collisionExsistsNoCollisionNameTest() {
-        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970,1, 1), 1);
+        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
         ArrayList<Donor> donors = new ArrayList<>();
         donors.add(donor);
         manager = new DonorManager(donors);
@@ -90,7 +90,7 @@ public class DonorManagerTest {
 
     @Test
     public void collisionExsistsNoCollisionDateTest() {
-        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970,1, 1), 1);
+        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
         ArrayList<Donor> donors = new ArrayList<>();
         donors.add(donor);
         manager = new DonorManager(donors);
@@ -100,7 +100,7 @@ public class DonorManagerTest {
 
     @Test
     public void collisionExsistsValidCollisionTest() {
-        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970,1, 1), 1);
+        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
         ArrayList<Donor> donors = new ArrayList<>();
         donors.add(donor);
         manager = new DonorManager(donors);
@@ -110,7 +110,7 @@ public class DonorManagerTest {
 
     @Test
     public void getDonorByIDExistsTest() {
-        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970,1, 1), 1);
+        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
         ArrayList<Donor> donors = new ArrayList<>();
         donors.add(donor);
         manager = new DonorManager(donors);
