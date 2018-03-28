@@ -23,6 +23,7 @@ import seng302.Utilities.View.WindowContext;
  * date: 2018-03-22
  */
 public class AppUI extends Application {
+
     private static Stage window;
 
     public static Stage getWindow() {

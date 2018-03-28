@@ -20,7 +20,8 @@ public class GenderConverter implements CommandLine.ITypeConverter<Gender> {
         try {
             return Gender.fromString(value);
         } catch (IllegalArgumentException e) {
-            throw new CommandLine.TypeConversionException(value + " is not a supported gender. Please enter \"Male\", \"Female\", \"Other\" or \"Unspecified\"");
+            throw new CommandLine.TypeConversionException(value
+                    + " is not a supported gender. Please enter \"Male\", \"Female\", \"Other\" or \"Unspecified\"");
         }
     }
 }

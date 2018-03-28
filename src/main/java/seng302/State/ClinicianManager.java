@@ -9,7 +9,6 @@ import seng302.Utilities.Enums.Region;
 /**
  * The class to handle the Donor inputs, including adding,
  * setting attributes and updating the values of the donor.
- *
  * @author Dylan Carlyle, Jack Steel
  * @version sprint 1.
  * date 08/03/2018
@@ -68,7 +67,7 @@ public class ClinicianManager {
 
     /**
      * Checks if a user already exists with that staff id
-     * @param  staffId The id of the clinician
+     * @param staffId The id of the clinician
      * @return Boolean
      */
     public boolean collisionExists(int staffId) {

@@ -12,10 +12,9 @@ import picocli.CommandLine.Option;
 
 /**
  * Command line to print all of the information of a single user.
- *
- *@author Dylan Carlyle, Jack Steel
- *@version sprint 1.
- *date 06/03/2018
+ * @author Dylan Carlyle, Jack Steel
+ * @version sprint 1.
+ * date 06/03/2018
  */
 
 @Command(name = "getchanges", description = "Print a single users update history.", sortOptions = false)

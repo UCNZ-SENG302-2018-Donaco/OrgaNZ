@@ -16,7 +16,6 @@ public class ModifyClinicianAction implements Action {
 
     /**
      * Create a new Action
-     *
      * @param clinician The clinician to be modified
      */
     public ModifyClinicianAction(Clinician clinician) {
@@ -25,14 +24,15 @@ public class ModifyClinicianAction implements Action {
 
     /**
      * Add a modification to the clinician
-     *
-     * @param field    The setter field of the clinician. Must match a valid setter in the Clinician object
+     * @param field The setter field of the clinician. Must match a valid setter in the Clinician object
      * @param oldValue The object the field initially had. Should be taken from the Clinicians equivalent getter
      * @param newValue The object the field should be update to. Must match the setters Object type
      * @throws NoSuchMethodException Thrown if the Clinician does not have the specified setter
-     * @throws NoSuchFieldException  Thrown if the Clinicians specified setter does not take the same type as given in one of the values
+     * @throws NoSuchFieldException Thrown if the Clinicians specified setter does not take the same type as given in
+     * one of the values
      */
-    public void addChange(String field, Object oldValue, Object newValue) throws NoSuchMethodException, NoSuchFieldException {
+    public void addChange(String field, Object oldValue, Object newValue)
+            throws NoSuchMethodException, NoSuchFieldException {
         actions.add(new ModifyObjectByFieldAction(clinician, field, oldValue, newValue));
     }
 

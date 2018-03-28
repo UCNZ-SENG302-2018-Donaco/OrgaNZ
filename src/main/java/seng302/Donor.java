@@ -50,12 +50,11 @@ public class Donor {
 
     /**
      * Create a new donor object
-     *
-     * @param firstName   First name string
-     * @param middleName  Middle name(s). May be null
-     * @param lastName    Last name string
+     * @param firstName First name string
+     * @param middleName Middle name(s). May be null
+     * @param lastName Last name string
      * @param dateOfBirth LocalDate formatted date of birth
-     * @param uid         A unique user ID. Should be queried to ensure uniqueness
+     * @param uid A unique user ID. Should be queried to ensure uniqueness
      */
     public Donor(String firstName, String middleName, String lastName, LocalDate dateOfBirth, int uid) {
         created_on = LocalDateTime.now();
@@ -86,7 +85,6 @@ public class Donor {
 
     /**
      * Set a single organs donation status
-     *
      * @param organ The organ to be set
      * @param value Boolean value to set the status too
      * @throws OrganAlreadyRegisteredException Thrown if the organ is set to true when it already is
@@ -105,7 +103,6 @@ public class Donor {
 
     /**
      * Get the donors organ donation status, with a formatted string listing the organs to be donated
-     *
      * @return A formatted string listing the organs to be donated
      */
     public String getDonorOrganStatusString() {
@@ -127,7 +124,6 @@ public class Donor {
 
     /**
      * Get the donors organ donation status, with a formatted string listing the organs to be donated
-     *
      * @return A formatted string listing the organs to be donated
      */
     public String getDonorOrgans() {
@@ -149,7 +145,6 @@ public class Donor {
 
     /**
      * Returns a preformatted string of the users change history
-     *
      * @return Formatted string with newlines
      */
     public String getUpdatesString() {
@@ -162,7 +157,6 @@ public class Donor {
 
     /**
      * Get a formatted string with the donors user information. Does not include organ donation status
-     *
      * @return Formatted string with the donors user information. Does not include organ donation status
      */
     public String getDonorInfoString() {
@@ -175,7 +169,6 @@ public class Donor {
 
     /**
      * Get the full name of the donor concatenating their names
-     *
      * @return The full name string
      */
     public String getFullName() {
@@ -301,7 +294,6 @@ public class Donor {
     /**
      * Calculates the BMI of the Donor based off their height and weight - BMI = weight/height^2.
      * If either field is 0, the result returned is 0.
-     *
      * @return the users calculated BMI.
      */
     public double getBMI() {
@@ -317,7 +309,6 @@ public class Donor {
     /**
      * Calculates the users age based on their date of birth and date of death. If the date of death is null the age
      * is calculated base of the LocalDate.now().
-     *
      * @return age of the Donor.
      */
     public int getAge() {
@@ -332,7 +323,6 @@ public class Donor {
 
     /**
      * Takes a string and checks if each space separated string section matches one of the names
-     *
      * @param searchParam The string to be checked
      * @return True if all sections of the passed string match any of the names of the donor
      */
@@ -358,10 +348,12 @@ public class Donor {
      */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (!(obj instanceof Donor))
+        }
+        if (!(obj instanceof Donor)) {
             return false;
+        }
         Donor d = (Donor) obj;
         return d.uid == this.uid;
     }

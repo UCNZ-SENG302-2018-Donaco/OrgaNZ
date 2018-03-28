@@ -4,14 +4,14 @@ package seng302.Utilities.Enums;
  * Enum for blood types. Allows for to/from string conversion
  */
 public enum BloodType {
-    A_NEG ("A-"),
-    A_POS ("A+"),
-    AB_NEG ("AB-"),
-    AB_POS ("AB+"),
-    B_NEG ("B-"),
-    B_POS ("B+"),
-    O_NEG ("O-"),
-    O_POS ("O+");
+    A_NEG("A-"),
+    A_POS("A+"),
+    AB_NEG("AB-"),
+    AB_POS("AB+"),
+    B_NEG("B-"),
+    B_POS("B+"),
+    O_NEG("O-"),
+    O_POS("O+");
 
     private final String text;
 

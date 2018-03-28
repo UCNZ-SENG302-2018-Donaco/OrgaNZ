@@ -12,10 +12,9 @@ import picocli.CommandLine.Command;
 
 /**
  * Command line to print all of the information of all the users, including their ID. Not Sorted.
- *
- *@author Dylan Carlyle, Jack Steel
- *@version sprint 1.
- *date 08/03/2018
+ * @author Dylan Carlyle, Jack Steel
+ * @version sprint 1.
+ * date 08/03/2018
  */
 
 @Command(name = "printallorgan", description = "Print all users with their organ donation status.", sortOptions = false)

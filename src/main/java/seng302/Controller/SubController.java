@@ -6,6 +6,7 @@ import seng302.Utilities.View.WindowContext;
  * A Controller that holds it's parent controller state
  */
 abstract public class SubController {
+
     protected MainController mainController;
     protected WindowContext windowContext;
 

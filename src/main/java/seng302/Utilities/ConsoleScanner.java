@@ -11,58 +11,58 @@ import jline.console.ConsoleReader;
  * features command history. On all other platforms, a ConsoleReader from the JLine library is used instead.
  */
 public class ConsoleScanner {
-	private boolean isWindows = false;
-	private Scanner scanIn;
-	private ConsoleReader consoleIn;
 
-	/**
-	 * Creates a new ConsoleScanner by determining whether the platform is Windows-based or not, then instantiating
-	 * the appropriate input scanner.
-	 */
-	public ConsoleScanner() {
-		if (System.getProperty("os.name").toLowerCase().contains("win")) {
-			isWindows = true;
-		}
+    private boolean isWindows = false;
+    private Scanner scanIn;
+    private ConsoleReader consoleIn;
 
-		if (isWindows) {
-			scanIn = new Scanner(System.in);
-		}
-		else {
-			try {
-				consoleIn = new ConsoleReader();
-				consoleIn.setHistoryEnabled(true);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-	}
+    /**
+     * Creates a new ConsoleScanner by determining whether the platform is Windows-based or not, then instantiating
+     * the appropriate input scanner.
+     */
+    public ConsoleScanner() {
+        if (System.getProperty("os.name").toLowerCase().contains("win")) {
+            isWindows = true;
+        }
 
-	/**
-	 * Returns the next line of user input.
-	 * @return the next line of user input.
-	 */
-	public String readLine() {
-		if (isWindows) {
-			return scanIn.nextLine();
-		} else {
-			try {
-				return consoleIn.readLine();
-			} catch (IOException e) {
-				e.printStackTrace();
-				return "";
-			}
-		}
-	}
+        if (isWindows) {
+            scanIn = new Scanner(System.in);
+        } else {
+            try {
+                consoleIn = new ConsoleReader();
+                consoleIn.setHistoryEnabled(true);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
-	/**
-	 * Closes the console and frees all resources.
-	 */
-	public void close() {
-		if (scanIn != null) {
-			scanIn.close();
-		}
-		if (consoleIn != null) {
-			consoleIn.shutdown();
-		}
-	}
+    /**
+     * Returns the next line of user input.
+     * @return the next line of user input.
+     */
+    public String readLine() {
+        if (isWindows) {
+            return scanIn.nextLine();
+        } else {
+            try {
+                return consoleIn.readLine();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return "";
+            }
+        }
+    }
+
+    /**
+     * Closes the console and frees all resources.
+     */
+    public void close() {
+        if (scanIn != null) {
+            scanIn.close();
+        }
+        if (consoleIn != null) {
+            consoleIn.shutdown();
+        }
+    }
 }

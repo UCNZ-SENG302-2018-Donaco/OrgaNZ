@@ -4,18 +4,18 @@ package seng302.Utilities.Enums;
  * Enum for organs. Allows for to/from string conversion
  */
 public enum Organ {
-    LIVER ("Liver"),
-    KIDNEY ("Kidney"),
-    PANCREAS ("Pancreas"),
-    HEART ("Heart"),
-    LUNG ("Lung"),
-    INTESTINE ("Intestine"),
-    CORNEA ("Cornea"),
-    MIDDLE_EAR ("Middle ear"),
-    SKIN ("Skin"),
-    BONE ("Bone"),
-    BONE_MARROW ("Bone marrow"),
-    CONNECTIVE_TISSUE ("Connective tissue");
+    LIVER("Liver"),
+    KIDNEY("Kidney"),
+    PANCREAS("Pancreas"),
+    HEART("Heart"),
+    LUNG("Lung"),
+    INTESTINE("Intestine"),
+    CORNEA("Cornea"),
+    MIDDLE_EAR("Middle ear"),
+    SKIN("Skin"),
+    BONE("Bone"),
+    BONE_MARROW("Bone marrow"),
+    CONNECTIVE_TISSUE("Connective tissue");
 
     private final String text;
 
@@ -34,7 +34,7 @@ public enum Organ {
      * @throws IllegalArgumentException Thrown when no matching organ is found
      */
     public static Organ fromString(String text) {
-        for (Organ o: Organ.values()) {
+        for (Organ o : Organ.values()) {
             if (o.toString().equalsIgnoreCase(text)) {
                 return o;
             }

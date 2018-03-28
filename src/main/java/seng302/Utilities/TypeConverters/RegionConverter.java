@@ -20,7 +20,8 @@ public class RegionConverter implements CommandLine.ITypeConverter<Region> {
         try {
             return Region.fromString(value);
         } catch (IllegalArgumentException e) {
-            throw new CommandLine.TypeConversionException(value + " is not a supported region. Please enter the region name");
+            throw new CommandLine.TypeConversionException(
+                    value + " is not a supported region. Please enter the region name");
         }
     }
 }

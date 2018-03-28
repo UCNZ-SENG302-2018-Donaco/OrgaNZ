@@ -19,6 +19,7 @@ import seng302.Controller.SubController;
  * All methods on the navigator are static to facilitate simple access from anywhere in the application.
  */
 public class PageNavigator {
+
     /**
      * Loads the given page in the given MainController.
      * @param page the Page (enum including path to fxml file) to be loaded.
@@ -41,7 +42,7 @@ public class PageNavigator {
      * Refreshes the current page in the given MainController.
      * @param controller the MainController to refresh.
      */
-	public static void refreshPage(MainController controller) {
+    public static void refreshPage(MainController controller) {
         Page page = controller.getCurrentPage();
         loadPage(page, controller);
     }
@@ -50,7 +51,7 @@ public class PageNavigator {
      * Opens a new window.
      * @return The MainController for the new window, or null if the new window could not be created.
      */
-	public static MainController openNewWindow() {
+    public static MainController openNewWindow() {
         try {
             Stage newStage = new Stage();
             newStage.setTitle("Organ Donor Management System");
@@ -79,7 +80,7 @@ public class PageNavigator {
      * @param bodyText the text to show within the body of the alert.
      * @return an Optional for the button that was clicked to dismiss the alert.
      */
-	public static Optional<ButtonType> showAlert(Alert.AlertType alertType, String title, String bodyText) {
+    public static Optional<ButtonType> showAlert(Alert.AlertType alertType, String title, String bodyText) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);
         alert.setHeaderText(title);

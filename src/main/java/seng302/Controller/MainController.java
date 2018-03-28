@@ -17,16 +17,18 @@ import seng302.Utilities.View.WindowContext;
 
 /**
  * Main controller class for the application window.
- *
  */
 public class MainController {
-	private Stage stage;
+
+    private Stage stage;
     private Page currentPage;
     private WindowContext windowContext;
 
-	/** Holder of a switchable page. */
-	@FXML
-	private StackPane pageHolder;
+    /**
+     * Holder of a switchable page.
+     */
+    @FXML
+    private StackPane pageHolder;
 
     public Stage getStage() {
         return this.stage;
@@ -40,36 +42,36 @@ public class MainController {
         return windowContext;
     }
 
-    public void setStage(Stage stage){
+    public void setStage(Stage stage) {
         this.stage = stage;
     }
 
-	/**
-	 * Replaces the page displayed in the page holder with a new page.
+    /**
+     * Replaces the page displayed in the page holder with a new page.
      * @param page the new current Page.
-	 * @param node the page node to be swapped in.
-	 */
-	public void setPage(Page page, Node node) {
+     * @param node the page node to be swapped in.
+     */
+    public void setPage(Page page, Node node) {
         currentPage = page;
-		pageHolder.getChildren().setAll(node);
-	}
+        pageHolder.getChildren().setAll(node);
+    }
 
-	public void setWindowContext(WindowContext context) {
-	    this.windowContext = context;
+    public void setWindowContext(WindowContext context) {
+        this.windowContext = context;
     }
 
     public void resetWindowContext() {
-	    this.windowContext = WindowContext.defaultContext();
+        this.windowContext = WindowContext.defaultContext();
     }
 
-	/**
-	 * Closes the window.
-	 * @param event when the exit button is clicked.
-	 */
-	@FXML
-	private void closeWindow(ActionEvent event) {
-		Platform.exit();
-	}
+    /**
+     * Closes the window.
+     * @param event when the exit button is clicked.
+     */
+    @FXML
+    private void closeWindow(ActionEvent event) {
+        Platform.exit();
+    }
 
     /**
      * Method that can be called from other controllers to load the sidebar into that page.

@@ -16,10 +16,9 @@ import picocli.CommandLine;
  * @version sprint 2.
  * date: 2018-03-22
  */
-public class App
-{
-    public static void main( String[] args )
-    {
+public class App {
+
+    public static void main(String[] args) {
         State.init();
 
         String input;
@@ -38,7 +37,7 @@ public class App
                 inputs.add(m.group(1).replace("\"", ""));
             }
             String[] currArgs = inputs.toArray(new String[0]);
-        CommandLine.run(command, System.out, currArgs);
+            CommandLine.run(command, System.out, currArgs);
         }
     }
 }

@@ -12,10 +12,9 @@ import picocli.CommandLine.Option;
 
 /**
  * Command line to print the donation information of a user.
- *
- *@author Dylan Carlyle, Jack Steel
- *@version sprint 1.
- *date 05/03/2018
+ * @author Dylan Carlyle, Jack Steel
+ * @version sprint 1.
+ * date 05/03/2018
  */
 
 @Command(name = "printuserorgan", description = "Print a single user with their organ information.", sortOptions = false)
@@ -42,7 +41,8 @@ public class PrintDonorOrgan implements Runnable {
             return;
         }
         System.out.println(donor.getDonorOrganStatusString());
-        HistoryItem printUserOrgan = new HistoryItem("PRINT USER ORGAN", "The organ information was printed for donor " + uid);
+        HistoryItem printUserOrgan = new HistoryItem("PRINT USER ORGAN",
+                "The organ information was printed for donor " + uid);
         JSONConverter.updateHistory(printUserOrgan, "action_history.json");
     }
 }

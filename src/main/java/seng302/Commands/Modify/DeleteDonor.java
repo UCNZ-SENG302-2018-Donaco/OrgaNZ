@@ -38,7 +38,9 @@ public class DeleteDonor implements Runnable {
         if (donor == null) {
             System.out.println("No donor exists with that user ID");
         } else {
-            System.out.println(String.format("Removing user: %s %s %s, with date of birth: %s, would you like to proceed? (y/n)", donor.getFirstName(), donor.getMiddleName(), donor.getLastName(), donor.getDateOfBirth()));
+            System.out.println(
+                    String.format("Removing user: %s %s %s, with date of birth: %s, would you like to proceed? (y/n)",
+                            donor.getFirstName(), donor.getMiddleName(), donor.getLastName(), donor.getDateOfBirth()));
             Scanner scanner = new Scanner(System.in);
             String response = scanner.next();
 
@@ -46,7 +48,8 @@ public class DeleteDonor implements Runnable {
                 Action action = new DeleteDonorAction(donor, manager);
                 invoker.execute(action);
 
-                System.out.println("Donor " + uid + " removed. This removal will only be permanent once the 'save' command is used");
+                System.out.println("Donor " + uid
+                        + " removed. This removal will only be permanent once the 'save' command is used");
                 HistoryItem printAllOrgan = new HistoryItem("DELETE", "Donor " + uid + " deleted.");
                 JSONConverter.updateHistory(printAllOrgan, "action_history.json");
             } else {

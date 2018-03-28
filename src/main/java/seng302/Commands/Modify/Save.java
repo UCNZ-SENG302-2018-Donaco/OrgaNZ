@@ -15,10 +15,9 @@ import picocli.CommandLine.Command;
 
 /**
  * Command line to save the current information of the Donors onto a JSON file using the GSON API.
- *
- *@author Dylan Carlyle, Jack Steel
- *@version sprint 1.
- *date 06/03/2018
+ * @author Dylan Carlyle, Jack Steel
+ * @version sprint 1.
+ * date 06/03/2018
  */
 
 @Command(name = "save", description = "Save donors to file", sortOptions = false)
@@ -43,7 +42,7 @@ public class Save implements Runnable {
         }
         try {
             JSONConverter.saveToFile(new File("savefile.json"));
-            System.out.println(String.format("Saved %s users to file",manager.getDonors().size()));
+            System.out.println(String.format("Saved %s users to file", manager.getDonors().size()));
             HistoryItem save = new HistoryItem("SAVE", "The systems current state was saved.");
             JSONConverter.updateHistory(save, "action_history.json");
         } catch (IOException e) {

@@ -53,8 +53,7 @@ public class CreateDonorController extends SubController {
         if (firstNameFld.getText().equals("") || lastNamefld.getText().equals("") || dobFld.getValue() == null) {
             PageNavigator.showAlert(AlertType.ERROR, "Required Field Empty",
                     "Please make sure that all the required fields are given.");
-        }
-        else {
+        } else {
             //Duplicate user warning alert
             if (manager.collisionExists(firstNameFld.getText(), lastNamefld.getText(), dobFld.getValue())) {
                 System.out.println("Duplicate");
@@ -69,7 +68,8 @@ public class CreateDonorController extends SubController {
             }
 
             int uid = manager.getUid();
-            Donor donor = new Donor(firstNameFld.getText(), middleNamefld.getText(), lastNamefld.getText(), dobFld.getValue(), uid);
+            Donor donor = new Donor(firstNameFld.getText(), middleNamefld.getText(), lastNamefld.getText(),
+                    dobFld.getValue(), uid);
             Action action = new CreateDonorAction(donor, manager);
             invoker.execute(action);
             HistoryItem save = new HistoryItem("CREATE DONOR",

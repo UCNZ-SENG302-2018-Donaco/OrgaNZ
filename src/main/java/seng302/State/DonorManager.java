@@ -8,7 +8,6 @@ import seng302.Donor;
 /**
  * The class to handle the Donor inputs, including adding,
  * setting attributes and updating the values of the donor.
- *
  * @author Dylan Carlyle, Jack Steel
  * @version sprint 1.
  * date 08/03/2018
@@ -65,11 +64,13 @@ public class DonorManager {
         return uid++;
     }
 
-	/**
-	 * Set the user ID
-	 * @param uid Value to set the user IF
-	 */
-	public void setUid(int uid) { this.uid = uid; }
+    /**
+     * Set the user ID
+     * @param uid Value to set the user IF
+     */
+    public void setUid(int uid) {
+        this.uid = uid;
+    }
 
     /**
      * Checks if a user already exists with that first + last name and date of birth

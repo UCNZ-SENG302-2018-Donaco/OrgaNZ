@@ -24,6 +24,7 @@ import seng302.Utilities.View.PageNavigator;
  * Controller for the sidebar pane imported into every page in the main part of the GUI.
  */
 public class SidebarController extends SubController {
+
     @FXML
     private Button viewDonorButton, registerOrgansButton, viewClinicianButton, searchButton, logoutButton;
 
@@ -116,7 +117,8 @@ public class SidebarController extends SubController {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Save Donors File");
             fileChooser.setInitialDirectory(
-                    new File(Paths.get(AppUI.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParent().toString())
+                    new File(Paths.get(AppUI.class.getProtectionDomain().getCodeSource().getLocation().toURI())
+                            .getParent().toString())
             );
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json"));
             File file = fileChooser.showSaveDialog(AppUI.getWindow());
@@ -145,7 +147,8 @@ public class SidebarController extends SubController {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Load Donors File");
             fileChooser.setInitialDirectory(
-                    new File(Paths.get(AppUI.class.getProtectionDomain().getCodeSource().getLocation().toURI()).getParent().toString())
+                    new File(Paths.get(AppUI.class.getProtectionDomain().getCodeSource().getLocation().toURI())
+                            .getParent().toString())
             );
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json"));
             File file = fileChooser.showOpenDialog(AppUI.getWindow());

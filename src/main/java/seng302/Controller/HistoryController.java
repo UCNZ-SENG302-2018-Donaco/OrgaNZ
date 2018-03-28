@@ -19,6 +19,7 @@ import seng302.Utilities.JSONConverter;
  * Controller for the history page.
  */
 public class HistoryController extends SubController {
+
     private final DateTimeFormatter datetimeformat = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm:ss");
 
     @FXML

@@ -12,7 +12,7 @@ public class SaveAction implements Action {
     private ArrayList<Donor> oldState;
     private ArrayList<Donor> newState;
 
-    public SaveAction (ArrayList<Donor> oldState, ArrayList<Donor> newState, DonorManager manager) {
+    public SaveAction(ArrayList<Donor> oldState, ArrayList<Donor> newState, DonorManager manager) {
         this.manager = manager;
         this.oldState = oldState;
         this.newState = newState;

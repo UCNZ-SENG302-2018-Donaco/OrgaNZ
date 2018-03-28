@@ -26,12 +26,14 @@ import com.google.gson.stream.JsonReader;
  * to Java objects.
  */
 public final class JSONConverter {
-    private static final Gson gson = new GsonBuilder()
-			.setPrettyPrinting()
-			.enableComplexMapKeySerialization()
-			.create();
 
-    private JSONConverter() {} // To ensure that this UTILITY class cannot be instantiated.
+    private static final Gson gson = new GsonBuilder()
+            .setPrettyPrinting()
+            .enableComplexMapKeySerialization()
+            .create();
+
+    private JSONConverter() {
+    } // To ensure that this UTILITY class cannot be instantiated.
 
     /**
      * If the given file does not exist, creates an empty JSON array in that file.
@@ -53,38 +55,39 @@ public final class JSONConverter {
         }
     }
 
-	/**
-	 * Saves the current donors list to a specified file
-	 * @param file The file to be saved to
-	 * @throws IOException Throws IOExceptions
-	 */
-	public static void saveToFile(File file) throws IOException {
-		Writer writer = new FileWriter(file);
-		DonorManager donorManager = State.getDonorManager();
-		gson.toJson(donorManager.getDonors(), writer);
-		writer.close();
-	}
+    /**
+     * Saves the current donors list to a specified file
+     * @param file The file to be saved to
+     * @throws IOException Throws IOExceptions
+     */
+    public static void saveToFile(File file) throws IOException {
+        Writer writer = new FileWriter(file);
+        DonorManager donorManager = State.getDonorManager();
+        gson.toJson(donorManager.getDonors(), writer);
+        writer.close();
+    }
 
-	/**
-	 * Loads the donors from a specified file. Overwrites any current donors
-	 * @param file The file to be loaded from
-	 * @throws IOException Throws IOExceptions
-	 */
-	public static void loadFromFile(File file) throws IOException {
-		Reader reader = new FileReader(file);
-		ArrayList<Donor> donors;
-		Type collectionType = new TypeToken<ArrayList<Donor>>() {}.getType();
+    /**
+     * Loads the donors from a specified file. Overwrites any current donors
+     * @param file The file to be loaded from
+     * @throws IOException Throws IOExceptions
+     */
+    public static void loadFromFile(File file) throws IOException {
+        Reader reader = new FileReader(file);
+        ArrayList<Donor> donors;
+        Type collectionType = new TypeToken<ArrayList<Donor>>() {
+        }.getType();
 
-		donors = gson.fromJson(reader, collectionType);
-		DonorManager donorManager = State.getDonorManager();
-		donorManager.setDonors(donors);
+        donors = gson.fromJson(reader, collectionType);
+        DonorManager donorManager = State.getDonorManager();
+        donorManager.setDonors(donors);
 
-		for (Donor donor : donors) {
-			if (donor.getUid() >= donorManager.getUid()) {
-				donorManager.setUid(donor.getUid() + 1);
-			}
-		}
-	}
+        for (Donor donor : donors) {
+            if (donor.getUid() >= donorManager.getUid()) {
+                donorManager.setUid(donor.getUid() + 1);
+            }
+        }
+    }
 
     /**
      * Read's the action_history.json file into an ArrayList, appends the historyItem to the list and
@@ -107,7 +110,8 @@ public final class JSONConverter {
             writeHistoryToJSON(historyList, filename);
 
         } catch (IOException | IllegalStateException exc) {
-            System.err.println("An error occurred when reading historyItem history from the JSON file: \n" + exc.getMessage());
+            System.err.println(
+                    "An error occurred when reading historyItem history from the JSON file: \n" + exc.getMessage());
         }
     }
 
@@ -128,7 +132,8 @@ public final class JSONConverter {
     public static List<HistoryItem> loadJSONtoHistory(File filename) throws IOException {
         Reader reader = new FileReader(filename);
         ArrayList<HistoryItem> historyItemList;
-        Type historyCollection = new TypeToken<ArrayList<HistoryItem>>() {}.getType();
+        Type historyCollection = new TypeToken<ArrayList<HistoryItem>>() {
+        }.getType();
         historyItemList = gson.fromJson(reader, historyCollection);
         return historyItemList;
     }

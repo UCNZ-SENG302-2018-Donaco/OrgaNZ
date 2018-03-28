@@ -12,12 +12,12 @@ import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
  * A reversible donor organ modification Action
  */
 public class ModifyDonorOrgansAction implements Action {
+
     private Map<Organ, Boolean> changes = new HashMap<>();
     private Donor donor;
 
     /**
      * Create a new Action
-     *
      * @param donor The donor to be modified
      */
     public ModifyDonorOrgansAction(Donor donor) {
@@ -46,7 +46,6 @@ public class ModifyDonorOrgansAction implements Action {
 
     /**
      * Loops through the list of changes and applies them to the donor
-     *
      * @param isUndo If true, negate all booleans
      */
     private void runChanges(boolean isUndo) {

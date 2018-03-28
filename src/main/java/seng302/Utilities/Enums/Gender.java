@@ -4,10 +4,10 @@ package seng302.Utilities.Enums;
  * Enum for genders. Allows for to/from string conversion
  */
 public enum Gender {
-    MALE ("Male"),
-    FEMALE ("Female"),
-    OTHER ("Other"),
-    UNSPECIFIED ("Unspecified");
+    MALE("Male"),
+    FEMALE("Female"),
+    OTHER("Other"),
+    UNSPECIFIED("Unspecified");
 
     private final String text;
 
@@ -26,7 +26,7 @@ public enum Gender {
      * @throws IllegalArgumentException Thrown when no matching gender is found
      */
     public static Gender fromString(String text) {
-        for (Gender g: Gender.values()) {
+        for (Gender g : Gender.values()) {
             if (g.toString().equalsIgnoreCase(text)) {
                 return g;
             }

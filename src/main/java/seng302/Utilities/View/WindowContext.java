@@ -7,6 +7,7 @@ import seng302.Donor;
  * Is stored by that window's MainController, and can be accessed by SubControllers.
  */
 public class WindowContext {
+
     private boolean sidebarEnabled;
     private boolean isClinViewDonorWindow;
     private Donor viewDonor;
@@ -22,11 +23,13 @@ public class WindowContext {
      * Has methods to set parameters that return the builder, in order to allow fluent interface usage.
      */
     public static class WindowContextBuilder {
+
         private boolean sidebarEnabled = true;
         private boolean isClinViewDonorWindow = false;
         private Donor viewDonor;
 
-        public WindowContextBuilder() {}
+        public WindowContextBuilder() {
+        }
 
         public WindowContextBuilder setSidebarDisabled() {
             this.sidebarEnabled = false;

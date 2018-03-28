@@ -21,7 +21,7 @@ public class LoadAction implements Action {
      * @param newState The new state of the Donor array
      * @param manager The DonorManager to apply changes to
      */
-    public LoadAction (ArrayList<Donor> oldState, ArrayList<Donor> newState, DonorManager manager) {
+    public LoadAction(ArrayList<Donor> oldState, ArrayList<Donor> newState, DonorManager manager) {
         this.manager = manager;
         this.oldState = oldState;
         this.newState = newState;

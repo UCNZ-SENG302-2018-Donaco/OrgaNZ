@@ -26,15 +26,16 @@ public class Clinician {
 
     /**
      * Create a new Clinician object
-     * @param firstName     First name string
-     * @param middleName    Middle name(s). May be null
-     * @param lastName      Last name string
-     * @param workAddress   Address string
-     * @param region        Region from the Region ENUM
-     * @param staffId       The unique staffId. Should be checked using the ClinicianManager to ensure uniqueness
-     * @param password      The clinicians password for logins. Stored in plaintext
+     * @param firstName First name string
+     * @param middleName Middle name(s). May be null
+     * @param lastName Last name string
+     * @param workAddress Address string
+     * @param region Region from the Region ENUM
+     * @param staffId The unique staffId. Should be checked using the ClinicianManager to ensure uniqueness
+     * @param password The clinicians password for logins. Stored in plaintext
      */
-    public Clinician(String firstName, String middleName, String lastName, String workAddress, Region region, int staffId, String password) {
+    public Clinician(String firstName, String middleName, String lastName, String workAddress, Region region,
+            int staffId, String password) {
         created_on = LocalDateTime.now();
 
         this.firstName = firstName;
@@ -122,7 +123,7 @@ public class Clinician {
         this.password = password;
         addUpdate("password");
     }
-    
+
     public LocalDateTime getModified_on() {
         return modified_on;
     }

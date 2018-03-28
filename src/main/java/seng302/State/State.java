@@ -8,12 +8,14 @@ import seng302.Donor;
  * A static class to store the current state of the system.
  */
 public final class State {
+
     private static DonorManager donorManager;
     private static ClinicianManager clinicianManager;
     private static ActionInvoker actionInvoker;
     private static Session session;
 
-    private State() {}
+    private State() {
+    }
 
     /**
      * Initialises a new action invoker, donor manager and clinician manager.

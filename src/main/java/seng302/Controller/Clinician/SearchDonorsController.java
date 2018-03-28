@@ -30,6 +30,7 @@ import seng302.Utilities.View.PageNavigator;
 import seng302.Utilities.View.WindowContext;
 
 public class SearchDonorsController extends SubController {
+
     private static final int ROWS_PER_PAGE = 30;
 
     @FXML
@@ -59,11 +60,11 @@ public class SearchDonorsController extends SubController {
     private FilteredList<Donor> filteredDonors;
     private SortedList<Donor> sortedDonors;
 
-	@Override
-	public void setup(MainController mainController) {
-		super.setup(mainController);
-		mainController.loadSidebar(sidebarPane);
-	}
+    @Override
+    public void setup(MainController mainController) {
+        super.setup(mainController);
+        mainController.loadSidebar(sidebarPane);
+    }
 
     @FXML
     private void initialize() {
@@ -107,6 +108,7 @@ public class SearchDonorsController extends SubController {
 
         tableView.setRowFactory(tv -> new TableRow<Donor>() {
             private Tooltip tooltip = new Tooltip();
+
             @Override
             public void updateItem(Donor donor, boolean empty) {
                 super.updateItem(donor, empty);
@@ -146,8 +148,7 @@ public class SearchDonorsController extends SubController {
         String searchText = searchBox.getText();
         if (searchText == null || searchText.length() == 0) {
             filteredDonors.setPredicate(donor -> true);
-        }
-        else {
+        } else {
             filteredDonors.setPredicate(donor -> donor.nameContains(searchText));
         }
 

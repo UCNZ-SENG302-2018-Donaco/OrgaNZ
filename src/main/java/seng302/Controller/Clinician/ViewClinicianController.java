@@ -29,6 +29,7 @@ import seng302.Utilities.View.PageNavigator;
  * their details directly on this page.
  */
 public class ViewClinicianController extends SubController {
+
     private final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy\nh:mm:ss a");
 
     private Session session;
@@ -54,13 +55,13 @@ public class ViewClinicianController extends SubController {
         currentClinician = session.getLoggedInClinician();
     }
 
-	/**
-	 * Initialize the page.
-	 */
-	@FXML
+    /**
+     * Initialize the page.
+     */
+    @FXML
     private void initialize() {
         region.setItems(FXCollections.observableArrayList(Region.values()));
-		staffID.setDisable(true);
+        staffID.setDisable(true);
         inputsPane.setVisible(true);
 
         loadClinicianData();
@@ -72,10 +73,10 @@ public class ViewClinicianController extends SubController {
         mainController.loadSidebar(sidebarPane);
     }
 
-	/**
-	 * Loads all of the currently logged in Clinician's details, except for their password.
-	 */
-	private void loadClinicianData() {
+    /**
+     * Loads all of the currently logged in Clinician's details, except for their password.
+     */
+    private void loadClinicianData() {
         fname.setText(currentClinician.getFirstName());
         mname.setText(currentClinician.getMiddleName());
         lname.setText(currentClinician.getLastName());
@@ -110,36 +111,36 @@ public class ViewClinicianController extends SubController {
      * @return true if all mandatory fields have valid input.
      */
     private boolean checkMandatoryFields() {
-		boolean update = true;
-		if (fname.getText().equals("")) {
-			fnameLabel.setTextFill(Color.RED);
-			update = false;
-		} else {
-			fnameLabel.setTextFill(Color.BLACK);
-		}
+        boolean update = true;
+        if (fname.getText().equals("")) {
+            fnameLabel.setTextFill(Color.RED);
+            update = false;
+        } else {
+            fnameLabel.setTextFill(Color.BLACK);
+        }
 
-		if (lname.getText().equals("")) {
-			lnameLabel.setTextFill(Color.RED);
-			update = false;
-		} else {
-			lnameLabel.setTextFill(Color.BLACK);
-		}
-		if (lname.getText().equals("")) {
-			lnameLabel.setTextFill(Color.RED);
-			update = false;
-		} else {
-			lnameLabel.setTextFill(Color.BLACK);
-		}
-		return update;
-	}
+        if (lname.getText().equals("")) {
+            lnameLabel.setTextFill(Color.RED);
+            update = false;
+        } else {
+            lnameLabel.setTextFill(Color.BLACK);
+        }
+        if (lname.getText().equals("")) {
+            lnameLabel.setTextFill(Color.RED);
+            update = false;
+        } else {
+            lnameLabel.setTextFill(Color.BLACK);
+        }
+        return update;
+    }
 
 
-	/**
-	 * Checks if the password has been update. If the PasswordField is left blank, the old password remains current.
-	 * Otherwise the current password is updated to the newly entered value in the field.
-	 * @return the users password.
-	 */
-	private String checkPassword() {
+    /**
+     * Checks if the password has been update. If the PasswordField is left blank, the old password remains current.
+     * Otherwise the current password is updated to the newly entered value in the field.
+     * @return the users password.
+     */
+    private String checkPassword() {
         if (password.getText().equals("")) {
             return currentClinician.getPassword();
         } else {
@@ -163,7 +164,8 @@ public class ViewClinicianController extends SubController {
 
             invoker.execute(action);
 
-            HistoryItem save = new HistoryItem("UPDATE CLINICIAN", "The Clinician's information was updated. New details are: " + currentClinician.getUpdateLog());
+            HistoryItem save = new HistoryItem("UPDATE CLINICIAN",
+                    "The Clinician's information was updated. New details are: " + currentClinician.getUpdateLog());
             JSONConverter.updateHistory(save, "action_history.json");
 
             PageNavigator.showAlert(Alert.AlertType.INFORMATION,

@@ -8,6 +8,7 @@ import seng302.Donor;
 import seng302.HistoryItem;
 
 public class Session {
+
     public enum UserType {
         DONOR, CLINICIAN
     }

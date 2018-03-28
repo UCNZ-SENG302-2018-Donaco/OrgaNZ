@@ -19,10 +19,9 @@ import picocli.CommandLine.Option;
 
 /**
  * Command line to create a Donor with basic information, including their DOB and full name.
- *
- *@author Dylan Carlyle, Jack Steel
- *@version sprint 1.
- *date 05/03/2018
+ * @author Dylan Carlyle, Jack Steel
+ * @version sprint 1.
+ * date 05/03/2018
  */
 
 @Command(name = "createuser", description = "Creates a user.")
@@ -47,7 +46,8 @@ public class CreateDonor implements Runnable {
     @Option(names = {"-l", "--lastname"}, description = "Last name.", required = true)
     private String lastName;
 
-    @Option(names = {"-d", "--dob"}, description = "Date of birth.", required = true, converter = LocalDateConverter.class)
+    @Option(names = {"-d",
+            "--dob"}, description = "Date of birth.", required = true, converter = LocalDateConverter.class)
     private LocalDate dateOfBirth;
 
     @Option(names = {"-m", "--middlenames", "--middlename"}, description = "Middle name(s)")
@@ -69,7 +69,8 @@ public class CreateDonor implements Runnable {
 
         invoker.execute(action);
 
-        System.out.println(String.format("New donor %s %s %s created with userID %s", firstName, ofNullable(middleNames).orElse(""), lastName, uid));
+        System.out.println(String.format("New donor %s %s %s created with userID %s", firstName,
+                ofNullable(middleNames).orElse(""), lastName, uid));
         HistoryItem create = new HistoryItem("CREATE", "Donor profile ID: " + uid + " created.");
         JSONConverter.updateHistory(create, "action_history.json");
     }
