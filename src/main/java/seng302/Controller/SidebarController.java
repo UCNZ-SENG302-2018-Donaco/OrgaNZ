@@ -108,7 +108,7 @@ public class SidebarController extends SubController {
                 JSONConverter.updateHistory(load, "action_history.json");
 
                 State.logout();
-                mainController.clearPageParams();
+                mainController.resetWindowContext();
                 PageNavigator.showAlert(Alert.AlertType.INFORMATION,
                         "Load Successful",
                         "Successfully loaded Donors from " + file.getName());
@@ -128,7 +128,7 @@ public class SidebarController extends SubController {
     @FXML
     private void logout(ActionEvent event) {
         State.logout();
-        mainController.clearPageParams();
+        mainController.resetWindowContext();
         PageNavigator.loadPage(Page.LANDING, mainController);
         HistoryItem save = new HistoryItem("LOGOUT", "The Donor logged out");
         JSONConverter.updateHistory(save, "action_history.json");

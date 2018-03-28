@@ -53,7 +53,7 @@ public class ViewClinicianController extends SubController {
             currentClinician = session.getLoggedInClinician();
         } else {
             State.logout();
-            mainController.clearPageParams();
+            mainController.resetWindowContext();
             PageNavigator.loadPage(Page.LANDING, mainController);
         }
     }

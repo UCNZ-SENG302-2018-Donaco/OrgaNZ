@@ -10,10 +10,9 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import seng302.Utilities.Page;
+import seng302.Utilities.WindowContext;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Main controller class for the application window.
@@ -22,7 +21,7 @@ import java.util.Map;
 public class MainController {
 	private Stage stage;
     private Page currentPage;
-    private Map<String, Object> pageContext = new HashMap<>();
+    private WindowContext windowContext;
 
 	/** Holder of a switchable page. */
 	@FXML
@@ -34,6 +33,10 @@ public class MainController {
 
     public Page getCurrentPage() {
         return currentPage;
+    }
+
+    public WindowContext getWindowContext() {
+        return windowContext;
     }
 
     public void setStage(Stage stage){
@@ -49,6 +52,14 @@ public class MainController {
         currentPage = page;
 		pageHolder.getChildren().setAll(node);
 	}
+
+	public void setWindowContext(WindowContext context) {
+	    this.windowContext = context;
+    }
+
+    public void resetWindowContext() {
+	    this.windowContext = WindowContext.defaultContext();
+    }
 
 	/**
 	 * Closes the window.
@@ -93,21 +104,5 @@ public class MainController {
             System.err.println("Couldn't load sidebar from fxml file.");
             exc.printStackTrace();
         }
-    }
-
-    public Object getPageParam(String key) {
-        return pageContext.get(key);
-    }
-
-    public void setPageParam(String key, Object value) {
-        pageContext.put(key, value);
-    }
-
-    public void removePageParam(String key) {
-        pageContext.remove(key);
-    }
-
-    public void clearPageParams() {
-        pageContext.clear();
     }
 }

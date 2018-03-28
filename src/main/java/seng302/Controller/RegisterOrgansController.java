@@ -5,9 +5,13 @@ import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
-import seng302.*;
 import seng302.Actions.ActionInvoker;
 import seng302.Actions.ModifyDonorOrgansAction;
+import seng302.Donor;
+import seng302.DonorManager;
+import seng302.HistoryItem;
+import seng302.Session;
+import seng302.State;
 import seng302.Utilities.JSONConverter;
 import seng302.Utilities.Organ;
 
@@ -71,11 +75,8 @@ public class RegisterOrgansController extends SubController {
 
         if (session.getLoggedInUserType() == Session.UserType.DONOR) {
             donor = session.getLoggedInDonor();
-        } else if (session.getLoggedInUserType() == Session.UserType.CLINICIAN) {
-            Donor viewUser = (Donor) mainController.getPageParam("viewUser");
-            if (viewUser != null) {
-                donor = viewUser;
-            }
+        } else if (windowContext.isClinViewDonorWindow()) {
+            donor = windowContext.getViewDonor();
         }
 
         if (donor != null) {
@@ -97,7 +98,6 @@ public class RegisterOrgansController extends SubController {
 		}
 
 		if (donor != null) {
-            mainController.setPageParam("viewUser", donor);
 			setCheckBoxesEnabled();
 			for (Map.Entry<Organ, CheckBox> entry : organCheckBoxes.entrySet()) {
 				entry.getValue().setSelected(donor.getOrganStatus().get(entry.getKey()));

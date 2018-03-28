@@ -21,7 +21,6 @@ import java.util.List;
  */
 public class HistoryController extends SubController {
     private final DateTimeFormatter datetimeformat = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm:ss");
-
     private Session session;
 
     @FXML
@@ -65,8 +64,7 @@ public class HistoryController extends SubController {
     }
 
     private void getSidebar() {
-        if (session.getLoggedInUserType() == Session.UserType.DONOR ||
-        (boolean) mainController.getPageParam("isClinViewDonorWindow")) {
+        if (session.getLoggedInUserType() == Session.UserType.DONOR || windowContext.isClinViewDonorWindow()) {
             mainController.loadDonorSidebar(sidebarPane);
         } else if (session.getLoggedInUserType() == Session.UserType.CLINICIAN) {
             mainController.loadClinicianSidebar(sidebarPane);

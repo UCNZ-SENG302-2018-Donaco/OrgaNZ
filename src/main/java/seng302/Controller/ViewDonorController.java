@@ -84,11 +84,8 @@ public class ViewDonorController extends SubController {
             viewedDonor = session.getLoggedInDonor();
             idPane.setVisible(false);
             idPane.setManaged(false);
-        } else if (session.getLoggedInUserType() == Session.UserType.CLINICIAN) {
-            Donor viewUser = (Donor) mainController.getPageParam("viewUser");
-            if (viewUser != null) {
-                viewedDonor = viewUser;
-            }
+        } else if (windowContext.isClinViewDonorWindow()) {
+            viewedDonor = windowContext.getViewDonor();
         }
 
         if (viewedDonor != null) {
@@ -117,7 +114,6 @@ public class ViewDonorController extends SubController {
 			noDonorLabel.setVisible(true);
             setFieldsDisabled(true);
 		} else {
-            mainController.setPageParam("viewUser", viewedDonor);
 			noDonorLabel.setVisible(false);
             setFieldsDisabled(false);
 
@@ -309,7 +305,6 @@ public class ViewDonorController extends SubController {
 	 */
 	@FXML
 	public void viewOrgansForDonor() {
-        mainController.setPageParam("viewUser", viewedDonor);
 		PageNavigator.loadPage(Page.REGISTER_ORGANS, mainController);
 	}
 }
