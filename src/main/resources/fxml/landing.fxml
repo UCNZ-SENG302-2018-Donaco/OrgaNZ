@@ -1,10 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
@@ -15,53 +10,60 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
+<VBox prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+  fx:controller="seng302.Controller.LandingController">
+  <children>
+    <BorderPane VBox.vgrow="ALWAYS">
+      <bottom>
+        <GridPane hgap="50.0" prefHeight="150.0" prefWidth="300.0" vgap="20.0" BorderPane.alignment="CENTER">
+          <columnConstraints>
+            <ColumnConstraints hgrow="ALWAYS"/>
+            <ColumnConstraints hgrow="ALWAYS"/>
+          </columnConstraints>
+          <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+          </rowConstraints>
+          <children>
+            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+              onAction="#goToCreateClinician" text="Create Clinician"/>
+            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+              onAction="#goToClinicianLogin" text="Login as Clinician" GridPane.columnIndex="1"/>
+            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+              onAction="#goToCreateDonor" text="Create Donor Profile" GridPane.rowIndex="1"/>
+            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+              onAction="#goToDonorLogin" text="Login as Donor" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+          </children>
+          <BorderPane.margin>
+            <Insets/>
+          </BorderPane.margin>
+          <padding>
+            <Insets bottom="30.0" left="50.0" right="50.0" top="30.0"/>
+          </padding>
+        </GridPane>
+      </bottom>
+      <center>
 
-<VBox prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.LandingController">
-   <children>
-       <BorderPane VBox.vgrow="ALWAYS">
-           <bottom>
-               <GridPane hgap="50.0" prefHeight="150.0" prefWidth="300.0" vgap="20.0" BorderPane.alignment="CENTER">
-                   <columnConstraints>
-                       <ColumnConstraints hgrow="ALWAYS" />
-                  <ColumnConstraints hgrow="ALWAYS" />
-                   </columnConstraints>
-                   <rowConstraints>
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                   </rowConstraints>
-                   <children>
-                  <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToCreateClinician" text="Create Clinician" />
-                  <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToClinicianLogin" text="Login as Clinician" GridPane.columnIndex="1" />
-                    <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToCreateDonor" text="Create Donor Profile" GridPane.rowIndex="1" />
-                    <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToDonorLogin" text="Login as Donor" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                   </children>
-                   <BorderPane.margin>
-                       <Insets />
-                   </BorderPane.margin>
-                   <padding>
-                       <Insets bottom="30.0" left="50.0" right="50.0" top="30.0" />
-                   </padding>
-               </GridPane>
-           </bottom>
-           <center>
-
-           </center>
-           <top>
-               <Text strokeType="OUTSIDE" strokeWidth="0.0" text="ODMS" BorderPane.alignment="CENTER">
-                   <font>
-                       <Font name="System Bold" size="48.0" />
-                   </font>
-                   <BorderPane.margin>
-                       <Insets top="20.0" />
-                   </BorderPane.margin>
-               </Text>
-           </top>
-         <center>
-              <Label text="Hello There! For new users, please click on 'Create User'. For existing users, please select 'Login'" textAlignment="CENTER" wrapText="true" BorderPane.alignment="CENTER">
-               <font>
-                  <Font size="24.0" />
-               </font></Label>
-         </center>
-       </BorderPane>
-   </children>
+      </center>
+      <top>
+        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="ODMS" BorderPane.alignment="CENTER">
+          <font>
+            <Font name="System Bold" size="48.0"/>
+          </font>
+          <BorderPane.margin>
+            <Insets top="20.0"/>
+          </BorderPane.margin>
+        </Text>
+      </top>
+      <center>
+        <Label
+          text="Hello There! For new users, please click on 'Create User'. For existing users, please select 'Login'"
+          textAlignment="CENTER" wrapText="true" BorderPane.alignment="CENTER">
+          <font>
+            <Font size="24.0"/>
+          </font>
+        </Label>
+      </center>
+    </BorderPane>
+  </children>
 </VBox>

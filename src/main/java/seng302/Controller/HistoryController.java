@@ -1,25 +1,25 @@
 package seng302.Controller;
 
+import java.io.File;
+import java.io.IOException;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.Pane;
+
 import seng302.HistoryItem;
 import seng302.Utilities.JSONConverter;
-
-import java.io.File;
-import java.io.IOException;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
 
 /**
  * Controller for the history page.
  */
-public class HistoryController implements SubController {
+public class HistoryController extends SubController {
 
-    private MainController mainController;
     private final DateTimeFormatter datetimeformat = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm:ss");
 
     @FXML
@@ -58,23 +58,13 @@ public class HistoryController implements SubController {
 
     }
 
-    private void init() {
-        if (mainController.getPageParam("currentUserType") == null ||
-                mainController.getPageParam("currentUserType").equals("donor")) {
-            mainController.loadDonorSidebar(sidebarPane);
-        } else {
-            mainController.loadClinicianSidebar(sidebarPane);
-        }
+    private void getSidebar() {
+        mainController.loadSidebar(sidebarPane);
     }
 
     @Override
-    public void setMainController(MainController mainController) {
-        this.mainController = mainController;
-        init();
-    }
-
-    @Override
-    public MainController getMainController() {
-        return mainController;
+    public void setup(MainController mainController) {
+        super.setup(mainController);
+        getSidebar();
     }
 }

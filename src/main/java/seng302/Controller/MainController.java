@@ -1,5 +1,7 @@
 package seng302.Controller;
 
+import java.io.IOException;
+
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -9,108 +11,83 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import seng302.Utilities.Page;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import seng302.Utilities.View.Page;
+import seng302.Utilities.View.WindowContext;
 
 /**
  * Main controller class for the application window.
- *
  */
 public class MainController {
-	private Stage stage;
-    private String currentFXMLPath;
-    private Map<String, Object> pageContext = new HashMap<>();
 
-	public void setStage(Stage stage){
-		this.stage = stage;
-	}
+    private Stage stage;
+    private Page currentPage;
+    private WindowContext windowContext;
 
-	public Stage getStage() {
-		return this.stage;
-	}
+    /**
+     * Holder of a switchable page.
+     */
+    @FXML
+    private StackPane pageHolder;
 
-	/** Holder of a switchable page. */
-	@FXML
-	private StackPane pageHolder;
+    public Stage getStage() {
+        return this.stage;
+    }
 
-	/**
-	 * Replaces the page displayed in the page holder with a new page.
-	 * @param node the page node to be swapped in.
-	 */
-	public void setPage(Node node) {
-		pageHolder.getChildren().setAll(node);
-	}
+    public Page getCurrentPage() {
+        return currentPage;
+    }
 
-	/**
-	 * Closes the window.
-	 * @param event when the exit button is clicked.
-	 */
-	@FXML
-	private void closeWindow(ActionEvent event) {
-		Platform.exit();
-	}
+    public WindowContext getWindowContext() {
+        return windowContext;
+    }
 
+    public void setStage(Stage stage) {
+        this.stage = stage;
+    }
+
+    /**
+     * Replaces the page displayed in the page holder with a new page.
+     * @param page the new current Page.
+     * @param node the page node to be swapped in.
+     */
+    public void setPage(Page page, Node node) {
+        currentPage = page;
+        pageHolder.getChildren().setAll(node);
+    }
+
+    public void setWindowContext(WindowContext context) {
+        this.windowContext = context;
+    }
+
+    public void resetWindowContext() {
+        this.windowContext = WindowContext.defaultContext();
+    }
+
+    /**
+     * Closes the window.
+     * @param event when the exit button is clicked.
+     */
+    @FXML
+    private void closeWindow(ActionEvent event) {
+        Platform.exit();
+    }
 
     /**
      * Method that can be called from other controllers to load the sidebar into that page.
      * Will set the sidebar as the child of the pane given.
      * @param sidebarPane The container pane for the sidebar, given by the importer.
      */
-    public void loadDonorSidebar(Pane sidebarPane) {
+    public void loadSidebar(Pane sidebarPane) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(Page.SIDEBAR.getPath()));
             VBox sidebar = loader.load();
             SubController subController = loader.getController();
-            subController.setMainController(this);
+            subController.setup(this);
             sidebarPane.getChildren().setAll(sidebar);
         } catch (IOException exc) {
             System.err.println("Couldn't load sidebar from fxml file.");
             exc.printStackTrace();
         }
-    }
-
-    /**
-     * Method that can be called from other controllers to load the sidebar into that page.
-     * Will set the sidebar as the child of the pane given.
-     * @param sidebarPane The container pane for the sidebar, given by the importer.
-     */
-    public void loadClinicianSidebar(Pane sidebarPane) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(Page.CLINICIAN_SIDEBAR.getPath()));
-            VBox sidebar = loader.load();
-            SubController subController = loader.getController();
-            subController.setMainController(this);
-            sidebarPane.getChildren().setAll(sidebar);
-        } catch (IOException exc) {
-            System.err.println("Couldn't load sidebar from fxml file.");
-            exc.printStackTrace();
-        }
-    }
-
-    public String getCurrentFXMLPath() {
-        return currentFXMLPath;
-    }
-
-    public void setCurrentFXMLPath(String currentFXMLPath) {
-        this.currentFXMLPath = currentFXMLPath;
-    }
-
-    public Object getPageParam(String key) {
-        return pageContext.get(key);
-    }
-
-    public void setPageParam(String key, Object value) {
-        pageContext.put(key, value);
-    }
-
-    public void removePageParam(String key) {
-        pageContext.remove(key);
-    }
-
-    public void clearPageParams() {
-        pageContext.clear();
     }
 }

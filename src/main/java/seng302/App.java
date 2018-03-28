@@ -1,12 +1,14 @@
 package seng302;
 
-import picocli.CommandLine;
-import seng302.Commands.BaseCommand;
-import seng302.Utilities.ConsoleScanner;
-
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import seng302.Commands.BaseCommand;
+import seng302.State.State;
+import seng302.Utilities.ConsoleScanner;
+
+import picocli.CommandLine;
 
 /**
  * The main class that runs the whole program. Calls the Base command and the Donor manager.
@@ -14,10 +16,9 @@ import java.util.regex.Pattern;
  * @version sprint 2.
  * date: 2018-03-22
  */
-public class App
-{
-    public static void main( String[] args )
-    {
+public class App {
+
+    public static void main(String[] args) {
         State.init();
 
         String input;
@@ -36,7 +37,7 @@ public class App
                 inputs.add(m.group(1).replace("\"", ""));
             }
             String[] currArgs = inputs.toArray(new String[0]);
-        CommandLine.run(command, System.out, currArgs);
+            CommandLine.run(command, System.out, currArgs);
         }
     }
 }
