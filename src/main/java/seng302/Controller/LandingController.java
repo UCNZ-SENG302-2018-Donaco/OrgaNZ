@@ -2,7 +2,7 @@ package seng302.Controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import seng302.Utilities.Enums.Page;
+import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
 
 /**
@@ -16,7 +16,7 @@ public class LandingController extends SubController {
 	 */
 	@FXML
 	private void goToCreateDonor(ActionEvent event) {
-		PageNavigator.loadPage(Page.CREATE_USER, mainController);
+		PageNavigator.loadPage(Page.CREATE_DONOR, mainController);
 	}
 
 	/**
@@ -25,7 +25,7 @@ public class LandingController extends SubController {
 	 */
 	@FXML
 	private void goToDonorLogin(ActionEvent event) {
-		PageNavigator.loadPage(Page.LOGIN, mainController);
+		PageNavigator.loadPage(Page.LOGIN_DONOR, mainController);
 	}
 
     /**
@@ -34,7 +34,7 @@ public class LandingController extends SubController {
      */
 	@FXML
 	private void goToClinicianLogin(ActionEvent event) {
-		PageNavigator.loadPage(Page.CLINICIAN_LOGIN, mainController);
+		PageNavigator.loadPage(Page.LOGIN_CLINICIAN, mainController);
 	}
 
     /**

@@ -1,4 +1,4 @@
-package seng302.Utilities.Enums;
+package seng302.Utilities.View;
 
 /**
  * An enum to represent pages in the GUI application.
@@ -7,15 +7,15 @@ package seng302.Utilities.Enums;
 public enum Page {
 	MAIN("/fxml/main.fxml"),
 	LANDING("/fxml/landing.fxml"),
-	LOGIN("/fxml/donor_login.fxml"),
-	CREATE_USER("/fxml/create_donor.fxml"),
+	LOGIN_DONOR("/fxml/login_donor.fxml"),
+	CREATE_DONOR("/fxml/create_donor.fxml"),
 	SIDEBAR("/fxml/sidebar.fxml"),
 	VIEW_DONOR("/fxml/view_donor.fxml"),
 	VIEW_CLINICIAN("/fxml/view_clinician.fxml"),
 	REGISTER_ORGANS("/fxml/register_organs.fxml"),
 	HISTORY("/fxml/history.fxml"),
 	SEARCH("/fxml/search_donors.fxml"),
-	CLINICIAN_LOGIN("/fxml/clinician_login.fxml"),
+	LOGIN_CLINICIAN("/fxml/login_clinician.fxml"),
 	CREATE_CLINICIAN("/fxml/create_clinician.fxml");
 
 	private String path;

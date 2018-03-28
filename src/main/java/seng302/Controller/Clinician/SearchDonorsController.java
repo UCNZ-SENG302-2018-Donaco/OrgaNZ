@@ -21,7 +21,7 @@ import seng302.Controller.SubController;
 import seng302.Donor;
 import seng302.State.State;
 import seng302.Utilities.Enums.Gender;
-import seng302.Utilities.Enums.Page;
+import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
 import seng302.Utilities.Enums.Region;
 import seng302.Utilities.View.WindowContext;

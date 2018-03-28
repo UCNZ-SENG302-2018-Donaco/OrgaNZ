@@ -9,7 +9,6 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
-import seng302.Utilities.Enums.Page;
 
 import java.io.IOException;
 import java.util.Optional;

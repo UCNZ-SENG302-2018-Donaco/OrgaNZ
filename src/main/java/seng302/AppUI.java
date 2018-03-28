@@ -8,7 +8,7 @@ import javafx.stage.Stage;
 import seng302.Controller.MainController;
 import seng302.State.State;
 import seng302.Utilities.JSONConverter;
-import seng302.Utilities.Enums.Page;
+import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
 import seng302.Utilities.View.WindowContext;
 

@@ -21,7 +21,7 @@ import seng302.State.State;
 import seng302.Utilities.Enums.BloodType;
 import seng302.Utilities.Enums.Gender;
 import seng302.Utilities.JSONConverter;
-import seng302.Utilities.Enums.Page;
+import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
 import seng302.Utilities.Enums.Region;
 

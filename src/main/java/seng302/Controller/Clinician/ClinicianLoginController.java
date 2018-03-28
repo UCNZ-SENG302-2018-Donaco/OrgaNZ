@@ -12,7 +12,7 @@ import seng302.HistoryItem;
 import seng302.State.Session;
 import seng302.State.State;
 import seng302.Utilities.JSONConverter;
-import seng302.Utilities.Enums.Page;
+import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
 
 /**
@@ -104,7 +104,7 @@ public class ClinicianLoginController extends SubController {
 				PageNavigator.loadPage(Page.VIEW_CLINICIAN, mainController);
 				loginSuccessAlert();
 
-				HistoryItem save = new HistoryItem("LOGIN CLINICIAN", String.format("Clinician %s %s logged in.",
+				HistoryItem save = new HistoryItem("LOGIN_CLINICIAN", String.format("Clinician %s %s logged in.",
 						clinician.getFirstName(), clinician.getLastName()));
 				JSONConverter.updateHistory(save, "action_history.json");
             }

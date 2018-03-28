@@ -12,7 +12,7 @@ import seng302.HistoryItem;
 import seng302.State.Session;
 import seng302.State.State;
 import seng302.Utilities.JSONConverter;
-import seng302.Utilities.Enums.Page;
+import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
 
 /**
@@ -57,7 +57,7 @@ public class DonorLoginController extends SubController {
         Donor selectedDonor = donorList.getSelectionModel().getSelectedItem();
 
         if (selectedDonor != null) {
-            HistoryItem loginHistory = new HistoryItem("LOGIN", String.format("Donor %s %s (%d) logged in.",
+            HistoryItem loginHistory = new HistoryItem("LOGIN_DONOR", String.format("Donor %s %s (%d) logged in.",
                     selectedDonor.getFirstName(), selectedDonor.getLastName(), selectedDonor.getUid()));
             JSONConverter.updateHistory(loginHistory, "action_history.json");
 
