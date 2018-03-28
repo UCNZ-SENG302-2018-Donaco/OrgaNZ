@@ -1,11 +1,6 @@
 package seng302.Utilities;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
-import seng302.Donor;
-import seng302.State.DonorManager;
-import seng302.State.State;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,7 +11,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
-import static org.junit.Assert.assertTrue;
+import seng302.Donor;
+import seng302.State.DonorManager;
+import seng302.State.State;
+
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 public class JSONConverterTest {
 

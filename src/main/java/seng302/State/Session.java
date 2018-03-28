@@ -1,11 +1,11 @@
 package seng302.State;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import seng302.Clinician;
 import seng302.Donor;
 import seng302.HistoryItem;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class Session {
     public enum UserType {

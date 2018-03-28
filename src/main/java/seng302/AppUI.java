@@ -1,19 +1,20 @@
 package seng302;
 
+import java.io.File;
+import java.io.IOException;
+
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+
 import seng302.Controller.MainController;
 import seng302.State.State;
 import seng302.Utilities.JSONConverter;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
 import seng302.Utilities.View.WindowContext;
-
-import java.io.File;
-import java.io.IOException;
 
 /**
  * The main class that runs the JavaFX GUI.

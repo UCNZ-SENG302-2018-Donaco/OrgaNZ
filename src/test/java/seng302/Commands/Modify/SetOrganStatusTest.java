@@ -1,25 +1,25 @@
 package seng302.Commands.Modify;
 
 
-import org.junit.Before;
-import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import picocli.CommandLine;
-import seng302.Actions.ActionInvoker;
-import seng302.Commands.Modify.SetOrganStatus;
-import seng302.Donor;
-import seng302.State.DonorManager;
-import seng302.Utilities.Enums.Organ;
-import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.time.LocalDate;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.*;
+import seng302.Actions.ActionInvoker;
+import seng302.Donor;
+import seng302.State.DonorManager;
+import seng302.Utilities.Enums.Organ;
+import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import picocli.CommandLine;
 
 public class SetOrganStatusTest {
 

@@ -1,16 +1,16 @@
 package seng302.Actions.Donor;
 
 
-import org.junit.Before;
-import org.junit.Test;
-import seng302.Actions.ActionInvoker;
-import seng302.Actions.Donor.DeleteDonorAction;
-import seng302.Donor;
-import seng302.State.DonorManager;
+import static org.junit.Assert.assertEquals;
 
 import java.time.LocalDate;
 
-import static org.junit.Assert.assertEquals;
+import seng302.Actions.ActionInvoker;
+import seng302.Donor;
+import seng302.State.DonorManager;
+
+import org.junit.Before;
+import org.junit.Test;
 
 public class DeleteDonorActionTest {
 

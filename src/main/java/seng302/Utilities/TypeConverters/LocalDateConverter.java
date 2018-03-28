@@ -1,11 +1,11 @@
 package seng302.Utilities.TypeConverters;
 
-import picocli.CommandLine;
-import picocli.CommandLine.ITypeConverter;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+
+import picocli.CommandLine;
+import picocli.CommandLine.ITypeConverter;
 
 /**
  * Converter used by PicoCLI options to select LocalDate from strings

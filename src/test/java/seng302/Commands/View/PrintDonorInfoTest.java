@@ -1,19 +1,19 @@
 package seng302.Commands.View;
 
-import org.junit.Before;
-import org.junit.Test;
-import picocli.CommandLine;
-import seng302.Commands.View.PrintDonorInfo;
-import seng302.Donor;
-import seng302.State.DonorManager;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.time.LocalDate;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.*;
+import seng302.Donor;
+import seng302.State.DonorManager;
+
+import org.junit.Before;
+import org.junit.Test;
+import picocli.CommandLine;
 
 public class PrintDonorInfoTest {
 

@@ -1,13 +1,14 @@
 package seng302;
 
-import picocli.CommandLine;
+import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import seng302.Commands.BaseCommand;
 import seng302.State.State;
 import seng302.Utilities.ConsoleScanner;
 
-import java.util.ArrayList;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import picocli.CommandLine;
 
 /**
  * The main class that runs the whole program. Calls the Base command and the Donor manager.

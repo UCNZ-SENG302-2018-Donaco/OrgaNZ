@@ -1,5 +1,7 @@
 package seng302.Controller.Clinician;
 
+import java.util.ArrayList;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -16,17 +18,16 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
 import seng302.Donor;
 import seng302.State.State;
 import seng302.Utilities.Enums.Gender;
+import seng302.Utilities.Enums.Region;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
-import seng302.Utilities.Enums.Region;
 import seng302.Utilities.View.WindowContext;
-
-import java.util.ArrayList;
 
 public class SearchDonorsController extends SubController {
     private static final int ROWS_PER_PAGE = 30;

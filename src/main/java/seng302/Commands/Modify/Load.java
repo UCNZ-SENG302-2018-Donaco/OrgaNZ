@@ -1,15 +1,16 @@
 package seng302.Commands.Modify;
 
 
-import picocli.CommandLine.Command;
-import seng302.State.DonorManager;
-import seng302.HistoryItem;
-import seng302.State.State;
-import seng302.Utilities.JSONConverter;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+
+import seng302.HistoryItem;
+import seng302.State.DonorManager;
+import seng302.State.State;
+import seng302.Utilities.JSONConverter;
+
+import picocli.CommandLine.Command;
 
 /**
  * Command line to load the information of all the donors from a JSON file,

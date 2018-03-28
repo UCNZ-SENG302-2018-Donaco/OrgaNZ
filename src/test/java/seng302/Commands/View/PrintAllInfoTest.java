@@ -1,21 +1,21 @@
 package seng302.Commands.View;
 
-import org.junit.Before;
-import org.junit.Test;
-import picocli.CommandLine;
-import seng302.Commands.View.PrintAllInfo;
-import seng302.Donor;
-import seng302.State.DonorManager;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
+import seng302.Donor;
+import seng302.State.DonorManager;
+
+import org.junit.Before;
+import org.junit.Test;
+import picocli.CommandLine;
 
 public class PrintAllInfoTest {
 

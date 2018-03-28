@@ -1,20 +1,21 @@
 package seng302.Commands.Modify;
 
-import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
-import seng302.Actions.ActionInvoker;
-import seng302.Actions.Donor.ModifyDonorOrgansAction;
-import seng302.Donor;
-import seng302.State.DonorManager;
-import seng302.HistoryItem;
-import seng302.State.State;
-import seng302.Utilities.JSONConverter;
-import seng302.Utilities.Enums.Organ;
+import static seng302.Utilities.Enums.Organ.*;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static seng302.Utilities.Enums.Organ.*;
+import seng302.Actions.ActionInvoker;
+import seng302.Actions.Donor.ModifyDonorOrgansAction;
+import seng302.Donor;
+import seng302.HistoryItem;
+import seng302.State.DonorManager;
+import seng302.State.State;
+import seng302.Utilities.Enums.Organ;
+import seng302.Utilities.JSONConverter;
+
+import picocli.CommandLine.Command;
+import picocli.CommandLine.Option;
 
 /**
  * Command line to set the status of their organs in terms of what they would like to donate.

@@ -1,5 +1,8 @@
 package seng302.Utilities.View;
 
+import java.io.IOException;
+import java.util.Optional;
+
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -7,11 +10,9 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
-
-import java.io.IOException;
-import java.util.Optional;
 
 /**
  * Utility class for controlling navigation between pages.

@@ -1,9 +1,9 @@
 package seng302.Actions;
 
-import seng302.Utilities.TypeConverters.PrimitiveConverter;
-
 import java.beans.Statement;
 import java.lang.reflect.Method;
+
+import seng302.Utilities.TypeConverters.PrimitiveConverter;
 
 public class ModifyObjectByFieldAction implements Action {
 

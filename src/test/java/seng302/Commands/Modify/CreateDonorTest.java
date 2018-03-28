@@ -1,14 +1,14 @@
 package seng302.Commands.Modify;
 
 
+import static org.mockito.Mockito.*;
+
+import seng302.Actions.ActionInvoker;
+import seng302.State.DonorManager;
+
 import org.junit.Before;
 import org.junit.Test;
 import picocli.CommandLine;
-import seng302.Actions.ActionInvoker;
-import seng302.Commands.Modify.CreateDonor;
-import seng302.State.DonorManager;
-
-import static org.mockito.Mockito.*;
 
 public class CreateDonorTest {
 

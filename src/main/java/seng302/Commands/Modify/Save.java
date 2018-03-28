@@ -1,16 +1,17 @@
 package seng302.Commands.Modify;
 
 
-import picocli.CommandLine.Command;
-import seng302.Donor;
-import seng302.State.DonorManager;
-import seng302.HistoryItem;
-import seng302.State.State;
-import seng302.Utilities.JSONConverter;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+
+import seng302.Donor;
+import seng302.HistoryItem;
+import seng302.State.DonorManager;
+import seng302.State.State;
+import seng302.Utilities.JSONConverter;
+
+import picocli.CommandLine.Command;
 
 /**
  * Command line to save the current information of the Donors onto a JSON file using the GSON API.

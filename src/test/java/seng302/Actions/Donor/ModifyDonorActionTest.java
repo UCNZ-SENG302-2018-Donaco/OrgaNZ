@@ -1,17 +1,17 @@
 package seng302.Actions.Donor;
 
 
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+
+import java.time.LocalDate;
+
 import seng302.Actions.ActionInvoker;
-import seng302.Actions.Donor.ModifyDonorAction;
 import seng302.Donor;
 import seng302.State.DonorManager;
 import seng302.Utilities.Enums.Gender;
 
-import java.time.LocalDate;
-
-import static org.junit.Assert.assertEquals;
+import org.junit.Before;
+import org.junit.Test;
 
 public class ModifyDonorActionTest {
 

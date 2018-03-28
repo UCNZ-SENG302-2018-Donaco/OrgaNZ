@@ -1,10 +1,9 @@
 package seng302;
 
-
-import seng302.Utilities.Enums.Region;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+
+import seng302.Utilities.Enums.Region;
 
 /**
  * The main Clinician class.

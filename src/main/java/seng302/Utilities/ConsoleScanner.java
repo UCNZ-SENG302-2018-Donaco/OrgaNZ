@@ -1,9 +1,9 @@
 package seng302.Utilities;
 
-import jline.console.ConsoleReader;
-
 import java.io.IOException;
 import java.util.Scanner;
+
+import jline.console.ConsoleReader;
 
 /**
  * A platform-independent Scanner for console input that features a command history that can be cycled through with

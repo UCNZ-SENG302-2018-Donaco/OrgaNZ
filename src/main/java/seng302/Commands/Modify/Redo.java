@@ -1,8 +1,9 @@
 package seng302.Commands.Modify;
 
-import picocli.CommandLine.Command;
 import seng302.Actions.ActionInvoker;
 import seng302.State.State;
+
+import picocli.CommandLine.Command;
 
 @Command(name = "redo", description = "Redo an undone change.")
 public class Redo implements Runnable {

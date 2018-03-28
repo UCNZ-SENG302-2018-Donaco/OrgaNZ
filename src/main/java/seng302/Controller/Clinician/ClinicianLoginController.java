@@ -5,10 +5,11 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+
 import seng302.Clinician;
 import seng302.Controller.SubController;
-import seng302.State.ClinicianManager;
 import seng302.HistoryItem;
+import seng302.State.ClinicianManager;
 import seng302.State.Session;
 import seng302.State.State;
 import seng302.Utilities.JSONConverter;

@@ -1,10 +1,16 @@
 package seng302.Controller;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Paths;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.stage.FileChooser;
+
 import seng302.Actions.ActionInvoker;
 import seng302.AppUI;
 import seng302.HistoryItem;
@@ -13,11 +19,6 @@ import seng302.State.State;
 import seng302.Utilities.JSONConverter;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
-
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Paths;
 
 /**
  * Controller for the sidebar pane imported into every page in the main part of the GUI.

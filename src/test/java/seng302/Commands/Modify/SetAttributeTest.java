@@ -1,20 +1,20 @@
 package seng302.Commands.Modify;
 
 
-import org.junit.Before;
-import org.junit.Test;
-import picocli.CommandLine;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.*;
+
+import java.time.LocalDate;
+
 import seng302.Actions.ActionInvoker;
-import seng302.Commands.Modify.SetAttribute;
 import seng302.Donor;
 import seng302.State.DonorManager;
 import seng302.Utilities.Enums.BloodType;
 import seng302.Utilities.Enums.Gender;
 
-import java.time.LocalDate;
-
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
+import org.junit.Before;
+import org.junit.Test;
+import picocli.CommandLine;
 
 public class SetAttributeTest {
 

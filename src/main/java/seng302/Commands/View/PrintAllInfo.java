@@ -1,13 +1,14 @@
 package seng302.Commands.View;
 
-import picocli.CommandLine.Command;
+import java.util.ArrayList;
+
 import seng302.Donor;
-import seng302.State.DonorManager;
 import seng302.HistoryItem;
+import seng302.State.DonorManager;
 import seng302.State.State;
 import seng302.Utilities.JSONConverter;
 
-import java.util.ArrayList;
+import picocli.CommandLine.Command;
 
 /**
  * Command line to print all of the information of all the users, including their ID. Not Sorted.

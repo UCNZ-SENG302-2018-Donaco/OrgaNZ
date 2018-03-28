@@ -1,17 +1,17 @@
 package seng302;
 
-import seng302.Utilities.Enums.BloodType;
-import seng302.Utilities.Enums.Gender;
-import seng302.Utilities.Enums.Organ;
-import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
-import seng302.Utilities.Enums.Region;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+
+import seng302.Utilities.Enums.BloodType;
+import seng302.Utilities.Enums.Gender;
+import seng302.Utilities.Enums.Organ;
+import seng302.Utilities.Enums.Region;
+import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
 
 /**
  * The main Donor class.

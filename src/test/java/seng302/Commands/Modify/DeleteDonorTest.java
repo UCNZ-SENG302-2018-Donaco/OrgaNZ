@@ -1,18 +1,18 @@
 package seng302.Commands.Modify;
 
 
-import org.junit.Before;
-import org.junit.Test;
-import picocli.CommandLine;
-import seng302.Actions.ActionInvoker;
-import seng302.Commands.Modify.DeleteDonor;
-import seng302.Donor;
-import seng302.State.DonorManager;
+import static org.mockito.Mockito.*;
 
 import java.io.ByteArrayInputStream;
 import java.time.LocalDate;
 
-import static org.mockito.Mockito.*;
+import seng302.Actions.ActionInvoker;
+import seng302.Donor;
+import seng302.State.DonorManager;
+
+import org.junit.Before;
+import org.junit.Test;
+import picocli.CommandLine;
 
 public class DeleteDonorTest {
 

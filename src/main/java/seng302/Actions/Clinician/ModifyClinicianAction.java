@@ -1,10 +1,10 @@
 package seng302.Actions.Clinician;
 
+import java.util.ArrayList;
+
 import seng302.Actions.Action;
 import seng302.Actions.ModifyObjectByFieldAction;
 import seng302.Clinician;
-
-import java.util.ArrayList;
 
 /**
  * A reversible clinician modification Action

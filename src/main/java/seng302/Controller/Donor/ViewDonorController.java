@@ -1,5 +1,8 @@
 package seng302.Controller.Donor;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -9,24 +12,22 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+
 import seng302.Actions.ActionInvoker;
 import seng302.Actions.Donor.ModifyDonorAction;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
 import seng302.Donor;
-import seng302.State.DonorManager;
 import seng302.HistoryItem;
+import seng302.State.DonorManager;
 import seng302.State.Session;
 import seng302.State.State;
 import seng302.Utilities.Enums.BloodType;
 import seng302.Utilities.Enums.Gender;
+import seng302.Utilities.Enums.Region;
 import seng302.Utilities.JSONConverter;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
-import seng302.Utilities.Enums.Region;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 /**
  * Controller for the view/edit donor page.

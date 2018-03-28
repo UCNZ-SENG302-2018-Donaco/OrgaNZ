@@ -1,9 +1,9 @@
 package seng302.State;
 
-import seng302.Donor;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
+
+import seng302.Donor;
 
 /**
  * The class to handle the Donor inputs, including adding,

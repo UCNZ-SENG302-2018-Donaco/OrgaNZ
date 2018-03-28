@@ -1,5 +1,7 @@
 package seng302.Controller.Clinician;
 
+import java.time.format.DateTimeFormatter;
+
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -9,6 +11,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+
 import seng302.Actions.ActionInvoker;
 import seng302.Actions.Clinician.ModifyClinicianAction;
 import seng302.Clinician;
@@ -17,11 +20,9 @@ import seng302.Controller.SubController;
 import seng302.HistoryItem;
 import seng302.State.Session;
 import seng302.State.State;
+import seng302.Utilities.Enums.Region;
 import seng302.Utilities.JSONConverter;
 import seng302.Utilities.View.PageNavigator;
-import seng302.Utilities.Enums.Region;
-
-import java.time.format.DateTimeFormatter;
 
 /**
  * Presents an interface displaying all information of the currently logged in Clinician. Clinicians are able to edit

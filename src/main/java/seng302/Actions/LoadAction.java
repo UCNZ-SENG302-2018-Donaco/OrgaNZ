@@ -1,9 +1,9 @@
 package seng302.Actions;
 
+import java.util.ArrayList;
+
 import seng302.Donor;
 import seng302.State.DonorManager;
-
-import java.util.ArrayList;
 
 /**
  * A reversible DonorManager donor list modification Action

@@ -1,12 +1,12 @@
 package seng302.Actions.Donor;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import seng302.Actions.Action;
 import seng302.Donor;
 import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * A reversible donor organ modification Action

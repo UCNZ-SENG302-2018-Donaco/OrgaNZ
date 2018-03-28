@@ -1,24 +1,25 @@
 package seng302.Controller.Donor;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
+
 import seng302.Actions.ActionInvoker;
 import seng302.Actions.Donor.ModifyDonorOrgansAction;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
 import seng302.Donor;
-import seng302.State.DonorManager;
 import seng302.HistoryItem;
+import seng302.State.DonorManager;
 import seng302.State.Session;
 import seng302.State.State;
-import seng302.Utilities.JSONConverter;
 import seng302.Utilities.Enums.Organ;
-
-import java.util.HashMap;
-import java.util.Map;
+import seng302.Utilities.JSONConverter;
 
 /**
  * Controller for the register organs page.

@@ -1,13 +1,14 @@
 package seng302.Commands.View;
 
 
-import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
 import seng302.Donor;
-import seng302.State.DonorManager;
 import seng302.HistoryItem;
+import seng302.State.DonorManager;
 import seng302.State.State;
 import seng302.Utilities.JSONConverter;
+
+import picocli.CommandLine.Command;
+import picocli.CommandLine.Option;
 
 /**
  * Command line to print all of the information of a single user.

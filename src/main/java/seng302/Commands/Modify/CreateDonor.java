@@ -1,20 +1,21 @@
 package seng302.Commands.Modify;
 
-import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
+import static java.util.Optional.ofNullable;
+
+import java.time.LocalDate;
+
 import seng302.Actions.Action;
 import seng302.Actions.ActionInvoker;
 import seng302.Actions.Donor.CreateDonorAction;
 import seng302.Donor;
-import seng302.State.DonorManager;
 import seng302.HistoryItem;
+import seng302.State.DonorManager;
 import seng302.State.State;
 import seng302.Utilities.JSONConverter;
 import seng302.Utilities.TypeConverters.LocalDateConverter;
 
-import java.time.LocalDate;
-
-import static java.util.Optional.ofNullable;
+import picocli.CommandLine.Command;
+import picocli.CommandLine.Option;
 
 /**
  * Command line to create a Donor with basic information, including their DOB and full name.

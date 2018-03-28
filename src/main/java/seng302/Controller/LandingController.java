@@ -2,6 +2,7 @@ package seng302.Controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
 

@@ -1,17 +1,18 @@
 package seng302.Commands.Modify;
 
-import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
+import java.util.Scanner;
+
 import seng302.Actions.Action;
 import seng302.Actions.ActionInvoker;
 import seng302.Actions.Donor.DeleteDonorAction;
 import seng302.Donor;
-import seng302.State.DonorManager;
 import seng302.HistoryItem;
+import seng302.State.DonorManager;
 import seng302.State.State;
 import seng302.Utilities.JSONConverter;
 
-import java.util.Scanner;
+import picocli.CommandLine.Command;
+import picocli.CommandLine.Option;
 
 @Command(name = "deleteuser", description = "Deletes a user.")
 public class DeleteDonor implements Runnable {

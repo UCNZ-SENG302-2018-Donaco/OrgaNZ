@@ -1,5 +1,7 @@
 package seng302.Controller;
 
+import java.io.IOException;
+
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -9,10 +11,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.WindowContext;
-
-import java.io.IOException;
 
 /**
  * Main controller class for the application window.

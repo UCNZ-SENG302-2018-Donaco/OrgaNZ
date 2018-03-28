@@ -1,7 +1,8 @@
 package seng302.Utilities.TypeConverters;
 
-import picocli.CommandLine;
 import seng302.Utilities.Enums.BloodType;
+
+import picocli.CommandLine;
 
 /**
  * Converter used by PicoCLI options to select bloodtypes from strings

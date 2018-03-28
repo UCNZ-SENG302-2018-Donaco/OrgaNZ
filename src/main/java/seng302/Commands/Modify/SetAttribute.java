@@ -1,26 +1,27 @@
 package seng302.Commands.Modify;
 
-import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
-import seng302.Actions.ActionInvoker;
-import seng302.Actions.Donor.ModifyDonorAction;
-import seng302.Donor;
-import seng302.State.DonorManager;
-import seng302.HistoryItem;
-import seng302.State.State;
-import seng302.Utilities.Enums.BloodType;
-import seng302.Utilities.TypeConverters.BloodTypeConverter;
-import seng302.Utilities.Enums.Gender;
-import seng302.Utilities.TypeConverters.GenderConverter;
-import seng302.Utilities.JSONConverter;
-import seng302.Utilities.TypeConverters.LocalDateConverter;
-import seng302.Utilities.Enums.Region;
-import seng302.Utilities.TypeConverters.RegionConverter;
-
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import seng302.Actions.ActionInvoker;
+import seng302.Actions.Donor.ModifyDonorAction;
+import seng302.Donor;
+import seng302.HistoryItem;
+import seng302.State.DonorManager;
+import seng302.State.State;
+import seng302.Utilities.Enums.BloodType;
+import seng302.Utilities.Enums.Gender;
+import seng302.Utilities.Enums.Region;
+import seng302.Utilities.JSONConverter;
+import seng302.Utilities.TypeConverters.BloodTypeConverter;
+import seng302.Utilities.TypeConverters.GenderConverter;
+import seng302.Utilities.TypeConverters.LocalDateConverter;
+import seng302.Utilities.TypeConverters.RegionConverter;
+
+import picocli.CommandLine.Command;
+import picocli.CommandLine.Option;
 
 /**
  * Command line to set attributes of a Donor, by using their ID as a reference key.

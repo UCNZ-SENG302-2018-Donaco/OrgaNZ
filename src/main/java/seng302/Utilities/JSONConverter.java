@@ -1,14 +1,5 @@
 package seng302.Utilities;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import com.google.gson.stream.JsonReader;
-import seng302.Donor;
-import seng302.State.DonorManager;
-import seng302.HistoryItem;
-import seng302.State.State;
-
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -19,6 +10,16 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import seng302.Donor;
+import seng302.HistoryItem;
+import seng302.State.DonorManager;
+import seng302.State.State;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
 
 /**
  * Uses GSON to convert Java objects into JSON files and from JSON files
