@@ -13,7 +13,6 @@ import seng302.State;
 import seng302.Utilities.JSONConverter;
 import seng302.Utilities.Page;
 import seng302.Utilities.PageNavigator;
-import sun.applet.Main;
 
 import java.io.File;
 import java.io.IOException;

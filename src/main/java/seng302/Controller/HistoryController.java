@@ -7,8 +7,6 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.Pane;
 import seng302.HistoryItem;
-import seng302.Session;
-import seng302.State;
 import seng302.Utilities.JSONConverter;
 
 import java.io.File;
