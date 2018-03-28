@@ -9,8 +9,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import seng302.Utilities.Page;
-import seng302.Utilities.WindowContext;
+import seng302.Utilities.Enums.Page;
+import seng302.Utilities.View.WindowContext;
 
 import java.io.IOException;
 

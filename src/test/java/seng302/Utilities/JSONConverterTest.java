@@ -4,8 +4,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import seng302.Donor;
-import seng302.DonorManager;
-import seng302.State;
+import seng302.State.DonorManager;
+import seng302.State.State;
 
 import java.io.File;
 import java.io.IOException;

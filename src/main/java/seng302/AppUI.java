@@ -6,10 +6,11 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import seng302.Controller.MainController;
+import seng302.State.State;
 import seng302.Utilities.JSONConverter;
-import seng302.Utilities.Page;
-import seng302.Utilities.PageNavigator;
-import seng302.Utilities.WindowContext;
+import seng302.Utilities.Enums.Page;
+import seng302.Utilities.View.PageNavigator;
+import seng302.Utilities.View.WindowContext;
 
 import java.io.File;
 import java.io.IOException;

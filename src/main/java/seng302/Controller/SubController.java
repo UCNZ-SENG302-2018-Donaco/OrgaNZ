@@ -1,6 +1,6 @@
 package seng302.Controller;
 
-import seng302.Utilities.WindowContext;
+import seng302.Utilities.View.WindowContext;
 
 /**
  * A Controller that holds it's parent controller state

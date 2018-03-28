@@ -2,8 +2,8 @@ package seng302.Controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import seng302.Utilities.Page;
-import seng302.Utilities.PageNavigator;
+import seng302.Utilities.Enums.Page;
+import seng302.Utilities.View.PageNavigator;
 
 /**
  * Controls the Landing Screen View.
