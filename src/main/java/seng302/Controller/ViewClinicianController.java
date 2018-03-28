@@ -71,9 +71,9 @@ public class ViewClinicianController extends SubController {
     }
 
     @Override
-    public void setMainController(MainController mainController) {
-        super.setMainController(mainController);
-        mainController.loadClinicianSidebar(sidebarPane);
+    public void setup(MainController mainController) {
+        super.setup(mainController);
+        mainController.loadSidebar(sidebarPane);
     }
 
 	/**

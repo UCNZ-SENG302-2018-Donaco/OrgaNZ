@@ -21,7 +21,6 @@ import java.util.List;
  */
 public class HistoryController extends SubController {
     private final DateTimeFormatter datetimeformat = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm:ss");
-    private Session session;
 
     @FXML
     private TableColumn<HistoryItem, String> timeCol, typeCol, commandCol;
@@ -29,10 +28,6 @@ public class HistoryController extends SubController {
     private TableView<HistoryItem> historyTable;
     @FXML
     private Pane sidebarPane;
-
-    public HistoryController() {
-        session = State.getSession();
-    }
 
     /**
      * Initializes the UI for this page.
@@ -64,16 +59,12 @@ public class HistoryController extends SubController {
     }
 
     private void getSidebar() {
-        if (session.getLoggedInUserType() == Session.UserType.DONOR || windowContext.isClinViewDonorWindow()) {
-            mainController.loadDonorSidebar(sidebarPane);
-        } else if (session.getLoggedInUserType() == Session.UserType.CLINICIAN) {
-            mainController.loadClinicianSidebar(sidebarPane);
-        }
+        mainController.loadSidebar(sidebarPane);
     }
 
     @Override
-    public void setMainController(MainController mainController) {
-        super.setMainController(mainController);
+    public void setup(MainController mainController) {
+        super.setup(mainController);
         getSidebar();
     }
 }

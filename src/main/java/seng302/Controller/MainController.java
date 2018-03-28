@@ -75,30 +75,12 @@ public class MainController {
      * Will set the sidebar as the child of the pane given.
      * @param sidebarPane The container pane for the sidebar, given by the importer.
      */
-    public void loadDonorSidebar(Pane sidebarPane) {
+    public void loadSidebar(Pane sidebarPane) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(Page.SIDEBAR.getPath()));
             VBox sidebar = loader.load();
             SubController subController = loader.getController();
-            subController.setMainController(this);
-            sidebarPane.getChildren().setAll(sidebar);
-        } catch (IOException exc) {
-            System.err.println("Couldn't load sidebar from fxml file.");
-            exc.printStackTrace();
-        }
-    }
-
-    /**
-     * Method that can be called from other controllers to load the sidebar into that page.
-     * Will set the sidebar as the child of the pane given.
-     * @param sidebarPane The container pane for the sidebar, given by the importer.
-     */
-    public void loadClinicianSidebar(Pane sidebarPane) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(Page.CLINICIAN_SIDEBAR.getPath()));
-            VBox sidebar = loader.load();
-            SubController subController = loader.getController();
-            subController.setMainController(this);
+            subController.setup(this);
             sidebarPane.getChildren().setAll(sidebar);
         } catch (IOException exc) {
             System.err.println("Couldn't load sidebar from fxml file.");

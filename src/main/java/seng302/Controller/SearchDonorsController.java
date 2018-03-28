@@ -57,9 +57,9 @@ public class SearchDonorsController extends SubController {
     private SortedList<Donor> sortedDonors;
 
 	@Override
-	public void setMainController(MainController mainController) {
-		super.setMainController(mainController);
-		mainController.loadClinicianSidebar(sidebarPane);
+	public void setup(MainController mainController) {
+		super.setup(mainController);
+		mainController.loadSidebar(sidebarPane);
 	}
 
     @FXML

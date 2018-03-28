@@ -69,9 +69,9 @@ public class RegisterOrgansController extends SubController {
 	}
 
     @Override
-    public void setMainController(MainController mainController) {
-        super.setMainController(mainController);
-        mainController.loadDonorSidebar(sidebarPane);
+    public void setup(MainController mainController) {
+        super.setup(mainController);
+        mainController.loadSidebar(sidebarPane);
 
         if (session.getLoggedInUserType() == Session.UserType.DONOR) {
             donor = session.getLoggedInDonor();
