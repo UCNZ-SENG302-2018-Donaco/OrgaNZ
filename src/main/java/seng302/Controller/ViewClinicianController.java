@@ -9,11 +9,14 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import seng302.Actions.ActionInvoker;
 import seng302.Actions.ModifyClinicianAction;
 import seng302.Clinician;
 import seng302.HistoryItem;
+import seng302.Session;
 import seng302.State;
 import seng302.Utilities.JSONConverter;
+import seng302.Utilities.Page;
 import seng302.Utilities.PageNavigator;
 import seng302.Utilities.Region;
 
@@ -26,13 +29,10 @@ import java.time.format.DateTimeFormatter;
 public class ViewClinicianController extends SubController {
     private final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy\nh:mm:ss a");
 
-    @Override
-    public void setMainController(MainController mainController) {
-        super.setMainController(mainController);
-
-        mainController.loadClinicianSidebar(sidebarPane);
-        init();
-    }
+    private Session session;
+    private ActionInvoker invoker;
+    private Clinician currentClinician;
+    private String updatedPassword;
 
     @FXML
     private Pane sidebarPane, idPane, inputsPane;
@@ -45,8 +45,12 @@ public class ViewClinicianController extends SubController {
     @FXML
     private ChoiceBox<Region> region;
 
-    private Clinician currentClinician;
-    private String updatedPassword;
+    public ViewClinicianController() {
+        invoker = State.getInvoker();
+        session = State.getSession();
+
+        currentClinician = session.getLoggedInClinician();
+    }
 
 	/**
 	 * Initialize the page.
@@ -55,13 +59,15 @@ public class ViewClinicianController extends SubController {
     private void initialize() {
         region.setItems(FXCollections.observableArrayList(Region.values()));
 		staffID.setDisable(true);
-
         inputsPane.setVisible(true);
+
+        loadClinicianData();
     }
 
-    private void init() {
-        currentClinician = (Clinician) mainController.getPageParam("currentClinician");
-        loadClinicianData();
+    @Override
+    public void setup(MainController mainController) {
+        super.setup(mainController);
+        mainController.loadSidebar(sidebarPane);
     }
 
 	/**
@@ -153,7 +159,7 @@ public class ViewClinicianController extends SubController {
             action.addChange("setPassword", currentClinician.getPassword(), updatedPassword);
             action.addChange("setRegion", currentClinician.getRegion(), region.getValue());
 
-            State.getInvoker().execute(action);
+            invoker.execute(action);
 
             HistoryItem save = new HistoryItem("UPDATE CLINICIAN", "The Clinician's information was updated. New details are: " + currentClinician.getUpdateLog());
             JSONConverter.updateHistory(save, "action_history.json");

@@ -10,6 +10,7 @@ import seng302.Actions.ModifyDonorOrgansAction;
 import seng302.Donor;
 import seng302.DonorManager;
 import seng302.HistoryItem;
+import seng302.Session;
 import seng302.State;
 import seng302.Utilities.JSONConverter;
 import seng302.Utilities.Organ;
@@ -21,19 +22,13 @@ import java.util.Map;
  * Controller for the register organs page.
  */
 public class RegisterOrgansController extends SubController {
-
-	@Override
-	public void setMainController(MainController mainController) {
-		super.setMainController(mainController);
-		mainController.loadDonorSidebar(sidebarPane);
-
-		init();
-	}
+    private Session session;
+    private DonorManager manager;
+    private ActionInvoker invoker;
+    private Donor donor;
 
 	@FXML
-    private Pane sidebarPane;
-    @FXML
-    private Pane idPane;
+    private Pane sidebarPane, idPane;
 	@FXML
 	private CheckBox checkBoxLiver, checkBoxKidney, checkBoxPancreas, checkBoxHeart, checkBoxLung, checkBoxIntestine,
 			checkBoxCornea, checkBoxMiddleEar, checkBoxSkin, checkBoxBone, checkBoxBoneMarrow, checkBoxConnTissue;
@@ -41,9 +36,11 @@ public class RegisterOrgansController extends SubController {
 	@FXML
 	private TextField fieldUserID;
 
-	private DonorManager manager;
-	private ActionInvoker invoker;
-	private Donor donor;
+	public RegisterOrgansController() {
+        manager = State.getDonorManager();
+        invoker = State.getInvoker();
+        session = State.getSession();
+    }
 
     /**
      * Initializes the UI for this page.
@@ -56,7 +53,6 @@ public class RegisterOrgansController extends SubController {
      */
 	@FXML
 	private void initialize() {
-
 		organCheckBoxes.put(Organ.LIVER, checkBoxLiver);
 		organCheckBoxes.put(Organ.KIDNEY, checkBoxKidney);
 		organCheckBoxes.put(Organ.PANCREAS, checkBoxPancreas);
@@ -70,29 +66,22 @@ public class RegisterOrgansController extends SubController {
 		organCheckBoxes.put(Organ.BONE_MARROW, checkBoxBoneMarrow);
 		organCheckBoxes.put(Organ.CONNECTIVE_TISSUE, checkBoxConnTissue);
 		setCheckboxesDisabled();
-
-        manager = State.getDonorManager();
-        invoker = State.getInvoker();
 	}
 
-	private void init() {
-		String currentUserType = (String) mainController.getPageParam("currentUserType");
-		if (currentUserType == null) {
-			Integer viewUserId = (Integer) mainController.getPageParam("viewUserId");
-			if (viewUserId != null) {
-				fieldUserID.setText(viewUserId.toString());
-				updateUserID(null);
-			}
-		} else if (currentUserType.equals("donor")) {
-			Integer currentUserId = (Integer) mainController.getPageParam("currentUserId");
-			if (currentUserId != null) {
-				fieldUserID.setText(currentUserId.toString());
-				updateUserID(null);
-			}
-			idPane.setVisible(false);
-			idPane.setManaged(false);
-		}
-	}
+    @Override
+    public void setup(MainController mainController) {
+        super.setup(mainController);
+        mainController.loadSidebar(sidebarPane);
+
+        if (session.getLoggedInUserType() == Session.UserType.DONOR) {
+            donor = session.getLoggedInDonor();
+        } else if (windowContext.isClinViewDonorWindow()) {
+            donor = windowContext.getViewDonor();
+        }
+
+		fieldUserID.setText(Integer.toString(donor.getUid()));
+		updateUserID(null);
+    }
 
     /**
      * Updates the current donor to the one specified in the userID field, and populates with their info.
@@ -107,7 +96,6 @@ public class RegisterOrgansController extends SubController {
 		}
 
 		if (donor != null) {
-            mainController.setPageParam("viewUserId", donor.getUid());
 			setCheckBoxesEnabled();
 			for (Map.Entry<Organ, CheckBox> entry : organCheckBoxes.entrySet()) {
 				entry.getValue().setSelected(donor.getOrganStatus().get(entry.getKey()));

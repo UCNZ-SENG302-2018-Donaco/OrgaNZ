@@ -28,12 +28,11 @@ public class PageNavigator {
             FXMLLoader loader = new FXMLLoader(PageNavigator.class.getResource(page.getPath()));
             Node loadedPage = loader.load();
             SubController subController = loader.getController();
-            subController.setMainController(controller);
+            subController.setup(controller);
             controller.setPage(page, loadedPage);
         } catch (IOException e) {
             showAlert(Alert.AlertType.ERROR, "Could not load page: " + page.toString(),
                     "The page loader failed to load the layout for the page.");
-            refreshPage(controller);
         }
     }
 

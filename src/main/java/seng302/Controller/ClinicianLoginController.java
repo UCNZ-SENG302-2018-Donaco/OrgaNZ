@@ -6,7 +6,9 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import seng302.Clinician;
+import seng302.ClinicianManager;
 import seng302.HistoryItem;
+import seng302.Session;
 import seng302.State;
 import seng302.Utilities.JSONConverter;
 import seng302.Utilities.Page;
@@ -17,14 +19,17 @@ import seng302.Utilities.PageNavigator;
  * system, e.g. the default clinician.
  */
 public class ClinicianLoginController extends SubController {
-
 	@FXML
 	private TextField staffId;
 	@FXML
 	private PasswordField password;
-	@FXML
-	private int id;
 
+	private ClinicianManager clinicianManager;
+    private int id;
+
+	public ClinicianLoginController() {
+        clinicianManager = State.getClinicianManager();
+    }
 
 	/**
 	 * Navigates a user back to the Landing page.
@@ -88,27 +93,20 @@ public class ClinicianLoginController extends SubController {
 	@FXML
 	private void signIn(ActionEvent event) {
 		if (validStaffIDinput()) {
-			if (State.getClinicianManager().getClinicianByStaffId(id) == null) {
+            Clinician clinician = clinicianManager.getClinicianByStaffId(id);
+			if (clinician == null) {
 				staffIdDoesntExistAlert();
-			} else {
-				Clinician clinician = State.getClinicianManager().getClinicianByStaffId(id);
+			} else if (!clinician.getPassword().equals(password.getText())) {
+				staffIdPasswordMismatchAlert();
+            } else {
+				State.login(Session.UserType.CLINICIAN, clinician);
+				PageNavigator.loadPage(Page.VIEW_CLINICIAN, mainController);
+				loginSuccessAlert();
 
-				if (clinician.getPassword().equals(password.getText())) {
-
-					mainController.setPageParam("currentUserType", "clinician");
-					mainController.setPageParam("currentClinician", clinician);
-					//PageNavigator.loadPage(Page.VIEW_DONOR);
-
-					PageNavigator.loadPage(Page.VIEW_CLINICIAN, mainController);
-					loginSuccessAlert();
-
-                    HistoryItem save = new HistoryItem("LOGIN CLINICIAN",
-                            "The Clinician " + clinician.getFirstName() + " " + clinician.getLastName() + " logged in.");
-                    JSONConverter.updateHistory(save, "action_history.json");
-				} else {
-					staffIdPasswordMismatchAlert();
-				}
-			}
+				HistoryItem save = new HistoryItem("LOGIN CLINICIAN", String.format("Clinician %s %s logged in.",
+						clinician.getFirstName(), clinician.getLastName()));
+				JSONConverter.updateHistory(save, "action_history.json");
+            }
 		} else {
 			invalidStaffIdAlert();
 		}

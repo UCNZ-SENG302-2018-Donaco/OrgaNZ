@@ -12,6 +12,7 @@ import seng302.Actions.CreateDonorAction;
 import seng302.Donor;
 import seng302.DonorManager;
 import seng302.HistoryItem;
+import seng302.Session;
 import seng302.State;
 import seng302.Utilities.JSONConverter;
 import seng302.Utilities.Page;
@@ -34,8 +35,7 @@ public class CreateDonorController extends SubController {
      * Initializes the UI for this page.
      * - Gets the DonorManager and ActionInvoker from the current state.
      */
-    @FXML
-    private void initialize() {
+    public CreateDonorController() {
         manager = State.getDonorManager();
         invoker = State.getInvoker();
     }
@@ -79,8 +79,7 @@ public class CreateDonorController extends SubController {
                     String.format("Successfully created donor %s %s %s with ID %d.",
                             donor.getFirstName(), donor.getMiddleName(), donor.getLastName(), uid));
 
-            mainController.setPageParam("currentUserId", uid);
-            mainController.setPageParam("currentUserType", "donor");
+            State.login(Session.UserType.DONOR, donor);
             PageNavigator.loadPage(Page.VIEW_DONOR, mainController);
         }
     }

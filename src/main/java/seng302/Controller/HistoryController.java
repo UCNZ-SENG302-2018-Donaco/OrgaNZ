@@ -56,18 +56,13 @@ public class HistoryController extends SubController {
 
     }
 
-    private void init() {
-        if (mainController.getPageParam("currentUserType") == null ||
-                mainController.getPageParam("currentUserType").equals("donor")) {
-            mainController.loadDonorSidebar(sidebarPane);
-        } else {
-            mainController.loadClinicianSidebar(sidebarPane);
-        }
+    private void getSidebar() {
+        mainController.loadSidebar(sidebarPane);
     }
 
     @Override
-    public void setMainController(MainController mainController) {
-        super.setMainController(mainController);
-        init();
+    public void setup(MainController mainController) {
+        super.setup(mainController);
+        getSidebar();
     }
 }

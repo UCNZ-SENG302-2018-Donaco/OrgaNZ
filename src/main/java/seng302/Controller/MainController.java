@@ -10,10 +10,9 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import seng302.Utilities.Page;
+import seng302.Utilities.WindowContext;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Main controller class for the application window.
@@ -22,7 +21,7 @@ import java.util.Map;
 public class MainController {
 	private Stage stage;
     private Page currentPage;
-    private Map<String, Object> pageContext = new HashMap<>();
+    private WindowContext windowContext;
 
 	/** Holder of a switchable page. */
 	@FXML
@@ -34,6 +33,10 @@ public class MainController {
 
     public Page getCurrentPage() {
         return currentPage;
+    }
+
+    public WindowContext getWindowContext() {
+        return windowContext;
     }
 
     public void setStage(Stage stage){
@@ -50,6 +53,14 @@ public class MainController {
 		pageHolder.getChildren().setAll(node);
 	}
 
+	public void setWindowContext(WindowContext context) {
+	    this.windowContext = context;
+    }
+
+    public void resetWindowContext() {
+	    this.windowContext = WindowContext.defaultContext();
+    }
+
 	/**
 	 * Closes the window.
 	 * @param event when the exit button is clicked.
@@ -64,50 +75,16 @@ public class MainController {
      * Will set the sidebar as the child of the pane given.
      * @param sidebarPane The container pane for the sidebar, given by the importer.
      */
-    public void loadDonorSidebar(Pane sidebarPane) {
+    public void loadSidebar(Pane sidebarPane) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(Page.SIDEBAR.getPath()));
             VBox sidebar = loader.load();
             SubController subController = loader.getController();
-            subController.setMainController(this);
+            subController.setup(this);
             sidebarPane.getChildren().setAll(sidebar);
         } catch (IOException exc) {
             System.err.println("Couldn't load sidebar from fxml file.");
             exc.printStackTrace();
         }
-    }
-
-    /**
-     * Method that can be called from other controllers to load the sidebar into that page.
-     * Will set the sidebar as the child of the pane given.
-     * @param sidebarPane The container pane for the sidebar, given by the importer.
-     */
-    public void loadClinicianSidebar(Pane sidebarPane) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(Page.CLINICIAN_SIDEBAR.getPath()));
-            VBox sidebar = loader.load();
-            SubController subController = loader.getController();
-            subController.setMainController(this);
-            sidebarPane.getChildren().setAll(sidebar);
-        } catch (IOException exc) {
-            System.err.println("Couldn't load sidebar from fxml file.");
-            exc.printStackTrace();
-        }
-    }
-
-    public Object getPageParam(String key) {
-        return pageContext.get(key);
-    }
-
-    public void setPageParam(String key, Object value) {
-        pageContext.put(key, value);
-    }
-
-    public void removePageParam(String key) {
-        pageContext.remove(key);
-    }
-
-    public void clearPageParams() {
-        pageContext.clear();
     }
 }

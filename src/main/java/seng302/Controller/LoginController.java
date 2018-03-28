@@ -8,6 +8,7 @@ import javafx.scene.control.ListView;
 import seng302.Donor;
 import seng302.DonorManager;
 import seng302.HistoryItem;
+import seng302.Session;
 import seng302.State;
 import seng302.Utilities.JSONConverter;
 import seng302.Utilities.Page;
@@ -59,8 +60,7 @@ public class LoginController extends SubController {
                     selectedDonor.getFirstName(), selectedDonor.getLastName(), selectedDonor.getUid()));
             JSONConverter.updateHistory(loginHistory, "action_history.json");
 
-            mainController.setPageParam("currentUserId", selectedDonor.getUid());
-            mainController.setPageParam("currentUserType", "donor");
+            State.login(Session.UserType.DONOR, selectedDonor);
             PageNavigator.loadPage(Page.VIEW_DONOR, mainController);
         }
     }

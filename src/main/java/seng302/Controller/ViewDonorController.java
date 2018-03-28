@@ -9,9 +9,12 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import seng302.Actions.ActionInvoker;
 import seng302.Actions.ModifyDonorAction;
 import seng302.Donor;
+import seng302.DonorManager;
 import seng302.HistoryItem;
+import seng302.Session;
 import seng302.State;
 import seng302.Utilities.BloodType;
 import seng302.Utilities.Gender;
@@ -29,12 +32,10 @@ import java.time.format.DateTimeFormatter;
 public class ViewDonorController extends SubController {
     private final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy\nh:mm:ss a");
 
-	@Override
-	public void setMainController(MainController mainController) {
-		super.setMainController(mainController);
-		mainController.loadDonorSidebar(sidebarPane);
-		init();
-	}
+    private Session session;
+    private DonorManager manager;
+    private ActionInvoker invoker;
+    private Donor viewedDonor;
 
     @FXML
     private Pane sidebarPane, idPane, inputsPane;
@@ -52,7 +53,11 @@ public class ViewDonorController extends SubController {
 	@FXML
     private ChoiceBox<Region> region;
 
-	private Donor viewedDonor;
+	public ViewDonorController() {
+        manager = State.getDonorManager();
+        invoker = State.getInvoker();
+        session = State.getSession();
+    }
 
     /**
      * Initializes the UI for this page.
@@ -70,24 +75,22 @@ public class ViewDonorController extends SubController {
 		setFieldsDisabled(true);
     }
 
-    private void init() {
-		String currentUserType = (String) mainController.getPageParam("currentUserType");
-		if (currentUserType == null) {
-			Integer viewUserId = (Integer) mainController.getPageParam("viewUserId");
-			if (viewUserId != null) {
-				id.setText(viewUserId.toString());
-				searchDonor();
-			}
-		} else if (currentUserType.equals("donor")) {
-			Integer currentUserId = (Integer) mainController.getPageParam("currentUserId");
-			if (currentUserId != null) {
-				id.setText(currentUserId.toString());
-				searchDonor();
-			}
-			idPane.setVisible(false);
-			idPane.setManaged(false);
-		}
-	}
+    @Override
+    public void setup(MainController mainController) {
+        super.setup(mainController);
+        mainController.loadSidebar(sidebarPane);
+
+        if (session.getLoggedInUserType() == Session.UserType.DONOR) {
+            viewedDonor = session.getLoggedInDonor();
+            idPane.setVisible(false);
+            idPane.setManaged(false);
+        } else if (windowContext.isClinViewDonorWindow()) {
+            viewedDonor = windowContext.getViewDonor();
+        }
+
+		id.setText(Integer.toString(viewedDonor.getUid()));
+		searchDonor();
+    }
 
 	/**
 	 * Searches for a donor based off the id number supplied in the text field. The users fields will be displayed if
@@ -104,12 +107,11 @@ public class ViewDonorController extends SubController {
 			return;
 		}
 
-		viewedDonor = State.getDonorManager().getDonorByID(id_value);
+		viewedDonor = manager.getDonorByID(id_value);
 		if (viewedDonor == null) {
 			noDonorLabel.setVisible(true);
             setFieldsDisabled(true);
 		} else {
-            mainController.setPageParam("viewUserId", id_value);
 			noDonorLabel.setVisible(false);
             setFieldsDisabled(false);
 
@@ -259,7 +261,7 @@ public class ViewDonorController extends SubController {
             action.addChange("setRegion", viewedDonor.getRegion(), region.getValue());
 			action.addChange("setCurrentAddress", viewedDonor.getCurrentAddress(), address.getText());
 
-		    State.getInvoker().execute(action);
+		    invoker.execute(action);
 
 		    PageNavigator.showAlert(Alert.AlertType.INFORMATION,
 				"Success",
@@ -301,7 +303,6 @@ public class ViewDonorController extends SubController {
 	 */
 	@FXML
 	public void viewOrgansForDonor() {
-        mainController.setPageParam("viewUserId", viewedDonor.getUid());
 		PageNavigator.loadPage(Page.REGISTER_ORGANS, mainController);
 	}
 }

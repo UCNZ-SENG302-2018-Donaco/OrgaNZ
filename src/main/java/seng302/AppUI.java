@@ -9,6 +9,7 @@ import seng302.Controller.MainController;
 import seng302.Utilities.JSONConverter;
 import seng302.Utilities.Page;
 import seng302.Utilities.PageNavigator;
+import seng302.Utilities.WindowContext;
 
 import java.io.File;
 import java.io.IOException;
@@ -58,6 +59,7 @@ public class AppUI extends Application {
         Pane mainPane = loader.load(getClass().getResourceAsStream(Page.MAIN.getPath()));
         MainController mainController = loader.getController();
         mainController.setStage(stage);
+        mainController.setWindowContext(WindowContext.defaultContext());
 
         PageNavigator.loadPage(Page.LANDING, mainController);
 

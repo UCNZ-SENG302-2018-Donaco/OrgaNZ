@@ -9,6 +9,7 @@ public final class State {
     private static DonorManager donorManager;
     private static ClinicianManager clinicianManager;
     private static ActionInvoker actionInvoker;
+    private static Session session;
 
     private State() {}
 
@@ -31,5 +32,22 @@ public final class State {
 
     public static ActionInvoker getInvoker() {
         return actionInvoker;
+    }
+
+    public static Session getSession() {
+        return session;
+    }
+
+    public static void login(Session.UserType userType, Object user) {
+        if (userType == Session.UserType.DONOR) {
+            session = new Session((Donor) user);
+        } else if (userType == Session.UserType.CLINICIAN) {
+            session = new Session((Clinician) user);
+        }
+    }
+
+    public static void logout() {
+        // Do something with the old session
+        session = null;
     }
 }

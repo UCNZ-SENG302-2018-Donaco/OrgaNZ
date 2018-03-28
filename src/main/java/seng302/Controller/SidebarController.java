@@ -3,10 +3,12 @@ package seng302.Controller;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.stage.FileChooser;
 import seng302.Actions.ActionInvoker;
 import seng302.AppUI;
 import seng302.HistoryItem;
+import seng302.Session;
 import seng302.State;
 import seng302.Utilities.JSONConverter;
 import seng302.Utilities.Page;
@@ -21,13 +23,41 @@ import java.nio.file.Paths;
  * Controller for the sidebar pane imported into every page in the main part of the GUI.
  */
 public class SidebarController extends SubController {
+    @FXML
+    private Button viewDonorButton, registerOrgansButton, viewClinicianButton, searchButton, logoutButton;
+
     private ActionInvoker invoker;
+    private Session session;
 
     /**
      * Gets the ActionInvoker from the current state.
      */
     public SidebarController() {
         invoker = State.getInvoker();
+        session = State.getSession();
+    }
+
+    @Override
+    public void setup(MainController controller) {
+        super.setup(controller);
+
+        Session.UserType userType = session.getLoggedInUserType();
+        if (userType == Session.UserType.DONOR || windowContext.isClinViewDonorWindow()) {
+            hideButton(viewClinicianButton);
+            hideButton(searchButton);
+        } else if (userType == Session.UserType.CLINICIAN) {
+            hideButton(viewDonorButton);
+            hideButton(registerOrgansButton);
+        }
+
+        if (windowContext.isClinViewDonorWindow()) {
+            hideButton(logoutButton);
+        }
+    }
+
+    private void hideButton(Button button) {
+        button.setVisible(false);
+        button.setManaged(false);
     }
 
     /**
@@ -46,6 +76,24 @@ public class SidebarController extends SubController {
     @FXML
     private void goToRegisterOrgans(ActionEvent event) {
         PageNavigator.loadPage(Page.REGISTER_ORGANS, mainController);
+    }
+
+    /**
+     * Redirects the GUI to the View Donor page.
+     * @param event When the view donor button is clicked.
+     */
+    @FXML
+    private void goToViewClinician(ActionEvent event) {
+        PageNavigator.loadPage(Page.VIEW_CLINICIAN, mainController);
+    }
+
+    /**
+     * Redirects the GUI to the Register Organs page.
+     * @param event When the register organs button is clicked.
+     */
+    @FXML
+    private void goToSearch(ActionEvent event) {
+        PageNavigator.loadPage(Page.SEARCH, mainController);
     }
 
     /**
@@ -107,7 +155,8 @@ public class SidebarController extends SubController {
                 HistoryItem load = new HistoryItem("LOAD", "The systems state was loaded from " + file.getName());
                 JSONConverter.updateHistory(load, "action_history.json");
 
-                mainController.clearPageParams();
+                State.logout();
+                mainController.resetWindowContext();
                 PageNavigator.showAlert(Alert.AlertType.INFORMATION,
                         "Load Successful",
                         "Successfully loaded Donors from " + file.getName());
@@ -126,7 +175,8 @@ public class SidebarController extends SubController {
      */
     @FXML
     private void logout(ActionEvent event) {
-        mainController.clearPageParams();
+        State.logout();
+        mainController.resetWindowContext();
         PageNavigator.loadPage(Page.LANDING, mainController);
         HistoryItem save = new HistoryItem("LOGOUT", "The Donor logged out");
         JSONConverter.updateHistory(save, "action_history.json");
