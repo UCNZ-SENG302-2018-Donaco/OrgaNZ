@@ -63,13 +63,14 @@ public class PrintDonorInfoTest {
 
     @Test
     public void printuserinfo_valid() {
-        Donor donor = new Donor("First", "mid", "Last", LocalDate.of(1970,1, 1), 1);
+        Donor donor = new Donor("First", "mid", "Last", LocalDate.of(1970, 1, 1), 1);
 
         when(spyDonorManager.getDonorByID(anyInt())).thenReturn(donor);
         String[] inputs = {"-u", "1"};
 
         CommandLine.run(spyPrintDonorInfo, System.out, inputs);
 
-        assertThat(outContent.toString(), containsString("User: 1. Name: First mid Last, date of birth: 1970-01-01, date of death: null"));
+        assertThat(outContent.toString(),
+                containsString("User: 1. Name: First mid Last, date of birth: 1970-01-01, date of death: null"));
     }
 }

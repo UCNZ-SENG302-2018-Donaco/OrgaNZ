@@ -21,29 +21,29 @@ import org.junit.rules.TemporaryFolder;
 
 public class JSONConverterTest {
 
-	@Rule
-	public TemporaryFolder folder = new TemporaryFolder();
+    @Rule
+    public TemporaryFolder folder = new TemporaryFolder();
 
-	private boolean compareFiles(String file1, String file2) {
-		try {
-			byte[] contents1 = Files.readAllBytes(Paths.get(file1));
-			byte[] contents2 = Files.readAllBytes(Paths.get(file2));
-			return Arrays.equals(contents1, contents2);
-		} catch (IOException ex) {
-			System.out.println("Error comparing file contents: " + ex);
-			return false;
-		}
-	}
+    private boolean compareFiles(String file1, String file2) {
+        try {
+            byte[] contents1 = Files.readAllBytes(Paths.get(file1));
+            byte[] contents2 = Files.readAllBytes(Paths.get(file2));
+            return Arrays.equals(contents1, contents2);
+        } catch (IOException ex) {
+            System.out.println("Error comparing file contents: " + ex);
+            return false;
+        }
+    }
 
 
-	@Test
+    @Test
     public void saveToFileTest() throws Exception {
         File file = new File("src/test/resources/filled_donors.json");
 
-        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970,1, 1), 1);
+        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
         ArrayList<Donor> donors = new ArrayList<>();
         donors.add(donor);
-		State.init();
+        State.init();
         DonorManager manager = State.getDonorManager();
         manager.setDonors(donors);
 
@@ -62,7 +62,6 @@ public class JSONConverterTest {
         assertTrue(json.contains("\"firstName\": \"First\""));
         assertTrue(json.contains("\"lastName\": \"Last\""));
     }
-
 
 //    @Test
 //    public void loadFromFileTest() throws Exception {

@@ -69,7 +69,7 @@ public class SetOrganStatusTest {
 
     @Test
     public void setorganstatus_valid_set_to_true() {
-        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970,1, 1), 1);
+        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
         when(spyDonorManager.getDonorByID(anyInt())).thenReturn(donor);
         String[] inputs = {"-u", "1", "--liver"};
 
@@ -80,7 +80,7 @@ public class SetOrganStatusTest {
 
     @Test
     public void setorganstatus_valid_set_to_false() throws OrganAlreadyRegisteredException {
-        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970,1, 1), 1);
+        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
 
         donor.setOrganStatus(Organ.LIVER, true);
 
@@ -94,7 +94,7 @@ public class SetOrganStatusTest {
 
     @Test
     public void setorganstatus_invalid_set_to_true_already_true() throws OrganAlreadyRegisteredException {
-        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970,1, 1), 1);
+        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
 
         donor.setOrganStatus(Organ.LIVER, true);
 
@@ -110,7 +110,7 @@ public class SetOrganStatusTest {
 
     @Test
     public void setorganstatus_valid_multiple_updates() {
-        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970,1, 1), 1);
+        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
 
         when(spyDonorManager.getDonorByID(anyInt())).thenReturn(donor);
         String[] inputs = {"-u", "1", "--liver", "--kidney"};
@@ -123,11 +123,10 @@ public class SetOrganStatusTest {
 
     @Test
     public void setorganstatus_valid_multiple_updates_some_invalid() throws OrganAlreadyRegisteredException {
-        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970,1, 1), 1);
+        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
 
         donor.setOrganStatus(Organ.LIVER, true);
         donor.setOrganStatus(Organ.BONE, true);
-
 
         when(spyDonorManager.getDonorByID(anyInt())).thenReturn(donor);
         String[] inputs = {"-u", "1", "--liver", "--kidney", "--bone=false"};

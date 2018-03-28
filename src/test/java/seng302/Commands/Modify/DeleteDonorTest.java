@@ -58,7 +58,7 @@ public class DeleteDonorTest {
 
     @Test
     public void deleteuser_valid_reject() {
-        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970,1, 1), 1);
+        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
         when(spyDonorManager.getDonorByID(anyInt())).thenReturn(donor);
         String[] inputs = {"-u", "1"};
 
@@ -72,7 +72,7 @@ public class DeleteDonorTest {
 
     @Test
     public void deleteuser_valid_accept() {
-        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970,1, 1), 1);
+        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
         when(spyDonorManager.getDonorByID(anyInt())).thenReturn(donor);
         String[] inputs = {"-u", "1"};
 

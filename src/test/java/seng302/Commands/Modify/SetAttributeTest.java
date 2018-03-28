@@ -59,7 +59,7 @@ public class SetAttributeTest {
 
     @Test
     public void setattribute_valid_name() {
-        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970,1, 1), 1);
+        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
         when(spyDonorManager.getDonorByID(anyInt())).thenReturn(donor);
         String[] inputs = {"-u", "1", "--firstname", "NewFirst"};
 
@@ -70,7 +70,7 @@ public class SetAttributeTest {
 
     @Test
     public void setattribute_valid_blood_type() {
-        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970,1, 1), 1);
+        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
         when(spyDonorManager.getDonorByID(anyInt())).thenReturn(donor);
         String[] inputs = {"-u", "1", "--bloodtype", "O+"};
 
@@ -90,7 +90,7 @@ public class SetAttributeTest {
 
     @Test
     public void setattribute_valid_gender() {
-        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970,1, 1), 1);
+        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
         when(spyDonorManager.getDonorByID(anyInt())).thenReturn(donor);
         String[] inputs = {"-u", "1", "--gender", "Male"};
         CommandLine.run(spySetAttribute, System.out, inputs);
@@ -109,7 +109,7 @@ public class SetAttributeTest {
 
     @Test
     public void setattribute_valid_date() {
-        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970,1, 1), 1);
+        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
         when(spyDonorManager.getDonorByID(anyInt())).thenReturn(donor);
         String[] inputs = {"-u", "1", "--dateofdeath", "20/01/2038"};
 
@@ -127,7 +127,6 @@ public class SetAttributeTest {
 
         verify(spySetAttribute, times(0)).run();
     }
-
 
 
 }

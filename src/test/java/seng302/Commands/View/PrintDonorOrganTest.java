@@ -66,7 +66,7 @@ public class PrintDonorOrganTest {
 
     @Test
     public void printuserorgan_valid_no_organs() {
-        Donor donor = new Donor("First", "mid", "Last", LocalDate.of(1970,1, 1), 1);
+        Donor donor = new Donor("First", "mid", "Last", LocalDate.of(1970, 1, 1), 1);
 
         when(spyDonorManager.getDonorByID(anyInt())).thenReturn(donor);
 
@@ -74,12 +74,13 @@ public class PrintDonorOrganTest {
 
         CommandLine.run(spyPrintDonorOrgan, System.out, inputs);
 
-        assertThat(outContent.toString(), containsString("User: 1. Name: First mid Last, no organs registered for donation"));
+        assertThat(outContent.toString(),
+                containsString("User: 1. Name: First mid Last, no organs registered for donation"));
     }
 
     @Test
     public void printuserorgan_valid_one_organ() throws OrganAlreadyRegisteredException {
-        Donor donor = new Donor("First", "mid", "Last", LocalDate.of(1970,1, 1), 1);
+        Donor donor = new Donor("First", "mid", "Last", LocalDate.of(1970, 1, 1), 1);
         donor.setOrganStatus(Organ.KIDNEY, true);
 
         when(spyDonorManager.getDonorByID(anyInt())).thenReturn(donor);
@@ -90,9 +91,10 @@ public class PrintDonorOrganTest {
 
         assertThat(outContent.toString(), containsString("User: 1. Name: First mid Last, Donation status: Kidney"));
     }
+
     @Test
     public void printuserorgan_valid_multiple_organs() throws OrganAlreadyRegisteredException {
-        Donor donor = new Donor("First", "mid", "Last", LocalDate.of(1970,1, 1), 1);
+        Donor donor = new Donor("First", "mid", "Last", LocalDate.of(1970, 1, 1), 1);
         donor.setOrganStatus(Organ.LIVER, true);
         donor.setOrganStatus(Organ.KIDNEY, true);
 
@@ -102,6 +104,7 @@ public class PrintDonorOrganTest {
 
         CommandLine.run(spyPrintDonorOrgan, System.out, inputs);
 
-        assertTrue(outContent.toString().contains("User: 1. Name: First mid Last, Donation status: Kidney, Liver") || outContent.toString().contains("User: 1. Name: First mid Last, Donation status: Liver, Kidney"));
+        assertTrue(outContent.toString().contains("User: 1. Name: First mid Last, Donation status: Kidney, Liver")
+                || outContent.toString().contains("User: 1. Name: First mid Last, Donation status: Liver, Kidney"));
     }
 }
