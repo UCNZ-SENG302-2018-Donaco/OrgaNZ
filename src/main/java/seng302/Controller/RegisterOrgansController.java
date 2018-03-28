@@ -79,10 +79,8 @@ public class RegisterOrgansController extends SubController {
             donor = windowContext.getViewDonor();
         }
 
-        if (donor != null) {
-            fieldUserID.setText(Integer.toString(donor.getUid()));
-            updateUserID(null);
-        }
+		fieldUserID.setText(Integer.toString(donor.getUid()));
+		updateUserID(null);
     }
 
     /**

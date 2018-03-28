@@ -96,16 +96,16 @@ public class ClinicianLoginController extends SubController {
             Clinician clinician = clinicianManager.getClinicianByStaffId(id);
 			if (clinician == null) {
 				staffIdDoesntExistAlert();
-			} else if (clinician.getPassword().equals(password.getText())) {
-                State.login(Session.UserType.CLINICIAN, clinician);
-                PageNavigator.loadPage(Page.VIEW_CLINICIAN, mainController);
-                loginSuccessAlert();
-
-                HistoryItem save = new HistoryItem("LOGIN CLINICIAN", String.format("Clinician %s %s logged in.",
-                        clinician.getFirstName(), clinician.getLastName()));
-                JSONConverter.updateHistory(save, "action_history.json");
+			} else if (!clinician.getPassword().equals(password.getText())) {
+				staffIdPasswordMismatchAlert();
             } else {
-                staffIdPasswordMismatchAlert();
+				State.login(Session.UserType.CLINICIAN, clinician);
+				PageNavigator.loadPage(Page.VIEW_CLINICIAN, mainController);
+				loginSuccessAlert();
+
+				HistoryItem save = new HistoryItem("LOGIN CLINICIAN", String.format("Clinician %s %s logged in.",
+						clinician.getFirstName(), clinician.getLastName()));
+				JSONConverter.updateHistory(save, "action_history.json");
             }
 		} else {
 			invalidStaffIdAlert();

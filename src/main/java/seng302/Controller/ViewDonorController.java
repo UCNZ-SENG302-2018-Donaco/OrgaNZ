@@ -88,10 +88,8 @@ public class ViewDonorController extends SubController {
             viewedDonor = windowContext.getViewDonor();
         }
 
-        if (viewedDonor != null) {
-            id.setText(Integer.toString(viewedDonor.getUid()));
-            searchDonor();
-        }
+		id.setText(Integer.toString(viewedDonor.getUid()));
+		searchDonor();
     }
 
 	/**

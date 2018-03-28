@@ -49,13 +49,7 @@ public class ViewClinicianController extends SubController {
         invoker = State.getInvoker();
         session = State.getSession();
 
-        if (session.getLoggedInUserType() == Session.UserType.CLINICIAN) {
-            currentClinician = session.getLoggedInClinician();
-        } else {
-            State.logout();
-            mainController.resetWindowContext();
-            PageNavigator.loadPage(Page.LANDING, mainController);
-        }
+        currentClinician = session.getLoggedInClinician();
     }
 
 	/**
