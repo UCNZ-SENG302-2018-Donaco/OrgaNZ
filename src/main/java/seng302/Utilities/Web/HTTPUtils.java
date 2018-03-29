@@ -24,9 +24,8 @@ public class HTTPUtils {
         List<String> suggestions = new ArrayList<>();
 
         HttpRequestFactory requestFactory = HTTP_TRANSPORT.createRequestFactory(
-                (HttpRequest request) -> {
-                    request.setParser(new JsonObjectParser(JSON_FACTORY));
-                });
+                (HttpRequest request) -> request.setParser(new JsonObjectParser(JSON_FACTORY))
+        );
 
         try {
             MedAutoCompleteURL url = new MedAutoCompleteURL(AUTOCOMPLETE_ENDPOINT);
