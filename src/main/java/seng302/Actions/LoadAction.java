@@ -1,9 +1,9 @@
 package seng302.Actions;
 
-import seng302.Donor;
-import seng302.DonorManager;
-
 import java.util.ArrayList;
+
+import seng302.Donor;
+import seng302.State.DonorManager;
 
 /**
  * A reversible DonorManager donor list modification Action
@@ -21,7 +21,7 @@ public class LoadAction implements Action {
      * @param newState The new state of the Donor array
      * @param manager The DonorManager to apply changes to
      */
-    public LoadAction (ArrayList<Donor> oldState, ArrayList<Donor> newState, DonorManager manager) {
+    public LoadAction(ArrayList<Donor> oldState, ArrayList<Donor> newState, DonorManager manager) {
         this.manager = manager;
         this.oldState = oldState;
         this.newState = newState;

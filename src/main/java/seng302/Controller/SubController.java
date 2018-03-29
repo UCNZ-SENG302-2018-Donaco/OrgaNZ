@@ -1,18 +1,29 @@
 package seng302.Controller;
 
+import seng302.Utilities.View.WindowContext;
+
 /**
  * A Controller that holds it's parent controller state
  */
-public interface SubController {
+abstract public class SubController {
+
+    protected MainController mainController;
+    protected WindowContext windowContext;
+
     /**
      * Set the controllers parent controller
      * @param mainController The MainController
      */
-    void setMainController(MainController mainController);
+    public void setup(MainController mainController) {
+        this.mainController = mainController;
+        this.windowContext = mainController.getWindowContext();
+    }
 
     /**
      * Get the controllers parent controller
      * @return The MainController
      */
-    MainController getMainController();
+    public MainController getMainController() {
+        return mainController;
+    }
 }

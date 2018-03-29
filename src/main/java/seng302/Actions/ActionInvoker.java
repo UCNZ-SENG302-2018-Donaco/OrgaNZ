@@ -3,9 +3,11 @@ package seng302.Actions;
 import java.util.Stack;
 
 /**
- * The main invoker class for all model modifying actions. All actions should be using the Action implementation and invoked by the invoker instance to allow undo/redo
+ * The main invoker class for all model modifying actions. All actions should be using the Action implementation and
+ * invoked by the invoker instance to allow undo/redo
  */
 public class ActionInvoker {
+
     private Stack<Action> undoStack = new Stack<>();
     private Stack<Action> redoStack = new Stack<>();
 

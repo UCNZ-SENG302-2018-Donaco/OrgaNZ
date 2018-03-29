@@ -1,9 +1,9 @@
 package seng302.Actions;
 
-import seng302.Donor;
-import seng302.DonorManager;
-
 import java.util.ArrayList;
+
+import seng302.Donor;
+import seng302.State.DonorManager;
 
 public class SaveAction implements Action {
 
@@ -12,7 +12,7 @@ public class SaveAction implements Action {
     private ArrayList<Donor> oldState;
     private ArrayList<Donor> newState;
 
-    public SaveAction (ArrayList<Donor> oldState, ArrayList<Donor> newState, DonorManager manager) {
+    public SaveAction(ArrayList<Donor> oldState, ArrayList<Donor> newState, DonorManager manager) {
         this.manager = manager;
         this.oldState = oldState;
         this.newState = newState;
