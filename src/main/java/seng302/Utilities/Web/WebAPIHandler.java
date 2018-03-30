@@ -6,11 +6,19 @@ import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.gson.GsonFactory;
 
 /**
- * An interface for a generic WebAPIHandler.
+ * An abstract class for a generic WebAPIHandler.
  * Holds the underlying HttpTransport client and JSON factory for all WebAPIHandlers to use.
  */
-public interface WebAPIHandler {
+public abstract class WebAPIHandler {
 
-    HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
-    JsonFactory JSON_FACTORY = new GsonFactory();
+    protected HttpTransport httpTransport;
+    protected JsonFactory jsonFactory = new GsonFactory();
+
+    protected WebAPIHandler() {
+        this.httpTransport = new NetHttpTransport();
+    }
+
+    protected WebAPIHandler(HttpTransport httpTransport) {
+        this.httpTransport = httpTransport;
+    }
 }

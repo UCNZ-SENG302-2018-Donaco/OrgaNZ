@@ -7,23 +7,37 @@ import java.util.List;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.HttpResponseException;
+import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonObjectParser;
 
 /**
  * A handler for requests to the drug autocompletion web API provided by MAPI.
  */
-public class MedAutoCompleteHandler implements WebAPIHandler {
+public class MedAutoCompleteHandler extends WebAPIHandler {
 
     private static final String AUTOCOMPLETE_ENDPOINT = "http://mapi-us.iterar.co/api/autocomplete";
 
     private HttpRequestFactory requestFactory;
 
     /**
-     * Instantiates a new MedAutoCompleteHandler and sets up its request factory (with a JSON factory for responses).
+     * Instantiates a new MedAutoCompleteHandler using the default NetHttpTransport and sets up its request factory
+     * (using a JSON factory to parse JSON response bodies).
      */
     public MedAutoCompleteHandler() {
-        requestFactory = HTTP_TRANSPORT.createRequestFactory(
-                (HttpRequest request) -> request.setParser(new JsonObjectParser(JSON_FACTORY))
+        super();
+        requestFactory = httpTransport.createRequestFactory(
+                (HttpRequest request) -> request.setParser(new JsonObjectParser(jsonFactory))
+        );
+    }
+
+    /**
+     * Instantiates a new MedAutoCompleteHandler using the given HttpTransport (may be mocked) and sets up its request
+     * factory (using a JSON factory to parse JSON response bodies).
+     */
+    public MedAutoCompleteHandler(HttpTransport transport) {
+        super(transport);
+        requestFactory = httpTransport.createRequestFactory(
+                (HttpRequest request) -> request.setParser(new JsonObjectParser(jsonFactory))
         );
     }
 
