@@ -7,26 +7,33 @@ import java.util.List;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestFactory;
 import com.google.api.client.http.HttpResponseException;
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.JsonObjectParser;
-import com.google.api.client.json.gson.GsonFactory;
 
-public class HTTPUtils {
+/**
+ * A handler for requests to the drug autocompletion web API provided by MAPI.
+ */
+public class MedAutoCompleteHandler implements WebAPIHandler {
 
     private static final String AUTOCOMPLETE_ENDPOINT = "http://mapi-us.iterar.co/api/autocomplete";
 
-    private static HttpTransport HTTP_TRANSPORT = new NetHttpTransport();
-    private static JsonFactory JSON_FACTORY = new GsonFactory();
+    private HttpRequestFactory requestFactory;
 
-    public static List<String> getMedAutoCompleteSuggestions(String queryString) {
-        List<String> suggestions = new ArrayList<>();
-
-        HttpRequestFactory requestFactory = HTTP_TRANSPORT.createRequestFactory(
+    /**
+     * Instantiates a new MedAutoCompleteHandler and sets up its request factory (with a JSON factory for responses).
+     */
+    public MedAutoCompleteHandler() {
+        requestFactory = HTTP_TRANSPORT.createRequestFactory(
                 (HttpRequest request) -> request.setParser(new JsonObjectParser(JSON_FACTORY))
         );
+    }
 
+    /**
+     * Makes a request to the drug autocompletion web API and returns the results.
+     * @param queryString The query string to send to the API.
+     * @return A list of suggested drug names matching the query string.
+     */
+    public List<String> getSuggestions(String queryString) {
+        List<String> suggestions = new ArrayList<>();
         try {
             MedAutoCompleteURL url = new MedAutoCompleteURL(AUTOCOMPLETE_ENDPOINT);
             url.setQueryString(queryString);
@@ -40,9 +47,5 @@ public class HTTPUtils {
             exc.printStackTrace();
         }
         return suggestions;
-    }
-
-    public static void main(String[] args) {
-        System.out.println(getMedAutoCompleteSuggestions("pan"));
     }
 }
