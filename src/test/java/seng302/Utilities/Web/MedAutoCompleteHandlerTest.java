@@ -1,6 +1,6 @@
 package seng302.Utilities.Web;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -27,9 +27,9 @@ public class MedAutoCompleteHandlerTest {
 
     /**
      * Creates a MockHttpTransport that will return the same response every time. The response will have:
-     *   Status: 200 OK
-     *   ContentType: application/json
-     *   Body: {jsonResponseBody}
+     * Status: 200 OK
+     * ContentType: application/json
+     * Body: {jsonResponseBody}
      * @param jsonResponseBody The JSON string to put in the body of every response from this HttpTransport.
      * @return A new MockHttpTransport that will always return the described response.
      */
@@ -56,7 +56,11 @@ public class MedAutoCompleteHandlerTest {
      */
     @Test
     public void getSuggestionsTest1() {
-        final String EXPECTED_RESPONSE_BODY = "{\"query\":\"res\",\"suggestions\":[\"Reserpine\",\"Resectisol\",\"Resectisol in plastic container\",\"Restoril\",\"Rescriptor\",\"Restasis\",\"Rescula\",\"Reserpine and hydrochlorothiazide\",\"Reserpine, hydralazine hydrochloride and hydrochlorothiazide\",\"Reserpine, hydrochlorothiazide, and hydralazine hydrochloride\",\"Reserpine and hydrochlorothiazide-50\",\"Reserpine and hydroflumethiazide\",\"Resporal\"]}";
+        final String EXPECTED_RESPONSE_BODY = "{\"query\":\"res\",\"suggestions\":[\"Reserpine\",\"Resectisol\",\"Resec"
+                + "tisol in plastic container\",\"Restoril\",\"Rescriptor\",\"Restasis\",\"Rescula\",\"Reserpine and hy"
+                + "drochlorothiazide\",\"Reserpine, hydralazine hydrochloride and hydrochlorothiazide\",\"Reserpine, hy"
+                + "drochlorothiazide, and hydralazine hydrochloride\",\"Reserpine and hydrochlorothiazide-50\",\"Reserp"
+                + "ine and hydroflumethiazide\",\"Resporal\"]}";
 
         mockTransport = makeMockHttpTransport(EXPECTED_RESPONSE_BODY);
         handler = new MedAutoCompleteHandler(mockTransport);
