@@ -1,12 +1,10 @@
 package seng302.Utilities.Web;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
 import seng302.Donor;
-import seng302.Utilities.Enums.Gender;
 
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequest;
@@ -17,6 +15,9 @@ import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonObjectParser;
 
+/**
+ * A handler for requests to a drug interaction API.
+ */
 public class DrugInteractionsHandler extends WebAPIHandler {
     private static final String INTERACTIONS_ENDPOINT = "https://www.ehealthme.com/api/v1/drug-interaction/%s/%s/";
     private static final int STUDY_NOT_DONE_RESPONSE = 202;
@@ -82,12 +83,5 @@ public class DrugInteractionsHandler extends WebAPIHandler {
 
             throw new UnsupportedOperationException(e);
         }
-    }
-
-    public static void main(String[] args) {
-        Donor donor = new Donor("first", null, "last", LocalDate.now().minusYears(32).minusDays(10), 0);
-        donor.setGender(Gender.FEMALE);
-//        new DrugInteractionsHandler().getInteractions(donor, "escitalopram", "diazepam");
-        new DrugInteractionsHandler().getInteractions(donor, "leflunomide", "prednisone");
     }
 }
