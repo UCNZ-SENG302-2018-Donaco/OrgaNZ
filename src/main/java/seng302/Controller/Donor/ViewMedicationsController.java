@@ -7,6 +7,7 @@ import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
@@ -55,15 +56,23 @@ public class ViewMedicationsController extends SubController {
         pastMedications.addListener((ListChangeListener<MedicationHistoryItem>) change -> {
             change.next();
             for (MedicationHistoryItem item : change.getAddedSubList()) {
-                item.setStopped(LocalDate.now());
+                if (!donor.getPastMedications().contains(item)) {
+                    item.setStopped(LocalDate.now());
+                    donor.getCurrentMedications().remove(item);
+                    donor.getPastMedications().add(item);
+                }
             }
         });
 
         currentMedications.addListener((ListChangeListener<MedicationHistoryItem>) change -> {
             change.next();
             for (MedicationHistoryItem item : change.getAddedSubList()) {
-                item.setStarted(LocalDate.now());
-                item.setStopped(null);
+                if (!donor.getCurrentMedications().contains(item)) {
+                    item.setStarted(LocalDate.now());
+                    item.setStopped(null);
+                    donor.getPastMedications().remove(item);
+                    donor.getCurrentMedications().add(item);
+                }
             }
         });
     }
@@ -84,6 +93,11 @@ public class ViewMedicationsController extends SubController {
         refreshMedicationLists();
     }
 
+    private void refreshMedicationLists() {
+        pastMedications.setAll(donor.getPastMedications());
+        currentMedications.setAll(donor.getCurrentMedications());
+    }
+
     @FXML
     public void newMedKeyPressed(KeyEvent keyEvent) {
         if (keyEvent.getCode().equals(KeyCode.ENTER)) {
@@ -91,17 +105,18 @@ public class ViewMedicationsController extends SubController {
         }
     }
 
-    private void refreshMedicationLists() {
-        pastMedications.setAll(donor.getPastMedications());
-        currentMedications.setAll(donor.getCurrentMedications());
+    @FXML
+    private void addButtonPressed(ActionEvent event) {
+        addMedication(newMedField.getText());
     }
 
     private void addMedication(String newMedName) {
-        MedicationHistoryItem newMed = new MedicationHistoryItem(newMedName, LocalDate.now(), null);
-        donor.getCurrentMedications().add(newMed);
-
+        currentMedications.add(new MedicationHistoryItem(newMedName, LocalDate.now(), null));
         newMedField.setText("");
-        refreshMedicationLists();
+    }
+
+    @FXML
+    private void deleteMedication(ActionEvent actionEvent) {
     }
 
     private List<String> getSuggestions(String input) {
