@@ -1,13 +1,17 @@
 package seng302;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class MedicationHistoryItem {
-    private String medicationName;
-    private LocalDateTime started;
-    private LocalDateTime stopped;
 
-    public MedicationHistoryItem(String medicationName, LocalDateTime started, LocalDateTime stopped) {
+    private static DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+    private String medicationName;
+    private LocalDate started;
+    private LocalDate stopped;
+
+    public MedicationHistoryItem(String medicationName, LocalDate started, LocalDate stopped) {
         this.medicationName = medicationName;
         this.started = started;
         this.stopped = stopped;
@@ -17,11 +21,11 @@ public class MedicationHistoryItem {
         return medicationName;
     }
 
-    public LocalDateTime getStarted() {
+    public LocalDate getStarted() {
         return started;
     }
 
-    public LocalDateTime getStopped() {
+    public LocalDate getStopped() {
         return stopped;
     }
 
@@ -29,11 +33,20 @@ public class MedicationHistoryItem {
         this.medicationName = medicationName;
     }
 
-    public void setStarted(LocalDateTime started) {
+    public void setStarted(LocalDate started) {
         this.started = started;
     }
 
-    public void setStopped(LocalDateTime stopped) {
+    public void setStopped(LocalDate stopped) {
         this.stopped = stopped;
+    }
+
+    public String toString() {
+        if (stopped == null) {
+            return String.format("%s (started using: %s)", medicationName, started.format(dateFormat));
+        } else {
+            return String.format("%s (started using: %s, stopped using: %s)", medicationName,
+                    started.format(dateFormat), stopped.format(dateFormat));
+        }
     }
 }

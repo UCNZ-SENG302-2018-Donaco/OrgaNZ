@@ -37,12 +37,17 @@ public class Donor {
     private LocalDateTime modifiedTimestamp;
 
     private Map<Organ, Boolean> organStatus;
-    private List<MedicationHistoryItem> medicationHistory;
+
+    private List<MedicationHistoryItem> currentMedications;
+    private List<MedicationHistoryItem> pastMedications;
 
     private ArrayList<String> updateLog = new ArrayList<>();
 
     public Donor() {
         createdTimestamp = LocalDateTime.now();
+        initOrgans();
+        currentMedications = new ArrayList<>();
+        pastMedications = new ArrayList<>();
     }
 
     /**
@@ -64,7 +69,8 @@ public class Donor {
         this.createdTimestamp = LocalDateTime.now();
 
         initOrgans();
-        medicationHistory = new ArrayList<>();
+        currentMedications = new ArrayList<>();
+        pastMedications = new ArrayList<>();
     }
 
     private void initOrgans() {
@@ -274,6 +280,14 @@ public class Donor {
 
     public LocalDateTime getModifiedTimestamp() {
         return modifiedTimestamp;
+    }
+
+    public List<MedicationHistoryItem> getCurrentMedications() {
+        return currentMedications;
+    }
+
+    public List<MedicationHistoryItem> getPastMedications() {
+        return pastMedications;
     }
 
     /**
