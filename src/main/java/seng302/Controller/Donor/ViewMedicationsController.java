@@ -22,6 +22,7 @@ import seng302.MedicationHistoryItem;
 import seng302.State.Session;
 import seng302.State.Session.UserType;
 import seng302.State.State;
+import seng302.Utilities.Web.MedAutoCompleteHandler;
 
 import impl.org.controlsfx.autocompletion.AutoCompletionTextFieldBinding;
 
@@ -32,6 +33,7 @@ public class ViewMedicationsController extends SubController {
 
     private Session session;
     private Donor donor;
+    private MedAutoCompleteHandler autoCompleteHandler;
 
     @FXML
     private Pane sidebarPane;
@@ -56,12 +58,14 @@ public class ViewMedicationsController extends SubController {
 
     /**
      * Initializes the UI for this page.
+     * - Starts the WebAPIHandler for drug name autocompletion.
      * - Sets listeners for changing selection on two list views so that if an item is selected on one, the selection
      * is removed from the other.
      * - Checks if the logged in user is a donor, and if so, makes the page non-editable.
      */
     @FXML
     private void initialize() {
+        autoCompleteHandler = new MedAutoCompleteHandler();
         new AutoCompletionTextFieldBinding<>(newMedField, param -> getSuggestions(newMedField.getText()));
 
         pastMedicationsView.getSelectionModel().selectedItemProperty().addListener(
@@ -207,6 +211,6 @@ public class ViewMedicationsController extends SubController {
     }
 
     private List<String> getSuggestions(String input) {
-        return new ArrayList<>();
+        return autoCompleteHandler.getSuggestions(input);
     }
 }
