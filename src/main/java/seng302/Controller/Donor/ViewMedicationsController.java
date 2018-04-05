@@ -184,9 +184,11 @@ public class ViewMedicationsController extends SubController {
      * @param newMedName The name of the medication to add a new instance of.
      */
     private void addMedication(String newMedName) {
-        donor.getCurrentMedications().add(new MedicationHistoryItem(newMedName, LocalDate.now(), null));
-        newMedField.setText("");
-        refreshMedicationLists();
+        if (!newMedName.equals("")) {
+            donor.getCurrentMedications().add(new MedicationHistoryItem(newMedName, LocalDate.now(), null));
+            newMedField.setText("");
+            refreshMedicationLists();
+        }
     }
 
     /**
