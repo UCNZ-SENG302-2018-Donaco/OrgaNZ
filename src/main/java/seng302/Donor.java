@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import seng302.Utilities.Enums.BloodType;
@@ -19,33 +20,29 @@ import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
 
 public class Donor {
 
-    private final LocalDateTime created_on;
-    private LocalDateTime modified_on;
-
+    private int uid;
     private String firstName;
     private String lastName;
     private String middleName;
-
     private String currentAddress;
     private Region region;
-
     private Gender gender;
     private BloodType bloodType;
-
     private double height;
     private double weight;
-
     private LocalDate dateOfBirth;
     private LocalDate dateOfDeath;
 
+    private final LocalDateTime createdTimestamp;
+    private LocalDateTime modifiedTimestamp;
+
     private Map<Organ, Boolean> organStatus;
+    private List<MedicationHistoryItem> medicationHistory;
 
     private ArrayList<String> updateLog = new ArrayList<>();
 
-    private int uid;
-
     public Donor() {
-        created_on = LocalDateTime.now();
+        createdTimestamp = LocalDateTime.now();
     }
 
     /**
@@ -57,17 +54,17 @@ public class Donor {
      * @param uid A unique user ID. Should be queried to ensure uniqueness
      */
     public Donor(String firstName, String middleName, String lastName, LocalDate dateOfBirth, int uid) {
-        created_on = LocalDateTime.now();
-
         this.uid = uid;
-
-        gender = Gender.UNSPECIFIED;
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
         this.dateOfBirth = dateOfBirth;
 
+        this.gender = Gender.UNSPECIFIED;
+        this.createdTimestamp = LocalDateTime.now();
+
         initOrgans();
+        medicationHistory = new ArrayList<>();
     }
 
     private void initOrgans() {
@@ -80,7 +77,7 @@ public class Donor {
     private void addUpdate(String function) {
         LocalDateTime timestamp = LocalDateTime.now();
         updateLog.add(String.format("%s; updated %s", timestamp, function));
-        modified_on = LocalDateTime.now();
+        modifiedTimestamp = LocalDateTime.now();
     }
 
     /**
@@ -102,10 +99,11 @@ public class Donor {
     }
 
     /**
-     * Get the donors organ donation status, with a formatted string listing the organs to be donated
-     * @return A formatted string listing the organs to be donated
+     * Returns a string listing the organs that the donor is currently donating, or a message that the donor currently
+     * has no organs registered for donation if that is the case.
+     * @return The donor's organ status string.
      */
-    public String getDonorOrganStatusString() {
+    public String getOrganStatusString() {
         StringBuilder builder = new StringBuilder();
         for (Map.Entry<Organ, Boolean> entry : organStatus.entrySet()) {
             if (entry.getValue()) {
@@ -116,31 +114,18 @@ public class Donor {
             }
         }
         if (builder.length() == 0) {
-            return String.format("User: %s. Name: %s, no organs registered for donation", uid, getFullName());
+            return "No organs registered for donation";
         } else {
-            return String.format("User: %s. Name: %s, Donation status: %s", uid, getFullName(), builder.toString());
+            return builder.toString();
         }
     }
 
     /**
-     * Get the donors organ donation status, with a formatted string listing the organs to be donated
-     * @return A formatted string listing the organs to be donated
+     * Returns a formatted string listing the donor's ID number, full name, and the organs they are donating.
+     * @return The formatted donor info string.
      */
-    public String getDonorOrgans() {
-        StringBuilder builder = new StringBuilder();
-        for (Map.Entry<Organ, Boolean> entry : organStatus.entrySet()) {
-            if (entry.getValue()) {
-                if (builder.length() != 0) {
-                    builder.append(", ");
-                }
-                builder.append(entry.getKey().toString());
-            }
-        }
-        if (builder.length() == 0) {
-            return String.format("User: %s. Name: %s, no organs registered for donation", uid, getFullName());
-        } else {
-            return String.format(" %s", builder.toString());
-        }
+    public String getDonorOrganStatusString() {
+        return String.format("User: %s. Name: %s, Donation status: %s.", uid, getFullName(), getOrganStatusString());
     }
 
     /**
@@ -164,7 +149,7 @@ public class Donor {
                         " height: %scm, weight: %skg, blood type: %s, current address: %s, region: %s," +
                         " created on: %s, modified on: %s",
                 uid, getFullName(), dateOfBirth, dateOfDeath, gender,
-                height, weight, bloodType, currentAddress, region, created_on, modified_on);
+                height, weight, bloodType, currentAddress, region, createdTimestamp, modifiedTimestamp);
     }
 
     /**
@@ -283,12 +268,12 @@ public class Donor {
         return uid;
     }
 
-    public LocalDateTime getCreationdate() {
-        return created_on;
+    public LocalDateTime getCreatedTimestamp() {
+        return createdTimestamp;
     }
 
-    public LocalDateTime getModified_on() {
-        return modified_on;
+    public LocalDateTime getModifiedTimestamp() {
+        return modifiedTimestamp;
     }
 
     /**
