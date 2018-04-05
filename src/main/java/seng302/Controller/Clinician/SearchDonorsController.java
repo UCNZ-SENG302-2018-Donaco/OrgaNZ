@@ -128,14 +128,15 @@ public class SearchDonorsController extends SubController {
         tableView.setOnMouseClicked(mouseEvent -> {
             if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2) {
                 Donor donor = tableView.getSelectionModel().getSelectedItem();
-
-                MainController newMain = PageNavigator.openNewWindow();
-                if (newMain != null) {
-                    newMain.setWindowContext(new WindowContext.WindowContextBuilder()
-                            .setAsClinViewDonorWindow()
-                            .viewDonor(donor)
-                            .build());
-                    PageNavigator.loadPage(Page.VIEW_DONOR, newMain);
+                if (donor != null) {
+                    MainController newMain = PageNavigator.openNewWindow();
+                    if (newMain != null) {
+                        newMain.setWindowContext(new WindowContext.WindowContextBuilder()
+                                .setAsClinViewDonorWindow()
+                                .viewDonor(donor)
+                                .build());
+                        PageNavigator.loadPage(Page.VIEW_DONOR, newMain);
+                    }
                 }
             }
         });
