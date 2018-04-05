@@ -193,13 +193,17 @@ public class ViewMedicationsController extends SubController {
      */
     @FXML
     private void deleteMedication(ActionEvent event) {
-        MedicationHistoryItem item = selectedListView.getSelectionModel().getSelectedItem();
-        if (selectedListView == pastMedicationsView) {
-            donor.getPastMedications().remove(item);
-        } else if (selectedListView == currentMedicationsView) {
-            donor.getCurrentMedications().remove(item);
+        if (selectedListView != null) {
+            MedicationHistoryItem item = selectedListView.getSelectionModel().getSelectedItem();
+            if (item != null) {
+                if (selectedListView == pastMedicationsView) {
+                    donor.getPastMedications().remove(item);
+                } else if (selectedListView == currentMedicationsView) {
+                    donor.getCurrentMedications().remove(item);
+                }
+                refreshMedicationLists();
+            }
         }
-        refreshMedicationLists();
     }
 
     private List<String> getSuggestions(String input) {
