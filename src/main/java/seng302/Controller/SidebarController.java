@@ -26,7 +26,8 @@ import seng302.Utilities.View.PageNavigator;
 public class SidebarController extends SubController {
 
     @FXML
-    private Button viewDonorButton, registerOrgansButton, viewClinicianButton, searchButton, logoutButton;
+    private Button viewDonorButton, registerOrgansButton, viewMedicationsButton, viewClinicianButton, searchButton,
+    logoutButton;
 
     private ActionInvoker invoker;
     private Session session;
@@ -50,6 +51,7 @@ public class SidebarController extends SubController {
         } else if (userType == Session.UserType.CLINICIAN) {
             hideButton(viewDonorButton);
             hideButton(registerOrgansButton);
+            hideButton(viewMedicationsButton);
         }
 
         if (windowContext.isClinViewDonorWindow()) {
@@ -78,6 +80,15 @@ public class SidebarController extends SubController {
     @FXML
     private void goToRegisterOrgans(ActionEvent event) {
         PageNavigator.loadPage(Page.REGISTER_ORGANS, mainController);
+    }
+
+    /**
+     * Redirects the GUI to the View Medications page.
+     * @param event When the register organs button is clicked.
+     */
+    @FXML
+    private void goToViewMedications(ActionEvent event) {
+        PageNavigator.loadPage(Page.VIEW_MEDICATIONS, mainController);
     }
 
     /**

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<VBox prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.Donor.ViewMedicationsController">
+  <children>
+    <SplitPane dividerPositions="0.5" VBox.vgrow="ALWAYS">
+      <items>
+        <HBox fx:id="sidebarPane" maxWidth="200.0" minWidth="200.0" prefWidth="200.0" />
+        <VBox prefHeight="600.0" prefWidth="800.0">
+          <children>
+            <BorderPane VBox.vgrow="ALWAYS">
+              <top>
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="View/edit medications" textAlignment="CENTER" BorderPane.alignment="CENTER">
+                  <font>
+                    <Font size="24.0" />
+                  </font>
+                  <BorderPane.margin>
+                    <Insets top="50.0" />
+                  </BorderPane.margin>
+                </Text>
+              </top>
+              <center>
+              </center>
+            </BorderPane>
+          </children>
+        </VBox>
+      </items>
+    </SplitPane>
+  </children>
+</VBox>
