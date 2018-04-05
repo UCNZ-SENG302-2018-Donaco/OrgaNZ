@@ -7,10 +7,12 @@ import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 
 import seng302.Controller.MainController;
@@ -18,6 +20,7 @@ import seng302.Controller.SubController;
 import seng302.Donor;
 import seng302.MedicationHistoryItem;
 import seng302.State.Session;
+import seng302.State.Session.UserType;
 import seng302.State.State;
 
 import impl.org.controlsfx.autocompletion.AutoCompletionTextFieldBinding;
@@ -32,6 +35,12 @@ public class ViewMedicationsController extends SubController {
 
     @FXML
     private TextField newMedField;
+
+    @FXML
+    private HBox newMedicationPane;
+
+    @FXML
+    private Button moveToHistoryButton, moveToCurrentButton, deleteButton;
 
     @FXML
     private ListView<MedicationHistoryItem> pastMedicationsView, currentMedicationsView;
@@ -57,6 +66,15 @@ public class ViewMedicationsController extends SubController {
                 selectedListView = currentMedicationsView;
                 pastMedicationsView.getSelectionModel().clearSelection();
             });
+
+        if (session.getLoggedInUserType() == UserType.DONOR) {
+            newMedicationPane.setVisible(false);
+            newMedicationPane.setManaged(false);
+
+            moveToHistoryButton.setDisable(true);
+            moveToCurrentButton.setDisable(true);
+            deleteButton.setDisable(true);
+        }
     }
 
     @Override
@@ -81,20 +99,24 @@ public class ViewMedicationsController extends SubController {
     @FXML
     private void moveMedicationToHistory(ActionEvent actionEvent) {
         MedicationHistoryItem item = currentMedicationsView.getSelectionModel().getSelectedItem();
-        item.setStopped(LocalDate.now());
-        donor.getCurrentMedications().remove(item);
-        donor.getPastMedications().add(item);
-        refreshMedicationLists();
+        if (item != null) {
+            item.setStopped(LocalDate.now());
+            donor.getCurrentMedications().remove(item);
+            donor.getPastMedications().add(item);
+            refreshMedicationLists();
+        }
     }
 
     @FXML
     private void moveMedicationToCurrent(ActionEvent actionEvent) {
         MedicationHistoryItem item = pastMedicationsView.getSelectionModel().getSelectedItem();
-        item.setStarted(LocalDate.now());
-        item.setStopped(null);
-        donor.getPastMedications().remove(item);
-        donor.getCurrentMedications().add(item);
-        refreshMedicationLists();
+        if (item != null) {
+            item.setStarted(LocalDate.now());
+            item.setStopped(null);
+            donor.getPastMedications().remove(item);
+            donor.getCurrentMedications().add(item);
+            refreshMedicationLists();
+        }
     }
 
     @FXML
