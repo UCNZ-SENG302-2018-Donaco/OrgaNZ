@@ -75,7 +75,7 @@ public class PrintDonorOrganTest {
         CommandLine.run(spyPrintDonorOrgan, System.out, inputs);
 
         assertThat(outContent.toString(),
-                containsString("User: 1. Name: First mid Last, no organs registered for donation"));
+                containsString("User: 1. Name: First mid Last, Donation status: No organs registered for donation"));
     }
 
     @Test

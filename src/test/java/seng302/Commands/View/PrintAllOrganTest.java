@@ -90,6 +90,7 @@ public class PrintAllOrganTest {
         assertThat(outContent.toString(),
                 containsString("User: 2. Name: FirstTwo LastTwo, Donation status: Connective tissue"));
         assertThat(outContent.toString(),
-                containsString("User: 3. Name: FirstThree LastThree, no organs registered for donation"));
+                containsString("User: 3. Name: FirstThree LastThree, Donation status: No organs registered for "
+                        + "donation"));
     }
 }
