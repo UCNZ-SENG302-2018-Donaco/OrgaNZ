@@ -3,6 +3,9 @@ package seng302;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Represents an instance of a user taking a medication for a period of time.
+ */
 public class MedicationHistoryItem {
 
     private static DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -11,6 +14,13 @@ public class MedicationHistoryItem {
     private LocalDate started;
     private LocalDate stopped;
 
+    /**
+     * Creates a new MedicationHistoryItem for a given medication name, with the given started date and stopped date.
+     * @param medicationName The name of the medication to create a record for.
+     * @param started The date on which the user started taking this medication.
+     * @param stopped The date on which the user stopped taking this medication. If null, means the user is still
+     * taking this medication.
+     */
     public MedicationHistoryItem(String medicationName, LocalDate started, LocalDate stopped) {
         this.medicationName = medicationName;
         this.started = started;
