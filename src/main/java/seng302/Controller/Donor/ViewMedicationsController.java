@@ -1,7 +1,6 @@
 package seng302.Controller.Donor;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 import javafx.collections.FXCollections;
@@ -33,6 +32,7 @@ public class ViewMedicationsController extends SubController {
 
     private Session session;
     private Donor donor;
+    private List<String> lastResponse;
     private MedAutoCompleteHandler autoCompleteHandler;
 
     @FXML
@@ -66,7 +66,10 @@ public class ViewMedicationsController extends SubController {
     @FXML
     private void initialize() {
         autoCompleteHandler = new MedAutoCompleteHandler();
-        new AutoCompletionTextFieldBinding<>(newMedField, param -> getSuggestions(newMedField.getText()));
+        new AutoCompletionTextFieldBinding<String>(newMedField, param -> {
+            String input = param.getUserText().trim();
+            return getSuggestions(input);
+        });
 
         pastMedicationsView.getSelectionModel().selectedItemProperty().addListener(
             (observable) -> {
@@ -218,6 +221,16 @@ public class ViewMedicationsController extends SubController {
      * @return The list of suggested medication names.
      */
     private List<String> getSuggestions(String input) {
-        return autoCompleteHandler.getSuggestions(input);
+        if (input.equals("")) {
+            return null;
+        } else {
+            List<String> results = autoCompleteHandler.getSuggestions(input);
+            if (input.equals(newMedField.getText())) {
+                lastResponse = results;
+                return results;
+            } else {
+                return lastResponse;
+            }
+        }
     }
 }
