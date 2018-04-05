@@ -131,11 +131,11 @@ public class ViewDonorController extends SubController {
             region.setValue(viewedDonor.getRegion());
             address.setText(viewedDonor.getCurrentAddress());
 
-            creationDate.setText(viewedDonor.getCreationdate().format(dateTimeFormat));
-            if (viewedDonor.getModified_on() == null) {
+            creationDate.setText(viewedDonor.getCreatedTimestamp().format(dateTimeFormat));
+            if (viewedDonor.getModifiedTimestamp() == null) {
                 lastModified.setText("User has not been modified yet.");
             } else {
-                lastModified.setText(viewedDonor.getModified_on().format(dateTimeFormat));
+                lastModified.setText(viewedDonor.getModifiedTimestamp().format(dateTimeFormat));
             }
 
             HistoryItem save = new HistoryItem("SEARCH DONOR",
@@ -167,7 +167,7 @@ public class ViewDonorController extends SubController {
             updateChanges();
             displayBMI();
             displayAge();
-            lastModified.setText(viewedDonor.getModified_on().format(dateTimeFormat));
+            lastModified.setText(viewedDonor.getModifiedTimestamp().format(dateTimeFormat));
             //TODO show what in particular was updated
             HistoryItem save = new HistoryItem("UPDATE DONOR INFO",
                     "Updated changes to donor " + viewedDonor.getFirstName() + " " + viewedDonor.getLastName()

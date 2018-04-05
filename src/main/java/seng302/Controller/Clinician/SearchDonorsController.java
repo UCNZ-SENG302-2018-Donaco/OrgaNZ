@@ -115,9 +115,11 @@ public class SearchDonorsController extends SubController {
                 if (donor == null) {
                     setTooltip(null);
                 } else {
-                    tooltip.setText(
-                            donor.getFirstName() + " " + donor.getLastName() + ". Donor of: " + donor.getDonorOrgans()
-                                    + " with blood type " + donor.getBloodType());
+                    tooltip.setText(String.format("%s %s with blood type %s. Donating: %s",
+                            donor.getFirstName(),
+                            donor.getLastName(),
+                            donor.getBloodType(),
+                            donor.getOrganStatusString()));
                     setTooltip(tooltip);
                 }
             }
