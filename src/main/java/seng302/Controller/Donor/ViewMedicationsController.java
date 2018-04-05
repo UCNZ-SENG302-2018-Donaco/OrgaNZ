@@ -17,7 +17,7 @@ import javafx.scene.layout.Pane;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
 import seng302.Donor;
-import seng302.MedicationHistoryItem;
+import seng302.MedicationRecord;
 import seng302.State.Session;
 import seng302.State.Session.UserType;
 import seng302.State.State;
@@ -48,9 +48,9 @@ public class ViewMedicationsController extends SubController {
     private Button moveToHistoryButton, moveToCurrentButton, deleteButton;
 
     @FXML
-    private ListView<MedicationHistoryItem> pastMedicationsView, currentMedicationsView;
+    private ListView<MedicationRecord> pastMedicationsView, currentMedicationsView;
 
-    private ListView<MedicationHistoryItem> selectedListView = null;
+    private ListView<MedicationRecord> selectedListView = null;
 
     public ViewMedicationsController() {
         session = State.getSession();
@@ -123,39 +123,39 @@ public class ViewMedicationsController extends SubController {
     }
 
     /**
-     * Moves the MedicationHistoryItem selected in the current medications list to the past medications list. Also:
+     * Moves the MedicationRecord selected in the current medications list to the past medications list. Also:
      * - Sets the date the donor stopped taking the medication to the current date.
-     * - Removes the MedicationHistoryItem from the current medications list.
+     * - Removes the MedicationRecord from the current medications list.
      * - Refreshes both list views.
      * @param event When the '<' button is pressed.
      */
     @FXML
     private void moveMedicationToHistory(ActionEvent event) {
-        MedicationHistoryItem item = currentMedicationsView.getSelectionModel().getSelectedItem();
-        if (item != null) {
-            item.setStopped(LocalDate.now());
-            donor.getCurrentMedications().remove(item);
-            donor.getPastMedications().add(item);
+        MedicationRecord record = currentMedicationsView.getSelectionModel().getSelectedItem();
+        if (record != null) {
+            record.setStopped(LocalDate.now());
+            donor.getCurrentMedications().remove(record);
+            donor.getPastMedications().add(record);
             refreshMedicationLists();
         }
     }
 
     /**
-     * Moves the MedicationHistoryItem selected in the past medications list to the current medications list. Also:
+     * Moves the MedicationRecord selected in the past medications list to the current medications list. Also:
      * - Sets the date the donor started taking the medication to the current date.
      * - Sets the date the donor stopped taking the medication to null (hasn't stopped yet).
-     * - Removes the MedicationHistoryItem from the past medications list.
+     * - Removes the MedicationRecord from the past medications list.
      * - Refreshes both list views.
      * @param event When the '>' button is pressed.
      */
     @FXML
     private void moveMedicationToCurrent(ActionEvent event) {
-        MedicationHistoryItem item = pastMedicationsView.getSelectionModel().getSelectedItem();
-        if (item != null) {
-            item.setStarted(LocalDate.now());
-            item.setStopped(null);
-            donor.getPastMedications().remove(item);
-            donor.getCurrentMedications().add(item);
+        MedicationRecord record = pastMedicationsView.getSelectionModel().getSelectedItem();
+        if (record != null) {
+            record.setStarted(LocalDate.now());
+            record.setStopped(null);
+            donor.getPastMedications().remove(record);
+            donor.getCurrentMedications().add(record);
             refreshMedicationLists();
         }
     }
@@ -182,20 +182,20 @@ public class ViewMedicationsController extends SubController {
     }
 
     /**
-     * Creates a new MedicationHistoryItem for a medication with the given name, sets its 'started' date to the
+     * Creates a new MedicationRecord for a medication with the given name, sets its 'started' date to the
      * current date, then adds it to the donor's current medications list.
      * @param newMedName The name of the medication to add a new instance of.
      */
     private void addMedication(String newMedName) {
         if (!newMedName.equals("")) {
-            donor.getCurrentMedications().add(new MedicationHistoryItem(newMedName, LocalDate.now(), null));
+            donor.getCurrentMedications().add(new MedicationRecord(newMedName, LocalDate.now(), null));
             newMedField.setText("");
             refreshMedicationLists();
         }
     }
 
     /**
-     * Deletes the currently selected MedicationHistoryItem. Will determine which of the list views is currently
+     * Deletes the currently selected MedicationRecord. Will determine which of the list views is currently
      * selected, then delete from the appropriate one. If neither list view is currently selected, this will have no
      * effect.
      * @param event When the 'delete' button is clicked.
@@ -203,12 +203,12 @@ public class ViewMedicationsController extends SubController {
     @FXML
     private void deleteMedication(ActionEvent event) {
         if (selectedListView != null) {
-            MedicationHistoryItem item = selectedListView.getSelectionModel().getSelectedItem();
-            if (item != null) {
+            MedicationRecord record = selectedListView.getSelectionModel().getSelectedItem();
+            if (record != null) {
                 if (selectedListView == pastMedicationsView) {
-                    donor.getPastMedications().remove(item);
+                    donor.getPastMedications().remove(record);
                 } else if (selectedListView == currentMedicationsView) {
-                    donor.getCurrentMedications().remove(item);
+                    donor.getCurrentMedications().remove(record);
                 }
                 refreshMedicationLists();
             }

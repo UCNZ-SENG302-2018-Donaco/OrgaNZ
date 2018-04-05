@@ -38,8 +38,8 @@ public class Donor {
 
     private Map<Organ, Boolean> organStatus;
 
-    private List<MedicationHistoryItem> currentMedications;
-    private List<MedicationHistoryItem> pastMedications;
+    private List<MedicationRecord> currentMedications;
+    private List<MedicationRecord> pastMedications;
 
     private ArrayList<String> updateLog = new ArrayList<>();
 
@@ -282,11 +282,11 @@ public class Donor {
         return modifiedTimestamp;
     }
 
-    public List<MedicationHistoryItem> getCurrentMedications() {
+    public List<MedicationRecord> getCurrentMedications() {
         return currentMedications;
     }
 
-    public List<MedicationHistoryItem> getPastMedications() {
+    public List<MedicationRecord> getPastMedications() {
         return pastMedications;
     }
 
