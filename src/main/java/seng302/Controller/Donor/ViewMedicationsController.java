@@ -210,6 +210,11 @@ public class ViewMedicationsController extends SubController {
         }
     }
 
+    /**
+     * Gets a list of medication suggestions for the given input from the autocomplete WebAPIHandler.
+     * @param input The string to search for suggested drug names that start with this.
+     * @return The list of suggested medication names.
+     */
     private List<String> getSuggestions(String input) {
         return autoCompleteHandler.getSuggestions(input);
     }
