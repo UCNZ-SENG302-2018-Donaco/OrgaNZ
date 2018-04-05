@@ -5,11 +5,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -23,15 +21,11 @@ import seng302.State.Session;
 import seng302.State.State;
 
 import impl.org.controlsfx.autocompletion.AutoCompletionTextFieldBinding;
-import org.controlsfx.control.ListSelectionView;
 
 public class ViewMedicationsController extends SubController {
 
     private Session session;
     private Donor donor;
-
-    private ObservableList<MedicationHistoryItem> pastMedications = FXCollections.observableArrayList();
-    private ObservableList<MedicationHistoryItem> currentMedications = FXCollections.observableArrayList();
 
     @FXML
     private Pane sidebarPane;
@@ -40,7 +34,9 @@ public class ViewMedicationsController extends SubController {
     private TextField newMedField;
 
     @FXML
-    private ListSelectionView<MedicationHistoryItem> medicationListsView;
+    private ListView<MedicationHistoryItem> pastMedicationsView, currentMedicationsView;
+
+    private ListView<MedicationHistoryItem> selectedListView = null;
 
     public ViewMedicationsController() {
         session = State.getSession();
@@ -48,33 +44,19 @@ public class ViewMedicationsController extends SubController {
 
     @FXML
     private void initialize() {
-        medicationListsView.setSourceHeader(new Label("Past Medications"));
-        medicationListsView.setTargetHeader(new Label("Current Medications"));
-
         new AutoCompletionTextFieldBinding<>(newMedField, param -> getSuggestions(newMedField.getText()));
 
-        pastMedications.addListener((ListChangeListener<MedicationHistoryItem>) change -> {
-            change.next();
-            for (MedicationHistoryItem item : change.getAddedSubList()) {
-                if (!donor.getPastMedications().contains(item)) {
-                    item.setStopped(LocalDate.now());
-                    donor.getCurrentMedications().remove(item);
-                    donor.getPastMedications().add(item);
-                }
-            }
-        });
+        pastMedicationsView.getSelectionModel().selectedItemProperty().addListener(
+            (observable) -> {
+                selectedListView = pastMedicationsView;
+                currentMedicationsView.getSelectionModel().clearSelection();
+            });
 
-        currentMedications.addListener((ListChangeListener<MedicationHistoryItem>) change -> {
-            change.next();
-            for (MedicationHistoryItem item : change.getAddedSubList()) {
-                if (!donor.getCurrentMedications().contains(item)) {
-                    item.setStarted(LocalDate.now());
-                    item.setStopped(null);
-                    donor.getPastMedications().remove(item);
-                    donor.getCurrentMedications().add(item);
-                }
-            }
-        });
+        currentMedicationsView.getSelectionModel().selectedItemProperty().addListener(
+            (observable) -> {
+                selectedListView = currentMedicationsView;
+                pastMedicationsView.getSelectionModel().clearSelection();
+            });
     }
 
     @Override
@@ -88,14 +70,31 @@ public class ViewMedicationsController extends SubController {
             donor = windowContext.getViewDonor();
         }
 
-        medicationListsView.setSourceItems(pastMedications);
-        medicationListsView.setTargetItems(currentMedications);
         refreshMedicationLists();
     }
 
     private void refreshMedicationLists() {
-        pastMedications.setAll(donor.getPastMedications());
-        currentMedications.setAll(donor.getCurrentMedications());
+        pastMedicationsView.setItems(FXCollections.observableArrayList(donor.getPastMedications()));
+        currentMedicationsView.setItems(FXCollections.observableArrayList(donor.getCurrentMedications()));
+    }
+
+    @FXML
+    private void moveMedicationToHistory(ActionEvent actionEvent) {
+        MedicationHistoryItem item = currentMedicationsView.getSelectionModel().getSelectedItem();
+        item.setStopped(LocalDate.now());
+        donor.getCurrentMedications().remove(item);
+        donor.getPastMedications().add(item);
+        refreshMedicationLists();
+    }
+
+    @FXML
+    private void moveMedicationToCurrent(ActionEvent actionEvent) {
+        MedicationHistoryItem item = pastMedicationsView.getSelectionModel().getSelectedItem();
+        item.setStarted(LocalDate.now());
+        item.setStopped(null);
+        donor.getPastMedications().remove(item);
+        donor.getCurrentMedications().add(item);
+        refreshMedicationLists();
     }
 
     @FXML
@@ -111,12 +110,20 @@ public class ViewMedicationsController extends SubController {
     }
 
     private void addMedication(String newMedName) {
-        currentMedications.add(new MedicationHistoryItem(newMedName, LocalDate.now(), null));
+        donor.getCurrentMedications().add(new MedicationHistoryItem(newMedName, LocalDate.now(), null));
         newMedField.setText("");
+        refreshMedicationLists();
     }
 
     @FXML
-    private void deleteMedication(ActionEvent actionEvent) {
+    private void deleteMedication(ActionEvent event) {
+        MedicationHistoryItem item = selectedListView.getSelectionModel().getSelectedItem();
+        if (selectedListView == pastMedicationsView) {
+            donor.getPastMedications().remove(item);
+        } else if (selectedListView == currentMedicationsView) {
+            donor.getCurrentMedications().remove(item);
+        }
+        refreshMedicationLists();
     }
 
     private List<String> getSuggestions(String input) {
