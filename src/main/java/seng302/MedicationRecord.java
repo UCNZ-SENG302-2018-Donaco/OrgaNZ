@@ -39,10 +39,6 @@ public class MedicationRecord {
         return stopped;
     }
 
-    public void setMedicationName(String medicationName) {
-        this.medicationName = medicationName;
-    }
-
     public void setStarted(LocalDate started) {
         this.started = started;
     }
@@ -60,7 +56,17 @@ public class MedicationRecord {
         }
     }
 
-    public MedicationRecord copy() {
-        return new MedicationRecord(this.medicationName, this.started, this.stopped);
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (!(obj instanceof MedicationRecord)) {
+            return false;
+        } else {
+            MedicationRecord other = (MedicationRecord) obj;
+            return this.medicationName.equals(other.medicationName) &&
+                    this.started.equals(other.started) &&
+                    this.stopped.equals(other.stopped);
+        }
     }
 }

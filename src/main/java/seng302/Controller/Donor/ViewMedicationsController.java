@@ -15,7 +15,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 
 import seng302.Actions.ActionInvoker;
-import seng302.Actions.Donor.ModifyMedicationHistoryAction;
+import seng302.Actions.Donor.AddMedicationRecordAction;
+import seng302.Actions.Donor.DeleteMedicationRecordAction;
+import seng302.Actions.Donor.ModifyMedicationRecordAction;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
 import seng302.Donor;
@@ -137,12 +139,8 @@ public class ViewMedicationsController extends SubController {
     private void moveMedicationToHistory(ActionEvent event) {
         MedicationRecord record = currentMedicationsView.getSelectionModel().getSelectedItem();
         if (record != null) {
-            ModifyMedicationHistoryAction action = new ModifyMedicationHistoryAction(donor);
-            action.removeCurrentMedication(record);
-
-            record = record.copy();
-            record.setStopped(LocalDate.now());
-            action.addPastMedication(record);
+            ModifyMedicationRecordAction action = new ModifyMedicationRecordAction(record);
+            action.changeStopped(LocalDate.now());
 
             invoker.execute(action);
             refreshMedicationLists();
@@ -161,13 +159,8 @@ public class ViewMedicationsController extends SubController {
     private void moveMedicationToCurrent(ActionEvent event) {
         MedicationRecord record = pastMedicationsView.getSelectionModel().getSelectedItem();
         if (record != null) {
-            ModifyMedicationHistoryAction action = new ModifyMedicationHistoryAction(donor);
-            action.removePastMedication(record);
-
-            record = record.copy();
-            record.setStarted(LocalDate.now());
-            record.setStopped(null);
-            action.addCurrentMedication(record);
+            ModifyMedicationRecordAction action = new ModifyMedicationRecordAction(record);
+            action.changeStopped(null);
 
             invoker.execute(action);
             refreshMedicationLists();
@@ -202,10 +195,10 @@ public class ViewMedicationsController extends SubController {
      */
     private void addMedication(String newMedName) {
         if (!newMedName.equals("")) {
-            ModifyMedicationHistoryAction action = new ModifyMedicationHistoryAction(donor);
-            action.addCurrentMedication(new MedicationRecord(newMedName, LocalDate.now(), null));
-            invoker.execute(action);
+            MedicationRecord record = new MedicationRecord(newMedName, LocalDate.now(), null);
+            AddMedicationRecordAction action = new AddMedicationRecordAction(donor, record);
 
+            invoker.execute(action);
             newMedField.setText("");
             refreshMedicationLists();
         }
@@ -222,12 +215,8 @@ public class ViewMedicationsController extends SubController {
         if (selectedListView != null) {
             MedicationRecord record = selectedListView.getSelectionModel().getSelectedItem();
             if (record != null) {
-                ModifyMedicationHistoryAction action = new ModifyMedicationHistoryAction(donor);
-                if (selectedListView == pastMedicationsView) {
-                    action.removePastMedication(record);
-                } else if (selectedListView == currentMedicationsView) {
-                    action.removeCurrentMedication(record);
-                }
+                DeleteMedicationRecordAction action = new DeleteMedicationRecordAction(donor, record);
+
                 invoker.execute(action);
                 refreshMedicationLists();
             }

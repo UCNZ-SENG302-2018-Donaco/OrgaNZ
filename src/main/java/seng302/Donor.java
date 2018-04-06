@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import seng302.Utilities.Enums.BloodType;
 import seng302.Utilities.Enums.Gender;
@@ -38,16 +39,13 @@ public class Donor {
 
     private Map<Organ, Boolean> organStatus;
 
-    private List<MedicationRecord> currentMedications;
-    private List<MedicationRecord> pastMedications;
+    private List<MedicationRecord> medicationHistory = new ArrayList<>();
 
     private ArrayList<String> updateLog = new ArrayList<>();
 
     public Donor() {
         createdTimestamp = LocalDateTime.now();
         initOrgans();
-        currentMedications = new ArrayList<>();
-        pastMedications = new ArrayList<>();
     }
 
     /**
@@ -69,8 +67,6 @@ public class Donor {
         this.createdTimestamp = LocalDateTime.now();
 
         initOrgans();
-        currentMedications = new ArrayList<>();
-        pastMedications = new ArrayList<>();
     }
 
     private void initOrgans() {
@@ -282,12 +278,42 @@ public class Donor {
         return modifiedTimestamp;
     }
 
+    /**
+     * Returns a new list containing the medications which are currently being used by the Donor.
+     * @return The list of medications currently being used by the Donor.
+     */
     public List<MedicationRecord> getCurrentMedications() {
-        return currentMedications;
+        return medicationHistory.stream().filter(
+                record -> record.getStopped() == null
+        ).collect(Collectors.toList());
     }
 
+    /**
+     * Returns a new list containing the medications which were previously used by the Donor.
+     * @return The list of medications used by the Donor in the past.
+     */
     public List<MedicationRecord> getPastMedications() {
-        return pastMedications;
+        return medicationHistory.stream().filter(
+                record -> record.getStopped() != null
+        ).collect(Collectors.toList());
+    }
+
+    /**
+     * Adds a new MedicationRecord to the donor's history.
+     * @param record The given MedicationRecord.
+     */
+    public void addMedicationRecord(MedicationRecord record) {
+        medicationHistory.add(record);
+        addUpdate("medicationHistory");
+    }
+
+    /**
+     * Deletes the given MedicationRecord from the donor's history.
+     * @param record The given MedicationRecord.
+     */
+    public void deleteMedicationRecord(MedicationRecord record) {
+        medicationHistory.remove(record);
+        addUpdate("medicationHistory");
     }
 
     /**
