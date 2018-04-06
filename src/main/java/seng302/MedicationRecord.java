@@ -59,4 +59,8 @@ public class MedicationRecord {
                     started.format(dateFormat), stopped.format(dateFormat));
         }
     }
+
+    public MedicationRecord copy() {
+        return new MedicationRecord(this.medicationName, this.started, this.stopped);
+    }
 }
