@@ -117,6 +117,7 @@ public class ViewMedicationsController extends SubController {
             donor = windowContext.getViewDonor();
         }
 
+        mainController.setTitle("Medication history: " + donor.getFullName());
         refreshMedicationLists();
     }
 

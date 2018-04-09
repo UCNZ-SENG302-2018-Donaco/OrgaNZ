@@ -23,6 +23,7 @@ public class MainController {
     private Stage stage;
     private Page currentPage;
     private WindowContext windowContext;
+    private String windowTitle;
 
     /**
      * Holder of a switchable page.
@@ -88,6 +89,23 @@ public class MainController {
         } catch (IOException exc) {
             System.err.println("Couldn't load sidebar from fxml file.");
             exc.printStackTrace();
+        }
+    }
+
+    /**
+     * Set the title of the window to the given text
+     * @param title The text to set the window title to
+     */
+    public void setTitle(String title) {
+        windowTitle = title;
+        stage.setTitle(windowTitle);
+    }
+
+    public void setUnsaved(boolean isUnsaved) {
+        if (isUnsaved) {
+            stage.setTitle("*" + windowTitle);
+        } else {
+            stage.setTitle(windowTitle);
         }
     }
 }

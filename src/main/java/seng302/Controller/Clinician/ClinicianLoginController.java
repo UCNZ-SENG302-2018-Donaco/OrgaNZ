@@ -7,6 +7,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
 import seng302.Clinician;
+import seng302.Controller.MainController;
 import seng302.Controller.SubController;
 import seng302.HistoryItem;
 import seng302.State.ClinicianManager;
@@ -32,6 +33,16 @@ public class ClinicianLoginController extends SubController {
 
     public ClinicianLoginController() {
         clinicianManager = State.getClinicianManager();
+    }
+
+    /**
+     * Override so we can set the page title.
+     * @param mainController The MainController
+     */
+    @Override
+    public void setup(MainController mainController) {
+        super.setup(mainController);
+        mainController.setTitle("Clinician login");
     }
 
     /**

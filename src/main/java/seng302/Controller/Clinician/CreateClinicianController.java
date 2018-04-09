@@ -11,6 +11,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 
 import seng302.Clinician;
+import seng302.Controller.MainController;
 import seng302.Controller.SubController;
 import seng302.HistoryItem;
 import seng302.State.ClinicianManager;
@@ -45,6 +46,16 @@ public class CreateClinicianController extends SubController {
     private void initialize() {
         clinicianManager = State.getClinicianManager();
         region.setItems(FXCollections.observableArrayList(Region.values()));
+    }
+
+    /**
+     * Override so we can set the page title.
+     * @param mainController The MainController
+     */
+    @Override
+    public void setup(MainController mainController) {
+        super.setup(mainController);
+        mainController.setTitle("Create a new Clinician");
     }
 
     /**

@@ -127,4 +127,18 @@ public class Clinician {
     public LocalDateTime getModified_on() {
         return modified_on;
     }
+
+
+    /**
+     * Get the full name of the donor concatenating their names
+     * @return The full name string
+     */
+    public String getFullName() {
+        String fullName = firstName + " ";
+        if (middleName != null) {
+            fullName += middleName + " ";
+        }
+        fullName += lastName;
+        return fullName;
+    }
 }

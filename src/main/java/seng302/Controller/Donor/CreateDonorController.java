@@ -10,6 +10,7 @@ import javafx.scene.control.TextField;
 import seng302.Actions.Action;
 import seng302.Actions.ActionInvoker;
 import seng302.Actions.Donor.CreateDonorAction;
+import seng302.Controller.MainController;
 import seng302.Controller.SubController;
 import seng302.Donor;
 import seng302.HistoryItem;
@@ -40,6 +41,16 @@ public class CreateDonorController extends SubController {
     public CreateDonorController() {
         manager = State.getDonorManager();
         invoker = State.getInvoker();
+    }
+
+    /**
+     * Override so we can set the page title.
+     * @param mainController The MainController
+     */
+    @Override
+    public void setup(MainController mainController) {
+        super.setup(mainController);
+        mainController.setTitle("Create a new Donor");
     }
 
     /**

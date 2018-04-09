@@ -92,6 +92,7 @@ public class ViewDonorController extends SubController {
             viewedDonor = windowContext.getViewDonor();
         }
 
+        mainController.setTitle("Donor profile: " + viewedDonor.getFullName());
         id.setText(Integer.toString(viewedDonor.getUid()));
         searchDonor();
     }

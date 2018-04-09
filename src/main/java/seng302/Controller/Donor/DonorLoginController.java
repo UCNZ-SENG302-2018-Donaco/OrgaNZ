@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 
+import seng302.Controller.MainController;
 import seng302.Controller.SubController;
 import seng302.Donor;
 import seng302.HistoryItem;
@@ -23,6 +24,16 @@ public class DonorLoginController extends SubController {
 
     @FXML
     private ListView<Donor> donorList;
+
+    /**
+     * Override so we can set the page title.
+     * @param mainController The MainController
+     */
+    @Override
+    public void setup(MainController mainController) {
+        super.setup(mainController);
+        mainController.setTitle("Donor login");
+    }
 
     /**
      * Initializes the UI for this page.

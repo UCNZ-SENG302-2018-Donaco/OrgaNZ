@@ -43,7 +43,6 @@ public class SidebarController extends SubController {
     @Override
     public void setup(MainController controller) {
         super.setup(controller);
-
         Session.UserType userType = session.getLoggedInUserType();
         if (userType == Session.UserType.DONOR || windowContext.isClinViewDonorWindow()) {
             hideButton(viewClinicianButton);
