@@ -41,6 +41,8 @@ public class Person {
 
     private List<MedicationRecord> medicationHistory = new ArrayList<>();
 
+    private List<TransplantRequest> transplantRequests = new ArrayList<>();
+
     private ArrayList<String> updateLog = new ArrayList<>();
 
     public Person() {

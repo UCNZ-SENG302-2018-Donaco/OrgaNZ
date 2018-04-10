@@ -26,7 +26,7 @@ import seng302.Utilities.View.PageNavigator;
 public class SidebarController extends SubController {
 
     @FXML
-    private Button viewPersonButton, registerOrgansButton, viewMedicationsButton, viewClinicianButton, searchButton,
+    private Button viewPersonButton, registerOrganDonationButton, viewMedicationsButton, viewClinicianButton, searchButton,
     logoutButton;
 
     private ActionInvoker invoker;
@@ -50,7 +50,7 @@ public class SidebarController extends SubController {
             hideButton(searchButton);
         } else if (userType == Session.UserType.CLINICIAN) {
             hideButton(viewPersonButton);
-            hideButton(registerOrgansButton);
+            hideButton(registerOrganDonationButton);
             hideButton(viewMedicationsButton);
         }
 
@@ -78,8 +78,8 @@ public class SidebarController extends SubController {
      * @param event When the register organs button is clicked.
      */
     @FXML
-    private void goToRegisterOrgans(ActionEvent event) {
-        PageNavigator.loadPage(Page.REGISTER_ORGANS, mainController);
+    private void goToRegisterOrganDonation(ActionEvent event) {
+        PageNavigator.loadPage(Page.REGISTER_ORGAN_DONATIONS, mainController);
     }
 
     /**

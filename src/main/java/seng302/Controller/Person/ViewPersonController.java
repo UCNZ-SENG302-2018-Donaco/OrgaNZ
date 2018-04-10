@@ -309,6 +309,6 @@ public class ViewPersonController extends SubController {
      */
     @FXML
     public void viewOrgansForPerson() {
-        PageNavigator.loadPage(Page.REGISTER_ORGANS, mainController);
+        PageNavigator.loadPage(Page.REGISTER_ORGAN_DONATIONS, mainController);
     }
 }

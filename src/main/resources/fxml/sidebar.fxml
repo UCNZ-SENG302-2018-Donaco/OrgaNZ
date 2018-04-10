@@ -28,7 +28,7 @@
             <Font size="16.0" />
           </font>
         </Button>
-        <Button fx:id="registerOrgansButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToRegisterOrgans" text="Register Organs" VBox.vgrow="ALWAYS">
+        <Button fx:id="registerOrganDonationButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToRegisterOrganDonation" text="Register Organs" VBox.vgrow="ALWAYS">
           <font>
             <Font size="16.0" />
           </font>

@@ -24,7 +24,7 @@ import seng302.Utilities.JSONConverter;
 /**
  * Controller for the register organs page.
  */
-public class RegisterOrgansController extends SubController {
+public class RegisterOrganDonationController extends SubController {
 
     private Session session;
     private PersonManager manager;
@@ -40,7 +40,7 @@ public class RegisterOrgansController extends SubController {
     @FXML
     private TextField fieldUserID;
 
-    public RegisterOrgansController() {
+    public RegisterOrganDonationController() {
         manager = State.getPersonManager();
         invoker = State.getInvoker();
         session = State.getSession();
