@@ -7,14 +7,14 @@ package seng302.Utilities.View;
 public enum Page {
     MAIN("/fxml/main.fxml"),
     LANDING("/fxml/landing.fxml"),
-    LOGIN_DONOR("/fxml/login_donor.fxml"),
-    CREATE_DONOR("/fxml/create_donor.fxml"),
+    LOGIN_PERSON("/fxml/login_person.fxml"),
+    CREATE_PERSON("/fxml/create_person.fxml"),
     SIDEBAR("/fxml/sidebar.fxml"),
-    VIEW_DONOR("/fxml/view_donor.fxml"),
+    VIEW_PERSON("/fxml/view_person.fxml"),
     VIEW_CLINICIAN("/fxml/view_clinician.fxml"),
     REGISTER_ORGANS("/fxml/register_organs.fxml"),
     HISTORY("/fxml/history.fxml"),
-    SEARCH("/fxml/search_donors.fxml"),
+    SEARCH("/fxml/search_persons.fxml"),
     LOGIN_CLINICIAN("/fxml/login_clinician.fxml"),
     CREATE_CLINICIAN("/fxml/create_clinician.fxml"),
     VIEW_MEDICATIONS("/fxml/view_medications.fxml");

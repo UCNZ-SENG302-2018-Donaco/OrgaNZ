@@ -16,10 +16,10 @@ import seng302.Utilities.Enums.Region;
 import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
 
 /**
- * The main Donor class.
+ * The main Person class.
  */
 
-public class Donor {
+public class Person {
 
     private int uid;
     private String firstName;
@@ -43,20 +43,20 @@ public class Donor {
 
     private ArrayList<String> updateLog = new ArrayList<>();
 
-    public Donor() {
+    public Person() {
         createdTimestamp = LocalDateTime.now();
         initOrgans();
     }
 
     /**
-     * Create a new donor object
+     * Create a new person object
      * @param firstName First name string
      * @param middleName Middle name(s). May be null
      * @param lastName Last name string
      * @param dateOfBirth LocalDate formatted date of birth
      * @param uid A unique user ID. Should be queried to ensure uniqueness
      */
-    public Donor(String firstName, String middleName, String lastName, LocalDate dateOfBirth, int uid) {
+    public Person(String firstName, String middleName, String lastName, LocalDate dateOfBirth, int uid) {
         this.uid = uid;
         this.firstName = firstName;
         this.middleName = middleName;
@@ -101,9 +101,9 @@ public class Donor {
     }
 
     /**
-     * Returns a string listing the organs that the donor is currently donating, or a message that the donor currently
+     * Returns a string listing the organs that the person is currently donating, or a message that the person currently
      * has no organs registered for donation if that is the case.
-     * @return The donor's organ status string.
+     * @return The person's organ status string.
      */
     public String getOrganStatusString() {
         StringBuilder builder = new StringBuilder();
@@ -123,10 +123,10 @@ public class Donor {
     }
 
     /**
-     * Returns a formatted string listing the donor's ID number, full name, and the organs they are donating.
-     * @return The formatted donor info string.
+     * Returns a formatted string listing the person's ID number, full name, and the organs they are donating.
+     * @return The formatted person info string.
      */
-    public String getDonorOrganStatusString() {
+    public String getPersonOrganStatusString() {
         return String.format("User: %s. Name: %s, Donation status: %s.", uid, getFullName(), getOrganStatusString());
     }
 
@@ -143,10 +143,10 @@ public class Donor {
     }
 
     /**
-     * Get a formatted string with the donors user information. Does not include organ donation status
-     * @return Formatted string with the donors user information. Does not include organ donation status
+     * Get a formatted string with the persons user information. Does not include organ donation status
+     * @return Formatted string with the persons user information. Does not include organ donation status
      */
-    public String getDonorInfoString() {
+    public String getPersonInfoString() {
         return String.format("User: %s. Name: %s, date of birth: %tF, date of death: %tF, gender: %s," +
                         " height: %scm, weight: %skg, blood type: %s, current address: %s, region: %s," +
                         " created on: %s, modified on: %s",
@@ -155,7 +155,7 @@ public class Donor {
     }
 
     /**
-     * Get the full name of the donor concatenating their names
+     * Get the full name of the person concatenating their names
      * @return The full name string
      */
     public String getFullName() {
@@ -279,8 +279,8 @@ public class Donor {
     }
 
     /**
-     * Returns a new list containing the medications which are currently being used by the Donor.
-     * @return The list of medications currently being used by the Donor.
+     * Returns a new list containing the medications which are currently being used by the Person.
+     * @return The list of medications currently being used by the Person.
      */
     public List<MedicationRecord> getCurrentMedications() {
         return medicationHistory.stream().filter(
@@ -289,8 +289,8 @@ public class Donor {
     }
 
     /**
-     * Returns a new list containing the medications which were previously used by the Donor.
-     * @return The list of medications used by the Donor in the past.
+     * Returns a new list containing the medications which were previously used by the Person.
+     * @return The list of medications used by the Person in the past.
      */
     public List<MedicationRecord> getPastMedications() {
         return medicationHistory.stream().filter(
@@ -299,7 +299,7 @@ public class Donor {
     }
 
     /**
-     * Adds a new MedicationRecord to the donor's history.
+     * Adds a new MedicationRecord to the person's history.
      * @param record The given MedicationRecord.
      */
     public void addMedicationRecord(MedicationRecord record) {
@@ -308,7 +308,7 @@ public class Donor {
     }
 
     /**
-     * Deletes the given MedicationRecord from the donor's history.
+     * Deletes the given MedicationRecord from the person's history.
      * @param record The given MedicationRecord.
      */
     public void deleteMedicationRecord(MedicationRecord record) {
@@ -317,7 +317,7 @@ public class Donor {
     }
 
     /**
-     * Calculates the BMI of the Donor based off their height and weight - BMI = weight/height^2.
+     * Calculates the BMI of the Person based off their height and weight - BMI = weight/height^2.
      * If either field is 0, the result returned is 0.
      * @return the users calculated BMI.
      */
@@ -334,7 +334,7 @@ public class Donor {
     /**
      * Calculates the users age based on their date of birth and date of death. If the date of death is null the age
      * is calculated base of the LocalDate.now().
-     * @return age of the Donor.
+     * @return age of the Person.
      */
     public int getAge() {
         int age;
@@ -349,7 +349,7 @@ public class Donor {
     /**
      * Takes a string and checks if each space separated string section matches one of the names
      * @param searchParam The string to be checked
-     * @return True if all sections of the passed string match any of the names of the donor
+     * @return True if all sections of the passed string match any of the names of the person
      */
     public boolean nameContains(String searchParam) {
         String lowerSearch = searchParam.toLowerCase();
@@ -369,17 +369,17 @@ public class Donor {
     }
 
     /**
-     * Donor objects are identified by their uid
+     * Person objects are identified by their uid
      */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof Donor)) {
+        if (!(obj instanceof Person)) {
             return false;
         }
-        Donor d = (Donor) obj;
+        Person d = (Person) obj;
         return d.uid == this.uid;
     }
 }

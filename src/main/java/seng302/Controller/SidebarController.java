@@ -26,7 +26,7 @@ import seng302.Utilities.View.PageNavigator;
 public class SidebarController extends SubController {
 
     @FXML
-    private Button viewDonorButton, registerOrgansButton, viewMedicationsButton, viewClinicianButton, searchButton,
+    private Button viewPersonButton, registerOrgansButton, viewMedicationsButton, viewClinicianButton, searchButton,
     logoutButton;
 
     private ActionInvoker invoker;
@@ -45,16 +45,16 @@ public class SidebarController extends SubController {
         super.setup(controller);
 
         Session.UserType userType = session.getLoggedInUserType();
-        if (userType == Session.UserType.DONOR || windowContext.isClinViewDonorWindow()) {
+        if (userType == Session.UserType.PERSON || windowContext.isClinViewPersonWindow()) {
             hideButton(viewClinicianButton);
             hideButton(searchButton);
         } else if (userType == Session.UserType.CLINICIAN) {
-            hideButton(viewDonorButton);
+            hideButton(viewPersonButton);
             hideButton(registerOrgansButton);
             hideButton(viewMedicationsButton);
         }
 
-        if (windowContext.isClinViewDonorWindow()) {
+        if (windowContext.isClinViewPersonWindow()) {
             hideButton(logoutButton);
         }
     }
@@ -65,12 +65,12 @@ public class SidebarController extends SubController {
     }
 
     /**
-     * Redirects the GUI to the View Donor page.
-     * @param event When the view donor button is clicked.
+     * Redirects the GUI to the View Person page.
+     * @param event When the view person button is clicked.
      */
     @FXML
-    private void goToViewDonor(ActionEvent event) {
-        PageNavigator.loadPage(Page.VIEW_DONOR, mainController);
+    private void goToViewPerson(ActionEvent event) {
+        PageNavigator.loadPage(Page.VIEW_PERSON, mainController);
     }
 
     /**
@@ -92,8 +92,8 @@ public class SidebarController extends SubController {
     }
 
     /**
-     * Redirects the GUI to the View Donor page.
-     * @param event When the view donor button is clicked.
+     * Redirects the GUI to the View Person page.
+     * @param event When the view person button is clicked.
      */
     @FXML
     private void goToViewClinician(ActionEvent event) {
@@ -119,14 +119,14 @@ public class SidebarController extends SubController {
     }
 
     /**
-     * Opens a save file dialog to choose where to save all donors in the system to a file.
+     * Opens a save file dialog to choose where to save all persons in the system to a file.
      * @param event When the save button is clicked.
      */
     @FXML
     private void save(ActionEvent event) {
         try {
             FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Save Donors File");
+            fileChooser.setTitle("Save Persons File");
             fileChooser.setInitialDirectory(
                     new File(Paths.get(AppUI.class.getProtectionDomain().getCodeSource().getLocation().toURI())
                             .getParent().toString())
@@ -135,12 +135,12 @@ public class SidebarController extends SubController {
             File file = fileChooser.showSaveDialog(AppUI.getWindow());
             if (file != null) {
                 JSONConverter.saveToFile(file);
-                // TODO Make alert with number of donors saved
+                // TODO Make alert with number of persons saved
                 HistoryItem save = new HistoryItem("SAVE", "The systems current state was saved.");
                 JSONConverter.updateHistory(save, "action_history.json");
                 PageNavigator.showAlert(Alert.AlertType.INFORMATION,
                         "Save Successful",
-                        "Successfully saved Donors to " + file.getName());
+                        "Successfully saved Persons to " + file.getName());
             }
         } catch (URISyntaxException | IOException exc) {
             // TODO Make alert when save fails
@@ -149,14 +149,14 @@ public class SidebarController extends SubController {
     }
 
     /**
-     * Opens a load file dialog to choose a file to load all donors from.
+     * Opens a load file dialog to choose a file to load all persons from.
      * @param event When the load button is clicked.
      */
     @FXML
     private void load(ActionEvent event) {
         try {
             FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Load Donors File");
+            fileChooser.setTitle("Load Persons File");
             fileChooser.setInitialDirectory(
                     new File(Paths.get(AppUI.class.getProtectionDomain().getCodeSource().getLocation().toURI())
                             .getParent().toString())
@@ -174,7 +174,7 @@ public class SidebarController extends SubController {
                 mainController.resetWindowContext();
                 PageNavigator.showAlert(Alert.AlertType.INFORMATION,
                         "Load Successful",
-                        "Successfully loaded Donors from " + file.getName());
+                        "Successfully loaded Persons from " + file.getName());
                 PageNavigator.loadPage(Page.LANDING, mainController);
             }
         } catch (URISyntaxException | IOException exc) {
@@ -193,7 +193,7 @@ public class SidebarController extends SubController {
         State.logout();
         mainController.resetWindowContext();
         PageNavigator.loadPage(Page.LANDING, mainController);
-        HistoryItem save = new HistoryItem("LOGOUT", "The Donor logged out");
+        HistoryItem save = new HistoryItem("LOGOUT", "The Person logged out");
         JSONConverter.updateHistory(save, "action_history.json");
     }
 

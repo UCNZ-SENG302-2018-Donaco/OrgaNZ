@@ -1,31 +1,31 @@
-package seng302.Actions.Donor;
+package seng302.Actions.Person;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import seng302.Actions.Action;
-import seng302.Donor;
+import seng302.Person;
 import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
 
 /**
- * A reversible donor organ modification Action
+ * A reversible person organ modification Action
  */
-public class ModifyDonorOrgansAction implements Action {
+public class ModifyPersonOrgansAction implements Action {
 
     private Map<Organ, Boolean> changes = new HashMap<>();
-    private Donor donor;
+    private Person person;
 
     /**
      * Create a new Action
-     * @param donor The donor to be modified
+     * @param person The person to be modified
      */
-    public ModifyDonorOrgansAction(Donor donor) {
-        this.donor = donor;
+    public ModifyPersonOrgansAction(Person person) {
+        this.person = person;
     }
 
     /**
-     * Add a organ change to the donor. Should check the value is not already set before adding the change
+     * Add a organ change to the person. Should check the value is not already set before adding the change
      * @param organ The organ to be updated
      * @param newValue The new value
      */
@@ -45,7 +45,7 @@ public class ModifyDonorOrgansAction implements Action {
     }
 
     /**
-     * Loops through the list of changes and applies them to the donor
+     * Loops through the list of changes and applies them to the person
      * @param isUndo If true, negate all booleans
      */
     private void runChanges(boolean isUndo) {
@@ -56,7 +56,7 @@ public class ModifyDonorOrgansAction implements Action {
                 if (isUndo) {
                     newState = !newState;
                 }
-                donor.setOrganStatus(organ, newState);
+                person.setOrganStatus(organ, newState);
             } catch (OrganAlreadyRegisteredException e) {
                 e.printStackTrace();
             }

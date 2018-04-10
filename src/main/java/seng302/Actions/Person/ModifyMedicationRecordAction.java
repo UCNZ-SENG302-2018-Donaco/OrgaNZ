@@ -1,4 +1,4 @@
-package seng302.Actions.Donor;
+package seng302.Actions.Person;
 
 import java.time.LocalDate;
 

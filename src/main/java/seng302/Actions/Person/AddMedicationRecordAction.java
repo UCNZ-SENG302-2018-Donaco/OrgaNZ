@@ -1,26 +1,26 @@
-package seng302.Actions.Donor;
+package seng302.Actions.Person;
 
 import seng302.Actions.Action;
-import seng302.Donor;
+import seng302.Person;
 import seng302.MedicationRecord;
 
 public class AddMedicationRecordAction implements Action {
 
-    private Donor donor;
+    private Person person;
     private MedicationRecord record;
 
-    public AddMedicationRecordAction(Donor donor, MedicationRecord record) {
-        this.donor = donor;
+    public AddMedicationRecordAction(Person person, MedicationRecord record) {
+        this.person = person;
         this.record = record;
     }
 
     @Override
     public void execute() {
-        donor.addMedicationRecord(record);
+        person.addMedicationRecord(record);
     }
 
     @Override
     public void unExecute() {
-        donor.deleteMedicationRecord(record);
+        person.deleteMedicationRecord(record);
     }
 }

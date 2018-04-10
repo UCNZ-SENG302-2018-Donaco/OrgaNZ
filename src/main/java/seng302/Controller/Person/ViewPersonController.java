@@ -1,4 +1,4 @@
-package seng302.Controller.Donor;
+package seng302.Controller.Person;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -14,12 +14,12 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
 import seng302.Actions.ActionInvoker;
-import seng302.Actions.Donor.ModifyDonorAction;
+import seng302.Actions.Person.ModifyPersonAction;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
-import seng302.Donor;
+import seng302.Person;
 import seng302.HistoryItem;
-import seng302.State.DonorManager;
+import seng302.State.PersonManager;
 import seng302.State.Session;
 import seng302.State.State;
 import seng302.Utilities.Enums.BloodType;
@@ -30,21 +30,21 @@ import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
 
 /**
- * Controller for the view/edit donor page.
+ * Controller for the view/edit person page.
  */
-public class ViewDonorController extends SubController {
+public class ViewPersonController extends SubController {
 
     private final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy\nh:mm:ss a");
 
     private Session session;
-    private DonorManager manager;
+    private PersonManager manager;
     private ActionInvoker invoker;
-    private Donor viewedDonor;
+    private Person viewedPerson;
 
     @FXML
     private Pane sidebarPane, idPane, inputsPane;
     @FXML
-    private Label creationDate, lastModified, noDonorLabel, fnameLabel, lnameLabel, dobLabel,
+    private Label creationDate, lastModified, noPersonLabel, fnameLabel, lnameLabel, dobLabel,
             dodLabel, heightLabel, weightLabel, ageDisplayLabel, ageLabel, BMILabel;
     @FXML
     private TextField id, fname, lname, mname, height, weight, address;
@@ -57,8 +57,8 @@ public class ViewDonorController extends SubController {
     @FXML
     private ChoiceBox<Region> region;
 
-    public ViewDonorController() {
-        manager = State.getDonorManager();
+    public ViewPersonController() {
+        manager = State.getPersonManager();
         invoker = State.getInvoker();
         session = State.getSession();
     }
@@ -68,7 +68,7 @@ public class ViewDonorController extends SubController {
      * - Loads the sidebar.
      * - Adds all values to the gender and blood type dropdown lists.
      * - Disables all fields.
-     * - If a donor is logged in, populates with their info and removes ability to view a different donor.
+     * - If a person is logged in, populates with their info and removes ability to view a different person.
      * - If the viewUserId is set, populates with their info.
      */
     @FXML
@@ -84,62 +84,62 @@ public class ViewDonorController extends SubController {
         super.setup(mainController);
         mainController.loadSidebar(sidebarPane);
 
-        if (session.getLoggedInUserType() == Session.UserType.DONOR) {
-            viewedDonor = session.getLoggedInDonor();
+        if (session.getLoggedInUserType() == Session.UserType.PERSON) {
+            viewedPerson = session.getLoggedInPerson();
             idPane.setVisible(false);
             idPane.setManaged(false);
-        } else if (windowContext.isClinViewDonorWindow()) {
-            viewedDonor = windowContext.getViewDonor();
+        } else if (windowContext.isClinViewPersonWindow()) {
+            viewedPerson = windowContext.getViewPerson();
         }
 
-        id.setText(Integer.toString(viewedDonor.getUid()));
-        searchDonor();
+        id.setText(Integer.toString(viewedPerson.getUid()));
+        searchPerson();
     }
 
     /**
-     * Searches for a donor based off the id number supplied in the text field. The users fields will be displayed if
+     * Searches for a person based off the id number supplied in the text field. The users fields will be displayed if
      * this user exists, otherwise an error message will display.
      */
     @FXML
-    private void searchDonor() {
+    private void searchPerson() {
         int id_value;
         try {
             id_value = Integer.parseInt(id.getText());
         } catch (Exception e) {
-            noDonorLabel.setVisible(true);
+            noPersonLabel.setVisible(true);
             setFieldsDisabled(true);
             return;
         }
 
-        viewedDonor = manager.getDonorByID(id_value);
-        if (viewedDonor == null) {
-            noDonorLabel.setVisible(true);
+        viewedPerson = manager.getPersonByID(id_value);
+        if (viewedPerson == null) {
+            noPersonLabel.setVisible(true);
             setFieldsDisabled(true);
         } else {
-            noDonorLabel.setVisible(false);
+            noPersonLabel.setVisible(false);
             setFieldsDisabled(false);
 
-            fname.setText(viewedDonor.getFirstName());
-            lname.setText(viewedDonor.getLastName());
-            mname.setText(viewedDonor.getMiddleName());
-            dob.setValue(viewedDonor.getDateOfBirth());
-            dod.setValue(viewedDonor.getDateOfDeath());
-            gender.setValue(viewedDonor.getGender());
-            height.setText(String.valueOf(viewedDonor.getHeight()));
-            weight.setText(String.valueOf(viewedDonor.getWeight()));
-            btype.setValue(viewedDonor.getBloodType());
-            region.setValue(viewedDonor.getRegion());
-            address.setText(viewedDonor.getCurrentAddress());
+            fname.setText(viewedPerson.getFirstName());
+            lname.setText(viewedPerson.getLastName());
+            mname.setText(viewedPerson.getMiddleName());
+            dob.setValue(viewedPerson.getDateOfBirth());
+            dod.setValue(viewedPerson.getDateOfDeath());
+            gender.setValue(viewedPerson.getGender());
+            height.setText(String.valueOf(viewedPerson.getHeight()));
+            weight.setText(String.valueOf(viewedPerson.getWeight()));
+            btype.setValue(viewedPerson.getBloodType());
+            region.setValue(viewedPerson.getRegion());
+            address.setText(viewedPerson.getCurrentAddress());
 
-            creationDate.setText(viewedDonor.getCreatedTimestamp().format(dateTimeFormat));
-            if (viewedDonor.getModifiedTimestamp() == null) {
+            creationDate.setText(viewedPerson.getCreatedTimestamp().format(dateTimeFormat));
+            if (viewedPerson.getModifiedTimestamp() == null) {
                 lastModified.setText("User has not been modified yet.");
             } else {
-                lastModified.setText(viewedDonor.getModifiedTimestamp().format(dateTimeFormat));
+                lastModified.setText(viewedPerson.getModifiedTimestamp().format(dateTimeFormat));
             }
 
-            HistoryItem save = new HistoryItem("SEARCH DONOR",
-                    "Donor " + viewedDonor.getFirstName() + " " + viewedDonor.getLastName() + " (" + viewedDonor
+            HistoryItem save = new HistoryItem("SEARCH PERSON",
+                    "Person " + viewedPerson.getFirstName() + " " + viewedPerson.getLastName() + " (" + viewedPerson
                             .getUid() + ") was searched");
             JSONConverter.updateHistory(save, "action_history.json");
 
@@ -149,8 +149,8 @@ public class ViewDonorController extends SubController {
     }
 
     /**
-     * Disables the view of user fields as these will all be irrelevant to the id number supplied if no such donor
-     * exists with this id. Or sets it to visible so that the user can see all fields relevant to the donor.
+     * Disables the view of user fields as these will all be irrelevant to the id number supplied if no such person
+     * exists with this id. Or sets it to visible so that the user can see all fields relevant to the person.
      * @param disabled the state of the pane.
      */
     private void setFieldsDisabled(boolean disabled) {
@@ -158,7 +158,7 @@ public class ViewDonorController extends SubController {
     }
 
     /**
-     * Saves the changes a user makes to the viewed donor if all their inputs are valid. Otherwise the invalid fields
+     * Saves the changes a user makes to the viewed person if all their inputs are valid. Otherwise the invalid fields
      * text turns red.
      */
     @FXML
@@ -167,11 +167,11 @@ public class ViewDonorController extends SubController {
             updateChanges();
             displayBMI();
             displayAge();
-            lastModified.setText(viewedDonor.getModifiedTimestamp().format(dateTimeFormat));
+            lastModified.setText(viewedPerson.getModifiedTimestamp().format(dateTimeFormat));
             //TODO show what in particular was updated
-            HistoryItem save = new HistoryItem("UPDATE DONOR INFO",
-                    "Updated changes to donor " + viewedDonor.getFirstName() + " " + viewedDonor.getLastName()
-                            + "updated donor info: " + viewedDonor.getDonorInfoString());
+            HistoryItem save = new HistoryItem("UPDATE PERSON INFO",
+                    "Updated changes to person " + viewedPerson.getFirstName() + " " + viewedPerson.getLastName()
+                            + "updated person info: " + viewedPerson.getPersonInfoString());
             JSONConverter.updateHistory(save, "action_history.json");
         }
     }
@@ -249,31 +249,31 @@ public class ViewDonorController extends SubController {
     }
 
     /**
-     * Records the changes updated as a ModifyDonorAction to trace the change in record.
+     * Records the changes updated as a ModifyPersonAction to trace the change in record.
      */
     private void updateChanges() {
         try {
-            ModifyDonorAction action = new ModifyDonorAction(viewedDonor);
+            ModifyPersonAction action = new ModifyPersonAction(viewedPerson);
 
-            action.addChange("setFirstName", viewedDonor.getFirstName(), fname.getText());
-            action.addChange("setLastName", viewedDonor.getLastName(), lname.getText());
-            action.addChange("setMiddleName", viewedDonor.getMiddleName(), mname.getText());
-            action.addChange("setDateOfBirth", viewedDonor.getDateOfBirth(), dob.getValue());
-            action.addChange("setDateOfDeath", viewedDonor.getDateOfDeath(), dod.getValue());
-            action.addChange("setGender", viewedDonor.getGender(), gender.getValue());
-            action.addChange("setHeight", viewedDonor.getHeight(), Double.parseDouble(height.getText()));
-            action.addChange("setWeight", viewedDonor.getWeight(), Double.parseDouble(weight.getText()));
-            action.addChange("setBloodType", viewedDonor.getBloodType(), btype.getValue());
-            action.addChange("setRegion", viewedDonor.getRegion(), region.getValue());
-            action.addChange("setCurrentAddress", viewedDonor.getCurrentAddress(), address.getText());
+            action.addChange("setFirstName", viewedPerson.getFirstName(), fname.getText());
+            action.addChange("setLastName", viewedPerson.getLastName(), lname.getText());
+            action.addChange("setMiddleName", viewedPerson.getMiddleName(), mname.getText());
+            action.addChange("setDateOfBirth", viewedPerson.getDateOfBirth(), dob.getValue());
+            action.addChange("setDateOfDeath", viewedPerson.getDateOfDeath(), dod.getValue());
+            action.addChange("setGender", viewedPerson.getGender(), gender.getValue());
+            action.addChange("setHeight", viewedPerson.getHeight(), Double.parseDouble(height.getText()));
+            action.addChange("setWeight", viewedPerson.getWeight(), Double.parseDouble(weight.getText()));
+            action.addChange("setBloodType", viewedPerson.getBloodType(), btype.getValue());
+            action.addChange("setRegion", viewedPerson.getRegion(), region.getValue());
+            action.addChange("setCurrentAddress", viewedPerson.getCurrentAddress(), address.getText());
 
             invoker.execute(action);
 
             PageNavigator.showAlert(Alert.AlertType.INFORMATION,
                     "Success",
-                    String.format("Successfully updated donor %s %s %s %d.",
-                            viewedDonor.getFirstName(), viewedDonor.getMiddleName(),
-                            viewedDonor.getLastName(), viewedDonor.getUid()));
+                    String.format("Successfully updated person %s %s %s %d.",
+                            viewedPerson.getFirstName(), viewedPerson.getMiddleName(),
+                            viewedPerson.getLastName(), viewedPerson.getUid()));
 
         } catch (NoSuchFieldException | NoSuchMethodException exc) {
             exc.printStackTrace();
@@ -281,34 +281,34 @@ public class ViewDonorController extends SubController {
     }
 
     /**
-     * Displays the currently viewed donors BMI.
+     * Displays the currently viewed persons BMI.
      */
     private void displayBMI() {
-        if (viewedDonor.getDateOfDeath() == null) {
-            BMILabel.setText(String.format("%.01f", viewedDonor.getBMI()));
+        if (viewedPerson.getDateOfDeath() == null) {
+            BMILabel.setText(String.format("%.01f", viewedPerson.getBMI()));
         } else {
-            BMILabel.setText(String.format("%.01f", viewedDonor.getBMI()));
+            BMILabel.setText(String.format("%.01f", viewedPerson.getBMI()));
         }
     }
 
     /**
-     * Displays either the current age, or age at death of the donor depending on if the date of death field has been
+     * Displays either the current age, or age at death of the person depending on if the date of death field has been
      * filled in.
      */
     private void displayAge() {
-        if (viewedDonor.getDateOfDeath() == null) {
+        if (viewedPerson.getDateOfDeath() == null) {
             ageDisplayLabel.setText("Age");
         } else {
             ageDisplayLabel.setText("Age at Death");
         }
-        ageLabel.setText(String.valueOf(viewedDonor.getAge()));
+        ageLabel.setText(String.valueOf(viewedPerson.getAge()));
     }
 
     /**
-     * Navigate to the page to display organs for the currently specified donor.
+     * Navigate to the page to display organs for the currently specified person.
      */
     @FXML
-    public void viewOrgansForDonor() {
+    public void viewOrgansForPerson() {
         PageNavigator.loadPage(Page.REGISTER_ORGANS, mainController);
     }
 }

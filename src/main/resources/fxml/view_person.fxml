@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <VBox prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-  fx:controller="seng302.Controller.Donor.ViewDonorController">
+  fx:controller="seng302.Controller.Person.ViewPersonController">
   <children>
     <SplitPane dividerPositions="0.29797979797979796" VBox.vgrow="ALWAYS">
       <items>
@@ -41,9 +41,9 @@
                       </rowConstraints>
                       <children>
                         <TextField fx:id="id" prefHeight="30.0" promptText="ID Number" GridPane.columnIndex="1"/>
-                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#searchDonor"
+                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#searchPerson"
                           prefHeight="30.0" text="Search" GridPane.columnIndex="2"/>
-                        <Label fx:id="noDonorLabel" text="No Donor with this ID exists!" textFill="#c60000"
+                        <Label fx:id="noPersonLabel" text="No Person with this ID exists!" textFill="#c60000"
                           visible="false" wrapText="true" GridPane.columnIndex="3"/>
                       </children>
                       <VBox.margin>
@@ -88,7 +88,7 @@
                           GridPane.columnIndex="3" GridPane.rowIndex="3"/>
                         <TextField fx:id="address" layoutX="530.0" layoutY="245.0" prefHeight="30.0"
                           GridPane.columnIndex="3" GridPane.rowIndex="4"/>
-                        <Button mnemonicParsing="false" onAction="#viewOrgansForDonor" text="Organs"
+                        <Button mnemonicParsing="false" onAction="#viewOrgansForPerson" text="Organs"
                           GridPane.columnIndex="2" GridPane.rowIndex="7"/>
                         <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#saveChanges"
                           prefHeight="30.0" text="Save Changes" GridPane.columnIndex="3" GridPane.rowIndex="7"/>
@@ -134,7 +134,7 @@
                 </VBox>
               </center>
               <top>
-                <Label text="View/edit donor" BorderPane.alignment="CENTER">
+                <Label text="View/edit person" BorderPane.alignment="CENTER">
                   <font>
                     <Font size="24.0"/>
                   </font>

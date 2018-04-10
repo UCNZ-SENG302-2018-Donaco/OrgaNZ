@@ -21,7 +21,7 @@ import javafx.scene.layout.Pane;
 
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
-import seng302.Donor;
+import seng302.Person;
 import seng302.State.State;
 import seng302.Utilities.Enums.Gender;
 import seng302.Utilities.Enums.Region;
@@ -29,7 +29,7 @@ import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
 import seng302.Utilities.View.WindowContext;
 
-public class SearchDonorsController extends SubController {
+public class SearchPersonsController extends SubController {
 
     private static final int ROWS_PER_PAGE = 30;
 
@@ -40,25 +40,25 @@ public class SearchDonorsController extends SubController {
     private HBox sidebarPane;
 
     @FXML
-    private TableView<Donor> tableView;
+    private TableView<Person> tableView;
 
     @FXML
-    private TableColumn<Donor, Integer> idCol;
+    private TableColumn<Person, Integer> idCol;
     @FXML
-    private TableColumn<Donor, String> nameCol;
+    private TableColumn<Person, String> nameCol;
     @FXML
-    private TableColumn<Donor, Integer> ageCol;
+    private TableColumn<Person, Integer> ageCol;
     @FXML
-    private TableColumn<Donor, Gender> genderCol;
+    private TableColumn<Person, Gender> genderCol;
     @FXML
-    private TableColumn<Donor, Region> regionCol;
+    private TableColumn<Person, Region> regionCol;
 
     @FXML
     private Pagination pagination;
 
-    private ObservableList<Donor> observableDonorList = FXCollections.observableArrayList();
-    private FilteredList<Donor> filteredDonors;
-    private SortedList<Donor> sortedDonors;
+    private ObservableList<Person> observablePersonList = FXCollections.observableArrayList();
+    private FilteredList<Person> filteredPeople;
+    private SortedList<Person> sortedPeople;
 
     @Override
     public void setup(MainController mainController) {
@@ -68,7 +68,7 @@ public class SearchDonorsController extends SubController {
 
     @FXML
     private void initialize() {
-        ArrayList<Donor> allDonors = State.getDonorManager().getDonors();
+        ArrayList<Person> allPeople = State.getPersonManager().getPeople();
 
         setupTable();
 
@@ -76,26 +76,26 @@ public class SearchDonorsController extends SubController {
         searchBox.textProperty().addListener(((o) -> refresh()));
 
         //Create a filtered list, that defaults to allow all using lambda function
-        filteredDonors = new FilteredList<>(FXCollections.observableArrayList(allDonors), donor -> true);
+        filteredPeople = new FilteredList<>(FXCollections.observableArrayList(allPeople), person -> true);
         //Create a sorted list that links to the filtered list
-        sortedDonors = new SortedList<>(filteredDonors);
+        sortedPeople = new SortedList<>(filteredPeople);
         //Link the sorted list sort to the tableView sort
-        sortedDonors.comparatorProperty().bind(tableView.comparatorProperty());
+        sortedPeople.comparatorProperty().bind(tableView.comparatorProperty());
 
         //Set initial pagination
-        pagination.setPageCount(sortedDonors.size() / ROWS_PER_PAGE + 1);
+        pagination.setPageCount(sortedPeople.size() / ROWS_PER_PAGE + 1);
         //On pagination update call createPage
         pagination.setPageFactory(this::createPage);
 
-        //Initialize the observable list to all donors
-        observableDonorList.setAll(sortedDonors);
+        //Initialize the observable list to all persons
+        observablePersonList.setAll(sortedPeople);
         //Bind the tableView to the observable list
-        tableView.setItems(observableDonorList);
+        tableView.setItems(observablePersonList);
     }
 
     /**
      * Initialize the table columns.
-     * The donor must have getters for these specific names specified in the PV Factories.
+     * The person must have getters for these specific names specified in the PV Factories.
      */
     private void setupTable() {
         idCol.setCellValueFactory(new PropertyValueFactory<>("uid"));
@@ -106,20 +106,20 @@ public class SearchDonorsController extends SubController {
 
         tableView.getColumns().setAll(idCol, nameCol, ageCol, genderCol, regionCol);
 
-        tableView.setRowFactory(tv -> new TableRow<Donor>() {
+        tableView.setRowFactory(tv -> new TableRow<Person>() {
             private Tooltip tooltip = new Tooltip();
 
             @Override
-            public void updateItem(Donor donor, boolean empty) {
-                super.updateItem(donor, empty);
-                if (donor == null) {
+            public void updateItem(Person person, boolean empty) {
+                super.updateItem(person, empty);
+                if (person == null) {
                     setTooltip(null);
                 } else {
                     tooltip.setText(String.format("%s %s with blood type %s. Donating: %s",
-                            donor.getFirstName(),
-                            donor.getLastName(),
-                            donor.getBloodType(),
-                            donor.getOrganStatusString()));
+                            person.getFirstName(),
+                            person.getLastName(),
+                            person.getBloodType(),
+                            person.getOrganStatusString()));
                     setTooltip(tooltip);
                 }
             }
@@ -127,15 +127,15 @@ public class SearchDonorsController extends SubController {
 
         tableView.setOnMouseClicked(mouseEvent -> {
             if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2) {
-                Donor donor = tableView.getSelectionModel().getSelectedItem();
-                if (donor != null) {
+                Person person = tableView.getSelectionModel().getSelectedItem();
+                if (person != null) {
                     MainController newMain = PageNavigator.openNewWindow();
                     if (newMain != null) {
                         newMain.setWindowContext(new WindowContext.WindowContextBuilder()
-                                .setAsClinViewDonorWindow()
-                                .viewDonor(donor)
+                                .setAsClinViewPersonWindow()
+                                .viewPerson(person)
                                 .build());
-                        PageNavigator.loadPage(Page.VIEW_DONOR, newMain);
+                        PageNavigator.loadPage(Page.VIEW_PERSON, newMain);
                     }
                 }
             }
@@ -150,13 +150,13 @@ public class SearchDonorsController extends SubController {
     private void refresh() {
         String searchText = searchBox.getText();
         if (searchText == null || searchText.length() == 0) {
-            filteredDonors.setPredicate(donor -> true);
+            filteredPeople.setPredicate(person -> true);
         } else {
-            filteredDonors.setPredicate(donor -> donor.nameContains(searchText));
+            filteredPeople.setPredicate(person -> person.nameContains(searchText));
         }
 
         //If the pagination count wont change, force a refresh of the page, if it will, change it and that will trigger the update.
-        int newPageCount = filteredDonors.size() / ROWS_PER_PAGE + 1;
+        int newPageCount = filteredPeople.size() / ROWS_PER_PAGE + 1;
         if (pagination.getPageCount() == newPageCount) {
             createPage(0);
         } else {
@@ -171,8 +171,8 @@ public class SearchDonorsController extends SubController {
      */
     private Node createPage(int pageIndex) {
         int fromIndex = pageIndex * ROWS_PER_PAGE;
-        int toIndex = Math.min(fromIndex + ROWS_PER_PAGE, filteredDonors.size());
-        observableDonorList.setAll(sortedDonors.subList(fromIndex, toIndex));
+        int toIndex = Math.min(fromIndex + ROWS_PER_PAGE, filteredPeople.size());
+        observablePersonList.setAll(sortedPeople.subList(fromIndex, toIndex));
         return new Pane();
     }
 }

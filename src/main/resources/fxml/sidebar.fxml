@@ -23,7 +23,7 @@
             </Button>
           </children>
         </HBox>
-        <Button fx:id="viewDonorButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToViewDonor" text="View Donor" VBox.vgrow="ALWAYS">
+        <Button fx:id="viewPersonButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToViewPerson" text="View Person" VBox.vgrow="ALWAYS">
           <font>
             <Font size="16.0" />
           </font>
@@ -53,12 +53,12 @@
             <Font size="16.0" />
           </font>
         </Button>
-        <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#save" text="Save All Donors" VBox.vgrow="ALWAYS">
+        <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#save" text="Save All Persons" VBox.vgrow="ALWAYS">
           <font>
             <Font size="16.0" />
           </font>
         </Button>
-        <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#load" text="Load Donors" VBox.vgrow="ALWAYS">
+        <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#load" text="Load Persons" VBox.vgrow="ALWAYS">
           <font>
             <Font size="16.0" />
           </font>

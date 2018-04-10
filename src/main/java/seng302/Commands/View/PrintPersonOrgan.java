@@ -1,9 +1,9 @@
 package seng302.Commands.View;
 
 
-import seng302.Donor;
+import seng302.Person;
 import seng302.HistoryItem;
-import seng302.State.DonorManager;
+import seng302.State.PersonManager;
 import seng302.State.State;
 import seng302.Utilities.JSONConverter;
 
@@ -18,15 +18,15 @@ import picocli.CommandLine.Option;
  */
 
 @Command(name = "printuserorgan", description = "Print a single user with their organ information.", sortOptions = false)
-public class PrintDonorOrgan implements Runnable {
+public class PrintPersonOrgan implements Runnable {
 
-    private DonorManager manager;
+    private PersonManager manager;
 
-    public PrintDonorOrgan() {
-        manager = State.getDonorManager();
+    public PrintPersonOrgan() {
+        manager = State.getPersonManager();
     }
 
-    public PrintDonorOrgan(DonorManager manager) {
+    public PrintPersonOrgan(PersonManager manager) {
         this.manager = manager;
     }
 
@@ -35,14 +35,14 @@ public class PrintDonorOrgan implements Runnable {
 
     @Override
     public void run() {
-        Donor donor = manager.getDonorByID(uid);
-        if (donor == null) {
-            System.out.println("No donor exists with that user ID");
+        Person person = manager.getPersonByID(uid);
+        if (person == null) {
+            System.out.println("No person exists with that user ID");
             return;
         }
-        System.out.println(donor.getDonorOrganStatusString());
+        System.out.println(person.getPersonOrganStatusString());
         HistoryItem printUserOrgan = new HistoryItem("PRINT USER ORGAN",
-                "The organ information was printed for donor " + uid);
+                "The organ information was printed for person " + uid);
         JSONConverter.updateHistory(printUserOrgan, "action_history.json");
     }
 }

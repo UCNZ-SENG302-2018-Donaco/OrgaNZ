@@ -1,4 +1,4 @@
-package seng302.Controller.Donor;
+package seng302.Controller.Person;
 
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -7,9 +7,9 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 
 import seng302.Controller.SubController;
-import seng302.Donor;
+import seng302.Person;
 import seng302.HistoryItem;
-import seng302.State.DonorManager;
+import seng302.State.PersonManager;
 import seng302.State.Session;
 import seng302.State.State;
 import seng302.Utilities.JSONConverter;
@@ -19,24 +19,24 @@ import seng302.Utilities.View.PageNavigator;
 /**
  * Controller for the login page.
  */
-public class DonorLoginController extends SubController {
+public class PersonLoginController extends SubController {
 
     @FXML
-    private ListView<Donor> donorList;
+    private ListView<Person> personList;
 
     /**
      * Initializes the UI for this page.
-     * - Gets the donor manager from the current state.
+     * - Gets the person manager from the current state.
      * - Sets up the cell factory to show users with their id and name.
-     * - Adds all donors currently in the donor manager to the donor list.
+     * - Adds all persons currently in the person manager to the person list.
      */
     @FXML
     private void initialize() {
-        DonorManager donorManager = State.getDonorManager();
+        PersonManager personManager = State.getPersonManager();
 
-        donorList.setCellFactory(cell -> new ListCell<Donor>() {
+        personList.setCellFactory(cell -> new ListCell<Person>() {
             @Override
-            public void updateItem(Donor item, boolean empty) {
+            public void updateItem(Person item, boolean empty) {
                 super.updateItem(item, empty);
                 if (empty) {
                     setText(null);
@@ -45,25 +45,25 @@ public class DonorLoginController extends SubController {
                 }
             }
         });
-        donorList.setItems(FXCollections.observableArrayList(donorManager.getDonors()));
+        personList.setItems(FXCollections.observableArrayList(personManager.getPeople()));
     }
 
     /**
-     * Attempts to login with the selected donor.
-     * If successful, redirects to the view donor page for that donor.
+     * Attempts to login with the selected person.
+     * If successful, redirects to the view person page for that person.
      * @param event When the sign in button is clicked.
      */
     @FXML
     private void signIn(ActionEvent event) {
-        Donor selectedDonor = donorList.getSelectionModel().getSelectedItem();
+        Person selectedPerson = personList.getSelectionModel().getSelectedItem();
 
-        if (selectedDonor != null) {
-            HistoryItem loginHistory = new HistoryItem("LOGIN_DONOR", String.format("Donor %s %s (%d) logged in.",
-                    selectedDonor.getFirstName(), selectedDonor.getLastName(), selectedDonor.getUid()));
+        if (selectedPerson != null) {
+            HistoryItem loginHistory = new HistoryItem("LOGIN_PERSON", String.format("Person %s %s (%d) logged in.",
+                    selectedPerson.getFirstName(), selectedPerson.getLastName(), selectedPerson.getUid()));
             JSONConverter.updateHistory(loginHistory, "action_history.json");
 
-            State.login(Session.UserType.DONOR, selectedDonor);
-            PageNavigator.loadPage(Page.VIEW_DONOR, mainController);
+            State.login(Session.UserType.PERSON, selectedPerson);
+            PageNavigator.loadPage(Page.VIEW_PERSON, mainController);
         }
     }
 

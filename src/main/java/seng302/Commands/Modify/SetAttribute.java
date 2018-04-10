@@ -6,10 +6,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import seng302.Actions.ActionInvoker;
-import seng302.Actions.Donor.ModifyDonorAction;
-import seng302.Donor;
+import seng302.Actions.Person.ModifyPersonAction;
+import seng302.Person;
 import seng302.HistoryItem;
-import seng302.State.DonorManager;
+import seng302.State.PersonManager;
 import seng302.State.State;
 import seng302.Utilities.Enums.BloodType;
 import seng302.Utilities.Enums.Gender;
@@ -24,7 +24,7 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
 /**
- * Command line to set attributes of a Donor, by using their ID as a reference key.
+ * Command line to set attributes of a Person, by using their ID as a reference key.
  * @author Dylan Carlyle, Jack Steel
  * @version sprint 1.
  * date 05/03/2018
@@ -33,15 +33,15 @@ import picocli.CommandLine.Option;
 @Command(name = "setattribute", description = "Set the attributes of an existing user.", sortOptions = false)
 public class SetAttribute implements Runnable {
 
-    private DonorManager manager;
+    private PersonManager manager;
     private ActionInvoker invoker;
 
     public SetAttribute() {
-        manager = State.getDonorManager();
+        manager = State.getPersonManager();
         invoker = State.getInvoker();
     }
 
-    public SetAttribute(DonorManager manager, ActionInvoker invoker) {
+    public SetAttribute(PersonManager manager, ActionInvoker invoker) {
         this.manager = manager;
         this.invoker = invoker;
     }
@@ -85,26 +85,26 @@ public class SetAttribute implements Runnable {
 
     @Override
     public void run() {
-        Donor donor = manager.getDonorByID(uid);
-        if (donor == null) {
-            System.out.println("No donor exists with that user ID");
+        Person person = manager.getPersonByID(uid);
+        if (person == null) {
+            System.out.println("No person exists with that user ID");
             return;
         }
 
-        ModifyDonorAction action = new ModifyDonorAction(donor);
+        ModifyPersonAction action = new ModifyPersonAction(person);
 
         Map<String, Object[]> states = new HashMap<>();
-        states.put("setFirstName", new String[]{donor.getFirstName(), firstName});
-        states.put("setMiddleName", new String[]{donor.getMiddleName(), middleName});
-        states.put("setLastName", new String[]{donor.getLastName(), lastName});
-        states.put("setCurrentAddress", new String[]{donor.getCurrentAddress(), address});
-        states.put("setRegion", new Region[]{donor.getRegion(), region});
-        states.put("setGender", new Gender[]{donor.getGender(), gender});
-        states.put("setBloodType", new BloodType[]{donor.getBloodType(), bloodType});
-        states.put("setHeight", new Double[]{donor.getHeight(), height});
-        states.put("setWeight", new Double[]{donor.getWeight(), weight});
-        states.put("setDateOfBirth", new LocalDate[]{donor.getDateOfBirth(), dateOfBirth});
-        states.put("setDateOfDeath", new LocalDate[]{donor.getDateOfDeath(), dateOfDeath});
+        states.put("setFirstName", new String[]{person.getFirstName(), firstName});
+        states.put("setMiddleName", new String[]{person.getMiddleName(), middleName});
+        states.put("setLastName", new String[]{person.getLastName(), lastName});
+        states.put("setCurrentAddress", new String[]{person.getCurrentAddress(), address});
+        states.put("setRegion", new Region[]{person.getRegion(), region});
+        states.put("setGender", new Gender[]{person.getGender(), gender});
+        states.put("setBloodType", new BloodType[]{person.getBloodType(), bloodType});
+        states.put("setHeight", new Double[]{person.getHeight(), height});
+        states.put("setWeight", new Double[]{person.getWeight(), weight});
+        states.put("setDateOfBirth", new LocalDate[]{person.getDateOfBirth(), dateOfBirth});
+        states.put("setDateOfDeath", new LocalDate[]{person.getDateOfDeath(), dateOfDeath});
 
         for (Entry<String, Object[]> entry : states.entrySet()) {
             if (entry.getValue()[1] == null) {

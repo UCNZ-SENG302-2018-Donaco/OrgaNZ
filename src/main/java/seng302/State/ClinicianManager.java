@@ -7,8 +7,8 @@ import seng302.Clinician;
 import seng302.Utilities.Enums.Region;
 
 /**
- * The class to handle the Donor inputs, including adding,
- * setting attributes and updating the values of the donor.
+ * The class to handle the Person inputs, including adding,
+ * setting attributes and updating the values of the person.
  * @author Dylan Carlyle, Jack Steel
  * @version sprint 1.
  * date 08/03/2018
@@ -42,10 +42,10 @@ public class ClinicianManager {
     }
 
     /**
-     * Add a donor
+     * Add a person
      * @param clinician Clinician to be added
      */
-    public void addDonor(Clinician clinician) {
+    public void addPerson(Clinician clinician) {
         clinicians.add(clinician);
     }
 
@@ -58,7 +58,7 @@ public class ClinicianManager {
     }
 
     /**
-     * Remove a donor object
+     * Remove a person object
      * @param clinician Clinician to be removed
      */
     public void removeClinician(Clinician clinician) {

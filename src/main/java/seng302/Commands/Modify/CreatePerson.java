@@ -6,10 +6,10 @@ import java.time.LocalDate;
 
 import seng302.Actions.Action;
 import seng302.Actions.ActionInvoker;
-import seng302.Actions.Donor.CreateDonorAction;
-import seng302.Donor;
+import seng302.Actions.Person.CreatePersonAction;
+import seng302.Person;
 import seng302.HistoryItem;
-import seng302.State.DonorManager;
+import seng302.State.PersonManager;
 import seng302.State.State;
 import seng302.Utilities.JSONConverter;
 import seng302.Utilities.TypeConverters.LocalDateConverter;
@@ -18,24 +18,24 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
 /**
- * Command line to create a Donor with basic information, including their DOB and full name.
+ * Command line to create a Person with basic information, including their DOB and full name.
  * @author Dylan Carlyle, Jack Steel
  * @version sprint 1.
  * date 05/03/2018
  */
 
 @Command(name = "createuser", description = "Creates a user.")
-public class CreateDonor implements Runnable {
+public class CreatePerson implements Runnable {
 
-    private DonorManager manager;
+    private PersonManager manager;
     private ActionInvoker invoker;
 
-    public CreateDonor() {
-        manager = State.getDonorManager();
+    public CreatePerson() {
+        manager = State.getPersonManager();
         invoker = State.getInvoker();
     }
 
-    public CreateDonor(DonorManager manager, ActionInvoker invoker) {
+    public CreatePerson(PersonManager manager, ActionInvoker invoker) {
         this.manager = manager;
         this.invoker = invoker;
     }
@@ -63,15 +63,15 @@ public class CreateDonor implements Runnable {
         }
         int uid = manager.getUid();
 
-        Donor donor = new Donor(firstName, middleNames, lastName, dateOfBirth, uid);
+        Person person = new Person(firstName, middleNames, lastName, dateOfBirth, uid);
 
-        Action action = new CreateDonorAction(donor, manager);
+        Action action = new CreatePersonAction(person, manager);
 
         invoker.execute(action);
 
-        System.out.println(String.format("New donor %s %s %s created with userID %s", firstName,
+        System.out.println(String.format("New person %s %s %s created with userID %s", firstName,
                 ofNullable(middleNames).orElse(""), lastName, uid));
-        HistoryItem create = new HistoryItem("CREATE", "Donor profile ID: " + uid + " created.");
+        HistoryItem create = new HistoryItem("CREATE", "Person profile ID: " + uid + " created.");
         JSONConverter.updateHistory(create, "action_history.json");
     }
 }

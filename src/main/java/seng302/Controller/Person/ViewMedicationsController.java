@@ -1,4 +1,4 @@
-package seng302.Controller.Donor;
+package seng302.Controller.Person;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -15,12 +15,12 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 
 import seng302.Actions.ActionInvoker;
-import seng302.Actions.Donor.AddMedicationRecordAction;
-import seng302.Actions.Donor.DeleteMedicationRecordAction;
-import seng302.Actions.Donor.ModifyMedicationRecordAction;
+import seng302.Actions.Person.AddMedicationRecordAction;
+import seng302.Actions.Person.DeleteMedicationRecordAction;
+import seng302.Actions.Person.ModifyMedicationRecordAction;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
-import seng302.Donor;
+import seng302.Person;
 import seng302.MedicationRecord;
 import seng302.State.Session;
 import seng302.State.Session.UserType;
@@ -36,7 +36,7 @@ public class ViewMedicationsController extends SubController {
 
     private Session session;
     private ActionInvoker invoker;
-    private Donor donor;
+    private Person person;
     private List<String> lastResponse;
     private MedAutoCompleteHandler autoCompleteHandler;
 
@@ -67,7 +67,7 @@ public class ViewMedicationsController extends SubController {
      * - Starts the WebAPIHandler for drug name autocompletion.
      * - Sets listeners for changing selection on two list views so that if an item is selected on one, the selection
      * is removed from the other.
-     * - Checks if the logged in user is a donor, and if so, makes the page non-editable.
+     * - Checks if the logged in user is a person, and if so, makes the page non-editable.
      */
     @FXML
     private void initialize() {
@@ -89,7 +89,7 @@ public class ViewMedicationsController extends SubController {
                 pastMedicationsView.getSelectionModel().clearSelection();
             });
 
-        if (session.getLoggedInUserType() == UserType.DONOR) {
+        if (session.getLoggedInUserType() == UserType.PERSON) {
             newMedicationPane.setVisible(false);
             newMedicationPane.setManaged(false);
 
@@ -102,8 +102,8 @@ public class ViewMedicationsController extends SubController {
     /**
      * Sets up the page using the MainController given.
      * - Loads the sidebar.
-     * - Checks if the session login type is a donor or a clinician, and sets the viewed donor appropriately.
-     * - Refreshes the medication list views to set initial state based on the viewed donor.
+     * - Checks if the session login type is a person or a clinician, and sets the viewed person appropriately.
+     * - Refreshes the medication list views to set initial state based on the viewed person.
      * @param mainController The MainController for the window this page is loaded on.
      */
     @Override
@@ -111,26 +111,26 @@ public class ViewMedicationsController extends SubController {
         super.setup(mainController);
         mainController.loadSidebar(sidebarPane);
 
-        if (session.getLoggedInUserType() == Session.UserType.DONOR) {
-            donor = session.getLoggedInDonor();
-        } else if (windowContext.isClinViewDonorWindow()) {
-            donor = windowContext.getViewDonor();
+        if (session.getLoggedInUserType() == Session.UserType.PERSON) {
+            person = session.getLoggedInPerson();
+        } else if (windowContext.isClinViewPersonWindow()) {
+            person = windowContext.getViewPerson();
         }
 
         refreshMedicationLists();
     }
 
     /**
-     * Refreshes the past/current medication list views from the donor's properties.
+     * Refreshes the past/current medication list views from the person's properties.
      */
     private void refreshMedicationLists() {
-        pastMedicationsView.setItems(FXCollections.observableArrayList(donor.getPastMedications()));
-        currentMedicationsView.setItems(FXCollections.observableArrayList(donor.getCurrentMedications()));
+        pastMedicationsView.setItems(FXCollections.observableArrayList(person.getPastMedications()));
+        currentMedicationsView.setItems(FXCollections.observableArrayList(person.getCurrentMedications()));
     }
 
     /**
      * Moves the MedicationRecord selected in the current medications list to the past medications list. Also:
-     * - Sets the date the donor stopped taking the medication to the current date.
+     * - Sets the date the person stopped taking the medication to the current date.
      * - Removes the MedicationRecord from the current medications list.
      * - Refreshes both list views.
      * @param event When the '<' button is pressed.
@@ -149,8 +149,8 @@ public class ViewMedicationsController extends SubController {
 
     /**
      * Moves the MedicationRecord selected in the past medications list to the current medications list. Also:
-     * - Sets the date the donor started taking the medication to the current date.
-     * - Sets the date the donor stopped taking the medication to null (hasn't stopped yet).
+     * - Sets the date the person started taking the medication to the current date.
+     * - Sets the date the person stopped taking the medication to null (hasn't stopped yet).
      * - Removes the MedicationRecord from the past medications list.
      * - Refreshes both list views.
      * @param event When the '>' button is pressed.
@@ -190,13 +190,13 @@ public class ViewMedicationsController extends SubController {
 
     /**
      * Creates a new MedicationRecord for a medication with the given name, sets its 'started' date to the
-     * current date, then adds it to the donor's current medications list.
+     * current date, then adds it to the person's current medications list.
      * @param newMedName The name of the medication to add a new instance of.
      */
     private void addMedication(String newMedName) {
         if (!newMedName.equals("")) {
             MedicationRecord record = new MedicationRecord(newMedName, LocalDate.now(), null);
-            AddMedicationRecordAction action = new AddMedicationRecordAction(donor, record);
+            AddMedicationRecordAction action = new AddMedicationRecordAction(person, record);
 
             invoker.execute(action);
             newMedField.setText("");
@@ -215,7 +215,7 @@ public class ViewMedicationsController extends SubController {
         if (selectedListView != null) {
             MedicationRecord record = selectedListView.getSelectionModel().getSelectedItem();
             if (record != null) {
-                DeleteMedicationRecordAction action = new DeleteMedicationRecordAction(donor, record);
+                DeleteMedicationRecordAction action = new DeleteMedicationRecordAction(person, record);
 
                 invoker.execute(action);
                 refreshMedicationLists();

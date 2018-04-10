@@ -54,7 +54,7 @@ public class PageNavigator {
     public static MainController openNewWindow() {
         try {
             Stage newStage = new Stage();
-            newStage.setTitle("Organ Donor Management System");
+            newStage.setTitle("Organ Person Management System");
 
             FXMLLoader loader = new FXMLLoader();
             Pane mainPane = loader.load(PageNavigator.class.getResourceAsStream(Page.MAIN.getPath()));

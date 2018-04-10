@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <VBox prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
-  fx:controller="seng302.Controller.Donor.DonorLoginController">
+  fx:controller="seng302.Controller.Person.PersonLoginController">
   <children>
     <Button mnemonicParsing="false" onAction="#goBack" prefHeight="30.0" prefWidth="120.0"
       style="-fx-base: rgba(173,216,230, 0.8);" text="Back">
@@ -18,7 +18,7 @@
     </Button>
     <BorderPane VBox.vgrow="ALWAYS">
       <top>
-        <Label text="Donor Login" BorderPane.alignment="CENTER">
+        <Label text="Person Login" BorderPane.alignment="CENTER">
           <font>
             <Font size="24.0"/>
           </font>
@@ -28,7 +28,7 @@
         </Label>
       </top>
       <center>
-        <ListView fx:id="donorList" maxWidth="250.0" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+        <ListView fx:id="personList" maxWidth="250.0" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
           <BorderPane.margin>
             <Insets/>
           </BorderPane.margin>

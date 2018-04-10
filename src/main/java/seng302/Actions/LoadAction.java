@@ -2,26 +2,26 @@ package seng302.Actions;
 
 import java.util.ArrayList;
 
-import seng302.Donor;
-import seng302.State.DonorManager;
+import seng302.Person;
+import seng302.State.PersonManager;
 
 /**
- * A reversible DonorManager donor list modification Action
+ * A reversible PersonManager person list modification Action
  */
 public class LoadAction implements Action {
 
-    private DonorManager manager;
+    private PersonManager manager;
 
-    private ArrayList<Donor> oldState;
-    private ArrayList<Donor> newState;
+    private ArrayList<Person> oldState;
+    private ArrayList<Person> newState;
 
     /**
      * Create a new Action
-     * @param oldState The initial state of the Donor array
-     * @param newState The new state of the Donor array
-     * @param manager The DonorManager to apply changes to
+     * @param oldState The initial state of the Person array
+     * @param newState The new state of the Person array
+     * @param manager The PersonManager to apply changes to
      */
-    public LoadAction(ArrayList<Donor> oldState, ArrayList<Donor> newState, DonorManager manager) {
+    public LoadAction(ArrayList<Person> oldState, ArrayList<Person> newState, PersonManager manager) {
         this.manager = manager;
         this.oldState = oldState;
         this.newState = newState;
@@ -29,11 +29,11 @@ public class LoadAction implements Action {
 
     @Override
     public void execute() {
-        manager.setDonors(newState);
+        manager.setPeople(newState);
     }
 
     @Override
     public void unExecute() {
-        manager.setDonors(oldState);
+        manager.setPeople(oldState);
     }
 }

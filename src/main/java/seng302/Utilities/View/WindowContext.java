@@ -1,6 +1,6 @@
 package seng302.Utilities.View;
 
-import seng302.Donor;
+import seng302.Person;
 
 /**
  * A class to represent the parameters for a given window.
@@ -9,13 +9,13 @@ import seng302.Donor;
 public class WindowContext {
 
     private boolean sidebarEnabled;
-    private boolean isClinViewDonorWindow;
-    private Donor viewDonor;
+    private boolean isClinViewPersonWindow;
+    private Person viewPerson;
 
     private WindowContext(WindowContextBuilder builder) {
         this.sidebarEnabled = builder.sidebarEnabled;
-        this.isClinViewDonorWindow = builder.isClinViewDonorWindow;
-        this.viewDonor = builder.viewDonor;
+        this.isClinViewPersonWindow = builder.isClinViewPersonWindow;
+        this.viewPerson = builder.viewPerson;
     }
 
     /**
@@ -25,8 +25,8 @@ public class WindowContext {
     public static class WindowContextBuilder {
 
         private boolean sidebarEnabled = true;
-        private boolean isClinViewDonorWindow = false;
-        private Donor viewDonor;
+        private boolean isClinViewPersonWindow = false;
+        private Person viewPerson;
 
         public WindowContextBuilder() {
         }
@@ -36,13 +36,13 @@ public class WindowContext {
             return this;
         }
 
-        public WindowContextBuilder setAsClinViewDonorWindow() {
-            this.isClinViewDonorWindow = true;
+        public WindowContextBuilder setAsClinViewPersonWindow() {
+            this.isClinViewPersonWindow = true;
             return this;
         }
 
-        public WindowContextBuilder viewDonor(Donor donor) {
-            this.viewDonor = donor;
+        public WindowContextBuilder viewPerson(Person person) {
+            this.viewPerson = person;
             return this;
         }
 
@@ -51,8 +51,8 @@ public class WindowContext {
          * @return the new WindowContext.
          */
         public WindowContext build() {
-            if (isClinViewDonorWindow && viewDonor == null) {
-                throw new IllegalStateException("Cannot have a clinician donor view with no donor defined.");
+            if (isClinViewPersonWindow && viewPerson == null) {
+                throw new IllegalStateException("Cannot have a clinician person view with no person defined.");
             } else {
                 return new WindowContext(this);
             }
@@ -71,11 +71,11 @@ public class WindowContext {
         return sidebarEnabled;
     }
 
-    public boolean isClinViewDonorWindow() {
-        return isClinViewDonorWindow;
+    public boolean isClinViewPersonWindow() {
+        return isClinViewPersonWindow;
     }
 
-    public Donor getViewDonor() {
-        return viewDonor;
+    public Person getViewPerson() {
+        return viewPerson;
     }
 }
