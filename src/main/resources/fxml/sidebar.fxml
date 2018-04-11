@@ -4,73 +4,68 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<VBox prefHeight="600.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
-  fx:controller="seng302.Controller.SidebarController">
+
+<VBox prefHeight="600.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.SidebarController">
   <children>
     <VBox VBox.vgrow="ALWAYS">
       <children>
         <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
           <children>
-            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
-              onAction="#undo" text="Undo" HBox.hgrow="ALWAYS">
+            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#undo" text="Undo" HBox.hgrow="ALWAYS">
               <font>
-                <Font size="16.0"/>
+                <Font size="16.0" />
               </font>
             </Button>
-            <Button layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-              mnemonicParsing="false" onAction="#redo" text="Redo" HBox.hgrow="ALWAYS">
+            <Button layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#redo" text="Redo" HBox.hgrow="ALWAYS">
               <font>
-                <Font size="16.0"/>
+                <Font size="16.0" />
               </font>
             </Button>
           </children>
         </HBox>
-        <Button fx:id="viewDonorButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-          mnemonicParsing="false" onAction="#goToViewDonor" text="View Donor" VBox.vgrow="ALWAYS">
+        <Button fx:id="viewPersonButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToViewPerson" text="View Person" VBox.vgrow="ALWAYS">
           <font>
-            <Font size="16.0"/>
+            <Font size="16.0" />
           </font>
         </Button>
-        <Button fx:id="registerOrgansButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-          mnemonicParsing="false" onAction="#goToRegisterOrgans" text="Register Organs" VBox.vgrow="ALWAYS">
+        <Button fx:id="registerOrganDonationButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToRegisterOrganDonation" text="Register Organs" VBox.vgrow="ALWAYS">
           <font>
-            <Font size="16.0"/>
+            <Font size="16.0" />
           </font>
         </Button>
-        <Button fx:id="viewClinicianButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-          mnemonicParsing="false" onAction="#goToViewClinician" text="View Clinician" VBox.vgrow="ALWAYS">
+            <Button fx:id="viewMedicationsButton" layoutX="10.0" layoutY="144.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToViewMedications" text="View Medications" VBox.vgrow="ALWAYS">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Button>
+        <Button fx:id="viewClinicianButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToViewClinician" text="View Clinician" VBox.vgrow="ALWAYS">
           <font>
-            <Font size="16.0"/>
+            <Font size="16.0" />
           </font>
         </Button>
-        <Button fx:id="searchButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-          mnemonicParsing="false" onAction="#goToSearch" text="Search" VBox.vgrow="ALWAYS">
+        <Button fx:id="searchButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToSearch" text="Search" VBox.vgrow="ALWAYS">
           <font>
-            <Font size="16.0"/>
+            <Font size="16.0" />
           </font>
         </Button>
-        <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
-          onAction="#goToHistory" text="History" VBox.vgrow="ALWAYS">
+        <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToHistory" text="History" VBox.vgrow="ALWAYS">
           <font>
-            <Font size="16.0"/>
+            <Font size="16.0" />
           </font>
         </Button>
-        <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
-          onAction="#save" text="Save All Donors" VBox.vgrow="ALWAYS">
+        <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#save" text="Save All Persons" VBox.vgrow="ALWAYS">
           <font>
-            <Font size="16.0"/>
+            <Font size="16.0" />
           </font>
         </Button>
-        <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
-          onAction="#load" text="Load Donors" VBox.vgrow="ALWAYS">
+        <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#load" text="Load Persons" VBox.vgrow="ALWAYS">
           <font>
-            <Font size="16.0"/>
+            <Font size="16.0" />
           </font>
         </Button>
-        <Button fx:id="logoutButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-          mnemonicParsing="false" onAction="#logout" text="Logout" VBox.vgrow="ALWAYS">
+        <Button fx:id="logoutButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#logout" text="Logout" VBox.vgrow="ALWAYS">
           <font>
-            <Font size="16.0"/>
+            <Font size="16.0" />
           </font>
         </Button>
       </children>

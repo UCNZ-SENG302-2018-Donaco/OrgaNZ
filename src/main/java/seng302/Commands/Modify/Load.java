@@ -6,29 +6,29 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import seng302.HistoryItem;
-import seng302.State.DonorManager;
+import seng302.State.PersonManager;
 import seng302.State.State;
 import seng302.Utilities.JSONConverter;
 
 import picocli.CommandLine.Command;
 
 /**
- * Command line to load the information of all the donors from a JSON file,
+ * Command line to load the information of all the persons from a JSON file,
  * @author Dylan Carlyle, Jack Steel
  * @version sprint 1.
  * date 05/03/2018
  */
 
-@Command(name = "load", description = "Load donors from file", sortOptions = false)
+@Command(name = "load", description = "Load persons from file", sortOptions = false)
 public class Load implements Runnable {
 
-    private DonorManager manager;
+    private PersonManager manager;
 
     public Load() {
-        manager = State.getDonorManager();
+        manager = State.getPersonManager();
     }
 
-    public Load(DonorManager manager) {
+    public Load(PersonManager manager) {
         this.manager = manager;
     }
 
@@ -36,7 +36,7 @@ public class Load implements Runnable {
     public void run() {
         try {
             JSONConverter.loadFromFile(new File("savefile.json"));
-            System.out.println(String.format("Loaded %s users from file", manager.getDonors().size()));
+            System.out.println(String.format("Loaded %s users from file", manager.getPeople().size()));
             HistoryItem load = new HistoryItem("LOAD", "The systems state was loaded from "
                     + "savefile.json"); // Are we going to allow them to load from different files?
             JSONConverter.updateHistory(load, "action_history.json");

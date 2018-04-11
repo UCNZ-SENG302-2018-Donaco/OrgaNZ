@@ -4,24 +4,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 import seng302.Clinician;
-import seng302.Donor;
+import seng302.Person;
 import seng302.HistoryItem;
 
 public class Session {
 
     public enum UserType {
-        DONOR, CLINICIAN
+        PERSON, CLINICIAN
     }
 
-    private Donor loggedInDonor;
+    private Person loggedInPerson;
     private Clinician loggedInClinician;
     private UserType loggedInUserType;
     private List<HistoryItem> sessionHistory;
 
-    public Session(Donor donor) {
+    public Session(Person person) {
         sessionHistory = new ArrayList<>();
-        this.loggedInDonor = donor;
-        this.loggedInUserType = UserType.DONOR;
+        this.loggedInPerson = person;
+        this.loggedInUserType = UserType.PERSON;
     }
 
     public Session(Clinician clinician) {
@@ -30,8 +30,8 @@ public class Session {
         this.loggedInUserType = UserType.CLINICIAN;
     }
 
-    public Donor getLoggedInDonor() {
-        return loggedInDonor;
+    public Person getLoggedInPerson() {
+        return loggedInPerson;
     }
 
     public Clinician getLoggedInClinician() {
