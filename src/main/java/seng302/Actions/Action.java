@@ -1,12 +1,12 @@
 package seng302.Actions;
 
-public interface Action {
+public abstract class Action {
 
-    void execute();
+    protected abstract void execute();
 
-    void unExecute();
+    protected abstract void unExecute();
 
-    String getExecuteText();
+    public abstract String getExecuteText();
 
-    String getUnexecuteText();
+    public abstract String getUnexecuteText();
 }

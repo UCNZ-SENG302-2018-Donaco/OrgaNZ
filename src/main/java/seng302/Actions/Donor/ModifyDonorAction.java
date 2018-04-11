@@ -9,7 +9,7 @@ import seng302.Donor;
 /**
  * A reversible donor modification Action
  */
-public class ModifyDonorAction implements Action {
+public class ModifyDonorAction extends Action {
 
     private ArrayList<ModifyObjectByFieldAction> actions = new ArrayList<>();
     private Donor donor;
@@ -37,14 +37,14 @@ public class ModifyDonorAction implements Action {
     }
 
     @Override
-    public void execute() {
+    protected  void execute() {
         for (ModifyObjectByFieldAction action : actions) {
             action.execute();
         }
     }
 
     @Override
-    public void unExecute() {
+    protected void unExecute() {
         for (ModifyObjectByFieldAction action : actions) {
             action.unExecute();
         }

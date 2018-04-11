@@ -4,7 +4,7 @@ import seng302.Actions.Action;
 import seng302.Donor;
 import seng302.MedicationRecord;
 
-public class AddMedicationRecordAction implements Action {
+public class AddMedicationRecordAction extends Action {
 
     private Donor donor;
     private MedicationRecord record;
@@ -15,12 +15,12 @@ public class AddMedicationRecordAction implements Action {
     }
 
     @Override
-    public void execute() {
+    protected void execute() {
         donor.addMedicationRecord(record);
     }
 
     @Override
-    public void unExecute() {
+    protected void unExecute() {
         donor.deleteMedicationRecord(record);
     }
 

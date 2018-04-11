@@ -59,7 +59,7 @@ public class ActionInvoker {
         redoStack.clear();
         unsavedUpdates++;
         State.setUnsavedChanges(true);
-        return action.getUnexecuteText();
+        return action.getExecuteText();
     }
 
     /**

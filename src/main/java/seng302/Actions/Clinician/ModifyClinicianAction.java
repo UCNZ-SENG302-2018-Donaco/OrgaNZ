@@ -9,7 +9,7 @@ import seng302.Clinician;
 /**
  * A reversible clinician modification Action
  */
-public class ModifyClinicianAction implements Action {
+public class ModifyClinicianAction extends Action {
 
     private ArrayList<ModifyObjectByFieldAction> actions = new ArrayList<>();
     private Clinician clinician;
@@ -37,14 +37,14 @@ public class ModifyClinicianAction implements Action {
     }
 
     @Override
-    public void execute() {
+    protected void execute() {
         for (ModifyObjectByFieldAction action : actions) {
             action.execute();
         }
     }
 
     @Override
-    public void unExecute() {
+    protected void unExecute() {
         for (ModifyObjectByFieldAction action : actions) {
             action.unExecute();
         }

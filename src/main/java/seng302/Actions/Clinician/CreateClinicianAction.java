@@ -2,14 +2,12 @@ package seng302.Actions.Clinician;
 
 import seng302.Actions.Action;
 import seng302.Clinician;
-import seng302.Donor;
 import seng302.State.ClinicianManager;
-import seng302.State.DonorManager;
 
 /**
  * A reversible clinician creation action
  */
-public class CreateClinicianAction implements Action {
+public class CreateClinicianAction extends Action {
 
     private Clinician clinician;
     private ClinicianManager manager;
@@ -28,7 +26,7 @@ public class CreateClinicianAction implements Action {
      * Simply add the clinician to the DonorManager
      */
     @Override
-    public void execute() {
+    protected void execute() {
         manager.addClinician(clinician);
     }
 
@@ -36,7 +34,7 @@ public class CreateClinicianAction implements Action {
      * Simply remove the clinician from the DonorManager
      */
     @Override
-    public void unExecute() {
+    protected void unExecute() {
         manager.removeClinician(clinician);
     }
 

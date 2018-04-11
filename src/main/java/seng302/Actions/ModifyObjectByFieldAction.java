@@ -5,7 +5,7 @@ import java.lang.reflect.Method;
 
 import seng302.Utilities.TypeConverters.PrimitiveConverter;
 
-public class ModifyObjectByFieldAction implements Action {
+public class ModifyObjectByFieldAction extends Action {
 
     private Object toModify;
     private String field;

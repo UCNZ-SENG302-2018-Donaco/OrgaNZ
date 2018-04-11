@@ -7,7 +7,7 @@ import seng302.State.DonorManager;
 /**
  * A reversible donor deletion action
  */
-public class DeleteDonorAction implements Action {
+public class DeleteDonorAction extends Action {
 
     private Donor donor;
     private DonorManager manager;
@@ -23,12 +23,12 @@ public class DeleteDonorAction implements Action {
     }
 
     @Override
-    public void execute() {
+    protected void execute() {
         manager.removeDonor(donor);
     }
 
     @Override
-    public void unExecute() {
+    protected void unExecute() {
         manager.addDonor(donor);
     }
 

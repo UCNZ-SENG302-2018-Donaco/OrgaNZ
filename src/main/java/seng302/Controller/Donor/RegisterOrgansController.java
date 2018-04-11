@@ -19,6 +19,7 @@ import seng302.State.DonorManager;
 import seng302.State.Session;
 import seng302.State.State;
 import seng302.Utilities.Enums.Organ;
+import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
 import seng302.Utilities.JSONConverter;
 import seng302.Utilities.View.PageNavigator;
 
@@ -128,8 +129,12 @@ public class RegisterOrgansController extends SubController {
             boolean newStatus = organCheckBoxes.get(organ).isSelected();
 
             if (oldStatus != newStatus) {
-                action.addChange(organ, newStatus);
-                hasChanged = true;
+                try {
+                    action.addChange(organ, newStatus);
+                    hasChanged = true;
+                } catch (OrganAlreadyRegisteredException e) {
+                    e.printStackTrace();
+                }
             }
         }
         if (hasChanged) {

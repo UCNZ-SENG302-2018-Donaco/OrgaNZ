@@ -7,7 +7,7 @@ import seng302.State.ClinicianManager;
 /**
  * A reversible clinician deletion action
  */
-public class DeleteClinicianAction implements Action {
+public class DeleteClinicianAction extends Action {
 
     private Clinician clinician;
     private ClinicianManager manager;
@@ -23,12 +23,12 @@ public class DeleteClinicianAction implements Action {
     }
 
     @Override
-    public void execute() {
+    protected void execute() {
         manager.removeClinician(clinician);
     }
 
     @Override
-    public void unExecute() {
+    protected void unExecute() {
         manager.addClinician(clinician);
     }
 
