@@ -30,6 +30,7 @@ public class DonorManager {
 
     public void setDonors(ArrayList<Donor> donors) {
         this.donors = donors;
+        uid = calculateNextId();
     }
 
     /**
@@ -62,14 +63,6 @@ public class DonorManager {
      */
     public int getUid() {
         return uid++;
-    }
-
-    /**
-     * Set the user ID
-     * @param uid Value to set the user IF
-     */
-    public void setUid(int uid) {
-        this.uid = uid;
     }
 
     /**

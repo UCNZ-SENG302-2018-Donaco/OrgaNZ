@@ -22,7 +22,7 @@ public class DeleteDonorActionTest {
     public void init() {
         invoker = new ActionInvoker();
         manager = new DonorManager();
-        baseDonor = new Donor("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        baseDonor = new Donor("First", null, "Last", LocalDate.of(1970, 1, 1), 2);
         manager.addDonor(baseDonor);
     }
 
@@ -43,7 +43,7 @@ public class DeleteDonorActionTest {
 
     @Test
     public void CheckDonorMultipleDeletesOneUndoTest() {
-        Donor second = new Donor("SecondDonor", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        Donor second = new Donor("SecondDonor", null, "Last", LocalDate.of(1970, 1, 1), 2);
         manager.addDonor(second);
 
         DeleteDonorAction action = new DeleteDonorAction(baseDonor, manager);
@@ -53,13 +53,13 @@ public class DeleteDonorActionTest {
         invoker.execute(secondAction);
 
         invoker.undo();
-        assertEquals(baseDonor, manager.getDonors().get(0));
+        assertEquals(second, manager.getDonors().get(0));
         assertEquals(1, manager.getDonors().size());
     }
 
     @Test
     public void CheckDonorMultipleDeletesOneUndoRedoTest() {
-        Donor second = new Donor("SecondDonor", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        Donor second = new Donor("SecondDonor", null, "Last", LocalDate.of(1970, 1, 1), 2);
         manager.addDonor(second);
 
         DeleteDonorAction action = new DeleteDonorAction(baseDonor, manager);
@@ -69,7 +69,7 @@ public class DeleteDonorActionTest {
         invoker.execute(secondAction);
 
         invoker.undo();
-        assertEquals(baseDonor, manager.getDonors().get(0));
+        assertEquals(second, manager.getDonors().get(0));
         assertEquals(1, manager.getDonors().size());
 
         invoker.redo();

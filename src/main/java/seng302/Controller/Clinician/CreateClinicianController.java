@@ -9,6 +9,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 
+import seng302.Actions.Clinician.CreateClinicianAction;
 import seng302.Clinician;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
@@ -119,7 +120,9 @@ public class CreateClinicianController extends SubController {
                 Clinician clinician = new Clinician(fname.getText(), mname.getText(), lname.getText(),
                         workAddress.getText(), region.getValue(), Integer.parseInt(staffId.getText()),
                         password.getText());
-                clinicianManager.addDonor(clinician);
+
+                CreateClinicianAction action = new CreateClinicianAction(clinician, clinicianManager);
+                State.getInvoker().execute(action);
 
                 HistoryItem save = new HistoryItem("CREATE CLINICIAN",
                         "Clinician " + fname.getText() + " " + lname.getText() + " with staff ID " + staffId.getText()

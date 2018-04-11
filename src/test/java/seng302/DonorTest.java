@@ -20,21 +20,21 @@ public class DonorTest {
     }
 
     @Test
-    public void getBMITest1() {
+    public void getBMI1Test() {
         donor.setWeight(70);
         donor.setHeight(180);
         assertEquals(donor.getBMI(), 21.6, 0.01);
     }
 
     @Test
-    public void getBMITest2() {
+    public void getBMI2Test() {
         donor.setWeight(0);
         donor.setHeight(180);
         assertEquals(donor.getBMI(), 0, 0.0);
     }
 
     @Test
-    public void getAge() {
+    public void getAgeTest() {
         LocalDate dob = LocalDate.of(2000, 1, 1);
         int age = Period.between(dob, LocalDate.now()).getYears();
         donor.setDateOfBirth(dob);
@@ -43,7 +43,7 @@ public class DonorTest {
     }
 
     @Test
-    public void getAge2() {
+    public void getAge2Test() {
         LocalDate dob = LocalDate.of(2000, 1, 1);
         LocalDate dod = LocalDate.of(2010, 1, 1);
         donor.setDateOfBirth(dob);
