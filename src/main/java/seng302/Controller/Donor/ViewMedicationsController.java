@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import javafx.collections.FXCollections;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -85,16 +86,16 @@ public class ViewMedicationsController extends SubController {
         activeIngredientsHandler = new MedActiveIngredientsHandler();
 
         pastMedicationsView.getSelectionModel().selectedItemProperty().addListener(
-            (observable) -> {
-                selectedListView = pastMedicationsView;
-                currentMedicationsView.getSelectionModel().clearSelection();
-            });
+                (observable) -> {
+                    selectedListView = pastMedicationsView;
+                    currentMedicationsView.getSelectionModel().clearSelection();
+                });
 
         currentMedicationsView.getSelectionModel().selectedItemProperty().addListener(
-            (observable) -> {
-                selectedListView = currentMedicationsView;
-                pastMedicationsView.getSelectionModel().clearSelection();
-            });
+                (observable) -> {
+                    selectedListView = currentMedicationsView;
+                    pastMedicationsView.getSelectionModel().clearSelection();
+                });
 
         if (session.getLoggedInUserType() == UserType.DONOR) {
             newMedicationPane.setVisible(false);
@@ -236,35 +237,54 @@ public class ViewMedicationsController extends SubController {
      * @param event When the 'View active ingredients' button is clicked.
      */
     @FXML
-    void viewActiveIngredients(ActionEvent event) {
+    private void viewActiveIngredients(ActionEvent event) {
         // Figure out which record is currently selected
         MedicationRecord currentMedicationRecord = currentMedicationsView.getSelectionModel().getSelectedItem();
         MedicationRecord pastMedicationRecord = pastMedicationsView.getSelectionModel().getSelectedItem();
         MedicationRecord medicationRecord;
-        if (currentMedicationRecord != null) medicationRecord = currentMedicationRecord;
-        else if (pastMedicationRecord != null) medicationRecord = pastMedicationRecord;
-        else medicationRecord = null;
+        if (currentMedicationRecord != null) {
+            medicationRecord = currentMedicationRecord;
+        } else if (pastMedicationRecord != null) {
+            medicationRecord = pastMedicationRecord;
+        } else {
+            medicationRecord = null;
+        }
 
         if (medicationRecord != null) {
             String currentMedication = medicationRecord.getMedicationName();
-            List<String> activeIngredients = activeIngredientsHandler.getActiveIngredients(currentMedication);
+            // Generate initial alert popup
             String alertTitle = "Active ingredients in " + currentMedication;
+            Alert alert = PageNavigator.generateAlert(AlertType.INFORMATION, alertTitle, "Loading...");
+            alert.show();
 
-            // If there are no results, display an error, else display the results.
-            // It is assumed that if every valid drug has active ingredients, thus if an empty list is returned,
-            //     then the drug name wasn't valid.
-            if (activeIngredients.isEmpty()) {
-                PageNavigator.showAlert(AlertType.ERROR, alertTitle, "No results found for " + currentMedication);
-            } else {
-                // Build list of active ingredients into a string, each ingredient on a new line
-                StringBuilder sb = new StringBuilder();
-                for (String ingredient : activeIngredients) {
-                    sb.append(ingredient).append("\n");
+            Task<List<String>> task = new Task<List<String>>() {
+                @Override
+                public List<String> call() {
+                    return activeIngredientsHandler.getActiveIngredients(currentMedication);
                 }
-                PageNavigator.showAlert(AlertType.INFORMATION, alertTitle, sb.toString());
-            }
-        }
+            };
 
+            task.setOnSucceeded(e -> {
+                List<String> activeIngredients = task.getValue();
+                // If there are no results, display an error, else display the results.
+                // It is assumed that every valid drug has active ingredients, thus if an empty list is returned,
+                //     then the drug name wasn't valid.
+                if (activeIngredients.isEmpty()) {
+                    alert.setAlertType(AlertType.ERROR);
+                    alert.setContentText("No results found for " + currentMedication);
+                } else {
+                    // Build list of active ingredients into a string, each ingredient on a new line
+                    StringBuilder sb = new StringBuilder();
+                    for (String ingredient : activeIngredients) {
+                        sb.append(ingredient).append("\n");
+                    }
+                    alert.setContentText(sb.toString());
+                }
+                PageNavigator.resizeAlert(alert);
+            });
+
+            new Thread(task).start();
+        }
     }
 
     /**
