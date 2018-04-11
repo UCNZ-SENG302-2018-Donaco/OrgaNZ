@@ -1,3 +1,6 @@
+variables:
+  _JAVA_OPTIONS: "-Djava.awt.headless=true -Dtestfx.robot=glass -Dtestfx.headless=true -Dprism.order=sw -Dprism.text=t2k -Dtestfx.setup.timeout=2500"
+
 tag_checker:
   stage: build
   script:
@@ -9,8 +12,6 @@ junit:
   stage: test
   script:
     - mvn -B clean test
-  variables:
-    _JAVA_OPTIONS: "-Djava.awt.headless=true -Dtestfx.robot=glass -Dtestfx.headless=true -Dprism.order=sw -Dprism.text=t2k -Dtestfx.setup.timeout=2500"
 
 recent-artifacts:
   stage: deploy
