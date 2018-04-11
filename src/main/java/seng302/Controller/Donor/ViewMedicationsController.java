@@ -223,6 +223,16 @@ public class ViewMedicationsController extends SubController {
         }
     }
 
+
+    /**
+     * Generates a pop-up with a list of active ingredients.
+     * @param event When the 'View active ingredients' button is clicked.
+     */
+    @FXML
+    void viewActiveIngreds(ActionEvent event) {
+
+    }
+
     /**
      * Gets a list of medication suggestions for the given input from the autocomplete WebAPIHandler.
      * @param input The string to search for suggested drug names that start with this.
