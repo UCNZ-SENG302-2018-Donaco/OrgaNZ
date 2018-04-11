@@ -2,6 +2,7 @@ package seng302;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 /**
  * Represents an instance of a user taking a medication for a period of time.
@@ -66,7 +67,7 @@ public class MedicationRecord {
             MedicationRecord other = (MedicationRecord) obj;
             return this.medicationName.equals(other.medicationName) &&
                     this.started.equals(other.started) &&
-                    this.stopped.equals(other.stopped);
+                    Objects.equals(this.stopped, other.stopped);
         }
     }
 }
