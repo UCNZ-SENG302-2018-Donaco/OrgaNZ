@@ -87,7 +87,7 @@ public class CreateDonorController extends SubController {
                     "Donor " + firstNameFld.getText() + " " + lastNamefld.getText() + "was created with ID " + uid);
             JSONConverter.updateHistory(save, "action_history.json");
 
-            State.login(Session.UserType.DONOR, donor);
+            State.login(donor);
             PageNavigator.loadPage(Page.VIEW_DONOR, mainController);
         }
     }

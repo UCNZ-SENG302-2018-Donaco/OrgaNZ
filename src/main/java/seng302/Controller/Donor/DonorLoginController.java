@@ -71,7 +71,7 @@ public class DonorLoginController extends SubController {
                     selectedDonor.getFirstName(), selectedDonor.getLastName(), selectedDonor.getUid()));
             JSONConverter.updateHistory(loginHistory, "action_history.json");
 
-            State.login(Session.UserType.DONOR, selectedDonor);
+            State.login(selectedDonor);
             PageNavigator.loadPage(Page.VIEW_DONOR, mainController);
         }
     }

@@ -5,6 +5,8 @@ import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.time.LocalDate;
 
 import seng302.Actions.ActionInvoker;
@@ -20,14 +22,13 @@ import org.junit.rules.ExpectedException;
 
 public class ModifyDonorOrgansActionTest {
 
-    private DonorManager manager;
     private ActionInvoker invoker;
     private Donor baseDonor;
 
     @Before
     public void init() {
         invoker = new ActionInvoker();
-        manager = new DonorManager();
+        DonorManager manager = new DonorManager();
         baseDonor = new Donor("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
         manager.addDonor(baseDonor);
     }
@@ -181,6 +182,9 @@ public class ModifyDonorOrgansActionTest {
 
     @Test
     public void CheckExecuteExistingTest() throws OrganAlreadyRegisteredException {
+        ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+        System.setErr(new PrintStream(errContent));
+
         ModifyDonorOrgansAction action = new ModifyDonorOrgansAction(baseDonor);
 
         action.addChange(Organ.LIVER, true);
@@ -188,6 +192,8 @@ public class ModifyDonorOrgansActionTest {
         baseDonor.setOrganStatus(Organ.LIVER, true);
 
         invoker.execute(action);
+
+        assertTrue(errContent.toString().contains("OrganAlreadyRegisteredException"));
     }
 
     @Test

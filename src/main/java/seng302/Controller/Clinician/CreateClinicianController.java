@@ -129,7 +129,7 @@ public class CreateClinicianController extends SubController {
                                 + " Created.");
                 JSONConverter.updateHistory(save, "action_history.json");
 
-                State.login(Session.UserType.CLINICIAN, clinician);
+                State.login(clinician);
 
                 PageNavigator.loadPage(Page.VIEW_CLINICIAN, mainController);
             }

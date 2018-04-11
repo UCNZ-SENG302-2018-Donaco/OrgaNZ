@@ -47,12 +47,12 @@ public final class State {
         return session;
     }
 
-    public static void login(Session.UserType userType, Object user) {
-        if (userType == Session.UserType.DONOR) {
-            session = new Session((Donor) user);
-        } else if (userType == Session.UserType.CLINICIAN) {
-            session = new Session((Clinician) user);
-        }
+    public static void login(Donor donor) {
+        session = new Session(donor);
+    }
+
+    public static void login(Clinician clinician) {
+        session = new Session(clinician);
     }
 
     public static void setUnsavedChanges(boolean changes) {

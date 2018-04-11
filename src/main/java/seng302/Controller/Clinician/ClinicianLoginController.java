@@ -105,7 +105,7 @@ public class ClinicianLoginController extends SubController {
             } else if (!clinician.getPassword().equals(password.getText())) {
                 staffIdPasswordMismatchAlert();
             } else {
-                State.login(Session.UserType.CLINICIAN, clinician);
+                State.login(clinician);
                 PageNavigator.loadPage(Page.VIEW_CLINICIAN, mainController);
 
                 HistoryItem save = new HistoryItem("LOGIN_CLINICIAN", String.format("Clinician %s %s logged in.",
