@@ -68,6 +68,14 @@ public class SidebarController extends SubController {
     }
 
     /**
+     * Refreshes the undo/redo buttons based on if there are changes to be made
+     */
+    public void refresh() {
+        undoButton.setDisable(!invoker.canUndo());
+        redoButton.setDisable(!invoker.canRedo());
+    }
+
+    /**
      * Redirects the GUI to the View Donor page.
      */
     @FXML
@@ -139,6 +147,7 @@ public class SidebarController extends SubController {
                 JSONConverter.updateHistory(save, "action_history.json");
 
                 invoker.resetUnsavedUpdates();
+                PageNavigator.refreshAllWindows();
             }
         } catch (URISyntaxException | IOException e) {
             PageNavigator.showAlert(Alert.AlertType.WARNING, "Save Failed",
@@ -188,9 +197,16 @@ public class SidebarController extends SubController {
     @FXML
     private void logout() {
         State.logout();
+        for (MainController controller : State.getMainControllers()) {
+            if (controller != mainController) {
+                controller.closeWindow();
+            }
+        }
+        State.getMainControllers().clear();
+        State.addMainController(mainController);
         mainController.resetWindowContext();
         PageNavigator.loadPage(Page.LANDING, mainController);
-        HistoryItem save = new HistoryItem("LOGOUT", "The Donor logged out");
+        HistoryItem save = new HistoryItem("LOGOUT", "The user logged out");
         JSONConverter.updateHistory(save, "action_history.json");
     }
 

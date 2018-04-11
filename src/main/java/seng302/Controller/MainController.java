@@ -22,6 +22,8 @@ public class MainController {
     private Stage stage;
     private Page currentPage;
     private WindowContext windowContext;
+    private String windowTitle;
+    private SidebarController sidebarController;
 
     /**
      * Holder of a switchable page.
@@ -64,6 +66,14 @@ public class MainController {
     }
 
     /**
+     * Closes the window.
+     */
+    @FXML
+    public void closeWindow() {
+        stage.close();
+    }
+
+    /**
      * Method that can be called from other controllers to load the sidebar into that page.
      * Will set the sidebar as the child of the pane given.
      * @param sidebarPane The container pane for the sidebar, given by the importer.
@@ -72,7 +82,7 @@ public class MainController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(Page.SIDEBAR.getPath()));
             VBox sidebar = loader.load();
-            SidebarController sidebarController = loader.getController();
+            sidebarController = loader.getController();
             sidebarController.setup(this);
             sidebarPane.getChildren().setAll(sidebar);
         } catch (IOException exc) {
@@ -82,14 +92,29 @@ public class MainController {
     }
 
     /**
+     * Refreshes the title and sidebar. Does not refresh the main section
+     */
+    public void refreshTitleAndSidebar() {
+        updateTitle();
+        if (sidebarController != null) {
+            sidebarController.refresh();
+        }
+    }
+
+    /**
      * Set the title of the window to the given text
      * @param title The text to set the window title to
      */
     public void setTitle(String title) {
+        windowTitle = title;
+        updateTitle();
+    }
+
+    private void updateTitle() {
         if (State.isUnsavedChanges()) {
-            stage.setTitle("*" + title);
+            stage.setTitle("*" + windowTitle);
         } else {
-            stage.setTitle(title);
+            stage.setTitle(windowTitle);
         }
     }
 }

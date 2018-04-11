@@ -40,20 +40,11 @@ public class PageNavigator {
     }
 
     /**
-     * Refreshes the current page in the given MainController.
-     * @param controller the MainController to refresh.
-     */
-    private static void refreshPage(MainController controller) {
-        Page page = controller.getCurrentPage();
-        loadPage(page, controller);
-    }
-
-    /**
-     * Refreshes all windows, to be used when an update occurs
+     * Refreshes all windows, to be used when an update occurs. Only refreshes titles and sidebars
      */
     public static void refreshAllWindows() {
         for (MainController controller : State.getMainControllers()) {
-            refreshPage(controller);
+            controller.refreshTitleAndSidebar();
         }
     }
 

@@ -25,7 +25,7 @@ public class ActionInvoker {
             action.unExecute();
             redoStack.push(action);
             unsavedUpdates--;
-            State.setUnsavedChanges(unsavedUpdates > 0);
+            State.setUnsavedChanges(unsavedUpdates != 0);
             return action.getUnexecuteText();
         }
         return null;
@@ -42,7 +42,7 @@ public class ActionInvoker {
             action.execute();
             undoStack.push(action);
             unsavedUpdates++;
-            State.setUnsavedChanges(true);
+            State.setUnsavedChanges(unsavedUpdates != 0);
             return action.getExecuteText();
         }
         return null;
@@ -83,5 +83,6 @@ public class ActionInvoker {
      */
     public void resetUnsavedUpdates() {
         unsavedUpdates = 0;
+        State.setUnsavedChanges(false);
     }
 }
