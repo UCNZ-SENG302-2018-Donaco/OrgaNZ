@@ -8,7 +8,9 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 
 import seng302.Controller.MainController;
@@ -85,6 +87,10 @@ public class PageNavigator {
         alert.setTitle(title);
         alert.setHeaderText(title);
         alert.setContentText(bodyText);
+        // The below line is adapted from https://stackoverflow.com/a/33905734/8355496
+        // Licenced under cc by-sa 3.0 with attribution required https://creativecommons.org/licenses/by-sa/3.0/
+        // It sets the alert window at the right size so that all the text can be read.
+        alert.getDialogPane().getChildren().stream().filter(node -> node instanceof Label).forEach(node -> ((Label)node).setMinHeight(Region.USE_PREF_SIZE));
         return alert.showAndWait();
     }
 }
