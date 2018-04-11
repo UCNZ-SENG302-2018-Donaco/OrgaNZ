@@ -130,7 +130,7 @@ public class Clinician {
 
 
     /**
-     * Get the full name of the donor concatenating their names
+     * Get the full name of the clinician concatenating their names
      * @return The full name string
      */
     public String getFullName() {
