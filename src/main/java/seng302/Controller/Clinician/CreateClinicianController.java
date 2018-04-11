@@ -1,7 +1,6 @@
 package seng302.Controller.Clinician;
 
 import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ChoiceBox;
@@ -129,9 +128,6 @@ public class CreateClinicianController extends SubController {
 
                 State.login(Session.UserType.CLINICIAN, clinician);
 
-                PageNavigator.showAlert(Alert.AlertType.INFORMATION, "Clinician created",
-                        String.format("Successfully created clinician with Staff ID %s.",
-                                staffId.getText()));
                 PageNavigator.loadPage(Page.VIEW_CLINICIAN, mainController);
             }
         }
@@ -140,10 +136,9 @@ public class CreateClinicianController extends SubController {
 
     /**
      * Takes the user back to the landing page.
-     * @param event user clicks the go back button
      */
     @FXML
-    private void goBack(ActionEvent event) {
+    private void goBack() {
         PageNavigator.loadPage(Page.LANDING, mainController);
     }
 }

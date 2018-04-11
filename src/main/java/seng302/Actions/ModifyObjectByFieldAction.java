@@ -55,6 +55,16 @@ public class ModifyObjectByFieldAction implements Action {
         runChange(oldValue);
     }
 
+    @Override
+    public String getExecuteText() {
+        return null;
+    }
+
+    @Override
+    public String getUnexecuteText() {
+        return null;
+    }
+
     /**
      * Execute a statement update on the object. Should not throw the errors from Statement as we check them in the
      * constructor

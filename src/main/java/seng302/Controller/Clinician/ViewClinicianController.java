@@ -4,7 +4,6 @@ import java.time.format.DateTimeFormatter;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -23,6 +22,8 @@ import seng302.State.State;
 import seng302.Utilities.Enums.Region;
 import seng302.Utilities.JSONConverter;
 import seng302.Utilities.View.PageNavigator;
+
+import org.controlsfx.control.Notifications;
 
 /**
  * Presents an interface displaying all information of the currently logged in Clinician. Clinicians are able to edit
@@ -164,16 +165,13 @@ public class ViewClinicianController extends SubController {
             action.addChange("setRegion", currentClinician.getRegion(), region.getValue());
 
             invoker.execute(action);
+            PageNavigator.refreshAllWindows();
 
             HistoryItem save = new HistoryItem("UPDATE CLINICIAN",
                     "The Clinician's information was updated. New details are: " + currentClinician.getUpdateLog());
             JSONConverter.updateHistory(save, "action_history.json");
 
-            PageNavigator.showAlert(Alert.AlertType.INFORMATION,
-                    "Success",
-                    String.format("Successfully updated %s.",
-                            currentClinician.getFirstName()));
-
+            Notifications.create().title("Updated").text("Successfully updated clinician").showInformation();
         } catch (NoSuchFieldException | NoSuchMethodException exc) {
             exc.printStackTrace();
         }

@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.List;
 
 import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
@@ -25,6 +24,7 @@ import seng302.MedicationRecord;
 import seng302.State.Session;
 import seng302.State.Session.UserType;
 import seng302.State.State;
+import seng302.Utilities.View.PageNavigator;
 import seng302.Utilities.Web.MedAutoCompleteHandler;
 
 import impl.org.controlsfx.autocompletion.AutoCompletionTextFieldBinding;
@@ -72,22 +72,22 @@ public class ViewMedicationsController extends SubController {
     @FXML
     private void initialize() {
         autoCompleteHandler = new MedAutoCompleteHandler();
-        new AutoCompletionTextFieldBinding<String>(newMedField, param -> {
+        new AutoCompletionTextFieldBinding<>(newMedField, param -> {
             String input = param.getUserText().trim();
             return getSuggestions(input);
         });
 
         pastMedicationsView.getSelectionModel().selectedItemProperty().addListener(
-            (observable) -> {
-                selectedListView = pastMedicationsView;
-                currentMedicationsView.getSelectionModel().clearSelection();
-            });
+                (observable) -> {
+                    selectedListView = pastMedicationsView;
+                    currentMedicationsView.getSelectionModel().clearSelection();
+                });
 
         currentMedicationsView.getSelectionModel().selectedItemProperty().addListener(
-            (observable) -> {
-                selectedListView = currentMedicationsView;
-                pastMedicationsView.getSelectionModel().clearSelection();
-            });
+                (observable) -> {
+                    selectedListView = currentMedicationsView;
+                    pastMedicationsView.getSelectionModel().clearSelection();
+                });
 
         if (session.getLoggedInUserType() == UserType.DONOR) {
             newMedicationPane.setVisible(false);
@@ -118,13 +118,6 @@ public class ViewMedicationsController extends SubController {
         }
 
         mainController.setTitle("Medication history: " + donor.getFullName());
-        refreshMedicationLists();
-    }
-
-    /**
-     * Refreshes the past/current medication list views from the donor's properties.
-     */
-    private void refreshMedicationLists() {
         pastMedicationsView.setItems(FXCollections.observableArrayList(donor.getPastMedications()));
         currentMedicationsView.setItems(FXCollections.observableArrayList(donor.getCurrentMedications()));
     }
@@ -134,17 +127,16 @@ public class ViewMedicationsController extends SubController {
      * - Sets the date the donor stopped taking the medication to the current date.
      * - Removes the MedicationRecord from the current medications list.
      * - Refreshes both list views.
-     * @param event When the '<' button is pressed.
      */
     @FXML
-    private void moveMedicationToHistory(ActionEvent event) {
+    private void moveMedicationToHistory() {
         MedicationRecord record = currentMedicationsView.getSelectionModel().getSelectedItem();
         if (record != null) {
             ModifyMedicationRecordAction action = new ModifyMedicationRecordAction(record);
             action.changeStopped(LocalDate.now());
 
             invoker.execute(action);
-            refreshMedicationLists();
+            PageNavigator.refreshAllWindows();
         }
     }
 
@@ -154,17 +146,16 @@ public class ViewMedicationsController extends SubController {
      * - Sets the date the donor stopped taking the medication to null (hasn't stopped yet).
      * - Removes the MedicationRecord from the past medications list.
      * - Refreshes both list views.
-     * @param event When the '>' button is pressed.
      */
     @FXML
-    private void moveMedicationToCurrent(ActionEvent event) {
+    private void moveMedicationToCurrent() {
         MedicationRecord record = pastMedicationsView.getSelectionModel().getSelectedItem();
         if (record != null) {
             ModifyMedicationRecordAction action = new ModifyMedicationRecordAction(record);
             action.changeStopped(null);
 
             invoker.execute(action);
-            refreshMedicationLists();
+            PageNavigator.refreshAllWindows();
         }
     }
 
@@ -182,10 +173,9 @@ public class ViewMedicationsController extends SubController {
 
     /**
      * Adds a new medication with the current value of the new medication text field.
-     * @param event When the 'add medication' button is pressed.
      */
     @FXML
-    private void addButtonPressed(ActionEvent event) {
+    private void addButtonPressed() {
         addMedication(newMedField.getText());
     }
 
@@ -201,7 +191,7 @@ public class ViewMedicationsController extends SubController {
 
             invoker.execute(action);
             newMedField.setText("");
-            refreshMedicationLists();
+            PageNavigator.refreshAllWindows();
         }
     }
 
@@ -209,17 +199,16 @@ public class ViewMedicationsController extends SubController {
      * Deletes the currently selected MedicationRecord. Will determine which of the list views is currently
      * selected, then delete from the appropriate one. If neither list view is currently selected, this will have no
      * effect.
-     * @param event When the 'delete' button is clicked.
      */
     @FXML
-    private void deleteMedication(ActionEvent event) {
+    private void deleteMedication() {
         if (selectedListView != null) {
             MedicationRecord record = selectedListView.getSelectionModel().getSelectedItem();
             if (record != null) {
                 DeleteMedicationRecordAction action = new DeleteMedicationRecordAction(donor, record);
 
                 invoker.execute(action);
-                refreshMedicationLists();
+                PageNavigator.refreshAllWindows();
             }
         }
     }

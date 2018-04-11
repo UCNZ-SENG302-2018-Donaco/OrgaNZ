@@ -49,4 +49,14 @@ public class ModifyClinicianAction implements Action {
             action.unExecute();
         }
     }
+
+    @Override
+    public String getExecuteText() {
+        return String.format("Updated clinician %s", clinician.getFullName());
+    }
+
+    @Override
+    public String getUnexecuteText() {
+        return String.format("Undid update for clinician %s", clinician.getFullName());
+    }
 }

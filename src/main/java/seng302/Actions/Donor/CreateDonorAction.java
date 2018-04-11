@@ -40,4 +40,14 @@ public class CreateDonorAction implements Action {
     public void unExecute() {
         manager.removeDonor(donor);
     }
+
+    @Override
+    public String getExecuteText() {
+        return String.format("Created donor %s", donor.getFullName());
+    }
+
+    @Override
+    public String getUnexecuteText() {
+        return String.format("Removed donor %s", donor.getFullName());
+    }
 }

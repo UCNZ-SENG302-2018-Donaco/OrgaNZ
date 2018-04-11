@@ -92,21 +92,12 @@ public class ClinicianLoginController extends SubController {
     }
 
     /**
-     * Alert to display a successful login.
-     */
-    private void loginSuccessAlert() {
-        PageNavigator.showAlert(Alert.AlertType.INFORMATION, "Success",
-                "Successfully logged in.");
-    }
-
-    /**
      * Checks if valid input for a staff member who exists in the systems ClinicianManager matches the supplied
      * password.
      * The user cannot be taken to the view_clinician page until valid parameters are supplied.
-     * @param event user clicking the login button
      */
     @FXML
-    private void signIn(ActionEvent event) {
+    private void signIn() {
         if (validStaffIDinput()) {
             Clinician clinician = clinicianManager.getClinicianByStaffId(id);
             if (clinician == null) {
@@ -116,7 +107,6 @@ public class ClinicianLoginController extends SubController {
             } else {
                 State.login(Session.UserType.CLINICIAN, clinician);
                 PageNavigator.loadPage(Page.VIEW_CLINICIAN, mainController);
-                loginSuccessAlert();
 
                 HistoryItem save = new HistoryItem("LOGIN_CLINICIAN", String.format("Clinician %s %s logged in.",
                         clinician.getFirstName(), clinician.getLastName()));

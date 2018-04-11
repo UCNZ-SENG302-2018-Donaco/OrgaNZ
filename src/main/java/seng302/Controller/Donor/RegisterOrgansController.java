@@ -20,6 +20,7 @@ import seng302.State.Session;
 import seng302.State.State;
 import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.JSONConverter;
+import seng302.Utilities.View.PageNavigator;
 
 /**
  * Controller for the register organs page.
@@ -79,6 +80,7 @@ public class RegisterOrgansController extends SubController {
 
         if (session.getLoggedInUserType() == Session.UserType.DONOR) {
             donor = session.getLoggedInDonor();
+            idPane.setDisable(true);
         } else if (windowContext.isClinViewDonorWindow()) {
             donor = windowContext.getViewDonor();
         }
@@ -132,6 +134,7 @@ public class RegisterOrgansController extends SubController {
         }
         if (hasChanged) {
             invoker.execute(action);
+            PageNavigator.refreshAllWindows();
             HistoryItem save = new HistoryItem("UPDATE ORGANS",
                     "The Donor's organs were updated: " + donor.getDonorOrganStatusString());
             JSONConverter.updateHistory(save, "action_history.json");

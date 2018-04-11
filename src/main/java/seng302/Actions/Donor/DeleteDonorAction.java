@@ -31,4 +31,14 @@ public class DeleteDonorAction implements Action {
     public void unExecute() {
         manager.addDonor(donor);
     }
+
+    @Override
+    public String getExecuteText() {
+        return String.format("Deleted donor %s", donor.getFullName());
+    }
+
+    @Override
+    public String getUnexecuteText() {
+        return String.format("Re-added donor %s", donor.getFullName());
+    }
 }

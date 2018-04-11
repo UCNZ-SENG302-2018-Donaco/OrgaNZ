@@ -51,4 +51,14 @@ public class ModifyMedicationRecordAction implements Action {
             record.setStopped(oldStopped);
         }
     }
+
+    @Override
+    public String getExecuteText() {
+        return String.format("Updated medication %s record", record.getMedicationName());
+    }
+
+    @Override
+    public String getUnexecuteText() {
+        return String.format("Update of medication %s record has been undone", record.getMedicationName());
+    }
 }

@@ -49,4 +49,14 @@ public class ModifyDonorAction implements Action {
             action.unExecute();
         }
     }
+
+    @Override
+    public String getExecuteText() {
+        return String.format("Donor %s, %s has been updated", donor.getUid(), donor.getFullName());
+    }
+
+    @Override
+    public String getUnexecuteText() {
+        return String.format("The changes for donor %s, %s have been undone", donor.getUid(), donor.getFullName());
+    }
 }

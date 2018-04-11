@@ -44,6 +44,16 @@ public class ModifyDonorOrgansAction implements Action {
         runChanges(true);
     }
 
+    @Override
+    public String getExecuteText() {
+        return String.format("Updated %s organs for user %s", changes.size(), donor.getFullName());
+    }
+
+    @Override
+    public String getUnexecuteText() {
+        return String.format("Undid %s organ updates for user %s", changes.size(), donor.getFullName());
+    }
+
     /**
      * Loops through the list of changes and applies them to the donor
      * @param isUndo If true, negate all booleans

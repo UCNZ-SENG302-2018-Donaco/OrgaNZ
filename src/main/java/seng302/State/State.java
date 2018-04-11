@@ -1,7 +1,10 @@
 package seng302.State;
 
+import java.util.ArrayList;
+
 import seng302.Actions.ActionInvoker;
 import seng302.Clinician;
+import seng302.Controller.MainController;
 import seng302.Donor;
 
 /**
@@ -13,6 +16,8 @@ public final class State {
     private static ClinicianManager clinicianManager;
     private static ActionInvoker actionInvoker;
     private static Session session;
+    private static boolean unsavedChanges = false;
+    private static ArrayList<MainController> mainControllers = new ArrayList<>();
 
     private State() {
     }
@@ -50,8 +55,24 @@ public final class State {
         }
     }
 
+    public static void setUnsavedChanges(boolean changes) {
+        unsavedChanges = changes;
+    }
+
+    public static boolean isUnsavedChanges() {
+        return unsavedChanges;
+    }
+
     public static void logout() {
         // Do something with the old session
         session = null;
+    }
+
+    public static void addMainController(MainController mainController) {
+        mainControllers.add(mainController);
+    }
+
+    public static ArrayList<MainController> getMainControllers() {
+        return mainControllers;
     }
 }

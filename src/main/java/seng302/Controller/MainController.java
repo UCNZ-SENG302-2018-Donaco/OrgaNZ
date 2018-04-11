@@ -2,8 +2,6 @@ package seng302.Controller;
 
 import java.io.IOException;
 
-import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -12,6 +10,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import seng302.State.State;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.WindowContext;
 
@@ -23,7 +22,6 @@ public class MainController {
     private Stage stage;
     private Page currentPage;
     private WindowContext windowContext;
-    private String windowTitle;
 
     /**
      * Holder of a switchable page.
@@ -66,15 +64,6 @@ public class MainController {
     }
 
     /**
-     * Closes the window.
-     * @param event when the exit button is clicked.
-     */
-    @FXML
-    private void closeWindow(ActionEvent event) {
-        Platform.exit();
-    }
-
-    /**
      * Method that can be called from other controllers to load the sidebar into that page.
      * Will set the sidebar as the child of the pane given.
      * @param sidebarPane The container pane for the sidebar, given by the importer.
@@ -83,8 +72,8 @@ public class MainController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(Page.SIDEBAR.getPath()));
             VBox sidebar = loader.load();
-            SubController subController = loader.getController();
-            subController.setup(this);
+            SidebarController sidebarController = loader.getController();
+            sidebarController.setup(this);
             sidebarPane.getChildren().setAll(sidebar);
         } catch (IOException exc) {
             System.err.println("Couldn't load sidebar from fxml file.");
@@ -97,15 +86,10 @@ public class MainController {
      * @param title The text to set the window title to
      */
     public void setTitle(String title) {
-        windowTitle = title;
-        stage.setTitle(windowTitle);
-    }
-
-    public void setUnsaved(boolean isUnsaved) {
-        if (isUnsaved) {
-            stage.setTitle("*" + windowTitle);
+        if (State.isUnsavedChanges()) {
+            stage.setTitle("*" + title);
         } else {
-            stage.setTitle(windowTitle);
+            stage.setTitle(title);
         }
     }
 }

@@ -1,7 +1,6 @@
 package seng302.Controller.Donor;
 
 import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -62,10 +61,9 @@ public class DonorLoginController extends SubController {
     /**
      * Attempts to login with the selected donor.
      * If successful, redirects to the view donor page for that donor.
-     * @param event When the sign in button is clicked.
      */
     @FXML
-    private void signIn(ActionEvent event) {
+    private void signIn() {
         Donor selectedDonor = donorList.getSelectionModel().getSelectedItem();
 
         if (selectedDonor != null) {
@@ -80,10 +78,9 @@ public class DonorLoginController extends SubController {
 
     /**
      * Redirects the UI back to the landing page.
-     * @param event When the back button is clicked.
      */
     @FXML
-    private void goBack(ActionEvent event) {
+    private void goBack() {
         PageNavigator.loadPage(Page.LANDING, mainController);
     }
 }

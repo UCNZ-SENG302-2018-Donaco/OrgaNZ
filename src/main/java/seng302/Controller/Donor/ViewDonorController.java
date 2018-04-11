@@ -5,7 +5,6 @@ import java.time.format.DateTimeFormatter;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
@@ -28,6 +27,8 @@ import seng302.Utilities.Enums.Region;
 import seng302.Utilities.JSONConverter;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
+
+import org.controlsfx.control.Notifications;
 
 /**
  * Controller for the view/edit donor page.
@@ -269,12 +270,8 @@ public class ViewDonorController extends SubController {
             action.addChange("setCurrentAddress", viewedDonor.getCurrentAddress(), address.getText());
 
             invoker.execute(action);
-
-            PageNavigator.showAlert(Alert.AlertType.INFORMATION,
-                    "Success",
-                    String.format("Successfully updated donor %s %s %s %d.",
-                            viewedDonor.getFirstName(), viewedDonor.getMiddleName(),
-                            viewedDonor.getLastName(), viewedDonor.getUid()));
+            PageNavigator.refreshAllWindows();
+            Notifications.create().title("Success").text(action.getExecuteText());
 
         } catch (NoSuchFieldException | NoSuchMethodException exc) {
             exc.printStackTrace();

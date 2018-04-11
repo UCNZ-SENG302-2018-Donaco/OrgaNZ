@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
@@ -20,6 +19,8 @@ import seng302.Utilities.JSONConverter;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
 
+import org.controlsfx.control.Notifications;
+
 /**
  * Controller for the sidebar pane imported into every page in the main part of the GUI.
  */
@@ -27,7 +28,7 @@ public class SidebarController extends SubController {
 
     @FXML
     private Button viewDonorButton, registerOrgansButton, viewMedicationsButton, viewClinicianButton, searchButton,
-    logoutButton;
+            logoutButton, undoButton, redoButton;
 
     private ActionInvoker invoker;
     private Session session;
@@ -56,6 +57,9 @@ public class SidebarController extends SubController {
         if (windowContext.isClinViewDonorWindow()) {
             hideButton(logoutButton);
         }
+
+        undoButton.setDisable(!invoker.canUndo());
+        redoButton.setDisable(!invoker.canRedo());
     }
 
     private void hideButton(Button button) {
@@ -65,64 +69,57 @@ public class SidebarController extends SubController {
 
     /**
      * Redirects the GUI to the View Donor page.
-     * @param event When the view donor button is clicked.
      */
     @FXML
-    private void goToViewDonor(ActionEvent event) {
+    private void goToViewDonor() {
         PageNavigator.loadPage(Page.VIEW_DONOR, mainController);
     }
 
     /**
      * Redirects the GUI to the Register Organs page.
-     * @param event When the register organs button is clicked.
      */
     @FXML
-    private void goToRegisterOrgans(ActionEvent event) {
+    private void goToRegisterOrgans() {
         PageNavigator.loadPage(Page.REGISTER_ORGANS, mainController);
     }
 
     /**
      * Redirects the GUI to the View Medications page.
-     * @param event When the register organs button is clicked.
      */
     @FXML
-    private void goToViewMedications(ActionEvent event) {
+    private void goToViewMedications() {
         PageNavigator.loadPage(Page.VIEW_MEDICATIONS, mainController);
     }
 
     /**
      * Redirects the GUI to the View Donor page.
-     * @param event When the view donor button is clicked.
      */
     @FXML
-    private void goToViewClinician(ActionEvent event) {
+    private void goToViewClinician() {
         PageNavigator.loadPage(Page.VIEW_CLINICIAN, mainController);
     }
 
     /**
      * Redirects the GUI to the Register Organs page.
-     * @param event When the register organs button is clicked.
      */
     @FXML
-    private void goToSearch(ActionEvent event) {
+    private void goToSearch() {
         PageNavigator.loadPage(Page.SEARCH, mainController);
     }
 
     /**
      * Redirects the GUI to the History page.
-     * @param event When the history button is clicked.
      */
     @FXML
-    private void goToHistory(ActionEvent event) {
+    private void goToHistory() {
         PageNavigator.loadPage(Page.HISTORY, mainController);
     }
 
     /**
      * Opens a save file dialog to choose where to save all donors in the system to a file.
-     * @param event When the save button is clicked.
      */
     @FXML
-    private void save(ActionEvent event) {
+    private void save() {
         try {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Save Donors File");
@@ -134,25 +131,27 @@ public class SidebarController extends SubController {
             File file = fileChooser.showSaveDialog(AppUI.getWindow());
             if (file != null) {
                 JSONConverter.saveToFile(file);
-                // TODO Make alert with number of donors saved
+
+                Notifications.create().title("Saved").text(String.format("Successfully saved %s donors to file %s",
+                        State.getDonorManager().getDonors().size(), file.getName())).showInformation();
+
                 HistoryItem save = new HistoryItem("SAVE", "The systems current state was saved.");
                 JSONConverter.updateHistory(save, "action_history.json");
-                PageNavigator.showAlert(Alert.AlertType.INFORMATION,
-                        "Save Successful",
-                        "Successfully saved Donors to " + file.getName());
+
+                invoker.resetUnsavedUpdates();
             }
-        } catch (URISyntaxException | IOException exc) {
-            // TODO Make alert when save fails
-            System.err.println(exc.getMessage());
+        } catch (URISyntaxException | IOException e) {
+            PageNavigator.showAlert(Alert.AlertType.WARNING, "Save Failed",
+                    "There was an error saving to the file specified.");
+            System.err.println(e.getMessage());
         }
     }
 
     /**
      * Opens a load file dialog to choose a file to load all donors from.
-     * @param event When the load button is clicked.
      */
     @FXML
-    private void load(ActionEvent event) {
+    private void load() {
         try {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Load Donors File");
@@ -171,24 +170,23 @@ public class SidebarController extends SubController {
 
                 State.logout();
                 mainController.resetWindowContext();
-                PageNavigator.showAlert(Alert.AlertType.INFORMATION,
-                        "Load Successful",
-                        "Successfully loaded Donors from " + file.getName());
+                Notifications.create().title("Loaded data").text(
+                        String.format("Successfully loaded %d donors from file", State.getDonorManager()
+                                .getDonors().size())).showInformation();
                 PageNavigator.loadPage(Page.LANDING, mainController);
             }
-        } catch (URISyntaxException | IOException exc) {
-            // TODO Make alert when load fails
+        } catch (URISyntaxException | IOException e) {
             PageNavigator.showAlert(Alert.AlertType.WARNING, "Load Failed",
                     "Warning: unrecognisable or invalid file. please make \n sure that you have selected the correct file type.");
+            System.err.println(e.getMessage());
         }
     }
 
     /**
      * Logs out the current user and sends them to the Landing page.
-     * @param event When the logout button is clicked.
      */
     @FXML
-    private void logout(ActionEvent event) {
+    private void logout() {
         State.logout();
         mainController.resetWindowContext();
         PageNavigator.loadPage(Page.LANDING, mainController);
@@ -197,39 +195,26 @@ public class SidebarController extends SubController {
     }
 
     /**
-     * Undo-s the most recent action performed in the system, and refreshes the current page to reflect the change.
-     * @param event When the undo button is clicked.
+     * Undoes the most recent action performed in the system, and refreshes the current page to reflect the change.
      */
     @FXML
-    private void undo(ActionEvent event) {
-        if (invoker.canUndo()) {
-            invoker.undo();
-            //TODO show what was undone
-            HistoryItem save = new HistoryItem("UNDO", "Something was undone.");
-            JSONConverter.updateHistory(save, "action_history.json");
-            PageNavigator.refreshPage(mainController);
-        } else {
-            PageNavigator.showAlert(Alert.AlertType.ERROR,
-                    "No Undoable Actions",
-                    "There are no actions left to undo.");
-        }
+    private void undo() {
+        String undoneText = invoker.undo();
+        Notifications.create().title("Undo").text(undoneText).showInformation();
+        HistoryItem save = new HistoryItem("UNDO", undoneText);
+        JSONConverter.updateHistory(save, "action_history.json");
+        PageNavigator.refreshAllWindows();
     }
 
     /**
-     * Redo-s the most recent action performed in the system, and refreshes the current page to reflect the change.
-     * @param event When the redo button is clicked.
+     * Redoes the most recent action performed in the system, and refreshes the current page to reflect the change.
      */
     @FXML
-    private void redo(ActionEvent event) {
-        if (invoker.canRedo()) {
-            invoker.redo();
-            HistoryItem save = new HistoryItem("REDO", "Something was redone");
-            JSONConverter.updateHistory(save, "action_history.json");
-            PageNavigator.refreshPage(mainController);
-        } else {
-            PageNavigator.showAlert(Alert.AlertType.ERROR,
-                    "No Redoable Actions",
-                    "There are no actions left to redo.");
-        }
+    private void redo() {
+        String redoneText = invoker.redo();
+        Notifications.create().title("Redo").text(redoneText).showInformation();
+        HistoryItem save = new HistoryItem("REDO", redoneText);
+        JSONConverter.updateHistory(save, "action_history.json");
+        PageNavigator.refreshAllWindows();
     }
 }

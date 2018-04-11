@@ -13,6 +13,7 @@ import javafx.stage.Stage;
 
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
+import seng302.State.State;
 
 /**
  * Utility class for controlling navigation between pages.
@@ -42,9 +43,18 @@ public class PageNavigator {
      * Refreshes the current page in the given MainController.
      * @param controller the MainController to refresh.
      */
-    public static void refreshPage(MainController controller) {
+    private static void refreshPage(MainController controller) {
         Page page = controller.getCurrentPage();
         loadPage(page, controller);
+    }
+
+    /**
+     * Refreshes all windows, to be used when an update occurs
+     */
+    public static void refreshAllWindows() {
+        for (MainController controller : State.getMainControllers()) {
+            refreshPage(controller);
+        }
     }
 
     /**
@@ -60,6 +70,7 @@ public class PageNavigator {
             Pane mainPane = loader.load(PageNavigator.class.getResourceAsStream(Page.MAIN.getPath()));
             MainController mainController = loader.getController();
             mainController.setStage(newStage);
+            State.addMainController(mainController);
 
             newStage.setScene(new Scene(mainPane));
             newStage.show();

@@ -23,4 +23,16 @@ public class AddMedicationRecordAction implements Action {
     public void unExecute() {
         donor.deleteMedicationRecord(record);
     }
+
+    @Override
+    public String getExecuteText() {
+        return String.format("Added medication %s record for donor %s", record.getMedicationName(), donor
+                .getFullName());
+    }
+
+    @Override
+    public String getUnexecuteText() {
+        return String.format("Removed medication %s record for donor %s", record.getMedicationName(), donor
+                .getFullName());
+    }
 }
