@@ -145,8 +145,8 @@ public class SearchDonorsController extends SubController {
 
 
     /**
-     * Upon filtering update, refreshTitleAndSidebar the filters to the new string and update pagination
-     * Every refreshTitleAndSidebar triggers the pagination to update and go to page zero
+     * Upon filtering update, refresh the filters to the new string and update pagination
+     * Every refresh triggers the pagination to update and go to page zero
      */
     private void refresh() {
         String searchText = searchBox.getText();
@@ -156,7 +156,7 @@ public class SearchDonorsController extends SubController {
             filteredDonors.setPredicate(donor -> donor.nameContains(searchText));
         }
 
-        //If the pagination count wont change, force a refreshTitleAndSidebar of the page, if it will, change it and that will trigger the update.
+        //If the pagination count wont change, force a refresh of the page, if it will, change it and that will trigger the update.
         int newPageCount = filteredDonors.size() / ROWS_PER_PAGE + 1;
         if (pagination.getPageCount() == newPageCount) {
             createPage(0);
