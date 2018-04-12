@@ -16,7 +16,8 @@ public enum Page {
     HISTORY("/fxml/history.fxml"),
     SEARCH("/fxml/search_donors.fxml"),
     LOGIN_CLINICIAN("/fxml/login_clinician.fxml"),
-    CREATE_CLINICIAN("/fxml/create_clinician.fxml");
+    CREATE_CLINICIAN("/fxml/create_clinician.fxml"),
+    VIEW_MEDICATIONS("/fxml/view_medications.fxml");
 
     private String path;
 
