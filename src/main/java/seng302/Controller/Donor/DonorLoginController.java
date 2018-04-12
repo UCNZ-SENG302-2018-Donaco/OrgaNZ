@@ -10,7 +10,6 @@ import seng302.Controller.SubController;
 import seng302.Donor;
 import seng302.HistoryItem;
 import seng302.State.DonorManager;
-import seng302.State.Session;
 import seng302.State.State;
 import seng302.Utilities.JSONConverter;
 import seng302.Utilities.View.Page;

@@ -15,7 +15,6 @@ import seng302.Controller.MainController;
 import seng302.Controller.SubController;
 import seng302.HistoryItem;
 import seng302.State.ClinicianManager;
-import seng302.State.Session;
 import seng302.State.State;
 import seng302.Utilities.Enums.Region;
 import seng302.Utilities.JSONConverter;

@@ -1,7 +1,6 @@
 package seng302.Actions.Donor;
 
 import java.time.LocalDate;
-import java.util.Objects;
 
 import seng302.Actions.Action;
 import seng302.MedicationRecord;

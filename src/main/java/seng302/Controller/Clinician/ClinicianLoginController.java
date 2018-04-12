@@ -1,6 +1,5 @@
 package seng302.Controller.Clinician;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
@@ -11,7 +10,6 @@ import seng302.Controller.MainController;
 import seng302.Controller.SubController;
 import seng302.HistoryItem;
 import seng302.State.ClinicianManager;
-import seng302.State.Session;
 import seng302.State.State;
 import seng302.Utilities.JSONConverter;
 import seng302.Utilities.View.Page;
@@ -47,10 +45,9 @@ public class ClinicianLoginController extends SubController {
 
     /**
      * Navigates a user back to the Landing page.
-     * @param event user clicking the go back button
      */
     @FXML
-    private void goBack(ActionEvent event) {
+    private void goBack() {
         PageNavigator.loadPage(Page.LANDING, mainController);
     }
 

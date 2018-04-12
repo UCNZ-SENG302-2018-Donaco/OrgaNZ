@@ -3,7 +3,6 @@ package seng302.Controller.Donor;
 import java.util.HashMap;
 import java.util.Map;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
@@ -88,15 +87,14 @@ public class RegisterOrgansController extends SubController {
 
         mainController.setTitle("Organ registration: " + donor.getFullName());
         fieldUserID.setText(Integer.toString(donor.getUid()));
-        updateUserID(null);
+        updateUserID();
     }
 
     /**
      * Updates the current donor to the one specified in the userID field, and populates with their info.
-     * @param event When ENTER is pressed with focus on the userID field.
      */
     @FXML
-    private void updateUserID(ActionEvent event) {
+    private void updateUserID() {
         try {
             donor = manager.getDonorByID(Integer.parseInt(fieldUserID.getText()));
         } catch (NumberFormatException exc) {
@@ -117,10 +115,9 @@ public class RegisterOrgansController extends SubController {
 
     /**
      * Checks which organs check boxes have been changed, and applies those changes with a ModifyDonorOrgansAction.
-     * @param event When any organ checkbox changes state.
      */
     @FXML
-    private void modifyOrgans(ActionEvent event) {
+    private void modifyOrgans() {
         ModifyDonorOrgansAction action = new ModifyDonorOrgansAction(donor);
         boolean hasChanged = false;
 

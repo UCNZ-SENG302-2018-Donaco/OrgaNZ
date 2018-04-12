@@ -37,7 +37,7 @@ public class ModifyDonorAction extends Action {
     }
 
     @Override
-    protected  void execute() {
+    protected void execute() {
         for (ModifyObjectByFieldAction action : actions) {
             action.execute();
         }

@@ -22,7 +22,6 @@ import seng302.Controller.SubController;
 import seng302.Donor;
 import seng302.MedicationRecord;
 import seng302.State.Session;
-import seng302.State.Session.UserType;
 import seng302.State.State;
 import seng302.Utilities.View.PageNavigator;
 import seng302.Utilities.Web.MedAutoCompleteHandler;
@@ -83,10 +82,10 @@ public class ViewMedicationsController extends SubController {
                 });
 
         currentMedicationsView.getSelectionModel().selectedItemProperty().addListener(
-            (observable) -> {
-                selectedListView = currentMedicationsView;
-                pastMedicationsView.getSelectionModel().clearSelection();
-            });
+                (observable) -> {
+                    selectedListView = currentMedicationsView;
+                    pastMedicationsView.getSelectionModel().clearSelection();
+                });
     }
 
     /**
