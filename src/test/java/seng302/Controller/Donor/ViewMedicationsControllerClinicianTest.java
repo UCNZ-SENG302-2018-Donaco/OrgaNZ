@@ -51,7 +51,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
     };
 
     private Clinician testClinician = new Clinician("A", "B", "C", "D", Region.UNSPECIFIED, 0, "E");
-    private Donor testDonor = new Donor();
+    private Donor testDonor = new Donor(1);
 
     @Override
     protected Page getPage() {
@@ -61,7 +61,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
     @Override
     protected void initState() {
         State.init();
-        State.login(UserType.CLINICIAN, testClinician);
+        State.login(testClinician);
         mainController.setWindowContext(new WindowContext.WindowContextBuilder()
                 .setAsClinViewDonorWindow()
                 .viewDonor(testDonor)

@@ -114,10 +114,18 @@ public class ViewMedicationsController extends SubController {
             donor = windowContext.getViewDonor();
         }
 
+        refreshMedicationLists();
         mainController.setTitle("Medication history: " + donor.getFullName());
+    }
+
+    /**
+     * Refreshes the past/current medication list views from the donor's properties.
+     */
+    private void refreshMedicationLists() {
         pastMedicationsView.setItems(FXCollections.observableArrayList(donor.getPastMedications()));
         currentMedicationsView.setItems(FXCollections.observableArrayList(donor.getCurrentMedications()));
     }
+
 
     /**
      * Moves the MedicationRecord selected in the current medications list to the past medications list. Also:
@@ -134,6 +142,7 @@ public class ViewMedicationsController extends SubController {
 
             invoker.execute(action);
             PageNavigator.refreshAllWindows();
+            refreshMedicationLists();
         }
     }
 
@@ -153,6 +162,7 @@ public class ViewMedicationsController extends SubController {
 
             invoker.execute(action);
             PageNavigator.refreshAllWindows();
+            refreshMedicationLists();
         }
     }
 
@@ -189,6 +199,7 @@ public class ViewMedicationsController extends SubController {
             invoker.execute(action);
             newMedField.setText("");
             PageNavigator.refreshAllWindows();
+            refreshMedicationLists();
         }
     }
 
@@ -206,6 +217,7 @@ public class ViewMedicationsController extends SubController {
 
                 invoker.execute(action);
                 PageNavigator.refreshAllWindows();
+                refreshMedicationLists();
             }
         }
     }

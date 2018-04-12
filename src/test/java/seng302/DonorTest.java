@@ -16,7 +16,7 @@ public class DonorTest {
 
     @Before
     public void createDonor() {
-        donor = new Donor();
+        donor = new Donor(1);
     }
 
     @Test
