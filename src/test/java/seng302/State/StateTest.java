@@ -39,5 +39,4 @@ public class StateTest {
         assertEquals(UserType.CLINICIAN, State.getSession().getLoggedInUserType());
         assertEquals(clinician, State.getSession().getLoggedInClinician());
     }
-
 }

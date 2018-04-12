@@ -4,10 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 
-import seng302.Actions.Clinician.DeleteClinicianAction;
 import seng302.Clinician;
 import seng302.Utilities.Enums.Region;
 

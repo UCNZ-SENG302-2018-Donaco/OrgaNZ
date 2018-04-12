@@ -2,7 +2,6 @@ package seng302.State;
 
 import java.util.ArrayList;
 
-import seng302.Actions.ActionInvoker;
 import seng302.Clinician;
 import seng302.Utilities.Enums.Region;
 
