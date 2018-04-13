@@ -77,7 +77,7 @@ public class JSONFileReader<T> implements Closeable {
 
     /**
      * Reads the next object of the given datatype from the stream. This requires that {@link #startStream()} has
-     * already been called.
+     * already been called, or an {@link IllegalStateException} will be thrown.
      * @return The next object of the given datatype in the stream, or null if there are no more objects left in the
      * stream.
      * @throws IOException If an IO error occurs when reading from the file.
