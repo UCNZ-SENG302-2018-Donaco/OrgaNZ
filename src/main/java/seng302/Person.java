@@ -41,6 +41,8 @@ public class Person {
 
     private List<MedicationRecord> medicationHistory = new ArrayList<>();
 
+    private List<Condition> conditions = new ArrayList<>();
+
     private List<TransplantRequest> transplantRequests = new ArrayList<>();
 
     private ArrayList<String> updateLog = new ArrayList<>();
@@ -346,6 +348,54 @@ public class Person {
             age = Period.between(dateOfBirth, dateOfDeath).getYears();
         }
         return age;
+    }
+
+    /**
+     * Returns all conditions that the person has
+     * @return ArrayList of all the conditions that the person has
+     */
+    public List<Condition> getAllConditions() {
+        return conditions;
+    }
+
+    /**
+     * Finds which conditions are current (those that do not have a resolution date)
+     * and returns them
+     * @return List of current conditions of the person
+     */
+    public List<Condition> getCurrentConditions() {
+        List<Condition> currentConditions = new ArrayList<>();
+
+        for (Condition condition: conditions) {
+            if (condition.getResolutionDate() == null) {
+                currentConditions.add(condition);
+            }
+        }
+        return currentConditions;
+    }
+
+    /**
+     * Adds the given Condition to the persons list of conditions
+     * @param condition Condition to be added to the persons list of conditions
+     */
+    public void addCondition(Condition condition) {
+        conditions.add(condition);
+    }
+
+    /**
+     * Finds which conditions are resolved (those that do have a resolution date)
+     * and returns them
+     * @return List of resolved conditions of the person
+     */
+    public List<Condition> getResolvedConditions() {
+        List<Condition> resolvedConditions = new ArrayList<>();
+
+        for (Condition condition: conditions) {
+            if (condition.getResolutionDate() != null) {
+                resolvedConditions.add(condition);
+            }
+        }
+        return resolvedConditions;
     }
 
     /**
