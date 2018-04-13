@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.nio.channels.FileChannel;
+import java.util.Arrays;
 import java.util.List;
 
 import com.google.gson.Gson;
@@ -28,15 +29,19 @@ public class JSONFileReader<T> implements Closeable {
             .create();
     private final FileChannel channel;
     private final JsonReader reader;
-    private final Type dataType = new TypeToken<T>() {}.getType();
+    private final Type dataType;
     private boolean readingAsStream = false;
 
     /**
-     * Creates a new JSONFileReader to read from the given file.
+     * Creates a new JSONFileReader to read from the given file. The class of the datatype must also be provided
+     * because of Java's type erasure.
      * @param file The JSON file to read from.
+     * @param dataClass The class of the datatype stored in the JSON file.
      * @throws FileNotFoundException If the given file cannot be found (or cannot be opened).
      */
-    public JSONFileReader(File file) throws FileNotFoundException {
+    public JSONFileReader(File file, Class<T> dataClass) throws FileNotFoundException {
+        dataType = TypeToken.get(dataClass).getType();
+
         FileInputStream inputStream = new FileInputStream(file);
         reader = new JsonReader(new InputStreamReader(inputStream));
         channel = inputStream.getChannel();
@@ -97,8 +102,9 @@ public class JSONFileReader<T> implements Closeable {
         if (readingAsStream) {
             throw new IllegalStateException("Cannot use getAll after started reading as stream.");
         } else {
-            Type listType = new TypeToken<List<T>>() {}.getType();
-            return gson.fromJson(reader, listType);
+            Type arrayType = TypeToken.getArray(dataType).getType();
+            T[] dataArray = gson.fromJson(reader, arrayType);
+            return Arrays.asList(dataArray);
         }
     }
 
@@ -106,6 +112,7 @@ public class JSONFileReader<T> implements Closeable {
      * Closes the JSONFileReader and its underlying file input stream.
      * @throws IOException If an IO error occurs while closing the JSONFileReader.
      */
+    @Override
     public void close() throws IOException {
         reader.close();
     }
