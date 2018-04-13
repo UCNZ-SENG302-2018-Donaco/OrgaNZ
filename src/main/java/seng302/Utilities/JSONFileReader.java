@@ -102,9 +102,8 @@ public class JSONFileReader<T> implements Closeable {
         if (readingAsStream) {
             throw new IllegalStateException("Cannot use getAll after started reading as stream.");
         } else {
-            Type arrayType = TypeToken.getArray(dataType).getType();
-            T[] dataArray = gson.fromJson(reader, arrayType);
-            return Arrays.asList(dataArray);
+            Type listType = TypeToken.getParameterized(List.class, dataType).getType();
+            return gson.fromJson(reader, listType);
         }
     }
 
