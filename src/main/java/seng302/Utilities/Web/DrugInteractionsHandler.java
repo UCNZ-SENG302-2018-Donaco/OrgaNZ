@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-import seng302.Donor;
+import seng302.Person;
 
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequest;
@@ -36,10 +36,10 @@ public class DrugInteractionsHandler extends WebAPIHandler {
         });
     }
 
-    public List<String> getInteractions(Donor donor, String drug1, String drug2) {
+    public List<String> getInteractions(Person person, String drug1, String drug2) {
         // TODO: Use drug object instead of String?
 
-        if (donor == null) {
+        if (person == null) {
             throw new IllegalArgumentException("donor must not be null");
         }
 
@@ -66,7 +66,7 @@ public class DrugInteractionsHandler extends WebAPIHandler {
                 return Collections.emptyList();
             } else {
                 DrugInteractionsResponse interactionsResponse = response.parseAs(DrugInteractionsResponse.class);
-                return interactionsResponse.calculateDonorInteractions(donor);
+                return interactionsResponse.calculateDonorInteractions(person);
             }
         } catch (HttpResponseException e) {
             if (e.getStatusCode() == BAD_DRUG_NAME) {

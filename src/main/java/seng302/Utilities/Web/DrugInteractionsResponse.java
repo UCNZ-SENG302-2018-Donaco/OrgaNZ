@@ -12,7 +12,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import seng302.Donor;
+import seng302.Person;
 import seng302.Utilities.Enums.Gender;
 
 import com.google.api.client.util.Key;
@@ -47,11 +47,11 @@ public class DrugInteractionsResponse {
     /**
      * Calculates a list of possible drug interactions given a donor.
      */
-    public List<String> calculateDonorInteractions(Donor donor) {
-        int donorAge = donor.getAge();
+    public List<String> calculateDonorInteractions(Person person) {
+        int donorAge = person.getAge();
         Set<String> ageInteractions = calculateAgeInteractions(donorAge);
 
-        Gender donorGender = donor.getGender();
+        Gender donorGender = person.getGender();
         Set<String> genderInteractions = calculateGenderInteractions(donorGender);
 
         // Get the intersection
