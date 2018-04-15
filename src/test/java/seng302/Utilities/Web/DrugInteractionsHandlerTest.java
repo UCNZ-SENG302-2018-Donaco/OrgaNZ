@@ -7,13 +7,14 @@ import java.util.List;
 
 import seng302.Donor;
 import seng302.Utilities.Enums.Gender;
+import seng302.Utilities.Exceptions.BadGatewayException;
 
 import com.google.api.client.testing.http.MockHttpTransport;
 import org.junit.Test;
 
 public class DrugInteractionsHandlerTest {
     @Test
-    public void testValidDrugInteractions() {
+    public void testValidDrugInteractions() throws BadGatewayException {
         String EXPECTED_RESPONSE_BODY = "{\"age_interaction\":{\"0-1\":[\"foetal exposure during pregnancy\","
                 + "\"congenital arterial malformation\",\"premature baby\",\"ventricular septal defect\","
                 + "\"cytogenetic abnormality\",\"heart disease congenital\",\"pyloric stenosis\"],"

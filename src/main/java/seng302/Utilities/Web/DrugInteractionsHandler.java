@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import seng302.Donor;
+import seng302.Utilities.Exceptions.BadGatewayException;
 
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequest;
@@ -22,6 +23,7 @@ public class DrugInteractionsHandler extends WebAPIHandler {
     private static final String INTERACTIONS_ENDPOINT = "https://www.ehealthme.com/api/v1/drug-interaction/%s/%s/";
     private static final int STUDY_NOT_DONE_RESPONSE = 202;
     private static final int BAD_DRUG_NAME = 404;
+    private static final int BAD_GATEWAY = 502;
 
     private final HttpRequestFactory requestFactory;
 
@@ -36,7 +38,7 @@ public class DrugInteractionsHandler extends WebAPIHandler {
         });
     }
 
-    public List<String> getInteractions(Donor donor, String drug1, String drug2) {
+    public List<String> getInteractions(Donor donor, String drug1, String drug2) throws BadGatewayException {
         // TODO: Use drug object instead of String?
 
         if (donor == null) {
@@ -71,6 +73,8 @@ public class DrugInteractionsHandler extends WebAPIHandler {
         } catch (HttpResponseException e) {
             if (e.getStatusCode() == BAD_DRUG_NAME) {
                 throw new IllegalArgumentException("One or both of the drug names are invalid.", e);
+            } else if (e.getStatusCode() == BAD_GATEWAY){
+                throw new BadGatewayException(e.getContent());
             }
 
             // TODO handle more gracefully

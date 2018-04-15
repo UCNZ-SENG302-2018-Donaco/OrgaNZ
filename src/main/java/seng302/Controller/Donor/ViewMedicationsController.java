@@ -1,6 +1,9 @@
 package seng302.Controller.Donor;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javafx.collections.FXCollections;
@@ -28,7 +31,9 @@ import seng302.MedicationRecord;
 import seng302.State.Session;
 import seng302.State.Session.UserType;
 import seng302.State.State;
+import seng302.Utilities.Exceptions.BadGatewayException;
 import seng302.Utilities.View.PageNavigator;
+import seng302.Utilities.Web.DrugInteractionsHandler;
 import seng302.Utilities.Web.MedAutoCompleteHandler;
 import seng302.Utilities.Web.MedActiveIngredientsHandler;
 
@@ -39,12 +44,17 @@ import impl.org.controlsfx.autocompletion.AutoCompletionTextFieldBinding;
  */
 public class ViewMedicationsController extends SubController {
 
+    private static final String SUCCESSFUL = "Successful";
+    private static final String BAD_NAME = "Bad name";
+    private static final String BAD_GATEWAY = "Bad gateway";
+
     private Session session;
     private ActionInvoker invoker;
     private Donor donor;
     private List<String> lastResponse;
     private MedAutoCompleteHandler autoCompleteHandler;
     private MedActiveIngredientsHandler activeIngredientsHandler;
+    private DrugInteractionsHandler drugInteractionsHandler;
 
     @FXML
     private Pane sidebarPane;
@@ -84,6 +94,7 @@ public class ViewMedicationsController extends SubController {
         });
 
         activeIngredientsHandler = new MedActiveIngredientsHandler();
+        drugInteractionsHandler = new DrugInteractionsHandler();
 
         pastMedicationsView.getSelectionModel().selectedItemProperty().addListener(
                 (observable) -> {
@@ -287,9 +298,77 @@ public class ViewMedicationsController extends SubController {
         }
     }
 
+
+    /**
+     * Generates a pop-up with a list of interactions.
+     * @param event When the 'View interactions' button is clicked.
+     */
     @FXML
     void viewInteractions(ActionEvent event) {
-        PageNavigator.showAlert(AlertType.INFORMATION, "Not yet implemented", "Not yet implemented.");
+        // Sample medications - TODO these should be replaced by getting the two selected medications,
+        // or TODO displaying an error popup if there aren't exactly two selected.
+        MedicationRecord medicationRecord1 = currentMedicationsView.getSelectionModel().getSelectedItem();
+        MedicationRecord medicationRecord2 = new MedicationRecord("Leflunomide", LocalDate.now(),
+                LocalDate.now());
+
+        if (medicationRecord1 != null && medicationRecord2 != null) {
+            String medication1 = medicationRecord1.getMedicationName();
+            String medication2 = medicationRecord2.getMedicationName();
+
+            // Generate initial alert popup
+            String alertTitle = "Interactions between " + medication1 + " and " + medication2;
+            Alert alert = PageNavigator.generateAlert(AlertType.INFORMATION, alertTitle, "Loading...");
+            alert.show();
+
+            Task<List<String>> task = new Task<List<String>>() {
+                @Override
+                public List<String> call() {
+                    // Call the drug interactions API wrapper, and wait for a response
+                    List<String> interactions;
+                    try {
+                        interactions = drugInteractionsHandler.getInteractions(donor, medication1,
+                                medication2);
+                        interactions = new ArrayList<>(interactions); //make the list modifiable
+                        interactions.add(0, SUCCESSFUL); //add successful tag to the start of the list
+                    } catch (IllegalArgumentException e) {
+                        // Invalid drug name(s)
+                        interactions = Collections.singletonList(BAD_NAME);
+                    } catch (BadGatewayException e) {
+                        interactions = Collections.singletonList(BAD_GATEWAY);
+                    }
+                    return interactions;
+                }
+            };
+
+            // Update the popup
+            task.setOnSucceeded(e -> {
+                List<String> interactions = task.getValue();
+
+                if (interactions.get(0).equals(BAD_NAME)) {
+                    // Invalid drug name(s)
+                    alert.setAlertType(AlertType.ERROR);
+                    alert.setContentText("Either " + medication1 + " or " + medication2 + " is not a valid drug name.");
+                } else if (interactions.get(0).equals(BAD_GATEWAY)) {
+                    alert.setAlertType(AlertType.ERROR);
+                    alert.setContentText("Sorry, there was an error connecting to the server (502: Bad Gateway). "
+                            + "Please try again later.");
+                } else if (interactions.size() == 1) {
+                    // only element in list is SUCCESSFUL tag
+                    alert.setAlertType(AlertType.ERROR);
+                    alert.setContentText("No results found for " + medication1 + " and " + medication2);
+                } else {
+                    // Build list of interactions into a string, each interaction on a new line
+                    StringBuilder sb = new StringBuilder();
+                    for (String interaction : interactions) {
+                        sb.append(interaction).append("\n");
+                    }
+                    alert.setContentText(sb.toString());
+                }
+                PageNavigator.resizeAlert(alert);
+            });
+
+            new Thread(task).start();
+        }
     }
 
     /**
