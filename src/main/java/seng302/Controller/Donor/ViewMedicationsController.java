@@ -287,6 +287,11 @@ public class ViewMedicationsController extends SubController {
         }
     }
 
+    @FXML
+    void viewInteractions(ActionEvent event) {
+        PageNavigator.showAlert(AlertType.INFORMATION, "Not yet implemented", "Not yet implemented.");
+    }
+
     /**
      * Gets a list of medication suggestions for the given input from the autocomplete WebAPIHandler.
      * @param input The string to search for suggested drug names that start with this.
