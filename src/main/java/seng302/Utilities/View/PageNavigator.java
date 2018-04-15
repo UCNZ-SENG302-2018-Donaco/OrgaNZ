@@ -7,8 +7,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 
 import seng302.Controller.MainController;
@@ -74,6 +77,31 @@ public class PageNavigator {
     }
 
     /**
+     * Sets the alert window at the right size so that all the text can be read.
+     */
+    public static void resizeAlert(Alert alert) {
+        // The below line is adapted from https://stackoverflow.com/a/31208445/8355496
+        // Licenced under cc by-sa 3.0 with attribution required https://creativecommons.org/licenses/by-sa/3.0/
+        alert.getDialogPane().getScene().getWindow().sizeToScene();
+    }
+
+    /**
+     * Shows a pop-up alert of the given type.
+     * @param alertType the type of alert to show (can determine its style and button options).
+     * @param title the text to show as the title and heading of the alert.
+     * @param bodyText the text to show within the body of the alert.
+     * @return an Optional for the button that was clicked to dismiss the alert.
+     */
+    public static Alert generateAlert(Alert.AlertType alertType, String title, String bodyText) {
+        Alert alert = new Alert(alertType);
+        alert.setTitle(title);
+        alert.setHeaderText(title);
+        alert.setContentText(bodyText);
+        resizeAlert(alert);
+        return alert;
+    }
+
+    /**
      * Shows a pop-up alert of the given type.
      * @param alertType the type of alert to show (can determine its style and button options).
      * @param title the text to show as the title and heading of the alert.
@@ -81,10 +109,7 @@ public class PageNavigator {
      * @return an Optional for the button that was clicked to dismiss the alert.
      */
     public static Optional<ButtonType> showAlert(Alert.AlertType alertType, String title, String bodyText) {
-        Alert alert = new Alert(alertType);
-        alert.setTitle(title);
-        alert.setHeaderText(title);
-        alert.setContentText(bodyText);
+        Alert alert = generateAlert(alertType, title, bodyText);
         return alert.showAndWait();
     }
 }
