@@ -19,6 +19,7 @@ import seng302.Client;
 import seng302.State.ClientManager;
 import seng302.State.Session;
 import seng302.State.State;
+import seng302.TransplantRequest;
 import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.JSONConverter;
 import seng302.Utilities.View.Page;
@@ -104,8 +105,11 @@ public class RequestOrganController extends SubController {
 
     @FXML
     private void viewRequestHistory(ActionEvent event) {
+        for (int i = 0; i < client.getTransplantRequests().size(); i++) {
+            System.out.println( "Organ: " + client.getTransplantRequests().get(i).getRequestedOrgan() + "| Date: " +
+                    client.getTransplantRequests().get(i).getRequestTime());
+        }
         PageNavigator.loadPage(Page.ORGAN_REQUEST_HISTORY, mainController);
-        System.out.println(client.getTransplantRequests());
     }
 
     /**
@@ -123,7 +127,6 @@ public class RequestOrganController extends SubController {
         if (client != null) {
             setCheckBoxesEnabled();
             for (Map.Entry<Organ, CheckBox> entry : organCheckBoxes.entrySet()) {
-                System.out.println(entry);
                 entry.getValue().setSelected(client.getOrganRequestStatus().get(entry.getKey()));
             }
             HistoryItem save = new HistoryItem("UPDATE ID", "The Clients ID was updated to " + client.getUid());
