@@ -19,9 +19,9 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 
+import seng302.Client;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
-import seng302.Person;
 import seng302.State.State;
 import seng302.Utilities.Enums.Gender;
 import seng302.Utilities.Enums.Region;
@@ -29,7 +29,7 @@ import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
 import seng302.Utilities.View.WindowContext;
 
-public class SearchPersonsController extends SubController {
+public class SearchClientsController extends SubController {
 
     private static final int ROWS_PER_PAGE = 30;
 
@@ -40,25 +40,25 @@ public class SearchPersonsController extends SubController {
     private HBox sidebarPane;
 
     @FXML
-    private TableView<Person> tableView;
+    private TableView<Client> tableView;
 
     @FXML
-    private TableColumn<Person, Integer> idCol;
+    private TableColumn<Client, Integer> idCol;
     @FXML
-    private TableColumn<Person, String> nameCol;
+    private TableColumn<Client, String> nameCol;
     @FXML
-    private TableColumn<Person, Integer> ageCol;
+    private TableColumn<Client, Integer> ageCol;
     @FXML
-    private TableColumn<Person, Gender> genderCol;
+    private TableColumn<Client, Gender> genderCol;
     @FXML
-    private TableColumn<Person, Region> regionCol;
+    private TableColumn<Client, Region> regionCol;
 
     @FXML
     private Pagination pagination;
 
-    private ObservableList<Person> observablePersonList = FXCollections.observableArrayList();
-    private FilteredList<Person> filteredPeople;
-    private SortedList<Person> sortedPeople;
+    private ObservableList<Client> observableClientList = FXCollections.observableArrayList();
+    private FilteredList<Client> filteredPeople;
+    private SortedList<Client> sortedPeople;
 
     @Override
     public void setup(MainController mainController) {
@@ -68,7 +68,7 @@ public class SearchPersonsController extends SubController {
 
     @FXML
     private void initialize() {
-        ArrayList<Person> allPeople = State.getPersonManager().getPeople();
+        ArrayList<Client> allPeople = State.getClientManager().getPeople();
 
         setupTable();
 
@@ -76,7 +76,7 @@ public class SearchPersonsController extends SubController {
         searchBox.textProperty().addListener(((o) -> refresh()));
 
         //Create a filtered list, that defaults to allow all using lambda function
-        filteredPeople = new FilteredList<>(FXCollections.observableArrayList(allPeople), person -> true);
+        filteredPeople = new FilteredList<>(FXCollections.observableArrayList(allPeople), client -> true);
         //Create a sorted list that links to the filtered list
         sortedPeople = new SortedList<>(filteredPeople);
         //Link the sorted list sort to the tableView sort
@@ -87,15 +87,15 @@ public class SearchPersonsController extends SubController {
         //On pagination update call createPage
         pagination.setPageFactory(this::createPage);
 
-        //Initialize the observable list to all persons
-        observablePersonList.setAll(sortedPeople);
+        //Initialize the observable list to all clients
+        observableClientList.setAll(sortedPeople);
         //Bind the tableView to the observable list
-        tableView.setItems(observablePersonList);
+        tableView.setItems(observableClientList);
     }
 
     /**
      * Initialize the table columns.
-     * The person must have getters for these specific names specified in the PV Factories.
+     * The client must have getters for these specific names specified in the PV Factories.
      */
     private void setupTable() {
         idCol.setCellValueFactory(new PropertyValueFactory<>("uid"));
@@ -106,20 +106,20 @@ public class SearchPersonsController extends SubController {
 
         tableView.getColumns().setAll(idCol, nameCol, ageCol, genderCol, regionCol);
 
-        tableView.setRowFactory(tv -> new TableRow<Person>() {
+        tableView.setRowFactory(tv -> new TableRow<Client>() {
             private Tooltip tooltip = new Tooltip();
 
             @Override
-            public void updateItem(Person person, boolean empty) {
-                super.updateItem(person, empty);
-                if (person == null) {
+            public void updateItem(Client client, boolean empty) {
+                super.updateItem(client, empty);
+                if (client == null) {
                     setTooltip(null);
                 } else {
                     tooltip.setText(String.format("%s %s with blood type %s. Donating: %s",
-                            person.getFirstName(),
-                            person.getLastName(),
-                            person.getBloodType(),
-                            person.getOrganStatusString()));
+                            client.getFirstName(),
+                            client.getLastName(),
+                            client.getBloodType(),
+                            client.getOrganStatusString()));
                     setTooltip(tooltip);
                 }
             }
@@ -127,15 +127,15 @@ public class SearchPersonsController extends SubController {
 
         tableView.setOnMouseClicked(mouseEvent -> {
             if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2) {
-                Person person = tableView.getSelectionModel().getSelectedItem();
-                if (person != null) {
+                Client client = tableView.getSelectionModel().getSelectedItem();
+                if (client != null) {
                     MainController newMain = PageNavigator.openNewWindow();
                     if (newMain != null) {
                         newMain.setWindowContext(new WindowContext.WindowContextBuilder()
-                                .setAsClinViewPersonWindow()
-                                .viewPerson(person)
+                                .setAsClinViewClientWindow()
+                                .viewClient(client)
                                 .build());
-                        PageNavigator.loadPage(Page.VIEW_PERSON, newMain);
+                        PageNavigator.loadPage(Page.VIEW_CLIENT, newMain);
                     }
                 }
             }
@@ -150,9 +150,9 @@ public class SearchPersonsController extends SubController {
     private void refresh() {
         String searchText = searchBox.getText();
         if (searchText == null || searchText.length() == 0) {
-            filteredPeople.setPredicate(person -> true);
+            filteredPeople.setPredicate(client -> true);
         } else {
-            filteredPeople.setPredicate(person -> person.nameContains(searchText));
+            filteredPeople.setPredicate(client -> client.nameContains(searchText));
         }
 
         //If the pagination count wont change, force a refresh of the page, if it will, change it and that will trigger the update.
@@ -172,7 +172,7 @@ public class SearchPersonsController extends SubController {
     private Node createPage(int pageIndex) {
         int fromIndex = pageIndex * ROWS_PER_PAGE;
         int toIndex = Math.min(fromIndex + ROWS_PER_PAGE, filteredPeople.size());
-        observablePersonList.setAll(sortedPeople.subList(fromIndex, toIndex));
+        observableClientList.setAll(sortedPeople.subList(fromIndex, toIndex));
         return new Pane();
     }
 }

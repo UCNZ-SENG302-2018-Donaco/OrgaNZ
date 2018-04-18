@@ -12,21 +12,21 @@ import seng302.Utilities.View.PageNavigator;
 public class LandingController extends SubController {
 
     /**
-     * Redirects the GUI to create person page
+     * Redirects the GUI to create client page
      * @param event when create user button is clicked
      */
     @FXML
-    private void goToCreatePerson(ActionEvent event) {
-        PageNavigator.loadPage(Page.CREATE_PERSON, mainController);
+    private void goToCreateClient(ActionEvent event) {
+        PageNavigator.loadPage(Page.CREATE_CLIENT, mainController);
     }
 
     /**
-     * Redirects the GUI to person login page
+     * Redirects the GUI to client login page
      * @param event when login button is clicked
      */
     @FXML
-    private void goToPersonLogin(ActionEvent event) {
-        PageNavigator.loadPage(Page.LOGIN_PERSON, mainController);
+    private void goToClientLogin(ActionEvent event) {
+        PageNavigator.loadPage(Page.LOGIN_CLIENT, mainController);
     }
 
     /**

@@ -2,26 +2,26 @@ package seng302.Actions;
 
 import java.util.ArrayList;
 
-import seng302.Person;
-import seng302.State.PersonManager;
+import seng302.Client;
+import seng302.State.ClientManager;
 
 /**
- * A reversible PersonManager person list modification Action
+ * A reversible ClientManager client list modification Action
  */
 public class LoadAction implements Action {
 
-    private PersonManager manager;
+    private ClientManager manager;
 
-    private ArrayList<Person> oldState;
-    private ArrayList<Person> newState;
+    private ArrayList<Client> oldState;
+    private ArrayList<Client> newState;
 
     /**
      * Create a new Action
-     * @param oldState The initial state of the Person array
-     * @param newState The new state of the Person array
-     * @param manager The PersonManager to apply changes to
+     * @param oldState The initial state of the Client array
+     * @param newState The new state of the Client array
+     * @param manager The ClientManager to apply changes to
      */
-    public LoadAction(ArrayList<Person> oldState, ArrayList<Person> newState, PersonManager manager) {
+    public LoadAction(ArrayList<Client> oldState, ArrayList<Client> newState, ClientManager manager) {
         this.manager = manager;
         this.oldState = oldState;
         this.newState = newState;

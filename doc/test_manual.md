@@ -1,9 +1,9 @@
 # Manual Testing Procedures 
 ## Story 10 
 #### AC1
-On the landing page, click on the button labeled "Create Person Profile". Fill in the required text fields "First name",
+On the landing page, click on the button labeled "Create Client Profile". Fill in the required text fields "First name",
 "Last name" and "Date of Birth" ("Middle name" is optional). Select "Create". You will now be redirected to the 
-view/edit person page where you can set any other attributes such as gender, region and height, for example.
+view/edit client page where you can set any other attributes such as gender, region and height, for example.
 
 #### AC2
 Run AC1. Click on the "Register Organs" button on the left side bar. You will now be redirected to  register/deregister 
@@ -12,8 +12,8 @@ register the organ that you selected. To deregister, un-tick the organs check bo
 deregister the organ that you un-ticked.
 
 #### AC4
-To save the profile, go to the Persons' view/edit page and click on the button "Save Changes" on the bottom right. 
-A pop-up should appear notifying the Person that their profile was saved successfully. 
+To save the profile, go to the Clients' view/edit page and click on the button "Save Changes" on the bottom right. 
+A pop-up should appear notifying the Client that their profile was saved successfully. 
 
 #### AC5
 When initially logged in, if you click on the undo or redo button, then a pop up message will display saying that 
@@ -22,36 +22,36 @@ the action even if it has been saved by clicking on the "Undo" button (AB+ will 
 refreshed). To revert the undo, click on the "Redo" button (A- will revert to AB+ once refreshed.).
 
 #### AC6
-To show the History of the particular Person, click on the "History" button on the side bar and a table 
-should appear with the time, type and description log of each action that the Person has done.
+To show the History of the particular Client, click on the "History" button on the side bar and a table 
+should appear with the time, type and description log of each action that the Client has done.
 
 #### AC7
-Go to the "View Profile" page. If the Person has died, then the age of the Person at death should
+Go to the "View Profile" page. If the Client has died, then the age of the Client at death should
 be displayed at the "Age" label. To test this, you can set the "Date of Death" field to a time on or before the current
 day. The calculated age will show where the "Age" label is.
 
 #### AC8
 The BMI is calculated with a simple formula of: (weight / (height^2)). To test this, edit and save the 
-"Height" and "Weight" fields of a Person in the "View Profile" panel, and then the BMI will be shown next to the BMI label.
+"Height" and "Weight" fields of a Client in the "View Profile" panel, and then the BMI will be shown next to the BMI label.
 
 
 ## Story 11
 #### AC1
-The steps on Story 10, AC1 can be used to create a Person profile. Once completed, you will be redirected to the 
-"View Profile" panel. Persons are then able to edit their profile by clicking on any text field such as blood-type or
+The steps on Story 10, AC1 can be used to create a Client profile. Once completed, you will be redirected to the 
+"View Profile" panel. Clients are then able to edit their profile by clicking on any text field such as blood-type or
 gender. To save their profile, click on the "Save Changes" button. Their edits are now saved. 
 
 #### AC2
-To log in, Click on the "Login as Person" button and find your Name or ID in the list. Click "Sign in". The Person can 
-only edit their own page and not be able to access any other Person's profiles.
+To log in, Click on the "Login as Client" button and find your Name or ID in the list. Click "Sign in". The Client can 
+only edit their own page and not be able to access any other Client's profiles.
 
 #### AC3
-Multiple Persons are saved once they are created, so to verify that multiple Persons exist, go to "Login as Persons" and 
+Multiple Clients are saved once they are created, so to verify that multiple Clients exist, go to "Login as Clients" and 
 you should be able to see multiple profiles. To verify that their information is also stored, you can sign in as them
 and view the saved data.
 
 #### AC4
-The Person (once signed in) is only able to view their profile as they are set to a Person status, not a Clinician or Admin
+The Client (once signed in) is only able to view their profile as they are set to a Client status, not a Clinician or Admin
 status.
 
 ## Story 12
@@ -78,7 +78,7 @@ The test is successful if a popup box saying 'login successful' appears, and the
 clinician page.
 
 #### AC2
-The program creates a default person with default attributes each time AppUI is run. To test: Perform the same manual 
+The program creates a default client with default attributes each time AppUI is run. To test: Perform the same manual 
 test for AC1 multiple times, and the success popup box must appear each time to consider the test successful.
 
 #### AC3

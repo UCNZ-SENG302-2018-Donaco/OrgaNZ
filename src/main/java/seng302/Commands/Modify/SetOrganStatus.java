@@ -6,10 +6,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import seng302.Actions.ActionInvoker;
-import seng302.Actions.Person.ModifyPersonOrgansAction;
-import seng302.Person;
+import seng302.Actions.Client.ModifyClientOrgansAction;
+import seng302.Client;
 import seng302.HistoryItem;
-import seng302.State.PersonManager;
+import seng302.State.ClientManager;
 import seng302.State.State;
 import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.JSONConverter;
@@ -27,15 +27,15 @@ import picocli.CommandLine.Option;
 @Command(name = "setorganstatus", description = "Set the organ donation choices of an existing user.", sortOptions = false)
 public class SetOrganStatus implements Runnable {
 
-    private PersonManager manager;
+    private ClientManager manager;
     private ActionInvoker invoker;
 
     public SetOrganStatus() {
-        manager = State.getPersonManager();
+        manager = State.getClientManager();
         invoker = State.getInvoker();
     }
 
-    public SetOrganStatus(PersonManager manager, ActionInvoker invoker) {
+    public SetOrganStatus(ClientManager manager, ActionInvoker invoker) {
         this.manager = manager;
         this.invoker = invoker;
     }
@@ -82,13 +82,13 @@ public class SetOrganStatus implements Runnable {
 
     @Override
     public void run() {
-        Person person = manager.getPersonByID(uid);
-        if (person == null) {
-            System.out.println("No person exists with that user ID");
+        Client client = manager.getClientByID(uid);
+        if (client == null) {
+            System.out.println("No client exists with that user ID");
             return;
         }
 
-        ModifyPersonOrgansAction action = new ModifyPersonOrgansAction(person);
+        ModifyClientOrgansAction action = new ModifyClientOrgansAction(client);
 
         Map<Organ, Boolean> states = new HashMap<>();
         states.put(LIVER, liver);
@@ -107,7 +107,7 @@ public class SetOrganStatus implements Runnable {
         for (Map.Entry<Organ, Boolean> entry : states.entrySet()) {
             Organ organ = entry.getKey();
             Boolean newState = entry.getValue();
-            Boolean currState = person.getOrganStatus().get(organ);
+            Boolean currState = client.getOrganStatus().get(organ);
             if (newState == null) {
                 continue;
             } else if (newState && currState) {

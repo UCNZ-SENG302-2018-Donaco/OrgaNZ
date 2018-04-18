@@ -1,4 +1,4 @@
-package seng302.Controller.Person;
+package seng302.Controller.Client;
 
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -6,10 +6,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 
+import seng302.Client;
 import seng302.Controller.SubController;
-import seng302.Person;
 import seng302.HistoryItem;
-import seng302.State.PersonManager;
+import seng302.State.ClientManager;
 import seng302.State.Session;
 import seng302.State.State;
 import seng302.Utilities.JSONConverter;
@@ -19,24 +19,24 @@ import seng302.Utilities.View.PageNavigator;
 /**
  * Controller for the login page.
  */
-public class PersonLoginController extends SubController {
+public class ClientLoginController extends SubController {
 
     @FXML
-    private ListView<Person> personList;
+    private ListView<Client> clientList;
 
     /**
      * Initializes the UI for this page.
-     * - Gets the person manager from the current state.
+     * - Gets the client manager from the current state.
      * - Sets up the cell factory to show users with their id and name.
-     * - Adds all persons currently in the person manager to the person list.
+     * - Adds all clients currently in the client manager to the client list.
      */
     @FXML
     private void initialize() {
-        PersonManager personManager = State.getPersonManager();
+        ClientManager clientManager = State.getClientManager();
 
-        personList.setCellFactory(cell -> new ListCell<Person>() {
+        clientList.setCellFactory(cell -> new ListCell<Client>() {
             @Override
-            public void updateItem(Person item, boolean empty) {
+            public void updateItem(Client item, boolean empty) {
                 super.updateItem(item, empty);
                 if (empty) {
                     setText(null);
@@ -45,25 +45,25 @@ public class PersonLoginController extends SubController {
                 }
             }
         });
-        personList.setItems(FXCollections.observableArrayList(personManager.getPeople()));
+        clientList.setItems(FXCollections.observableArrayList(clientManager.getPeople()));
     }
 
     /**
-     * Attempts to login with the selected person.
-     * If successful, redirects to the view person page for that person.
+     * Attempts to login with the selected client.
+     * If successful, redirects to the view client page for that client.
      * @param event When the sign in button is clicked.
      */
     @FXML
     private void signIn(ActionEvent event) {
-        Person selectedPerson = personList.getSelectionModel().getSelectedItem();
+        Client selectedClient = clientList.getSelectionModel().getSelectedItem();
 
-        if (selectedPerson != null) {
-            HistoryItem loginHistory = new HistoryItem("LOGIN_PERSON", String.format("Person %s %s (%d) logged in.",
-                    selectedPerson.getFirstName(), selectedPerson.getLastName(), selectedPerson.getUid()));
+        if (selectedClient != null) {
+            HistoryItem loginHistory = new HistoryItem("LOGIN_CLIENT", String.format("Client %s %s (%d) logged in.",
+                    selectedClient.getFirstName(), selectedClient.getLastName(), selectedClient.getUid()));
             JSONConverter.updateHistory(loginHistory, "action_history.json");
 
-            State.login(Session.UserType.PERSON, selectedPerson);
-            PageNavigator.loadPage(Page.VIEW_PERSON, mainController);
+            State.login(Session.UserType.CLIENT, selectedClient);
+            PageNavigator.loadPage(Page.VIEW_CLIENT, mainController);
         }
     }
 

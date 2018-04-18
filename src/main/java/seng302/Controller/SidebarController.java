@@ -14,7 +14,9 @@ import javafx.stage.FileChooser;
 import seng302.Actions.ActionInvoker;
 import seng302.AppUI;
 import seng302.HistoryItem;
+import seng302.Client;
 import seng302.State.Session;
+import seng302.State.Session.UserType;
 import seng302.State.State;
 import seng302.Utilities.JSONConverter;
 import seng302.Utilities.View.Page;
@@ -26,8 +28,8 @@ import seng302.Utilities.View.PageNavigator;
 public class SidebarController extends SubController {
 
     @FXML
-    private Button viewPersonButton, registerOrganDonationButton, viewMedicationsButton, viewClinicianButton, searchButton,
-    logoutButton;
+    private Button viewClientButton, registerOrganDonationButton, viewMedicationsButton, viewClinicianButton, searchButton,
+    logoutButton, requestOrganDonationButton;
 
     private ActionInvoker invoker;
     private Session session;
@@ -45,32 +47,53 @@ public class SidebarController extends SubController {
         super.setup(controller);
 
         Session.UserType userType = session.getLoggedInUserType();
-        if (userType == Session.UserType.PERSON || windowContext.isClinViewPersonWindow()) {
+        if (userType == Session.UserType.CLIENT || windowContext.isClinViewClientWindow()) {
             hideButton(viewClinicianButton);
             hideButton(searchButton);
         } else if (userType == Session.UserType.CLINICIAN) {
-            hideButton(viewPersonButton);
+            hideButton(viewClientButton);
             hideButton(registerOrganDonationButton);
             hideButton(viewMedicationsButton);
         }
 
-        if (windowContext.isClinViewPersonWindow()) {
+        if (windowContext.isClinViewClientWindow()) {
             hideButton(logoutButton);
+        }
+
+        if (!showRequestedOrgansButton(userType)) {
+            hideButton(requestOrganDonationButton);
         }
     }
 
+    /**
+     * Evaluates if the request organs button should be displayed for the current user.
+     * @param userType the type of current user
+     * @return true if the button should be shown, false otherwise
+     */
+    private boolean showRequestedOrgansButton(Session.UserType userType) {
+        if (userType == UserType.CLIENT) {
+            Client currentClient = session.getLoggedInClient();
+            return currentClient.getTransplantRequests().size() > 0;
+        }
+        return windowContext.isClinViewClientWindow();
+    }
+
+    /**
+     * Hides the button from the sidebar.
+     * @param button the button to hide
+     */
     private void hideButton(Button button) {
         button.setVisible(false);
         button.setManaged(false);
     }
 
     /**
-     * Redirects the GUI to the View Person page.
-     * @param event When the view person button is clicked.
+     * Redirects the GUI to the View Client page.
+     * @param event When the view client button is clicked.
      */
     @FXML
-    private void goToViewPerson(ActionEvent event) {
-        PageNavigator.loadPage(Page.VIEW_PERSON, mainController);
+    private void goToViewClient(ActionEvent event) {
+        PageNavigator.loadPage(Page.VIEW_CLIENT, mainController);
     }
 
     /**
@@ -83,6 +106,15 @@ public class SidebarController extends SubController {
     }
 
     /**
+     * Redirects the GUI to the Request Organs page.
+     * @param event When the register organs button is clicked.
+     */
+    @FXML
+    private void goToRequestOrganDonation(ActionEvent event) {
+        PageNavigator.loadPage(Page.REQUEST_ORGAN, mainController);
+    }
+
+    /**
      * Redirects the GUI to the View Medications page.
      * @param event When the register organs button is clicked.
      */
@@ -92,8 +124,8 @@ public class SidebarController extends SubController {
     }
 
     /**
-     * Redirects the GUI to the View Person page.
-     * @param event When the view person button is clicked.
+     * Redirects the GUI to the View Client page.
+     * @param event When the view client button is clicked.
      */
     @FXML
     private void goToViewClinician(ActionEvent event) {
@@ -119,14 +151,14 @@ public class SidebarController extends SubController {
     }
 
     /**
-     * Opens a save file dialog to choose where to save all persons in the system to a file.
+     * Opens a save file dialog to choose where to save all clients in the system to a file.
      * @param event When the save button is clicked.
      */
     @FXML
     private void save(ActionEvent event) {
         try {
             FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Save Persons File");
+            fileChooser.setTitle("Save Clients File");
             fileChooser.setInitialDirectory(
                     new File(Paths.get(AppUI.class.getProtectionDomain().getCodeSource().getLocation().toURI())
                             .getParent().toString())
@@ -135,12 +167,12 @@ public class SidebarController extends SubController {
             File file = fileChooser.showSaveDialog(AppUI.getWindow());
             if (file != null) {
                 JSONConverter.saveToFile(file);
-                // TODO Make alert with number of persons saved
+                // TODO Make alert with number of clients saved
                 HistoryItem save = new HistoryItem("SAVE", "The systems current state was saved.");
                 JSONConverter.updateHistory(save, "action_history.json");
                 PageNavigator.showAlert(Alert.AlertType.INFORMATION,
                         "Save Successful",
-                        "Successfully saved Persons to " + file.getName());
+                        "Successfully saved Clients to " + file.getName());
             }
         } catch (URISyntaxException | IOException exc) {
             // TODO Make alert when save fails
@@ -149,14 +181,14 @@ public class SidebarController extends SubController {
     }
 
     /**
-     * Opens a load file dialog to choose a file to load all persons from.
+     * Opens a load file dialog to choose a file to load all clients from.
      * @param event When the load button is clicked.
      */
     @FXML
     private void load(ActionEvent event) {
         try {
             FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Load Persons File");
+            fileChooser.setTitle("Load Clients File");
             fileChooser.setInitialDirectory(
                     new File(Paths.get(AppUI.class.getProtectionDomain().getCodeSource().getLocation().toURI())
                             .getParent().toString())
@@ -170,12 +202,12 @@ public class SidebarController extends SubController {
                 HistoryItem load = new HistoryItem("LOAD", "The systems state was loaded from " + file.getName());
                 JSONConverter.updateHistory(load, "action_history.json");
 
-                State.logout();
+                //State.logout();
                 mainController.resetWindowContext();
                 PageNavigator.showAlert(Alert.AlertType.INFORMATION,
                         "Load Successful",
-                        "Successfully loaded Persons from " + file.getName());
-                PageNavigator.loadPage(Page.LANDING, mainController);
+                        "Successfully loaded Clients from " + file.getName());
+                //PageNavigator.loadPage(Page.LANDING, mainController);
             }
         } catch (URISyntaxException | IOException exc) {
             // TODO Make alert when load fails
@@ -193,7 +225,7 @@ public class SidebarController extends SubController {
         State.logout();
         mainController.resetWindowContext();
         PageNavigator.loadPage(Page.LANDING, mainController);
-        HistoryItem save = new HistoryItem("LOGOUT", "The Person logged out");
+        HistoryItem save = new HistoryItem("LOGOUT", "The Client logged out");
         JSONConverter.updateHistory(save, "action_history.json");
     }
 

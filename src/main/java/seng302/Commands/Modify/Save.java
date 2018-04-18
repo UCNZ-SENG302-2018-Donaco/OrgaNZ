@@ -5,37 +5,37 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import seng302.Person;
+import seng302.Client;
 import seng302.HistoryItem;
-import seng302.State.PersonManager;
+import seng302.State.ClientManager;
 import seng302.State.State;
 import seng302.Utilities.JSONConverter;
 
 import picocli.CommandLine.Command;
 
 /**
- * Command line to save the current information of the Persons onto a JSON file using the GSON API.
+ * Command line to save the current information of the Clients onto a JSON file using the GSON API.
  * @author Dylan Carlyle, Jack Steel
  * @version sprint 1.
  * date 06/03/2018
  */
 
-@Command(name = "save", description = "Save persons to file", sortOptions = false)
+@Command(name = "save", description = "Save clients to file", sortOptions = false)
 public class Save implements Runnable {
 
-    private PersonManager manager;
+    private ClientManager manager;
 
     public Save() {
-        manager = State.getPersonManager();
+        manager = State.getClientManager();
     }
 
-    public Save(PersonManager manager) {
+    public Save(ClientManager manager) {
         this.manager = manager;
     }
 
     @Override
     public void run() {
-        ArrayList<Person> people = manager.getPeople();
+        ArrayList<Client> people = manager.getPeople();
         if (people.size() == 0) {
             System.out.println("No people exist, nothing to save");
             return;

@@ -1,4 +1,4 @@
-package seng302.Controller.Person;
+package seng302.Controller.Client;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -10,12 +10,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 
 import seng302.Actions.ActionInvoker;
-import seng302.Actions.Person.ModifyPersonOrgansAction;
+import seng302.Actions.Client.ModifyClientOrgansAction;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
-import seng302.Person;
+import seng302.Client;
 import seng302.HistoryItem;
-import seng302.State.PersonManager;
+import seng302.State.ClientManager;
 import seng302.State.Session;
 import seng302.State.State;
 import seng302.Utilities.Enums.Organ;
@@ -27,9 +27,9 @@ import seng302.Utilities.JSONConverter;
 public class RegisterOrganDonationController extends SubController {
 
     private Session session;
-    private PersonManager manager;
+    private ClientManager manager;
     private ActionInvoker invoker;
-    private Person person;
+    private Client client;
 
     @FXML
     private Pane sidebarPane, idPane;
@@ -41,7 +41,7 @@ public class RegisterOrganDonationController extends SubController {
     private TextField fieldUserID;
 
     public RegisterOrganDonationController() {
-        manager = State.getPersonManager();
+        manager = State.getClientManager();
         invoker = State.getInvoker();
         session = State.getSession();
     }
@@ -51,8 +51,8 @@ public class RegisterOrganDonationController extends SubController {
      * - Loads the sidebar.
      * - Adds all checkboxes with their respective Organ to the organCheckBoxes map.
      * - Disables all checkboxes.
-     * - Gets the PersonManager and ActionInvoker from the current state.
-     * - If a person is logged in, populates with their info and removes ability to view a different person.
+     * - Gets the ClientManager and ActionInvoker from the current state.
+     * - If a client is logged in, populates with their info and removes ability to view a different client.
      * - If the viewUserId is set, populates with their info.
      */
     @FXML
@@ -77,34 +77,34 @@ public class RegisterOrganDonationController extends SubController {
         super.setup(mainController);
         mainController.loadSidebar(sidebarPane);
 
-        if (session.getLoggedInUserType() == Session.UserType.PERSON) {
-            person = session.getLoggedInPerson();
-        } else if (windowContext.isClinViewPersonWindow()) {
-            person = windowContext.getViewPerson();
+        if (session.getLoggedInUserType() == Session.UserType.CLIENT) {
+            client = session.getLoggedInClient();
+        } else if (windowContext.isClinViewClientWindow()) {
+            client = windowContext.getViewClient();
         }
 
-        fieldUserID.setText(Integer.toString(person.getUid()));
+        fieldUserID.setText(Integer.toString(client.getUid()));
         updateUserID(null);
     }
 
     /**
-     * Updates the current person to the one specified in the userID field, and populates with their info.
+     * Updates the current client to the one specified in the userID field, and populates with their info.
      * @param event When ENTER is pressed with focus on the userID field.
      */
     @FXML
     private void updateUserID(ActionEvent event) {
         try {
-            person = manager.getPersonByID(Integer.parseInt(fieldUserID.getText()));
+            client = manager.getClientByID(Integer.parseInt(fieldUserID.getText()));
         } catch (NumberFormatException exc) {
-            person = null;
+            client = null;
         }
 
-        if (person != null) {
+        if (client != null) {
             setCheckBoxesEnabled();
             for (Map.Entry<Organ, CheckBox> entry : organCheckBoxes.entrySet()) {
-                entry.getValue().setSelected(person.getOrganStatus().get(entry.getKey()));
+                entry.getValue().setSelected(client.getOrganStatus().get(entry.getKey()));
             }
-            HistoryItem save = new HistoryItem("UPDATE ID", "The Person's ID was updated to " + person.getUid());
+            HistoryItem save = new HistoryItem("UPDATE ID", "The Clients ID was updated to " + client.getUid());
             JSONConverter.updateHistory(save, "action_history.json");
         } else {
             setCheckboxesDisabled();
@@ -112,16 +112,16 @@ public class RegisterOrganDonationController extends SubController {
     }
 
     /**
-     * Checks which organs check boxes have been changed, and applies those changes with a ModifyPersonOrgansAction.
+     * Checks which organs check boxes have been changed, and applies those changes with a ModifyClientOrgansAction.
      * @param event When any organ checkbox changes state.
      */
     @FXML
     private void modifyOrgans(ActionEvent event) {
-        ModifyPersonOrgansAction action = new ModifyPersonOrgansAction(person);
+        ModifyClientOrgansAction action = new ModifyClientOrgansAction(client);
         boolean hasChanged = false;
 
         for (Organ organ : organCheckBoxes.keySet()) {
-            boolean oldStatus = person.getOrganStatus().get(organ);
+            boolean oldStatus = client.getOrganStatus().get(organ);
             boolean newStatus = organCheckBoxes.get(organ).isSelected();
 
             if (oldStatus != newStatus) {
@@ -132,7 +132,7 @@ public class RegisterOrganDonationController extends SubController {
         if (hasChanged) {
             invoker.execute(action);
             HistoryItem save = new HistoryItem("UPDATE ORGANS",
-                    "The Person's organs were updated: " + person.getPersonOrganStatusString());
+                    "The Client's organs were updated: " + client.getClientOrganStatusString());
             JSONConverter.updateHistory(save, "action_history.json");
         }
     }

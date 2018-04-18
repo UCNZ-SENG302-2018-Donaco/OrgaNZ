@@ -1,4 +1,4 @@
-package seng302.Controller.Person;
+package seng302.Controller.Client;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -14,12 +14,12 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
 import seng302.Actions.ActionInvoker;
-import seng302.Actions.Person.ModifyPersonAction;
+import seng302.Actions.Client.ModifyClientAction;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
-import seng302.Person;
+import seng302.Client;
 import seng302.HistoryItem;
-import seng302.State.PersonManager;
+import seng302.State.ClientManager;
 import seng302.State.Session;
 import seng302.State.State;
 import seng302.Utilities.Enums.BloodType;
@@ -30,21 +30,21 @@ import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
 
 /**
- * Controller for the view/edit person page.
+ * Controller for the view/edit client page.
  */
-public class ViewPersonController extends SubController {
+public class ViewClientController extends SubController {
 
     private final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy\nh:mm:ss a");
 
     private Session session;
-    private PersonManager manager;
+    private ClientManager manager;
     private ActionInvoker invoker;
-    private Person viewedPerson;
+    private Client viewedClient;
 
     @FXML
     private Pane sidebarPane, idPane, inputsPane;
     @FXML
-    private Label creationDate, lastModified, noPersonLabel, fnameLabel, lnameLabel, dobLabel,
+    private Label creationDate, lastModified, noClientLabel, fnameLabel, lnameLabel, dobLabel,
             dodLabel, heightLabel, weightLabel, ageDisplayLabel, ageLabel, BMILabel;
     @FXML
     private TextField id, fname, lname, mname, height, weight, address;
@@ -57,8 +57,8 @@ public class ViewPersonController extends SubController {
     @FXML
     private ChoiceBox<Region> region;
 
-    public ViewPersonController() {
-        manager = State.getPersonManager();
+    public ViewClientController() {
+        manager = State.getClientManager();
         invoker = State.getInvoker();
         session = State.getSession();
     }
@@ -68,7 +68,7 @@ public class ViewPersonController extends SubController {
      * - Loads the sidebar.
      * - Adds all values to the gender and blood type dropdown lists.
      * - Disables all fields.
-     * - If a person is logged in, populates with their info and removes ability to view a different person.
+     * - If a client is logged in, populates with their info and removes ability to view a different client.
      * - If the viewUserId is set, populates with their info.
      */
     @FXML
@@ -84,62 +84,62 @@ public class ViewPersonController extends SubController {
         super.setup(mainController);
         mainController.loadSidebar(sidebarPane);
 
-        if (session.getLoggedInUserType() == Session.UserType.PERSON) {
-            viewedPerson = session.getLoggedInPerson();
+        if (session.getLoggedInUserType() == Session.UserType.CLIENT) {
+            viewedClient = session.getLoggedInClient();
             idPane.setVisible(false);
             idPane.setManaged(false);
-        } else if (windowContext.isClinViewPersonWindow()) {
-            viewedPerson = windowContext.getViewPerson();
+        } else if (windowContext.isClinViewClientWindow()) {
+            viewedClient = windowContext.getViewClient();
         }
 
-        id.setText(Integer.toString(viewedPerson.getUid()));
-        searchPerson();
+        id.setText(Integer.toString(viewedClient.getUid()));
+        searchClient();
     }
 
     /**
-     * Searches for a person based off the id number supplied in the text field. The users fields will be displayed if
+     * Searches for a client based off the id number supplied in the text field. The users fields will be displayed if
      * this user exists, otherwise an error message will display.
      */
     @FXML
-    private void searchPerson() {
+    private void searchClient() {
         int id_value;
         try {
             id_value = Integer.parseInt(id.getText());
         } catch (Exception e) {
-            noPersonLabel.setVisible(true);
+            noClientLabel.setVisible(true);
             setFieldsDisabled(true);
             return;
         }
 
-        viewedPerson = manager.getPersonByID(id_value);
-        if (viewedPerson == null) {
-            noPersonLabel.setVisible(true);
+        viewedClient = manager.getClientByID(id_value);
+        if (viewedClient == null) {
+            noClientLabel.setVisible(true);
             setFieldsDisabled(true);
         } else {
-            noPersonLabel.setVisible(false);
+            noClientLabel.setVisible(false);
             setFieldsDisabled(false);
 
-            fname.setText(viewedPerson.getFirstName());
-            lname.setText(viewedPerson.getLastName());
-            mname.setText(viewedPerson.getMiddleName());
-            dob.setValue(viewedPerson.getDateOfBirth());
-            dod.setValue(viewedPerson.getDateOfDeath());
-            gender.setValue(viewedPerson.getGender());
-            height.setText(String.valueOf(viewedPerson.getHeight()));
-            weight.setText(String.valueOf(viewedPerson.getWeight()));
-            btype.setValue(viewedPerson.getBloodType());
-            region.setValue(viewedPerson.getRegion());
-            address.setText(viewedPerson.getCurrentAddress());
+            fname.setText(viewedClient.getFirstName());
+            lname.setText(viewedClient.getLastName());
+            mname.setText(viewedClient.getMiddleName());
+            dob.setValue(viewedClient.getDateOfBirth());
+            dod.setValue(viewedClient.getDateOfDeath());
+            gender.setValue(viewedClient.getGender());
+            height.setText(String.valueOf(viewedClient.getHeight()));
+            weight.setText(String.valueOf(viewedClient.getWeight()));
+            btype.setValue(viewedClient.getBloodType());
+            region.setValue(viewedClient.getRegion());
+            address.setText(viewedClient.getCurrentAddress());
 
-            creationDate.setText(viewedPerson.getCreatedTimestamp().format(dateTimeFormat));
-            if (viewedPerson.getModifiedTimestamp() == null) {
+            creationDate.setText(viewedClient.getCreatedTimestamp().format(dateTimeFormat));
+            if (viewedClient.getModifiedTimestamp() == null) {
                 lastModified.setText("User has not been modified yet.");
             } else {
-                lastModified.setText(viewedPerson.getModifiedTimestamp().format(dateTimeFormat));
+                lastModified.setText(viewedClient.getModifiedTimestamp().format(dateTimeFormat));
             }
 
-            HistoryItem save = new HistoryItem("SEARCH PERSON",
-                    "Person " + viewedPerson.getFirstName() + " " + viewedPerson.getLastName() + " (" + viewedPerson
+            HistoryItem save = new HistoryItem("SEARCH CLIENT",
+                    "Client " + viewedClient.getFirstName() + " " + viewedClient.getLastName() + " (" + viewedClient
                             .getUid() + ") was searched");
             JSONConverter.updateHistory(save, "action_history.json");
 
@@ -149,8 +149,8 @@ public class ViewPersonController extends SubController {
     }
 
     /**
-     * Disables the view of user fields as these will all be irrelevant to the id number supplied if no such person
-     * exists with this id. Or sets it to visible so that the user can see all fields relevant to the person.
+     * Disables the view of user fields as these will all be irrelevant to the id number supplied if no such client
+     * exists with this id. Or sets it to visible so that the user can see all fields relevant to the client.
      * @param disabled the state of the pane.
      */
     private void setFieldsDisabled(boolean disabled) {
@@ -158,7 +158,7 @@ public class ViewPersonController extends SubController {
     }
 
     /**
-     * Saves the changes a user makes to the viewed person if all their inputs are valid. Otherwise the invalid fields
+     * Saves the changes a user makes to the viewed client if all their inputs are valid. Otherwise the invalid fields
      * text turns red.
      */
     @FXML
@@ -167,11 +167,11 @@ public class ViewPersonController extends SubController {
             updateChanges();
             displayBMI();
             displayAge();
-            lastModified.setText(viewedPerson.getModifiedTimestamp().format(dateTimeFormat));
+            lastModified.setText(viewedClient.getModifiedTimestamp().format(dateTimeFormat));
             //TODO show what in particular was updated
-            HistoryItem save = new HistoryItem("UPDATE PERSON INFO",
-                    "Updated changes to person " + viewedPerson.getFirstName() + " " + viewedPerson.getLastName()
-                            + "updated person info: " + viewedPerson.getPersonInfoString());
+            HistoryItem save = new HistoryItem("UPDATE CLIENT INFO",
+                    "Updated changes to client " + viewedClient.getFirstName() + " " + viewedClient.getLastName()
+                            + "updated client info: " + viewedClient.getClientInfoString());
             JSONConverter.updateHistory(save, "action_history.json");
         }
     }
@@ -249,31 +249,31 @@ public class ViewPersonController extends SubController {
     }
 
     /**
-     * Records the changes updated as a ModifyPersonAction to trace the change in record.
+     * Records the changes updated as a ModifyClientAction to trace the change in record.
      */
     private void updateChanges() {
         try {
-            ModifyPersonAction action = new ModifyPersonAction(viewedPerson);
+            ModifyClientAction action = new ModifyClientAction(viewedClient);
 
-            action.addChange("setFirstName", viewedPerson.getFirstName(), fname.getText());
-            action.addChange("setLastName", viewedPerson.getLastName(), lname.getText());
-            action.addChange("setMiddleName", viewedPerson.getMiddleName(), mname.getText());
-            action.addChange("setDateOfBirth", viewedPerson.getDateOfBirth(), dob.getValue());
-            action.addChange("setDateOfDeath", viewedPerson.getDateOfDeath(), dod.getValue());
-            action.addChange("setGender", viewedPerson.getGender(), gender.getValue());
-            action.addChange("setHeight", viewedPerson.getHeight(), Double.parseDouble(height.getText()));
-            action.addChange("setWeight", viewedPerson.getWeight(), Double.parseDouble(weight.getText()));
-            action.addChange("setBloodType", viewedPerson.getBloodType(), btype.getValue());
-            action.addChange("setRegion", viewedPerson.getRegion(), region.getValue());
-            action.addChange("setCurrentAddress", viewedPerson.getCurrentAddress(), address.getText());
+            action.addChange("setFirstName", viewedClient.getFirstName(), fname.getText());
+            action.addChange("setLastName", viewedClient.getLastName(), lname.getText());
+            action.addChange("setMiddleName", viewedClient.getMiddleName(), mname.getText());
+            action.addChange("setDateOfBirth", viewedClient.getDateOfBirth(), dob.getValue());
+            action.addChange("setDateOfDeath", viewedClient.getDateOfDeath(), dod.getValue());
+            action.addChange("setGender", viewedClient.getGender(), gender.getValue());
+            action.addChange("setHeight", viewedClient.getHeight(), Double.parseDouble(height.getText()));
+            action.addChange("setWeight", viewedClient.getWeight(), Double.parseDouble(weight.getText()));
+            action.addChange("setBloodType", viewedClient.getBloodType(), btype.getValue());
+            action.addChange("setRegion", viewedClient.getRegion(), region.getValue());
+            action.addChange("setCurrentAddress", viewedClient.getCurrentAddress(), address.getText());
 
             invoker.execute(action);
 
             PageNavigator.showAlert(Alert.AlertType.INFORMATION,
                     "Success",
-                    String.format("Successfully updated person %s %s %s %d.",
-                            viewedPerson.getFirstName(), viewedPerson.getMiddleName(),
-                            viewedPerson.getLastName(), viewedPerson.getUid()));
+                    String.format("Successfully updated client %s %s %s %d.",
+                            viewedClient.getFirstName(), viewedClient.getMiddleName(),
+                            viewedClient.getLastName(), viewedClient.getUid()));
 
         } catch (NoSuchFieldException | NoSuchMethodException exc) {
             exc.printStackTrace();
@@ -281,34 +281,34 @@ public class ViewPersonController extends SubController {
     }
 
     /**
-     * Displays the currently viewed persons BMI.
+     * Displays the currently viewed clients BMI.
      */
     private void displayBMI() {
-        if (viewedPerson.getDateOfDeath() == null) {
-            BMILabel.setText(String.format("%.01f", viewedPerson.getBMI()));
+        if (viewedClient.getDateOfDeath() == null) {
+            BMILabel.setText(String.format("%.01f", viewedClient.getBMI()));
         } else {
-            BMILabel.setText(String.format("%.01f", viewedPerson.getBMI()));
+            BMILabel.setText(String.format("%.01f", viewedClient.getBMI()));
         }
     }
 
     /**
-     * Displays either the current age, or age at death of the person depending on if the date of death field has been
+     * Displays either the current age, or age at death of the client depending on if the date of death field has been
      * filled in.
      */
     private void displayAge() {
-        if (viewedPerson.getDateOfDeath() == null) {
+        if (viewedClient.getDateOfDeath() == null) {
             ageDisplayLabel.setText("Age");
         } else {
             ageDisplayLabel.setText("Age at Death");
         }
-        ageLabel.setText(String.valueOf(viewedPerson.getAge()));
+        ageLabel.setText(String.valueOf(viewedClient.getAge()));
     }
 
     /**
-     * Navigate to the page to display organs for the currently specified person.
+     * Navigate to the page to display organs for the currently specified client.
      */
     @FXML
-    public void viewOrgansForPerson() {
+    public void viewOrgansForClient() {
         PageNavigator.loadPage(Page.REGISTER_ORGAN_DONATIONS, mainController);
     }
 }

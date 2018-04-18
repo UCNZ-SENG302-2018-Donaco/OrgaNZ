@@ -6,29 +6,29 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import seng302.HistoryItem;
-import seng302.State.PersonManager;
+import seng302.State.ClientManager;
 import seng302.State.State;
 import seng302.Utilities.JSONConverter;
 
 import picocli.CommandLine.Command;
 
 /**
- * Command line to load the information of all the persons from a JSON file,
+ * Command line to load the information of all the clients from a JSON file,
  * @author Dylan Carlyle, Jack Steel
  * @version sprint 1.
  * date 05/03/2018
  */
 
-@Command(name = "load", description = "Load persons from file", sortOptions = false)
+@Command(name = "load", description = "Load clients from file", sortOptions = false)
 public class Load implements Runnable {
 
-    private PersonManager manager;
+    private ClientManager manager;
 
     public Load() {
-        manager = State.getPersonManager();
+        manager = State.getClientManager();
     }
 
-    public Load(PersonManager manager) {
+    public Load(ClientManager manager) {
         this.manager = manager;
     }
 

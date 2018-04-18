@@ -37,6 +37,20 @@
       "INTESTINE": false,
       "MIDDLE_EAR": false
     },
+    "organRequestStatus": {
+      "CORNEA": false,
+      "BONE": false,
+      "PANCREAS": false,
+      "CONNECTIVE_TISSUE": true,
+      "SKIN": true,
+      "LIVER": false,
+      "LUNG": false,
+      "BONE_MARROW": false,
+      "HEART": false,
+      "KIDNEY": false,
+      "INTESTINE": false,
+      "MIDDLE_EAR": false
+    },
     "updateLog": [],
     "uid": 1
   }

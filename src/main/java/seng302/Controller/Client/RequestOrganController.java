@@ -1,4 +1,4 @@
-package seng302.Controller.Person;
+package seng302.Controller.Client;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -9,24 +9,27 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 
+import seng302.Actions.Action;
 import seng302.Actions.ActionInvoker;
-import seng302.Actions.Person.ModifyPersonOrgansAction;
+import seng302.Actions.Client.ModifyOrganRequestAction;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
 import seng302.HistoryItem;
-import seng302.Person;
-import seng302.State.PersonManager;
+import seng302.Client;
+import seng302.State.ClientManager;
 import seng302.State.Session;
 import seng302.State.State;
 import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.JSONConverter;
+import seng302.Utilities.View.Page;
+import seng302.Utilities.View.PageNavigator;
 
 public class RequestOrganController extends SubController {
 
     private Session session;
-    private PersonManager manager;
+    private ClientManager manager;
     private ActionInvoker invoker;
-    private Person person;
+    private Client client;
 
     @FXML
     private Pane sidebarPane, idPane;
@@ -38,20 +41,12 @@ public class RequestOrganController extends SubController {
     private TextField fieldUserID;
 
     public RequestOrganController() {
-        manager = State.getPersonManager();
+        manager = State.getClientManager();
         invoker = State.getInvoker();
         session = State.getSession();
     }
 
-    /**
-     * Initializes the UI for this page.
-     * - Loads the sidebar.
-     * - Adds all checkboxes with their respective Organ to the organCheckBoxes map.
-     * - Disables all checkboxes.
-     * - Gets the PersonManager and ActionInvoker from the current state.
-     * - If a person is logged in, populates with their info and removes ability to view a different person.
-     * - If the viewUserId is set, populates with their info.
-     */
+
     @FXML
     private void initialize() {
         organCheckBoxes.put(Organ.LIVER, checkBoxLiver);
@@ -69,56 +64,29 @@ public class RequestOrganController extends SubController {
         setCheckboxesDisabled();
     }
 
+
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
         mainController.loadSidebar(sidebarPane);
 
-        if (session.getLoggedInUserType() == Session.UserType.PERSON) {
-            person = session.getLoggedInPerson();
-        } else if (windowContext.isClinViewPersonWindow()) {
-            person = windowContext.getViewPerson();
+        if (session.getLoggedInUserType() == Session.UserType.CLIENT) {
+            client = session.getLoggedInClient();
+        } else if (windowContext.isClinViewClientWindow()) {
+            client = windowContext.getViewClient();
         }
 
-        fieldUserID.setText(Integer.toString(person.getUid()));
+        fieldUserID.setText(Integer.toString(client.getUid()));
         updateUserID(null);
     }
 
-    /**
-     * Updates the current person to the one specified in the userID field, and populates with their info.
-     * @param event When ENTER is pressed with focus on the userID field.
-     */
     @FXML
-    private void updateUserID(ActionEvent event) {
-        try {
-            person = manager.getPersonByID(Integer.parseInt(fieldUserID.getText()));
-        } catch (NumberFormatException exc) {
-            person = null;
-        }
-
-        if (person != null) {
-            setCheckBoxesEnabled();
-            for (Map.Entry<Organ, CheckBox> entry : organCheckBoxes.entrySet()) {
-                entry.getValue().setSelected(person.getOrganStatus().get(entry.getKey()));
-            }
-            HistoryItem save = new HistoryItem("UPDATE ID", "The Person's ID was updated to " + person.getUid());
-            JSONConverter.updateHistory(save, "action_history.json");
-        } else {
-            setCheckboxesDisabled();
-        }
-    }
-
-    /**
-     * Checks which organs check boxes have been changed, and applies those changes with a ModifyPersonOrgansAction.
-     * @param event When any organ checkbox changes state.
-     */
-    @FXML
-    private void modifyOrgans(ActionEvent event) {
-        ModifyPersonOrgansAction action = new ModifyPersonOrgansAction(person);
+    private void modifyRequests(ActionEvent event) {
+        ModifyOrganRequestAction action = new ModifyOrganRequestAction(client);
         boolean hasChanged = false;
 
-        for (Organ organ : organCheckBoxes.keySet()) {
-            boolean oldStatus = person.getOrganStatus().get(organ);
+        for (Organ organ: organCheckBoxes.keySet()) {
+            boolean oldStatus = client.getOrganRequestStatus().get(organ);
             boolean newStatus = organCheckBoxes.get(organ).isSelected();
 
             if (oldStatus != newStatus) {
@@ -128,11 +96,43 @@ public class RequestOrganController extends SubController {
         }
         if (hasChanged) {
             invoker.execute(action);
-            HistoryItem save = new HistoryItem("UPDATE ORGANS",
-                    "The Person's organs were updated: " + person.getPersonOrganStatusString());
-            JSONConverter.updateHistory(save, "action_history.json");
+            HistoryItem organRequest = new HistoryItem("ORGAN REQUEST UPDATE",
+                    "The Client's organ request list was updated: " + client.getClientOrganRequestStatusString());
+            JSONConverter.updateHistory(organRequest, "action_history.json");
         }
     }
+
+    @FXML
+    private void viewRequestHistory(ActionEvent event) {
+        PageNavigator.loadPage(Page.ORGAN_REQUEST_HISTORY, mainController);
+        System.out.println(client.getTransplantRequests());
+    }
+
+    /**
+     * Updates the current client to the one specified in the userID field, and populates with their info.
+     * @param event When ENTER is pressed with focus on the userID field.
+     */
+    @FXML
+    private void updateUserID(ActionEvent event) {
+        try {
+            client = manager.getClientByID(Integer.parseInt(fieldUserID.getText()));
+        } catch (NumberFormatException exc) {
+            client = null;
+        }
+
+        if (client != null) {
+            setCheckBoxesEnabled();
+            for (Map.Entry<Organ, CheckBox> entry : organCheckBoxes.entrySet()) {
+                System.out.println(entry);
+                entry.getValue().setSelected(client.getOrganRequestStatus().get(entry.getKey()));
+            }
+            HistoryItem save = new HistoryItem("UPDATE ID", "The Clients ID was updated to " + client.getUid());
+            JSONConverter.updateHistory(save, "action_history.json");
+        } else {
+            setCheckboxesDisabled();
+        }
+    }
+
 
     /**
      * Sets the state of all checkboxes to not selected, then disables them.

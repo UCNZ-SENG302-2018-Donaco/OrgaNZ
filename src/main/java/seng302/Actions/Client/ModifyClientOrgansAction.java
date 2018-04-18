@@ -1,31 +1,31 @@
-package seng302.Actions.Person;
+package seng302.Actions.Client;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import seng302.Actions.Action;
-import seng302.Person;
+import seng302.Client;
 import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
 
 /**
- * A reversible person organ modification Action
+ * A reversible client organ modification Action
  */
-public class ModifyPersonOrgansAction implements Action {
+public class ModifyClientOrgansAction implements Action {
 
     private Map<Organ, Boolean> changes = new HashMap<>();
-    private Person person;
+    private Client client;
 
     /**
      * Create a new Action
-     * @param person The person to be modified
+     * @param client The client to be modified
      */
-    public ModifyPersonOrgansAction(Person person) {
-        this.person = person;
+    public ModifyClientOrgansAction(Client client) {
+        this.client = client;
     }
 
     /**
-     * Add a organ change to the person. Should check the value is not already set before adding the change
+     * Add a organ change to the client. Should check the value is not already set before adding the change
      * @param organ The organ to be updated
      * @param newValue The new value
      */
@@ -45,7 +45,7 @@ public class ModifyPersonOrgansAction implements Action {
     }
 
     /**
-     * Loops through the list of changes and applies them to the person
+     * Loops through the list of changes and applies them to the client
      * @param isUndo If true, negate all booleans
      */
     private void runChanges(boolean isUndo) {
@@ -56,7 +56,7 @@ public class ModifyPersonOrgansAction implements Action {
                 if (isUndo) {
                     newState = !newState;
                 }
-                person.setOrganStatus(organ, newState);
+                client.setOrganStatus(organ, newState);
             } catch (OrganAlreadyRegisteredException e) {
                 e.printStackTrace();
             }

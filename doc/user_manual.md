@@ -34,12 +34,12 @@ deleteuser -u=<uid>
 
 
 
-## Print all users with their personal information.
+## Print all users with their cliental information.
 
 printallinfo
 
 
-## Print a single user with their personal information.
+## Print a single user with their cliental information.
 
 printuser -u=<uid>
 

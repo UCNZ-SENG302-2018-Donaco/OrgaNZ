@@ -2,14 +2,14 @@ package seng302.State;
 
 import seng302.Actions.ActionInvoker;
 import seng302.Clinician;
-import seng302.Person;
+import seng302.Client;
 
 /**
  * A static class to store the current state of the system.
  */
 public final class State {
 
-    private static PersonManager personManager;
+    private static ClientManager clientManager;
     private static ClinicianManager clinicianManager;
     private static ActionInvoker actionInvoker;
     private static Session session;
@@ -18,16 +18,16 @@ public final class State {
     }
 
     /**
-     * Initialises a new action invoker, person manager and clinician manager.
+     * Initialises a new action invoker, client manager and clinician manager.
      */
     public static void init() {
         actionInvoker = new ActionInvoker();
-        personManager = new PersonManager();
+        clientManager = new ClientManager();
         clinicianManager = new ClinicianManager();
     }
 
-    public static PersonManager getPersonManager() {
-        return personManager;
+    public static ClientManager getClientManager() {
+        return clientManager;
     }
 
     public static ClinicianManager getClinicianManager() {
@@ -43,8 +43,8 @@ public final class State {
     }
 
     public static void login(Session.UserType userType, Object user) {
-        if (userType == Session.UserType.PERSON) {
-            session = new Session((Person) user);
+        if (userType == Session.UserType.CLIENT) {
+            session = new Session((Client) user);
         } else if (userType == Session.UserType.CLINICIAN) {
             session = new Session((Clinician) user);
         }

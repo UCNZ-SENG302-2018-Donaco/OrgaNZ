@@ -3,25 +3,25 @@ package seng302.State;
 import java.util.ArrayList;
 import java.util.List;
 
+import seng302.Client;
 import seng302.Clinician;
-import seng302.Person;
 import seng302.HistoryItem;
 
 public class Session {
 
     public enum UserType {
-        PERSON, CLINICIAN
+        CLIENT, CLINICIAN
     }
 
-    private Person loggedInPerson;
+    private Client loggedInClient;
     private Clinician loggedInClinician;
     private UserType loggedInUserType;
     private List<HistoryItem> sessionHistory;
 
-    public Session(Person person) {
+    public Session(Client client) {
         sessionHistory = new ArrayList<>();
-        this.loggedInPerson = person;
-        this.loggedInUserType = UserType.PERSON;
+        this.loggedInClient = client;
+        this.loggedInUserType = UserType.CLIENT;
     }
 
     public Session(Clinician clinician) {
@@ -30,8 +30,8 @@ public class Session {
         this.loggedInUserType = UserType.CLINICIAN;
     }
 
-    public Person getLoggedInPerson() {
-        return loggedInPerson;
+    public Client getLoggedInClient() {
+        return loggedInClient;
     }
 
     public Clinician getLoggedInClinician() {

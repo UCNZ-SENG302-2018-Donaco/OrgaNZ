@@ -7,8 +7,8 @@ import seng302.Clinician;
 import seng302.Utilities.Enums.Region;
 
 /**
- * The class to handle the Person inputs, including adding,
- * setting attributes and updating the values of the person.
+ * The class to handle the Client inputs, including adding,
+ * setting attributes and updating the values of the client.
  * @author Dylan Carlyle, Jack Steel
  * @version sprint 1.
  * date 08/03/2018
@@ -42,10 +42,10 @@ public class ClinicianManager {
     }
 
     /**
-     * Add a person
+     * Add a client
      * @param clinician Clinician to be added
      */
-    public void addPerson(Clinician clinician) {
+    public void addClient(Clinician clinician) {
         clinicians.add(clinician);
     }
 
@@ -58,7 +58,7 @@ public class ClinicianManager {
     }
 
     /**
-     * Remove a person object
+     * Remove a client object
      * @param clinician Clinician to be removed
      */
     public void removeClinician(Clinician clinician) {

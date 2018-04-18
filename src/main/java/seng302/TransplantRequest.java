@@ -8,10 +8,16 @@ public class TransplantRequest {
 
     private Organ requestedOrgan;
     private LocalDateTime requestTime;
+    private boolean currentRequest;
 
-    public TransplantRequest(Organ requestedOrgan) {
+    public TransplantRequest(Organ requestedOrgan, boolean currentRequest) {
         this.requestedOrgan = requestedOrgan;
+        this.currentRequest = currentRequest;
         requestTime = LocalDateTime.now();
+    }
+
+    public void setRequestRemoved(boolean requestRemoved) {
+        this.currentRequest = requestRemoved;
     }
 
 

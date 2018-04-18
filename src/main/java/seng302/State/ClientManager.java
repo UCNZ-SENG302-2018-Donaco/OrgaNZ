@@ -3,57 +3,57 @@ package seng302.State;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-import seng302.Person;
+import seng302.Client;
 
 /**
- * The class to handle the Person inputs, including adding,
- * setting attributes and updating the values of the person.
+ * The class to handle the Client inputs, including adding,
+ * setting attributes and updating the values of the client.
  * @author Dylan Carlyle, Jack Steel
  * @version sprint 1.
  * date 08/03/2018
  */
 
-public class PersonManager {
+public class ClientManager {
 
-    private ArrayList<Person> people;
+    private ArrayList<Client> people;
     private int uid;
 
-    public PersonManager() {
+    public ClientManager() {
         people = new ArrayList<>();
         uid = 1;
     }
 
-    public PersonManager(ArrayList<Person> people) {
+    public ClientManager(ArrayList<Client> people) {
         this.people = people;
         uid = calculateNextId();
     }
 
-    public void setPeople(ArrayList<Person> people) {
+    public void setPeople(ArrayList<Client> people) {
         this.people = people;
     }
 
     /**
-     * Add a person
-     * @param person Person to be added
+     * Add a client
+     * @param client Client to be added
      */
-    public void addPerson(Person person) {
-        people.add(person);
+    public void addClient(Client client) {
+        people.add(client);
     }
 
     /**
      * Get the list of people
      * @return ArrayList of current people
      */
-    public ArrayList<Person> getPeople() {
+    public ArrayList<Client> getPeople() {
         return people;
     }
 
     /**
-     * Remove a person object
-     * @param person Person to be removed
+     * Remove a client object
+     * @param client Client to be removed
      */
-    public void removePerson(Person person) {
-        people.remove(person);
+    public void removeClient(Client client) {
+        people.remove(client);
     }
 
     /**
@@ -80,10 +80,10 @@ public class PersonManager {
      * @return Boolean
      */
     public boolean collisionExists(String firstName, String lastName, LocalDate dateOfBirth) {
-        for (Person person : people) {
-            if (person.getFirstName().equals(firstName) &&
-                    person.getLastName().equals(lastName) &&
-                    person.getDateOfBirth().isEqual(dateOfBirth)) {
+        for (Client client : people) {
+            if (client.getFirstName().equals(firstName) &&
+                    client.getLastName().equals(lastName) &&
+                    client.getDateOfBirth().isEqual(dateOfBirth)) {
                 return true;
             }
         }
@@ -91,20 +91,20 @@ public class PersonManager {
     }
 
     /**
-     * Return a person matching that UID
+     * Return a client matching that UID
      * @param id To be matched
-     * @return Person object or null if none exists
+     * @return Client object or null if none exists
      */
-    public Person getPersonByID(int id) {
+    public Client getClientByID(int id) {
         return people.stream()
                 .filter(d -> d.getUid() == id).findFirst().orElse(null);
     }
 
     private int calculateNextId() {
         int id = 1;
-        for (Person person : people) {
-            if (person.getUid() >= id) {
-                id = person.getUid() + 1;
+        for (Client client : people) {
+            if (client.getUid() >= id) {
+                id = client.getUid() + 1;
             }
         }
         return id;

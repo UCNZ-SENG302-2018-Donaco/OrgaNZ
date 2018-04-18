@@ -1,6 +1,6 @@
 package seng302.Utilities.View;
 
-import seng302.Person;
+import seng302.Client;
 
 /**
  * A class to represent the parameters for a given window.
@@ -9,13 +9,13 @@ import seng302.Person;
 public class WindowContext {
 
     private boolean sidebarEnabled;
-    private boolean isClinViewPersonWindow;
-    private Person viewPerson;
+    private boolean isClinViewClientWindow;
+    private Client viewClient;
 
     private WindowContext(WindowContextBuilder builder) {
         this.sidebarEnabled = builder.sidebarEnabled;
-        this.isClinViewPersonWindow = builder.isClinViewPersonWindow;
-        this.viewPerson = builder.viewPerson;
+        this.isClinViewClientWindow = builder.isClinViewClientWindow;
+        this.viewClient = builder.viewClient;
     }
 
     /**
@@ -25,8 +25,8 @@ public class WindowContext {
     public static class WindowContextBuilder {
 
         private boolean sidebarEnabled = true;
-        private boolean isClinViewPersonWindow = false;
-        private Person viewPerson;
+        private boolean isClinViewClientWindow = false;
+        private Client viewClient;
 
         public WindowContextBuilder() {
         }
@@ -36,13 +36,13 @@ public class WindowContext {
             return this;
         }
 
-        public WindowContextBuilder setAsClinViewPersonWindow() {
-            this.isClinViewPersonWindow = true;
+        public WindowContextBuilder setAsClinViewClientWindow() {
+            this.isClinViewClientWindow = true;
             return this;
         }
 
-        public WindowContextBuilder viewPerson(Person person) {
-            this.viewPerson = person;
+        public WindowContextBuilder viewClient(Client client) {
+            this.viewClient = client;
             return this;
         }
 
@@ -51,8 +51,8 @@ public class WindowContext {
          * @return the new WindowContext.
          */
         public WindowContext build() {
-            if (isClinViewPersonWindow && viewPerson == null) {
-                throw new IllegalStateException("Cannot have a clinician person view with no person defined.");
+            if (isClinViewClientWindow && viewClient == null) {
+                throw new IllegalStateException("Cannot have a clinician client view with no client defined.");
             } else {
                 return new WindowContext(this);
             }
@@ -71,11 +71,11 @@ public class WindowContext {
         return sidebarEnabled;
     }
 
-    public boolean isClinViewPersonWindow() {
-        return isClinViewPersonWindow;
+    public boolean isClinViewClientWindow() {
+        return isClinViewClientWindow;
     }
 
-    public Person getViewPerson() {
-        return viewPerson;
+    public Client getViewClient() {
+        return viewClient;
     }
 }

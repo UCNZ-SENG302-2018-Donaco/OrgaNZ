@@ -17,16 +17,16 @@ import picocli.CommandLine.Option;
  * date 06/03/2018
  */
 
-@Command(name = "getchanges", description = "Print a single users update history.", sortOptions = false)
-public class GetChanges implements Runnable {
+@Command(name = "printuserinfo", description = "Print a single user with their cliental information.", sortOptions = false)
+public class PrintClientInfo implements Runnable {
 
     private ClientManager manager;
 
-    public GetChanges() {
+    public PrintClientInfo() {
         manager = State.getClientManager();
     }
 
-    GetChanges(ClientManager manager) {
+    public PrintClientInfo(ClientManager manager) {
         this.manager = manager;
     }
 
@@ -40,9 +40,9 @@ public class GetChanges implements Runnable {
             System.out.println("No client exists with that user ID");
             return;
         }
-        System.out.println(client.getUpdatesString());
-        HistoryItem printAllHistory = new HistoryItem("PRINT UPDATE HISTORY", "All client's history printed.");
-        JSONConverter.updateHistory(printAllHistory, "action_history.json");
+        System.out.println(client.getClientInfoString());
+        HistoryItem printUserInfo = new HistoryItem("PRINT CLIENT INFO", "Information was printed about client " + uid);
+        JSONConverter.updateHistory(printUserInfo, "action_history.json");
     }
 }
 

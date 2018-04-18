@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
-import seng302.Person;
-import seng302.State.PersonManager;
+import seng302.Client;
+import seng302.State.ClientManager;
 import seng302.State.State;
 
 import org.junit.Rule;
@@ -38,13 +38,13 @@ public class JSONConverterTest {
 
     @Test
     public void saveToFileTest() throws Exception {
-        File file = new File("src/test/resources/filled_persons.json");
+        File file = new File("src/test/resources/filled_clients.json");
 
-        Person person = new Person("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
-        ArrayList<Person> people = new ArrayList<>();
-        people.add(person);
+        Client client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        ArrayList<Client> people = new ArrayList<>();
+        people.add(client);
         State.init();
-        PersonManager manager = State.getPersonManager();
+        ClientManager manager = State.getClientManager();
         manager.setPeople(people);
 
         JSONConverter.saveToFile(file);
@@ -67,14 +67,14 @@ public class JSONConverterTest {
 //    public void loadFromFileTest() throws Exception {
 //        //File file = folder.newFile("testfile.json");
 //
-//        Person person = new Person("First", null, "Last", LocalDate.of(1970,1, 1), 1);
-//        ArrayList<Person> persons = new ArrayList<>();
-//        persons.add(person);
-//        //manager = new PersonManager(persons);
+//        Client client = new Client("First", null, "Last", LocalDate.of(1970,1, 1), 1);
+//        ArrayList<Client> clients = new ArrayList<>();
+//        clients.add(client);
+//        //manager = new ClientManager(clients);
 //
 //        manager.saveToFile(file);
 //
-//        manager = new PersonManager();
+//        manager = new ClientManager();
 //
 //        manager.loadFromFile(file);
 //

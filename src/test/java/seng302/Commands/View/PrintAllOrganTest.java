@@ -11,8 +11,8 @@ import java.io.PrintStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-import seng302.Person;
-import seng302.State.PersonManager;
+import seng302.Client;
+import seng302.State.ClientManager;
 import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
 
@@ -22,25 +22,25 @@ import picocli.CommandLine;
 
 public class PrintAllOrganTest {
 
-    private PersonManager spyPersonManager;
+    private ClientManager spyClientManager;
     private PrintAllOrgan spyPrintAllOrgan;
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
 
     @Before
     public void init() {
-        spyPersonManager = spy(new PersonManager());
+        spyClientManager = spy(new ClientManager());
 
-        spyPrintAllOrgan = spy(new PrintAllOrgan(spyPersonManager));
+        spyPrintAllOrgan = spy(new PrintAllOrgan(spyClientManager));
         System.setOut(new PrintStream(outContent));
         System.setErr(new PrintStream(errContent));
     }
 
     @Test
-    public void printallorgan_no_persons() {
-        ArrayList<Person> people = new ArrayList<>();
+    public void printallorgan_no_clients() {
+        ArrayList<Client> people = new ArrayList<>();
 
-        when(spyPersonManager.getPeople()).thenReturn(people);
+        when(spyClientManager.getPeople()).thenReturn(people);
         String[] inputs = {};
 
         CommandLine.run(spyPrintAllOrgan, System.out, inputs);
@@ -49,15 +49,15 @@ public class PrintAllOrganTest {
     }
 
     @Test
-    public void printallorgan_single_person() throws OrganAlreadyRegisteredException {
-        Person person = new Person("First", "mid", "Last", LocalDate.of(1970, 1, 1), 1);
-        person.setOrganStatus(Organ.LIVER, true);
-        person.setOrganStatus(Organ.KIDNEY, true);
+    public void printallorgan_single_client() throws OrganAlreadyRegisteredException {
+        Client client = new Client("First", "mid", "Last", LocalDate.of(1970, 1, 1), 1);
+        client.setOrganStatus(Organ.LIVER, true);
+        client.setOrganStatus(Organ.KIDNEY, true);
 
-        ArrayList<Person> people = new ArrayList<>();
-        people.add(person);
+        ArrayList<Client> people = new ArrayList<>();
+        people.add(client);
 
-        when(spyPersonManager.getPeople()).thenReturn(people);
+        when(spyClientManager.getPeople()).thenReturn(people);
         String[] inputs = {};
 
         CommandLine.run(spyPrintAllOrgan, System.out, inputs);
@@ -67,20 +67,20 @@ public class PrintAllOrganTest {
     }
 
     @Test
-    public void printallorgan_multiple_persons() throws OrganAlreadyRegisteredException {
-        Person person = new Person("First", "mid", "Last", LocalDate.of(1970, 1, 1), 1);
-        Person person2 = new Person("FirstTwo", null, "LastTwo", LocalDate.of(1971, 2, 2), 2);
-        Person person3 = new Person("FirstThree", null, "LastThree", LocalDate.of(1971, 2, 2), 3);
-        person.setOrganStatus(Organ.LIVER, true);
-        person.setOrganStatus(Organ.KIDNEY, true);
-        person2.setOrganStatus(Organ.CONNECTIVE_TISSUE, true);
+    public void printallorgan_multiple_clients() throws OrganAlreadyRegisteredException {
+        Client client = new Client("First", "mid", "Last", LocalDate.of(1970, 1, 1), 1);
+        Client client2 = new Client("FirstTwo", null, "LastTwo", LocalDate.of(1971, 2, 2), 2);
+        Client client3 = new Client("FirstThree", null, "LastThree", LocalDate.of(1971, 2, 2), 3);
+        client.setOrganStatus(Organ.LIVER, true);
+        client.setOrganStatus(Organ.KIDNEY, true);
+        client2.setOrganStatus(Organ.CONNECTIVE_TISSUE, true);
 
-        ArrayList<Person> people = new ArrayList<>();
-        people.add(person);
-        people.add(person2);
-        people.add(person3);
+        ArrayList<Client> people = new ArrayList<>();
+        people.add(client);
+        people.add(client2);
+        people.add(client3);
 
-        when(spyPersonManager.getPeople()).thenReturn(people);
+        when(spyClientManager.getPeople()).thenReturn(people);
         String[] inputs = {};
 
         CommandLine.run(spyPrintAllOrgan, System.out, inputs);

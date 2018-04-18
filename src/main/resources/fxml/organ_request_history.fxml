@@ -11,7 +11,7 @@
 <?import javafx.scene.layout.VBox?>
 <VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0"
   xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
-  fx:controller="seng302.Controller.Clinician.SearchPersonsController">
+  fx:controller="seng302.Controller.Client.OrganRequestHistoryController">
   <children>
     <SplitPane dividerPositions="0.298" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
       <items>
@@ -35,7 +35,7 @@
             <Pagination fx:id="pagination" prefHeight="70.0" prefWidth="200.0" BorderPane.alignment="BOTTOM_CENTER"/>
           </bottom>
           <top>
-            <TextField fx:id="searchBox" promptText="Person name" BorderPane.alignment="CENTER">
+            <TextField fx:id="searchBox" promptText="Client name" BorderPane.alignment="CENTER">
               <BorderPane.margin>
                 <Insets left="100.0" right="100.0" top="20.0"/>
               </BorderPane.margin>

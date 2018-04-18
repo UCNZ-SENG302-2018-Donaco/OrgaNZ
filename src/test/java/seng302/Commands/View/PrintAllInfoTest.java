@@ -10,8 +10,8 @@ import java.io.PrintStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-import seng302.Person;
-import seng302.State.PersonManager;
+import seng302.Client;
+import seng302.State.ClientManager;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -19,25 +19,25 @@ import picocli.CommandLine;
 
 public class PrintAllInfoTest {
 
-    private PersonManager spyPersonManager;
+    private ClientManager spyClientManager;
     private PrintAllInfo spyPrintAllInfo;
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
 
     @Before
     public void init() {
-        spyPersonManager = spy(new PersonManager());
+        spyClientManager = spy(new ClientManager());
 
-        spyPrintAllInfo = spy(new PrintAllInfo(spyPersonManager));
+        spyPrintAllInfo = spy(new PrintAllInfo(spyClientManager));
         System.setOut(new PrintStream(outContent));
         System.setErr(new PrintStream(errContent));
     }
 
     @Test
-    public void printallinfo_no_persons() {
-        ArrayList<Person> people = new ArrayList<>();
+    public void printallinfo_no_clients() {
+        ArrayList<Client> people = new ArrayList<>();
 
-        when(spyPersonManager.getPeople()).thenReturn(people);
+        when(spyClientManager.getPeople()).thenReturn(people);
         String[] inputs = {};
 
         CommandLine.run(spyPrintAllInfo, System.out, inputs);
@@ -46,13 +46,13 @@ public class PrintAllInfoTest {
     }
 
     @Test
-    public void printallinfo_single_person() {
-        Person person = new Person("First", "mid", "Last", LocalDate.of(1970, 1, 1), 1);
+    public void printallinfo_single_client() {
+        Client client = new Client("First", "mid", "Last", LocalDate.of(1970, 1, 1), 1);
 
-        ArrayList<Person> people = new ArrayList<>();
-        people.add(person);
+        ArrayList<Client> people = new ArrayList<>();
+        people.add(client);
 
-        when(spyPersonManager.getPeople()).thenReturn(people);
+        when(spyClientManager.getPeople()).thenReturn(people);
         String[] inputs = {};
 
         CommandLine.run(spyPrintAllInfo, System.out, inputs);
@@ -62,15 +62,15 @@ public class PrintAllInfoTest {
     }
 
     @Test
-    public void printallinfo_multiple_persons() {
-        Person person = new Person("First", "mid", "Last", LocalDate.of(1970, 1, 1), 1);
-        Person person2 = new Person("FirstTwo", null, "LastTwo", LocalDate.of(1971, 2, 2), 2);
+    public void printallinfo_multiple_clients() {
+        Client client = new Client("First", "mid", "Last", LocalDate.of(1970, 1, 1), 1);
+        Client client2 = new Client("FirstTwo", null, "LastTwo", LocalDate.of(1971, 2, 2), 2);
 
-        ArrayList<Person> people = new ArrayList<>();
-        people.add(person);
-        people.add(person2);
+        ArrayList<Client> people = new ArrayList<>();
+        people.add(client);
+        people.add(client2);
 
-        when(spyPersonManager.getPeople()).thenReturn(people);
+        when(spyClientManager.getPeople()).thenReturn(people);
         String[] inputs = {};
 
         CommandLine.run(spyPrintAllInfo, System.out, inputs);

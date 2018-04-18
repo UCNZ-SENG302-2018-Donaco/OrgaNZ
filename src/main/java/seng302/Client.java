@@ -16,10 +16,10 @@ import seng302.Utilities.Enums.Region;
 import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
 
 /**
- * The main Person class.
+ * The main Client class.
  */
 
-public class Person {
+public class Client {
 
     private int uid;
     private String firstName;
@@ -38,6 +38,7 @@ public class Person {
     private LocalDateTime modifiedTimestamp;
 
     private Map<Organ, Boolean> organStatus;
+    private Map<Organ, Boolean> organRequestStatus;
 
     private List<MedicationRecord> medicationHistory = new ArrayList<>();
 
@@ -45,20 +46,20 @@ public class Person {
 
     private ArrayList<String> updateLog = new ArrayList<>();
 
-    public Person() {
+    public Client() {
         createdTimestamp = LocalDateTime.now();
         initOrgans();
     }
 
     /**
-     * Create a new person object
+     * Create a new client object
      * @param firstName First name string
      * @param middleName Middle name(s). May be null
      * @param lastName Last name string
      * @param dateOfBirth LocalDate formatted date of birth
      * @param uid A unique user ID. Should be queried to ensure uniqueness
      */
-    public Person(String firstName, String middleName, String lastName, LocalDate dateOfBirth, int uid) {
+    public Client(String firstName, String middleName, String lastName, LocalDate dateOfBirth, int uid) {
         this.uid = uid;
         this.firstName = firstName;
         this.middleName = middleName;
@@ -73,8 +74,10 @@ public class Person {
 
     private void initOrgans() {
         organStatus = new HashMap<>();
+        organRequestStatus = new HashMap<>();
         for (Organ o : Organ.values()) {
             organStatus.put(o, false);
+            organRequestStatus.put(o, false);
         }
     }
 
@@ -82,6 +85,35 @@ public class Person {
         LocalDateTime timestamp = LocalDateTime.now();
         updateLog.add(String.format("%s; updated %s", timestamp, function));
         modifiedTimestamp = LocalDateTime.now();
+    }
+
+    public void setOrganRequestStatus(Organ organ, boolean value) throws OrganAlreadyRegisteredException {
+        if (value && organRequestStatus.get(organ)) {
+            throw new OrganAlreadyRegisteredException(organ.toString() + " is already registered for donation");
+        }
+        addUpdate(organ.toString());
+        organRequestStatus.replace(organ, value);
+    }
+
+    public String getClientOrganRequestStatusString() {
+        StringBuilder builder = new StringBuilder();
+        for (Map.Entry<Organ, Boolean> entry : organRequestStatus.entrySet()) {
+            if (entry.getValue()) {
+                if (builder.length() != 0) {
+                    builder.append(", ");
+                }
+                builder.append(entry.getKey().toString());
+            }
+        }
+        if (builder.length() == 0) {
+            return "No organs registered for donation";
+        } else {
+            return builder.toString();
+        }
+    }
+
+    public Map<Organ, Boolean> getOrganRequestStatus() {
+        return organRequestStatus;
     }
 
     /**
@@ -98,14 +130,17 @@ public class Person {
         organStatus.replace(organ, value);
     }
 
+
+
     public Map<Organ, Boolean> getOrganStatus() {
         return organStatus;
     }
 
+
     /**
-     * Returns a string listing the organs that the person is currently donating, or a message that the person currently
+     * Returns a string listing the organs that the client is currently donating, or a message that the client currently
      * has no organs registered for donation if that is the case.
-     * @return The person's organ status string.
+     * @return The client's organ status string.
      */
     public String getOrganStatusString() {
         StringBuilder builder = new StringBuilder();
@@ -125,10 +160,10 @@ public class Person {
     }
 
     /**
-     * Returns a formatted string listing the person's ID number, full name, and the organs they are donating.
-     * @return The formatted person info string.
+     * Returns a formatted string listing the client's ID number, full name, and the organs they are donating.
+     * @return The formatted client info string.
      */
-    public String getPersonOrganStatusString() {
+    public String getClientOrganStatusString() {
         return String.format("User: %s. Name: %s, Donation status: %s.", uid, getFullName(), getOrganStatusString());
     }
 
@@ -145,10 +180,10 @@ public class Person {
     }
 
     /**
-     * Get a formatted string with the persons user information. Does not include organ donation status
-     * @return Formatted string with the persons user information. Does not include organ donation status
+     * Get a formatted string with the clients user information. Does not include organ donation status
+     * @return Formatted string with the clients user information. Does not include organ donation status
      */
-    public String getPersonInfoString() {
+    public String getClientInfoString() {
         return String.format("User: %s. Name: %s, date of birth: %tF, date of death: %tF, gender: %s," +
                         " height: %scm, weight: %skg, blood type: %s, current address: %s, region: %s," +
                         " created on: %s, modified on: %s",
@@ -157,7 +192,7 @@ public class Person {
     }
 
     /**
-     * Get the full name of the person concatenating their names
+     * Get the full name of the client concatenating their names
      * @return The full name string
      */
     public String getFullName() {
@@ -281,8 +316,8 @@ public class Person {
     }
 
     /**
-     * Returns a new list containing the medications which are currently being used by the Person.
-     * @return The list of medications currently being used by the Person.
+     * Returns a new list containing the medications which are currently being used by the Client.
+     * @return The list of medications currently being used by the Client.
      */
     public List<MedicationRecord> getCurrentMedications() {
         return medicationHistory.stream().filter(
@@ -291,8 +326,8 @@ public class Person {
     }
 
     /**
-     * Returns a new list containing the medications which were previously used by the Person.
-     * @return The list of medications used by the Person in the past.
+     * Returns a new list containing the medications which were previously used by the Client.
+     * @return The list of medications used by the Client in the past.
      */
     public List<MedicationRecord> getPastMedications() {
         return medicationHistory.stream().filter(
@@ -301,7 +336,7 @@ public class Person {
     }
 
     /**
-     * Adds a new MedicationRecord to the person's history.
+     * Adds a new MedicationRecord to the client's history.
      * @param record The given MedicationRecord.
      */
     public void addMedicationRecord(MedicationRecord record) {
@@ -310,7 +345,7 @@ public class Person {
     }
 
     /**
-     * Deletes the given MedicationRecord from the person's history.
+     * Deletes the given MedicationRecord from the client's history.
      * @param record The given MedicationRecord.
      */
     public void deleteMedicationRecord(MedicationRecord record) {
@@ -319,7 +354,7 @@ public class Person {
     }
 
     /**
-     * Calculates the BMI of the Person based off their height and weight - BMI = weight/height^2.
+     * Calculates the BMI of the Client based off their height and weight - BMI = weight/height^2.
      * If either field is 0, the result returned is 0.
      * @return the users calculated BMI.
      */
@@ -336,7 +371,7 @@ public class Person {
     /**
      * Calculates the users age based on their date of birth and date of death. If the date of death is null the age
      * is calculated base of the LocalDate.now().
-     * @return age of the Person.
+     * @return age of the Client.
      */
     public int getAge() {
         int age;
@@ -351,7 +386,7 @@ public class Person {
     /**
      * Takes a string and checks if each space separated string section matches one of the names
      * @param searchParam The string to be checked
-     * @return True if all sections of the passed string match any of the names of the person
+     * @return True if all sections of the passed string match any of the names of the client
      */
     public boolean nameContains(String searchParam) {
         String lowerSearch = searchParam.toLowerCase();
@@ -371,17 +406,25 @@ public class Person {
     }
 
     /**
-     * Person objects are identified by their uid
+     * Client objects are identified by their uid
      */
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof Person)) {
+        if (!(obj instanceof Client)) {
             return false;
         }
-        Person d = (Person) obj;
+        Client d = (Client) obj;
         return d.uid == this.uid;
+    }
+
+    public List<TransplantRequest> getTransplantRequests() {
+        return transplantRequests;
+    }
+
+    public void transplantRequestsUpdate(TransplantRequest transplantRequest) {
+        transplantRequests.add(transplantRequest);
     }
 }

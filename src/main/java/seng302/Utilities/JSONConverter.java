@@ -11,9 +11,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import seng302.Person;
+import seng302.Client;
 import seng302.HistoryItem;
-import seng302.State.PersonManager;
+import seng302.State.ClientManager;
 import seng302.State.State;
 
 import com.google.gson.Gson;
@@ -56,35 +56,35 @@ public final class JSONConverter {
     }
 
     /**
-     * Saves the current persons list to a specified file
+     * Saves the current clients list to a specified file
      * @param file The file to be saved to
      * @throws IOException Throws IOExceptions
      */
     public static void saveToFile(File file) throws IOException {
         Writer writer = new FileWriter(file);
-        PersonManager personManager = State.getPersonManager();
-        gson.toJson(personManager.getPeople(), writer);
+        ClientManager clientManager = State.getClientManager();
+        gson.toJson(clientManager.getPeople(), writer);
         writer.close();
     }
 
     /**
-     * Loads the persons from a specified file. Overwrites any current persons
+     * Loads the clients from a specified file. Overwrites any current clients
      * @param file The file to be loaded from
      * @throws IOException Throws IOExceptions
      */
     public static void loadFromFile(File file) throws IOException {
         Reader reader = new FileReader(file);
-        ArrayList<Person> people;
-        Type collectionType = new TypeToken<ArrayList<Person>>() {
+        ArrayList<Client> people;
+        Type collectionType = new TypeToken<ArrayList<Client>>() {
         }.getType();
 
         people = gson.fromJson(reader, collectionType);
-        PersonManager personManager = State.getPersonManager();
-        personManager.setPeople(people);
+        ClientManager clientManager = State.getClientManager();
+        clientManager.setPeople(people);
 
-        for (Person person : people) {
-            if (person.getUid() >= personManager.getUid()) {
-                personManager.setUid(person.getUid() + 1);
+        for (Client client : people) {
+            if (client.getUid() >= clientManager.getUid()) {
+                clientManager.setUid(client.getUid() + 1);
             }
         }
     }

@@ -11,8 +11,8 @@ import java.io.PrintStream;
 import java.time.LocalDate;
 
 import seng302.Actions.ActionInvoker;
-import seng302.Person;
-import seng302.State.PersonManager;
+import seng302.Client;
+import seng302.State.ClientManager;
 import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
 
@@ -23,16 +23,16 @@ import picocli.CommandLine;
 
 public class SetOrganStatusTest {
 
-    private PersonManager spyPersonManager;
+    private ClientManager spyClientManager;
     private SetOrganStatus spySetOrganStatus;
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
 
     @Before
     public void init() {
-        spyPersonManager = spy(new PersonManager());
+        spyClientManager = spy(new ClientManager());
 
-        spySetOrganStatus = spy(new SetOrganStatus(spyPersonManager, new ActionInvoker()));
+        spySetOrganStatus = spy(new SetOrganStatus(spyClientManager, new ActionInvoker()));
 
         System.setOut(new PrintStream(outContent));
         System.setErr(new PrintStream(errContent));
@@ -59,7 +59,7 @@ public class SetOrganStatusTest {
 
     @Test
     public void setorganstatus_non_existent_id() {
-        when(spyPersonManager.getPersonByID(anyInt())).thenReturn(null);
+        when(spyClientManager.getClientByID(anyInt())).thenReturn(null);
         String[] inputs = {"-u", "2"};
 
         CommandLine.run(spySetOrganStatus, System.out, inputs);
@@ -69,39 +69,39 @@ public class SetOrganStatusTest {
 
     @Test
     public void setorganstatus_valid_set_to_true() {
-        Person person = new Person("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
-        when(spyPersonManager.getPersonByID(anyInt())).thenReturn(person);
+        Client client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        when(spyClientManager.getClientByID(anyInt())).thenReturn(client);
         String[] inputs = {"-u", "1", "--liver"};
 
         CommandLine.run(spySetOrganStatus, System.out, inputs);
 
-        assertEquals(true, person.getOrganStatus().get(Organ.LIVER));
+        assertEquals(true, client.getOrganStatus().get(Organ.LIVER));
     }
 
     @Test
     public void setorganstatus_valid_set_to_false() throws OrganAlreadyRegisteredException {
-        Person person = new Person("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        Client client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
 
-        person.setOrganStatus(Organ.LIVER, true);
+        client.setOrganStatus(Organ.LIVER, true);
 
-        when(spyPersonManager.getPersonByID(anyInt())).thenReturn(person);
+        when(spyClientManager.getClientByID(anyInt())).thenReturn(client);
         String[] inputs = {"-u", "1", "--liver=false"};
 
         CommandLine.run(spySetOrganStatus, System.out, inputs);
 
-        assertEquals(false, person.getOrganStatus().get(Organ.LIVER));
+        assertEquals(false, client.getOrganStatus().get(Organ.LIVER));
     }
 
     @Test
     public void setorganstatus_invalid_set_to_true_already_true() throws OrganAlreadyRegisteredException {
-        Person person = new Person("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        Client client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
 
-        person.setOrganStatus(Organ.LIVER, true);
+        client.setOrganStatus(Organ.LIVER, true);
 
-        when(spyPersonManager.getPersonByID(anyInt())).thenReturn(person);
+        when(spyClientManager.getClientByID(anyInt())).thenReturn(client);
         String[] inputs = {"-u", "1", "--liver"};
 
-        ArgumentCaptor<Person> captor = ArgumentCaptor.forClass(Person.class);
+        ArgumentCaptor<Client> captor = ArgumentCaptor.forClass(Client.class);
 
         CommandLine.run(spySetOrganStatus, System.out, inputs);
 
@@ -110,32 +110,32 @@ public class SetOrganStatusTest {
 
     @Test
     public void setorganstatus_valid_multiple_updates() {
-        Person person = new Person("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        Client client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
 
-        when(spyPersonManager.getPersonByID(anyInt())).thenReturn(person);
+        when(spyClientManager.getClientByID(anyInt())).thenReturn(client);
         String[] inputs = {"-u", "1", "--liver", "--kidney"};
 
         CommandLine.run(spySetOrganStatus, System.out, inputs);
 
-        assertEquals(true, person.getOrganStatus().get(Organ.LIVER));
-        assertEquals(true, person.getOrganStatus().get(Organ.KIDNEY));
+        assertEquals(true, client.getOrganStatus().get(Organ.LIVER));
+        assertEquals(true, client.getOrganStatus().get(Organ.KIDNEY));
     }
 
     @Test
     public void setorganstatus_valid_multiple_updates_some_invalid() throws OrganAlreadyRegisteredException {
-        Person person = new Person("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        Client client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
 
-        person.setOrganStatus(Organ.LIVER, true);
-        person.setOrganStatus(Organ.BONE, true);
+        client.setOrganStatus(Organ.LIVER, true);
+        client.setOrganStatus(Organ.BONE, true);
 
-        when(spyPersonManager.getPersonByID(anyInt())).thenReturn(person);
+        when(spyClientManager.getClientByID(anyInt())).thenReturn(client);
         String[] inputs = {"-u", "1", "--liver", "--kidney", "--bone=false"};
 
         CommandLine.run(spySetOrganStatus, System.out, inputs);
 
         assertThat(outContent.toString(), containsString("Liver is already registered for donation"));
 
-        assertEquals(true, person.getOrganStatus().get(Organ.KIDNEY));
-        assertEquals(false, person.getOrganStatus().get(Organ.BONE));
+        assertEquals(true, client.getOrganStatus().get(Organ.KIDNEY));
+        assertEquals(false, client.getOrganStatus().get(Organ.BONE));
     }
 }

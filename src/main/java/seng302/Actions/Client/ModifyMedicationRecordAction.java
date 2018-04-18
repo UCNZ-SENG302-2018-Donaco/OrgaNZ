@@ -1,4 +1,4 @@
-package seng302.Actions.Person;
+package seng302.Actions.Client;
 
 import java.time.LocalDate;
 

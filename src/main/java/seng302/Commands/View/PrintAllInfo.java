@@ -2,9 +2,9 @@ package seng302.Commands.View;
 
 import java.util.ArrayList;
 
-import seng302.Person;
+import seng302.Client;
 import seng302.HistoryItem;
-import seng302.State.PersonManager;
+import seng302.State.ClientManager;
 import seng302.State.State;
 import seng302.Utilities.JSONConverter;
 
@@ -17,28 +17,28 @@ import picocli.CommandLine.Command;
  * date 05/03/2018
  */
 
-@Command(name = "printallinfo", description = "Print all users with their personal information.", sortOptions = false)
+@Command(name = "printallinfo", description = "Print all users with their cliental information.", sortOptions = false)
 public class PrintAllInfo implements Runnable {
 
-    private PersonManager manager;
+    private ClientManager manager;
 
     public PrintAllInfo() {
-        manager = State.getPersonManager();
+        manager = State.getClientManager();
     }
 
-    public PrintAllInfo(PersonManager manager) {
+    public PrintAllInfo(ClientManager manager) {
         this.manager = manager;
     }
 
     @Override
     public void run() {
-        ArrayList<Person> people = manager.getPeople();
+        ArrayList<Client> people = manager.getPeople();
 
         if (people.size() == 0) {
             System.out.println("No people exist");
         } else {
-            for (Person person : people) {
-                System.out.println(person.getPersonInfoString());
+            for (Client client : people) {
+                System.out.println(client.getClientInfoString());
             }
             HistoryItem printAllInfo = new HistoryItem("PRINT ALL INFO", "All people information printed.");
             JSONConverter.updateHistory(printAllInfo, "action_history.json");
