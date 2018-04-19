@@ -9,7 +9,6 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 
-import seng302.Actions.Action;
 import seng302.Actions.ActionInvoker;
 import seng302.Actions.Client.ModifyOrganRequestAction;
 import seng302.Controller.MainController;
@@ -19,12 +18,15 @@ import seng302.Client;
 import seng302.State.ClientManager;
 import seng302.State.Session;
 import seng302.State.State;
-import seng302.TransplantRequest;
 import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.JSONConverter;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
 
+/**
+ * Presents an interface displaying all organs currently requested by a user. Clinicians have the ability to alter what
+ * organs are currently being requested by a Client.
+ */
 public class RequestOrganController extends SubController {
 
     private Session session;
@@ -47,7 +49,9 @@ public class RequestOrganController extends SubController {
         session = State.getSession();
     }
 
-
+    /**
+     * Map each organ to the matching checkbox.
+     */
     @FXML
     private void initialize() {
         organCheckBoxes.put(Organ.LIVER, checkBoxLiver);
@@ -65,7 +69,6 @@ public class RequestOrganController extends SubController {
         setCheckboxesDisabled();
     }
 
-
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
@@ -81,6 +84,11 @@ public class RequestOrganController extends SubController {
         updateUserID(null);
     }
 
+    /**
+     * When an organ checkbox is ticked or unticked, this creates a ModifyOrganRequestAction to record the change and
+     * update the Clients transplantRequest list.
+     * @param event a checkbox is checked/unchecked.
+     */
     @FXML
     private void modifyRequests(ActionEvent event) {
         ModifyOrganRequestAction action = new ModifyOrganRequestAction(client);
@@ -103,12 +111,12 @@ public class RequestOrganController extends SubController {
         }
     }
 
+    /**
+     * Navigates to the organ_request_history page.
+     * @param event the back view history button is clicked.
+     */
     @FXML
     private void viewRequestHistory(ActionEvent event) {
-        for (int i = 0; i < client.getTransplantRequests().size(); i++) {
-            System.out.println( "Organ: " + client.getTransplantRequests().get(i).getRequestedOrgan() + "| Date: " +
-                    client.getTransplantRequests().get(i).getRequestTime());
-        }
         PageNavigator.loadPage(Page.ORGAN_REQUEST_HISTORY, mainController);
     }
 
