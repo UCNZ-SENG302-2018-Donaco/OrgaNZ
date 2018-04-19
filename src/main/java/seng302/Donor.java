@@ -5,8 +5,10 @@ import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import java.util.stream.Collectors;
 import seng302.Utilities.Enums.BloodType;
 import seng302.Utilities.Enums.Gender;
 import seng302.Utilities.Enums.Organ;
@@ -39,6 +41,9 @@ public class Donor {
     private LocalDate dateOfDeath;
 
     private Map<Organ, Boolean> organStatus;
+
+    private List<IllnessRecord> illnessHistory = new ArrayList<>();
+
 
     private ArrayList<String> updateLog = new ArrayList<>();
 
@@ -356,5 +361,28 @@ public class Donor {
         }
         Donor d = (Donor) obj;
         return d.uid == this.uid;
+    }
+
+    public List<IllnessRecord> getPastIllnesses() {
+        return illnessHistory.stream().filter(
+            record -> record.getCuredDate() != null
+        ).collect(Collectors.toList());
+    }
+
+    public List<IllnessRecord>  getCurrentIllnesses() {
+        return illnessHistory.stream().filter(
+            record -> record.getCuredDate() != null
+        ).collect(Collectors.toList());
+    }
+
+    public void deleteIllnessRecord(IllnessRecord record) {
+        illnessHistory.remove(record);
+        addUpdate("illnessHistory");
+    }
+
+    public void addIllnessRecord(IllnessRecord record) {
+        illnessHistory.add(record);
+        addUpdate("illnessHistory");
+
     }
 }
