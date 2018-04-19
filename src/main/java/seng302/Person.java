@@ -47,6 +47,8 @@ public class Person {
 
     private ArrayList<String> updateLog = new ArrayList<>();
 
+    private List<IllnessRecord> illnessHistory = new ArrayList<>();
+
     public Person() {
         createdTimestamp = LocalDateTime.now();
         initOrgans();
@@ -348,6 +350,47 @@ public class Person {
             age = Period.between(dateOfBirth, dateOfDeath).getYears();
         }
         return age;
+    }
+
+
+    /**
+     * Returns a list of illnesses that Person previously had
+     * @return List of illnesses held by Person
+     */
+    public List<IllnessRecord> getPastIllnesses(){
+        return illnessHistory.stream().filter(
+            record -> record.getCuredDate() != null
+
+        ).collect(Collectors.toList());
+    }
+
+    /**
+     * Returns list of illnesses person currently has
+     * @return List of illnesses Person currently has
+     */
+    public List<IllnessRecord> getCurrentIllnesses(){
+        return illnessHistory.stream().filter(
+            record -> record.getCuredDate() == null
+        ).collect(Collectors.toList());
+    }
+
+
+    /**
+     * Adds Illness history to Person
+     * @param record IllnessRecord that is wanted to be added
+     */
+    public void addIllnessRecord(IllnessRecord record){
+        illnessHistory.add(record);
+        addUpdate("illnessHistory");
+    }
+
+    /**
+     * Deletes illness history from Person
+     * @param record The illness history that is wanted to be deleted
+     */
+    public void deleteIllnessRecord(IllnessRecord record){
+        illnessHistory.remove(record);
+        addUpdate("illnessHistory");
     }
 
     /**
