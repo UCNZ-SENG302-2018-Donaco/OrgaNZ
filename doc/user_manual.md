@@ -51,12 +51,12 @@ printuserorgan -u=<uid>
 
 
 
-## Save donors to file
+## Save people to file
 
 save
 
 
-## Load donors from file
+## Load people from file
 
 load
 

@@ -11,9 +11,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import seng302.Donor;
+import seng302.Person;
 import seng302.HistoryItem;
-import seng302.State.DonorManager;
+import seng302.State.PersonManager;
 import seng302.State.State;
 
 import com.google.gson.Gson;
@@ -56,35 +56,35 @@ public final class JSONConverter {
     }
 
     /**
-     * Saves the current donors list to a specified file
+     * Saves the current persons list to a specified file
      * @param file The file to be saved to
      * @throws IOException Throws IOExceptions
      */
     public static void saveToFile(File file) throws IOException {
         Writer writer = new FileWriter(file);
-        DonorManager donorManager = State.getDonorManager();
-        gson.toJson(donorManager.getDonors(), writer);
+        PersonManager personManager = State.getPersonManager();
+        gson.toJson(personManager.getPeople(), writer);
         writer.close();
     }
 
     /**
-     * Loads the donors from a specified file. Overwrites any current donors
+     * Loads the persons from a specified file. Overwrites any current persons
      * @param file The file to be loaded from
      * @throws IOException Throws IOExceptions
      */
     public static void loadFromFile(File file) throws IOException {
         Reader reader = new FileReader(file);
-        ArrayList<Donor> donors;
-        Type collectionType = new TypeToken<ArrayList<Donor>>() {
+        ArrayList<Person> people;
+        Type collectionType = new TypeToken<ArrayList<Person>>() {
         }.getType();
 
-        donors = gson.fromJson(reader, collectionType);
-        DonorManager donorManager = State.getDonorManager();
-        donorManager.setDonors(donors);
+        people = gson.fromJson(reader, collectionType);
+        PersonManager personManager = State.getPersonManager();
+        personManager.setPeople(people);
 
-        for (Donor donor : donors) {
-            if (donor.getUid() >= donorManager.getUid()) {
-                donorManager.setUid(donor.getUid() + 1);
+        for (Person person : people) {
+            if (person.getUid() >= personManager.getUid()) {
+                personManager.setUid(person.getUid() + 1);
             }
         }
     }

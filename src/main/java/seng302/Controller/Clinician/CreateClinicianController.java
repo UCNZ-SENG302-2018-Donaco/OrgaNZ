@@ -109,7 +109,7 @@ public class CreateClinicianController extends SubController {
                 Clinician clinician = new Clinician(fname.getText(), mname.getText(), lname.getText(),
                         workAddress.getText(), region.getValue(), Integer.parseInt(staffId.getText()),
                         password.getText());
-                clinicianManager.addDonor(clinician);
+                clinicianManager.addPerson(clinician);
 
                 HistoryItem save = new HistoryItem("CREATE CLINICIAN",
                         "Clinician " + fname.getText() + " " + lname.getText() + " with staff ID " + staffId.getText()

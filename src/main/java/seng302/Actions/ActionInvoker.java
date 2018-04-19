@@ -40,7 +40,7 @@ public class ActionInvoker {
     public void execute(Action action) {
         action.execute();
         undoStack.push(action);
-        redoStack.empty();
+        redoStack.clear();
     }
 
     /**

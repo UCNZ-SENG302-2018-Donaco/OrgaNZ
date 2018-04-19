@@ -2,17 +2,17 @@ package seng302.Actions;
 
 import java.util.ArrayList;
 
-import seng302.Donor;
-import seng302.State.DonorManager;
+import seng302.Person;
+import seng302.State.PersonManager;
 
 public class SaveAction implements Action {
 
-    private DonorManager manager;
+    private PersonManager manager;
 
-    private ArrayList<Donor> oldState;
-    private ArrayList<Donor> newState;
+    private ArrayList<Person> oldState;
+    private ArrayList<Person> newState;
 
-    public SaveAction(ArrayList<Donor> oldState, ArrayList<Donor> newState, DonorManager manager) {
+    public SaveAction(ArrayList<Person> oldState, ArrayList<Person> newState, PersonManager manager) {
         this.manager = manager;
         this.oldState = oldState;
         this.newState = newState;
@@ -20,11 +20,11 @@ public class SaveAction implements Action {
 
     @Override
     public void execute() {
-        manager.setDonors(newState);
+        manager.setPeople(newState);
     }
 
     @Override
     public void unExecute() {
-        manager.setDonors(oldState);
+        manager.setPeople(oldState);
     }
 }

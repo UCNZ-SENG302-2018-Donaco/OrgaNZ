@@ -19,7 +19,7 @@ Scrum Master:
 
 *Version*: Sprint 2 Release
 
-*Description:* This project has been designed to increase the deceased organ donation rates in New Zealand. It provides people in New Zealand with a system they can use to register as organ donors.
+*Description:* This project has been designed to increase the deceased organ donation rates in New Zealand. It provides people in New Zealand with a system they can use to register as organ people.
 
 ## External Libraries
 
