@@ -10,10 +10,12 @@ import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -72,6 +74,7 @@ public class ViewMedicationsController extends SubController {
     private ListView<MedicationRecord> pastMedicationsView, currentMedicationsView;
 
     private ListView<MedicationRecord> selectedListView = null;
+    private boolean controlIsDepressed = false;
 
     public ViewMedicationsController() {
         session = State.getSession();
@@ -97,15 +100,26 @@ public class ViewMedicationsController extends SubController {
 
         pastMedicationsView.getSelectionModel().selectedItemProperty().addListener(
                 (observable) -> {
+                    trackControlKeyPressed();
                     selectedListView = pastMedicationsView;
-                    currentMedicationsView.getSelectionModel().clearSelection();
+                    // Clear the other list if Ctrl is not being held down
+                    if (!controlIsDepressed) {
+                        currentMedicationsView.getSelectionModel().clearSelection();
+                    }
                 });
 
         currentMedicationsView.getSelectionModel().selectedItemProperty().addListener(
-            (observable) -> {
-                selectedListView = currentMedicationsView;
-                pastMedicationsView.getSelectionModel().clearSelection();
-            });
+                (observable) -> {
+                    trackControlKeyPressed();
+                    selectedListView = currentMedicationsView;
+                    // Clear the other list if Ctrl is not being held down
+                    if (!controlIsDepressed) {
+                        pastMedicationsView.getSelectionModel().clearSelection();
+                    }
+                });
+
+        pastMedicationsView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
+        currentMedicationsView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
     }
 
     /**
@@ -193,6 +207,23 @@ public class ViewMedicationsController extends SubController {
         if (keyEvent.getCode().equals(KeyCode.ENTER)) {
             addMedication(newMedField.getText());
         }
+    }
+
+    /**
+     * Tracks if the control key is pressed or released, and updates controlIsDepressed accordingly.
+     */
+    private void trackControlKeyPressed() {
+        Scene scene = sidebarPane.getScene();
+        scene.setOnKeyPressed(e -> {
+            if (e.getCode() == KeyCode.CONTROL) {
+                controlIsDepressed = true;
+            }
+        });
+        scene.setOnKeyReleased(e -> {
+            if (e.getCode() == KeyCode.CONTROL) {
+                controlIsDepressed = false;
+            }
+        });
     }
 
     /**
@@ -302,13 +333,21 @@ public class ViewMedicationsController extends SubController {
      */
     @FXML
     void viewInteractions(ActionEvent event) {
-        // Sample medications - TODO these should be replaced by getting the two selected medications,
-        // or TODO displaying an error popup if there aren't exactly two selected.
-        MedicationRecord medicationRecord1 = currentMedicationsView.getSelectionModel().getSelectedItem();
-        MedicationRecord medicationRecord2 = new MedicationRecord("Leflunomide", LocalDate.now(),
-                LocalDate.now());
 
-        if (medicationRecord1 != null && medicationRecord2 != null) {
+        // Check if there are two medications selected
+        List<MedicationRecord> selectedItems = new ArrayList<>();
+        selectedItems.addAll(currentMedicationsView.getSelectionModel().getSelectedItems());
+        selectedItems.addAll(pastMedicationsView.getSelectionModel().getSelectedItems());
+
+        if (selectedItems.size() != 2) {
+            PageNavigator.showAlert(AlertType.ERROR, "Incorrect number of medications selected",
+                    "Please select exactly two medications to view their interactions.");
+
+        } else {
+            Collections.sort(selectedItems); // get them into alphabetical order - the API appears to want this
+            MedicationRecord medicationRecord1 = selectedItems.get(0);
+            MedicationRecord medicationRecord2 = selectedItems.get(1);
+
             String medication1 = medicationRecord1.getMedicationName();
             String medication2 = medicationRecord2.getMedicationName();
 
@@ -354,6 +393,7 @@ public class ViewMedicationsController extends SubController {
                     alert.setAlertType(AlertType.ERROR);
                     alert.setContentText("No results found for " + medication1 + " and " + medication2);
                 } else {
+                    interactions.remove(0); //remove the SUCCESSFUL tag
                     // Build list of interactions into a string, each interaction on a new line
                     StringBuilder sb = new StringBuilder();
                     for (String interaction : interactions) {
