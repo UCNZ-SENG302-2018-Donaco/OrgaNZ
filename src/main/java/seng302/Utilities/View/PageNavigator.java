@@ -9,10 +9,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
@@ -78,11 +80,26 @@ public class PageNavigator {
 
     /**
      * Sets the alert window at the right size so that all the text can be read.
+     * This function is adapted from https://stackoverflow.com/a/31208445/8355496
+     * Licenced under cc by-sa 3.0 with attribution required https://creativecommons.org/licenses/by-sa/3.0/
      */
     public static void resizeAlert(Alert alert) {
-        // The below line is adapted from https://stackoverflow.com/a/31208445/8355496
-        // Licenced under cc by-sa 3.0 with attribution required https://creativecommons.org/licenses/by-sa/3.0/
-        alert.getDialogPane().getScene().getWindow().sizeToScene();
+        DialogPane dialogPane;
+        Scene scene;
+        Window window;
+
+        if (alert != null) {
+            dialogPane = alert.getDialogPane();
+            if (dialogPane != null) {
+                scene = dialogPane.getScene();
+                if (scene != null) {
+                    window = scene.getWindow();
+                    if (window != null) {
+                        window.sizeToScene();
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -97,6 +114,7 @@ public class PageNavigator {
         alert.setTitle(title);
         alert.setHeaderText(title);
         alert.setContentText(bodyText);
+        alert.setResizable(true);
         resizeAlert(alert);
         return alert;
     }
