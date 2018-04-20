@@ -14,7 +14,6 @@ import javafx.scene.layout.Pane;
 import seng302.Actions.ActionInvoker;
 import seng302.Actions.Donor.AddIllnessRecord;
 import seng302.Actions.Donor.ModifyIllnessRecordAction;
-import seng302.Condition;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
 import seng302.Person;

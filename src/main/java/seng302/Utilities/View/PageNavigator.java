@@ -33,6 +33,7 @@ public class PageNavigator {
             subController.setup(controller);
             controller.setPage(page, loadedPage);
         } catch (IOException e) {
+            System.out.print(e);
             showAlert(Alert.AlertType.ERROR, "Could not load page: " + page.toString(),
                     "The page loader failed to load the layout for the page.");
         }

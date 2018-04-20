@@ -48,7 +48,7 @@
                                     <Insets />
                                  </HBox.margin>
                               </Label>
-                              <TextField fx:id="IlnessField" HBox.hgrow="ALWAYS" />
+                              <TextField fx:id="IllnessField" HBox.hgrow="ALWAYS" />
                               <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Date of Diagnosis">
                                  <HBox.margin>
                                     <Insets left="10.0" />
@@ -111,7 +111,7 @@
                   </VBox>
                </center>
                <bottom>
-                  <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteIllness" text="Delete" BorderPane.alignment="CENTER">
+                  <Button fx:id="deleteButton" mnemonicParsing="false" text="Delete" BorderPane.alignment="CENTER">
                      <BorderPane.margin>
                         <Insets bottom="20.0" left="10.0" right="10.0" />
                      </BorderPane.margin>

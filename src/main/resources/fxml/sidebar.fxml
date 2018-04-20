@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="600.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.SidebarController">
+<VBox prefHeight="600.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.SidebarController">
   <children>
     <VBox VBox.vgrow="ALWAYS">
       <children>
@@ -48,11 +48,16 @@
             <Font size="16.0" />
           </font>
         </Button>
-        <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToHistory" text="History" VBox.vgrow="ALWAYS">
+        <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToHistory" text="Command History" VBox.vgrow="ALWAYS">
           <font>
             <Font size="16.0" />
           </font>
         </Button>
+            <Button fx:id="illnessHistoryButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToIllnessHistory" prefHeight="54.0" prefWidth="200.0" text="illness History">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Button>
         <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#save" text="Save All Persons" VBox.vgrow="ALWAYS">
           <font>
             <Font size="16.0" />

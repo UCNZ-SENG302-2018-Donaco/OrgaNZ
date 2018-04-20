@@ -9,6 +9,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 
 import seng302.Actions.ActionInvoker;
@@ -27,7 +28,7 @@ public class SidebarController extends SubController {
 
     @FXML
     private Button viewPersonButton, registerOrganDonationButton, viewMedicationsButton, viewClinicianButton, searchButton,
-    logoutButton;
+    logoutButton,illnessHistoryButton;
 
     private ActionInvoker invoker;
     private Session session;
@@ -52,6 +53,7 @@ public class SidebarController extends SubController {
             hideButton(viewPersonButton);
             hideButton(registerOrganDonationButton);
             hideButton(viewMedicationsButton);
+            hideButton(illnessHistoryButton);
         }
 
         if (windowContext.isClinViewPersonWindow()) {
@@ -63,6 +65,8 @@ public class SidebarController extends SubController {
         button.setVisible(false);
         button.setManaged(false);
     }
+
+
 
     /**
      * Redirects the GUI to the View Person page.
@@ -116,6 +120,11 @@ public class SidebarController extends SubController {
     @FXML
     private void goToHistory(ActionEvent event) {
         PageNavigator.loadPage(Page.HISTORY, mainController);
+    }
+
+    @FXML
+    private void goToIllnessHistory(ActionEvent event){
+        PageNavigator.loadPage(Page.VIEW_MEDICAL_HISTORY,mainController);
     }
 
     /**

@@ -49,4 +49,16 @@ public class IllnessRecord {
   public void setCuredDate(LocalDate curedDate) {
     this.curedDate = curedDate;
   }
+
+  public String toString(){
+    if (curedDate == null && isChronic == false) {
+      return String.format("%s Diagnosed on: %s",illnessName, diagnosisDate.format(dateFormat));
+    } if (isChronic){
+      return String.format("%s (Chronic Disease) Diagnosed on: %s",illnessName,
+          diagnosisDate.format(dateFormat));
+    } else {
+      return String.format("%s Diagnosed on: %s, Cured on: %s)", illnessName,
+          diagnosisDate.format(dateFormat), curedDate.format(dateFormat));
+    }
+  }
 }
