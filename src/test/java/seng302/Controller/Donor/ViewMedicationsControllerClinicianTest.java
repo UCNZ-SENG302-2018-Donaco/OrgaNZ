@@ -264,7 +264,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
 
     private MedActiveIngredientsHandler createMockActiveIngredientsHandler(String medName, List<String> ingredients) {
         MedActiveIngredientsHandler handler = mock(MedActiveIngredientsHandler.class);
-        when(handler.getActiveIngredients("Ibuprofen")).thenReturn(ingredients);
+        when(handler.getActiveIngredients(medName)).thenReturn(ingredients);
         return handler;
     }
 
