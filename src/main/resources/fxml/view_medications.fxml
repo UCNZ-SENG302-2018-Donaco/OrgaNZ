@@ -98,7 +98,7 @@
                <bottom>
                   <HBox alignment="CENTER" prefHeight="50.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                      <children>
-                        <Button alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#viewActiveIngredients" text="View active ingredients">
+                        <Button fx:id="viewActiveIngredientsButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#viewActiveIngredients" text="View active ingredients">
                            <HBox.margin>
                               <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
                            </HBox.margin>
