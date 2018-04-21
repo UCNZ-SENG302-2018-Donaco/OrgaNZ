@@ -68,6 +68,10 @@ public class ViewMedicationsController extends SubController {
         invoker = State.getInvoker();
     }
 
+    public void setActiveIngredientsHandler(MedActiveIngredientsHandler handler) {
+        this.activeIngredientsHandler = handler;
+    }
+
     /**
      * Initializes the UI for this page.
      * - Starts the WebAPIHandler for drug name autocompletion.
@@ -209,6 +213,14 @@ public class ViewMedicationsController extends SubController {
         }
     }
 
+    private MedicationRecord getSelectedRecord() {
+        if (selectedListView != null) {
+            return selectedListView.getSelectionModel().getSelectedItem();
+        } else {
+            return null;
+        }
+    }
+
     /**
      * Deletes the currently selected MedicationRecord. Will determine which of the list views is currently
      * selected, then delete from the appropriate one. If neither list view is currently selected, this will have no
@@ -217,17 +229,14 @@ public class ViewMedicationsController extends SubController {
      */
     @FXML
     private void deleteMedication(ActionEvent event) {
-        if (selectedListView != null) {
-            MedicationRecord record = selectedListView.getSelectionModel().getSelectedItem();
-            if (record != null) {
-                DeleteMedicationRecordAction action = new DeleteMedicationRecordAction(donor, record);
+        MedicationRecord record = getSelectedRecord();
+        if (record != null) {
+            DeleteMedicationRecordAction action = new DeleteMedicationRecordAction(donor, record);
 
-                invoker.execute(action);
-                refreshMedicationLists();
-            }
+            invoker.execute(action);
+            refreshMedicationLists();
         }
     }
-
 
     /**
      * Generates a pop-up with a list of active ingredients.
@@ -235,29 +244,19 @@ public class ViewMedicationsController extends SubController {
      */
     @FXML
     private void viewActiveIngredients(ActionEvent event) {
-        // Figure out which record is currently selected
-        MedicationRecord currentMedicationRecord = currentMedicationsView.getSelectionModel().getSelectedItem();
-        MedicationRecord pastMedicationRecord = pastMedicationsView.getSelectionModel().getSelectedItem();
-        MedicationRecord medicationRecord;
-        if (currentMedicationRecord != null) {
-            medicationRecord = currentMedicationRecord;
-        } else if (pastMedicationRecord != null) {
-            medicationRecord = pastMedicationRecord;
-        } else {
-            medicationRecord = null;
-        }
+        MedicationRecord medicationRecord = getSelectedRecord();
 
         if (medicationRecord != null) {
-            String currentMedication = medicationRecord.getMedicationName();
+            String medicationName = medicationRecord.getMedicationName();
             // Generate initial alert popup
-            String alertTitle = "Active ingredients in " + currentMedication;
+            String alertTitle = "Active ingredients in " + medicationName;
             Alert alert = PageNavigator.generateAlert(AlertType.INFORMATION, alertTitle, "Loading...");
             alert.show();
 
             Task<List<String>> task = new Task<List<String>>() {
                 @Override
                 public List<String> call() {
-                    return activeIngredientsHandler.getActiveIngredients(currentMedication);
+                    return activeIngredientsHandler.getActiveIngredients(medicationName);
                 }
             };
 
@@ -268,7 +267,7 @@ public class ViewMedicationsController extends SubController {
                 //     then the drug name wasn't valid.
                 if (activeIngredients.isEmpty()) {
                     alert.setAlertType(AlertType.ERROR);
-                    alert.setContentText("No results found for " + currentMedication);
+                    alert.setContentText("No results found for " + medicationName);
                 } else {
                     // Build list of active ingredients into a string, each ingredient on a new line
                     StringBuilder sb = new StringBuilder();

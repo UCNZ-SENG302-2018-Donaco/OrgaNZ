@@ -5,6 +5,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.matcher.control.ListViewMatchers.hasListCell;
 import static org.testfx.util.NodeQueryUtils.hasText;
@@ -12,6 +14,7 @@ import static org.testfx.util.NodeQueryUtils.isVisible;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -31,6 +34,7 @@ import seng302.State.State;
 import seng302.Utilities.Enums.Region;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.WindowContext;
+import seng302.Utilities.Web.MedActiveIngredientsHandler;
 
 import org.junit.Before;
 import org.junit.ComparisonFailure;
@@ -80,7 +84,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
      * @param expectedContent Expected content of the dialog
      */
     private void alertDialogHasHeaderAndContent(final String expectedHeader, final String expectedContent) {
-        final javafx.stage.Stage actualAlertDialog = getTopModalStage();
+        final Stage actualAlertDialog = getTopModalStage();
         assertNotNull(actualAlertDialog);
 
         final DialogPane dialogPane = (DialogPane) actualAlertDialog.getScene().getRoot();
@@ -103,7 +107,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
 
         return (Stage) allWindows
                 .stream()
-                .filter(window -> window instanceof javafx.stage.Stage)
+                .filter(window -> window instanceof Stage)
                 .findFirst()
                 .orElse(null);
     }
@@ -258,16 +262,32 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
 
     //------ Viewing active ingredients ------------
 
+    private MedActiveIngredientsHandler createMockActiveIngredientsHandler(String medName, List<String> ingredients) {
+        MedActiveIngredientsHandler handler = mock(MedActiveIngredientsHandler.class);
+        when(handler.getActiveIngredients("Ibuprofen")).thenReturn(ingredients);
+        return handler;
+    }
+
     @Test
     public void viewActiveIngredientsTest() {
-        MedicationRecord toBeMoved = testCurrentMedicationRecords[1];
+        ViewMedicationsController pageController = (ViewMedicationsController) super.pageController;
+        pageController.setActiveIngredientsHandler(createMockActiveIngredientsHandler(
+                "Ibuprofen",
+                Arrays.asList("Diphenhydramine citrate; ibuprofen",
+                        "Diphenhydramine hydrochloride; ibuprofen",
+                        "Ibuprofen",
+                        "Ibuprofen; pseudoephedrine hydrochloride"
+                )
+        ));
+
+        MedicationRecord ibuprofenRecord = testCurrentMedicationRecords[1];
         String ibuprofenActiveIngredients = "Diphenhydramine citrate; ibuprofen\n"
                 + "Diphenhydramine hydrochloride; ibuprofen\n"
                 + "Ibuprofen\n"
                 + "Ibuprofen; pseudoephedrine hydrochloride\n";
 
-        verifyThat("#currentMedicationsView", hasListCell(toBeMoved));
-        clickOn((Node) lookup(hasText(toBeMoved.toString())).query());
+        verifyThat("#currentMedicationsView", hasListCell(ibuprofenRecord));
+        clickOn((Node) lookup(hasText(ibuprofenRecord.toString())).query());
         clickOn("#viewActiveIngredientsButton");
         alertDialogHasHeaderAndContentAfterLoading("Active ingredients in Ibuprofen", ibuprofenActiveIngredients);
         press(KeyCode.ENTER); // Close the dialog, ready for the next test.
@@ -275,6 +295,12 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
 
     @Test
     public void viewActiveIngredientsBadDrugNameTest() {
+        ViewMedicationsController pageController = (ViewMedicationsController) super.pageController;
+        pageController.setActiveIngredientsHandler(createMockActiveIngredientsHandler(
+                "Med C",
+                Collections.emptyList()
+        ));
+
         MedicationRecord toBeMoved = testCurrentMedicationRecords[0];
 
         verifyThat("#currentMedicationsView", hasListCell(toBeMoved));
