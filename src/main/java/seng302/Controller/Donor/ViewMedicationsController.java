@@ -73,7 +73,6 @@ public class ViewMedicationsController extends SubController {
      * - Starts the WebAPIHandler for drug name autocompletion.
      * - Sets listeners for changing selection on two list views so that if an item is selected on one, the selection
      * is removed from the other.
-     * - Checks if the logged in user is a donor, and if so, makes the page non-editable.
      */
     @FXML
     private void initialize() {
@@ -86,25 +85,16 @@ public class ViewMedicationsController extends SubController {
         activeIngredientsHandler = new MedActiveIngredientsHandler();
 
         pastMedicationsView.getSelectionModel().selectedItemProperty().addListener(
-                (observable) -> {
-                    selectedListView = pastMedicationsView;
-                    currentMedicationsView.getSelectionModel().clearSelection();
-                });
+            (observable) -> {
+                selectedListView = pastMedicationsView;
+                currentMedicationsView.getSelectionModel().clearSelection();
+            });
 
         currentMedicationsView.getSelectionModel().selectedItemProperty().addListener(
-                (observable) -> {
-                    selectedListView = currentMedicationsView;
-                    pastMedicationsView.getSelectionModel().clearSelection();
-                });
-
-        if (session.getLoggedInUserType() == UserType.DONOR) {
-            newMedicationPane.setVisible(false);
-            newMedicationPane.setManaged(false);
-
-            moveToHistoryButton.setDisable(true);
-            moveToCurrentButton.setDisable(true);
-            deleteButton.setDisable(true);
-        }
+            (observable) -> {
+                selectedListView = currentMedicationsView;
+                pastMedicationsView.getSelectionModel().clearSelection();
+            });
     }
 
     /**
@@ -112,6 +102,7 @@ public class ViewMedicationsController extends SubController {
      * - Loads the sidebar.
      * - Checks if the session login type is a donor or a clinician, and sets the viewed donor appropriately.
      * - Refreshes the medication list views to set initial state based on the viewed donor.
+     * - Checks if the logged in user is a donor, and if so, makes the page non-editable.
      * @param mainController The MainController for the window this page is loaded on.
      */
     @Override
@@ -121,6 +112,12 @@ public class ViewMedicationsController extends SubController {
 
         if (session.getLoggedInUserType() == Session.UserType.DONOR) {
             donor = session.getLoggedInDonor();
+
+            newMedicationPane.setVisible(false);
+            newMedicationPane.setManaged(false);
+            moveToHistoryButton.setDisable(true);
+            moveToCurrentButton.setDisable(true);
+            deleteButton.setDisable(true);
         } else if (windowContext.isClinViewDonorWindow()) {
             donor = windowContext.getViewDonor();
         }
