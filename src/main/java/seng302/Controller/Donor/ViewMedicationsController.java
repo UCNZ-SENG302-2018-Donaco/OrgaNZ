@@ -1,5 +1,6 @@
 package seng302.Controller.Donor;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -49,6 +50,7 @@ public class ViewMedicationsController extends SubController {
     private static final String SUCCESSFUL = "Successful";
     private static final String BAD_NAME = "Bad name";
     private static final String BAD_GATEWAY = "Bad gateway";
+    private static final String IO_EXCEPTION = "IO Exception";
 
     private Session session;
     private ActionInvoker invoker;
@@ -371,6 +373,8 @@ public class ViewMedicationsController extends SubController {
                         interactions = Collections.singletonList(BAD_NAME);
                     } catch (BadGatewayException e) {
                         interactions = Collections.singletonList(BAD_GATEWAY);
+                    } catch (IOException e) {
+                        interactions = Collections.singletonList(IO_EXCEPTION);
                     }
                     return interactions;
                 }

@@ -1,8 +1,11 @@
 package seng302.Utilities.Web;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 
 import seng302.Donor;
@@ -66,8 +69,12 @@ public class DrugInteractionsHandlerTest {
         Donor donor = new Donor("first", null, "last", LocalDate.now().minusYears(32).minusDays(10), 0);
         donor.setGender(Gender.FEMALE);
 
-        List<String> interactions = handler.getInteractions(donor, "leflunomide", "prednisone");
-
+        List<String> interactions = Collections.emptyList();
+        try {
+            interactions = handler.getInteractions(donor, "leflunomide", "prednisone");
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
         assertEquals(7, interactions.size());
         assertEquals("pain (1 - 6 months, 2 - 5 years)", interactions.get(0));
         assertEquals("fatigue", interactions.get(1));
