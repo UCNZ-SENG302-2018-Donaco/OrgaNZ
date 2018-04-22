@@ -38,7 +38,7 @@ public class DrugInteractionsHandler extends WebAPIHandler {
         });
     }
 
-    public List<String> getInteractions(Donor donor, String drug1, String drug2) throws BadGatewayException {
+    public List<String> getInteractions(Donor donor, String drug1, String drug2) throws BadGatewayException, IOException {
         // TODO: Use drug object instead of String?
 
         if (donor == null) {
@@ -64,7 +64,7 @@ public class DrugInteractionsHandler extends WebAPIHandler {
             int statusCode = response.getStatusCode();
 
             if (statusCode == STUDY_NOT_DONE_RESPONSE) {
-                // TODO: Log something about study not being done
+                // TODO: Log something about study not being done (Do we need to? --Ollie)
                 return Collections.emptyList();
             } else {
                 DrugInteractionsResponse interactionsResponse = response.parseAs(DrugInteractionsResponse.class);
@@ -75,17 +75,9 @@ public class DrugInteractionsHandler extends WebAPIHandler {
                 throw new IllegalArgumentException("One or both of the drug names are invalid.", e);
             } else if (e.getStatusCode() == BAD_GATEWAY){
                 throw new BadGatewayException(e.getContent());
+            } else {
+                throw new IllegalArgumentException("Miscellaneous error response from server.");
             }
-
-            // TODO handle more gracefully
-            e.printStackTrace();
-
-            throw new UnsupportedOperationException(e);
-        } catch (IOException e) {
-            // TODO handle more gracefully
-            e.printStackTrace();
-
-            throw new UnsupportedOperationException(e);
         }
     }
 }
