@@ -1,5 +1,6 @@
 package seng302.Controller.Donor;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -89,16 +90,16 @@ public class ViewMedicationsController extends SubController {
         activeIngredientsHandler = new MedActiveIngredientsHandler();
 
         pastMedicationsView.getSelectionModel().selectedItemProperty().addListener(
-            (observable) -> {
-                selectedListView = pastMedicationsView;
-                currentMedicationsView.getSelectionModel().clearSelection();
-            });
+                (observable) -> {
+                    selectedListView = pastMedicationsView;
+                    currentMedicationsView.getSelectionModel().clearSelection();
+                });
 
         currentMedicationsView.getSelectionModel().selectedItemProperty().addListener(
-            (observable) -> {
-                selectedListView = currentMedicationsView;
-                pastMedicationsView.getSelectionModel().clearSelection();
-            });
+                (observable) -> {
+                    selectedListView = currentMedicationsView;
+                    pastMedicationsView.getSelectionModel().clearSelection();
+                });
     }
 
     /**
@@ -255,7 +256,7 @@ public class ViewMedicationsController extends SubController {
 
             Task<List<String>> task = new Task<List<String>>() {
                 @Override
-                public List<String> call() {
+                public List<String> call() throws IOException {
                     return activeIngredientsHandler.getActiveIngredients(medicationName);
                 }
             };
@@ -277,6 +278,12 @@ public class ViewMedicationsController extends SubController {
                     alert.setContentText(sb.toString());
                 }
                 PageNavigator.resizeAlert(alert);
+            });
+
+            task.setOnFailed(e -> {
+                alert.setAlertType(AlertType.ERROR);
+                alert.setContentText("Error loading results. Please try again later.");
+
             });
 
             new Thread(task).start();

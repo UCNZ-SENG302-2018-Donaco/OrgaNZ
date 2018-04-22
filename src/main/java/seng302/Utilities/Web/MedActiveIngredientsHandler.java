@@ -3,11 +3,13 @@ package seng302.Utilities.Web;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequest;
 import com.google.api.client.http.HttpRequestFactory;
+import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpResponseException;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonObjectParser;
@@ -40,18 +42,16 @@ public class MedActiveIngredientsHandler extends WebAPIHandler {
         );
     }
 
-    public List<String> getActiveIngredients(String medicationName) {
-        List<String> activeIngredients = new ArrayList<>();
+    public List<String> getActiveIngredients(String medicationName) throws IOException {
+        List<String> activeIngredients;
         try {
             GenericUrl url = new GenericUrl(String.format(ACTIVE_INGREDIENTS_ENDPOINT, medicationName));
             HttpRequest request = requestFactory.buildGetRequest(url);
-            activeIngredients = Arrays.asList(request.execute().parseAs(String[].class));
+            HttpResponse response = request.execute();
+            activeIngredients = Arrays.asList(response.parseAs(String[].class));
         } catch (HttpResponseException exc) {
-            // TODO handle more gracefully
-            exc.printStackTrace();
-        } catch (IOException exc) {
-            // TODO handle more gracefully
-            exc.printStackTrace();
+            // Any non 2xx response (e.g. 404)
+            activeIngredients = Collections.emptyList();
         }
         return activeIngredients;
     }
