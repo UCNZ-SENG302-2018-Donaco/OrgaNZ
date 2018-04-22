@@ -83,6 +83,10 @@ public class ViewMedicationsController extends SubController {
         invoker = State.getInvoker();
     }
 
+    public void setDrugInteractionsHandler(DrugInteractionsHandler handler) {
+        this.drugInteractionsHandler = handler;
+    }
+
     /**
      * Initializes the UI for this page.
      * - Starts the WebAPIHandler for drug name autocompletion.
@@ -384,19 +388,7 @@ public class ViewMedicationsController extends SubController {
             task.setOnSucceeded(e -> {
                 List<String> interactions = task.getValue();
 
-                if (interactions.get(0).equals(BAD_NAME)) {
-                    // Invalid drug name(s)
-                    alert.setAlertType(AlertType.ERROR);
-                    alert.setContentText("Either " + medication1 + " or " + medication2 + " is not a valid drug name.");
-                } else if (interactions.get(0).equals(BAD_GATEWAY)) {
-                    alert.setAlertType(AlertType.ERROR);
-                    alert.setContentText("Sorry, there was an error connecting to the server (502: Bad Gateway). "
-                            + "Please try again later.");
-                } else if (interactions.size() == 1) {
-                    // only element in list is SUCCESSFUL tag
-                    alert.setAlertType(AlertType.ERROR);
-                    alert.setContentText("No results found for " + medication1 + " and " + medication2);
-                } else {
+                if (interactions.size() > 1) {
                     interactions.remove(0); //remove the SUCCESSFUL tag
                     // Build list of interactions into a string, each interaction on a new line
                     StringBuilder sb = new StringBuilder();
@@ -404,6 +396,21 @@ public class ViewMedicationsController extends SubController {
                         sb.append(interaction).append("\n");
                     }
                     alert.setContentText(sb.toString());
+                } else if (interactions.get(0).equals(BAD_NAME)) {
+                    // Invalid drug name(s)
+                    alert.setAlertType(AlertType.ERROR);
+                    alert.setContentText("Either " + medication1 + " or " + medication2 + " is not a valid drug name.");
+                } else if (interactions.get(0).equals(BAD_GATEWAY)) {
+                    alert.setAlertType(AlertType.ERROR);
+                    alert.setContentText("Sorry, there was an error connecting to the server (502: Bad Gateway). "
+                            + "Please try again later.");
+                } else if (interactions.get(0).equals(IO_EXCEPTION)) {
+                    alert.setAlertType(AlertType.ERROR);
+                    alert.setContentText("Sorry, there was an error connecting to the server. Please try again later.");
+                } else {
+                    // only element in list is SUCCESSFUL tag
+                    alert.setAlertType(AlertType.ERROR);
+                    alert.setContentText("No results found for " + medication1 + " and " + medication2);
                 }
                 PageNavigator.resizeAlert(alert);
             });

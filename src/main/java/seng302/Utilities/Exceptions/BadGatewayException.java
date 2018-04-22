@@ -5,8 +5,12 @@ package seng302.Utilities.Exceptions;
  */
 public class BadGatewayException extends Exception {
 
-    public BadGatewayException(String text) {
-        super(text);
+    public BadGatewayException() {
+        super();
+    }
+
+    public BadGatewayException(String message) {
+        super(message);
     }
 
 }
