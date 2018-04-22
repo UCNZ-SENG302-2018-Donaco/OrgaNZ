@@ -75,28 +75,28 @@ public class SetOrganStatusTest {
 
         CommandLine.run(spySetOrganStatus, System.out, inputs);
 
-        assertEquals(true, client.getOrganStatus().get(Organ.LIVER));
+        assertEquals(true, client.getOrganDonationStatus().get(Organ.LIVER));
     }
 
     @Test
     public void setorganstatus_valid_set_to_false() throws OrganAlreadyRegisteredException {
         Client client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
 
-        client.setOrganStatus(Organ.LIVER, true);
+        client.setOrganDonationStatus(Organ.LIVER, true);
 
         when(spyClientManager.getClientByID(anyInt())).thenReturn(client);
         String[] inputs = {"-u", "1", "--liver=false"};
 
         CommandLine.run(spySetOrganStatus, System.out, inputs);
 
-        assertEquals(false, client.getOrganStatus().get(Organ.LIVER));
+        assertEquals(false, client.getOrganDonationStatus().get(Organ.LIVER));
     }
 
     @Test
     public void setorganstatus_invalid_set_to_true_already_true() throws OrganAlreadyRegisteredException {
         Client client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
 
-        client.setOrganStatus(Organ.LIVER, true);
+        client.setOrganDonationStatus(Organ.LIVER, true);
 
         when(spyClientManager.getClientByID(anyInt())).thenReturn(client);
         String[] inputs = {"-u", "1", "--liver"};
@@ -117,16 +117,16 @@ public class SetOrganStatusTest {
 
         CommandLine.run(spySetOrganStatus, System.out, inputs);
 
-        assertEquals(true, client.getOrganStatus().get(Organ.LIVER));
-        assertEquals(true, client.getOrganStatus().get(Organ.KIDNEY));
+        assertEquals(true, client.getOrganDonationStatus().get(Organ.LIVER));
+        assertEquals(true, client.getOrganDonationStatus().get(Organ.KIDNEY));
     }
 
     @Test
     public void setorganstatus_valid_multiple_updates_some_invalid() throws OrganAlreadyRegisteredException {
         Client client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
 
-        client.setOrganStatus(Organ.LIVER, true);
-        client.setOrganStatus(Organ.BONE, true);
+        client.setOrganDonationStatus(Organ.LIVER, true);
+        client.setOrganDonationStatus(Organ.BONE, true);
 
         when(spyClientManager.getClientByID(anyInt())).thenReturn(client);
         String[] inputs = {"-u", "1", "--liver", "--kidney", "--bone=false"};
@@ -135,7 +135,7 @@ public class SetOrganStatusTest {
 
         assertThat(outContent.toString(), containsString("Liver is already registered for donation"));
 
-        assertEquals(true, client.getOrganStatus().get(Organ.KIDNEY));
-        assertEquals(false, client.getOrganStatus().get(Organ.BONE));
+        assertEquals(true, client.getOrganDonationStatus().get(Organ.KIDNEY));
+        assertEquals(false, client.getOrganDonationStatus().get(Organ.BONE));
     }
 }

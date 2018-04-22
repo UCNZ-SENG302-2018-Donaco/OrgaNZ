@@ -102,7 +102,7 @@ public class RegisterOrganDonationController extends SubController {
         if (client != null) {
             setCheckBoxesEnabled();
             for (Map.Entry<Organ, CheckBox> entry : organCheckBoxes.entrySet()) {
-                entry.getValue().setSelected(client.getOrganStatus().get(entry.getKey()));
+                entry.getValue().setSelected(client.getOrganDonationStatus().get(entry.getKey()));
             }
             HistoryItem save = new HistoryItem("UPDATE ID", "The Clients ID was updated to " + client.getUid());
             JSONConverter.updateHistory(save, "action_history.json");
@@ -121,7 +121,7 @@ public class RegisterOrganDonationController extends SubController {
         boolean hasChanged = false;
 
         for (Organ organ : organCheckBoxes.keySet()) {
-            boolean oldStatus = client.getOrganStatus().get(organ);
+            boolean oldStatus = client.getOrganDonationStatus().get(organ);
             boolean newStatus = organCheckBoxes.get(organ).isSelected();
 
             if (oldStatus != newStatus) {
@@ -132,7 +132,7 @@ public class RegisterOrganDonationController extends SubController {
         if (hasChanged) {
             invoker.execute(action);
             HistoryItem save = new HistoryItem("UPDATE ORGANS",
-                    "The Client's organs were updated: " + client.getClientOrganStatusString());
+                    "The Client's organs were updated: " + client.getOrganStatusString("donations"));
             JSONConverter.updateHistory(save, "action_history.json");
         }
     }

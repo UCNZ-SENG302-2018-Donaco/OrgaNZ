@@ -40,7 +40,7 @@ public class PrintClientOrgan implements Runnable {
             System.out.println("No client exists with that user ID");
             return;
         }
-        System.out.println(client.getClientOrganStatusString());
+        System.out.println(client.getClientOrganStatusString("donations"));
         HistoryItem printUserOrgan = new HistoryItem("PRINT USER ORGAN",
                 "The organ information was printed for client " + uid);
         JSONConverter.updateHistory(printUserOrgan, "action_history.json");

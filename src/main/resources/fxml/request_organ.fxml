@@ -51,7 +51,7 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       </rowConstraints>
                       <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Organs requested forUser ID">
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Organs requested for User ID">
                           <font>
                             <Font size="14.0" />
                           </font>
@@ -89,7 +89,7 @@
                         <CheckBox fx:id="checkBoxBone" layoutX="535.0" layoutY="295.0" mnemonicParsing="false" onAction="#modifyRequests" text="Bone" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                         <CheckBox fx:id="checkBoxBoneMarrow" layoutX="535.0" layoutY="379.0" mnemonicParsing="false" onAction="#modifyRequests" text="Bone Marrow" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                         <CheckBox fx:id="checkBoxConnTissue" layoutX="535.0" layoutY="463.0" mnemonicParsing="false" onAction="#modifyRequests" text="Connective Tissue" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                                    <Button mnemonicParsing="false" onAction="#viewRequestHistory" prefHeight="34.0" prefWidth="170.0" text="Request History" GridPane.columnIndex="1" GridPane.rowIndex="6" />
+                                    <Button fx:id="requestHistoryButton" mnemonicParsing="false" onAction="#viewRequestHistory" prefHeight="34.0" prefWidth="170.0" text="Request History" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                       </children>
                     </GridPane>
                   </children>

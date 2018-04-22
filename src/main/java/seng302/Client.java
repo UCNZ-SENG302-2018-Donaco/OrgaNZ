@@ -37,7 +37,7 @@ public class Client {
     private final LocalDateTime createdTimestamp;
     private LocalDateTime modifiedTimestamp;
 
-    private Map<Organ, Boolean> organStatus;
+    private Map<Organ, Boolean> organDonationStatus;
     private Map<Organ, Boolean> organRequestStatus;
 
     private List<MedicationRecord> medicationHistory = new ArrayList<>();
@@ -73,10 +73,10 @@ public class Client {
     }
 
     private void initOrgans() {
-        organStatus = new HashMap<>();
+        organDonationStatus = new HashMap<>();
         organRequestStatus = new HashMap<>();
         for (Organ o : Organ.values()) {
-            organStatus.put(o, false);
+            organDonationStatus.put(o, false);
             organRequestStatus.put(o, false);
         }
     }
@@ -87,33 +87,18 @@ public class Client {
         modifiedTimestamp = LocalDateTime.now();
     }
 
+    /**
+     * Set a particular organs request status
+     * @param organ The organ to be set
+     * @param value Boolean value to set the attributes
+     * @throws OrganAlreadyRegisteredException Thrown if the organ is set to true when it already is
+     */
     public void setOrganRequestStatus(Organ organ, boolean value) throws OrganAlreadyRegisteredException {
         if (value && organRequestStatus.get(organ)) {
-            throw new OrganAlreadyRegisteredException(organ.toString() + " is already registered for donation");
+            throw new OrganAlreadyRegisteredException(organ.toString() + " is already currently requested");
         }
         addUpdate(organ.toString());
         organRequestStatus.replace(organ, value);
-    }
-
-    public String getClientOrganRequestStatusString() {
-        StringBuilder builder = new StringBuilder();
-        for (Map.Entry<Organ, Boolean> entry : organRequestStatus.entrySet()) {
-            if (entry.getValue()) {
-                if (builder.length() != 0) {
-                    builder.append(", ");
-                }
-                builder.append(entry.getKey().toString());
-            }
-        }
-        if (builder.length() == 0) {
-            return "No organs registered for donation";
-        } else {
-            return builder.toString();
-        }
-    }
-
-    public Map<Organ, Boolean> getOrganRequestStatus() {
-        return organRequestStatus;
     }
 
     /**
@@ -122,29 +107,34 @@ public class Client {
      * @param value Boolean value to set the status too
      * @throws OrganAlreadyRegisteredException Thrown if the organ is set to true when it already is
      */
-    public void setOrganStatus(Organ organ, boolean value) throws OrganAlreadyRegisteredException {
-        if (value && organStatus.get(organ)) {
+    public void setOrganDonationStatus(Organ organ, boolean value) throws OrganAlreadyRegisteredException {
+        if (value && organDonationStatus.get(organ)) {
             throw new OrganAlreadyRegisteredException(organ.toString() + " is already registered for donation");
         }
         addUpdate(organ.toString());
-        organStatus.replace(organ, value);
+        organDonationStatus.replace(organ, value);
     }
-
-
-
-    public Map<Organ, Boolean> getOrganStatus() {
-        return organStatus;
-    }
-
 
     /**
      * Returns a string listing the organs that the client is currently donating, or a message that the client currently
      * has no organs registered for donation if that is the case.
      * @return The client's organ status string.
      */
-    public String getOrganStatusString() {
+    public String getOrganStatusString(String type) {
         StringBuilder builder = new StringBuilder();
-        for (Map.Entry<Organ, Boolean> entry : organStatus.entrySet()) {
+        Map<Organ, Boolean> organsList;
+        switch (type) {
+            case "requests":
+                organsList = organRequestStatus;
+                break;
+            case "donations":
+                organsList = organDonationStatus;
+                break;
+            default:
+                return "Invalid input";
+        }
+
+        for (Map.Entry<Organ, Boolean> entry : organsList.entrySet()) {
             if (entry.getValue()) {
                 if (builder.length() != 0) {
                     builder.append(", ");
@@ -153,7 +143,7 @@ public class Client {
             }
         }
         if (builder.length() == 0) {
-            return "No organs registered for donation";
+            return "No organs found";
         } else {
             return builder.toString();
         }
@@ -163,8 +153,9 @@ public class Client {
      * Returns a formatted string listing the client's ID number, full name, and the organs they are donating.
      * @return The formatted client info string.
      */
-    public String getClientOrganStatusString() {
-        return String.format("User: %s. Name: %s, Donation status: %s.", uid, getFullName(), getOrganStatusString());
+    public String getClientOrganStatusString(String type) {
+        return String.format("User: %s. Name: %s, Donation status: %s.", uid, getFullName(), getOrganStatusString
+                (type));
     }
 
     /**
@@ -315,6 +306,14 @@ public class Client {
         return modifiedTimestamp;
     }
 
+    public Map<Organ, Boolean> getOrganRequestStatus() {
+        return organRequestStatus;
+    }
+
+    public Map<Organ, Boolean> getOrganDonationStatus() {
+        return organDonationStatus;
+    }
+
     /**
      * Returns a new list containing the medications which are currently being used by the Client.
      * @return The list of medications currently being used by the Client.
@@ -426,5 +425,18 @@ public class Client {
 
     public void transplantRequestsUpdate(TransplantRequest transplantRequest) {
         transplantRequests.add(transplantRequest);
+    }
+
+    /**
+     * Checks if the client has any current organ requests.
+     * @return true if the client has a current organ request. False otherwise.
+     */
+    public boolean currentOrganRequest() {
+        for (TransplantRequest t: transplantRequests) {
+            if (t.getCurrentRequest()){
+                return true;
+            }
+        }
+        return false;
     }
 }

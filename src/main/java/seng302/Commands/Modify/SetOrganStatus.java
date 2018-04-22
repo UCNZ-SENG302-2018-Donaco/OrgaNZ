@@ -107,7 +107,7 @@ public class SetOrganStatus implements Runnable {
         for (Map.Entry<Organ, Boolean> entry : states.entrySet()) {
             Organ organ = entry.getKey();
             Boolean newState = entry.getValue();
-            Boolean currState = client.getOrganStatus().get(organ);
+            Boolean currState = client.getOrganDonationStatus().get(organ);
             if (newState == null) {
                 continue;
             } else if (newState && currState) {

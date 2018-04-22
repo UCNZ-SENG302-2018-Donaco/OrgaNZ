@@ -119,7 +119,7 @@ public class SearchClientsController extends SubController {
                             client.getFirstName(),
                             client.getLastName(),
                             client.getBloodType(),
-                            client.getOrganStatusString()));
+                            client.getOrganStatusString("donations")));
                     setTooltip(tooltip);
                 }
             }

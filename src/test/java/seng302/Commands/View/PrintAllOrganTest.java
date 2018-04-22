@@ -51,8 +51,8 @@ public class PrintAllOrganTest {
     @Test
     public void printallorgan_single_client() throws OrganAlreadyRegisteredException {
         Client client = new Client("First", "mid", "Last", LocalDate.of(1970, 1, 1), 1);
-        client.setOrganStatus(Organ.LIVER, true);
-        client.setOrganStatus(Organ.KIDNEY, true);
+        client.setOrganDonationStatus(Organ.LIVER, true);
+        client.setOrganDonationStatus(Organ.KIDNEY, true);
 
         ArrayList<Client> people = new ArrayList<>();
         people.add(client);
@@ -71,9 +71,9 @@ public class PrintAllOrganTest {
         Client client = new Client("First", "mid", "Last", LocalDate.of(1970, 1, 1), 1);
         Client client2 = new Client("FirstTwo", null, "LastTwo", LocalDate.of(1971, 2, 2), 2);
         Client client3 = new Client("FirstThree", null, "LastThree", LocalDate.of(1971, 2, 2), 3);
-        client.setOrganStatus(Organ.LIVER, true);
-        client.setOrganStatus(Organ.KIDNEY, true);
-        client2.setOrganStatus(Organ.CONNECTIVE_TISSUE, true);
+        client.setOrganDonationStatus(Organ.LIVER, true);
+        client.setOrganDonationStatus(Organ.KIDNEY, true);
+        client2.setOrganDonationStatus(Organ.CONNECTIVE_TISSUE, true);
 
         ArrayList<Client> people = new ArrayList<>();
         people.add(client);

@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
@@ -42,6 +43,8 @@ public class RequestOrganController extends SubController {
     private final Map<Organ, CheckBox> organCheckBoxes = new HashMap<>();
     @FXML
     private TextField fieldUserID;
+    @FXML
+    private Button requestHistoryButton;
 
     public RequestOrganController() {
         manager = State.getClientManager();
@@ -66,7 +69,6 @@ public class RequestOrganController extends SubController {
         organCheckBoxes.put(Organ.BONE, checkBoxBone);
         organCheckBoxes.put(Organ.BONE_MARROW, checkBoxBoneMarrow);
         organCheckBoxes.put(Organ.CONNECTIVE_TISSUE, checkBoxConnTissue);
-        setCheckboxesDisabled();
     }
 
     @Override
@@ -76,10 +78,13 @@ public class RequestOrganController extends SubController {
 
         if (session.getLoggedInUserType() == Session.UserType.CLIENT) {
             client = session.getLoggedInClient();
+            fieldUserID.setEditable(false);
+            setCheckboxesDisabled();
         } else if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
+            fieldUserID.setEditable(true);
+            setCheckBoxesEnabled();
         }
-
         fieldUserID.setText(Integer.toString(client.getUid()));
         updateUserID(null);
     }
@@ -106,7 +111,7 @@ public class RequestOrganController extends SubController {
         if (hasChanged) {
             invoker.execute(action);
             HistoryItem organRequest = new HistoryItem("ORGAN REQUEST UPDATE",
-                    "The Client's organ request list was updated: " + client.getClientOrganRequestStatusString());
+                    "The Client's organ request list was updated: " + client.getOrganStatusString("requests"));
             JSONConverter.updateHistory(organRequest, "action_history.json");
         }
     }
@@ -133,7 +138,7 @@ public class RequestOrganController extends SubController {
         }
 
         if (client != null) {
-            setCheckBoxesEnabled();
+            requestHistoryButton.setDisable(false);
             for (Map.Entry<Organ, CheckBox> entry : organCheckBoxes.entrySet()) {
                 entry.getValue().setSelected(client.getOrganRequestStatus().get(entry.getKey()));
             }
@@ -141,16 +146,16 @@ public class RequestOrganController extends SubController {
             JSONConverter.updateHistory(save, "action_history.json");
         } else {
             setCheckboxesDisabled();
+            setCheckBoxesUnselected();
+            requestHistoryButton.setDisable(true);
         }
     }
 
-
     /**
-     * Sets the state of all checkboxes to not selected, then disables them.
+     * Disables all checkboxes.
      */
     private void setCheckboxesDisabled() {
         for (CheckBox box : organCheckBoxes.values()) {
-            box.setSelected(false);
             box.setDisable(true);
         }
     }
@@ -164,4 +169,12 @@ public class RequestOrganController extends SubController {
         }
     }
 
+    /**
+     * Unselect all checkboxes.
+     */
+    private void setCheckBoxesUnselected() {
+        for (CheckBox box: organCheckBoxes.values()) {
+            box.setSelected(false);
+        }
+    }
 }

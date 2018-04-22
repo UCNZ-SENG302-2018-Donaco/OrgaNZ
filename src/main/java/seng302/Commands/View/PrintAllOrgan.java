@@ -38,7 +38,7 @@ public class PrintAllOrgan implements Runnable {
             System.out.println("No people exist");
         } else {
             for (Client client : people) {
-                System.out.println(client.getClientOrganStatusString());
+                System.out.println(client.getClientOrganStatusString("donations"));
             }
             HistoryItem printAllOrgan = new HistoryItem("PRINT ALL ORGAN", "All client organ information printed.");
             JSONConverter.updateHistory(printAllOrgan, "action_history.json");

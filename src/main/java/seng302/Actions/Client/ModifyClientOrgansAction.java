@@ -56,7 +56,7 @@ public class ModifyClientOrgansAction implements Action {
                 if (isUndo) {
                     newState = !newState;
                 }
-                client.setOrganStatus(organ, newState);
+                client.setOrganDonationStatus(organ, newState);
             } catch (OrganAlreadyRegisteredException e) {
                 e.printStackTrace();
             }
