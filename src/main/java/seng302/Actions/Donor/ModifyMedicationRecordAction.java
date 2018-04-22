@@ -4,10 +4,14 @@ import java.time.LocalDate;
 import java.util.Objects;
 
 import seng302.Actions.Action;
+import seng302.Donor;
+import seng302.HistoryItem;
 import seng302.MedicationRecord;
+import seng302.Utilities.JSONConverter;
 
 public class ModifyMedicationRecordAction implements Action {
 
+    private Donor donor;
     private MedicationRecord record;
     private LocalDate oldStarted;
     private LocalDate oldStopped;
@@ -20,6 +24,9 @@ public class ModifyMedicationRecordAction implements Action {
         this.oldStopped = record.getStopped();
         this.newStarted = oldStarted;
         this.newStopped = oldStopped;
+        HistoryItem save = new HistoryItem("MODIFY_MEDICATION", String.format("Medication %s moved. Stop date: %s. Start date: %s",
+                record.getMedicationName(), record.getStopped(), record.getStarted()));
+        JSONConverter.updateHistory(save, "action_history.json");
     }
 
     public void changeStarted(LocalDate newStarted) {
