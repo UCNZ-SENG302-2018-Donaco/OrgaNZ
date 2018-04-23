@@ -3,6 +3,7 @@ package seng302;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -167,32 +168,25 @@ public class ClientTest {
         }
         assertEquals("Heart", client.getOrganStatusString("donations"));
     }
-// TODO find what is going wrong with enum ordering!!
-//    @Test
-//    public void getOrganStatusStringValid3() {
-//        Organ o1 = Organ.BONE;
-//        Organ o2 = Organ.HEART;
-//        Organ o3 = Organ.LIVER;
-//        try {
-//            client.setOrganRequestStatus(o1, true);
-//            client.setOrganRequestStatus(o2, true);
-//            client.setOrganRequestStatus(o3, true);
-//        } catch (OrganAlreadyRegisteredException ex) {
-//            System.out.println(ex);
-//        }
-//        assertEquals("Bone, Heart, Liver", client.getOrganStatusString("requests"));
-//    }
 
-    // TODO Figure out why custom exception is not passing.
-//    @Test(expected = OrganAlreadyRegisteredException.class)
-//    public void getOrganStatusStringInvalid() {
-//        Organ o1 = Organ.BONE;
-//        Organ o2 = Organ.BONE;
-//        try {
-//            client.setOrganRequestStatus(o1, true);
-//            client.setOrganRequestStatus(o2, true);
-//        } catch (OrganAlreadyRegisteredException ex) {
-//            System.out.println(ex);
-//        }
-//    }
+    @Test
+    public void getOrganStatusStringValid3() {
+        try {
+            client.setOrganRequestStatus(Organ.BONE, true);
+            client.setOrganRequestStatus(Organ.HEART, true);
+            client.setOrganRequestStatus(Organ.LIVER, true);
+        } catch (OrganAlreadyRegisteredException ex) {
+            fail(ex.getMessage());
+        }
+        String organStatusString = client.getOrganStatusString("requests");
+        assertTrue(organStatusString.contains("Bone"));
+        assertTrue(organStatusString.contains("Heart"));
+        assertTrue(organStatusString.contains("Liver"));
+    }
+
+    @Test(expected = OrganAlreadyRegisteredException.class)
+    public void getOrganStatusStringInvalid() throws OrganAlreadyRegisteredException {
+        client.setOrganRequestStatus(Organ.BONE, true);
+        client.setOrganRequestStatus(Organ.BONE, true);
+    }
 }
