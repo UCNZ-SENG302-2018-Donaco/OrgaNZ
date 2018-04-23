@@ -1,7 +1,11 @@
 package seng302.Utilities.Enums;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumSet;
+import java.util.List;
 
 /**
  * Enum for organs. Allows for to/from string conversion
@@ -21,7 +25,7 @@ public enum Organ {
     CONNECTIVE_TISSUE("Connective tissue");
 
     private final String text;
-    public static final EnumSet<Organ> enumSet = EnumSet.allOf(Organ.class);
+    public static List<Organ> organList = new ArrayList<>(Arrays.asList(Organ.values()));
 
     Organ(String text) {
         this.text = text;
@@ -29,6 +33,11 @@ public enum Organ {
 
     public String toString() {
         return text;
+    }
+
+    public static List<Organ> getOrganList() {
+        Collections.sort(organList);
+        return organList;
     }
 
     /**
