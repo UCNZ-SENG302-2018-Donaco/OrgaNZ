@@ -180,7 +180,7 @@ public class ClientTest {
         } catch (OrganAlreadyRegisteredException ex) {
             System.out.println(ex);
         }
-        assertEquals("Bone, Heart, Liver", client.getOrganStatusString("requests"));
+        assertEquals("Liver, Bone, Heart", client.getOrganStatusString("requests"));
     }
 
     // TODO Figure out why custom exception is not passing.
