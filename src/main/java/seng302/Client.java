@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -42,7 +43,7 @@ public class Client {
 
     private List<MedicationRecord> medicationHistory = new ArrayList<>();
 
-    private List<TransplantRequest> transplantRequests = new ArrayList<>();
+    private Collection<TransplantRequest> transplantRequests = new ArrayList<>();
 
     private ArrayList<String> updateLog = new ArrayList<>();
 
@@ -133,8 +134,9 @@ public class Client {
             default:
                 return "Invalid input";
         }
-
+        System.out.println(organsList.entrySet());
         for (Map.Entry<Organ, Boolean> entry : organsList.entrySet()) {
+            System.out.println(entry);
             if (entry.getValue()) {
                 if (builder.length() != 0) {
                     builder.append(", ");
@@ -419,7 +421,7 @@ public class Client {
         return d.uid == this.uid;
     }
 
-    public List<TransplantRequest> getTransplantRequests() {
+    public Collection<TransplantRequest> getTransplantRequests() {
         return transplantRequests;
     }
 
