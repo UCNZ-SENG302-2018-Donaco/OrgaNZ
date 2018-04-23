@@ -76,7 +76,7 @@ public class Client {
     private void initOrgans() {
         organDonationStatus = new HashMap<>();
         organRequestStatus = new HashMap<>();
-        for (Organ o : Organ.getOrganList()) {
+        for (Organ o : Organ.values()) {
             organDonationStatus.put(o, false);
             organRequestStatus.put(o, false);
         }
