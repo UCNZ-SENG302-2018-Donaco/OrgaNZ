@@ -134,9 +134,7 @@ public class Client {
             default:
                 return "Invalid input";
         }
-        System.out.println(organsList.entrySet());
         for (Map.Entry<Organ, Boolean> entry : organsList.entrySet()) {
-            System.out.println(entry);
             if (entry.getValue()) {
                 if (builder.length() != 0) {
                     builder.append(", ");
