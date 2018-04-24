@@ -3,7 +3,6 @@ package seng302.Controller.Donor;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -32,13 +31,12 @@ import seng302.Controller.SubController;
 import seng302.Donor;
 import seng302.MedicationRecord;
 import seng302.State.Session;
-import seng302.State.Session.UserType;
 import seng302.State.State;
 import seng302.Utilities.Exceptions.BadGatewayException;
 import seng302.Utilities.View.PageNavigator;
 import seng302.Utilities.Web.DrugInteractionsHandler;
-import seng302.Utilities.Web.MedAutoCompleteHandler;
 import seng302.Utilities.Web.MedActiveIngredientsHandler;
+import seng302.Utilities.Web.MedAutoCompleteHandler;
 
 import impl.org.controlsfx.autocompletion.AutoCompletionTextFieldBinding;
 
@@ -346,7 +344,8 @@ public class ViewMedicationsController extends SubController {
         selectedItems.addAll(pastMedicationsView.getSelectionModel().getSelectedItems());
 
         if (selectedItems.size() != 2) {
-            PageNavigator.showAlert(AlertType.ERROR, "Incorrect number of medications selected",
+            PageNavigator.showAlert(AlertType.ERROR, "Incorrect number of medications selected ("
+                            + selectedItems.size() + ")",
                     "Please select exactly two medications to view their interactions.");
 
         } else {

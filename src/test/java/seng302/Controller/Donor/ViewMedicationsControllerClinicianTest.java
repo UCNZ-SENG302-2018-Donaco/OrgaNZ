@@ -269,7 +269,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
     @Test
     public void viewInteractionsBetweenZeroDrugsTest() {
         clickOn("#viewInteractionsButton");
-        alertDialogHasHeaderAndContent("Incorrect number of medications selected",
+        alertDialogHasHeaderAndContent("Incorrect number of medications selected (0)",
                 "Please select exactly two medications to view their interactions.");
         press(KeyCode.ENTER); // Close the dialog
         release(KeyCode.ENTER);
@@ -284,7 +284,34 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
         clickOn((Node) lookup(hasText(drug0.toString())).query());
         clickOn("#viewInteractionsButton");
 
-        alertDialogHasHeaderAndContent("Incorrect number of medications selected",
+        alertDialogHasHeaderAndContent("Incorrect number of medications selected (1)",
+                "Please select exactly two medications to view their interactions.");
+        press(KeyCode.ENTER); // Close the dialog
+        release(KeyCode.ENTER);
+    }
+
+    @Test
+    public void viewInteractionsBetweenThreeDrugsTest() {
+        MedicationRecord drug0 = testCurrentMedicationRecords[0];
+        MedicationRecord drug1 = testCurrentMedicationRecords[1];
+        MedicationRecord drug2 = testCurrentMedicationRecords[2];
+
+        verifyThat("#currentMedicationsView", hasListCell(drug0));
+        verifyThat("#currentMedicationsView", hasListCell(drug1));
+        verifyThat("#currentMedicationsView", hasListCell(drug2));
+
+        press(KeyCode.CONTROL); // So all the drugs are selected
+        clickOn((Node) lookup(hasText(drug0.toString())).query());
+        verifyThat((Node) lookup(hasText(drug0.toString())).query(), Node::isFocused);
+        clickOn((Node) lookup(hasText(drug1.toString())).query());
+        verifyThat((Node) lookup(hasText(drug1.toString())).query(), Node::isFocused);
+        clickOn((Node) lookup(hasText(drug2.toString())).query());
+        verifyThat((Node) lookup(hasText(drug2.toString())).query(), Node::isFocused);
+        release(KeyCode.CONTROL);
+
+        clickOn("#viewInteractionsButton");
+
+        alertDialogHasHeaderAndContent("Incorrect number of medications selected (3)",
                 "Please select exactly two medications to view their interactions.");
         press(KeyCode.ENTER); // Close the dialog
         release(KeyCode.ENTER);
@@ -422,30 +449,6 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
 
         alertDialogHasHeaderAndContent("Interactions between Ibuprofen and Med C",
                 "Either Ibuprofen or Med C is not a valid drug name.");
-        press(KeyCode.ENTER); // Close the dialog
-        release(KeyCode.ENTER);
-    }
-
-    @Test
-    public void viewInteractionsBetweenThreeDrugsTest() {
-        MedicationRecord drug0 = testCurrentMedicationRecords[0];
-        MedicationRecord drug1 = testCurrentMedicationRecords[1];
-        MedicationRecord drug2 = testCurrentMedicationRecords[2];
-
-        verifyThat("#currentMedicationsView", hasListCell(drug0));
-        verifyThat("#currentMedicationsView", hasListCell(drug1));
-        verifyThat("#currentMedicationsView", hasListCell(drug2));
-
-        press(KeyCode.CONTROL); // So all the drugs are selected
-        clickOn((Node) lookup(hasText(drug0.toString())).query());
-        clickOn((Node) lookup(hasText(drug1.toString())).query());
-        clickOn((Node) lookup(hasText(drug2.toString())).query());
-        release(KeyCode.CONTROL);
-
-        clickOn("#viewInteractionsButton");
-
-        alertDialogHasHeaderAndContent("Incorrect number of medications selected",
-                "Please select exactly two medications to view their interactions.");
         press(KeyCode.ENTER); // Close the dialog
         release(KeyCode.ENTER);
     }
