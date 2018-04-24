@@ -88,22 +88,14 @@ public class ViewMedicationsController extends SubController {
                 selectedListView = currentMedicationsView;
                 pastMedicationsView.getSelectionModel().clearSelection();
             });
-
-        if (session.getLoggedInUserType() == UserType.CLIENT) {
-            newMedicationPane.setVisible(false);
-            newMedicationPane.setManaged(false);
-
-            moveToHistoryButton.setDisable(true);
-            moveToCurrentButton.setDisable(true);
-            deleteButton.setDisable(true);
-        }
     }
 
     /**
      * Sets up the page using the MainController given.
      * - Loads the sidebar.
-     * - Checks if the session login type is a client or a clinician, and sets the viewed client appropriately.
-     * - Refreshes the medication list views to set initial state based on the viewed client.
+     * - Checks if the session login type is a donor or a clinician, and sets the viewed donor appropriately.
+     * - Refreshes the medication list views to set initial state based on the viewed donor.
+     * - Checks if the logged in user is a donor, and if so, makes the page non-editable.
      * @param mainController The MainController for the window this page is loaded on.
      */
     @Override
@@ -113,6 +105,12 @@ public class ViewMedicationsController extends SubController {
 
         if (session.getLoggedInUserType() == Session.UserType.CLIENT) {
             client = session.getLoggedInClient();
+
+            newMedicationPane.setVisible(false);
+            newMedicationPane.setManaged(false);
+            moveToHistoryButton.setDisable(true);
+            moveToCurrentButton.setDisable(true);
+            deleteButton.setDisable(true);
         } else if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
         }
