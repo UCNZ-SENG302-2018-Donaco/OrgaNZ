@@ -4,10 +4,14 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import seng302.Utilities.Enums.BloodType;
 import seng302.Utilities.Enums.Gender;
@@ -44,6 +48,8 @@ public class Person {
     private List<Condition> conditions = new ArrayList<>();
 
     private List<TransplantRequest> transplantRequests = new ArrayList<>();
+
+    private final Collection<ProcedureRecord> procedureRecords = new TreeSet<>(ProcedureRecord.Comparator);
 
     private ArrayList<String> updateLog = new ArrayList<>();
 
@@ -372,6 +378,46 @@ public class Person {
         return illnessHistory.stream().filter(
             record -> record.getCuredDate() == null
         ).collect(Collectors.toList());
+    }
+
+    /**
+     * Adds a procedure record to this client.
+     */
+    public void addProcedure(ProcedureRecord procedure) {
+        boolean failed = !procedureRecords.add(procedure);
+        if (failed) {
+            throw new IllegalArgumentException("Procedure is unable to be added to the list");
+        }
+    }
+
+    /**
+     * Removed a procedure record from this client.
+     */
+    public void removeProcedure(ProcedureRecord procedure) {
+        boolean failed = !procedureRecords.remove(procedure);
+        if (failed) {
+            throw new IllegalArgumentException("Procedure is unable to be added removed from the list");
+        }
+    }
+
+    /**
+     * Returns all procedures that occurred before the current date.
+     */
+    public Stream<ProcedureRecord> getPastProcedures() {
+        return procedureRecords.stream().filter(x -> {
+            LocalDate now = LocalDate.now();
+            return x.getDate().isBefore(now);
+        });
+    }
+
+    /**
+     * Returns all procedures that occur after or on the current date.
+     */
+    public Stream<ProcedureRecord> getPendingProcedures() {
+        return procedureRecords.stream().filter(x -> {
+            LocalDate now = LocalDate.now();
+            return !x.getDate().isBefore(now);
+        });
     }
 
 
