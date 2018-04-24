@@ -37,7 +37,7 @@
             <Font size="16.0" />
           </font>
         </Button>
-            <Button fx:id="requestOrganDonationButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToRequestOrganDonation" prefHeight="56.0" prefWidth="200.0" text="Request Organs">
+            <Button fx:id="requestOrganDonationButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToRequestOrganDonation" text="Request Organs" VBox.vgrow="ALWAYS">
                <font>
                   <Font size="16.0" />
                </font>

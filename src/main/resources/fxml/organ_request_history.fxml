@@ -35,9 +35,6 @@
                      </columnResizePolicy>
             </TableView>
           </center>
-          <bottom>
-            <Pagination fx:id="pagination" prefHeight="70.0" prefWidth="200.0" BorderPane.alignment="BOTTOM_CENTER" />
-          </bottom>
           <top>
             <TextField fx:id="searchBox" editable="false" promptText="Client name" BorderPane.alignment="CENTER">
               <BorderPane.margin>
@@ -45,9 +42,9 @@
               </BorderPane.margin>
             </TextField>
           </top>
-               <left>
+               <bottom>
                   <Button mnemonicParsing="false" onAction="#backToRequests" text="Back" BorderPane.alignment="CENTER" />
-               </left>
+               </bottom>
         </BorderPane>
       </items>
     </SplitPane>
