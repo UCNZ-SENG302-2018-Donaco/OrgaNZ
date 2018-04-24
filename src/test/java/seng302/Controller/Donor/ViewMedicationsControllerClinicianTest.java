@@ -1,11 +1,7 @@
 package seng302.Controller.Donor;
 
 import static org.hamcrest.CoreMatchers.not;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -300,9 +296,9 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
         verifyThat("#currentMedicationsView", hasListCell(drug1));
         verifyThat("#currentMedicationsView", hasListCell(drug2));
 
-        press(KeyCode.CONTROL); // So all the drugs are selected
         clickOn((Node) lookup(hasText(drug0.toString())).query());
         verifyThat((Node) lookup(hasText(drug0.toString())).query(), Node::isFocused);
+        press(KeyCode.CONTROL); // So all the drugs are selected
         clickOn((Node) lookup(hasText(drug1.toString())).query());
         verifyThat((Node) lookup(hasText(drug1.toString())).query(), Node::isFocused);
         clickOn((Node) lookup(hasText(drug2.toString())).query());
@@ -331,8 +327,8 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
         verifyThat("#currentMedicationsView", hasListCell(ibuprofenRecord));
         verifyThat("#currentMedicationsView", hasListCell(prednisoneRecord));
 
-        press(KeyCode.CONTROL); // So all the drugs are selected
         clickOn((Node) lookup(hasText(ibuprofenRecord.toString())).query());
+        press(KeyCode.CONTROL); // So all the drugs are selected
         clickOn((Node) lookup(hasText(prednisoneRecord.toString())).query());
         release(KeyCode.CONTROL);
 
@@ -350,6 +346,34 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
     }
 
     @Test
+    public void viewInteractionsBetweenTwoDrugsDifferentListsTest() {
+        ViewMedicationsController pageController = (ViewMedicationsController) super.pageController;
+        pageController.setDrugInteractionsHandler(
+                createMockDrugInteractionsHandler("Med A", "Med C",
+                        Arrays.asList("anxiety", "nausea")
+                ));
+
+        MedicationRecord currentDrug = testCurrentMedicationRecords[0];
+        MedicationRecord pastDrug = testPastMedicationRecords[0];
+
+        verifyThat("#currentMedicationsView", hasListCell(currentDrug));
+        verifyThat("#pastMedicationsView", hasListCell(pastDrug));
+
+        clickOn((Node) lookup(hasText(currentDrug.toString())).query());
+        press(KeyCode.CONTROL); // So all the drugs are selected
+        clickOn((Node) lookup(hasText(pastDrug.toString())).query());
+        release(KeyCode.CONTROL);
+
+        clickOn("#viewInteractionsButton");
+
+        alertDialogHasHeaderAndContent("Interactions between Med A and Med C",
+                "anxiety\n"
+                        + "nausea\n");
+        press(KeyCode.ENTER); // Close the dialog
+        release(KeyCode.ENTER);
+    }
+
+    @Test
     public void viewInteractionsBetweenTwoDrugsNoResultsTest() {
         ViewMedicationsController pageController = (ViewMedicationsController) super.pageController;
         pageController.setDrugInteractionsHandler(
@@ -361,8 +385,8 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
         verifyThat("#currentMedicationsView", hasListCell(ibuprofenRecord));
         verifyThat("#currentMedicationsView", hasListCell(prednisoneRecord));
 
-        press(KeyCode.CONTROL); // So all the drugs are selected
         clickOn((Node) lookup(hasText(ibuprofenRecord.toString())).query());
+        press(KeyCode.CONTROL); // So all the drugs are selected
         clickOn((Node) lookup(hasText(prednisoneRecord.toString())).query());
         release(KeyCode.CONTROL);
 
@@ -387,8 +411,8 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
         verifyThat("#currentMedicationsView", hasListCell(drug0));
         verifyThat("#currentMedicationsView", hasListCell(drug1));
 
-        press(KeyCode.CONTROL); // So all the drugs are selected
         clickOn((Node) lookup(hasText(drug0.toString())).query());
+        press(KeyCode.CONTROL); // So all the drugs are selected
         clickOn((Node) lookup(hasText(drug1.toString())).query());
         release(KeyCode.CONTROL);
 
@@ -414,8 +438,8 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
         verifyThat("#currentMedicationsView", hasListCell(drug0));
         verifyThat("#currentMedicationsView", hasListCell(drug1));
 
-        press(KeyCode.CONTROL); // So all the drugs are selected
         clickOn((Node) lookup(hasText(drug0.toString())).query());
+        press(KeyCode.CONTROL); // So all the drugs are selected
         clickOn((Node) lookup(hasText(drug1.toString())).query());
         release(KeyCode.CONTROL);
 
@@ -440,8 +464,8 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
         verifyThat("#currentMedicationsView", hasListCell(drug0));
         verifyThat("#currentMedicationsView", hasListCell(drug1));
 
-        press(KeyCode.CONTROL); // So all the drugs are selected
         clickOn((Node) lookup(hasText(drug0.toString())).query());
+        press(KeyCode.CONTROL); // So all the drugs are selected
         clickOn((Node) lookup(hasText(drug1.toString())).query());
         release(KeyCode.CONTROL);
 
