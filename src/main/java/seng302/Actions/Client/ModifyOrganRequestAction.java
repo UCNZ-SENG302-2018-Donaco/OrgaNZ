@@ -30,7 +30,7 @@ public class ModifyOrganRequestAction implements Action {
      */
     public void addChange(Organ organ, Boolean newValue) {
         TransplantRequest transplantRequest = new TransplantRequest(organ, newValue);
-        client.transplantRequestsUpdate(transplantRequest);
+        client.addTransplantRequest(transplantRequest);
         changes.put(organ, newValue);
     }
 

@@ -30,7 +30,7 @@ public class DeleteClientActionTest {
     public void CheckClientDeletedTest() {
         DeleteClientAction action = new DeleteClientAction(baseClient, manager);
         invoker.execute(action);
-        assertEquals(0, manager.getPeople().size());
+        assertEquals(0, manager.getClients().size());
     }
 
     @Test
@@ -38,7 +38,7 @@ public class DeleteClientActionTest {
         DeleteClientAction action = new DeleteClientAction(baseClient, manager);
         invoker.execute(action);
         invoker.undo();
-        assertEquals(1, manager.getPeople().size());
+        assertEquals(1, manager.getClients().size());
     }
 
     @Test
@@ -53,8 +53,8 @@ public class DeleteClientActionTest {
         invoker.execute(secondAction);
 
         invoker.undo();
-        assertEquals(baseClient, manager.getPeople().get(0));
-        assertEquals(1, manager.getPeople().size());
+        assertEquals(baseClient, manager.getClients().get(0));
+        assertEquals(1, manager.getClients().size());
     }
 
     @Test
@@ -69,12 +69,12 @@ public class DeleteClientActionTest {
         invoker.execute(secondAction);
 
         invoker.undo();
-        assertEquals(baseClient, manager.getPeople().get(0));
-        assertEquals(1, manager.getPeople().size());
+        assertEquals(baseClient, manager.getClients().get(0));
+        assertEquals(1, manager.getClients().size());
 
         invoker.redo();
 
-        assertEquals(0, manager.getPeople().size());
+        assertEquals(0, manager.getClients().size());
     }
 
 

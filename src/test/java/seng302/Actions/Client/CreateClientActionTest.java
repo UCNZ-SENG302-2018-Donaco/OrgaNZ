@@ -29,7 +29,7 @@ public class CreateClientActionTest {
     public void CheckClientAddedTest() {
         CreateClientAction action = new CreateClientAction(baseClient, manager);
         invoker.execute(action);
-        assertEquals(1, manager.getPeople().size());
+        assertEquals(1, manager.getClients().size());
     }
 
     @Test
@@ -37,7 +37,7 @@ public class CreateClientActionTest {
         CreateClientAction action = new CreateClientAction(baseClient, manager);
         invoker.execute(action);
         invoker.undo();
-        assertEquals(0, manager.getPeople().size());
+        assertEquals(0, manager.getClients().size());
     }
 
     @Test
@@ -48,8 +48,8 @@ public class CreateClientActionTest {
         CreateClientAction secondAction = new CreateClientAction(second, manager);
         invoker.execute(secondAction);
         invoker.undo();
-        assertEquals(baseClient, manager.getPeople().get(0));
-        assertEquals(1, manager.getPeople().size());
+        assertEquals(baseClient, manager.getClients().get(0));
+        assertEquals(1, manager.getClients().size());
     }
 
     @Test
@@ -61,12 +61,12 @@ public class CreateClientActionTest {
         invoker.execute(secondAction);
         invoker.undo();
 
-        assertEquals(baseClient, manager.getPeople().get(0));
-        assertEquals(1, manager.getPeople().size());
+        assertEquals(baseClient, manager.getClients().get(0));
+        assertEquals(1, manager.getClients().size());
 
         invoker.redo();
 
-        assertEquals(baseClient, manager.getPeople().get(1));
-        assertEquals(2, manager.getPeople().size());
+        assertEquals(baseClient, manager.getClients().get(1));
+        assertEquals(2, manager.getClients().size());
     }
 }

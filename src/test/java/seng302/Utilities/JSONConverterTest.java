@@ -41,11 +41,11 @@ public class JSONConverterTest {
         File file = new File("src/test/resources/filled_clients.json");
 
         Client client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
-        ArrayList<Client> people = new ArrayList<>();
-        people.add(client);
+        ArrayList<Client> clients = new ArrayList<>();
+        clients.add(client);
         State.init();
         ClientManager manager = State.getClientManager();
-        manager.setPeople(people);
+        manager.setClients(clients);
 
         JSONConverter.saveToFile(file);
 
@@ -78,8 +78,8 @@ public class JSONConverterTest {
 //
 //        manager.loadFromFile(file);
 //
-//        assertTrue(manager.getPeople().size() == 1);
-//        assertEquals("First", manager.getPeople().get(0).getFirstName());
+//        assertTrue(manager.getClients().size() == 1);
+//        assertEquals("First", manager.getClients().get(0).getFirstName());
 //    }
 
 }

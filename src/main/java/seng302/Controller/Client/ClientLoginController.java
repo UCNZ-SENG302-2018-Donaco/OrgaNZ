@@ -45,7 +45,7 @@ public class ClientLoginController extends SubController {
                 }
             }
         });
-        clientList.setItems(FXCollections.observableArrayList(clientManager.getPeople()));
+        clientList.setItems(FXCollections.observableArrayList(clientManager.getClients()));
     }
 
     /**

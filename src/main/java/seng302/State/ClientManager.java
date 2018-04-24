@@ -15,21 +15,21 @@ import seng302.Client;
 
 public class ClientManager {
 
-    private ArrayList<Client> people;
+    private ArrayList<Client> clients;
     private int uid;
 
     public ClientManager() {
-        people = new ArrayList<>();
+        clients = new ArrayList<>();
         uid = 1;
     }
 
-    public ClientManager(ArrayList<Client> people) {
-        this.people = people;
+    public ClientManager(ArrayList<Client> clients) {
+        this.clients = clients;
         uid = calculateNextId();
     }
 
-    public void setPeople(ArrayList<Client> people) {
-        this.people = people;
+    public void setClients(ArrayList<Client> clients) {
+        this.clients = clients;
     }
 
     /**
@@ -37,15 +37,15 @@ public class ClientManager {
      * @param client Client to be added
      */
     public void addClient(Client client) {
-        people.add(client);
+        clients.add(client);
     }
 
     /**
-     * Get the list of people
-     * @return ArrayList of current people
+     * Get the list of clients
+     * @return ArrayList of current clients
      */
-    public ArrayList<Client> getPeople() {
-        return people;
+    public ArrayList<Client> getClients() {
+        return clients;
     }
 
     /**
@@ -53,7 +53,7 @@ public class ClientManager {
      * @param client Client to be removed
      */
     public void removeClient(Client client) {
-        people.remove(client);
+        clients.remove(client);
     }
 
     /**
@@ -80,7 +80,7 @@ public class ClientManager {
      * @return Boolean
      */
     public boolean collisionExists(String firstName, String lastName, LocalDate dateOfBirth) {
-        for (Client client : people) {
+        for (Client client : clients) {
             if (client.getFirstName().equals(firstName) &&
                     client.getLastName().equals(lastName) &&
                     client.getDateOfBirth().isEqual(dateOfBirth)) {
@@ -96,13 +96,13 @@ public class ClientManager {
      * @return Client object or null if none exists
      */
     public Client getClientByID(int id) {
-        return people.stream()
+        return clients.stream()
                 .filter(d -> d.getUid() == id).findFirst().orElse(null);
     }
 
     private int calculateNextId() {
         int id = 1;
-        for (Client client : people) {
+        for (Client client : clients) {
             if (client.getUid() >= id) {
                 id = client.getUid() + 1;
             }

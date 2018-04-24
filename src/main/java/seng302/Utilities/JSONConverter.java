@@ -63,7 +63,7 @@ public final class JSONConverter {
     public static void saveToFile(File file) throws IOException {
         Writer writer = new FileWriter(file);
         ClientManager clientManager = State.getClientManager();
-        gson.toJson(clientManager.getPeople(), writer);
+        gson.toJson(clientManager.getClients(), writer);
         writer.close();
     }
 
@@ -74,15 +74,15 @@ public final class JSONConverter {
      */
     public static void loadFromFile(File file) throws IOException {
         Reader reader = new FileReader(file);
-        ArrayList<Client> people;
+        ArrayList<Client> clients;
         Type collectionType = new TypeToken<ArrayList<Client>>() {
         }.getType();
 
-        people = gson.fromJson(reader, collectionType);
+        clients = gson.fromJson(reader, collectionType);
         ClientManager clientManager = State.getClientManager();
-        clientManager.setPeople(people);
+        clientManager.setClients(clients);
 
-        for (Client client : people) {
+        for (Client client : clients) {
             if (client.getUid() >= clientManager.getUid()) {
                 clientManager.setUid(client.getUid() + 1);
             }

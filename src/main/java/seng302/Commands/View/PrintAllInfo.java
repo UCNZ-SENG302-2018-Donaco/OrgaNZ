@@ -32,15 +32,15 @@ public class PrintAllInfo implements Runnable {
 
     @Override
     public void run() {
-        ArrayList<Client> people = manager.getPeople();
+        ArrayList<Client> clients = manager.getClients();
 
-        if (people.size() == 0) {
-            System.out.println("No people exist");
+        if (clients.size() == 0) {
+            System.out.println("No clients exist");
         } else {
-            for (Client client : people) {
+            for (Client client : clients) {
                 System.out.println(client.getClientInfoString());
             }
-            HistoryItem printAllInfo = new HistoryItem("PRINT ALL INFO", "All people information printed.");
+            HistoryItem printAllInfo = new HistoryItem("PRINT ALL INFO", "All clients information printed.");
             JSONConverter.updateHistory(printAllInfo, "action_history.json");
         }
     }

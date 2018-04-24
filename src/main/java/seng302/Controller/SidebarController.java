@@ -73,7 +73,7 @@ public class SidebarController extends SubController {
     private boolean showRequestedOrgansButton(Session.UserType userType) {
         if (userType == UserType.CLIENT) {
             Client currentClient = session.getLoggedInClient();
-            return currentClient.currentOrganRequest();
+            return currentClient.getTransplantRequests().size() > 0;
         }
         return windowContext.isClinViewClientWindow();
     }

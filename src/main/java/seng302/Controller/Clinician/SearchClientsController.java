@@ -57,8 +57,8 @@ public class SearchClientsController extends SubController {
     private Pagination pagination;
 
     private ObservableList<Client> observableClientList = FXCollections.observableArrayList();
-    private FilteredList<Client> filteredPeople;
-    private SortedList<Client> sortedPeople;
+    private FilteredList<Client> filteredClients;
+    private SortedList<Client> sortedClients;
 
     @Override
     public void setup(MainController mainController) {
@@ -68,7 +68,7 @@ public class SearchClientsController extends SubController {
 
     @FXML
     private void initialize() {
-        ArrayList<Client> allPeople = State.getClientManager().getPeople();
+        ArrayList<Client> allClients = State.getClientManager().getClients();
 
         setupTable();
 
@@ -76,19 +76,19 @@ public class SearchClientsController extends SubController {
         searchBox.textProperty().addListener(((o) -> refresh()));
 
         //Create a filtered list, that defaults to allow all using lambda function
-        filteredPeople = new FilteredList<>(FXCollections.observableArrayList(allPeople), client -> true);
+        filteredClients = new FilteredList<>(FXCollections.observableArrayList(allClients), client -> true);
         //Create a sorted list that links to the filtered list
-        sortedPeople = new SortedList<>(filteredPeople);
+        sortedClients = new SortedList<>(filteredClients);
         //Link the sorted list sort to the tableView sort
-        sortedPeople.comparatorProperty().bind(tableView.comparatorProperty());
+        sortedClients.comparatorProperty().bind(tableView.comparatorProperty());
 
         //Set initial pagination
-        pagination.setPageCount(sortedPeople.size() / ROWS_PER_PAGE + 1);
+        pagination.setPageCount(sortedClients.size() / ROWS_PER_PAGE + 1);
         //On pagination update call createPage
         pagination.setPageFactory(this::createPage);
 
         //Initialize the observable list to all clients
-        observableClientList.setAll(sortedPeople);
+        observableClientList.setAll(sortedClients);
         //Bind the tableView to the observable list
         tableView.setItems(observableClientList);
     }
@@ -150,13 +150,13 @@ public class SearchClientsController extends SubController {
     private void refresh() {
         String searchText = searchBox.getText();
         if (searchText == null || searchText.length() == 0) {
-            filteredPeople.setPredicate(client -> true);
+            filteredClients.setPredicate(client -> true);
         } else {
-            filteredPeople.setPredicate(client -> client.nameContains(searchText));
+            filteredClients.setPredicate(client -> client.nameContains(searchText));
         }
 
         //If the pagination count wont change, force a refresh of the page, if it will, change it and that will trigger the update.
-        int newPageCount = filteredPeople.size() / ROWS_PER_PAGE + 1;
+        int newPageCount = filteredClients.size() / ROWS_PER_PAGE + 1;
         if (pagination.getPageCount() == newPageCount) {
             createPage(0);
         } else {
@@ -171,8 +171,8 @@ public class SearchClientsController extends SubController {
      */
     private Node createPage(int pageIndex) {
         int fromIndex = pageIndex * ROWS_PER_PAGE;
-        int toIndex = Math.min(fromIndex + ROWS_PER_PAGE, filteredPeople.size());
-        observableClientList.setAll(sortedPeople.subList(fromIndex, toIndex));
+        int toIndex = Math.min(fromIndex + ROWS_PER_PAGE, filteredClients.size());
+        observableClientList.setAll(sortedClients.subList(fromIndex, toIndex));
         return new Pane();
     }
 }

@@ -35,24 +35,24 @@ public class PrintAllInfoTest {
 
     @Test
     public void printallinfo_no_clients() {
-        ArrayList<Client> people = new ArrayList<>();
+        ArrayList<Client> clients = new ArrayList<>();
 
-        when(spyClientManager.getPeople()).thenReturn(people);
+        when(spyClientManager.getClients()).thenReturn(clients);
         String[] inputs = {};
 
         CommandLine.run(spyPrintAllInfo, System.out, inputs);
 
-        assertThat(outContent.toString(), containsString("No people exist"));
+        assertThat(outContent.toString(), containsString("No clients exist"));
     }
 
     @Test
     public void printallinfo_single_client() {
         Client client = new Client("First", "mid", "Last", LocalDate.of(1970, 1, 1), 1);
 
-        ArrayList<Client> people = new ArrayList<>();
-        people.add(client);
+        ArrayList<Client> clients = new ArrayList<>();
+        clients.add(client);
 
-        when(spyClientManager.getPeople()).thenReturn(people);
+        when(spyClientManager.getClients()).thenReturn(clients);
         String[] inputs = {};
 
         CommandLine.run(spyPrintAllInfo, System.out, inputs);
@@ -66,11 +66,11 @@ public class PrintAllInfoTest {
         Client client = new Client("First", "mid", "Last", LocalDate.of(1970, 1, 1), 1);
         Client client2 = new Client("FirstTwo", null, "LastTwo", LocalDate.of(1971, 2, 2), 2);
 
-        ArrayList<Client> people = new ArrayList<>();
-        people.add(client);
-        people.add(client2);
+        ArrayList<Client> clients = new ArrayList<>();
+        clients.add(client);
+        clients.add(client2);
 
-        when(spyClientManager.getPeople()).thenReturn(people);
+        when(spyClientManager.getClients()).thenReturn(clients);
         String[] inputs = {};
 
         CommandLine.run(spyPrintAllInfo, System.out, inputs);

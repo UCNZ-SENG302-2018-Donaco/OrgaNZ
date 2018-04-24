@@ -35,14 +35,14 @@ public class Save implements Runnable {
 
     @Override
     public void run() {
-        ArrayList<Client> people = manager.getPeople();
-        if (people.size() == 0) {
-            System.out.println("No people exist, nothing to save");
+        ArrayList<Client> clients = manager.getClients();
+        if (clients.size() == 0) {
+            System.out.println("No clients exist, nothing to save");
             return;
         }
         try {
             JSONConverter.saveToFile(new File("savefile.json"));
-            System.out.println(String.format("Saved %s users to file", manager.getPeople().size()));
+            System.out.println(String.format("Saved %s users to file", manager.getClients().size()));
             HistoryItem save = new HistoryItem("SAVE", "The systems current state was saved.");
             JSONConverter.updateHistory(save, "action_history.json");
         } catch (IOException e) {

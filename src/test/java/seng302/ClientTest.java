@@ -7,14 +7,12 @@ import static org.junit.Assert.fail;
 
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.ArrayList;
 
 import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 public class ClientTest {
 
@@ -120,7 +118,7 @@ public class ClientTest {
     public void noRequestCurrentOrganRequestTest2() {
         Organ o = Organ.HEART;
         TransplantRequest t = new TransplantRequest(o, false);
-        client.transplantRequestsUpdate(t);
+        client.addTransplantRequest(t);
         assertEquals(false, client.currentOrganRequest());
     }
 
@@ -128,7 +126,7 @@ public class ClientTest {
     public void validCurrentOrganRequest() {
         Organ o = Organ.HEART;
         TransplantRequest t = new TransplantRequest(o, true);
-        client.transplantRequestsUpdate(t);
+        client.addTransplantRequest(t);
         assertEquals(true, client.currentOrganRequest());
     }
 

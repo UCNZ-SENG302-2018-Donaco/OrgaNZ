@@ -32,7 +32,7 @@ public class ModifyClientActionTest {
         ModifyClientAction action = new ModifyClientAction(baseClient);
         action.addChange("setFirstName", baseClient.getFirstName(), "New");
         invoker.execute(action);
-        assertEquals("New", manager.getPeople().get(0).getFirstName());
+        assertEquals("New", manager.getClients().get(0).getFirstName());
     }
 
     @Test
@@ -41,7 +41,7 @@ public class ModifyClientActionTest {
         action.addChange("setFirstName", baseClient.getFirstName(), "New");
         invoker.execute(action);
         invoker.undo();
-        assertEquals("First", manager.getPeople().get(0).getFirstName());
+        assertEquals("First", manager.getClients().get(0).getFirstName());
     }
 
     @Test
@@ -50,8 +50,8 @@ public class ModifyClientActionTest {
         action.addChange("setFirstName", baseClient.getFirstName(), "New");
         action.addChange("setGender", baseClient.getGender(), Gender.FEMALE);
         invoker.execute(action);
-        assertEquals("New", manager.getPeople().get(0).getFirstName());
-        assertEquals(Gender.FEMALE, manager.getPeople().get(0).getGender());
+        assertEquals("New", manager.getClients().get(0).getFirstName());
+        assertEquals(Gender.FEMALE, manager.getClients().get(0).getGender());
     }
 
     @Test
@@ -61,8 +61,8 @@ public class ModifyClientActionTest {
         action.addChange("setGender", baseClient.getGender(), Gender.FEMALE);
         invoker.execute(action);
         invoker.undo();
-        assertEquals("First", manager.getPeople().get(0).getFirstName());
-        assertEquals(Gender.UNSPECIFIED, manager.getPeople().get(0).getGender());
+        assertEquals("First", manager.getClients().get(0).getFirstName());
+        assertEquals(Gender.UNSPECIFIED, manager.getClients().get(0).getGender());
     }
 
     @Test(expected = NoSuchMethodException.class)

@@ -32,12 +32,12 @@ public class PrintAllOrgan implements Runnable {
 
     @Override
     public void run() {
-        ArrayList<Client> people = manager.getPeople();
+        ArrayList<Client> clients = manager.getClients();
 
-        if (people.size() == 0) {
-            System.out.println("No people exist");
+        if (clients.size() == 0) {
+            System.out.println("No clients exist");
         } else {
-            for (Client client : people) {
+            for (Client client : clients) {
                 System.out.println(client.getClientOrganStatusString("donations"));
             }
             HistoryItem printAllOrgan = new HistoryItem("PRINT ALL ORGAN", "All client organ information printed.");

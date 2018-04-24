@@ -423,7 +423,7 @@ public class Client {
         return transplantRequests;
     }
 
-    public void transplantRequestsUpdate(TransplantRequest transplantRequest) {
+    public void addTransplantRequest(TransplantRequest transplantRequest) {
         transplantRequests.add(transplantRequest);
     }
 

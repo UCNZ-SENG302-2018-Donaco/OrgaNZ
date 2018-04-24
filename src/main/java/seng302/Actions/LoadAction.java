@@ -29,11 +29,11 @@ public class LoadAction implements Action {
 
     @Override
     public void execute() {
-        manager.setPeople(newState);
+        manager.setClients(newState);
     }
 
     @Override
     public void unExecute() {
-        manager.setPeople(oldState);
+        manager.setClients(oldState);
     }
 }

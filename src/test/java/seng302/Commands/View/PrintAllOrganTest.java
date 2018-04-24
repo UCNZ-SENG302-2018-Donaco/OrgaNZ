@@ -38,14 +38,14 @@ public class PrintAllOrganTest {
 
     @Test
     public void printallorgan_no_clients() {
-        ArrayList<Client> people = new ArrayList<>();
+        ArrayList<Client> clients = new ArrayList<>();
 
-        when(spyClientManager.getPeople()).thenReturn(people);
+        when(spyClientManager.getClients()).thenReturn(clients);
         String[] inputs = {};
 
         CommandLine.run(spyPrintAllOrgan, System.out, inputs);
 
-        assertThat(outContent.toString(), containsString("No people exist"));
+        assertThat(outContent.toString(), containsString("No clients exist"));
     }
 
     @Test
@@ -54,10 +54,10 @@ public class PrintAllOrganTest {
         client.setOrganDonationStatus(Organ.LIVER, true);
         client.setOrganDonationStatus(Organ.KIDNEY, true);
 
-        ArrayList<Client> people = new ArrayList<>();
-        people.add(client);
+        ArrayList<Client> clients = new ArrayList<>();
+        clients.add(client);
 
-        when(spyClientManager.getPeople()).thenReturn(people);
+        when(spyClientManager.getClients()).thenReturn(clients);
         String[] inputs = {};
 
         CommandLine.run(spyPrintAllOrgan, System.out, inputs);
@@ -75,12 +75,12 @@ public class PrintAllOrganTest {
         client.setOrganDonationStatus(Organ.KIDNEY, true);
         client2.setOrganDonationStatus(Organ.CONNECTIVE_TISSUE, true);
 
-        ArrayList<Client> people = new ArrayList<>();
-        people.add(client);
-        people.add(client2);
-        people.add(client3);
+        ArrayList<Client> clients = new ArrayList<>();
+        clients.add(client);
+        clients.add(client2);
+        clients.add(client3);
 
-        when(spyClientManager.getPeople()).thenReturn(people);
+        when(spyClientManager.getClients()).thenReturn(clients);
         String[] inputs = {};
 
         CommandLine.run(spyPrintAllOrgan, System.out, inputs);
