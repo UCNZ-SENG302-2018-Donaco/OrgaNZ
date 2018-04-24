@@ -1,4 +1,4 @@
-package seng302.Actions.Donor;
+package seng302.Actions.Client;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -6,7 +6,7 @@ import static org.junit.Assert.assertTrue;
 import java.time.LocalDate;
 
 import seng302.Actions.Action;
-import seng302.Donor;
+import seng302.Client;
 import seng302.MedicationRecord;
 
 import org.junit.Before;
@@ -14,37 +14,37 @@ import org.junit.Test;
 
 public class DeleteMedicationRecordActionTest {
 
-    private Donor testDonor;
+    private Client testClient;
     private MedicationRecord recordToDelete;
 
     @Before
-    public void resetDonor() {
-        testDonor = new Donor();
+    public void resetClient() {
+        testClient = new Client();
         recordToDelete = new MedicationRecord(
                 "Med C",
                 LocalDate.of(2000, 1, 1),
                 LocalDate.of(2010, 5, 6));
-        testDonor.addMedicationRecord(recordToDelete);
+        testClient.addMedicationRecord(recordToDelete);
     }
 
     @Test
     public void executeTest() {
-        assertTrue(testDonor.getPastMedications().contains(recordToDelete));
+        assertTrue(testClient.getPastMedications().contains(recordToDelete));
 
-        Action action = new DeleteMedicationRecordAction(testDonor, recordToDelete);
+        Action action = new DeleteMedicationRecordAction(testClient, recordToDelete);
         action.execute();
-        assertFalse(testDonor.getPastMedications().contains(recordToDelete));
+        assertFalse(testClient.getPastMedications().contains(recordToDelete));
     }
 
     @Test
     public void unExecuteTest() {
-        assertTrue(testDonor.getPastMedications().contains(recordToDelete));
+        assertTrue(testClient.getPastMedications().contains(recordToDelete));
 
-        Action action = new DeleteMedicationRecordAction(testDonor, recordToDelete);
+        Action action = new DeleteMedicationRecordAction(testClient, recordToDelete);
         action.execute();
-        assertFalse(testDonor.getPastMedications().contains(recordToDelete));
+        assertFalse(testClient.getPastMedications().contains(recordToDelete));
 
         action.unExecute();
-        assertTrue(testDonor.getPastMedications().contains(recordToDelete));
+        assertTrue(testClient.getPastMedications().contains(recordToDelete));
     }
 }

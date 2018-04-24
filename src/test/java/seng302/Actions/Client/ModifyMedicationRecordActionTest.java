@@ -1,4 +1,4 @@
-package seng302.Actions.Donor;
+package seng302.Actions.Client;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;

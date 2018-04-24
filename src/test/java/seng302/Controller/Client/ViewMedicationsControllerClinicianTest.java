@@ -1,4 +1,4 @@
-package seng302.Controller.Donor;
+package seng302.Controller.Client;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertEquals;
@@ -17,7 +17,7 @@ import javafx.scene.input.KeyCode;
 
 import seng302.Clinician;
 import seng302.Controller.ControllerTest;
-import seng302.Donor;
+import seng302.Client;
 import seng302.MedicationRecord;
 import seng302.State.Session.UserType;
 import seng302.State.State;
@@ -51,7 +51,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
     };
 
     private Clinician testClinician = new Clinician("A", "B", "C", "D", Region.UNSPECIFIED, 0, "E");
-    private Donor testDonor = new Donor();
+    private Client testClient = new Client();
 
     @Override
     protected Page getPage() {
@@ -63,25 +63,25 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
         State.init();
         State.login(UserType.CLINICIAN, testClinician);
         mainController.setWindowContext(new WindowContext.WindowContextBuilder()
-                .setAsClinViewDonorWindow()
-                .viewDonor(testDonor)
+                .setAsClinViewClientWindow()
+                .viewClient(testClient)
                 .build());
-        resetTestDonorMedicationHistory();
+        resetTestClientMedicationHistory();
     }
 
     @Before
-    public void resetTestDonorMedicationHistory() {
-        for (MedicationRecord record : testDonor.getPastMedications()) {
-            testDonor.deleteMedicationRecord(record);
+    public void resetTestClientMedicationHistory() {
+        for (MedicationRecord record : testClient.getPastMedications()) {
+            testClient.deleteMedicationRecord(record);
         }
-        for (MedicationRecord record : testDonor.getCurrentMedications()) {
-            testDonor.deleteMedicationRecord(record);
+        for (MedicationRecord record : testClient.getCurrentMedications()) {
+            testClient.deleteMedicationRecord(record);
         }
         for (MedicationRecord record : testPastMedicationRecords) {
-            testDonor.addMedicationRecord(record);
+            testClient.addMedicationRecord(record);
         }
         for (MedicationRecord record : testCurrentMedicationRecords) {
-            testDonor.addMedicationRecord(record);
+            testClient.addMedicationRecord(record);
         }
     }
 
@@ -170,7 +170,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
 
         verifyThat("#pastMedicationsView", not(hasListCell(toBeDeleted)));
         verifyThat("#currentMedicationsView", not(hasListCell(toBeDeleted)));
-        assertTrue(!testDonor.getPastMedications().contains(toBeDeleted));
-        assertTrue(!testDonor.getCurrentMedications().contains(toBeDeleted));
+        assertTrue(!testClient.getPastMedications().contains(toBeDeleted));
+        assertTrue(!testClient.getCurrentMedications().contains(toBeDeleted));
     }
 }

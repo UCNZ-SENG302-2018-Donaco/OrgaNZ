@@ -93,9 +93,9 @@ public class ViewMedicationsController extends SubController {
     /**
      * Sets up the page using the MainController given.
      * - Loads the sidebar.
-     * - Checks if the session login type is a donor or a clinician, and sets the viewed donor appropriately.
-     * - Refreshes the medication list views to set initial state based on the viewed donor.
-     * - Checks if the logged in user is a donor, and if so, makes the page non-editable.
+     * - Checks if the session login type is a client or a clinician, and sets the viewed client appropriately.
+     * - Refreshes the medication list views to set initial state based on the viewed client.
+     * - Checks if the logged in user is a client, and if so, makes the page non-editable.
      * @param mainController The MainController for the window this page is loaded on.
      */
     @Override

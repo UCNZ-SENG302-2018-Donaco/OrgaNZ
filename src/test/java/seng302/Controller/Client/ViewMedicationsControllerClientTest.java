@@ -1,4 +1,4 @@
-package seng302.Controller.Donor;
+package seng302.Controller.Client;
 
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.matcher.base.NodeMatchers.isDisabled;
@@ -8,7 +8,7 @@ import static org.testfx.util.NodeQueryUtils.isVisible;
 import java.time.LocalDate;
 
 import seng302.Controller.ControllerTest;
-import seng302.Donor;
+import seng302.Client;
 import seng302.MedicationRecord;
 import seng302.State.Session.UserType;
 import seng302.State.State;
@@ -18,7 +18,7 @@ import seng302.Utilities.View.WindowContext;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ViewMedicationsControllerDonorTest extends ControllerTest {
+public class ViewMedicationsControllerClientTest extends ControllerTest {
 
     private static final MedicationRecord[] testPastMedicationRecords = {
             new MedicationRecord(
@@ -40,7 +40,7 @@ public class ViewMedicationsControllerDonorTest extends ControllerTest {
             )
     };
 
-    private Donor testDonor = new Donor();
+    private Client testClient = new Client();
 
     @Override
     protected Page getPage() {
@@ -50,24 +50,24 @@ public class ViewMedicationsControllerDonorTest extends ControllerTest {
     @Override
     protected void initState() {
         State.init();
-        State.login(UserType.DONOR, testDonor);
+        State.login(UserType.CLIENT, testClient);
         mainController.setWindowContext(WindowContext.defaultContext());
-        resetTestDonorMedicationHistory();
+        resetTestClientMedicationHistory();
     }
 
     @Before
-    public void resetTestDonorMedicationHistory() {
-        for (MedicationRecord record : testDonor.getPastMedications()) {
-            testDonor.deleteMedicationRecord(record);
+    public void resetTestClientMedicationHistory() {
+        for (MedicationRecord record : testClient.getPastMedications()) {
+            testClient.deleteMedicationRecord(record);
         }
-        for (MedicationRecord record : testDonor.getCurrentMedications()) {
-            testDonor.deleteMedicationRecord(record);
+        for (MedicationRecord record : testClient.getCurrentMedications()) {
+            testClient.deleteMedicationRecord(record);
         }
         for (MedicationRecord record : testPastMedicationRecords) {
-            testDonor.addMedicationRecord(record);
+            testClient.addMedicationRecord(record);
         }
         for (MedicationRecord record : testCurrentMedicationRecords) {
-            testDonor.addMedicationRecord(record);
+            testClient.addMedicationRecord(record);
         }
     }
 
