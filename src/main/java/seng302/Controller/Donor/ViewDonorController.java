@@ -98,6 +98,11 @@ public class ViewDonorController extends SubController {
         searchDonor();
     }
 
+    @Override
+    public void refresh() {
+        searchDonor();
+    }
+
     /**
      * Searches for a donor based off the id number supplied in the text field. The users fields will be displayed if
      * this user exists, otherwise an error message will display.

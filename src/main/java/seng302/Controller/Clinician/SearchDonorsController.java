@@ -148,7 +148,7 @@ public class SearchDonorsController extends SubController {
      * Upon filtering update, refresh the filters to the new string and update pagination
      * Every refresh triggers the pagination to update and go to page zero
      */
-    private void refresh() {
+    public void refresh() {
         String searchText = searchBox.getText();
         if (searchText == null || searchText.length() == 0) {
             filteredDonors.setPredicate(donor -> true);

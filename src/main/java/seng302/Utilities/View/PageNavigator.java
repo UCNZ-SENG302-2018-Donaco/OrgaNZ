@@ -32,6 +32,7 @@ public class PageNavigator {
             Node loadedPage = loader.load();
             SubController subController = loader.getController();
             subController.setup(controller);
+            controller.setSubController(subController);
             controller.setPage(page, loadedPage);
         } catch (IOException e) {
             showAlert(Alert.AlertType.ERROR, "Could not load page: " + page.toString(),
@@ -44,7 +45,7 @@ public class PageNavigator {
      */
     public static void refreshAllWindows() {
         for (MainController controller : State.getMainControllers()) {
-            controller.refreshTitleAndSidebar();
+            controller.refresh();
         }
     }
 

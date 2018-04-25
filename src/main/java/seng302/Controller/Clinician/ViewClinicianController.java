@@ -75,6 +75,11 @@ public class ViewClinicianController extends SubController {
         mainController.loadSidebar(sidebarPane);
     }
 
+    @Override
+    public void refresh() {
+        loadClinicianData();
+    }
+
     /**
      * Loads all of the currently logged in Clinician's details, except for their password.
      */

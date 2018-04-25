@@ -117,6 +117,11 @@ public class ViewMedicationsController extends SubController {
         mainController.setTitle("Medication history: " + donor.getFullName());
     }
 
+    @Override
+    public void refresh() {
+        refreshMedicationLists();
+    }
+
     /**
      * Refreshes the past/current medication list views from the donor's properties.
      */

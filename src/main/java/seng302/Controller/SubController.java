@@ -26,4 +26,6 @@ abstract public class SubController {
     public MainController getMainController() {
         return mainController;
     }
+
+    public void refresh(){}
 }

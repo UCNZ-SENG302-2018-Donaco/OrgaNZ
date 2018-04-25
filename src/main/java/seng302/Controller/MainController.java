@@ -24,6 +24,7 @@ public class MainController {
     private WindowContext windowContext;
     private String windowTitle;
     private SidebarController sidebarController;
+    private SubController subController;
 
     /**
      * Holder of a switchable page.
@@ -91,11 +92,16 @@ public class MainController {
         }
     }
 
+    public void setSubController(SubController subController) {
+        this.subController = subController;
+    }
+
     /**
-     * Refreshes the title and sidebar. Does not refresh the main section
+     * Refreshes all current windows
      */
-    public void refreshTitleAndSidebar() {
+    public void refresh() {
         updateTitle();
+        subController.refresh();
         if (sidebarController != null) {
             sidebarController.refresh();
         }

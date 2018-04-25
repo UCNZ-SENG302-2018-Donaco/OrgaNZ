@@ -90,17 +90,8 @@ public class RegisterOrgansController extends SubController {
         updateUserID();
     }
 
-    /**
-     * Updates the current donor to the one specified in the userID field, and populates with their info.
-     */
-    @FXML
-    private void updateUserID() {
-        try {
-            donor = manager.getDonorByID(Integer.parseInt(fieldUserID.getText()));
-        } catch (NumberFormatException exc) {
-            donor = null;
-        }
-
+    @Override
+    public void refresh() {
         if (donor != null) {
             setCheckBoxesEnabled();
             for (Map.Entry<Organ, CheckBox> entry : organCheckBoxes.entrySet()) {
@@ -111,6 +102,19 @@ public class RegisterOrgansController extends SubController {
         } else {
             setCheckboxesDisabled();
         }
+    }
+
+    /**
+     * Updates the current donor to the one specified in the userID field, and populates with their info.
+     */
+    @FXML
+    private void updateUserID() {
+        try {
+            donor = manager.getDonorByID(Integer.parseInt(fieldUserID.getText()));
+        } catch (NumberFormatException exc) {
+            donor = null;
+        }
+        refresh();
     }
 
     /**
