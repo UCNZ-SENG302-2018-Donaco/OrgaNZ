@@ -2,8 +2,10 @@ package seng302.State;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 import seng302.Client;
+import seng302.TransplantRequest;
 
 /**
  * The class to handle the Client inputs, including adding,
@@ -110,4 +112,33 @@ public class ClientManager {
         return id;
     }
 
+    /**
+     * Returns a waiting list of all transplant requests for all clients
+     * @return List of TransplantRequests for all clients
+     */
+    public List<TransplantRequest> getTransplantWaitingList() {
+        List<TransplantRequest> transplantWaitingList = new ArrayList<>();
+
+        for (Client client: clients) {
+            for (TransplantRequest transplantRequest: client.getTransplantRequests()) {
+                if (transplantRequest.getCurrentRequest()) {
+                    transplantWaitingList.add(transplantRequest);
+                }
+            }
+        }
+        return transplantWaitingList;
+    }
+
+    /**
+     * Gets all transplant requests, regardless of whether or not they are current
+     * @return List of all transplant requests
+     */
+    public List<TransplantRequest> getAllTransplantRequests() {
+        List<TransplantRequest> transplantRequests = new ArrayList<>();
+
+        for (Client client: clients) {
+            transplantRequests.addAll(client.getTransplantRequests());
+        }
+        return transplantRequests;
+    }
 }
