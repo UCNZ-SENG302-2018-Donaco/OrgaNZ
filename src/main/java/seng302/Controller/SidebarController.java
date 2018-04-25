@@ -28,8 +28,8 @@ import seng302.Utilities.View.PageNavigator;
 public class SidebarController extends SubController {
 
     @FXML
-    private Button viewClientButton, registerOrganDonationButton, viewMedicationsButton, viewClinicianButton, searchButton,
-    logoutButton, requestOrganDonationButton;
+    private Button viewClientButton, registerOrganDonationButton, viewMedicationsButton, viewClinicianButton,
+            searchButton, transplantsButton, logoutButton, requestOrganDonationButton;
 
     private ActionInvoker invoker;
     private Session session;
@@ -50,6 +50,8 @@ public class SidebarController extends SubController {
         if (userType == Session.UserType.CLIENT || windowContext.isClinViewClientWindow()) {
             hideButton(viewClinicianButton);
             hideButton(searchButton);
+            hideButton(transplantsButton);
+
         } else if (userType == Session.UserType.CLINICIAN) {
             hideButton(viewClientButton);
             hideButton(registerOrganDonationButton);
@@ -133,12 +135,21 @@ public class SidebarController extends SubController {
     }
 
     /**
-     * Redirects the GUI to the Register Organs page.
+     * Redirects the GUI to the Search clients page.
      * @param event When the register organs button is clicked.
      */
     @FXML
     private void goToSearch(ActionEvent event) {
         PageNavigator.loadPage(Page.SEARCH, mainController);
+    }
+
+    /**
+     * Redirects the GUI to the Transplants page.
+     * @param event When the register organs button is clicked.
+     */
+    @FXML
+    private void goToTransplants(ActionEvent event) {
+        PageNavigator.loadPage(Page.TRANSPLANTS, mainController);
     }
 
     /**

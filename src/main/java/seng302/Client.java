@@ -424,6 +424,7 @@ public class Client {
     }
 
     public void addTransplantRequest(TransplantRequest transplantRequest) {
+        transplantRequest.setClient(this);
         transplantRequests.add(transplantRequest);
     }
 
