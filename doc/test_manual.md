@@ -127,8 +127,6 @@ the test passes. Otherwise it fails.
 
 
 
-## Story 16
+## Story 21
 
-
-
-## Story 17
+Uncomment the two lines marked `DELETE THIS LINE` in `ViewMedicationsControllerClinicianTest`, then run all the tests in that file (not in headless mode).
