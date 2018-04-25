@@ -15,28 +15,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 15
+        "day": 25
       },
       "time": {
-        "hour": 21,
-        "minute": 4,
-        "second": 30,
-        "nano": 637000000
+        "hour": 20,
+        "minute": 42,
+        "second": 42,
+        "nano": 628000000
       }
     },
     "organStatus": {
-      "KIDNEY": false,
-      "BONE_MARROW": false,
-      "CORNEA": false,
-      "CONNECTIVE_TISSUE": false,
-      "HEART": false,
-      "INTESTINE": false,
-      "SKIN": false,
       "PANCREAS": false,
+      "SKIN": false,
       "BONE": false,
-      "LIVER": false,
+      "BONE_MARROW": false,
       "MIDDLE_EAR": false,
-      "LUNG": false
+      "HEART": false,
+      "KIDNEY": false,
+      "LIVER": false,
+      "INTESTINE": false,
+      "CORNEA": false,
+      "LUNG": false,
+      "CONNECTIVE_TISSUE": false
     },
     "medicationHistory": [],
     "updateLog": []
