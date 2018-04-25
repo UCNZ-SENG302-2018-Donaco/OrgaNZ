@@ -286,7 +286,6 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
         release(KeyCode.ENTER);
     }
 
-/* DELETE THE LINE
     @Test
     public void viewInteractionsBetweenThreeDrugsTest() {
         MedicationRecord drug0 = testCurrentMedicationRecords[0];
@@ -477,5 +476,4 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
         press(KeyCode.ENTER); // Close the dialog
         release(KeyCode.ENTER);
     }
-AND THIS LINE*/
 }
