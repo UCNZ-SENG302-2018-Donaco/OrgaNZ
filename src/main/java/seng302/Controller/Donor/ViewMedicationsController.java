@@ -29,10 +29,12 @@ import seng302.Actions.Donor.ModifyMedicationRecordAction;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
 import seng302.Donor;
+import seng302.HistoryItem;
 import seng302.MedicationRecord;
 import seng302.State.Session;
 import seng302.State.State;
 import seng302.Utilities.Exceptions.BadGatewayException;
+import seng302.Utilities.JSONConverter;
 import seng302.Utilities.View.PageNavigator;
 import seng302.Utilities.Web.DrugInteractionsHandler;
 import seng302.Utilities.Web.MedActiveIngredientsHandler;
@@ -395,6 +397,9 @@ public class ViewMedicationsController extends SubController {
                         sb.append(interaction).append("\n");
                     }
                     alert.setContentText(sb.toString());
+                    HistoryItem save = new HistoryItem("MEDICATION_COMPARE_SUCCESS", String.format("Medication %s and %s were compared. %s",
+                            medication1, medication2, sb.append(interactions)));
+                    JSONConverter.updateHistory(save, "action_history.json");
                 } else if (interactions.get(0).equals(BAD_NAME)) {
                     // Invalid drug name(s)
                     alert.setAlertType(AlertType.ERROR);
@@ -410,9 +415,13 @@ public class ViewMedicationsController extends SubController {
                     // only element in list is SUCCESSFUL tag
                     alert.setAlertType(AlertType.ERROR);
                     alert.setContentText("No results found for " + medication1 + " and " + medication2);
+                    HistoryItem save = new HistoryItem("MEDICATION_COMPARE_NULL", String.format("Medication %s and %s were compared. No results found",
+                            medication1, medication2));
+                    JSONConverter.updateHistory(save, "action_history.json");
                 }
                 PageNavigator.resizeAlert(alert);
             });
+
 
             new Thread(task).start();
         }
