@@ -7,12 +7,15 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.text.Text;
 
 import seng302.Client;
 import seng302.Controller.MainController;
@@ -50,6 +53,10 @@ public class TransplantsController extends SubController {
     @FXML
     private Pagination pagination;
 
+    @FXML
+    private Text displayingXToYOfZText;
+
+
     private ObservableList<TransplantRequest> observableTransplantList = FXCollections.observableArrayList();
     private SortedList<TransplantRequest> sortedTransplants;
 
@@ -76,9 +83,10 @@ public class TransplantsController extends SubController {
         sortedTransplants.comparatorProperty().bind(tableView.comparatorProperty());
 
         //Set initial pagination
-        pagination.setPageCount(sortedTransplants.size() / ROWS_PER_PAGE + 1);/*
+        double numberOfPages = Math.ceil((double) sortedTransplants.size() / (double) ROWS_PER_PAGE);
+        pagination.setPageCount((int) numberOfPages);
         //On pagination update call createPage
-        pagination.setPageFactory(this::createPage);*/
+        pagination.setPageFactory(this::createPage);
 
         //Initialize the observable list to all clients
         observableTransplantList.setAll(sortedTransplants);
@@ -99,27 +107,7 @@ public class TransplantsController extends SubController {
         regionCol.setCellValueFactory(new PropertyValueFactory<>("clientRegion"));
 
         tableView.getColumns().setAll(clientCol, organCol, regionCol, dateCol);
-        /*
 
-        tableView.setRowFactory(tv -> new TableRow<Client>() {
-            private Tooltip tooltip = new Tooltip();
-
-            @Override
-            public void updateItem(Client client, boolean empty) {
-                super.updateItem(client, empty);
-                if (client == null) {
-                    setTooltip(null);
-                } else {
-                    tooltip.setText(String.format("%s %s with blood type %s. Donating: %s",
-                            client.getFirstName(),
-                            client.getLastName(),
-                            client.getBloodType(),
-                            client.getOrganStatusString("donations")));
-                    setTooltip(tooltip);
-                }
-            }
-        });
-*/
         tableView.setOnMouseClicked(mouseEvent -> {
             if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2) {
                 Client client = tableView.getSelectionModel().getSelectedItem().getClient();
@@ -136,6 +124,20 @@ public class TransplantsController extends SubController {
             }
         });
 
+    }
+
+    /**
+     * Upon pagination, update the table to show the correct items
+     * @param pageIndex The page we're now on (starts at 0)
+     * @return An empty pane as pagination requires a non null return. Not used.
+     */
+    private Node createPage(int pageIndex) {
+        int fromIndex = pageIndex * ROWS_PER_PAGE;
+        int toIndex = Math.min(fromIndex + ROWS_PER_PAGE, sortedTransplants.size());
+        observableTransplantList.setAll(sortedTransplants.subList(fromIndex, toIndex));
+        displayingXToYOfZText.setText(String.format("Displaying %d-%d of %d", fromIndex+1, toIndex,
+                sortedTransplants.size()));
+        return new Pane();
     }
 
 }

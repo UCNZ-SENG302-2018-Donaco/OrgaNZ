@@ -8,6 +8,7 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
 
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.Clinician.TransplantsController">
    <children>
@@ -32,7 +33,12 @@
                   </TableView>
                </center>
                <bottom>
-                  <Pagination fx:id="pagination" prefHeight="70.0" prefWidth="200.0" BorderPane.alignment="CENTER" />
+                  <VBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <Pagination fx:id="pagination" prefHeight="70.0" prefWidth="200.0" />
+                        <Text fx:id="displayingXToYOfZText" strokeType="OUTSIDE" strokeWidth="0.0" text="Displaying x-y of z" />
+                     </children>
+                  </VBox>
                </bottom>
             </BorderPane>
          </items>

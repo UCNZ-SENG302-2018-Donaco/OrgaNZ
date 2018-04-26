@@ -83,7 +83,8 @@ public class SearchClientsController extends SubController {
         sortedClients.comparatorProperty().bind(tableView.comparatorProperty());
 
         //Set initial pagination
-        pagination.setPageCount(sortedClients.size() / ROWS_PER_PAGE + 1);
+        double numberOfPages = Math.ceil((double) sortedClients.size() / (double) ROWS_PER_PAGE);
+        pagination.setPageCount((int) numberOfPages);
         //On pagination update call createPage
         pagination.setPageFactory(this::createPage);
 
