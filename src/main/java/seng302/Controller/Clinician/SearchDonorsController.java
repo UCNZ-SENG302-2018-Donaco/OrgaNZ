@@ -160,7 +160,7 @@ public class SearchDonorsController extends SubController {
         //If the pagination count wont change, force a refresh of the page, if it will, change it and that will trigger the update.
         int newPageCount = filteredDonors.size() / ROWS_PER_PAGE + 1;
         if (pagination.getPageCount() == newPageCount) {
-            createPage(0);
+            createPage(pagination.getCurrentPageIndex());
         } else {
             pagination.setPageCount(newPageCount);
         }
