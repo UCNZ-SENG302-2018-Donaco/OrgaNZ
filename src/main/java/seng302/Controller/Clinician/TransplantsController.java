@@ -98,7 +98,7 @@ public class TransplantsController extends SubController {
         organCol.setCellValueFactory(new PropertyValueFactory<>("requestedOrgan"));
         regionCol.setCellValueFactory(new PropertyValueFactory<>("clientRegion"));
 
-        tableView.getColumns().setAll(dateCol, clientCol, organCol, regionCol);
+        tableView.getColumns().setAll(clientCol, organCol, regionCol, dateCol);
         /*
 
         tableView.setRowFactory(tv -> new TableRow<Client>() {
