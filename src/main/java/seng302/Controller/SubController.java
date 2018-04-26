@@ -3,16 +3,18 @@ package seng302.Controller;
 import seng302.Utilities.View.WindowContext;
 
 /**
- * A Controller that holds it's parent controller state
+ * An abstract class that can be extended by controller classes for individual pages and other subcontrollers within
+ * the GUI. It holds a reference to the {@link MainController} for the window it is in.
  */
-abstract public class SubController {
+public abstract class SubController {
 
     protected MainController mainController;
     protected WindowContext windowContext;
 
     /**
-     * Set the controllers parent controller
-     * @param mainController The MainController
+     * Method to setup the subcontroller after its window (main controller) has been assigned. Sets the
+     * subcontroller's {@link MainController}, associated with the window it is in, also sets the window context.
+     * @param mainController The main controller that defines which window this subcontroller belongs to.
      */
     public void setup(MainController mainController) {
         this.mainController = mainController;
@@ -20,12 +22,9 @@ abstract public class SubController {
     }
 
     /**
-     * Get the controllers parent controller
-     * @return The MainController
+     * Refreshes all data on this page, so that it may be updated if any changes have been made elsewhere.
+     * Implementation of this method is left to the discretion of each subcontroller, so by default this does nothing.
      */
-    public MainController getMainController() {
-        return mainController;
+    public void refresh() {
     }
-
-    public void refresh(){}
 }
