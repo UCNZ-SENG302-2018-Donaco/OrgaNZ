@@ -1,10 +1,14 @@
 package seng302.Controller.Donor;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
 import javafx.collections.FXCollections;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
@@ -24,6 +28,7 @@ import seng302.MedicationRecord;
 import seng302.State.Session;
 import seng302.State.State;
 import seng302.Utilities.View.PageNavigator;
+import seng302.Utilities.Web.MedActiveIngredientsHandler;
 import seng302.Utilities.Web.MedAutoCompleteHandler;
 
 import impl.org.controlsfx.autocompletion.AutoCompletionTextFieldBinding;
@@ -38,6 +43,7 @@ public class ViewMedicationsController extends SubController {
     private Donor donor;
     private List<String> lastResponse;
     private MedAutoCompleteHandler autoCompleteHandler;
+    private MedActiveIngredientsHandler activeIngredientsHandler;
 
     @FXML
     private Pane sidebarPane;
@@ -61,6 +67,10 @@ public class ViewMedicationsController extends SubController {
         invoker = State.getInvoker();
     }
 
+    public void setActiveIngredientsHandler(MedActiveIngredientsHandler handler) {
+        this.activeIngredientsHandler = handler;
+    }
+
     /**
      * Initializes the UI for this page.
      * - Starts the WebAPIHandler for drug name autocompletion.
@@ -70,10 +80,12 @@ public class ViewMedicationsController extends SubController {
     @FXML
     private void initialize() {
         autoCompleteHandler = new MedAutoCompleteHandler();
-        new AutoCompletionTextFieldBinding<>(newMedField, param -> {
+        new AutoCompletionTextFieldBinding<String>(newMedField, param -> {
             String input = param.getUserText().trim();
             return getSuggestions(input);
         });
+
+        activeIngredientsHandler = new MedActiveIngredientsHandler();
 
         pastMedicationsView.getSelectionModel().selectedItemProperty().addListener(
                 (observable) -> {
@@ -129,7 +141,6 @@ public class ViewMedicationsController extends SubController {
         pastMedicationsView.setItems(FXCollections.observableArrayList(donor.getPastMedications()));
         currentMedicationsView.setItems(FXCollections.observableArrayList(donor.getCurrentMedications()));
     }
-
 
     /**
      * Moves the MedicationRecord selected in the current medications list to the past medications list. Also:
@@ -208,21 +219,81 @@ public class ViewMedicationsController extends SubController {
     }
 
     /**
+     * Returns the currently selected record from the currently selected list view.
+     * @return The selected record, or null if no record is currently selected.
+     */
+    private MedicationRecord getSelectedRecord() {
+        if (selectedListView != null) {
+            return selectedListView.getSelectionModel().getSelectedItem();
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Deletes the currently selected MedicationRecord. Will determine which of the list views is currently
      * selected, then delete from the appropriate one. If neither list view is currently selected, this will have no
      * effect.
      */
     @FXML
     private void deleteMedication() {
-        if (selectedListView != null) {
-            MedicationRecord record = selectedListView.getSelectionModel().getSelectedItem();
-            if (record != null) {
-                DeleteMedicationRecordAction action = new DeleteMedicationRecordAction(donor, record);
+        MedicationRecord record = getSelectedRecord();
+        if (record != null) {
+            DeleteMedicationRecordAction action = new DeleteMedicationRecordAction(donor, record);
 
-                invoker.execute(action);
-                PageNavigator.refreshAllWindows();
-                refreshMedicationLists();
-            }
+            invoker.execute(action);
+            PageNavigator.refreshAllWindows();
+            refreshMedicationLists();
+        }
+    }
+
+    /**
+     * Generates a pop-up with a list of active ingredients.
+     */
+    @FXML
+    private void viewActiveIngredients() {
+        MedicationRecord medicationRecord = getSelectedRecord();
+
+        if (medicationRecord != null) {
+            String medicationName = medicationRecord.getMedicationName();
+            // Generate initial alert popup
+            String alertTitle = "Active ingredients in " + medicationName;
+            Alert alert = PageNavigator.generateAlert(AlertType.INFORMATION, alertTitle, "Loading...");
+            alert.show();
+
+            Task<List<String>> task = new Task<List<String>>() {
+                @Override
+                public List<String> call() throws IOException {
+                    return activeIngredientsHandler.getActiveIngredients(medicationName);
+                }
+            };
+
+            task.setOnSucceeded(e -> {
+                List<String> activeIngredients = task.getValue();
+                // If there are no results, display an error, else display the results.
+                // It is assumed that every valid drug has active ingredients, thus if an empty list is returned,
+                //     then the drug name wasn't valid.
+                if (activeIngredients.isEmpty()) {
+                    alert.setAlertType(AlertType.ERROR);
+                    alert.setContentText("No results found for " + medicationName);
+                } else {
+                    // Build list of active ingredients into a string, each ingredient on a new line
+                    StringBuilder sb = new StringBuilder();
+                    for (String ingredient : activeIngredients) {
+                        sb.append(ingredient).append("\n");
+                    }
+                    alert.setContentText(sb.toString());
+                }
+                PageNavigator.resizeAlert(alert);
+            });
+
+            task.setOnFailed(e -> {
+                alert.setAlertType(AlertType.ERROR);
+                alert.setContentText("Error loading results. Please try again later.");
+
+            });
+
+            new Thread(task).start();
         }
     }
 
