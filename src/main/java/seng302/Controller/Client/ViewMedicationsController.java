@@ -22,12 +22,11 @@ import seng302.Actions.ActionInvoker;
 import seng302.Actions.Client.AddMedicationRecordAction;
 import seng302.Actions.Client.DeleteMedicationRecordAction;
 import seng302.Actions.Client.ModifyMedicationRecordAction;
+import seng302.Client;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
-import seng302.Client;
 import seng302.MedicationRecord;
 import seng302.State.Session;
-import seng302.State.Session.UserType;
 import seng302.State.State;
 import seng302.Utilities.View.PageNavigator;
 import seng302.Utilities.Web.MedActiveIngredientsHandler;
@@ -232,7 +231,7 @@ public class ViewMedicationsController extends SubController {
     private void deleteMedication(ActionEvent event) {
         MedicationRecord record = getSelectedRecord();
         if (record != null) {
-            DeleteMedicationRecordAction action = new DeleteMedicationRecordAction(donor, record);
+            DeleteMedicationRecordAction action = new DeleteMedicationRecordAction(client, record);
 
             invoker.execute(action);
             refreshMedicationLists();
