@@ -9,7 +9,7 @@ import seng302.Utilities.JSONConverter;
 /**
  * A reversible action that will delete the given medication record from the given Donor's medication history.
  */
-public class DeleteMedicationRecordAction implements Action {
+public class DeleteMedicationRecordAction extends Action {
 
     private Donor donor;
     private MedicationRecord record;
@@ -25,7 +25,7 @@ public class DeleteMedicationRecordAction implements Action {
     }
 
     @Override
-    public void execute() {
+    protected void execute() {
         donor.deleteMedicationRecord(record);
         HistoryItem save = new HistoryItem("DELETE_MEDICATION",
                 String.format("Medication record for %s deleted from %s %s",
@@ -34,7 +34,19 @@ public class DeleteMedicationRecordAction implements Action {
     }
 
     @Override
-    public void unExecute() {
+    protected void unExecute() {
         donor.addMedicationRecord(record);
+    }
+
+    @Override
+    public String getExecuteText() {
+        return String.format("Removed record for medication '%s' from the history of donor %d: %s %s.",
+                record.getMedicationName(), donor.getUid(), donor.getFirstName(), donor.getLastName());
+    }
+
+    @Override
+    public String getUnexecuteText() {
+        return String.format("Re-added record for medication '%s' to the history of donor %d: %s %s.",
+                record.getMedicationName(), donor.getUid(), donor.getFirstName(), donor.getLastName());
     }
 }

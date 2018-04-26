@@ -43,8 +43,9 @@ public class Donor {
 
     private ArrayList<String> updateLog = new ArrayList<>();
 
-    public Donor() {
+    public Donor(int uid) {
         createdTimestamp = LocalDateTime.now();
+        this.uid = uid;
         initOrgans();
     }
 

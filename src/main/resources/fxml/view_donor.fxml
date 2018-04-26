@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<VBox prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+<VBox prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
   fx:controller="seng302.Controller.Donor.ViewDonorController">
   <children>
     <SplitPane dividerPositions="0.29797979797979796" VBox.vgrow="ALWAYS">
@@ -88,8 +88,8 @@
                           GridPane.columnIndex="3" GridPane.rowIndex="3"/>
                         <TextField fx:id="address" layoutX="530.0" layoutY="245.0" prefHeight="30.0"
                           GridPane.columnIndex="3" GridPane.rowIndex="4"/>
-                        <Button mnemonicParsing="false" onAction="#viewOrgansForDonor" text="Organs"
-                          GridPane.columnIndex="2" GridPane.rowIndex="7"/>
+                        <Button mnemonicParsing="false" onAction="#viewOrgansForDonor" prefHeight="30.0"
+                          text="View Organs" GridPane.columnIndex="2" GridPane.rowIndex="7"/>
                         <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#saveChanges"
                           prefHeight="30.0" text="Save Changes" GridPane.columnIndex="3" GridPane.rowIndex="7"/>
                         <Label layoutX="41.0" text="Creation Date"/>

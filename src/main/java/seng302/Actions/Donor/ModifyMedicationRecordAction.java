@@ -11,7 +11,7 @@ import seng302.Utilities.JSONConverter;
 /**
  * A reversible action to modify a given medication record (specifically, its 'started' and 'stopped' dates).
  */
-public class ModifyMedicationRecordAction implements Action {
+public class ModifyMedicationRecordAction extends Action {
 
     private MedicationRecord record;
     private LocalDate oldStarted;
@@ -53,7 +53,7 @@ public class ModifyMedicationRecordAction implements Action {
      * @throws IllegalStateException If no changes were made.
      */
     @Override
-    public void execute() {
+    protected void execute() {
         if (Objects.equals(newStarted, oldStarted) && Objects.equals(newStopped, oldStopped)) {
             throw new IllegalStateException("No changes were made to the MedicationRecord.");
         }
@@ -63,19 +63,48 @@ public class ModifyMedicationRecordAction implements Action {
         if (!Objects.equals(newStopped, oldStopped)) {
             record.setStopped(newStopped);
         }
-        HistoryItem save = new HistoryItem("MODIFY_MEDICATION",
-                String.format("Medication record for %s changed. New started date: %s. New stopped date: %s",
-                        record.getMedicationName(), record.getStarted(), record.getStopped()));
+        HistoryItem save = new HistoryItem("MODIFY_MEDICATION", getExecuteText());
         JSONConverter.updateHistory(save, "action_history.json");
     }
 
     @Override
-    public void unExecute() {
+    protected void unExecute() {
         if (!Objects.equals(newStarted, oldStarted)) {
             record.setStarted(oldStarted);
         }
         if (!Objects.equals(newStopped, oldStopped)) {
             record.setStopped(oldStopped);
         }
+    }
+
+    @Override
+    public String getExecuteText() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(String.format("Changed medication record for '%s':", record.getMedicationName()));
+
+        if (!Objects.equals(newStarted, oldStarted)) {
+            builder.append(String.format("\nStarted date changed from %s to %s", oldStarted, newStarted));
+        }
+        if (!Objects.equals(newStopped, oldStopped)) {
+            builder.append(String.format("\nStopped date changed from %s to %s", oldStarted, newStarted));
+        }
+
+        return builder.toString();
+    }
+
+    @Override
+    public String getUnexecuteText() {
+        StringBuilder builder = new StringBuilder();
+        builder.append(String.format("Reversed these changes to medication record for '%s':",
+                record.getMedicationName()));
+
+        if (!Objects.equals(newStarted, oldStarted)) {
+            builder.append(String.format("\nStarted date changed from %s to %s", oldStarted, newStarted));
+        }
+        if (!Objects.equals(newStopped, oldStopped)) {
+            builder.append(String.format("\nStopped date changed from %s to %s", oldStopped, newStopped));
+        }
+
+        return builder.toString();
     }
 }

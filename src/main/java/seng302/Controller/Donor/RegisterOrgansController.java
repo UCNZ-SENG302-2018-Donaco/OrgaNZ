@@ -3,7 +3,6 @@ package seng302.Controller.Donor;
 import java.util.HashMap;
 import java.util.Map;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
@@ -19,7 +18,12 @@ import seng302.State.DonorManager;
 import seng302.State.Session;
 import seng302.State.State;
 import seng302.Utilities.Enums.Organ;
+import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
 import seng302.Utilities.JSONConverter;
+import seng302.Utilities.View.Page;
+import seng302.Utilities.View.PageNavigator;
+
+import org.controlsfx.control.Notifications;
 
 /**
  * Controller for the register organs page.
@@ -79,26 +83,18 @@ public class RegisterOrgansController extends SubController {
 
         if (session.getLoggedInUserType() == Session.UserType.DONOR) {
             donor = session.getLoggedInDonor();
+            idPane.setDisable(true);
         } else if (windowContext.isClinViewDonorWindow()) {
             donor = windowContext.getViewDonor();
         }
 
+        mainController.setTitle("Organ registration: " + donor.getFullName());
         fieldUserID.setText(Integer.toString(donor.getUid()));
-        updateUserID(null);
+        updateUserID();
     }
 
-    /**
-     * Updates the current donor to the one specified in the userID field, and populates with their info.
-     * @param event When ENTER is pressed with focus on the userID field.
-     */
-    @FXML
-    private void updateUserID(ActionEvent event) {
-        try {
-            donor = manager.getDonorByID(Integer.parseInt(fieldUserID.getText()));
-        } catch (NumberFormatException exc) {
-            donor = null;
-        }
-
+    @Override
+    public void refresh() {
         if (donor != null) {
             setCheckBoxesEnabled();
             for (Map.Entry<Organ, CheckBox> entry : organCheckBoxes.entrySet()) {
@@ -112,11 +108,23 @@ public class RegisterOrgansController extends SubController {
     }
 
     /**
-     * Checks which organs check boxes have been changed, and applies those changes with a ModifyDonorOrgansAction.
-     * @param event When any organ checkbox changes state.
+     * Updates the current donor to the one specified in the userID field, and populates with their info.
      */
     @FXML
-    private void modifyOrgans(ActionEvent event) {
+    private void updateUserID() {
+        try {
+            donor = manager.getDonorByID(Integer.parseInt(fieldUserID.getText()));
+        } catch (NumberFormatException exc) {
+            donor = null;
+        }
+        refresh();
+    }
+
+    /**
+     * Checks which organs check boxes have been changed, and applies those changes with a ModifyDonorOrgansAction.
+     */
+    @FXML
+    private void modifyOrgans() {
         ModifyDonorOrgansAction action = new ModifyDonorOrgansAction(donor);
         boolean hasChanged = false;
 
@@ -125,15 +133,25 @@ public class RegisterOrgansController extends SubController {
             boolean newStatus = organCheckBoxes.get(organ).isSelected();
 
             if (oldStatus != newStatus) {
-                action.addChange(organ, newStatus);
-                hasChanged = true;
+                try {
+                    action.addChange(organ, newStatus);
+                    hasChanged = true;
+                } catch (OrganAlreadyRegisteredException e) {
+                    e.printStackTrace();
+                }
             }
         }
         if (hasChanged) {
-            invoker.execute(action);
+            String actionText = invoker.execute(action);
+            PageNavigator.refreshAllWindows();
             HistoryItem save = new HistoryItem("UPDATE ORGANS",
                     "The Donor's organs were updated: " + donor.getDonorOrganStatusString());
             JSONConverter.updateHistory(save, "action_history.json");
+
+            Notifications.create()
+                    .title("Updated Organs")
+                    .text(actionText)
+                    .showInformation();
         }
     }
 
@@ -154,5 +172,10 @@ public class RegisterOrgansController extends SubController {
         for (CheckBox box : organCheckBoxes.values()) {
             box.setDisable(false);
         }
+    }
+
+    @FXML
+    private void returnToViewDonor() {
+        PageNavigator.loadPage(Page.VIEW_DONOR, mainController);
     }
 }

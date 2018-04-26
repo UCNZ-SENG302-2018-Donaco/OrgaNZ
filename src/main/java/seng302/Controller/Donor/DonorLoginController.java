@@ -1,16 +1,15 @@
 package seng302.Controller.Donor;
 
 import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 
+import seng302.Controller.MainController;
 import seng302.Controller.SubController;
 import seng302.Donor;
 import seng302.HistoryItem;
 import seng302.State.DonorManager;
-import seng302.State.Session;
 import seng302.State.State;
 import seng302.Utilities.JSONConverter;
 import seng302.Utilities.View.Page;
@@ -23,6 +22,16 @@ public class DonorLoginController extends SubController {
 
     @FXML
     private ListView<Donor> donorList;
+
+    /**
+     * Override so we can set the page title.
+     * @param mainController The MainController
+     */
+    @Override
+    public void setup(MainController mainController) {
+        super.setup(mainController);
+        mainController.setTitle("Donor login");
+    }
 
     /**
      * Initializes the UI for this page.
@@ -51,10 +60,9 @@ public class DonorLoginController extends SubController {
     /**
      * Attempts to login with the selected donor.
      * If successful, redirects to the view donor page for that donor.
-     * @param event When the sign in button is clicked.
      */
     @FXML
-    private void signIn(ActionEvent event) {
+    private void signIn() {
         Donor selectedDonor = donorList.getSelectionModel().getSelectedItem();
 
         if (selectedDonor != null) {
@@ -62,17 +70,16 @@ public class DonorLoginController extends SubController {
                     selectedDonor.getFirstName(), selectedDonor.getLastName(), selectedDonor.getUid()));
             JSONConverter.updateHistory(loginHistory, "action_history.json");
 
-            State.login(Session.UserType.DONOR, selectedDonor);
+            State.login(selectedDonor);
             PageNavigator.loadPage(Page.VIEW_DONOR, mainController);
         }
     }
 
     /**
      * Redirects the UI back to the landing page.
-     * @param event When the back button is clicked.
      */
     @FXML
-    private void goBack(ActionEvent event) {
+    private void goBack() {
         PageNavigator.loadPage(Page.LANDING, mainController);
     }
 }

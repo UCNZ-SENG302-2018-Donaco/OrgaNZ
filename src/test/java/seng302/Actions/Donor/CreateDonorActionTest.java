@@ -44,7 +44,7 @@ public class CreateDonorActionTest {
     public void CheckDonorMultipleAddsOneUndoTest() {
         CreateDonorAction action = new CreateDonorAction(baseDonor, manager);
         invoker.execute(action);
-        Donor second = new Donor("SecondDonor", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        Donor second = new Donor("SecondDonor", null, "Last", LocalDate.of(1970, 1, 1), 2);
         CreateDonorAction secondAction = new CreateDonorAction(second, manager);
         invoker.execute(secondAction);
         invoker.undo();
@@ -56,9 +56,11 @@ public class CreateDonorActionTest {
     public void CheckDonorMultipleAddsOneUndoRedoTest() {
         CreateDonorAction action = new CreateDonorAction(baseDonor, manager);
         invoker.execute(action);
-        Donor second = new Donor("SecondDonor", null, "Last", LocalDate.of(1970, 1, 1), 1);
+
+        Donor second = new Donor("SecondDonor", null, "Last", LocalDate.of(1970, 1, 1), 2);
         CreateDonorAction secondAction = new CreateDonorAction(second, manager);
         invoker.execute(secondAction);
+
         invoker.undo();
 
         assertEquals(baseDonor, manager.getDonors().get(0));
@@ -66,7 +68,8 @@ public class CreateDonorActionTest {
 
         invoker.redo();
 
-        assertEquals(baseDonor, manager.getDonors().get(1));
+        assertEquals(baseDonor, manager.getDonors().get(0));
+        assertEquals(second, manager.getDonors().get(1));
         assertEquals(2, manager.getDonors().size());
     }
 }

@@ -1,6 +1,5 @@
 package seng302.Controller.Donor;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
@@ -10,11 +9,11 @@ import javafx.scene.control.TextField;
 import seng302.Actions.Action;
 import seng302.Actions.ActionInvoker;
 import seng302.Actions.Donor.CreateDonorAction;
+import seng302.Controller.MainController;
 import seng302.Controller.SubController;
 import seng302.Donor;
 import seng302.HistoryItem;
 import seng302.State.DonorManager;
-import seng302.State.Session;
 import seng302.State.State;
 import seng302.Utilities.JSONConverter;
 import seng302.Utilities.View.Page;
@@ -43,13 +42,22 @@ public class CreateDonorController extends SubController {
     }
 
     /**
+     * Override so we can set the page title.
+     * @param mainController The MainController
+     */
+    @Override
+    public void setup(MainController mainController) {
+        super.setup(mainController);
+        mainController.setTitle("Create a new Donor");
+    }
+
+    /**
      * Creates a new donor based on the information supplied in the fields.
      * Shows appropriate alerts if the information is invalid, or if the donor already exists.
      * Shows an alert if successful, then redirects to the view page for the new donor.
-     * @param event When the create button is clicked.
      */
     @FXML
-    private void createDonor(ActionEvent event) {
+    private void createDonor() {
         if (firstNameFld.getText().equals("") || lastNamefld.getText().equals("") || dobFld.getValue() == null) {
             PageNavigator.showAlert(AlertType.ERROR, "Required Field Empty",
                     "Please make sure that all the required fields are given.");
@@ -76,22 +84,16 @@ public class CreateDonorController extends SubController {
                     "Donor " + firstNameFld.getText() + " " + lastNamefld.getText() + "was created with ID " + uid);
             JSONConverter.updateHistory(save, "action_history.json");
 
-            PageNavigator.showAlert(AlertType.INFORMATION,
-                    "Success",
-                    String.format("Successfully created donor %s %s %s with ID %d.",
-                            donor.getFirstName(), donor.getMiddleName(), donor.getLastName(), uid));
-
-            State.login(Session.UserType.DONOR, donor);
+            State.login(donor);
             PageNavigator.loadPage(Page.VIEW_DONOR, mainController);
         }
     }
 
     /**
      * Redirects the UI back to the landing page.
-     * @param event When the back button is clicked.
      */
     @FXML
-    private void goBack(ActionEvent event) {
+    private void goBack() {
         PageNavigator.loadPage(Page.LANDING, mainController);
     }
 }
