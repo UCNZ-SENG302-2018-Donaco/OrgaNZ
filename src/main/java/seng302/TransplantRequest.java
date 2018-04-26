@@ -1,6 +1,7 @@
 package seng302;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import seng302.State.State;
 import seng302.Utilities.Enums.Organ;
@@ -37,6 +38,10 @@ public class TransplantRequest {
 
     public LocalDateTime getRequestDate() {
         return requestDate;
+    }
+
+    public String getRequestDateString() {
+        return requestDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
 
     public boolean getCurrentRequest() {

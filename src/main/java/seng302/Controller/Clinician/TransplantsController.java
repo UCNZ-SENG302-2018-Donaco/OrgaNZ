@@ -1,19 +1,15 @@
 package seng302.Controller.Clinician;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
-import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
@@ -97,7 +93,7 @@ public class TransplantsController extends SubController {
      * The client must have getters for these specific names specified in the PV Factories.
      */
     private void setupTable() {
-        dateCol.setCellValueFactory(new PropertyValueFactory<>("requestDate"));
+        dateCol.setCellValueFactory(new PropertyValueFactory<>("requestDateString"));
         clientCol.setCellValueFactory(new PropertyValueFactory<>("clientName"));
         organCol.setCellValueFactory(new PropertyValueFactory<>("requestedOrgan"));
         regionCol.setCellValueFactory(new PropertyValueFactory<>("clientRegion"));
