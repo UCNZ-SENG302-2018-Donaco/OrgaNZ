@@ -40,13 +40,13 @@ public class AddMedicationRecordAction extends Action {
 
     @Override
     public String getExecuteText() {
-        return String.format("Added medication %s record for donor %s", record.getMedicationName(), donor
-                .getFullName());
+        return String.format("Added record for medication '%s' to the history of donor %d: %s %s.",
+                record.getMedicationName(), donor.getUid(), donor.getFirstName(), donor.getLastName());
     }
 
     @Override
     public String getUnexecuteText() {
-        return String.format("Removed medication %s record for donor %s", record.getMedicationName(), donor
-                .getFullName());
+        return String.format("Reversed the addition of record for medication '%s' to the history of donor %d: %s %s.",
+                record.getMedicationName(), donor.getUid(), donor.getFirstName(), donor.getLastName());
     }
 }

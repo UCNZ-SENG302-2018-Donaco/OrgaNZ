@@ -63,9 +63,7 @@ public class ModifyMedicationRecordAction extends Action {
         if (!Objects.equals(newStopped, oldStopped)) {
             record.setStopped(newStopped);
         }
-        HistoryItem save = new HistoryItem("MODIFY_MEDICATION",
-                String.format("Medication record for %s changed. New started date: %s. New stopped date: %s",
-                        record.getMedicationName(), record.getStarted(), record.getStopped()));
+        HistoryItem save = new HistoryItem("MODIFY_MEDICATION", getExecuteText());
         JSONConverter.updateHistory(save, "action_history.json");
     }
 
@@ -81,11 +79,32 @@ public class ModifyMedicationRecordAction extends Action {
 
     @Override
     public String getExecuteText() {
-        return String.format("Updated medication %s record", record.getMedicationName());
+        StringBuilder builder = new StringBuilder();
+        builder.append(String.format("Changed medication record for '%s':", record.getMedicationName()));
+
+        if (!Objects.equals(newStarted, oldStarted)) {
+            builder.append(String.format("\nStarted date changed from %s to %s", oldStarted, newStarted));
+        }
+        if (!Objects.equals(newStopped, oldStopped)) {
+            builder.append(String.format("\nStopped date changed from %s to %s", oldStarted, newStarted));
+        }
+
+        return builder.toString();
     }
 
     @Override
     public String getUnexecuteText() {
-        return String.format("Update of medication %s record has been undone", record.getMedicationName());
+        StringBuilder builder = new StringBuilder();
+        builder.append(String.format("Reversed these changes to medication record for '%s':",
+                record.getMedicationName()));
+
+        if (!Objects.equals(newStarted, oldStarted)) {
+            builder.append(String.format("\nStarted date changed from %s to %s", oldStarted, newStarted));
+        }
+        if (!Objects.equals(newStopped, oldStopped)) {
+            builder.append(String.format("\nStopped date changed from %s to %s", oldStopped, newStopped));
+        }
+
+        return builder.toString();
     }
 }
