@@ -55,14 +55,23 @@ public class ModifyObjectByFieldAction extends Action {
         runChange(oldValue);
     }
 
+    private String unCamelCase(String inCamelCase) {
+        String unCamelCased = inCamelCase.replaceAll("([a-z])([A-Z]+)", "$1 $2");
+        return unCamelCased.substring(0, 1).toUpperCase() + unCamelCased.substring(1);
+    }
+
+    private String formatValue(Object[] value) {
+        return value[0] != null ? String.format("'%s'", value[0].toString()) : "empty";
+    }
+
     @Override
     public String getExecuteText() {
-        return null;
+        return String.format("%s from %s to %s.", unCamelCase(field), formatValue(oldValue), formatValue(newValue));
     }
 
     @Override
     public String getUnexecuteText() {
-        return null;
+        return String.format("%s from %s to %s.", unCamelCase(field), formatValue(newValue), formatValue(oldValue));
     }
 
     /**

@@ -2,6 +2,7 @@ package seng302.Controller.Donor;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -255,32 +256,41 @@ public class ViewDonorController extends SubController {
         return update;
     }
 
+    private void addChangeIfDifferent(ModifyDonorAction action, String field, Object oldValue, Object newValue) {
+        try {
+            if (!Objects.equals(oldValue, newValue)) {
+                action.addChange(field, oldValue, newValue);
+            }
+        } catch (NoSuchFieldException | NoSuchMethodException exc) {
+            exc.printStackTrace();
+        }
+    }
+
     /**
      * Records the changes updated as a ModifyDonorAction to trace the change in record.
      */
     private void updateChanges() {
-        try {
-            ModifyDonorAction action = new ModifyDonorAction(viewedDonor);
+        ModifyDonorAction action = new ModifyDonorAction(viewedDonor);
 
-            action.addChange("setFirstName", viewedDonor.getFirstName(), fname.getText());
-            action.addChange("setLastName", viewedDonor.getLastName(), lname.getText());
-            action.addChange("setMiddleName", viewedDonor.getMiddleName(), mname.getText());
-            action.addChange("setDateOfBirth", viewedDonor.getDateOfBirth(), dob.getValue());
-            action.addChange("setDateOfDeath", viewedDonor.getDateOfDeath(), dod.getValue());
-            action.addChange("setGender", viewedDonor.getGender(), gender.getValue());
-            action.addChange("setHeight", viewedDonor.getHeight(), Double.parseDouble(height.getText()));
-            action.addChange("setWeight", viewedDonor.getWeight(), Double.parseDouble(weight.getText()));
-            action.addChange("setBloodType", viewedDonor.getBloodType(), btype.getValue());
-            action.addChange("setRegion", viewedDonor.getRegion(), region.getValue());
-            action.addChange("setCurrentAddress", viewedDonor.getCurrentAddress(), address.getText());
+        addChangeIfDifferent(action, "setFirstName", viewedDonor.getFirstName(), fname.getText());
+        addChangeIfDifferent(action, "setLastName", viewedDonor.getLastName(), lname.getText());
+        addChangeIfDifferent(action, "setMiddleName", viewedDonor.getMiddleName(), mname.getText());
+        addChangeIfDifferent(action, "setDateOfBirth", viewedDonor.getDateOfBirth(), dob.getValue());
+        addChangeIfDifferent(action, "setDateOfDeath", viewedDonor.getDateOfDeath(), dod.getValue());
+        addChangeIfDifferent(action, "setGender", viewedDonor.getGender(), gender.getValue());
+        addChangeIfDifferent(action, "setHeight", viewedDonor.getHeight(), Double.parseDouble(height.getText()));
+        addChangeIfDifferent(action, "setWeight", viewedDonor.getWeight(), Double.parseDouble(weight.getText()));
+        addChangeIfDifferent(action, "setBloodType", viewedDonor.getBloodType(), btype.getValue());
+        addChangeIfDifferent(action, "setRegion", viewedDonor.getRegion(), region.getValue());
+        addChangeIfDifferent(action, "setCurrentAddress", viewedDonor.getCurrentAddress(), address.getText());
 
-            invoker.execute(action);
-            PageNavigator.refreshAllWindows();
-            Notifications.create().title("Success").text(action.getExecuteText());
+        String actionText = invoker.execute(action);
+        PageNavigator.refreshAllWindows();
 
-        } catch (NoSuchFieldException | NoSuchMethodException exc) {
-            exc.printStackTrace();
-        }
+        Notifications.create()
+                .title("Updated Donor")
+                .text(actionText)
+                .showInformation();
     }
 
     /**

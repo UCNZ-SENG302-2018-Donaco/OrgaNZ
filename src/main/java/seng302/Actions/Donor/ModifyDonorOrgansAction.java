@@ -2,6 +2,7 @@ package seng302.Actions.Donor;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import seng302.Actions.Action;
 import seng302.Donor;
@@ -47,14 +48,32 @@ public class ModifyDonorOrgansAction extends Action {
         runChanges(true);
     }
 
+    private String formatChange(Organ organ, boolean newValue) {
+        if (newValue) {
+            return String.format("Registered %s for donation.", organ.toString());
+        } else {
+            return String.format("Deregistered %s for donation.", organ.toString());
+        }
+    }
+
     @Override
     public String getExecuteText() {
-        return String.format("Updated %s organ(s) for user %s", changes.size(), donor.getFullName());
+        String changesText = changes.entrySet().stream()
+                .map(entry -> formatChange(entry.getKey(), entry.getValue()))
+                .collect(Collectors.joining("\n"));
+
+        return String.format("Changed organ registration for client %d: %s %s:\n\n%s",
+                donor.getUid(), donor.getFirstName(), donor.getLastName(), changesText);
     }
 
     @Override
     public String getUnexecuteText() {
-        return String.format("Undid %s organ update(s) for user %s", changes.size(), donor.getFullName());
+        String changesText = changes.entrySet().stream()
+                .map(entry -> formatChange(entry.getKey(), entry.getValue()))
+                .collect(Collectors.joining("\n"));
+
+        return String.format("Reversed these changes to organ registration for client %d: %s %s:\n\n%s",
+                donor.getUid(), donor.getFirstName(), donor.getLastName(), changesText);
     }
 
     /**

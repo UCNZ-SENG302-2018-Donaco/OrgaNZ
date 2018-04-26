@@ -1,6 +1,7 @@
 package seng302.Actions.Donor;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import seng302.Actions.Action;
 import seng302.Actions.ModifyObjectByFieldAction;
@@ -52,11 +53,23 @@ public class ModifyDonorAction extends Action {
 
     @Override
     public String getExecuteText() {
-        return String.format("Donor %s, %s has been updated", donor.getUid(), donor.getFullName());
+        String changesText = actions.stream()
+                .map(ModifyObjectByFieldAction::getExecuteText)
+                .collect(Collectors.joining("\n"));
+
+        return String.format("Updated details for donor %d: %s %s. \n"
+                        + "These changes were made: \n\n%s",
+                donor.getUid(), donor.getFirstName(), donor.getLastName(), changesText);
     }
 
     @Override
     public String getUnexecuteText() {
-        return String.format("The changes for donor %s, %s have been undone", donor.getUid(), donor.getFullName());
+        String changesText = actions.stream()
+                .map(ModifyObjectByFieldAction::getExecuteText)
+                .collect(Collectors.joining("\n"));
+
+        return String.format("Reversed update for donor %d: %s %s. \n"
+                        + "These changes were reversed: \n\n%s",
+                donor.getUid(), donor.getFirstName(), donor.getLastName(), changesText);
     }
 }
