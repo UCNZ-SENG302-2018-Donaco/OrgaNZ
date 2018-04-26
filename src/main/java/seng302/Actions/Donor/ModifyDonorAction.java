@@ -1,6 +1,7 @@
 package seng302.Actions.Donor;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import seng302.Actions.Action;
 import seng302.Actions.ModifyObjectByFieldAction;
@@ -9,7 +10,7 @@ import seng302.Donor;
 /**
  * A reversible donor modification Action
  */
-public class ModifyDonorAction implements Action {
+public class ModifyDonorAction extends Action {
 
     private ArrayList<ModifyObjectByFieldAction> actions = new ArrayList<>();
     private Donor donor;
@@ -37,16 +38,38 @@ public class ModifyDonorAction implements Action {
     }
 
     @Override
-    public void execute() {
+    protected void execute() {
         for (ModifyObjectByFieldAction action : actions) {
             action.execute();
         }
     }
 
     @Override
-    public void unExecute() {
+    protected void unExecute() {
         for (ModifyObjectByFieldAction action : actions) {
             action.unExecute();
         }
+    }
+
+    @Override
+    public String getExecuteText() {
+        String changesText = actions.stream()
+                .map(ModifyObjectByFieldAction::getExecuteText)
+                .collect(Collectors.joining("\n"));
+
+        return String.format("Updated details for donor %d: %s %s. \n"
+                        + "These changes were made: \n\n%s",
+                donor.getUid(), donor.getFirstName(), donor.getLastName(), changesText);
+    }
+
+    @Override
+    public String getUnexecuteText() {
+        String changesText = actions.stream()
+                .map(ModifyObjectByFieldAction::getExecuteText)
+                .collect(Collectors.joining("\n"));
+
+        return String.format("Reversed update for donor %d: %s %s. \n"
+                        + "These changes were reversed: \n\n%s",
+                donor.getUid(), donor.getFirstName(), donor.getLastName(), changesText);
     }
 }

@@ -7,7 +7,7 @@ import seng302.State.DonorManager;
 /**
  * A reversible donor creation action
  */
-public class CreateDonorAction implements Action {
+public class CreateDonorAction extends Action {
 
 
     private Donor donor;
@@ -29,7 +29,7 @@ public class CreateDonorAction implements Action {
      * Simply add the donor to the DonorManager
      */
     @Override
-    public void execute() {
+    protected void execute() {
         manager.addDonor(donor);
     }
 
@@ -37,7 +37,17 @@ public class CreateDonorAction implements Action {
      * Simply remove the donor from the DonorManager
      */
     @Override
-    public void unExecute() {
+    protected void unExecute() {
         manager.removeDonor(donor);
+    }
+
+    @Override
+    public String getExecuteText() {
+        return String.format("Created donor %s", donor.getFullName());
+    }
+
+    @Override
+    public String getUnexecuteText() {
+        return String.format("Removed donor %s", donor.getFullName());
     }
 }

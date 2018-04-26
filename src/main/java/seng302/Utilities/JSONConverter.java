@@ -81,12 +81,6 @@ public final class JSONConverter {
         donors = gson.fromJson(reader, collectionType);
         DonorManager donorManager = State.getDonorManager();
         donorManager.setDonors(donors);
-
-        for (Donor donor : donors) {
-            if (donor.getUid() >= donorManager.getUid()) {
-                donorManager.setUid(donor.getUid() + 1);
-            }
-        }
     }
 
     /**

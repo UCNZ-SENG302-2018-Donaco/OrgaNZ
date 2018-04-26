@@ -8,7 +8,6 @@ import java.util.List;
 
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
@@ -87,6 +86,10 @@ public class ViewMedicationsController extends SubController {
         this.drugInteractionsHandler = handler;
     }
 
+    public void setActiveIngredientsHandler(MedActiveIngredientsHandler handler) {
+        this.activeIngredientsHandler = handler;
+    }
+
     /**
      * Initializes the UI for this page.
      * - Starts the WebAPIHandler for drug name autocompletion.
@@ -154,6 +157,12 @@ public class ViewMedicationsController extends SubController {
         }
 
         refreshMedicationLists();
+        mainController.setTitle("Medication history: " + donor.getFullName());
+    }
+
+    @Override
+    public void refresh() {
+        refreshMedicationLists();
     }
 
     /**
@@ -169,16 +178,16 @@ public class ViewMedicationsController extends SubController {
      * - Sets the date the donor stopped taking the medication to the current date.
      * - Removes the MedicationRecord from the current medications list.
      * - Refreshes both list views.
-     * @param event When the '<' button is pressed.
      */
     @FXML
-    private void moveMedicationToHistory(ActionEvent event) {
+    private void moveMedicationToHistory() {
         MedicationRecord record = currentMedicationsView.getSelectionModel().getSelectedItem();
         if (record != null) {
             ModifyMedicationRecordAction action = new ModifyMedicationRecordAction(record);
             action.changeStopped(LocalDate.now());
 
             invoker.execute(action);
+            PageNavigator.refreshAllWindows();
             refreshMedicationLists();
         }
     }
@@ -189,16 +198,16 @@ public class ViewMedicationsController extends SubController {
      * - Sets the date the donor stopped taking the medication to null (hasn't stopped yet).
      * - Removes the MedicationRecord from the past medications list.
      * - Refreshes both list views.
-     * @param event When the '>' button is pressed.
      */
     @FXML
-    private void moveMedicationToCurrent(ActionEvent event) {
+    private void moveMedicationToCurrent() {
         MedicationRecord record = pastMedicationsView.getSelectionModel().getSelectedItem();
         if (record != null) {
             ModifyMedicationRecordAction action = new ModifyMedicationRecordAction(record);
             action.changeStopped(null);
 
             invoker.execute(action);
+            PageNavigator.refreshAllWindows();
             refreshMedicationLists();
         }
     }
@@ -234,10 +243,9 @@ public class ViewMedicationsController extends SubController {
 
     /**
      * Adds a new medication with the current value of the new medication text field.
-     * @param event When the 'add medication' button is pressed.
      */
     @FXML
-    private void addButtonPressed(ActionEvent event) {
+    private void addButtonPressed() {
         addMedication(newMedField.getText());
     }
 
@@ -253,7 +261,20 @@ public class ViewMedicationsController extends SubController {
 
             invoker.execute(action);
             newMedField.setText("");
+            PageNavigator.refreshAllWindows();
             refreshMedicationLists();
+        }
+    }
+
+    /**
+     * Returns the currently selected record from the currently selected list view.
+     * @return The selected record, or null if no record is currently selected.
+     */
+    private MedicationRecord getSelectedRecord() {
+        if (selectedListView != null) {
+            return selectedListView.getSelectionModel().getSelectedItem();
+        } else {
+            return null;
         }
     }
 
@@ -261,51 +282,37 @@ public class ViewMedicationsController extends SubController {
      * Deletes the currently selected MedicationRecord. Will determine which of the list views is currently
      * selected, then delete from the appropriate one. If neither list view is currently selected, this will have no
      * effect.
-     * @param event When the 'delete' button is clicked.
      */
     @FXML
-    private void deleteMedication(ActionEvent event) {
-        if (selectedListView != null) {
-            MedicationRecord record = selectedListView.getSelectionModel().getSelectedItem();
-            if (record != null) {
-                DeleteMedicationRecordAction action = new DeleteMedicationRecordAction(donor, record);
+    private void deleteMedication() {
+        MedicationRecord record = getSelectedRecord();
+        if (record != null) {
+            DeleteMedicationRecordAction action = new DeleteMedicationRecordAction(donor, record);
 
-                invoker.execute(action);
-                refreshMedicationLists();
-            }
+            invoker.execute(action);
+            PageNavigator.refreshAllWindows();
+            refreshMedicationLists();
         }
     }
 
-
     /**
      * Generates a pop-up with a list of active ingredients.
-     * @param event When the 'View active ingredients' button is clicked.
      */
     @FXML
-    private void viewActiveIngredients(ActionEvent event) {
-        // Figure out which record is currently selected
-        MedicationRecord currentMedicationRecord = currentMedicationsView.getSelectionModel().getSelectedItem();
-        MedicationRecord pastMedicationRecord = pastMedicationsView.getSelectionModel().getSelectedItem();
-        MedicationRecord medicationRecord;
-        if (currentMedicationRecord != null) {
-            medicationRecord = currentMedicationRecord;
-        } else if (pastMedicationRecord != null) {
-            medicationRecord = pastMedicationRecord;
-        } else {
-            medicationRecord = null;
-        }
+    private void viewActiveIngredients() {
+        MedicationRecord medicationRecord = getSelectedRecord();
 
         if (medicationRecord != null) {
-            String currentMedication = medicationRecord.getMedicationName();
+            String medicationName = medicationRecord.getMedicationName();
             // Generate initial alert popup
-            String alertTitle = "Active ingredients in " + currentMedication;
+            String alertTitle = "Active ingredients in " + medicationName;
             Alert alert = PageNavigator.generateAlert(AlertType.INFORMATION, alertTitle, "Loading...");
             alert.show();
 
             Task<List<String>> task = new Task<List<String>>() {
                 @Override
-                public List<String> call() {
-                    return activeIngredientsHandler.getActiveIngredients(currentMedication);
+                public List<String> call() throws IOException {
+                    return activeIngredientsHandler.getActiveIngredients(medicationName);
                 }
             };
 
@@ -316,7 +323,7 @@ public class ViewMedicationsController extends SubController {
                 //     then the drug name wasn't valid.
                 if (activeIngredients.isEmpty()) {
                     alert.setAlertType(AlertType.ERROR);
-                    alert.setContentText("No results found for " + currentMedication);
+                    alert.setContentText("No results found for " + medicationName);
                 } else {
                     // Build list of active ingredients into a string, each ingredient on a new line
                     StringBuilder sb = new StringBuilder();
@@ -328,6 +335,12 @@ public class ViewMedicationsController extends SubController {
                 PageNavigator.resizeAlert(alert);
             });
 
+            task.setOnFailed(e -> {
+                alert.setAlertType(AlertType.ERROR);
+                alert.setContentText("Error loading results. Please try again later.");
+
+            });
+
             new Thread(task).start();
         }
     }
@@ -335,10 +348,9 @@ public class ViewMedicationsController extends SubController {
 
     /**
      * Generates a pop-up with a list of interactions.
-     * @param event When the 'View interactions' button is clicked.
      */
     @FXML
-    void viewInteractions(ActionEvent event) {
+    void viewInteractions() {
 
         // Check if there are two medications selected
         List<MedicationRecord> selectedItems = new ArrayList<>();
@@ -421,7 +433,6 @@ public class ViewMedicationsController extends SubController {
                 }
                 PageNavigator.resizeAlert(alert);
             });
-
 
             new Thread(task).start();
         }

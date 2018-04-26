@@ -40,7 +40,7 @@ public class ViewMedicationsControllerDonorTest extends ControllerTest {
             )
     };
 
-    private Donor testDonor = new Donor();
+    private Donor testDonor = new Donor(1);
 
     @Override
     protected Page getPage() {
@@ -50,7 +50,7 @@ public class ViewMedicationsControllerDonorTest extends ControllerTest {
     @Override
     protected void initState() {
         State.init();
-        State.login(UserType.DONOR, testDonor);
+        State.login(testDonor);
         mainController.setWindowContext(WindowContext.defaultContext());
         resetTestDonorMedicationHistory();
     }

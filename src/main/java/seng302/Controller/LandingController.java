@@ -1,6 +1,5 @@
 package seng302.Controller;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 
 import seng302.Utilities.View.Page;
@@ -12,38 +11,44 @@ import seng302.Utilities.View.PageNavigator;
 public class LandingController extends SubController {
 
     /**
+     * Override so we can set the page title.
+     * @param mainController The MainController
+     */
+    @Override
+    public void setup(MainController mainController) {
+        super.setup(mainController);
+        mainController.setTitle("Home");
+    }
+
+    /**
      * Redirects the GUI to create donor page
-     * @param event when create user button is clicked
      */
     @FXML
-    private void goToCreateDonor(ActionEvent event) {
+    private void goToCreateDonor() {
         PageNavigator.loadPage(Page.CREATE_DONOR, mainController);
     }
 
     /**
      * Redirects the GUI to donor login page
-     * @param event when login button is clicked
      */
     @FXML
-    private void goToDonorLogin(ActionEvent event) {
+    private void goToDonorLogin() {
         PageNavigator.loadPage(Page.LOGIN_DONOR, mainController);
     }
 
     /**
      * Redirects the GUI to clinician login page
-     * @param event when login button is clicked
      */
     @FXML
-    private void goToClinicianLogin(ActionEvent event) {
+    private void goToClinicianLogin() {
         PageNavigator.loadPage(Page.LOGIN_CLINICIAN, mainController);
     }
 
     /**
      * Redirects the GUI to create clinician page
-     * @param event when login button is clicked
      */
     @FXML
-    private void goToCreateClinician(ActionEvent event) {
+    private void goToCreateClinician() {
         PageNavigator.loadPage(Page.CREATE_CLINICIAN, mainController);
     }
 }

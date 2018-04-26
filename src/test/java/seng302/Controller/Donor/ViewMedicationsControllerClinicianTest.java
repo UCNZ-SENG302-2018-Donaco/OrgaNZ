@@ -2,10 +2,10 @@ package seng302.Controller.Donor;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.matcher.control.ListViewMatchers.hasListCell;
 import static org.testfx.util.NodeQueryUtils.hasText;
@@ -36,6 +36,7 @@ import seng302.Utilities.Exceptions.BadGatewayException;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.WindowContext;
 import seng302.Utilities.Web.DrugInteractionsHandler;
+import seng302.Utilities.Web.MedActiveIngredientsHandler;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -79,44 +80,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
     };
 
     private Clinician testClinician = new Clinician("A", "B", "C", "D", Region.UNSPECIFIED, 0, "E");
-    private Donor testDonor = new Donor();
-
-    /**
-     * Checks the current alert dialog displayed (on the top of the window stack) has the expected contents.
-     *
-     * From https://stackoverflow.com/a/48654878/8355496
-     * Licenced under cc by-sa 3.0 with attribution required https://creativecommons.org/licenses/by-sa/3.0/
-     * @param expectedHeader Expected header of the dialog
-     * @param expectedContent Expected content of the dialog
-     */
-    private void alertDialogHasHeaderAndContent(final String expectedHeader, final String expectedContent) {
-        final Stage actualAlertDialog = getTopModalStage();
-        assertNotNull(actualAlertDialog);
-
-        final DialogPane dialogPane = (DialogPane) actualAlertDialog.getScene().getRoot();
-        assertEquals(expectedHeader, dialogPane.getHeaderText());
-        assertEquals(expectedContent, dialogPane.getContentText());
-    }
-
-    /**
-     * Get the top modal window.
-     *
-     * Adapted from https://stackoverflow.com/a/48654878/8355496
-     * Licenced under cc by-sa 3.0 with attribution required https://creativecommons.org/licenses/by-sa/3.0/
-     * @return the top modal window
-     */
-    private Stage getTopModalStage() {
-        // Get a list of windows but ordered from top[0] to bottom[n] ones.
-        // It is needed to get the first found modal window.
-        final List<Window> allWindows = new ArrayList<>(new FxRobot().robotContext().getWindowFinder().listWindows());
-        Collections.reverse(allWindows);
-
-        return (Stage) allWindows
-                .stream()
-                .filter(window -> window instanceof Stage)
-                .findFirst()
-                .orElse(null);
-    }
+    private Donor testDonor = new Donor(1);
 
     @Override
     protected Page getPage() {
@@ -126,7 +90,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
     @Override
     protected void initState() {
         State.init();
-        State.login(UserType.CLINICIAN, testClinician);
+        State.login(testClinician);
         mainController.setWindowContext(new WindowContext.WindowContextBuilder()
                 .setAsClinViewDonorWindow()
                 .viewDonor(testDonor)
@@ -239,6 +203,122 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
         assertTrue(!testDonor.getCurrentMedications().contains(toBeDeleted));
     }
 
+    // VIEWING ACTIVE INGREDIENTS //
+
+    /**
+     * Get the top modal window.
+     * @return the top modal window
+     */
+    private Stage getTopModalStage() {
+        // Get a list of windows but ordered from top[0] to bottom[n] ones.
+        List<Window> allWindows = new ArrayList<>(new FxRobot().robotContext().getWindowFinder().listWindows());
+        Collections.reverse(allWindows);
+
+        // Return the first found modal window.
+        return (Stage) allWindows
+                .stream()
+                .filter(window -> window instanceof Stage)
+                .findFirst()
+                .orElse(null);
+    }
+
+    /**
+     * Checks the current alert dialog displayed (on the top of the window stack) has the expected contents.
+     * @param expectedHeader Expected header of the dialog
+     * @param expectedContent Expected content of the dialog
+     */
+    private void checkAlertHasHeaderAndContent(String expectedHeader, String expectedContent) {
+        final Stage actualAlertDialog = getTopModalStage();
+        assertNotNull(actualAlertDialog);
+
+        final DialogPane dialogPane = (DialogPane) actualAlertDialog.getScene().getRoot();
+        assertEquals(expectedHeader, dialogPane.getHeaderText());
+        assertEquals(expectedContent, dialogPane.getContentText());
+    }
+
+    /**
+     * Create a mock ActiveIngredientsHandler that returns ingredients when passed medName.
+     * If medName contains the string "throw IOException", it will throw an IOException.
+     * @param medName Name of medication
+     * @param ingredients Ingredients in medication
+     * @return mock MedActiveIngredientsHandler
+     */
+    private MedActiveIngredientsHandler createMockActiveIngredientsHandler(String medName, List<String> ingredients)
+            throws IOException {
+        MedActiveIngredientsHandler handler = mock(MedActiveIngredientsHandler.class);
+        if (medName.contains("throw IOException")) {
+            when(handler.getActiveIngredients(medName)).thenThrow(new IOException());
+        } else {
+            try {
+                when(handler.getActiveIngredients(medName)).thenReturn(ingredients);
+            } catch (IOException e) {
+                fail(e.getMessage());
+            }
+        }
+        return handler;
+    }
+
+    @Test
+    public void viewActiveIngredientsTest() throws IOException {
+        ViewMedicationsController pageController = (ViewMedicationsController) super.pageController;
+        pageController.setActiveIngredientsHandler(createMockActiveIngredientsHandler(
+                "Ibuprofen",
+                Arrays.asList("Diphenhydramine citrate; ibuprofen",
+                        "Diphenhydramine hydrochloride; ibuprofen",
+                        "Ibuprofen",
+                        "Ibuprofen; pseudoephedrine hydrochloride"
+                )
+        ));
+
+        MedicationRecord ibuprofenRecord = testCurrentMedicationRecords[1];
+        String ibuprofenActiveIngredients = "Diphenhydramine citrate; ibuprofen\n"
+                + "Diphenhydramine hydrochloride; ibuprofen\n"
+                + "Ibuprofen\n"
+                + "Ibuprofen; pseudoephedrine hydrochloride\n";
+
+        verifyThat("#currentMedicationsView", hasListCell(ibuprofenRecord));
+        clickOn((Node) lookup(hasText(ibuprofenRecord.toString())).query());
+        clickOn("#viewActiveIngredientsButton");
+        checkAlertHasHeaderAndContent("Active ingredients in Ibuprofen", ibuprofenActiveIngredients);
+        press(KeyCode.ENTER); // Close the dialog
+    }
+
+    @Test
+    public void viewActiveIngredientsBadDrugNameTest() throws IOException {
+        ViewMedicationsController pageController = (ViewMedicationsController) super.pageController;
+        pageController.setActiveIngredientsHandler(createMockActiveIngredientsHandler(
+                "Med C",
+                Collections.emptyList()
+        ));
+
+        MedicationRecord toBeMoved = testCurrentMedicationRecords[0];
+
+        verifyThat("#currentMedicationsView", hasListCell(toBeMoved));
+        clickOn((Node) lookup(hasText(toBeMoved.toString())).query());
+        clickOn("#viewActiveIngredientsButton");
+        checkAlertHasHeaderAndContent("Active ingredients in Med C", "No results found for Med C");
+        press(KeyCode.ENTER); // Close the dialog
+    }
+
+    @Test
+    public void viewActiveIngredientsIOExceptionTest() throws IOException {
+        ViewMedicationsController pageController = (ViewMedicationsController) super.pageController;
+        pageController.setActiveIngredientsHandler(createMockActiveIngredientsHandler(
+                "A medication that should throw IOException",
+                Collections.emptyList()
+        ));
+
+        MedicationRecord toBeMoved = testCurrentMedicationRecords[2];
+
+        verifyThat("#currentMedicationsView", hasListCell(toBeMoved));
+        clickOn((Node) lookup(hasText(toBeMoved.toString())).query());
+        clickOn("#viewActiveIngredientsButton");
+        checkAlertHasHeaderAndContent(
+                "Active ingredients in A medication that should throw IOException",
+                "Error loading results. Please try again later.");
+        press(KeyCode.ENTER); // Close the dialog
+    }
+
     //------ Viewing interactions between drugs ------------
 
     private DrugInteractionsHandler createMockDrugInteractionsHandler(String drug1, String drug2, List<String>
@@ -265,7 +345,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
     @Test
     public void viewInteractionsBetweenZeroDrugsTest() {
         clickOn("#viewInteractionsButton");
-        alertDialogHasHeaderAndContent("Incorrect number of medications selected (0)",
+        checkAlertHasHeaderAndContent("Incorrect number of medications selected (0)",
                 "Please select exactly two medications to view their interactions.");
         press(KeyCode.ENTER); // Close the dialog
         release(KeyCode.ENTER);
@@ -280,7 +360,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
         clickOn((Node) lookup(hasText(drug0.toString())).query());
         clickOn("#viewInteractionsButton");
 
-        alertDialogHasHeaderAndContent("Incorrect number of medications selected (1)",
+        checkAlertHasHeaderAndContent("Incorrect number of medications selected (1)",
                 "Please select exactly two medications to view their interactions.");
         press(KeyCode.ENTER); // Close the dialog
         release(KeyCode.ENTER);
@@ -307,7 +387,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
 
         clickOn("#viewInteractionsButton");
 
-        alertDialogHasHeaderAndContent("Incorrect number of medications selected (3)",
+        checkAlertHasHeaderAndContent("Incorrect number of medications selected (3)",
                 "Please select exactly two medications to view their interactions.");
         press(KeyCode.ENTER); // Close the dialog
         release(KeyCode.ENTER);
@@ -334,7 +414,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
 
         clickOn("#viewInteractionsButton");
 
-        alertDialogHasHeaderAndContent("Interactions between Ibuprofen and Prednisone",
+        checkAlertHasHeaderAndContent("Interactions between Ibuprofen and Prednisone",
                 "anxiety\n"
                         + "arthralgia\n"
                         + "dyspnoea\n"
@@ -366,7 +446,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
 
         clickOn("#viewInteractionsButton");
 
-        alertDialogHasHeaderAndContent("Interactions between Med A and Med C",
+        checkAlertHasHeaderAndContent("Interactions between Med A and Med C",
                 "anxiety\n"
                         + "nausea\n");
         press(KeyCode.ENTER); // Close the dialog
@@ -392,7 +472,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
 
         clickOn("#viewInteractionsButton");
 
-        alertDialogHasHeaderAndContent("Interactions between Ibuprofen and Prednisone",
+        checkAlertHasHeaderAndContent("Interactions between Ibuprofen and Prednisone",
                 "No results found for Ibuprofen and Prednisone");
         press(KeyCode.ENTER); // Close the dialog
         release(KeyCode.ENTER);
@@ -418,7 +498,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
 
         clickOn("#viewInteractionsButton");
 
-        alertDialogHasHeaderAndContent("Interactions between Ibuprofen and Med C",
+        checkAlertHasHeaderAndContent("Interactions between Ibuprofen and Med C",
                 "Sorry, there was an error connecting to the server (502: Bad Gateway). "
                         + "Please try again later.");
         press(KeyCode.ENTER); // Close the dialog
@@ -445,7 +525,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
 
         clickOn("#viewInteractionsButton");
 
-        alertDialogHasHeaderAndContent("Interactions between Ibuprofen and Med C",
+        checkAlertHasHeaderAndContent("Interactions between Ibuprofen and Med C",
                 "Sorry, there was an error connecting to the server. Please try again later.");
         press(KeyCode.ENTER); // Close the dialog
         release(KeyCode.ENTER);
@@ -471,7 +551,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
 
         clickOn("#viewInteractionsButton");
 
-        alertDialogHasHeaderAndContent("Interactions between Ibuprofen and Med C",
+        checkAlertHasHeaderAndContent("Interactions between Ibuprofen and Med C",
                 "Either Ibuprofen or Med C is not a valid drug name.");
         press(KeyCode.ENTER); // Close the dialog
         release(KeyCode.ENTER);

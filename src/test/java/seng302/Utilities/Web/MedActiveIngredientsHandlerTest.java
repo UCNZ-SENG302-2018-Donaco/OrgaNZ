@@ -1,8 +1,10 @@
 package seng302.Utilities.Web;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import com.google.api.client.http.HttpTransport;
@@ -25,7 +27,12 @@ public class MedActiveIngredientsHandlerTest {
                 .asList("Hydralazine hydrochloride; hydrochlorothiazide; reserpine", "Hydrochlorothiazide; reserpine",
                         "Hydroflumethiazide; reserpine", "Reserpine");
 
-        List<String> actual = handler.getActiveIngredients("reserpine");
+        List<String> actual = Collections.emptyList();
+        try {
+            actual = handler.getActiveIngredients("reserpine");
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
 
         assertEquals(expected, actual);
     }

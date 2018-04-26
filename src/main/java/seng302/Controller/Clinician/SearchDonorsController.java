@@ -63,6 +63,7 @@ public class SearchDonorsController extends SubController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
+        mainController.setTitle("Donor search");
         mainController.loadSidebar(sidebarPane);
     }
 
@@ -147,7 +148,8 @@ public class SearchDonorsController extends SubController {
      * Upon filtering update, refresh the filters to the new string and update pagination
      * Every refresh triggers the pagination to update and go to page zero
      */
-    private void refresh() {
+    @Override
+    public void refresh() {
         String searchText = searchBox.getText();
         if (searchText == null || searchText.length() == 0) {
             filteredDonors.setPredicate(donor -> true);
@@ -158,7 +160,7 @@ public class SearchDonorsController extends SubController {
         //If the pagination count wont change, force a refresh of the page, if it will, change it and that will trigger the update.
         int newPageCount = filteredDonors.size() / ROWS_PER_PAGE + 1;
         if (pagination.getPageCount() == newPageCount) {
-            createPage(0);
+            createPage(pagination.getCurrentPageIndex());
         } else {
             pagination.setPageCount(newPageCount);
         }
