@@ -8,6 +8,8 @@ import static org.junit.Assert.assertFalse;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
 
 import seng302.Actions.ActionInvoker;
 import seng302.Donor;
@@ -202,11 +204,11 @@ public class ModifyDonorOrgansActionTest {
 
     @Test
     public void CheckExecuteTextThreeChangeTest() throws OrganAlreadyRegisteredException {
-        final String expectedText = String.format("Changed organ registration for client %d: First Last:\n"
-                + "\n"
-                + "Registered Heart for donation.\n"
-                + "Registered Liver for donation.\n"
-                + "Registered Pancreas for donation.", baseDonor.getUid());
+        final List<String> expectedText = Arrays.asList(
+                String.format("Changed organ registration for client %d: First Last:", baseDonor.getUid()),
+                "Registered Heart for donation.",
+                "Registered Liver for donation.",
+                "Registered Pancreas for donation.");
 
         ModifyDonorOrgansAction action = new ModifyDonorOrgansAction(baseDonor);
 
@@ -214,7 +216,10 @@ public class ModifyDonorOrgansActionTest {
         action.addChange(Organ.PANCREAS, true);
         action.addChange(Organ.HEART, true);
         String result = invoker.execute(action);
-        assertEquals(expectedText, result);
+
+        for (String expectedLine : expectedText) {
+            assertTrue(result.contains(expectedLine));
+        }
     }
 
     @Test
