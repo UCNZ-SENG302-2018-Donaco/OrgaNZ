@@ -1,6 +1,7 @@
 package seng302.Actions.Clinician;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import seng302.Actions.Action;
 import seng302.Actions.ModifyObjectByFieldAction;
@@ -52,11 +53,23 @@ public class ModifyClinicianAction extends Action {
 
     @Override
     public String getExecuteText() {
-        return String.format("Updated clinician %s", clinician.getFullName());
+        String changesText = actions.stream()
+                .map(ModifyObjectByFieldAction::getExecuteText)
+                .collect(Collectors.joining("\n"));
+
+        return String.format("Updated details for clinician %d: %s %s. \n"
+                        + "These changes were made: \n\n%s",
+                clinician.getStaffId(), clinician.getFirstName(), clinician.getLastName(), changesText);
     }
 
     @Override
     public String getUnexecuteText() {
-        return String.format("Undid update for clinician %s", clinician.getFullName());
+        String changesText = actions.stream()
+                .map(ModifyObjectByFieldAction::getExecuteText)
+                .collect(Collectors.joining("\n"));
+
+        return String.format("Reversed update for clinician %d: %s %s. \n"
+                        + "These changes were reversed: \n\n%s",
+                clinician.getStaffId(), clinician.getFirstName(), clinician.getLastName(), changesText);
     }
 }
