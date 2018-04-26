@@ -11,7 +11,13 @@ import seng302.Utilities.Enums.Organ;
  * Contains a summary, description, date and an optional affected organ.
  */
 public class ProcedureRecord {
-    public static final Comparator<ProcedureRecord> Comparator = java.util.Comparator.comparing(o -> o.date);
+    public static final Comparator<ProcedureRecord> Comparator = (o1, o2) -> {
+        int result = o1.date.compareTo(o2.date);
+        if (result == 0) {
+            return Integer.compare(o1.hashCode(), o2.hashCode());
+        }
+        return result;
+    };
 
     private final String summary;
     private final String description;
