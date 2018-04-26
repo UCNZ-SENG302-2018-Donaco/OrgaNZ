@@ -1,6 +1,8 @@
 package seng302.Controller.Clinician;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -11,6 +13,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.text.Text;
 import seng302.Actions.ActionInvoker;
 import seng302.Actions.Donor.AddIllnessRecord;
 import seng302.Actions.Donor.ModifyIllnessRecordAction;
@@ -30,6 +33,9 @@ public class ClinicianMedicalHistoryController extends SubController{
 
   @FXML
   private TextField IllnessField;
+
+  @FXML
+  private Text errorMessage;
 
   @FXML
   private DatePicker dateDiagnosed;
@@ -113,6 +119,7 @@ public class ClinicianMedicalHistoryController extends SubController{
    * Refreshes the past/current illness list views from the donor's properties.
    */
   private void refreshIllnessLists() {
+    List<IllnessRecord> currentIllnesses = donor.getPastIllnesses();
     pastIllnessView.setItems(FXCollections.observableArrayList(donor.getPastIllnesses()));
     currentIllnessView.setItems(FXCollections.observableArrayList(donor.getCurrentIllnesses()));
   }
@@ -156,17 +163,33 @@ public class ClinicianMedicalHistoryController extends SubController{
   }
 
   private void addIllness(String illnessName,LocalDate dateDiagnosed,Boolean isChronic){
+    Boolean afterBirth = donor.getDateOfBirth().isBefore(dateDiagnosed);
+    Boolean notInFuture = LocalDate.now().isAfter(dateDiagnosed);
     if(!illnessName.equals("")){
+      if(!afterBirth){
+        errorMessage.setText("Diagnosis date cannot be before person is born!");
+        errorMessage.setOpacity(1);
+      }
+
+      if(!notInFuture){
+        errorMessage.setText("Diagnosis date cannot be in the future!");
+        errorMessage.setOpacity(1);
+      }
+
+      else{
+        IllnessRecord record =  new IllnessRecord(illnessName,dateDiagnosed,null,
+            isChronic);
+        AddIllnessRecord action = new AddIllnessRecord(donor,record);
+
+        invoker.execute(action);
+        IllnessField.setText("");
+        refreshIllnessLists();
+      }
 
 
-      IllnessRecord record =  new IllnessRecord(illnessName,dateDiagnosed,null,
-          isChronic);
-      AddIllnessRecord action = new AddIllnessRecord(donor,record);
-
-      invoker.execute(action);
-      IllnessField.setText("");
-      refreshIllnessLists();
-
+    } else{
+      errorMessage.setText("Illness Name must be longer than 0 characters!");
+      errorMessage.setOpacity(1);
     }
   }
 

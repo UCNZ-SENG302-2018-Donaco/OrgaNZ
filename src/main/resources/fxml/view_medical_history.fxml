@@ -65,6 +65,7 @@
                               <Button mnemonicParsing="false" onAction="#addButtonPressed" text="Add Illness" />
                            </children>
                         </HBox>
+                        <Text fx:id="errorMessage" fill="RED" opacity="0.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Diagnosis date cannot be before birth!" />
                         <HBox VBox.vgrow="ALWAYS">
                            <children>
                               <VBox prefHeight="385.0" prefWidth="195.0" HBox.hgrow="ALWAYS">

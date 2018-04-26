@@ -439,6 +439,10 @@ public class Person {
         addUpdate("illnessHistory");
     }
 
+    public void sortIllnesses(IllnessRecord record){
+
+    }
+
     /**
      * Returns all conditions that the person has
      * @return ArrayList of all the conditions that the person has
