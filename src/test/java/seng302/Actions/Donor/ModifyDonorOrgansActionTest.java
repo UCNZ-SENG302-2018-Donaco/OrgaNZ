@@ -165,11 +165,15 @@ public class ModifyDonorOrgansActionTest {
 
     @Test
     public void CheckExecuteTextOneChangeTest() throws OrganAlreadyRegisteredException {
+        final String expectedText = String.format("Changed organ registration for client %d: First Last:\n"
+                + "\n"
+                + "Registered Liver for donation.", baseDonor.getUid());
+
         ModifyDonorOrgansAction action = new ModifyDonorOrgansAction(baseDonor);
 
         action.addChange(Organ.LIVER, true);
         String result = invoker.execute(action);
-        assertEquals("Updated 1 organ(s) for user First Last", result);
+        assertEquals(expectedText, result);
     }
 
     @Test(expected = OrganAlreadyRegisteredException.class)
@@ -198,22 +202,33 @@ public class ModifyDonorOrgansActionTest {
 
     @Test
     public void CheckExecuteTextThreeChangeTest() throws OrganAlreadyRegisteredException {
+        final String expectedText = String.format("Changed organ registration for client %d: First Last:\n"
+                + "\n"
+                + "Registered Heart for donation.\n"
+                + "Registered Liver for donation.\n"
+                + "Registered Pancreas for donation.", baseDonor.getUid());
+
         ModifyDonorOrgansAction action = new ModifyDonorOrgansAction(baseDonor);
 
         action.addChange(Organ.LIVER, true);
         action.addChange(Organ.PANCREAS, true);
         action.addChange(Organ.HEART, true);
         String result = invoker.execute(action);
-        assertEquals("Updated 3 organ(s) for user First Last", result);
+        assertEquals(expectedText, result);
     }
 
     @Test
     public void CheckUnexecuteTextOneChangeTest() throws OrganAlreadyRegisteredException {
+        final String expectedText = String.format("Reversed these changes to organ registration for client %d: First "
+                + "Last:\n"
+                + "\n"
+                + "Registered Liver for donation.", baseDonor.getUid());
+
         ModifyDonorOrgansAction action = new ModifyDonorOrgansAction(baseDonor);
 
         action.addChange(Organ.LIVER, true);
         invoker.execute(action);
         String result = invoker.undo();
-        assertEquals("Undid 1 organ update(s) for user First Last", result);
+        assertEquals(expectedText, result);
     }
 }
