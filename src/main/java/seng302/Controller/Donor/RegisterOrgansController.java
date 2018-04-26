@@ -20,7 +20,10 @@ import seng302.State.State;
 import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
 import seng302.Utilities.JSONConverter;
+import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
+
+import org.controlsfx.control.Notifications;
 
 /**
  * Controller for the register organs page.
@@ -139,11 +142,16 @@ public class RegisterOrgansController extends SubController {
             }
         }
         if (hasChanged) {
-            invoker.execute(action);
+            String actionText = invoker.execute(action);
             PageNavigator.refreshAllWindows();
             HistoryItem save = new HistoryItem("UPDATE ORGANS",
                     "The Donor's organs were updated: " + donor.getDonorOrganStatusString());
             JSONConverter.updateHistory(save, "action_history.json");
+
+            Notifications.create()
+                    .title("Updated Organs")
+                    .text(actionText)
+                    .showInformation();
         }
     }
 
@@ -164,5 +172,10 @@ public class RegisterOrgansController extends SubController {
         for (CheckBox box : organCheckBoxes.values()) {
             box.setDisable(false);
         }
+    }
+
+    @FXML
+    private void returnToViewDonor() {
+        PageNavigator.loadPage(Page.VIEW_DONOR, mainController);
     }
 }
