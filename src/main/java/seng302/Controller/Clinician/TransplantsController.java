@@ -7,9 +7,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Pagination;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
@@ -28,6 +26,13 @@ import seng302.Utilities.View.WindowContext;
 public class TransplantsController extends SubController {
 
     private static final int ROWS_PER_PAGE = 30;
+
+
+    @FXML
+    private ChoiceBox<Region> regionChoice;
+
+    @FXML
+    private ChoiceBox<Organ> organChoice;
 
     @FXML
     private HBox sidebarPane;
@@ -49,6 +54,7 @@ public class TransplantsController extends SubController {
 
     @FXML
     private Pagination pagination;
+
 
     private ObservableList<TransplantRequest> observableTransplantList = FXCollections.observableArrayList();
     private SortedList<TransplantRequest> sortedTransplants;
@@ -85,8 +91,26 @@ public class TransplantsController extends SubController {
         //Bind the tableView to the observable list
         tableView.setItems(observableTransplantList);
 
+        //Sets items for the Choice boxes for region and organ
+        regionChoice.setItems(FXCollections.observableArrayList(Region.values()));
+        organChoice.setItems(FXCollections.observableArrayList(Organ.values()));
+
+
     }
 
+    /**
+     * Used to filter out the transplant waiting list based on what organ or region or both is chosen
+     */
+    @FXML
+    private void filter() {
+
+        /*if (organChoice.isShowing() | regionChoice.isShowing()) {
+            // update the table to show only the selected items
+        } else {
+            PageNavigator.showAlert(Alert.AlertType.ERROR, "No filter required", "There was nothing to filter");
+        }*/
+
+    }
 
     /**
      * Initialize the table columns.
@@ -137,5 +161,8 @@ public class TransplantsController extends SubController {
         });
 
     }
+
+
+
 
 }
