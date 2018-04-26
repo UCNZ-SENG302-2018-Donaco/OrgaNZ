@@ -120,7 +120,10 @@ public class AddMedicationRecordActionTest {
 
         String result = invoker.execute(action);
 
-        assertEquals("Added medication Generic Name record for donor First Last", result);
+        assertEquals(
+                String.format("Added record for medication 'Generic Name' to the history of donor %d: First Last.",
+                        baseDonor.getUid()),
+                result);
     }
 
     @Test
@@ -132,6 +135,9 @@ public class AddMedicationRecordActionTest {
 
         String result = invoker.undo();
 
-        assertEquals("Removed medication Generic Name record for donor First Last", result);
+        assertEquals(
+                String.format("Reversed the addition of record for medication 'Generic Name' to the history of donor "
+                                + "%d: First Last.", baseDonor.getUid()),
+                result);
     }
 }
