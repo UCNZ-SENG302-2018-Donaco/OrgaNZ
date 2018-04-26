@@ -97,7 +97,7 @@ public class MainController {
     }
 
     /**
-     * Refreshes all current windows
+     * Refreshes the title of the window, and calls the current page's {@link SubController#refresh()} method.
      */
     public void refresh() {
         updateTitle();
@@ -108,14 +108,17 @@ public class MainController {
     }
 
     /**
-     * Set the title of the window to the given text
-     * @param title The text to set the window title to
+     * Sets the title of the window to the given text.
+     * @param title The new title of the window.
      */
     public void setTitle(String title) {
         windowTitle = title;
         updateTitle();
     }
 
+    /**
+     * Updates the title of the window, inserting an asterisk if there are unsaved changes.
+     */
     private void updateTitle() {
         if (State.isUnsavedChanges()) {
             stage.setTitle("*" + windowTitle);
