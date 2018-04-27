@@ -75,7 +75,7 @@ public class ViewMedicationsController extends SubController {
     private ListView<MedicationRecord> pastMedicationsView, currentMedicationsView;
 
     private ListView<MedicationRecord> selectedListView = null;
-    private boolean controlIsDepressed = false;
+    private boolean selectingMultiple = false;
 
     public ViewMedicationsController() {
         session = State.getSession();
@@ -109,20 +109,18 @@ public class ViewMedicationsController extends SubController {
 
         pastMedicationsView.getSelectionModel().selectedItemProperty().addListener(
                 (observable) -> {
-                    trackControlKeyPressed();
                     selectedListView = pastMedicationsView;
-                    // Clear the other list if Ctrl is not being held down
-                    if (!controlIsDepressed) {
+                    // Clear the other list if CTRL or SHIFT is not being held down
+                    if (!selectingMultiple) {
                         currentMedicationsView.getSelectionModel().clearSelection();
                     }
                 });
 
         currentMedicationsView.getSelectionModel().selectedItemProperty().addListener(
                 (observable) -> {
-                    trackControlKeyPressed();
                     selectedListView = currentMedicationsView;
-                    // Clear the other list if Ctrl is not being held down
-                    if (!controlIsDepressed) {
+                    // Clear the other list if CTRL or SHIFT is not being held down
+                    if (!selectingMultiple) {
                         pastMedicationsView.getSelectionModel().clearSelection();
                     }
                 });
@@ -158,6 +156,8 @@ public class ViewMedicationsController extends SubController {
 
         refreshMedicationLists();
         mainController.setTitle("Medication history: " + donor.getFullName());
+
+        trackControlOrShiftKeyPressed();
     }
 
     @Override
@@ -225,18 +225,18 @@ public class ViewMedicationsController extends SubController {
     }
 
     /**
-     * Tracks if the control key is pressed or released, and updates controlIsDepressed accordingly.
+     * Tracks if the control key is pressed or released, and updates selectingMultiple accordingly.
      */
-    private void trackControlKeyPressed() {
-        Scene scene = sidebarPane.getScene();
+    private void trackControlOrShiftKeyPressed() {
+        Scene scene = mainController.getStage().getScene();
         scene.setOnKeyPressed(e -> {
-            if (e.getCode() == KeyCode.CONTROL) {
-                controlIsDepressed = true;
+            if (e.getCode() == KeyCode.CONTROL || e.getCode() == KeyCode.SHIFT) {
+                selectingMultiple = true;
             }
         });
         scene.setOnKeyReleased(e -> {
-            if (e.getCode() == KeyCode.CONTROL) {
-                controlIsDepressed = false;
+            if (e.getCode() == KeyCode.CONTROL || e.getCode() == KeyCode.SHIFT) {
+                selectingMultiple = false;
             }
         });
     }
