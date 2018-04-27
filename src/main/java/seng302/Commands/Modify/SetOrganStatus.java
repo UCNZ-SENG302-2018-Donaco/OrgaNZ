@@ -12,6 +12,7 @@ import seng302.HistoryItem;
 import seng302.State.ClientManager;
 import seng302.State.State;
 import seng302.Utilities.Enums.Organ;
+import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
 import seng302.Utilities.JSONConverter;
 
 import picocli.CommandLine.Command;
@@ -115,7 +116,11 @@ public class SetOrganStatus implements Runnable {
             } else if (!newState && !currState) {
                 System.out.println(organ.toString() + " is already not registered for donation");
             } else {
-                action.addChange(organ, newState);
+                try {
+                    action.addChange(organ, newState);
+                } catch (OrganAlreadyRegisteredException e) {
+                    e.printStackTrace();
+                }
             }
         }
 

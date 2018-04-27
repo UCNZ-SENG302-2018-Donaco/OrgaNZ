@@ -64,6 +64,8 @@ public class AppUI extends Application {
         mainController.setStage(stage);
         mainController.setWindowContext(WindowContext.defaultContext());
 
+        State.addMainController(mainController);
+
         PageNavigator.loadPage(Page.LANDING, mainController);
 
         return mainPane;

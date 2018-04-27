@@ -2,10 +2,10 @@ package seng302.Controller.Client;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
@@ -28,6 +28,8 @@ import seng302.Utilities.Enums.Region;
 import seng302.Utilities.JSONConverter;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
+
+import org.controlsfx.control.Notifications;
 
 /**
  * Controller for the view/edit client page.
@@ -91,8 +93,13 @@ public class ViewClientController extends SubController {
         } else if (windowContext.isClinViewClientWindow()) {
             viewedClient = windowContext.getViewClient();
         }
-
+        mainController.setTitle("Donor profile: " + viewedClient.getFullName());
         id.setText(Integer.toString(viewedClient.getUid()));
+        searchClient();
+    }
+
+    @Override
+    public void refresh() {
         searchClient();
     }
 
@@ -248,36 +255,41 @@ public class ViewClientController extends SubController {
         return update;
     }
 
-    /**
-     * Records the changes updated as a ModifyClientAction to trace the change in record.
-     */
-    private void updateChanges() {
+    private void addChangeIfDifferent(ModifyClientAction action, String field, Object oldValue, Object newValue) {
         try {
-            ModifyClientAction action = new ModifyClientAction(viewedClient);
-
-            action.addChange("setFirstName", viewedClient.getFirstName(), fname.getText());
-            action.addChange("setLastName", viewedClient.getLastName(), lname.getText());
-            action.addChange("setMiddleName", viewedClient.getMiddleName(), mname.getText());
-            action.addChange("setDateOfBirth", viewedClient.getDateOfBirth(), dob.getValue());
-            action.addChange("setDateOfDeath", viewedClient.getDateOfDeath(), dod.getValue());
-            action.addChange("setGender", viewedClient.getGender(), gender.getValue());
-            action.addChange("setHeight", viewedClient.getHeight(), Double.parseDouble(height.getText()));
-            action.addChange("setWeight", viewedClient.getWeight(), Double.parseDouble(weight.getText()));
-            action.addChange("setBloodType", viewedClient.getBloodType(), btype.getValue());
-            action.addChange("setRegion", viewedClient.getRegion(), region.getValue());
-            action.addChange("setCurrentAddress", viewedClient.getCurrentAddress(), address.getText());
-
-            invoker.execute(action);
-
-            PageNavigator.showAlert(Alert.AlertType.INFORMATION,
-                    "Success",
-                    String.format("Successfully updated client %s %s %s %d.",
-                            viewedClient.getFirstName(), viewedClient.getMiddleName(),
-                            viewedClient.getLastName(), viewedClient.getUid()));
-
+            if (!Objects.equals(oldValue, newValue)) {
+                action.addChange(field, oldValue, newValue);
+            }
         } catch (NoSuchFieldException | NoSuchMethodException exc) {
             exc.printStackTrace();
         }
+    }
+
+    /**
+     * Records the changes updated as a ModifyDonorAction to trace the change in record.
+     */
+    private void updateChanges() {
+        ModifyClientAction action = new ModifyClientAction(viewedClient);
+
+        addChangeIfDifferent(action, "setFirstName", viewedClient.getFirstName(), fname.getText());
+        addChangeIfDifferent(action, "setLastName", viewedClient.getLastName(), lname.getText());
+        addChangeIfDifferent(action, "setMiddleName", viewedClient.getMiddleName(), mname.getText());
+        addChangeIfDifferent(action, "setDateOfBirth", viewedClient.getDateOfBirth(), dob.getValue());
+        addChangeIfDifferent(action, "setDateOfDeath", viewedClient.getDateOfDeath(), dod.getValue());
+        addChangeIfDifferent(action, "setGender", viewedClient.getGender(), gender.getValue());
+        addChangeIfDifferent(action, "setHeight", viewedClient.getHeight(), Double.parseDouble(height.getText()));
+        addChangeIfDifferent(action, "setWeight", viewedClient.getWeight(), Double.parseDouble(weight.getText()));
+        addChangeIfDifferent(action, "setBloodType", viewedClient.getBloodType(), btype.getValue());
+        addChangeIfDifferent(action, "setRegion", viewedClient.getRegion(), region.getValue());
+        addChangeIfDifferent(action, "setCurrentAddress", viewedClient.getCurrentAddress(), address.getText());
+
+        String actionText = invoker.execute(action);
+        PageNavigator.refreshAllWindows();
+
+        Notifications.create()
+                .title("Updated Donor")
+                .text(actionText)
+                .showInformation();
     }
 
     /**

@@ -79,14 +79,8 @@ public final class JSONConverter {
         }.getType();
 
         clients = gson.fromJson(reader, collectionType);
-        ClientManager clientManager = State.getClientManager();
-        clientManager.setClients(clients);
-
-        for (Client client : clients) {
-            if (client.getUid() >= clientManager.getUid()) {
-                clientManager.setUid(client.getUid() + 1);
-            }
-        }
+        ClientManager donorManager = State.getClientManager();
+        donorManager.setClients(clients);
     }
 
     /**

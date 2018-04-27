@@ -15,12 +15,12 @@
       <children>
         <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
           <children>
-            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#undo" text="Undo" HBox.hgrow="ALWAYS">
+            <Button fx:id="undoButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#undo" text="Undo" HBox.hgrow="ALWAYS">
               <font>
                 <Font size="16.0" />
               </font>
             </Button>
-            <Button layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#redo" text="Redo" HBox.hgrow="ALWAYS">
+            <Button fx:id="redoButton" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#redo" text="Redo" HBox.hgrow="ALWAYS">
               <font>
                 <Font size="16.0" />
               </font>
