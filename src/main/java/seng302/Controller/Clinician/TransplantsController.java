@@ -1,8 +1,11 @@
 package seng302.Controller.Clinician;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+import javafx.beans.property.BooleanProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -24,21 +27,11 @@ import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
 import seng302.Utilities.View.WindowContext;
 
+import org.controlsfx.control.CheckComboBox;
+
 public class TransplantsController extends SubController {
 
     private static final int ROWS_PER_PAGE = 30;
-
-    @FXML
-    private TextField regionSearch;
-
-    @FXML
-    private TextField organSearch;
-
-    @FXML
-    private ChoiceBox<Region> regionChoice;
-
-    @FXML
-    private ChoiceBox<Organ> organChoice;
 
     @FXML
     private HBox sidebarPane;
@@ -61,10 +54,13 @@ public class TransplantsController extends SubController {
     @FXML
     private Pagination pagination;
 
-
+    @FXML
+    private CheckComboBox regionChoice;
+    @FXML
+    private CheckComboBox organChoice;
     private ObservableList<TransplantRequest> observableTransplantList = FXCollections.observableArrayList();
-    /*private FilteredList<TransplantRequest> filteredOrgans;
-    private FilteredList<TransplantRequest> filteredRegions;*/
+    private FilteredList<TransplantRequest> filteredOrgans;
+    private FilteredList<TransplantRequest> filteredRegions;
     private SortedList<TransplantRequest> sortedTransplants;
 
     @Override
@@ -83,8 +79,6 @@ public class TransplantsController extends SubController {
 
         //set up the search bars
         tableView.setOnSort((o) -> pagination.setPageCount(sortedTransplants.size() / ROWS_PER_PAGE + 1));
-        organSearch.textProperty().addListener(((o) -> filter()));
-        regionSearch.textProperty().addListener(((o) -> filter()));
 
         /*filteredOrgans = new FilteredList<>(FXCollections.observableArrayList(allTransplants), transplantRequest ->
                 true);
@@ -107,10 +101,10 @@ public class TransplantsController extends SubController {
         tableView.setItems(observableTransplantList);
 
         //Sets items for the Choice boxes for region and organ
-        regionChoice.setItems(FXCollections.observableArrayList(Region.values()));
-        organChoice.setItems(FXCollections.observableArrayList(Organ.values()));
-
-
+        //regionChoice.setItems(FXCollections.observableArrayList(Region.values()));
+        //organChoice.setItems(FXCollections.observableArrayList(Organ.values()));
+        regionChoice.getItems().addAll(Region.values());
+        organChoice.getItems().addAll(Organ.values());
 
     }
 
@@ -164,6 +158,30 @@ public class TransplantsController extends SubController {
 
     }
 
+    private void filterRegions() {
+        Collection<String> regionsToFilter = new ArrayList<>();
+        for (int i = 0; i < Region.values().length; i++) {
+            if (regionChoice.getItemBooleanProperty(i).getValue()) {
+                regionsToFilter.add(regionChoice.getItemBooleanProperty(i).getBean().toString());
+                //regionsToFilter.add(Region.valueOf(regionChoice.getItemBooleanProperty(i).getBean().toString().toUpperCase()));
+            }
+        }
+        if (regionsToFilter.size() > 0) {
+            //filteredRegions.setPredicate(region -> regionsToFilter.contains(region));
+        } else {
+            //filteredRegions.setPredicate(Region -> true);
+        }
+    }
+
+    private void filterOrgans() {
+        Collection<Organ> organsToFilter = new ArrayList<>();
+        for (int i = 0; i < Organ.values().length; i++) {
+            if (organChoice.getItemBooleanProperty(i).getValue()) {
+                System.out.println(organChoice.getItemBooleanProperty(i).getBean());
+                //regionsToFilter.add(regionChoice.getItemBooleanProperty(i).getBean())
+            }
+        }
+    }
 
     /**
      * Used to filter out the transplant waiting list based on what organ or region or both is chosen
@@ -171,6 +189,10 @@ public class TransplantsController extends SubController {
 
     @FXML
     private void filter() {
+        filterRegions();
+        //filterOrgans();
+
+
         /*
         String organSearchText = organSearch.getText();
         if (organSearch == null || organSearchText.length() == 0) {
@@ -186,7 +208,6 @@ public class TransplantsController extends SubController {
             filteredRegions.setPredicate(transplantRequest -> transplantRequest.getRequestedOrgan().equals(organSearchText));
         }
         */
-
     }
 
 
