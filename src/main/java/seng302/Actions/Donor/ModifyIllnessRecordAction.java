@@ -14,6 +14,9 @@ public class ModifyIllnessRecordAction implements Action{
   private LocalDate newStarted;
   private LocalDate newStopped;
 
+  private Boolean oldChronic;
+  private Boolean newChronic;
+
   public ModifyIllnessRecordAction(IllnessRecord record){
     this.record = record;
     this.oldStarted = record.getDiagnosisDate();
@@ -26,17 +29,19 @@ public class ModifyIllnessRecordAction implements Action{
 
   public void changeStopped(LocalDate newStopped) {this.newStopped = newStopped;}
 
+  public void changeChronicStatus(Boolean newChronic) {this.newChronic = newChronic;}
+
   @Override
   public void execute(){
-    if (Objects.equals(newStarted, oldStarted) && Objects.equals(newStopped, oldStopped)) {
-        throw new IllegalArgumentException("No changes were made to Illness Record");
-      }
     if (!Objects.equals(newStarted, oldStarted)) {
       record.setDiagnosisDate(newStarted);
     }
 
     if(!Objects.equals(newStopped,oldStopped)){
       record.setCuredDate(newStopped);
+    }
+    if(!Objects.equals(oldChronic,newChronic)){
+        record.setChronic(newChronic);
     }
   }
 

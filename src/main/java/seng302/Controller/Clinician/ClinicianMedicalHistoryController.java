@@ -14,6 +14,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
+
+import seng302.Actions.Action;
 import seng302.Actions.ActionInvoker;
 import seng302.Actions.Donor.AddIllnessRecord;
 import seng302.Actions.Donor.ModifyIllnessRecordAction;
@@ -51,7 +53,7 @@ public class ClinicianMedicalHistoryController extends SubController{
   private HBox newIllnessPane;
 
   @FXML
-  private Button moveToHistoryButton, moveToCurrentButton, deleteButton;
+  private Button moveToHistoryButton, moveToCurrentButton, deleteButton,noLongerChronic;
 
 
 
@@ -159,6 +161,19 @@ public class ClinicianMedicalHistoryController extends SubController{
   private void addButtonPressed(ActionEvent event) {
 
     addIllness(IllnessField.getText(),dateDiagnosed.getValue(),chronicBox.isSelected());
+  }
+
+  @FXML
+  private void removeChronicStatus(ActionEvent event){
+      IllnessRecord record = currentIllnessView.getSelectionModel().getSelectedItem();
+      if(record.getChronic()){
+          ModifyIllnessRecordAction action = new ModifyIllnessRecordAction(record);
+          action.changeChronicStatus(false);
+          invoker.execute(action);
+          record.toString();
+          refreshIllnessLists();
+      }
+
   }
 
   private void addIllness(String illnessName,LocalDate dateDiagnosed,Boolean isChronic){

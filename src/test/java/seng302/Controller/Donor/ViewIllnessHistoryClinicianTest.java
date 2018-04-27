@@ -50,7 +50,7 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
                     "Colon Cancer",
                     LocalDate.of(2014, 3, 4),
                     null,
-                    false
+                    true
             )
     };
 
@@ -107,6 +107,18 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
         verifyThat("#moveToCurrentButton", (Button b) -> !b.isDisabled());
         verifyThat("#deleteButton", (Button b) -> !b.isDisabled());
     }
+
+    /**
+
+    @Test
+    public void removeChronicTag(){
+        IllnessRecord removeChronicTag = testCurrentIllnessRecords[0];
+        clickOn((Node) lookup(hasText(removeChronicTag.toString())).query());
+        clickOn("#noLongerChronic");
+        assertEquals(removeChronicTag.toString(),"%s Diagnosed on: %s");
+
+
+    } **/
 
     @Test
     public void pastIllnessesContainsRecordsTest() {
