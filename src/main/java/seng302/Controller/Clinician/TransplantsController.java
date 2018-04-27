@@ -135,11 +135,13 @@ public class TransplantsController extends SubController {
         int fromIndex = pageIndex * ROWS_PER_PAGE;
         int toIndex = Math.min(fromIndex + ROWS_PER_PAGE, sortedTransplants.size());
         observableTransplantList.setAll(sortedTransplants.subList(fromIndex, toIndex));
-        if (sortedTransplants.size() == 0) {
-            displayingXToYOfZText.setText("Displaying 0 of 0");
+        if (sortedTransplants.size() < 2 || fromIndex + 1 == toIndex) {
+            // 0 or 1 items OR the last item, on its own page
+            displayingXToYOfZText.setText(String.format("Displaying %d of %d", sortedTransplants.size(), sortedTransplants.size()));
+        } else {
+            displayingXToYOfZText.setText(String.format("Displaying %d-%d of %d", fromIndex + 1, toIndex,
+                    sortedTransplants.size()));
         }
-        displayingXToYOfZText.setText(String.format("Displaying %d-%d of %d", fromIndex + 1, toIndex,
-                sortedTransplants.size()));
         return new Pane();
     }
 

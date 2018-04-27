@@ -24,6 +24,8 @@ import org.junit.Test;
 
 public class TransplantsControllerTest extends ControllerTest {
 
+    // Test data
+
     private Clinician testClinician = new Clinician("A", "B", "C", "D",
             Region.UNSPECIFIED, 0, "E");
 
@@ -45,6 +47,8 @@ public class TransplantsControllerTest extends ControllerTest {
     private TransplantRequest[] requests2 = {request2a, request2b};
 
     private List<TransplantRequest> requests = new ArrayList<>();
+
+    // Overridden classes from parent class
 
     @Override
     protected Page getPage() {
@@ -74,7 +78,7 @@ public class TransplantsControllerTest extends ControllerTest {
         client1.setRegion(Region.CANTERBURY);
         client2.setRegion(Region.OTAGO);
 
-        for (int i = 4; i < 100; i++) {
+        for (int i = 4; i < 119; i++) {
             Client client = new Client("Client", "Number", Integer.toString(i), LocalDate.now(), i);
             TransplantRequest request = new TransplantRequest(Organ.BONE, true, i);
             client.addTransplantRequest(request);
@@ -86,6 +90,8 @@ public class TransplantsControllerTest extends ControllerTest {
                 .build());
     }
 
+    // Tests
+
     @Test
     public void testComponentsAreVisible() {
         verifyThat("#tableView", isVisible());
@@ -96,7 +102,7 @@ public class TransplantsControllerTest extends ControllerTest {
 
     @Test
     public void testPaginationDescription() {
-        verifyThat("#displayingXToYOfZText", hasText("Displaying 1-30 of 102"));
+        verifyThat("#displayingXToYOfZText", hasText("Displaying 1-30 of 121"));
     }
 
     /**
@@ -114,17 +120,21 @@ public class TransplantsControllerTest extends ControllerTest {
         verifyThat("#tableView", hasNumRows(30));
     }
 /*
-todo fix in headless
+//todo fix in headless
     @Test
     public void testNext30Rows() {
         moveTo("#pagination");
 
         // Move across to the next page button
-        moveTo(new Point2D(MouseInfo.getPointerInfo().getLocation().x + 55, MouseInfo.getPointerInfo().getLocation()
+        moveTo(new Point2D(MouseInfo.getPointerInfo().getLocation().x + 65, MouseInfo.getPointerInfo().getLocation()
                 .y));
+
         // Click on the next page button
         press(MouseButton.PRIMARY);
         release(MouseButton.PRIMARY);
+
+        // Check it has 30 rows
+        verifyThat("#tableView", hasNumRows(30));
 
         // Check all 30 requests are correct
         TransplantRequest request;
@@ -134,7 +144,28 @@ todo fix in headless
                     request.getClientRegion(), request.getRequestDateString()));
         }
     }
-*/
+
+    @Test
+    public void testPaginationLastPage() {
+        moveTo("#pagination");
+
+        // Move across to the next page button
+        moveTo(new Point2D(MouseInfo.getPointerInfo().getLocation().x + 65, MouseInfo.getPointerInfo().getLocation()
+                .y));
+
+        // Click on the next page button 4 times
+        for (int i = 0; i < 4; i ++) {
+            press(MouseButton.PRIMARY);
+            release(MouseButton.PRIMARY);
+        }
+
+        // Check it only has 1 row
+        verifyThat("#tableView", hasNumRows(1));
+
+        // Check pagination description
+        verifyThat("#displayingXToYOfZText", hasText("Displaying 121 of 121"));
+    }
+
     /*Column names:
 
     "clientCol"
