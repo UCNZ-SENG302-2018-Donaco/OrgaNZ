@@ -159,14 +159,6 @@ public class TransplantsControllerTest extends ControllerTest {
                 .orElse(null);
     }
 
-    /**
-     * Checks the current alert dialog displayed (on the top of the window stack) has the expected contents.
-     * @param expectedHeader Expected header of the dialog
-     * @param expectedContent Expected content of the dialog
-     */
-    private void checkNewWindowHasHeaderAndContent(String expectedHeader, String expectedContent) {
-    }
-
     @Test
     public void testDoubleClickToOpenClient() {
         // Select Client 1 and double click on them
