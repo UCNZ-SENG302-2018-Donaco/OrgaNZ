@@ -138,7 +138,7 @@ public class TransplantsController extends SubController {
         if (sortedTransplants.size() == 0) {
             displayingXToYOfZText.setText("Displaying 0 of 0");
         }
-        displayingXToYOfZText.setText(String.format("Displaying %d-%d of %d", fromIndex+1, toIndex,
+        displayingXToYOfZText.setText(String.format("Displaying %d-%d of %d", fromIndex + 1, toIndex,
                 sortedTransplants.size()));
         return new Pane();
     }

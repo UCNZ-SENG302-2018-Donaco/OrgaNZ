@@ -7,10 +7,9 @@ import static org.testfx.util.NodeQueryUtils.isVisible;
 
 import java.time.LocalDate;
 
-import seng302.Controller.ControllerTest;
 import seng302.Client;
+import seng302.Controller.ControllerTest;
 import seng302.MedicationRecord;
-import seng302.State.Session.UserType;
 import seng302.State.State;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.WindowContext;

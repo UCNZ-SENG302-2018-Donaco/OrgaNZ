@@ -25,7 +25,7 @@ public class DeleteMedicationRecordAction extends Action {
     }
 
     @Override
-    protected void execute() {
+    public void execute() {
         client.deleteMedicationRecord(record);
         HistoryItem save = new HistoryItem("DELETE_MEDICATION",
                 String.format("Medication record for %s deleted from %s %s",
@@ -34,19 +34,19 @@ public class DeleteMedicationRecordAction extends Action {
     }
 
     @Override
-    protected void unExecute() {
+    public void unExecute() {
         client.addMedicationRecord(record);
     }
 
     @Override
     public String getExecuteText() {
-        return String.format("Removed record for medication '%s' from the history of donor %d: %s %s.",
-                record.getMedicationName(), donor.getUid(), donor.getFirstName(), donor.getLastName());
+        return String.format("Removed record for medication '%s' from the history of client %d: %s %s.",
+                record.getMedicationName(), client.getUid(), client.getFirstName(), client.getLastName());
     }
 
     @Override
     public String getUnexecuteText() {
-        return String.format("Re-added record for medication '%s' to the history of donor %d: %s %s.",
-                record.getMedicationName(), donor.getUid(), donor.getFirstName(), donor.getLastName());
+        return String.format("Re-added record for medication '%s' to the history of client %d: %s %s.",
+                record.getMedicationName(), client.getUid(), client.getFirstName(), client.getLastName());
     }
 }

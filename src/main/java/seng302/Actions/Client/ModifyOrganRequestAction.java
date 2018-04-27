@@ -9,7 +9,7 @@ import seng302.TransplantRequest;
 import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
 
-public class ModifyOrganRequestAction implements Action {
+public class ModifyOrganRequestAction extends Action {
 
     private Map<Organ, Boolean> changes = new HashMap<>();
     private Client client;
@@ -42,6 +42,16 @@ public class ModifyOrganRequestAction implements Action {
     @Override
     public void unExecute() {
         runChanges(true);
+    }
+
+    //TODO implement these two methods
+
+    public String getExecuteText() {
+        return "";
+    }
+
+    public String getUnexecuteText() {
+        return "";
     }
 
     /**

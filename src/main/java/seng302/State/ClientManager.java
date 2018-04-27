@@ -119,8 +119,8 @@ public class ClientManager {
     public List<TransplantRequest> getTransplantWaitingList() {
         List<TransplantRequest> transplantWaitingList = new ArrayList<>();
 
-        for (Client client: clients) {
-            for (TransplantRequest transplantRequest: client.getTransplantRequests()) {
+        for (Client client : clients) {
+            for (TransplantRequest transplantRequest : client.getTransplantRequests()) {
                 if (transplantRequest.getCurrentRequest()) {
                     transplantWaitingList.add(transplantRequest);
                 }
@@ -136,7 +136,7 @@ public class ClientManager {
     public List<TransplantRequest> getAllTransplantRequests() {
         List<TransplantRequest> transplantRequests = new ArrayList<>();
 
-        for (Client client: clients) {
+        for (Client client : clients) {
             transplantRequests.addAll(client.getTransplantRequests());
         }
         return transplantRequests;

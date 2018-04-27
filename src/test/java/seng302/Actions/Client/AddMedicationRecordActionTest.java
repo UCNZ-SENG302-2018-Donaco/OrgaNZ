@@ -48,7 +48,6 @@ public class AddMedicationRecordActionTest {
     }
 
 
-
     @Test
     public void AddMultipleMedicationTest() {
         MedicationRecord record = new MedicationRecord("Generic Name", LocalDate.of(2018, 4, 9), null);
@@ -139,7 +138,7 @@ public class AddMedicationRecordActionTest {
 
         assertEquals(
                 String.format("Reversed the addition of record for medication 'Generic Name' to the history of client "
-                                + "%d: First Last.", baseClient.getUid()),
+                        + "%d: First Last.", baseClient.getUid()),
                 result);
     }
 }

@@ -131,26 +131,26 @@ public class SetAttributeTest {
 
     @Test
     public void setAttributeValidRegionTest() {
-        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
-        when(spyDonorManager.getDonorByID(anyInt())).thenReturn(donor);
+        Client client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        when(spyClientManager.getClientByID(anyInt())).thenReturn(client);
 
         String[] inputs = {"-u", "1", "--region", "Canterbury"};
 
         CommandLine.run(spySetAttribute, System.out, inputs);
 
-        assertEquals(Region.CANTERBURY, donor.getRegion());
+        assertEquals(Region.CANTERBURY, client.getRegion());
     }
 
     @Test
     public void setAttributeValidRegionWithSpaceTest() {
-        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
-        when(spyDonorManager.getDonorByID(anyInt())).thenReturn(donor);
+        Client client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        when(spyClientManager.getClientByID(anyInt())).thenReturn(client);
 
         String[] inputs = {"-u", "1", "--region", "West Coast"};
 
         CommandLine.run(spySetAttribute, System.out, inputs);
 
-        assertEquals(Region.WEST_COAST, donor.getRegion());
+        assertEquals(Region.WEST_COAST, client.getRegion());
     }
 
     @Test

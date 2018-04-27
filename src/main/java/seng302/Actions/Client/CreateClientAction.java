@@ -7,7 +7,7 @@ import seng302.State.ClientManager;
 /**
  * A reversible client creation action
  */
-public class CreateClientAction implements Action {
+public class CreateClientAction extends Action {
 
 
     private Client client;
@@ -39,5 +39,15 @@ public class CreateClientAction implements Action {
     @Override
     public void unExecute() {
         manager.removeClient(client);
+    }
+
+    //TODO implement these two methods
+
+    public String getExecuteText() {
+        return "";
+    }
+
+    public String getUnexecuteText() {
+        return "";
     }
 }

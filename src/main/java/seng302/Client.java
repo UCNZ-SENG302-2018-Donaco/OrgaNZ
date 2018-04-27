@@ -434,8 +434,8 @@ public class Client {
      * @return true if the client has a current organ request. False otherwise.
      */
     public boolean currentOrganRequest() {
-        for (TransplantRequest t: transplantRequests) {
-            if (t.getCurrentRequest()){
+        for (TransplantRequest t : transplantRequests) {
+            if (t.getCurrentRequest()) {
                 return true;
             }
         }

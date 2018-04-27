@@ -1,26 +1,27 @@
 package seng302.Controller.Client;
 
-import javafx.scene.control.CheckBox;
+import static org.junit.Assert.assertEquals;
+
+import java.time.LocalDate;
+
 import javafx.scene.input.KeyCode;
-import org.junit.Test;
+
 import seng302.Client;
 import seng302.Clinician;
 import seng302.Controller.ControllerTest;
-import seng302.State.Session;
 import seng302.State.State;
 import seng302.Utilities.Enums.Region;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.WindowContext;
 
-import java.time.LocalDate;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
 
 /**
  * Clinicians should be able to view and edit any Clients requests. They can set new requests and expire old requests,
  * which should then display on the history page.
  */
 public class RequestOrganControllerCliniciansTest extends ControllerTest {
+
     private Clinician testClinician = new Clinician("A", "B", "C", "D",
             Region.UNSPECIFIED, 0, "E");
     private Client testClient = new Client("J", "V", "T", LocalDate.now(), 1);
@@ -33,7 +34,7 @@ public class RequestOrganControllerCliniciansTest extends ControllerTest {
     @Override
     protected void initState() {
         State.init();
-        State.login(Session.UserType.CLINICIAN, testClinician);
+        State.login(testClinician);
         State.getClientManager().addClient(testClient);
         mainController.setWindowContext(new WindowContext.WindowContextBuilder()
                 .setAsClinViewClientWindow()
@@ -90,7 +91,7 @@ public class RequestOrganControllerCliniciansTest extends ControllerTest {
     @Test
     public void clientView() {
         State.logout();
-        State.login(Session.UserType.CLIENT, testClient);
+        State.login(testClient);
         mainController.setWindowContext(new WindowContext.WindowContextBuilder()
                 .build());
         System.out.println();

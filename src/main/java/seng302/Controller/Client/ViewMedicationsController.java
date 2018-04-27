@@ -126,7 +126,7 @@ public class ViewMedicationsController extends SubController {
         }
 
         refreshMedicationLists();
-        mainController.setTitle("Medication history: " + donor.getFullName());
+        mainController.setTitle("Medication history: " + client.getFullName());
     }
 
     @Override

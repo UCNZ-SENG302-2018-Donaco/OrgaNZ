@@ -32,7 +32,7 @@ public class ModifyClientOrgansAction extends Action {
      * @throws OrganAlreadyRegisteredException Thrown if the organ is already set to that value
      */
     public void addChange(Organ organ, Boolean newValue) throws OrganAlreadyRegisteredException {
-        if (donor.getOrganStatus().get(organ) == newValue) {
+        if (client.getOrganDonationStatus().get(organ) == newValue) {
             throw new OrganAlreadyRegisteredException("That organ is already set to that value");
         }
         changes.put(organ, newValue);
@@ -63,7 +63,7 @@ public class ModifyClientOrgansAction extends Action {
                 .collect(Collectors.joining("\n"));
 
         return String.format("Changed organ registration for client %d: %s %s:\n\n%s",
-                donor.getUid(), donor.getFirstName(), donor.getLastName(), changesText);
+                client.getUid(), client.getFirstName(), client.getLastName(), changesText);
     }
 
     @Override
@@ -73,7 +73,7 @@ public class ModifyClientOrgansAction extends Action {
                 .collect(Collectors.joining("\n"));
 
         return String.format("Reversed these changes to organ registration for client %d: %s %s:\n\n%s",
-                donor.getUid(), donor.getFirstName(), donor.getLastName(), changesText);
+                client.getUid(), client.getFirstName(), client.getLastName(), changesText);
     }
 
     /**

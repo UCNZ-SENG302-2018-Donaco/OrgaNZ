@@ -29,7 +29,8 @@ public class ModifyClientAction extends Action {
      * @param oldValue The object the field initially had. Should be taken from the Clients equivalent getter
      * @param newValue The object the field should be update to. Must match the setters Object type
      * @throws NoSuchMethodException Thrown if the Client does not have the specified setter
-     * @throws NoSuchFieldException Thrown if the Clients specified setter does not take the same type as given in one of
+     * @throws NoSuchFieldException Thrown if the Clients specified setter does not take the same type as given in one
+     * of
      * the values
      */
     public void addChange(String field, Object oldValue, Object newValue)
@@ -71,6 +72,5 @@ public class ModifyClientAction extends Action {
         return String.format("Reversed update for client %d: %s %s. \n"
                         + "These changes were reversed: \n\n%s",
                 client.getUid(), client.getFirstName(), client.getLastName(), changesText);
-public class ModifyDonorAction extends Action {
     }
 }

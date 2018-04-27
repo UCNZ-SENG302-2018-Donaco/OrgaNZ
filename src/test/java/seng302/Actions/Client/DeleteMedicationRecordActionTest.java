@@ -5,7 +5,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDate;
 
-import seng302.Actions.Action;
 import seng302.Client;
 import seng302.MedicationRecord;
 
@@ -19,7 +18,7 @@ public class DeleteMedicationRecordActionTest {
 
     @Before
     public void resetClient() {
-        testClient = new Client();
+        testClient = new Client(1);
         recordToDelete = new MedicationRecord(
                 "Med C",
                 LocalDate.of(2000, 1, 1),
@@ -31,7 +30,7 @@ public class DeleteMedicationRecordActionTest {
     public void executeTest() {
         assertTrue(testClient.getPastMedications().contains(recordToDelete));
 
-        Action action = new DeleteMedicationRecordAction(testClient, recordToDelete);
+        DeleteMedicationRecordAction action = new DeleteMedicationRecordAction(testClient, recordToDelete);
         action.execute();
         assertFalse(testClient.getPastMedications().contains(recordToDelete));
     }
@@ -40,7 +39,7 @@ public class DeleteMedicationRecordActionTest {
     public void unExecuteTest() {
         assertTrue(testClient.getPastMedications().contains(recordToDelete));
 
-        Action action = new DeleteMedicationRecordAction(testClient, recordToDelete);
+        DeleteMedicationRecordAction action = new DeleteMedicationRecordAction(testClient, recordToDelete);
         action.execute();
         assertFalse(testClient.getPastMedications().contains(recordToDelete));
 

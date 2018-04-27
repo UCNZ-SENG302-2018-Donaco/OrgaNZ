@@ -99,7 +99,7 @@ public class RequestOrganController extends SubController {
         ModifyOrganRequestAction action = new ModifyOrganRequestAction(client);
         boolean hasChanged = false;
 
-        for (Organ organ: organCheckBoxes.keySet()) {
+        for (Organ organ : organCheckBoxes.keySet()) {
             boolean oldStatus = client.getOrganRequestStatus().get(organ);
             boolean newStatus = organCheckBoxes.get(organ).isSelected();
 
@@ -173,7 +173,7 @@ public class RequestOrganController extends SubController {
      * Unselect all checkboxes.
      */
     private void setCheckBoxesUnselected() {
-        for (CheckBox box: organCheckBoxes.values()) {
+        for (CheckBox box : organCheckBoxes.values()) {
             box.setSelected(false);
         }
     }

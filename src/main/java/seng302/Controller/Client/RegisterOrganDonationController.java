@@ -121,7 +121,7 @@ public class RegisterOrganDonationController extends SubController {
     }
 
     /**
-     * Checks which organs check boxes have been changed, and applies those changes with a ModifyDonorOrgansAction.
+     * Checks which organs check boxes have been changed, and applies those changes with a ModifyClientOrgansAction.
      */
     @FXML
     private void modifyOrgans() {
@@ -175,7 +175,7 @@ public class RegisterOrganDonationController extends SubController {
     }
 
     @FXML
-    private void returnToViewDonor() {
-        PageNavigator.loadPage(Page.VIEW_DONOR, mainController);
+    private void returnToViewClient() {
+        PageNavigator.loadPage(Page.VIEW_CLIENT, mainController);
     }
 }

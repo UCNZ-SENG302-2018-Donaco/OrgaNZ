@@ -40,7 +40,8 @@ public class DeleteClient implements Runnable {
         } else {
             System.out.println(
                     String.format("Removing user: %s %s %s, with date of birth: %s, would you like to proceed? (y/n)",
-                            client.getFirstName(), client.getMiddleName(), client.getLastName(), client.getDateOfBirth()));
+                            client.getFirstName(), client.getMiddleName(), client.getLastName(),
+                            client.getDateOfBirth()));
             Scanner scanner = new Scanner(System.in);
             String response = scanner.next();
 

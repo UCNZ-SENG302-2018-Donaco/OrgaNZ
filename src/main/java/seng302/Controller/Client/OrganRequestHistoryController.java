@@ -84,7 +84,6 @@ public class OrganRequestHistoryController extends SubController {
 
     /**
      * Navigate back to the request_organ page.
-     * @param event
      */
     @FXML
     private void backToRequests(ActionEvent event) {

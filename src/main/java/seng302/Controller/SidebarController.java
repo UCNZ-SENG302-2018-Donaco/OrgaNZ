@@ -30,8 +30,7 @@ public class SidebarController extends SubController {
 
     @FXML
     private Button viewClientButton, registerOrganDonationButton, viewMedicationsButton, viewClinicianButton,
-            searchButton, transplantsButton, logoutButton, requestOrganDonationButton;
-    private Button registerOrgansButton,
+            searchButton, transplantsButton, logoutButton, requestOrganDonationButton, registerOrgansButton,
             undoButton, redoButton;
 
     private ActionInvoker invoker;
