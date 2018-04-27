@@ -8,8 +8,9 @@ import static org.testfx.util.NodeQueryUtils.isVisible;
 import java.time.LocalDate;
 
 import seng302.Controller.ControllerTest;
-import seng302.Donor;
+import seng302.Person;
 import seng302.MedicationRecord;
+import seng302.Person;
 import seng302.State.Session.UserType;
 import seng302.State.State;
 import seng302.Utilities.View.Page;
@@ -40,7 +41,7 @@ public class ViewMedicationsControllerDonorTest extends ControllerTest {
             )
     };
 
-    private Donor testDonor = new Donor();
+    private Person testDonor = new Person();
 
     @Override
     protected Page getPage() {
@@ -50,7 +51,7 @@ public class ViewMedicationsControllerDonorTest extends ControllerTest {
     @Override
     protected void initState() {
         State.init();
-        State.login(UserType.DONOR, testDonor);
+        State.login(UserType.PERSON, testDonor);
         mainController.setWindowContext(WindowContext.defaultContext());
         resetTestDonorMedicationHistory();
     }

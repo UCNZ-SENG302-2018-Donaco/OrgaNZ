@@ -6,19 +6,20 @@ import static org.junit.Assert.assertTrue;
 import java.time.LocalDate;
 
 import seng302.Actions.Action;
-import seng302.Donor;
+import seng302.Actions.Person.AddMedicationRecordAction;
 import seng302.MedicationRecord;
+import seng302.Person;
 
 import org.junit.Before;
 import org.junit.Test;
 
 public class AddMedicationRecordActionTest {
 
-    private Donor testDonor;
+    private Person testDonor;
 
     @Before
     public void resetDonor() {
-        testDonor = new Donor();
+        testDonor = new Person();
     }
 
     @Test

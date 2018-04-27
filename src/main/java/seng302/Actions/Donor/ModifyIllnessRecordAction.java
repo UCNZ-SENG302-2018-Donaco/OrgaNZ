@@ -19,6 +19,7 @@ public class ModifyIllnessRecordAction implements Action{
     this.oldStarted = record.getDiagnosisDate();
     this.oldStopped = record.getCuredDate();
     this.newStarted = oldStarted;
+    this.newStopped = oldStopped;
   }
 
   public void changeStarted(LocalDate newStarted) {this.newStarted = newStarted;}

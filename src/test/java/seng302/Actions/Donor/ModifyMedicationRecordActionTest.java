@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNull;
 
 import java.time.LocalDate;
 
+import seng302.Actions.Person.ModifyMedicationRecordAction;
 import seng302.MedicationRecord;
 
 import org.junit.Before;

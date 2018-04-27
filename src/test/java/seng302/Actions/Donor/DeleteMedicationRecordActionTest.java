@@ -6,20 +6,21 @@ import static org.junit.Assert.assertTrue;
 import java.time.LocalDate;
 
 import seng302.Actions.Action;
-import seng302.Donor;
+import seng302.Actions.Person.DeleteMedicationRecordAction;
 import seng302.MedicationRecord;
+import seng302.Person;
 
 import org.junit.Before;
 import org.junit.Test;
 
 public class DeleteMedicationRecordActionTest {
 
-    private Donor testDonor;
+    private Person testDonor;
     private MedicationRecord recordToDelete;
 
     @Before
     public void resetDonor() {
-        testDonor = new Donor();
+        testDonor = new Person();
         recordToDelete = new MedicationRecord(
                 "Med C",
                 LocalDate.of(2000, 1, 1),

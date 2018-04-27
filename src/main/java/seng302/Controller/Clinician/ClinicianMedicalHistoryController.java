@@ -119,7 +119,6 @@ public class ClinicianMedicalHistoryController extends SubController{
    * Refreshes the past/current illness list views from the donor's properties.
    */
   private void refreshIllnessLists() {
-    List<IllnessRecord> currentIllnesses = donor.getPastIllnesses();
     pastIllnessView.setItems(FXCollections.observableArrayList(donor.getPastIllnesses()));
     currentIllnessView.setItems(FXCollections.observableArrayList(donor.getCurrentIllnesses()));
   }
@@ -134,7 +133,7 @@ public class ClinicianMedicalHistoryController extends SubController{
   private void moveIllnessToHistory(ActionEvent event){
     IllnessRecord record = currentIllnessView.getSelectionModel().getSelectedItem();
     if (record != null){
-      if(record.getChronic() == false){
+      if(!record.getChronic()){
         ModifyIllnessRecordAction action = new ModifyIllnessRecordAction(record);
         action.changeStopped(LocalDate.now());
 
