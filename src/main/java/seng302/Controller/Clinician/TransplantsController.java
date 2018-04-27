@@ -5,6 +5,7 @@ import java.util.List;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -27,6 +28,11 @@ public class TransplantsController extends SubController {
 
     private static final int ROWS_PER_PAGE = 30;
 
+    @FXML
+    private TextField regionSearch;
+
+    @FXML
+    private TextField organSearch;
 
     @FXML
     private ChoiceBox<Region> regionChoice;
@@ -57,6 +63,8 @@ public class TransplantsController extends SubController {
 
 
     private ObservableList<TransplantRequest> observableTransplantList = FXCollections.observableArrayList();
+    /*private FilteredList<TransplantRequest> filteredOrgans;
+    private FilteredList<TransplantRequest> filteredRegions;*/
     private SortedList<TransplantRequest> sortedTransplants;
 
     @Override
@@ -72,9 +80,16 @@ public class TransplantsController extends SubController {
         List<TransplantRequest> allTransplants = State.getClientManager().getAllTransplantRequests();
 
         setupTable();
-/*
-        tableView.setOnSort((o) -> createPage(pagination.getCurrentPageIndex()));
-        searchBox.textProperty().addListener(((o) -> refresh()));*/
+
+        //set up the search bars
+        tableView.setOnSort((o) -> pagination.setPageCount(sortedTransplants.size() / ROWS_PER_PAGE + 1));
+        organSearch.textProperty().addListener(((o) -> filter()));
+        regionSearch.textProperty().addListener(((o) -> filter()));
+
+        /*filteredOrgans = new FilteredList<>(FXCollections.observableArrayList(allTransplants), transplantRequest ->
+                true);
+        filteredRegions = new FilteredList<>(FXCollections.observableArrayList(allTransplants), transplantRequest ->
+        true);*/
 
         //Create a sorted list
         sortedTransplants = new SortedList<>(FXCollections.observableArrayList(allTransplants));
@@ -96,21 +111,9 @@ public class TransplantsController extends SubController {
         organChoice.setItems(FXCollections.observableArrayList(Organ.values()));
 
 
-    }
-
-    /**
-     * Used to filter out the transplant waiting list based on what organ or region or both is chosen
-     */
-    @FXML
-    private void filter() {
-
-        /*if (organChoice.isShowing() | regionChoice.isShowing()) {
-            // update the table to show only the selected items
-        } else {
-            PageNavigator.showAlert(Alert.AlertType.ERROR, "No filter required", "There was nothing to filter");
-        }*/
 
     }
+
 
     /**
      * Initialize the table columns.
@@ -123,27 +126,26 @@ public class TransplantsController extends SubController {
         regionCol.setCellValueFactory(new PropertyValueFactory<>("clientRegion"));
 
         tableView.getColumns().setAll(clientCol, organCol, regionCol, dateCol);
-        /*
 
-        tableView.setRowFactory(tv -> new TableRow<Client>() {
+
+        tableView.setRowFactory(tv -> new TableRow<TransplantRequest>() {
             private Tooltip tooltip = new Tooltip();
 
             @Override
-            public void updateItem(Client client, boolean empty) {
-                super.updateItem(client, empty);
-                if (client == null) {
+            public void updateItem(TransplantRequest transplantRequest, boolean empty) {
+                super.updateItem(transplantRequest, empty);
+                if (transplantRequest == null) {
                     setTooltip(null);
                 } else {
-                    tooltip.setText(String.format("%s %s with blood type %s. Donating: %s",
-                            client.getFirstName(),
-                            client.getLastName(),
-                            client.getBloodType(),
-                            client.getOrganStatusString("donations")));
+                    tooltip.setText(String.format("%s donating organ %s from region %s",
+                            transplantRequest.getClientName(),
+                            transplantRequest.getRequestedOrgan(),
+                            transplantRequest.getClientRegion()));
                     setTooltip(tooltip);
                 }
             }
         });
-*/
+
         tableView.setOnMouseClicked(mouseEvent -> {
             if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2) {
                 Client client = tableView.getSelectionModel().getSelectedItem().getClient();
@@ -159,6 +161,31 @@ public class TransplantsController extends SubController {
                 }
             }
         });
+
+    }
+
+
+    /**
+     * Used to filter out the transplant waiting list based on what organ or region or both is chosen
+     */
+
+    @FXML
+    private void filter() {
+        /*
+        String organSearchText = organSearch.getText();
+        if (organSearch == null || organSearchText.length() == 0) {
+            filteredOrgans.setPredicate(transplantRequest -> true);
+        } else {
+            filteredOrgans.setPredicate(transplantRequest -> transplantRequest.getRequestedOrgan().equals(organSearchText));
+        }
+
+        String regionSearchText = regionSearch.getText();
+        if (regionSearch == null || regionSearchText.length() == 0) {
+            filteredRegions.setPredicate(transplantRequest -> true);
+        } else {
+            filteredRegions.setPredicate(transplantRequest -> transplantRequest.getRequestedOrgan().equals(organSearchText));
+        }
+        */
 
     }
 
