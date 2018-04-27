@@ -12,16 +12,13 @@ import java.util.Arrays;
 import java.util.List;
 
 import seng302.Actions.ActionInvoker;
-import seng302.Actions.Client.ModifyClientOrgansAction;
 import seng302.Client;
 import seng302.State.ClientManager;
-import seng302.Utilities.Enums.Gender;
 import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 public class ModifyClientOrgansActionTest {
 

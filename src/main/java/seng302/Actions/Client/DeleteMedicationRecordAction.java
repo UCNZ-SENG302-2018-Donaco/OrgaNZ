@@ -1,8 +1,8 @@
 package seng302.Actions.Client;
 
 import seng302.Actions.Action;
-import seng302.HistoryItem;
 import seng302.Client;
+import seng302.HistoryItem;
 import seng302.MedicationRecord;
 import seng302.Utilities.JSONConverter;
 
@@ -47,6 +47,6 @@ public class DeleteMedicationRecordAction extends Action {
     @Override
     public String getUnexecuteText() {
         return String.format("Re-added record for medication '%s' to the history of client %d: %s.",
-                record.getMedicationName(), client.getUid(),client.getFullName());
+                record.getMedicationName(), client.getUid(), client.getFullName());
     }
 }

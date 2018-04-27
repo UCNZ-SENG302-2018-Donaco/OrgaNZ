@@ -1,12 +1,9 @@
 package seng302.Actions.Client;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDate;
 
-import seng302.Actions.Action;
 import seng302.Actions.ActionInvoker;
 import seng302.Client;
 import seng302.MedicationRecord;
@@ -46,7 +43,6 @@ public class DeleteMedicationRecordActionTest {
         baseClient.addMedicationRecord(newRecord);
 
         DeleteMedicationRecordAction action = new DeleteMedicationRecordAction(baseClient, newRecord);
-
 
         assertEquals(1, baseClient.getPastMedications().size());
 

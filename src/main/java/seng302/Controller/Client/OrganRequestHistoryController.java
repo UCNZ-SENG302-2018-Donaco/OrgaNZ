@@ -16,7 +16,6 @@ import seng302.Actions.ActionInvoker;
 import seng302.Client;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
-import seng302.State.ClientManager;
 import seng302.State.Session;
 import seng302.State.State;
 import seng302.TransplantRequest;
@@ -84,7 +83,6 @@ public class OrganRequestHistoryController extends SubController {
 
     /**
      * Navigate back to the request_organ page.
-     * @param event
      */
     @FXML
     private void backToRequests(ActionEvent event) {

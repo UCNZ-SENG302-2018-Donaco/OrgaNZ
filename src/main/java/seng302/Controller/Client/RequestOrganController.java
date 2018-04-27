@@ -12,10 +12,10 @@ import javafx.scene.layout.Pane;
 
 import seng302.Actions.ActionInvoker;
 import seng302.Actions.Client.ModifyOrganRequestAction;
+import seng302.Client;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
 import seng302.HistoryItem;
-import seng302.Client;
 import seng302.State.ClientManager;
 import seng302.State.Session;
 import seng302.State.State;
@@ -101,7 +101,7 @@ public class RequestOrganController extends SubController {
         ModifyOrganRequestAction action = new ModifyOrganRequestAction(client);
         boolean hasChanged = false;
 
-        for (Organ organ: organCheckBoxes.keySet()) {
+        for (Organ organ : organCheckBoxes.keySet()) {
             boolean oldStatus = client.getOrganRequestStatus().get(organ);
             boolean newStatus = organCheckBoxes.get(organ).isSelected();
 
@@ -175,7 +175,7 @@ public class RequestOrganController extends SubController {
      * Unselect all checkboxes.
      */
     private void setCheckBoxesUnselected() {
-        for (CheckBox box: organCheckBoxes.values()) {
+        for (CheckBox box : organCheckBoxes.values()) {
             box.setSelected(false);
         }
     }

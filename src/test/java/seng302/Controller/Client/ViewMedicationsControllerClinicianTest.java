@@ -23,11 +23,10 @@ import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
+import seng302.Client;
 import seng302.Clinician;
 import seng302.Controller.ControllerTest;
-import seng302.Client;
 import seng302.MedicationRecord;
-import seng302.State.Session.UserType;
 import seng302.State.State;
 import seng302.Utilities.Enums.Region;
 import seng302.Utilities.View.Page;

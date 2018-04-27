@@ -1,9 +1,5 @@
 package seng302.Utilities.Enums;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
-
 /**
  * Enum for organs. Allows for to/from string conversion
  */

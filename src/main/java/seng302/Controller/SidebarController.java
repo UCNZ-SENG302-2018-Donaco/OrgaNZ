@@ -12,8 +12,8 @@ import javafx.stage.FileChooser;
 
 import seng302.Actions.ActionInvoker;
 import seng302.AppUI;
-import seng302.HistoryItem;
 import seng302.Client;
+import seng302.HistoryItem;
 import seng302.State.Session;
 import seng302.State.Session.UserType;
 import seng302.State.State;
@@ -30,7 +30,7 @@ public class SidebarController extends SubController {
 
     @FXML
     private Button viewClientButton, registerOrganDonationButton, viewMedicationsButton, viewClinicianButton, searchButton,
-    logoutButton, requestOrganDonationButton, undoButton, redoButton;
+            logoutButton, requestOrganDonationButton, undoButton, redoButton;
 
     private ActionInvoker invoker;
     private Session session;

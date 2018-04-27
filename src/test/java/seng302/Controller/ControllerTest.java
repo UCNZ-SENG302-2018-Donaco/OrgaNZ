@@ -11,6 +11,7 @@ import seng302.Utilities.View.Page;
 import org.testfx.framework.junit.ApplicationTest;
 
 public abstract class ControllerTest extends ApplicationTest {
+
     protected MainController mainController;
     protected SubController pageController;
     protected Node pageNode;

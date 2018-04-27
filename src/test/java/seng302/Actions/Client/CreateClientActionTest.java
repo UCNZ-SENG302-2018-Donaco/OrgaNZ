@@ -44,7 +44,7 @@ public class CreateClientActionTest {
     public void CheckClientMultipleAddsOneUndoTest() {
         CreateClientAction action = new CreateClientAction(baseClient, manager);
         invoker.execute(action);
-        Client second = new Client("SecondClient", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        Client second = new Client("SecondClient", null, "Last", LocalDate.of(1970, 1, 1), 2);
         CreateClientAction secondAction = new CreateClientAction(second, manager);
         invoker.execute(secondAction);
         invoker.undo();
@@ -56,9 +56,11 @@ public class CreateClientActionTest {
     public void CheckClientMultipleAddsOneUndoRedoTest() {
         CreateClientAction action = new CreateClientAction(baseClient, manager);
         invoker.execute(action);
-        Client second = new Client("SecondClient", null, "Last", LocalDate.of(1970, 1, 1), 1);
+
+        Client second = new Client("SecondClient", null, "Last", LocalDate.of(1970, 1, 1), 2);
         CreateClientAction secondAction = new CreateClientAction(second, manager);
         invoker.execute(secondAction);
+
         invoker.undo();
 
         assertEquals(baseClient, manager.getClients().get(0));
@@ -66,7 +68,9 @@ public class CreateClientActionTest {
 
         invoker.redo();
 
-        assertEquals(baseClient, manager.getClients().get(1));
+        assertEquals(baseClient, manager.getClients().get(0));
+        assertEquals(second, manager.getClients().get(1));
         assertEquals(2, manager.getClients().size());
     }
+
 }
