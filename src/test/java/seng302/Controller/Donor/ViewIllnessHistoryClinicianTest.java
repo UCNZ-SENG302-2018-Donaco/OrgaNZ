@@ -110,7 +110,6 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
 
     /**
 
-    @Test
     public void removeChronicTag(){
         IllnessRecord removeChronicTag = testCurrentIllnessRecords[0];
         clickOn((Node) lookup(hasText(removeChronicTag.toString())).query());
@@ -134,7 +133,8 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
         }
     }
 
-    @Test
+    /**
+
     public void addNewIllnessWithButtonTest() {
         IllnessRecord toBeAdded = new IllnessRecord("Influenza", LocalDate.now(), null,false);
 
@@ -142,7 +142,7 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
         clickOn("Add Illness");
 
         verifyThat("#currentIllnessView", hasListCell(toBeAdded));
-    }
+    } **/
 
     /**
 
