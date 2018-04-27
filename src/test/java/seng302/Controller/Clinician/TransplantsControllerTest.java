@@ -38,6 +38,7 @@ import seng302.Utilities.View.WindowContext;
 import org.junit.Test;
 import org.testfx.api.FxRobot;
 import org.testfx.util.NodeQueryUtils;
+import org.testfx.util.WaitForAsyncUtils;
 
 public class TransplantsControllerTest extends ControllerTest {
 
@@ -214,7 +215,6 @@ public class TransplantsControllerTest extends ControllerTest {
         boolean gotAField;
         int totalChecks = 0;
         for (Node node : nodes) {
-            System.out.println(node);
             if (node.getId() != null) {
                 switch (node.getId()) {
                     case "id":
@@ -244,6 +244,8 @@ public class TransplantsControllerTest extends ControllerTest {
             }
         }
         assertEquals(4, totalChecks); // it should have checked 4 fields
+
+        WaitForAsyncUtils.asyncFx(topModalStage::close);
     }
 
     @Test

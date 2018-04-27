@@ -65,4 +65,11 @@ public class TransplantRequest {
         Client client = State.getClientManager().getClientByID(clientId);
         return client == null ? null : client.getRegion();
     }
+
+    @Override
+    public String toString() {
+        return String.format("TransplantRequest{requestedOrgan=%s, requestDate=%s, currentRequest=%s, clientId=%d, "
+                        + "clientName=%s}",
+                requestedOrgan, requestDate, currentRequest, clientId, getClientName());
+    }
 }
