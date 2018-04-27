@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
@@ -28,12 +29,11 @@ import seng302.Actions.Donor.ModifyMedicationRecordAction;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
 import seng302.Donor;
-import seng302.HistoryItem;
 import seng302.MedicationRecord;
 import seng302.State.Session;
 import seng302.State.State;
+import seng302.Utilities.Exceptions.BadDrugNameException;
 import seng302.Utilities.Exceptions.BadGatewayException;
-import seng302.Utilities.JSONConverter;
 import seng302.Utilities.View.PageNavigator;
 import seng302.Utilities.Web.DrugInteractionsHandler;
 import seng302.Utilities.Web.MedActiveIngredientsHandler;
@@ -45,11 +45,6 @@ import impl.org.controlsfx.autocompletion.AutoCompletionTextFieldBinding;
  * Controller for the view/edit medications page.
  */
 public class ViewMedicationsController extends SubController {
-
-    private static final String SUCCESSFUL = "Successful";
-    private static final String BAD_NAME = "Bad name";
-    private static final String BAD_GATEWAY = "Bad gateway";
-    private static final String IO_EXCEPTION = "IO Exception";
 
     private Session session;
     private ActionInvoker invoker;
@@ -99,7 +94,7 @@ public class ViewMedicationsController extends SubController {
     @FXML
     private void initialize() {
         autoCompleteHandler = new MedAutoCompleteHandler();
-        new AutoCompletionTextFieldBinding<String>(newMedField, param -> {
+        new AutoCompletionTextFieldBinding<>(newMedField, param -> {
             String input = param.getUserText().trim();
             return getSuggestions(input);
         });
@@ -347,10 +342,11 @@ public class ViewMedicationsController extends SubController {
 
 
     /**
-     * Generates a pop-up with a list of interactions.
+     * Generates a pop-up with a list of interactions between the 2 medications selected. If any errors occurs when
+     * retrieving the interactions, the popup will display the appropriate error message instead.
      */
     @FXML
-    void viewInteractions() {
+    private void viewInteractions() {
 
         // Check if there are two medications selected
         List<MedicationRecord> selectedItems = new ArrayList<>();
@@ -358,79 +354,49 @@ public class ViewMedicationsController extends SubController {
         selectedItems.addAll(pastMedicationsView.getSelectionModel().getSelectedItems());
 
         if (selectedItems.size() != 2) {
-            PageNavigator.showAlert(AlertType.ERROR, "Incorrect number of medications selected ("
-                            + selectedItems.size() + ")",
+            PageNavigator.showAlert(AlertType.ERROR,
+                    String.format("Incorrect number of medications selected (%d).", selectedItems.size()),
                     "Please select exactly two medications to view their interactions.");
 
         } else {
-            Collections.sort(selectedItems); // get them into alphabetical order - the API appears to want this
-            MedicationRecord medicationRecord1 = selectedItems.get(0);
-            MedicationRecord medicationRecord2 = selectedItems.get(1);
-
-            String medication1 = medicationRecord1.getMedicationName();
-            String medication2 = medicationRecord2.getMedicationName();
+            Collections.sort(selectedItems);
+            String medication1 = selectedItems.get(0).getMedicationName();
+            String medication2 = selectedItems.get(1).getMedicationName();
 
             // Generate initial alert popup
-            String alertTitle = "Interactions between " + medication1 + " and " + medication2;
-            Alert alert = PageNavigator.generateAlert(AlertType.INFORMATION, alertTitle, "Loading...");
+            Alert alert = PageNavigator.generateAlert(AlertType.INFORMATION,
+                    String.format("Interactions between %s and %s", medication1, medication2),
+                    "Loading...");
             alert.show();
 
             Task<List<String>> task = new Task<List<String>>() {
                 @Override
-                public List<String> call() {
-                    // Call the drug interactions API wrapper, and wait for a response
-                    List<String> interactions;
-                    try {
-                        interactions = drugInteractionsHandler.getInteractions(donor, medication1,
-                                medication2);
-                        interactions = new ArrayList<>(interactions); //make the list modifiable
-                        interactions.add(0, SUCCESSFUL); //add successful tag to the start of the list
-                    } catch (IllegalArgumentException e) {
-                        // Invalid drug name(s)
-                        interactions = Collections.singletonList(BAD_NAME);
-                    } catch (BadGatewayException e) {
-                        interactions = Collections.singletonList(BAD_GATEWAY);
-                    } catch (IOException e) {
-                        interactions = Collections.singletonList(IO_EXCEPTION);
-                    }
-                    return interactions;
+                public List<String> call() throws IOException, BadDrugNameException, BadGatewayException {
+                    return drugInteractionsHandler.getInteractions(donor, medication1, medication2);
                 }
             };
 
-            // Update the popup
-            task.setOnSucceeded(e -> {
+            task.setOnFailed(event -> {
+                alert.setAlertType(AlertType.ERROR);
+                alert.setContentText("An error occurred when retrieving drug interactions: \n" +
+                        task.getException().getMessage());
+                task.getException().printStackTrace();
+                PageNavigator.resizeAlert(alert);
+            });
+
+            task.setOnSucceeded(event -> {
                 List<String> interactions = task.getValue();
 
-                if (interactions.size() > 1) {
-                    interactions.remove(0); //remove the SUCCESSFUL tag
-                    // Build list of interactions into a string, each interaction on a new line
-                    StringBuilder sb = new StringBuilder();
-                    for (String interaction : interactions) {
-                        sb.append(interaction).append("\n");
-                    }
-                    alert.setContentText(sb.toString());
-                    HistoryItem save = new HistoryItem("MEDICATION_COMPARE_SUCCESS", String.format("Medication %s and %s were compared. %s",
-                            medication1, medication2, sb.append(interactions)));
-                    JSONConverter.updateHistory(save, "action_history.json");
-                } else if (interactions.get(0).equals(BAD_NAME)) {
-                    // Invalid drug name(s)
-                    alert.setAlertType(AlertType.ERROR);
-                    alert.setContentText("Either " + medication1 + " or " + medication2 + " is not a valid drug name.");
-                } else if (interactions.get(0).equals(BAD_GATEWAY)) {
-                    alert.setAlertType(AlertType.ERROR);
-                    alert.setContentText("Sorry, there was an error connecting to the server (502: Bad Gateway). "
-                            + "Please try again later.");
-                } else if (interactions.get(0).equals(IO_EXCEPTION)) {
-                    alert.setAlertType(AlertType.ERROR);
-                    alert.setContentText("Sorry, there was an error connecting to the server. Please try again later.");
-                } else {
-                    // only element in list is SUCCESSFUL tag
-                    alert.setAlertType(AlertType.ERROR);
-                    alert.setContentText("No results found for " + medication1 + " and " + medication2);
-                    HistoryItem save = new HistoryItem("MEDICATION_COMPARE_NULL", String.format("Medication %s and %s were compared. No results found",
+                if (interactions.size() == 0) {
+                    alert.setAlertType(AlertType.WARNING);
+                    alert.setContentText(String.format(
+                            "A study has not yet been done on the interactions between '%s' and '%s'.",
                             medication1, medication2));
-                    JSONConverter.updateHistory(save, "action_history.json");
+                } else {
+                    String interactionsText = interactions.stream().collect(Collectors.joining("\n"));
+                    alert.setContentText(interactionsText);
                 }
+
                 PageNavigator.resizeAlert(alert);
             });
 

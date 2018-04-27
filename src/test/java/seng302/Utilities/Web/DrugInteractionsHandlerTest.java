@@ -10,6 +10,7 @@ import java.util.List;
 
 import seng302.Donor;
 import seng302.Utilities.Enums.Gender;
+import seng302.Utilities.Exceptions.BadDrugNameException;
 import seng302.Utilities.Exceptions.BadGatewayException;
 
 import com.google.api.client.testing.http.MockHttpTransport;
@@ -17,7 +18,7 @@ import org.junit.Test;
 
 public class DrugInteractionsHandlerTest {
     @Test
-    public void testValidDrugInteractions() throws BadGatewayException {
+    public void testValidDrugInteractions() {
         String EXPECTED_RESPONSE_BODY = "{\"age_interaction\":{\"0-1\":[\"foetal exposure during pregnancy\","
                 + "\"congenital arterial malformation\",\"premature baby\",\"ventricular septal defect\","
                 + "\"cytogenetic abnormality\",\"heart disease congenital\",\"pyloric stenosis\"],"
@@ -72,7 +73,7 @@ public class DrugInteractionsHandlerTest {
         List<String> interactions = Collections.emptyList();
         try {
             interactions = handler.getInteractions(donor, "leflunomide", "prednisone");
-        } catch (IOException e) {
+        } catch (IOException | BadDrugNameException | BadGatewayException e) {
             fail(e.getMessage());
         }
         assertEquals(7, interactions.size());

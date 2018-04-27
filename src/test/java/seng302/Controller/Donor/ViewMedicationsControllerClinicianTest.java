@@ -2,10 +2,10 @@ package seng302.Controller.Donor;
 
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.matcher.control.ListViewMatchers.hasListCell;
 import static org.testfx.util.NodeQueryUtils.hasText;
@@ -29,9 +29,9 @@ import seng302.Clinician;
 import seng302.Controller.ControllerTest;
 import seng302.Donor;
 import seng302.MedicationRecord;
-import seng302.State.Session.UserType;
 import seng302.State.State;
 import seng302.Utilities.Enums.Region;
+import seng302.Utilities.Exceptions.BadDrugNameException;
 import seng302.Utilities.Exceptions.BadGatewayException;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.WindowContext;
@@ -324,28 +324,42 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
     private DrugInteractionsHandler createMockDrugInteractionsHandler(String drug1, String drug2, List<String>
             interactions) {
         DrugInteractionsHandler handler = mock(DrugInteractionsHandler.class);
+
         try {
             if (drug1.contains("throw IOException") || drug2.contains("throw IOException")) {
-                when(handler.getInteractions(any(), anyString(), anyString())).thenThrow(new IOException());
-            } else if (drug1.contains("throw IllegalArgumentException") || drug2
-                    .contains("throw IllegalArgumentException")) {
-                when(handler.getInteractions(any(), anyString(), anyString()))
-                        .thenThrow(new IllegalArgumentException());
+                when(handler.getInteractions(any(), anyString(), anyString())).thenThrow(
+                        new IOException("The drug interactions API could not be reached. Check your internet "
+                                + "connection and try again."));
+
+            } else if (drug1.contains("throw IllegalArgumentException") ||
+                    drug2.contains("throw IllegalArgumentException")) {
+                when(handler.getInteractions(any(), anyString(), anyString())).thenThrow(
+                        new IllegalArgumentException("The drug interactions API responded in an unexpected way."));
+
+            } else if (drug1.contains("throw BadDrugNameException") || drug2.contains("throw BadDrugNameException")) {
+                when(handler.getInteractions(any(), anyString(), anyString())).thenThrow(
+                        new BadDrugNameException("One or both of the drug names are invalid."));
+
             } else if (drug1.contains("throw BadGatewayException") || drug2.contains("throw BadGatewayException")) {
-                when(handler.getInteractions(any(), anyString(), anyString())).thenThrow(new BadGatewayException());
+                when(handler.getInteractions(any(), anyString(), anyString())).thenThrow(
+                        new BadGatewayException("The drug interactions web API could not retrieve the results."));
+
             } else {
                 when(handler.getInteractions(testDonor, drug1, drug2)).thenReturn(interactions);
             }
-        } catch (BadGatewayException | IOException e) {
-            fail(e.getMessage());
+
+        } catch (IOException | IllegalArgumentException | BadDrugNameException |
+                BadGatewayException exc) {
+            fail(exc.getMessage());
         }
+
         return handler;
     }
 
     @Test
     public void viewInteractionsBetweenZeroDrugsTest() {
         clickOn("#viewInteractionsButton");
-        checkAlertHasHeaderAndContent("Incorrect number of medications selected (0)",
+        checkAlertHasHeaderAndContent("Incorrect number of medications selected (0).",
                 "Please select exactly two medications to view their interactions.");
         press(KeyCode.ENTER); // Close the dialog
         release(KeyCode.ENTER);
@@ -360,7 +374,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
         clickOn((Node) lookup(hasText(drug0.toString())).query());
         clickOn("#viewInteractionsButton");
 
-        checkAlertHasHeaderAndContent("Incorrect number of medications selected (1)",
+        checkAlertHasHeaderAndContent("Incorrect number of medications selected (1).",
                 "Please select exactly two medications to view their interactions.");
         press(KeyCode.ENTER); // Close the dialog
         release(KeyCode.ENTER);
@@ -387,7 +401,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
 
         clickOn("#viewInteractionsButton");
 
-        checkAlertHasHeaderAndContent("Incorrect number of medications selected (3)",
+        checkAlertHasHeaderAndContent("Incorrect number of medications selected (3).",
                 "Please select exactly two medications to view their interactions.");
         press(KeyCode.ENTER); // Close the dialog
         release(KeyCode.ENTER);
@@ -420,7 +434,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
                         + "dyspnoea\n"
                         + "fatigue\n"
                         + "nausea\n"
-                        + "pyrexia\n");
+                        + "pyrexia");
         press(KeyCode.ENTER); // Close the dialog
         release(KeyCode.ENTER);
     }
@@ -448,7 +462,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
 
         checkAlertHasHeaderAndContent("Interactions between Med A and Med C",
                 "anxiety\n"
-                        + "nausea\n");
+                        + "nausea");
         press(KeyCode.ENTER); // Close the dialog
         release(KeyCode.ENTER);
     }
@@ -473,7 +487,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
         clickOn("#viewInteractionsButton");
 
         checkAlertHasHeaderAndContent("Interactions between Ibuprofen and Prednisone",
-                "No results found for Ibuprofen and Prednisone");
+                "A study has not yet been done on the interactions between 'Ibuprofen' and 'Prednisone'.");
         press(KeyCode.ENTER); // Close the dialog
         release(KeyCode.ENTER);
     }
@@ -499,8 +513,8 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
         clickOn("#viewInteractionsButton");
 
         checkAlertHasHeaderAndContent("Interactions between Ibuprofen and Med C",
-                "Sorry, there was an error connecting to the server (502: Bad Gateway). "
-                        + "Please try again later.");
+                "An error occurred when retrieving drug interactions: \n"
+                        + "The drug interactions web API could not retrieve the results.");
         press(KeyCode.ENTER); // Close the dialog
         release(KeyCode.ENTER);
     }
@@ -526,7 +540,9 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
         clickOn("#viewInteractionsButton");
 
         checkAlertHasHeaderAndContent("Interactions between Ibuprofen and Med C",
-                "Sorry, there was an error connecting to the server. Please try again later.");
+                "An error occurred when retrieving drug interactions: \n"
+                        + "The drug interactions API could not be reached. Check your internet connection and try "
+                        + "again.");
         press(KeyCode.ENTER); // Close the dialog
         release(KeyCode.ENTER);
     }
@@ -552,7 +568,8 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
         clickOn("#viewInteractionsButton");
 
         checkAlertHasHeaderAndContent("Interactions between Ibuprofen and Med C",
-                "Either Ibuprofen or Med C is not a valid drug name.");
+                "An error occurred when retrieving drug interactions: \n"
+                        + "The drug interactions API responded in an unexpected way.");
         press(KeyCode.ENTER); // Close the dialog
         release(KeyCode.ENTER);
     }
