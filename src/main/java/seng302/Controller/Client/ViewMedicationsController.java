@@ -6,7 +6,6 @@ import java.util.List;
 
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -127,6 +126,12 @@ public class ViewMedicationsController extends SubController {
         }
 
         refreshMedicationLists();
+        mainController.setTitle("Medication history: " + donor.getFullName());
+    }
+
+    @Override
+    public void refresh() {
+        refreshMedicationLists();
     }
 
     /**
@@ -142,16 +147,16 @@ public class ViewMedicationsController extends SubController {
      * - Sets the date the client stopped taking the medication to the current date.
      * - Removes the MedicationRecord from the current medications list.
      * - Refreshes both list views.
-     * @param event When the '<' button is pressed.
      */
     @FXML
-    private void moveMedicationToHistory(ActionEvent event) {
+    private void moveMedicationToHistory() {
         MedicationRecord record = currentMedicationsView.getSelectionModel().getSelectedItem();
         if (record != null) {
             ModifyMedicationRecordAction action = new ModifyMedicationRecordAction(record);
             action.changeStopped(LocalDate.now());
 
             invoker.execute(action);
+            PageNavigator.refreshAllWindows();
             refreshMedicationLists();
         }
     }
@@ -162,16 +167,16 @@ public class ViewMedicationsController extends SubController {
      * - Sets the date the client stopped taking the medication to null (hasn't stopped yet).
      * - Removes the MedicationRecord from the past medications list.
      * - Refreshes both list views.
-     * @param event When the '>' button is pressed.
      */
     @FXML
-    private void moveMedicationToCurrent(ActionEvent event) {
+    private void moveMedicationToCurrent() {
         MedicationRecord record = pastMedicationsView.getSelectionModel().getSelectedItem();
         if (record != null) {
             ModifyMedicationRecordAction action = new ModifyMedicationRecordAction(record);
             action.changeStopped(null);
 
             invoker.execute(action);
+            PageNavigator.refreshAllWindows();
             refreshMedicationLists();
         }
     }
@@ -190,10 +195,9 @@ public class ViewMedicationsController extends SubController {
 
     /**
      * Adds a new medication with the current value of the new medication text field.
-     * @param event When the 'add medication' button is pressed.
      */
     @FXML
-    private void addButtonPressed(ActionEvent event) {
+    private void addButtonPressed() {
         addMedication(newMedField.getText());
     }
 
@@ -209,10 +213,15 @@ public class ViewMedicationsController extends SubController {
 
             invoker.execute(action);
             newMedField.setText("");
+            PageNavigator.refreshAllWindows();
             refreshMedicationLists();
         }
     }
 
+    /**
+     * Returns the currently selected record from the currently selected list view.
+     * @return The selected record, or null if no record is currently selected.
+     */
     private MedicationRecord getSelectedRecord() {
         if (selectedListView != null) {
             return selectedListView.getSelectionModel().getSelectedItem();
@@ -225,25 +234,24 @@ public class ViewMedicationsController extends SubController {
      * Deletes the currently selected MedicationRecord. Will determine which of the list views is currently
      * selected, then delete from the appropriate one. If neither list view is currently selected, this will have no
      * effect.
-     * @param event When the 'delete' button is clicked.
      */
     @FXML
-    private void deleteMedication(ActionEvent event) {
+    private void deleteMedication() {
         MedicationRecord record = getSelectedRecord();
         if (record != null) {
             DeleteMedicationRecordAction action = new DeleteMedicationRecordAction(client, record);
 
             invoker.execute(action);
+            PageNavigator.refreshAllWindows();
             refreshMedicationLists();
         }
     }
 
     /**
      * Generates a pop-up with a list of active ingredients.
-     * @param event When the 'View active ingredients' button is clicked.
      */
     @FXML
-    private void viewActiveIngredients(ActionEvent event) {
+    private void viewActiveIngredients() {
         MedicationRecord medicationRecord = getSelectedRecord();
 
         if (medicationRecord != null) {

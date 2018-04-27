@@ -40,7 +40,7 @@ public class ViewMedicationsControllerClientTest extends ControllerTest {
             )
     };
 
-    private Client testClient = new Client();
+    private Client testClient = new Client(1);
 
     @Override
     protected Page getPage() {
@@ -50,7 +50,7 @@ public class ViewMedicationsControllerClientTest extends ControllerTest {
     @Override
     protected void initState() {
         State.init();
-        State.login(UserType.CLIENT, testClient);
+        State.login(testClient);
         mainController.setWindowContext(WindowContext.defaultContext());
         resetTestClientMedicationHistory();
     }

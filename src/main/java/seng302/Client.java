@@ -47,8 +47,9 @@ public class Client {
 
     private ArrayList<String> updateLog = new ArrayList<>();
 
-    public Client() {
+    public Client(int uid) {
         createdTimestamp = LocalDateTime.now();
+        this.uid = uid;
         initOrgans();
     }
 
