@@ -7,7 +7,7 @@ import java.util.Objects;
 /**
  * Represents an instance of a user taking a medication for a period of time.
  */
-public class MedicationRecord {
+public class MedicationRecord implements Comparable<MedicationRecord> {
 
     private static DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
@@ -69,5 +69,10 @@ public class MedicationRecord {
                     this.started.equals(other.started) &&
                     Objects.equals(this.stopped, other.stopped);
         }
+    }
+
+    @Override
+    public int compareTo(MedicationRecord other) {
+        return this.getMedicationName().compareTo(other.medicationName);
     }
 }

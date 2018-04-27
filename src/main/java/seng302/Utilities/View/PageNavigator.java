@@ -95,6 +95,7 @@ public class PageNavigator {
         alert.setTitle(title);
         alert.setHeaderText(title);
         alert.setContentText(bodyText);
+        alert.setResizable(true);
         resizeAlert(alert);
         return alert;
     }
