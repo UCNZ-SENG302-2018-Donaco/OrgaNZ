@@ -4,10 +4,8 @@ import static org.junit.Assert.assertEquals;
 
 import java.time.LocalDate;
 
-import seng302.Actions.Action;
-import seng302.Actions.Client.AddMedicationRecordAction;
-import seng302.Client;
 import seng302.Actions.ActionInvoker;
+import seng302.Client;
 import seng302.MedicationRecord;
 
 import org.junit.Before;
@@ -21,8 +19,8 @@ public class AddMedicationRecordActionTest {
     @Before
     public void init() {
         invoker = new ActionInvoker();
-            testClient = new Client();
-        }
+        testClient = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+    }
 
     @Test
     public void AddSingleMedicationCurrentTest() {
@@ -47,7 +45,6 @@ public class AddMedicationRecordActionTest {
         assertEquals(1, testClient.getPastMedications().size());
         assertEquals(record, testClient.getPastMedications().get(0));
     }
-
 
 
     @Test
@@ -140,7 +137,7 @@ public class AddMedicationRecordActionTest {
 
         assertEquals(
                 String.format("Reversed the addition of record for medication 'Generic Name' to the history of client "
-                                + "%d: First Last.", testClient.getUid()),
+                        + "%d: First Last.", testClient.getUid()),
                 result);
     }
 }

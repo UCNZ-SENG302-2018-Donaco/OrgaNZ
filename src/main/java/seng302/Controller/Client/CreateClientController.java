@@ -48,7 +48,7 @@ public class CreateClientController extends SubController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
-        mainController.setTitle("Create a new Donor");
+        mainController.setTitle("Create a new Client");
     }
 
     /**

@@ -4,8 +4,8 @@ import static org.junit.Assert.assertEquals;
 
 import java.time.LocalDate;
 
+import seng302.Client;
 import seng302.Clinician;
-import seng302.Donor;
 import seng302.State.Session.UserType;
 import seng302.Utilities.Enums.Region;
 
@@ -21,13 +21,13 @@ public class StateTest {
     }
 
     @Test
-    public void LoginDonorValidTest() {
-        Donor loginDonor = new Donor("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+    public void LoginClientValidTest() {
+        Client client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
 
-        State.login(loginDonor);
+        State.login(client);
 
-        assertEquals(UserType.DONOR, State.getSession().getLoggedInUserType());
-        assertEquals(loginDonor, State.getSession().getLoggedInDonor());
+        assertEquals(UserType.CLIENT, State.getSession().getLoggedInUserType());
+        assertEquals(client, State.getSession().getLoggedInClient());
     }
 
     @Test

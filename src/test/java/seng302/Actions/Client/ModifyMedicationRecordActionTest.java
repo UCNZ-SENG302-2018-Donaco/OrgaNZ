@@ -5,7 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.time.LocalDate;
 
 import seng302.Actions.ActionInvoker;
-import seng302.Donor;
+import seng302.Client;
 import seng302.MedicationRecord;
 
 import org.junit.Before;
@@ -14,15 +14,15 @@ import org.junit.Test;
 public class ModifyMedicationRecordActionTest {
 
     private ActionInvoker invoker;
-    private Donor baseDonor;
+    private Client baseClient;
     private MedicationRecord record;
 
     @Before
     public void init() {
         invoker = new ActionInvoker();
-        baseDonor = new Donor("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        baseClient = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
         record = new MedicationRecord("Generic Name", LocalDate.of(2018, 4, 9), null);
-        baseDonor.addMedicationRecord(record);
+        baseClient.addMedicationRecord(record);
     }
 
     @Test
@@ -35,7 +35,7 @@ public class ModifyMedicationRecordActionTest {
 
         invoker.execute(action);
 
-        assertEquals(newDate, baseDonor.getCurrentMedications().get(0).getStarted());
+        assertEquals(newDate, baseClient.getCurrentMedications().get(0).getStarted());
     }
 
 
@@ -49,8 +49,8 @@ public class ModifyMedicationRecordActionTest {
 
         invoker.execute(action);
 
-        assertEquals(1, baseDonor.getPastMedications().size());
-        assertEquals(newDate, baseDonor.getPastMedications().get(0).getStopped());
+        assertEquals(1, baseClient.getPastMedications().size());
+        assertEquals(newDate, baseClient.getPastMedications().get(0).getStopped());
     }
 
 
@@ -65,7 +65,7 @@ public class ModifyMedicationRecordActionTest {
         invoker.execute(action);
         invoker.undo();
 
-        assertEquals(LocalDate.of(2018, 4, 9), baseDonor.getCurrentMedications().get(0).getStarted());
+        assertEquals(LocalDate.of(2018, 4, 9), baseClient.getCurrentMedications().get(0).getStarted());
     }
 
 
@@ -81,7 +81,7 @@ public class ModifyMedicationRecordActionTest {
         invoker.undo();
         invoker.redo();
 
-        assertEquals(newDate, baseDonor.getCurrentMedications().get(0).getStarted());
+        assertEquals(newDate, baseClient.getCurrentMedications().get(0).getStarted());
     }
 
 

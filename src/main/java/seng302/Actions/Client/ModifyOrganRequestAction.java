@@ -2,6 +2,7 @@ package seng302.Actions.Client;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import seng302.Actions.Action;
 import seng302.Client;
@@ -9,7 +10,7 @@ import seng302.TransplantRequest;
 import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
 
-public class ModifyOrganRequestAction implements Action {
+public class ModifyOrganRequestAction extends Action {
 
     private Map<Organ, Boolean> changes = new HashMap<>();
     private Client client;
@@ -42,6 +43,34 @@ public class ModifyOrganRequestAction implements Action {
     @Override
     public void unExecute() {
         runChanges(true);
+    }
+
+    private String formatChange(Organ organ, boolean newValue) {
+        if (newValue) {
+            return String.format("Registered %s for donation.", organ.toString());
+        } else {
+            return String.format("Deregistered %s for donation.", organ.toString());
+        }
+    }
+
+    @Override
+    public String getExecuteText() {
+        String changesText = changes.entrySet().stream()
+                .map(entry -> formatChange(entry.getKey(), entry.getValue()))
+                .collect(Collectors.joining("\n"));
+
+        return String.format("Changed organ request registration for client %d: %s:\n\n%s",
+                client.getUid(), client.getFullName(), changesText);
+    }
+
+    @Override
+    public String getUnexecuteText() {
+        String changesText = changes.entrySet().stream()
+                .map(entry -> formatChange(entry.getKey(), entry.getValue()))
+                .collect(Collectors.joining("\n"));
+
+        return String.format("Reversed these changes to organ request registration for client %d: %s:\n\n%s",
+                client.getUid(), client.getFullName(), changesText);
     }
 
     /**

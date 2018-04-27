@@ -33,7 +33,7 @@ public class RequestOrganControllerCliniciansTest extends ControllerTest {
     @Override
     protected void initState() {
         State.init();
-        State.login(Session.UserType.CLINICIAN, testClinician);
+        State.login(testClinician);
         State.getClientManager().addClient(testClient);
         mainController.setWindowContext(new WindowContext.WindowContextBuilder()
                 .setAsClinViewClientWindow()
@@ -90,7 +90,7 @@ public class RequestOrganControllerCliniciansTest extends ControllerTest {
     @Test
     public void clientView() {
         State.logout();
-        State.login(Session.UserType.CLIENT, testClient);
+        State.login(testClient);
         mainController.setWindowContext(new WindowContext.WindowContextBuilder()
                 .build());
         System.out.println();

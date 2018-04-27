@@ -44,7 +44,7 @@ public class RequestOrganControllerClientsTest extends ControllerTest {
             System.out.println(ex);
         }
         State.getClientManager().addClient(testClient);
-        State.login(Session.UserType.CLIENT, testClient);
+        State.login(testClient);
         mainController.setWindowContext(new WindowContext.WindowContextBuilder()
                 .build());
     }

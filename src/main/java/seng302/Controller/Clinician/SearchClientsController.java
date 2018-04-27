@@ -63,7 +63,7 @@ public class SearchClientsController extends SubController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
-        mainController.setTitle("Donor search");
+        mainController.setTitle("Client search");
         mainController.loadSidebar(sidebarPane);
     }
 

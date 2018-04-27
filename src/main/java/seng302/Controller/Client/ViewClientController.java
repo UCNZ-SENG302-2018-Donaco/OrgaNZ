@@ -93,7 +93,7 @@ public class ViewClientController extends SubController {
         } else if (windowContext.isClinViewClientWindow()) {
             viewedClient = windowContext.getViewClient();
         }
-        mainController.setTitle("Donor profile: " + viewedClient.getFullName());
+        mainController.setTitle("Client profile: " + viewedClient.getFullName());
         id.setText(Integer.toString(viewedClient.getUid()));
         searchClient();
     }
@@ -266,7 +266,7 @@ public class ViewClientController extends SubController {
     }
 
     /**
-     * Records the changes updated as a ModifyDonorAction to trace the change in record.
+     * Records the changes updated as a ModifyClientAction to trace the change in record.
      */
     private void updateChanges() {
         ModifyClientAction action = new ModifyClientAction(viewedClient);
@@ -287,7 +287,7 @@ public class ViewClientController extends SubController {
         PageNavigator.refreshAllWindows();
 
         Notifications.create()
-                .title("Updated Donor")
+                .title("Updated Client")
                 .text(actionText)
                 .showInformation();
     }

@@ -88,7 +88,7 @@ public class RegisterOrganDonationController extends SubController {
             client = windowContext.getViewClient();
         }
 
-        mainController.setTitle("Organ registration: " + client.getFullName());
+        mainController.setTitle("Organ donation registration: " + client.getFullName());
         fieldUserID.setText(Integer.toString(client.getUid()));
         updateUserID();
     }
@@ -100,7 +100,7 @@ public class RegisterOrganDonationController extends SubController {
             for (Map.Entry<Organ, CheckBox> entry : organCheckBoxes.entrySet()) {
                 entry.getValue().setSelected(client.getOrganDonationStatus().get(entry.getKey()));
             }
-            HistoryItem save = new HistoryItem("UPDATE ID", "The Donor's ID was updated to " + client.getUid());
+            HistoryItem save = new HistoryItem("UPDATE ID", "The Client's ID was updated to " + client.getUid());
             JSONConverter.updateHistory(save, "action_history.json");
         } else {
             setCheckboxesDisabled();
@@ -175,7 +175,7 @@ public class RegisterOrganDonationController extends SubController {
     }
 
     @FXML
-    private void returnToViewDonor() {
+    private void returnToViewClient() {
         PageNavigator.loadPage(Page.VIEW_CLIENT, mainController);
     }
 }

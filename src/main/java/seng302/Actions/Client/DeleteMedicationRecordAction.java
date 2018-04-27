@@ -40,13 +40,13 @@ public class DeleteMedicationRecordAction extends Action {
 
     @Override
     public String getExecuteText() {
-        return String.format("Removed record for medication '%s' from the history of donor %d: %s.",
+        return String.format("Removed record for medication '%s' from the history of client %d: %s.",
                 record.getMedicationName(), client.getUid(), client.getFullName());
     }
 
     @Override
     public String getUnexecuteText() {
-        return String.format("Re-added record for medication '%s' to the history of donor %d: %s.",
-                record.getMedicationName(), c   .getUid(),client.getFullName());
+        return String.format("Re-added record for medication '%s' to the history of client %d: %s.",
+                record.getMedicationName(), client.getUid(),client.getFullName());
     }
 }

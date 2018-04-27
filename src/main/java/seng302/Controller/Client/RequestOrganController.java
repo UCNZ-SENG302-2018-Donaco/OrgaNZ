@@ -85,6 +85,8 @@ public class RequestOrganController extends SubController {
             fieldUserID.setEditable(true);
             setCheckBoxesEnabled();
         }
+
+        mainController.setTitle("Organ request registration: " + client.getFullName());
         fieldUserID.setText(Integer.toString(client.getUid()));
         updateUserID(null);
     }

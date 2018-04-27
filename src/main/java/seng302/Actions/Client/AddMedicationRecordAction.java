@@ -7,7 +7,7 @@ import seng302.MedicationRecord;
 import seng302.Utilities.JSONConverter;
 
 /**
- * A reversible action that will add the given medication record to the given Donor's medication history.
+ * A reversible action that will add the given medication record to the given Client's medication history.
  */
 public class AddMedicationRecordAction extends Action {
 
@@ -40,13 +40,13 @@ public class AddMedicationRecordAction extends Action {
 
     @Override
     public String getExecuteText() {
-        return String.format("Added record for medication '%s' to the history of donor %d: %s %s.",
-                record.getMedicationName(), client.getUid(), client.getFirstName(), client.getLastName());
+        return String.format("Added record for medication '%s' to the history of client %d: %s.",
+                record.getMedicationName(), client.getUid(), client.getFullName());
     }
 
     @Override
     public String getUnexecuteText() {
-        return String.format("Reversed the addition of record for medication '%s' to the history of client %d: %s %s.",
-                record.getMedicationName(), client.getUid(), client.getFirstName(), client.getLastName());
+        return String.format("Reversed the addition of record for medication '%s' to the history of client %d: %s.",
+                record.getMedicationName(), client.getUid(), client.getFullName());
     }
 }
