@@ -90,11 +90,11 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
         }
     }
 
-    /**
+    @Test
     public void bothListViewsVisibleTest() {
         verifyThat("#pastIllnessView", isVisible());
         verifyThat("#currentIllnessView", isVisible());
-    } **/
+    }
 
     @Test
     public void newIllnessesFieldsVisibleTest() {
@@ -121,8 +121,8 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
             verifyThat("#currentIllnessView", hasListCell(record));
         }
     }
-    /**
 
+    @Test
     public void addNewIllnessWithButtonTest() {
         IllnessRecord toBeAdded = new IllnessRecord("Influenza", LocalDate.now(), null,false);
 
@@ -130,7 +130,7 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
         clickOn("Add Illness");
 
         verifyThat("#currentIllnessView", hasListCell(toBeAdded));
-    } **/
+    }
 
     /**
 

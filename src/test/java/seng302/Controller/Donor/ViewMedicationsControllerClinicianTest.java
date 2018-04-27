@@ -117,6 +117,17 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
         }
     }
 
+    @Test
+    public void addNewMedicationWithButtonTest() {
+        MedicationRecord toBeAdded = new MedicationRecord("Med D", LocalDate.now(), null);
+
+        clickOn("#newMedField").write(toBeAdded.getMedicationName());
+        clickOn("Add Medication");
+
+        verifyThat("#currentMedicationsView", hasListCell(toBeAdded));
+    }
+
+
     /**
 
     @Test
