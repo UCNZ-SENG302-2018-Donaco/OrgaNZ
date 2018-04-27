@@ -2,22 +2,17 @@ package seng302.Controller.Clinician;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.matcher.base.NodeMatchers.isVisible;
 import static org.testfx.matcher.control.TableViewMatchers.containsRowAtIndex;
 import static org.testfx.matcher.control.TableViewMatchers.hasNumRows;
 import static org.testfx.matcher.control.TextMatchers.hasText;
 
-import java.awt.MouseInfo;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
@@ -251,18 +246,9 @@ public class TransplantsControllerTest extends ControllerTest {
         assertEquals(4, totalChecks); // it should have checked 4 fields
     }
 
-/*
-    //todo fix in headless
     @Test
     public void testNext30Rows() {
-        moveTo("#pagination");
-
-        // Move across to the next page button
-        moveBy(90, 0);
-
-        // Click on the next page button
-        press(MouseButton.PRIMARY);
-        release(MouseButton.PRIMARY);
+        clickOn(".right-arrow-button");
 
         // Check it has 30 rows
         verifyThat("#tableView", hasNumRows(30));
@@ -281,15 +267,9 @@ public class TransplantsControllerTest extends ControllerTest {
 
     @Test
     public void testPaginationLastPage() {
-        moveTo("#pagination");
-
-        // Move across to the next page button
-        moveBy(90, 0);
-
         // Click on the next page button 4 times
         for (int i = 0; i < 4; i++) {
-            press(MouseButton.PRIMARY);
-            release(MouseButton.PRIMARY);
+            clickOn(".right-arrow-button");
         }
 
         // Check it only has 1 row
