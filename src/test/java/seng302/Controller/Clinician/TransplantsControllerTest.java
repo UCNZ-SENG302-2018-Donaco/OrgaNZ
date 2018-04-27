@@ -251,16 +251,13 @@ public class TransplantsControllerTest extends ControllerTest {
         assertEquals(4, totalChecks); // it should have checked 4 fields
     }
 
-/*
-    //todo fix in headless
+
     @Test
     public void testNext30Rows() {
         moveTo("#pagination");
 
         // Move across to the next page button
-        moveTo(new Point2D(MouseInfo.getPointerInfo().getLocation().x + 65, MouseInfo.getPointerInfo().getLocation()
-                .y)); //todo headless mode: can't get mouse pointer location, need to move straight to "next page"
-                button
+        moveBy(90, 0);
 
         // Click on the next page button
         press(MouseButton.PRIMARY);
@@ -286,8 +283,7 @@ public class TransplantsControllerTest extends ControllerTest {
         moveTo("#pagination");
 
         // Move across to the next page button
-        moveTo(new Point2D(MouseInfo.getPointerInfo().getLocation().x + 65, MouseInfo.getPointerInfo().getLocation()
-                .y));
+        moveBy(90, 0);
 
         // Click on the next page button 4 times
         for (int i = 0; i < 4; i++) {
