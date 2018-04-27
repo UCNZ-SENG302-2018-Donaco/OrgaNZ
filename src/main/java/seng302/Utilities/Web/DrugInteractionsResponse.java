@@ -17,6 +17,10 @@ import seng302.Utilities.Enums.Gender;
 
 import com.google.api.client.util.Key;
 
+/**
+ * Handles parsing the response from a drug interactions API request and determining which symptoms apply to a given
+ * donor.
+ */
 public class DrugInteractionsResponse {
     private static final Pattern AGE_RANGE_PATTERN
             = Pattern.compile("^(?:(?<nan>nan)|(?<singlePlus>\\d+)\\+|(?<lowerBound>\\d+)-(?<upperBound>\\d+))$");

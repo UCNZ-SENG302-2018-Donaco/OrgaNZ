@@ -28,10 +28,18 @@ public class DrugInteractionsHandler extends WebAPIHandler {
 
     private final HttpRequestFactory requestFactory;
 
+    /**
+     * Instantiates a new DrugInteractionsHandler using the default NetHttpTransport and sets up its request factory
+     * (using a JSON factory to parse JSON response bodies).
+     */
     public DrugInteractionsHandler() {
         this(new NetHttpTransport());
     }
 
+    /**
+     * Instantiates a new DrugInteractionsHandler using the given HttpTransport (may be mocked) and sets up its request
+     * factory (using a JSON factory to parse JSON response bodies).
+     */
     public DrugInteractionsHandler(HttpTransport httpTransport) {
         super(httpTransport);
         requestFactory = httpTransport.createRequestFactory(request -> {
@@ -40,6 +48,13 @@ public class DrugInteractionsHandler extends WebAPIHandler {
         });
     }
 
+    /**
+     * Creates a URL for a request to the drug interactions API with the given drug names. Will sanitise the drug
+     * name inputs so that they work correctly with the API.
+     * @param drug1 The first drug name to use for the request.
+     * @param drug2 The second drug name to use for the request.
+     * @return The URL for the request.
+     */
     private GenericUrl createURL(String drug1, String drug2) {
         // Drug names containing '/' will mess with the urls of the web api
         drug1 = drug1.replaceAll("/", "");
@@ -52,11 +67,29 @@ public class DrugInteractionsHandler extends WebAPIHandler {
         return new GenericUrl(String.format(INTERACTIONS_ENDPOINT, drug1, drug2));
     }
 
+    /**
+     * Makes a GET request to the given URL and returns the {@link HttpResponse}.
+     * @param url The URL to send a GET request to.
+     * @return The response from the given URL.
+     * @throws IOException If the server at the URL cannot be reached, e.g. if there is no internet access.
+     */
     private HttpResponse makeRequest(GenericUrl url) throws IOException {
         HttpRequest request = requestFactory.buildGetRequest(url);
         return request.execute();
     }
 
+    /**
+     * Makes a request to the drug interactions web API and returns a list of interactions between the two drugs
+     * given that apply for the given donor (based on age and gender).
+     * @param donor The donor to check that the interactions apply for.
+     * @param drug1 The name of the first drug to find interactions for.
+     * @param drug2 The name of the second drug to find interactions for.
+     * @return A list of strings that each contain the details of one interaction symptom. May be empty if there are
+     * no results for that request.
+     * @throws IOException If the drug interactions web API cannot be reached, e.g. if there is no internet access.
+     * @throws BadDrugNameException If the API returns a 404 response saying that the drug names are invalid.
+     * @throws BadGatewayException If the API returns a 502 response.
+     */
     public List<String> getInteractions(Donor donor, String drug1, String drug2)
             throws IOException, BadDrugNameException, BadGatewayException {
         try {
