@@ -3,17 +3,17 @@ package seng302.Controller.Clinician;
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.matcher.base.NodeMatchers.isVisible;
 import static org.testfx.matcher.control.TableViewMatchers.containsRowAtIndex;
-import static org.testfx.matcher.control.TableViewMatchers.hasTableCell;
 import static org.testfx.matcher.control.TableViewMatchers.hasNumRows;
 import static org.testfx.matcher.control.TextMatchers.hasText;
 
+import java.awt.MouseInfo;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 
-import javafx.scene.Node;
+import javafx.geometry.Point2D;
+import javafx.scene.input.MouseButton;
 
 import seng302.Client;
 import seng302.Clinician;
@@ -27,7 +27,6 @@ import seng302.Utilities.View.Page;
 import seng302.Utilities.View.WindowContext;
 
 import org.junit.Test;
-import org.testfx.matcher.control.TextMatchers;
 
 public class TransplantsControllerTest extends ControllerTest {
 
@@ -82,7 +81,7 @@ public class TransplantsControllerTest extends ControllerTest {
         client2.setRegion(Region.OTAGO);
 
         for (int i = 4; i < 100; i++) {
-            Client client =  new Client("Client", "Number", Integer.toString(i), LocalDate.now(), i);
+            Client client = new Client("Client", "Number", Integer.toString(i), LocalDate.now(), i);
             TransplantRequest request = new TransplantRequest(Organ.BONE, true, i);
             client.addTransplantRequest(request);
             requests.add(request);
@@ -106,6 +105,10 @@ public class TransplantsControllerTest extends ControllerTest {
         verifyThat("#displayingXToYOfZText", hasText("Displaying 1-30 of 102"));
     }
 
+    /**
+     * This test enforces multiple requests per person, pagination, and all elements (name, organ, region, date) being
+     * recorded in the table.
+     */
     @Test
     public void testFirst30Rows() {
         TransplantRequest request;
@@ -115,6 +118,59 @@ public class TransplantsControllerTest extends ControllerTest {
                     request.getClientRegion(), request.getRequestDateString()));
         }
         verifyThat("#tableView", hasNumRows(30));
+    }
+
+    @Test
+    public void testNext30Rows() {
+        moveTo("#pagination");
+
+        // Move across to the next page button
+        moveTo(new Point2D(MouseInfo.getPointerInfo().getLocation().x + 55, MouseInfo.getPointerInfo().getLocation()
+                .y));
+        // Click on the next page button
+        press(MouseButton.PRIMARY);
+        release(MouseButton.PRIMARY);
+
+        // Check all 30 requests are correct
+        TransplantRequest request;
+        for (int i = 0; i < 30; i++) {
+            request = requests.get(i + 30);
+            verifyThat("#tableView", containsRowAtIndex(i, request.getClientName(), request.getRequestedOrgan(),
+                    request.getClientRegion(), request.getRequestDateString()));
+        }
+    }
+
+    /*Column names:
+
+    "clientCol"
+    "organCol"
+    "regionCol"
+    "dateCol"
+
+    */
+
+    @Test
+    public void testReorderByName() {
+        clickOn("#clientCol");
+
+        // Sort requests by client name
+        requests.sort(new Comparator<TransplantRequest>() {
+            @Override
+            public int compare(TransplantRequest o1, TransplantRequest o2) {
+                return o1.getClientName().compareTo(o2.getClientName());
+            }
+        });
+
+        // Check all 30 requests are correct
+        TransplantRequest request;
+        for (int i = 0; i < 30; i++) {
+            request = requests.get(i);
+            System.out.println(request.getClientName());
+            verifyThat("#tableView", containsRowAtIndex(i, request.getClientName(), request.getRequestedOrgan(),
+                    request.getClientRegion(), request.getRequestDateString()));
+
+        }
+
     }
 
 }
