@@ -91,7 +91,6 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
     }
 
     /**
-    @Test
     public void bothListViewsVisibleTest() {
         verifyThat("#pastIllnessView", isVisible());
         verifyThat("#currentIllnessView", isVisible());
@@ -123,7 +122,7 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
         }
     }
     /**
-    @Test
+
     public void addNewIllnessWithButtonTest() {
         IllnessRecord toBeAdded = new IllnessRecord("Influenza", LocalDate.now(), null,false);
 
@@ -134,7 +133,7 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
     } **/
 
     /**
-    @Test
+
     public void moveIllnessToPastTest() {
         IllnessRecord toBeMoved = testCurrentIllnessRecords[0];
         System.out.println(toBeMoved.toString());
@@ -149,7 +148,7 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
 
     /**
 
-    @Test
+
     public void moveIllnesstoCurrentTest() {
         IllnessRecord toBeMoved = testPastIllnessRecords[0];
 
@@ -163,7 +162,7 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
 
     /**
 
-    @Test
+
     public void deleteMedicationRecordTest() {
         IllnessRecord toBeDeleted = testPastIllnessRecords[0];
 
