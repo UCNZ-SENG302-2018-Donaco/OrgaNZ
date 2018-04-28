@@ -2,30 +2,24 @@ package seng302.State;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.OptionalInt;
 
 import seng302.Client;
 
 /**
- * The class to handle the Client inputs, including adding,
- * setting attributes and updating the values of the client.
- * @author Dylan Carlyle, Jack Steel
- * @version sprint 1.
- * date 08/03/2018
+ * Handles the manipulation of the clients currently stored in the system.
  */
 
 public class ClientManager {
 
     private ArrayList<Client> clients;
-    private int uid;
 
     public ClientManager() {
         clients = new ArrayList<>();
-        uid = 1;
     }
 
     public ClientManager(ArrayList<Client> clients) {
         this.clients = clients;
-        uid = calculateNextId();
     }
 
     public void setClients(ArrayList<Client> clients) {
@@ -57,22 +51,6 @@ public class ClientManager {
     }
 
     /**
-     * Get the next user ID
-     * @return Next userID to be used
-     */
-    public int getUid() {
-        return uid++;
-    }
-
-    /**
-     * Set the user ID
-     * @param uid Value to set the user IF
-     */
-    public void setUid(int uid) {
-        this.uid = uid;
-    }
-
-    /**
      * Checks if a user already exists with that first + last name and date of birth
      * @param firstName First name
      * @param lastName Last name
@@ -100,14 +78,19 @@ public class ClientManager {
                 .filter(d -> d.getUid() == id).findFirst().orElse(null);
     }
 
-    private int calculateNextId() {
-        int id = 1;
-        for (Client client : clients) {
-            if (client.getUid() >= id) {
-                id = client.getUid() + 1;
-            }
-        }
-        return id;
-    }
+    /**
+     * Returns the next unused id number for a new client.
+     * @return The next free UID.
+     */
+    public int nextUid() {
+        OptionalInt max = clients.stream()
+                .mapToInt(Client::getUid)
+                .max();
 
+        if (max.isPresent()) {
+            return max.getAsInt() + 1;
+        } else {
+            return 1;
+        }
+    }
 }

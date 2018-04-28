@@ -75,7 +75,7 @@ public class CreateClientController extends SubController {
                 }
             }
 
-            int uid = manager.getUid();
+            int uid = manager.nextUid();
             Client client = new Client(firstNameFld.getText(), middleNamefld.getText(), lastNamefld.getText(),
                     dobFld.getValue(), uid);
             Action action = new CreateClientAction(client, manager);
