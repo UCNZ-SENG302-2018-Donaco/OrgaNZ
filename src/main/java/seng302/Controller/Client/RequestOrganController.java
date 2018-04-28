@@ -3,7 +3,6 @@ package seng302.Controller.Client;
 import java.util.HashMap;
 import java.util.Map;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -23,6 +22,8 @@ import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.JSONConverter;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
+
+import org.controlsfx.control.Notifications;
 
 /**
  * Presents an interface displaying all organs currently requested by a user. Clinicians have the ability to alter what
@@ -78,26 +79,38 @@ public class RequestOrganController extends SubController {
 
         if (session.getLoggedInUserType() == Session.UserType.CLIENT) {
             client = session.getLoggedInClient();
-            fieldUserID.setEditable(false);
+            idPane.setDisable(true);
             setCheckboxesDisabled();
         } else if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
-            fieldUserID.setEditable(true);
             setCheckBoxesEnabled();
         }
 
         mainController.setTitle("Organ request registration: " + client.getFullName());
         fieldUserID.setText(Integer.toString(client.getUid()));
-        updateUserID(null);
+        updateUserID();
+    }
+
+    @Override
+    public void refresh() {
+        if (client != null) {
+            requestHistoryButton.setDisable(false);
+            for (Map.Entry<Organ, CheckBox> entry : organCheckBoxes.entrySet()) {
+                entry.getValue().setSelected(client.getOrganRequestStatus().get(entry.getKey()));
+            }
+        } else {
+            setCheckboxesDisabled();
+            setCheckBoxesUnselected();
+            requestHistoryButton.setDisable(true);
+        }
     }
 
     /**
-     * When an organ checkbox is ticked or unticked, this creates a ModifyOrganRequestAction to record the change and
-     * update the Clients transplantRequest list.
-     * @param event a checkbox is checked/unchecked.
+     * Checks which organs check boxes have been changed, then creates a ModifyOrganRequestAction to record the change
+     * and update the Client's transplantRequest list.
      */
     @FXML
-    private void modifyRequests(ActionEvent event) {
+    private void modifyRequests() {
         ModifyOrganRequestAction action = new ModifyOrganRequestAction(client);
         boolean hasChanged = false;
 
@@ -111,46 +124,38 @@ public class RequestOrganController extends SubController {
             }
         }
         if (hasChanged) {
-            invoker.execute(action);
+            String actionText = invoker.execute(action);
             HistoryItem organRequest = new HistoryItem("ORGAN REQUEST UPDATE",
                     "The Client's organ request list was updated: " + client.getOrganStatusString("requests"));
             JSONConverter.updateHistory(organRequest, "action_history.json");
+
+            PageNavigator.refreshAllWindows();
+            Notifications.create()
+                    .title("Updated Requested Organs")
+                    .text(actionText)
+                    .showInformation();
         }
     }
 
     /**
-     * Navigates to the organ_request_history page.
-     * @param event the back view history button is clicked.
+     * Navigates to the organ_request_history page when the view history button is clicked.
      */
     @FXML
-    private void viewRequestHistory(ActionEvent event) {
+    private void viewRequestHistory() {
         PageNavigator.loadPage(Page.ORGAN_REQUEST_HISTORY, mainController);
     }
 
     /**
      * Updates the current client to the one specified in the userID field, and populates with their info.
-     * @param event When ENTER is pressed with focus on the userID field.
      */
     @FXML
-    private void updateUserID(ActionEvent event) {
+    private void updateUserID() {
         try {
             client = manager.getClientByID(Integer.parseInt(fieldUserID.getText()));
         } catch (NumberFormatException exc) {
             client = null;
         }
-
-        if (client != null) {
-            requestHistoryButton.setDisable(false);
-            for (Map.Entry<Organ, CheckBox> entry : organCheckBoxes.entrySet()) {
-                entry.getValue().setSelected(client.getOrganRequestStatus().get(entry.getKey()));
-            }
-            HistoryItem save = new HistoryItem("UPDATE ID", "The Clients ID was updated to " + client.getUid());
-            JSONConverter.updateHistory(save, "action_history.json");
-        } else {
-            setCheckboxesDisabled();
-            setCheckBoxesUnselected();
-            requestHistoryButton.setDisable(true);
-        }
+        refresh();
     }
 
     /**
@@ -178,5 +183,10 @@ public class RequestOrganController extends SubController {
         for (CheckBox box : organCheckBoxes.values()) {
             box.setSelected(false);
         }
+    }
+
+    @FXML
+    private void returnToViewClient() {
+        PageNavigator.loadPage(Page.VIEW_CLIENT, mainController);
     }
 }

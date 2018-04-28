@@ -45,6 +45,7 @@ public class RequestOrganControllerCliniciansTest extends ControllerTest {
     @Test
     public void tickSingleOrganUpdates() {
         clickOn("#checkBoxLiver");
+        clickOn("Apply Changes");
         assertEquals(1, testClient.getTransplantRequests().size());
     }
 
@@ -55,6 +56,7 @@ public class RequestOrganControllerCliniciansTest extends ControllerTest {
         clickOn("#checkBoxBone");
         clickOn("#checkBoxKidney");
         clickOn("#checkBoxPancreas");
+        clickOn("Apply Changes");
         assertEquals(5, testClient.getTransplantRequests().size());
     }
 
@@ -62,7 +64,8 @@ public class RequestOrganControllerCliniciansTest extends ControllerTest {
     public void untickOrgansUpdates() {
         clickOn("#checkBoxLiver");
         clickOn("#checkBoxLiver");
-        assertEquals(2, testClient.getTransplantRequests().size());
+        clickOn("Apply Changes");
+        assertEquals(0, testClient.getTransplantRequests().size());
     }
 
     @Test

@@ -47,9 +47,9 @@ public class ModifyOrganRequestAction extends Action {
 
     private String formatChange(Organ organ, boolean newValue) {
         if (newValue) {
-            return String.format("Registered %s for donation.", organ.toString());
+            return String.format("Requesting %s.", organ.toString());
         } else {
-            return String.format("Deregistered %s for donation.", organ.toString());
+            return String.format("No longer requesting %s.", organ.toString());
         }
     }
 
