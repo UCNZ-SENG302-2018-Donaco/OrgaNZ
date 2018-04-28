@@ -170,6 +170,8 @@ public class TransplantsController extends SubController {
                 .getRequestedOrgan()) || organsToFilter.size() == 0);
     }
 
+
+
     /**
      * Used to filter out the transplant waiting list based on what organ or region or both is chosen
      */

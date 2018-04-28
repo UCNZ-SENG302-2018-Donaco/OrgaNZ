@@ -132,3 +132,35 @@ the test passes. Otherwise it fails.
 
 
 ## Story 17
+
+## Story 18
+
+## Story 19
+
+## Story 20
+
+## Story 21
+
+## Story 22
+
+## Story 23
+
+## Story 24
+
+## Story 25
+
+####AC1
+Log in as a clinician and on the side bar, navigate to the transplants section. If you haven't done yet,
+you should load in a save file for all clients so that the table will be populated. To filter a region,
+ click on the check box on top of the table, next to the "Region" label and select the desired regions to be
+ filtered. The same can be applied to the Organs. Then press on the "Filter" button on the top right
+ and the table should refresh itself with whatever has been selected.
+ 
+####AC2
+There should be no confusion as to how the filtering process works as most applications/websites 
+use this method for filtering.
+
+####AC3
+You can also sort the table columns in alphabetical order (or by date/time for the date one) by clicking
+on the head of the table. You can also choose to view a client by double-clicking on their row. This 
+will navigate you to their client page.
