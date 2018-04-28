@@ -57,6 +57,7 @@ public class TransplantsController extends SubController {
 
     @FXML
     private CheckComboBox regionChoice;
+
     @FXML
     private CheckComboBox organChoice;
 
