@@ -16,6 +16,8 @@ import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.Enums.Region;
 import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
 
+import com.google.api.client.util.ArrayMap;
+
 /**
  * The main Client class.
  */
@@ -43,14 +45,16 @@ public class Client {
 
     private List<MedicationRecord> medicationHistory = new ArrayList<>();
 
-    private Collection<TransplantRequest> transplantRequests = new ArrayList<>();
+    private List<TransplantRequest> transplantRequests = new ArrayList<>();
 
-    private ArrayList<String> updateLog = new ArrayList<>();
+    private List<String> updateLog = new ArrayList<>();
 
     public Client(int uid) {
         createdTimestamp = LocalDateTime.now();
         this.uid = uid;
-        initOrgans();
+
+        initDonationOrgans();
+        initRequestOrgans();
     }
 
     /**
@@ -71,14 +75,19 @@ public class Client {
         this.gender = Gender.UNSPECIFIED;
         this.createdTimestamp = LocalDateTime.now();
 
-        initOrgans();
+        initDonationOrgans();
+        initRequestOrgans();
     }
 
-    private void initOrgans() {
+    private void initDonationOrgans() {
         organDonationStatus = new HashMap<>();
-        organRequestStatus = new HashMap<>();
         for (Organ o : Organ.values()) {
             organDonationStatus.put(o, false);
+        }
+    }
+    private void initRequestOrgans() {
+        organRequestStatus = new HashMap<>();
+        for (Organ o : Organ.values()) {
             organRequestStatus.put(o, false);
         }
     }
@@ -96,6 +105,9 @@ public class Client {
      * @throws OrganAlreadyRegisteredException Thrown if the organ is set to true when it already is
      */
     public void setOrganRequestStatus(Organ organ, boolean value) throws OrganAlreadyRegisteredException {
+        if (organRequestStatus == null) {
+            initRequestOrgans();
+        }
         if (value && organRequestStatus.get(organ)) {
             throw new OrganAlreadyRegisteredException(organ.toString() + " is already currently requested");
         }
@@ -110,6 +122,9 @@ public class Client {
      * @throws OrganAlreadyRegisteredException Thrown if the organ is set to true when it already is
      */
     public void setOrganDonationStatus(Organ organ, boolean value) throws OrganAlreadyRegisteredException {
+        if (organDonationStatus == null) {
+            initDonationOrgans();
+        }
         if (value && organDonationStatus.get(organ)) {
             throw new OrganAlreadyRegisteredException(organ.toString() + " is already registered for donation");
         }
@@ -308,10 +323,16 @@ public class Client {
     }
 
     public Map<Organ, Boolean> getOrganRequestStatus() {
+        if (organRequestStatus == null) {
+            initRequestOrgans();
+        }
         return organRequestStatus;
     }
 
     public Map<Organ, Boolean> getOrganDonationStatus() {
+        if (organDonationStatus == null) {
+            initDonationOrgans();
+        }
         return organDonationStatus;
     }
 
@@ -420,11 +441,17 @@ public class Client {
         return d.uid == this.uid;
     }
 
-    public Collection<TransplantRequest> getTransplantRequests() {
+    public List<TransplantRequest> getTransplantRequests() {
+        if (transplantRequests == null) {
+            transplantRequests = new ArrayList<>();
+        }
         return transplantRequests;
     }
 
     public void addTransplantRequest(TransplantRequest transplantRequest) {
+        if (transplantRequests == null) {
+            transplantRequests = new ArrayList<>();
+        }
         transplantRequest.setClient(this);
         transplantRequests.add(transplantRequest);
     }
@@ -434,6 +461,10 @@ public class Client {
      * @return true if the client has a current organ request. False otherwise.
      */
     public boolean currentOrganRequest() {
+        if (transplantRequests == null) {
+            transplantRequests = new ArrayList<>();
+            return false;
+        }
         for (TransplantRequest t : transplantRequests) {
             if (t.getCurrentRequest()) {
                 return true;
