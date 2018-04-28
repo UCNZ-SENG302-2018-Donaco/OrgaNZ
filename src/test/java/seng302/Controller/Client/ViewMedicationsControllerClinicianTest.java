@@ -345,7 +345,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
                         new BadGatewayException("The drug interactions web API could not retrieve the results."));
 
             } else {
-                when(handler.getInteractions(testDonor, drug1, drug2)).thenReturn(interactions);
+                when(handler.getInteractions(testClient, drug1, drug2)).thenReturn(interactions);
             }
 
         } catch (IOException | IllegalArgumentException | BadDrugNameException |
