@@ -43,12 +43,12 @@ public class CreateClientAction extends Action {
 
     @Override
     public String getExecuteText() {
-        return String.format("Deleted client %s", client.getFullName());
+        return String.format("Created client %s", client.getFullName());
     }
 
     @Override
     public String getUnexecuteText() {
-        return String.format("Re-added client %s", client.getFullName());
+        return String.format("Removed client %s", client.getFullName());
     }
 
 }
