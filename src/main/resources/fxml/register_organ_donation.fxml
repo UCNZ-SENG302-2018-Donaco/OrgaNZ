@@ -109,7 +109,7 @@
                       </rowConstraints>
                       <children>
                         <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#returnToViewClient"
-                          prefHeight="30.0" text="Return to Donor Details"/>
+                          prefHeight="30.0" text="Return to Client Details"/>
                         <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#modifyOrgans"
                           prefHeight="30.0" text="Apply Changes" GridPane.columnIndex="1"/>
                       </children>
