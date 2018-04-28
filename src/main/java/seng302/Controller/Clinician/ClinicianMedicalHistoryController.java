@@ -18,6 +18,7 @@ import javafx.scene.text.Text;
 import seng302.Actions.Action;
 import seng302.Actions.ActionInvoker;
 import seng302.Actions.Donor.AddIllnessRecord;
+import seng302.Actions.Donor.DeleteIllnessRecord;
 import seng302.Actions.Donor.ModifyIllnessRecordAction;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
@@ -53,7 +54,8 @@ public class ClinicianMedicalHistoryController extends SubController{
   private HBox newIllnessPane;
 
   @FXML
-  private Button moveToHistoryButton, moveToCurrentButton, deleteButton,noLongerChronic;
+  private Button moveToHistoryButton, moveToCurrentButton, deleteButton,noLongerChronic,
+      defaultFilter,alphabeticalFilter,diagnosisFilter;
 
 
 
@@ -118,11 +120,29 @@ public class ClinicianMedicalHistoryController extends SubController{
   }
 
   /**
+   * Sorts past/current illnesses ensures Chronic illnesses are at the top.
+   */
+  private List<IllnessRecord> sortCurrentIllnessList(){
+    List<IllnessRecord> currentIllnesses = donor.getCurrentIllnesses();
+
+    for (int j = 0; j < currentIllnesses.size(); j++){
+      IllnessRecord item = currentIllnesses.get(j);
+      if(item.getChronic()){
+        currentIllnesses.remove(item);
+        currentIllnesses.add(0,item);
+      }
+
+    }
+    return currentIllnesses;
+  }
+
+
+  /**
    * Refreshes the past/current illness list views from the donor's properties.
    */
   private void refreshIllnessLists() {
     pastIllnessView.setItems(FXCollections.observableArrayList(donor.getPastIllnesses()));
-    currentIllnessView.setItems(FXCollections.observableArrayList(donor.getCurrentIllnesses()));
+    currentIllnessView.setItems(FXCollections.observableArrayList(sortCurrentIllnessList()));
   }
 
 
@@ -162,6 +182,50 @@ public class ClinicianMedicalHistoryController extends SubController{
 
     addIllness(IllnessField.getText(),dateDiagnosed.getValue(),chronicBox.isSelected());
   }
+
+  @FXML
+  private void defaultFilterPressed(ActionEvent event){
+    sortCurrentIllnessList();
+
+  }
+
+  @FXML
+  private void alphabeticalFilterPressed(ActionEvent event){
+
+    List<IllnessRecord> currentIllnesses = donor.getCurrentIllnesses();
+    List<IllnessRecord> pastIllnesses = donor.getPastIllnesses();
+    for (int j = 0; j < currentIllnesses.size(); j += 2){
+      IllnessRecord item = currentIllnesses.get(j);
+      IllnessRecord item2 = currentIllnesses.get(j+1);
+      item.getIllnessName().compareToIgnoreCase(item2.getIllnessName());
+
+    }
+
+
+
+  }
+
+  @FXML
+  private void diagnosisFilterPressed(ActionEvent event){
+
+  }
+
+  @FXML
+  private void deleteIllness(ActionEvent event) {
+    if (selectedListView != null) {
+      IllnessRecord record = selectedListView.getSelectionModel().getSelectedItem();
+      if (record != null) {
+        DeleteIllnessRecord action = new DeleteIllnessRecord(donor, record);
+
+        invoker.execute(action);
+        refreshIllnessLists();
+      }
+    }
+  }
+
+
+
+
 
   @FXML
   private void removeChronicStatus(ActionEvent event){

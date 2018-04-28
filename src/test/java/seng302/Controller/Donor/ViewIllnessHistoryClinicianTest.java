@@ -1,5 +1,6 @@
 package seng302.Controller.Donor;
 
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -45,13 +46,25 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
                     false
             )
     };
-    private final IllnessRecord[] testCurrentIllnessRecords = {
-            new IllnessRecord(
-                    "Colon Cancer",
-                    LocalDate.of(2014, 3, 4),
-                    null,
-                    true
-            )
+    private final  IllnessRecord[] testCurrentIllnessRecords = {
+        new IllnessRecord(
+            "Colon Cancer",
+            LocalDate.of(2014, 3, 4),
+            null,
+            true
+        ),
+        new IllnessRecord(
+            "Influenza",
+            LocalDate.of(2012, 1, 2),
+            null,
+            false
+        ),
+        new IllnessRecord(
+            "Lung Cancer",
+            LocalDate.of(2011, 9, 22),
+            null,
+            true
+        )
     };
 
     private Clinician testClinician = new Clinician("A", "B", "C", "D", Region.UNSPECIFIED, 0, "E");
@@ -134,6 +147,16 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
     }
 
     /**
+    public void illnessesSortedChronicFirstTest(){
+        for (IllnessRecord record : testCurrentIllnessRecords) {
+            getList
+            verifyThat("#currentIllnessView",g);
+            System.out.println(hasListCell(record));
+        }
+
+    } **/
+
+    /**
 
     public void addNewIllnessWithButtonTest() {
         IllnessRecord toBeAdded = new IllnessRecord("Influenza", LocalDate.now(), null,false);
@@ -172,10 +195,9 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
         assertNull(toBeMoved.getCuredDate());
     } **/
 
-    /**
 
-
-    public void deleteMedicationRecordTest() {
+    @Test
+    public void deleteIllnessRecordTest() {
         IllnessRecord toBeDeleted = testPastIllnessRecords[0];
 
         clickOn((Node) lookup(hasText(toBeDeleted.toString())).query());
@@ -185,7 +207,7 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
         verifyThat("#currentIllnessView", not(hasListCell(toBeDeleted)));
         assertTrue(!testDonor.getPastIllnesses().contains(toBeDeleted));
         assertTrue(!testDonor.getCurrentIllnesses().contains(toBeDeleted));
-    } **/
+    }
 
 
 }
