@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Predicate;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.collections.FXCollections;
@@ -58,10 +59,10 @@ public class TransplantsController extends SubController {
     private CheckComboBox regionChoice;
     @FXML
     private CheckComboBox organChoice;
-    private ObservableList<TransplantRequest> observableTransplantList = FXCollections.observableArrayList();
-    private FilteredList<TransplantRequest> filteredOrgans;
-    private FilteredList<TransplantRequest> filteredRegions;
-    private SortedList<TransplantRequest> sortedTransplants;
+
+    private ObservableList<TransplantRequest> observableTransplantRequests = FXCollections.observableArrayList();
+    private FilteredList<TransplantRequest> filteredTransplantRequests;
+    private SortedList<TransplantRequest> sortedTransplantRequests;
 
     @Override
     public void setup(MainController mainController) {
@@ -69,43 +70,27 @@ public class TransplantsController extends SubController {
         mainController.loadSidebar(sidebarPane);
     }
 
-    //Note: some commented-out code is just copied and pasted from SearchClientsController
 
     @FXML
     private void initialize() {
-        List<TransplantRequest> allTransplants = State.getClientManager().getAllTransplantRequests();
+        Collection<TransplantRequest> transplantWaitingList = State.getClientManager().getTransplantWaitingList();
 
         setupTable();
+        tableView.setOnSort((o) -> pagination.setPageCount(sortedTransplantRequests.size() / ROWS_PER_PAGE + 1));
 
-        //set up the search bars
-        tableView.setOnSort((o) -> pagination.setPageCount(sortedTransplants.size() / ROWS_PER_PAGE + 1));
+        filteredTransplantRequests = new FilteredList<>(FXCollections.observableArrayList(transplantWaitingList), client -> true);
 
-        /*filteredOrgans = new FilteredList<>(FXCollections.observableArrayList(allTransplants), transplantRequest ->
-                true);
-        filteredRegions = new FilteredList<>(FXCollections.observableArrayList(allTransplants), transplantRequest ->
-        true);*/
+        sortedTransplantRequests = new SortedList<>(filteredTransplantRequests);
+        sortedTransplantRequests.comparatorProperty().bind(tableView.comparatorProperty());
 
-        //Create a sorted list
-        sortedTransplants = new SortedList<>(FXCollections.observableArrayList(allTransplants));
-        //Link the sorted list sort to the tableView sort
-        sortedTransplants.comparatorProperty().bind(tableView.comparatorProperty());
 
-        //Set initial pagination
-        pagination.setPageCount(sortedTransplants.size() / ROWS_PER_PAGE + 1);/*
-        //On pagination update call createPage
-        pagination.setPageFactory(this::createPage);*/
+        pagination.setPageCount(sortedTransplantRequests.size() / ROWS_PER_PAGE + 1);
 
-        //Initialize the observable list to all clients
-        observableTransplantList.setAll(sortedTransplants);
-        //Bind the tableView to the observable list
-        tableView.setItems(observableTransplantList);
+        observableTransplantRequests.setAll(sortedTransplantRequests);
+        tableView.setItems(sortedTransplantRequests);
 
-        //Sets items for the Choice boxes for region and organ
-        //regionChoice.setItems(FXCollections.observableArrayList(Region.values()));
-        //organChoice.setItems(FXCollections.observableArrayList(Organ.values()));
         regionChoice.getItems().addAll(Region.values());
         organChoice.getItems().addAll(Organ.values());
-
     }
 
 
@@ -159,28 +144,29 @@ public class TransplantsController extends SubController {
     }
 
     private void filterRegions() {
-        Collection<String> regionsToFilter = new ArrayList<>();
+        Collection<Region> regionsToFilter = new ArrayList<>();
         for (int i = 0; i < Region.values().length; i++) {
             if (regionChoice.getItemBooleanProperty(i).getValue()) {
-                regionsToFilter.add(regionChoice.getItemBooleanProperty(i).getBean().toString());
-                //regionsToFilter.add(Region.valueOf(regionChoice.getItemBooleanProperty(i).getBean().toString().toUpperCase()));
+                regionsToFilter.add(Region.fromString(regionChoice.getItemBooleanProperty(i).getBean().toString()));
             }
         }
-        if (regionsToFilter.size() > 0) {
-            //filteredRegions.setPredicate(region -> regionsToFilter.contains(region));
-        } else {
-            //filteredRegions.setPredicate(Region -> true);
-        }
+        System.out.println(regionsToFilter.toString());
+
+        filteredTransplantRequests.setPredicate(transplantRequest -> regionsToFilter.contains(transplantRequest
+                .getClientRegion()) || regionsToFilter.size() == 0);
     }
 
     private void filterOrgans() {
         Collection<Organ> organsToFilter = new ArrayList<>();
         for (int i = 0; i < Organ.values().length; i++) {
             if (organChoice.getItemBooleanProperty(i).getValue()) {
-                System.out.println(organChoice.getItemBooleanProperty(i).getBean());
-                //regionsToFilter.add(regionChoice.getItemBooleanProperty(i).getBean())
+                organsToFilter.add(Organ.fromString(organChoice.getItemBooleanProperty(i).getBean().toString()));
             }
         }
+        System.out.println(organsToFilter.toString());
+
+        filteredTransplantRequests.setPredicate(transplantRequest -> organsToFilter.contains(transplantRequest
+                .getRequestedOrgan()) || organsToFilter.size() == 0);
     }
 
     /**
@@ -191,23 +177,6 @@ public class TransplantsController extends SubController {
     private void filter() {
         filterRegions();
         //filterOrgans();
-
-
-        /*
-        String organSearchText = organSearch.getText();
-        if (organSearch == null || organSearchText.length() == 0) {
-            filteredOrgans.setPredicate(transplantRequest -> true);
-        } else {
-            filteredOrgans.setPredicate(transplantRequest -> transplantRequest.getRequestedOrgan().equals(organSearchText));
-        }
-
-        String regionSearchText = regionSearch.getText();
-        if (regionSearch == null || regionSearchText.length() == 0) {
-            filteredRegions.setPredicate(transplantRequest -> true);
-        } else {
-            filteredRegions.setPredicate(transplantRequest -> transplantRequest.getRequestedOrgan().equals(organSearchText));
-        }
-        */
     }
 
 
