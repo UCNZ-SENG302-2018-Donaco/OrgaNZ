@@ -143,13 +143,13 @@ public class RegisterOrganDonationController extends SubController {
         }
         if (hasChanged) {
             String actionText = invoker.execute(action);
-            PageNavigator.refreshAllWindows();
             HistoryItem save = new HistoryItem("UPDATE ORGANS",
                     "The Client's organs were updated: " + client.getOrganStatusString("donations"));
             JSONConverter.updateHistory(save, "action_history.json");
 
+            PageNavigator.refreshAllWindows();
             Notifications.create()
-                    .title("Updated Organs")
+                    .title("Updated Donating Organs")
                     .text(actionText)
                     .showInformation();
         }
