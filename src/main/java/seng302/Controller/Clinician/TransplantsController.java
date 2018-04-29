@@ -30,6 +30,10 @@ import seng302.Utilities.View.WindowContext;
 
 import org.controlsfx.control.CheckComboBox;
 
+/**
+ * Handles the TransplantRequests in the system that can only be accessed from the clinician. Clinicians can filter
+ * the requests based off the Region and Organ of the requests.
+ */
 public class TransplantsController extends SubController {
 
     private static final int ROWS_PER_PAGE = 30;
@@ -89,7 +93,6 @@ public class TransplantsController extends SubController {
         sortedTransplantRequests = new SortedList<>(filteredTransplantRequests);
         sortedTransplantRequests.comparatorProperty().bind(tableView.comparatorProperty());
 
-
         pagination.setPageCount(sortedTransplantRequests.size() / ROWS_PER_PAGE + 1);
 
         observableTransplantRequests.setAll(sortedTransplantRequests);
@@ -97,6 +100,7 @@ public class TransplantsController extends SubController {
 
         regionChoice.getItems().addAll(Region.values());
         organChoice.getItems().addAll(Organ.values());
+        organChoice.setAccessibleHelp("hi");
     }
 
 
@@ -149,6 +153,10 @@ public class TransplantsController extends SubController {
 
     }
 
+
+    /**
+     * Filters the regions based on the RegionChoices current state and updates the organsToFilter Collection.
+     */
     private void filterRegions() {
         regionsToFilter = new ArrayList<>();
         for (int i = 0; i < Region.values().length; i++) {
@@ -158,6 +166,9 @@ public class TransplantsController extends SubController {
         }
     }
 
+    /**
+     * Filters the organs based on the OrganChoices current state and updates the organsToFilter Collection.
+     */
     private void filterOrgans() {
         organsToFilter = new ArrayList<>();
         for (int i = 0; i < Organ.values().length; i++) {
@@ -167,23 +178,19 @@ public class TransplantsController extends SubController {
         }
     }
 
-
-
     /**
-     * Used to filter out the transplant waiting list based on what organ or region or both is chosen
+     * Filters the transplant waiting list based on what organs/regions are chosen.
      */
-
     @FXML
     private void filter() {
         filterRegions();
         filterOrgans();
-
         filteredTransplantRequests.setPredicate(transplantRequest ->
                 (regionsToFilter.contains(transplantRequest.getClientRegion()) || regionsToFilter.size() == 0) &&
                 (organsToFilter.contains(transplantRequest.getRequestedOrgan()) || organsToFilter.size() == 0));
+        if (filteredTransplantRequests.size() == 0) {
+            // Show notification.
+            System.out.println("No requests");
+        }
     }
-
-
-
-
 }
