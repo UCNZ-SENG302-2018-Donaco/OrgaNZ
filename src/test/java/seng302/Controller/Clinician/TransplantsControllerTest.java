@@ -97,8 +97,8 @@ public class TransplantsControllerTest extends ControllerTest {
         client1.setRegion(Region.CANTERBURY);
         client2.setRegion(Region.OTAGO);
 
-        for (int i = 4; i < 119; i++) {
-            Client client = new Client("Client", "Number", Integer.toString(i), LocalDate.now(), i);
+        for (int i = 100; i < 215; i++) {
+            Client client = new Client("Client", "Number", createClientName(i), LocalDate.now(), i);
             TransplantRequest request = new TransplantRequest(Organ.BONE, true, i);
             client.addTransplantRequest(request);
             requests.add(request);
@@ -107,6 +107,70 @@ public class TransplantsControllerTest extends ControllerTest {
 
         mainController.setWindowContext(new WindowContext.WindowContextBuilder()
                 .build());
+    }
+
+    // Helper methods
+
+    private String createClientName(int i) {
+        String[] parts = Integer.toString(i).split("");
+        StringBuilder stringBuilder = new StringBuilder();
+        String alphaPart;
+        for (String part : parts) {
+            switch (part) {
+                case "0":
+                    alphaPart = "a";
+                    break;
+                case "1":
+                    alphaPart = "b";
+                    break;
+                case "2":
+                    alphaPart = "c";
+                    break;
+                case "3":
+                    alphaPart = "d";
+                    break;
+                case "4":
+                    alphaPart = "e";
+                    break;
+                case "5":
+                    alphaPart = "f";
+                    break;
+                case "6":
+                    alphaPart = "g";
+                    break;
+                case "7":
+                    alphaPart = "h";
+                    break;
+                case "8":
+                    alphaPart = "i";
+                    break;
+                case "9":
+                    alphaPart = "j";
+                    break;
+                default:
+                    alphaPart = "x";
+                    break;
+            }
+            stringBuilder.append(alphaPart);
+        }
+        return stringBuilder.toString();
+    }
+
+    /**
+     * Get the top modal window.
+     * @return the top modal window
+     */
+    private Stage getTopModalStage() {
+        // Get a list of windows but ordered from top[0] to bottom[n] ones.
+        List<Window> allWindows = new ArrayList<>(new FxRobot().robotContext().getWindowFinder().listWindows());
+        Collections.reverse(allWindows);
+
+        // Return the first found modal window.
+        return (Stage) allWindows
+                .stream()
+                .filter(window -> window instanceof Stage)
+                .findFirst()
+                .orElse(null);
     }
 
     // Tests
@@ -137,23 +201,6 @@ public class TransplantsControllerTest extends ControllerTest {
                     request.getClientRegion(), request.getRequestDateString()));
         }
         verifyThat("#tableView", hasNumRows(30));
-    }
-
-    /**
-     * Get the top modal window.
-     * @return the top modal window
-     */
-    private Stage getTopModalStage() {
-        // Get a list of windows but ordered from top[0] to bottom[n] ones.
-        List<Window> allWindows = new ArrayList<>(new FxRobot().robotContext().getWindowFinder().listWindows());
-        Collections.reverse(allWindows);
-
-        // Return the first found modal window.
-        return (Stage) allWindows
-                .stream()
-                .filter(window -> window instanceof Stage)
-                .findFirst()
-                .orElse(null);
     }
 
     @Test
