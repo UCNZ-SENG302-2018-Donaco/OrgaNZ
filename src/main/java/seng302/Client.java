@@ -422,8 +422,12 @@ public class Client {
         return transplantRequests;
     }
 
-    public void addTransplantRequest(TransplantRequest transplantRequest) {
-        transplantRequests.add(transplantRequest);
+    public void addTransplantRequest(TransplantRequest request) {
+        transplantRequests.add(request);
+    }
+
+    public void removeTransplantRequest(TransplantRequest request) {
+        transplantRequests.remove(request);
     }
 
     public boolean isReceiver() {
