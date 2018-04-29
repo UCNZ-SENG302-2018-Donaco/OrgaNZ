@@ -12,6 +12,10 @@ import seng302.Actions.Action;
 import seng302.TransplantRequest;
 import seng302.TransplantRequest.RequestStatus;
 
+/**
+ * A reversible action that will resolve the given transplant request with a given status. This status must be one of
+ * the valid {@link ResolveTransplantRequestAction#RESOLVED_STATUSES}.
+ */
 public class ResolveTransplantRequestAction extends Action {
 
     private static final Collection<RequestStatus> RESOLVED_STATUSES = Arrays.asList(
@@ -21,6 +25,12 @@ public class ResolveTransplantRequestAction extends Action {
     private TransplantRequest request;
     private RequestStatus newStatus;
 
+    /**
+     * Creates a new resolve transplant request action for the given request and given new status.
+     * @param request The transplant request to resolve.
+     * @param newStatus The new status to give the request. Must be one of the valid {@link
+     * ResolveTransplantRequestAction#RESOLVED_STATUSES}.
+     */
     public ResolveTransplantRequestAction(TransplantRequest request, RequestStatus newStatus) {
         this.request = request;
         this.newStatus = newStatus;

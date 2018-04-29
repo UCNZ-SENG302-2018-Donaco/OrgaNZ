@@ -12,6 +12,11 @@ public class AddTransplantRequestAction extends Action {
     private Client client;
     private TransplantRequest request;
 
+    /**
+     * Creates a new action to add the given transplant request to the given client.
+     * @param client The client to add the request for.
+     * @param request The request to add.
+     */
     public AddTransplantRequestAction(Client client, TransplantRequest request) {
         this.client = client;
         this.request = request;
