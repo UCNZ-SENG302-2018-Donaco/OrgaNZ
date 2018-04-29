@@ -472,4 +472,21 @@ public class Client {
         }
         return false;
     }
+
+    /**
+     * Marks the client as dead and marks all organs as no for reception and donation
+     *
+     * @param dateOfDeath LocalDate that the client died
+     */
+    public void markDead(LocalDate dateOfDeath) {
+        this.dateOfDeath = dateOfDeath;
+
+        for (Map.Entry<Organ, Boolean> organDonate: organDonationStatus.entrySet()) {
+            organDonate.setValue(false);
+        }
+
+        for (Map.Entry<Organ, Boolean> organRequest: organRequestStatus.entrySet()) {
+            organRequest.setValue(false);
+        }
+    }
 }

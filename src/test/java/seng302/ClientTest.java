@@ -1,6 +1,7 @@
 package seng302;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -186,5 +187,25 @@ public class ClientTest {
     public void getOrganStatusStringInvalid() throws OrganAlreadyRegisteredException {
         client.setOrganRequestStatus(Organ.BONE, true);
         client.setOrganRequestStatus(Organ.BONE, true);
+    }
+
+    @Test
+    public void equalsNotAClientTest() {
+        String testString = "panda";
+
+        assertNotEquals(testString, client);
+    }
+
+    @Test
+    public void markDeadTest() throws OrganAlreadyRegisteredException {
+        client.setOrganDonationStatus(Organ.BONE, true);
+        client.setOrganRequestStatus(Organ.LIVER, true);
+
+        LocalDate deathDate = LocalDate.now();
+        client.markDead(deathDate);
+
+        assertEquals(deathDate, client.getDateOfDeath());
+        assertFalse(client.getOrganDonationStatus().get(Organ.BONE));
+        assertFalse(client.getOrganRequestStatus().get(Organ.LIVER));
     }
 }
