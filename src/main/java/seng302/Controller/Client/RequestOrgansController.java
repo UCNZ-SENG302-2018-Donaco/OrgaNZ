@@ -34,7 +34,7 @@ import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
 
 /**
- * Controller for the Request Organs page. Handles the viewing of current & past organ transplant requests. If the
+ * Controller for the Request Organs page. Handles the viewing of current and past organ transplant requests. If the
  * logged in user is a clinician, they also have the ability to create new transplant requests and resolve current ones.
  */
 public class RequestOrgansController extends SubController {
