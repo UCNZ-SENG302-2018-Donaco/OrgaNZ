@@ -11,6 +11,7 @@ import static org.testfx.matcher.control.TextMatchers.hasText;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javafx.scene.Node;
@@ -336,7 +337,13 @@ public class TransplantsControllerTest extends ControllerTest {
         clickOn("#clientCol");
 
         // Sort requests by client name
-        requests.sort(tableView.getComparator());
+        requests.sort(new Comparator<TransplantRequest>() {
+            @Override
+            public int compare(TransplantRequest o1, TransplantRequest o2) {
+                return o1.getClientName().toLowerCase().compareTo(o2.getClientName().toLowerCase());
+            }
+        });
+
 
         // Check all 30 requests are correct
         for (int i = 0; i < 30; i++) {
