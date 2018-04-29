@@ -61,6 +61,8 @@ public class TransplantsController extends SubController {
     @FXML
     private CheckComboBox organChoice;
 
+    private Collection<Region> regionsToFilter;
+    private Collection<Organ> organsToFilter;
     private ObservableList<TransplantRequest> observableTransplantRequests = FXCollections.observableArrayList();
     private FilteredList<TransplantRequest> filteredTransplantRequests;
     private SortedList<TransplantRequest> sortedTransplantRequests;
@@ -145,29 +147,21 @@ public class TransplantsController extends SubController {
     }
 
     private void filterRegions() {
-        Collection<Region> regionsToFilter = new ArrayList<>();
+        regionsToFilter = new ArrayList<>();
         for (int i = 0; i < Region.values().length; i++) {
             if (regionChoice.getItemBooleanProperty(i).getValue()) {
                 regionsToFilter.add(Region.fromString(regionChoice.getItemBooleanProperty(i).getBean().toString()));
             }
         }
-        System.out.println(regionsToFilter.toString());
-
-        filteredTransplantRequests.setPredicate(transplantRequest -> regionsToFilter.contains(transplantRequest
-                .getClientRegion()) || regionsToFilter.size() == 0);
     }
 
     private void filterOrgans() {
-        Collection<Organ> organsToFilter = new ArrayList<>();
+        organsToFilter = new ArrayList<>();
         for (int i = 0; i < Organ.values().length; i++) {
             if (organChoice.getItemBooleanProperty(i).getValue()) {
                 organsToFilter.add(Organ.fromString(organChoice.getItemBooleanProperty(i).getBean().toString()));
             }
         }
-        System.out.println(organsToFilter.toString());
-
-        filteredTransplantRequests.setPredicate(transplantRequest -> organsToFilter.contains(transplantRequest
-                .getRequestedOrgan()) || organsToFilter.size() == 0);
     }
 
 
@@ -179,7 +173,11 @@ public class TransplantsController extends SubController {
     @FXML
     private void filter() {
         filterRegions();
-        //filterOrgans();
+        filterOrgans();
+
+        filteredTransplantRequests.setPredicate(transplantRequest ->
+                (regionsToFilter.contains(transplantRequest.getClientRegion()) || regionsToFilter.size() == 0) &&
+                (organsToFilter.contains(transplantRequest.getRequestedOrgan()) || organsToFilter.size() == 0));
     }
 
 
