@@ -15,7 +15,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.Client.RequestOrganController">
+<VBox prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.Client.RequestOrgansController">
   <children>
     <SplitPane dividerPositions="0.5" VBox.vgrow="ALWAYS">
       <items>
@@ -49,11 +49,11 @@
                                           <Insets right="10.0" />
                                        </HBox.margin>
                         </Text>
-                                    <ChoiceBox prefHeight="30.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                                    <ChoiceBox fx:id="newOrganChoiceBox" prefHeight="30.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
                                        <HBox.margin>
                                           <Insets right="-1.0" />
                                        </HBox.margin></ChoiceBox>
-                                    <Button mnemonicParsing="false" prefHeight="30.0" text="Submit Request" HBox.hgrow="ALWAYS">
+                                    <Button mnemonicParsing="false" onAction="#submitNewRequest" prefHeight="30.0" text="Submit Request" HBox.hgrow="ALWAYS">
                                        <HBox.margin>
                                           <Insets left="-1.0" />
                                        </HBox.margin></Button>
@@ -74,8 +74,8 @@
                                     </Text>
                                     <TableView fx:id="currentRequestsTable" VBox.vgrow="ALWAYS">
                                       <columns>
-                                        <TableColumn prefWidth="75.0" text="Organ" />
-                                        <TableColumn prefWidth="75.0" text="Date Requested" />
+                                        <TableColumn fx:id="organCurrCol" prefWidth="75.0" text="Organ" />
+                                        <TableColumn fx:id="requestDateCurrCol" prefWidth="75.0" text="Date Requested" />
                                       </columns>
                                        <VBox.margin>
                                           <Insets top="5.0" />
@@ -89,6 +89,7 @@
                                     <Insets top="10.0" />
                                  </VBox.margin>
                               </VBox>
+                              <Button mnemonicParsing="false" text="Cancel" />
                               <VBox prefWidth="100.0">
                                  <children>
                                     <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Past Requests" textAlignment="CENTER">
@@ -101,10 +102,10 @@
                                     </Text>
                                     <TableView fx:id="pastRequestsTable" VBox.vgrow="ALWAYS">
                                        <columns>
-                                          <TableColumn prefWidth="75.0" text="Organ" />
-                                          <TableColumn prefWidth="75.0" text="Date Requested" />
-                                          <TableColumn prefWidth="75.0" text="Resolved" />
-                                          <TableColumn prefWidth="75.0" text="Reason" />
+                                          <TableColumn fx:id="organPastCol" prefWidth="75.0" text="Organ" />
+                                          <TableColumn fx:id="requestDatePastCol" prefWidth="75.0" text="Date Requested" />
+                                          <TableColumn fx:id="requestStatusPastCol" prefWidth="75.0" text="Resolved" />
+                                          <TableColumn fx:id="resolvedDatePastCol" prefWidth="75.0" text="Resolved" />
                                        </columns>
                                        <VBox.margin>
                                           <Insets top="5.0" />
@@ -128,7 +129,6 @@
                                  </rowConstraints>
                                  <children>
                                     <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#returnToViewClient" prefHeight="30.0" text="Return to Client Details" />
-                                    <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#modifyRequests" prefHeight="30.0" text="Apply Changes" GridPane.columnIndex="1" />
                                  </children>
                                  <VBox.margin>
                                     <Insets top="15.0" />

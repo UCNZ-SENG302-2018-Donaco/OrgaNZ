@@ -5,19 +5,24 @@ import java.time.LocalDateTime;
 import seng302.Utilities.Enums.Organ;
 
 /**
- * Class to hold Transplant Requests for each time a clinician adds a request for a Client to have a transplant for
- * a specified organ. The Organ type, time of request, and status of request are all properties of a TransplantRequest.
+ * Represents a request for a client to receive a transplant for a given organ.
  */
 public class TransplantRequest {
 
+    public enum RequestStatus {
+        WAITING,
+        CANCELLED,
+        COMPLETED
+    }
+
     private Organ requestedOrgan;
     private LocalDateTime requestDate;
-    private boolean currentRequest;
+    private LocalDateTime resolvedDate;
+    private RequestStatus status = RequestStatus.WAITING;
 
-    public TransplantRequest(Organ requestedOrgan, boolean currentRequest) {
+    public TransplantRequest(Organ requestedOrgan) {
         this.requestedOrgan = requestedOrgan;
-        this.currentRequest = currentRequest;
-        requestDate = LocalDateTime.now();
+        this.requestDate = LocalDateTime.now();
     }
 
     public Organ getRequestedOrgan() {
@@ -28,7 +33,19 @@ public class TransplantRequest {
         return requestDate;
     }
 
-    public boolean getCurrentRequest() {
-        return currentRequest;
+    public LocalDateTime getResolvedDate() {
+        return resolvedDate;
+    }
+
+    public RequestStatus getStatus() {
+        return status;
+    }
+
+    public void setResolvedDate(LocalDateTime resolvedDate) {
+        this.resolvedDate = resolvedDate;
+    }
+
+    public void setStatus(RequestStatus status) {
+        this.status = status;
     }
 }

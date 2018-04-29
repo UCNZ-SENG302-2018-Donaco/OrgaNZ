@@ -63,7 +63,7 @@ public class SidebarController extends SubController {
         undoButton.setDisable(!invoker.canUndo());
         redoButton.setDisable(!invoker.canRedo());
 
-        if (!showRequestedOrgansButton(userType)) {
+        if (!shouldShowRequestOrgans(userType)) {
             hideButton(requestOrganDonationButton);
         }
     }
@@ -73,12 +73,13 @@ public class SidebarController extends SubController {
      * @param userType the type of current user
      * @return true if the button should be shown, false otherwise
      */
-    private boolean showRequestedOrgansButton(Session.UserType userType) {
+    private boolean shouldShowRequestOrgans(Session.UserType userType) {
         if (userType == UserType.CLIENT) {
             Client currentClient = session.getLoggedInClient();
-            return currentClient.getTransplantRequests().size() > 0;
+            return currentClient.isReceiver();
+        } else {
+            return windowContext.isClinViewClientWindow();
         }
-        return windowContext.isClinViewClientWindow();
     }
 
     /**
@@ -119,7 +120,7 @@ public class SidebarController extends SubController {
      */
     @FXML
     private void goToRequestOrganDonation() {
-        PageNavigator.loadPage(Page.REQUEST_ORGAN, mainController);
+        PageNavigator.loadPage(Page.REQUEST_ORGANS, mainController);
     }
 
     /**
