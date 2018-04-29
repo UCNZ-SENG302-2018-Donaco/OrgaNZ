@@ -44,6 +44,13 @@ public class TransplantRequest {
         return requestDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
 
+    /**
+     * ONLY USED FOR TESTING PURPOSES
+     */
+    public void setRequestDate(LocalDateTime newDate) {
+        requestDate = newDate;
+    }
+
     public boolean getCurrentRequest() {
         return currentRequest;
     }

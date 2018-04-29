@@ -1,6 +1,7 @@
 package seng302.Controller.Clinician;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 
 import javafx.collections.FXCollections;
@@ -39,9 +40,6 @@ public class TransplantsController extends SubController {
     private TableView<TransplantRequest> tableView;
 
     @FXML
-    private TableColumn<TransplantRequest, LocalDateTime> dateCol;
-
-    @FXML
     private TableColumn<TransplantRequest, String> clientCol;
 
     @FXML
@@ -49,6 +47,9 @@ public class TransplantsController extends SubController {
 
     @FXML
     private TableColumn<TransplantRequest, Region> regionCol;
+
+    @FXML
+    private TableColumn<TransplantRequest, LocalDateTime> dateCol;
 
     @FXML
     private Pagination pagination;
@@ -99,17 +100,18 @@ public class TransplantsController extends SubController {
      * The client must have getters for these specific names specified in the PV Factories.
      */
     private void setupTable() {
-        dateCol.setCellValueFactory(new PropertyValueFactory<>("requestDateString"));
         clientCol.setCellValueFactory(new PropertyValueFactory<>("clientName"));
         organCol.setCellValueFactory(new PropertyValueFactory<>("requestedOrgan"));
         regionCol.setCellValueFactory(new PropertyValueFactory<>("clientRegion"));
+        dateCol.setCellValueFactory(new PropertyValueFactory<>("requestDateString"));
 
         tableView.getColumns().setAll(clientCol, organCol, regionCol, dateCol);
 
         tableView.setOnMouseClicked(mouseEvent -> {
             if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2) {
-                Client client = tableView.getSelectionModel().getSelectedItem().getClient();
-                if (client != null) {
+                TransplantRequest request = tableView.getSelectionModel().getSelectedItem();
+                if (request != null) {
+                    Client client = request.getClient();
                     MainController newMain = PageNavigator.openNewWindow();
                     if (newMain != null) {
                         newMain.setWindowContext(new WindowContext.WindowContextBuilder()
@@ -119,6 +121,35 @@ public class TransplantsController extends SubController {
                         PageNavigator.loadPage(Page.VIEW_CLIENT, newMain);
                     }
                 }
+            }
+        });
+
+        organCol.setComparator(new Comparator<Organ>() {
+            /**
+             * Alphabetical order of the name
+             */
+            @Override
+            public int compare(Organ o1, Organ o2) {
+                return o1.toString().compareTo(o2.toString());
+            }
+        });
+
+        regionCol.setComparator(new Comparator<Region>() {
+            /**
+             * Nulls are ordered first, then alphabetical order of the name.
+             */
+            @Override
+            public int compare(Region o1, Region o2) {
+                if (o1 == null) {
+                    if (o2 == null) {
+                        return 0;
+                    } else {
+                        return -1;
+                    }
+                } else if (o2 == null) {
+                    return 1;
+                }
+                return o1.toString().compareTo(o2.toString());
             }
         });
     }

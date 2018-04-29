@@ -9,6 +9,7 @@ import static org.testfx.matcher.control.TableViewMatchers.hasNumRows;
 import static org.testfx.matcher.control.TextMatchers.hasText;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -51,7 +52,7 @@ public class TransplantsControllerTest extends ControllerTest {
 
     private Client client1 = new Client("Client", "Number", "One", LocalDate.now(), 1);
     private TransplantRequest request1a = new TransplantRequest(Organ.LIVER, true, 1);
-    private TransplantRequest request1b = new TransplantRequest(Organ.KIDNEY, true, 1);
+    private TransplantRequest request1b = new TransplantRequest(Organ.PANCREAS, true, 1);
     private TransplantRequest request1c = new TransplantRequest(Organ.LUNG, true, 1);
 
     private Client client2 = new Client("Client", "Number", "Two", LocalDate.now(), 2);
@@ -97,11 +98,16 @@ public class TransplantsControllerTest extends ControllerTest {
 
         client1.setRegion(Region.CANTERBURY);
         client2.setRegion(Region.OTAGO);
+        // client3's region is left as null
+
+        request1b.setRequestDate(LocalDateTime.now().minusDays(10));
+        request2a.setRequestDate(LocalDateTime.now().minusDays(15));
 
         for (int i = 100; i < 215; i++) {
             Client client = new Client("Client", "Number", createClientName(i), LocalDate.now(), i);
-            TransplantRequest request = new TransplantRequest(Organ.BONE, true, i);
+            TransplantRequest request = new TransplantRequest(Organ.MIDDLE_EAR, true, i);
             client.addTransplantRequest(request);
+            client.setRegion(Region.NELSON);
             requests.add(request);
             State.getClientManager().addClient(client);
         }
@@ -332,8 +338,6 @@ public class TransplantsControllerTest extends ControllerTest {
 
     @Test
     public void testReorderByName() {
-        TableView<TransplantRequest> tableView = lookup("#tableView").queryTableView();
-
         clickOn("#clientCol");
 
         // Sort requests by client name
@@ -344,6 +348,76 @@ public class TransplantsControllerTest extends ControllerTest {
             }
         });
 
+        // Check all 30 requests are correct
+        for (int i = 0; i < 30; i++) {
+            TransplantRequest request = requests.get(i);
+            verifyThat("#tableView", containsRowAtIndex(i, request.getClientName(), request.getRequestedOrgan(),
+                    request.getClientRegion(), request.getRequestDateString()));
+        }
+    }
+
+    @Test
+    public void testReorderByOrgan() {
+        clickOn("#organCol");
+
+        // Sort requests by organ
+        requests.sort(new Comparator<TransplantRequest>() {
+            @Override
+            public int compare(TransplantRequest o1, TransplantRequest o2) {
+                return o1.getRequestedOrgan().toString().compareTo(o2.getRequestedOrgan().toString());
+            }
+        });
+
+        // Check all 30 requests are correct
+        for (int i = 0; i < 30; i++) {
+            TransplantRequest request = requests.get(i);
+            System.out.println(request);
+            verifyThat("#tableView", containsRowAtIndex(i, request.getClientName(), request.getRequestedOrgan(),
+                    request.getClientRegion(), request.getRequestDateString()));
+        }
+    }
+
+    @Test
+    public void testReorderByRegion() {
+        clickOn("#regionCol");
+
+        // Sort requests by client name
+        requests.sort(new Comparator<TransplantRequest>() {
+            @Override
+            public int compare(TransplantRequest o1, TransplantRequest o2) {
+                if (o1.getClientRegion() == null) {
+                    if (o2.getClientRegion() == null) {
+                        return 0;
+                    } else {
+                        return -1;
+                    }
+                } else if (o2.getClientRegion() == null) {
+                    return 1;
+                }
+                return o1.getClientRegion().toString().compareTo(o2.getClientRegion().toString());
+            }
+        });
+
+        // Check all 30 requests are correct
+        for (int i = 0; i < 30; i++) {
+            TransplantRequest request = requests.get(i);
+            System.out.println(request.getClientRegion());
+            verifyThat("#tableView", containsRowAtIndex(i, request.getClientName(), request.getRequestedOrgan(),
+                    request.getClientRegion(), request.getRequestDateString()));
+        }
+    }
+
+    @Test
+    public void testReorderByDate() {
+        clickOn("#dateCol");
+
+        // Sort requests by client name
+        requests.sort(new Comparator<TransplantRequest>() {
+            @Override
+            public int compare(TransplantRequest o1, TransplantRequest o2) {
+                return o1.getRequestDate().compareTo(o2.getRequestDate());
+            }
+        });
 
         // Check all 30 requests are correct
         for (int i = 0; i < 30; i++) {
