@@ -39,7 +39,7 @@
                     <Insets bottom="30.0" left="30.0" right="30.0" />
                   </BorderPane.margin>
                   <children>
-                              <HBox alignment="CENTER" maxHeight="1.7976931348623157E308">
+                              <HBox fx:id="newRequestForm" alignment="CENTER" maxHeight="1.7976931348623157E308">
                                  <children>
                         <Text strokeType="OUTSIDE" strokeWidth="0.0" text="New request to receive: ">
                           <font>
@@ -84,7 +84,7 @@
                                           <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                                        </columnResizePolicy>
                                     </TableView>
-                                    <HBox prefHeight="100.0" prefWidth="200.0" spacing="5.0">
+                                    <HBox fx:id="resolveRequestBar" prefHeight="100.0" prefWidth="200.0" spacing="5.0">
                                        <children>
                                           <Button mnemonicParsing="false" onAction="#cancelRequest" text="Mark as Cancelled" />
                                           <Button layoutX="320.0" layoutY="10.0" mnemonicParsing="false" onAction="#completeRequest" text="Mark as Completed" />

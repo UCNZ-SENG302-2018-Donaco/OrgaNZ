@@ -14,6 +14,7 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 
 import seng302.Actions.Action;
@@ -44,6 +45,8 @@ public class RequestOrgansController extends SubController {
 
     @FXML
     private Pane sidebarPane;
+    @FXML
+    private HBox newRequestForm, resolveRequestBar;
     @FXML
     private ChoiceBox<Organ> newOrganChoiceBox;
     @FXML
@@ -101,6 +104,10 @@ public class RequestOrgansController extends SubController {
 
         if (session.getLoggedInUserType() == Session.UserType.CLIENT) {
             client = session.getLoggedInClient();
+            newRequestForm.setManaged(false);
+            newRequestForm.setVisible(false);
+            resolveRequestBar.setManaged(false);
+            resolveRequestBar.setVisible(false);
         } else if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
         }
