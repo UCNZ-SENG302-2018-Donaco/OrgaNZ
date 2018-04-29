@@ -435,12 +435,20 @@ public class TransplantsControllerTest extends ControllerTest {
         Organ liver = Organ.LIVER;
         clickOn("#organChoice");
         clickOn((Node) lookup(liver.toString()).query());
+        clickOn((Node) lookup(liver.toString()).query());
         clickOn("#filterButton");
+        sleep(1500);
     }
 
     @Test
     public void testFilterMultipleOrgans() {
-
+        Organ pancreas = Organ.PANCREAS;
+        Organ kidney = Organ.KIDNEY;
+        clickOn("#organChoice");
+        clickOn((Node) lookup(pancreas.toString()).query());
+        clickOn((Node) lookup(kidney.toString()).query());
+        clickOn("#filterButton");
+        sleep(1500);
     }
 
     @Test
