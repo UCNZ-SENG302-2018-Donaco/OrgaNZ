@@ -11,6 +11,7 @@ import static org.testfx.matcher.control.TextMatchers.hasText;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import javafx.scene.Node;
@@ -281,42 +282,18 @@ public class TransplantsControllerTest extends ControllerTest {
         verifyThat("#displayingXToYOfZText", hasText("Displaying 121 of 121"));
     }
 
-    /*Column names:
-
-    "clientCol"
-    "organCol"
-    "regionCol"
-    "dateCol"
-
-    */
-
-/*
-
-TODO fix
-
     @Test
     public void testReorderByName() {
         clickOn("#clientCol");
 
         // Sort requests by client name
-        requests.sort(new Comparator<TransplantRequest>() {
-            @Override
-            public int compare(TransplantRequest o1, TransplantRequest o2) {
-                return o1.getClientName().compareTo(o2.getClientName());
-            }
-        });
+        requests.sort(Comparator.comparing(TransplantRequest::getClientName));
 
         // Check all 30 requests are correct
-        TransplantRequest request;
         for (int i = 0; i < 30; i++) {
-            request = requests.get(i);
-            System.out.println(request.getClientName());
+            TransplantRequest request = requests.get(i);
             verifyThat("#tableView", containsRowAtIndex(i, request.getClientName(), request.getRequestedOrgan(),
                     request.getClientRegion(), request.getRequestDateString()));
-
         }
-
     }
-*/
-
-    }
+}

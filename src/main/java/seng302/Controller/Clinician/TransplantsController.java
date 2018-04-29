@@ -73,9 +73,9 @@ public class TransplantsController extends SubController {
         List<TransplantRequest> allTransplants = State.getClientManager().getAllTransplantRequests();
 
         setupTable();
-/*
+
         tableView.setOnSort((o) -> createPage(pagination.getCurrentPageIndex()));
-        searchBox.textProperty().addListener(((o) -> refresh()));*/
+//        searchBox.textProperty().addListener(((o) -> refresh()));
 
         //Create a sorted list
         sortedTransplants = new SortedList<>(FXCollections.observableArrayList(allTransplants));
@@ -92,9 +92,7 @@ public class TransplantsController extends SubController {
         observableTransplantList.setAll(sortedTransplants);
         //Bind the tableView to the observable list
         tableView.setItems(observableTransplantList);
-
     }
-
 
     /**
      * Initialize the table columns.
@@ -123,7 +121,6 @@ public class TransplantsController extends SubController {
                 }
             }
         });
-
     }
 
     /**
@@ -144,5 +141,4 @@ public class TransplantsController extends SubController {
         }
         return new Pane();
     }
-
 }
