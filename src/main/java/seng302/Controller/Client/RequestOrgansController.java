@@ -33,6 +33,10 @@ import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
 
+/**
+ * Controller for the Request Organs page. Handles the viewing of current & past organ transplant requests. If the
+ * logged in user is a clinician, they also have the ability to create new transplant requests and resolve current ones.
+ */
 public class RequestOrgansController extends SubController {
 
     private static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("d MMM yyyy hh:mm a");
@@ -60,6 +64,10 @@ public class RequestOrgansController extends SubController {
     @FXML
     private TableColumn<TransplantRequest, RequestStatus> requestStatusPastCol;
 
+    /**
+     * Formats a table cell that holds a {@link LocalDateTime} value to display that value in the date time format.
+     * @return The cell with the date time formatter set.
+     */
     private static TableCell<TransplantRequest, LocalDateTime> formatDateTimeCell() {
         return new TableCell<TransplantRequest, LocalDateTime>() {
             @Override
@@ -74,6 +82,11 @@ public class RequestOrgansController extends SubController {
         };
     }
 
+    /**
+     * Formats a table row to be coloured if the {@link TransplantRequest} it holds is for an organ that the client
+     * is also donating.
+     * @return The row with the colouring callback set.
+     */
     private TableRow<TransplantRequest> colourIfDonatedAndRequested() {
         return new TableRow<TransplantRequest>() {
             @Override
@@ -91,13 +104,16 @@ public class RequestOrgansController extends SubController {
         };
     }
 
+    /**
+     * Creates a new controller for this page, getting the current session and invoker from the global state.
+     */
     public RequestOrgansController() {
         session = State.getSession();
         invoker = State.getInvoker();
     }
 
     /**
-     * Map each organ to the matching checkbox.
+     * Sets up the two tables.
      */
     @FXML
     private void initialize() {
@@ -128,6 +144,11 @@ public class RequestOrgansController extends SubController {
                 (observable) -> currentRequestsTable.getSelectionModel().clearSelection());
     }
 
+    /**
+     * Loads, the sidebar, hides sections of the page according to which type of user is logged in, and sets the
+     * window's title.
+     * @param mainController The main controller that defines which window this subcontroller belongs to.
+     */
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
@@ -147,6 +168,9 @@ public class RequestOrgansController extends SubController {
         refresh();
     }
 
+    /**
+     * Refreshes the contents of the two tables based on the client's current transplant requests.
+     */
     @Override
     public void refresh() {
         allRequests = client.getTransplantRequests();
@@ -164,7 +188,11 @@ public class RequestOrgansController extends SubController {
         pastRequestsTable.setItems(pastRequests);
     }
 
-    public void submitNewRequest() {
+    /**
+     * Creates a new transplant request for this client based on the contents of the organ choice box.
+     */
+    @FXML
+    private void submitNewRequest() {
         TransplantRequest newRequest = new TransplantRequest(newOrganChoiceBox.getValue());
         Action action = new AddTransplantRequestAction(client, newRequest);
         invoker.execute(action);
@@ -172,11 +200,9 @@ public class RequestOrgansController extends SubController {
         PageNavigator.refreshAllWindows();
     }
 
-    @FXML
-    private void returnToViewClient() {
-        PageNavigator.loadPage(Page.VIEW_CLIENT, mainController);
-    }
-
+    /**
+     * Marks a request as cancelled, and moves it to the past requests table.
+     */
     @FXML
     private void cancelRequest() {
         TransplantRequest selectedRequest = currentRequestsTable.getSelectionModel().getSelectedItem();
@@ -188,6 +214,9 @@ public class RequestOrgansController extends SubController {
         }
     }
 
+    /**
+     * Marks a request as completed, and moves it to the past requests table.
+     */
     @FXML
     private void completeRequest() {
         TransplantRequest selectedRequest = currentRequestsTable.getSelectionModel().getSelectedItem();
@@ -197,5 +226,13 @@ public class RequestOrgansController extends SubController {
 
             PageNavigator.refreshAllWindows();
         }
+    }
+
+    /**
+     * Returns to the view client details page.
+     */
+    @FXML
+    private void returnToViewClient() {
+        PageNavigator.loadPage(Page.VIEW_CLIENT, mainController);
     }
 }
