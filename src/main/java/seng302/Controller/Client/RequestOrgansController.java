@@ -34,6 +34,7 @@ import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
 
 public class RequestOrgansController extends SubController {
+
     private static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("d MMM yyyy hh:mm a");
 
     private Session session;
@@ -122,13 +123,9 @@ public class RequestOrgansController extends SubController {
 
         // Add listeners to clear the other table when anything is selected in each table.
         currentRequestsTable.getSelectionModel().selectedItemProperty().addListener(
-                (observable) -> {
-                    pastRequestsTable.getSelectionModel().clearSelection();
-                });
+                (observable) -> pastRequestsTable.getSelectionModel().clearSelection());
         pastRequestsTable.getSelectionModel().selectedItemProperty().addListener(
-                (observable) -> {
-                    currentRequestsTable.getSelectionModel().clearSelection();
-                });
+                (observable) -> currentRequestsTable.getSelectionModel().clearSelection());
     }
 
     @Override
