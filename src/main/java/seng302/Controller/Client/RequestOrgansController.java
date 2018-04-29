@@ -145,7 +145,7 @@ public class RequestOrgansController extends SubController {
     }
 
     /**
-     * Loads, the sidebar, hides sections of the page according to which type of user is logged in, and sets the
+     * Loads the sidebar, hides sections of the page according to which type of user is logged in, and sets the
      * window's title.
      * @param mainController The main controller that defines which window this subcontroller belongs to.
      */
