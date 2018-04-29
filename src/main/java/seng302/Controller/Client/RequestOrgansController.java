@@ -3,18 +3,23 @@ package seng302.Controller.Client;
 import static seng302.TransplantRequest.RequestStatus.*;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 
 import javafx.collections.FXCollections;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
 
+import seng302.Actions.Action;
 import seng302.Actions.ActionInvoker;
+import seng302.Actions.Client.AddTransplantRequestAction;
+import seng302.Actions.Client.ResolveTransplantRequestAction;
 import seng302.Client;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
@@ -27,6 +32,7 @@ import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
 
 public class RequestOrgansController extends SubController {
+    private static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("d MMM yyyy hh:mm a");
 
     private Session session;
     private ActionInvoker invoker;
@@ -49,6 +55,20 @@ public class RequestOrgansController extends SubController {
     @FXML
     private TableColumn<TransplantRequest, RequestStatus> requestStatusPastCol;
 
+    private static TableCell<TransplantRequest, LocalDateTime> formatDateTimeCell() {
+        return new TableCell<TransplantRequest, LocalDateTime>() {
+            @Override
+            protected void updateItem(LocalDateTime item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setText(null);
+                } else {
+                    setText(item.format(dateTimeFormat));
+                }
+            }
+        };
+    }
+
     public RequestOrgansController() {
         session = State.getSession();
         invoker = State.getInvoker();
@@ -68,6 +88,10 @@ public class RequestOrgansController extends SubController {
         requestDatePastCol.setCellValueFactory(new PropertyValueFactory<>("requestDate"));
         requestStatusPastCol.setCellValueFactory(new PropertyValueFactory<>("status"));
         resolvedDatePastCol.setCellValueFactory(new PropertyValueFactory<>("resolvedDate"));
+
+        requestDateCurrCol.setCellFactory(cell -> formatDateTimeCell());
+        requestDatePastCol.setCellFactory(cell -> formatDateTimeCell());
+        resolvedDatePastCol.setCellFactory(cell -> formatDateTimeCell());
     }
 
     @Override
@@ -104,12 +128,36 @@ public class RequestOrgansController extends SubController {
 
     public void submitNewRequest() {
         TransplantRequest newRequest = new TransplantRequest(newOrganChoiceBox.getValue());
-        client.addTransplantRequest(newRequest);
-        refresh();
+        Action action = new AddTransplantRequestAction(client, newRequest);
+        invoker.execute(action);
+
+        PageNavigator.refreshAllWindows();
     }
 
     @FXML
     private void returnToViewClient() {
         PageNavigator.loadPage(Page.VIEW_CLIENT, mainController);
+    }
+
+    @FXML
+    private void cancelRequest() {
+        TransplantRequest selectedRequest = currentRequestsTable.getSelectionModel().getSelectedItem();
+        if (selectedRequest != null) {
+            Action action = new ResolveTransplantRequestAction(selectedRequest, CANCELLED);
+            invoker.execute(action);
+
+            PageNavigator.refreshAllWindows();
+        }
+    }
+
+    @FXML
+    private void completeRequest() {
+        TransplantRequest selectedRequest = currentRequestsTable.getSelectionModel().getSelectedItem();
+        if (selectedRequest != null) {
+            Action action = new ResolveTransplantRequestAction(selectedRequest, COMPLETED);
+            invoker.execute(action);
+
+            PageNavigator.refreshAllWindows();
+        }
     }
 }

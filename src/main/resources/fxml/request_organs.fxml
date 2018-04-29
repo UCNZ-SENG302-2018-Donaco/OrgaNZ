@@ -62,7 +62,7 @@
                                     <Insets top="10.0" />
                                  </VBox.margin>
                               </HBox>
-                              <VBox>
+                              <VBox VBox.vgrow="ALWAYS">
                                  <children>
                                     <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Current Requests" textAlignment="CENTER">
                                        <font>
@@ -72,7 +72,7 @@
                                           <Insets />
                                        </VBox.margin>
                                     </Text>
-                                    <TableView fx:id="currentRequestsTable" VBox.vgrow="ALWAYS">
+                                    <TableView fx:id="currentRequestsTable" maxHeight="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                                       <columns>
                                         <TableColumn fx:id="organCurrCol" prefWidth="75.0" text="Organ" />
                                         <TableColumn fx:id="requestDateCurrCol" prefWidth="75.0" text="Date Requested" />
@@ -84,13 +84,21 @@
                                           <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                                        </columnResizePolicy>
                                     </TableView>
+                                    <HBox prefHeight="100.0" prefWidth="200.0" spacing="5.0">
+                                       <children>
+                                          <Button mnemonicParsing="false" onAction="#cancelRequest" text="Mark as Cancelled" />
+                                          <Button layoutX="320.0" layoutY="10.0" mnemonicParsing="false" onAction="#completeRequest" text="Mark as Completed" />
+                                       </children>
+                                       <VBox.margin>
+                                          <Insets top="5.0" />
+                                       </VBox.margin>
+                                    </HBox>
                                  </children>
                                  <VBox.margin>
                                     <Insets top="10.0" />
                                  </VBox.margin>
                               </VBox>
-                              <Button mnemonicParsing="false" text="Cancel" />
-                              <VBox prefWidth="100.0">
+                              <VBox VBox.vgrow="ALWAYS">
                                  <children>
                                     <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Past Requests" textAlignment="CENTER">
                                        <font>
@@ -100,12 +108,12 @@
                                           <Insets />
                                        </VBox.margin>
                                     </Text>
-                                    <TableView fx:id="pastRequestsTable" VBox.vgrow="ALWAYS">
+                                    <TableView fx:id="pastRequestsTable" maxHeight="1.7976931348623157E308" VBox.vgrow="ALWAYS">
                                        <columns>
                                           <TableColumn fx:id="organPastCol" prefWidth="75.0" text="Organ" />
                                           <TableColumn fx:id="requestDatePastCol" prefWidth="75.0" text="Date Requested" />
-                                          <TableColumn fx:id="requestStatusPastCol" prefWidth="75.0" text="Resolved" />
-                                          <TableColumn fx:id="resolvedDatePastCol" prefWidth="75.0" text="Resolved" />
+                                          <TableColumn fx:id="requestStatusPastCol" prefWidth="75.0" text="Resolution" />
+                                          <TableColumn fx:id="resolvedDatePastCol" prefWidth="75.0" text="Date Resolved" />
                                        </columns>
                                        <VBox.margin>
                                           <Insets top="5.0" />
