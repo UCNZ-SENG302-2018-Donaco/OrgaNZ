@@ -35,6 +35,9 @@ public class TransplantsController extends SubController {
     private static final int ROWS_PER_PAGE = 30;
 
     @FXML
+    private Button filterButton;
+
+    @FXML
     private HBox sidebarPane;
 
     @FXML

@@ -40,6 +40,8 @@ public class TransplantRequest {
         return requestDate;
     }
 
+    public void setRequestDate(LocalDateTime requestDate) {this.requestDate = requestDate;}
+
     public String getRequestDateString() {
         return requestDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
     }
