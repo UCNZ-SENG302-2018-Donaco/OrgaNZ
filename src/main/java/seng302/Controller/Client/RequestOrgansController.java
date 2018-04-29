@@ -12,6 +12,7 @@ import javafx.fxml.FXML;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
@@ -72,6 +73,23 @@ public class RequestOrgansController extends SubController {
         };
     }
 
+    private TableRow<TransplantRequest> colourIfDonatedAndRequested() {
+        return new TableRow<TransplantRequest>() {
+            @Override
+            protected void updateItem(TransplantRequest request, boolean empty) {
+                super.updateItem(request, empty);
+                if (empty || request == null) {
+                    setText(null);
+                    setGraphic(null);
+                } else if (client.getOrganDonationStatus().get(request.getRequestedOrgan())) {
+                    setStyle("-fx-background-color: lightcoral");
+                } else {
+                    setStyle("");
+                }
+            }
+        };
+    }
+
     public RequestOrgansController() {
         session = State.getSession();
         invoker = State.getInvoker();
@@ -82,19 +100,35 @@ public class RequestOrgansController extends SubController {
      */
     @FXML
     private void initialize() {
+        // Populate organ box with all organ values
         newOrganChoiceBox.setItems(FXCollections.observableArrayList(Organ.values()));
 
+        // Setup all cell value factories
         organCurrCol.setCellValueFactory(new PropertyValueFactory<>("requestedOrgan"));
         requestDateCurrCol.setCellValueFactory(new PropertyValueFactory<>("requestDate"));
-
         organPastCol.setCellValueFactory(new PropertyValueFactory<>("requestedOrgan"));
         requestDatePastCol.setCellValueFactory(new PropertyValueFactory<>("requestDate"));
         requestStatusPastCol.setCellValueFactory(new PropertyValueFactory<>("status"));
         resolvedDatePastCol.setCellValueFactory(new PropertyValueFactory<>("resolvedDate"));
 
+        // Format all the datetime cells
         requestDateCurrCol.setCellFactory(cell -> formatDateTimeCell());
         requestDatePastCol.setCellFactory(cell -> formatDateTimeCell());
         resolvedDatePastCol.setCellFactory(cell -> formatDateTimeCell());
+
+        // Colour each row if it is a request for an organ that the client is also registered to donate.
+        currentRequestsTable.setRowFactory(row -> colourIfDonatedAndRequested());
+        pastRequestsTable.setRowFactory(row -> colourIfDonatedAndRequested());
+
+        // Add listeners to clear the other table when anything is selected in each table.
+        currentRequestsTable.getSelectionModel().selectedItemProperty().addListener(
+                (observable) -> {
+                    pastRequestsTable.getSelectionModel().clearSelection();
+                });
+        pastRequestsTable.getSelectionModel().selectedItemProperty().addListener(
+                (observable) -> {
+                    currentRequestsTable.getSelectionModel().clearSelection();
+                });
     }
 
     @Override
