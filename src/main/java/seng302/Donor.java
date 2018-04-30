@@ -45,12 +45,6 @@ public class Donor {
 
     private List<MedicationRecord> medicationHistory = new ArrayList<>();
 
-    private List<Condition> conditions = new ArrayList<>();
-
-    private List<TransplantRequest> transplantRequests = new ArrayList<>();
-
-    private final Collection<ProcedureRecord> procedureRecords = new TreeSet<>(ProcedureRecord.Comparator);
-
     private ArrayList<String> updateLog = new ArrayList<>();
 
     private List<IllnessRecord> illnessHistory = new ArrayList<>();
@@ -382,47 +376,6 @@ public class Donor {
     }
 
     /**
-     * Adds a procedure record to this client.
-     */
-    public void addProcedure(ProcedureRecord procedure) {
-        boolean failed = !procedureRecords.add(procedure);
-        if (failed) {
-            throw new IllegalArgumentException("Procedure is unable to be added to the list");
-        }
-    }
-
-    /**
-     * Removed a procedure record from this client.
-     */
-    public void removeProcedure(ProcedureRecord procedure) {
-        boolean failed = !procedureRecords.remove(procedure);
-        if (failed) {
-            throw new IllegalArgumentException("Procedure is unable to be added removed from the list");
-        }
-    }
-
-    /**
-     * Returns all procedures that occurred before the current date.
-     */
-    public Stream<ProcedureRecord> getPastProcedures() {
-        return procedureRecords.stream().filter(x -> {
-            LocalDate now = LocalDate.now();
-            return x.getDate().isBefore(now);
-        });
-    }
-
-    /**
-     * Returns all procedures that occur after or on the current date.
-     */
-    public Stream<ProcedureRecord> getPendingProcedures() {
-        return procedureRecords.stream().filter(x -> {
-            LocalDate now = LocalDate.now();
-            return !x.getDate().isBefore(now);
-        });
-    }
-
-
-    /**
      * Adds Illness history to Person
      * @param record IllnessRecord that is wanted to be added
      */
@@ -442,54 +395,6 @@ public class Donor {
 
     public void sortIllnesses(IllnessRecord record){
 
-    }
-
-    /**
-     * Returns all conditions that the donor has
-     * @return ArrayList of all the conditions that the donor has
-     */
-    public List<Condition> getAllConditions() {
-        return conditions;
-    }
-
-    /**
-     * Finds which conditions are current (those that do not have a resolution date)
-     * and returns them
-     * @return List of current conditions of the donor
-     */
-    public List<Condition> getCurrentConditions() {
-        List<Condition> currentConditions = new ArrayList<>();
-
-        for (Condition condition: conditions) {
-            if (condition.getResolutionDate() == null) {
-                currentConditions.add(condition);
-            }
-        }
-        return currentConditions;
-    }
-
-    /**
-     * Adds the given Condition to the donors list of conditions
-     * @param condition Condition to be added to the donors list of conditions
-     */
-    public void addCondition(Condition condition) {
-        conditions.add(condition);
-    }
-
-    /**
-     * Finds which conditions are resolved (those that do have a resolution date)
-     * and returns them
-     * @return List of resolved conditions of the donor
-     */
-    public List<Condition> getResolvedConditions() {
-        List<Condition> resolvedConditions = new ArrayList<>();
-
-        for (Condition condition: conditions) {
-            if (condition.getResolutionDate() != null) {
-                resolvedConditions.add(condition);
-            }
-        }
-        return resolvedConditions;
     }
 
     /**

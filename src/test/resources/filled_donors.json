@@ -18,30 +18,27 @@
         "day": 30
       },
       "time": {
-        "hour": 14,
-        "minute": 38,
-        "second": 39,
-        "nano": 727000000
+        "hour": 15,
+        "minute": 37,
+        "second": 52,
+        "nano": 976000000
       }
     },
     "organStatus": {
+      "LUNG": false,
+      "LIVER": false,
+      "BONE": false,
+      "CORNEA": false,
       "PANCREAS": false,
       "MIDDLE_EAR": false,
-      "LUNG": false,
       "CONNECTIVE_TISSUE": false,
-      "LIVER": false,
       "INTESTINE": false,
-      "BONE": false,
-      "HEART": false,
-      "BONE_MARROW": false,
       "KIDNEY": false,
-      "CORNEA": false,
-      "SKIN": false
+      "HEART": false,
+      "SKIN": false,
+      "BONE_MARROW": false
     },
     "medicationHistory": [],
-    "conditions": [],
-    "transplantRequests": [],
-    "procedureRecords": [],
     "updateLog": [],
     "illnessHistory": []
   }
