@@ -31,7 +31,6 @@ import seng302.Utilities.View.WindowContext.WindowContextBuilder;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.testfx.matcher.control.TableViewMatchers;
 
 public class RequestOrgansControllerClinicianTest extends ControllerTest {
 
@@ -145,8 +144,16 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
         }
     }
 
+    @Ignore
     @Test
     public void cancelRequestTest() {
+        TableView<TransplantRequest> currRequestsTable = lookup("#currentRequestsTable").queryTableView();
 
+        Node heartCell = from(currRequestsTable)
+                .lookup(hasText("Heart"))
+                .query();
+
+        System.out.println("heartRow: " + heartCell);
+        clickOn(heartCell);
     }
 }
