@@ -124,11 +124,3 @@ updates you made now must show in the 'View/Edit Clinician' page for this test t
 the default Clinician. If so, this first test passes.
 * Terminate any running AppUI programs > Run AppUi > Log into the default clinician > If Last Modified is set to "Not yet modified"
 the test passes. Otherwise it fails.
-
-
-
-## Story 16
-
-
-
-## Story 17

@@ -1,8 +1,8 @@
 package seng302.Actions.Client;
 
 import seng302.Actions.Action;
-import seng302.HistoryItem;
 import seng302.Client;
+import seng302.HistoryItem;
 import seng302.MedicationRecord;
 import seng302.Utilities.JSONConverter;
 
@@ -34,19 +34,19 @@ public class AddMedicationRecordAction extends Action {
     }
 
     @Override
-    public void unExecute() {
+    protected void unExecute() {
         client.deleteMedicationRecord(record);
     }
 
     @Override
     public String getExecuteText() {
-        return String.format("Added record for medication '%s' to the history of client %d: %s %s.",
-                record.getMedicationName(), client.getUid(), client.getFirstName(), client.getLastName());
+        return String.format("Added record for medication '%s' to the history of client %d: %s.",
+                record.getMedicationName(), client.getUid(), client.getFullName());
     }
 
     @Override
     public String getUnexecuteText() {
-        return String.format("Reversed the addition of record for medication '%s' to the history of client %d: %s %s.",
-                record.getMedicationName(), client.getUid(), client.getFirstName(), client.getLastName());
+        return String.format("Reversed the addition of record for medication '%s' to the history of client %d: %s.",
+                record.getMedicationName(), client.getUid(), client.getFullName());
     }
 }

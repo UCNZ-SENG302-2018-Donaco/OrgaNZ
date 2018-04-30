@@ -14,7 +14,6 @@ import javafx.scene.paint.Color;
 
 import seng302.Actions.ActionInvoker;
 import seng302.Actions.Clinician.ModifyClinicianAction;
-import seng302.Actions.ModifyObjectByFieldAction;
 import seng302.Clinician;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;

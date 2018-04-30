@@ -1,10 +1,10 @@
 package seng302.Actions.Client;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import java.time.LocalDate;
 
+import seng302.Actions.ActionInvoker;
 import seng302.Client;
 import seng302.MedicationRecord;
 
@@ -13,37 +13,65 @@ import org.junit.Test;
 
 public class DeleteMedicationRecordActionTest {
 
-    private Client testClient;
-    private MedicationRecord recordToDelete;
+    private Client baseClient;
+    private MedicationRecord record;
+    private ActionInvoker invoker;
 
     @Before
-    public void resetClient() {
-        testClient = new Client(1);
-        recordToDelete = new MedicationRecord(
-                "Med C",
-                LocalDate.of(2000, 1, 1),
-                LocalDate.of(2010, 5, 6));
-        testClient.addMedicationRecord(recordToDelete);
+    public void init() {
+        invoker = new ActionInvoker();
+        baseClient = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        record = new MedicationRecord("Generic Name", LocalDate.of(2018, 4, 9), null);
+        baseClient.addMedicationRecord(record);
     }
 
     @Test
-    public void executeTest() {
-        assertTrue(testClient.getPastMedications().contains(recordToDelete));
+    public void DeleteSingleMedicationCurrentTest() {
+        DeleteMedicationRecordAction action = new DeleteMedicationRecordAction(baseClient, record);
 
-        DeleteMedicationRecordAction action = new DeleteMedicationRecordAction(testClient, recordToDelete);
-        action.execute();
-        assertFalse(testClient.getPastMedications().contains(recordToDelete));
+        assertEquals(1, baseClient.getCurrentMedications().size());
+
+        invoker.execute(action);
+
+        assertEquals(0, baseClient.getCurrentMedications().size());
     }
 
     @Test
-    public void unExecuteTest() {
-        assertTrue(testClient.getPastMedications().contains(recordToDelete));
+    public void DeleteSingleMedicationPastTest() {
+        MedicationRecord newRecord = new MedicationRecord("Generic Name", LocalDate.of(2018, 4, 9), LocalDate.of(2018,
+                4, 10));
+        baseClient.addMedicationRecord(newRecord);
 
-        DeleteMedicationRecordAction action = new DeleteMedicationRecordAction(testClient, recordToDelete);
-        action.execute();
-        assertFalse(testClient.getPastMedications().contains(recordToDelete));
+        DeleteMedicationRecordAction action = new DeleteMedicationRecordAction(baseClient, newRecord);
 
-        action.unExecute();
-        assertTrue(testClient.getPastMedications().contains(recordToDelete));
+        assertEquals(1, baseClient.getPastMedications().size());
+
+        invoker.execute(action);
+
+        assertEquals(0, baseClient.getPastMedications().size());
     }
+
+
+    @Test
+    public void DeleteSingleMedicationCurrentUndoTest() {
+        DeleteMedicationRecordAction action = new DeleteMedicationRecordAction(baseClient, record);
+
+        invoker.execute(action);
+        invoker.undo();
+
+        assertEquals(1, baseClient.getCurrentMedications().size());
+    }
+
+
+    @Test
+    public void DeleteSingleMedicationCurrentUndoRedoTest() {
+        DeleteMedicationRecordAction action = new DeleteMedicationRecordAction(baseClient, record);
+
+        invoker.execute(action);
+        invoker.undo();
+        invoker.redo();
+
+        assertEquals(0, baseClient.getCurrentMedications().size());
+    }
+
 }

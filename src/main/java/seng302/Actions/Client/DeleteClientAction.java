@@ -32,11 +32,14 @@ public class DeleteClientAction extends Action {
         manager.addClient(client);
     }
 
+    @Override
     public String getExecuteText() {
-        return String.format("Deleted donor %s", client.getFullName());
+        return String.format("Deleted client %s", client.getFullName());
     }
 
+    @Override
     public String getUnexecuteText() {
-        return String.format("Re-added donor %s", client.getFullName());
+        return String.format("Re-added client %s", client.getFullName());
     }
+
 }

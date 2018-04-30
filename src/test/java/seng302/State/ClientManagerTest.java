@@ -1,36 +1,31 @@
 package seng302.State;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 import seng302.Client;
 import seng302.TransplantRequest;
+import seng302.TransplantRequest.RequestStatus;
 import seng302.Utilities.Enums.Organ;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
 
 public class ClientManagerTest {
 
     private ClientManager manager;
-    private Client client;
+    private Client client1;
     private Client client2;
-
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
 
     @Before
     public void init() {
         manager = new ClientManager();
-        client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
-        manager.addClient(client);
+        client1 = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        manager.addClient(client1);
         client2 = new Client("FirstTwo", null, "LastTwo", LocalDate.of(1970, 1, 1), 2);
     }
 
@@ -45,7 +40,7 @@ public class ClientManagerTest {
     public void getClientsTest() {
         manager.addClient(client2);
 
-        assertTrue(manager.getClients().contains(client));
+        assertTrue(manager.getClients().contains(client1));
         assertTrue(manager.getClients().contains(client2));
     }
 
@@ -54,66 +49,72 @@ public class ClientManagerTest {
         manager.addClient(client2);
         manager.removeClient(client2);
 
-        assertTrue(manager.getClients().contains(client));
+        assertTrue(manager.getClients().contains(client1));
         assertFalse(manager.getClients().contains(client2));
     }
 
     @Test
     public void updateClientTest() {
-        client.setFirstName("New");
+        client1.setFirstName("New");
 
-        assertTrue(manager.getClients().contains(client));
+        assertTrue(manager.getClients().contains(client1));
         assertEquals(manager.getClientByID(1).getFirstName(), "New");
     }
 
 
     @Test
     public void collisionExsistsNoCollisionNameTest() {
+        ArrayList<Client> clients = new ArrayList<>();
+        clients.add(client1);
+        manager = new ClientManager(clients);
+
         assertFalse(manager.collisionExists("Not", "Same", LocalDate.of(1970, 1, 1)));
     }
 
     @Test
     public void collisionExsistsNoCollisionDateTest() {
+        ArrayList<Client> clients = new ArrayList<>();
+        clients.add(client1);
+        manager = new ClientManager(clients);
+
         assertFalse(manager.collisionExists("First", "Last", LocalDate.of(2018, 12, 12)));
     }
 
     @Test
     public void collisionExsistsValidCollisionTest() {
+        ArrayList<Client> clients = new ArrayList<>();
+        clients.add(client1);
+        manager = new ClientManager(clients);
+
         assertTrue(manager.collisionExists("First", "Last", LocalDate.of(1970, 1, 1)));
     }
 
     @Test
     public void getClientByIDExistsTest() {
-        assertTrue(manager.getClientByID(1) != null);
+        ArrayList<Client> clients = new ArrayList<>();
+        clients.add(client1);
+        manager = new ClientManager(clients);
+
+        assertNotNull(manager.getClientByID(1));
     }
 
     @Test
     public void getClientByIDDoesNotExistTest() {
-        assertTrue(manager.getClientByID(2) == null);
-    }
+        ArrayList<Client> clients = new ArrayList<>();
+        clients.add(client1);
+        manager = new ClientManager(clients);
 
-
-    @Test
-    public void getTransplantWaitingList() {
-        TransplantRequest transplantRequest = new TransplantRequest(Organ.LIVER, true);
-        TransplantRequest transplantRequest2 = new TransplantRequest(Organ.LIVER, false);
-        client.addTransplantRequest(transplantRequest);
-        client.addTransplantRequest(transplantRequest2);
-
-        List<TransplantRequest> waitingList = manager.getTransplantWaitingList();
-
-        assertTrue(waitingList.contains(transplantRequest));
-        assertFalse(waitingList.contains(transplantRequest2));
+        assertNull(manager.getClientByID(2));
     }
 
     @Test
     public void getAllTransplantRequests() {
-        TransplantRequest transplantRequest = new TransplantRequest(Organ.LIVER, true);
-        TransplantRequest transplantRequest2 = new TransplantRequest(Organ.LIVER, false);
-        client.addTransplantRequest(transplantRequest);
-        client.addTransplantRequest(transplantRequest2);
+        TransplantRequest transplantRequest = new TransplantRequest(client1, Organ.LIVER);
+        TransplantRequest transplantRequest2 = new TransplantRequest(client2, Organ.HEART);
+        client1.addTransplantRequest(transplantRequest);
+        client2.addTransplantRequest(transplantRequest2);
 
-        List<TransplantRequest> transplantRequests = manager.getAllTransplantRequests();
+        Collection<TransplantRequest> transplantRequests = manager.getAllTransplantRequests();
 
         assertTrue(transplantRequests.contains(transplantRequest));
         assertTrue(transplantRequests.contains(transplantRequest2));
@@ -121,12 +122,14 @@ public class ClientManagerTest {
 
     @Test
     public void getAllCurrentTransplantRequests() {
-        TransplantRequest transplantRequest = new TransplantRequest(Organ.LIVER, true);
-        TransplantRequest transplantRequest2 = new TransplantRequest(Organ.LIVER, false);
-        client.addTransplantRequest(transplantRequest);
-        client.addTransplantRequest(transplantRequest2);
+        TransplantRequest transplantRequest = new TransplantRequest(client1, Organ.LIVER);
+        TransplantRequest transplantRequest2 = new TransplantRequest(client2, Organ.HEART);
+        transplantRequest2.setStatus(RequestStatus.COMPLETED);
+        transplantRequest2.setResolvedDate(LocalDateTime.now());
+        client1.addTransplantRequest(transplantRequest);
+        client2.addTransplantRequest(transplantRequest2);
 
-        List<TransplantRequest> transplantRequests = manager.getAllCurrentTransplantRequests();
+        Collection<TransplantRequest> transplantRequests = manager.getAllCurrentTransplantRequests();
 
         assertTrue(transplantRequests.contains(transplantRequest));
         assertFalse(transplantRequests.contains(transplantRequest2));

@@ -4,10 +4,8 @@ import static org.junit.Assert.assertEquals;
 
 import java.time.LocalDate;
 
-import seng302.Actions.Action;
-import seng302.Actions.Client.AddMedicationRecordAction;
-import seng302.Client;
 import seng302.Actions.ActionInvoker;
+import seng302.Client;
 import seng302.MedicationRecord;
 
 import org.junit.Before;
@@ -16,35 +14,36 @@ import org.junit.Test;
 public class AddMedicationRecordActionTest {
 
     private ActionInvoker invoker;
-    private Client baseClient;
+    private Client testClient;
 
     @Before
     public void init() {
         invoker = new ActionInvoker();
-        baseClient = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        testClient = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
     }
 
     @Test
     public void AddSingleMedicationCurrentTest() {
         MedicationRecord record = new MedicationRecord("Generic Name", LocalDate.of(2018, 4, 9), null);
-        AddMedicationRecordAction action = new AddMedicationRecordAction(baseClient, record);
+        AddMedicationRecordAction action = new AddMedicationRecordAction(testClient, record);
 
         invoker.execute(action);
 
-        assertEquals(1, baseClient.getCurrentMedications().size());
-        assertEquals(record, baseClient.getCurrentMedications().get(0));
+        assertEquals(1, testClient.getCurrentMedications().size());
+        assertEquals(record, testClient.getCurrentMedications().get(0));
+
     }
 
     @Test
     public void AddSingleMedicationPastTest() {
         MedicationRecord record = new MedicationRecord("Generic Name", LocalDate.of(2018, 4, 9), LocalDate.of(2018,
                 4, 10));
-        AddMedicationRecordAction action = new AddMedicationRecordAction(baseClient, record);
+        AddMedicationRecordAction action = new AddMedicationRecordAction(testClient, record);
 
         invoker.execute(action);
 
-        assertEquals(1, baseClient.getPastMedications().size());
-        assertEquals(record, baseClient.getPastMedications().get(0));
+        assertEquals(1, testClient.getPastMedications().size());
+        assertEquals(record, testClient.getPastMedications().get(0));
     }
 
 
@@ -55,16 +54,16 @@ public class AddMedicationRecordActionTest {
         MedicationRecord record2 = new MedicationRecord("Second Generic Name", LocalDate.of(2018, 4, 8), null);
 
         MedicationRecord record3 = new MedicationRecord("Third Generic Name", LocalDate.of(2018, 4, 7), null);
-        AddMedicationRecordAction action = new AddMedicationRecordAction(baseClient, record);
-        AddMedicationRecordAction action2 = new AddMedicationRecordAction(baseClient, record2);
-        AddMedicationRecordAction action3 = new AddMedicationRecordAction(baseClient, record3);
+        AddMedicationRecordAction action = new AddMedicationRecordAction(testClient, record);
+        AddMedicationRecordAction action2 = new AddMedicationRecordAction(testClient, record2);
+        AddMedicationRecordAction action3 = new AddMedicationRecordAction(testClient, record3);
 
         invoker.execute(action);
         invoker.execute(action2);
         invoker.execute(action3);
 
-        assertEquals(3, baseClient.getCurrentMedications().size());
-        assertEquals(record, baseClient.getCurrentMedications().get(0));
+        assertEquals(3, testClient.getCurrentMedications().size());
+        assertEquals(record, testClient.getCurrentMedications().get(0));
     }
 
 
@@ -75,9 +74,9 @@ public class AddMedicationRecordActionTest {
         MedicationRecord record2 = new MedicationRecord("Second Generic Name", LocalDate.of(2018, 4, 8), null);
 
         MedicationRecord record3 = new MedicationRecord("Third Generic Name", LocalDate.of(2018, 4, 7), null);
-        AddMedicationRecordAction action = new AddMedicationRecordAction(baseClient, record);
-        AddMedicationRecordAction action2 = new AddMedicationRecordAction(baseClient, record2);
-        AddMedicationRecordAction action3 = new AddMedicationRecordAction(baseClient, record3);
+        AddMedicationRecordAction action = new AddMedicationRecordAction(testClient, record);
+        AddMedicationRecordAction action2 = new AddMedicationRecordAction(testClient, record2);
+        AddMedicationRecordAction action3 = new AddMedicationRecordAction(testClient, record3);
 
         invoker.execute(action);
         invoker.execute(action2);
@@ -85,9 +84,9 @@ public class AddMedicationRecordActionTest {
 
         invoker.undo();
 
-        assertEquals(2, baseClient.getCurrentMedications().size());
-        assertEquals(record, baseClient.getCurrentMedications().get(0));
-        assertEquals(record2, baseClient.getCurrentMedications().get(1));
+        assertEquals(2, testClient.getCurrentMedications().size());
+        assertEquals(record, testClient.getCurrentMedications().get(0));
+        assertEquals(record2, testClient.getCurrentMedications().get(1));
     }
 
     @Test
@@ -97,9 +96,9 @@ public class AddMedicationRecordActionTest {
         MedicationRecord record2 = new MedicationRecord("Second Generic Name", LocalDate.of(2018, 4, 8), null);
 
         MedicationRecord record3 = new MedicationRecord("Third Generic Name", LocalDate.of(2018, 4, 7), null);
-        AddMedicationRecordAction action = new AddMedicationRecordAction(baseClient, record);
-        AddMedicationRecordAction action2 = new AddMedicationRecordAction(baseClient, record2);
-        AddMedicationRecordAction action3 = new AddMedicationRecordAction(baseClient, record3);
+        AddMedicationRecordAction action = new AddMedicationRecordAction(testClient, record);
+        AddMedicationRecordAction action2 = new AddMedicationRecordAction(testClient, record2);
+        AddMedicationRecordAction action3 = new AddMedicationRecordAction(testClient, record3);
 
         invoker.execute(action);
         invoker.execute(action2);
@@ -110,27 +109,27 @@ public class AddMedicationRecordActionTest {
         invoker.undo();
         invoker.redo();
 
-        assertEquals(1, baseClient.getCurrentMedications().size());
-        assertEquals(record, baseClient.getCurrentMedications().get(0));
+        assertEquals(1, testClient.getCurrentMedications().size());
+        assertEquals(record, testClient.getCurrentMedications().get(0));
     }
 
     @Test
     public void AddMedicationStringTest() {
         MedicationRecord record = new MedicationRecord("Generic Name", LocalDate.of(2018, 4, 9), null);
-        AddMedicationRecordAction action = new AddMedicationRecordAction(baseClient, record);
+        AddMedicationRecordAction action = new AddMedicationRecordAction(testClient, record);
 
         String result = invoker.execute(action);
 
         assertEquals(
                 String.format("Added record for medication 'Generic Name' to the history of client %d: First Last.",
-                        baseClient.getUid()),
+                        testClient.getUid()),
                 result);
     }
 
     @Test
     public void AddMedicationUndoStringTest() {
         MedicationRecord record = new MedicationRecord("Generic Name", LocalDate.of(2018, 4, 9), null);
-        AddMedicationRecordAction action = new AddMedicationRecordAction(baseClient, record);
+        AddMedicationRecordAction action = new AddMedicationRecordAction(testClient, record);
 
         invoker.execute(action);
 
@@ -138,7 +137,7 @@ public class AddMedicationRecordActionTest {
 
         assertEquals(
                 String.format("Reversed the addition of record for medication 'Generic Name' to the history of client "
-                        + "%d: First Last.", baseClient.getUid()),
+                        + "%d: First Last.", testClient.getUid()),
                 result);
     }
 }
