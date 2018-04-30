@@ -1,6 +1,7 @@
 package seng302.Controller.Clinician;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 
 import javafx.beans.property.SimpleObjectProperty;
@@ -11,8 +12,11 @@ import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Pagination;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
@@ -34,6 +38,7 @@ import seng302.Utilities.View.WindowContext.WindowContextBuilder;
 public class TransplantsController extends SubController {
 
     private static final int ROWS_PER_PAGE = 30;
+    private static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("d MMM yyyy hh:mm a");
 
     @FXML
     private HBox sidebarPane;
@@ -62,6 +67,48 @@ public class TransplantsController extends SubController {
     private ClientManager manager;
     private ObservableList<TransplantRequest> observableTransplantList = FXCollections.observableArrayList();
     private SortedList<TransplantRequest> sortedTransplants;
+
+    /**
+     * Formats a table cell that holds a {@link LocalDateTime} value to display that value in the date time format.
+     * @return The cell with the date time formatter set.
+     */
+    private static TableCell<TransplantRequest, LocalDateTime> formatDateTimeCell() {
+        return new TableCell<TransplantRequest, LocalDateTime>() {
+            @Override
+            protected void updateItem(LocalDateTime item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setText(null);
+                } else {
+                    setText(item.format(dateTimeFormat));
+                }
+            }
+        };
+    }
+
+    /**
+     * Formats a table row to be coloured if the {@link TransplantRequest} it holds is for an organ that the client
+     * is also donating.
+     * @return The row with the colouring callback set.
+     */
+    private TableRow<TransplantRequest> colourIfDonatedAndRequested() {
+        return new TableRow<TransplantRequest>() {
+            @Override
+            protected void updateItem(TransplantRequest request, boolean empty) {
+                super.updateItem(request, empty);
+                if (empty || request == null) {
+                    setStyle(null);
+                    setTooltip(null);
+                } else if (request.getClient().getOrganDonationStatus().get(request.getRequestedOrgan())) {
+                    setStyle("-fx-background-color: lightcoral");
+                    setTooltip(new Tooltip("The client also currently has this organ registered for donation."));
+                } else {
+                    setStyle(null);
+                    setTooltip(null);
+                }
+            }
+        };
+    }
 
     public TransplantsController() {
         manager = State.getClientManager();
@@ -115,6 +162,12 @@ public class TransplantsController extends SubController {
         regionCol.setCellValueFactory(cellData -> new SimpleObjectProperty<>(
                 cellData.getValue().getClient().getRegion()));
         dateCol.setCellValueFactory(new PropertyValueFactory<>("requestDate"));
+
+        // Format all the datetime cells
+        dateCol.setCellFactory(cell -> formatDateTimeCell());
+
+        // Colour each row if it is a request for an organ that the client is also registered to donate.
+        tableView.setRowFactory(row -> colourIfDonatedAndRequested());
 
         tableView.setOnMouseClicked(mouseEvent -> {
             if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2) {
