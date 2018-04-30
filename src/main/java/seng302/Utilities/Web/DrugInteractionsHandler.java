@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 
-import seng302.Donor;
+import seng302.Client;
 import seng302.Utilities.Exceptions.BadDrugNameException;
 import seng302.Utilities.Exceptions.BadGatewayException;
 
@@ -80,8 +80,8 @@ public class DrugInteractionsHandler extends WebAPIHandler {
 
     /**
      * Makes a request to the drug interactions web API and returns a list of interactions between the two drugs
-     * given that apply for the given donor (based on age and gender).
-     * @param donor The donor to check that the interactions apply for.
+     * given that apply for the given client (based on age and gender).
+     * @param client The client to check that the interactions apply for.
      * @param drug1 The name of the first drug to find interactions for.
      * @param drug2 The name of the second drug to find interactions for.
      * @return A list of strings that each contain the details of one interaction symptom. May be empty if there are
@@ -90,7 +90,7 @@ public class DrugInteractionsHandler extends WebAPIHandler {
      * @throws BadDrugNameException If the API returns a 404 response saying that the drug names are invalid.
      * @throws BadGatewayException If the API returns a 502 response.
      */
-    public List<String> getInteractions(Donor donor, String drug1, String drug2)
+    public List<String> getInteractions(Client client, String drug1, String drug2)
             throws IOException, BadDrugNameException, BadGatewayException {
         try {
             HttpResponse response = makeRequest(createURL(drug1, drug2));
@@ -108,7 +108,7 @@ public class DrugInteractionsHandler extends WebAPIHandler {
 
             if (statusCode == OK) {
                 DrugInteractionsResponse interactionsResponse = response.parseAs(DrugInteractionsResponse.class);
-                return interactionsResponse.calculateDonorInteractions(donor);
+                return interactionsResponse.calculateClientInteractions(client);
             } else if (statusCode == STUDY_NOT_DONE) {
                 return Collections.emptyList();
             } else if (statusCode == BAD_DRUG_NAME) {

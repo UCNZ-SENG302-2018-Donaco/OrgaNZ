@@ -14,7 +14,6 @@ import javafx.scene.paint.Color;
 
 import seng302.Actions.ActionInvoker;
 import seng302.Actions.Clinician.ModifyClinicianAction;
-import seng302.Actions.ModifyObjectByFieldAction;
 import seng302.Clinician;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
@@ -102,7 +101,7 @@ public class ViewClinicianController extends SubController {
     }
 
     /**
-     * Saves the changes a user makes to the viewed donor if all their inputs are valid. Otherwise the invalid fields
+     * Saves the changes a user makes to the viewed client if all their inputs are valid. Otherwise the invalid fields
      * text turns red.
      */
     @FXML
@@ -168,7 +167,7 @@ public class ViewClinicianController extends SubController {
     }
 
     /**
-     * Records the changes updated as a ModifyDonorAction to trace the change in record.
+     * Records the changes updated as a ModifyClientAction to trace the change in record.
      */
     private void updateChanges() {
         ModifyClinicianAction action = new ModifyClinicianAction(currentClinician);

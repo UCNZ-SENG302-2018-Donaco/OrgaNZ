@@ -10,9 +10,9 @@ that it implemented and the Authors and date created.
 
 Our project was set up in two main files: Commands and Utilities. As weird as it may sound,
 any classes inheriting off our command base was put into the commands section and anything that related to
-the utilisation of the data surrounding the donor was put into the utilities section, including blood type converter,
-gender and the local date converter. We also had a donor manager that used functions requested from the commands and
-updated the donor's information using the utilities section.
+the utilisation of the data surrounding the client was put into the utilities section, including blood type converter,
+gender and the local date converter. We also had a client manager that used functions requested from the commands and
+updated the client's information using the utilities section.
 
 **Testing**
 
@@ -21,7 +21,7 @@ valid results, what would happen if a user forgot to enter a necessary part into
 would occur if there were duplicate results entered, and any other valid acceptance or rejecting tests.
 
 
-**APIs' used**
+**APIs used**
 
 
 **Picocli**

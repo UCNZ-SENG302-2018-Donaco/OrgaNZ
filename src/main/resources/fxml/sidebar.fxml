@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="600.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/8.0.161" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.SidebarController">
+<VBox prefHeight="600.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.SidebarController">
   <children>
     <VBox VBox.vgrow="ALWAYS">
       <children>
@@ -23,16 +27,21 @@
             </Button>
           </children>
         </HBox>
-        <Button fx:id="viewDonorButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToViewDonor" text="View Donor" VBox.vgrow="ALWAYS">
+        <Button fx:id="viewClientButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToViewClient" text="View Client" VBox.vgrow="ALWAYS">
           <font>
             <Font size="16.0" />
           </font>
         </Button>
-        <Button fx:id="registerOrgansButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToRegisterOrgans" text="Register Organs" VBox.vgrow="ALWAYS">
+        <Button fx:id="registerOrganDonationButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToRegisterOrganDonation" text="Register Organs" VBox.vgrow="ALWAYS">
           <font>
             <Font size="16.0" />
           </font>
         </Button>
+            <Button fx:id="requestOrganDonationButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToRequestOrganDonation" text="Request Organs" VBox.vgrow="ALWAYS">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Button>
             <Button fx:id="viewMedicationsButton" layoutX="10.0" layoutY="144.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToViewMedications" text="View Medications" VBox.vgrow="ALWAYS">
                <font>
                   <Font size="16.0" />
@@ -53,12 +62,12 @@
             <Font size="16.0" />
           </font>
         </Button>
-        <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#save" text="Save All Donors" VBox.vgrow="ALWAYS">
+        <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#save" text="Save All Clients" VBox.vgrow="ALWAYS">
           <font>
             <Font size="16.0" />
           </font>
         </Button>
-        <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#load" text="Load Donors" VBox.vgrow="ALWAYS">
+        <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#load" text="Load Clients" VBox.vgrow="ALWAYS">
           <font>
             <Font size="16.0" />
           </font>

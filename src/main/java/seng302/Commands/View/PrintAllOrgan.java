@@ -2,9 +2,9 @@ package seng302.Commands.View;
 
 import java.util.ArrayList;
 
-import seng302.Donor;
+import seng302.Client;
 import seng302.HistoryItem;
-import seng302.State.DonorManager;
+import seng302.State.ClientManager;
 import seng302.State.State;
 import seng302.Utilities.JSONConverter;
 
@@ -20,27 +20,27 @@ import picocli.CommandLine.Command;
 @Command(name = "printallorgan", description = "Print all users with their organ donation status.", sortOptions = false)
 public class PrintAllOrgan implements Runnable {
 
-    private DonorManager manager;
+    private ClientManager manager;
 
     public PrintAllOrgan() {
-        manager = State.getDonorManager();
+        manager = State.getClientManager();
     }
 
-    public PrintAllOrgan(DonorManager manager) {
+    public PrintAllOrgan(ClientManager manager) {
         this.manager = manager;
     }
 
     @Override
     public void run() {
-        ArrayList<Donor> donors = manager.getDonors();
+        ArrayList<Client> clients = manager.getClients();
 
-        if (donors.size() == 0) {
-            System.out.println("No donors exist");
+        if (clients.size() == 0) {
+            System.out.println("No clients exist");
         } else {
-            for (Donor donor : donors) {
-                System.out.println(donor.getDonorOrganStatusString());
+            for (Client client : clients) {
+                System.out.println(client.getClientOrganStatusString("donations"));
             }
-            HistoryItem printAllOrgan = new HistoryItem("PRINT ALL ORGAN", "All donor organ information printed.");
+            HistoryItem printAllOrgan = new HistoryItem("PRINT ALL ORGAN", "All client organ information printed.");
             JSONConverter.updateHistory(printAllOrgan, "action_history.json");
         }
     }

@@ -23,7 +23,7 @@ public class CreateClinicianAction extends Action {
     }
 
     /**
-     * Simply add the clinician to the DonorManager
+     * Simply add the clinician to the ClinicianManager
      */
     @Override
     protected void execute() {
@@ -31,7 +31,7 @@ public class CreateClinicianAction extends Action {
     }
 
     /**
-     * Simply remove the clinician from the DonorManager
+     * Simply remove the clinician from the ClinicianManager
      */
     @Override
     protected void unExecute() {

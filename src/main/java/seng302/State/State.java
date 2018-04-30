@@ -3,16 +3,16 @@ package seng302.State;
 import java.util.ArrayList;
 
 import seng302.Actions.ActionInvoker;
+import seng302.Client;
 import seng302.Clinician;
 import seng302.Controller.MainController;
-import seng302.Donor;
 
 /**
  * A static class to store the current state of the system.
  */
 public final class State {
 
-    private static DonorManager donorManager;
+    private static ClientManager clientManager;
     private static ClinicianManager clinicianManager;
     private static ActionInvoker actionInvoker;
     private static Session session;
@@ -23,16 +23,16 @@ public final class State {
     }
 
     /**
-     * Initialises a new action invoker, donor manager and clinician manager.
+     * Initialises a new action invoker, client manager and clinician manager.
      */
     public static void init() {
         actionInvoker = new ActionInvoker();
-        donorManager = new DonorManager();
+        clientManager = new ClientManager();
         clinicianManager = new ClinicianManager();
     }
 
-    public static DonorManager getDonorManager() {
-        return donorManager;
+    public static ClientManager getClientManager() {
+        return clientManager;
     }
 
     public static ClinicianManager getClinicianManager() {
@@ -47,8 +47,8 @@ public final class State {
         return session;
     }
 
-    public static void login(Donor donor) {
-        session = new Session(donor);
+    public static void login(Client client) {
+        session = new Session(client);
     }
 
     public static void login(Clinician clinician) {

@@ -6,11 +6,13 @@ import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
+import seng302.State.State;
 import seng302.Utilities.View.Page;
 
 import org.testfx.framework.junit.ApplicationTest;
 
 public abstract class ControllerTest extends ApplicationTest {
+
     protected MainController mainController;
     protected SubController pageController;
     protected Node pageNode;
@@ -23,6 +25,7 @@ public abstract class ControllerTest extends ApplicationTest {
         mainController = mainLoader.getController();
 
         initState();
+        State.addMainController(mainController);
 
         // Load page's node and controller
         FXMLLoader pageLoader = new FXMLLoader(getClass().getResource(getPage().getPath()));
@@ -37,6 +40,7 @@ public abstract class ControllerTest extends ApplicationTest {
         // Setup both main and page controller
         pageController.setup(mainController);
         mainController.setPage(getPage(), pageNode);
+        mainController.setSubController(pageController);
     }
 
     protected abstract Page getPage();

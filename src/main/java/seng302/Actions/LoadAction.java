@@ -2,26 +2,26 @@
 //
 //import java.util.ArrayList;
 //
-//import seng302.Donor;
-//import seng302.State.DonorManager;
+//import seng302.Client;
+//import seng302.State.ClientManager;
 //
 ///**
-// * A reversible DonorManager donor list modification Action
+// * A reversible ClientManager client list modification Action
 // */
 //public class LoadAction implements Action {
 //
-//    private DonorManager manager;
+//    private ClientManager manager;
 //
-//    private ArrayList<Donor> oldState;
-//    private ArrayList<Donor> newState;
+//    private ArrayList<Client> oldState;
+//    private ArrayList<Client> newState;
 //
 //    /**
 //     * Create a new Action
-//     * @param oldState The initial state of the Donor array
-//     * @param newState The new state of the Donor array
-//     * @param manager The DonorManager to apply changes to
+//     * @param oldState The initial state of the Client array
+//     * @param newState The new state of the Client array
+//     * @param manager The ClientManager to apply changes to
 //     */
-//    public LoadAction(ArrayList<Donor> oldState, ArrayList<Donor> newState, DonorManager manager) {
+//    public LoadAction(ArrayList<Client> oldState, ArrayList<Client> newState, ClientManager manager) {
 //        this.manager = manager;
 //        this.oldState = oldState;
 //        this.newState = newState;
@@ -29,21 +29,11 @@
 //
 //    @Override
 //    public void execute() {
-//        manager.setDonors(newState);
+//        manager.setClients(newState);
 //    }
 //
 //    @Override
 //    public void unExecute() {
-//        manager.setDonors(oldState);
-//    }
-//
-//    @Override
-//    public String getExecuteText() {
-//        return String.format("Loaded %s users from file", newState.size());
-//    }
-//
-//    @Override
-//    public String getUnexecuteText() {
-//        return String.format("Reverted to the old user list with %s users", oldState.size());
+//        manager.setClients(oldState);
 //    }
 //}

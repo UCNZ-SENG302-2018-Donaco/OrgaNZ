@@ -8,7 +8,7 @@ import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 
-import seng302.Donor;
+import seng302.Client;
 import seng302.Utilities.Enums.Gender;
 import seng302.Utilities.Exceptions.BadDrugNameException;
 import seng302.Utilities.Exceptions.BadGatewayException;
@@ -67,12 +67,12 @@ public class DrugInteractionsHandlerTest {
         MockHttpTransport mockTransport = MockHelper.makeMockHttpTransport(EXPECTED_RESPONSE_BODY);
         DrugInteractionsHandler handler = new DrugInteractionsHandler(mockTransport);
 
-        Donor donor = new Donor("first", null, "last", LocalDate.now().minusYears(32).minusDays(10), 0);
-        donor.setGender(Gender.FEMALE);
+        Client client = new Client("first", null, "last", LocalDate.now().minusYears(32).minusDays(10), 0);
+        client.setGender(Gender.FEMALE);
 
         List<String> interactions = Collections.emptyList();
         try {
-            interactions = handler.getInteractions(donor, "leflunomide", "prednisone");
+            interactions = handler.getInteractions(client, "leflunomide", "prednisone");
         } catch (IOException | BadDrugNameException | BadGatewayException e) {
             fail(e.getMessage());
         }

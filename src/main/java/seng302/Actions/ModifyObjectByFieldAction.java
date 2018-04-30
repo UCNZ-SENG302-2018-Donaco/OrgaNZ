@@ -42,7 +42,7 @@ public class ModifyObjectByFieldAction extends Action {
                 return;
             }
         }
-        throw new NoSuchMethodException("Donor does not contain that method");
+        throw new NoSuchMethodException("Client does not contain that method");
     }
 
     @Override
