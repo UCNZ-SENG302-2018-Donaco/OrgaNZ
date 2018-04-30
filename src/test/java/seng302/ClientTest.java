@@ -205,7 +205,7 @@ public class ClientTest {
         client.markDead(deathDate);
 
         assertEquals(deathDate, client.getDateOfDeath());
-        assertFalse(client.getOrganDonationStatus().get(Organ.BONE));
+        assertTrue(client.getOrganDonationStatus().get(Organ.BONE));
         assertFalse(client.getOrganRequestStatus().get(Organ.LIVER));
     }
 }

@@ -474,16 +474,12 @@ public class Client {
     }
 
     /**
-     * Marks the client as dead and marks all organs as no for reception and donation
+     * Marks the client as dead and marks all organs as no for reception
      *
      * @param dateOfDeath LocalDate that the client died
      */
     public void markDead(LocalDate dateOfDeath) {
         this.dateOfDeath = dateOfDeath;
-
-        for (Map.Entry<Organ, Boolean> organDonate: organDonationStatus.entrySet()) {
-            organDonate.setValue(false);
-        }
 
         for (Map.Entry<Organ, Boolean> organRequest: organRequestStatus.entrySet()) {
             organRequest.setValue(false);
