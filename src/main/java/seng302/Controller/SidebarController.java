@@ -12,8 +12,8 @@ import javafx.stage.FileChooser;
 
 import seng302.Actions.ActionInvoker;
 import seng302.AppUI;
-import seng302.HistoryItem;
 import seng302.Client;
+import seng302.HistoryItem;
 import seng302.State.Session;
 import seng302.State.Session.UserType;
 import seng302.State.State;
@@ -52,7 +52,6 @@ public class SidebarController extends SubController {
             hideButton(viewClinicianButton);
             hideButton(searchButton);
             hideButton(transplantsButton);
-
         } else if (userType == Session.UserType.CLINICIAN) {
             hideButton(viewClientButton);
             hideButton(registerOrganDonationButton);
@@ -63,7 +62,7 @@ public class SidebarController extends SubController {
             hideButton(logoutButton);
         }
 
-        if (!showRequestedOrgansButton(userType)) {
+        if (!shouldShowRequestOrgans(userType)) {
             hideButton(requestOrganDonationButton);
         }
 
@@ -76,12 +75,13 @@ public class SidebarController extends SubController {
      * @param userType the type of current user
      * @return true if the button should be shown, false otherwise
      */
-    private boolean showRequestedOrgansButton(Session.UserType userType) {
+    private boolean shouldShowRequestOrgans(Session.UserType userType) {
         if (userType == UserType.CLIENT) {
             Client currentClient = session.getLoggedInClient();
-            return currentClient.getTransplantRequests().size() > 0;
+            return currentClient.isReceiver();
+        } else {
+            return windowContext.isClinViewClientWindow();
         }
-        return windowContext.isClinViewClientWindow();
     }
 
     /**
@@ -122,7 +122,7 @@ public class SidebarController extends SubController {
      */
     @FXML
     private void goToRequestOrganDonation() {
-        PageNavigator.loadPage(Page.REQUEST_ORGAN, mainController);
+        PageNavigator.loadPage(Page.REQUEST_ORGANS, mainController);
     }
 
     /**

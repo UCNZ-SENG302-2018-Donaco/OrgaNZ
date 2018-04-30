@@ -62,8 +62,8 @@ public class ModifyClientOrgansAction extends Action {
                 .map(entry -> formatChange(entry.getKey(), entry.getValue()))
                 .collect(Collectors.joining("\n"));
 
-        return String.format("Changed organ registration for client %d: %s %s:\n\n%s",
-                client.getUid(), client.getFirstName(), client.getLastName(), changesText);
+        return String.format("Changed organ donation registration for client %d: %s:\n\n%s",
+                client.getUid(), client.getFullName(), changesText);
     }
 
     @Override
@@ -72,8 +72,8 @@ public class ModifyClientOrgansAction extends Action {
                 .map(entry -> formatChange(entry.getKey(), entry.getValue()))
                 .collect(Collectors.joining("\n"));
 
-        return String.format("Reversed these changes to organ registration for client %d: %s %s:\n\n%s",
-                client.getUid(), client.getFirstName(), client.getLastName(), changesText);
+        return String.format("Reversed these changes to organ donation registration for client %d: %s:\n\n%s",
+                client.getUid(), client.getFullName(), changesText);
     }
 
     /**

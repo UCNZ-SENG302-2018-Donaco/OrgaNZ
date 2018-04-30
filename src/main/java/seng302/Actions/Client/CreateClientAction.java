@@ -41,13 +41,14 @@ public class CreateClientAction extends Action {
         manager.removeClient(client);
     }
 
-    //TODO implement these two methods
-
+    @Override
     public String getExecuteText() {
-        return "";
+        return String.format("Created client %s", client.getFullName());
     }
 
+    @Override
     public String getUnexecuteText() {
-        return "";
+        return String.format("Removed client %s", client.getFullName());
     }
+
 }

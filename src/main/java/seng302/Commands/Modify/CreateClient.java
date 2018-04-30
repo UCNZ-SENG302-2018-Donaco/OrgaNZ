@@ -61,7 +61,7 @@ public class CreateClient implements Runnable {
             System.out.println("Duplicate user found, use --force to create anyway");
             return;
         }
-        int uid = manager.getUid();
+        int uid = manager.nextUid();
 
         Client client = new Client(firstName, middleNames, lastName, dateOfBirth, uid);
 

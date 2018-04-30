@@ -1,10 +1,6 @@
 package seng302;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -25,21 +21,21 @@ public class ClientTest {
     }
 
     @Test
-    public void getBMITest1() {
+    public void getBMI1Test() {
         client.setWeight(70);
         client.setHeight(180);
         assertEquals(client.getBMI(), 21.6, 0.01);
     }
 
     @Test
-    public void getBMITest2() {
+    public void getBMI2Test() {
         client.setWeight(0);
         client.setHeight(180);
         assertEquals(client.getBMI(), 0, 0.0);
     }
 
     @Test
-    public void getAge() {
+    public void getAgeTest() {
         LocalDate dob = LocalDate.of(2000, 1, 1);
         int age = Period.between(dob, LocalDate.now()).getYears();
         client.setDateOfBirth(dob);
@@ -48,7 +44,7 @@ public class ClientTest {
     }
 
     @Test
-    public void getAge2() {
+    public void getAge2Test() {
         LocalDate dob = LocalDate.of(2000, 1, 1);
         LocalDate dod = LocalDate.of(2010, 1, 1);
         client.setDateOfBirth(dob);
@@ -110,44 +106,46 @@ public class ClientTest {
         assertEquals("First Mid Name Last", client.getFullName());
     }
 
+    /*
     @Test
-    public void noRequestCurrentOrganRequestTest() {
-        assertEquals(false, client.currentOrganRequest());
+    public void noRequestCurrentOrganRequest1Test() {
+        assertEquals(false, client.isReceiver());
     }
 
     @Test
-    public void noRequestCurrentOrganRequestTest2() {
+    public void noRequestCurrentOrganRequest2Test() {
         Organ o = Organ.HEART;
         TransplantRequest t = new TransplantRequest(o, false);
         client.addTransplantRequest(t);
-        assertEquals(false, client.currentOrganRequest());
+        assertEquals(false, client.isReceiver());
     }
 
+
     @Test
-    public void validCurrentOrganRequest() {
+    public void validCurrentOrganRequestTest() {
         Organ o = Organ.HEART;
         TransplantRequest t = new TransplantRequest(o, true);
         client.addTransplantRequest(t);
-        assertEquals(true, client.currentOrganRequest());
+        assertEquals(true, client.isReceiver());
     }
 
     @Test
-    public void getOrganStatusStringEmpty1() {
+    public void getOrganStatusStringEmpty1Test() {
         assertEquals("No organs found", client.getOrganStatusString("requests"));
     }
 
     @Test
-    public void getOrganStatusStringEmpty2() {
+    public void getOrganStatusStringEmpty2Test() {
         assertEquals("No organs found", client.getOrganStatusString("donations"));
     }
 
     @Test
-    public void getOrganStatusStringInvalidString() {
+    public void getOrganStatusStringInvalidStringTest() {
         assertEquals("Invalid input", client.getOrganStatusString(""));
     }
 
     @Test
-    public void getOrganStatusStringValid1() {
+    public void getOrganStatusStringValid1Test() {
         Organ o = Organ.HEART;
         try {
             client.setOrganRequestStatus(o, true);
@@ -158,7 +156,7 @@ public class ClientTest {
     }
 
     @Test
-    public void getOrganStatusStringValid2() {
+    public void getOrganStatusStringValid2Test() {
         Organ o = Organ.HEART;
         try {
             client.setOrganDonationStatus(o, true);
@@ -169,7 +167,7 @@ public class ClientTest {
     }
 
     @Test
-    public void getOrganStatusStringValid3() {
+    public void getOrganStatusStringValid3Test() {
         try {
             client.setOrganRequestStatus(Organ.BONE, true);
             client.setOrganRequestStatus(Organ.HEART, true);
@@ -184,10 +182,11 @@ public class ClientTest {
     }
 
     @Test(expected = OrganAlreadyRegisteredException.class)
-    public void getOrganStatusStringInvalid() throws OrganAlreadyRegisteredException {
+    public void getOrganStatusStringInvalidTest() throws OrganAlreadyRegisteredException {
         client.setOrganRequestStatus(Organ.BONE, true);
         client.setOrganRequestStatus(Organ.BONE, true);
     }
+    */
 
     @Test
     public void equalsNotAClientTest() {
@@ -199,7 +198,8 @@ public class ClientTest {
     @Test
     public void markDeadTest() throws OrganAlreadyRegisteredException {
         client.setOrganDonationStatus(Organ.BONE, true);
-        client.setOrganRequestStatus(Organ.LIVER, true);
+        TransplantRequest request = new TransplantRequest(client, Organ.LIVER);
+        client.addTransplantRequest(request);
 
         LocalDate deathDate = LocalDate.now();
         client.markDead(deathDate);

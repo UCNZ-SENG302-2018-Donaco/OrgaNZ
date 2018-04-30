@@ -49,7 +49,7 @@ public class SetAttributeTest {
     }
 
     @Test
-    public void setattributeNonExistentIdTest() {
+    public void setAttributeNonExistentIdTest() {
         when(spyClientManager.getClientByID(anyInt())).thenReturn(null);
         String[] inputs = {"-u", "2"};
 

@@ -28,7 +28,7 @@ public class TransplantsControllerOneItemTest extends ControllerTest {
     private Clinician testClinician = new Clinician("A", "B", "C", "D",
             Region.UNSPECIFIED, 0, "E");
     private Client client = new Client("Client", "Number", "One", LocalDate.now(), 1);
-    private TransplantRequest request = new TransplantRequest(Organ.LIVER, true, 1);
+    private TransplantRequest request = new TransplantRequest(client, Organ.LIVER);
 
     // Overridden classes from parent class
 
@@ -67,9 +67,10 @@ public class TransplantsControllerOneItemTest extends ControllerTest {
     @Test
     public void testOneRow() {
         verifyThat("#tableView", hasNumRows(1));
-        verifyThat("#tableView", containsRowAtIndex(0, request.getClientName(), request.getRequestedOrgan(),
-                request.getClientRegion(), request.getRequestDateString()));
-
+        verifyThat("#tableView", containsRowAtIndex(0,
+                request.getClient().getFullName(),
+                request.getRequestedOrgan(),
+                request.getClient().getRegion(),
+                request.getRequestDate()));
     }
-
 }

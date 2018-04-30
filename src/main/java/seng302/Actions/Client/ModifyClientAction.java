@@ -30,8 +30,7 @@ public class ModifyClientAction extends Action {
      * @param newValue The object the field should be update to. Must match the setters Object type
      * @throws NoSuchMethodException Thrown if the Client does not have the specified setter
      * @throws NoSuchFieldException Thrown if the Clients specified setter does not take the same type as given in one
-     * of
-     * the values
+     * of the values
      */
     public void addChange(String field, Object oldValue, Object newValue)
             throws NoSuchMethodException, NoSuchFieldException {
@@ -58,9 +57,9 @@ public class ModifyClientAction extends Action {
                 .map(ModifyObjectByFieldAction::getExecuteText)
                 .collect(Collectors.joining("\n"));
 
-        return String.format("Updated details for client %d: %s %s. \n"
+        return String.format("Updated details for client %d: %s. \n"
                         + "These changes were made: \n\n%s",
-                client.getUid(), client.getFirstName(), client.getLastName(), changesText);
+                client.getUid(), client.getFullName(), changesText);
     }
 
     @Override
@@ -69,8 +68,8 @@ public class ModifyClientAction extends Action {
                 .map(ModifyObjectByFieldAction::getExecuteText)
                 .collect(Collectors.joining("\n"));
 
-        return String.format("Reversed update for client %d: %s %s. \n"
+        return String.format("Reversed update for client %d: %s. \n"
                         + "These changes were reversed: \n\n%s",
-                client.getUid(), client.getFirstName(), client.getLastName(), changesText);
+                client.getUid(), client.getFullName(), changesText);
     }
 }

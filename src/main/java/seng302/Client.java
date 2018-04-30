@@ -1,13 +1,17 @@
 package seng302;
 
+import static seng302.TransplantRequest.RequestStatus.*;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import seng302.Utilities.Enums.BloodType;
@@ -15,8 +19,6 @@ import seng302.Utilities.Enums.Gender;
 import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.Enums.Region;
 import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
-
-import com.google.api.client.util.ArrayMap;
 
 /**
  * The main Client class.
@@ -41,20 +43,22 @@ public class Client {
     private LocalDateTime modifiedTimestamp;
 
     private Map<Organ, Boolean> organDonationStatus;
-    private Map<Organ, Boolean> organRequestStatus;
 
     private List<MedicationRecord> medicationHistory = new ArrayList<>();
 
-    private List<TransplantRequest> transplantRequests = new ArrayList<>();
+    private Collection<TransplantRequest> transplantRequests = new ArrayList<>();
 
     private List<String> updateLog = new ArrayList<>();
 
-    public Client(int uid) {
+    public Client() {
         createdTimestamp = LocalDateTime.now();
-        this.uid = uid;
-
         initDonationOrgans();
-        initRequestOrgans();
+    }
+
+    public Client(int uid) {
+        this.uid = uid;
+        createdTimestamp = LocalDateTime.now();
+        initDonationOrgans();
     }
 
     /**
@@ -76,19 +80,12 @@ public class Client {
         this.createdTimestamp = LocalDateTime.now();
 
         initDonationOrgans();
-        initRequestOrgans();
     }
 
     private void initDonationOrgans() {
         organDonationStatus = new HashMap<>();
         for (Organ o : Organ.values()) {
             organDonationStatus.put(o, false);
-        }
-    }
-    private void initRequestOrgans() {
-        organRequestStatus = new HashMap<>();
-        for (Organ o : Organ.values()) {
-            organRequestStatus.put(o, false);
         }
     }
 
@@ -99,32 +96,12 @@ public class Client {
     }
 
     /**
-     * Set a particular organs request status
-     * @param organ The organ to be set
-     * @param value Boolean value to set the attributes
-     * @throws OrganAlreadyRegisteredException Thrown if the organ is set to true when it already is
-     */
-    public void setOrganRequestStatus(Organ organ, boolean value) throws OrganAlreadyRegisteredException {
-        if (organRequestStatus == null) {
-            initRequestOrgans();
-        }
-        if (value && organRequestStatus.get(organ)) {
-            throw new OrganAlreadyRegisteredException(organ.toString() + " is already currently requested");
-        }
-        addUpdate(organ.toString());
-        organRequestStatus.replace(organ, value);
-    }
-
-    /**
      * Set a single organs donation status
      * @param organ The organ to be set
      * @param value Boolean value to set the status too
      * @throws OrganAlreadyRegisteredException Thrown if the organ is set to true when it already is
      */
     public void setOrganDonationStatus(Organ organ, boolean value) throws OrganAlreadyRegisteredException {
-        if (organDonationStatus == null) {
-            initDonationOrgans();
-        }
         if (value && organDonationStatus.get(organ)) {
             throw new OrganAlreadyRegisteredException(organ.toString() + " is already registered for donation");
         }
@@ -142,7 +119,7 @@ public class Client {
         Map<Organ, Boolean> organsList;
         switch (type) {
             case "requests":
-                organsList = organRequestStatus;
+                organsList = getOrganRequestStatus();
                 break;
             case "donations":
                 organsList = organDonationStatus;
@@ -322,18 +299,26 @@ public class Client {
         return modifiedTimestamp;
     }
 
-    public Map<Organ, Boolean> getOrganRequestStatus() {
-        if (organRequestStatus == null) {
-            initRequestOrgans();
-        }
-        return organRequestStatus;
+    public Map<Organ, Boolean> getOrganDonationStatus() {
+        return organDonationStatus;
     }
 
-    public Map<Organ, Boolean> getOrganDonationStatus() {
-        if (organDonationStatus == null) {
-            initDonationOrgans();
+    public Set<Organ> getCurrentlyRequestedOrgans() {
+        return transplantRequests
+                .stream()
+                .filter(request -> request.getStatus() == WAITING)
+                .map(TransplantRequest::getRequestedOrgan)
+                .collect(Collectors.toCollection(() -> EnumSet.noneOf(Organ.class)));
+    }
+
+    public Map<Organ, Boolean> getOrganRequestStatus() {
+        Map<Organ, Boolean> organStatus = new HashMap<>();
+        Set<Organ> requestedOrgans = getCurrentlyRequestedOrgans();
+
+        for (Organ organ : Organ.values()) {
+            organStatus.put(organ, requestedOrgans.contains(organ));
         }
-        return organDonationStatus;
+        return organStatus;
     }
 
     /**
@@ -441,36 +426,20 @@ public class Client {
         return d.uid == this.uid;
     }
 
-    public List<TransplantRequest> getTransplantRequests() {
-        if (transplantRequests == null) {
-            transplantRequests = new ArrayList<>();
-        }
+    public Collection<TransplantRequest> getTransplantRequests() {
         return transplantRequests;
     }
 
-    public void addTransplantRequest(TransplantRequest transplantRequest) {
-        if (transplantRequests == null) {
-            transplantRequests = new ArrayList<>();
-        }
-        transplantRequest.setClient(this);
-        transplantRequests.add(transplantRequest);
+    public void addTransplantRequest(TransplantRequest request) {
+        transplantRequests.add(request);
     }
 
-    /**
-     * Checks if the client has any current organ requests.
-     * @return true if the client has a current organ request. False otherwise.
-     */
-    public boolean currentOrganRequest() {
-        if (transplantRequests == null) {
-            transplantRequests = new ArrayList<>();
-            return false;
-        }
-        for (TransplantRequest t : transplantRequests) {
-            if (t.getCurrentRequest()) {
-                return true;
-            }
-        }
-        return false;
+    public void removeTransplantRequest(TransplantRequest request) {
+        transplantRequests.remove(request);
+    }
+
+    public boolean isReceiver() {
+        return transplantRequests.size() > 0;
     }
 
     /**
@@ -481,8 +450,11 @@ public class Client {
     public void markDead(LocalDate dateOfDeath) {
         this.dateOfDeath = dateOfDeath;
 
-        for (Map.Entry<Organ, Boolean> organRequest: organRequestStatus.entrySet()) {
-            organRequest.setValue(false);
+        for (TransplantRequest request : transplantRequests) {
+            if (request.getStatus() == WAITING) {
+                request.setStatus(CANCELLED);
+                request.setResolvedDate(LocalDateTime.now());
+            }
         }
     }
 }

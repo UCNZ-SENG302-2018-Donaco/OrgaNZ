@@ -125,7 +125,8 @@
       <groupId>org.testfx</groupId>
       <artifactId>openjfx-monocle</artifactId>
       <version>8u76-b04</version>
-      <scope>test</scope>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/openjfx-monocle-8u76-b04.jar</systemPath>
     </dependency>
   </dependencies>
 
