@@ -53,7 +53,7 @@ public class Client {
 
     private List<IllnessRecord> illnessHistory = new ArrayList<>();
 
-    public Client(int uid) {
+    public Client() {
         createdTimestamp = LocalDateTime.now();
         initOrgans();
     }

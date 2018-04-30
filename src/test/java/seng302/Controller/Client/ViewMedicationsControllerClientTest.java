@@ -39,7 +39,7 @@ public class ViewMedicationsControllerClientTest extends ControllerTest {
             )
     };
 
-    private Client testClient = new Client(1);
+    private Client testClient = new Client();
 
     @Override
     protected Page getPage() {

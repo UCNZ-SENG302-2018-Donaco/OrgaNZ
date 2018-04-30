@@ -23,7 +23,7 @@ import org.testfx.api.FxAssert;
 
 public class ViewIllnessHistoryClientTest extends ControllerTest{
 
-    private Client testClient = new Client(1);
+    private Client testClient = new Client();
 
     private final IllnessRecord[] testPastIllnessRecords = {
             new IllnessRecord(
