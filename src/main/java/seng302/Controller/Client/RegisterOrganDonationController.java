@@ -112,6 +112,9 @@ public class RegisterOrganDonationController extends SubController {
                 if (allPreviouslyRequestedOrgans.contains(entry.getKey())) {
                     entry.getValue().setStyle("-fx-color: lightcoral;");
                     entry.getValue().setTooltip(new Tooltip("This organ was/is part of a transplant request."));
+                } else {
+                    entry.getValue().setStyle(null);
+                    entry.getValue().setTooltip(null);
                 }
             }
             HistoryItem save = new HistoryItem("UPDATE ID", "The Client's ID was updated to " + client.getUid());
