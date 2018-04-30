@@ -93,7 +93,7 @@ public class ViewClientController extends SubController {
         } else if (windowContext.isClinViewClientWindow()) {
             viewedClient = windowContext.getViewClient();
         }
-        
+
         mainController.setTitle("Client profile: " + viewedClient.getFullName());
         id.setText(Integer.toString(viewedClient.getUid()));
         searchClient();

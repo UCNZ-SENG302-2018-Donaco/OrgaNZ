@@ -48,6 +48,11 @@ public class Client {
 
     private List<String> updateLog = new ArrayList<>();
 
+    public Client() {
+        createdTimestamp = LocalDateTime.now();
+        initDonationOrgans();
+    }
+
     public Client(int uid) {
         this.uid = uid;
         createdTimestamp = LocalDateTime.now();
@@ -423,7 +428,6 @@ public class Client {
     }
 
     public void addTransplantRequest(TransplantRequest request) {
-        transplantRequest.setClient(this);
         transplantRequests.add(request);
     }
 

@@ -27,7 +27,7 @@ public class AddTransplantRequestActionTest {
 
     @Test
     public void checkRequestWasAddedTest() {
-        TransplantRequest request = new TransplantRequest(Organ.HEART);
+        TransplantRequest request = new TransplantRequest(testClient, Organ.HEART);
         Action action = new AddTransplantRequestAction(testClient, request);
         invoker.execute(action);
         assertTrue(testClient.getTransplantRequests().contains(request));
@@ -35,7 +35,7 @@ public class AddTransplantRequestActionTest {
 
     @Test
     public void checkRequestWasAddedThenUndoneTest() {
-        TransplantRequest request = new TransplantRequest(Organ.HEART);
+        TransplantRequest request = new TransplantRequest(testClient, Organ.HEART);
         Action action = new AddTransplantRequestAction(testClient, request);
         invoker.execute(action);
         assertTrue(testClient.getTransplantRequests().contains(request));

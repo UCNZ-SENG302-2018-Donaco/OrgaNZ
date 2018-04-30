@@ -1,9 +1,12 @@
 package seng302.Controller.Clinician;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
@@ -70,7 +73,7 @@ public class TransplantsController extends SubController {
 
     @FXML
     private void initialize() {
-        List<TransplantRequest> allTransplants = State.getClientManager().getAllCurrentTransplantRequests();
+        Collection<TransplantRequest> allTransplants = State.getClientManager().getAllCurrentTransplantRequests();
 
         setupTable();
 
@@ -98,10 +101,12 @@ public class TransplantsController extends SubController {
      * The client must have getters for these specific names specified in the PV Factories.
      */
     private void setupTable() {
-        clientCol.setCellValueFactory(new PropertyValueFactory<>("clientName"));
+        clientCol.setCellValueFactory(cellData -> new SimpleStringProperty(
+                cellData.getValue().getClient().getFullName()));
         organCol.setCellValueFactory(new PropertyValueFactory<>("requestedOrgan"));
-        regionCol.setCellValueFactory(new PropertyValueFactory<>("clientRegion"));
-        dateCol.setCellValueFactory(new PropertyValueFactory<>("requestDateString"));
+        regionCol.setCellValueFactory(cellData -> new SimpleObjectProperty<>(
+                cellData.getValue().getClient().getRegion()));
+        dateCol.setCellValueFactory(new PropertyValueFactory<>("requestDate"));
 
         tableView.getColumns().setAll(clientCol, organCol, regionCol, dateCol);
 
@@ -113,7 +118,7 @@ public class TransplantsController extends SubController {
                     MainController newMain = PageNavigator.openNewWindow();
                     if (newMain != null) {
                         newMain.setWindowContext(new WindowContextBuilder()
-                                .setAsClinicianViewingClientWindow()
+                                .setAsClinViewClientWindow()
                                 .viewClient(client)
                                 .build());
                         PageNavigator.loadPage(Page.VIEW_CLIENT, newMain);

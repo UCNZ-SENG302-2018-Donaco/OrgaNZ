@@ -111,6 +111,7 @@ public class ClientManagerTest {
     public void getAllTransplantRequests() {
         TransplantRequest transplantRequest = new TransplantRequest(client1, Organ.LIVER);
         TransplantRequest transplantRequest2 = new TransplantRequest(client2, Organ.HEART);
+        manager.addClient(client2);
         client1.addTransplantRequest(transplantRequest);
         client2.addTransplantRequest(transplantRequest2);
 

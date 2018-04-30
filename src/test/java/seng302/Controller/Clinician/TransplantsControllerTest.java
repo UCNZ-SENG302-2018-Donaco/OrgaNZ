@@ -51,16 +51,16 @@ public class TransplantsControllerTest extends ControllerTest {
             Region.UNSPECIFIED, 0, "E");
 
     private Client client1 = new Client("Client", "Number", "One", LocalDate.now(), 1);
-    private TransplantRequest request1a = new TransplantRequest(Organ.LIVER, true, 1);
-    private TransplantRequest request1b = new TransplantRequest(Organ.PANCREAS, true, 1);
-    private TransplantRequest request1c = new TransplantRequest(Organ.LUNG, true, 1);
+    private TransplantRequest request1a = new TransplantRequest(client1, Organ.LIVER);
+    private TransplantRequest request1b = new TransplantRequest(client1, Organ.PANCREAS);
+    private TransplantRequest request1c = new TransplantRequest(client1, Organ.LUNG);
 
     private Client client2 = new Client("Client", "Number", "Two", LocalDate.now(), 2);
-    private TransplantRequest request2a = new TransplantRequest(Organ.LIVER, true, 2);
-    private TransplantRequest request2b = new TransplantRequest(Organ.HEART, true, 2);
+    private TransplantRequest request2a = new TransplantRequest(client2, Organ.LIVER);
+    private TransplantRequest request2b = new TransplantRequest(client2, Organ.HEART);
 
     private Client client3 = new Client("Client", "Number", "Three", LocalDate.now(), 3);
-    private TransplantRequest request3 = new TransplantRequest(Organ.LIVER, true, 3);
+    private TransplantRequest request3 = new TransplantRequest(client3, Organ.LIVER);
 
 
     private Client[] clients = {client1, client2, client3};
@@ -100,12 +100,9 @@ public class TransplantsControllerTest extends ControllerTest {
         client2.setRegion(Region.OTAGO);
         // client3's region is left as null
 
-        request1b.setRequestDate(LocalDateTime.now().minusDays(10));
-        request2a.setRequestDate(LocalDateTime.now().minusDays(15));
-
         for (int i = 100; i < 215; i++) {
             Client client = new Client("Client", "Number", createClientName(i), LocalDate.now(), i);
-            TransplantRequest request = new TransplantRequest(Organ.MIDDLE_EAR, true, i);
+            TransplantRequest request = new TransplantRequest(client, Organ.MIDDLE_EAR);
             client.addTransplantRequest(request);
             client.setRegion(Region.NELSON);
             requests.add(request);
@@ -202,10 +199,15 @@ public class TransplantsControllerTest extends ControllerTest {
     @Test
     public void testFirst30Rows() {
         TransplantRequest request;
+        Client reqClient;
         for (int i = 0; i < 30; i++) {
             request = requests.get(i);
-            verifyThat("#tableView", containsRowAtIndex(i, request.getClientName(), request.getRequestedOrgan(),
-                    request.getClientRegion(), request.getRequestDateString()));
+            reqClient = request.getClient();
+            verifyThat("#tableView", containsRowAtIndex(i,
+                    reqClient.getFullName(),
+                    request.getRequestedOrgan(),
+                    reqClient.getRegion(),
+                    request.getRequestDate()));
         }
         verifyThat("#tableView", hasNumRows(30));
     }
@@ -213,7 +215,7 @@ public class TransplantsControllerTest extends ControllerTest {
     @Test
     public void testDoubleClickToOpenClient() {
         // Select Client 1 and double click on them
-        clickOn((Node) lookup(NodeQueryUtils.hasText(request1a.getClientName())).query());
+        clickOn((Node) lookup(NodeQueryUtils.hasText(request1a.getClient().getFullName())).query());
         press(MouseButton.PRIMARY);
         release(MouseButton.PRIMARY);
 
@@ -314,8 +316,11 @@ public class TransplantsControllerTest extends ControllerTest {
         TransplantRequest request;
         for (int i = 0; i < 30; i++) {
             request = requests.get(i + 30);
-            verifyThat("#tableView", containsRowAtIndex(i, request.getClientName(), request.getRequestedOrgan(),
-                    request.getClientRegion(), request.getRequestDateString()));
+            verifyThat("#tableView", containsRowAtIndex(i,
+                    request.getClient().getFullName(),
+                    request.getRequestedOrgan(),
+                    request.getClient().getRegion(),
+                    request.getRequestDate()));
         }
 
         // Check pagination description
@@ -344,15 +349,15 @@ public class TransplantsControllerTest extends ControllerTest {
         requests.sort(new Comparator<TransplantRequest>() {
             @Override
             public int compare(TransplantRequest o1, TransplantRequest o2) {
-                return o1.getClientName().toLowerCase().compareTo(o2.getClientName().toLowerCase());
+                return o1.getClient().getFullName().toLowerCase().compareTo(o2.getClient().getFullName().toLowerCase());
             }
         });
 
         // Check all 30 requests are correct
         for (int i = 0; i < 30; i++) {
             TransplantRequest request = requests.get(i);
-            verifyThat("#tableView", containsRowAtIndex(i, request.getClientName(), request.getRequestedOrgan(),
-                    request.getClientRegion(), request.getRequestDateString()));
+            verifyThat("#tableView", containsRowAtIndex(i, request.getClient().getFullName(), request.getRequestedOrgan(),
+                    request.getClient().getRegion(), request.getRequestDate()));
         }
     }
 
@@ -372,8 +377,8 @@ public class TransplantsControllerTest extends ControllerTest {
         for (int i = 0; i < 30; i++) {
             TransplantRequest request = requests.get(i);
             System.out.println(request);
-            verifyThat("#tableView", containsRowAtIndex(i, request.getClientName(), request.getRequestedOrgan(),
-                    request.getClientRegion(), request.getRequestDateString()));
+            verifyThat("#tableView", containsRowAtIndex(i, request.getClient().getFullName(), request.getRequestedOrgan(),
+                    request.getClient().getRegion(), request.getRequestDate()));
         }
     }
 
@@ -385,25 +390,25 @@ public class TransplantsControllerTest extends ControllerTest {
         requests.sort(new Comparator<TransplantRequest>() {
             @Override
             public int compare(TransplantRequest o1, TransplantRequest o2) {
-                if (o1.getClientRegion() == null) {
-                    if (o2.getClientRegion() == null) {
+                if (o1.getClient().getRegion() == null) {
+                    if (o2.getClient().getRegion() == null) {
                         return 0;
                     } else {
                         return -1;
                     }
-                } else if (o2.getClientRegion() == null) {
+                } else if (o2.getClient().getRegion() == null) {
                     return 1;
                 }
-                return o1.getClientRegion().toString().compareTo(o2.getClientRegion().toString());
+                return o1.getClient().getRegion().toString().compareTo(o2.getClient().getRegion().toString());
             }
         });
 
         // Check all 30 requests are correct
         for (int i = 0; i < 30; i++) {
             TransplantRequest request = requests.get(i);
-            System.out.println(request.getClientRegion());
-            verifyThat("#tableView", containsRowAtIndex(i, request.getClientName(), request.getRequestedOrgan(),
-                    request.getClientRegion(), request.getRequestDateString()));
+            System.out.println(request.getClient().getRegion());
+            verifyThat("#tableView", containsRowAtIndex(i, request.getClient().getFullName(), request.getRequestedOrgan(),
+                    request.getClient().getRegion(), request.getRequestDate()));
         }
     }
 
@@ -422,8 +427,8 @@ public class TransplantsControllerTest extends ControllerTest {
         // Check all 30 requests are correct
         for (int i = 0; i < 30; i++) {
             TransplantRequest request = requests.get(i);
-            verifyThat("#tableView", containsRowAtIndex(i, request.getClientName(), request.getRequestedOrgan(),
-                    request.getClientRegion(), request.getRequestDateString()));
+            verifyThat("#tableView", containsRowAtIndex(i, request.getClient().getFullName(), request.getRequestedOrgan(),
+                    request.getClient().getRegion(), request.getRequestDate()));
         }
     }
 }

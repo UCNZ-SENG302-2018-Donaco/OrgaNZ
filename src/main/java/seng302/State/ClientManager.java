@@ -104,7 +104,7 @@ public class ClientManager {
      * Gets all transplant requests, regardless of whether or not they are current
      * @return List of all transplant requests
      */
-    public List<TransplantRequest> getAllTransplantRequests() {
+    public Collection<TransplantRequest> getAllTransplantRequests() {
         return clients.stream()
                 .map(Client::getTransplantRequests)
                 .flatMap(Collection::stream)
