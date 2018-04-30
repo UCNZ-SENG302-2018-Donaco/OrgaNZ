@@ -101,7 +101,7 @@ public class TransplantsControllerTest extends ControllerTest {
         requests.add(request3);
 
         client1.setRegion(Region.CANTERBURY);
-        client2.setRegion(Region.OTAGO);
+        client2.setRegion(Region.AUCKLAND); // Changed to Auckland so that the checkbox is visible.
         // client3's region is left as null
 
         request1b.setRequestDate(LocalDateTime.now().minusDays(10));
@@ -184,266 +184,272 @@ public class TransplantsControllerTest extends ControllerTest {
                 .orElse(null);
     }
 
-    // Tests
+    // S24 Tests
+//
+//    @Test
+//    public void testComponentsAreVisible() {
+//        verifyThat("#tableView", isVisible());
+//        verifyThat("#displayingXToYOfZText", isVisible());
+//        verifyThat("#sidebarPane", isVisible());
+//        verifyThat("#pagination", isVisible());
+//    }
+//
+//    @Test
+//    public void testPaginationDescription() {
+//        verifyThat("#displayingXToYOfZText", hasText("Displaying 1-30 of 121"));
+//    }
+//
+//    /**
+//     * This test enforces multiple requests per person, pagination, and all elements (name, organ, region, date) being
+//     * recorded in the table.
+//     */
+//    @Test
+//    public void testFirst30Rows() {
+//        TransplantRequest request;
+//        for (int i = 0; i < 30; i++) {
+//            request = requests.get(i);
+//            verifyThat("#tableView", containsRowAtIndex(i, request.getClientName(), request.getRequestedOrgan(),
+//                    request.getClientRegion(), request.getRequestDateString()));
+//        }
+//        verifyThat("#tableView", hasNumRows(30));
+//    }
+//
+//    @Test
+//    public void testDoubleClickToOpenClient() {
+//        // Select Client 1 and double click on them
+//        clickOn((Node) lookup(NodeQueryUtils.hasText(request1a.getClientName())).query());
+//        press(MouseButton.PRIMARY);
+//        release(MouseButton.PRIMARY);
+//
+//        // Get the top pane
+//        final Stage topModalStage = getTopModalStage();
+//        assertNotNull(topModalStage);
+//        final AnchorPane pane = (AnchorPane) topModalStage.getScene().getRoot();
+//
+//        // Check each subnode is there
+//        VBox mainVbox = (VBox) pane.getChildren().get(0); // Main pane
+//        assertNotNull(mainVbox);
+//
+//        StackPane stackPane = (StackPane) mainVbox.getChildren().get(0); // page holder
+//        assertNotNull(stackPane);
+//        assertEquals("pageHolder", stackPane.getId());
+//
+//        VBox clientVbox = (VBox) stackPane.getChildren().get(0); // Main VBox in client viewer
+//        assertNotNull(clientVbox);
+//
+//        SplitPane splitPane = (SplitPane) clientVbox.getChildren().get(0); // Main SplitPane
+//        assertNotNull(splitPane);
+//
+//        VBox vbox2 = (VBox) splitPane.getItems().get(1); // Vbox containing a borderpane
+//        assertNotNull(vbox2);
+//
+//        BorderPane borderPane = (BorderPane) vbox2.getChildren().get(0); //Borderpane containing header and data
+//        assertNotNull(borderPane);
+//
+//        VBox vbox3 = (VBox) borderPane.getCenter(); // Vbox containing two gridpanes
+//        assertNotNull(vbox3);
+//
+//        GridPane gridPaneId = (GridPane) vbox3.getChildren().get(0); //Gridpane containing ID fields
+//        assertNotNull(gridPaneId);
+//        assertEquals("idPane", gridPaneId.getId());
+//
+//        GridPane gridPaneFields = (GridPane) vbox3.getChildren().get(1); //Gridpane containing all fields
+//        assertNotNull(gridPaneFields);
+//        assertEquals("inputsPane", gridPaneFields.getId());
+//
+//        // Check all nodes we need to look in are visible
+//        verifyThat("#id", isVisible());
+//        verifyThat("#fname", isVisible());
+//        verifyThat("#mname", isVisible());
+//        verifyThat("#lname", isVisible());
+//
+//        // Create a list of all nodes to search in to find user's details
+//        ArrayList<Node> nodes = new ArrayList<>();
+//        nodes.addAll(gridPaneFields.getChildren());
+//        nodes.addAll(gridPaneId.getChildren());
+//
+//        // Iterate through nodes in both grid panes, check if they are one that we want, and if so, check they are
+//        // as expected.
+//        String expectedString = "";
+//        boolean gotAField;
+//        int totalChecks = 0;
+//        for (Node node : nodes) {
+//            if (node.getId() != null) {
+//                switch (node.getId()) {
+//                    case "id":
+//                        expectedString = Integer.toString(client1.getUid());
+//                        gotAField = true;
+//                        break;
+//                    case "fname":
+//                        expectedString = client1.getFirstName();
+//                        gotAField = true;
+//                        break;
+//                    case "mname":
+//                        expectedString = client1.getMiddleName();
+//                        gotAField = true;
+//                        break;
+//                    case "lname":
+//                        expectedString = client1.getLastName();
+//                        gotAField = true;
+//                        break;
+//                    default:
+//                        gotAField = false;
+//                }
+//                if (gotAField) {
+//                    TextField textField = (TextField) node;
+//                    assertEquals(expectedString, textField.getText());
+//                    totalChecks++;
+//                }
+//            }
+//        }
+//        assertEquals(4, totalChecks); // it should have checked 4 fields
+//
+//        WaitForAsyncUtils.asyncFx(topModalStage::close);
+//    }
+//
+//    @Test
+//    public void testNext30Rows() {
+//        clickOn(".right-arrow-button");
+//
+//        // Check it has 30 rows
+//        verifyThat("#tableView", hasNumRows(30));
+//
+//        // Check all 30 requests are correct
+//        TransplantRequest request;
+//        for (int i = 0; i < 30; i++) {
+//            request = requests.get(i + 30);
+//            verifyThat("#tableView", containsRowAtIndex(i, request.getClientName(), request.getRequestedOrgan(),
+//                    request.getClientRegion(), request.getRequestDateString()));
+//        }
+//
+//        // Check pagination description
+//        verifyThat("#displayingXToYOfZText", hasText("Displaying 31-60 of 121"));
+//    }
+//
+//    @Test
+//    public void testPaginationLastPage() {
+//        // Click on the next page button 4 times
+//        for (int i = 0; i < 4; i++) {
+//            clickOn(".right-arrow-button");
+//        }
+//
+//        // Check it only has 1 row
+//        verifyThat("#tableView", hasNumRows(1));
+//
+//        // Check pagination description
+//        verifyThat("#displayingXToYOfZText", hasText("Displaying 121 of 121"));
+//    }
+//
+//    @Test
+//    public void testReorderByName() {
+//        clickOn("#clientCol");
+//
+//        // Sort requests by client name
+//        requests.sort(new Comparator<TransplantRequest>() {
+//            @Override
+//            public int compare(TransplantRequest o1, TransplantRequest o2) {
+//                return o1.getClientName().toLowerCase().compareTo(o2.getClientName().toLowerCase());
+//            }
+//        });
+//
+//        // Check all 30 requests are correct
+//        for (int i = 0; i < 30; i++) {
+//            TransplantRequest request = requests.get(i);
+//            verifyThat("#tableView", containsRowAtIndex(i, request.getClientName(), request.getRequestedOrgan(),
+//                    request.getClientRegion(), request.getRequestDateString()));
+//        }
+//    }
+//
+//    @Test
+//    public void testReorderByOrgan() {
+//        clickOn("#organCol");
+//
+//        // Sort requests by organ
+//        requests.sort(new Comparator<TransplantRequest>() {
+//            @Override
+//            public int compare(TransplantRequest o1, TransplantRequest o2) {
+//                return o1.getRequestedOrgan().toString().compareTo(o2.getRequestedOrgan().toString());
+//            }
+//        });
+//
+//        // Check all 30 requests are correct
+//        for (int i = 0; i < 30; i++) {
+//            TransplantRequest request = requests.get(i);
+//            System.out.println(request);
+//            verifyThat("#tableView", containsRowAtIndex(i, request.getClientName(), request.getRequestedOrgan(),
+//                    request.getClientRegion(), request.getRequestDateString()));
+//        }
+//    }
+//
+//    @Test
+//    public void testReorderByRegion() {
+//        clickOn("#regionCol");
+//
+//        // Sort requests by client name
+//        requests.sort(new Comparator<TransplantRequest>() {
+//            @Override
+//            public int compare(TransplantRequest o1, TransplantRequest o2) {
+//                if (o1.getClientRegion() == null) {
+//                    if (o2.getClientRegion() == null) {
+//                        return 0;
+//                    } else {
+//                        return -1;
+//                    }
+//                } else if (o2.getClientRegion() == null) {
+//                    return 1;
+//                }
+//                return o1.getClientRegion().toString().compareTo(o2.getClientRegion().toString());
+//            }
+//        });
+//
+//        // Check all 30 requests are correct
+//        for (int i = 0; i < 30; i++) {
+//            TransplantRequest request = requests.get(i);
+//            System.out.println(request.getClientRegion());
+//            verifyThat("#tableView", containsRowAtIndex(i, request.getClientName(), request.getRequestedOrgan(),
+//                    request.getClientRegion(), request.getRequestDateString()));
+//        }
+//    }
+//
+//    @Test
+//    public void testReorderByDate() {
+//        clickOn("#dateCol");
+//
+//        // Sort requests by client name
+//        requests.sort(new Comparator<TransplantRequest>() {
+//            @Override
+//            public int compare(TransplantRequest o1, TransplantRequest o2) {
+//                return o1.getRequestDate().compareTo(o2.getRequestDate());
+//            }
+//        });
+//
+//        // Check all 30 requests are correct
+//        for (int i = 0; i < 30; i++) {
+//            TransplantRequest request = requests.get(i);
+//            verifyThat("#tableView", containsRowAtIndex(i, request.getClientName(), request.getRequestedOrgan(),
+//                    request.getClientRegion(), request.getRequestDateString()));
+//        }
+//    }
+
+    // ------- Filtering Tests --------
 
     @Test
-    public void testComponentsAreVisible() {
-        verifyThat("#tableView", isVisible());
-        verifyThat("#displayingXToYOfZText", isVisible());
-        verifyThat("#sidebarPane", isVisible());
-        verifyThat("#pagination", isVisible());
-    }
-
-    @Test
-    public void testPaginationDescription() {
-        verifyThat("#displayingXToYOfZText", hasText("Displaying 1-30 of 121"));
-    }
-
-    /**
-     * This test enforces multiple requests per person, pagination, and all elements (name, organ, region, date) being
-     * recorded in the table.
-     */
-    @Test
-    public void testFirst30Rows() {
-        TransplantRequest request;
-        for (int i = 0; i < 30; i++) {
-            request = requests.get(i);
-            verifyThat("#tableView", containsRowAtIndex(i, request.getClientName(), request.getRequestedOrgan(),
-                    request.getClientRegion(), request.getRequestDateString()));
-        }
-        verifyThat("#tableView", hasNumRows(30));
-    }
-
-    @Test
-    public void testDoubleClickToOpenClient() {
-        // Select Client 1 and double click on them
-        clickOn((Node) lookup(NodeQueryUtils.hasText(request1a.getClientName())).query());
-        press(MouseButton.PRIMARY);
-        release(MouseButton.PRIMARY);
-
-        // Get the top pane
-        final Stage topModalStage = getTopModalStage();
-        assertNotNull(topModalStage);
-        final AnchorPane pane = (AnchorPane) topModalStage.getScene().getRoot();
-
-        // Check each subnode is there
-        VBox mainVbox = (VBox) pane.getChildren().get(0); // Main pane
-        assertNotNull(mainVbox);
-
-        StackPane stackPane = (StackPane) mainVbox.getChildren().get(0); // page holder
-        assertNotNull(stackPane);
-        assertEquals("pageHolder", stackPane.getId());
-
-        VBox clientVbox = (VBox) stackPane.getChildren().get(0); // Main VBox in client viewer
-        assertNotNull(clientVbox);
-
-        SplitPane splitPane = (SplitPane) clientVbox.getChildren().get(0); // Main SplitPane
-        assertNotNull(splitPane);
-
-        VBox vbox2 = (VBox) splitPane.getItems().get(1); // Vbox containing a borderpane
-        assertNotNull(vbox2);
-
-        BorderPane borderPane = (BorderPane) vbox2.getChildren().get(0); //Borderpane containing header and data
-        assertNotNull(borderPane);
-
-        VBox vbox3 = (VBox) borderPane.getCenter(); // Vbox containing two gridpanes
-        assertNotNull(vbox3);
-
-        GridPane gridPaneId = (GridPane) vbox3.getChildren().get(0); //Gridpane containing ID fields
-        assertNotNull(gridPaneId);
-        assertEquals("idPane", gridPaneId.getId());
-
-        GridPane gridPaneFields = (GridPane) vbox3.getChildren().get(1); //Gridpane containing all fields
-        assertNotNull(gridPaneFields);
-        assertEquals("inputsPane", gridPaneFields.getId());
-
-        // Check all nodes we need to look in are visible
-        verifyThat("#id", isVisible());
-        verifyThat("#fname", isVisible());
-        verifyThat("#mname", isVisible());
-        verifyThat("#lname", isVisible());
-
-        // Create a list of all nodes to search in to find user's details
-        ArrayList<Node> nodes = new ArrayList<>();
-        nodes.addAll(gridPaneFields.getChildren());
-        nodes.addAll(gridPaneId.getChildren());
-
-        // Iterate through nodes in both grid panes, check if they are one that we want, and if so, check they are
-        // as expected.
-        String expectedString = "";
-        boolean gotAField;
-        int totalChecks = 0;
-        for (Node node : nodes) {
-            if (node.getId() != null) {
-                switch (node.getId()) {
-                    case "id":
-                        expectedString = Integer.toString(client1.getUid());
-                        gotAField = true;
-                        break;
-                    case "fname":
-                        expectedString = client1.getFirstName();
-                        gotAField = true;
-                        break;
-                    case "mname":
-                        expectedString = client1.getMiddleName();
-                        gotAField = true;
-                        break;
-                    case "lname":
-                        expectedString = client1.getLastName();
-                        gotAField = true;
-                        break;
-                    default:
-                        gotAField = false;
-                }
-                if (gotAField) {
-                    TextField textField = (TextField) node;
-                    assertEquals(expectedString, textField.getText());
-                    totalChecks++;
-                }
-            }
-        }
-        assertEquals(4, totalChecks); // it should have checked 4 fields
-
-        WaitForAsyncUtils.asyncFx(topModalStage::close);
-    }
-
-    @Test
-    public void testNext30Rows() {
-        clickOn(".right-arrow-button");
-
-        // Check it has 30 rows
-        verifyThat("#tableView", hasNumRows(30));
-
-        // Check all 30 requests are correct
-        TransplantRequest request;
-        for (int i = 0; i < 30; i++) {
-            request = requests.get(i + 30);
-            verifyThat("#tableView", containsRowAtIndex(i, request.getClientName(), request.getRequestedOrgan(),
-                    request.getClientRegion(), request.getRequestDateString()));
-        }
-
-        // Check pagination description
-        verifyThat("#displayingXToYOfZText", hasText("Displaying 31-60 of 121"));
-    }
-
-    @Test
-    public void testPaginationLastPage() {
-        // Click on the next page button 4 times
-        for (int i = 0; i < 4; i++) {
-            clickOn(".right-arrow-button");
-        }
-
-        // Check it only has 1 row
-        verifyThat("#tableView", hasNumRows(1));
-
-        // Check pagination description
-        verifyThat("#displayingXToYOfZText", hasText("Displaying 121 of 121"));
-    }
-
-    @Test
-    public void testReorderByName() {
-        clickOn("#clientCol");
-
-        // Sort requests by client name
-        requests.sort(new Comparator<TransplantRequest>() {
-            @Override
-            public int compare(TransplantRequest o1, TransplantRequest o2) {
-                return o1.getClientName().toLowerCase().compareTo(o2.getClientName().toLowerCase());
-            }
-        });
-
-        // Check all 30 requests are correct
-        for (int i = 0; i < 30; i++) {
-            TransplantRequest request = requests.get(i);
-            verifyThat("#tableView", containsRowAtIndex(i, request.getClientName(), request.getRequestedOrgan(),
-                    request.getClientRegion(), request.getRequestDateString()));
-        }
-    }
-
-    @Test
-    public void testReorderByOrgan() {
-        clickOn("#organCol");
-
-        // Sort requests by organ
-        requests.sort(new Comparator<TransplantRequest>() {
-            @Override
-            public int compare(TransplantRequest o1, TransplantRequest o2) {
-                return o1.getRequestedOrgan().toString().compareTo(o2.getRequestedOrgan().toString());
-            }
-        });
-
-        // Check all 30 requests are correct
-        for (int i = 0; i < 30; i++) {
-            TransplantRequest request = requests.get(i);
-            System.out.println(request);
-            verifyThat("#tableView", containsRowAtIndex(i, request.getClientName(), request.getRequestedOrgan(),
-                    request.getClientRegion(), request.getRequestDateString()));
-        }
-    }
-
-    @Test
-    public void testReorderByRegion() {
-        clickOn("#regionCol");
-
-        // Sort requests by client name
-        requests.sort(new Comparator<TransplantRequest>() {
-            @Override
-            public int compare(TransplantRequest o1, TransplantRequest o2) {
-                if (o1.getClientRegion() == null) {
-                    if (o2.getClientRegion() == null) {
-                        return 0;
-                    } else {
-                        return -1;
-                    }
-                } else if (o2.getClientRegion() == null) {
-                    return 1;
-                }
-                return o1.getClientRegion().toString().compareTo(o2.getClientRegion().toString());
-            }
-        });
-
-        // Check all 30 requests are correct
-        for (int i = 0; i < 30; i++) {
-            TransplantRequest request = requests.get(i);
-            System.out.println(request.getClientRegion());
-            verifyThat("#tableView", containsRowAtIndex(i, request.getClientName(), request.getRequestedOrgan(),
-                    request.getClientRegion(), request.getRequestDateString()));
-        }
-    }
-
-    @Test
-    public void testReorderByDate() {
-        clickOn("#dateCol");
-
-        // Sort requests by client name
-        requests.sort(new Comparator<TransplantRequest>() {
-            @Override
-            public int compare(TransplantRequest o1, TransplantRequest o2) {
-                return o1.getRequestDate().compareTo(o2.getRequestDate());
-            }
-        });
-
-        // Check all 30 requests are correct
-        for (int i = 0; i < 30; i++) {
-            TransplantRequest request = requests.get(i);
-            verifyThat("#tableView", containsRowAtIndex(i, request.getClientName(), request.getRequestedOrgan(),
-                    request.getClientRegion(), request.getRequestDateString()));
-        }
+    public void noFilter() {
+        clickOn("#filterButton");
+        verifyThat("#tableView", hasNumRows(121));
     }
 
     /**
      * Test for one organ to be filtered
      */
-    // TODO: Make sure that the checkbox is clicked only!
-    // TODO Runs into an error by clicking on the table instead. Applies with the rest of the tests below.
     @Test
     public void testFilterOneOrgan() {
-        Organ liver = Organ.LIVER;
         clickOn("#organChoice");
-        clickOn((Node) lookup(liver.toString()).query());
-        moveBy(-60, 0);
-        clickOn(MouseButton.PRIMARY);
+        clickOn((Node) lookup(".check-box").nth(3).query());
         clickOn("#filterButton");
+        verifyThat("#tableView", containsRowAtIndex(0, request2b.getClientName(), request2b.getRequestedOrgan(),
+                request2b.getClientRegion(), request2b.getRequestDateString()));
+        verifyThat("#tableView", hasNumRows(1));
     }
 
     /**
@@ -451,17 +457,14 @@ public class TransplantsControllerTest extends ControllerTest {
      */
     @Test
     public void testFilterMultipleOrgans() {
-        Organ liver = Organ.LIVER;
-        Organ pancreas = Organ.PANCREAS;
         clickOn("#organChoice");
-        clickOn((Node) lookup(liver.toString()).query());
-        moveBy(-60, 0);
-        clickOn(MouseButton.PRIMARY);
-        clickOn((Node) lookup(pancreas.toString()).query());
-        moveBy(-60, 0);
-        clickOn(MouseButton.PRIMARY);
+        clickOn((Node) lookup(".check-box").nth(3).query());
+        clickOn((Node) lookup(".check-box").nth(4).query());
+        clickOn((Node) lookup(".check-box").nth(5).query());
         clickOn("#filterButton");
-        sleep(1500);
+        verifyThat("#tableView", containsRowAtIndex(1, request2b.getClientName(), request2b.getRequestedOrgan(),
+                request2b.getClientRegion(), request2b.getRequestDateString()));
+        verifyThat("#tableView", hasNumRows(2));
     }
 
     /**
@@ -469,12 +472,12 @@ public class TransplantsControllerTest extends ControllerTest {
      */
     @Test
     public void testFilterOneRegion() {
-        Region canterbury = Region.CANTERBURY;
         clickOn("#regionChoice");
-        clickOn((Node) lookup(canterbury.toString()).query());
-        moveBy(-60, 0);
-        clickOn(MouseButton.PRIMARY);
-        clickOn("filterButton");
+        clickOn((Node) lookup(".check-box").nth(1).query());
+        clickOn("#filterButton");
+        verifyThat("#tableView", containsRowAtIndex(1, request2b.getClientName(), request2b.getRequestedOrgan(),
+                request2b.getClientRegion(), request2b.getRequestDateString()));
+        verifyThat("#tableView", hasNumRows(2));
     }
 
     /**
@@ -482,17 +485,15 @@ public class TransplantsControllerTest extends ControllerTest {
      */
     @Test
     public void testFilterMultipleRegions() {
-        Region canterbury = Region.CANTERBURY;
-        Region nelson = Region.NELSON;
         clickOn("#regionChoice");
-        clickOn((Node) lookup(canterbury.toString()).query());
-        moveBy(-60, 0);
-        clickOn(MouseButton.PRIMARY);
-        clickOn("#regionChoice");
-        clickOn((Node) lookup(nelson.toString()).query());
-        moveBy(-60, 0);
-        clickOn(MouseButton.PRIMARY);
+        clickOn((Node) lookup(".check-box").nth(1).query());
+        clickOn((Node) lookup(".check-box").nth(2).query());
+        clickOn((Node) lookup(".check-box").nth(3).query());
         clickOn("#filterButton");
+        verifyThat("#tableView", containsRowAtIndex(1, request2b.getClientName(), request2b.getRequestedOrgan(),
+                request2b.getClientRegion(), request2b.getRequestDateString()));
+        verifyThat("#tableView", hasNumRows(2));
+        sleep(200);
     }
 
     /**
@@ -500,37 +501,71 @@ public class TransplantsControllerTest extends ControllerTest {
      */
     @Test
     public void testFilterOneRegionAndOrgan() {
-        Region canterbury = Region.CANTERBURY;
-        Organ liver = Organ.LIVER;
-        clickOn("#organChoice");
-        clickOn((Node) lookup(liver.toString()).query());
-        moveBy(-60, 0);
-        clickOn(MouseButton.PRIMARY);
         clickOn("#regionChoice");
-        clickOn((Node) lookup(canterbury.toString()).query());
-        moveBy(-60, 0);
-        clickOn(MouseButton.PRIMARY);
-        clickOn("filterButton");
+        clickOn((Node) lookup(".check-box").nth(1).query());
+        clickOn("#organChoice");
+        clickOn((Node) lookup(".check-box").nth(3).query());
+        clickOn("#filterButton");
+        verifyThat("#tableView", containsRowAtIndex(0, request2b.getClientName(), request2b.getRequestedOrgan(),
+                request2b.getClientRegion(), request2b.getRequestDateString()));
+        verifyThat("#tableView", hasNumRows(1));
     }
 
     /**
      * Test for one region and multiple organs to be filtered
      */
     @Test
-    public void testFilterOneRegionAndMultipleOrgans() {}
+    public void testFilterOneRegionAndMultipleOrgans() {
+        clickOn("#regionChoice");
+        clickOn((Node) lookup(".check-box").nth(1).query());
+        clickOn("#organChoice");
+        clickOn((Node) lookup(".check-box").nth(3).query());
+        clickOn((Node) lookup(".check-box").nth(4).query());
+        clickOn((Node) lookup(".check-box").nth(5).query());
+        clickOn("#filterButton");
+        verifyThat("#tableView", containsRowAtIndex(0, request2b.getClientName(), request2b.getRequestedOrgan(),
+                request2b.getClientRegion(), request2b.getRequestDateString()));
+        verifyThat("#tableView", hasNumRows(1));
+    }
 
     /**
      * Test for multiple regions and one organ to be filtered
      */
     @Test
-    public void testFilterMultipleRegionsAndOneOrgan() {}
+    public void testFilterMultipleRegionsAndOneOrgan() {
+        clickOn("#regionChoice");
+        clickOn((Node) lookup(".check-box").nth(1).query());
+        clickOn((Node) lookup(".check-box").nth(2).query());
+        clickOn((Node) lookup(".check-box").nth(3).query());
+        clickOn("#organChoice");
+        clickOn((Node) lookup(".check-box").nth(3).query());
+        clickOn("#filterButton");
+        verifyThat("#tableView", containsRowAtIndex(0, request2b.getClientName(), request2b.getRequestedOrgan(),
+                request2b.getClientRegion(), request2b.getRequestDateString()));
+        verifyThat("#tableView", hasNumRows(1));
+    }
 
     /**
      * Test for multiple regions and organs to be filtered
      */
     @Test
-    public void testFilterMultipleRegionsAndOrgans() {}
+    public void testFilterMultipleRegionsAndOrgans() {
+        clickOn("#regionChoice");
+        clickOn((Node) lookup(".check-box").nth(1).query());
+        clickOn((Node) lookup(".check-box").nth(2).query());
+        clickOn((Node) lookup(".check-box").nth(3).query());
+        clickOn("#organChoice");
+        clickOn((Node) lookup(".check-box").nth(3).query());
+        clickOn((Node) lookup(".check-box").nth(4).query());
+        clickOn((Node) lookup(".check-box").nth(5).query());
+        clickOn("#filterButton");
+        verifyThat("#tableView", containsRowAtIndex(0, request2b.getClientName(), request2b.getRequestedOrgan(),
+                request2b.getClientRegion(), request2b.getRequestDateString()));
+        verifyThat("#tableView", hasNumRows(1));
+    }
 
+
+    //TODO @Dylan could you do these 3 - I'm not sure what they're meant to be testing for.
     /**
      * Test that existing features work after one organ has been filtered
      */
