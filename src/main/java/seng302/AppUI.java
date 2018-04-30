@@ -38,13 +38,13 @@ public class AppUI extends Application {
      */
     @Override
     public void start(Stage stage) throws IOException {
-        stage.setTitle("Organ Person Management System");
+        stage.setTitle("Organ Donor Management System");
         stage.setScene(createScene(loadMainPane(stage)));
         stage.show();
 
         State.init();
 
-        // Loads the initial person data from the save file, or creates it if it does not yet exist. //
+        // Loads the initial donor data from the save file, or creates it if it does not yet exist. //
         File saveFile = new File("savefile.json");
         JSONConverter.createEmptyJSONFileIfNotExists(saveFile);
         JSONConverter.loadFromFile(saveFile);
@@ -63,6 +63,8 @@ public class AppUI extends Application {
         MainController mainController = loader.getController();
         mainController.setStage(stage);
         mainController.setWindowContext(WindowContext.defaultContext());
+
+        State.addMainController(mainController);
 
         PageNavigator.loadPage(Page.LANDING, mainController);
 

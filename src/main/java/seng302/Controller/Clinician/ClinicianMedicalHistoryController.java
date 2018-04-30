@@ -22,7 +22,7 @@ import seng302.Actions.Donor.DeleteIllnessRecord;
 import seng302.Actions.Donor.ModifyIllnessRecordAction;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
-import seng302.Person;
+import seng302.Donor;
 import seng302.IllnessRecord;
 import seng302.State.Session;
 import seng302.State.Session.UserType;
@@ -32,7 +32,7 @@ public class ClinicianMedicalHistoryController extends SubController{
 
   private Session session;
   private ActionInvoker invoker;
-  private Person donor;
+  private Donor donor;
 
   @FXML
   private TextField IllnessField;
@@ -104,16 +104,16 @@ public class ClinicianMedicalHistoryController extends SubController{
     super.setup(mainController);
     mainController.loadSidebar(sidebarPane);
 
-    if (session.getLoggedInUserType() == UserType.PERSON) {
-      donor = session.getLoggedInPerson();
+    if (session.getLoggedInUserType() == UserType.DONOR) {
+      donor = session.getLoggedInDonor();
 
       newIllnessPane.setVisible(false);
       newIllnessPane.setManaged(false);
       moveToHistoryButton.setDisable(true);
       moveToCurrentButton.setDisable(true);
       deleteButton.setDisable(true);
-    } else if (windowContext.isClinViewPersonWindow()) {
-      donor = windowContext.getViewPerson();
+    } else if (windowContext.isClinViewDonorWindow()) {
+      donor = windowContext.getViewDonor();
     }
 
     refreshIllnessLists();

@@ -65,6 +65,7 @@ public class HistoryController extends SubController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
+        mainController.setTitle("Action history");
         getSidebar();
     }
 }

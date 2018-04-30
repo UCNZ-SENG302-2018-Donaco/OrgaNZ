@@ -12,7 +12,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.Person.ViewMedicationsController">
+<VBox prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.Donor.ViewMedicationsController">
   <children>
     <SplitPane dividerPositions="0.5" VBox.vgrow="ALWAYS">
       <items>
@@ -96,11 +96,21 @@
                   </VBox>
                </center>
                <bottom>
-                  <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteMedication" text="Delete" BorderPane.alignment="CENTER">
-                     <BorderPane.margin>
-                        <Insets bottom="20.0" left="10.0" right="10.0" />
-                     </BorderPane.margin>
-                  </Button>
+                  <HBox alignment="CENTER" prefHeight="50.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <Button fx:id="viewActiveIngredientsButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#viewActiveIngredients" text="View active ingredients">
+                           <HBox.margin>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </HBox.margin>
+                        </Button>
+                        <Button fx:id="viewInteractionsButton" mnemonicParsing="false" onAction="#viewInteractions" text="View interactions" />
+                        <Button fx:id="deleteButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#deleteMedication" text="Delete">
+                           <HBox.margin>
+                              <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                           </HBox.margin>
+                        </Button>
+                     </children>
+                  </HBox>
                </bottom>
       </BorderPane>
       </items>

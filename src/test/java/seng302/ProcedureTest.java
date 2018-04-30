@@ -14,20 +14,20 @@ public class ProcedureTest {
 
     @Test
     public void testAddRemove() {
-        Person person = new Person();
+        Donor donor = new Donor(1);
 
         LocalDate date = LocalDate.of(2000, 1, 1);
         ProcedureRecord procedure1 = new ProcedureRecord(SUMMARY, DESCRIPTION, date);
         ProcedureRecord procedure2 = new ProcedureRecord(SUMMARY, DESCRIPTION, date, Organ.LIVER);
 
-        person.addProcedure(procedure1);
-        person.addProcedure(procedure2);
+        donor.addProcedure(procedure1);
+        donor.addProcedure(procedure2);
 
-        assertEquals(2, person.getPastProcedures().count() + person.getPendingProcedures().count());
+        assertEquals(2, donor.getPastProcedures().count() + donor.getPendingProcedures().count());
 
-        person.removeProcedure(procedure1);
-        person.removeProcedure(procedure2);
+        donor.removeProcedure(procedure1);
+        donor.removeProcedure(procedure2);
 
-        assertEquals(0, person.getPastProcedures().count() + person.getPendingProcedures().count());
+        assertEquals(0, donor.getPastProcedures().count() + donor.getPendingProcedures().count());
     }
 }

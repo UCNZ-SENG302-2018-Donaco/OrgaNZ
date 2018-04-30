@@ -20,7 +20,7 @@ import seng302.Clinician;
 import seng302.Controller.ControllerTest;
 import seng302.IllnessRecord;
 
-import seng302.Person;
+import seng302.Donor;
 import seng302.State.Session.UserType;
 import seng302.State.State;
 import seng302.Utilities.Enums.Region;
@@ -68,7 +68,7 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
     };
 
     private Clinician testClinician = new Clinician("A", "B", "C", "D", Region.UNSPECIFIED, 0, "E");
-    private Person testDonor = new Person();
+    private Donor testDonor = new Donor(1);
 
     @Override
     protected Page getPage() {
@@ -78,10 +78,10 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
     @Override
     protected void initState() {
         State.init();
-        State.login(UserType.CLINICIAN, testClinician);
+        State.login(testClinician);
         mainController.setWindowContext(new WindowContext.WindowContextBuilder()
-                .setAsClinViewPersonWindow()
-                .viewPerson(testDonor)
+                .setAsClinViewDonorWindow()
+                .viewDonor(testDonor)
                 .build());
         resetTestDonorIllnessHistory();
     }

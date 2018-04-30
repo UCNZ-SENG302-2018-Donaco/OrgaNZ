@@ -6,12 +6,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import seng302.Actions.ActionInvoker;
-import seng302.Actions.Person.ModifyPersonOrgansAction;
-import seng302.Person;
+import seng302.Actions.Donor.ModifyDonorOrgansAction;
+import seng302.Donor;
 import seng302.HistoryItem;
-import seng302.State.PersonManager;
+import seng302.State.DonorManager;
 import seng302.State.State;
 import seng302.Utilities.Enums.Organ;
+import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
 import seng302.Utilities.JSONConverter;
 
 import picocli.CommandLine.Command;
@@ -27,15 +28,15 @@ import picocli.CommandLine.Option;
 @Command(name = "setorganstatus", description = "Set the organ donation choices of an existing user.", sortOptions = false)
 public class SetOrganStatus implements Runnable {
 
-    private PersonManager manager;
+    private DonorManager manager;
     private ActionInvoker invoker;
 
     public SetOrganStatus() {
-        manager = State.getPersonManager();
+        manager = State.getDonorManager();
         invoker = State.getInvoker();
     }
 
-    public SetOrganStatus(PersonManager manager, ActionInvoker invoker) {
+    public SetOrganStatus(DonorManager manager, ActionInvoker invoker) {
         this.manager = manager;
         this.invoker = invoker;
     }
@@ -82,13 +83,13 @@ public class SetOrganStatus implements Runnable {
 
     @Override
     public void run() {
-        Person person = manager.getPersonByID(uid);
-        if (person == null) {
-            System.out.println("No person exists with that user ID");
+        Donor donor = manager.getDonorByID(uid);
+        if (donor == null) {
+            System.out.println("No donor exists with that user ID");
             return;
         }
 
-        ModifyPersonOrgansAction action = new ModifyPersonOrgansAction(person);
+        ModifyDonorOrgansAction action = new ModifyDonorOrgansAction(donor);
 
         Map<Organ, Boolean> states = new HashMap<>();
         states.put(LIVER, liver);
@@ -107,7 +108,7 @@ public class SetOrganStatus implements Runnable {
         for (Map.Entry<Organ, Boolean> entry : states.entrySet()) {
             Organ organ = entry.getKey();
             Boolean newState = entry.getValue();
-            Boolean currState = person.getOrganStatus().get(organ);
+            Boolean currState = donor.getOrganStatus().get(organ);
             if (newState == null) {
                 continue;
             } else if (newState && currState) {
@@ -115,7 +116,11 @@ public class SetOrganStatus implements Runnable {
             } else if (!newState && !currState) {
                 System.out.println(organ.toString() + " is already not registered for donation");
             } else {
-                action.addChange(organ, newState);
+                try {
+                    action.addChange(organ, newState);
+                } catch (OrganAlreadyRegisteredException e) {
+                    e.printStackTrace();
+                }
             }
         }
 

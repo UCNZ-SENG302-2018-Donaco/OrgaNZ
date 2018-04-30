@@ -1,7 +1,7 @@
 package seng302.Commands;
 
-import seng302.Commands.Modify.CreatePerson;
-import seng302.Commands.Modify.DeletePerson;
+import seng302.Commands.Modify.CreateDonor;
+import seng302.Commands.Modify.DeleteDonor;
 import seng302.Commands.Modify.Load;
 import seng302.Commands.Modify.Redo;
 import seng302.Commands.Modify.Save;
@@ -11,8 +11,8 @@ import seng302.Commands.Modify.Undo;
 import seng302.Commands.View.GetChanges;
 import seng302.Commands.View.PrintAllInfo;
 import seng302.Commands.View.PrintAllOrgan;
-import seng302.Commands.View.PrintPersonInfo;
-import seng302.Commands.View.PrintPersonOrgan;
+import seng302.Commands.View.PrintDonorInfo;
+import seng302.Commands.View.PrintDonorOrgan;
 
 import picocli.CommandLine.Command;
 
@@ -23,16 +23,16 @@ import picocli.CommandLine.Command;
  * date 05/03/2018
  */
 
-@Command(name = "PersonCLI", description = "PersonCLI is a command based management tool for the team-21 person registration system.",
+@Command(name = "DonorCLI", description = "DonorCLI is a command based management tool for the team-21 donor registration system.",
         subcommands = {
-                CreatePerson.class,
+                CreateDonor.class,
                 SetAttribute.class,
                 SetOrganStatus.class,
-                DeletePerson.class,
+                DeleteDonor.class,
                 PrintAllInfo.class,
                 PrintAllOrgan.class,
-                PrintPersonInfo.class,
-                PrintPersonOrgan.class,
+                PrintDonorInfo.class,
+                PrintDonorOrgan.class,
                 GetChanges.class,
                 Save.class,
                 Load.class,

@@ -1,6 +1,7 @@
 package seng302.Actions.Clinician;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import seng302.Actions.Action;
 import seng302.Actions.ModifyObjectByFieldAction;
@@ -9,7 +10,7 @@ import seng302.Clinician;
 /**
  * A reversible clinician modification Action
  */
-public class ModifyClinicianAction implements Action {
+public class ModifyClinicianAction extends Action {
 
     private ArrayList<ModifyObjectByFieldAction> actions = new ArrayList<>();
     private Clinician clinician;
@@ -37,16 +38,38 @@ public class ModifyClinicianAction implements Action {
     }
 
     @Override
-    public void execute() {
+    protected void execute() {
         for (ModifyObjectByFieldAction action : actions) {
             action.execute();
         }
     }
 
     @Override
-    public void unExecute() {
+    protected void unExecute() {
         for (ModifyObjectByFieldAction action : actions) {
             action.unExecute();
         }
+    }
+
+    @Override
+    public String getExecuteText() {
+        String changesText = actions.stream()
+                .map(ModifyObjectByFieldAction::getExecuteText)
+                .collect(Collectors.joining("\n"));
+
+        return String.format("Updated details for clinician %d: %s %s. \n"
+                        + "These changes were made: \n\n%s",
+                clinician.getStaffId(), clinician.getFirstName(), clinician.getLastName(), changesText);
+    }
+
+    @Override
+    public String getUnexecuteText() {
+        String changesText = actions.stream()
+                .map(ModifyObjectByFieldAction::getExecuteText)
+                .collect(Collectors.joining("\n"));
+
+        return String.format("Reversed update for clinician %d: %s %s. \n"
+                        + "These changes were reversed: \n\n%s",
+                clinician.getStaffId(), clinician.getFirstName(), clinician.getLastName(), changesText);
     }
 }

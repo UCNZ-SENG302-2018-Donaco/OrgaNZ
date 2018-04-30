@@ -1,12 +1,17 @@
 package seng302.Utilities.Web;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
+import java.io.IOException;
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 
-import seng302.Person;
+import seng302.Donor;
 import seng302.Utilities.Enums.Gender;
+import seng302.Utilities.Exceptions.BadDrugNameException;
+import seng302.Utilities.Exceptions.BadGatewayException;
 
 import com.google.api.client.testing.http.MockHttpTransport;
 import org.junit.Test;
@@ -62,11 +67,15 @@ public class DrugInteractionsHandlerTest {
         MockHttpTransport mockTransport = MockHelper.makeMockHttpTransport(EXPECTED_RESPONSE_BODY);
         DrugInteractionsHandler handler = new DrugInteractionsHandler(mockTransport);
 
-        Person person = new Person("first", null, "last", LocalDate.now().minusYears(32).minusDays(10), 0);
-        person.setGender(Gender.FEMALE);
+        Donor donor = new Donor("first", null, "last", LocalDate.now().minusYears(32).minusDays(10), 0);
+        donor.setGender(Gender.FEMALE);
 
-        List<String> interactions = handler.getInteractions(person, "leflunomide", "prednisone");
-
+        List<String> interactions = Collections.emptyList();
+        try {
+            interactions = handler.getInteractions(donor, "leflunomide", "prednisone");
+        } catch (IOException | BadDrugNameException | BadGatewayException e) {
+            fail(e.getMessage());
+        }
         assertEquals(7, interactions.size());
         assertEquals("pain (1 - 6 months, 2 - 5 years)", interactions.get(0));
         assertEquals("fatigue", interactions.get(1));

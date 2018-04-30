@@ -30,9 +30,9 @@
             <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
               onAction="#goToClinicianLogin" text="Login as Clinician" GridPane.columnIndex="1"/>
             <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
-              onAction="#goToCreatePerson" text="Create Person Profile" GridPane.rowIndex="1"/>
+              onAction="#goToCreateDonor" text="Create Donor Profile" GridPane.rowIndex="1"/>
             <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
-              onAction="#goToPersonLogin" text="Login as Person" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+              onAction="#goToDonorLogin" text="Login as Donor" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
           </children>
           <BorderPane.margin>
             <Insets/>

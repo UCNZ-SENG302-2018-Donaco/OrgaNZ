@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TextField?>
@@ -13,7 +14,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 <VBox prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
-  fx:controller="seng302.Controller.Person.RegisterOrganDonationController">
+  fx:controller="seng302.Controller.Donor.RegisterOrganDonationController">
   <children>
     <SplitPane dividerPositions="0.5" VBox.vgrow="ALWAYS">
       <items>
@@ -73,31 +74,48 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
                       </rowConstraints>
                       <children>
-                        <CheckBox fx:id="checkBoxLiver" mnemonicParsing="false" onAction="#modifyOrgans" text="Liver"/>
+                        <CheckBox fx:id="checkBoxLiver" mnemonicParsing="false" text="Liver"/>
                         <CheckBox fx:id="checkBoxKidney" layoutX="10.0" layoutY="127.0" mnemonicParsing="false"
-                          onAction="#modifyOrgans" text="Kidney" GridPane.rowIndex="1"/>
+                          text="Kidney" GridPane.rowIndex="1"/>
                         <CheckBox fx:id="checkBoxPancreas" layoutX="10.0" layoutY="43.0" mnemonicParsing="false"
-                          onAction="#modifyOrgans" text="Pancreas" GridPane.rowIndex="2"/>
+                          text="Pancreas" GridPane.rowIndex="2"/>
                         <CheckBox fx:id="checkBoxHeart" layoutX="10.0" layoutY="295.0" mnemonicParsing="false"
-                          onAction="#modifyOrgans" text="Heart" GridPane.rowIndex="3"/>
+                          text="Heart" GridPane.rowIndex="3"/>
                         <CheckBox fx:id="checkBoxLung" layoutX="10.0" layoutY="379.0" mnemonicParsing="false"
-                          onAction="#modifyOrgans" text="Lung" GridPane.rowIndex="4"/>
+                          text="Lung" GridPane.rowIndex="4"/>
                         <CheckBox fx:id="checkBoxIntestine" layoutX="10.0" layoutY="463.0" mnemonicParsing="false"
-                          onAction="#modifyOrgans" text="Intestine" GridPane.rowIndex="5"/>
+                          text="Intestine" GridPane.rowIndex="5"/>
                         <CheckBox fx:id="checkBoxCornea" layoutX="10.0" layoutY="547.0" mnemonicParsing="false"
-                          onAction="#modifyOrgans" text="Cornea" GridPane.columnIndex="1"/>
+                          text="Cornea" GridPane.columnIndex="1"/>
                         <CheckBox fx:id="checkBoxMiddleEar" layoutX="535.0" layoutY="127.0" mnemonicParsing="false"
-                          onAction="#modifyOrgans" text="Middle Ear" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                          text="Middle Ear" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
                         <CheckBox fx:id="checkBoxSkin" layoutX="535.0" layoutY="211.0" mnemonicParsing="false"
-                          onAction="#modifyOrgans" text="Skin" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                          text="Skin" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
                         <CheckBox fx:id="checkBoxBone" layoutX="535.0" layoutY="295.0" mnemonicParsing="false"
-                          onAction="#modifyOrgans" text="Bone" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
+                          text="Bone" GridPane.columnIndex="1" GridPane.rowIndex="3"/>
                         <CheckBox fx:id="checkBoxBoneMarrow" layoutX="535.0" layoutY="379.0" mnemonicParsing="false"
-                          onAction="#modifyOrgans" text="Bone Marrow" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
+                          text="Bone Marrow" GridPane.columnIndex="1" GridPane.rowIndex="4"/>
                         <CheckBox fx:id="checkBoxConnTissue" layoutX="535.0" layoutY="463.0" mnemonicParsing="false"
-                          onAction="#modifyOrgans" text="Connective Tissue" GridPane.columnIndex="1"
-                          GridPane.rowIndex="5"/>
+                          text="Connective Tissue" GridPane.columnIndex="1" GridPane.rowIndex="5"/>
                       </children>
+                    </GridPane>
+                    <GridPane hgap="50.0">
+                      <columnConstraints>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                      </columnConstraints>
+                      <rowConstraints>
+                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                      </rowConstraints>
+                      <children>
+                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#returnToViewDonor"
+                          prefHeight="30.0" text="Return to Donor Details"/>
+                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#modifyOrgans"
+                          prefHeight="30.0" text="Apply Changes" GridPane.columnIndex="1"/>
+                      </children>
+                      <VBox.margin>
+                        <Insets top="15.0"/>
+                      </VBox.margin>
                     </GridPane>
                   </children>
                 </VBox>

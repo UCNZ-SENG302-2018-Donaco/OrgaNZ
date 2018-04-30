@@ -7,10 +7,11 @@ import static org.mockito.Mockito.*;
 import java.time.LocalDate;
 
 import seng302.Actions.ActionInvoker;
-import seng302.Person;
-import seng302.State.PersonManager;
+import seng302.Donor;
+import seng302.State.DonorManager;
 import seng302.Utilities.Enums.BloodType;
 import seng302.Utilities.Enums.Gender;
+import seng302.Utilities.Enums.Region;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -18,19 +19,19 @@ import picocli.CommandLine;
 
 public class SetAttributeTest {
 
-    private PersonManager spyPersonManager;
+    private DonorManager spyDonorManager;
     private SetAttribute spySetAttribute;
 
     @Before
-    public void init() {
-        spyPersonManager = spy(new PersonManager());
+    public void initTest() {
+        spyDonorManager = spy(new DonorManager());
 
-        spySetAttribute = spy(new SetAttribute(spyPersonManager, new ActionInvoker()));
+        spySetAttribute = spy(new SetAttribute(spyDonorManager, new ActionInvoker()));
 
     }
 
     @Test
-    public void setattribute_invalid_format_id() {
+    public void setAttributeInvalidFormatIdTest() {
         String[] inputs = {"-u", "notint"};
 
         CommandLine.run(spySetAttribute, System.out, inputs);
@@ -39,7 +40,7 @@ public class SetAttributeTest {
     }
 
     @Test
-    public void setattribute_invalid_option() {
+    public void setAttributeInvalidOptionTest() {
         String[] inputs = {"-u", "1", "--notanoption"};
 
         CommandLine.run(spySetAttribute, System.out, inputs);
@@ -48,8 +49,8 @@ public class SetAttributeTest {
     }
 
     @Test
-    public void setattribute_non_existent_id() {
-        when(spyPersonManager.getPersonByID(anyInt())).thenReturn(null);
+    public void setattributeNonExistentIdTest() {
+        when(spyDonorManager.getDonorByID(anyInt())).thenReturn(null);
         String[] inputs = {"-u", "2"};
 
         CommandLine.run(spySetAttribute, System.out, inputs);
@@ -58,29 +59,29 @@ public class SetAttributeTest {
     }
 
     @Test
-    public void setattribute_valid_name() {
-        Person person = new Person("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
-        when(spyPersonManager.getPersonByID(anyInt())).thenReturn(person);
+    public void setAttributeValidNameTest() {
+        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        when(spyDonorManager.getDonorByID(anyInt())).thenReturn(donor);
         String[] inputs = {"-u", "1", "--firstname", "NewFirst"};
 
         CommandLine.run(spySetAttribute, System.out, inputs);
 
-        assertEquals("NewFirst", person.getFirstName());
+        assertEquals("NewFirst", donor.getFirstName());
     }
 
     @Test
-    public void setattribute_valid_blood_type() {
-        Person person = new Person("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
-        when(spyPersonManager.getPersonByID(anyInt())).thenReturn(person);
+    public void setAttributeValidBloodTypeTest() {
+        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        when(spyDonorManager.getDonorByID(anyInt())).thenReturn(donor);
         String[] inputs = {"-u", "1", "--bloodtype", "O+"};
 
         CommandLine.run(spySetAttribute, System.out, inputs);
 
-        assertEquals(BloodType.O_POS, person.getBloodType());
+        assertEquals(BloodType.O_POS, donor.getBloodType());
     }
 
     @Test
-    public void setattribute_invalid_blood_type() {
+    public void setAttributeInvalidBloodTypeTest() {
         String[] inputs = {"-u", "1", "--bloodtype", "O"};
 
         CommandLine.run(spySetAttribute, System.out, inputs);
@@ -89,17 +90,17 @@ public class SetAttributeTest {
     }
 
     @Test
-    public void setattribute_valid_gender() {
-        Person person = new Person("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
-        when(spyPersonManager.getPersonByID(anyInt())).thenReturn(person);
+    public void setAttributeValidGenderTest() {
+        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        when(spyDonorManager.getDonorByID(anyInt())).thenReturn(donor);
         String[] inputs = {"-u", "1", "--gender", "Male"};
         CommandLine.run(spySetAttribute, System.out, inputs);
 
-        assertEquals(Gender.MALE, person.getGender());
+        assertEquals(Gender.MALE, donor.getGender());
     }
 
     @Test
-    public void setattribute_invalid_gender() {
+    public void setAttributeInvalidGenderTest() {
         String[] inputs = {"-u", "1", "--gender", "Neg"};
 
         CommandLine.run(spySetAttribute, System.out, inputs);
@@ -108,20 +109,53 @@ public class SetAttributeTest {
     }
 
     @Test
-    public void setattribute_valid_date() {
-        Person person = new Person("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
-        when(spyPersonManager.getPersonByID(anyInt())).thenReturn(person);
+    public void setAttributeValidDateTest() {
+        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        when(spyDonorManager.getDonorByID(anyInt())).thenReturn(donor);
         String[] inputs = {"-u", "1", "--dateofdeath", "20/01/2038"};
 
         CommandLine.run(spySetAttribute, System.out, inputs);
 
-        assertEquals(LocalDate.of(2038, 1, 20), person.getDateOfDeath());
+        assertEquals(LocalDate.of(2038, 1, 20), donor.getDateOfDeath());
     }
 
 
     @Test
-    public void setattribute_invalid_date() {
+    public void setAttributeInvalidDateTest() {
         String[] inputs = {"-u", "1", "--dateofdeath", "20/13/2038"};
+
+        CommandLine.run(spySetAttribute, System.out, inputs);
+
+        verify(spySetAttribute, times(0)).run();
+    }
+
+    @Test
+    public void setAttributeValidRegionTest() {
+        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        when(spyDonorManager.getDonorByID(anyInt())).thenReturn(donor);
+
+        String[] inputs = {"-u", "1", "--region", "Canterbury"};
+
+        CommandLine.run(spySetAttribute, System.out, inputs);
+
+        assertEquals(Region.CANTERBURY, donor.getRegion());
+    }
+
+    @Test
+    public void setAttributeValidRegionWithSpaceTest() {
+        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        when(spyDonorManager.getDonorByID(anyInt())).thenReturn(donor);
+
+        String[] inputs = {"-u", "1", "--region", "West Coast"};
+
+        CommandLine.run(spySetAttribute, System.out, inputs);
+
+        assertEquals(Region.WEST_COAST, donor.getRegion());
+    }
+
+    @Test
+    public void setAttributeInvalidRegionTest() {
+        String[] inputs = {"-u", "1", "--region", "notvalid"};
 
         CommandLine.run(spySetAttribute, System.out, inputs);
 

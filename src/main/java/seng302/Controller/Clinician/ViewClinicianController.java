@@ -1,10 +1,10 @@
 package seng302.Controller.Clinician;
 
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
@@ -14,6 +14,7 @@ import javafx.scene.paint.Color;
 
 import seng302.Actions.ActionInvoker;
 import seng302.Actions.Clinician.ModifyClinicianAction;
+import seng302.Actions.ModifyObjectByFieldAction;
 import seng302.Clinician;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
@@ -23,6 +24,8 @@ import seng302.State.State;
 import seng302.Utilities.Enums.Region;
 import seng302.Utilities.JSONConverter;
 import seng302.Utilities.View.PageNavigator;
+
+import org.controlsfx.control.Notifications;
 
 /**
  * Presents an interface displaying all information of the currently logged in Clinician. Clinicians are able to edit
@@ -70,7 +73,13 @@ public class ViewClinicianController extends SubController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
+        mainController.setTitle("Clinician profile: " + currentClinician.getFullName());
         mainController.loadSidebar(sidebarPane);
+    }
+
+    @Override
+    public void refresh() {
+        loadClinicianData();
     }
 
     /**
@@ -93,7 +102,7 @@ public class ViewClinicianController extends SubController {
     }
 
     /**
-     * Saves the changes a user makes to the viewed person if all their inputs are valid. Otherwise the invalid fields
+     * Saves the changes a user makes to the viewed donor if all their inputs are valid. Otherwise the invalid fields
      * text turns red.
      */
     @FXML
@@ -148,34 +157,39 @@ public class ViewClinicianController extends SubController {
         }
     }
 
-    /**
-     * Records the changes updated as a ModifyPersonAction to trace the change in record.
-     */
-    private void updateChanges() {
+    private void addChangeIfDifferent(ModifyClinicianAction action, String field, Object oldValue, Object newValue) {
         try {
-            ModifyClinicianAction action = new ModifyClinicianAction(currentClinician);
-
-            action.addChange("setFirstName", currentClinician.getFirstName(), fname.getText());
-            action.addChange("setLastName", currentClinician.getLastName(), lname.getText());
-            action.addChange("setMiddleName", currentClinician.getMiddleName(), mname.getText());
-            action.addChange("setWorkAddress", currentClinician.getWorkAddress(), workAddress.getText());
-            action.addChange("setPassword", currentClinician.getPassword(), updatedPassword);
-            action.addChange("setRegion", currentClinician.getRegion(), region.getValue());
-
-            invoker.execute(action);
-
-            HistoryItem save = new HistoryItem("UPDATE CLINICIAN",
-                    "The Clinician's information was updated. New details are: " + currentClinician.getUpdateLog());
-            JSONConverter.updateHistory(save, "action_history.json");
-
-            PageNavigator.showAlert(Alert.AlertType.INFORMATION,
-                    "Success",
-                    String.format("Successfully updated %s.",
-                            currentClinician.getFirstName()));
-
+            if (!Objects.equals(oldValue, newValue)) {
+                action.addChange(field, oldValue, newValue);
+            }
         } catch (NoSuchFieldException | NoSuchMethodException exc) {
             exc.printStackTrace();
         }
     }
 
+    /**
+     * Records the changes updated as a ModifyDonorAction to trace the change in record.
+     */
+    private void updateChanges() {
+        ModifyClinicianAction action = new ModifyClinicianAction(currentClinician);
+
+        addChangeIfDifferent(action, "setFirstName", currentClinician.getFirstName(), fname.getText());
+        addChangeIfDifferent(action, "setLastName", currentClinician.getLastName(), lname.getText());
+        addChangeIfDifferent(action, "setMiddleName", currentClinician.getMiddleName(), mname.getText());
+        addChangeIfDifferent(action, "setWorkAddress", currentClinician.getWorkAddress(), workAddress.getText());
+        addChangeIfDifferent(action, "setPassword", currentClinician.getPassword(), updatedPassword);
+        addChangeIfDifferent(action, "setRegion", currentClinician.getRegion(), region.getValue());
+
+        String actionText = invoker.execute(action);
+        PageNavigator.refreshAllWindows();
+
+        HistoryItem save = new HistoryItem("UPDATE CLINICIAN",
+                "The Clinician's information was updated. New details are: " + currentClinician.getUpdateLog());
+        JSONConverter.updateHistory(save, "action_history.json");
+
+        Notifications.create()
+                .title("Updated Clinician")
+                .text(actionText)
+                .showInformation();
+    }
 }

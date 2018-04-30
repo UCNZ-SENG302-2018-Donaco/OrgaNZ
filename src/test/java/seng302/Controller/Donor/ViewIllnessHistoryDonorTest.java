@@ -11,7 +11,7 @@ import javafx.scene.Node;
 
 import seng302.Controller.ControllerTest;
 import seng302.IllnessRecord;
-import seng302.Person;
+import seng302.Donor;
 import seng302.State.Session.UserType;
 import seng302.State.State;
 import seng302.Utilities.View.Page;
@@ -23,7 +23,7 @@ import org.testfx.api.FxAssert;
 
 public class ViewIllnessHistoryDonorTest extends ControllerTest{
 
-    private Person testClient = new Person();
+    private Donor testDonor = new Donor(1);
 
     private final IllnessRecord[] testPastIllnessRecords = {
             new IllnessRecord(
@@ -55,24 +55,24 @@ public class ViewIllnessHistoryDonorTest extends ControllerTest{
     @Override
     protected void initState() {
         State.init();
-        State.login(UserType.PERSON,testClient);
+        State.login(testDonor);
         mainController.setWindowContext(WindowContext.defaultContext());
         resetTestClientIllnessHistory();
     }
 
     @Before
     public void resetTestClientIllnessHistory() {
-        for (IllnessRecord record : testClient.getPastIllnesses()) {
-            testClient.deleteIllnessRecord(record);
+        for (IllnessRecord record : testDonor.getPastIllnesses()) {
+            testDonor.deleteIllnessRecord(record);
         }
-        for (IllnessRecord record : testClient.getCurrentIllnesses()) {
-            testClient.deleteIllnessRecord(record);
+        for (IllnessRecord record : testDonor.getCurrentIllnesses()) {
+            testDonor.deleteIllnessRecord(record);
         }
         for (IllnessRecord record : testPastIllnessRecords) {
-            testClient.addIllnessRecord(record);
+            testDonor.addIllnessRecord(record);
         }
         for (IllnessRecord record : testCurrentIllnessRecords) {
-            testClient.addIllnessRecord(record);
+            testDonor.addIllnessRecord(record);
         }
     }
 

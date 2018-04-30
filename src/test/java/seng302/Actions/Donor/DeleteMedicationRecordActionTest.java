@@ -1,51 +1,78 @@
 package seng302.Actions.Donor;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 
 import java.time.LocalDate;
 
-import seng302.Actions.Action;
-import seng302.Actions.Person.DeleteMedicationRecordAction;
+import seng302.Actions.ActionInvoker;
+import seng302.Donor;
 import seng302.MedicationRecord;
-import seng302.Person;
 
 import org.junit.Before;
 import org.junit.Test;
 
 public class DeleteMedicationRecordActionTest {
 
-    private Person testDonor;
-    private MedicationRecord recordToDelete;
+    private ActionInvoker invoker;
+    private Donor baseDonor;
+    private MedicationRecord record;
 
     @Before
-    public void resetDonor() {
-        testDonor = new Person();
-        recordToDelete = new MedicationRecord(
-                "Med C",
-                LocalDate.of(2000, 1, 1),
-                LocalDate.of(2010, 5, 6));
-        testDonor.addMedicationRecord(recordToDelete);
+    public void init() {
+        invoker = new ActionInvoker();
+        baseDonor = new Donor("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        record = new MedicationRecord("Generic Name", LocalDate.of(2018, 4, 9), null);
+        baseDonor.addMedicationRecord(record);
     }
 
     @Test
-    public void executeTest() {
-        assertTrue(testDonor.getPastMedications().contains(recordToDelete));
+    public void DeleteSingleMedicationCurrentTest() {
+        DeleteMedicationRecordAction action = new DeleteMedicationRecordAction(baseDonor, record);
 
-        Action action = new DeleteMedicationRecordAction(testDonor, recordToDelete);
-        action.execute();
-        assertFalse(testDonor.getPastMedications().contains(recordToDelete));
+        assertEquals(1, baseDonor.getCurrentMedications().size());
+
+        invoker.execute(action);
+
+        assertEquals(0, baseDonor.getCurrentMedications().size());
     }
 
     @Test
-    public void unExecuteTest() {
-        assertTrue(testDonor.getPastMedications().contains(recordToDelete));
+    public void DeleteSingleMedicationPastTest() {
+        MedicationRecord newRecord = new MedicationRecord("Generic Name", LocalDate.of(2018, 4, 9), LocalDate.of(2018,
+                4, 10));
+        baseDonor.addMedicationRecord(newRecord);
 
-        Action action = new DeleteMedicationRecordAction(testDonor, recordToDelete);
-        action.execute();
-        assertFalse(testDonor.getPastMedications().contains(recordToDelete));
+        DeleteMedicationRecordAction action = new DeleteMedicationRecordAction(baseDonor, newRecord);
 
-        action.unExecute();
-        assertTrue(testDonor.getPastMedications().contains(recordToDelete));
+
+        assertEquals(1, baseDonor.getPastMedications().size());
+
+        invoker.execute(action);
+
+        assertEquals(0, baseDonor.getPastMedications().size());
     }
+
+
+    @Test
+    public void DeleteSingleMedicationCurrentUndoTest() {
+        DeleteMedicationRecordAction action = new DeleteMedicationRecordAction(baseDonor, record);
+
+        invoker.execute(action);
+        invoker.undo();
+
+        assertEquals(1, baseDonor.getCurrentMedications().size());
+    }
+
+
+    @Test
+    public void DeleteSingleMedicationCurrentUndoRedoTest() {
+        DeleteMedicationRecordAction action = new DeleteMedicationRecordAction(baseDonor, record);
+
+        invoker.execute(action);
+        invoker.undo();
+        invoker.redo();
+
+        assertEquals(0, baseDonor.getCurrentMedications().size());
+    }
+
 }
