@@ -17,9 +17,7 @@ import java.util.List;
 
 import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
-import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -32,7 +30,6 @@ import javafx.stage.Window;
 import seng302.Client;
 import seng302.Clinician;
 import seng302.Controller.ControllerTest;
-import seng302.State.Session;
 import seng302.State.Session.UserType;
 import seng302.State.State;
 import seng302.TransplantRequest;
@@ -432,6 +429,10 @@ public class TransplantsControllerTest extends ControllerTest {
 
     // ------- Filtering Tests --------
 
+    /**
+     * Test that the filter button works as normal if there isn't anything to filter
+     * --Should just come as the table is unchanged
+     */
     @Test
     public void noFilter() {
         clickOn("#filterButton");
@@ -492,7 +493,6 @@ public class TransplantsControllerTest extends ControllerTest {
         verifyThat("#tableView", containsRowAtIndex(1, request2b.getClientName(), request2b.getRequestedOrgan(),
                 request2b.getClientRegion(), request2b.getRequestDateString()));
         verifyThat("#tableView", hasNumRows(2));
-        sleep(200);
     }
 
     /**
@@ -563,24 +563,50 @@ public class TransplantsControllerTest extends ControllerTest {
         verifyThat("#tableView", hasNumRows(1));
     }
 
-
-    //TODO @Dylan could you do these 3 - I'm not sure what they're meant to be testing for.
+    //TODO Just uncomment out the (//testOrderByX) methods once merged onto s24 branch.
     /**
      * Test that existing features work after one organ has been filtered
      */
     @Test
-    public void testFilterOrganAndCheckExistingFeaturesWork() {}
+    public void testFilterOrganAndCheckExistingFeaturesWork() {
+        clickOn("#organChoice");
+        clickOn((Node) lookup(".check-box").nth(3).query());
+        clickOn("#filterButton");
+        verifyThat("#tableView", containsRowAtIndex(0, request2b.getClientName(), request2b.getRequestedOrgan(),
+                request2b.getClientRegion(), request2b.getRequestDateString()));
+        verifyThat("#tableView", hasNumRows(1));
+        //testReorderByRegion();
+    }
 
     /**
      * Test that existing features work after one region has been filtered
      */
     @Test
-    public void testFilterRegionAndCheckExistingFeaturesWork() {}
+    public void testFilterRegionAndCheckExistingFeaturesWork() {
+        clickOn("#regionChoice");
+        clickOn((Node) lookup(".check-box").nth(1).query());
+        clickOn("#filterButton");
+        verifyThat("#tableView", containsRowAtIndex(1, request2b.getClientName(), request2b.getRequestedOrgan(),
+                request2b.getClientRegion(), request2b.getRequestDateString()));
+        verifyThat("#tableView", hasNumRows(2));
+        //testReorderByDate();
+    }
 
     /**
      * Test that existing features work after both organs and regions have been filtered
      */
     @Test
-    public void testFilterBothRegionAndOrganAndCheckExistingFeaturesWork() {}
+    public void testFilterBothRegionAndOrganAndCheckExistingFeaturesWork() {
+        clickOn("#regionChoice");
+        clickOn((Node) lookup(".check-box").nth(1).query());
+        clickOn("#filterButton");
+        clickOn("#organChoice");
+        clickOn((Node) lookup(".check-box").nth(3).query());
+        clickOn("#filterButton");
+        verifyThat("#tableView", containsRowAtIndex(0, request2b.getClientName(), request2b.getRequestedOrgan(),
+                request2b.getClientRegion(), request2b.getRequestDateString()));
+        verifyThat("#tableView", hasNumRows(1));
+        //testReorderByOrgan();
+    }
 
 }
