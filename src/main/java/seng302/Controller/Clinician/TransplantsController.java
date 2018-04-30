@@ -139,6 +139,8 @@ public class TransplantsController extends SubController {
 
         //Bind the tableView to the observable list
         tableView.setItems(observableTransplantList);
+
+        createPage(pagination.getCurrentPageIndex());
     }
 
     @FXML
