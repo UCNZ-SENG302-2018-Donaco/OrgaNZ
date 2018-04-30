@@ -9,17 +9,16 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
-
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0"
+<VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0"
   prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1"
   fx:controller="seng302.Controller.Clinician.TransplantsController">
   <children>
     <SplitPane dividerPositions="0.5" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
       <items>
         <HBox fx:id="sidebarPane" maxWidth="200.0" minWidth="200.0" prefWidth="200.0"/>
-        <BorderPane prefHeight="200.0" prefWidth="200.0">
+        <BorderPane>
           <center>
-            <TableView fx:id="tableView" BorderPane.alignment="CENTER">
+            <TableView fx:id="tableView">
               <columns>
                 <TableColumn fx:id="clientCol" prefWidth="75.0" text="Client"/>
                 <TableColumn fx:id="organCol" prefWidth="75.0" text="Organ"/>
