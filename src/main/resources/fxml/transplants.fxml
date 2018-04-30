@@ -26,6 +26,9 @@
         <BorderPane>
           <center>
             <TableView fx:id="tableView">
+              <placeholder>
+                <Label text="No transplant requests found that match those criteria."/>
+              </placeholder>
               <columns>
                 <TableColumn fx:id="clientCol" prefWidth="75.0" text="Client"/>
                 <TableColumn fx:id="organCol" prefWidth="75.0" text="Organ"/>

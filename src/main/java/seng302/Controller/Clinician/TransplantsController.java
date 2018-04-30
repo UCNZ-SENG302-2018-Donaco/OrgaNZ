@@ -3,7 +3,7 @@ package seng302.Controller.Clinician;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
-import java.util.HashSet;
+import java.util.EnumSet;
 import java.util.Set;
 
 import javafx.beans.property.SimpleObjectProperty;
@@ -286,10 +286,11 @@ public class TransplantsController extends SubController {
      * Filters the regions based on the RegionChoices current state and updates the organsToFilter Collection.
      */
     private void filterRegions() {
-        regionsToFilter = new HashSet<>();
-        for (int i = 0; i < Region.values().length; i++) {
-            if (regionChoice.getItemBooleanProperty(i).getValue()) {
-                regionsToFilter.add(Region.fromString(regionChoice.getItemBooleanProperty(i).getBean().toString()));
+        regionsToFilter = EnumSet.noneOf(Region.class);
+
+        for (Region region : Region.values()) {
+            if (regionChoice.getCheckModel().isChecked(region)) {
+                regionsToFilter.add(region);
             }
         }
     }
@@ -298,10 +299,11 @@ public class TransplantsController extends SubController {
      * Filters the organs based on the OrganChoices current state and updates the organsToFilter Collection.
      */
     private void filterOrgans() {
-        organsToFilter = new HashSet<>();
-        for (int i = 0; i < Organ.values().length; i++) {
-            if (organChoice.getItemBooleanProperty(i).getValue()) {
-                organsToFilter.add(Organ.fromString(organChoice.getItemBooleanProperty(i).getBean().toString()));
+        organsToFilter = EnumSet.noneOf(Organ.class);
+
+        for (Organ organ : Organ.values()) {
+            if (organChoice.getCheckModel().isChecked(organ)) {
+                organsToFilter.add(organ);
             }
         }
     }
@@ -316,9 +318,19 @@ public class TransplantsController extends SubController {
         filteredTransplantRequests.setPredicate(transplantRequest ->
                 (regionsToFilter.contains(transplantRequest.getClient().getRegion()) || regionsToFilter.size() == 0) &&
                 (organsToFilter.contains(transplantRequest.getRequestedOrgan()) || organsToFilter.size() == 0));
-        if (filteredTransplantRequests.size() == 0) {
-            // Show notification.
-            System.out.println("No requests");
+        refreshTable();
+    }
+
+    /**
+     * Upon filtering update, update pagination
+     * Every refresh triggers the pagination to update and go to page zero
+     */
+    private void refreshTable() {
+        int newPageCount = Math.max(1, (filteredTransplantRequests.size() + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE);
+        if (pagination.getPageCount() == newPageCount) {
+            createPage(pagination.getCurrentPageIndex());
+        } else {
+            pagination.setPageCount(newPageCount);
         }
     }
 }
