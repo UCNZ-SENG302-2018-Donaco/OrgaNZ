@@ -48,7 +48,7 @@ public class SidebarController extends SubController {
     public void setup(MainController controller) {
         super.setup(controller);
         Session.UserType userType = session.getLoggedInUserType();
-        if (userType == Session.UserType.CLIENT || windowContext.isClinViewClientWindow()) {
+        if (userType == Session.UserType.CLIENT || windowContext.isClinicianViewingClientWindow()) {
             hideButton(viewClinicianButton);
             hideButton(searchButton);
             hideButton(transplantsButton);
@@ -59,7 +59,7 @@ public class SidebarController extends SubController {
             hideButton(viewMedicationsButton);
         }
 
-        if (windowContext.isClinViewClientWindow()) {
+        if (windowContext.isClinicianViewingClientWindow()) {
             hideButton(logoutButton);
         }
 
@@ -76,12 +76,12 @@ public class SidebarController extends SubController {
      * @param userType the type of current user
      * @return true if the button should be shown, false otherwise
      */
-    private boolean showRequestedOrgansButton(Session.UserType userType) {
+    private boolean showRequestedOrgansButton(UserType userType) {
         if (userType == UserType.CLIENT) {
             Client currentClient = session.getLoggedInClient();
-            return currentClient.getTransplantRequests().size() > 0;
+            return !currentClient.getTransplantRequests().isEmpty();
         }
-        return windowContext.isClinViewClientWindow();
+        return windowContext.isClinicianViewingClientWindow();
     }
 
     /**

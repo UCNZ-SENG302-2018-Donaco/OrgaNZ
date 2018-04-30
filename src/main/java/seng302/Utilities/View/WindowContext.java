@@ -14,7 +14,7 @@ public class WindowContext {
 
     private WindowContext(WindowContextBuilder builder) {
         this.sidebarEnabled = builder.sidebarEnabled;
-        this.isClinViewClientWindow = builder.isClinViewClientWindow;
+        this.isClinViewClientWindow = builder.isClinicianViewingClientWindow;
         this.viewClient = builder.viewClient;
     }
 
@@ -25,7 +25,7 @@ public class WindowContext {
     public static class WindowContextBuilder {
 
         private boolean sidebarEnabled = true;
-        private boolean isClinViewClientWindow = false;
+        private boolean isClinicianViewingClientWindow;
         private Client viewClient;
 
         public WindowContextBuilder() {
@@ -36,8 +36,8 @@ public class WindowContext {
             return this;
         }
 
-        public WindowContextBuilder setAsClinViewClientWindow() {
-            this.isClinViewClientWindow = true;
+        public WindowContextBuilder setAsClinicianViewingClientWindow() {
+            this.isClinicianViewingClientWindow = true;
             return this;
         }
 
@@ -51,7 +51,7 @@ public class WindowContext {
          * @return the new WindowContext.
          */
         public WindowContext build() {
-            if (isClinViewClientWindow && viewClient == null) {
+            if (isClinicianViewingClientWindow && viewClient == null) {
                 throw new IllegalStateException("Cannot have a clinician client view with no client defined.");
             } else {
                 return new WindowContext(this);
@@ -71,7 +71,7 @@ public class WindowContext {
         return sidebarEnabled;
     }
 
-    public boolean isClinViewClientWindow() {
+    public boolean isClinicianViewingClientWindow() {
         return isClinViewClientWindow;
     }
 

@@ -27,7 +27,7 @@ import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.Enums.Region;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
-import seng302.Utilities.View.WindowContext;
+import seng302.Utilities.View.WindowContext.WindowContextBuilder;
 
 public class TransplantsController extends SubController {
 
@@ -64,10 +64,9 @@ public class TransplantsController extends SubController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
+        mainController.setTitle("Transplant requests");
         mainController.loadSidebar(sidebarPane);
     }
-
-    //Note: some commented-out code is just copied and pasted from SearchClientsController
 
     @FXML
     private void initialize() {
@@ -76,7 +75,6 @@ public class TransplantsController extends SubController {
         setupTable();
 
         tableView.setOnSort((o) -> createPage(pagination.getCurrentPageIndex()));
-//        searchBox.textProperty().addListener(((o) -> refresh()));
 
         //Create a sorted list
         sortedTransplants = new SortedList<>(FXCollections.observableArrayList(allTransplants));
@@ -114,8 +112,8 @@ public class TransplantsController extends SubController {
                     Client client = request.getClient();
                     MainController newMain = PageNavigator.openNewWindow();
                     if (newMain != null) {
-                        newMain.setWindowContext(new WindowContext.WindowContextBuilder()
-                                .setAsClinViewClientWindow()
+                        newMain.setWindowContext(new WindowContextBuilder()
+                                .setAsClinicianViewingClientWindow()
                                 .viewClient(client)
                                 .build());
                         PageNavigator.loadPage(Page.VIEW_CLIENT, newMain);

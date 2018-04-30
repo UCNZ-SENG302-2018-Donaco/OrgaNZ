@@ -121,7 +121,7 @@ public class ViewMedicationsController extends SubController {
             moveToHistoryButton.setDisable(true);
             moveToCurrentButton.setDisable(true);
             deleteButton.setDisable(true);
-        } else if (windowContext.isClinViewClientWindow()) {
+        } else if (windowContext.isClinicianViewingClientWindow()) {
             client = windowContext.getViewClient();
         }
 

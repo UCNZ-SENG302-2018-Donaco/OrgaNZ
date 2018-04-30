@@ -4,7 +4,6 @@ import java.time.LocalDateTime;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -16,7 +15,6 @@ import seng302.Actions.ActionInvoker;
 import seng302.Client;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
-import seng302.State.ClientManager;
 import seng302.State.Session;
 import seng302.State.State;
 import seng302.TransplantRequest;
@@ -42,7 +40,7 @@ public class OrganRequestHistoryController extends SubController {
     @FXML
     private Pane sidebarPane;
 
-    private ObservableList<TransplantRequest> observableTransplantRequestList;// = FXCollections.observableArrayList();
+    private ObservableList<TransplantRequest> observableTransplantRequestList;
     private Session session;
     private ActionInvoker invoker;
     private Client client;
@@ -71,7 +69,7 @@ public class OrganRequestHistoryController extends SubController {
 
         if (session.getLoggedInUserType() == Session.UserType.CLIENT) {
             client = session.getLoggedInClient();
-        } else if (windowContext.isClinViewClientWindow()) {
+        } else if (windowContext.isClinicianViewingClientWindow()) {
             client = windowContext.getViewClient();
         }
 
@@ -79,15 +77,13 @@ public class OrganRequestHistoryController extends SubController {
 
         observableTransplantRequestList = FXCollections.observableArrayList(client.getTransplantRequests());
         tableView.setItems(observableTransplantRequestList);
-        // updateUserID(null);
     }
 
     /**
      * Navigate back to the request_organ page.
      */
     @FXML
-    private void backToRequests(ActionEvent event) {
+    private void backToRequests() {
         PageNavigator.loadPage(Page.REQUEST_ORGAN, mainController);
     }
-
 }

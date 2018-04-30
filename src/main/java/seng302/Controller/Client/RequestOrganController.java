@@ -1,7 +1,8 @@
 package seng302.Controller.Client;
 
-import java.util.HashMap;
+import java.util.EnumMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -18,6 +19,7 @@ import seng302.HistoryItem;
 import seng302.Client;
 import seng302.State.ClientManager;
 import seng302.State.Session;
+import seng302.State.Session.UserType;
 import seng302.State.State;
 import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.JSONConverter;
@@ -36,11 +38,32 @@ public class RequestOrganController extends SubController {
     private Client client;
 
     @FXML
-    private Pane sidebarPane, idPane;
+    private Pane sidebarPane;
     @FXML
-    private CheckBox checkBoxLiver, checkBoxKidney, checkBoxPancreas, checkBoxHeart, checkBoxLung, checkBoxIntestine,
-            checkBoxCornea, checkBoxMiddleEar, checkBoxSkin, checkBoxBone, checkBoxBoneMarrow, checkBoxConnTissue;
-    private final Map<Organ, CheckBox> organCheckBoxes = new HashMap<>();
+    private CheckBox checkBoxLiver;
+    @FXML
+    private CheckBox checkBoxKidney;
+    @FXML
+    private CheckBox checkBoxPancreas;
+    @FXML
+    private CheckBox checkBoxHeart;
+    @FXML
+    private CheckBox checkBoxLung;
+    @FXML
+    private CheckBox checkBoxIntestine;
+    @FXML
+    private CheckBox checkBoxCornea;
+    @FXML
+    private CheckBox checkBoxMiddleEar;
+    @FXML
+    private CheckBox checkBoxSkin;
+    @FXML
+    private CheckBox checkBoxBone;
+    @FXML
+    private CheckBox checkBoxBoneMarrow;
+    @FXML
+    private CheckBox checkBoxConnTissue;
+    private final Map<Organ, CheckBox> organCheckBoxes = new EnumMap<>(Organ.class);
     @FXML
     private TextField fieldUserID;
     @FXML
@@ -76,17 +99,17 @@ public class RequestOrganController extends SubController {
         super.setup(mainController);
         mainController.loadSidebar(sidebarPane);
 
-        if (session.getLoggedInUserType() == Session.UserType.CLIENT) {
+        if (session.getLoggedInUserType() == UserType.CLIENT) {
             client = session.getLoggedInClient();
             fieldUserID.setEditable(false);
             setCheckboxesDisabled();
-        } else if (windowContext.isClinViewClientWindow()) {
+        } else if (windowContext.isClinicianViewingClientWindow()) {
             client = windowContext.getViewClient();
             fieldUserID.setEditable(true);
             setCheckBoxesEnabled();
         }
         fieldUserID.setText(Integer.toString(client.getUid()));
-        updateUserID(null);
+        updateUserID();
     }
 
     /**
@@ -118,19 +141,17 @@ public class RequestOrganController extends SubController {
 
     /**
      * Navigates to the organ_request_history page.
-     * @param event the back view history button is clicked.
      */
     @FXML
-    private void viewRequestHistory(ActionEvent event) {
+    private void viewRequestHistory() {
         PageNavigator.loadPage(Page.ORGAN_REQUEST_HISTORY, mainController);
     }
 
     /**
      * Updates the current client to the one specified in the userID field, and populates with their info.
-     * @param event When ENTER is pressed with focus on the userID field.
      */
     @FXML
-    private void updateUserID(ActionEvent event) {
+    private void updateUserID() {
         try {
             client = manager.getClientByID(Integer.parseInt(fieldUserID.getText()));
         } catch (NumberFormatException exc) {
@@ -139,7 +160,7 @@ public class RequestOrganController extends SubController {
 
         if (client != null) {
             requestHistoryButton.setDisable(false);
-            for (Map.Entry<Organ, CheckBox> entry : organCheckBoxes.entrySet()) {
+            for (Entry<Organ, CheckBox> entry : organCheckBoxes.entrySet()) {
                 entry.getValue().setSelected(client.getOrganRequestStatus().get(entry.getKey()));
             }
             HistoryItem save = new HistoryItem("UPDATE ID", "The Clients ID was updated to " + client.getUid());

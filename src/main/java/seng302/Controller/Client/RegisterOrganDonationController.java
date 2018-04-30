@@ -84,7 +84,7 @@ public class RegisterOrganDonationController extends SubController {
         if (session.getLoggedInUserType() == Session.UserType.CLIENT) {
             client = session.getLoggedInClient();
             idPane.setDisable(true);
-        } else if (windowContext.isClinViewClientWindow()) {
+        } else if (windowContext.isClinicianViewingClientWindow()) {
             client = windowContext.getViewClient();
         }
 

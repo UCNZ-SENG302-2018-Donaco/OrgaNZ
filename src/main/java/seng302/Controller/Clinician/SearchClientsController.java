@@ -63,7 +63,7 @@ public class SearchClientsController extends SubController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
-        mainController.setTitle("Donor search");
+        mainController.setTitle("Client search");
         mainController.loadSidebar(sidebarPane);
     }
 
@@ -134,7 +134,7 @@ public class SearchClientsController extends SubController {
                     MainController newMain = PageNavigator.openNewWindow();
                     if (newMain != null) {
                         newMain.setWindowContext(new WindowContext.WindowContextBuilder()
-                                .setAsClinViewClientWindow()
+                                .setAsClinicianViewingClientWindow()
                                 .viewClient(client)
                                 .build());
                         PageNavigator.loadPage(Page.VIEW_CLIENT, newMain);

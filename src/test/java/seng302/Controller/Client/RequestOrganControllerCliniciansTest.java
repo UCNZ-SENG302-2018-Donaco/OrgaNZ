@@ -37,7 +37,7 @@ public class RequestOrganControllerCliniciansTest extends ControllerTest {
         State.login(testClinician);
         State.getClientManager().addClient(testClient);
         mainController.setWindowContext(new WindowContext.WindowContextBuilder()
-                .setAsClinViewClientWindow()
+                .setAsClinicianViewingClientWindow()
                 .viewClient(testClient)
                 .build());
     }

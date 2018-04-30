@@ -90,7 +90,7 @@ public class ViewClientController extends SubController {
             viewedClient = session.getLoggedInClient();
             idPane.setVisible(false);
             idPane.setManaged(false);
-        } else if (windowContext.isClinViewClientWindow()) {
+        } else if (windowContext.isClinicianViewingClientWindow()) {
             viewedClient = windowContext.getViewClient();
         }
 

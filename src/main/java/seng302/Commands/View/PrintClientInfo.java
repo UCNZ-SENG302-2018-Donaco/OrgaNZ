@@ -17,7 +17,8 @@ import picocli.CommandLine.Option;
  * date 06/03/2018
  */
 
-@Command(name = "printuserinfo", description = "Print a single user with their cliental information.", sortOptions = false)
+@Command(name = "printuserinfo", description = "Print a single user with their personal information.", sortOptions =
+        false)
 public class PrintClientInfo implements Runnable {
 
     private ClientManager manager;

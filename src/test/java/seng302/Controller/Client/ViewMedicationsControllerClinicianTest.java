@@ -27,7 +27,6 @@ import seng302.Clinician;
 import seng302.Controller.ControllerTest;
 import seng302.Client;
 import seng302.MedicationRecord;
-import seng302.State.Session.UserType;
 import seng302.State.State;
 import seng302.Utilities.Enums.Region;
 import seng302.Utilities.View.Page;
@@ -83,7 +82,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
         State.init();
         State.login(testClinician);
         mainController.setWindowContext(new WindowContext.WindowContextBuilder()
-                .setAsClinViewClientWindow()
+                .setAsClinicianViewingClientWindow()
                 .viewClient(testClient)
                 .build());
         resetTestClientMedicationHistory();
