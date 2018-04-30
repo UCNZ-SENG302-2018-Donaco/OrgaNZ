@@ -9,6 +9,7 @@ import java.util.Collection;
 import javafx.collections.FXCollections;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -194,10 +195,16 @@ public class RequestOrgansController extends SubController {
     @FXML
     private void submitNewRequest() {
         TransplantRequest newRequest = new TransplantRequest(newOrganChoiceBox.getValue());
-        Action action = new AddTransplantRequestAction(client, newRequest);
-        invoker.execute(action);
-
-        PageNavigator.refreshAllWindows();
+        if (client.getRequestedOrgans().contains(newRequest.getRequestedOrgan())) {
+            PageNavigator.showAlert(
+                    AlertType.ERROR,
+                    "Request already exists",
+                    "Client already has a waiting request for this organ.");
+        } else {
+            Action action = new AddTransplantRequestAction(client, newRequest);
+            invoker.execute(action);
+            PageNavigator.refreshAllWindows();
+        }
     }
 
     /**

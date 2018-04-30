@@ -296,11 +296,10 @@ public class Client {
     }
 
     public Set<Organ> getRequestedOrgans() {
-        return EnumSet.copyOf(
-                transplantRequests.stream()
-                        .map(TransplantRequest::getRequestedOrgan)
-                        .collect(Collectors.toSet())
-        );
+        return transplantRequests
+                .stream()
+                .map(TransplantRequest::getRequestedOrgan)
+                .collect(Collectors.toCollection(() -> EnumSet.noneOf(Organ.class)));
     }
 
     public Map<Organ, Boolean> getOrganRequestStatus() {
