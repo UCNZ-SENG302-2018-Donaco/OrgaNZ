@@ -10,10 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import seng302.Utilities.Enums.BloodType;
 import seng302.Utilities.Enums.Gender;
@@ -390,7 +387,7 @@ public class Client {
      * Returns a list of illnesses that Client previously had
      * @return List of illnesses held by Client
      */
-    public List<IllnessRecord> getPastIllnesses(){
+    public List<IllnessRecord> getPastIllnesses() {
         return illnessHistory.stream().filter(
                 record -> record.getCuredDate() != null
 
@@ -401,7 +398,7 @@ public class Client {
      * Returns list of illnesses client currently has
      * @return List of illnesses client currently has
      */
-    public List<IllnessRecord> getCurrentIllnesses(){
+    public List<IllnessRecord> getCurrentIllnesses() {
         return illnessHistory.stream().filter(
                 record -> record.getCuredDate() == null
         ).collect(Collectors.toList());
@@ -411,7 +408,7 @@ public class Client {
      * Adds Illness history to Person
      * @param record IllnessRecord that is wanted to be added
      */
-    public void addIllnessRecord(IllnessRecord record){
+    public void addIllnessRecord(IllnessRecord record) {
         illnessHistory.add(record);
         addUpdate("illnessHistory");
     }
@@ -420,12 +417,12 @@ public class Client {
      * Deletes illness history from Person
      * @param record The illness history that is wanted to be deleted
      */
-    public void deleteIllnessRecord(IllnessRecord record){
+    public void deleteIllnessRecord(IllnessRecord record) {
         illnessHistory.remove(record);
         addUpdate("illnessHistory");
     }
 
-    public void sortIllnesses(IllnessRecord record){
+    public void sortIllnesses(IllnessRecord record) {
 
     }
 

@@ -8,7 +8,6 @@ import java.nio.file.Paths;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
-import javafx.scene.layout.Pane;
 import javafx.stage.FileChooser;
 
 import seng302.Actions.ActionInvoker;
@@ -161,8 +160,8 @@ public class SidebarController extends SubController {
      * Redirects the GUI to the Illness History page.
      */
     @FXML
-    private void goToIllnessHistory(){
-        PageNavigator.loadPage(Page.VIEW_MEDICAL_HISTORY,mainController);
+    private void goToIllnessHistory() {
+        PageNavigator.loadPage(Page.VIEW_MEDICAL_HISTORY, mainController);
     }
 
     /**
