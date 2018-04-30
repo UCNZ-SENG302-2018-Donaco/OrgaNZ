@@ -439,7 +439,7 @@ public class TransplantsControllerTest extends ControllerTest {
     @Test
     public void noFilter() {
         clickOn("#filterButton");
-        verifyThat("#tableView", hasNumRows(121));
+        verifyThat("#tableView", hasNumRows(30));  // 30 rows is max that can be displayed on one page
     }
 
     /**
