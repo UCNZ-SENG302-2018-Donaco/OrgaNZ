@@ -14,7 +14,6 @@ import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -49,9 +48,6 @@ public class TransplantsController extends SubController {
 
     private static final int ROWS_PER_PAGE = 30;
     private static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("d MMM yyyy hh:mm a");
-
-    @FXML
-    private Button filterButton;
 
     @FXML
     private HBox sidebarPane;
@@ -273,8 +269,9 @@ public class TransplantsController extends SubController {
         observableTransplantRequests.setAll(sortedTransplantRequests.subList(fromIndex, toIndex));
         if (sortedTransplantRequests.size() < 2 || fromIndex + 1 == toIndex) {
             // 0 or 1 items OR the last item, on its own page
-            displayingXToYOfZText.setText(
-                    String.format("Displaying %d of %d", sortedTransplantRequests.size(), sortedTransplantRequests.size()));
+            displayingXToYOfZText.setText(String.format("Displaying %d of %d",
+                    sortedTransplantRequests.size(),
+                    sortedTransplantRequests.size()));
         } else {
             displayingXToYOfZText.setText(String.format("Displaying %d-%d of %d", fromIndex + 1, toIndex,
                     sortedTransplantRequests.size()));
@@ -317,7 +314,7 @@ public class TransplantsController extends SubController {
         filterOrgans();
         filteredTransplantRequests.setPredicate(transplantRequest ->
                 (regionsToFilter.contains(transplantRequest.getClient().getRegion()) || regionsToFilter.size() == 0) &&
-                (organsToFilter.contains(transplantRequest.getRequestedOrgan()) || organsToFilter.size() == 0));
+                        (organsToFilter.contains(transplantRequest.getRequestedOrgan()) || organsToFilter.size() == 0));
         refreshTable();
     }
 

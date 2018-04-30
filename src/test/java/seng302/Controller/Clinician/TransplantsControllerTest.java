@@ -344,12 +344,7 @@ public class TransplantsControllerTest extends ControllerTest {
         clickOn("#clientCol");
 
         // Sort requests by client name
-        requests.sort(new Comparator<TransplantRequest>() {
-            @Override
-            public int compare(TransplantRequest o1, TransplantRequest o2) {
-                return o1.getClient().getFullName().toLowerCase().compareTo(o2.getClient().getFullName().toLowerCase());
-            }
-        });
+        requests.sort(Comparator.comparing(req -> req.getClient().getFullName().toLowerCase()));
 
         // Check all 30 requests are correct
         for (int i = 0; i < 30; i++) {
@@ -364,12 +359,7 @@ public class TransplantsControllerTest extends ControllerTest {
         clickOn("#organCol");
 
         // Sort requests by organ
-        requests.sort(new Comparator<TransplantRequest>() {
-            @Override
-            public int compare(TransplantRequest o1, TransplantRequest o2) {
-                return o1.getRequestedOrgan().toString().compareTo(o2.getRequestedOrgan().toString());
-            }
-        });
+        requests.sort(Comparator.comparing(req -> req.getRequestedOrgan().toString()));
 
         // Check all 30 requests are correct
         for (int i = 0; i < 30; i++) {
@@ -385,20 +375,17 @@ public class TransplantsControllerTest extends ControllerTest {
         clickOn("#regionCol");
 
         // Sort requests by client name
-        requests.sort(new Comparator<TransplantRequest>() {
-            @Override
-            public int compare(TransplantRequest o1, TransplantRequest o2) {
-                if (o1.getClient().getRegion() == null) {
-                    if (o2.getClient().getRegion() == null) {
-                        return 0;
-                    } else {
-                        return -1;
-                    }
-                } else if (o2.getClient().getRegion() == null) {
-                    return 1;
+        requests.sort((req1, req2) -> {
+            if (req1.getClient().getRegion() == null) {
+                if (req2.getClient().getRegion() == null) {
+                    return 0;
+                } else {
+                    return -1;
                 }
-                return o1.getClient().getRegion().toString().compareTo(o2.getClient().getRegion().toString());
+            } else if (req2.getClient().getRegion() == null) {
+                return 1;
             }
+            return req1.getClient().getRegion().toString().compareTo(req2.getClient().getRegion().toString());
         });
 
         // Check all 30 requests are correct
@@ -415,12 +402,7 @@ public class TransplantsControllerTest extends ControllerTest {
         clickOn("#dateCol");
 
         // Sort requests by client name
-        requests.sort(new Comparator<TransplantRequest>() {
-            @Override
-            public int compare(TransplantRequest o1, TransplantRequest o2) {
-                return o1.getRequestDate().compareTo(o2.getRequestDate());
-            }
-        });
+        requests.sort(Comparator.comparing(TransplantRequest::getRequestDate));
 
         // Check all 30 requests are correct
         for (int i = 0; i < 30; i++) {
