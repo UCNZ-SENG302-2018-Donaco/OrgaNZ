@@ -201,7 +201,7 @@ public class TransplantsController extends SubController {
                                 .setAsClinViewClientWindow()
                                 .viewClient(client)
                                 .build());
-                        PageNavigator.loadPage(Page.REQUEST_ORGANS, newMain);
+                        PageNavigator.loadPage(Page.VIEW_CLIENT, newMain);
                     }
                 }
             }
