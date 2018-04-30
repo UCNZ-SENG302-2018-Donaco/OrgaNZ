@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import com.sun.xml.internal.bind.v2.TODO;
 import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableView;
@@ -430,51 +431,121 @@ public class TransplantsControllerTest extends ControllerTest {
         }
     }
 
+    /**
+     * Test for one organ to be filtered
+     */
+    // TODO: Make sure that the checkbox is clicked only!
+    // TODO Runs into an error by clicking on the table instead. Applies with the rest of the tests below.
     @Test
     public void testFilterOneOrgan() {
         Organ liver = Organ.LIVER;
         clickOn("#organChoice");
         clickOn((Node) lookup(liver.toString()).query());
-        clickOn((Node) lookup(liver.toString()).query());
+        moveBy(-60, 0);
+        clickOn(MouseButton.PRIMARY);
         clickOn("#filterButton");
-        sleep(1500);
     }
 
+    /**
+     * Test for multiple organs to be filtered
+     */
     @Test
     public void testFilterMultipleOrgans() {
+        Organ liver = Organ.LIVER;
         Organ pancreas = Organ.PANCREAS;
-        Organ kidney = Organ.KIDNEY;
         clickOn("#organChoice");
+        clickOn((Node) lookup(liver.toString()).query());
+        moveBy(-60, 0);
+        clickOn(MouseButton.PRIMARY);
         clickOn((Node) lookup(pancreas.toString()).query());
-        clickOn((Node) lookup(kidney.toString()).query());
+        moveBy(-60, 0);
+        clickOn(MouseButton.PRIMARY);
         clickOn("#filterButton");
         sleep(1500);
     }
 
+    /**
+     * Test for one region to be filtered
+     */
     @Test
-    public void testFilterOneRegion() {}
+    public void testFilterOneRegion() {
+        Region canterbury = Region.CANTERBURY;
+        clickOn("#regionChoice");
+        clickOn((Node) lookup(canterbury.toString()).query());
+        moveBy(-60, 0);
+        clickOn(MouseButton.PRIMARY);
+        clickOn("filterButton");
+    }
 
+    /**
+     * Test for multiple regions to be filtered
+     */
     @Test
-    public void testFilterMultipleRegions() {}
+    public void testFilterMultipleRegions() {
+        Region canterbury = Region.CANTERBURY;
+        Region nelson = Region.NELSON;
+        clickOn("#regionChoice");
+        clickOn((Node) lookup(canterbury.toString()).query());
+        moveBy(-60, 0);
+        clickOn(MouseButton.PRIMARY);
+        clickOn("#regionChoice");
+        clickOn((Node) lookup(nelson.toString()).query());
+        moveBy(-60, 0);
+        clickOn(MouseButton.PRIMARY);
+        clickOn("#filterButton");
+    }
 
+    /**
+     * Test for one region and one organ to be filtered
+     */
     @Test
-    public void testFilterOneRegionAndOrgan() {}
+    public void testFilterOneRegionAndOrgan() {
+        Region canterbury = Region.CANTERBURY;
+        Organ liver = Organ.LIVER;
+        clickOn("#organChoice");
+        clickOn((Node) lookup(liver.toString()).query());
+        moveBy(-60, 0);
+        clickOn(MouseButton.PRIMARY);
+        clickOn("#regionChoice");
+        clickOn((Node) lookup(canterbury.toString()).query());
+        moveBy(-60, 0);
+        clickOn(MouseButton.PRIMARY);
+        clickOn("filterButton");
+    }
 
+    /**
+     * Test for one region and multiple organs to be filtered
+     */
     @Test
     public void testFilterOneRegionAndMultipleOrgans() {}
 
+    /**
+     * Test for multiple regions and one organ to be filtered
+     */
     @Test
     public void testFilterMultipleRegionsAndOneOrgan() {}
 
+    /**
+     * Test for multiple regions and organs to be filtered
+     */
     @Test
     public void testFilterMultipleRegionsAndOrgans() {}
 
+    /**
+     * Test that existing features work after one organ has been filtered
+     */
     @Test
     public void testFilterOrganAndCheckExistingFeaturesWork() {}
 
+    /**
+     * Test that existing features work after one region has been filtered
+     */
     @Test
     public void testFilterRegionAndCheckExistingFeaturesWork() {}
 
+    /**
+     * Test that existing features work after both organs and regions have been filtered
+     */
     @Test
     public void testFilterBothRegionAndOrganAndCheckExistingFeaturesWork() {}
 
