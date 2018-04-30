@@ -454,6 +454,7 @@ public class Client {
             if (request.getStatus() == WAITING) {
                 request.setStatus(CANCELLED);
                 request.setResolvedDate(LocalDateTime.now());
+                request.setResolvedReason("death");
             }
         }
     }
