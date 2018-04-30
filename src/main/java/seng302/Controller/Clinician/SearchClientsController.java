@@ -106,8 +106,6 @@ public class SearchClientsController extends SubController {
         genderCol.setCellValueFactory(new PropertyValueFactory<>("gender"));
         regionCol.setCellValueFactory(new PropertyValueFactory<>("region"));
 
-        tableView.getColumns().setAll(idCol, nameCol, ageCol, genderCol, regionCol);
-
         tableView.setRowFactory(tv -> new TableRow<Client>() {
             private Tooltip tooltip = new Tooltip();
 
