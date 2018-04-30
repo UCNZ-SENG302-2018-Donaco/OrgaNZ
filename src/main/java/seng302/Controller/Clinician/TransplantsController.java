@@ -1,9 +1,7 @@
 package seng302.Controller.Clinician;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.Comparator;
-import java.util.List;
 
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
@@ -24,6 +22,7 @@ import javafx.scene.text.Text;
 import seng302.Client;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
+import seng302.State.ClientManager;
 import seng302.State.State;
 import seng302.TransplantRequest;
 import seng302.Utilities.Enums.Organ;
@@ -60,40 +59,49 @@ public class TransplantsController extends SubController {
     @FXML
     private Text displayingXToYOfZText;
 
-
+    private ClientManager manager;
     private ObservableList<TransplantRequest> observableTransplantList = FXCollections.observableArrayList();
     private SortedList<TransplantRequest> sortedTransplants;
+
+    public TransplantsController() {
+        manager = State.getClientManager();
+    }
 
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
         mainController.setTitle("Transplant requests");
         mainController.loadSidebar(sidebarPane);
+        refresh();
     }
 
-    @FXML
-    private void initialize() {
-        Collection<TransplantRequest> allTransplants = State.getClientManager().getAllCurrentTransplantRequests();
+    @Override
+    public void refresh() {
+        sortedTransplants = new SortedList<>(FXCollections.observableArrayList(
+                manager.getAllCurrentTransplantRequests()));
 
-        setupTable();
-
-        tableView.setOnSort((o) -> createPage(pagination.getCurrentPageIndex()));
-
-        //Create a sorted list
-        sortedTransplants = new SortedList<>(FXCollections.observableArrayList(allTransplants));
         //Link the sorted list sort to the tableView sort
         sortedTransplants.comparatorProperty().bind(tableView.comparatorProperty());
 
         //Set initial pagination
         int numberOfPages = Math.max(1, (sortedTransplants.size() + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE);
         pagination.setPageCount(numberOfPages);
-        //On pagination update call createPage
-        pagination.setPageFactory(this::createPage);
 
         //Initialize the observable list to all clients
         observableTransplantList.setAll(sortedTransplants);
+
         //Bind the tableView to the observable list
         tableView.setItems(observableTransplantList);
+    }
+
+    @FXML
+    private void initialize() {
+        setupTable();
+
+        tableView.setOnSort((o) -> createPage(pagination.getCurrentPageIndex()));
+
+        //On pagination update call createPage
+        pagination.setPageFactory(this::createPage);
     }
 
     /**
@@ -107,8 +115,6 @@ public class TransplantsController extends SubController {
         regionCol.setCellValueFactory(cellData -> new SimpleObjectProperty<>(
                 cellData.getValue().getClient().getRegion()));
         dateCol.setCellValueFactory(new PropertyValueFactory<>("requestDate"));
-
-        tableView.getColumns().setAll(clientCol, organCol, regionCol, dateCol);
 
         tableView.setOnMouseClicked(mouseEvent -> {
             if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2) {
@@ -168,7 +174,8 @@ public class TransplantsController extends SubController {
         observableTransplantList.setAll(sortedTransplants.subList(fromIndex, toIndex));
         if (sortedTransplants.size() < 2 || fromIndex + 1 == toIndex) {
             // 0 or 1 items OR the last item, on its own page
-            displayingXToYOfZText.setText(String.format("Displaying %d of %d", sortedTransplants.size(), sortedTransplants.size()));
+            displayingXToYOfZText.setText(
+                    String.format("Displaying %d of %d", sortedTransplants.size(), sortedTransplants.size()));
         } else {
             displayingXToYOfZText.setText(String.format("Displaying %d-%d of %d", fromIndex + 1, toIndex,
                     sortedTransplants.size()));
