@@ -35,6 +35,10 @@ import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
 import seng302.Utilities.View.WindowContext.WindowContextBuilder;
 
+/**
+ * Controller for the transplants waiting list page. Contains a table that shows all the current waiting requests for
+ * an organ transplant.
+ */
 public class TransplantsController extends SubController {
 
     private static final int ROWS_PER_PAGE = 30;
@@ -110,10 +114,17 @@ public class TransplantsController extends SubController {
         };
     }
 
+    /**
+     * Gets the client manager from the global state.
+     */
     public TransplantsController() {
         manager = State.getClientManager();
     }
 
+    /**
+     * Sets up the page, setting its title, loading the sidebar and doing the first refresh of the data.
+     * @param mainController The main controller that defines which window this subcontroller belongs to.
+     */
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
@@ -122,6 +133,10 @@ public class TransplantsController extends SubController {
         refresh();
     }
 
+    /**
+     * Refreshes the data in the transplants waiting list table. Should be called whenever any page calls a global
+     * refresh.
+     */
     @Override
     public void refresh() {
         sortedTransplants = new SortedList<>(FXCollections.observableArrayList(
@@ -143,6 +158,9 @@ public class TransplantsController extends SubController {
         createPage(pagination.getCurrentPageIndex());
     }
 
+    /**
+     * Initializes the page and the table/pagination properties.
+     */
     @FXML
     private void initialize() {
         setupTable();
@@ -154,8 +172,8 @@ public class TransplantsController extends SubController {
     }
 
     /**
-     * Initialize the table columns.
-     * The client must have getters for these specific names specified in the PV Factories.
+     * Sets up the table columns with their respective value factories and representation factories. Also registers a
+     * mouse event handler for double-clicking on a record in the table to open up the appropriate client profile.
      */
     private void setupTable() {
         clientCol.setCellValueFactory(cellData -> new SimpleStringProperty(
@@ -171,6 +189,7 @@ public class TransplantsController extends SubController {
         // Colour each row if it is a request for an organ that the client is also registered to donate.
         tableView.setRowFactory(row -> colourIfDonatedAndRequested());
 
+        // Register the mouse event for double-clicking on a record to open the client profile.
         tableView.setOnMouseClicked(mouseEvent -> {
             if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2) {
                 TransplantRequest request = tableView.getSelectionModel().getSelectedItem();
@@ -182,15 +201,16 @@ public class TransplantsController extends SubController {
                                 .setAsClinViewClientWindow()
                                 .viewClient(client)
                                 .build());
-                        PageNavigator.loadPage(Page.VIEW_CLIENT, newMain);
+                        PageNavigator.loadPage(Page.REQUEST_ORGANS, newMain);
                     }
                 }
             }
         });
 
+        // Sets the comparator for sorting by organ column.
         organCol.setComparator(new Comparator<Organ>() {
             /**
-             * Alphabetical order of the name
+             * Alphabetical order of the organ name.
              */
             @Override
             public int compare(Organ o1, Organ o2) {
@@ -198,9 +218,10 @@ public class TransplantsController extends SubController {
             }
         });
 
+        // Sets the comparator for sorting by region column.
         regionCol.setComparator(new Comparator<Region>() {
             /**
-             * Nulls are ordered first, then alphabetical order of the name.
+             * Nulls are ordered first, then alphabetical order of the region name.
              */
             @Override
             public int compare(Region o1, Region o2) {
