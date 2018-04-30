@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import seng302.TransplantRequest.RequestStatus;
 import seng302.Utilities.Enums.BloodType;
 import seng302.Utilities.Enums.Gender;
 import seng302.Utilities.Enums.Organ;
@@ -301,16 +302,17 @@ public class Client {
         return organDonationStatus;
     }
 
-    public Set<Organ> getRequestedOrgans() {
+    public Set<Organ> getCurrentlyRequestedOrgans() {
         return transplantRequests
                 .stream()
+                .filter(request -> request.getStatus() == RequestStatus.WAITING)
                 .map(TransplantRequest::getRequestedOrgan)
                 .collect(Collectors.toCollection(() -> EnumSet.noneOf(Organ.class)));
     }
 
     public Map<Organ, Boolean> getOrganRequestStatus() {
         Map<Organ, Boolean> organStatus = new HashMap<>();
-        Set<Organ> requestedOrgans = getRequestedOrgans();
+        Set<Organ> requestedOrgans = getCurrentlyRequestedOrgans();
 
         for (Organ organ : Organ.values()) {
             organStatus.put(organ, requestedOrgans.contains(organ));
