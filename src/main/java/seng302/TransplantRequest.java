@@ -73,6 +73,10 @@ public class TransplantRequest {
         return client == null ? null : client.getRegion();
     }
 
+    public void setCurrentRequest(boolean currentRequest) {
+        this.currentRequest = currentRequest;
+    }
+
     @Override
     public String toString() {
         return String.format("TransplantRequest{requestedOrgan=%s, requestDate=%s, currentRequest=%s, clientId=%d, "

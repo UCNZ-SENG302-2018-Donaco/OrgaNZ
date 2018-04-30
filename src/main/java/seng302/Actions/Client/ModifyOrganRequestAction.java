@@ -2,6 +2,7 @@ package seng302.Actions.Client;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import seng302.Actions.Action;
 import seng302.Client;
@@ -29,8 +30,6 @@ public class ModifyOrganRequestAction extends Action {
      * @param newValue The new value
      */
     public void addChange(Organ organ, Boolean newValue) {
-        TransplantRequest transplantRequest = new TransplantRequest(organ, newValue);
-        client.addTransplantRequest(transplantRequest);
         changes.put(organ, newValue);
     }
 
@@ -59,7 +58,7 @@ public class ModifyOrganRequestAction extends Action {
      * @param isUndo If true, negate all booleans
      */
     private void runChanges(boolean isUndo) {
-        for (Map.Entry<Organ, Boolean> entry : changes.entrySet()) {
+        for (Entry<Organ, Boolean> entry : changes.entrySet()) {
             try {
                 Organ organ = entry.getKey();
                 boolean newState = entry.getValue();
@@ -67,6 +66,33 @@ public class ModifyOrganRequestAction extends Action {
                     newState = !newState;
                 }
                 client.setOrganRequestStatus(organ, newState);
+
+                if (!isUndo) {
+                    if (!newState) {
+                        client.getTransplantRequests()
+                                .stream()
+                                .filter(x -> x.getCurrentRequest() && x.getRequestedOrgan() == organ)
+                                .forEach(x -> x.setCurrentRequest(false));
+                    } else {
+                        TransplantRequest transplantRequest = new TransplantRequest(organ, true);
+                        client.addTransplantRequest(transplantRequest);
+                    }
+                } else {
+                    if (!newState) {
+                        client.getTransplantRequests()
+                                .stream()
+                                .filter(x -> !x.getCurrentRequest() && x.getRequestedOrgan() == organ)
+                                .reduce((x, y) -> y).get()
+                                .setCurrentRequest(true);
+                    } else {
+                        TransplantRequest lastestRequest = client.getTransplantRequests()
+                                .stream()
+                                .filter(x -> x.getCurrentRequest() && x.getRequestedOrgan() == organ)
+                                .reduce((x, y) -> y).get();
+                        client.getTransplantRequests().remove(lastestRequest);
+                    }
+                }
+
             } catch (OrganAlreadyRegisteredException e) {
                 e.printStackTrace();
             }

@@ -118,4 +118,17 @@ public class ClientManagerTest {
         assertTrue(transplantRequests.contains(transplantRequest));
         assertTrue(transplantRequests.contains(transplantRequest2));
     }
+
+    @Test
+    public void getAllCurrentTransplantRequests() {
+        TransplantRequest transplantRequest = new TransplantRequest(Organ.LIVER, true);
+        TransplantRequest transplantRequest2 = new TransplantRequest(Organ.LIVER, false);
+        client.addTransplantRequest(transplantRequest);
+        client.addTransplantRequest(transplantRequest2);
+
+        List<TransplantRequest> transplantRequests = manager.getAllCurrentTransplantRequests();
+
+        assertTrue(transplantRequests.contains(transplantRequest));
+        assertFalse(transplantRequests.contains(transplantRequest2));
+    }
 }

@@ -70,7 +70,7 @@ public class TransplantsController extends SubController {
 
     @FXML
     private void initialize() {
-        List<TransplantRequest> allTransplants = State.getClientManager().getAllTransplantRequests();
+        List<TransplantRequest> allTransplants = State.getClientManager().getAllCurrentTransplantRequests();
 
         setupTable();
 
@@ -82,8 +82,8 @@ public class TransplantsController extends SubController {
         sortedTransplants.comparatorProperty().bind(tableView.comparatorProperty());
 
         //Set initial pagination
-        double numberOfPages = Math.ceil((double) sortedTransplants.size() / (double) ROWS_PER_PAGE);
-        pagination.setPageCount((int) numberOfPages);
+        int numberOfPages = Math.max(1, (sortedTransplants.size() + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE);
+        pagination.setPageCount(numberOfPages);
         //On pagination update call createPage
         pagination.setPageFactory(this::createPage);
 

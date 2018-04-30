@@ -2,7 +2,9 @@ package seng302.State;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import seng302.Client;
 import seng302.TransplantRequest;
@@ -140,5 +142,21 @@ public class ClientManager {
             transplantRequests.addAll(client.getTransplantRequests());
         }
         return transplantRequests;
+    }
+
+    /**
+     * Gets all current transplant requests.
+     * @return List of all current transplant requests
+     */
+    public List<TransplantRequest> getAllCurrentTransplantRequests() {
+        Collection<TransplantRequest> transplantRequests = new ArrayList<>();
+
+        for (Client client : clients) {
+            transplantRequests.addAll(client.getTransplantRequests());
+        }
+        return transplantRequests
+                .stream()
+                .filter(TransplantRequest::getCurrentRequest)
+                .collect(Collectors.toList());
     }
 }

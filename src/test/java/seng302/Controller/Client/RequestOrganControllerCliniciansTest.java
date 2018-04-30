@@ -62,7 +62,7 @@ public class RequestOrganControllerCliniciansTest extends ControllerTest {
     public void untickOrgansUpdates() {
         clickOn("#checkBoxLiver");
         clickOn("#checkBoxLiver");
-        assertEquals(2, testClient.getTransplantRequests().size());
+        assertEquals(1, testClient.getTransplantRequests().size());
     }
 
     @Test
