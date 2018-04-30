@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
-import seng302.Donor;
-import seng302.State.DonorManager;
+import seng302.Client;
+import seng302.State.ClientManager;
 import seng302.State.State;
 
 import org.junit.Rule;
@@ -38,14 +38,14 @@ public class JSONConverterTest {
 
     @Test
     public void saveToFileTest() throws Exception {
-        File file = new File("src/test/resources/filled_donors.json");
+        File file = new File("src/test/resources/filled_clients.json");
 
-        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
-        ArrayList<Donor> donors = new ArrayList<>();
-        donors.add(donor);
+        Client client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        ArrayList<Client> clients = new ArrayList<>();
+        clients.add(client);
         State.init();
-        DonorManager manager = State.getDonorManager();
-        manager.setDonors(donors);
+        ClientManager manager = State.getClientManager();
+        manager.setClients(clients);
 
         JSONConverter.saveToFile(file);
 
@@ -67,19 +67,19 @@ public class JSONConverterTest {
 //    public void loadFromFileTest() throws Exception {
 //        //File file = folder.newFile("testfile.json");
 //
-//        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970,1, 1), 1);
-//        ArrayList<Donor> donors = new ArrayList<>();
-//        donors.add(donor);
-//        //manager = new DonorManager(donors);
+//        Client client = new Client("First", null, "Last", LocalDate.of(1970,1, 1), 1);
+//        ArrayList<Client> clients = new ArrayList<>();
+//        clients.add(client);
+//        //manager = new ClientManager(clients);
 //
 //        manager.saveToFile(file);
 //
-//        manager = new DonorManager();
+//        manager = new ClientManager();
 //
 //        manager.loadFromFile(file);
 //
-//        assertTrue(manager.getDonors().size() == 1);
-//        assertEquals("First", manager.getDonors().get(0).getFirstName());
+//        assertTrue(manager.getClients().size() == 1);
+//        assertEquals("First", manager.getClients().get(0).getFirstName());
 //    }
 
 }

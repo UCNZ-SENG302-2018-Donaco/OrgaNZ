@@ -12,14 +12,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import seng302.Donor;
+import seng302.Client;
 import seng302.Utilities.Enums.Gender;
 
 import com.google.api.client.util.Key;
 
 /**
  * Handles parsing the response from a drug interactions API request and determining which symptoms apply to a given
- * donor.
+ * client.
  */
 public class DrugInteractionsResponse {
     private static final Pattern AGE_RANGE_PATTERN
@@ -49,14 +49,14 @@ public class DrugInteractionsResponse {
     private Map<String, List<String>> genderInteraction;
 
     /**
-     * Calculates a list of possible drug interactions given a donor.
+     * Calculates a list of possible drug interactions given a client.
      */
-    public List<String> calculateDonorInteractions(Donor donor) {
-        int donorAge = donor.getAge();
-        Set<String> ageInteractions = calculateAgeInteractions(donorAge);
+    public List<String> calculateClientInteractions(Client client) {
+        int clientAge = client.getAge();
+        Set<String> ageInteractions = calculateAgeInteractions(clientAge);
 
-        Gender donorGender = donor.getGender();
-        Set<String> genderInteractions = calculateGenderInteractions(donorGender);
+        Gender clientGender = client.getGender();
+        Set<String> genderInteractions = calculateGenderInteractions(clientGender);
 
         // Get the intersection
         ageInteractions.retainAll(genderInteractions);

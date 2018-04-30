@@ -5,44 +5,44 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import seng302.Donor;
+import seng302.Client;
 import seng302.HistoryItem;
-import seng302.State.DonorManager;
+import seng302.State.ClientManager;
 import seng302.State.State;
 import seng302.Utilities.JSONConverter;
 
 import picocli.CommandLine.Command;
 
 /**
- * Command line to save the current information of the Donors onto a JSON file using the GSON API.
+ * Command line to save the current information of the Clients onto a JSON file using the GSON API.
  * @author Dylan Carlyle, Jack Steel
  * @version sprint 1.
  * date 06/03/2018
  */
 
-@Command(name = "save", description = "Save donors to file", sortOptions = false)
+@Command(name = "save", description = "Save clients to file", sortOptions = false)
 public class Save implements Runnable {
 
-    private DonorManager manager;
+    private ClientManager manager;
 
     public Save() {
-        manager = State.getDonorManager();
+        manager = State.getClientManager();
     }
 
-    public Save(DonorManager manager) {
+    public Save(ClientManager manager) {
         this.manager = manager;
     }
 
     @Override
     public void run() {
-        ArrayList<Donor> donors = manager.getDonors();
-        if (donors.size() == 0) {
-            System.out.println("No donors exist, nothing to save");
+        ArrayList<Client> clients = manager.getClients();
+        if (clients.size() == 0) {
+            System.out.println("No clients exist, nothing to save");
             return;
         }
         try {
             JSONConverter.saveToFile(new File("savefile.json"));
-            System.out.println(String.format("Saved %s users to file", manager.getDonors().size()));
+            System.out.println(String.format("Saved %s users to file", manager.getClients().size()));
             HistoryItem save = new HistoryItem("SAVE", "The systems current state was saved.");
             JSONConverter.updateHistory(save, "action_history.json");
         } catch (IOException e) {

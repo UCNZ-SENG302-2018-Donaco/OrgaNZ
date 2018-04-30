@@ -19,6 +19,7 @@ public enum Organ {
 
     private final String text;
 
+
     Organ(String text) {
         this.text = text;
     }
@@ -41,4 +42,5 @@ public enum Organ {
         }
         throw new IllegalArgumentException("Unsupported organ");
     }
+
 }

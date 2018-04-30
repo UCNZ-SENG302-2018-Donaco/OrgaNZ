@@ -11,9 +11,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import seng302.Donor;
+import seng302.Client;
 import seng302.HistoryItem;
-import seng302.State.DonorManager;
+import seng302.State.ClientManager;
 import seng302.State.State;
 
 import com.google.gson.Gson;
@@ -56,31 +56,31 @@ public final class JSONConverter {
     }
 
     /**
-     * Saves the current donors list to a specified file
+     * Saves the current clients list to a specified file
      * @param file The file to be saved to
      * @throws IOException Throws IOExceptions
      */
     public static void saveToFile(File file) throws IOException {
         Writer writer = new FileWriter(file);
-        DonorManager donorManager = State.getDonorManager();
-        gson.toJson(donorManager.getDonors(), writer);
+        ClientManager clientManager = State.getClientManager();
+        gson.toJson(clientManager.getClients(), writer);
         writer.close();
     }
 
     /**
-     * Loads the donors from a specified file. Overwrites any current donors
+     * Loads the clients from a specified file. Overwrites any current clients
      * @param file The file to be loaded from
      * @throws IOException Throws IOExceptions
      */
     public static void loadFromFile(File file) throws IOException {
         Reader reader = new FileReader(file);
-        ArrayList<Donor> donors;
-        Type collectionType = new TypeToken<ArrayList<Donor>>() {
+        ArrayList<Client> clients;
+        Type collectionType = new TypeToken<ArrayList<Client>>() {
         }.getType();
 
-        donors = gson.fromJson(reader, collectionType);
-        DonorManager donorManager = State.getDonorManager();
-        donorManager.setDonors(donors);
+        clients = gson.fromJson(reader, collectionType);
+        ClientManager clientManager = State.getClientManager();
+        clientManager.setClients(clients);
     }
 
     /**

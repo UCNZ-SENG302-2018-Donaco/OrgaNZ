@@ -35,7 +35,6 @@ public class PageNavigator {
             controller.setSubController(subController);
             controller.setPage(page, loadedPage);
         } catch (IOException e) {
-            e.printStackTrace();
             showAlert(Alert.AlertType.ERROR, "Could not load page: " + page.toString(),
                     "The page loader failed to load the layout for the page.");
         }
@@ -57,7 +56,7 @@ public class PageNavigator {
     public static MainController openNewWindow() {
         try {
             Stage newStage = new Stage();
-            newStage.setTitle("Organ Donor Management System");
+            newStage.setTitle("Organ Client Management System");
 
             FXMLLoader loader = new FXMLLoader();
             Pane mainPane = loader.load(PageNavigator.class.getResourceAsStream(Page.MAIN.getPath()));
@@ -73,7 +72,6 @@ public class PageNavigator {
             // Will throw if MAIN's fxml file could not be loaded.
             showAlert(Alert.AlertType.ERROR, "New window could not be created",
                     "The page loader failed to load the layout for the new window.");
-            exc.printStackTrace();
             return null;
         }
     }

@@ -19,12 +19,12 @@ import javafx.scene.text.Text;
 
 import seng302.Actions.Action;
 import seng302.Actions.ActionInvoker;
-import seng302.Actions.Donor.AddIllnessRecord;
-import seng302.Actions.Donor.DeleteIllnessRecord;
-import seng302.Actions.Donor.ModifyIllnessRecordAction;
+import seng302.Actions.Client.AddIllnessRecord;
+import seng302.Actions.Client.DeleteIllnessRecord;
+import seng302.Actions.Client.ModifyIllnessRecordAction;
+import seng302.Client;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
-import seng302.Donor;
 import seng302.IllnessRecord;
 import seng302.State.Session;
 import seng302.State.Session.UserType;
@@ -34,7 +34,7 @@ public class ClinicianMedicalHistoryController extends SubController{
 
   private Session session;
   private ActionInvoker invoker;
-  private Donor donor;
+  private Client client;
 
   @FXML
   private TextField IllnessField;
@@ -96,9 +96,9 @@ public class ClinicianMedicalHistoryController extends SubController{
   /**
    * Sets up the page using the MainController given.
    * - Loads the sidebar.
-   * - Checks if the session login type is a donor or a clinician, and sets the viewed donor appropriately.
-   * - Refreshes the medication list views to set initial state based on the viewed donor.
-   * - Checks if the logged in user is a donor, and if so, makes the page non-editable.
+   * - Checks if the session login type is a client or a clinician, and sets the viewed client appropriately.
+   * - Refreshes the medication list views to set initial state based on the viewed client.
+   * - Checks if the logged in user is a client, and if so, makes the page non-editable.
    * @param mainController The MainController for the window this page is loaded on.
    */
   @Override
@@ -106,16 +106,16 @@ public class ClinicianMedicalHistoryController extends SubController{
     super.setup(mainController);
     mainController.loadSidebar(sidebarPane);
 
-    if (session.getLoggedInUserType() == UserType.DONOR) {
-      donor = session.getLoggedInDonor();
+    if (session.getLoggedInUserType() == UserType.CLIENT) {
+      client = session.getLoggedInClient();
 
       newIllnessPane.setVisible(false);
       newIllnessPane.setManaged(false);
       moveToHistoryButton.setDisable(true);
       moveToCurrentButton.setDisable(true);
       deleteButton.setDisable(true);
-    } else if (windowContext.isClinViewDonorWindow()) {
-      donor = windowContext.getViewDonor();
+    } else if (windowContext.isClinViewClientWindow()) {
+      client = windowContext.getViewClient();
     }
 
     refreshIllnessLists();
@@ -125,7 +125,7 @@ public class ClinicianMedicalHistoryController extends SubController{
    * Sorts past/current illnesses ensures Chronic illnesses are at the top.
    */
   private List<IllnessRecord> sortCurrentIllnessList(){
-    List<IllnessRecord> currentIllnesses = donor.getCurrentIllnesses();
+    List<IllnessRecord> currentIllnesses = client.getCurrentIllnesses();
 
     for (int j = 0; j < currentIllnesses.size(); j++){
       IllnessRecord item = currentIllnesses.get(j);
@@ -140,10 +140,10 @@ public class ClinicianMedicalHistoryController extends SubController{
 
 
   /**
-   * Refreshes the past/current illness list views from the donor's properties.
+   * Refreshes the past/current illness list views from the client's properties.
    */
   private void refreshIllnessLists() {
-    pastIllnessView.setItems(FXCollections.observableArrayList(donor.getPastIllnesses()));
+    pastIllnessView.setItems(FXCollections.observableArrayList(client.getPastIllnesses()));
     currentIllnessView.setItems(FXCollections.observableArrayList(sortCurrentIllnessList()));
   }
 
@@ -195,8 +195,8 @@ public class ClinicianMedicalHistoryController extends SubController{
 
 
   private void filterFunction(String filterType,Boolean isInverted){
-      List<IllnessRecord> currentIllnesses = donor.getCurrentIllnesses();
-      List<IllnessRecord> pastIllnesses = donor.getPastIllnesses();
+      List<IllnessRecord> currentIllnesses = client.getCurrentIllnesses();
+      List<IllnessRecord> pastIllnesses = client.getPastIllnesses();
       if(filterType.equals("Alphabetical")){
           currentIllnesses.sort(Comparator.comparing(IllnessRecord::getIllnessName));
           pastIllnesses.sort(Comparator.comparing(IllnessRecord::getIllnessName));
@@ -250,7 +250,7 @@ public class ClinicianMedicalHistoryController extends SubController{
     if (selectedListView != null) {
       IllnessRecord record = selectedListView.getSelectionModel().getSelectedItem();
       if (record != null) {
-        DeleteIllnessRecord action = new DeleteIllnessRecord(donor, record);
+        DeleteIllnessRecord action = new DeleteIllnessRecord(client, record);
 
         invoker.execute(action);
         refreshIllnessLists();
@@ -276,7 +276,7 @@ public class ClinicianMedicalHistoryController extends SubController{
   }
 
   private void addIllness(String illnessName,LocalDate dateDiagnosed,Boolean isChronic){
-    Boolean afterBirth = donor.getDateOfBirth().isBefore(dateDiagnosed);
+    Boolean afterBirth = client.getDateOfBirth().isBefore(dateDiagnosed);
     Boolean notInFuture = LocalDate.now().isAfter(dateDiagnosed);
     if(!illnessName.equals("")){
       if(!afterBirth){
@@ -292,7 +292,7 @@ public class ClinicianMedicalHistoryController extends SubController{
       else{
         IllnessRecord record =  new IllnessRecord(illnessName,dateDiagnosed,null,
             isChronic);
-        AddIllnessRecord action = new AddIllnessRecord(donor,record);
+        AddIllnessRecord action = new AddIllnessRecord(client,record);
 
         invoker.execute(action);
         IllnessField.setText("");
