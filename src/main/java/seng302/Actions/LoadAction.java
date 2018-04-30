@@ -36,4 +36,14 @@
 //    public void unExecute() {
 //        manager.setClients(oldState);
 //    }
+//
+//    @Override
+//    public String getExecuteText() {
+//        return String.format("Loaded %s users from file", newState.size());
+//    }
+//
+//    @Override
+//    public String getUnexecuteText() {
+//        return String.format("Reverted to the old user list with %s users", oldState.size());
+//    }
 //}

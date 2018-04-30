@@ -29,8 +29,9 @@ import org.controlsfx.control.Notifications;
 public class SidebarController extends SubController {
 
     @FXML
-    private Button viewClientButton, registerOrganDonationButton, viewMedicationsButton, viewClinicianButton, searchButton,
-            logoutButton, requestOrganDonationButton, undoButton, redoButton;
+    private Button viewClientButton, registerOrganDonationButton, viewMedicationsButton, viewClinicianButton,
+            searchButton, transplantsButton, logoutButton, requestOrganDonationButton, registerOrgansButton,
+            undoButton, redoButton;
 
     private ActionInvoker invoker;
     private Session session;
@@ -50,6 +51,7 @@ public class SidebarController extends SubController {
         if (userType == Session.UserType.CLIENT || windowContext.isClinViewClientWindow()) {
             hideButton(viewClinicianButton);
             hideButton(searchButton);
+            hideButton(transplantsButton);
         } else if (userType == Session.UserType.CLINICIAN) {
             hideButton(viewClientButton);
             hideButton(registerOrganDonationButton);
@@ -60,12 +62,12 @@ public class SidebarController extends SubController {
             hideButton(logoutButton);
         }
 
-        undoButton.setDisable(!invoker.canUndo());
-        redoButton.setDisable(!invoker.canRedo());
-
         if (!shouldShowRequestOrgans(userType)) {
             hideButton(requestOrganDonationButton);
         }
+
+        undoButton.setDisable(!invoker.canUndo());
+        redoButton.setDisable(!invoker.canRedo());
     }
 
     /**
@@ -140,11 +142,19 @@ public class SidebarController extends SubController {
     }
 
     /**
-     * Redirects the GUI to the Register Organs page.
+     * Redirects the GUI to the Search clients page.
      */
     @FXML
     private void goToSearch() {
         PageNavigator.loadPage(Page.SEARCH, mainController);
+    }
+
+    /**
+     * Redirects the GUI to the Transplants page.
+     */
+    @FXML
+    private void goToTransplants() {
+        PageNavigator.loadPage(Page.TRANSPLANTS, mainController);
     }
 
     /**

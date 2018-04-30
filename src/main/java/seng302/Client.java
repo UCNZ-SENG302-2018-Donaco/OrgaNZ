@@ -47,11 +47,17 @@ public class Client {
 
     private Collection<TransplantRequest> transplantRequests = new ArrayList<>();
 
-    private ArrayList<String> updateLog = new ArrayList<>();
+    private List<String> updateLog = new ArrayList<>();
 
     public Client() {
         createdTimestamp = LocalDateTime.now();
-        initOrgans();
+        initDonationOrgans();
+    }
+
+    public Client(int uid) {
+        this.uid = uid;
+        createdTimestamp = LocalDateTime.now();
+        initDonationOrgans();
     }
 
     /**
@@ -72,10 +78,10 @@ public class Client {
         this.gender = Gender.UNSPECIFIED;
         this.createdTimestamp = LocalDateTime.now();
 
-        initOrgans();
+        initDonationOrgans();
     }
 
-    private void initOrgans() {
+    private void initDonationOrgans() {
         organDonationStatus = new HashMap<>();
         for (Organ o : Organ.values()) {
             organDonationStatus.put(o, false);

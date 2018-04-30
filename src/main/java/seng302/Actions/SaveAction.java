@@ -27,4 +27,14 @@
 //    public void unExecute() {
 //        manager.setClients(oldState);
 //    }
+//
+//    @Override
+//    public String getExecuteText() {
+//        return String.format("Saved %s users to file", newState.size());
+//    }
+//
+//    @Override
+//    public String getUnexecuteText() {
+//        return null;
+//    }
 //}

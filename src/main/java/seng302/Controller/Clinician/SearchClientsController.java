@@ -84,7 +84,8 @@ public class SearchClientsController extends SubController {
         sortedClients.comparatorProperty().bind(tableView.comparatorProperty());
 
         //Set initial pagination
-        pagination.setPageCount(sortedClients.size() / ROWS_PER_PAGE + 1);
+        int numberOfPages = Math.max(1, (sortedClients.size() + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE);
+        pagination.setPageCount(numberOfPages);
         //On pagination update call createPage
         pagination.setPageFactory(this::createPage);
 
@@ -104,8 +105,6 @@ public class SearchClientsController extends SubController {
         ageCol.setCellValueFactory(new PropertyValueFactory<>("age"));
         genderCol.setCellValueFactory(new PropertyValueFactory<>("gender"));
         regionCol.setCellValueFactory(new PropertyValueFactory<>("region"));
-
-        tableView.getColumns().setAll(idCol, nameCol, ageCol, genderCol, regionCol);
 
         tableView.setRowFactory(tv -> new TableRow<Client>() {
             private Tooltip tooltip = new Tooltip();
@@ -158,7 +157,7 @@ public class SearchClientsController extends SubController {
         }
 
         //If the pagination count wont change, force a refresh of the page, if it will, change it and that will trigger the update.
-        int newPageCount = filteredClients.size() / ROWS_PER_PAGE + 1;
+        int newPageCount = Math.max(1, (filteredClients.size() + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE);
         if (pagination.getPageCount() == newPageCount) {
             createPage(pagination.getCurrentPageIndex());
         } else {

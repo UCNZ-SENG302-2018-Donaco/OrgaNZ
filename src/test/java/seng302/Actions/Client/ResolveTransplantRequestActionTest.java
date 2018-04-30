@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 
 import seng302.Actions.Action;
 import seng302.Actions.ActionInvoker;
+import seng302.Client;
 import seng302.TransplantRequest;
 import seng302.Utilities.Enums.Organ;
 
@@ -25,7 +26,7 @@ public class ResolveTransplantRequestActionTest {
     @Before
     public void beforeEach() {
         invoker = new ActionInvoker();
-        testRequest = new TransplantRequest(Organ.BONE_MARROW);
+        testRequest = new TransplantRequest(new Client(1), Organ.BONE_MARROW);
     }
 
     @Test

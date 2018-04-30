@@ -25,7 +25,7 @@ public class WindowContext {
     public static class WindowContextBuilder {
 
         private boolean sidebarEnabled = true;
-        private boolean isClinViewClientWindow = false;
+        private boolean isClinViewClientWindow;
         private Client viewClient;
 
         public WindowContextBuilder() {

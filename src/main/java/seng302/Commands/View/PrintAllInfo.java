@@ -17,7 +17,7 @@ import picocli.CommandLine.Command;
  * date 05/03/2018
  */
 
-@Command(name = "printallinfo", description = "Print all users with their cliental information.", sortOptions = false)
+@Command(name = "printallinfo", description = "Print all users with their personal information.", sortOptions = false)
 public class PrintAllInfo implements Runnable {
 
     private ClientManager manager;

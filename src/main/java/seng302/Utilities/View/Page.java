@@ -16,6 +16,7 @@ public enum Page {
     REQUEST_ORGANS("/fxml/request_organs.fxml"),
     HISTORY("/fxml/history.fxml"),
     SEARCH("/fxml/search_clients.fxml"),
+    TRANSPLANTS("/fxml/transplants.fxml"),
     LOGIN_CLINICIAN("/fxml/login_clinician.fxml"),
     CREATE_CLINICIAN("/fxml/create_clinician.fxml"),
     VIEW_MEDICATIONS("/fxml/view_medications.fxml");
