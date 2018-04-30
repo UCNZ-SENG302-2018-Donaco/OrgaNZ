@@ -2,6 +2,8 @@ package seng302.Controller.Clinician;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
@@ -189,26 +191,59 @@ public class ClinicianMedicalHistoryController extends SubController{
 
   }
 
-  @FXML
-  private void alphabeticalFilterPressed(ActionEvent event){
 
-    List<IllnessRecord> currentIllnesses = donor.getCurrentIllnesses();
-    List<IllnessRecord> pastIllnesses = donor.getPastIllnesses();
-    for (int j = 0; j < currentIllnesses.size(); j += 2){
-      IllnessRecord item = currentIllnesses.get(j);
-      IllnessRecord item2 = currentIllnesses.get(j+1);
-      item.getIllnessName().compareToIgnoreCase(item2.getIllnessName());
+
+
+  private void filterFunction(String filterType,Boolean isInverted){
+      List<IllnessRecord> currentIllnesses = donor.getCurrentIllnesses();
+      List<IllnessRecord> pastIllnesses = donor.getPastIllnesses();
+      if(filterType.equals("Alphabetical")){
+          currentIllnesses.sort(Comparator.comparing(IllnessRecord::getIllnessName));
+          pastIllnesses.sort(Comparator.comparing(IllnessRecord::getIllnessName));
+      } else if (filterType.equals("Diagnosis Date")){
+          currentIllnesses.sort(Comparator.comparing(IllnessRecord::getDiagnosisDate));
+          pastIllnesses.sort(Comparator.comparing(IllnessRecord::getDiagnosisDate));
+      }
+
+      if(isInverted){
+          List<IllnessRecord> shallowCopy = currentIllnesses.subList(0,currentIllnesses.size());
+          List<IllnessRecord> shallowCopyPast = pastIllnesses.subList(0,pastIllnesses.size());
+          Collections.reverse(shallowCopy);
+          Collections.reverse(shallowCopyPast);
+          currentIllnessView.setItems(FXCollections.observableArrayList(shallowCopy));
+          pastIllnessView.setItems(FXCollections.observableArrayList(shallowCopyPast));
+      } else {
+          currentIllnessView.setItems(FXCollections.observableArrayList(currentIllnesses));
+          pastIllnessView.setItems(FXCollections.observableArrayList(pastIllnesses));
+      }
+  }
+
+    @FXML
+    private void alphabeticalFilterPressed(ActionEvent event){
+        filterFunction("Alphabetical",false);
+
+    }
+
+    @FXML
+    private void invertedAlphabeticalFilterPressed(ActionEvent event){
+      filterFunction("Alphabetical",true);
+
+    }
+
+  @FXML
+  private void diagnosisFilterPressed(ActionEvent event){
+      filterFunction("Diagnosis Date",false);
+
+
+  }
+
+    @FXML
+    private void invertedDiagnosisFilterPressed(ActionEvent event){
+      filterFunction("Diagnosis Date",true);
 
     }
 
 
-
-  }
-
-  @FXML
-  private void diagnosisFilterPressed(ActionEvent event){
-
-  }
 
   @FXML
   private void deleteIllness(ActionEvent event) {
