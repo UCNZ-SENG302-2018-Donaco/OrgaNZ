@@ -3,11 +3,14 @@ package seng302.Controller.Clinician;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
+import java.util.EnumSet;
+import java.util.Set;
 
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -35,9 +38,11 @@ import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
 import seng302.Utilities.View.WindowContext.WindowContextBuilder;
 
+import org.controlsfx.control.CheckComboBox;
+
 /**
  * Controller for the transplants waiting list page. Contains a table that shows all the current waiting requests for
- * an organ transplant.
+ * an organ transplant. Clinicians can filter the requests based off the Region and Organ of the requests.
  */
 public class TransplantsController extends SubController {
 
@@ -68,9 +73,18 @@ public class TransplantsController extends SubController {
     @FXML
     private Text displayingXToYOfZText;
 
+    @FXML
+    private CheckComboBox<Region> regionChoice;
+
+    @FXML
+    private CheckComboBox<Organ> organChoice;
+
     private ClientManager manager;
-    private ObservableList<TransplantRequest> observableTransplantList = FXCollections.observableArrayList();
-    private SortedList<TransplantRequest> sortedTransplants;
+    private Set<Region> regionsToFilter;
+    private Set<Organ> organsToFilter;
+    private ObservableList<TransplantRequest> observableTransplantRequests = FXCollections.observableArrayList();
+    private FilteredList<TransplantRequest> filteredTransplantRequests;
+    private SortedList<TransplantRequest> sortedTransplantRequests;
 
     /**
      * Formats a table cell that holds a {@link LocalDateTime} value to display that value in the date time format.
@@ -139,21 +153,23 @@ public class TransplantsController extends SubController {
      */
     @Override
     public void refresh() {
-        sortedTransplants = new SortedList<>(FXCollections.observableArrayList(
-                manager.getAllCurrentTransplantRequests()));
+        filteredTransplantRequests = new FilteredList<>(FXCollections.observableArrayList(
+                manager.getAllCurrentTransplantRequests()), client -> true);
+
+        sortedTransplantRequests = new SortedList<>(filteredTransplantRequests);
 
         //Link the sorted list sort to the tableView sort
-        sortedTransplants.comparatorProperty().bind(tableView.comparatorProperty());
+        sortedTransplantRequests.comparatorProperty().bind(tableView.comparatorProperty());
 
         //Set initial pagination
-        int numberOfPages = Math.max(1, (sortedTransplants.size() + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE);
+        int numberOfPages = Math.max(1, (sortedTransplantRequests.size() + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE);
         pagination.setPageCount(numberOfPages);
 
         //Initialize the observable list to all clients
-        observableTransplantList.setAll(sortedTransplants);
+        observableTransplantRequests.setAll(sortedTransplantRequests);
 
         //Bind the tableView to the observable list
-        tableView.setItems(observableTransplantList);
+        tableView.setItems(observableTransplantRequests);
 
         createPage(pagination.getCurrentPageIndex());
     }
@@ -169,6 +185,9 @@ public class TransplantsController extends SubController {
 
         //On pagination update call createPage
         pagination.setPageFactory(this::createPage);
+
+        regionChoice.getItems().addAll(Region.values());
+        organChoice.getItems().addAll(Organ.values());
     }
 
     /**
@@ -246,16 +265,69 @@ public class TransplantsController extends SubController {
      */
     private Node createPage(int pageIndex) {
         int fromIndex = pageIndex * ROWS_PER_PAGE;
-        int toIndex = Math.min(fromIndex + ROWS_PER_PAGE, sortedTransplants.size());
-        observableTransplantList.setAll(sortedTransplants.subList(fromIndex, toIndex));
-        if (sortedTransplants.size() < 2 || fromIndex + 1 == toIndex) {
+        int toIndex = Math.min(fromIndex + ROWS_PER_PAGE, sortedTransplantRequests.size());
+        observableTransplantRequests.setAll(sortedTransplantRequests.subList(fromIndex, toIndex));
+        if (sortedTransplantRequests.size() < 2 || fromIndex + 1 == toIndex) {
             // 0 or 1 items OR the last item, on its own page
-            displayingXToYOfZText.setText(
-                    String.format("Displaying %d of %d", sortedTransplants.size(), sortedTransplants.size()));
+            displayingXToYOfZText.setText(String.format("Displaying %d of %d",
+                    sortedTransplantRequests.size(),
+                    sortedTransplantRequests.size()));
         } else {
             displayingXToYOfZText.setText(String.format("Displaying %d-%d of %d", fromIndex + 1, toIndex,
-                    sortedTransplants.size()));
+                    sortedTransplantRequests.size()));
         }
         return new Pane();
+    }
+
+    /**
+     * Filters the regions based on the RegionChoices current state and updates the organsToFilter Collection.
+     */
+    private void filterRegions() {
+        regionsToFilter = EnumSet.noneOf(Region.class);
+
+        for (Region region : Region.values()) {
+            if (regionChoice.getCheckModel().isChecked(region)) {
+                regionsToFilter.add(region);
+            }
+        }
+    }
+
+    /**
+     * Filters the organs based on the OrganChoices current state and updates the organsToFilter Collection.
+     */
+    private void filterOrgans() {
+        organsToFilter = EnumSet.noneOf(Organ.class);
+
+        for (Organ organ : Organ.values()) {
+            if (organChoice.getCheckModel().isChecked(organ)) {
+                organsToFilter.add(organ);
+            }
+        }
+    }
+
+    /**
+     * Filters the transplant waiting list based on what organs/regions are chosen.
+     */
+    @FXML
+    private void filter() {
+        filterRegions();
+        filterOrgans();
+        filteredTransplantRequests.setPredicate(transplantRequest ->
+                (regionsToFilter.contains(transplantRequest.getClient().getRegion()) || regionsToFilter.size() == 0) &&
+                        (organsToFilter.contains(transplantRequest.getRequestedOrgan()) || organsToFilter.size() == 0));
+        refreshTable();
+    }
+
+    /**
+     * Upon filtering update, update pagination
+     * Every refresh triggers the pagination to update and go to page zero
+     */
+    private void refreshTable() {
+        int newPageCount = Math.max(1, (filteredTransplantRequests.size() + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE);
+        if (pagination.getPageCount() == newPageCount) {
+            createPage(pagination.getCurrentPageIndex());
+        } else {
+            pagination.setPageCount(newPageCount);
+        }
     }
 }
