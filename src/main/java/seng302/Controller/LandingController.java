@@ -2,6 +2,7 @@ package seng302.Controller;
 
 import javafx.fxml.FXML;
 
+import javafx.scene.control.Button;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
 
@@ -9,6 +10,9 @@ import seng302.Utilities.View.PageNavigator;
  * Controls the Landing Screen View.
  */
 public class LandingController extends SubController {
+
+    @FXML
+    Button createClientButton, loginClientButton, createClinicianButton, loginClinicianButton;
 
     /**
      * Override so we can set the page title.
