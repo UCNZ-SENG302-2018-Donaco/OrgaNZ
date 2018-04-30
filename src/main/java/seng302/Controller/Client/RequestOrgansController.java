@@ -15,6 +15,7 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -94,12 +95,14 @@ public class RequestOrgansController extends SubController {
             protected void updateItem(TransplantRequest request, boolean empty) {
                 super.updateItem(request, empty);
                 if (empty || request == null) {
-                    setText(null);
-                    setGraphic(null);
+                    setStyle(null);
+                    setTooltip(null);
                 } else if (client.getOrganDonationStatus().get(request.getRequestedOrgan())) {
                     setStyle("-fx-background-color: lightcoral");
+                    setTooltip(new Tooltip("This organ is currently set for donation."));
                 } else {
-                    setStyle("");
+                    setStyle(null);
+                    setTooltip(null);
                 }
             }
         };

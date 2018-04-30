@@ -1,11 +1,14 @@
 package seng302.Controller.Client;
 
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Pane;
 
 import seng302.Actions.ActionInvoker;
@@ -17,6 +20,7 @@ import seng302.HistoryItem;
 import seng302.State.ClientManager;
 import seng302.State.Session;
 import seng302.State.State;
+import seng302.TransplantRequest;
 import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
 import seng302.Utilities.JSONConverter;
@@ -97,8 +101,18 @@ public class RegisterOrganDonationController extends SubController {
     public void refresh() {
         if (client != null) {
             setCheckBoxesEnabled();
+
+            EnumSet<Organ> allPreviouslyRequestedOrgans = client.getTransplantRequests()
+                    .stream()
+                    .map(TransplantRequest::getRequestedOrgan)
+                    .collect(Collectors.toCollection(() -> EnumSet.noneOf(Organ.class)));
+
             for (Map.Entry<Organ, CheckBox> entry : organCheckBoxes.entrySet()) {
                 entry.getValue().setSelected(client.getOrganDonationStatus().get(entry.getKey()));
+                if (allPreviouslyRequestedOrgans.contains(entry.getKey())) {
+                    entry.getValue().setStyle("-fx-color: lightcoral;");
+                    entry.getValue().setTooltip(new Tooltip("This organ was/is part of a transplant request."));
+                }
             }
             HistoryItem save = new HistoryItem("UPDATE ID", "The Client's ID was updated to " + client.getUid());
             JSONConverter.updateHistory(save, "action_history.json");
