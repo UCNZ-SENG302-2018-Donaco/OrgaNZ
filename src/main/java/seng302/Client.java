@@ -9,6 +9,7 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -24,7 +25,7 @@ import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
 
 public class Client {
 
-    private int uid;
+    private final int uid;
     private String firstName;
     private String lastName;
     private String middleName;
@@ -53,6 +54,7 @@ public class Client {
     public Client() {
         createdTimestamp = LocalDateTime.now();
         initOrgans();
+        uid = 1;
     }
 
     /**
@@ -426,6 +428,22 @@ public class Client {
 
     }
 
+    public Collection<TransplantRequest> getTransplantRequests() {
+        return transplantRequests;
+    }
+
+    public void addTransplantRequest(TransplantRequest request) {
+        transplantRequests.add(request);
+    }
+
+    public void removeTransplantRequest(TransplantRequest request) {
+        transplantRequests.remove(request);
+    }
+
+    public boolean isReceiver() {
+        return transplantRequests.size() > 0;
+    }
+
     /**
      * Takes a string and checks if each space separated string section matches one of the names
      * @param searchParam The string to be checked
@@ -450,32 +468,26 @@ public class Client {
 
     /**
      * Client objects are identified by their uid
+     * @param o The object to compare
+     * @return If the Client is a match
      */
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
+    public boolean equals(Object o) {
+        if (this == o) {
             return true;
         }
-        if (!(obj instanceof Client)) {
+        if (!(o instanceof Client)) {
             return false;
         }
-        Client d = (Client) obj;
-        return d.uid == this.uid;
+        Client client = (Client) o;
+        return client.uid == this.uid;
     }
 
-    public Collection<TransplantRequest> getTransplantRequests() {
-        return transplantRequests;
-    }
-
-    public void addTransplantRequest(TransplantRequest request) {
-        transplantRequests.add(request);
-    }
-
-    public void removeTransplantRequest(TransplantRequest request) {
-        transplantRequests.remove(request);
-    }
-
-    public boolean isReceiver() {
-        return transplantRequests.size() > 0;
+    /**
+     * Client objects are identified by their uid
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(uid);
     }
 }
