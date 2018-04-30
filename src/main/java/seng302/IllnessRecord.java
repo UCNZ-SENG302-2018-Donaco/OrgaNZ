@@ -51,7 +51,7 @@ public class IllnessRecord {
   }
 
   public String toString(){
-    if (curedDate == null && isChronic == false) {
+    if (curedDate == null && !isChronic) {
       return String.format("%s Diagnosed on: %s",illnessName, diagnosisDate.format(dateFormat));
     } if (isChronic){
       return String.format("%s (Chronic Disease) Diagnosed on: %s",illnessName,
