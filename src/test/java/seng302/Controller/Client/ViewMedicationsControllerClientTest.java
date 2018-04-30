@@ -7,10 +7,9 @@ import static org.testfx.util.NodeQueryUtils.isVisible;
 
 import java.time.LocalDate;
 
-import seng302.Controller.ControllerTest;
 import seng302.Client;
+import seng302.Controller.ControllerTest;
 import seng302.MedicationRecord;
-import seng302.State.Session.UserType;
 import seng302.State.State;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.WindowContext;
@@ -40,7 +39,7 @@ public class ViewMedicationsControllerClientTest extends ControllerTest {
             )
     };
 
-    private Client testClient = new Client();
+    private Client testClient = new Client(1);
 
     @Override
     protected Page getPage() {
@@ -50,7 +49,7 @@ public class ViewMedicationsControllerClientTest extends ControllerTest {
     @Override
     protected void initState() {
         State.init();
-        State.login(UserType.CLIENT, testClient);
+        State.login(testClient);
         mainController.setWindowContext(WindowContext.defaultContext());
         resetTestClientMedicationHistory();
     }

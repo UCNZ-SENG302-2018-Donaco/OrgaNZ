@@ -1,8 +1,11 @@
 package seng302.State;
 
+import java.util.ArrayList;
+
 import seng302.Actions.ActionInvoker;
-import seng302.Clinician;
 import seng302.Client;
+import seng302.Clinician;
+import seng302.Controller.MainController;
 
 /**
  * A static class to store the current state of the system.
@@ -13,6 +16,8 @@ public final class State {
     private static ClinicianManager clinicianManager;
     private static ActionInvoker actionInvoker;
     private static Session session;
+    private static boolean unsavedChanges = false;
+    private static ArrayList<MainController> mainControllers = new ArrayList<>();
 
     private State() {
     }
@@ -42,16 +47,32 @@ public final class State {
         return session;
     }
 
-    public static void login(Session.UserType userType, Object user) {
-        if (userType == Session.UserType.CLIENT) {
-            session = new Session((Client) user);
-        } else if (userType == Session.UserType.CLINICIAN) {
-            session = new Session((Clinician) user);
-        }
+    public static void login(Client client) {
+        session = new Session(client);
+    }
+
+    public static void login(Clinician clinician) {
+        session = new Session(clinician);
+    }
+
+    public static void setUnsavedChanges(boolean changes) {
+        unsavedChanges = changes;
+    }
+
+    public static boolean isUnsavedChanges() {
+        return unsavedChanges;
     }
 
     public static void logout() {
         // Do something with the old session
         session = null;
+    }
+
+    public static void addMainController(MainController mainController) {
+        mainControllers.add(mainController);
+    }
+
+    public static ArrayList<MainController> getMainControllers() {
+        return mainControllers;
     }
 }

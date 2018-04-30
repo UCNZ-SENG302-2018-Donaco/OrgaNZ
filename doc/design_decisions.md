@@ -21,7 +21,7 @@ valid results, what would happen if a user forgot to enter a necessary part into
 would occur if there were duplicate results entered, and any other valid acceptance or rejecting tests.
 
 
-**APIs' used**
+**APIs used**
 
 
 **Picocli**

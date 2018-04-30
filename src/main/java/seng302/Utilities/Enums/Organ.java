@@ -1,9 +1,5 @@
 package seng302.Utilities.Enums;
 
-import java.util.ArrayList;
-import java.util.EnumSet;
-import java.util.List;
-
 /**
  * Enum for organs. Allows for to/from string conversion
  */
@@ -22,7 +18,6 @@ public enum Organ {
     CONNECTIVE_TISSUE("Connective tissue");
 
     private final String text;
-
 
     Organ(String text) {
         this.text = text;
@@ -46,5 +41,4 @@ public enum Organ {
         }
         throw new IllegalArgumentException("Unsupported organ");
     }
-
 }

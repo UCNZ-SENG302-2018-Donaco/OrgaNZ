@@ -63,6 +63,7 @@ public class SearchClientsController extends SubController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
+        mainController.setTitle("Client search");
         mainController.loadSidebar(sidebarPane);
     }
 
@@ -83,7 +84,8 @@ public class SearchClientsController extends SubController {
         sortedClients.comparatorProperty().bind(tableView.comparatorProperty());
 
         //Set initial pagination
-        pagination.setPageCount(sortedClients.size() / ROWS_PER_PAGE + 1);
+        int numberOfPages = Math.max(1, (sortedClients.size() + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE);
+        pagination.setPageCount(numberOfPages);
         //On pagination update call createPage
         pagination.setPageFactory(this::createPage);
 
@@ -103,8 +105,6 @@ public class SearchClientsController extends SubController {
         ageCol.setCellValueFactory(new PropertyValueFactory<>("age"));
         genderCol.setCellValueFactory(new PropertyValueFactory<>("gender"));
         regionCol.setCellValueFactory(new PropertyValueFactory<>("region"));
-
-        tableView.getColumns().setAll(idCol, nameCol, ageCol, genderCol, regionCol);
 
         tableView.setRowFactory(tv -> new TableRow<Client>() {
             private Tooltip tooltip = new Tooltip();
@@ -147,7 +147,8 @@ public class SearchClientsController extends SubController {
      * Upon filtering update, refresh the filters to the new string and update pagination
      * Every refresh triggers the pagination to update and go to page zero
      */
-    private void refresh() {
+    @Override
+    public void refresh() {
         String searchText = searchBox.getText();
         if (searchText == null || searchText.length() == 0) {
             filteredClients.setPredicate(client -> true);
@@ -156,9 +157,9 @@ public class SearchClientsController extends SubController {
         }
 
         //If the pagination count wont change, force a refresh of the page, if it will, change it and that will trigger the update.
-        int newPageCount = filteredClients.size() / ROWS_PER_PAGE + 1;
+        int newPageCount = Math.max(1, (filteredClients.size() + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE);
         if (pagination.getPageCount() == newPageCount) {
-            createPage(0);
+            createPage(pagination.getCurrentPageIndex());
         } else {
             pagination.setPageCount(newPageCount);
         }

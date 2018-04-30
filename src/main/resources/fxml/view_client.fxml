@@ -88,7 +88,7 @@
                           GridPane.columnIndex="3" GridPane.rowIndex="3"/>
                         <TextField fx:id="address" layoutX="530.0" layoutY="245.0" prefHeight="30.0"
                           GridPane.columnIndex="3" GridPane.rowIndex="4"/>
-                        <Button mnemonicParsing="false" onAction="#viewOrgansForClient" text="Organs"
+                        <Button mnemonicParsing="false" onAction="#viewOrgansForClient" text="Organs" prefHeight="30.0"
                           GridPane.columnIndex="2" GridPane.rowIndex="7"/>
                         <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#saveChanges"
                           prefHeight="30.0" text="Save Changes" GridPane.columnIndex="3" GridPane.rowIndex="7"/>

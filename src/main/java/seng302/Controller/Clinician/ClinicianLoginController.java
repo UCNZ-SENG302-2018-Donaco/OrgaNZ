@@ -1,16 +1,15 @@
 package seng302.Controller.Clinician;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
 import seng302.Clinician;
+import seng302.Controller.MainController;
 import seng302.Controller.SubController;
 import seng302.HistoryItem;
 import seng302.State.ClinicianManager;
-import seng302.State.Session;
 import seng302.State.State;
 import seng302.Utilities.JSONConverter;
 import seng302.Utilities.View.Page;
@@ -35,11 +34,20 @@ public class ClinicianLoginController extends SubController {
     }
 
     /**
+     * Override so we can set the page title.
+     * @param mainController The MainController
+     */
+    @Override
+    public void setup(MainController mainController) {
+        super.setup(mainController);
+        mainController.setTitle("Clinician login");
+    }
+
+    /**
      * Navigates a user back to the Landing page.
-     * @param event user clicking the go back button
      */
     @FXML
-    private void goBack(ActionEvent event) {
+    private void goBack() {
         PageNavigator.loadPage(Page.LANDING, mainController);
     }
 
@@ -84,10 +92,9 @@ public class ClinicianLoginController extends SubController {
      * Checks if valid input for a staff member who exists in the systems ClinicianManager matches the supplied
      * password.
      * The user cannot be taken to the view_clinician page until valid parameters are supplied.
-     * @param event user clicking the login button
      */
     @FXML
-    private void signIn(ActionEvent event) {
+    private void signIn() {
         if (validStaffIDinput()) {
             Clinician clinician = clinicianManager.getClinicianByStaffId(id);
             if (clinician == null) {
@@ -95,7 +102,7 @@ public class ClinicianLoginController extends SubController {
             } else if (!clinician.getPassword().equals(password.getText())) {
                 staffIdPasswordMismatchAlert();
             } else {
-                State.login(Session.UserType.CLINICIAN, clinician);
+                State.login(clinician);
                 PageNavigator.loadPage(Page.VIEW_CLINICIAN, mainController);
 
                 HistoryItem save = new HistoryItem("LOGIN_CLINICIAN", String.format("Clinician %s %s logged in.",

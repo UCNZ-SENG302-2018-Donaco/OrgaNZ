@@ -1,35 +1,34 @@
 package seng302;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
-import seng302.State.State;
 import seng302.Utilities.Enums.Organ;
-import seng302.Utilities.Enums.Region;
 
 /**
- * Class to hold Transplant Requests for each time a clinician adds a request for a Client to have a transplant for
- * a specified organ. The Organ type, time of request, and status of request are all properties of a TransplantRequest.
+ * Represents a request for a client to receive a transplant for a given organ.
  */
 public class TransplantRequest {
 
-    private Organ requestedOrgan;
-    private LocalDateTime requestDate;
-    private boolean currentRequest;
-    private int clientId;
-
-    public TransplantRequest(Organ requestedOrgan, boolean currentRequest) {
-        this.requestedOrgan = requestedOrgan;
-        this.currentRequest = currentRequest;
-        requestDate = LocalDateTime.now();
-        clientId = -1;
+    public enum RequestStatus {
+        WAITING,
+        CANCELLED,
+        COMPLETED
     }
 
-    public TransplantRequest(Organ requestedOrgan, boolean currentRequest, int clientId) {
+    private Client client;
+    private Organ requestedOrgan;
+    private LocalDateTime requestDate;
+    private LocalDateTime resolvedDate;
+    private RequestStatus status = RequestStatus.WAITING;
+
+    public TransplantRequest(Client client, Organ requestedOrgan) {
+        this.client = client;
         this.requestedOrgan = requestedOrgan;
-        this.currentRequest = currentRequest;
-        requestDate = LocalDateTime.now();
-        this.clientId = clientId;
+        this.requestDate = LocalDateTime.now();
+    }
+
+    public Client getClient() {
+        return client;
     }
 
     public Organ getRequestedOrgan() {
@@ -40,31 +39,19 @@ public class TransplantRequest {
         return requestDate;
     }
 
-    public void setRequestDate(LocalDateTime requestDate) {this.requestDate = requestDate;}
-
-    public String getRequestDateString() {
-        return requestDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+    public LocalDateTime getResolvedDate() {
+        return resolvedDate;
     }
 
-    public boolean getCurrentRequest() {
-        return currentRequest;
+    public RequestStatus getStatus() {
+        return status;
     }
 
-    public Client getClient() {
-        return State.getClientManager().getClientByID(clientId);
+    public void setResolvedDate(LocalDateTime resolvedDate) {
+        this.resolvedDate = resolvedDate;
     }
 
-    public void setClient(Client client) {
-        this.clientId = client.getUid();
-    }
-
-    public String getClientName() {
-        Client client = State.getClientManager().getClientByID(clientId);
-        return client == null ? null : client.getFullName();
-    }
-
-    public Region getClientRegion() {
-        Client client = State.getClientManager().getClientByID(clientId);
-        return client == null ? null : client.getRegion();
+    public void setStatus(RequestStatus status) {
+        this.status = status;
     }
 }

@@ -28,7 +28,8 @@
         </Label>
       </top>
       <center>
-        <ListView fx:id="clientList" maxWidth="250.0" prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+        <ListView fx:id="clientList" maxWidth="250.0" prefHeight="200.0" prefWidth="200.0"
+          BorderPane.alignment="CENTER">
           <BorderPane.margin>
             <Insets/>
           </BorderPane.margin>

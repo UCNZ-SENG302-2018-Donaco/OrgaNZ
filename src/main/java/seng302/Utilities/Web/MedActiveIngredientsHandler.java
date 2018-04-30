@@ -13,6 +13,9 @@ import com.google.api.client.http.HttpResponseException;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonObjectParser;
 
+/**
+ * A handler for requests to the medication active ingredients web API provided by MAPI.
+ */
 public class MedActiveIngredientsHandler extends WebAPIHandler {
 
     private static final String ACTIVE_INGREDIENTS_ENDPOINT = "http://mapi-us.iterar.co/api/%s/substances.json";

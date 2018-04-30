@@ -43,7 +43,7 @@ public class DeleteClientActionTest {
 
     @Test
     public void CheckClientMultipleDeletesOneUndoTest() {
-        Client second = new Client("SecondClient", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        Client second = new Client("SecondClient", null, "Last", LocalDate.of(1970, 1, 1), 2);
         manager.addClient(second);
 
         DeleteClientAction action = new DeleteClientAction(baseClient, manager);
@@ -53,13 +53,13 @@ public class DeleteClientActionTest {
         invoker.execute(secondAction);
 
         invoker.undo();
-        assertEquals(baseClient, manager.getClients().get(0));
+        assertEquals(second, manager.getClients().get(0));
         assertEquals(1, manager.getClients().size());
     }
 
     @Test
     public void CheckClientMultipleDeletesOneUndoRedoTest() {
-        Client second = new Client("SecondClient", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        Client second = new Client("SecondClient", null, "Last", LocalDate.of(1970, 1, 1), 2);
         manager.addClient(second);
 
         DeleteClientAction action = new DeleteClientAction(baseClient, manager);
@@ -69,13 +69,11 @@ public class DeleteClientActionTest {
         invoker.execute(secondAction);
 
         invoker.undo();
-        assertEquals(baseClient, manager.getClients().get(0));
+        assertEquals(second, manager.getClients().get(0));
         assertEquals(1, manager.getClients().size());
 
         invoker.redo();
 
         assertEquals(0, manager.getClients().size());
     }
-
-
 }

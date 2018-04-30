@@ -1,15 +1,15 @@
 package seng302.Actions.Client;
 
 import seng302.Actions.Action;
-import seng302.HistoryItem;
 import seng302.Client;
+import seng302.HistoryItem;
 import seng302.MedicationRecord;
 import seng302.Utilities.JSONConverter;
 
 /**
  * A reversible action that will delete the given medication record from the given Client's medication history.
  */
-public class DeleteMedicationRecordAction implements Action {
+public class DeleteMedicationRecordAction extends Action {
 
     private Client client;
     private MedicationRecord record;
@@ -25,16 +25,28 @@ public class DeleteMedicationRecordAction implements Action {
     }
 
     @Override
-    public void execute() {
+    protected void execute() {
         client.deleteMedicationRecord(record);
         HistoryItem save = new HistoryItem("DELETE_MEDICATION",
-                String.format("Medication record for %s deleted from %s %s",
-                        record.getMedicationName(), client.getFirstName(), client.getLastName()));
+                String.format("Medication record for %s deleted from %s",
+                        record.getMedicationName(), client.getFullName()));
         JSONConverter.updateHistory(save, "action_history.json");
     }
 
     @Override
-    public void unExecute() {
+    protected void unExecute() {
         client.addMedicationRecord(record);
+    }
+
+    @Override
+    public String getExecuteText() {
+        return String.format("Removed record for medication '%s' from the history of client %d: %s.",
+                record.getMedicationName(), client.getUid(), client.getFullName());
+    }
+
+    @Override
+    public String getUnexecuteText() {
+        return String.format("Re-added record for medication '%s' to the history of client %d: %s.",
+                record.getMedicationName(), client.getUid(), client.getFullName());
     }
 }

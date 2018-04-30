@@ -7,7 +7,7 @@ import seng302.State.ClientManager;
 /**
  * A reversible client deletion action
  */
-public class DeleteClientAction implements Action {
+public class DeleteClientAction extends Action {
 
     private Client client;
     private ClientManager manager;
@@ -31,4 +31,15 @@ public class DeleteClientAction implements Action {
     public void unExecute() {
         manager.addClient(client);
     }
+
+    @Override
+    public String getExecuteText() {
+        return String.format("Deleted client %s", client.getFullName());
+    }
+
+    @Override
+    public String getUnexecuteText() {
+        return String.format("Re-added client %s", client.getFullName());
+    }
+
 }

@@ -1,25 +1,33 @@
 package seng302.Controller.Client;
 
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Pane;
 
 import seng302.Actions.ActionInvoker;
 import seng302.Actions.Client.ModifyClientOrgansAction;
+import seng302.Client;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
-import seng302.Client;
 import seng302.HistoryItem;
 import seng302.State.ClientManager;
 import seng302.State.Session;
 import seng302.State.State;
+import seng302.TransplantRequest;
 import seng302.Utilities.Enums.Organ;
+import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
 import seng302.Utilities.JSONConverter;
+import seng302.Utilities.View.Page;
+import seng302.Utilities.View.PageNavigator;
+
+import org.controlsfx.control.Notifications;
 
 /**
  * Controller for the register organs page.
@@ -79,32 +87,37 @@ public class RegisterOrganDonationController extends SubController {
 
         if (session.getLoggedInUserType() == Session.UserType.CLIENT) {
             client = session.getLoggedInClient();
+            idPane.setDisable(true);
         } else if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
         }
 
+        mainController.setTitle("Organ donation registration: " + client.getFullName());
         fieldUserID.setText(Integer.toString(client.getUid()));
-        updateUserID(null);
+        updateUserID();
     }
 
-    /**
-     * Updates the current client to the one specified in the userID field, and populates with their info.
-     * @param event When ENTER is pressed with focus on the userID field.
-     */
-    @FXML
-    private void updateUserID(ActionEvent event) {
-        try {
-            client = manager.getClientByID(Integer.parseInt(fieldUserID.getText()));
-        } catch (NumberFormatException exc) {
-            client = null;
-        }
-
+    @Override
+    public void refresh() {
         if (client != null) {
             setCheckBoxesEnabled();
+
+            EnumSet<Organ> allPreviouslyRequestedOrgans = client.getTransplantRequests()
+                    .stream()
+                    .map(TransplantRequest::getRequestedOrgan)
+                    .collect(Collectors.toCollection(() -> EnumSet.noneOf(Organ.class)));
+
             for (Map.Entry<Organ, CheckBox> entry : organCheckBoxes.entrySet()) {
                 entry.getValue().setSelected(client.getOrganDonationStatus().get(entry.getKey()));
+                if (allPreviouslyRequestedOrgans.contains(entry.getKey())) {
+                    entry.getValue().setStyle("-fx-color: lightcoral;");
+                    entry.getValue().setTooltip(new Tooltip("This organ was/is part of a transplant request."));
+                } else {
+                    entry.getValue().setStyle(null);
+                    entry.getValue().setTooltip(null);
+                }
             }
-            HistoryItem save = new HistoryItem("UPDATE ID", "The Clients ID was updated to " + client.getUid());
+            HistoryItem save = new HistoryItem("UPDATE ID", "The Client's ID was updated to " + client.getUid());
             JSONConverter.updateHistory(save, "action_history.json");
         } else {
             setCheckboxesDisabled();
@@ -112,11 +125,23 @@ public class RegisterOrganDonationController extends SubController {
     }
 
     /**
-     * Checks which organs check boxes have been changed, and applies those changes with a ModifyClientOrgansAction.
-     * @param event When any organ checkbox changes state.
+     * Updates the current client to the one specified in the userID field, and populates with their info.
      */
     @FXML
-    private void modifyOrgans(ActionEvent event) {
+    private void updateUserID() {
+        try {
+            client = manager.getClientByID(Integer.parseInt(fieldUserID.getText()));
+        } catch (NumberFormatException exc) {
+            client = null;
+        }
+        refresh();
+    }
+
+    /**
+     * Checks which organs check boxes have been changed, and applies those changes with a ModifyClientOrgansAction.
+     */
+    @FXML
+    private void modifyOrgans() {
         ModifyClientOrgansAction action = new ModifyClientOrgansAction(client);
         boolean hasChanged = false;
 
@@ -125,15 +150,25 @@ public class RegisterOrganDonationController extends SubController {
             boolean newStatus = organCheckBoxes.get(organ).isSelected();
 
             if (oldStatus != newStatus) {
-                action.addChange(organ, newStatus);
-                hasChanged = true;
+                try {
+                    action.addChange(organ, newStatus);
+                    hasChanged = true;
+                } catch (OrganAlreadyRegisteredException e) {
+                    e.printStackTrace();
+                }
             }
         }
         if (hasChanged) {
-            invoker.execute(action);
+            String actionText = invoker.execute(action);
             HistoryItem save = new HistoryItem("UPDATE ORGANS",
                     "The Client's organs were updated: " + client.getOrganStatusString("donations"));
             JSONConverter.updateHistory(save, "action_history.json");
+
+            PageNavigator.refreshAllWindows();
+            Notifications.create()
+                    .title("Updated Donating Organs")
+                    .text(actionText)
+                    .showInformation();
         }
     }
 
@@ -154,5 +189,10 @@ public class RegisterOrganDonationController extends SubController {
         for (CheckBox box : organCheckBoxes.values()) {
             box.setDisable(false);
         }
+    }
+
+    @FXML
+    private void returnToViewClient() {
+        PageNavigator.loadPage(Page.VIEW_CLIENT, mainController);
     }
 }

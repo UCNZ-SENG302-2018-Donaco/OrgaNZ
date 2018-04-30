@@ -2,10 +2,10 @@ package seng302.Controller.Client;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
@@ -15,9 +15,9 @@ import javafx.scene.paint.Color;
 
 import seng302.Actions.ActionInvoker;
 import seng302.Actions.Client.ModifyClientAction;
+import seng302.Client;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
-import seng302.Client;
 import seng302.HistoryItem;
 import seng302.State.ClientManager;
 import seng302.State.Session;
@@ -28,6 +28,8 @@ import seng302.Utilities.Enums.Region;
 import seng302.Utilities.JSONConverter;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
+
+import org.controlsfx.control.Notifications;
 
 /**
  * Controller for the view/edit client page.
@@ -92,7 +94,13 @@ public class ViewClientController extends SubController {
             viewedClient = windowContext.getViewClient();
         }
 
+        mainController.setTitle("Client profile: " + viewedClient.getFullName());
         id.setText(Integer.toString(viewedClient.getUid()));
+        searchClient();
+    }
+
+    @Override
+    public void refresh() {
         searchClient();
     }
 
@@ -248,36 +256,41 @@ public class ViewClientController extends SubController {
         return update;
     }
 
+    private void addChangeIfDifferent(ModifyClientAction action, String field, Object oldValue, Object newValue) {
+        try {
+            if (!Objects.equals(oldValue, newValue)) {
+                action.addChange(field, oldValue, newValue);
+            }
+        } catch (NoSuchFieldException | NoSuchMethodException exc) {
+            exc.printStackTrace();
+        }
+    }
+
     /**
      * Records the changes updated as a ModifyClientAction to trace the change in record.
      */
     private void updateChanges() {
-        try {
-            ModifyClientAction action = new ModifyClientAction(viewedClient);
+        ModifyClientAction action = new ModifyClientAction(viewedClient);
 
-            action.addChange("setFirstName", viewedClient.getFirstName(), fname.getText());
-            action.addChange("setLastName", viewedClient.getLastName(), lname.getText());
-            action.addChange("setMiddleName", viewedClient.getMiddleName(), mname.getText());
-            action.addChange("setDateOfBirth", viewedClient.getDateOfBirth(), dob.getValue());
-            action.addChange("setDateOfDeath", viewedClient.getDateOfDeath(), dod.getValue());
-            action.addChange("setGender", viewedClient.getGender(), gender.getValue());
-            action.addChange("setHeight", viewedClient.getHeight(), Double.parseDouble(height.getText()));
-            action.addChange("setWeight", viewedClient.getWeight(), Double.parseDouble(weight.getText()));
-            action.addChange("setBloodType", viewedClient.getBloodType(), btype.getValue());
-            action.addChange("setRegion", viewedClient.getRegion(), region.getValue());
-            action.addChange("setCurrentAddress", viewedClient.getCurrentAddress(), address.getText());
+        addChangeIfDifferent(action, "setFirstName", viewedClient.getFirstName(), fname.getText());
+        addChangeIfDifferent(action, "setLastName", viewedClient.getLastName(), lname.getText());
+        addChangeIfDifferent(action, "setMiddleName", viewedClient.getMiddleName(), mname.getText());
+        addChangeIfDifferent(action, "setDateOfBirth", viewedClient.getDateOfBirth(), dob.getValue());
+        addChangeIfDifferent(action, "setDateOfDeath", viewedClient.getDateOfDeath(), dod.getValue());
+        addChangeIfDifferent(action, "setGender", viewedClient.getGender(), gender.getValue());
+        addChangeIfDifferent(action, "setHeight", viewedClient.getHeight(), Double.parseDouble(height.getText()));
+        addChangeIfDifferent(action, "setWeight", viewedClient.getWeight(), Double.parseDouble(weight.getText()));
+        addChangeIfDifferent(action, "setBloodType", viewedClient.getBloodType(), btype.getValue());
+        addChangeIfDifferent(action, "setRegion", viewedClient.getRegion(), region.getValue());
+        addChangeIfDifferent(action, "setCurrentAddress", viewedClient.getCurrentAddress(), address.getText());
 
-            invoker.execute(action);
+        String actionText = invoker.execute(action);
+        PageNavigator.refreshAllWindows();
 
-            PageNavigator.showAlert(Alert.AlertType.INFORMATION,
-                    "Success",
-                    String.format("Successfully updated client %s %s %s %d.",
-                            viewedClient.getFirstName(), viewedClient.getMiddleName(),
-                            viewedClient.getLastName(), viewedClient.getUid()));
-
-        } catch (NoSuchFieldException | NoSuchMethodException exc) {
-            exc.printStackTrace();
-        }
+        Notifications.create()
+                .title("Updated Client")
+                .text(actionText)
+                .showInformation();
     }
 
     /**
