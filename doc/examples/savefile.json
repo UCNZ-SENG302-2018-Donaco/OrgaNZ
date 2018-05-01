@@ -19,202 +19,107 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 955000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 121000000
       }
     },
     "modifiedTimestamp": {
       "date": {
         "year": 2018,
-        "month": 4,
-        "day": 28
+        "month": 5,
+        "day": 1
       },
       "time": {
-        "hour": 18,
-        "minute": 18,
-        "second": 8,
-        "nano": 636000000
+        "hour": 14,
+        "minute": 48,
+        "second": 50,
+        "nano": 857000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": true,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": true,
-      "SKIN": false,
-      "LIVER": true
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": true,
-      "SKIN": false,
-      "LIVER": true
+      "PANCREAS": true
     },
     "medicationHistory": [],
-"illnessHistory": [],
     "transplantRequests": [
       {
-        "requestedOrgan": "KIDNEY",
-        "requestDate": {
-          "date": {
-            "year": 2018,
-            "month": 4,
-            "day": 26
-          },
-          "time": {
-            "hour": 19,
-            "minute": 37,
-            "second": 30,
-            "nano": 981000000
-          }
-        },
-        "currentRequest": true,
-        "clientId": 0
-      },
-      {
-        "requestedOrgan": "KIDNEY",
-        "requestDate": {
-          "date": {
-            "year": 2018,
-            "month": 4,
-            "day": 26
-          },
-          "time": {
-            "hour": 19,
-            "minute": 37,
-            "second": 34,
-            "nano": 870000000
-          }
-        },
-        "currentRequest": false,
-        "clientId": 0
-      },
-      {
-        "requestedOrgan": "KIDNEY",
-        "requestDate": {
-          "date": {
-            "year": 2018,
-            "month": 4,
-            "day": 26
-          },
-          "time": {
-            "hour": 19,
-            "minute": 37,
-            "second": 37,
-            "nano": 640000000
-          }
-        },
-        "currentRequest": true,
-        "clientId": 0
-      },
-      {
         "requestedOrgan": "LIVER",
         "requestDate": {
           "date": {
             "year": 2018,
-            "month": 4,
-            "day": 26
+            "month": 5,
+            "day": 1
           },
           "time": {
-            "hour": 19,
-            "minute": 37,
-            "second": 38,
-            "nano": 392000000
+            "hour": 14,
+            "minute": 48,
+            "second": 53,
+            "nano": 372000000
           }
         },
-        "currentRequest": true,
-        "clientId": 0
+        "status": "WAITING"
       },
       {
-        "requestedOrgan": "KIDNEY",
+        "requestedOrgan": "CORNEA",
         "requestDate": {
           "date": {
             "year": 2018,
-            "month": 4,
-            "day": 28
+            "month": 5,
+            "day": 1
           },
           "time": {
-            "hour": 18,
-            "minute": 18,
-            "second": 6,
-            "nano": 907000000
+            "hour": 14,
+            "minute": 48,
+            "second": 56,
+            "nano": 571000000
           }
         },
-        "currentRequest": false,
-        "clientId": 1
+        "status": "WAITING"
       },
       {
-        "requestedOrgan": "LIVER",
+        "requestedOrgan": "BONE_MARROW",
         "requestDate": {
           "date": {
             "year": 2018,
-            "month": 4,
-            "day": 28
+            "month": 5,
+            "day": 1
           },
           "time": {
-            "hour": 18,
-            "minute": 18,
-            "second": 7,
-            "nano": 632000000
+            "hour": 14,
+            "minute": 48,
+            "second": 58,
+            "nano": 223000000
           }
         },
-        "currentRequest": false,
-        "clientId": 1
-      },
-      {
-        "requestedOrgan": "LIVER",
-        "requestDate": {
+        "resolvedDate": {
           "date": {
             "year": 2018,
-            "month": 4,
-            "day": 28
+            "month": 5,
+            "day": 1
           },
           "time": {
-            "hour": 18,
-            "minute": 18,
-            "second": 8,
-            "nano": 28000000
+            "hour": 14,
+            "minute": 49,
+            "second": 4,
+            "nano": 735000000
           }
         },
-        "currentRequest": true,
-        "clientId": 1
-      },
-      {
-        "requestedOrgan": "KIDNEY",
-        "requestDate": {
-          "date": {
-            "year": 2018,
-            "month": 4,
-            "day": 28
-          },
-          "time": {
-            "hour": 18,
-            "minute": 18,
-            "second": 8,
-            "nano": 636000000
-          }
-        },
-        "currentRequest": true,
-        "clientId": 1
+        "status": "CANCELLED"
       }
     ],
     "updateLog": [
@@ -230,17 +135,11 @@
       "2018-03-21T20:55:58.082; updated Middle ear",
       "2018-03-21T20:55:58.082; updated Cornea",
       "2018-03-21T20:55:58.082; updated Liver",
-      "2018-04-26T19:37:30.981; updated Kidney",
-      "2018-04-26T19:37:34.870; updated Kidney",
-      "2018-04-26T19:37:37.640; updated Kidney",
-      "2018-04-26T19:37:38.392; updated Liver",
-      "2018-04-26T19:38:50.967; updated Kidney",
-      "2018-04-26T19:38:51.491; updated Liver",
-      "2018-04-28T18:18:06.907; updated Kidney",
-      "2018-04-28T18:18:07.632; updated Liver",
-      "2018-04-28T18:18:08.028; updated Liver",
-      "2018-04-28T18:18:08.636; updated Kidney"
-    ]
+      "2018-05-01T14:48:50.856; updated Liver",
+      "2018-05-01T14:48:50.856; updated Kidney",
+      "2018-05-01T14:48:50.857; updated Pancreas"
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 2,
@@ -262,42 +161,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 957000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 122000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -312,7 +197,8 @@
       "2018-03-21T20:55:58.107; updated Kidney",
       "2018-03-21T20:55:58.107; updated Intestine",
       "2018-03-21T20:55:58.107; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 3,
@@ -333,42 +219,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 957000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 122000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -388,7 +260,8 @@
       "2018-03-21T20:55:58.132; updated Liver",
       "2018-03-21T20:55:58.132; updated Intestine",
       "2018-03-21T20:55:58.132; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 4,
@@ -410,95 +283,31 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 957000000
-      }
-    },
-    "modifiedTimestamp": {
-      "date": {
-        "year": 2018,
-        "month": 4,
-        "day": 26
-      },
-      "time": {
-        "hour": 20,
-        "minute": 7,
-        "second": 5,
-        "nano": 726000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 123000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": true,
-      "KIDNEY": true,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
-    "transplantRequests": [
-      {
-        "requestedOrgan": "KIDNEY",
-        "requestDate": {
-          "date": {
-            "year": 2018,
-            "month": 4,
-            "day": 26
-          },
-          "time": {
-            "hour": 20,
-            "minute": 7,
-            "second": 5,
-            "nano": 70000000
-          }
-        },
-        "currentRequest": true,
-        "clientId": 4
-      },
-      {
-        "requestedOrgan": "PANCREAS",
-        "requestDate": {
-          "date": {
-            "year": 2018,
-            "month": 4,
-            "day": 26
-          },
-          "time": {
-            "hour": 20,
-            "minute": 7,
-            "second": 5,
-            "nano": 726000000
-          }
-        },
-        "currentRequest": true,
-        "clientId": 4
-      }
-    ],
+    "transplantRequests": [],
     "updateLog": [
       "2018-03-21T20:55:51.523; updated gender",
       "2018-03-21T20:55:51.523; updated region",
@@ -513,10 +322,9 @@
       "2018-03-21T20:55:58.159; updated Bone marrow",
       "2018-03-21T20:55:58.159; updated Kidney",
       "2018-03-21T20:55:58.159; updated Liver",
-      "2018-03-21T20:55:58.159; updated Bone",
-      "2018-04-26T20:07:05.070; updated Kidney",
-      "2018-04-26T20:07:05.726; updated Pancreas"
-    ]
+      "2018-03-21T20:55:58.159; updated Bone"
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 5,
@@ -538,42 +346,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 957000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 123000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -596,7 +390,8 @@
       "2018-03-21T20:55:58.187; updated Liver",
       "2018-03-21T20:55:58.187; updated Intestine",
       "2018-03-21T20:55:58.187; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 6,
@@ -618,42 +413,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 958000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 123000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -669,7 +450,8 @@
       "2018-03-21T20:55:58.214; updated Cornea",
       "2018-03-21T20:55:58.214; updated Intestine",
       "2018-03-21T20:55:58.214; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 7,
@@ -691,42 +473,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 958000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 123000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -743,7 +511,8 @@
       "2018-03-21T20:55:58.237; updated Cornea",
       "2018-03-21T20:55:58.237; updated Liver",
       "2018-03-21T20:55:58.237; updated Intestine"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 8,
@@ -764,77 +533,31 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 958000000
-      }
-    },
-    "modifiedTimestamp": {
-      "date": {
-        "year": 2018,
-        "month": 4,
-        "day": 28
-      },
-      "time": {
-        "hour": 18,
-        "minute": 18,
-        "second": 30,
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
         "nano": 124000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": true,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
-    "transplantRequests": [
-      {
-        "requestedOrgan": "CORNEA",
-        "requestDate": {
-          "date": {
-            "year": 2018,
-            "month": 4,
-            "day": 28
-          },
-          "time": {
-            "hour": 18,
-            "minute": 18,
-            "second": 30,
-            "nano": 124000000
-          }
-        },
-        "currentRequest": true,
-        "clientId": 8
-      }
-    ],
+    "transplantRequests": [],
     "updateLog": [
       "2018-03-21T20:55:51.628; updated gender",
       "2018-03-21T20:55:51.628; updated region",
@@ -847,9 +570,9 @@
       "2018-03-21T20:55:58.260; updated Pancreas",
       "2018-03-21T20:55:58.260; updated Bone marrow",
       "2018-03-21T20:55:58.260; updated Kidney",
-      "2018-03-21T20:55:58.260; updated Cornea",
-      "2018-04-28T18:18:30.124; updated Cornea"
-    ]
+      "2018-03-21T20:55:58.260; updated Cornea"
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 9,
@@ -871,42 +594,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 958000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 124000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -924,7 +633,8 @@
       "2018-03-21T20:55:58.284; updated Pancreas",
       "2018-03-21T20:55:58.284; updated Cornea",
       "2018-03-21T20:55:58.284; updated Intestine"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 10,
@@ -946,42 +656,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 958000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 124000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -997,7 +693,8 @@
       "2018-03-21T20:55:58.308; updated Cornea",
       "2018-03-21T20:55:58.308; updated Liver",
       "2018-03-21T20:55:58.308; updated Intestine"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 11,
@@ -1019,42 +716,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 958000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 125000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -1072,7 +755,8 @@
       "2018-03-21T20:55:58.333; updated Middle ear",
       "2018-03-21T20:55:58.333; updated Kidney",
       "2018-03-21T20:55:58.333; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 12,
@@ -1093,42 +777,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 958000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 125000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -1143,7 +813,8 @@
       "2018-03-21T20:55:58.386; updated Bone marrow",
       "2018-03-21T20:55:58.386; updated Middle ear",
       "2018-03-21T20:55:58.386; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 13,
@@ -1165,42 +836,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 958000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 126000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -1218,7 +875,8 @@
       "2018-03-21T20:55:58.422; updated Middle ear",
       "2018-03-21T20:55:58.423; updated Kidney",
       "2018-03-21T20:55:58.423; updated Liver"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 14,
@@ -1240,77 +898,31 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 958000000
-      }
-    },
-    "modifiedTimestamp": {
-      "date": {
-        "year": 2018,
-        "month": 4,
-        "day": 28
-      },
-      "time": {
-        "hour": 18,
-        "minute": 18,
-        "second": 22,
-        "nano": 232000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 126000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
       "BONE": false,
+      "LUNG": false,
       "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
+      "LIVER": false,
       "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
       "HEART": false,
-      "LUNG": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": true,
-      "LIVER": false
+      "BONE_MARROW": false,
+      "PANCREAS": false
     },
     "medicationHistory": [],
-    "transplantRequests": [
-      {
-        "requestedOrgan": "SKIN",
-        "requestDate": {
-          "date": {
-            "year": 2018,
-            "month": 4,
-            "day": 28
-          },
-          "time": {
-            "hour": 18,
-            "minute": 18,
-            "second": 22,
-            "nano": 232000000
-          }
-        },
-        "currentRequest": true,
-        "clientId": 14
-      }
-    ],
+    "transplantRequests": [],
     "updateLog": [
       "2018-03-21T20:55:51.776; updated gender",
       "2018-03-21T20:55:51.776; updated region",
@@ -1323,9 +935,9 @@
       "2018-03-21T20:55:58.448; updated Kidney",
       "2018-03-21T20:55:58.448; updated Cornea",
       "2018-03-21T20:55:58.448; updated Intestine",
-      "2018-03-21T20:55:58.448; updated Bone",
-      "2018-04-28T18:18:22.232; updated Skin"
-    ]
+      "2018-03-21T20:55:58.448; updated Bone"
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 15,
@@ -1347,77 +959,31 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 959000000
-      }
-    },
-    "modifiedTimestamp": {
-      "date": {
-        "year": 2018,
-        "month": 4,
-        "day": 28
-      },
-      "time": {
-        "hour": 18,
-        "minute": 18,
-        "second": 41,
-        "nano": 30000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 126000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
       "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
+      "LIVER": false,
       "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
       "HEART": false,
-      "LUNG": true,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "BONE_MARROW": false,
+      "PANCREAS": false
     },
     "medicationHistory": [],
-    "transplantRequests": [
-      {
-        "requestedOrgan": "LUNG",
-        "requestDate": {
-          "date": {
-            "year": 2018,
-            "month": 4,
-            "day": 28
-          },
-          "time": {
-            "hour": 18,
-            "minute": 18,
-            "second": 41,
-            "nano": 30000000
-          }
-        },
-        "currentRequest": true,
-        "clientId": 15
-      }
-    ],
+    "transplantRequests": [],
     "updateLog": [
       "2018-03-21T20:55:51.800; updated gender",
       "2018-03-21T20:55:51.800; updated region",
@@ -1435,9 +1001,9 @@
       "2018-03-21T20:55:58.470; updated Cornea",
       "2018-03-21T20:55:58.471; updated Liver",
       "2018-03-21T20:55:58.471; updated Intestine",
-      "2018-03-21T20:55:58.471; updated Bone",
-      "2018-04-28T18:18:41.030; updated Lung"
-    ]
+      "2018-03-21T20:55:58.471; updated Bone"
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 16,
@@ -1459,42 +1025,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 960000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 127000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -1511,7 +1063,8 @@
       "2018-03-21T20:55:58.501; updated Middle ear",
       "2018-03-21T20:55:58.501; updated Cornea",
       "2018-03-21T20:55:58.501; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 17,
@@ -1533,42 +1086,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 960000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 127000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -1585,7 +1124,8 @@
       "2018-03-21T20:55:58.525; updated Bone marrow",
       "2018-03-21T20:55:58.525; updated Intestine",
       "2018-03-21T20:55:58.525; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 18,
@@ -1606,42 +1146,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 960000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 127000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -1660,7 +1186,8 @@
       "2018-03-21T20:55:58.556; updated Liver",
       "2018-03-21T20:55:58.556; updated Intestine",
       "2018-03-21T20:55:58.556; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 19,
@@ -1682,42 +1209,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 960000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 128000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -1732,7 +1245,8 @@
       "2018-03-21T20:55:58.585; updated Cornea",
       "2018-03-21T20:55:58.585; updated Liver",
       "2018-03-21T20:55:58.585; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 20,
@@ -1753,42 +1267,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 960000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 128000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -1807,7 +1307,8 @@
       "2018-03-21T20:55:58.610; updated Cornea",
       "2018-03-21T20:55:58.610; updated Intestine",
       "2018-03-21T20:55:58.610; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 21,
@@ -1829,42 +1330,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 960000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 128000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -1885,7 +1372,8 @@
       "2018-03-21T20:55:58.634; updated Liver",
       "2018-03-21T20:55:58.634; updated Intestine",
       "2018-03-21T20:55:58.634; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 22,
@@ -1907,42 +1395,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 960000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 129000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -1962,7 +1436,8 @@
       "2018-03-21T20:55:58.656; updated Kidney",
       "2018-03-21T20:55:58.656; updated Liver",
       "2018-03-21T20:55:58.656; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 23,
@@ -1984,42 +1459,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 960000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 129000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -2035,7 +1496,8 @@
       "2018-03-21T20:55:58.684; updated Liver",
       "2018-03-21T20:55:58.685; updated Intestine",
       "2018-03-21T20:55:58.685; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 24,
@@ -2056,42 +1518,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 960000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 130000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -2110,7 +1558,8 @@
       "2018-03-21T20:55:58.710; updated Cornea",
       "2018-03-21T20:55:58.710; updated Intestine",
       "2018-03-21T20:55:58.710; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 25,
@@ -2132,42 +1581,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 960000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 130000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -2185,7 +1620,8 @@
       "2018-03-21T20:55:58.737; updated Kidney",
       "2018-03-21T20:55:58.737; updated Liver",
       "2018-03-21T20:55:58.737; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 26,
@@ -2206,95 +1642,31 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 960000000
-      }
-    },
-    "modifiedTimestamp": {
-      "date": {
-        "year": 2018,
-        "month": 4,
-        "day": 28
-      },
-      "time": {
-        "hour": 18,
-        "minute": 19,
-        "second": 0,
-        "nano": 156000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 130000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
       "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": true,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": true,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "BONE_MARROW": false,
+      "PANCREAS": false
     },
     "medicationHistory": [],
-    "transplantRequests": [
-      {
-        "requestedOrgan": "BONE",
-        "requestDate": {
-          "date": {
-            "year": 2018,
-            "month": 4,
-            "day": 28
-          },
-          "time": {
-            "hour": 18,
-            "minute": 18,
-            "second": 59,
-            "nano": 253000000
-          }
-        },
-        "currentRequest": true,
-        "clientId": 26
-      },
-      {
-        "requestedOrgan": "PANCREAS",
-        "requestDate": {
-          "date": {
-            "year": 2018,
-            "month": 4,
-            "day": 28
-          },
-          "time": {
-            "hour": 18,
-            "minute": 19,
-            "second": 0,
-            "nano": 156000000
-          }
-        },
-        "currentRequest": true,
-        "clientId": 26
-      }
-    ],
+    "transplantRequests": [],
     "updateLog": [
       "2018-03-21T20:55:52.306; updated gender",
       "2018-03-21T20:55:52.306; updated region",
@@ -2307,10 +1679,9 @@
       "2018-03-21T20:55:58.764; updated Pancreas",
       "2018-03-21T20:55:58.764; updated Bone marrow",
       "2018-03-21T20:55:58.764; updated Liver",
-      "2018-03-21T20:55:58.764; updated Intestine",
-      "2018-04-28T18:18:59.253; updated Bone",
-      "2018-04-28T18:19:00.156; updated Pancreas"
-    ]
+      "2018-03-21T20:55:58.764; updated Intestine"
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 27,
@@ -2332,95 +1703,31 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 960000000
-      }
-    },
-    "modifiedTimestamp": {
-      "date": {
-        "year": 2018,
-        "month": 4,
-        "day": 28
-      },
-      "time": {
-        "hour": 18,
-        "minute": 18,
-        "second": 51,
-        "nano": 369000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 131000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": true,
-      "CORNEA": false,
-      "MIDDLE_EAR": true,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
-    "transplantRequests": [
-      {
-        "requestedOrgan": "MIDDLE_EAR",
-        "requestDate": {
-          "date": {
-            "year": 2018,
-            "month": 4,
-            "day": 28
-          },
-          "time": {
-            "hour": 18,
-            "minute": 18,
-            "second": 50,
-            "nano": 488000000
-          }
-        },
-        "currentRequest": true,
-        "clientId": 27
-      },
-      {
-        "requestedOrgan": "INTESTINE",
-        "requestDate": {
-          "date": {
-            "year": 2018,
-            "month": 4,
-            "day": 28
-          },
-          "time": {
-            "hour": 18,
-            "minute": 18,
-            "second": 51,
-            "nano": 369000000
-          }
-        },
-        "currentRequest": true,
-        "clientId": 27
-      }
-    ],
+    "transplantRequests": [],
     "updateLog": [
       "2018-03-21T20:55:52.329; updated gender",
       "2018-03-21T20:55:52.330; updated region",
@@ -2431,10 +1738,9 @@
       "2018-03-21T20:55:58.788; updated Connective tissue",
       "2018-03-21T20:55:58.788; updated Pancreas",
       "2018-03-21T20:55:58.788; updated Cornea",
-      "2018-03-21T20:55:58.788; updated Intestine",
-      "2018-04-28T18:18:50.488; updated Middle ear",
-      "2018-04-28T18:18:51.369; updated Intestine"
-    ]
+      "2018-03-21T20:55:58.788; updated Intestine"
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 28,
@@ -2456,42 +1762,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 961000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 131000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -2506,7 +1798,8 @@
       "2018-03-21T20:55:58.815; updated Connective tissue",
       "2018-03-21T20:55:58.815; updated Kidney",
       "2018-03-21T20:55:58.815; updated Cornea"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 29,
@@ -2527,42 +1820,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 961000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 131000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -2581,7 +1860,8 @@
       "2018-03-21T20:55:58.838; updated Middle ear",
       "2018-03-21T20:55:58.838; updated Liver",
       "2018-03-21T20:55:58.838; updated Intestine"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 30,
@@ -2603,42 +1883,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 961000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 131000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -2655,7 +1921,8 @@
       "2018-03-21T20:55:58.868; updated Liver",
       "2018-03-21T20:55:58.868; updated Intestine",
       "2018-03-21T20:55:58.868; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 31,
@@ -2677,42 +1944,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 961000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 132000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -2727,7 +1980,8 @@
       "2018-03-21T20:55:58.894; updated Connective tissue",
       "2018-03-21T20:55:58.894; updated Middle ear",
       "2018-03-21T20:55:58.894; updated Cornea"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 32,
@@ -2749,42 +2003,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 961000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 132000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -2802,7 +2042,8 @@
       "2018-03-21T20:55:58.924; updated Liver",
       "2018-03-21T20:55:58.924; updated Intestine",
       "2018-03-21T20:55:58.924; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 33,
@@ -2824,42 +2065,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 961000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 132000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -2878,7 +2105,8 @@
       "2018-03-21T20:55:58.949; updated Liver",
       "2018-03-21T20:55:58.949; updated Intestine",
       "2018-03-21T20:55:58.949; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 34,
@@ -2899,42 +2127,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 961000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 133000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -2949,7 +2163,8 @@
       "2018-03-21T20:55:58.973; updated Connective tissue",
       "2018-03-21T20:55:58.973; updated Bone marrow",
       "2018-03-21T20:55:58.973; updated Middle ear"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 35,
@@ -2971,42 +2186,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 961000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 133000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -3024,7 +2225,8 @@
       "2018-03-21T20:55:59.002; updated Bone marrow",
       "2018-03-21T20:55:59.002; updated Middle ear",
       "2018-03-21T20:55:59.002; updated Kidney"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 36,
@@ -3046,42 +2248,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 961000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 133000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -3099,7 +2287,8 @@
       "2018-03-21T20:55:59.027; updated Kidney",
       "2018-03-21T20:55:59.027; updated Cornea",
       "2018-03-21T20:55:59.027; updated Intestine"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 37,
@@ -3121,42 +2310,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 961000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 133000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -3173,7 +2348,8 @@
       "2018-03-21T20:55:59.052; updated Cornea",
       "2018-03-21T20:55:59.052; updated Intestine",
       "2018-03-21T20:55:59.052; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 38,
@@ -3194,42 +2370,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 961000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 134000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -3244,7 +2406,8 @@
       "2018-03-21T20:55:59.075; updated Bone marrow",
       "2018-03-21T20:55:59.075; updated Liver",
       "2018-03-21T20:55:59.075; updated Intestine"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 39,
@@ -3266,42 +2429,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 961000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 134000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -3316,7 +2465,8 @@
       "2018-03-21T20:55:59.099; updated Connective tissue",
       "2018-03-21T20:55:59.099; updated Middle ear",
       "2018-03-21T20:55:59.099; updated Kidney"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 40,
@@ -3338,42 +2488,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 961000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 134000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -3391,7 +2527,8 @@
       "2018-03-21T20:55:59.124; updated Kidney",
       "2018-03-21T20:55:59.124; updated Intestine",
       "2018-03-21T20:55:59.124; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 41,
@@ -3413,42 +2550,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 962000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 135000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -3466,7 +2589,8 @@
       "2018-03-21T20:55:59.151; updated Cornea",
       "2018-03-21T20:55:59.151; updated Intestine",
       "2018-03-21T20:55:59.151; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 42,
@@ -3488,42 +2612,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 962000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 135000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -3541,7 +2651,8 @@
       "2018-03-21T20:55:59.175; updated Middle ear",
       "2018-03-21T20:55:59.175; updated Liver",
       "2018-03-21T20:55:59.175; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 43,
@@ -3563,42 +2674,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 962000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 135000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -3614,7 +2711,8 @@
       "2018-03-21T20:55:59.201; updated Middle ear",
       "2018-03-21T20:55:59.201; updated Kidney",
       "2018-03-21T20:55:59.201; updated Liver"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 44,
@@ -3636,42 +2734,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 962000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 135000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -3692,7 +2776,8 @@
       "2018-03-21T20:55:59.226; updated Liver",
       "2018-03-21T20:55:59.226; updated Intestine",
       "2018-03-21T20:55:59.226; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 45,
@@ -3713,42 +2798,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 962000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 136000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -3765,7 +2836,8 @@
       "2018-03-21T20:55:59.252; updated Bone marrow",
       "2018-03-21T20:55:59.252; updated Middle ear",
       "2018-03-21T20:55:59.252; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 46,
@@ -3787,42 +2859,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 962000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 136000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -3841,7 +2899,8 @@
       "2018-03-21T20:55:59.276; updated Cornea",
       "2018-03-21T20:55:59.277; updated Intestine",
       "2018-03-21T20:55:59.277; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 47,
@@ -3863,42 +2922,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 962000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 136000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -3915,7 +2960,8 @@
       "2018-03-21T20:55:59.299; updated Bone marrow",
       "2018-03-21T20:55:59.299; updated Middle ear",
       "2018-03-21T20:55:59.299; updated Liver"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 48,
@@ -3937,42 +2983,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 962000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 136000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -3990,7 +3022,8 @@
       "2018-03-21T20:55:59.322; updated Liver",
       "2018-03-21T20:55:59.322; updated Intestine",
       "2018-03-21T20:55:59.322; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 49,
@@ -4012,42 +3045,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 962000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 137000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -4063,7 +3082,8 @@
       "2018-03-21T20:55:59.360; updated Connective tissue",
       "2018-03-21T20:55:59.360; updated Pancreas",
       "2018-03-21T20:55:59.360; updated Bone marrow"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 50,
@@ -4085,42 +3105,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 962000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 137000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -4138,7 +3144,8 @@
       "2018-03-21T20:55:59.382; updated Middle ear",
       "2018-03-21T20:55:59.382; updated Liver",
       "2018-03-21T20:55:59.382; updated Intestine"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 51,
@@ -4160,42 +3167,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 962000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 137000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -4212,7 +3205,8 @@
       "2018-03-21T20:55:59.409; updated Pancreas",
       "2018-03-21T20:55:59.409; updated Kidney",
       "2018-03-21T20:55:59.409; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 52,
@@ -4234,42 +3228,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 962000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 137000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -4285,7 +3265,8 @@
       "2018-03-21T20:55:59.435; updated Middle ear",
       "2018-03-21T20:55:59.435; updated Kidney",
       "2018-03-21T20:55:59.435; updated Cornea"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 53,
@@ -4306,42 +3287,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 962000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 138000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -4359,7 +3326,8 @@
       "2018-03-21T20:55:59.458; updated Cornea",
       "2018-03-21T20:55:59.458; updated Liver",
       "2018-03-21T20:55:59.458; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 54,
@@ -4381,42 +3349,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 962000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 138000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -4433,7 +3387,8 @@
       "2018-03-21T20:55:59.482; updated Liver",
       "2018-03-21T20:55:59.482; updated Intestine",
       "2018-03-21T20:55:59.482; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 55,
@@ -4455,42 +3410,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 962000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 138000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -4506,7 +3447,8 @@
       "2018-03-21T20:55:59.505; updated Middle ear",
       "2018-03-21T20:55:59.505; updated Liver",
       "2018-03-21T20:55:59.505; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 56,
@@ -4528,42 +3470,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 962000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 138000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -4581,7 +3509,8 @@
       "2018-03-21T20:55:59.529; updated Cornea",
       "2018-03-21T20:55:59.529; updated Liver",
       "2018-03-21T20:55:59.529; updated Intestine"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 57,
@@ -4603,42 +3532,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 963000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 139000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -4655,7 +3570,8 @@
       "2018-03-21T20:55:59.554; updated Bone marrow",
       "2018-03-21T20:55:59.554; updated Kidney",
       "2018-03-21T20:55:59.554; updated Liver"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 58,
@@ -4676,42 +3592,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 963000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 139000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -4727,7 +3629,8 @@
       "2018-03-21T20:55:59.593; updated Liver",
       "2018-03-21T20:55:59.593; updated Intestine",
       "2018-03-21T20:55:59.593; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 59,
@@ -4749,42 +3652,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 963000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 139000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -4805,7 +3694,8 @@
       "2018-03-21T20:55:59.647; updated Cornea",
       "2018-03-21T20:55:59.647; updated Liver",
       "2018-03-21T20:55:59.647; updated Intestine"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 60,
@@ -4826,42 +3716,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 963000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 139000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -4882,7 +3758,8 @@
       "2018-03-21T20:55:59.673; updated Cornea",
       "2018-03-21T20:55:59.673; updated Liver",
       "2018-03-21T20:55:59.673; updated Intestine"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 61,
@@ -4903,42 +3780,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 963000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 140000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -4954,7 +3817,8 @@
       "2018-03-21T20:55:59.699; updated Kidney",
       "2018-03-21T20:55:59.699; updated Intestine",
       "2018-03-21T20:55:59.699; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 62,
@@ -4976,42 +3840,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 963000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 140000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -5026,7 +3876,8 @@
       "2018-03-21T20:55:59.721; updated Bone marrow",
       "2018-03-21T20:55:59.721; updated Cornea",
       "2018-03-21T20:55:59.721; updated Liver"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 63,
@@ -5048,42 +3899,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 963000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 140000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -5101,7 +3938,8 @@
       "2018-03-21T20:55:59.744; updated Liver",
       "2018-03-21T20:55:59.744; updated Intestine",
       "2018-03-21T20:55:59.744; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 64,
@@ -5123,42 +3961,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 963000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 141000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -5175,7 +3999,8 @@
       "2018-03-21T20:55:59.767; updated Liver",
       "2018-03-21T20:55:59.767; updated Intestine",
       "2018-03-21T20:55:59.767; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 65,
@@ -5197,42 +4022,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 963000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 141000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -5249,7 +4060,8 @@
       "2018-03-21T20:55:59.790; updated Kidney",
       "2018-03-21T20:55:59.790; updated Cornea",
       "2018-03-21T20:55:59.790; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 66,
@@ -5271,42 +4083,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 963000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 141000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -5324,7 +4122,8 @@
       "2018-03-21T20:55:59.818; updated Cornea",
       "2018-03-21T20:55:59.818; updated Intestine",
       "2018-03-21T20:55:59.818; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 67,
@@ -5346,42 +4145,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 963000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 141000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -5397,7 +4182,8 @@
       "2018-03-21T20:55:59.844; updated Skin",
       "2018-03-21T20:55:59.844; updated Cornea",
       "2018-03-21T20:55:59.844; updated Intestine"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 68,
@@ -5419,42 +4205,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 963000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 142000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -5475,7 +4247,8 @@
       "2018-03-21T20:55:59.872; updated Cornea",
       "2018-03-21T20:55:59.872; updated Intestine",
       "2018-03-21T20:55:59.872; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 69,
@@ -5497,42 +4270,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 963000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 142000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -5551,7 +4310,8 @@
       "2018-03-21T20:55:59.899; updated Middle ear",
       "2018-03-21T20:55:59.899; updated Cornea",
       "2018-03-21T20:55:59.900; updated Intestine"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 70,
@@ -5573,42 +4333,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 963000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 142000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -5626,7 +4372,8 @@
       "2018-03-21T20:55:59.926; updated Kidney",
       "2018-03-21T20:55:59.926; updated Cornea",
       "2018-03-21T20:55:59.926; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 71,
@@ -5648,42 +4395,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 963000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 142000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -5699,7 +4432,8 @@
       "2018-03-21T20:55:59.953; updated Connective tissue",
       "2018-03-21T20:55:59.953; updated Bone marrow",
       "2018-03-21T20:55:59.953; updated Liver"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 72,
@@ -5721,42 +4455,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 964000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 143000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -5772,7 +4492,8 @@
       "2018-03-21T20:55:59.979; updated Connective tissue",
       "2018-03-21T20:55:59.979; updated Pancreas",
       "2018-03-21T20:55:59.979; updated Cornea"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 73,
@@ -5794,42 +4515,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 964000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 143000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -5843,7 +4550,8 @@
       "2018-03-21T20:56:00.002; updated Skin",
       "2018-03-21T20:56:00.002; updated Connective tissue",
       "2018-03-21T20:56:00.002; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 74,
@@ -5865,42 +4573,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 964000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 143000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -5916,7 +4610,8 @@
       "2018-03-21T20:56:00.034; updated Bone marrow",
       "2018-03-21T20:56:00.034; updated Cornea",
       "2018-03-21T20:56:00.034; updated Intestine"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 75,
@@ -5938,42 +4633,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 964000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 144000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -5986,7 +4667,8 @@
       "2018-03-21T20:55:54.002; updated currentAddress",
       "2018-03-21T20:56:00.059; updated Lung",
       "2018-03-21T20:56:00.059; updated Bone marrow"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 76,
@@ -6008,42 +4690,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 964000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 144000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -6061,7 +4729,8 @@
       "2018-03-21T20:56:00.090; updated Middle ear",
       "2018-03-21T20:56:00.090; updated Cornea",
       "2018-03-21T20:56:00.090; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 77,
@@ -6082,42 +4751,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 964000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 144000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -6132,7 +4787,8 @@
       "2018-03-21T20:56:00.119; updated Connective tissue",
       "2018-03-21T20:56:00.119; updated Bone marrow",
       "2018-03-21T20:56:00.119; updated Cornea"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 78,
@@ -6153,42 +4809,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 964000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 144000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -6207,7 +4849,8 @@
       "2018-03-21T20:56:00.143; updated Kidney",
       "2018-03-21T20:56:00.143; updated Cornea",
       "2018-03-21T20:56:00.143; updated Liver"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 79,
@@ -6228,42 +4871,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 964000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 144000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -6280,7 +4909,8 @@
       "2018-03-21T20:56:00.171; updated Liver",
       "2018-03-21T20:56:00.171; updated Intestine",
       "2018-03-21T20:56:00.171; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 80,
@@ -6301,42 +4931,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 964000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 145000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -6354,7 +4970,8 @@
       "2018-03-21T20:56:00.195; updated Cornea",
       "2018-03-21T20:56:00.195; updated Intestine",
       "2018-03-21T20:56:00.195; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 81,
@@ -6376,42 +4993,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 964000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 145000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -6428,7 +5031,8 @@
       "2018-03-21T20:56:00.219; updated Bone marrow",
       "2018-03-21T20:56:00.219; updated Cornea",
       "2018-03-21T20:56:00.219; updated Intestine"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 82,
@@ -6450,42 +5054,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 964000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 145000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -6501,7 +5091,8 @@
       "2018-03-21T20:56:00.250; updated Bone marrow",
       "2018-03-21T20:56:00.250; updated Kidney",
       "2018-03-21T20:56:00.250; updated Liver"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 83,
@@ -6523,42 +5114,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 964000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 145000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -6576,7 +5153,8 @@
       "2018-03-21T20:56:00.276; updated Kidney",
       "2018-03-21T20:56:00.276; updated Intestine",
       "2018-03-21T20:56:00.276; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 84,
@@ -6598,42 +5176,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 964000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 145000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -6651,7 +5215,8 @@
       "2018-03-21T20:56:00.303; updated Cornea",
       "2018-03-21T20:56:00.303; updated Liver",
       "2018-03-21T20:56:00.303; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 85,
@@ -6672,42 +5237,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 964000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 146000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -6725,7 +5276,8 @@
       "2018-03-21T20:56:00.330; updated Middle ear",
       "2018-03-21T20:56:00.330; updated Kidney",
       "2018-03-21T20:56:00.330; updated Cornea"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 86,
@@ -6747,42 +5299,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 964000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 146000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -6796,7 +5334,8 @@
       "2018-03-21T20:56:00.357; updated Middle ear",
       "2018-03-21T20:56:00.357; updated Liver",
       "2018-03-21T20:56:00.357; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 87,
@@ -6818,42 +5357,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 964000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 146000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -6870,7 +5395,8 @@
       "2018-03-21T20:56:00.377; updated Middle ear",
       "2018-03-21T20:56:00.377; updated Kidney",
       "2018-03-21T20:56:00.377; updated Intestine"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 88,
@@ -6892,42 +5418,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 964000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 146000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -6945,7 +5457,8 @@
       "2018-03-21T20:56:00.401; updated Cornea",
       "2018-03-21T20:56:00.401; updated Intestine",
       "2018-03-21T20:56:00.401; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 89,
@@ -6966,42 +5479,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 964000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 147000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -7018,7 +5517,8 @@
       "2018-03-21T20:56:00.425; updated Liver",
       "2018-03-21T20:56:00.425; updated Intestine",
       "2018-03-21T20:56:00.425; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 90,
@@ -7040,42 +5540,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 964000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 147000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -7092,7 +5578,8 @@
       "2018-03-21T20:56:00.450; updated Middle ear",
       "2018-03-21T20:56:00.450; updated Kidney",
       "2018-03-21T20:56:00.450; updated Cornea"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 91,
@@ -7113,42 +5600,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 965000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 147000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -7161,7 +5634,8 @@
       "2018-03-21T20:55:54.507; updated currentAddress",
       "2018-03-21T20:56:00.479; updated Middle ear",
       "2018-03-21T20:56:00.479; updated Kidney"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 92,
@@ -7182,42 +5656,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 965000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 147000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -7235,7 +5695,8 @@
       "2018-03-21T20:56:00.504; updated Bone marrow",
       "2018-03-21T20:56:00.504; updated Liver",
       "2018-03-21T20:56:00.504; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 93,
@@ -7257,42 +5718,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 965000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 148000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -7311,7 +5758,8 @@
       "2018-03-21T20:56:00.533; updated Middle ear",
       "2018-03-21T20:56:00.533; updated Cornea",
       "2018-03-21T20:56:00.533; updated Liver"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 94,
@@ -7333,42 +5781,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 965000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 148000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -7385,7 +5819,8 @@
       "2018-03-21T20:56:00.559; updated Cornea",
       "2018-03-21T20:56:00.559; updated Liver",
       "2018-03-21T20:56:00.559; updated Intestine"
-    ]
+    ],
+    "illnessHistory": []
   },
   {
     "uid": 95,
@@ -7406,42 +5841,28 @@
       "date": {
         "year": 2018,
         "month": 4,
-        "day": 26
+        "day": 19
       },
       "time": {
-        "hour": 19,
-        "minute": 37,
-        "second": 13,
-        "nano": 965000000
+        "hour": 11,
+        "minute": 49,
+        "second": 45,
+        "nano": 148000000
       }
     },
     "organDonationStatus": {
-      "HEART": false,
+      "BONE": false,
       "LUNG": false,
+      "CONNECTIVE_TISSUE": false,
+      "LIVER": false,
+      "SKIN": false,
+      "HEART": false,
+      "MIDDLE_EAR": false,
       "INTESTINE": false,
       "CORNEA": false,
-      "MIDDLE_EAR": false,
-      "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
-    },
-    "organRequestStatus": {
-      "HEART": false,
-      "LUNG": false,
-      "INTESTINE": false,
-      "CORNEA": false,
-      "MIDDLE_EAR": false,
       "BONE_MARROW": false,
-      "BONE": false,
-      "CONNECTIVE_TISSUE": false,
-      "PANCREAS": false,
-      "KIDNEY": false,
-      "SKIN": false,
-      "LIVER": false
+      "PANCREAS": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
@@ -7461,6 +5882,7 @@
       "2018-03-21T20:56:00.585; updated Liver",
       "2018-03-21T20:56:00.585; updated Intestine",
       "2018-03-21T20:56:00.585; updated Bone"
-    ]
+    ],
+    "illnessHistory": []
   }
 ]
