@@ -350,6 +350,7 @@ public class ClinicianMedicalHistoryController extends SubController {
             illnessNameField.setText(null);
             errorMessage.setText(null);
             dateDiagnosedPicker.setValue(LocalDate.now());
+            chronicBox.setSelected(false);
             PageNavigator.refreshAllWindows();
         }
     }
