@@ -20,11 +20,28 @@ public class TransplantRequest {
     private LocalDateTime requestDate;
     private LocalDateTime resolvedDate;
     private RequestStatus status = RequestStatus.WAITING;
+    private String resolvedReason;
 
     public TransplantRequest(Client client, Organ requestedOrgan) {
         this.client = client;
         this.requestedOrgan = requestedOrgan;
         this.requestDate = LocalDateTime.now();
+    }
+
+    /**
+     * Should only be used by ResolveTransplantRequestAction
+     * @return reason that the transplant request was resolved
+     */
+    public String getResolvedReason() {
+        return resolvedReason;
+    }
+
+    /**
+     * Should only be used by ResolveTransplantRequestAction
+     * @param resolvedReason reason that the transplant request was resolved
+     */
+    public void setResolvedReason(String resolvedReason) {
+        this.resolvedReason = resolvedReason;
     }
 
     public Client getClient() {
