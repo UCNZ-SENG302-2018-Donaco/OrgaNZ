@@ -2,24 +2,20 @@ package seng302.Controller.Client;
 
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.matcher.base.NodeMatchers.isDisabled;
-import static org.testfx.matcher.control.ListViewMatchers.hasListCell;
+import static org.testfx.matcher.control.TableViewMatchers.containsRow;
 import static org.testfx.util.NodeQueryUtils.isVisible;
 
 import java.time.LocalDate;
 
-import javafx.scene.Node;
-
+import seng302.Client;
 import seng302.Controller.ControllerTest;
 import seng302.IllnessRecord;
-import seng302.Client;
-import seng302.State.Session.UserType;
 import seng302.State.State;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.WindowContext;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.testfx.api.FxAssert;
 
 public class ViewIllnessHistoryClientTest extends ControllerTest{
 
@@ -99,23 +95,20 @@ public class ViewIllnessHistoryClientTest extends ControllerTest{
     @Test
     public void pastIllnessContainsRecordsTest() {
         for (IllnessRecord record : testPastIllnessRecords) {
-            verifyThat("#pastIllnessView", hasListCell(record));
+            verifyThat("#pastIllnessView", containsRow(
+                    record.getIllnessName(),
+                    record.getDiagnosisDate(),
+                    record.getCuredDate()));
         }
     }
 
     @Test
     public void currentIllnessContainsRecordsTest() {
         for (IllnessRecord record : testCurrentIllnessRecords) {
-            verifyThat("#currentIllnessView", hasListCell(record));
+            verifyThat("#currentIllnessView", containsRow(
+                    record.getIllnessName(),
+                    record.getDiagnosisDate(),
+                    record.isChronic()));
         }
     }
-
-
-
-
-
-
-
-
-
 }
