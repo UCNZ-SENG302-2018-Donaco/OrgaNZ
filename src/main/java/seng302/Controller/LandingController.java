@@ -21,19 +21,19 @@ public class LandingController extends SubController {
     }
 
     /**
-     * Redirects the GUI to create donor page
+     * Redirects the GUI to create client page
      */
     @FXML
-    private void goToCreateDonor() {
-        PageNavigator.loadPage(Page.CREATE_DONOR, mainController);
+    private void goToCreateClient() {
+        PageNavigator.loadPage(Page.CREATE_CLIENT, mainController);
     }
 
     /**
-     * Redirects the GUI to donor login page
+     * Redirects the GUI to client login page
      */
     @FXML
-    private void goToDonorLogin() {
-        PageNavigator.loadPage(Page.LOGIN_DONOR, mainController);
+    private void goToClientLogin() {
+        PageNavigator.loadPage(Page.LOGIN_CLIENT, mainController);
     }
 
     /**

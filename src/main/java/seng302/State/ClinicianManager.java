@@ -6,8 +6,8 @@ import seng302.Clinician;
 import seng302.Utilities.Enums.Region;
 
 /**
- * The class to handle the Clinician inputs, including adding,
- * setting attributes and updating the values of the clinicians.
+ * The class to handle the Client inputs, including adding,
+ * setting attributes and updating the values of the client.
  */
 
 public class ClinicianManager {
@@ -41,7 +41,7 @@ public class ClinicianManager {
     }
 
     /**
-     * Remove a donor object
+     * Remove a client object
      * @param clinician Clinician to be removed
      */
     public void removeClinician(Clinician clinician) {

@@ -6,10 +6,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import seng302.Actions.ActionInvoker;
-import seng302.Actions.Donor.ModifyDonorOrgansAction;
-import seng302.Donor;
+import seng302.Actions.Client.ModifyClientOrgansAction;
+import seng302.Client;
 import seng302.HistoryItem;
-import seng302.State.DonorManager;
+import seng302.State.ClientManager;
 import seng302.State.State;
 import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
@@ -28,15 +28,15 @@ import picocli.CommandLine.Option;
 @Command(name = "setorganstatus", description = "Set the organ donation choices of an existing user.", sortOptions = false)
 public class SetOrganStatus implements Runnable {
 
-    private DonorManager manager;
+    private ClientManager manager;
     private ActionInvoker invoker;
 
     public SetOrganStatus() {
-        manager = State.getDonorManager();
+        manager = State.getClientManager();
         invoker = State.getInvoker();
     }
 
-    public SetOrganStatus(DonorManager manager, ActionInvoker invoker) {
+    public SetOrganStatus(ClientManager manager, ActionInvoker invoker) {
         this.manager = manager;
         this.invoker = invoker;
     }
@@ -83,13 +83,13 @@ public class SetOrganStatus implements Runnable {
 
     @Override
     public void run() {
-        Donor donor = manager.getDonorByID(uid);
-        if (donor == null) {
-            System.out.println("No donor exists with that user ID");
+        Client client = manager.getClientByID(uid);
+        if (client == null) {
+            System.out.println("No client exists with that user ID");
             return;
         }
 
-        ModifyDonorOrgansAction action = new ModifyDonorOrgansAction(donor);
+        ModifyClientOrgansAction action = new ModifyClientOrgansAction(client);
 
         Map<Organ, Boolean> states = new HashMap<>();
         states.put(LIVER, liver);
@@ -108,7 +108,7 @@ public class SetOrganStatus implements Runnable {
         for (Map.Entry<Organ, Boolean> entry : states.entrySet()) {
             Organ organ = entry.getKey();
             Boolean newState = entry.getValue();
-            Boolean currState = donor.getOrganStatus().get(organ);
+            Boolean currState = client.getOrganDonationStatus().get(organ);
             if (newState == null) {
                 continue;
             } else if (newState && currState) {

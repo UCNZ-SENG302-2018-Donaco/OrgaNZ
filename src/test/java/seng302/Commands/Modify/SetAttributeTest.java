@@ -7,8 +7,8 @@ import static org.mockito.Mockito.*;
 import java.time.LocalDate;
 
 import seng302.Actions.ActionInvoker;
-import seng302.Donor;
-import seng302.State.DonorManager;
+import seng302.Client;
+import seng302.State.ClientManager;
 import seng302.Utilities.Enums.BloodType;
 import seng302.Utilities.Enums.Gender;
 import seng302.Utilities.Enums.Region;
@@ -19,14 +19,14 @@ import picocli.CommandLine;
 
 public class SetAttributeTest {
 
-    private DonorManager spyDonorManager;
+    private ClientManager spyClientManager;
     private SetAttribute spySetAttribute;
 
     @Before
     public void initTest() {
-        spyDonorManager = spy(new DonorManager());
+        spyClientManager = spy(new ClientManager());
 
-        spySetAttribute = spy(new SetAttribute(spyDonorManager, new ActionInvoker()));
+        spySetAttribute = spy(new SetAttribute(spyClientManager, new ActionInvoker()));
 
     }
 
@@ -49,8 +49,8 @@ public class SetAttributeTest {
     }
 
     @Test
-    public void setattributeNonExistentIdTest() {
-        when(spyDonorManager.getDonorByID(anyInt())).thenReturn(null);
+    public void setAttributeNonExistentIdTest() {
+        when(spyClientManager.getClientByID(anyInt())).thenReturn(null);
         String[] inputs = {"-u", "2"};
 
         CommandLine.run(spySetAttribute, System.out, inputs);
@@ -60,24 +60,24 @@ public class SetAttributeTest {
 
     @Test
     public void setAttributeValidNameTest() {
-        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
-        when(spyDonorManager.getDonorByID(anyInt())).thenReturn(donor);
+        Client client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        when(spyClientManager.getClientByID(anyInt())).thenReturn(client);
         String[] inputs = {"-u", "1", "--firstname", "NewFirst"};
 
         CommandLine.run(spySetAttribute, System.out, inputs);
 
-        assertEquals("NewFirst", donor.getFirstName());
+        assertEquals("NewFirst", client.getFirstName());
     }
 
     @Test
     public void setAttributeValidBloodTypeTest() {
-        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
-        when(spyDonorManager.getDonorByID(anyInt())).thenReturn(donor);
+        Client client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        when(spyClientManager.getClientByID(anyInt())).thenReturn(client);
         String[] inputs = {"-u", "1", "--bloodtype", "O+"};
 
         CommandLine.run(spySetAttribute, System.out, inputs);
 
-        assertEquals(BloodType.O_POS, donor.getBloodType());
+        assertEquals(BloodType.O_POS, client.getBloodType());
     }
 
     @Test
@@ -91,12 +91,12 @@ public class SetAttributeTest {
 
     @Test
     public void setAttributeValidGenderTest() {
-        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
-        when(spyDonorManager.getDonorByID(anyInt())).thenReturn(donor);
+        Client client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        when(spyClientManager.getClientByID(anyInt())).thenReturn(client);
         String[] inputs = {"-u", "1", "--gender", "Male"};
         CommandLine.run(spySetAttribute, System.out, inputs);
 
-        assertEquals(Gender.MALE, donor.getGender());
+        assertEquals(Gender.MALE, client.getGender());
     }
 
     @Test
@@ -110,13 +110,13 @@ public class SetAttributeTest {
 
     @Test
     public void setAttributeValidDateTest() {
-        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
-        when(spyDonorManager.getDonorByID(anyInt())).thenReturn(donor);
+        Client client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        when(spyClientManager.getClientByID(anyInt())).thenReturn(client);
         String[] inputs = {"-u", "1", "--dateofdeath", "20/01/2038"};
 
         CommandLine.run(spySetAttribute, System.out, inputs);
 
-        assertEquals(LocalDate.of(2038, 1, 20), donor.getDateOfDeath());
+        assertEquals(LocalDate.of(2038, 1, 20), client.getDateOfDeath());
     }
 
 
@@ -131,26 +131,26 @@ public class SetAttributeTest {
 
     @Test
     public void setAttributeValidRegionTest() {
-        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
-        when(spyDonorManager.getDonorByID(anyInt())).thenReturn(donor);
+        Client client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        when(spyClientManager.getClientByID(anyInt())).thenReturn(client);
 
         String[] inputs = {"-u", "1", "--region", "Canterbury"};
 
         CommandLine.run(spySetAttribute, System.out, inputs);
 
-        assertEquals(Region.CANTERBURY, donor.getRegion());
+        assertEquals(Region.CANTERBURY, client.getRegion());
     }
 
     @Test
     public void setAttributeValidRegionWithSpaceTest() {
-        Donor donor = new Donor("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
-        when(spyDonorManager.getDonorByID(anyInt())).thenReturn(donor);
+        Client client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        when(spyClientManager.getClientByID(anyInt())).thenReturn(client);
 
         String[] inputs = {"-u", "1", "--region", "West Coast"};
 
         CommandLine.run(spySetAttribute, System.out, inputs);
 
-        assertEquals(Region.WEST_COAST, donor.getRegion());
+        assertEquals(Region.WEST_COAST, client.getRegion());
     }
 
     @Test

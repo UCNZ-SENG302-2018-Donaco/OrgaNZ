@@ -3,13 +3,9 @@ package seng302.Actions.Clinician;
 
 import static org.junit.Assert.assertEquals;
 
-import java.time.LocalDate;
-
 import seng302.Actions.ActionInvoker;
-import seng302.Actions.Clinician.ModifyClinicianAction;
 import seng302.Clinician;
 import seng302.State.ClinicianManager;
-import seng302.Utilities.Enums.Gender;
 import seng302.Utilities.Enums.Region;
 
 import org.junit.Before;

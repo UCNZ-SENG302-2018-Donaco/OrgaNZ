@@ -2,17 +2,17 @@
 //
 //import java.util.ArrayList;
 //
-//import seng302.Donor;
-//import seng302.State.DonorManager;
+//import seng302.Client;
+//import seng302.State.ClientManager;
 //
 //public class SaveAction implements Action {
 //
-//    private DonorManager manager;
+//    private ClientManager manager;
 //
-//    private ArrayList<Donor> oldState;
-//    private ArrayList<Donor> newState;
+//    private ArrayList<Client> oldState;
+//    private ArrayList<Client> newState;
 //
-//    public SaveAction(ArrayList<Donor> oldState, ArrayList<Donor> newState, DonorManager manager) {
+//    public SaveAction(ArrayList<Client> oldState, ArrayList<Client> newState, ClientManager manager) {
 //        this.manager = manager;
 //        this.oldState = oldState;
 //        this.newState = newState;
@@ -20,12 +20,12 @@
 //
 //    @Override
 //    public void execute() {
-//        manager.setDonors(newState);
+//        manager.setClients(newState);
 //    }
 //
 //    @Override
 //    public void unExecute() {
-//        manager.setDonors(oldState);
+//        manager.setClients(oldState);
 //    }
 //
 //    @Override

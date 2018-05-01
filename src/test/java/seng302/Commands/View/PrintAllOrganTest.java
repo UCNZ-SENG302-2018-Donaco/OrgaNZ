@@ -11,8 +11,8 @@ import java.io.PrintStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-import seng302.Donor;
-import seng302.State.DonorManager;
+import seng302.Client;
+import seng302.State.ClientManager;
 import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
 
@@ -22,42 +22,42 @@ import picocli.CommandLine;
 
 public class PrintAllOrganTest {
 
-    private DonorManager spyDonorManager;
+    private ClientManager spyClientManager;
     private PrintAllOrgan spyPrintAllOrgan;
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
 
     @Before
     public void init() {
-        spyDonorManager = spy(new DonorManager());
+        spyClientManager = spy(new ClientManager());
 
-        spyPrintAllOrgan = spy(new PrintAllOrgan(spyDonorManager));
+        spyPrintAllOrgan = spy(new PrintAllOrgan(spyClientManager));
         System.setOut(new PrintStream(outContent));
         System.setErr(new PrintStream(errContent));
     }
 
     @Test
-    public void printallorgan_no_donors() {
-        ArrayList<Donor> donors = new ArrayList<>();
+    public void printallorgan_no_clients() {
+        ArrayList<Client> clients = new ArrayList<>();
 
-        when(spyDonorManager.getDonors()).thenReturn(donors);
+        when(spyClientManager.getClients()).thenReturn(clients);
         String[] inputs = {};
 
         CommandLine.run(spyPrintAllOrgan, System.out, inputs);
 
-        assertThat(outContent.toString(), containsString("No donors exist"));
+        assertThat(outContent.toString(), containsString("No clients exist"));
     }
 
     @Test
-    public void printallorgan_single_donor() throws OrganAlreadyRegisteredException {
-        Donor donor = new Donor("First", "mid", "Last", LocalDate.of(1970, 1, 1), 1);
-        donor.setOrganStatus(Organ.LIVER, true);
-        donor.setOrganStatus(Organ.KIDNEY, true);
+    public void printallorgan_single_client() throws OrganAlreadyRegisteredException {
+        Client client = new Client("First", "mid", "Last", LocalDate.of(1970, 1, 1), 1);
+        client.setOrganDonationStatus(Organ.LIVER, true);
+        client.setOrganDonationStatus(Organ.KIDNEY, true);
 
-        ArrayList<Donor> donors = new ArrayList<>();
-        donors.add(donor);
+        ArrayList<Client> clients = new ArrayList<>();
+        clients.add(client);
 
-        when(spyDonorManager.getDonors()).thenReturn(donors);
+        when(spyClientManager.getClients()).thenReturn(clients);
         String[] inputs = {};
 
         CommandLine.run(spyPrintAllOrgan, System.out, inputs);
@@ -67,20 +67,20 @@ public class PrintAllOrganTest {
     }
 
     @Test
-    public void printallorgan_multiple_donors() throws OrganAlreadyRegisteredException {
-        Donor donor = new Donor("First", "mid", "Last", LocalDate.of(1970, 1, 1), 1);
-        Donor donor2 = new Donor("FirstTwo", null, "LastTwo", LocalDate.of(1971, 2, 2), 2);
-        Donor donor3 = new Donor("FirstThree", null, "LastThree", LocalDate.of(1971, 2, 2), 3);
-        donor.setOrganStatus(Organ.LIVER, true);
-        donor.setOrganStatus(Organ.KIDNEY, true);
-        donor2.setOrganStatus(Organ.CONNECTIVE_TISSUE, true);
+    public void printallorgan_multiple_clients() throws OrganAlreadyRegisteredException {
+        Client client = new Client("First", "mid", "Last", LocalDate.of(1970, 1, 1), 1);
+        Client client2 = new Client("FirstTwo", null, "LastTwo", LocalDate.of(1971, 2, 2), 2);
+        Client client3 = new Client("FirstThree", null, "LastThree", LocalDate.of(1971, 2, 2), 3);
+        client.setOrganDonationStatus(Organ.LIVER, true);
+        client.setOrganDonationStatus(Organ.KIDNEY, true);
+        client2.setOrganDonationStatus(Organ.CONNECTIVE_TISSUE, true);
 
-        ArrayList<Donor> donors = new ArrayList<>();
-        donors.add(donor);
-        donors.add(donor2);
-        donors.add(donor3);
+        ArrayList<Client> clients = new ArrayList<>();
+        clients.add(client);
+        clients.add(client2);
+        clients.add(client3);
 
-        when(spyDonorManager.getDonors()).thenReturn(donors);
+        when(spyClientManager.getClients()).thenReturn(clients);
         String[] inputs = {};
 
         CommandLine.run(spyPrintAllOrgan, System.out, inputs);
@@ -90,7 +90,6 @@ public class PrintAllOrganTest {
         assertThat(outContent.toString(),
                 containsString("User: 2. Name: FirstTwo LastTwo, Donation status: Connective tissue"));
         assertThat(outContent.toString(),
-                containsString("User: 3. Name: FirstThree LastThree, Donation status: No organs registered for "
-                        + "donation"));
+                containsString("User: 3. Name: FirstThree LastThree, Donation status: No organs found"));
     }
 }
