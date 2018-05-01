@@ -8,7 +8,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -144,18 +143,20 @@ public class ClinicianMedicalHistoryController extends SubController {
     public void refresh() {
         pastIllnessView.setItems(FXCollections.observableArrayList(client.getPastIllnesses()));
         currentIllnessView.setItems(FXCollections.observableArrayList(sortCurrentIllnessList()));
+        errorMessage.setText(null);
     }
 
 
     /**
      * Moves Selected Illness to past Illnesses List Provided it is not chronic.
-     * @param event '<<' Button is pressed
      */
     @FXML
-    private void moveIllnessToHistory(ActionEvent event) {
+    private void moveIllnessToHistory() {
         IllnessRecord record = currentIllnessView.getSelectionModel().getSelectedItem();
         if (record != null) {
-            if (!record.getChronic()) {
+            if (record.getChronic()) {
+                errorMessage.setText("Can't move chronic illness to Past Illnesses.");
+            } else {
                 ModifyIllnessRecordAction action = new ModifyIllnessRecordAction(record);
                 action.changeCuredDate(LocalDate.now());
 
@@ -166,7 +167,7 @@ public class ClinicianMedicalHistoryController extends SubController {
     }
 
     @FXML
-    private void moveIllnessToCurrent(ActionEvent event) {
+    private void moveIllnessToCurrent() {
         IllnessRecord record = pastIllnessView.getSelectionModel().getSelectedItem();
         if (record != null) {
             ModifyIllnessRecordAction action = new ModifyIllnessRecordAction(record);
@@ -177,21 +178,21 @@ public class ClinicianMedicalHistoryController extends SubController {
     }
 
     @FXML
-    private void addButtonPressed(ActionEvent event) {
+    private void addButtonPressed() {
         LocalDate dateValue = dateDiagnosedPicker.getValue();
         addIllness(IllnessField.getText(), dateValue, chronicBox.isSelected());
     }
 
     @FXML
-    private void defaultFilterPressed(ActionEvent event) {
+    private void defaultFilterPressed() {
         sortCurrentIllnessList();
 
     }
 
-    public List<IllnessRecord> seperateChronics(List<IllnessRecord> illnessRecords){
+    public List<IllnessRecord> seperateChronics(List<IllnessRecord> illnessRecords) {
         List<IllnessRecord> chronics = new ArrayList<>();
-        for (int i = 0; i < illnessRecords.size(); i++){
-            if(illnessRecords.get(i).getChronic()){
+        for (int i = 0; i < illnessRecords.size(); i++) {
+            if (illnessRecords.get(i).getChronic()) {
                 chronics.add(illnessRecords.get(i));
                 illnessRecords.remove(illnessRecords.get(i));
             }
@@ -210,7 +211,7 @@ public class ClinicianMedicalHistoryController extends SubController {
             currentIllnesses.sort(Comparator.comparing(IllnessRecord::getIllnessName));
             pastIllnesses.sort(Comparator.comparing(IllnessRecord::getIllnessName));
 
-            if(isInverted){
+            if (isInverted) {
                 Collections.reverse(chronics);
                 Collections.reverse(currentIllnesses);
                 Collections.reverse(pastIllnesses);
@@ -221,7 +222,7 @@ public class ClinicianMedicalHistoryController extends SubController {
             chronics.sort(Comparator.comparing(IllnessRecord::getDiagnosisDate));
             currentIllnesses.sort(Comparator.comparing(IllnessRecord::getDiagnosisDate));
             pastIllnesses.sort(Comparator.comparing(IllnessRecord::getDiagnosisDate));
-            if(isInverted){
+            if (isInverted) {
                 Collections.reverse(chronics);
                 Collections.reverse(currentIllnesses);
                 Collections.reverse(pastIllnesses);
@@ -230,38 +231,38 @@ public class ClinicianMedicalHistoryController extends SubController {
 
         }
 
-            currentIllnessView.setItems(FXCollections.observableArrayList(chronics));
-            pastIllnessView.setItems(FXCollections.observableArrayList(pastIllnesses));
+        currentIllnessView.setItems(FXCollections.observableArrayList(chronics));
+        pastIllnessView.setItems(FXCollections.observableArrayList(pastIllnesses));
     }
 
     @FXML
-    private void alphabeticalFilterPressed(ActionEvent event) {
+    private void alphabeticalFilterPressed() {
         filterFunction("Alphabetical", false);
 
     }
 
     @FXML
-    private void invertedAlphabeticalFilterPressed(ActionEvent event) {
+    private void invertedAlphabeticalFilterPressed() {
         filterFunction("Alphabetical", true);
 
     }
 
     @FXML
-    private void diagnosisFilterPressed(ActionEvent event) {
+    private void diagnosisFilterPressed() {
         filterFunction("Diagnosis Date", false);
 
 
     }
 
     @FXML
-    private void invertedDiagnosisFilterPressed(ActionEvent event) {
+    private void invertedDiagnosisFilterPressed() {
         filterFunction("Diagnosis Date", true);
 
     }
 
 
     @FXML
-    private void deleteIllness(ActionEvent event) {
+    private void deleteIllness() {
         if (selectedListView != null) {
             IllnessRecord record = selectedListView.getSelectionModel().getSelectedItem();
             if (record != null) {
@@ -275,7 +276,7 @@ public class ClinicianMedicalHistoryController extends SubController {
 
 
     @FXML
-    private void removeChronicStatus(ActionEvent event) {
+    private void removeChronicStatus() {
         IllnessRecord record = currentIllnessView.getSelectionModel().getSelectedItem();
         if (record.getChronic()) {
             ModifyIllnessRecordAction action = new ModifyIllnessRecordAction(record);
@@ -287,29 +288,24 @@ public class ClinicianMedicalHistoryController extends SubController {
     }
 
     private void addIllness(String illnessName, LocalDate dateDiagnosed, boolean isChronic) {
-        boolean afterBirth = client.getDateOfBirth().isBefore(dateDiagnosed);
-        boolean notInFuture = LocalDate.now().plus(1, ChronoUnit.DAYS).isAfter(dateDiagnosed);
-        if (!illnessName.equals("")) {
-            if (!afterBirth) {
-                errorMessage.setText("Diagnosis date cannot be before person is born!");
-                errorMessage.setOpacity(1);
-            } else if (!notInFuture) {
-                errorMessage.setText("Diagnosis date cannot be in the future!");
-                errorMessage.setOpacity(1);
-            } else {
-                IllnessRecord record = new IllnessRecord(illnessName, dateDiagnosed, null, isChronic);
-                AddIllnessRecord action = new AddIllnessRecord(client, record);
-                invoker.execute(action);
+        boolean beforeBirth = dateDiagnosed.isBefore(client.getDateOfBirth());
+        boolean inFuture = dateDiagnosed.isAfter(LocalDate.now().plus(1, ChronoUnit.DAYS));
 
-                IllnessField.setText(null);
-                errorMessage.setText(null);
-                dateDiagnosedPicker.setValue(LocalDate.now());
-                PageNavigator.refreshAllWindows();
-            }
-
+        if (illnessName == null || illnessName.equals("")) {
+            errorMessage.setText("Illness name must not be blank.");
+        } else if (beforeBirth) {
+            errorMessage.setText("Diagnosis date cannot be before person is born.");
+        } else if (inFuture) {
+            errorMessage.setText("Diagnosis date cannot be in the future.");
         } else {
-            errorMessage.setText("Illness Name must be longer than 0 characters!");
-            errorMessage.setOpacity(1);
+            IllnessRecord record = new IllnessRecord(illnessName, dateDiagnosed, null, isChronic);
+            AddIllnessRecord action = new AddIllnessRecord(client, record);
+            invoker.execute(action);
+
+            IllnessField.setText(null);
+            errorMessage.setText(null);
+            dateDiagnosedPicker.setValue(LocalDate.now());
+            PageNavigator.refreshAllWindows();
         }
     }
 }
