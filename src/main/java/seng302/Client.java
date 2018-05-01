@@ -9,6 +9,7 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -48,6 +49,8 @@ public class Client {
     private Collection<TransplantRequest> transplantRequests = new ArrayList<>();
 
     private List<String> updateLog = new ArrayList<>();
+
+    private List<IllnessRecord> illnessHistory = new ArrayList<>();
 
     public Client() {
         createdTimestamp = LocalDateTime.now();
@@ -388,6 +391,46 @@ public class Client {
         return age;
     }
 
+
+    /**
+     * Returns a list of illnesses that Client previously had
+     * @return List of illnesses held by Client
+     */
+    public List<IllnessRecord> getPastIllnesses() {
+        return illnessHistory.stream().filter(
+                record -> record.getCuredDate() != null
+
+        ).collect(Collectors.toList());
+    }
+
+    /**
+     * Returns list of illnesses client currently has
+     * @return List of illnesses client currently has
+     */
+    public List<IllnessRecord> getCurrentIllnesses() {
+        return illnessHistory.stream().filter(
+                record -> record.getCuredDate() == null
+        ).collect(Collectors.toList());
+    }
+
+    /**
+     * Adds Illness history to Person
+     * @param record IllnessRecord that is wanted to be added
+     */
+    public void addIllnessRecord(IllnessRecord record) {
+        illnessHistory.add(record);
+        addUpdate("illnessHistory");
+    }
+
+    /**
+     * Deletes illness history from Person
+     * @param record The illness history that is wanted to be deleted
+     */
+    public void deleteIllnessRecord(IllnessRecord record) {
+        illnessHistory.remove(record);
+        addUpdate("illnessHistory");
+    }
+
     /**
      * Takes a string and checks if each space separated string section matches one of the names
      * @param searchParam The string to be checked
@@ -412,17 +455,27 @@ public class Client {
 
     /**
      * Client objects are identified by their uid
+     * @param o The object to compare
+     * @return If the Client is a match
      */
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
+    public boolean equals(Object o) {
+        if (this == o) {
             return true;
         }
-        if (!(obj instanceof Client)) {
+        if (!(o instanceof Client)) {
             return false;
         }
-        Client d = (Client) obj;
-        return d.uid == this.uid;
+        Client client = (Client) o;
+        return client.uid == this.uid;
+    }
+
+    /**
+     * Client objects are identified by their uid
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(uid);
     }
 
     public Collection<TransplantRequest> getTransplantRequests() {
