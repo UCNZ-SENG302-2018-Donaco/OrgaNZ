@@ -1,6 +1,7 @@
 package seng302.Controller.Clinician;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -184,29 +185,50 @@ public class ClinicianMedicalHistoryController extends SubController {
 
     }
 
+    public List<IllnessRecord> seperateChronics(List<IllnessRecord> illnessRecords){
+        List<IllnessRecord> chronics = new ArrayList<>();
+        for (int i = 0; i < illnessRecords.size(); i++){
+            if(illnessRecords.get(i).getChronic()){
+                chronics.add(illnessRecords.get(i));
+                illnessRecords.remove(illnessRecords.get(i));
+            }
 
-    private void filterFunction(String filterType, Boolean isInverted) {
+        }
+        return chronics;
+    }
+
+
+    public void filterFunction(String filterType, Boolean isInverted) {
         List<IllnessRecord> currentIllnesses = client.getCurrentIllnesses();
         List<IllnessRecord> pastIllnesses = client.getPastIllnesses();
+        List<IllnessRecord> chronics = seperateChronics(currentIllnesses);
         if (filterType.equals("Alphabetical")) {
+            chronics.sort(Comparator.comparing(IllnessRecord::getIllnessName));
             currentIllnesses.sort(Comparator.comparing(IllnessRecord::getIllnessName));
             pastIllnesses.sort(Comparator.comparing(IllnessRecord::getIllnessName));
+
+            if(isInverted){
+                Collections.reverse(chronics);
+                Collections.reverse(currentIllnesses);
+                Collections.reverse(pastIllnesses);
+            }
+
+            chronics.addAll(currentIllnesses);
         } else if (filterType.equals("Diagnosis Date")) {
+            chronics.sort(Comparator.comparing(IllnessRecord::getDiagnosisDate));
             currentIllnesses.sort(Comparator.comparing(IllnessRecord::getDiagnosisDate));
             pastIllnesses.sort(Comparator.comparing(IllnessRecord::getDiagnosisDate));
+            if(isInverted){
+                Collections.reverse(chronics);
+                Collections.reverse(currentIllnesses);
+                Collections.reverse(pastIllnesses);
+            }
+            chronics.addAll(currentIllnesses);
+
         }
 
-        if (isInverted) {
-            List<IllnessRecord> shallowCopy = currentIllnesses.subList(0, currentIllnesses.size());
-            List<IllnessRecord> shallowCopyPast = pastIllnesses.subList(0, pastIllnesses.size());
-            Collections.reverse(shallowCopy);
-            Collections.reverse(shallowCopyPast);
-            currentIllnessView.setItems(FXCollections.observableArrayList(shallowCopy));
-            pastIllnessView.setItems(FXCollections.observableArrayList(shallowCopyPast));
-        } else {
-            currentIllnessView.setItems(FXCollections.observableArrayList(currentIllnesses));
+            currentIllnessView.setItems(FXCollections.observableArrayList(chronics));
             pastIllnessView.setItems(FXCollections.observableArrayList(pastIllnesses));
-        }
     }
 
     @FXML
@@ -256,7 +278,6 @@ public class ClinicianMedicalHistoryController extends SubController {
             ModifyIllnessRecordAction action = new ModifyIllnessRecordAction(record);
             action.changeChronicStatus(false);
             invoker.execute(action);
-            record.toString();
             refreshIllnessLists();
         }
 

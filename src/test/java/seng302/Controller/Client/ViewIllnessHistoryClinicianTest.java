@@ -12,11 +12,16 @@ import static org.testfx.util.NodeQueryUtils.isVisible;
 
 import java.time.LocalDate;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.input.KeyCode;
 
 import seng302.Clinician;
+import seng302.Controller.Clinician.ClinicianMedicalHistoryController;
 import seng302.Controller.ControllerTest;
 import seng302.IllnessRecord;
 
@@ -64,6 +69,12 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
             LocalDate.of(2011, 9, 22),
             null,
             true
+        ),
+        new IllnessRecord(
+            "Monopoly",
+            LocalDate.of(2011, 9, 22),
+            null,
+            false
         )
     };
 
@@ -120,6 +131,7 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
         verifyThat("#moveToCurrentButton", (Button b) -> !b.isDisabled());
         verifyThat("#deleteButton", (Button b) -> !b.isDisabled());
     }
+
 
     /**
 
