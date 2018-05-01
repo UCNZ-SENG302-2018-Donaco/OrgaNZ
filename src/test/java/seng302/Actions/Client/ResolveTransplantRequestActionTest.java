@@ -54,6 +54,6 @@ public class ResolveTransplantRequestActionTest {
         invoker.execute(action);
 
         Duration timeDiff = Duration.between(LocalDateTime.now(), testRequest.getResolvedDate());
-        assertTrue(Math.abs(timeDiff.getSeconds()) < 1);
+        assertTrue(Math.abs(timeDiff.getSeconds()) < 3);
     }
 }
