@@ -8,6 +8,7 @@ import java.util.Comparator;
 import javafx.collections.FXCollections;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.DatePicker;
@@ -33,6 +34,9 @@ import seng302.State.Session.UserType;
 import seng302.State.State;
 import seng302.Utilities.View.PageNavigator;
 
+/**
+ * Controller for the medical history page, which shows a list of all current and past illnesses for the client.
+ */
 public class ClinicianMedicalHistoryController extends SubController {
 
     private static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("d MMM yyyy");
@@ -86,6 +90,11 @@ public class ClinicianMedicalHistoryController extends SubController {
         };
     }
 
+    /**
+     * Formats a table cell that holds a {@link Boolean} to display "CHRONIC" in red text if the value is true, or
+     * nothing otherwise.
+     * @return The cell with the chronic formatter set.
+     */
     private static TableCell<IllnessRecord, Boolean> formatChronicCell() {
         return new TableCell<IllnessRecord, Boolean>() {
             @Override
@@ -105,6 +114,12 @@ public class ClinicianMedicalHistoryController extends SubController {
         };
     }
 
+    /**
+     * Creates a sort policy where records for chronic illnesses are always sorted first, then sorts by the table's
+     * current comparator.
+     * @param table The tableview to get the current comparator from.
+     * @return The sort policy.
+     */
     private static Boolean getChronicFirstSortPolicy(TableView<IllnessRecord> table) {
         Comparator<IllnessRecord> comparator = (r1, r2) -> {
             if (r1.isChronic() == r2.isChronic()) {
@@ -124,11 +139,18 @@ public class ClinicianMedicalHistoryController extends SubController {
         return true;
     }
 
+    /**
+     * Gets the current session and action invoker from the global state.
+     */
     public ClinicianMedicalHistoryController() {
         session = State.getSession();
         invoker = State.getInvoker();
     }
 
+    /**
+     * Initializes the page, setting cell value/represntation factories for all the columns, setting up selection
+     * listeners, setting the sort policy for each table and setting the initial value for the date diagnosed picker.
+     */
     @FXML
     public void initialize() {
         illnessCurrCol.setCellValueFactory(new PropertyValueFactory<>("illnessName"));
@@ -147,6 +169,7 @@ public class ClinicianMedicalHistoryController extends SubController {
         // Format chronic cells
         chronicCurrCol.setCellFactory(cell -> formatChronicCell());
 
+        // Set listeners so that the other table's selection is cleared when an item in each table is selected.
         pastIllnessView.getSelectionModel().selectedItemProperty().addListener(
                 (observable) -> {
                     selectedTableView = pastIllnessView;
@@ -168,8 +191,8 @@ public class ClinicianMedicalHistoryController extends SubController {
      * Sets up the page using the MainController given.
      * - Loads the sidebar.
      * - Checks if the session login type is a client or a clinician, and sets the viewed client appropriately.
-     * - Refreshes the medication list views to set initial state based on the viewed client.
      * - Checks if the logged in user is a client, and if so, makes the page non-editable.
+     * - Refreshes the illness tables to set initial state based on the viewed client.
      * @param mainController The MainController for the window this page is loaded on.
      */
     @Override
@@ -194,7 +217,7 @@ public class ClinicianMedicalHistoryController extends SubController {
     }
 
     /**
-     * Refreshes the past/current illness list views from the client's properties.
+     * Refreshes the past/current illness tables from the client's properties.
      */
     @Override
     public void refresh() {
@@ -233,6 +256,10 @@ public class ClinicianMedicalHistoryController extends SubController {
         errorMessage.setText(null);
     }
 
+    /**
+     * Gets the currently selected record in the currently selected table.
+     * @return The selected illness record.
+     */
     private IllnessRecord getSelectedRecord() {
         if (selectedTableView != null) {
             return selectedTableView.getSelectionModel().getSelectedItem();
@@ -242,13 +269,16 @@ public class ClinicianMedicalHistoryController extends SubController {
     }
 
     /**
-     * Moves Selected Illness to past Illnesses List Provided it is not chronic.
+     * Moves the currently selected illness record to history, setting its cured date to the current date.
      */
     @FXML
     private void moveIllnessToHistory() {
         IllnessRecord record = getSelectedRecord();
         if (record != null) {
             if (record.isChronic()) {
+                PageNavigator.showAlert(AlertType.ERROR,
+                        "Can't move a chronic illness to past illnesses.",
+                        "An illness can't be cured if it is chronic.");
                 errorMessage.setText("Can't move chronic illness to Past Illnesses.");
             } else {
                 ModifyIllnessRecordAction action = new ModifyIllnessRecordAction(record);
@@ -260,6 +290,9 @@ public class ClinicianMedicalHistoryController extends SubController {
         }
     }
 
+    /**
+     * Moves the currently selected illness record to history, setting its cured date to null.
+     */
     @FXML
     private void moveIllnessToCurrent() {
         IllnessRecord record = getSelectedRecord();
@@ -271,6 +304,9 @@ public class ClinicianMedicalHistoryController extends SubController {
         }
     }
 
+    /**
+     * Deletes the currently selected illness record.
+     */
     @FXML
     private void deleteIllness() {
         IllnessRecord record = getSelectedRecord();
@@ -282,6 +318,11 @@ public class ClinicianMedicalHistoryController extends SubController {
         }
     }
 
+    /**
+     * Toggles the currently selected illness record's chronic property. If the illness is chronic, it will be set to
+     * non-chronic. If the illness is not chronic, it will be set as chronic AND if it was a "cured" record, then its
+     * cured date will be set to null (to show that it wasn't cured after all).
+     */
     @FXML
     private void toggleChronic() {
         IllnessRecord record = getSelectedRecord();
@@ -300,6 +341,9 @@ public class ClinicianMedicalHistoryController extends SubController {
         }
     }
 
+    /**
+     * Adds a new illness record based on the information in the add new illness record inputs.
+     */
     @FXML
     private void addIllness() {
         String illnessName = illnessNameField.getText();

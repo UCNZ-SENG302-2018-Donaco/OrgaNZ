@@ -3,6 +3,9 @@ package seng302;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+/**
+ * Represents an instance of a user having an illness for a period of time.
+ */
 public class IllnessRecord {
 
     private static DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -12,7 +15,13 @@ public class IllnessRecord {
     private LocalDate curedDate;
     private boolean isChronic;
 
-
+    /**
+     * Creates a new IllnessRecord for a given illness.
+     * @param illnessName The name of the illness.
+     * @param diagnosisDate The date the illness was diagnosed for the client.
+     * @param curedDate The date the illness was cured.
+     * @param isChronic Whether the illness is chronic or not.
+     */
     public IllnessRecord(String illnessName, LocalDate diagnosisDate, LocalDate curedDate, boolean isChronic) {
         this.illnessName = illnessName;
         this.diagnosisDate = diagnosisDate;
