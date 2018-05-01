@@ -2,6 +2,7 @@ package seng302.Actions.Client;
 
 import static seng302.TransplantRequest.RequestStatus.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -11,10 +12,12 @@ import seng302.Client;
 public class MarkClientAsDeadAction extends Action {
 
     private Client client;
+    private LocalDate deathDate;
     private List<ResolveTransplantRequestAction> resolveTransplantActions;
 
-    public MarkClientAsDeadAction(Client client) {
+    public MarkClientAsDeadAction(Client client, LocalDate deathDate) {
         this.client = client;
+        this.deathDate = deathDate;
         this.resolveTransplantActions = client.getTransplantRequests()
                 .stream()
                 .filter(request -> request.getStatus() == WAITING)
@@ -24,6 +27,7 @@ public class MarkClientAsDeadAction extends Action {
 
     @Override
     protected void execute() {
+        client.setDateOfDeath(deathDate);
         for (ResolveTransplantRequestAction action : resolveTransplantActions) {
             action.execute();
         }
@@ -31,6 +35,7 @@ public class MarkClientAsDeadAction extends Action {
 
     @Override
     protected void unExecute() {
+        client.setDateOfDeath(null);
         for (ResolveTransplantRequestAction action : resolveTransplantActions) {
             action.unExecute();
         }

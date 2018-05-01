@@ -2,19 +2,28 @@ package seng302.Controller.Client;
 
 import static seng302.TransplantRequest.RequestStatus.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 import javafx.collections.FXCollections;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
+import javafx.scene.Camera;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ChoiceDialog;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
@@ -23,6 +32,7 @@ import javafx.scene.layout.Pane;
 import seng302.Actions.Action;
 import seng302.Actions.ActionInvoker;
 import seng302.Actions.Client.AddTransplantRequestAction;
+import seng302.Actions.Client.MarkClientAsDeadAction;
 import seng302.Actions.Client.ResolveTransplantRequestAction;
 import seng302.Client;
 import seng302.Controller.MainController;
@@ -65,6 +75,30 @@ public class RequestOrgansController extends SubController {
     private TableColumn<TransplantRequest, LocalDateTime> requestDateCurrCol, requestDatePastCol, resolvedDatePastCol;
     @FXML
     private TableColumn<TransplantRequest, RequestStatus> requestStatusPastCol;
+    @FXML
+    private ComboBox<ResolveReason> cancelTransplantOptions;
+    @FXML
+    private TextField customReason;
+    @FXML
+    private DatePicker deathDatePicker;
+
+    public enum ResolveReason {
+        CURED("Cured"),
+        DECEASED("Client deceased"),
+        COMPLETED("Transplant completed"),
+        CUSTOM("Custom reason"),
+        ERROR("Error");
+
+        private final String text;
+
+        ResolveReason(String text) {
+            this.text = text;
+        }
+
+        public String toString() {
+            return text;
+        }
+    }
 
     /**
      * Formats a table cell that holds a {@link LocalDateTime} value to display that value in the date time format.
@@ -75,7 +109,7 @@ public class RequestOrgansController extends SubController {
             @Override
             protected void updateItem(LocalDateTime item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty) {
+                if (empty || (item == null)) {
                     setText(null);
                 } else {
                     setText(item.format(dateTimeFormat));
@@ -121,8 +155,14 @@ public class RequestOrgansController extends SubController {
      */
     @FXML
     private void initialize() {
-        // Populate organ box with all organ values
+        // Populate organ and resolve boxes with all values
         newOrganChoiceBox.setItems(FXCollections.observableArrayList(Organ.values()));
+        cancelTransplantOptions.setItems(FXCollections.observableArrayList(ResolveReason.values()));
+        cancelTransplantOptions.setValue(ResolveReason.CURED);
+
+        customReason.setManaged(false);
+        deathDatePicker.setManaged(false);
+        deathDatePicker.setValue(LocalDate.now());
 
         // Setup all cell value factories
         organCurrCol.setCellValueFactory(new PropertyValueFactory<>("requestedOrgan"));
@@ -146,6 +186,23 @@ public class RequestOrgansController extends SubController {
                 (observable) -> pastRequestsTable.getSelectionModel().clearSelection());
         pastRequestsTable.getSelectionModel().selectedItemProperty().addListener(
                 (observable) -> currentRequestsTable.getSelectionModel().clearSelection());
+
+        cancelTransplantOptions.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue) -> {
+                    customReason.setManaged(false);
+                    customReason.setVisible(false);
+                    deathDatePicker.setManaged(false);
+                    deathDatePicker.setVisible(false);
+
+                    if (newValue == ResolveReason.CUSTOM) {
+                        customReason.setManaged(true);
+                        customReason.setVisible(true);
+                    } else if (newValue == ResolveReason.DECEASED) {
+                        deathDatePicker.setManaged(true);
+                        deathDatePicker.setVisible(true);
+                    }
+                }
+        );
     }
 
     /**
@@ -211,29 +268,47 @@ public class RequestOrgansController extends SubController {
     }
 
     /**
-     * Marks a request as cancelled, and moves it to the past requests table.
+     * Resolves the transplant request, by either cancelling or completing the request
+     * depending on the reason selected
      */
     @FXML
-    private void cancelRequest() {
+    private void resolveRequest() {
         TransplantRequest selectedRequest = currentRequestsTable.getSelectionModel().getSelectedItem();
+        ResolveReason resolveReason = cancelTransplantOptions.getValue();
+
         if (selectedRequest != null) {
-            Action action = new ResolveTransplantRequestAction(selectedRequest, CANCELLED, "Cancelled.");
+
+            Action action;
+
+            if (resolveReason == ResolveReason.COMPLETED) {
+                action = new ResolveTransplantRequestAction(selectedRequest, COMPLETED, "Completed.");
+
+
+            } else if (resolveReason == ResolveReason.DECEASED) {
+                LocalDate deathDate = deathDatePicker.getValue();
+                action = new MarkClientAsDeadAction(client, deathDate);
+
+                deathDatePicker.setValue(LocalDate.now());
+
+            } else {
+
+                String reason = null;
+
+                if (resolveReason == ResolveReason.CURED) {
+                    // TODO once s22 is complete
+
+                } else if (resolveReason == ResolveReason.ERROR) {
+                    reason = "error";
+
+                } else if (resolveReason == ResolveReason.CUSTOM) {
+                    reason = customReason.getText();
+                    customReason.clear();
+                }
+
+                action = new ResolveTransplantRequestAction(selectedRequest, CANCELLED, reason);
+            }
+
             invoker.execute(action);
-
-            PageNavigator.refreshAllWindows();
-        }
-    }
-
-    /**
-     * Marks a request as completed, and moves it to the past requests table.
-     */
-    @FXML
-    private void completeRequest() {
-        TransplantRequest selectedRequest = currentRequestsTable.getSelectionModel().getSelectedItem();
-        if (selectedRequest != null) {
-            Action action = new ResolveTransplantRequestAction(selectedRequest, COMPLETED, "Completed.");
-            invoker.execute(action);
-
             PageNavigator.refreshAllWindows();
         }
     }
