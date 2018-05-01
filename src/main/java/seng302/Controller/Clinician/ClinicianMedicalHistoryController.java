@@ -77,7 +77,7 @@ public class ClinicianMedicalHistoryController extends SubController {
             @Override
             protected void updateItem(LocalDate item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty) {
+                if (item == null || empty) {
                     setText(null);
                 } else {
                     setText(item.format(dateTimeFormat));
@@ -93,10 +93,13 @@ public class ClinicianMedicalHistoryController extends SubController {
                 super.updateItem(isChronic, empty);
                 if (isChronic == null || empty) {
                     setText(null);
+                    setStyle(null);
                 } else if (isChronic) {
                     setText("CHRONIC");
+                    setStyle("-fx-text-fill: red;");
                 } else {
                     setText(null);
+                    setStyle(null);
                 }
             }
         };
@@ -182,6 +185,7 @@ public class ClinicianMedicalHistoryController extends SubController {
             moveToHistoryButton.setDisable(true);
             moveToCurrentButton.setDisable(true);
             deleteButton.setDisable(true);
+            toggleChronicButton.setDisable(true);
         } else if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
         }
@@ -229,13 +233,20 @@ public class ClinicianMedicalHistoryController extends SubController {
         errorMessage.setText(null);
     }
 
+    private IllnessRecord getSelectedRecord() {
+        if (selectedTableView != null) {
+            return selectedTableView.getSelectionModel().getSelectedItem();
+        } else {
+            return null;
+        }
+    }
 
     /**
      * Moves Selected Illness to past Illnesses List Provided it is not chronic.
      */
     @FXML
     private void moveIllnessToHistory() {
-        IllnessRecord record = currentIllnessView.getSelectionModel().getSelectedItem();
+        IllnessRecord record = getSelectedRecord();
         if (record != null) {
             if (record.isChronic()) {
                 errorMessage.setText("Can't move chronic illness to Past Illnesses.");
@@ -251,7 +262,7 @@ public class ClinicianMedicalHistoryController extends SubController {
 
     @FXML
     private void moveIllnessToCurrent() {
-        IllnessRecord record = pastIllnessView.getSelectionModel().getSelectedItem();
+        IllnessRecord record = getSelectedRecord();
         if (record != null) {
             ModifyIllnessRecordAction action = new ModifyIllnessRecordAction(record);
             action.changeCuredDate(null);
@@ -262,27 +273,24 @@ public class ClinicianMedicalHistoryController extends SubController {
 
     @FXML
     private void deleteIllness() {
-        if (selectedTableView != null) {
-            IllnessRecord record = selectedTableView.getSelectionModel().getSelectedItem();
-            if (record != null) {
-                DeleteIllnessRecord action = new DeleteIllnessRecord(client, record);
+        IllnessRecord record = getSelectedRecord();
+        if (record != null) {
+            DeleteIllnessRecord action = new DeleteIllnessRecord(client, record);
 
-                invoker.execute(action);
-                PageNavigator.refreshAllWindows();
-            }
+            invoker.execute(action);
+            PageNavigator.refreshAllWindows();
         }
     }
 
     @FXML
     private void toggleChronic() {
-        IllnessRecord record = currentIllnessView.getSelectionModel().getSelectedItem();
+        IllnessRecord record = getSelectedRecord();
         if (record != null) {
             ModifyIllnessRecordAction action = new ModifyIllnessRecordAction(record);
             if (record.isChronic()) {
                 action.changeChronicStatus(false);
             } else {
                 if (record.getCuredDate() != null) {
-                    System.out.println("called");
                     action.changeCuredDate(null);
                 }
                 action.changeChronicStatus(true);
