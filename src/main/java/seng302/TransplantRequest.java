@@ -15,7 +15,7 @@ public class TransplantRequest {
         COMPLETED
     }
 
-    private Client client;
+    private transient Client client;
     private Organ requestedOrgan;
     private LocalDateTime requestDate;
     private LocalDateTime resolvedDate;
@@ -26,22 +26,6 @@ public class TransplantRequest {
         this.client = client;
         this.requestedOrgan = requestedOrgan;
         this.requestDate = LocalDateTime.now();
-    }
-
-    /**
-     * Should only be used by ResolveTransplantRequestAction
-     * @return reason that the transplant request was resolved
-     */
-    public String getResolvedReason() {
-        return resolvedReason;
-    }
-
-    /**
-     * Should only be used by ResolveTransplantRequestAction
-     * @param resolvedReason reason that the transplant request was resolved
-     */
-    public void setResolvedReason(String resolvedReason) {
-        this.resolvedReason = resolvedReason;
     }
 
     public Client getClient() {
@@ -64,11 +48,31 @@ public class TransplantRequest {
         return status;
     }
 
+    /**
+     * Should only be used by ResolveTransplantRequestAction
+     * @return reason that the transplant request was resolved
+     */
+    public String getResolvedReason() {
+        return resolvedReason;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
+    }
+
     public void setResolvedDate(LocalDateTime resolvedDate) {
         this.resolvedDate = resolvedDate;
     }
 
     public void setStatus(RequestStatus status) {
         this.status = status;
+    }
+
+    /**
+     * Should only be used by ResolveTransplantRequestAction
+     * @param resolvedReason reason that the transplant request was resolved
+     */
+    public void setResolvedReason(String resolvedReason) {
+        this.resolvedReason = resolvedReason;
     }
 }
