@@ -431,10 +431,6 @@ public class Client {
         addUpdate("illnessHistory");
     }
 
-    public void sortIllnesses(IllnessRecord record) {
-
-    }
-
     /**
      * Takes a string and checks if each space separated string section matches one of the names
      * @param searchParam The string to be checked
