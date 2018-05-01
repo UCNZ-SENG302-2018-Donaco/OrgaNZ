@@ -30,6 +30,7 @@ import seng302.IllnessRecord;
 import seng302.State.Session;
 import seng302.State.Session.UserType;
 import seng302.State.State;
+import seng302.Utilities.View.PageNavigator;
 
 public class ClinicianMedicalHistoryController extends SubController {
 
@@ -44,7 +45,7 @@ public class ClinicianMedicalHistoryController extends SubController {
     private Text errorMessage;
 
     @FXML
-    private DatePicker dateDiagnosed;
+    private DatePicker dateDiagnosedPicker;
 
     @FXML
     private CheckBox chronicBox;
@@ -86,6 +87,7 @@ public class ClinicianMedicalHistoryController extends SubController {
                     pastIllnessView.getSelectionModel().clearSelection();
                 });
 
+        dateDiagnosedPicker.setValue(LocalDate.now());
     }
 
 
@@ -114,7 +116,7 @@ public class ClinicianMedicalHistoryController extends SubController {
             client = windowContext.getViewClient();
         }
 
-        refreshIllnessLists();
+        refresh();
     }
 
     /**
@@ -138,7 +140,8 @@ public class ClinicianMedicalHistoryController extends SubController {
     /**
      * Refreshes the past/current illness list views from the client's properties.
      */
-    private void refreshIllnessLists() {
+    @Override
+    public void refresh() {
         pastIllnessView.setItems(FXCollections.observableArrayList(client.getPastIllnesses()));
         currentIllnessView.setItems(FXCollections.observableArrayList(sortCurrentIllnessList()));
     }
@@ -154,11 +157,10 @@ public class ClinicianMedicalHistoryController extends SubController {
         if (record != null) {
             if (!record.getChronic()) {
                 ModifyIllnessRecordAction action = new ModifyIllnessRecordAction(record);
-                action.changeStopped(LocalDate.now());
+                action.changeCuredDate(LocalDate.now());
 
                 invoker.execute(action);
-                refreshIllnessLists();
-
+                PageNavigator.refreshAllWindows();
             }
         }
     }
@@ -168,22 +170,15 @@ public class ClinicianMedicalHistoryController extends SubController {
         IllnessRecord record = pastIllnessView.getSelectionModel().getSelectedItem();
         if (record != null) {
             ModifyIllnessRecordAction action = new ModifyIllnessRecordAction(record);
-            action.changeStopped(null);
+            action.changeCuredDate(null);
             invoker.execute(action);
-            refreshIllnessLists();
+            PageNavigator.refreshAllWindows();
         }
     }
 
     @FXML
     private void addButtonPressed(ActionEvent event) {
-      LocalDate dateValue;
-      if(dateDiagnosed.getValue() == null){
-        dateValue = LocalDate.now();
-      }
-      else {
-        dateValue = dateDiagnosed.getValue();
-      }
-
+        LocalDate dateValue = dateDiagnosedPicker.getValue();
         addIllness(IllnessField.getText(), dateValue, chronicBox.isSelected());
     }
 
@@ -206,7 +201,7 @@ public class ClinicianMedicalHistoryController extends SubController {
     }
 
 
-    public void filterFunction(String filterType, Boolean isInverted) {
+    public void filterFunction(String filterType, boolean isInverted) {
         List<IllnessRecord> currentIllnesses = client.getCurrentIllnesses();
         List<IllnessRecord> pastIllnesses = client.getPastIllnesses();
         List<IllnessRecord> chronics = seperateChronics(currentIllnesses);
@@ -273,7 +268,7 @@ public class ClinicianMedicalHistoryController extends SubController {
                 DeleteIllnessRecord action = new DeleteIllnessRecord(client, record);
 
                 invoker.execute(action);
-                refreshIllnessLists();
+                PageNavigator.refreshAllWindows();
             }
         }
     }
@@ -286,39 +281,35 @@ public class ClinicianMedicalHistoryController extends SubController {
             ModifyIllnessRecordAction action = new ModifyIllnessRecordAction(record);
             action.changeChronicStatus(false);
             invoker.execute(action);
-            refreshIllnessLists();
+            PageNavigator.refreshAllWindows();
         }
 
     }
 
-    private void addIllness(String illnessName, LocalDate dateDiagnosed, Boolean isChronic) {
-        Boolean afterBirth = client.getDateOfBirth().isBefore(dateDiagnosed);
-        Boolean notInFuture = LocalDate.now().plus(1, ChronoUnit.DAYS).isAfter(dateDiagnosed);
+    private void addIllness(String illnessName, LocalDate dateDiagnosed, boolean isChronic) {
+        boolean afterBirth = client.getDateOfBirth().isBefore(dateDiagnosed);
+        boolean notInFuture = LocalDate.now().plus(1, ChronoUnit.DAYS).isAfter(dateDiagnosed);
         if (!illnessName.equals("")) {
             if (!afterBirth) {
                 errorMessage.setText("Diagnosis date cannot be before person is born!");
                 errorMessage.setOpacity(1);
-            }
-
-            if (!notInFuture) {
+            } else if (!notInFuture) {
                 errorMessage.setText("Diagnosis date cannot be in the future!");
                 errorMessage.setOpacity(1);
             } else {
-                IllnessRecord record = new IllnessRecord(illnessName, dateDiagnosed, null,
-                        isChronic);
+                IllnessRecord record = new IllnessRecord(illnessName, dateDiagnosed, null, isChronic);
                 AddIllnessRecord action = new AddIllnessRecord(client, record);
-
                 invoker.execute(action);
-                IllnessField.setText("");
-                refreshIllnessLists();
-            }
 
+                IllnessField.setText(null);
+                errorMessage.setText(null);
+                dateDiagnosedPicker.setValue(LocalDate.now());
+                PageNavigator.refreshAllWindows();
+            }
 
         } else {
             errorMessage.setText("Illness Name must be longer than 0 characters!");
             errorMessage.setOpacity(1);
         }
     }
-
-
 }

@@ -53,7 +53,7 @@
                                  <HBox.margin>
                                     <Insets left="10.0" />
                                  </HBox.margin></Text>
-                              <DatePicker fx:id="dateDiagnosed">
+                              <DatePicker fx:id="dateDiagnosedPicker">
                                  <HBox.margin>
                                     <Insets right="10.0" />
                                  </HBox.margin></DatePicker>

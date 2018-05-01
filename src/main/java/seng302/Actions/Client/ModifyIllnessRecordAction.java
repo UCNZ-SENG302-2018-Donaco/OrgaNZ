@@ -9,30 +9,29 @@ import seng302.IllnessRecord;
 public class ModifyIllnessRecordAction extends Action {
 
     private IllnessRecord record;
-    private LocalDate oldStarted;
-    private LocalDate oldStopped;
-    private LocalDate newStarted;
-    private LocalDate newStopped;
-
+    private LocalDate oldDiagnosisDate;
+    private LocalDate oldCuredDate;
+    private LocalDate newDiagnosisDate;
+    private LocalDate newCuredDate;
     private Boolean oldChronic;
     private Boolean newChronic;
 
     public ModifyIllnessRecordAction(IllnessRecord record) {
         this.record = record;
-        oldStarted = record.getDiagnosisDate();
-        oldStopped = record.getCuredDate();
+        oldDiagnosisDate = record.getDiagnosisDate();
+        oldCuredDate = record.getCuredDate();
         oldChronic = record.getChronic();
-        newStarted = oldStarted;
-        newStopped = oldStopped;
+        newDiagnosisDate = oldDiagnosisDate;
+        newCuredDate = oldCuredDate;
         newChronic = oldChronic;
     }
 
-    public void changeStarted(LocalDate newStarted) {
-        this.newStarted = newStarted;
+    public void changeDiagnosisDate(LocalDate newDiagnosisDate) {
+        this.newDiagnosisDate = newDiagnosisDate;
     }
 
-    public void changeStopped(LocalDate newStopped) {
-        this.newStopped = newStopped;
+    public void changeCuredDate(LocalDate newCuredDate) {
+        this.newCuredDate = newCuredDate;
     }
 
     public void changeChronicStatus(Boolean newChronic) {
@@ -41,12 +40,17 @@ public class ModifyIllnessRecordAction extends Action {
 
     @Override
     public void execute() {
-        if (!Objects.equals(newStarted, oldStarted)) {
-            record.setDiagnosisDate(newStarted);
+        if (Objects.equals(newDiagnosisDate, oldDiagnosisDate) &&
+                Objects.equals(newCuredDate, oldCuredDate) &&
+                Objects.equals(newChronic, oldChronic)) {
+            throw new IllegalStateException("No changes were made to the MedicationRecord.");
+        }
+        if (!Objects.equals(newDiagnosisDate, oldDiagnosisDate)) {
+            record.setDiagnosisDate(newDiagnosisDate);
         }
 
-        if (!Objects.equals(newStopped, oldStopped)) {
-            record.setCuredDate(newStopped);
+        if (!Objects.equals(newCuredDate, oldCuredDate)) {
+            record.setCuredDate(newCuredDate);
         }
 
         if (!Objects.equals(newChronic, oldChronic)) {
@@ -56,12 +60,12 @@ public class ModifyIllnessRecordAction extends Action {
 
     @Override
     public void unExecute() {
-        if (!Objects.equals(newStarted, oldStarted)) {
-            record.setDiagnosisDate(oldStarted);
+        if (!Objects.equals(newDiagnosisDate, oldDiagnosisDate)) {
+            record.setDiagnosisDate(oldDiagnosisDate);
         }
 
-        if (!Objects.equals(newStopped, oldStopped)) {
-            record.setCuredDate(oldStopped);
+        if (!Objects.equals(newCuredDate, oldCuredDate)) {
+            record.setCuredDate(oldCuredDate);
         }
 
         if (!Objects.equals(newChronic, oldChronic)) {
@@ -74,14 +78,14 @@ public class ModifyIllnessRecordAction extends Action {
         StringBuilder builder = new StringBuilder();
         builder.append(String.format("Changed illness record for '%s':", record.getIllnessName()));
 
-        if (!Objects.equals(newStarted, oldStarted)) {
-            builder.append(String.format("\nStarted date changed from %s to %s", oldStarted, newStarted));
+        if (!Objects.equals(newDiagnosisDate, oldDiagnosisDate)) {
+            builder.append(String.format("\nDiagnosisDate date changed from %s to %s", oldDiagnosisDate, newDiagnosisDate));
         }
-        if (!Objects.equals(newStopped, oldStopped)) {
-            builder.append(String.format("\nStopped date changed from %s to %s", oldStarted, newStarted));
+        if (!Objects.equals(newCuredDate, oldCuredDate)) {
+            builder.append(String.format("\nCuredDate date changed from %s to %s", oldDiagnosisDate, newDiagnosisDate));
         }
         if (!Objects.equals(newChronic, oldChronic)) {
-            builder.append(String.format("\nChronic status changed from %s to %s", oldStarted, newStarted));
+            builder.append(String.format("\nChronic status changed from %s to %s", oldChronic, newChronic));
         }
 
         return builder.toString();
@@ -92,14 +96,14 @@ public class ModifyIllnessRecordAction extends Action {
         StringBuilder builder = new StringBuilder();
         builder.append(String.format("Reversed these changes to illness record for '%s':", record.getIllnessName()));
 
-        if (!Objects.equals(newStarted, oldStarted)) {
-            builder.append(String.format("\nStarted date changed from %s to %s", oldStarted, newStarted));
+        if (!Objects.equals(newDiagnosisDate, oldDiagnosisDate)) {
+            builder.append(String.format("\nDiagnosisDate date changed from %s to %s", oldDiagnosisDate, newDiagnosisDate));
         }
-        if (!Objects.equals(newStopped, oldStopped)) {
-            builder.append(String.format("\nStopped date changed from %s to %s", oldStarted, newStarted));
+        if (!Objects.equals(newCuredDate, oldCuredDate)) {
+            builder.append(String.format("\nCuredDate date changed from %s to %s", oldDiagnosisDate, newDiagnosisDate));
         }
         if (!Objects.equals(newChronic, oldChronic)) {
-            builder.append(String.format("\nChronic status changed from %s to %s", oldStarted, newStarted));
+            builder.append(String.format("\nChronic status changed from %s to %s", oldChronic, newChronic));
         }
 
         return builder.toString();

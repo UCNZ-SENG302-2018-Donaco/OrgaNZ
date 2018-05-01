@@ -6,10 +6,11 @@ import java.time.format.DateTimeFormatter;
 public class IllnessRecord {
 
     private static DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
     private String illnessName;
     private LocalDate diagnosisDate;
     private LocalDate curedDate;
-    private Boolean isChronic;
+    private boolean isChronic;
 
 
     public IllnessRecord(String illnessName, LocalDate diagnosisDate, LocalDate curedDate, Boolean isChronic) {
@@ -23,32 +24,28 @@ public class IllnessRecord {
         return illnessName;
     }
 
-    public Boolean getChronic() {
-        return isChronic;
-    }
-
-    public void setChronic(Boolean chronic) {
-        isChronic = chronic;
-    }
-
-    public void setIllnessName(String illnessName) {
-        this.illnessName = illnessName;
-    }
-
     public LocalDate getDiagnosisDate() {
         return diagnosisDate;
-    }
-
-    public void setDiagnosisDate(LocalDate diagnosisDate) {
-        this.diagnosisDate = diagnosisDate;
     }
 
     public LocalDate getCuredDate() {
         return curedDate;
     }
 
+    public Boolean getChronic() {
+        return isChronic;
+    }
+
+    public void setDiagnosisDate(LocalDate diagnosisDate) {
+        this.diagnosisDate = diagnosisDate;
+    }
+
     public void setCuredDate(LocalDate curedDate) {
         this.curedDate = curedDate;
+    }
+
+    public void setChronic(Boolean chronic) {
+        isChronic = chronic;
     }
 
     public String toString() {
