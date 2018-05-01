@@ -1,6 +1,8 @@
 package seng302.Controller.Client;
 
-import static seng302.TransplantRequest.RequestStatus.*;
+import static seng302.TransplantRequest.RequestStatus.CANCELLED;
+import static seng302.TransplantRequest.RequestStatus.COMPLETED;
+import static seng302.TransplantRequest.RequestStatus.WAITING;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;

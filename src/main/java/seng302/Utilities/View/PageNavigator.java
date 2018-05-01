@@ -2,6 +2,7 @@ package seng302.Utilities.View;
 
 import java.io.IOException;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -21,6 +22,8 @@ import seng302.State.State;
  */
 public class PageNavigator {
 
+    private final static Logger LOGGER = Logger.getLogger(PageNavigator.class.getName());
+
     /**
      * Loads the given page in the given MainController.
      * @param page the Page (enum including path to fxml file) to be loaded.
@@ -28,6 +31,7 @@ public class PageNavigator {
      */
     public static void loadPage(Page page, MainController controller) {
         try {
+            LOGGER.info("Loading page: " + page);
             FXMLLoader loader = new FXMLLoader(PageNavigator.class.getResource(page.getPath()));
             Node loadedPage = loader.load();
             SubController subController = loader.getController();
@@ -35,6 +39,7 @@ public class PageNavigator {
             controller.setSubController(subController);
             controller.setPage(page, loadedPage);
         } catch (IOException e) {
+            LOGGER.severe("Couldn't load the page\n" + e.getStackTrace());
             showAlert(Alert.AlertType.ERROR, "Could not load page: " + page.toString(),
                     "The page loader failed to load the layout for the page.");
         }
@@ -44,6 +49,7 @@ public class PageNavigator {
      * Refreshes all windows, to be used when an update occurs. Only refreshes titles and sidebars
      */
     public static void refreshAllWindows() {
+        LOGGER.info("Refreshing all windows");
         for (MainController controller : State.getMainControllers()) {
             controller.refresh();
         }
@@ -54,6 +60,7 @@ public class PageNavigator {
      * @return The MainController for the new window, or null if the new window could not be created.
      */
     public static MainController openNewWindow() {
+        LOGGER.info("Opening new window");
         try {
             Stage newStage = new Stage();
             newStage.setTitle("Organ Client Management System");
@@ -68,7 +75,8 @@ public class PageNavigator {
             newStage.show();
 
             return mainController;
-        } catch (IOException exc) {
+        } catch (IOException e) {
+            LOGGER.severe("Error loading new window\n" + e.getStackTrace());
             // Will throw if MAIN's fxml file could not be loaded.
             showAlert(Alert.AlertType.ERROR, "New window could not be created",
                     "The page loader failed to load the layout for the new window.");

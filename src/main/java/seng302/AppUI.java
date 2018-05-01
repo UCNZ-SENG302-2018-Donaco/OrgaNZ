@@ -2,6 +2,7 @@ package seng302;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -12,6 +13,7 @@ import javafx.stage.Stage;
 import seng302.Controller.MainController;
 import seng302.State.State;
 import seng302.Utilities.JSONConverter;
+import seng302.Utilities.LoggerSetup;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
 import seng302.Utilities.View.WindowContext;
@@ -38,6 +40,8 @@ public class AppUI extends Application {
      */
     @Override
     public void start(Stage stage) throws IOException {
+        LoggerSetup.setup(Level.INFO);
+
         stage.setTitle("Organ Client Management System");
         stage.setScene(createScene(loadMainPane(stage)));
         stage.show();
