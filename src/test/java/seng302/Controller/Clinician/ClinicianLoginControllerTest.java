@@ -60,4 +60,19 @@ public class ClinicianLoginControllerTest extends ControllerTest {
         assertEquals(Page.LOGIN_CLINICIAN, mainController.getCurrentPage());
     }
 
+    @Test
+    public void invalidStaffIdInput() {
+        clickOn("#staffId").write("a");
+        clickOn("#password").write("k");
+        clickOn("#signInButton");
+        clickOn("OK");
+        assertEquals(Page.LOGIN_CLINICIAN, mainController.getCurrentPage());
+    }
+
+    @Test
+    public void goBackButtonTest() {
+        clickOn("#goBackButton");
+        assertEquals(Page.LANDING, mainController.getCurrentPage());
+    }
+
 }
