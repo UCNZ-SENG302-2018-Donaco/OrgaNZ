@@ -157,6 +157,7 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
     @Test
     public void cancelRequestTest() {
         TableView<TransplantRequest> currRequestsTable = lookup("#currentRequestsTable").queryTableView();
+        clickOn(currRequestsTable); // click on the table so lookups know where abouts to look
 
         TableRow<TransplantRequest> heartCell = lookup(".table-row-cell").nth(0).query();
 
