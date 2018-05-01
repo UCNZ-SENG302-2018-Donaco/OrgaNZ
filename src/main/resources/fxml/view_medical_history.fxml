@@ -5,8 +5,9 @@
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -65,48 +66,13 @@
                               <Button alignment="TOP_LEFT" mnemonicParsing="false" onAction="#addIllness" text="Add Illness" />
                            </children>
                         </HBox>
-                        <Button fx:id="noLongerChronic" alignment="TOP_LEFT" mnemonicParsing="false" onAction="#removeChronicStatus" text="Mark as No Longer Chronic">
+                        <Text fx:id="errorMessage" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0">
                            <VBox.margin>
-                              <Insets top="10.0" />
-                           </VBox.margin></Button>
-                        <Text fx:id="errorMessage" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" />
-                        <HBox prefHeight="100.0" prefWidth="200.0">
-                           <children>
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Filter:">
-                                 <font>
-                                    <Font size="19.0" />
-                                 </font>
-                                 <HBox.margin>
-                                    <Insets left="10.0" />
-                                 </HBox.margin>
-                              </Text>
-                              <Button fx:id="alphabeticalFilter" mnemonicParsing="false" onAction="#alphabeticalFilterPressed" text="Alphabetical">
-                                 <HBox.margin>
-                                    <Insets left="10.0" right="10.0" />
-                                 </HBox.margin>
-                              </Button>
-                              <Button fx:id="diagnosisFilter" mnemonicParsing="false" onAction="#diagnosisFilterPressed" text="Diagnosis Date" />
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Inverted Filters:">
-                                 <font>
-                                    <Font size="19.0" />
-                                 </font>
-                                 <HBox.margin>
-                                    <Insets left="10.0" />
-                                 </HBox.margin>
-                              </Text>
-                              <Button fx:id="invertedAlphabeticalFilter" mnemonicParsing="false" onAction="#invertedAlphabeticalFilterPressed" text="Alphabetical">
-                                 <HBox.margin>
-                                    <Insets left="10.0" />
-                                 </HBox.margin></Button>
-                              <Button fx:id="invertedDiagnosisFilter" mnemonicParsing="false" onAction="#invertedDiagnosisFilterPressed" text="Diagnosis Date">
-                                 <HBox.margin>
-                                    <Insets left="10.0" />
-                                 </HBox.margin></Button>
-                           </children>
-                        </HBox>
+                              <Insets left="10.0" top="5.0" />
+                           </VBox.margin></Text>
                         <HBox VBox.vgrow="ALWAYS">
                            <children>
-                              <VBox prefHeight="385.0" prefWidth="195.0" HBox.hgrow="ALWAYS">
+                              <VBox HBox.hgrow="ALWAYS">
                                  <children>
                                     <Label text="Past Illnesses">
                                        <font>
@@ -116,7 +82,16 @@
                                           <Insets bottom="10.0" />
                                        </VBox.margin>
                                     </Label>
-                                    <ListView fx:id="pastIllnessView" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+                                    <TableView fx:id="pastIllnessView" VBox.vgrow="ALWAYS">
+                                      <columns>
+                                        <TableColumn fx:id="illnessPastCol" prefWidth="75.0" text="Illness" />
+                                        <TableColumn fx:id="diagnosisDatePastCol" prefWidth="75.0" text="Diagnosis Date" />
+                                          <TableColumn fx:id="curedDatePastCol" prefWidth="75.0" text="Cured Date" />
+                                      </columns>
+                                       <columnResizePolicy>
+                                          <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                       </columnResizePolicy>
+                                    </TableView>
                                  </children>
                               </VBox>
                               <VBox spacing="5.0">
@@ -138,23 +113,36 @@
                                           <Insets bottom="10.0" />
                                        </VBox.margin>
                                     </Label>
-                                    <ListView fx:id="currentIllnessView" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+                                    <TableView fx:id="currentIllnessView">
+                                       <columns>
+                                          <TableColumn fx:id="illnessCurrCol" prefWidth="75.0" text="Illness" />
+                                          <TableColumn fx:id="diagnosisDateCurrCol" prefWidth="75.0" text="Diagnosis Date" />
+                                          <TableColumn fx:id="chronicCurrCol" prefWidth="75.0" text="Chronic" />
+                                       </columns>
+                                       <columnResizePolicy>
+                                          <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                       </columnResizePolicy>
+                                    </TableView>
                                  </children>
                               </VBox>
                            </children>
                            <VBox.margin>
-                              <Insets bottom="20.0" left="10.0" right="10.0" top="20.0" />
+                              <Insets bottom="20.0" left="10.0" right="10.0" top="10.0" />
                            </VBox.margin>
                         </HBox>
                      </children>
                   </VBox>
                </center>
                <bottom>
-                  <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteIllness" text="Delete" BorderPane.alignment="CENTER">
+                  <HBox alignment="TOP_CENTER" spacing="10.0" BorderPane.alignment="CENTER">
                      <BorderPane.margin>
                         <Insets bottom="20.0" left="10.0" right="10.0" />
                      </BorderPane.margin>
-                  </Button>
+                     <children>
+                        <Button fx:id="toggleChronicButton" alignment="TOP_LEFT" mnemonicParsing="false" onAction="#toggleChronic" text="Toggle Chronic" />
+                        <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteIllness" text="Delete" />
+                     </children>
+                  </HBox>
                </bottom>
       </BorderPane>
       </items>

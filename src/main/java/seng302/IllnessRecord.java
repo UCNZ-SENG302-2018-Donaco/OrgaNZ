@@ -13,7 +13,7 @@ public class IllnessRecord {
     private boolean isChronic;
 
 
-    public IllnessRecord(String illnessName, LocalDate diagnosisDate, LocalDate curedDate, Boolean isChronic) {
+    public IllnessRecord(String illnessName, LocalDate diagnosisDate, LocalDate curedDate, boolean isChronic) {
         this.illnessName = illnessName;
         this.diagnosisDate = diagnosisDate;
         this.curedDate = curedDate;
@@ -32,7 +32,7 @@ public class IllnessRecord {
         return curedDate;
     }
 
-    public Boolean getChronic() {
+    public boolean isChronic() {
         return isChronic;
     }
 
@@ -44,7 +44,7 @@ public class IllnessRecord {
         this.curedDate = curedDate;
     }
 
-    public void setChronic(Boolean chronic) {
+    public void setChronic(boolean chronic) {
         isChronic = chronic;
     }
 

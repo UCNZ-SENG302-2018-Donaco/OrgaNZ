@@ -1,19 +1,21 @@
 package seng302.Controller.Clinician;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
-import java.util.List;
 
 import javafx.collections.FXCollections;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.DatePicker;
-import javafx.scene.control.ListView;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
@@ -33,62 +35,131 @@ import seng302.Utilities.View.PageNavigator;
 
 public class ClinicianMedicalHistoryController extends SubController {
 
+    private static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("d MMM yyyy");
+
     private Session session;
     private ActionInvoker invoker;
     private Client client;
 
     @FXML
-    private TextField illnessNameField;
-
-    @FXML
-    private Text errorMessage;
-
-    @FXML
-    private DatePicker dateDiagnosedPicker;
-
-    @FXML
-    private CheckBox chronicBox;
-
-
-    @FXML
     private Pane sidebarPane;
-
     @FXML
     private HBox newIllnessPane;
 
     @FXML
-    private Button moveToHistoryButton, moveToCurrentButton, deleteButton, noLongerChronic,
-            defaultFilter, alphabeticalFilter, diagnosisFilter;
-
+    private TextField illnessNameField;
+    @FXML
+    private DatePicker dateDiagnosedPicker;
+    @FXML
+    private CheckBox chronicBox;
+    @FXML
+    private Text errorMessage;
 
     @FXML
-    private ListView<IllnessRecord> pastIllnessView, currentIllnessView;
+    private TableView<IllnessRecord> pastIllnessView, currentIllnessView;
+    @FXML
+    private TableColumn<IllnessRecord, String> illnessPastCol, illnessCurrCol;
+    @FXML
+    private TableColumn<IllnessRecord, LocalDate> diagnosisDatePastCol, diagnosisDateCurrCol, curedDatePastCol;
+    @FXML
+    private TableColumn<IllnessRecord, Boolean> chronicCurrCol;
+    @FXML
+    private Button moveToHistoryButton, moveToCurrentButton, deleteButton, toggleChronicButton;
 
-    private ListView<IllnessRecord> selectedListView = null;
+    private TableView<IllnessRecord> selectedTableView = null;
+
+    /**
+     * Formats a table cell that holds a {@link LocalDate} value to display that value in the date time format.
+     * @return The cell with the date time formatter set.
+     */
+    private static TableCell<IllnessRecord, LocalDate> formatDateTimeCell() {
+        return new TableCell<IllnessRecord, LocalDate>() {
+            @Override
+            protected void updateItem(LocalDate item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setText(null);
+                } else {
+                    setText(item.format(dateTimeFormat));
+                }
+            }
+        };
+    }
+
+    private static TableCell<IllnessRecord, Boolean> formatChronicCell() {
+        return new TableCell<IllnessRecord, Boolean>() {
+            @Override
+            protected void updateItem(Boolean isChronic, boolean empty) {
+                super.updateItem(isChronic, empty);
+                if (isChronic == null || empty) {
+                    setText(null);
+                } else if (isChronic) {
+                    setText("CHRONIC");
+                } else {
+                    setText(null);
+                }
+            }
+        };
+    }
+
+    private static Boolean getChronicFirstSortPolicy(TableView<IllnessRecord> table) {
+        Comparator<IllnessRecord> comparator = (r1, r2) -> {
+            if (r1.isChronic() == r2.isChronic()) {
+                Comparator<IllnessRecord> tableComparator = table.getComparator();
+                if (tableComparator != null) {
+                    return table.getComparator().compare(r1, r2);
+                } else {
+                    return 0;
+                }
+            } else if (r1.isChronic()) {
+                return -1;
+            } else {
+                return 1;
+            }
+        };
+        FXCollections.sort(table.getItems(), comparator);
+        return true;
+    }
 
     public ClinicianMedicalHistoryController() {
         session = State.getSession();
         invoker = State.getInvoker();
     }
 
-
     @FXML
     public void initialize() {
+        illnessCurrCol.setCellValueFactory(new PropertyValueFactory<>("illnessName"));
+        diagnosisDateCurrCol.setCellValueFactory(new PropertyValueFactory<>("diagnosisDate"));
+        chronicCurrCol.setCellValueFactory(new PropertyValueFactory<>("chronic"));
+
+        illnessPastCol.setCellValueFactory(new PropertyValueFactory<>("illnessName"));
+        diagnosisDatePastCol.setCellValueFactory(new PropertyValueFactory<>("diagnosisDate"));
+        curedDatePastCol.setCellValueFactory(new PropertyValueFactory<>("curedDate"));
+
+        // Format all the datetime cells
+        diagnosisDateCurrCol.setCellFactory(cell -> formatDateTimeCell());
+        diagnosisDatePastCol.setCellFactory(cell -> formatDateTimeCell());
+        curedDatePastCol.setCellFactory(cell -> formatDateTimeCell());
+
+        // Format chronic cells
+        chronicCurrCol.setCellFactory(cell -> formatChronicCell());
+
         pastIllnessView.getSelectionModel().selectedItemProperty().addListener(
                 (observable) -> {
-                    selectedListView = pastIllnessView;
+                    selectedTableView = pastIllnessView;
                     currentIllnessView.getSelectionModel().clearSelection();
                 });
 
         currentIllnessView.getSelectionModel().selectedItemProperty().addListener(
                 (observable) -> {
-                    selectedListView = currentIllnessView;
+                    selectedTableView = currentIllnessView;
                     pastIllnessView.getSelectionModel().clearSelection();
                 });
 
+        currentIllnessView.setSortPolicy(ClinicianMedicalHistoryController::getChronicFirstSortPolicy);
+
         dateDiagnosedPicker.setValue(LocalDate.now());
     }
-
 
     /**
      * Sets up the page using the MainController given.
@@ -119,30 +190,42 @@ public class ClinicianMedicalHistoryController extends SubController {
     }
 
     /**
-     * Sorts past/current illnesses ensures Chronic illnesses are at the top.
-     */
-    private List<IllnessRecord> sortCurrentIllnessList() {
-        List<IllnessRecord> currentIllnesses = client.getCurrentIllnesses();
-
-        for (int j = 0; j < currentIllnesses.size(); j++) {
-            IllnessRecord item = currentIllnesses.get(j);
-            if (item.getChronic()) {
-                currentIllnesses.remove(item);
-                currentIllnesses.add(0, item);
-            }
-
-        }
-        return currentIllnesses;
-    }
-
-
-    /**
      * Refreshes the past/current illness list views from the client's properties.
      */
     @Override
     public void refresh() {
-        pastIllnessView.setItems(FXCollections.observableArrayList(client.getPastIllnesses()));
-        currentIllnessView.setItems(FXCollections.observableArrayList(sortCurrentIllnessList()));
+        SortedList<IllnessRecord> sortedCurrentIllnesses = new SortedList<>(FXCollections.observableArrayList(
+                client.getCurrentIllnesses()));
+        SortedList<IllnessRecord> sortedPastIllnesses = new SortedList<>(FXCollections.observableArrayList(
+                client.getPastIllnesses()));
+
+        sortedCurrentIllnesses.comparatorProperty().bind(currentIllnessView.comparatorProperty());
+        sortedPastIllnesses.comparatorProperty().bind(pastIllnessView.comparatorProperty());
+
+        currentIllnessView.getItems().clear();
+        pastIllnessView.getItems().clear();
+
+        for (IllnessRecord record : sortedCurrentIllnesses) {
+            if (record.isChronic()) {
+                currentIllnessView.getItems().add(record);
+            }
+        }
+        for (IllnessRecord record : sortedCurrentIllnesses) {
+            if (!record.isChronic()) {
+                currentIllnessView.getItems().add(record);
+            }
+        }
+        for (IllnessRecord record : sortedPastIllnesses) {
+            if (record.isChronic()) {
+                pastIllnessView.getItems().add(record);
+            }
+        }
+        for (IllnessRecord record : sortedPastIllnesses) {
+            if (!record.isChronic()) {
+                pastIllnessView.getItems().add(record);
+            }
+        }
+
         errorMessage.setText(null);
     }
 
@@ -154,7 +237,7 @@ public class ClinicianMedicalHistoryController extends SubController {
     private void moveIllnessToHistory() {
         IllnessRecord record = currentIllnessView.getSelectionModel().getSelectedItem();
         if (record != null) {
-            if (record.getChronic()) {
+            if (record.isChronic()) {
                 errorMessage.setText("Can't move chronic illness to Past Illnesses.");
             } else {
                 ModifyIllnessRecordAction action = new ModifyIllnessRecordAction(record);
@@ -178,87 +261,9 @@ public class ClinicianMedicalHistoryController extends SubController {
     }
 
     @FXML
-    private void defaultFilterPressed() {
-        sortCurrentIllnessList();
-
-    }
-
-    public List<IllnessRecord> seperateChronics(List<IllnessRecord> illnessRecords) {
-        List<IllnessRecord> chronics = new ArrayList<>();
-        for (int i = 0; i < illnessRecords.size(); i++) {
-            if (illnessRecords.get(i).getChronic()) {
-                chronics.add(illnessRecords.get(i));
-                illnessRecords.remove(illnessRecords.get(i));
-            }
-
-        }
-        return chronics;
-    }
-
-
-    public void filterFunction(String filterType, boolean isInverted) {
-        List<IllnessRecord> currentIllnesses = client.getCurrentIllnesses();
-        List<IllnessRecord> pastIllnesses = client.getPastIllnesses();
-        List<IllnessRecord> chronics = seperateChronics(currentIllnesses);
-        if (filterType.equals("Alphabetical")) {
-            chronics.sort(Comparator.comparing(IllnessRecord::getIllnessName));
-            currentIllnesses.sort(Comparator.comparing(IllnessRecord::getIllnessName));
-            pastIllnesses.sort(Comparator.comparing(IllnessRecord::getIllnessName));
-
-            if (isInverted) {
-                Collections.reverse(chronics);
-                Collections.reverse(currentIllnesses);
-                Collections.reverse(pastIllnesses);
-            }
-
-            chronics.addAll(currentIllnesses);
-        } else if (filterType.equals("Diagnosis Date")) {
-            chronics.sort(Comparator.comparing(IllnessRecord::getDiagnosisDate));
-            currentIllnesses.sort(Comparator.comparing(IllnessRecord::getDiagnosisDate));
-            pastIllnesses.sort(Comparator.comparing(IllnessRecord::getDiagnosisDate));
-            if (isInverted) {
-                Collections.reverse(chronics);
-                Collections.reverse(currentIllnesses);
-                Collections.reverse(pastIllnesses);
-            }
-            chronics.addAll(currentIllnesses);
-
-        }
-
-        currentIllnessView.setItems(FXCollections.observableArrayList(chronics));
-        pastIllnessView.setItems(FXCollections.observableArrayList(pastIllnesses));
-    }
-
-    @FXML
-    private void alphabeticalFilterPressed() {
-        filterFunction("Alphabetical", false);
-
-    }
-
-    @FXML
-    private void invertedAlphabeticalFilterPressed() {
-        filterFunction("Alphabetical", true);
-
-    }
-
-    @FXML
-    private void diagnosisFilterPressed() {
-        filterFunction("Diagnosis Date", false);
-
-
-    }
-
-    @FXML
-    private void invertedDiagnosisFilterPressed() {
-        filterFunction("Diagnosis Date", true);
-
-    }
-
-
-    @FXML
     private void deleteIllness() {
-        if (selectedListView != null) {
-            IllnessRecord record = selectedListView.getSelectionModel().getSelectedItem();
+        if (selectedTableView != null) {
+            IllnessRecord record = selectedTableView.getSelectionModel().getSelectedItem();
             if (record != null) {
                 DeleteIllnessRecord action = new DeleteIllnessRecord(client, record);
 
@@ -268,17 +273,23 @@ public class ClinicianMedicalHistoryController extends SubController {
         }
     }
 
-
     @FXML
-    private void removeChronicStatus() {
+    private void toggleChronic() {
         IllnessRecord record = currentIllnessView.getSelectionModel().getSelectedItem();
-        if (record.getChronic()) {
+        if (record != null) {
             ModifyIllnessRecordAction action = new ModifyIllnessRecordAction(record);
-            action.changeChronicStatus(false);
+            if (record.isChronic()) {
+                action.changeChronicStatus(false);
+            } else {
+                if (record.getCuredDate() != null) {
+                    System.out.println("called");
+                    action.changeCuredDate(null);
+                }
+                action.changeChronicStatus(true);
+            }
             invoker.execute(action);
             PageNavigator.refreshAllWindows();
         }
-
     }
 
     @FXML

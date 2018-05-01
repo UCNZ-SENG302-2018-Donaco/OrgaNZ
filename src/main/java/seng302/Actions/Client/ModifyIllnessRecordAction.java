@@ -20,7 +20,7 @@ public class ModifyIllnessRecordAction extends Action {
         this.record = record;
         oldDiagnosisDate = record.getDiagnosisDate();
         oldCuredDate = record.getCuredDate();
-        oldChronic = record.getChronic();
+        oldChronic = record.isChronic();
         newDiagnosisDate = oldDiagnosisDate;
         newCuredDate = oldCuredDate;
         newChronic = oldChronic;
