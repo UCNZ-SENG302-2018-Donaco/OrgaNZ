@@ -16,7 +16,7 @@ junit:
 recent-artifacts:
   stage: deploy
   script:
-    - mvn -B clean site package
+    - mvn -B clean site package -Dmaven.test.skip=true
   artifacts:
     paths:
       - target/*.jar
