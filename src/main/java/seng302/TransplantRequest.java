@@ -15,7 +15,7 @@ public class TransplantRequest {
         COMPLETED
     }
 
-    private Client client;
+    private transient Client client;
     private Organ requestedOrgan;
     private LocalDateTime requestDate;
     private LocalDateTime resolvedDate;
@@ -54,6 +54,10 @@ public class TransplantRequest {
      */
     public String getResolvedReason() {
         return resolvedReason;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
     }
 
     public void setResolvedDate(LocalDateTime resolvedDate) {

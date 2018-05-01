@@ -15,6 +15,7 @@ import seng302.Client;
 import seng302.HistoryItem;
 import seng302.State.ClientManager;
 import seng302.State.State;
+import seng302.TransplantRequest;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -79,6 +80,11 @@ public final class JSONConverter {
         }.getType();
 
         clients = gson.fromJson(reader, collectionType);
+        for (Client client : clients) {
+            for (TransplantRequest request : client.getTransplantRequests()) {
+                request.setClient(client);
+            }
+        }
         ClientManager clientManager = State.getClientManager();
         clientManager.setClients(clients);
     }
