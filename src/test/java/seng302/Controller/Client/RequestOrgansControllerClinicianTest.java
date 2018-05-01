@@ -116,20 +116,25 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
         }
     }
 
-    @Ignore
     @Test
     public void conflictingRequestsAreColouredTest() {
         TableView<TransplantRequest> currRequestsTable = lookup("#currentRequestsTable").queryTableView();
-        for (TransplantRequest request : currRequestsTable.getItems()) {
-            if (testClient.getOrganDonationStatus().get(request.getRequestedOrgan())) {
-                String searchTerm = request.getRequestedOrgan().toString();
-                System.out.println(searchTerm);
-                Node rowNode = lookup(hasText(searchTerm)).query();
-                System.out.println(rowNode);
-                System.out.println(rowNode.getStyle());
-                assertTrue(rowNode.getStyle().contains("-fx-background-color: lightcoral"));
-            }
-        }
+        clickOn(currRequestsTable); // click on the table so lookups know where abouts to look
+
+        // Get conflicting request
+        TransplantRequest conflictingRequest = currRequestsTable.getItems().get(1);
+
+        // Check that it is conflicting
+        assertTrue(testClient.getOrganDonationStatus().get(conflictingRequest.getRequestedOrgan()));
+
+        // Get the row it should be in
+        TableRow<TransplantRequest> boneRow = lookup(".table-row-cell").nth(1).query();
+
+        // Check that it is the bone
+        assertEquals(Organ.BONE, boneRow.getTableView().getItems().get(1).getRequestedOrgan());
+
+        // Check that it is coloured
+        assertTrue(boneRow.getStyle().contains("-fx-background-color: lightcoral"));
     }
 
     @Test
@@ -159,13 +164,13 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
         TableView<TransplantRequest> currRequestsTable = lookup("#currentRequestsTable").queryTableView();
         clickOn(currRequestsTable); // click on the table so lookups know where abouts to look
 
-        TableRow<TransplantRequest> heartCell = lookup(".table-row-cell").nth(0).query();
+        TableRow<TransplantRequest> heartRow = lookup(".table-row-cell").nth(0).query();
 
         // Check that we start with two items, and this is indeed the heart row
         assertEquals(2, currRequestsTable.getItems().size());
-        assertEquals(Organ.HEART, heartCell.getTableView().getItems().get(0).getRequestedOrgan());
+        assertEquals(Organ.HEART, heartRow.getTableView().getItems().get(0).getRequestedOrgan());
 
-        clickOn(heartCell);
+        clickOn(heartRow);
         clickOn("#markAsCancelledButton");
 
         // Check that we now have 1 item
