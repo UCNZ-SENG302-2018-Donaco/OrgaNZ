@@ -175,5 +175,6 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
 
         // Check that we now have 1 item
         assertEquals(1, currRequestsTable.getItems().size());
+        assertEquals(Organ.BONE, currRequestsTable.getItems().get(0).getRequestedOrgan());
     }
 }
