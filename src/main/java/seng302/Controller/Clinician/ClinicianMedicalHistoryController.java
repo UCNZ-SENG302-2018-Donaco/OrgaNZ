@@ -48,7 +48,7 @@ public class ClinicianMedicalHistoryController extends SubController {
     @FXML
     private Pane sidebarPane;
     @FXML
-    private HBox newIllnessPane;
+    private HBox newIllnessPane, illnessButtonsPane;
 
     @FXML
     private TextField illnessNameField;
@@ -174,12 +174,14 @@ public class ClinicianMedicalHistoryController extends SubController {
                 (observable) -> {
                     selectedTableView = pastIllnessView;
                     currentIllnessView.getSelectionModel().clearSelection();
+                    enableAppropriateButtons();
                 });
 
         currentIllnessView.getSelectionModel().selectedItemProperty().addListener(
                 (observable) -> {
                     selectedTableView = currentIllnessView;
                     pastIllnessView.getSelectionModel().clearSelection();
+                    enableAppropriateButtons();
                 });
 
         currentIllnessView.setSortPolicy(ClinicianMedicalHistoryController::getChronicFirstSortPolicy);
@@ -206,15 +208,14 @@ public class ClinicianMedicalHistoryController extends SubController {
 
             newIllnessPane.setVisible(false);
             newIllnessPane.setManaged(false);
-            moveToHistoryButton.setDisable(true);
-            moveToCurrentButton.setDisable(true);
-            deleteButton.setDisable(true);
-            toggleChronicButton.setDisable(true);
+            illnessButtonsPane.setVisible(false);
+            illnessButtonsPane.setManaged(false);
         } else if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
         }
 
         refresh();
+        enableAppropriateButtons();
     }
 
     /**
@@ -237,6 +238,27 @@ public class ClinicianMedicalHistoryController extends SubController {
         pastIllnessView.sort();
 
         errorMessage.setText(null);
+    }
+
+    private void enableAppropriateButtons() {
+        if (windowContext.isClinViewClientWindow()) {
+            if (getSelectedRecord() == null) {
+                moveToCurrentButton.setDisable(true);
+                moveToHistoryButton.setDisable(true);
+                toggleChronicButton.setDisable(true);
+                deleteButton.setDisable(true);
+            } else if (selectedTableView == currentIllnessView) {
+                moveToCurrentButton.setDisable(true);
+                moveToHistoryButton.setDisable(false);
+                toggleChronicButton.setDisable(false);
+                deleteButton.setDisable(false);
+            } else if (selectedTableView == pastIllnessView) {
+                moveToCurrentButton.setDisable(false);
+                moveToHistoryButton.setDisable(true);
+                toggleChronicButton.setDisable(false);
+                deleteButton.setDisable(false);
+            }
+        }
     }
 
     /**

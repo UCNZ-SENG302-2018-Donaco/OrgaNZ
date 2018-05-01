@@ -96,10 +96,6 @@
                                  </children>
                               </VBox>
                               <VBox spacing="5.0">
-                                 <children>
-                                    <Button fx:id="moveToHistoryButton" mnemonicParsing="false" onAction="#moveIllnessToHistory" text="&lt;" textAlignment="CENTER" />
-                                    <Button fx:id="moveToCurrentButton" mnemonicParsing="false" onAction="#moveIllnessToCurrent" text="&gt;" textAlignment="CENTER" />
-                                 </children>
                                  <HBox.margin>
                                     <Insets left="10.0" right="10.0" top="27.0" />
                                  </HBox.margin>
@@ -114,7 +110,7 @@
                                           <Insets bottom="10.0" />
                                        </VBox.margin>
                                     </Label>
-                                    <TableView fx:id="currentIllnessView">
+                                    <TableView fx:id="currentIllnessView" VBox.vgrow="ALWAYS">
                                        <columns>
                                           <TableColumn fx:id="illnessCurrCol" prefWidth="75.0" text="Illness" />
                                           <TableColumn fx:id="diagnosisDateCurrCol" prefWidth="75.0" text="Diagnosis Date" />
@@ -135,11 +131,13 @@
                   </VBox>
                </center>
                <bottom>
-                  <HBox alignment="TOP_CENTER" spacing="10.0" BorderPane.alignment="CENTER">
+                  <HBox fx:id="illnessButtonsPane" alignment="TOP_CENTER" spacing="10.0" BorderPane.alignment="CENTER">
                      <BorderPane.margin>
                         <Insets bottom="20.0" left="10.0" right="10.0" />
                      </BorderPane.margin>
                      <children>
+                        <Button fx:id="moveToHistoryButton" mnemonicParsing="false" onAction="#moveIllnessToHistory" text="Mark as Cured" textAlignment="CENTER" />
+                        <Button fx:id="moveToCurrentButton" mnemonicParsing="false" onAction="#moveIllnessToCurrent" text="Mark as Non-Cured" textAlignment="CENTER" />
                         <Button fx:id="toggleChronicButton" alignment="TOP_LEFT" mnemonicParsing="false" onAction="#toggleChronic" text="Toggle Chronic" />
                         <Button fx:id="deleteButton" mnemonicParsing="false" onAction="#deleteIllness" text="Delete" />
                      </children>

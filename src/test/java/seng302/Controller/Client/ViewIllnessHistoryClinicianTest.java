@@ -9,7 +9,6 @@ import static org.testfx.util.NodeQueryUtils.isVisible;
 import java.time.LocalDate;
 
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 
 import seng302.Client;
 import seng302.Clinician;
@@ -121,9 +120,9 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
 
     @Test
     public void modifyButtonsEnabledTest() {
-        verifyThat("#moveToHistoryButton", (Button b) -> !b.isDisabled());
-        verifyThat("#moveToCurrentButton", (Button b) -> !b.isDisabled());
-        verifyThat("#deleteButton", (Button b) -> !b.isDisabled());
+        verifyThat("#moveToHistoryButton", isVisible());
+        verifyThat("#moveToCurrentButton", isVisible());
+        verifyThat("#deleteButton", isVisible());
     }
 
     @Test
