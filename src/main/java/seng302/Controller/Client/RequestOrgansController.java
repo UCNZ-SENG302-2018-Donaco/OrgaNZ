@@ -217,7 +217,7 @@ public class RequestOrgansController extends SubController {
     private void cancelRequest() {
         TransplantRequest selectedRequest = currentRequestsTable.getSelectionModel().getSelectedItem();
         if (selectedRequest != null) {
-            Action action = new ResolveTransplantRequestAction(selectedRequest, CANCELLED);
+            Action action = new ResolveTransplantRequestAction(selectedRequest, CANCELLED, "Cancelled.");
             invoker.execute(action);
 
             PageNavigator.refreshAllWindows();
@@ -231,7 +231,7 @@ public class RequestOrgansController extends SubController {
     private void completeRequest() {
         TransplantRequest selectedRequest = currentRequestsTable.getSelectionModel().getSelectedItem();
         if (selectedRequest != null) {
-            Action action = new ResolveTransplantRequestAction(selectedRequest, COMPLETED);
+            Action action = new ResolveTransplantRequestAction(selectedRequest, COMPLETED, "Completed.");
             invoker.execute(action);
 
             PageNavigator.refreshAllWindows();
