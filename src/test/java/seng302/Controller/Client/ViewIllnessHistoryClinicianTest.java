@@ -53,6 +53,12 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
     };
     private final  IllnessRecord[] testCurrentIllnessRecords = {
         new IllnessRecord(
+            "Mono",
+            LocalDate.of(2011, 9, 22),
+            null,
+            false
+        ),
+        new IllnessRecord(
             "Colon Cancer",
             LocalDate.of(2014, 3, 4),
             null,
@@ -133,16 +139,33 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
     }
 
 
-    /**
 
+
+    @Test
     public void removeChronicTag(){
-        IllnessRecord removeChronicTag = testCurrentIllnessRecords[0];
+        IllnessRecord removeChronicTag = testCurrentIllnessRecords[1];
         clickOn((Node) lookup(hasText(removeChronicTag.toString())).query());
         clickOn("#noLongerChronic");
-        assertEquals(removeChronicTag.toString(),"%s Diagnosed on: %s");
+        assertEquals("Colon Cancer Diagnosed on: 04/03/2014",removeChronicTag.toString());
 
 
-    } **/
+    }
+
+    @Test
+    public void movetoPastIllnessesAfterChronicRemovedTest(){
+        IllnessRecord removeChronicTag = testCurrentIllnessRecords[1];
+        clickOn((Node) lookup(hasText(removeChronicTag.toString())).query());
+        clickOn("#noLongerChronic");
+        assertEquals("Colon Cancer Diagnosed on: 04/03/2014",removeChronicTag.toString());
+
+        clickOn((Node) lookup(hasText(removeChronicTag.toString())).query());
+        clickOn("#moveToHistoryButton");
+
+        verifyThat("#pastIllnessView", hasListCell(removeChronicTag));
+        verifyThat("#currentIllnessView", not(hasListCell(removeChronicTag)));
+        assertEquals(removeChronicTag.getCuredDate(), LocalDate.now());
+
+    }
 
     @Test
     public void pastIllnessesContainsRecordsTest() {
@@ -158,32 +181,13 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
         }
     }
 
-    /**
-    public void illnessesSortedChronicFirstTest(){
-        for (IllnessRecord record : testCurrentIllnessRecords) {
-            getList
-            verifyThat("#currentIllnessView",g);
-            System.out.println(hasListCell(record));
-        }
 
-    } **/
 
-    /**
 
-    public void addNewIllnessWithButtonTest() {
-        IllnessRecord toBeAdded = new IllnessRecord("Influenza", LocalDate.now(), null,false);
 
-        clickOn("#IllnessField").write(toBeAdded.getIllnessName());
-        clickOn("Add Illness");
-
-        verifyThat("#currentIllnessView", hasListCell(toBeAdded));
-    } **/
-
-    /**
-
+    @Test
     public void moveIllnessToPastTest() {
         IllnessRecord toBeMoved = testCurrentIllnessRecords[0];
-        System.out.println(toBeMoved.toString());
 
         clickOn((Node) lookup(hasText(toBeMoved.toString())).query());
         clickOn("#moveToHistoryButton");
@@ -191,11 +195,9 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
         verifyThat("#pastIllnessView", hasListCell(toBeMoved));
         verifyThat("#currentIllnessView", not(hasListCell(toBeMoved)));
         assertEquals(toBeMoved.getCuredDate(), LocalDate.now());
-    } **/
+    }
 
-    /**
-
-
+    @Test
     public void moveIllnesstoCurrentTest() {
         IllnessRecord toBeMoved = testPastIllnessRecords[0];
 
@@ -205,7 +207,7 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
         verifyThat("#currentIllnessView", hasListCell(toBeMoved));
         verifyThat("#pastIllnessView", not(hasListCell(toBeMoved)));
         assertNull(toBeMoved.getCuredDate());
-    } **/
+    }
 
 
     @Test

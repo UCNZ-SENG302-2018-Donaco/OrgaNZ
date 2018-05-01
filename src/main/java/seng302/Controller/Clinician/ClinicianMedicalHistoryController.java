@@ -1,6 +1,7 @@
 package seng302.Controller.Clinician;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -175,8 +176,15 @@ public class ClinicianMedicalHistoryController extends SubController {
 
     @FXML
     private void addButtonPressed(ActionEvent event) {
+      LocalDate dateValue;
+      if(dateDiagnosed.getValue() == null){
+        dateValue = LocalDate.now();
+      }
+      else {
+        dateValue = dateDiagnosed.getValue();
+      }
 
-        addIllness(IllnessField.getText(), dateDiagnosed.getValue(), chronicBox.isSelected());
+        addIllness(IllnessField.getText(), dateValue, chronicBox.isSelected());
     }
 
     @FXML
@@ -285,7 +293,7 @@ public class ClinicianMedicalHistoryController extends SubController {
 
     private void addIllness(String illnessName, LocalDate dateDiagnosed, Boolean isChronic) {
         Boolean afterBirth = client.getDateOfBirth().isBefore(dateDiagnosed);
-        Boolean notInFuture = LocalDate.now().isAfter(dateDiagnosed);
+        Boolean notInFuture = LocalDate.now().plus(1, ChronoUnit.DAYS).isAfter(dateDiagnosed);
         if (!illnessName.equals("")) {
             if (!afterBirth) {
                 errorMessage.setText("Diagnosis date cannot be before person is born!");
