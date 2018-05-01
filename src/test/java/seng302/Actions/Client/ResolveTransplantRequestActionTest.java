@@ -9,6 +9,7 @@ import static seng302.TransplantRequest.RequestStatus.WAITING;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
+import org.junit.Ignore;
 import seng302.Actions.Action;
 import seng302.Actions.ActionInvoker;
 import seng302.Client;
@@ -48,6 +49,7 @@ public class ResolveTransplantRequestActionTest {
         new ResolveTransplantRequestAction(testRequest, WAITING);
     }
 
+    @Ignore
     @Test
     public void correctResolvedDateTest() {
         Action action = new ResolveTransplantRequestAction(testRequest, CANCELLED);
