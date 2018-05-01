@@ -284,7 +284,6 @@ public class ClinicianMedicalHistoryController extends SubController {
                 PageNavigator.showAlert(AlertType.ERROR,
                         "Can't move a chronic illness to past illnesses.",
                         "An illness can't be cured if it is chronic.");
-                errorMessage.setText("Can't move chronic illness to Past Illnesses.");
             } else {
                 ModifyIllnessRecordAction action = new ModifyIllnessRecordAction(record);
                 action.changeCuredDate(LocalDate.now());
