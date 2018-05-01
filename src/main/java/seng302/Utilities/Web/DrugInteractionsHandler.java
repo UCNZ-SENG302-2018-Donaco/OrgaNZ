@@ -20,6 +20,7 @@ import com.google.api.client.json.JsonObjectParser;
  * A handler for requests to a drug interaction API.
  */
 public class DrugInteractionsHandler extends WebAPIHandler {
+
     private static final String INTERACTIONS_ENDPOINT = "https://www.ehealthme.com/api/v1/drug-interaction/%s/%s/";
     private static final int OK = 200;
     private static final int STUDY_NOT_DONE = 202;
