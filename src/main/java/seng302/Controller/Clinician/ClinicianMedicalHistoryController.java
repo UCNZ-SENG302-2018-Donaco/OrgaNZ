@@ -116,7 +116,7 @@ public class ClinicianMedicalHistoryController extends SubController {
 
     /**
      * Creates a sort policy where records for chronic illnesses are always sorted first, then sorts by the table's
-     * current comparator.
+     * current comparator. If no table comparator is active, then the default sorting is by diagnosis date descending.
      * @param table The tableview to get the current comparator from.
      * @return The sort policy.
      */
@@ -127,7 +127,7 @@ public class ClinicianMedicalHistoryController extends SubController {
                 if (tableComparator != null) {
                     return table.getComparator().compare(r1, r2);
                 } else {
-                    return 0;
+                    return -r1.getDiagnosisDate().compareTo(r2.getDiagnosisDate());  // negative because sorting DESC
                 }
             } else if (r1.isChronic()) {
                 return -1;
@@ -183,6 +183,7 @@ public class ClinicianMedicalHistoryController extends SubController {
                 });
 
         currentIllnessView.setSortPolicy(ClinicianMedicalHistoryController::getChronicFirstSortPolicy);
+        pastIllnessView.setSortPolicy(ClinicianMedicalHistoryController::getChronicFirstSortPolicy);
 
         dateDiagnosedPicker.setValue(LocalDate.now());
     }
@@ -229,29 +230,11 @@ public class ClinicianMedicalHistoryController extends SubController {
         sortedCurrentIllnesses.comparatorProperty().bind(currentIllnessView.comparatorProperty());
         sortedPastIllnesses.comparatorProperty().bind(pastIllnessView.comparatorProperty());
 
-        currentIllnessView.getItems().clear();
-        pastIllnessView.getItems().clear();
+        currentIllnessView.getItems().setAll(sortedCurrentIllnesses);
+        pastIllnessView.getItems().setAll(sortedPastIllnesses);
 
-        for (IllnessRecord record : sortedCurrentIllnesses) {
-            if (record.isChronic()) {
-                currentIllnessView.getItems().add(record);
-            }
-        }
-        for (IllnessRecord record : sortedCurrentIllnesses) {
-            if (!record.isChronic()) {
-                currentIllnessView.getItems().add(record);
-            }
-        }
-        for (IllnessRecord record : sortedPastIllnesses) {
-            if (record.isChronic()) {
-                pastIllnessView.getItems().add(record);
-            }
-        }
-        for (IllnessRecord record : sortedPastIllnesses) {
-            if (!record.isChronic()) {
-                pastIllnessView.getItems().add(record);
-            }
-        }
+        currentIllnessView.sort();
+        pastIllnessView.sort();
 
         errorMessage.setText(null);
     }
