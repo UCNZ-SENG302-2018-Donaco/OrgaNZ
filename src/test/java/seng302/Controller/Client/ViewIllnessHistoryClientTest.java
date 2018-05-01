@@ -1,7 +1,6 @@
 package seng302.Controller.Client;
 
 import static org.testfx.api.FxAssert.verifyThat;
-import static org.testfx.matcher.base.NodeMatchers.isDisabled;
 import static org.testfx.matcher.control.TableViewMatchers.containsRow;
 import static org.testfx.util.NodeQueryUtils.isVisible;
 
@@ -86,11 +85,10 @@ public class ViewIllnessHistoryClientTest extends ControllerTest{
 
     @Test
     public void clientCantModifyIllnessHistory() {
-        verifyThat("#moveToHistoryButton", isVisible().negate());
-        verifyThat("#moveToCurrentButton", isVisible().negate());
+        verifyThat("#toggleCuredButton", isVisible().negate());
+        verifyThat("#toggleChronicButton", isVisible().negate());
         verifyThat("#deleteButton", isVisible().negate());
     }
-
 
     @Test
     public void pastIllnessContainsRecordsTest() {
