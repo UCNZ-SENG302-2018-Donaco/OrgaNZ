@@ -6,6 +6,7 @@ import seng302.Controller.ControllerTest;
 import seng302.State.Session;
 import seng302.State.State;
 import seng302.Utilities.View.Page;
+import seng302.Utilities.View.WindowContext;
 
 import static org.junit.Assert.*;
 
@@ -19,6 +20,7 @@ public class CreateClinicianControllerTest extends ControllerTest {
     @Override
     protected void initState() {
         State.init();
+        mainController.setWindowContext(WindowContext.defaultContext());
     }
 
     @Test
@@ -88,30 +90,23 @@ public class CreateClinicianControllerTest extends ControllerTest {
     //TODO find why page won't navigate?
     @Test
     public void validClinician1() {
-//        clickOn("#fname").write("f");
-//        clickOn("#lname").write("l");
-//        clickOn("#staffId").write("8");
-//        clickOn("#password").write("a");
-//        clickOn("#createButton");
-//        assertEquals(Page.VIEW_CLINICIAN, mainController.getCurrentPage());
+        clickOn("#fname").write("f");
+        clickOn("#lname").write("l");
+        clickOn("#staffId").write("8");
+        clickOn("#password").write("a");
+        clickOn("#createButton");
+        assertEquals(Page.VIEW_CLINICIAN, mainController.getCurrentPage());
     }
 
     @Test
     public void validClinician2() {
-//        clickOn("#fname").write("f");
-//        clickOn("#lname").write("l");
-//        clickOn("#staffId").write("8");
-//        clickOn("#password").write("a");
-//        clickOn("#createButton");
-//        assertEquals(Page.VIEW_CLINICIAN, mainController.getCurrentPage());
-    }
-
-    @Test
-    public void noStaffIdname() { // An ID should be generated.
-//        clickOn("#fname").write("f");
-//        clickOn("#lname").write("l");
-//        clickOn("#password").write("a");
-//        clickOn("#createButton");
-//        assertEquals(Page.VIEW_CLINICIAN, mainController.getCurrentPage());
+        clickOn("#fname").write("f");
+        clickOn("#mname").write("m");
+        clickOn("#lname").write("l");
+        clickOn("#staffId").write("8");
+        clickOn("#workAddress").write("k");
+        clickOn("#password").write("a");
+        clickOn("#createButton");
+        assertEquals(Page.VIEW_CLINICIAN, mainController.getCurrentPage());
     }
 }
