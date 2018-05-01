@@ -22,8 +22,8 @@ import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 
 import seng302.Actions.ActionInvoker;
-import seng302.Actions.Client.AddIllnessRecord;
-import seng302.Actions.Client.DeleteIllnessRecord;
+import seng302.Actions.Client.AddIllnessRecordAction;
+import seng302.Actions.Client.DeleteIllnessRecordAction;
 import seng302.Actions.Client.ModifyIllnessRecordAction;
 import seng302.Client;
 import seng302.Controller.MainController;
@@ -294,7 +294,7 @@ public class ClinicianMedicalHistoryController extends SubController {
     private void deleteIllness() {
         IllnessRecord record = getSelectedRecord();
         if (record != null) {
-            DeleteIllnessRecord action = new DeleteIllnessRecord(client, record);
+            DeleteIllnessRecordAction action = new DeleteIllnessRecordAction(client, record);
 
             invoker.execute(action);
             PageNavigator.refreshAllWindows();
@@ -344,7 +344,7 @@ public class ClinicianMedicalHistoryController extends SubController {
             errorMessage.setText("Diagnosis date cannot be in the future.");
         } else {
             IllnessRecord record = new IllnessRecord(illnessName, dateDiagnosed, null, isChronic);
-            AddIllnessRecord action = new AddIllnessRecord(client, record);
+            AddIllnessRecordAction action = new AddIllnessRecordAction(client, record);
             invoker.execute(action);
 
             illnessNameField.setText(null);

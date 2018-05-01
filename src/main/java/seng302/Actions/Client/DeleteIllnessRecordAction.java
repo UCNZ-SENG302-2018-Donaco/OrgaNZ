@@ -4,16 +4,22 @@ import seng302.Actions.Action;
 import seng302.Client;
 import seng302.IllnessRecord;
 
-public class DeleteIllnessRecord extends Action {
+/**
+ * A reversible action that will delete the given illness record from the given client's medication history.
+ */
+public class DeleteIllnessRecordAction extends Action {
 
     private Client client;
     private IllnessRecord record;
 
-    public DeleteIllnessRecord(Client client, IllnessRecord record) {
+    /**
+     * Creates a new action to delete an illness record.
+     * @param client The client whose medical history to delete it from.
+     * @param record The illness record to delete.
+     */
+    public DeleteIllnessRecordAction(Client client, IllnessRecord record) {
         this.client = client;
         this.record = record;
-
-
     }
 
     @Override

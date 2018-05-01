@@ -6,6 +6,10 @@ import java.util.Objects;
 import seng302.Actions.Action;
 import seng302.IllnessRecord;
 
+/**
+ * A reversible action to modify a given illness record. Only the diagnosis date, cured date and chronic status
+ * attributes of the record can be changed.
+ */
 public class ModifyIllnessRecordAction extends Action {
 
     private IllnessRecord record;
@@ -13,9 +17,14 @@ public class ModifyIllnessRecordAction extends Action {
     private LocalDate oldCuredDate;
     private LocalDate newDiagnosisDate;
     private LocalDate newCuredDate;
-    private Boolean oldChronic;
-    private Boolean newChronic;
+    private boolean oldChronic;
+    private boolean newChronic;
 
+    /**
+     * Creates a new action to modify a illness record. Will initialise the new diagnosis/cured dates and new chronic
+     * status to be the same as the current ones.
+     * @param record The illness record to modify.
+     */
     public ModifyIllnessRecordAction(IllnessRecord record) {
         this.record = record;
         oldDiagnosisDate = record.getDiagnosisDate();
@@ -26,24 +35,40 @@ public class ModifyIllnessRecordAction extends Action {
         newChronic = oldChronic;
     }
 
+    /**
+     * Make the action change the illness record's diagnosis date to the one given.
+     * @param newDiagnosisDate The new diagnosis date.
+     */
     public void changeDiagnosisDate(LocalDate newDiagnosisDate) {
         this.newDiagnosisDate = newDiagnosisDate;
     }
 
+    /**
+     * Make the action change the illness record's cured date to the one given.
+     * @param newCuredDate The new diagnosis date.
+     */
     public void changeCuredDate(LocalDate newCuredDate) {
         this.newCuredDate = newCuredDate;
     }
 
-    public void changeChronicStatus(Boolean newChronic) {
+    /**
+     * Make the action change the illness record's chronic status to the status given.
+     * @param newChronic The new chronic status.
+     */
+    public void changeChronicStatus(boolean newChronic) {
         this.newChronic = newChronic;
     }
 
+    /**
+     * Apply all changes to the illness record.
+     * @throws IllegalStateException If no changes were made.
+     */
     @Override
     public void execute() {
         if (Objects.equals(newDiagnosisDate, oldDiagnosisDate) &&
                 Objects.equals(newCuredDate, oldCuredDate) &&
                 Objects.equals(newChronic, oldChronic)) {
-            throw new IllegalStateException("No changes were made to the MedicationRecord.");
+            throw new IllegalStateException("No changes were made to the IllnessRecord.");
         }
         if (!Objects.equals(newDiagnosisDate, oldDiagnosisDate)) {
             record.setDiagnosisDate(newDiagnosisDate);
