@@ -128,7 +128,7 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
 
     @Test
     public void newIllnessesFieldsVisibleTest() {
-        verifyThat("#IllnessField", isVisible());
+        verifyThat("#illnessNameField", isVisible());
     }
 
     @Test

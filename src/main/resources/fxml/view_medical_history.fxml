@@ -35,12 +35,12 @@
                <center>
                   <VBox BorderPane.alignment="CENTER">
                      <children>
-                        <HBox fx:id="newIllnessPane">
+                        <HBox fx:id="newIllnessPane" alignment="CENTER_LEFT" spacing="10.0">
                            <VBox.margin>
                               <Insets left="10.0" right="10.0" top="20.0" />
                            </VBox.margin>
                            <children>
-                              <Label maxHeight="1.7976931348623157E308" text="Enter Illness">
+                              <Label maxHeight="1.7976931348623157E308" text="New Illness:">
                                  <font>
                                     <Font size="14.0" />
                                  </font>
@@ -48,26 +48,26 @@
                                     <Insets />
                                  </HBox.margin>
                               </Label>
-                              <TextField fx:id="IllnessField" HBox.hgrow="ALWAYS" />
+                              <TextField fx:id="illnessNameField" HBox.hgrow="ALWAYS" />
                               <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Date of Diagnosis">
                                  <HBox.margin>
-                                    <Insets left="10.0" />
+                                    <Insets />
                                  </HBox.margin></Text>
                               <DatePicker fx:id="dateDiagnosedPicker">
                                  <HBox.margin>
-                                    <Insets right="10.0" />
+                                    <Insets />
                                  </HBox.margin></DatePicker>
                               <CheckBox fx:id="chronicBox" mnemonicParsing="false" text="Chronic">
                                  <HBox.margin>
-                                    <Insets right="10.0" />
+                                    <Insets />
                                  </HBox.margin>
                               </CheckBox>
-                              <Button mnemonicParsing="false" onAction="#addButtonPressed" text="Add Illness" />
+                              <Button alignment="TOP_LEFT" mnemonicParsing="false" onAction="#addIllness" text="Add Illness" />
                            </children>
                         </HBox>
-                        <Button fx:id="noLongerChronic" mnemonicParsing="false" onAction="#removeChronicStatus" text="Mark as No Longer Chronic">
+                        <Button fx:id="noLongerChronic" alignment="TOP_LEFT" mnemonicParsing="false" onAction="#removeChronicStatus" text="Mark as No Longer Chronic">
                            <VBox.margin>
-                              <Insets left="10.0" />
+                              <Insets top="10.0" />
                            </VBox.margin></Button>
                         <Text fx:id="errorMessage" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0" />
                         <HBox prefHeight="100.0" prefWidth="200.0">

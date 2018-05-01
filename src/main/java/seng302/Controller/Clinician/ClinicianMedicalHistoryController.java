@@ -38,7 +38,7 @@ public class ClinicianMedicalHistoryController extends SubController {
     private Client client;
 
     @FXML
-    private TextField IllnessField;
+    private TextField illnessNameField;
 
     @FXML
     private Text errorMessage;
@@ -178,12 +178,6 @@ public class ClinicianMedicalHistoryController extends SubController {
     }
 
     @FXML
-    private void addButtonPressed() {
-        LocalDate dateValue = dateDiagnosedPicker.getValue();
-        addIllness(IllnessField.getText(), dateValue, chronicBox.isSelected());
-    }
-
-    @FXML
     private void defaultFilterPressed() {
         sortCurrentIllnessList();
 
@@ -287,7 +281,12 @@ public class ClinicianMedicalHistoryController extends SubController {
 
     }
 
-    private void addIllness(String illnessName, LocalDate dateDiagnosed, boolean isChronic) {
+    @FXML
+    private void addIllness() {
+        String illnessName = illnessNameField.getText();
+        LocalDate dateDiagnosed = dateDiagnosedPicker.getValue();
+        boolean isChronic = chronicBox.isSelected();
+
         boolean beforeBirth = dateDiagnosed.isBefore(client.getDateOfBirth());
         boolean inFuture = dateDiagnosed.isAfter(LocalDate.now().plus(1, ChronoUnit.DAYS));
 
@@ -302,7 +301,7 @@ public class ClinicianMedicalHistoryController extends SubController {
             AddIllnessRecord action = new AddIllnessRecord(client, record);
             invoker.execute(action);
 
-            IllnessField.setText(null);
+            illnessNameField.setText(null);
             errorMessage.setText(null);
             dateDiagnosedPicker.setValue(LocalDate.now());
             PageNavigator.refreshAllWindows();

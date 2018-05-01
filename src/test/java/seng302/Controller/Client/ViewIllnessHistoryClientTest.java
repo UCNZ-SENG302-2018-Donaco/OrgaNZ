@@ -84,7 +84,7 @@ public class ViewIllnessHistoryClientTest extends ControllerTest{
 
     @Test
     public void clientCantAddIllness(){
-        verifyThat("#IllnessField",isVisible().negate());
+        verifyThat("#illnessNameField",isVisible().negate());
 
     }
 
