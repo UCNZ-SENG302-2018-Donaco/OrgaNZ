@@ -13,6 +13,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import seng302.TransplantRequest.RequestStatus;
 import seng302.Utilities.Enums.BloodType;
 import seng302.Utilities.Enums.Gender;
 import seng302.Utilities.Enums.Organ;
@@ -25,7 +26,7 @@ import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
 
 public class Client {
 
-    private final int uid;
+    private int uid;
     private String firstName;
     private String lastName;
     private String middleName;
@@ -47,14 +48,19 @@ public class Client {
 
     private Collection<TransplantRequest> transplantRequests = new ArrayList<>();
 
-    private ArrayList<String> updateLog = new ArrayList<>();
+    private List<String> updateLog = new ArrayList<>();
 
     private List<IllnessRecord> illnessHistory = new ArrayList<>();
 
     public Client() {
         createdTimestamp = LocalDateTime.now();
-        initOrgans();
-        uid = 1;
+        initDonationOrgans();
+    }
+
+    public Client(int uid) {
+        this.uid = uid;
+        createdTimestamp = LocalDateTime.now();
+        initDonationOrgans();
     }
 
     /**
@@ -75,10 +81,10 @@ public class Client {
         this.gender = Gender.UNSPECIFIED;
         this.createdTimestamp = LocalDateTime.now();
 
-        initOrgans();
+        initDonationOrgans();
     }
 
-    private void initOrgans() {
+    private void initDonationOrgans() {
         organDonationStatus = new HashMap<>();
         for (Organ o : Organ.values()) {
             organDonationStatus.put(o, false);
@@ -299,16 +305,17 @@ public class Client {
         return organDonationStatus;
     }
 
-    public Set<Organ> getRequestedOrgans() {
+    public Set<Organ> getCurrentlyRequestedOrgans() {
         return transplantRequests
                 .stream()
+                .filter(request -> request.getStatus() == RequestStatus.WAITING)
                 .map(TransplantRequest::getRequestedOrgan)
                 .collect(Collectors.toCollection(() -> EnumSet.noneOf(Organ.class)));
     }
 
     public Map<Organ, Boolean> getOrganRequestStatus() {
         Map<Organ, Boolean> organStatus = new HashMap<>();
-        Set<Organ> requestedOrgans = getRequestedOrgans();
+        Set<Organ> requestedOrgans = getCurrentlyRequestedOrgans();
 
         for (Organ organ : Organ.values()) {
             organStatus.put(organ, requestedOrgans.contains(organ));
@@ -428,22 +435,6 @@ public class Client {
 
     }
 
-    public Collection<TransplantRequest> getTransplantRequests() {
-        return transplantRequests;
-    }
-
-    public void addTransplantRequest(TransplantRequest request) {
-        transplantRequests.add(request);
-    }
-
-    public void removeTransplantRequest(TransplantRequest request) {
-        transplantRequests.remove(request);
-    }
-
-    public boolean isReceiver() {
-        return transplantRequests.size() > 0;
-    }
-
     /**
      * Takes a string and checks if each space separated string section matches one of the names
      * @param searchParam The string to be checked
@@ -489,5 +480,21 @@ public class Client {
     @Override
     public int hashCode() {
         return Objects.hash(uid);
+    }
+
+    public Collection<TransplantRequest> getTransplantRequests() {
+        return transplantRequests;
+    }
+
+    public void addTransplantRequest(TransplantRequest request) {
+        transplantRequests.add(request);
+    }
+
+    public void removeTransplantRequest(TransplantRequest request) {
+        transplantRequests.remove(request);
+    }
+
+    public boolean isReceiver() {
+        return transplantRequests.size() > 0;
     }
 }

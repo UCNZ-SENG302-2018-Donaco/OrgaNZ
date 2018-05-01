@@ -37,7 +37,7 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
     private Collection<TransplantRequest> sampleRequests = new ArrayList<>();
 
     private Clinician testClinician = new Clinician("Mr", null, "Tester", "9 Fake St", Region.AUCKLAND, 1000, "qwerty");
-    private Client testClient = new Client();
+    private Client testClient = new Client(1);
 
     @Override
     protected Page getPage() {
@@ -55,10 +55,10 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
     }
 
     private void setSampleRequests() {
-        sampleRequests.add(new TransplantRequest(HEART));
-        sampleRequests.add(new TransplantRequest(BONE));
+        sampleRequests.add(new TransplantRequest(testClient, HEART));
+        sampleRequests.add(new TransplantRequest(testClient, BONE));
 
-        TransplantRequest pastRequest = new TransplantRequest(LIVER);
+        TransplantRequest pastRequest = new TransplantRequest(testClient, LIVER);
         pastRequest.setStatus(CANCELLED);
         pastRequest.setResolvedDate(LocalDateTime.now());
         sampleRequests.add(pastRequest);

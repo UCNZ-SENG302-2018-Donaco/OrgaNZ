@@ -1,10 +1,16 @@
 package seng302.State;
 
+import static seng302.TransplantRequest.RequestStatus.*;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.OptionalInt;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import seng302.Client;
+import seng302.TransplantRequest;
 
 /**
  * Handles the manipulation of the clients currently stored in the system.
@@ -92,5 +98,28 @@ public class ClientManager {
         } else {
             return 1;
         }
+    }
+
+    /**
+     * Gets all transplant requests, regardless of whether or not they are current
+     * @return List of all transplant requests
+     */
+    public Collection<TransplantRequest> getAllTransplantRequests() {
+        return clients.stream()
+                .map(Client::getTransplantRequests)
+                .flatMap(Collection::stream)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Gets all current transplant requests.
+     * @return List of all current transplant requests
+     */
+    public Collection<TransplantRequest> getAllCurrentTransplantRequests() {
+        return clients.stream()
+                .map(Client::getTransplantRequests)
+                .flatMap(Collection::stream)
+                .filter(request -> request.getStatus() == WAITING)
+                .collect(Collectors.toList());
     }
 }

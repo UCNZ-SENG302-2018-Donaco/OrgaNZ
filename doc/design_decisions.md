@@ -47,3 +47,9 @@ There are a few open-source projects that can convert Java objects to JSON.
 However, most of them require that you place Java annotations in your classes; something that you
 can not do if you do not have access to the source-code. Most also do not fully support the use
 of Java Generics. Gson considers both of these as very important design goals.
+
+
+
+S25 - CheckComboBoxes
+These were chosen as they reduce the number of clicks that users require to filter their lists. It allows them to select
+multiple regions/organs at once, rather than only one using a drop down box.

@@ -14,7 +14,7 @@ public class ClientTest {
 
     @Before
     public void createClient() {
-        client = new Client();
+        client = new Client(1);
     }
 
     @Test

@@ -9,6 +9,7 @@ import javafx.stage.Stage;
 import seng302.State.State;
 import seng302.Utilities.View.Page;
 
+import org.junit.BeforeClass;
 import org.testfx.framework.junit.ApplicationTest;
 
 public abstract class ControllerTest extends ApplicationTest {
@@ -16,6 +17,18 @@ public abstract class ControllerTest extends ApplicationTest {
     protected MainController mainController;
     protected SubController pageController;
     protected Node pageNode;
+
+    @BeforeClass
+    public static void initialise() {
+        String disableHeadless = System.getProperty("java.disable.headless");
+        if (disableHeadless == null || disableHeadless.isEmpty()) {
+            System.setProperty("testfx.robot", "glass");
+            System.setProperty("testfx.headless", "true");
+            System.setProperty("prism.order", "sw");
+            System.setProperty("prism.text", "t2k");
+            System.setProperty("java.awt.headless", "true");
+        }
+    }
 
     @Override
     public void start(Stage stage) throws Exception {

@@ -15,14 +15,20 @@ public class TransplantRequest {
         COMPLETED
     }
 
+    private transient Client client;
     private Organ requestedOrgan;
     private LocalDateTime requestDate;
     private LocalDateTime resolvedDate;
     private RequestStatus status = RequestStatus.WAITING;
 
-    public TransplantRequest(Organ requestedOrgan) {
+    public TransplantRequest(Client client, Organ requestedOrgan) {
+        this.client = client;
         this.requestedOrgan = requestedOrgan;
         this.requestDate = LocalDateTime.now();
+    }
+
+    public Client getClient() {
+        return client;
     }
 
     public Organ getRequestedOrgan() {
@@ -39,6 +45,10 @@ public class TransplantRequest {
 
     public RequestStatus getStatus() {
         return status;
+    }
+
+    public void setClient(Client client) {
+        this.client = client;
     }
 
     public void setResolvedDate(LocalDateTime resolvedDate) {

@@ -23,7 +23,7 @@ public class SetAttributeTest {
     private SetAttribute spySetAttribute;
 
     @Before
-    public void init() {
+    public void initTest() {
         spyClientManager = spy(new ClientManager());
 
         spySetAttribute = spy(new SetAttribute(spyClientManager, new ActionInvoker()));

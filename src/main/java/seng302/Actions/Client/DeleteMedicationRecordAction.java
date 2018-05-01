@@ -7,7 +7,7 @@ import seng302.MedicationRecord;
 import seng302.Utilities.JSONConverter;
 
 /**
- * A reversible action that will delete the given medication record from the given Clients's medication history.
+ * A reversible action that will delete the given medication record from the given Client's medication history.
  */
 public class DeleteMedicationRecordAction extends Action {
 
