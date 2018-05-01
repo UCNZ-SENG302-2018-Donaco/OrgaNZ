@@ -1,5 +1,6 @@
 package seng302.Controller.Client;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.testfx.api.FxAssert.verifyThat;
@@ -15,15 +16,21 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javafx.scene.Camera;
 import javafx.scene.Node;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCombination;
 
 import seng302.Client;
 import seng302.Clinician;
 import seng302.Controller.ControllerTest;
 import seng302.State.State;
 import seng302.TransplantRequest;
+import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.Enums.Region;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.WindowContext.WindowContextBuilder;
@@ -31,10 +38,12 @@ import seng302.Utilities.View.WindowContext.WindowContextBuilder;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.testfx.util.NodeQueryUtils;
 
 public class RequestOrgansControllerClinicianTest extends ControllerTest {
 
     private Collection<TransplantRequest> sampleRequests = new ArrayList<>();
+    TransplantRequest heartRequest;
 
     private Clinician testClinician = new Clinician("Mr", null, "Tester", "9 Fake St", Region.AUCKLAND, 1000, "qwerty");
     private Client testClient = new Client(1);
@@ -55,7 +64,8 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
     }
 
     private void setSampleRequests() {
-        sampleRequests.add(new TransplantRequest(testClient, HEART));
+        heartRequest = new TransplantRequest(testClient, HEART);
+        sampleRequests.add(heartRequest);
         sampleRequests.add(new TransplantRequest(testClient, BONE));
 
         TransplantRequest pastRequest = new TransplantRequest(testClient, LIVER);
@@ -144,16 +154,20 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
         }
     }
 
-    @Ignore
     @Test
     public void cancelRequestTest() {
         TableView<TransplantRequest> currRequestsTable = lookup("#currentRequestsTable").queryTableView();
 
-        Node heartCell = from(currRequestsTable)
-                .lookup(hasText("Heart"))
-                .query();
+        TableRow<TransplantRequest> heartCell = lookup(".table-row-cell").nth(0).query();
 
-        System.out.println("heartRow: " + heartCell);
+        // Check that we start with two items, and this is indeed the heart row
+        assertEquals(2, currRequestsTable.getItems().size());
+        assertEquals(Organ.HEART, heartCell.getTableView().getItems().get(0).getRequestedOrgan());
+
         clickOn(heartCell);
+        clickOn("#markAsCancelledButton");
+
+        // Check that we now have 1 item
+        assertEquals(1, currRequestsTable.getItems().size());
     }
 }
