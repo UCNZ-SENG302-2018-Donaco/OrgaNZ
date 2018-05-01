@@ -126,6 +126,21 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
     }
 
     @Test
+    public void addNewIllnessTest() {
+        testClient.setDateOfBirth(LocalDate.now().minusDays(10000));
+        IllnessRecord toBeAdded = new IllnessRecord("diabeetus", LocalDate.now(), null, false);
+
+        clickOn("#illnessNameField").write(toBeAdded.getIllnessName());
+        clickOn("Add Illness");
+
+        for (IllnessRecord illness : testClient.getCurrentIllnesses()) {
+            System.out.println(illness);
+        }
+        assertTrue(testClient.getCurrentIllnesses().stream()
+                .anyMatch(illness -> illness.getIllnessName().equals(toBeAdded.getIllnessName())));
+    }
+
+    @Test
     public void removeChronicTag(){
         IllnessRecord removeChronicTag = testCurrentIllnessRecords[1];
         clickOn((Node) lookup(NodeQueryUtils.hasText(removeChronicTag.getIllnessName())).query());
