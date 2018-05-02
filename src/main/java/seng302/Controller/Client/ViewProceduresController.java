@@ -93,33 +93,45 @@ public class ViewProceduresController extends SubController {
     private void editSummaryCell(CellEditEvent<ProcedureRecord,String> event) {
         ModifyProcedureRecordAction action = new ModifyProcedureRecordAction(event.getRowValue());
         action.changeSummary(event.getNewValue());
-        invoker.execute(action);
 
-        PageNavigator.refreshAllWindows();
+        try {
+            invoker.execute(action);
+            PageNavigator.refreshAllWindows();
+        } catch (IllegalStateException ignored) {
+        }
     }
 
     private void editDescriptionCell(CellEditEvent<ProcedureRecord,String> event) {
         ModifyProcedureRecordAction action = new ModifyProcedureRecordAction(event.getRowValue());
         action.changeDescription(event.getNewValue());
-        invoker.execute(action);
 
-        PageNavigator.refreshAllWindows();
+        try {
+            invoker.execute(action);
+            PageNavigator.refreshAllWindows();
+        } catch (IllegalStateException ignored) {
+        }
     }
 
     private void editDateCell(CellEditEvent<ProcedureRecord, LocalDate> event) {
         ModifyProcedureRecordAction action = new ModifyProcedureRecordAction(event.getRowValue());
         action.changeDate(event.getNewValue());
-        invoker.execute(action);
 
-        PageNavigator.refreshAllWindows();
+        try {
+            invoker.execute(action);
+            PageNavigator.refreshAllWindows();
+        } catch (IllegalStateException ignored) {
+        }
     }
 
     private void editAffectedOrgansCell(CellEditEvent<ProcedureRecord, Set<Organ>> event) {
         ModifyProcedureRecordAction action = new ModifyProcedureRecordAction(event.getRowValue());
         action.changeAffectedOrgans(event.getNewValue());
-        invoker.execute(action);
 
-        PageNavigator.refreshAllWindows();
+        try {
+            invoker.execute(action);
+            PageNavigator.refreshAllWindows();
+        } catch (IllegalStateException ignored) {
+        }
     }
 
     /**
@@ -242,7 +254,8 @@ public class ViewProceduresController extends SubController {
 
     private void enableAppropriateButtons() {
         if (windowContext.isClinViewClientWindow()) {
-            if (getSelectedRecord() == null) {
+            if (pastProcedureView.getSelectionModel().getSelectedItem() == null &&
+                    pendingProcedureView.getSelectionModel().getSelectedItem() == null) {
                 deleteButton.setDisable(true);
             } else {
                 deleteButton.setDisable(false);
