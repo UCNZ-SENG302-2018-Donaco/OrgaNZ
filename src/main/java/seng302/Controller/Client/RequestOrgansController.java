@@ -183,10 +183,12 @@ public class RequestOrgansController extends SubController {
         currentRequestsTable.setRowFactory(row -> colourIfDonatedAndRequested());
         pastRequestsTable.setRowFactory(row -> colourIfDonatedAndRequested());
 
-        // Add listeners to clear the other table when anything is selected in each table.
+        // Add listeners to clear the other table when anything is selected in each table (and enable/disable buttons).
         currentRequestsTable.getSelectionModel().selectedItemProperty().addListener(
+                (observable) -> enableAppropriateButtons());
+        currentRequestsTable.setOnMouseClicked(
                 (observable) -> pastRequestsTable.getSelectionModel().clearSelection());
-        pastRequestsTable.getSelectionModel().selectedItemProperty().addListener(
+        pastRequestsTable.setOnMouseClicked(
                 (observable) -> currentRequestsTable.getSelectionModel().clearSelection());
 
         cancelTransplantOptions.getSelectionModel().selectedItemProperty().addListener(
@@ -229,6 +231,7 @@ public class RequestOrgansController extends SubController {
 
         mainController.setTitle("Receive Organs: " + client.getFullName());
         refresh();
+        enableAppropriateButtons();
     }
 
     /**
@@ -249,6 +252,16 @@ public class RequestOrgansController extends SubController {
 
         currentRequestsTable.setItems(currentRequests);
         pastRequestsTable.setItems(pastRequests);
+    }
+
+    private void enableAppropriateButtons() {
+        if (windowContext.isClinViewClientWindow()) {
+            if (currentRequestsTable.getSelectionModel().getSelectedItem() == null) {
+                resolveRequestBar.setDisable(true);
+            } else {
+                resolveRequestBar.setDisable(false);
+            }
+        }
     }
 
     /**
