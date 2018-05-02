@@ -6,10 +6,7 @@ import java.util.Objects;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
@@ -58,6 +55,8 @@ public class ViewClientController extends SubController {
     private ChoiceBox<BloodType> btype;
     @FXML
     private ChoiceBox<Region> region;
+    @FXML
+    private Button saveChanges, viewOrgans;
 
     public ViewClientController() {
         manager = State.getClientManager();
