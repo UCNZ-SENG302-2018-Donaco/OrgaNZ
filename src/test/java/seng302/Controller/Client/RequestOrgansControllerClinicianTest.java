@@ -5,6 +5,7 @@ import static org.junit.Assert.fail;
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.matcher.control.TableViewMatchers.containsRow;
 import static org.testfx.matcher.control.TextMatchers.hasText;
+import static seng302.Controller.Client.RequestOrgansController.ResolveReason.DECEASED;
 import static seng302.TransplantRequest.RequestStatus.CANCELLED;
 import static seng302.TransplantRequest.RequestStatus.WAITING;
 import static seng302.Utilities.Enums.Organ.*;
@@ -16,7 +17,9 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javafx.scene.Node;
+import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableView;
 
 import seng302.Client;
@@ -155,5 +158,33 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
 
         System.out.println("heartRow: " + heartCell);
         clickOn(heartCell);
+    }
+
+    @Ignore
+    @Test
+    public void resolveRequestDeceasedTest() {
+        setSampleRequests();
+        //Node resolveOptions = lookup("#cancelTransplantOptions").queryAs(ComboBox.class);
+        Node resolveButton = lookup("Resolve").queryAs(Button.class);
+
+        clickOn("#cancelTransplantOptions");
+        clickOn(DECEASED.toString());
+        //clickOn((Node) lookup(DECEASED.toString()).query());
+        clickOn(resolveButton);
+    }
+
+    @Test
+    public void resolveRequestCuredTest() {
+
+    }
+
+    @Test
+    public void resolveRequestErrorTest() {
+
+    }
+
+    @Test
+    public void resolveRequestCustomTest() {
+
     }
 }

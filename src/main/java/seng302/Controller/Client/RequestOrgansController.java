@@ -83,7 +83,7 @@ public class RequestOrgansController extends SubController {
     @FXML
     private DatePicker deathDatePicker;
 
-    private enum ResolveReason {
+    public enum ResolveReason {
         ERROR("Input error"),
         COMPLETED("Transplant completed"),
         CURED("Disease was cured"),
