@@ -244,6 +244,8 @@ public class ViewProceduresController extends SubController {
             newProcedurePane.setManaged(false);
             procedureButtonsPane.setVisible(false);
             procedureButtonsPane.setManaged(false);
+            pendingProcedureView.setEditable(false);
+            pastProcedureView.setEditable(false);
         } else if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
         }
