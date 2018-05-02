@@ -3,9 +3,6 @@ package seng302.Controller.Client;
 import static org.junit.Assert.*;
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.matcher.control.TableViewMatchers.containsRow;
-import static org.testfx.matcher.control.TextMatchers.hasText;
-import static org.testfx.util.NodeQueryUtils.isVisible;
-import static seng302.Controller.Client.RequestOrgansController.ResolveReason.DECEASED;
 import static seng302.TransplantRequest.RequestStatus.CANCELLED;
 import static seng302.TransplantRequest.RequestStatus.WAITING;
 import static seng302.Utilities.Enums.Organ.*;
@@ -17,17 +14,11 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javafx.scene.Camera;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ComboBox;
 import javafx.scene.control.TableRow;
-import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCombination;
 
 import seng302.Client;
 import seng302.Clinician;
@@ -40,9 +31,7 @@ import seng302.Utilities.View.Page;
 import seng302.Utilities.View.WindowContext.WindowContextBuilder;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.testfx.util.NodeQueryUtils;
 
 public class RequestOrgansControllerClinicianTest extends ControllerTest {
 
@@ -164,25 +153,6 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
     }
 
     @Test
-    public void cancelRequestTest() {
-        TableView<TransplantRequest> currRequestsTable = lookup("#currentRequestsTable").queryTableView();
-        clickOn(currRequestsTable); // click on the table so lookups know where abouts to look
-
-        TableRow<TransplantRequest> heartRow = lookup(".table-row-cell").nth(0).query();
-
-        // Check that we start with two items, and this is indeed the heart row
-        assertEquals(2, currRequestsTable.getItems().size());
-        assertEquals(Organ.HEART, heartRow.getTableView().getItems().get(0).getRequestedOrgan());
-
-        clickOn(heartRow);
-        clickOn("#markAsCancelledButton");
-
-        // Check that we now have 1 item
-        assertEquals(1, currRequestsTable.getItems().size());
-        assertEquals(Organ.BONE, currRequestsTable.getItems().get(0).getRequestedOrgan());
-    }
-
-    @Test
     public void resolveRequestDeceasedTest() {
         setSampleRequests();
         testClient.setDateOfBirth(LocalDate.now());
@@ -233,7 +203,7 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
 
         // Checks that the selected organ has been removed from the clients transplant request list
         Organ organ = boneRow.getTableView().getItems().get(1).getRequestedOrgan();
-        assertFalse(testClient.getOrganDonationStatus().containsValue(organ));
+        assertFalse(testClient.getCurrentlyRequestedOrgans().contains(organ));
     }
 
     @Test
@@ -244,15 +214,18 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
         clickOn(currRequestsTable);
 
         TableRow<TransplantRequest> boneRow = lookup(".table-row-cell").nth(1).query();
+        Organ organ = boneRow.getTableView().getItems().get(1).getRequestedOrgan();
+
         clickOn(boneRow);
 
         // Selects "Error" from the options
         clickOn("#cancelTransplantOptions")
                 .type(KeyCode.ENTER);
 
+        clickOn("Resolve Request");
+
         // Checks that the selected organ has been removed from the clients transplant request list
-        Organ organ = boneRow.getTableView().getItems().get(1).getRequestedOrgan();
-        assertFalse(testClient.getOrganDonationStatus().containsValue(organ));
+        assertFalse(testClient.getCurrentlyRequestedOrgans().contains(organ));
     }
 
     @Test
@@ -285,7 +258,7 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
         clickOn("Resolve Request");
 
         // Checks that the selected organ has been removed from the clients transplant request list
-        assertFalse(testClient.getOrganDonationStatus().containsValue(organ));
+        assertFalse(testClient.getCurrentlyRequestedOrgans().contains(organ));
 
         // Check that reason has been added to transplantRequest
         Optional<TransplantRequest> findRequest = testClient.getTransplantRequests()
