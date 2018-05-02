@@ -34,6 +34,10 @@ public class MarkClientAsDeadAction extends Action {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Apply all changes to the client and their transplantRequests (all current requests are cancelled).
+     * @throws IllegalStateException If no changes were made.
+     */
     @Override
     protected void execute() {
         client.setDateOfDeath(deathDate);
