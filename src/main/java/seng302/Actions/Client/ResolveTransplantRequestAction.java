@@ -24,32 +24,41 @@ public class ResolveTransplantRequestAction extends Action {
 
     private TransplantRequest request;
     private RequestStatus newStatus;
+    private String reason;
 
     /**
-     * Creates a new resolve transplant request action for the given request and given new status.
+     * Creates a new resolve transplant request action for the given request and given new status/reason.
      * @param request The transplant request to resolve.
      * @param newStatus The new status to give the request. Must be one of the valid {@link
      * ResolveTransplantRequestAction#RESOLVED_STATUSES}.
+     * @param reason The reason for this request being resolved.
      */
-    public ResolveTransplantRequestAction(TransplantRequest request, RequestStatus newStatus) {
+    public ResolveTransplantRequestAction(TransplantRequest request, RequestStatus newStatus, String reason) {
         this.request = request;
         this.newStatus = newStatus;
+        this.reason = reason;
 
         if (!RESOLVED_STATUSES.contains(newStatus)) {
             throw new IllegalArgumentException("New status must be a valid resolved status.");
         }
     }
 
+    /**
+     * Apply all changes to the transplantRequest.
+     * @throws IllegalStateException If no changes were made.
+     */
     @Override
-    protected void execute() {
+    public void execute() {
         request.setStatus(newStatus);
         request.setResolvedDate(LocalDateTime.now());
+        request.setResolvedReason(reason);
     }
 
     @Override
-    protected void unExecute() {
+    public void unExecute() {
         request.setStatus(WAITING);
         request.setResolvedDate(null);
+        request.setResolvedReason(null);
     }
 
     @Override

@@ -1,29 +1,24 @@
 package seng302.Controller.Client;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.matcher.control.TableViewMatchers.containsRow;
-import static org.testfx.matcher.control.TextMatchers.hasText;
 import static seng302.TransplantRequest.RequestStatus.CANCELLED;
 import static seng302.TransplantRequest.RequestStatus.WAITING;
 import static seng302.Utilities.Enums.Organ.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javafx.scene.Camera;
 import javafx.scene.Node;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCombination;
 
 import seng302.Client;
 import seng302.Clinician;
@@ -36,9 +31,7 @@ import seng302.Utilities.View.Page;
 import seng302.Utilities.View.WindowContext.WindowContextBuilder;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.testfx.util.NodeQueryUtils;
 
 public class RequestOrgansControllerClinicianTest extends ControllerTest {
 
@@ -160,21 +153,124 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
     }
 
     @Test
-    public void cancelRequestTest() {
+    public void resolveRequestDeceasedTest() {
+        setSampleRequests();
+        testClient.setDateOfBirth(LocalDate.now());
+
         TableView<TransplantRequest> currRequestsTable = lookup("#currentRequestsTable").queryTableView();
-        clickOn(currRequestsTable); // click on the table so lookups know where abouts to look
+        clickOn(currRequestsTable);
 
-        TableRow<TransplantRequest> heartRow = lookup(".table-row-cell").nth(0).query();
+        clickOn((Node) lookup(".table-row-cell").nth(1).query());
 
-        // Check that we start with two items, and this is indeed the heart row
-        assertEquals(2, currRequestsTable.getItems().size());
-        assertEquals(Organ.HEART, heartRow.getTableView().getItems().get(0).getRequestedOrgan());
+        // Selects "deceased" from the options
+        clickOn("#cancelTransplantOptions")
+                .type(KeyCode.DOWN)
+                .type(KeyCode.DOWN)
+                .type(KeyCode.DOWN)
+                .type(KeyCode.ENTER);
 
-        clickOn(heartRow);
-        clickOn("#markAsCancelledButton");
+        // Check that death date picker is now visible
+        assertTrue((lookup("#deathDatePicker").query()).isVisible());
 
-        // Check that we now have 1 item
-        assertEquals(1, currRequestsTable.getItems().size());
-        assertEquals(Organ.BONE, currRequestsTable.getItems().get(0).getRequestedOrgan());
+        clickOn("Resolve Request");
+        // Press enter to confirm marking the client as deceased
+        type(KeyCode.ENTER);
+
+        //Checks that the client had been marked dead and the request table is empty
+        assertNotNull(testClient.getDateOfDeath());
+        assertTrue(currRequestsTable.getItems().isEmpty());
+    }
+
+    @Test
+    public void resolveRequestCuredTest() {
+        setSampleRequests();
+
+        TableView<TransplantRequest> currRequestsTable = lookup("#currentRequestsTable").queryTableView();
+        clickOn(currRequestsTable);
+
+        TableRow<TransplantRequest> boneRow = lookup(".table-row-cell").nth(1).query();
+        clickOn(boneRow);
+
+        // Selects "cured" from the options
+        clickOn("#cancelTransplantOptions")
+                .type(KeyCode.DOWN)
+                .type(KeyCode.DOWN)
+                .type(KeyCode.ENTER);
+
+        clickOn("Resolve Request");
+        // Press enter to go to medical history page
+        type(KeyCode.ENTER);
+
+        // Checks that the selected organ has been removed from the clients transplant request list
+        Organ organ = boneRow.getTableView().getItems().get(1).getRequestedOrgan();
+        assertFalse(testClient.getCurrentlyRequestedOrgans().contains(organ));
+    }
+
+    @Test
+    public void resolveRequestErrorTest() {
+        setSampleRequests();
+
+        TableView<TransplantRequest> currRequestsTable = lookup("#currentRequestsTable").queryTableView();
+        clickOn(currRequestsTable);
+
+        TableRow<TransplantRequest> boneRow = lookup(".table-row-cell").nth(1).query();
+        Organ organ = boneRow.getTableView().getItems().get(1).getRequestedOrgan();
+
+        clickOn(boneRow);
+
+        // Selects "Error" from the options
+        clickOn("#cancelTransplantOptions")
+                .type(KeyCode.ENTER);
+
+        clickOn("Resolve Request");
+
+        // Checks that the selected organ has been removed from the clients transplant request list
+        assertFalse(testClient.getCurrentlyRequestedOrgans().contains(organ));
+    }
+
+    @Test
+    public void resolveRequestCustomTest() {
+        String reason = "panda";
+        setSampleRequests();
+
+        TableView<TransplantRequest> currRequestsTable = lookup("#currentRequestsTable").queryTableView();
+        clickOn(currRequestsTable);
+
+        TableRow<TransplantRequest> boneRow = lookup(".table-row-cell").nth(1).query();
+        Organ organ = boneRow.getTableView().getItems().get(1).getRequestedOrgan();
+        clickOn(boneRow);
+
+        // Selects "Error" from the options
+        clickOn("#cancelTransplantOptions")
+                .type(KeyCode.DOWN)
+                .type(KeyCode.DOWN)
+                .type(KeyCode.DOWN)
+                .type(KeyCode.DOWN)
+                .type(KeyCode.ENTER);
+
+        // Check that death date picker is now visible
+        assertTrue((lookup("#customReason").query()).isVisible());
+
+        // Enter custom reason into the reason textField
+        clickOn("#customReason")
+                .write(reason);
+
+        clickOn("Resolve Request");
+
+        // Checks that the selected organ has been removed from the clients transplant request list
+        assertFalse(testClient.getCurrentlyRequestedOrgans().contains(organ));
+
+        // Check that reason has been added to transplantRequest
+        Optional<TransplantRequest> findRequest = testClient.getTransplantRequests()
+                .stream()
+                .filter(req -> req.getRequestedOrgan() == organ)
+                .findFirst();
+
+        if (findRequest.isPresent()) {
+            TransplantRequest request = findRequest.get();
+            assertEquals(reason, request.getResolvedReason());
+        } else {
+            fail("Request not found");
+        }
     }
 }
