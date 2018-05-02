@@ -25,7 +25,7 @@ public class OrganCheckComboBoxCell<T> extends TableCell<T, Set<Organ>> {
     /**
      * Creates a new organ {@link CheckComboBox} cell for the given column. Also binds the disabled property to that of
      * the table.
-     * @param column The {@link Set<Organ>} column to create a date picker cell for.
+     * @param column The {@link Set} of {@link Organ} column to create a date picker cell for.
      */
     public OrganCheckComboBoxCell(TableColumn<T, Set<Organ>> column) {
         checkComboBox = new CheckComboBox<>();
@@ -47,7 +47,7 @@ public class OrganCheckComboBoxCell<T> extends TableCell<T, Set<Organ>> {
     }
 
     /**
-     * Triggered whenever the {@link Set<Organ>} value of the cell is updated; it sets that new value in the
+     * Triggered whenever the {@link Set} of {@link Organ} value of the cell is updated; it sets that new value in the
      * {@link CheckComboBox}.
      * @param item The new set of organs.
      * @param empty Whether the cell is now empty or not.
