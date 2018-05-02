@@ -9,12 +9,21 @@ import java.util.stream.Collectors;
 import seng302.Actions.Action;
 import seng302.Client;
 
+/**
+ * A reversible action that will change the client's date of death to the date given, and cancel all their currently
+ * pending transplant requests with the reason "The client died.".
+ */
 public class MarkClientAsDeadAction extends Action {
 
     private Client client;
     private LocalDate deathDate;
     private List<ResolveTransplantRequestAction> resolveTransplantActions;
 
+    /**
+     * Creates a new action to mark the given client as dead, with the given date of death.
+     * @param client The client to mark as dead.
+     * @param deathDate Their date of death.
+     */
     public MarkClientAsDeadAction(Client client, LocalDate deathDate) {
         this.client = client;
         this.deathDate = deathDate;
