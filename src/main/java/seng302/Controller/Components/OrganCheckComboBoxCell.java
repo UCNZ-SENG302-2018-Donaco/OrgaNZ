@@ -28,16 +28,10 @@ public class OrganCheckComboBoxCell<T> extends TableCell<T, Set<Organ>> {
             tableView.edit(tableView.getSelectionModel().getSelectedIndex(), column);
         });
 
-        checkComboBox.addEventHandler(ComboBox.ON_HIDDEN, event -> {
-            System.out.println("edit cancelled");
-            cancelEdit();
-            System.out.println("Is editing: " + isEditing());
-        });
+        checkComboBox.addEventHandler(ComboBox.ON_HIDDEN, event -> cancelEdit());
 
         checkComboBox.getCheckModel().getCheckedItems().addListener((ListChangeListener<Organ>) change -> {
-            System.out.println("The list changed");
             if (isEditing()) {
-                System.out.println("and we were editing");
                 commitEdit(new HashSet<>(change.getList()));
             }
         });
