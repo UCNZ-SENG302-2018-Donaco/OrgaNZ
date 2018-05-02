@@ -153,7 +153,9 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
         clickOn("#newMedField").write(toBeAdded.getMedicationName());
         clickOn("Add Medication");
 
-        verifyThat("#currentMedicationsView", hasListCell(toBeAdded));
+        //Assert that the currentMedications list contains an entry with name "Med D"
+        assertTrue(testClient.getCurrentMedications().stream().anyMatch(medicationRecord -> "Med D".equals
+                (medicationRecord.getMedicationName())));
     }
 
     @Test
@@ -163,7 +165,9 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
         clickOn("#newMedField").write(toBeAdded.getMedicationName());
         type(KeyCode.ENTER);
 
-        verifyThat("#currentMedicationsView", hasListCell(toBeAdded));
+        //Assert that the currentMedications list contains an entry with name "Med D"
+        assertTrue(testClient.getCurrentMedications().stream().anyMatch(medicationRecord -> "Med D".equals
+                (medicationRecord.getMedicationName())));
     }
 
     @Test

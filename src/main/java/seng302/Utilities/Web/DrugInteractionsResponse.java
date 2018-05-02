@@ -22,6 +22,7 @@ import com.google.api.client.util.Key;
  * client.
  */
 public class DrugInteractionsResponse {
+
     private static final Pattern AGE_RANGE_PATTERN
             = Pattern.compile("^(?:(?<nan>nan)|(?<singlePlus>\\d+)\\+|(?<lowerBound>\\d+)-(?<upperBound>\\d+))$");
 
@@ -212,7 +213,6 @@ public class DrugInteractionsResponse {
     /**
      * Converts a string in the format 10-20 into a range tuple.
      * Will convert nan to 0-0x7FFFFFFF and 30+ into 30-0x7FFFFFFF.
-     *
      * @param range A string describing a number range, in the format 10-20, 30+, or nan/
      */
     private static IntPair parseAgeRange(String range) {
