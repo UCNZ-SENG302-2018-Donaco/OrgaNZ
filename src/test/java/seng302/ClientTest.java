@@ -7,6 +7,8 @@ import java.time.Period;
 
 import org.junit.Before;
 import org.junit.Test;
+import seng302.Utilities.Enums.Organ;
+import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
 
 public class ClientTest {
 

@@ -219,7 +219,7 @@ public class ViewClientController extends SubController {
      */
     private boolean checkNonMandatoryFields() {
         boolean update = true;
-        if (dod.getValue() == null || dod.getValue().isBefore(LocalDate.now())) {
+        if (dod.getValue() == null || dod.getValue().isBefore(LocalDate.now()) || dod.getValue().isEqual(LocalDate.now())) {
             dodLabel.setTextFill(Color.BLACK);
         } else {
             dodLabel.setTextFill(Color.RED);

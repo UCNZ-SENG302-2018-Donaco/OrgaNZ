@@ -16,13 +16,13 @@ import seng302.Utilities.View.Page;
 import seng302.Utilities.View.WindowContext;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import static org.junit.Assert.*;
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.util.NodeQueryUtils.isVisible;
 
 public class ViewClientControllerTest extends ControllerTest {
-    private Clinician testClinician = new Clinician("A", "B", "C", "D", Region.UNSPECIFIED, 0, "E");
     private Client testClient = new Client("a", "", "b", LocalDate.now(), 1);
 
     @Override
@@ -47,28 +47,29 @@ public class ViewClientControllerTest extends ControllerTest {
         testClient.setCurrentAddress("1 Test Road");
     }
 
-    @Test (expected = FxRobotException.class)
+    @Test (expected = FxRobotException.class) // Exception should be thrown because the robot cannot find the id!
     public void correctSetupClient() { // Only Clinicians should be able to see this the id field.
         clickOn("#id");
     }
 
     @Test
-    public void validChanges1() {
+    public void validChangesAll() {
         clickOn("#fname").type(KeyCode.BACK_SPACE).write("z");
         clickOn("#lname").type(KeyCode.BACK_SPACE).write("q");
-        clickOn("#dob").type(KeyCode.CONTROL);
+        clickOn("#dod").write(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         clickOn("#region");
-        //sleep(3000);
         clickOn("West Coast");
         clickOn("#saveChanges");
         assertEquals("z", testClient.getFirstName());
+        assertEquals("q", testClient.getLastName());
+        assertTrue(testClient.getDateOfDeath() != null);
         assertEquals(Region.WEST_COAST, testClient.getRegion());
     }
 
     @Test
     public void invalidChangesWeightAndHeight1() {
-        clickOn("#weight").type(KeyCode.BACK_SPACE).type(KeyCode.BACK_SPACE).type(KeyCode.BACK_SPACE).write("z");
-        clickOn("#height").type(KeyCode.BACK_SPACE).type(KeyCode.BACK_SPACE).write("z");
+        clickOn("#weight").type(KeyCode.BACK_SPACE).write("z");
+        clickOn("#height").type(KeyCode.BACK_SPACE).write("z");
         clickOn("#saveChanges");
         assertEquals(180, testClient.getHeight(), 0.1);
         assertEquals(80, testClient.getWeight(), 0.1);
@@ -84,13 +85,41 @@ public class ViewClientControllerTest extends ControllerTest {
     }
 
     @Test
-    public void invalidChanges() {
+    public void invalidChangesNames() {
         clickOn("#fname").type(KeyCode.BACK_SPACE);
+        clickOn("#lname").type(KeyCode.BACK_SPACE);
         clickOn("#saveChanges");
+        assertEquals("a", testClient.getFirstName());
+        assertEquals("b", testClient.getLastName());
     }
-//
-//    @Test
-//    public void invalid() {
-//
-//    }
+
+    @Test
+    public void invalidChangesDOB() {
+        clickOn("#dob").type(KeyCode.BACK_SPACE)
+                .type(KeyCode.BACK_SPACE)
+                .type(KeyCode.BACK_SPACE)
+                .type(KeyCode.BACK_SPACE)
+                .type(KeyCode.BACK_SPACE)
+                .type(KeyCode.BACK_SPACE)
+                .type(KeyCode.BACK_SPACE)
+                .type(KeyCode.BACK_SPACE)
+                .type(KeyCode.BACK_SPACE)
+                .type(KeyCode.BACK_SPACE);
+        clickOn("#saveChanges");
+        assertEquals(LocalDate.now(), testClient.getDateOfBirth());
+    }
+
+    @Test
+    public void invalidChangesDODAfterToday() {
+        clickOn("#dod").write(LocalDate.of(3000, 1, 1).format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        clickOn("#saveChanges");
+        assertEquals(LocalDate.now(), testClient.getDateOfBirth());
+    }
+
+    @Test
+    public void viewOrgansButtonTest() {
+        clickOn("#viewOrgans");
+        assertEquals(Page.REGISTER_ORGAN_DONATIONS, mainController.getCurrentPage());
+
+    }
 }
