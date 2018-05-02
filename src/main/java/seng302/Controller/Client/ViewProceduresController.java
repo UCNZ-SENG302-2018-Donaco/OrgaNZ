@@ -1,7 +1,6 @@
 package seng302.Controller.Client;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.Set;
 
@@ -10,13 +9,13 @@ import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 
@@ -25,8 +24,8 @@ import seng302.Actions.Client.AddProcedureRecordAction;
 import seng302.Actions.Client.DeleteProcedureRecordAction;
 import seng302.Actions.Client.ModifyProcedureRecordAction;
 import seng302.Client;
-import seng302.Controller.Components.OrganCheckComboBoxCell;
 import seng302.Controller.Components.DatePickerCell;
+import seng302.Controller.Components.OrganCheckComboBoxCell;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
 import seng302.ProcedureRecord;
@@ -42,8 +41,6 @@ import org.controlsfx.control.CheckComboBox;
  * Controller for the medical history page, which shows a list of all pending and past procedures for the client.
  */
 public class ViewProceduresController extends SubController {
-
-    private static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("d MMM yyyy");
 
     private Session session;
     private ActionInvoker invoker;
@@ -78,24 +75,6 @@ public class ViewProceduresController extends SubController {
 
     private TableView<ProcedureRecord> selectedTableView = null;
 
-    /**
-     * Formats a table cell that holds a {@link LocalDate} value to display that value in the date time format.
-     * @return The cell with the date time formatter set.
-     */
-    private static TableCell<ProcedureRecord, LocalDate> formatDateTimeCell() {
-        return new TableCell<ProcedureRecord, LocalDate>() {
-            @Override
-            protected void updateItem(LocalDate item, boolean empty) {
-                super.updateItem(item, empty);
-                if (item == null || empty) {
-                    setText(null);
-                } else {
-                    setText(item.format(dateTimeFormat));
-                }
-            }
-        };
-    }
-
     private static Boolean getTableSortPolicy(TableView<ProcedureRecord> table) {
         Comparator<ProcedureRecord> comparator = (r1, r2) -> {
             Comparator<ProcedureRecord> tableComparator = table.getComparator();
@@ -109,6 +88,22 @@ public class ViewProceduresController extends SubController {
         };
         FXCollections.sort(table.getItems(), comparator);
         return true;
+    }
+
+    private void editSummaryCell(CellEditEvent<ProcedureRecord,String> event) {
+        ModifyProcedureRecordAction action = new ModifyProcedureRecordAction(event.getRowValue());
+        action.changeSummary(event.getNewValue());
+        invoker.execute(action);
+
+        PageNavigator.refreshAllWindows();
+    }
+
+    private void editDescriptionCell(CellEditEvent<ProcedureRecord,String> event) {
+        ModifyProcedureRecordAction action = new ModifyProcedureRecordAction(event.getRowValue());
+        action.changeDescription(event.getNewValue());
+        invoker.execute(action);
+
+        PageNavigator.refreshAllWindows();
     }
 
     private void editDateCell(CellEditEvent<ProcedureRecord, LocalDate> event) {
@@ -141,21 +136,31 @@ public class ViewProceduresController extends SubController {
      */
     @FXML
     public void initialize() {
+        // Setup the value factories (these get the actual model values underlying the cells)
         summaryPastCol.setCellValueFactory(new PropertyValueFactory<>("summary"));
-        datePastCol.setCellValueFactory(new PropertyValueFactory<>("date"));
-        affectedPastCol.setCellValueFactory(new PropertyValueFactory<>("affectedOrgans"));
-        descriptionPastCol.setCellValueFactory(new PropertyValueFactory<>("description"));
-
         summaryPendCol.setCellValueFactory(new PropertyValueFactory<>("summary"));
+        datePastCol.setCellValueFactory(new PropertyValueFactory<>("date"));
         datePendCol.setCellValueFactory(new PropertyValueFactory<>("date"));
+        affectedPastCol.setCellValueFactory(new PropertyValueFactory<>("affectedOrgans"));
         affectedPendCol.setCellValueFactory(new PropertyValueFactory<>("affectedOrgans"));
+        descriptionPastCol.setCellValueFactory(new PropertyValueFactory<>("description"));
         descriptionPendCol.setCellValueFactory(new PropertyValueFactory<>("description"));
 
+        // Setup the cell factories (these generate the editable cells)
+        summaryPastCol.setCellFactory(TextFieldTableCell.forTableColumn());
+        summaryPendCol.setCellFactory(TextFieldTableCell.forTableColumn());
+        descriptionPastCol.setCellFactory(TextFieldTableCell.forTableColumn());
+        descriptionPendCol.setCellFactory(TextFieldTableCell.forTableColumn());
         datePastCol.setCellFactory(DatePickerCell::new);
         datePendCol.setCellFactory(DatePickerCell::new);
         affectedPastCol.setCellFactory(OrganCheckComboBoxCell::new);
         affectedPendCol.setCellFactory(OrganCheckComboBoxCell::new);
 
+        // Setup the edit commit handlers (these deal with making the changes using Actions)
+        summaryPastCol.setOnEditCommit(this::editSummaryCell);
+        summaryPendCol.setOnEditCommit(this::editSummaryCell);
+        descriptionPastCol.setOnEditCommit(this::editDescriptionCell);
+        descriptionPendCol.setOnEditCommit(this::editDescriptionCell);
         datePendCol.setOnEditCommit(this::editDateCell);
         datePastCol.setOnEditCommit(this::editDateCell);
         affectedPendCol.setOnEditCommit(this::editAffectedOrgansCell);
@@ -177,9 +182,11 @@ public class ViewProceduresController extends SubController {
                     pendingProcedureView.getSelectionModel().clearSelection();
                 });
 
+        // Set the sort policies for both tables
         pendingProcedureView.setSortPolicy(ViewProceduresController::getTableSortPolicy);
         pastProcedureView.setSortPolicy(ViewProceduresController::getTableSortPolicy);
 
+        // Setup the "new procedure" affected organs input with all organ values
         affectedOrgansField.getItems().setAll(Organ.values());
     }
 
