@@ -75,6 +75,12 @@ public class ViewProceduresController extends SubController {
 
     private TableView<ProcedureRecord> selectedTableView = null;
 
+    /**
+     * Sets the table's sort policy - default ordering is by date DESC, but if a column is selected for sorting then
+     * that takes precedence.
+     * @param table The table to set the sort policy for.
+     * @return True.
+     */
     private static Boolean getTableSortPolicy(TableView<ProcedureRecord> table) {
         Comparator<ProcedureRecord> comparator = (r1, r2) -> {
             Comparator<ProcedureRecord> tableComparator = table.getComparator();
@@ -90,6 +96,10 @@ public class ViewProceduresController extends SubController {
         return true;
     }
 
+    /**
+     * Handles the edit event when a procedure summary cell is edited.
+     * @param event The cell edit event.
+     */
     private void editSummaryCell(CellEditEvent<ProcedureRecord,String> event) {
         ModifyProcedureRecordAction action = new ModifyProcedureRecordAction(event.getRowValue());
         action.changeSummary(event.getNewValue());
@@ -101,6 +111,10 @@ public class ViewProceduresController extends SubController {
         }
     }
 
+    /**
+     * Handles the edit event when a procedure description cell is edited.
+     * @param event The cell edit event.
+     */
     private void editDescriptionCell(CellEditEvent<ProcedureRecord,String> event) {
         ModifyProcedureRecordAction action = new ModifyProcedureRecordAction(event.getRowValue());
         action.changeDescription(event.getNewValue());
@@ -112,6 +126,10 @@ public class ViewProceduresController extends SubController {
         }
     }
 
+    /**
+     * Handles the edit event when a procedure date cell is edited.
+     * @param event The cell edit event.
+     */
     private void editDateCell(CellEditEvent<ProcedureRecord, LocalDate> event) {
         ModifyProcedureRecordAction action = new ModifyProcedureRecordAction(event.getRowValue());
         action.changeDate(event.getNewValue());
@@ -123,6 +141,10 @@ public class ViewProceduresController extends SubController {
         }
     }
 
+    /**
+     * Handles the edit event when an affected organs cell is edited.
+     * @param event The cell edit event.
+     */
     private void editAffectedOrgansCell(CellEditEvent<ProcedureRecord, Set<Organ>> event) {
         ModifyProcedureRecordAction action = new ModifyProcedureRecordAction(event.getRowValue());
         action.changeAffectedOrgans(event.getNewValue());
@@ -252,6 +274,9 @@ public class ViewProceduresController extends SubController {
         errorMessage.setText(null);
     }
 
+    /**
+     * Enables and disables all buttons relevant to the selected procedure record appropriately.
+     */
     private void enableAppropriateButtons() {
         if (windowContext.isClinViewClientWindow()) {
             if (pastProcedureView.getSelectionModel().getSelectedItem() == null &&
