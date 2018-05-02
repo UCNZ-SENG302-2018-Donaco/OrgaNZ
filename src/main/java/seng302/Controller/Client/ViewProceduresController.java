@@ -49,7 +49,7 @@ public class ViewProceduresController extends SubController {
     @FXML
     private Pane sidebarPane;
     @FXML
-    private HBox newProcedurePane, procedureButtonsPane;
+    private Pane newProcedurePane, procedureButtonsPane;
 
     @FXML
     private TextField summaryField;
@@ -122,12 +122,12 @@ public class ViewProceduresController extends SubController {
      */
     @FXML
     public void initialize() {
-        summaryPastCol.setCellValueFactory(new PropertyValueFactory<>("procedureName"));
+        summaryPastCol.setCellValueFactory(new PropertyValueFactory<>("summary"));
         datePastCol.setCellValueFactory(new PropertyValueFactory<>("date"));
         affectedPastCol.setCellValueFactory(new PropertyValueFactory<>("affectedOrgans"));
         descriptionPastCol.setCellValueFactory(new PropertyValueFactory<>("description"));
 
-        summaryPendCol.setCellValueFactory(new PropertyValueFactory<>("procedureName"));
+        summaryPendCol.setCellValueFactory(new PropertyValueFactory<>("summary"));
         datePendCol.setCellValueFactory(new PropertyValueFactory<>("date"));
         affectedPendCol.setCellValueFactory(new PropertyValueFactory<>("affectedOrgans"));
         descriptionPendCol.setCellValueFactory(new PropertyValueFactory<>("description"));
@@ -248,10 +248,14 @@ public class ViewProceduresController extends SubController {
 
         if (summary == null || summary.equals("")) {
             errorMessage.setText("Procedure summary must not be blank.");
-        } else if (date.isBefore(client.getDateOfBirth())) {
-            errorMessage.setText("Procedure date cannot be before person is born.");
+        } else if (date == null || date.isBefore(client.getDateOfBirth())) {
+            errorMessage.setText("Procedure date cannot be before client was born.");
         } else {
             ProcedureRecord record = new ProcedureRecord(summary, descriptionField.getText(), date);
+            for (Organ organ : affectedOrgansField.getCheckModel().getCheckedItems()) {
+                record.getAffectedOrgans().add(organ);
+            }
+            System.out.println("Summary for new record is: " + record.getSummary());
             AddProcedureRecordAction action = new AddProcedureRecordAction(client, record);
             invoker.execute(action);
 

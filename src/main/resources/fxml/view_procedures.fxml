@@ -37,14 +37,14 @@
           <center>
             <VBox BorderPane.alignment="CENTER">
               <children>
-                        <VBox>
+                        <VBox fx:id="newProcedurePane">
                            <VBox.margin>
                               <Insets left="10.0" right="10.0" top="20.0" />
                            </VBox.margin>
                            <children>
-                      <HBox fx:id="newProcedurePane" alignment="CENTER_LEFT" spacing="10.0">
+                      <HBox alignment="CENTER_LEFT" spacing="10.0">
                         <children>
-                          <Label maxWidth="1.7976931348623157E308" text="New Procedure:">
+                          <Label maxWidth="1.7976931348623157E308" minWidth="98.0" text="New Procedure:">
                             <font>
                               <Font size="14.0" />
                             </font>
@@ -52,24 +52,24 @@
                               <Insets />
                             </HBox.margin>
                           </Label>
-                          <TextField fx:id="summaryField" onAction="#addProcedure" promptText="Summary" />
+                          <TextField fx:id="summaryField" maxWidth="1.7976931348623157E308" onAction="#addProcedure" promptText="Summary" HBox.hgrow="ALWAYS" />
                           <DatePicker fx:id="dateField" promptText="Procedure Date" HBox.hgrow="ALWAYS">
                             <HBox.margin>
                               <Insets />
                             </HBox.margin>
                                     </DatePicker>
-                          <Label maxWidth="1.7976931348623157E308" text="Affected:">
+                          <Label maxWidth="1.7976931348623157E308" minWidth="56.0" text="Affected:">
                             <font>
                               <Font size="14.0" />
                             </font>
                           </Label>
                                     <CheckComboBox fx:id="affectedOrgansField" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
-                          <Button alignment="TOP_LEFT" mnemonicParsing="false" onAction="#addProcedure" text="Add Procedure" />
+                          <Button alignment="TOP_LEFT" minWidth="96.0" mnemonicParsing="false" onAction="#addProcedure" text="Add Procedure" />
                         </children>
                       </HBox>
                               <TextArea fx:id="descriptionField" prefHeight="200.0" prefWidth="200.0" promptText="Description">
                                  <VBox.margin>
-                                    <Insets left="108.0" top="10.0" />
+                                    <Insets left="107.0" top="10.0" />
                                  </VBox.margin>
                               </TextArea>
                       <Text fx:id="errorMessage" fill="RED" strokeType="OUTSIDE" strokeWidth="0.0">
