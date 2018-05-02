@@ -86,7 +86,7 @@
                                     </TableView>
                                     <HBox fx:id="resolveRequestBar" prefHeight="100.0" prefWidth="200.0" spacing="5.0">
                                        <children>
-                                          <Button mnemonicParsing="false" onAction="#cancelRequest" text="Mark as Cancelled" />
+                                          <Button fx:id="markAsCancelledButton" mnemonicParsing="false" onAction="#cancelRequest" text="Mark as Cancelled" />
                                           <Button layoutX="320.0" layoutY="10.0" mnemonicParsing="false" onAction="#completeRequest" text="Mark as Completed" />
                                        </children>
                                        <VBox.margin>
