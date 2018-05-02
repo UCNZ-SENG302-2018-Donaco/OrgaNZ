@@ -40,37 +40,37 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
                     false
             )
     };
-    private final  IllnessRecord[] testCurrentIllnessRecords = {
-        new IllnessRecord(
-            "Mono",
-            LocalDate.of(2011, 9, 22),
-            null,
-            false
-        ),
-        new IllnessRecord(
-            "Colon Cancer",
-            LocalDate.of(2014, 3, 4),
-            null,
-            true
-        ),
-        new IllnessRecord(
-            "Influenza",
-            LocalDate.of(2012, 1, 2),
-            null,
-            false
-        ),
-        new IllnessRecord(
-            "Lung Cancer",
-            LocalDate.of(2011, 9, 22),
-            null,
-            true
-        ),
-        new IllnessRecord(
-            "Monopoly",
-            LocalDate.of(2011, 9, 22),
-            null,
-            false
-        )
+    private final IllnessRecord[] testCurrentIllnessRecords = {
+            new IllnessRecord(
+                    "Mono",
+                    LocalDate.of(2011, 9, 22),
+                    null,
+                    false
+            ),
+            new IllnessRecord(
+                    "Colon Cancer",
+                    LocalDate.of(2014, 3, 4),
+                    null,
+                    true
+            ),
+            new IllnessRecord(
+                    "Influenza",
+                    LocalDate.of(2012, 1, 2),
+                    null,
+                    false
+            ),
+            new IllnessRecord(
+                    "Lung Cancer",
+                    LocalDate.of(2011, 9, 22),
+                    null,
+                    true
+            ),
+            new IllnessRecord(
+                    "Monopoly",
+                    LocalDate.of(2011, 9, 22),
+                    null,
+                    false
+            )
     };
 
     private Clinician testClinician = new Clinician("A", "B", "C", "D", Region.UNSPECIFIED, 0, "E");
@@ -142,7 +142,7 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
     }
 
     @Test
-    public void addChronicTagTest(){
+    public void addChronicTagTest() {
         IllnessRecord addChronicTag = testCurrentIllnessRecords[0];
         assertFalse(addChronicTag.isChronic());
         clickOn((Node) lookup(NodeQueryUtils.hasText(addChronicTag.getIllnessName())).query());
@@ -151,17 +151,28 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
     }
 
     @Test
-    public void tryToAddChronicTagToPastIllnessTest(){
+    public void addChronicTagToPastIllnessTest() {
         IllnessRecord addChronicTag = testPastIllnessRecords[0];
         assertFalse(addChronicTag.isChronic());
         clickOn((Node) lookup(NodeQueryUtils.hasText(addChronicTag.getIllnessName())).query());
         clickOn("#toggleChronicButton");
-        press(KeyCode.ENTER); //close dialog
-        assertFalse(addChronicTag.isChronic());
+
+        // Check it is in current illnesses and not in past illnesses
+        verifyThat("#pastIllnessView", not(containsRow(
+                addChronicTag.getIllnessName(),
+                addChronicTag.getDiagnosisDate(),
+                addChronicTag.getCuredDate())));
+        verifyThat("#currentIllnessView", containsRow(
+                addChronicTag.getIllnessName(),
+                addChronicTag.getDiagnosisDate(),
+                addChronicTag.isChronic()));
+
+        assertEquals(null, addChronicTag.getCuredDate());
+        assertTrue(addChronicTag.isChronic());
     }
 
     @Test
-    public void removeChronicTagTest(){
+    public void removeChronicTagTest() {
         IllnessRecord removeChronicTag = testCurrentIllnessRecords[1];
         assertTrue(removeChronicTag.isChronic());
         clickOn((Node) lookup(NodeQueryUtils.hasText(removeChronicTag.getIllnessName())).query());
@@ -170,7 +181,7 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
     }
 
     @Test
-    public void tryToMovetoPastIllnessesWithChronicTagTest(){
+    public void tryToMovetoPastIllnessesWithChronicTagTest() {
         IllnessRecord chronicIllness = testCurrentIllnessRecords[1];
         clickOn((Node) lookup(NodeQueryUtils.hasText(chronicIllness.getIllnessName())).query());
         assertTrue(chronicIllness.isChronic());
@@ -190,7 +201,7 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
     }
 
     @Test
-    public void movetoPastIllnessesAfterChronicRemovedTest(){
+    public void movetoPastIllnessesAfterChronicRemovedTest() {
         IllnessRecord removeChronicTag = testCurrentIllnessRecords[1];
         clickOn((Node) lookup(NodeQueryUtils.hasText(removeChronicTag.getIllnessName())).query());
         clickOn("#toggleChronicButton");

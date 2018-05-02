@@ -342,27 +342,24 @@ public class ClientMedicalHistoryController extends SubController {
         IllnessRecord record = getSelectedRecord();
         if (record != null) {
             ModifyIllnessRecordAction action = new ModifyIllnessRecordAction(record);
-            if (selectedTableView == pastIllnessView) {
-                // Trying to mark a past illness as chronic
-                PageNavigator.showAlert(AlertType.ERROR,
-                        "Can't mark a past illness as chronic",
-                        "An illness can't be marked as chronic if it has been cured. If the illness is chronic, "
-                                + "first marked it as not cured.");
+            if (record.isChronic()) {
+                // Current, chronic illness -> Current illness
+                action.changeChronicStatus(false);
             } else {
-                // Marking a current illness
-                if (record.isChronic()) {
-                    // Marking it as not chronic
-                    action.changeChronicStatus(false);
-                } else {
-                    // Marking it as chronic
-                    action.changeChronicStatus(true);
+                if (record.getCuredDate() != null) {
+                    // Past illness -> Current, chronic illness
+                    action.changeCuredDate(null);
                 }
-                invoker.execute(action);
-                PageNavigator.refreshAllWindows();
+                // Illness -> chronic illness
+                action.changeChronicStatus(true);
             }
-
+            invoker.execute(action);
+            PageNavigator.refreshAllWindows();
         }
+
     }
+
+
 
     /**
      * Adds a new illness record based on the information in the add new illness record inputs.
