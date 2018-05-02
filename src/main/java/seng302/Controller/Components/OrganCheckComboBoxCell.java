@@ -2,13 +2,15 @@ package seng302.Controller.Components;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import javafx.collections.ListChangeListener;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContentDisplay;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.Tooltip;
 
 import seng302.Utilities.Enums.Organ;
 
@@ -65,7 +67,16 @@ public class OrganCheckComboBoxCell<T> extends TableCell<T, Set<Organ>> {
                     checkComboBox.getCheckModel().check(organ);
                 }
             }
-            setGraphic(checkComboBox);
+
+            if (getTableColumn().isEditable()) {
+                setGraphic(checkComboBox);
+            } else {
+                String text = checkComboBox.getCheckModel().getCheckedItems().stream()
+                        .map(Organ::toString)
+                        .collect(Collectors.joining(", "));
+                setTooltip(new Tooltip(text));
+                setGraphic(new Label(text));
+            }
         }
     }
 }

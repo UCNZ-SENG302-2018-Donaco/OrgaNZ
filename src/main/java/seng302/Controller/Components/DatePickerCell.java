@@ -1,9 +1,11 @@
 package seng302.Controller.Components;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -13,6 +15,8 @@ import javafx.scene.control.TableView;
  * @param <T> The type of data record each row in the table represents.
  */
 public class DatePickerCell<T> extends TableCell<T, LocalDate> {
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
     private final DatePicker datePicker;
 
     /**
@@ -50,7 +54,11 @@ public class DatePickerCell<T> extends TableCell<T, LocalDate> {
             setGraphic(null);
         } else {
             datePicker.setValue(item);
-            setGraphic(datePicker);
+            if (getTableColumn().isEditable()) {
+                setGraphic(datePicker);
+            } else {
+                setGraphic(new Label(datePicker.getValue().format(formatter)));
+            }
         }
     }
 }

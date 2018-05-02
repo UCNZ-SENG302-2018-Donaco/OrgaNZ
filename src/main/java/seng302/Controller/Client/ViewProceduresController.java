@@ -246,6 +246,10 @@ public class ViewProceduresController extends SubController {
             procedureButtonsPane.setManaged(false);
             pendingProcedureView.setEditable(false);
             pastProcedureView.setEditable(false);
+            datePendCol.setEditable(false);
+            datePastCol.setEditable(false);
+            affectedPendCol.setEditable(false);
+            affectedPastCol.setEditable(false);
         } else if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
         }
