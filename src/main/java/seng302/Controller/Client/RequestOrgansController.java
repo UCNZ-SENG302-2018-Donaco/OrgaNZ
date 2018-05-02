@@ -7,18 +7,15 @@ import static seng302.TransplantRequest.RequestStatus.WAITING;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 
 import javafx.collections.FXCollections;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
-import javafx.scene.Camera;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ChoiceDialog;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableCell;
@@ -78,18 +75,20 @@ public class RequestOrgansController extends SubController {
     @FXML
     private TableColumn<TransplantRequest, RequestStatus> requestStatusPastCol;
     @FXML
+    private TableColumn<TransplantRequest, String> resolvedReasonPastCol;
+    @FXML
     private ComboBox<ResolveReason> cancelTransplantOptions;
     @FXML
     private TextField customReason;
     @FXML
     private DatePicker deathDatePicker;
 
-    public enum ResolveReason {
-        CURED("Cured"),
-        DECEASED("Client deceased"),
+    private enum ResolveReason {
+        ERROR("Input error"),
         COMPLETED("Transplant completed"),
-        CUSTOM("Custom reason"),
-        ERROR("Error");
+        CURED("Disease was cured"),
+        DECEASED("Client is deceased"),
+        CUSTOM("Custom reason...");
 
         private final String text;
 
@@ -160,7 +159,7 @@ public class RequestOrgansController extends SubController {
         // Populate organ and resolve boxes with all values
         newOrganChoiceBox.setItems(FXCollections.observableArrayList(Organ.values()));
         cancelTransplantOptions.setItems(FXCollections.observableArrayList(ResolveReason.values()));
-        cancelTransplantOptions.setValue(ResolveReason.CURED);
+        cancelTransplantOptions.setValue(ResolveReason.ERROR);
 
         customReason.setManaged(false);
         deathDatePicker.setManaged(false);
@@ -173,6 +172,7 @@ public class RequestOrgansController extends SubController {
         requestDatePastCol.setCellValueFactory(new PropertyValueFactory<>("requestDate"));
         requestStatusPastCol.setCellValueFactory(new PropertyValueFactory<>("status"));
         resolvedDatePastCol.setCellValueFactory(new PropertyValueFactory<>("resolvedDate"));
+        resolvedReasonPastCol.setCellValueFactory(new PropertyValueFactory<>("resolvedReason"));
 
         // Format all the datetime cells
         requestDateCurrCol.setCellFactory(cell -> formatDateTimeCell());
@@ -279,39 +279,42 @@ public class RequestOrgansController extends SubController {
         ResolveReason resolveReason = cancelTransplantOptions.getValue();
 
         if (selectedRequest != null) {
-
-            Action action;
+            Action action = null;
 
             if (resolveReason == ResolveReason.COMPLETED) {
-                action = new ResolveTransplantRequestAction(selectedRequest, COMPLETED, "Completed.");
-
+                action = new ResolveTransplantRequestAction(selectedRequest, COMPLETED, "Transplant took place.");
 
             } else if (resolveReason == ResolveReason.DECEASED) {
-                LocalDate deathDate = deathDatePicker.getValue();
-                action = new MarkClientAsDeadAction(client, deathDate);
+                Optional<ButtonType> buttonOpt = PageNavigator.showAlert(AlertType.CONFIRMATION,
+                        "Are you sure you want to mark this client as dead?",
+                        "This will cancel all waiting transplant requests for this client.");
 
-                deathDatePicker.setValue(LocalDate.now());
-
-            } else {
-
-                String reason = null;
-
-                if (resolveReason == ResolveReason.CURED) {
-                    // TODO once s22 is complete
-
-                } else if (resolveReason == ResolveReason.ERROR) {
-                    reason = "error";
-
-                } else if (resolveReason == ResolveReason.CUSTOM) {
-                    reason = customReason.getText();
-                    customReason.clear();
+                if (buttonOpt.isPresent() && buttonOpt.get() == ButtonType.OK) {
+                    action = new MarkClientAsDeadAction(client, deathDatePicker.getValue());
+                    deathDatePicker.setValue(LocalDate.now());
                 }
 
-                action = new ResolveTransplantRequestAction(selectedRequest, CANCELLED, reason);
+            } else if (resolveReason == ResolveReason.CURED) {
+                action = new ResolveTransplantRequestAction(selectedRequest, CANCELLED, "The disease was cured.");
+                Optional<ButtonType> buttonOpt = PageNavigator.showAlert(AlertType.CONFIRMATION,
+                        "Go to Medical History Page",
+                        "Do you want to go to the medical history page to mark the disease that was cured?");
+                if (buttonOpt.isPresent() && buttonOpt.get() == ButtonType.OK) {
+                    PageNavigator.loadPage(Page.VIEW_MEDICAL_HISTORY, mainController);
+                }
+
+            } else if (resolveReason == ResolveReason.ERROR) {
+                action = new ResolveTransplantRequestAction(selectedRequest, CANCELLED, "Request was a mistake.");
+
+            } else if (resolveReason == ResolveReason.CUSTOM) {
+                action = new ResolveTransplantRequestAction(selectedRequest, CANCELLED, customReason.getText());
+                customReason.clear();
             }
 
-            invoker.execute(action);
-            PageNavigator.refreshAllWindows();
+            if (action != null) {
+                invoker.execute(action);
+                PageNavigator.refreshAllWindows();
+            }
         }
     }
 
