@@ -12,6 +12,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.CellEditEvent;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -22,6 +23,7 @@ import javafx.scene.text.Text;
 import seng302.Actions.ActionInvoker;
 import seng302.Actions.Client.AddProcedureRecordAction;
 import seng302.Actions.Client.DeleteProcedureRecordAction;
+import seng302.Actions.Client.ModifyProcedureRecordAction;
 import seng302.Client;
 import seng302.Controller.Components.OrganCheckComboBoxCell;
 import seng302.Controller.Components.DatePickerCell;
@@ -109,6 +111,22 @@ public class ViewProceduresController extends SubController {
         return true;
     }
 
+    private void editDateCell(CellEditEvent<ProcedureRecord, LocalDate> event) {
+        ModifyProcedureRecordAction action = new ModifyProcedureRecordAction(event.getRowValue());
+        action.changeDate(event.getNewValue());
+        invoker.execute(action);
+
+        PageNavigator.refreshAllWindows();
+    }
+
+    private void editAffectedOrgansCell(CellEditEvent<ProcedureRecord, Set<Organ>> event) {
+        ModifyProcedureRecordAction action = new ModifyProcedureRecordAction(event.getRowValue());
+        action.changeAffectedOrgans(event.getNewValue());
+        invoker.execute(action);
+
+        PageNavigator.refreshAllWindows();
+    }
+
     /**
      * Gets the current session and action invoker from the global state.
      */
@@ -135,30 +153,13 @@ public class ViewProceduresController extends SubController {
 
         datePastCol.setCellFactory(DatePickerCell::new);
         datePendCol.setCellFactory(DatePickerCell::new);
-
         affectedPastCol.setCellFactory(OrganCheckComboBoxCell::new);
         affectedPendCol.setCellFactory(OrganCheckComboBoxCell::new);
 
-        datePendCol.setOnEditCommit(event -> {
-            event.getRowValue().setDate(event.getNewValue());
-            PageNavigator.refreshAllWindows();
-        });
-        datePastCol.setOnEditCommit(event -> {
-            event.getRowValue().setDate(event.getNewValue());
-            PageNavigator.refreshAllWindows();
-        });
-
-        affectedPendCol.setOnEditCommit(event -> {
-            event.getRowValue().getAffectedOrgans().clear();
-            event.getRowValue().getAffectedOrgans().addAll(event.getNewValue());
-            PageNavigator.refreshAllWindows();
-        });
-
-        affectedPastCol.setOnEditCommit(event -> {
-            event.getRowValue().getAffectedOrgans().clear();
-            event.getRowValue().getAffectedOrgans().addAll(event.getNewValue());
-            PageNavigator.refreshAllWindows();
-        });
+        datePendCol.setOnEditCommit(this::editDateCell);
+        datePastCol.setOnEditCommit(this::editDateCell);
+        affectedPendCol.setOnEditCommit(this::editAffectedOrgansCell);
+        affectedPastCol.setOnEditCommit(this::editAffectedOrgansCell);
 
         // Add listeners to clear the other table when anything is selected in each table (and enable/disable buttons).
         pendingProcedureView.getSelectionModel().selectedItemProperty().addListener(

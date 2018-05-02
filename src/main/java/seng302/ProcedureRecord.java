@@ -46,4 +46,8 @@ public class ProcedureRecord {
     public void setDate(LocalDate date) {
         this.date = date;
     }
+
+    public void setAffectedOrgans(Set<Organ> affectedOrgans) {
+        this.affectedOrgans = affectedOrgans;
+    }
 }
