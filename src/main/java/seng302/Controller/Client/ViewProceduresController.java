@@ -23,6 +23,8 @@ import seng302.Actions.ActionInvoker;
 import seng302.Actions.Client.AddProcedureRecordAction;
 import seng302.Actions.Client.DeleteProcedureRecordAction;
 import seng302.Client;
+import seng302.Controller.Components.OrganCheckComboBoxCell;
+import seng302.Controller.Components.DatePickerCell;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
 import seng302.ProcedureRecord;
@@ -131,9 +133,32 @@ public class ViewProceduresController extends SubController {
         affectedPendCol.setCellValueFactory(new PropertyValueFactory<>("affectedOrgans"));
         descriptionPendCol.setCellValueFactory(new PropertyValueFactory<>("description"));
 
-        // Format all the datetime cells
-        datePendCol.setCellFactory(cell -> formatDateTimeCell());
-        datePastCol.setCellFactory(cell -> formatDateTimeCell());
+        datePastCol.setCellFactory(DatePickerCell::new);
+        datePendCol.setCellFactory(DatePickerCell::new);
+
+        affectedPastCol.setCellFactory(OrganCheckComboBoxCell::new);
+        affectedPendCol.setCellFactory(OrganCheckComboBoxCell::new);
+
+        datePendCol.setOnEditCommit(event -> {
+            event.getRowValue().setDate(event.getNewValue());
+            PageNavigator.refreshAllWindows();
+        });
+        datePastCol.setOnEditCommit(event -> {
+            event.getRowValue().setDate(event.getNewValue());
+            PageNavigator.refreshAllWindows();
+        });
+
+        affectedPendCol.setOnEditCommit(event -> {
+            event.getRowValue().getAffectedOrgans().clear();
+            event.getRowValue().getAffectedOrgans().addAll(event.getNewValue());
+            PageNavigator.refreshAllWindows();
+        });
+
+        affectedPastCol.setOnEditCommit(event -> {
+            event.getRowValue().getAffectedOrgans().clear();
+            event.getRowValue().getAffectedOrgans().addAll(event.getNewValue());
+            PageNavigator.refreshAllWindows();
+        });
 
         // Add listeners to clear the other table when anything is selected in each table (and enable/disable buttons).
         pendingProcedureView.getSelectionModel().selectedItemProperty().addListener(

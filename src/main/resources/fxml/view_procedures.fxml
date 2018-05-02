@@ -91,7 +91,7 @@
                             <Insets bottom="10.0" />
                           </VBox.margin>
                         </Label>
-                        <TableView fx:id="pastProcedureView" VBox.vgrow="ALWAYS">
+                        <TableView fx:id="pastProcedureView" editable="true" VBox.vgrow="ALWAYS">
                           <columnResizePolicy>
                             <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
                           </columnResizePolicy>
@@ -119,7 +119,7 @@
                             <Insets bottom="10.0" />
                           </VBox.margin>
                         </Label>
-                        <TableView fx:id="pendingProcedureView" VBox.vgrow="ALWAYS">
+                        <TableView fx:id="pendingProcedureView" editable="true" VBox.vgrow="ALWAYS">
                           <columns>
                             <TableColumn fx:id="summaryPendCol" prefWidth="75.0" text="Summary" />
                             <TableColumn fx:id="datePendCol" prefWidth="75.0" text="Date" />
