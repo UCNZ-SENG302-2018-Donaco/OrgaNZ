@@ -270,8 +270,8 @@ public class RequestOrgansController extends SubController {
     }
 
     /**
-     * Resolves the transplant request, by either cancelling or completing the request
-     * depending on the reason selected
+     * Resolves the selected transplant request in the current requests table, by either cancelling or completing the
+     * request depending on the reason given in the input pane.
      */
     @FXML
     private void resolveRequest() {
@@ -285,13 +285,20 @@ public class RequestOrgansController extends SubController {
                 action = new ResolveTransplantRequestAction(selectedRequest, COMPLETED, "Transplant took place.");
 
             } else if (resolveReason == ResolveReason.DECEASED) {
-                Optional<ButtonType> buttonOpt = PageNavigator.showAlert(AlertType.CONFIRMATION,
-                        "Are you sure you want to mark this client as dead?",
-                        "This will cancel all waiting transplant requests for this client.");
+                LocalDate deathDate = deathDatePicker.getValue();
+                if (deathDate.isBefore(client.getDateOfBirth()) || deathDate.isAfter(LocalDate.now())) {
+                    PageNavigator.showAlert(AlertType.ERROR,
+                            "Date of Death Invalid",
+                            "Date of death must be between client's birth date and the current date.");
+                } else {
+                    Optional<ButtonType> buttonOpt = PageNavigator.showAlert(AlertType.CONFIRMATION,
+                            "Are you sure you want to mark this client as dead?",
+                            "This will cancel all waiting transplant requests for this client.");
 
-                if (buttonOpt.isPresent() && buttonOpt.get() == ButtonType.OK) {
-                    action = new MarkClientAsDeadAction(client, deathDatePicker.getValue());
-                    deathDatePicker.setValue(LocalDate.now());
+                    if (buttonOpt.isPresent() && buttonOpt.get() == ButtonType.OK) {
+                        action = new MarkClientAsDeadAction(client, deathDate);
+                        deathDatePicker.setValue(LocalDate.now());
+                    }
                 }
 
             } else if (resolveReason == ResolveReason.CURED) {
