@@ -16,7 +16,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 
@@ -142,9 +141,15 @@ public class ViewProceduresController extends SubController {
         pastProcedureView.getSelectionModel().selectedItemProperty().addListener(
                 (observable) -> enableAppropriateButtons());
         pendingProcedureView.setOnMouseClicked(
-                (observable) -> pastProcedureView.getSelectionModel().clearSelection());
+                (observable) -> {
+                    selectedTableView = pendingProcedureView;
+                    pastProcedureView.getSelectionModel().clearSelection();
+                });
         pastProcedureView.setOnMouseClicked(
-                (observable) -> pendingProcedureView.getSelectionModel().clearSelection());
+                (observable) -> {
+                    selectedTableView = pastProcedureView;
+                    pendingProcedureView.getSelectionModel().clearSelection();
+                });
 
         pendingProcedureView.setSortPolicy(ViewProceduresController::getTableSortPolicy);
         pastProcedureView.setSortPolicy(ViewProceduresController::getTableSortPolicy);
@@ -255,7 +260,6 @@ public class ViewProceduresController extends SubController {
             for (Organ organ : affectedOrgansField.getCheckModel().getCheckedItems()) {
                 record.getAffectedOrgans().add(organ);
             }
-            System.out.println("Summary for new record is: " + record.getSummary());
             AddProcedureRecordAction action = new AddProcedureRecordAction(client, record);
             invoker.execute(action);
 

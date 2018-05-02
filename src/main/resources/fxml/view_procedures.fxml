@@ -63,7 +63,7 @@
                               <Font size="14.0" />
                             </font>
                           </Label>
-                                    <CheckComboBox fx:id="affectedOrgansField" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
+                                    <CheckComboBox fx:id="affectedOrgansField" maxWidth="150.0" HBox.hgrow="ALWAYS" />
                           <Button alignment="TOP_LEFT" minWidth="96.0" mnemonicParsing="false" onAction="#addProcedure" text="Add Procedure" />
                         </children>
                       </HBox>
