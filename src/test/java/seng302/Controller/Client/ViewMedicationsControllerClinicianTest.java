@@ -285,6 +285,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
         clickOn("#viewActiveIngredientsButton");
         checkAlertHasHeaderAndContent("Active ingredients in Ibuprofen", ibuprofenActiveIngredients);
         press(KeyCode.ENTER); // Close the dialog
+        release(KeyCode.ENTER);
     }
 
     @Test
@@ -302,6 +303,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
         clickOn("#viewActiveIngredientsButton");
         checkAlertHasHeaderAndContent("Active ingredients in Med C", "No results found for Med C");
         press(KeyCode.ENTER); // Close the dialog
+        release(KeyCode.ENTER);
     }
 
     @Test
@@ -321,6 +323,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
                 "Active ingredients in A medication that should throw IOException",
                 "Error loading results. Please try again later.");
         press(KeyCode.ENTER); // Close the dialog
+        release(KeyCode.ENTER);
     }
 
     //------ Viewing interactions between drugs ------------
@@ -577,4 +580,5 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
         press(KeyCode.ENTER); // Close the dialog
         release(KeyCode.ENTER);
     }
+
 }
