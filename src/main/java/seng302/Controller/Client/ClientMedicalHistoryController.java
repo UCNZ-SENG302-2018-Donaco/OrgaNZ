@@ -1,4 +1,4 @@
-package seng302.Controller.Clinician;
+package seng302.Controller.Client;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -37,7 +37,7 @@ import seng302.Utilities.View.PageNavigator;
 /**
  * Controller for the medical history page, which shows a list of all current and past illnesses for the client.
  */
-public class ClinicianMedicalHistoryController extends SubController {
+public class ClientMedicalHistoryController extends SubController {
 
     private static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("d MMM yyyy");
 
@@ -68,7 +68,7 @@ public class ClinicianMedicalHistoryController extends SubController {
     @FXML
     private TableColumn<IllnessRecord, Boolean> chronicCurrCol;
     @FXML
-    private Button moveToHistoryButton, moveToCurrentButton, deleteButton, toggleChronicButton;
+    private Button toggleCuredButton, deleteButton, toggleChronicButton;
 
     private TableView<IllnessRecord> selectedTableView = null;
 
@@ -142,7 +142,7 @@ public class ClinicianMedicalHistoryController extends SubController {
     /**
      * Gets the current session and action invoker from the global state.
      */
-    public ClinicianMedicalHistoryController() {
+    public ClientMedicalHistoryController() {
         session = State.getSession();
         invoker = State.getInvoker();
     }
@@ -184,8 +184,8 @@ public class ClinicianMedicalHistoryController extends SubController {
                     enableAppropriateButtons();
                 });
 
-        currentIllnessView.setSortPolicy(ClinicianMedicalHistoryController::getChronicFirstSortPolicy);
-        pastIllnessView.setSortPolicy(ClinicianMedicalHistoryController::getChronicFirstSortPolicy);
+        currentIllnessView.setSortPolicy(ClientMedicalHistoryController::getChronicFirstSortPolicy);
+        pastIllnessView.setSortPolicy(ClientMedicalHistoryController::getChronicFirstSortPolicy);
 
         dateDiagnosedPicker.setValue(LocalDate.now());
     }
@@ -242,21 +242,31 @@ public class ClinicianMedicalHistoryController extends SubController {
 
     private void enableAppropriateButtons() {
         if (windowContext.isClinViewClientWindow()) {
-            if (getSelectedRecord() == null) {
-                moveToCurrentButton.setDisable(true);
-                moveToHistoryButton.setDisable(true);
+            IllnessRecord selectedRecord = getSelectedRecord();
+            if (selectedRecord == null) {
+                toggleCuredButton.setDisable(true);
                 toggleChronicButton.setDisable(true);
                 deleteButton.setDisable(true);
+                toggleCuredButton.setText("Mark as Cured");
+                toggleChronicButton.setText("Mark as Chronic");
+
             } else if (selectedTableView == currentIllnessView) {
-                moveToCurrentButton.setDisable(true);
-                moveToHistoryButton.setDisable(false);
+                toggleCuredButton.setDisable(false);
                 toggleChronicButton.setDisable(false);
                 deleteButton.setDisable(false);
+                toggleCuredButton.setText("Mark as Cured");
+                if (selectedRecord.isChronic()) {
+                    toggleChronicButton.setText("Mark as not Chronic");
+                } else {
+                    toggleChronicButton.setText("Mark as Chronic");
+                }
+
             } else if (selectedTableView == pastIllnessView) {
-                moveToCurrentButton.setDisable(false);
-                moveToHistoryButton.setDisable(true);
+                toggleCuredButton.setDisable(false);
                 toggleChronicButton.setDisable(false);
                 deleteButton.setDisable(false);
+                toggleCuredButton.setText("Mark as not Cured");
+                toggleChronicButton.setText("Mark as Chronic");
             }
         }
     }
@@ -274,38 +284,38 @@ public class ClinicianMedicalHistoryController extends SubController {
     }
 
     /**
-     * Moves the currently selected illness record to history, setting its cured date to the current date.
+     * Moves the currently selected illness record.
+     * If it is chronic, it doesn't move it.
+     * If it is in past illnesses, then it is moved to current illnesses and its cured date is set to null.
+     * If it is in current illnesses, then it is moved to past illnesses and its cured date to the current date.
      */
     @FXML
-    private void moveIllnessToHistory() {
+    private void toggleCured() {
         IllnessRecord record = getSelectedRecord();
         if (record != null) {
             if (record.isChronic()) {
                 PageNavigator.showAlert(AlertType.ERROR,
                         "Can't move a chronic illness to past illnesses.",
-                        "An illness can't be cured if it is chronic.");
-            } else {
+                        "An illness can't be cured if it is chronic. If the illness has been cured, first mark it as"
+                                + " not chronic.");
+            } else if (selectedTableView == currentIllnessView) {
+                // Moving from current to past (marking as cured)
                 ModifyIllnessRecordAction action = new ModifyIllnessRecordAction(record);
                 action.changeCuredDate(LocalDate.now());
 
                 invoker.execute(action);
                 PageNavigator.refreshAllWindows();
-            }
-        }
-    }
+            } else if (selectedTableView == pastIllnessView) {
+                // Moving from past to current (marking as not cured)
+                ModifyIllnessRecordAction action = new ModifyIllnessRecordAction(record);
+                action.changeCuredDate(null);
+                invoker.execute(action);
+                PageNavigator.refreshAllWindows();
 
-    /**
-     * Moves the currently selected illness record to history, setting its cured date to null.
-     */
-    @FXML
-    private void moveIllnessToCurrent() {
-        IllnessRecord record = getSelectedRecord();
-        if (record != null) {
-            ModifyIllnessRecordAction action = new ModifyIllnessRecordAction(record);
-            action.changeCuredDate(null);
-            invoker.execute(action);
-            PageNavigator.refreshAllWindows();
+            }
+
         }
+
     }
 
     /**
@@ -333,17 +343,23 @@ public class ClinicianMedicalHistoryController extends SubController {
         if (record != null) {
             ModifyIllnessRecordAction action = new ModifyIllnessRecordAction(record);
             if (record.isChronic()) {
+                // Current, chronic illness -> Current illness
                 action.changeChronicStatus(false);
             } else {
                 if (record.getCuredDate() != null) {
+                    // Past illness -> Current, chronic illness
                     action.changeCuredDate(null);
                 }
+                // Illness -> chronic illness
                 action.changeChronicStatus(true);
             }
             invoker.execute(action);
             PageNavigator.refreshAllWindows();
         }
+
     }
+
+
 
     /**
      * Adds a new illness record based on the information in the add new illness record inputs.

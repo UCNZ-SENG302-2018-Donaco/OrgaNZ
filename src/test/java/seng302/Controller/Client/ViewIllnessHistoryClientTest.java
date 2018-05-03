@@ -84,11 +84,10 @@ public class ViewIllnessHistoryClientTest extends ControllerTest {
 
     @Test
     public void clientCantModifyIllnessHistory() {
-        verifyThat("#moveToHistoryButton", isVisible().negate());
-        verifyThat("#moveToCurrentButton", isVisible().negate());
+        verifyThat("#toggleCuredButton", isVisible().negate());
+        verifyThat("#toggleChronicButton", isVisible().negate());
         verifyThat("#deleteButton", isVisible().negate());
     }
-
 
     @Test
     public void pastIllnessContainsRecordsTest() {
