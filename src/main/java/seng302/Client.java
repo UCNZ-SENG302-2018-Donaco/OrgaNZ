@@ -1,5 +1,7 @@
 package seng302;
 
+import static seng302.TransplantRequest.RequestStatus.*;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
@@ -13,7 +15,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import seng302.TransplantRequest.RequestStatus;
 import seng302.Utilities.Enums.BloodType;
 import seng302.Utilities.Enums.Gender;
 import seng302.Utilities.Enums.Organ;
@@ -308,7 +309,7 @@ public class Client {
     public Set<Organ> getCurrentlyRequestedOrgans() {
         return transplantRequests
                 .stream()
-                .filter(request -> request.getStatus() == RequestStatus.WAITING)
+                .filter(request -> request.getStatus() == WAITING)
                 .map(TransplantRequest::getRequestedOrgan)
                 .collect(Collectors.toCollection(() -> EnumSet.noneOf(Organ.class)));
     }
@@ -492,5 +493,22 @@ public class Client {
 
     public boolean isReceiver() {
         return transplantRequests.size() > 0;
+    }
+
+    /**
+     * Marks the client as dead and marks all organs as no for reception
+     *
+     * @param dateOfDeath LocalDate that the client died
+     */
+    public void markDead(LocalDate dateOfDeath) {
+        this.dateOfDeath = dateOfDeath;
+
+        for (TransplantRequest request : transplantRequests) {
+            if (request.getStatus() == WAITING) {
+                request.setStatus(CANCELLED);
+                request.setResolvedDate(LocalDateTime.now());
+                request.setResolvedReason("death");
+            }
+        }
     }
 }

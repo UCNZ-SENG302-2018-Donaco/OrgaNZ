@@ -30,6 +30,19 @@ public class ClientManagerTest {
     }
 
     @Test
+    public void clientListConstructorTest() {
+        Client client3 = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        Client client4 = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        ArrayList<Client> clientList = new ArrayList<>();
+        clientList.add(client3);
+        clientList.add(client4);
+
+        ClientManager manager = new ClientManager(clientList);
+        ArrayList<Client> managerClientList = manager.getClients();
+        assertEquals(clientList, managerClientList);
+    }
+
+    @Test
     public void addClientTest() {
         manager.addClient(client2);
         assertTrue(manager.getClients().contains(client2));

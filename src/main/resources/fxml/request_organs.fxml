@@ -3,9 +3,12 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.ChoiceBox?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
@@ -49,7 +52,7 @@
                                           <Insets right="10.0" />
                                        </HBox.margin>
                         </Text>
-                                    <ChoiceBox fx:id="newOrganChoiceBox" prefHeight="30.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
+                                    <ChoiceBox fx:id="newOrganChoiceBox" prefHeight="30.0" HBox.hgrow="ALWAYS">
                                        <HBox.margin>
                                           <Insets right="-1.0" />
                                        </HBox.margin></ChoiceBox>
@@ -86,8 +89,10 @@
                                     </TableView>
                                     <HBox fx:id="resolveRequestBar" prefHeight="100.0" prefWidth="200.0" spacing="5.0">
                                        <children>
-                                          <Button mnemonicParsing="false" onAction="#cancelRequest" text="Mark as Cancelled" />
-                                          <Button layoutX="320.0" layoutY="10.0" mnemonicParsing="false" onAction="#completeRequest" text="Mark as Completed" />
+                                          <ComboBox fx:id="cancelTransplantOptions" prefHeight="25.0" promptText="Resolution Reason" HBox.hgrow="ALWAYS" />
+                                          <TextField fx:id="customReason" promptText="Reason" visible="false" />
+                                          <DatePicker fx:id="deathDatePicker" promptText="Date of Death" visible="false" />
+                                          <Button alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#resolveRequest" text="Resolve Request" />
                                        </children>
                                        <VBox.margin>
                                           <Insets top="5.0" />
@@ -112,8 +117,9 @@
                                        <columns>
                                           <TableColumn fx:id="organPastCol" prefWidth="75.0" text="Organ" />
                                           <TableColumn fx:id="requestDatePastCol" prefWidth="75.0" text="Date Requested" />
-                                          <TableColumn fx:id="requestStatusPastCol" prefWidth="75.0" text="Resolution" />
                                           <TableColumn fx:id="resolvedDatePastCol" prefWidth="75.0" text="Date Resolved" />
+                                          <TableColumn fx:id="requestStatusPastCol" prefWidth="75.0" text="Resolution" />
+                                          <TableColumn fx:id="resolvedReasonPastCol" prefWidth="75.0" text="Reason" />
                                        </columns>
                                        <VBox.margin>
                                           <Insets top="5.0" />
