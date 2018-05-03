@@ -1,6 +1,7 @@
 package seng302.Utilities;
 
 import java.io.IOException;
+import java.util.logging.ConsoleHandler;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -40,5 +41,14 @@ public class LoggerSetup {
         logger.addHandler(fileTxt);
 
         logger.info("New session");
+    }
+
+    static public void enableConsole() {
+
+        Logger logger = Logger.getLogger("");
+
+        ConsoleHandler handler = new ConsoleHandler();
+
+        logger.addHandler(handler);
     }
 }

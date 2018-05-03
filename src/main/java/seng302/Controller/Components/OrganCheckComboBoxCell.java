@@ -62,10 +62,9 @@ public class OrganCheckComboBoxCell<T> extends TableCell<T, Set<Organ>> {
         if (item == null || empty) {
             setGraphic(null);
         } else {
+            checkComboBox.getCheckModel().clearChecks();
             for (Organ organ : item) {
-                if (!checkComboBox.getCheckModel().isChecked(organ)) {
-                    checkComboBox.getCheckModel().check(organ);
-                }
+                checkComboBox.getCheckModel().check(organ);
             }
 
             if (getTableColumn().isEditable()) {
