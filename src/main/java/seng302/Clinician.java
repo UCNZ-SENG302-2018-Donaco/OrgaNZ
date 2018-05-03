@@ -2,6 +2,7 @@ package seng302;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Objects;
 
 import seng302.Utilities.Enums.Region;
 
@@ -9,6 +10,8 @@ import seng302.Utilities.Enums.Region;
  * The main Clinician class.
  */
 public class Clinician {
+
+    private final int staffId;
 
     private final LocalDateTime created_on;
     private LocalDateTime modified_on;
@@ -21,7 +24,6 @@ public class Clinician {
     private String workAddress;
     private Region region;
 
-    private int staffId;
     private String password;
 
     /**
@@ -110,11 +112,6 @@ public class Clinician {
         return staffId;
     }
 
-    public void setStaffId(int staffId) {
-        this.staffId = staffId;
-        addUpdate("staffId");
-    }
-
     public String getPassword() {
         return password;
     }
@@ -140,5 +137,30 @@ public class Clinician {
         }
         fullName += lastName;
         return fullName;
+    }
+
+    /**
+     * Clinician objects are identified by their staffID
+     * @param o The object to compare
+     * @return If the Clinician is a match
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof Clinician)) {
+            return false;
+        }
+        Clinician clinician = (Clinician) o;
+        return clinician.staffId == this.staffId;
+    }
+
+    /**
+     * Clinician objects are identified by their staffID
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(staffId);
     }
 }

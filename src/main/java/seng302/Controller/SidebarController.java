@@ -53,6 +53,8 @@ public class SidebarController extends SubController {
     @FXML
     private Button registerOrgansButton;
     @FXML
+    private Button illnessHistoryButton;
+    @FXML
     private Button undoButton;
     @FXML
     private Button redoButton;
@@ -80,6 +82,7 @@ public class SidebarController extends SubController {
             hideButton(viewClientButton);
             hideButton(registerOrganDonationButton);
             hideButton(viewMedicationsButton);
+            hideButton(illnessHistoryButton);
         }
 
         if (windowContext.isClinViewClientWindow()) {
@@ -187,6 +190,14 @@ public class SidebarController extends SubController {
     @FXML
     private void goToHistory() {
         PageNavigator.loadPage(Page.HISTORY, mainController);
+    }
+
+    /**
+     * Redirects the GUI to the Illness History page.
+     */
+    @FXML
+    private void goToIllnessHistory() {
+        PageNavigator.loadPage(Page.VIEW_MEDICAL_HISTORY, mainController);
     }
 
     /**
