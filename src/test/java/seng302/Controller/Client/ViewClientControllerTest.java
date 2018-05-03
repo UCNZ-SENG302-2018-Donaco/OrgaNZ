@@ -23,7 +23,7 @@ import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.util.NodeQueryUtils.isVisible;
 
 public class ViewClientControllerTest extends ControllerTest {
-    private Client testClient = new Client("a", "", "b", LocalDate.now(), 1);
+    private Client testClient = new Client("a", "", "b", LocalDate.now().minusDays(10), 1);
 
     @Override
     protected Page getPage() {
@@ -44,7 +44,6 @@ public class ViewClientControllerTest extends ControllerTest {
         testClient.setRegion(Region.AUCKLAND);
         testClient.setHeight(180);
         testClient.setWeight(80);
-        testClient.setDateOfBirth(LocalDate.now().minusDays(10));
         testClient.setCurrentAddress("1 Test Road");
     }
 
@@ -109,14 +108,15 @@ public class ViewClientControllerTest extends ControllerTest {
                 .type(KeyCode.BACK_SPACE)
                 .type(KeyCode.BACK_SPACE);
         clickOn("#saveChanges");
-        assertEquals(LocalDate.now(), testClient.getDateOfBirth());
+        assertEquals(LocalDate.now().minusDays(10), testClient.getDateOfBirth());
     }
 
     @Test
     public void invalidChangesDODAfterToday() {
-        clickOn("#dod").write(LocalDate.of(3000, 1, 1).format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        clickOn("#dod").write(LocalDate.now().minusDays(1).format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         clickOn("#saveChanges");
-        assertEquals(LocalDate.now(), testClient.getDateOfBirth());
+        press(KeyCode.ENTER);
+        assertEquals(LocalDate.now().minusDays(1), testClient.getDateOfDeath());
     }
 
     @Test
