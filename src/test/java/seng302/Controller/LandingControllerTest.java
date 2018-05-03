@@ -3,7 +3,6 @@ package seng302.Controller;
 import org.junit.Test;
 import seng302.State.State;
 import seng302.Utilities.View.Page;
-import seng302.Utilities.View.WindowContext;
 
 import static org.junit.Assert.*;
 
