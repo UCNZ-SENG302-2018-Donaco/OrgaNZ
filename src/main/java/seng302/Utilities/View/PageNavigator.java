@@ -2,6 +2,7 @@ package seng302.Utilities.View;
 
 import java.io.IOException;
 import java.util.Optional;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javafx.fxml.FXMLLoader;
@@ -9,6 +10,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
@@ -22,7 +24,7 @@ import seng302.State.State;
  */
 public class PageNavigator {
 
-    private final static Logger LOGGER = Logger.getLogger(PageNavigator.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(PageNavigator.class.getName());
 
     /**
      * Loads the given page in the given MainController.
@@ -39,8 +41,8 @@ public class PageNavigator {
             controller.setSubController(subController);
             controller.setPage(page, loadedPage);
         } catch (IOException e) {
-            LOGGER.severe("Couldn't load the page\n" + e.getStackTrace());
-            showAlert(Alert.AlertType.ERROR, "Could not load page: " + page.toString(),
+            LOGGER.log(Level.SEVERE, "Couldn't load the page", e);
+            showAlert(Alert.AlertType.ERROR, "Could not load page: " + page,
                     "The page loader failed to load the layout for the page.");
         }
     }
@@ -76,7 +78,7 @@ public class PageNavigator {
 
             return mainController;
         } catch (IOException e) {
-            LOGGER.severe("Error loading new window\n" + e.getStackTrace());
+            LOGGER.log(Level.SEVERE, "Error loading new window\n", e);
             // Will throw if MAIN's fxml file could not be loaded.
             showAlert(Alert.AlertType.ERROR, "New window could not be created",
                     "The page loader failed to load the layout for the new window.");
@@ -103,7 +105,7 @@ public class PageNavigator {
         alert.setTitle(title);
         alert.setHeaderText(title);
         alert.setContentText(bodyText);
-        alert.setResizable(true);
+        alert.getDialogPane().setContent(new Label(bodyText));
         resizeAlert(alert);
         return alert;
     }
