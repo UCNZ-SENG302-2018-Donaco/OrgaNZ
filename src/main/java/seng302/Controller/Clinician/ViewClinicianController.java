@@ -5,10 +5,7 @@ import java.util.Objects;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
@@ -49,6 +46,8 @@ public class ViewClinicianController extends SubController {
     private PasswordField password;
     @FXML
     private ChoiceBox<Region> region;
+    @FXML
+    private Button saveChangesButton;
 
     public ViewClinicianController() {
         invoker = State.getInvoker();
@@ -126,13 +125,6 @@ public class ViewClinicianController extends SubController {
         } else {
             fnameLabel.setTextFill(Color.BLACK);
         }
-
-        if (lname.getText().equals("")) {
-            lnameLabel.setTextFill(Color.RED);
-            update = false;
-        } else {
-            lnameLabel.setTextFill(Color.BLACK);
-        }
         if (lname.getText().equals("")) {
             lnameLabel.setTextFill(Color.RED);
             update = false;
@@ -144,7 +136,7 @@ public class ViewClinicianController extends SubController {
 
 
     /**
-     * Checks if the password has been update. If the PasswordField is left blank, the old password remains current.
+     * Checks if the password has been updated. If the PasswordField is left blank, the old password remains current.
      * Otherwise the current password is updated to the newly entered value in the field.
      * @return the users password.
      */
