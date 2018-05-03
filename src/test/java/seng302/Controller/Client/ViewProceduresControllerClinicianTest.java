@@ -40,7 +40,7 @@ public class ViewProceduresControllerClinicianTest extends ControllerTest {
     private final ProcedureRecord[] pendingRecords = {
             new ProcedureRecord("Summary4", "Description4", LocalDate.of(2045, 10, 15))
     };
-    private Client testClient = new Client(1);
+    private Client testClient = new Client( "Alex", null, "Tester", LocalDate.of(1998, 5, 9), 1);
     private Clinician testClinician = new Clinician("A", "B", "C", "D", Region.UNSPECIFIED, 0, "E");
 
     @Override
