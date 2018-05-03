@@ -34,6 +34,7 @@ public class SidebarController extends SubController {
     private static final String ERROR_SAVING_MESSAGE = "There was an error saving to the file specified.";
     private static final String ERROR_LOADING_MESSAGE = "There was an error loading the file specified.";
 
+    @FXML
     private Button viewClientButton, registerOrganDonationButton, viewMedicationsButton, viewClinicianButton,
             searchButton, transplantsButton, logoutButton, requestOrganDonationButton, illnessHistoryButton,
             viewProceduresButton, undoButton, redoButton;
