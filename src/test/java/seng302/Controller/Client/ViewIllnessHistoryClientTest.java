@@ -16,9 +16,7 @@ import seng302.Utilities.View.WindowContext;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ViewIllnessHistoryClientTest extends ControllerTest{
-
-    private Client testClient = new Client();
+public class ViewIllnessHistoryClientTest extends ControllerTest {
 
     private final IllnessRecord[] testPastIllnessRecords = {
             new IllnessRecord(
@@ -41,6 +39,7 @@ public class ViewIllnessHistoryClientTest extends ControllerTest{
                     null,
                     false)
     };
+    private Client testClient = new Client();
 
     @Override
     protected Page getPage() {
@@ -72,14 +71,14 @@ public class ViewIllnessHistoryClientTest extends ControllerTest{
     }
 
     @Test
-    public void clientCanSeeBothTables(){
-        verifyThat("#pastIllnessView",isVisible());
-        verifyThat("#currentIllnessView",isVisible());
+    public void clientCanSeeBothTables() {
+        verifyThat("#pastIllnessView", isVisible());
+        verifyThat("#currentIllnessView", isVisible());
     }
 
     @Test
-    public void clientCantAddIllness(){
-        verifyThat("#illnessNameField",isVisible().negate());
+    public void clientCantAddIllness() {
+        verifyThat("#illnessNameField", isVisible().negate());
 
     }
 
