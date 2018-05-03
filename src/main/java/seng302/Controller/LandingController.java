@@ -11,9 +11,6 @@ import seng302.Utilities.View.PageNavigator;
  */
 public class LandingController extends SubController {
 
-    @FXML
-    Button createClientButton, loginClientButton, createClinicianButton, loginClinicianButton;
-
     /**
      * Override so we can set the page title.
      * @param mainController The MainController

@@ -48,10 +48,6 @@ public class TransplantRequest {
         return status;
     }
 
-    /**
-     * Should only be used by ResolveTransplantRequestAction
-     * @return reason that the transplant request was resolved
-     */
     public String getResolvedReason() {
         return resolvedReason;
     }

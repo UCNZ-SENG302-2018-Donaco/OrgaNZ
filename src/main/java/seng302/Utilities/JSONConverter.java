@@ -1,12 +1,20 @@
 package seng302.Utilities;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.lang.reflect.Type;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -19,6 +27,7 @@ import seng302.TransplantRequest;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 
@@ -62,10 +71,12 @@ public final class JSONConverter {
      * @throws IOException Throws IOExceptions
      */
     public static void saveToFile(File file) throws IOException {
-        Writer writer = new FileWriter(file);
-        ClientManager clientManager = State.getClientManager();
-        gson.toJson(clientManager.getClients(), writer);
-        writer.close();
+        try(OutputStream outputStream = new FileOutputStream(file)) {
+            try(Writer writer = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8)) {
+                ClientManager clientManager = State.getClientManager();
+                gson.toJson(clientManager.getClients(), writer);
+            }
+        }
     }
 
     /**
@@ -74,19 +85,26 @@ public final class JSONConverter {
      * @throws IOException Throws IOExceptions
      */
     public static void loadFromFile(File file) throws IOException {
-        Reader reader = new FileReader(file);
-        ArrayList<Client> clients;
-        Type collectionType = new TypeToken<ArrayList<Client>>() {
-        }.getType();
+        try(InputStream fileStream = new FileInputStream(file)) {
+            try(Reader reader = new InputStreamReader(fileStream, StandardCharsets.UTF_8)) {
+                try {
+                    ArrayList<Client> clients;
+                    Type collectionType = new TypeToken<ArrayList<Client>>() {
+                    }.getType();
 
-        clients = gson.fromJson(reader, collectionType);
-        for (Client client : clients) {
-            for (TransplantRequest request : client.getTransplantRequests()) {
-                request.setClient(client);
+                    clients = gson.fromJson(reader, collectionType);
+                    for (Client client : clients) {
+                        for (TransplantRequest request : client.getTransplantRequests()) {
+                            request.setClient(client);
+                        }
+                    }
+                    ClientManager clientManager = State.getClientManager();
+                    clientManager.setClients(clients);
+                }  catch (JsonSyntaxException e) {
+                    throw new IllegalArgumentException("Not a valid json file", e);
+                }
             }
         }
-        ClientManager clientManager = State.getClientManager();
-        clientManager.setClients(clients);
     }
 
     /**

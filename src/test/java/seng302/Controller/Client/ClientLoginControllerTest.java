@@ -29,20 +29,20 @@ public class ClientLoginControllerTest extends ControllerTest {
 
     @Test
     public void noSelectLogin() {
-        clickOn("#signInButton");
+        clickOn("Sign In");
         assertEquals(Page.LOGIN_CLIENT, mainController.getCurrentPage());
     }
 
     @Test
     public void validLogin() {
         clickOn((Node) lookup(".list-cell").nth(0).query());
-        clickOn("#signInButton");
+        clickOn("Sign In");
         assertEquals(Page.VIEW_CLIENT, mainController.getCurrentPage());
     }
 
     @Test
     public void goBackButtontest() {
-        clickOn("#goBackButton");
+        clickOn("Back");
         assertEquals(Page.LANDING, mainController.getCurrentPage());
     }
 

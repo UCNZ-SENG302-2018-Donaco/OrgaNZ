@@ -30,7 +30,7 @@ public class ClinicianLoginControllerTest extends ControllerTest {
     public void loginDefaultAdmin() {
         clickOn("#staffId").write("0");
         clickOn("#password").write("admin");
-        clickOn("#signInButton");
+        clickOn("Sign In");
         assertEquals(Page.VIEW_CLINICIAN, mainController.getCurrentPage());
     }
 
@@ -38,7 +38,7 @@ public class ClinicianLoginControllerTest extends ControllerTest {
     public void loginTestAdmin() {
         clickOn("#staffId").write("3");
         clickOn("#password").write("k");
-        clickOn("#signInButton");
+        clickOn("Sign In");
         assertEquals(Page.VIEW_CLINICIAN, mainController.getCurrentPage());
     }
 
@@ -46,7 +46,7 @@ public class ClinicianLoginControllerTest extends ControllerTest {
     public void nonExistingId() {
         clickOn("#staffId").write("9");
         clickOn("#password").write("k");
-        clickOn("#signInButton");
+        clickOn("Sign In");
         clickOn("OK");
         assertEquals(Page.LOGIN_CLINICIAN, mainController.getCurrentPage());
     }
@@ -55,7 +55,7 @@ public class ClinicianLoginControllerTest extends ControllerTest {
     public void incorrectPassword() {
         clickOn("#staffId").write("0");
         clickOn("#password").write("k");
-        clickOn("#signInButton");
+        clickOn("Sign In");
         clickOn("OK");
         assertEquals(Page.LOGIN_CLINICIAN, mainController.getCurrentPage());
     }
@@ -64,14 +64,14 @@ public class ClinicianLoginControllerTest extends ControllerTest {
     public void invalidStaffIdInput() {
         clickOn("#staffId").write("a");
         clickOn("#password").write("k");
-        clickOn("#signInButton");
+        clickOn("Sign In");
         clickOn("OK");
         assertEquals(Page.LOGIN_CLINICIAN, mainController.getCurrentPage());
     }
 
     @Test
     public void goBackButtonTest() {
-        clickOn("#goBackButton");
+        clickOn("Back");
         assertEquals(Page.LANDING, mainController.getCurrentPage());
     }
 

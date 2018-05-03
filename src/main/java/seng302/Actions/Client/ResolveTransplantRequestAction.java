@@ -43,6 +43,10 @@ public class ResolveTransplantRequestAction extends Action {
         }
     }
 
+    /**
+     * Apply all changes to the transplantRequest.
+     * @throws IllegalStateException If no changes were made.
+     */
     @Override
     public void execute() {
         request.setStatus(newStatus);

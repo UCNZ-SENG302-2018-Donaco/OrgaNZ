@@ -44,6 +44,7 @@ public class ViewClientControllerTest extends ControllerTest {
         testClient.setRegion(Region.AUCKLAND);
         testClient.setHeight(180);
         testClient.setWeight(80);
+        testClient.setDateOfBirth(LocalDate.now().minusDays(10));
         testClient.setCurrentAddress("1 Test Road");
     }
 
@@ -53,13 +54,15 @@ public class ViewClientControllerTest extends ControllerTest {
     }
 
     @Test
-    public void validChangesAll() {
+    public void validChangesAll() throws Exception {
         clickOn("#fname").type(KeyCode.BACK_SPACE).write("z");
         clickOn("#lname").type(KeyCode.BACK_SPACE).write("q");
-        clickOn("#dod").write(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        clickOn("#dod").write(LocalDate.now().minusDays(2).format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         clickOn("#region");
         clickOn("West Coast");
         clickOn("#saveChanges");
+        press(KeyCode.ENTER);
+
         assertEquals("z", testClient.getFirstName());
         assertEquals("q", testClient.getLastName());
         assertTrue(testClient.getDateOfDeath() != null);

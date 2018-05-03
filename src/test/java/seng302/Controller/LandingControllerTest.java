@@ -3,6 +3,7 @@ package seng302.Controller;
 import org.junit.Test;
 import seng302.State.State;
 import seng302.Utilities.View.Page;
+import seng302.Utilities.View.WindowContext;
 
 import static org.junit.Assert.*;
 
@@ -19,6 +20,7 @@ public class LandingControllerTest extends ControllerTest {
     @Override
     protected void initState() {
         State.init();
+        mainController.setWindowContext(WindowContext.defaultContext());
     }
 
     @Test
