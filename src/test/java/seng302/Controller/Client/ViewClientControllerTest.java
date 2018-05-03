@@ -4,6 +4,8 @@ import javafx.scene.Node;
 import javafx.scene.control.DatePicker;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.Pane;
+
+import org.junit.Before;
 import org.junit.Test;
 import org.testfx.api.FxRobotException;
 import seng302.Client;
@@ -39,7 +41,11 @@ public class ViewClientControllerTest extends ControllerTest {
         mainController.setWindowContext(WindowContext.defaultContext());
     }
 
-    private void setClientDetails() {
+    @Before
+    public void setClientDetails() {
+        testClient.setFirstName("a");
+        testClient.setLastName("b");
+        testClient.setDateOfBirth(LocalDate.now().minusDays(10));
         testClient.setBloodType(BloodType.A_POS);
         testClient.setRegion(Region.AUCKLAND);
         testClient.setHeight(180);
@@ -53,7 +59,7 @@ public class ViewClientControllerTest extends ControllerTest {
     }
 
     @Test
-    public void validChangesAll() throws Exception {
+    public void validChangesAll() {
         clickOn("#fname").type(KeyCode.BACK_SPACE).write("z");
         clickOn("#lname").type(KeyCode.BACK_SPACE).write("q");
         clickOn("#dod").write(LocalDate.now().minusDays(2).format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
@@ -113,10 +119,11 @@ public class ViewClientControllerTest extends ControllerTest {
 
     @Test
     public void invalidChangesDODAfterToday() {
-        clickOn("#dod").write(LocalDate.now().minusDays(1).format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        testClient = new Client("a", "", "b", LocalDate.now().minusDays(10), 1);
+        clickOn("#dod").write(LocalDate.now().plusDays(1).format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         clickOn("#saveChanges");
         press(KeyCode.ENTER);
-        assertEquals(LocalDate.now().minusDays(1), testClient.getDateOfDeath());
+        assertEquals(null, testClient.getDateOfDeath());
     }
 
     @Test
