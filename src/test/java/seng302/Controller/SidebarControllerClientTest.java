@@ -76,7 +76,7 @@ public class SidebarControllerClientTest extends ControllerTest{
 
     @Test
     public void testClickOnHistory() {
-        clickOn("#viewHistoryButton");
+        clickOn("Action history");
         assertEquals(Page.HISTORY, mainController.getCurrentPage());
     }
 
