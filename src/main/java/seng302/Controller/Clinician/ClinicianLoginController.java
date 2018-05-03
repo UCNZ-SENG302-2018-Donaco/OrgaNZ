@@ -2,6 +2,7 @@ package seng302.Controller.Clinician;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
@@ -25,6 +26,8 @@ public class ClinicianLoginController extends SubController {
     private TextField staffId;
     @FXML
     private PasswordField password;
+    @FXML
+    private Button signInButton, goBackButton;
 
     private ClinicianManager clinicianManager;
     private int id;

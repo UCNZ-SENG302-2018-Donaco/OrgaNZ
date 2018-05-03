@@ -2,6 +2,7 @@ package seng302.Controller.Client;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 
@@ -22,6 +23,8 @@ public class ClientLoginController extends SubController {
 
     @FXML
     private ListView<Client> clientList;
+    @FXML
+    private Button signInButton, goBackButton;
 
     /**
      * Override so we can set the page title.

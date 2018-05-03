@@ -2,6 +2,7 @@ package seng302.Controller.Client;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
@@ -28,6 +29,8 @@ public class CreateClientController extends SubController {
     private DatePicker dobFld;
     @FXML
     private TextField firstNameFld, middleNamefld, lastNamefld;
+    @FXML
+    private Button createButton, goBackButton;
 
     private ClientManager manager;
     private ActionInvoker invoker;
