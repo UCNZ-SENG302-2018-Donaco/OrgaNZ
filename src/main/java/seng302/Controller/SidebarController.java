@@ -4,6 +4,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -27,8 +29,11 @@ import org.controlsfx.control.Notifications;
  * Controller for the sidebar pane imported into every page in the main part of the GUI.
  */
 public class SidebarController extends SubController {
+    private static final Logger LOGGER = Logger.getLogger(SidebarController.class.getName());
 
-    @FXML
+    private static final String ERROR_SAVING_MESSAGE = "There was an error saving to the file specified.";
+    private static final String ERROR_LOADING_MESSAGE = "There was an error loading the file specified.";
+
     private Button viewClientButton, registerOrganDonationButton, viewMedicationsButton, viewClinicianButton,
             searchButton, transplantsButton, logoutButton, requestOrganDonationButton, illnessHistoryButton,
             viewProceduresButton, undoButton, redoButton;
@@ -210,9 +215,8 @@ public class SidebarController extends SubController {
                 PageNavigator.refreshAllWindows();
             }
         } catch (URISyntaxException | IOException e) {
-            PageNavigator.showAlert(Alert.AlertType.WARNING, "Save Failed",
-                    "There was an error saving to the file specified.");
-            System.err.println(e.getMessage());
+            PageNavigator.showAlert(Alert.AlertType.WARNING, "Save Failed", ERROR_SAVING_MESSAGE);
+            LOGGER.log(Level.SEVERE, ERROR_SAVING_MESSAGE, e);
         }
     }
 
@@ -240,14 +244,16 @@ public class SidebarController extends SubController {
                 //State.logout();
                 mainController.resetWindowContext();
                 Notifications.create().title("Loaded data").text(
-                        String.format("Successfully loaded %d clients from file", State.getClientManager()
-                                .getClients().size())).showInformation();
+                        String.format("Successfully loaded %d clients from file",
+                                State.getClientManager().getClients().size()))
+                        .showInformation();
                 PageNavigator.loadPage(Page.LANDING, mainController);
             }
-        } catch (URISyntaxException | IOException e) {
+        } catch (URISyntaxException | IOException | IllegalArgumentException e) {
             PageNavigator.showAlert(Alert.AlertType.WARNING, "Load Failed",
-                    "Warning: unrecognisable or invalid file. please make \n sure that you have selected the correct file type.");
-            System.err.println(e.getMessage());
+                    "Warning: unrecognisable or invalid file. please make\n"
+                            + "sure that you have selected the correct file type.");
+            LOGGER.log(Level.SEVERE, ERROR_LOADING_MESSAGE, e);
         }
     }
 
