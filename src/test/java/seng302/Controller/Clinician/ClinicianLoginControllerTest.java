@@ -1,15 +1,15 @@
 package seng302.Controller.Clinician;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+
 import seng302.Clinician;
 import seng302.Controller.ControllerTest;
-import seng302.Controller.MainController;
 import seng302.State.State;
 import seng302.Utilities.Enums.Region;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.WindowContext;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class ClinicianLoginControllerTest extends ControllerTest {
     private Clinician testClinician = new Clinician("Mr", null, "Tester", "9 Fake St", Region.AUCKLAND, 3, "k");
@@ -30,7 +30,7 @@ public class ClinicianLoginControllerTest extends ControllerTest {
     public void loginDefaultAdmin() {
         clickOn("#staffId").write("0");
         clickOn("#password").write("admin");
-        clickOn("Sign In");
+        clickOn("Log in");
         assertEquals(Page.VIEW_CLINICIAN, mainController.getCurrentPage());
     }
 
@@ -38,7 +38,7 @@ public class ClinicianLoginControllerTest extends ControllerTest {
     public void loginTestAdmin() {
         clickOn("#staffId").write("3");
         clickOn("#password").write("k");
-        clickOn("Sign In");
+        clickOn("Log in");
         assertEquals(Page.VIEW_CLINICIAN, mainController.getCurrentPage());
     }
 
@@ -46,7 +46,7 @@ public class ClinicianLoginControllerTest extends ControllerTest {
     public void nonExistingId() {
         clickOn("#staffId").write("9");
         clickOn("#password").write("k");
-        clickOn("Sign In");
+        clickOn("Log in");
         clickOn("OK");
         assertEquals(Page.LOGIN_CLINICIAN, mainController.getCurrentPage());
     }
@@ -55,7 +55,7 @@ public class ClinicianLoginControllerTest extends ControllerTest {
     public void incorrectPassword() {
         clickOn("#staffId").write("0");
         clickOn("#password").write("k");
-        clickOn("Sign In");
+        clickOn("Log in");
         clickOn("OK");
         assertEquals(Page.LOGIN_CLINICIAN, mainController.getCurrentPage());
     }
@@ -64,7 +64,7 @@ public class ClinicianLoginControllerTest extends ControllerTest {
     public void invalidStaffIdInput() {
         clickOn("#staffId").write("a");
         clickOn("#password").write("k");
-        clickOn("Sign In");
+        clickOn("Log in");
         clickOn("OK");
         assertEquals(Page.LOGIN_CLINICIAN, mainController.getCurrentPage());
     }
