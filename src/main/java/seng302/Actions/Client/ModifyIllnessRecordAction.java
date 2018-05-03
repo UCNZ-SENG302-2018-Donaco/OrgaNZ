@@ -64,7 +64,7 @@ public class ModifyIllnessRecordAction extends Action {
      * @throws IllegalStateException If no changes were made.
      */
     @Override
-    public void execute() {
+    protected void execute() {
         if (Objects.equals(newDiagnosisDate, oldDiagnosisDate) &&
                 Objects.equals(newCuredDate, oldCuredDate) &&
                 Objects.equals(newChronic, oldChronic)) {
@@ -84,7 +84,7 @@ public class ModifyIllnessRecordAction extends Action {
     }
 
     @Override
-    public void unExecute() {
+    protected void unExecute() {
         if (!Objects.equals(newDiagnosisDate, oldDiagnosisDate)) {
             record.setDiagnosisDate(oldDiagnosisDate);
         }

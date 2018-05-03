@@ -35,9 +35,8 @@ import org.junit.Test;
 
 public class RequestOrgansControllerClinicianTest extends ControllerTest {
 
-    private Collection<TransplantRequest> sampleRequests = new ArrayList<>();
     TransplantRequest heartRequest;
-
+    private Collection<TransplantRequest> sampleRequests = new ArrayList<>();
     private Clinician testClinician = new Clinician("Mr", null, "Tester", "9 Fake St", Region.AUCKLAND, 1000, "qwerty");
     private Client testClient = new Client(1);
 

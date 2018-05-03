@@ -35,29 +35,9 @@ public class SidebarController extends SubController {
     private static final String ERROR_LOADING_MESSAGE = "There was an error loading the file specified.";
 
     @FXML
-    private Button viewClientButton;
-    @FXML
-    private Button registerOrganDonationButton;
-    @FXML
-    private Button viewMedicationsButton;
-    @FXML
-    private Button viewClinicianButton;
-    @FXML
-    private Button searchButton;
-    @FXML
-    private Button transplantsButton;
-    @FXML
-    private Button logoutButton;
-    @FXML
-    private Button requestOrganDonationButton;
-    @FXML
-    private Button registerOrgansButton;
-    @FXML
-    private Button illnessHistoryButton;
-    @FXML
-    private Button undoButton;
-    @FXML
-    private Button redoButton;
+    private Button viewClientButton, registerOrganDonationButton, viewMedicationsButton, viewClinicianButton,
+            searchButton, transplantsButton, logoutButton, requestOrganDonationButton, illnessHistoryButton,
+            viewProceduresButton, undoButton, redoButton;
 
     private ActionInvoker invoker;
     private Session session;
@@ -83,6 +63,7 @@ public class SidebarController extends SubController {
             hideButton(registerOrganDonationButton);
             hideButton(viewMedicationsButton);
             hideButton(illnessHistoryButton);
+            hideButton(viewProceduresButton);
         }
 
         if (windowContext.isClinViewClientWindow()) {
@@ -198,6 +179,14 @@ public class SidebarController extends SubController {
     @FXML
     private void goToIllnessHistory() {
         PageNavigator.loadPage(Page.VIEW_MEDICAL_HISTORY, mainController);
+    }
+
+    /**
+     * Redirects the GUI to the View Procedures page.
+     */
+    @FXML
+    private void goToViewProcedures() {
+        PageNavigator.loadPage(Page.VIEW_PROCEDURES, mainController);
     }
 
     /**
