@@ -207,7 +207,7 @@ public class SidebarController extends SubController {
     private void save() {
         try {
             FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Save Clients File");
+            fileChooser.setTitle("Save to file");
             fileChooser.setInitialDirectory(
                     new File(Paths.get(AppUI.class.getProtectionDomain().getCodeSource().getLocation().toURI())
                             .getParent().toString())
@@ -239,7 +239,7 @@ public class SidebarController extends SubController {
     private void load() {
         try {
             FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Load Clients File");
+            fileChooser.setTitle("Load from file");
             fileChooser.setInitialDirectory(
                     new File(Paths.get(AppUI.class.getProtectionDomain().getCodeSource().getLocation().toURI())
                             .getParent().toString())

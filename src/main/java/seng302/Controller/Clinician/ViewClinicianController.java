@@ -72,7 +72,7 @@ public class ViewClinicianController extends SubController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
-        mainController.setTitle("Clinician profile: " + currentClinician.getFullName());
+        mainController.setTitle("Clinician details: " + currentClinician.getFullName());
         mainController.loadSidebar(sidebarPane);
     }
 

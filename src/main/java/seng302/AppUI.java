@@ -42,7 +42,7 @@ public class AppUI extends Application {
     public void start(Stage stage) throws IOException {
         LoggerSetup.setup(Level.INFO);
 
-        stage.setTitle("Organ Client Management System");
+        stage.setTitle("OrgaNZ");
         stage.setScene(createScene(loadMainPane(stage)));
         stage.show();
 

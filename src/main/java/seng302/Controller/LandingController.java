@@ -2,7 +2,6 @@ package seng302.Controller;
 
 import javafx.fxml.FXML;
 
-import javafx.scene.control.Button;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
 
@@ -18,7 +17,7 @@ public class LandingController extends SubController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
-        mainController.setTitle("Home");
+        mainController.setTitle("OrgaNZ");
     }
 
     /**

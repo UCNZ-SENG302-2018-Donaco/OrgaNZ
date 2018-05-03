@@ -129,6 +129,7 @@ public class RequestOrgansController extends SubController {
             @Override
             protected void updateItem(TransplantRequest request, boolean empty) {
                 super.updateItem(request, empty);
+
                 if (empty || request == null) {
                     setStyle(null);
                     setTooltip(null);
@@ -229,7 +230,7 @@ public class RequestOrgansController extends SubController {
             client = windowContext.getViewClient();
         }
 
-        mainController.setTitle("Receive Organs: " + client.getFullName());
+        mainController.setTitle("Request organs: " + client.getFullName());
         refresh();
         enableAppropriateButtons();
     }

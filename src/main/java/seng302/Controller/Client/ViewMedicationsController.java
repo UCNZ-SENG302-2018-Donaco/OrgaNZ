@@ -150,7 +150,7 @@ public class ViewMedicationsController extends SubController {
         }
 
         refreshMedicationLists();
-        mainController.setTitle("Medication history: " + client.getFullName());
+        mainController.setTitle("Medications : " + client.getFullName());
 
         trackControlOrShiftKeyPressed();
     }

@@ -65,7 +65,7 @@ public class PageNavigator {
         LOGGER.info("Opening new window");
         try {
             Stage newStage = new Stage();
-            newStage.setTitle("Organ Client Management System");
+            newStage.setTitle("OrgaNZ");
 
             FXMLLoader loader = new FXMLLoader();
             Pane mainPane = loader.load(PageNavigator.class.getResourceAsStream(Page.MAIN.getPath()));

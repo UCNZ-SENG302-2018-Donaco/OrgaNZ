@@ -52,7 +52,7 @@ public class CreateClinicianController extends SubController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
-        mainController.setTitle("Create a new Clinician");
+        mainController.setTitle("Create a new clinician");
     }
 
     /**

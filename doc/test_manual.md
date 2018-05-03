@@ -42,12 +42,12 @@ The steps on Story 10, AC1 can be used to create a Client profile. Once complete
 gender. To save their profile, click on the "Save Changes" button. Their edits are now saved. 
 
 #### AC2
-To log in, Click on the "Login as Client" button and find your Name or ID in the list. Click "Sign in". The Client can 
+To log in, Click on the "Login as Client" button and find your Name or ID in the list. Click "Log in". The Client can 
 only edit their own page and not be able to access any other Client's profiles.
 
 #### AC3
 Multiple Clients are saved once they are created, so to verify that multiple Clients exist, go to "Login as Clients" and 
-you should be able to see multiple profiles. To verify that their information is also stored, you can sign in as them
+you should be able to see multiple profiles. To verify that their information is also stored, you can log in as them
 and view the saved data.
 
 #### AC4
