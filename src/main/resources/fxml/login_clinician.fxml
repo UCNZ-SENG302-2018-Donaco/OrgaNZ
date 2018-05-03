@@ -28,8 +28,7 @@
       <children>
         <TextField fx:id="staffId" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
         <PasswordField fx:id="password" GridPane.columnIndex="2" GridPane.rowIndex="2"/>
-        <Button mnemonicParsing="false" onAction="#signIn" text="Sign in" GridPane.columnIndex="2"
-          GridPane.rowIndex="3"/>
+        <Button mnemonicParsing="false" onAction="#signIn" text="Sign in" GridPane.columnIndex="2" GridPane.rowIndex="3" defaultButton="true"/>
         <Button mnemonicParsing="false" onAction="#goBack" text="Go Back" GridPane.columnIndex="1"/>
         <Label text="Staff ID" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
         <Label text="Password" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.rowIndex="2"/>

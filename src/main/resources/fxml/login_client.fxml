@@ -36,8 +36,7 @@
         </ListView>
       </center>
       <bottom>
-        <Button mnemonicParsing="false" onAction="#signIn" prefHeight="30.0" prefWidth="100.0" text="Sign In"
-          BorderPane.alignment="CENTER">
+        <Button mnemonicParsing="false" onAction="#signIn" prefHeight="30.0" prefWidth="100.0" text="Sign In" BorderPane.alignment="CENTER" defaultButton="true">
           <BorderPane.margin>
             <Insets bottom="30.0" top="15.0"/>
           </BorderPane.margin>
