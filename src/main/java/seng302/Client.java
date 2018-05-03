@@ -53,6 +53,8 @@ public class Client {
 
     private List<IllnessRecord> illnessHistory = new ArrayList<>();
 
+    private List<ProcedureRecord> procedures = new ArrayList<>();
+
     public Client() {
         createdTimestamp = LocalDateTime.now();
         initDonationOrgans();
@@ -430,6 +432,44 @@ public class Client {
     public void deleteIllnessRecord(IllnessRecord record) {
         illnessHistory.remove(record);
         addUpdate("illnessHistory");
+    }
+
+    /**
+     * Returns a list of procedures that the client has previously undergone.
+     * @return A list of past procedures for the client.
+     */
+    public List<ProcedureRecord> getPastProcedures() {
+        return procedures.stream()
+                .filter(record -> record.getDate().isBefore(LocalDate.now()))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Returns a list of procedures that the client is going to undergo.
+     * @return A list of pending procedures for the client.
+     */
+    public List<ProcedureRecord> getPendingProcedures() {
+        return procedures.stream()
+                .filter(record -> LocalDate.now().isBefore(record.getDate()))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Adds the given procedure record to the list of procedures for this client.
+     * @param record The procedure record to add.
+     */
+    public void addProcedureRecord(ProcedureRecord record) {
+        procedures.add(record);
+        addUpdate("procedures");
+    }
+
+    /**
+     * Removes the given procedure record from the list of procedures for this client.
+     * @param record The procedure record to delete.
+     */
+    public void deleteProcedureRecord(ProcedureRecord record) {
+        procedures.remove(record);
+        addUpdate("procedures");
     }
 
     /**

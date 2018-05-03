@@ -20,7 +20,8 @@ public enum Page {
     LOGIN_CLINICIAN("/fxml/login_clinician.fxml"),
     CREATE_CLINICIAN("/fxml/create_clinician.fxml"),
     VIEW_MEDICATIONS("/fxml/view_medications.fxml"),
-    VIEW_MEDICAL_HISTORY("/fxml/view_medical_history.fxml");
+    VIEW_MEDICAL_HISTORY("/fxml/view_medical_history.fxml"),
+    VIEW_PROCEDURES("/fxml/view_procedures.fxml");
 
     private String path;
 

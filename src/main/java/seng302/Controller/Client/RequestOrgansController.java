@@ -269,13 +269,19 @@ public class RequestOrgansController extends SubController {
      */
     @FXML
     private void submitNewRequest() {
-        TransplantRequest newRequest = new TransplantRequest(client, newOrganChoiceBox.getValue());
-        if (client.getCurrentlyRequestedOrgans().contains(newRequest.getRequestedOrgan())) {
+        Organ selectedOrgan = newOrganChoiceBox.getValue();
+        if (selectedOrgan == null) {
+            PageNavigator.showAlert(
+                    AlertType.ERROR,
+                    "Select an organ",
+                    "You must select an organ to make a transplant request for.");
+        } else if (client.getCurrentlyRequestedOrgans().contains(selectedOrgan)) {
             PageNavigator.showAlert(
                     AlertType.ERROR,
                     "Request already exists",
                     "Client already has a waiting request for this organ.");
         } else {
+            TransplantRequest newRequest = new TransplantRequest(client, selectedOrgan);
             Action action = new AddTransplantRequestAction(client, newRequest);
             invoker.execute(action);
             PageNavigator.refreshAllWindows();
