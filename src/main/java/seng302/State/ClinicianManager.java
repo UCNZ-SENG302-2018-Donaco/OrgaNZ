@@ -1,6 +1,8 @@
 package seng302.State;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import seng302.Clinician;
 import seng302.Utilities.Enums.Region;
@@ -12,14 +14,14 @@ import seng302.Utilities.Enums.Region;
 
 public class ClinicianManager {
 
-    private ArrayList<Clinician> clinicians;
+    private final List<Clinician> clinicians;
 
     public ClinicianManager() {
         clinicians = new ArrayList<>();
         clinicians.add(new Clinician("admin", null, "admin", "admin", Region.UNSPECIFIED, 0, "admin"));
     }
 
-    public ClinicianManager(ArrayList<Clinician> clinicians) {
+    public ClinicianManager(List<Clinician> clinicians) {
         this.clinicians = clinicians;
         clinicians.add(new Clinician("admin", null, "admin", "admin", Region.UNSPECIFIED, 0, "admin"));
     }
@@ -36,8 +38,8 @@ public class ClinicianManager {
      * Get the list of clinicians
      * @return ArrayList of current clinicians
      */
-    public ArrayList<Clinician> getClinicians() {
-        return clinicians;
+    public List<Clinician> getClinicians() {
+        return Collections.unmodifiableList(clinicians);
     }
 
     /**
@@ -69,6 +71,8 @@ public class ClinicianManager {
      */
     public Clinician getClinicianByStaffId(int id) {
         return clinicians.stream()
-                .filter(c -> c.getStaffId() == id).findFirst().orElse(null);
+                .filter(o -> o.getStaffId() == id)
+                .findFirst()
+                .orElse(null);
     }
 }
