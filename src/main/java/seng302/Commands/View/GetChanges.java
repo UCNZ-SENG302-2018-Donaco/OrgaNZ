@@ -1,9 +1,9 @@
 package seng302.Commands.View;
 
 
-import seng302.Donor;
+import seng302.Client;
 import seng302.HistoryItem;
-import seng302.State.DonorManager;
+import seng302.State.ClientManager;
 import seng302.State.State;
 import seng302.Utilities.JSONConverter;
 
@@ -20,13 +20,13 @@ import picocli.CommandLine.Option;
 @Command(name = "getchanges", description = "Print a single users update history.", sortOptions = false)
 public class GetChanges implements Runnable {
 
-    private DonorManager manager;
+    private ClientManager manager;
 
     public GetChanges() {
-        manager = State.getDonorManager();
+        manager = State.getClientManager();
     }
 
-    GetChanges(DonorManager manager) {
+    GetChanges(ClientManager manager) {
         this.manager = manager;
     }
 
@@ -35,13 +35,13 @@ public class GetChanges implements Runnable {
 
     @Override
     public void run() {
-        Donor donor = manager.getDonorByID(uid);
-        if (donor == null) {
-            System.out.println("No donor exists with that user ID");
+        Client client = manager.getClientByID(uid);
+        if (client == null) {
+            System.out.println("No client exists with that user ID");
             return;
         }
-        System.out.println(donor.getUpdatesString());
-        HistoryItem printAllHistory = new HistoryItem("PRINT UPDATE HISTORY", "All donor's history printed.");
+        System.out.println(client.getUpdatesString());
+        HistoryItem printAllHistory = new HistoryItem("PRINT UPDATE HISTORY", "All client's history printed.");
         JSONConverter.updateHistory(printAllHistory, "action_history.json");
     }
 }

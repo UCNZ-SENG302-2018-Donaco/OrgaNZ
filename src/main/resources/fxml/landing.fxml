@@ -6,64 +6,92 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
-<VBox prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-  fx:controller="seng302.Controller.LandingController">
+
+<VBox prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.LandingController">
   <children>
     <BorderPane VBox.vgrow="ALWAYS">
       <bottom>
-        <GridPane hgap="50.0" prefHeight="150.0" prefWidth="300.0" vgap="20.0" BorderPane.alignment="CENTER">
+        <GridPane hgap="50.0" vgap="20.0" BorderPane.alignment="CENTER">
           <columnConstraints>
-            <ColumnConstraints hgrow="ALWAYS"/>
-            <ColumnConstraints hgrow="ALWAYS"/>
+                  <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" prefWidth="400.0" />
+            <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" prefWidth="400.0" />
           </columnConstraints>
           <rowConstraints>
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
           </rowConstraints>
           <children>
-            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
-              onAction="#goToCreateClinician" text="Create Clinician"/>
-            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
-              onAction="#goToClinicianLogin" text="Login as Clinician" GridPane.columnIndex="1"/>
-            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
-              onAction="#goToCreateDonor" text="Create Donor Profile" GridPane.rowIndex="1"/>
-            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
-              onAction="#goToDonorLogin" text="Login as Donor" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+            <Button fx:id="loginClientButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToClientLogin" text="Log in" />
+            <Button fx:id="createClientButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToCreateClient" text="Sign up" GridPane.columnIndex="1" />
+            <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
+                     <children>
+                        <Text fill="#3434ff" strokeType="OUTSIDE" strokeWidth="0.0" text="Clinician:" textAlignment="RIGHT">
+                           <HBox.margin>
+                              <Insets right="10.0" />
+                           </HBox.margin>
+                        </Text>
+                  <Button fx:id="loginClinicianButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToClinicianLogin" text="Log in" textFill="#2e2ef5">
+                           <HBox.margin>
+                              <Insets right="10.0" />
+                           </HBox.margin>
+                        </Button>
+                  <Button fx:id="createClinicianButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToCreateClinician" text="Sign up" textFill="#2d2df2" />
+                     </children>
+                  </HBox>
           </children>
           <BorderPane.margin>
-            <Insets/>
+            <Insets />
           </BorderPane.margin>
           <padding>
-            <Insets bottom="30.0" left="50.0" right="50.0" top="30.0"/>
+            <Insets bottom="30.0" left="50.0" right="50.0" top="30.0" />
           </padding>
         </GridPane>
       </bottom>
       <center>
 
       </center>
-      <top>
-        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="ODMS" BorderPane.alignment="CENTER">
-          <font>
-            <Font name="System Bold" size="48.0"/>
-          </font>
-          <BorderPane.margin>
-            <Insets top="20.0"/>
-          </BorderPane.margin>
-        </Text>
-      </top>
-      <center>
-        <Label
-          text="Hello There! For new users, please click on 'Create User'. For existing users, please select 'Login'"
-          textAlignment="CENTER" wrapText="true" BorderPane.alignment="CENTER">
-          <font>
-            <Font size="24.0"/>
-          </font>
-        </Label>
-      </center>
+         <top>
+            <VBox alignment="CENTER" prefHeight="146.0" prefWidth="800.0" BorderPane.alignment="CENTER">
+               <children>
+              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="OrgaNZ">
+                <font>
+                  <Font name="System Bold" size="48.0" />
+                </font>
+                     <VBox.margin>
+                        <Insets bottom="15.0" top="30.0" />
+                     </VBox.margin>
+              </Text>
+                  <Text strokeType="OUTSIDE" strokeWidth="0.0" text="by Human Harvest Inc." />
+               </children>
+            </VBox>
+         </top>
+         <center>
+            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+               <children>
+              <Label text="To create an account, press Sign up." textAlignment="CENTER" wrapText="true">
+                <font>
+                  <Font size="24.0" />
+                </font>
+                     <VBox.margin>
+                        <Insets bottom="15.0" />
+                     </VBox.margin>
+              </Label>
+                  <Label text="For existing users, press Log in." textAlignment="CENTER" wrapText="true">
+                     <font>
+                        <Font size="24.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets bottom="15.0" />
+                     </VBox.margin>
+                  </Label>
+               </children>
+            </VBox>
+         </center>
     </BorderPane>
   </children>
 </VBox>
