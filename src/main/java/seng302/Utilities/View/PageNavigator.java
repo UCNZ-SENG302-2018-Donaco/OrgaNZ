@@ -104,6 +104,7 @@ public class PageNavigator {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);
         alert.setHeaderText(title);
+        alert.setContentText(bodyText);
         alert.getDialogPane().setContent(new Label(bodyText));
         resizeAlert(alert);
         return alert;
