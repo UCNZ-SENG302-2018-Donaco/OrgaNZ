@@ -8,17 +8,20 @@ import org.junit.Test;
 
 import seng302.Client;
 import seng302.Clinician;
+import seng302.State.ClientManager;
 import seng302.State.State;
 import seng302.Utilities.Enums.Region;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.WindowContext;
+import seng302.Utilities.View.WindowContext.WindowContextBuilder;
 
-public class SidebarControllerTest extends ControllerTest{
+import org.junit.Test;
 
-    private Clinician testClinician = new Clinician("Bob", "Alex", "Jones",
-            "4 Ilam Road", Region.CANTERBURY, 521, "1234");
+public class SidebarControllerClinicianTest extends ControllerTest{
+
+    private Clinician testClinician = new Clinician("Mr", null, "Tester",
+            "9 Fake St", Region.AUCKLAND, 3, "k");
     private Client client = new Client("Client", "Number", "One", LocalDate.now(), 1);
-    private Client testClient = new Client("Jeff", "Number", "Gridges", LocalDate.now(), 2);
 
 
     @Override
@@ -29,6 +32,10 @@ public class SidebarControllerTest extends ControllerTest{
     @Override
     protected void initState() {
         State.init();
+        State.getClinicianManager().addClinician(testClinician);
+        State.getClientManager().getClientByID(1);
+        State.login(testClinician);
+        mainController.setWindowContext(new WindowContextBuilder().setAsClinViewClientWindow().viewClient(client).build());
     }
 
     @Test
@@ -44,10 +51,8 @@ public class SidebarControllerTest extends ControllerTest{
 
     @Test
     public void testClickOnViewClient() {
-       clickOn("#viewClientButton");
-       State.getClientManager().getClientByID(1);
-       assertEquals(Page.VIEW_CLIENT, mainController.getCurrentPage());
-       //assertTrue(mainController.getCurrentPage().getPath().equals(Page.VIEW_CLIENT));
+        clickOn("#viewClientButton");
+        assertEquals(Page.VIEW_CLIENT, mainController.getCurrentPage());
     }
 
     @Test
@@ -113,5 +118,6 @@ public class SidebarControllerTest extends ControllerTest{
         clickOn("#logoutButton");
         assertEquals(Page.LANDING, mainController.getCurrentPage());
     }
+
 
 }
