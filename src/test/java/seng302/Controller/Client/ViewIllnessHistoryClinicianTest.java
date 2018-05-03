@@ -39,37 +39,37 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
                     false
             )
     };
-    private final  IllnessRecord[] testCurrentIllnessRecords = {
-        new IllnessRecord(
-            "Mono",
-            LocalDate.of(2011, 9, 22),
-            null,
-            false
-        ),
-        new IllnessRecord(
-            "Colon Cancer",
-            LocalDate.of(2014, 3, 4),
-            null,
-            true
-        ),
-        new IllnessRecord(
-            "Influenza",
-            LocalDate.of(2012, 1, 2),
-            null,
-            false
-        ),
-        new IllnessRecord(
-            "Lung Cancer",
-            LocalDate.of(2011, 9, 22),
-            null,
-            true
-        ),
-        new IllnessRecord(
-            "Monopoly",
-            LocalDate.of(2011, 9, 22),
-            null,
-            false
-        )
+    private final IllnessRecord[] testCurrentIllnessRecords = {
+            new IllnessRecord(
+                    "Mono",
+                    LocalDate.of(2011, 9, 22),
+                    null,
+                    false
+            ),
+            new IllnessRecord(
+                    "Colon Cancer",
+                    LocalDate.of(2014, 3, 4),
+                    null,
+                    true
+            ),
+            new IllnessRecord(
+                    "Influenza",
+                    LocalDate.of(2012, 1, 2),
+                    null,
+                    false
+            ),
+            new IllnessRecord(
+                    "Lung Cancer",
+                    LocalDate.of(2011, 9, 22),
+                    null,
+                    true
+            ),
+            new IllnessRecord(
+                    "Monopoly",
+                    LocalDate.of(2011, 9, 22),
+                    null,
+                    false
+            )
     };
 
     private Clinician testClinician = new Clinician("A", "B", "C", "D", Region.UNSPECIFIED, 0, "E");
@@ -141,7 +141,7 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
     }
 
     @Test
-    public void removeChronicTag(){
+    public void removeChronicTag() {
         IllnessRecord removeChronicTag = testCurrentIllnessRecords[1];
         clickOn((Node) lookup(NodeQueryUtils.hasText(removeChronicTag.getIllnessName())).query());
         clickOn("#toggleChronicButton");
@@ -149,7 +149,7 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
     }
 
     @Test
-    public void movetoPastIllnessesAfterChronicRemovedTest(){
+    public void movetoPastIllnessesAfterChronicRemovedTest() {
         IllnessRecord removeChronicTag = testCurrentIllnessRecords[1];
         clickOn((Node) lookup(NodeQueryUtils.hasText(removeChronicTag.getIllnessName())).query());
         clickOn("#toggleChronicButton");
