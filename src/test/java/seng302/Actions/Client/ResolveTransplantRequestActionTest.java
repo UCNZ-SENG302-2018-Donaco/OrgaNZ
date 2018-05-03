@@ -31,26 +31,26 @@ public class ResolveTransplantRequestActionTest {
 
     @Test
     public void cancelTest() {
-        Action action = new ResolveTransplantRequestAction(testRequest, CANCELLED);
+        Action action = new ResolveTransplantRequestAction(testRequest, CANCELLED, "Cancelled.");
         invoker.execute(action);
         assertEquals(CANCELLED, testRequest.getStatus());
     }
 
     @Test
     public void completeTest() {
-        Action action = new ResolveTransplantRequestAction(testRequest, COMPLETED);
+        Action action = new ResolveTransplantRequestAction(testRequest, COMPLETED, "Completed.");
         invoker.execute(action);
         assertEquals(COMPLETED, testRequest.getStatus());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void statusNotValidResolutionTest() {
-        new ResolveTransplantRequestAction(testRequest, WAITING);
+        new ResolveTransplantRequestAction(testRequest, WAITING, "Waiting.");
     }
 
     @Test
     public void correctResolvedDateTest() {
-        Action action = new ResolveTransplantRequestAction(testRequest, CANCELLED);
+        Action action = new ResolveTransplantRequestAction(testRequest, CANCELLED, "Cancelled.");
         invoker.execute(action);
 
         Duration timeDiff = Duration.between(LocalDateTime.now(), testRequest.getResolvedDate());

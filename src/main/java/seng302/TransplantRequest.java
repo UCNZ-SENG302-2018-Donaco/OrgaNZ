@@ -20,6 +20,7 @@ public class TransplantRequest {
     private LocalDateTime requestDate;
     private LocalDateTime resolvedDate;
     private RequestStatus status = RequestStatus.WAITING;
+    private String resolvedReason;
 
     public TransplantRequest(Client client, Organ requestedOrgan) {
         this.client = client;
@@ -47,6 +48,10 @@ public class TransplantRequest {
         return status;
     }
 
+    public String getResolvedReason() {
+        return resolvedReason;
+    }
+
     public void setClient(Client client) {
         this.client = client;
     }
@@ -57,5 +62,13 @@ public class TransplantRequest {
 
     public void setStatus(RequestStatus status) {
         this.status = status;
+    }
+
+    /**
+     * Should only be used by ResolveTransplantRequestAction
+     * @param resolvedReason reason that the transplant request was resolved
+     */
+    public void setResolvedReason(String resolvedReason) {
+        this.resolvedReason = resolvedReason;
     }
 }

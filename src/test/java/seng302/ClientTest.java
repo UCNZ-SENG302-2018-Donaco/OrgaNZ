@@ -5,6 +5,9 @@ import static org.junit.Assert.*;
 import java.time.LocalDate;
 import java.time.Period;
 
+import seng302.Utilities.Enums.Organ;
+import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
+
 import org.junit.Before;
 import org.junit.Test;
 
@@ -184,4 +187,25 @@ public class ClientTest {
         client.setOrganRequestStatus(Organ.BONE, true);
     }
     */
+
+    @Test
+    public void equalsNotAClientTest() {
+        String testString = "panda";
+
+        assertNotEquals(testString, client);
+    }
+
+    @Test
+    public void markDeadTest() throws OrganAlreadyRegisteredException {
+        client.setOrganDonationStatus(Organ.BONE, true);
+        TransplantRequest request = new TransplantRequest(client, Organ.LIVER);
+        client.addTransplantRequest(request);
+
+        LocalDate deathDate = LocalDate.now();
+        client.markDead(deathDate);
+
+        assertEquals(deathDate, client.getDateOfDeath());
+        assertTrue(client.getOrganDonationStatus().get(Organ.BONE));
+        assertFalse(client.getOrganRequestStatus().get(Organ.LIVER));
+    }
 }

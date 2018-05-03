@@ -3,9 +3,12 @@ package seng302.Controller.Client;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
+import java.util.Optional;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
@@ -13,7 +16,9 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
+import seng302.Actions.Action;
 import seng302.Actions.ActionInvoker;
+import seng302.Actions.Client.MarkClientAsDeadAction;
 import seng302.Actions.Client.ModifyClientAction;
 import seng302.Client;
 import seng302.Controller.MainController;
@@ -220,7 +225,8 @@ public class ViewClientController extends SubController {
      */
     private boolean checkNonMandatoryFields() {
         boolean update = true;
-        if (dod.getValue() == null || dod.getValue().isBefore(LocalDate.now())) {
+        if (dod.getValue() == null ||
+                (dod.getValue().isAfter(dob.getValue())) && dod.getValue().isBefore(LocalDate.now().plusDays(1))) {
             dodLabel.setTextFill(Color.BLACK);
         } else {
             dodLabel.setTextFill(Color.RED);
@@ -276,7 +282,6 @@ public class ViewClientController extends SubController {
         addChangeIfDifferent(action, "setLastName", viewedClient.getLastName(), lname.getText());
         addChangeIfDifferent(action, "setMiddleName", viewedClient.getMiddleName(), mname.getText());
         addChangeIfDifferent(action, "setDateOfBirth", viewedClient.getDateOfBirth(), dob.getValue());
-        addChangeIfDifferent(action, "setDateOfDeath", viewedClient.getDateOfDeath(), dod.getValue());
         addChangeIfDifferent(action, "setGender", viewedClient.getGender(), gender.getValue());
         addChangeIfDifferent(action, "setHeight", viewedClient.getHeight(), Double.parseDouble(height.getText()));
         addChangeIfDifferent(action, "setWeight", viewedClient.getWeight(), Double.parseDouble(weight.getText()));
@@ -284,13 +289,39 @@ public class ViewClientController extends SubController {
         addChangeIfDifferent(action, "setRegion", viewedClient.getRegion(), region.getValue());
         addChangeIfDifferent(action, "setCurrentAddress", viewedClient.getCurrentAddress(), address.getText());
 
-        String actionText = invoker.execute(action);
-        PageNavigator.refreshAllWindows();
+        try {
+            String actionText = invoker.execute(action);
 
-        Notifications.create()
-                .title("Updated Client")
-                .text(actionText)
-                .showInformation();
+            Notifications.create()
+                    .title("Updated Client")
+                    .text(actionText)
+                    .showInformation();
+        } catch (IllegalStateException exc) {
+            if (Objects.equals(viewedClient.getDateOfDeath(), dod.getValue())) {
+                Notifications.create()
+                        .title("No changes were made.")
+                        .text("No changes were made to the client.")
+                        .showWarning();
+            }
+        }
+
+        if (viewedClient.getDateOfDeath() == null && dod.getValue() != null) {
+            Optional<ButtonType> buttonOpt = PageNavigator.showAlert(AlertType.CONFIRMATION,
+                    "Are you sure you want to mark this client as dead?",
+                    "This will cancel all waiting transplant requests for this client.");
+
+            if (buttonOpt.isPresent() && buttonOpt.get() == ButtonType.OK) {
+                Action markDeadAction = new MarkClientAsDeadAction(viewedClient, dod.getValue());
+                String actionText = invoker.execute(markDeadAction);
+
+                Notifications.create()
+                        .title("Marked Client as Dead")
+                        .text(actionText)
+                        .showConfirm();
+            }
+        }
+
+        PageNavigator.refreshAllWindows();
     }
 
     /**
