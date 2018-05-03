@@ -7,6 +7,7 @@ import java.util.Set;
 import javafx.collections.FXCollections;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableColumn;
@@ -131,14 +132,21 @@ public class ViewProceduresController extends SubController {
      * @param event The cell edit event.
      */
     private void editDateCell(CellEditEvent<ProcedureRecord, LocalDate> event) {
-        ModifyProcedureRecordAction action = new ModifyProcedureRecordAction(event.getRowValue());
-        action.changeDate(event.getNewValue());
+        LocalDate newDate = event.getNewValue();
+        if (newDate.isBefore(client.getDateOfBirth())) {
+            PageNavigator.showAlert(AlertType.ERROR,
+                    "Invalid Date",
+                    "New procedure date must be after the client's date of birth.");
+        } else {
+            ModifyProcedureRecordAction action = new ModifyProcedureRecordAction(event.getRowValue());
+            action.changeDate(newDate);
 
-        try {
-            invoker.execute(action);
-            PageNavigator.refreshAllWindows();
-        } catch (IllegalStateException ignored) {
+            try {
+                invoker.execute(action);
+            } catch (IllegalStateException ignored) {
+            }
         }
+        PageNavigator.refreshAllWindows();
     }
 
     /**
