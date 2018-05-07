@@ -450,7 +450,7 @@ public class Client {
      */
     public List<ProcedureRecord> getPendingProcedures() {
         return procedures.stream()
-                .filter(record -> LocalDate.now().isBefore(record.getDate()))
+                .filter(record -> !record.getDate().isBefore(LocalDate.now()))
                 .collect(Collectors.toList());
     }
 
