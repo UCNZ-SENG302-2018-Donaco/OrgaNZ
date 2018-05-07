@@ -161,6 +161,6 @@ public class Clinician {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(staffId);
+        return staffId;
     }
 }
