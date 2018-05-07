@@ -2,7 +2,6 @@ package seng302;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Objects;
 
 import seng302.Utilities.Enums.Region;
 
@@ -13,9 +12,9 @@ public class Clinician {
 
     private final int staffId;
 
-    private final LocalDateTime created_on;
-    private LocalDateTime modified_on;
-    private ArrayList<String> updateLog = new ArrayList<>();
+    private final LocalDateTime createdOn;
+    private LocalDateTime modifiedOn;
+    private final ArrayList<String> updateLog = new ArrayList<>();
 
     private String firstName;
     private String lastName;
@@ -38,7 +37,7 @@ public class Clinician {
      */
     public Clinician(String firstName, String middleName, String lastName, String workAddress, Region region,
             int staffId, String password) {
-        created_on = LocalDateTime.now();
+        createdOn = LocalDateTime.now();
 
         this.firstName = firstName;
         this.middleName = middleName;
@@ -52,11 +51,11 @@ public class Clinician {
     private void addUpdate(String function) {
         LocalDateTime timestamp = LocalDateTime.now();
         updateLog.add(String.format("%s; updated %s", timestamp, function));
-        modified_on = LocalDateTime.now();
+        modifiedOn = LocalDateTime.now();
     }
 
-    public LocalDateTime getCreated_on() {
-        return created_on;
+    public LocalDateTime getCreatedOn() {
+        return createdOn;
     }
 
     public ArrayList<String> getUpdateLog() {
@@ -121,8 +120,8 @@ public class Clinician {
         addUpdate("password");
     }
 
-    public LocalDateTime getModified_on() {
-        return modified_on;
+    public LocalDateTime getModifiedOn() {
+        return modifiedOn;
     }
 
 
@@ -141,19 +140,19 @@ public class Clinician {
 
     /**
      * Clinician objects are identified by their staffID
-     * @param o The object to compare
+     * @param obj The object to compare
      * @return If the Clinician is a match
      */
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object obj) {
+        if (this == obj) {
             return true;
         }
-        if (!(o instanceof Clinician)) {
+        if (!(obj instanceof Clinician)) {
             return false;
         }
-        Clinician clinician = (Clinician) o;
-        return clinician.staffId == this.staffId;
+        Clinician clinician = (Clinician)obj;
+        return clinician.staffId == staffId;
     }
 
     /**

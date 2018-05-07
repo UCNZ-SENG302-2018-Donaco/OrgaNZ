@@ -91,11 +91,11 @@ public class ViewClinicianController extends SubController {
         staffID.setText(String.valueOf(currentClinician.getStaffId()));
         region.setValue(currentClinician.getRegion());
 
-        creationDate.setText(currentClinician.getCreated_on().format(dateTimeFormat));
-        if (currentClinician.getModified_on() == null) {
+        creationDate.setText(currentClinician.getCreatedOn().format(dateTimeFormat));
+        if (currentClinician.getModifiedOn() == null) {
             lastModified.setText("Not yet modified.");
         } else {
-            lastModified.setText(currentClinician.getModified_on().format(dateTimeFormat));
+            lastModified.setText(currentClinician.getModifiedOn().format(dateTimeFormat));
         }
     }
 
@@ -108,7 +108,7 @@ public class ViewClinicianController extends SubController {
         if (checkMandatoryFields()) {
             updatedPassword = checkPassword();
             updateChanges();
-            lastModified.setText(currentClinician.getModified_on().format(dateTimeFormat));
+            lastModified.setText(currentClinician.getModifiedOn().format(dateTimeFormat));
         }
     }
 
