@@ -17,10 +17,12 @@ recent-artifacts:
   stage: deploy
   script:
     - mvn -B clean site package -Dmaven.test.skip=true
+    - cp doc/examples/savefile.json target/savefile.json
+
   artifacts:
     paths:
-      - doc/examples/savefile.json
       - target/organz-*-*.jar
+      - target/savefile.json
     expire_in: 1 week
   except:
     - tags
@@ -29,9 +31,11 @@ release-artifacts:
   stage: deploy
   script:
     - mvn -B clean site package
+    - cp doc/examples/savefile.json target/savefile.json
   artifacts:
     paths:
-    - target/*.jar
-    - target/site/jacoco/*
+      - target/organz-*-*.jar
+      - target/savefile.json
+      - target/site/jacoco/*
   only:
     - tags
