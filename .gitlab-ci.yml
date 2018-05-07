@@ -19,7 +19,8 @@ recent-artifacts:
     - mvn -B clean site package -Dmaven.test.skip=true
   artifacts:
     paths:
-      - target/*.jar
+      - doc/examples/savefile.json
+      - target/organz-*-*.jar
     expire_in: 1 week
   except:
     - tags
