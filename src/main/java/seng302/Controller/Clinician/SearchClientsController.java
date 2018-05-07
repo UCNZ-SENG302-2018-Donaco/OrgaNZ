@@ -29,12 +29,19 @@ import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
 import seng302.Utilities.View.WindowContext;
 
+import org.controlsfx.control.RangeSlider;
+
 public class SearchClientsController extends SubController {
 
     private static final int ROWS_PER_PAGE = 30;
+    private static final int AGE_LOWER_BOUND = 0;
+    private static final int AGE_UPPER_BOUND = 120;
 
     @FXML
-    private TextField searchBox;
+    private TextField searchBox, ageMinField, ageMaxField;
+
+    @FXML
+    private RangeSlider ageSlider;
 
     @FXML
     private HBox sidebarPane;
@@ -65,6 +72,8 @@ public class SearchClientsController extends SubController {
         super.setup(mainController);
         mainController.setTitle("Client search");
         mainController.loadSidebar(sidebarPane);
+        ageSlider.setLowValue(AGE_LOWER_BOUND);
+        ageSlider.setHighValue(AGE_UPPER_BOUND);
     }
 
     @FXML
@@ -72,6 +81,36 @@ public class SearchClientsController extends SubController {
         ArrayList<Client> allClients = State.getClientManager().getClients();
 
         setupTable();
+
+        ageMinField.setOnAction(event -> {
+            int newMin;
+            try {
+                newMin = Integer.max(Integer.parseInt(ageMinField.getText()), AGE_LOWER_BOUND);
+            } catch (NumberFormatException ignored) {
+                newMin = AGE_LOWER_BOUND;
+            }
+            ageSlider.setLowValue(newMin);
+        });
+
+        ageMaxField.setOnAction(event -> {
+            int newMax;
+            try {
+                newMax = Integer.min(Integer.parseInt(ageMaxField.getText()), AGE_UPPER_BOUND);
+            } catch (NumberFormatException exc) {
+                newMax = 0;
+            }
+            ageSlider.setHighValue(newMax);
+        });
+
+        ageSlider.lowValueProperty().addListener((observable, oldValue, newValue) -> {
+            ageMinField.setText(Integer.toString(newValue.intValue()));
+            refresh();
+        });
+
+        ageSlider.highValueProperty().addListener((observable, oldValue, newValue) -> {
+            ageMaxField.setText(Integer.toString(newValue.intValue()));
+            refresh();
+        });
 
         tableView.setOnSort((o) -> createPage(pagination.getCurrentPageIndex()));
         searchBox.textProperty().addListener(((o) -> refresh()));
