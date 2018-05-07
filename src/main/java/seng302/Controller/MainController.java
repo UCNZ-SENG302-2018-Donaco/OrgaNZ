@@ -2,8 +2,6 @@ package seng302.Controller;
 
 import java.io.IOException;
 
-import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -12,6 +10,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import seng302.State.State;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.WindowContext;
 
@@ -23,6 +22,9 @@ public class MainController {
     private Stage stage;
     private Page currentPage;
     private WindowContext windowContext;
+    private String windowTitle;
+    private SidebarController sidebarController;
+    private SubController subController;
 
     /**
      * Holder of a switchable page.
@@ -66,11 +68,10 @@ public class MainController {
 
     /**
      * Closes the window.
-     * @param event when the exit button is clicked.
      */
     @FXML
-    private void closeWindow(ActionEvent event) {
-        Platform.exit();
+    public void closeWindow() {
+        stage.close();
     }
 
     /**
@@ -82,12 +83,47 @@ public class MainController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(Page.SIDEBAR.getPath()));
             VBox sidebar = loader.load();
-            SubController subController = loader.getController();
-            subController.setup(this);
+            sidebarController = loader.getController();
+            sidebarController.setup(this);
             sidebarPane.getChildren().setAll(sidebar);
         } catch (IOException exc) {
             System.err.println("Couldn't load sidebar from fxml file.");
             exc.printStackTrace();
+        }
+    }
+
+    public void setSubController(SubController subController) {
+        this.subController = subController;
+    }
+
+    /**
+     * Refreshes the title of the window, and calls the current page's {@link SubController#refresh()} method.
+     */
+    public void refresh() {
+        updateTitle();
+        subController.refresh();
+        if (sidebarController != null) {
+            sidebarController.refresh();
+        }
+    }
+
+    /**
+     * Sets the title of the window to the given text.
+     * @param title The new title of the window.
+     */
+    public void setTitle(String title) {
+        windowTitle = title;
+        updateTitle();
+    }
+
+    /**
+     * Updates the title of the window, inserting an asterisk if there are unsaved changes.
+     */
+    private void updateTitle() {
+        if (State.isUnsavedChanges()) {
+            stage.setTitle("*" + windowTitle);
+        } else {
+            stage.setTitle(windowTitle);
         }
     }
 }
