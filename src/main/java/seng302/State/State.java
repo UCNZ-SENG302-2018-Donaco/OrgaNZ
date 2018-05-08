@@ -3,6 +3,7 @@ package seng302.State;
 import java.util.ArrayList;
 
 import seng302.Actions.ActionInvoker;
+import seng302.Administrator;
 import seng302.Client;
 import seng302.Clinician;
 import seng302.Controller.MainController;
@@ -14,6 +15,7 @@ public final class State {
 
     private static ClientManager clientManager;
     private static ClinicianManager clinicianManager;
+    private static AdministratorManager administratorManager;
     private static ActionInvoker actionInvoker;
     private static Session session;
     private static boolean unsavedChanges = false;
@@ -29,6 +31,7 @@ public final class State {
         actionInvoker = new ActionInvoker();
         clientManager = new ClientManager();
         clinicianManager = new ClinicianManager();
+        administratorManager = new AdministratorManager();
     }
 
     public static ClientManager getClientManager() {
@@ -37,6 +40,10 @@ public final class State {
 
     public static ClinicianManager getClinicianManager() {
         return clinicianManager;
+    }
+
+    public static AdministratorManager getAdministratorManager() {
+        return administratorManager;
     }
 
     public static ActionInvoker getInvoker() {
