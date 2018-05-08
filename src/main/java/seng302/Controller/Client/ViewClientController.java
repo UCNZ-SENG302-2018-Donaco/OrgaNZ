@@ -1,7 +1,6 @@
 package seng302.Controller.Client;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -40,8 +39,6 @@ import org.controlsfx.control.Notifications;
  * Controller for the view/edit client page.
  */
 public class ViewClientController extends SubController {
-
-    private final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy\nh:mm:ss a");
 
     private Session session;
     private ClientManager manager;
@@ -144,12 +141,8 @@ public class ViewClientController extends SubController {
             region.setValue(viewedClient.getRegion());
             address.setText(viewedClient.getCurrentAddress());
 
-            creationDate.setText(viewedClient.getCreatedTimestamp().format(dateTimeFormat));
-            if (viewedClient.getModifiedTimestamp() == null) {
-                lastModified.setText("User has not been modified yet.");
-            } else {
-                lastModified.setText(viewedClient.getModifiedTimestamp().format(dateTimeFormat));
-            }
+            creationDate.setText(viewedClient.getCreatedTimestampString());
+            lastModified.setText(viewedClient.getModifiedTimestampString());
 
             HistoryItem save = new HistoryItem("SEARCH CLIENT",
                     "Client " + viewedClient.getFirstName() + " " + viewedClient.getLastName() + " (" + viewedClient
@@ -180,7 +173,7 @@ public class ViewClientController extends SubController {
             updateChanges();
             displayBMI();
             displayAge();
-            lastModified.setText(viewedClient.getModifiedTimestamp().format(dateTimeFormat));
+            lastModified.setText(viewedClient.getModifiedTimestampString());
             //TODO show what in particular was updated
             HistoryItem save = new HistoryItem("UPDATE CLIENT INFO",
                     "Updated changes to client " + viewedClient.getFirstName() + " " + viewedClient.getLastName()
@@ -282,6 +275,7 @@ public class ViewClientController extends SubController {
         addChangeIfDifferent(action, "setLastName", viewedClient.getLastName(), lname.getText());
         addChangeIfDifferent(action, "setMiddleName", viewedClient.getMiddleName(), mname.getText());
         addChangeIfDifferent(action, "setDateOfBirth", viewedClient.getDateOfBirth(), dob.getValue());
+        addChangeIfDifferent(action, "setDateOfDeath", viewedClient.getDateOfDeath(), dod.getValue());
         addChangeIfDifferent(action, "setGender", viewedClient.getGender(), gender.getValue());
         addChangeIfDifferent(action, "setHeight", viewedClient.getHeight(), Double.parseDouble(height.getText()));
         addChangeIfDifferent(action, "setWeight", viewedClient.getWeight(), Double.parseDouble(weight.getText()));

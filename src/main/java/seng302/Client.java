@@ -5,6 +5,7 @@ import static seng302.TransplantRequest.RequestStatus.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;
@@ -39,6 +40,8 @@ public class Client {
     private double weight;
     private LocalDate dateOfBirth;
     private LocalDate dateOfDeath;
+
+    private final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy\nh:mm:ss a");
 
     private final LocalDateTime createdTimestamp;
     private LocalDateTime modifiedTimestamp;
@@ -296,12 +299,23 @@ public class Client {
         return uid;
     }
 
-    public LocalDateTime getCreatedTimestamp() {
-        return createdTimestamp;
+    /**
+     * @return the timestamp of when the client was created as a string.
+     */
+    public String getCreatedTimestampString() {
+        return createdTimestamp.format(dateTimeFormat);
     }
 
-    public LocalDateTime getModifiedTimestamp() {
-        return modifiedTimestamp;
+    /**
+     * @return the timestamp of when the client was last modified as a string.
+     * If not modified, returns "User has not been modified yet.".
+     */
+    public String getModifiedTimestampString() {
+        if (modifiedTimestamp == null) {
+            return "User has not been modified yet.";
+        } else {
+            return modifiedTimestamp.format(dateTimeFormat);
+        }
     }
 
     public Map<Organ, Boolean> getOrganDonationStatus() {
