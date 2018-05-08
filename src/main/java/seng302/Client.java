@@ -6,9 +6,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -491,6 +493,40 @@ public class Client {
             }
         }
 
+        return isMatch;
+    }
+
+    public Collection<String> getNameCollection() {
+        String mname = middleName;
+        if (middleName  == null) {
+            mname = "";
+        }
+        String[] allNames = {firstName.toLowerCase(), lastName.toLowerCase(), mname.toLowerCase()};
+        return new HashSet<>(Arrays.asList(allNames));
+    }
+
+    public boolean profileSearch(String searchParam) {
+        //Last name -> Pref name -> First name -> Middle name [-> suffix/prefixes]
+        String lowerSearch = searchParam.toLowerCase();
+        String[] splitSearchItems = lowerSearch.split("\\s+");
+
+        Collection<String> searched = new HashSet<>(Arrays.asList(splitSearchItems));
+        String mname = middleName;
+        if (middleName  == null) {
+            mname = "";
+        }
+
+        String[] allNames = {firstName.toLowerCase(), lastName.toLowerCase(), mname.toLowerCase()};
+        Collection<String> names = new HashSet<>(Arrays.asList(allNames));
+
+        boolean isMatch = false;
+        for (String searchedString: searched) {
+            for (String name: names) {
+                if (name.startsWith(searchedString)) {
+                    isMatch = true;
+                }
+            }
+        }
         return isMatch;
     }
 

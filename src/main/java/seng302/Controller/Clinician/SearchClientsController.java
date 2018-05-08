@@ -1,6 +1,8 @@
 package seng302.Controller.Clinician;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -153,7 +155,7 @@ public class SearchClientsController extends SubController {
         if (searchText == null || searchText.length() == 0) {
             filteredClients.setPredicate(client -> true);
         } else {
-            filteredClients.setPredicate(client -> client.nameContains(searchText));
+            filteredClients.setPredicate(client -> client.profileSearch(searchText));
         }
 
         //If the pagination count wont change, force a refresh of the page, if it will, change it and that will trigger the update.
@@ -164,6 +166,7 @@ public class SearchClientsController extends SubController {
             pagination.setPageCount(newPageCount);
         }
     }
+
 
     /**
      * Upon pagination, update the table to show the correct items
