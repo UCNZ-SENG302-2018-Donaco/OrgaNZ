@@ -20,6 +20,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.text.Text;
 
 import seng302.Client;
 import seng302.Controller.MainController;
@@ -57,6 +58,9 @@ public class SearchClientsController extends SubController {
 
     @FXML
     private Pagination pagination;
+
+    @FXML
+    private Text displayingXToYOfZText;
 
     private ObservableList<Client> observableClientList = FXCollections.observableArrayList();
     private FilteredList<Client> filteredClients;
@@ -177,6 +181,15 @@ public class SearchClientsController extends SubController {
         int fromIndex = pageIndex * ROWS_PER_PAGE;
         int toIndex = Math.min(fromIndex + ROWS_PER_PAGE, filteredClients.size());
         observableClientList.setAll(sortedClients.subList(fromIndex, toIndex));
+        if (sortedClients.size() < 2 || fromIndex + 1 == toIndex) {
+            // 0 or 1 items OR the last item, on its own page
+            displayingXToYOfZText.setText(String.format("Displaying %d of %d",
+                    sortedClients.size(),
+                    sortedClients.size()));
+        } else {
+            displayingXToYOfZText.setText(String.format("Displaying %d-%d of %d", fromIndex + 1, toIndex,
+                    sortedClients.size()));
+        }
         return new Pane();
     }
 }
