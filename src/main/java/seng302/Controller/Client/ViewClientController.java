@@ -100,7 +100,7 @@ public class ViewClientController extends SubController {
             viewedClient = windowContext.getViewClient();
         }
 
-        mainController.setTitle("Client profile: " + viewedClient.getFullName());
+        mainController.setTitle("Client profile: " + viewedClient.getPreferredName());
         id.setText(Integer.toString(viewedClient.getUid()));
         searchClient();
     }

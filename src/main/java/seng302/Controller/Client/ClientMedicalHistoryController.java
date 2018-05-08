@@ -213,7 +213,7 @@ public class ClientMedicalHistoryController extends SubController {
         } else if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
         }
-
+        mainController.setTitle("Medication History:  " + client.getPreferredName());
         refresh();
         enableAppropriateButtons();
     }

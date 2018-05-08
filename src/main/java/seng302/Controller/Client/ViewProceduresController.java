@@ -262,7 +262,7 @@ public class ViewProceduresController extends SubController {
             client = windowContext.getViewClient();
         }
 
-        mainController.setTitle("Procedures: " + client.getFullName());
+        mainController.setTitle("Procedures: " + client.getPreferredName());
         refresh();
         enableAppropriateButtons();
     }
