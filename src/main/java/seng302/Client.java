@@ -192,7 +192,7 @@ public class Client {
             fullName += middleName + " ";
         }
         if (preferredName != null) {
-            preferredName += "\"" + preferredName + "\" ";
+            fullName += "\"" + preferredName + "\" ";
         }
         fullName += lastName;
         return fullName;
@@ -223,6 +223,15 @@ public class Client {
     public void setMiddleName(String middleName) {
         addUpdate("middleNames");
         this.middleName = middleName;
+    }
+
+    public String getPreferredName() {
+        return preferredName;
+    }
+
+    public void setPreferredName(String preferredName) {
+        addUpdate("preferredName");
+        this.preferredName = preferredName;
     }
 
     public LocalDate getDateOfBirth() {
@@ -490,6 +499,7 @@ public class Client {
         for (String string : splitSearchItems) {
             if (!firstName.toLowerCase().contains(string) &&
                     (middleName == null || !middleName.toLowerCase().contains(string)) &&
+                    (preferredName == null || !preferredName.toLowerCase().contains(string)) &&
                     !lastName.toLowerCase().contains(string)) {
                 isMatch = false;
                 break;
