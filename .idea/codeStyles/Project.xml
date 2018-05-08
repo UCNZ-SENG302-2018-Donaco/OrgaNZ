@@ -7,6 +7,7 @@
         <option name="TAB_SIZE" value="2" />
       </value>
     </option>
+    <option name="RIGHT_MARGIN" value="1000" />
     <option name="WRAP_WHEN_TYPING_REACHES_RIGHT_MARGIN" value="true" />
     <JSCodeStyleSettings>
       <option name="INDENT_CHAINED_CALLS" value="false" />
@@ -45,6 +46,8 @@
       <option name="INDENT_CHAINED_CALLS" value="false" />
     </TypeScriptCodeStyleSettings>
     <XML>
+      <option name="XML_ATTRIBUTE_WRAP" value="0" />
+      <option name="XML_TEXT_WRAP" value="0" />
       <option name="XML_ALIGN_ATTRIBUTES" value="false" />
       <option name="XML_LEGACY_SETTINGS_IMPORTED" value="true" />
     </XML>
@@ -81,6 +84,7 @@
       </indentOptions>
     </codeStyleSettings>
     <codeStyleSettings language="JAVA">
+      <option name="RIGHT_MARGIN" value="120" />
       <option name="KEEP_CONTROL_STATEMENT_IN_ONE_LINE" value="false" />
       <option name="KEEP_BLANK_LINES_IN_CODE" value="1" />
       <option name="BLANK_LINES_AFTER_CLASS_HEADER" value="1" />
@@ -187,6 +191,8 @@
       </indentOptions>
     </codeStyleSettings>
     <codeStyleSettings language="XML">
+      <option name="RIGHT_MARGIN" value="1000" />
+      <option name="WRAP_ON_TYPING" value="0" />
       <indentOptions>
         <option name="INDENT_SIZE" value="2" />
         <option name="CONTINUATION_INDENT_SIZE" value="2" />

@@ -2,6 +2,7 @@ package seng302;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.logging.Level;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -12,6 +13,7 @@ import javafx.stage.Stage;
 import seng302.Controller.MainController;
 import seng302.State.State;
 import seng302.Utilities.JSONConverter;
+import seng302.Utilities.LoggerSetup;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
 import seng302.Utilities.View.WindowContext;
@@ -38,13 +40,15 @@ public class AppUI extends Application {
      */
     @Override
     public void start(Stage stage) throws IOException {
-        stage.setTitle("Organ Donor Management System");
+        LoggerSetup.setup(Level.INFO);
+
+        stage.setTitle("Organ Client Management System");
         stage.setScene(createScene(loadMainPane(stage)));
         stage.show();
 
         State.init();
 
-        // Loads the initial donor data from the save file, or creates it if it does not yet exist. //
+        // Loads the initial client data from the save file, or creates it if it does not yet exist. //
         File saveFile = new File("savefile.json");
         JSONConverter.createEmptyJSONFileIfNotExists(saveFile);
         JSONConverter.loadFromFile(saveFile);
@@ -63,6 +67,8 @@ public class AppUI extends Application {
         MainController mainController = loader.getController();
         mainController.setStage(stage);
         mainController.setWindowContext(WindowContext.defaultContext());
+
+        State.addMainController(mainController);
 
         PageNavigator.loadPage(Page.LANDING, mainController);
 

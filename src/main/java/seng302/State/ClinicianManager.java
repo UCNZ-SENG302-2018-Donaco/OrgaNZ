@@ -1,51 +1,36 @@
 package seng302.State;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
-import seng302.Actions.ActionInvoker;
 import seng302.Clinician;
 import seng302.Utilities.Enums.Region;
 
 /**
- * The class to handle the Donor inputs, including adding,
- * setting attributes and updating the values of the donor.
- * @author Dylan Carlyle, Jack Steel
- * @version sprint 1.
- * date 08/03/2018
+ * The class to handle the Client inputs, including adding,
+ * setting attributes and updating the values of the client.
  */
 
 public class ClinicianManager {
 
-    private ArrayList<Clinician> clinicians;
-    private ActionInvoker invoker;
+    private final List<Clinician> clinicians;
 
     public ClinicianManager() {
         clinicians = new ArrayList<>();
         clinicians.add(new Clinician("admin", null, "admin", "admin", Region.UNSPECIFIED, 0, "admin"));
-        invoker = State.getInvoker();
     }
 
-    public ClinicianManager(ActionInvoker invoker) {
-        clinicians = new ArrayList<>();
-        clinicians.add(new Clinician("admin", null, "admin", "admin", Region.UNSPECIFIED, 0, "admin"));
-        this.invoker = invoker;
-    }
-
-    public ClinicianManager(ArrayList<Clinician> clinicians) {
+    public ClinicianManager(List<Clinician> clinicians) {
         this.clinicians = clinicians;
         clinicians.add(new Clinician("admin", null, "admin", "admin", Region.UNSPECIFIED, 0, "admin"));
-        invoker = State.getInvoker();
-    }
-
-    public void setClinicians(ArrayList<Clinician> clinicians) {
-        this.clinicians = clinicians;
     }
 
     /**
-     * Add a donor
+     * Add a clinician
      * @param clinician Clinician to be added
      */
-    public void addDonor(Clinician clinician) {
+    public void addClinician(Clinician clinician) {
         clinicians.add(clinician);
     }
 
@@ -53,12 +38,12 @@ public class ClinicianManager {
      * Get the list of clinicians
      * @return ArrayList of current clinicians
      */
-    public ArrayList<Clinician> getClinicians() {
-        return clinicians;
+    public List<Clinician> getClinicians() {
+        return Collections.unmodifiableList(clinicians);
     }
 
     /**
-     * Remove a donor object
+     * Remove a client object
      * @param clinician Clinician to be removed
      */
     public void removeClinician(Clinician clinician) {
@@ -86,6 +71,8 @@ public class ClinicianManager {
      */
     public Clinician getClinicianByStaffId(int id) {
         return clinicians.stream()
-                .filter(c -> c.getStaffId() == id).findFirst().orElse(null);
+                .filter(o -> o.getStaffId() == id)
+                .findFirst()
+                .orElse(null);
     }
 }

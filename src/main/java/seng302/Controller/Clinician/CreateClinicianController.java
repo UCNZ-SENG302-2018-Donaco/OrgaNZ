@@ -1,20 +1,16 @@
 package seng302.Controller.Clinician;
 
 import javafx.collections.FXCollections;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 
+import seng302.Actions.Clinician.CreateClinicianAction;
 import seng302.Clinician;
+import seng302.Controller.MainController;
 import seng302.Controller.SubController;
 import seng302.HistoryItem;
 import seng302.State.ClinicianManager;
-import seng302.State.Session;
 import seng302.State.State;
 import seng302.Utilities.Enums.Region;
 import seng302.Utilities.JSONConverter;
@@ -35,6 +31,8 @@ public class CreateClinicianController extends SubController {
     private Label fnameLabel, mnameLabel, lnameLabel, staffIdLabel, regionLabel, passwordLabel;
     @FXML
     private ChoiceBox<Region> region;
+    @FXML
+    private Button createButton, goBackButton;
 
     private ClinicianManager clinicianManager;
 
@@ -45,6 +43,16 @@ public class CreateClinicianController extends SubController {
     private void initialize() {
         clinicianManager = State.getClinicianManager();
         region.setItems(FXCollections.observableArrayList(Region.values()));
+    }
+
+    /**
+     * Override so we can set the page title.
+     * @param mainController The MainController
+     */
+    @Override
+    public void setup(MainController mainController) {
+        super.setup(mainController);
+        mainController.setTitle("Create a new Clinician");
     }
 
     /**
@@ -79,6 +87,7 @@ public class CreateClinicianController extends SubController {
 
         } catch (NumberFormatException ex) {
             staffIdLabel.setTextFill(Color.RED);
+            update = false;
         }
 
         if (password.getText().equals("")) { // Password
@@ -92,35 +101,29 @@ public class CreateClinicianController extends SubController {
 
 
     /**
-     * Creates a Clinician if all of the fields have valid input. These are recorded in State and a success message is
-     * shown. The user is then taken to the view clinician page. If the StaffId already exists in the current state,
-     * an error alert is shown.
+     * Creates a Clinician if all of the fields have valid input.
      */
     @FXML
     private void createUser() {
         if (checkMandatoryFields()) {
-            System.out.println("all valid");
 
             if (clinicianManager.collisionExists(Integer.parseInt(staffId.getText()))) {
                 staffIdLabel.setTextFill(Color.RED);
-                PageNavigator.showAlert(Alert.AlertType.ERROR, "Staff ID in Use",
-                        "This staff ID is already in use and has an existing login.");
             } else {
                 Clinician clinician = new Clinician(fname.getText(), mname.getText(), lname.getText(),
                         workAddress.getText(), region.getValue(), Integer.parseInt(staffId.getText()),
                         password.getText());
-                clinicianManager.addDonor(clinician);
+
+                CreateClinicianAction action = new CreateClinicianAction(clinician, clinicianManager);
+                State.getInvoker().execute(action);
 
                 HistoryItem save = new HistoryItem("CREATE CLINICIAN",
                         "Clinician " + fname.getText() + " " + lname.getText() + " with staff ID " + staffId.getText()
                                 + " Created.");
                 JSONConverter.updateHistory(save, "action_history.json");
 
-                State.login(Session.UserType.CLINICIAN, clinician);
+                State.login(clinician);
 
-                PageNavigator.showAlert(Alert.AlertType.INFORMATION, "Clinician created",
-                        String.format("Successfully created clinician with Staff ID %s.",
-                                staffId.getText()));
                 PageNavigator.loadPage(Page.VIEW_CLINICIAN, mainController);
             }
         }
@@ -129,10 +132,9 @@ public class CreateClinicianController extends SubController {
 
     /**
      * Takes the user back to the landing page.
-     * @param event user clicks the go back button
      */
     @FXML
-    private void goBack(ActionEvent event) {
+    private void goBack() {
         PageNavigator.loadPage(Page.LANDING, mainController);
     }
 }

@@ -3,7 +3,7 @@
   <groupId>com.humanharvest.organz</groupId>
   <artifactId>organz</artifactId>
   <packaging>jar</packaging>
-  <version>0.3</version>
+  <version>0.4</version>
   <name>organz</name>
   <url>https://eng-git.canterbury.ac.nz/seng302-2018/team-700</url>
 
@@ -62,6 +62,7 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
 
   <dependencies>
@@ -91,6 +92,40 @@
       <groupId>jline</groupId>
       <artifactId>jline</artifactId>
       <version>2.14.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.controlsfx</groupId>
+      <artifactId>controlsfx</artifactId>
+      <version>8.40.14</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.http-client</groupId>
+      <artifactId>google-http-client</artifactId>
+      <version>1.23.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.google.http-client</groupId>
+      <artifactId>google-http-client-gson</artifactId>
+      <version>1.23.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.testfx</groupId>
+      <artifactId>testfx-core</artifactId>
+      <version>4.0.13-alpha</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.testfx</groupId>
+      <artifactId>testfx-junit</artifactId>
+      <version>4.0.13-alpha</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.testfx</groupId>
+      <artifactId>openjfx-monocle</artifactId>
+      <version>8u76-b04</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/openjfx-monocle-8u76-b04.jar</systemPath>
     </dependency>
   </dependencies>
 

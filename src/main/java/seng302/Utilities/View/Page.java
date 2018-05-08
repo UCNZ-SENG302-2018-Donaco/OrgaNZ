@@ -7,16 +7,21 @@ package seng302.Utilities.View;
 public enum Page {
     MAIN("/fxml/main.fxml"),
     LANDING("/fxml/landing.fxml"),
-    LOGIN_DONOR("/fxml/login_donor.fxml"),
-    CREATE_DONOR("/fxml/create_donor.fxml"),
+    LOGIN_CLIENT("/fxml/login_client.fxml"),
+    CREATE_CLIENT("/fxml/create_client.fxml"),
     SIDEBAR("/fxml/sidebar.fxml"),
-    VIEW_DONOR("/fxml/view_donor.fxml"),
+    VIEW_CLIENT("/fxml/view_client.fxml"),
     VIEW_CLINICIAN("/fxml/view_clinician.fxml"),
-    REGISTER_ORGANS("/fxml/register_organs.fxml"),
+    REGISTER_ORGAN_DONATIONS("/fxml/register_organ_donation.fxml"),
+    REQUEST_ORGANS("/fxml/request_organs.fxml"),
     HISTORY("/fxml/history.fxml"),
-    SEARCH("/fxml/search_donors.fxml"),
+    SEARCH("/fxml/search_clients.fxml"),
+    TRANSPLANTS("/fxml/transplants.fxml"),
     LOGIN_CLINICIAN("/fxml/login_clinician.fxml"),
-    CREATE_CLINICIAN("/fxml/create_clinician.fxml");
+    CREATE_CLINICIAN("/fxml/create_clinician.fxml"),
+    VIEW_MEDICATIONS("/fxml/view_medications.fxml"),
+    VIEW_MEDICAL_HISTORY("/fxml/view_medical_history.fxml"),
+    VIEW_PROCEDURES("/fxml/view_procedures.fxml");
 
     private String path;
 
