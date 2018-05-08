@@ -31,9 +31,11 @@ public class Client {
     private String firstName;
     private String lastName;
     private String middleName;
+    private String preferredName;
     private String currentAddress;
     private Region region;
     private Gender gender;
+    private Gender genderIdentity;
     private BloodType bloodType;
     private double height;
     private double weight;
@@ -188,6 +190,9 @@ public class Client {
         String fullName = firstName + " ";
         if (middleName != null) {
             fullName += middleName + " ";
+        }
+        if (preferredName != null) {
+            preferredName += "\"" + preferredName + "\" ";
         }
         fullName += lastName;
         return fullName;
