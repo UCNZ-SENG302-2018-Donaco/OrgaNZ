@@ -24,11 +24,13 @@ import seng302.Controller.MainController;
 import seng302.Controller.SubController;
 import seng302.State.State;
 import seng302.Utilities.Enums.Gender;
+import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.Enums.Region;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
 import seng302.Utilities.View.WindowContext;
 
+import org.controlsfx.control.CheckComboBox;
 import org.controlsfx.control.RangeSlider;
 
 public class SearchClientsController extends SubController {
@@ -42,6 +44,18 @@ public class SearchClientsController extends SubController {
 
     @FXML
     private RangeSlider ageSlider;
+
+    @FXML
+    private CheckComboBox<Gender> birthGenderFilter;
+
+    @FXML
+    private CheckComboBox<Region> regionFilter;
+
+    @FXML
+    private CheckComboBox<String> clientTypeFilter;
+
+    @FXML
+    private CheckComboBox<Organ> organsDonatingFilter, organsRequestingFilter;
 
     @FXML
     private HBox sidebarPane;
@@ -111,6 +125,12 @@ public class SearchClientsController extends SubController {
             ageMaxField.setText(Integer.toString(newValue.intValue()));
             refresh();
         });
+
+        birthGenderFilter.getItems().setAll(Gender.values());
+        regionFilter.getItems().setAll(Region.values());
+        clientTypeFilter.getItems().setAll("Donor", "Receiver");
+        organsDonatingFilter.getItems().setAll(Organ.values());
+        organsRequestingFilter.getItems().setAll(Organ.values());
 
         tableView.setOnSort((o) -> createPage(pagination.getCurrentPageIndex()));
         searchBox.textProperty().addListener(((o) -> refresh()));
