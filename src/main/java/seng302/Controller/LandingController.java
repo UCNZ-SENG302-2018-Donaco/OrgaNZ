@@ -52,4 +52,7 @@ public class LandingController extends SubController {
     private void goToCreateClinician() {
         PageNavigator.loadPage(Page.CREATE_CLINICIAN, mainController);
     }
+
+    @FXML
+    private void goToCLI() {PageNavigator.loadPage(Page.COMMAND_LINE, mainController);}
 }

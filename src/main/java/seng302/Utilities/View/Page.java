@@ -21,7 +21,8 @@ public enum Page {
     CREATE_CLINICIAN("/fxml/create_clinician.fxml"),
     VIEW_MEDICATIONS("/fxml/view_medications.fxml"),
     VIEW_MEDICAL_HISTORY("/fxml/view_medical_history.fxml"),
-    VIEW_PROCEDURES("/fxml/view_procedures.fxml");
+    VIEW_PROCEDURES("/fxml/view_procedures.fxml"),
+    COMMAND_LINE("/fxml/command_line.fxml");
 
     private String path;
 

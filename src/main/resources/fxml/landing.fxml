@@ -12,7 +12,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.LandingController">
+<VBox prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.LandingController">
   <children>
     <BorderPane VBox.vgrow="ALWAYS">
       <bottom>
@@ -43,6 +43,7 @@
                   <Button fx:id="createClinicianButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToCreateClinician" text="Sign up" textFill="#2d2df2" />
                      </children>
                   </HBox>
+                  <Button mnemonicParsing="false" onAction="#goToCLI" text="Button" GridPane.rowIndex="1" />
           </children>
           <BorderPane.margin>
             <Insets />

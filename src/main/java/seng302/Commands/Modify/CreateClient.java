@@ -57,6 +57,7 @@ public class CreateClient implements Runnable {
     private boolean force;
 
     public void run() {
+
         if (!force && manager.collisionExists(firstName, lastName, dateOfBirth)) {
             System.out.println("Duplicate user found, use --force to create anyway");
             return;

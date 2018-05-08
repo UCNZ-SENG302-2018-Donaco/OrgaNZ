@@ -18,12 +18,10 @@ import picocli.CommandLine.Command;
 
 /**
  * The main command hub used to access the other commands within the program such as save, help, createuser etc.
- * @author Dylan Carlyle, Jack Steel
- * @version sprint 1.
- * date 05/03/2018
  */
 
-@Command(name = "ClientCLI", description = "ClientCLI is a command based management tool for the team-21 client registration system.",
+@Command(name = "ClientCLI", description = "ClientCLI is a command based management tool for the OrgaNZ client "
+        + "registration system.",
         subcommands = {
                 CreateClient.class,
                 SetAttribute.class,
@@ -42,7 +40,6 @@ import picocli.CommandLine.Command;
         })
 
 public class BaseCommand implements Runnable {
-
 
     public void run() {
         System.out.println("Invalid command");
