@@ -54,11 +54,11 @@ public class ViewClientController extends SubController {
     private Label creationDate, lastModified, noClientLabel, fnameLabel, lnameLabel, dobLabel,
             dodLabel, heightLabel, weightLabel, ageDisplayLabel, ageLabel, BMILabel;
     @FXML
-    private TextField id, fname, lname, mname, height, weight, address;
+    private TextField id, fname, lname, mname, pname, height, weight, address;
     @FXML
     private DatePicker dob, dod;
     @FXML
-    private ChoiceBox<Gender> gender;
+    private ChoiceBox<Gender> gender, genderIdentity;
     @FXML
     private ChoiceBox<BloodType> btype;
     @FXML
@@ -73,7 +73,7 @@ public class ViewClientController extends SubController {
     /**
      * Initializes the UI for this page.
      * - Loads the sidebar.
-     * - Adds all values to the gender and blood type dropdown lists.
+     * - Adds all values to the gender, genderIdentity, blood type, and region dropdown lists.
      * - Disables all fields.
      * - If a client is logged in, populates with their info and removes ability to view a different client.
      * - If the viewUserId is set, populates with their info.
@@ -81,6 +81,7 @@ public class ViewClientController extends SubController {
     @FXML
     private void initialize() {
         gender.setItems(FXCollections.observableArrayList(Gender.values()));
+        genderIdentity.setItems(FXCollections.observableArrayList(Gender.values()));
         btype.setItems(FXCollections.observableArrayList(BloodType.values()));
         region.setItems(FXCollections.observableArrayList(Region.values()));
         setFieldsDisabled(true);
@@ -107,6 +108,7 @@ public class ViewClientController extends SubController {
     @Override
     public void refresh() {
         searchClient();
+        mainController.setTitle("Client profile: " + viewedClient.getFullName());
     }
 
     /**
@@ -135,9 +137,11 @@ public class ViewClientController extends SubController {
             fname.setText(viewedClient.getFirstName());
             lname.setText(viewedClient.getLastName());
             mname.setText(viewedClient.getMiddleName());
+            pname.setText(viewedClient.getPreferredName());
             dob.setValue(viewedClient.getDateOfBirth());
             dod.setValue(viewedClient.getDateOfDeath());
             gender.setValue(viewedClient.getGender());
+            genderIdentity.setValue(viewedClient.getGenderIdentity());
             height.setText(String.valueOf(viewedClient.getHeight()));
             weight.setText(String.valueOf(viewedClient.getWeight()));
             btype.setValue(viewedClient.getBloodType());
@@ -281,8 +285,10 @@ public class ViewClientController extends SubController {
         addChangeIfDifferent(action, "setFirstName", viewedClient.getFirstName(), fname.getText());
         addChangeIfDifferent(action, "setLastName", viewedClient.getLastName(), lname.getText());
         addChangeIfDifferent(action, "setMiddleName", viewedClient.getMiddleName(), mname.getText());
+        addChangeIfDifferent(action, "setPreferredName", viewedClient.getPreferredName(), pname.getText());
         addChangeIfDifferent(action, "setDateOfBirth", viewedClient.getDateOfBirth(), dob.getValue());
         addChangeIfDifferent(action, "setGender", viewedClient.getGender(), gender.getValue());
+        addChangeIfDifferent(action, "setGenderIdentity", viewedClient.getGenderIdentity(), genderIdentity.getValue());
         addChangeIfDifferent(action, "setHeight", viewedClient.getHeight(), Double.parseDouble(height.getText()));
         addChangeIfDifferent(action, "setWeight", viewedClient.getWeight(), Double.parseDouble(weight.getText()));
         addChangeIfDifferent(action, "setBloodType", viewedClient.getBloodType(), btype.getValue());
@@ -341,9 +347,9 @@ public class ViewClientController extends SubController {
      */
     private void displayAge() {
         if (viewedClient.getDateOfDeath() == null) {
-            ageDisplayLabel.setText("Age");
+            ageDisplayLabel.setText("Age:");
         } else {
-            ageDisplayLabel.setText("Age at Death");
+            ageDisplayLabel.setText("Age at death:");
         }
         ageLabel.setText(String.valueOf(viewedClient.getAge()));
     }

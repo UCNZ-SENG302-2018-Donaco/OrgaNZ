@@ -261,6 +261,15 @@ public class Client {
         this.gender = gender;
     }
 
+    public Gender getGenderIdentity() {
+        return genderIdentity;
+    }
+
+    public void setGenderIdentity(Gender genderIdentity) {
+        addUpdate("genderIdentity");
+        this.genderIdentity = genderIdentity;
+    }
+
     public double getHeight() {
         return height;
     }
