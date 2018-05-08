@@ -93,6 +93,7 @@ public class RegisterOrganDonationController extends SubController {
         }
 
         mainController.setTitle("Organ donation registration: " + client.getPreferredName());
+
         fieldUserID.setText(Integer.toString(client.getUid()));
         updateUserID();
     }

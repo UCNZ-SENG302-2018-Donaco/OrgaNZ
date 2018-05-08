@@ -226,7 +226,11 @@ public class Client {
     }
 
     public String getPreferredName() {
-        return preferredName;
+        if (preferredName != null) {
+            return preferredName;
+        } else {
+            return firstName + " " + lastName;
+        }
     }
 
     public void setPreferredName(String preferredName) {
