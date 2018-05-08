@@ -14,6 +14,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
+import seng302.AppUI;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
 import seng302.State.State;
@@ -73,7 +74,9 @@ public class PageNavigator {
             mainController.setStage(newStage);
             State.addMainController(mainController);
 
-            newStage.setScene(new Scene(mainPane));
+            Scene scene = new Scene(mainPane);
+            AppUI.addCss(scene);
+            newStage.setScene(scene);
             newStage.show();
 
             return mainController;

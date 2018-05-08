@@ -8,6 +8,7 @@ import java.util.Optional;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
@@ -27,6 +28,8 @@ import seng302.HistoryItem;
 import seng302.State.ClientManager;
 import seng302.State.Session;
 import seng302.State.State;
+import seng302.UI.Watchers.NumberWatcher;
+import seng302.UI.Watchers.UIWatcher;
 import seng302.Utilities.Enums.BloodType;
 import seng302.Utilities.Enums.Gender;
 import seng302.Utilities.Enums.Region;
@@ -50,6 +53,8 @@ public class ViewClientController extends SubController {
 
     @FXML
     private Pane sidebarPane, idPane, inputsPane;
+    @FXML
+    public Button searchClientButton;
     @FXML
     private Label creationDate, lastModified, noClientLabel, fnameLabel, lnameLabel, dobLabel,
             dodLabel, heightLabel, weightLabel, ageDisplayLabel, ageLabel, BMILabel;
@@ -101,7 +106,11 @@ public class ViewClientController extends SubController {
 
         mainController.setTitle("Client profile: " + viewedClient.getFullName());
         id.setText(Integer.toString(viewedClient.getUid()));
-        searchClient();
+        updateClientFields();
+
+        new UIWatcher()
+                .add(id, new NumberWatcher())
+                .addDisableButton(searchClientButton);
     }
 
     @Override
@@ -115,50 +124,53 @@ public class ViewClientController extends SubController {
      */
     @FXML
     private void searchClient() {
-        int id_value;
+        int idValue;
         try {
-            id_value = Integer.parseInt(id.getText());
-        } catch (Exception e) {
+            idValue = Integer.parseInt(id.getText());
+        } catch (NumberFormatException e) {
             noClientLabel.setVisible(true);
             setFieldsDisabled(true);
             return;
         }
 
-        viewedClient = manager.getClientByID(id_value);
+        viewedClient = manager.getClientByID(idValue);
         if (viewedClient == null) {
             noClientLabel.setVisible(true);
             setFieldsDisabled(true);
         } else {
-            noClientLabel.setVisible(false);
-            setFieldsDisabled(false);
-
-            fname.setText(viewedClient.getFirstName());
-            lname.setText(viewedClient.getLastName());
-            mname.setText(viewedClient.getMiddleName());
-            dob.setValue(viewedClient.getDateOfBirth());
-            dod.setValue(viewedClient.getDateOfDeath());
-            gender.setValue(viewedClient.getGender());
-            height.setText(String.valueOf(viewedClient.getHeight()));
-            weight.setText(String.valueOf(viewedClient.getWeight()));
-            btype.setValue(viewedClient.getBloodType());
-            region.setValue(viewedClient.getRegion());
-            address.setText(viewedClient.getCurrentAddress());
-
-            creationDate.setText(viewedClient.getCreatedTimestamp().format(dateTimeFormat));
-            if (viewedClient.getModifiedTimestamp() == null) {
-                lastModified.setText("User has not been modified yet.");
-            } else {
-                lastModified.setText(viewedClient.getModifiedTimestamp().format(dateTimeFormat));
-            }
-
-            HistoryItem save = new HistoryItem("SEARCH CLIENT",
-                    "Client " + viewedClient.getFirstName() + " " + viewedClient.getLastName() + " (" + viewedClient
-                            .getUid() + ") was searched");
-            JSONConverter.updateHistory(save, "action_history.json");
-
-            displayBMI();
-            displayAge();
+            updateClientFields();
         }
+    }
+
+    private void updateClientFields() {
+        noClientLabel.setVisible(false);
+        setFieldsDisabled(false);
+
+        fname.setText(viewedClient.getFirstName());
+        lname.setText(viewedClient.getLastName());
+        mname.setText(viewedClient.getMiddleName());
+        dob.setValue(viewedClient.getDateOfBirth());
+        dod.setValue(viewedClient.getDateOfDeath());
+        gender.setValue(viewedClient.getGender());
+        height.setText(String.valueOf(viewedClient.getHeight()));
+        weight.setText(String.valueOf(viewedClient.getWeight()));
+        btype.setValue(viewedClient.getBloodType());
+        region.setValue(viewedClient.getRegion());
+        address.setText(viewedClient.getCurrentAddress());
+
+        creationDate.setText(viewedClient.getCreatedTimestamp().format(dateTimeFormat));
+        if (viewedClient.getModifiedTimestamp() == null) {
+            lastModified.setText("User has not been modified yet.");
+        } else {
+            lastModified.setText(viewedClient.getModifiedTimestamp().format(dateTimeFormat));
+        }
+
+        HistoryItem save = new HistoryItem("SEARCH CLIENT",
+                "Client " + viewedClient.getFullName() + " (" + viewedClient.getUid() + ") was searched");
+        JSONConverter.updateHistory(save, "action_history.json");
+
+        displayBMI();
+        displayAge();
     }
 
     /**

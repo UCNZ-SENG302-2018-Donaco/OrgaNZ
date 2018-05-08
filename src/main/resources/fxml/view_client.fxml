@@ -41,7 +41,7 @@
                       </rowConstraints>
                       <children>
                         <TextField fx:id="id" prefHeight="30.0" promptText="ID Number" GridPane.columnIndex="1" />
-                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#searchClient" prefHeight="30.0" text="Search" GridPane.columnIndex="2" />
+                        <Button fx:id="searchClientButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#searchClient" prefHeight="30.0" text="Search" GridPane.columnIndex="2" />
                         <Label fx:id="noClientLabel" text="No Client with this ID exists!" textFill="#c60000" visible="false" wrapText="true" GridPane.columnIndex="3" />
                       </children>
                       <VBox.margin>
