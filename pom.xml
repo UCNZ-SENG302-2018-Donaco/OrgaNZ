@@ -9,8 +9,8 @@
 
   <developers>
     <developer>
-      <name>Jack Steel</name>
-      <email>jes143@uclive.ac.nz</email>
+      <name>Alex Tompkins</name>
+      <email>ato47@uclive.ac.nz</email>
       <organization>University of Canterbury</organization>
       <organizationUrl>http://www.canterbury.ac.nz</organizationUrl>
     </developer>
@@ -21,14 +21,26 @@
       <organizationUrl>http://www.canterbury.ac.nz</organizationUrl>
     </developer>
     <developer>
-      <name>Alex Tompkins</name>
-      <email>ato47@uclive.ac.nz</email>
+      <name>Elizabeth Wilson</name>
+      <email>ewi32@uclive.ac.nz</email>
+      <organization>University of Canterbury</organization>
+      <organizationUrl>http://www.canterbury.ac.nz</organizationUrl>
+    </developer>
+    <developer>
+      <name>Jack Steel</name>
+      <email>jes143@uclive.ac.nz</email>
       <organization>University of Canterbury</organization>
       <organizationUrl>http://www.canterbury.ac.nz</organizationUrl>
     </developer>
     <developer>
       <name>James Toohey</name>
       <email>jto59@uclive.ac.nz</email>
+      <organization>University of Canterbury</organization>
+      <organizationUrl>http://www.canterbury.ac.nz</organizationUrl>
+    </developer>
+    <developer>
+      <name>Matthew Smit</name>
+      <email>mjs351@uclive.ac.nz</email>
       <organization>University of Canterbury</organization>
       <organizationUrl>http://www.canterbury.ac.nz</organizationUrl>
     </developer>
@@ -41,18 +53,6 @@
     <developer>
       <name>Tom Kearsley</name>
       <email>tke29@uclive.ac.nz</email>
-      <organization>University of Canterbury</organization>
-      <organizationUrl>http://www.canterbury.ac.nz</organizationUrl>
-    </developer>
-    <developer>
-      <name>Matthew Smit</name>
-      <email>mjs351@uclive.ac.nz</email>
-      <organization>University of Canterbury</organization>
-      <organizationUrl>http://www.canterbury.ac.nz</organizationUrl>
-    </developer>
-    <developer>
-      <name>Elizabeth Wilson</name>
-      <email>ewi32@uclive.ac.nz</email>
       <organization>University of Canterbury</organization>
       <organizationUrl>http://www.canterbury.ac.nz</organizationUrl>
     </developer>
