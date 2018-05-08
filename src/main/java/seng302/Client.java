@@ -34,6 +34,7 @@ public class Client {
     private String lastName;
     private String middleName;
     private String currentAddress;
+    private String preferredName;
     private Region region;
     private Gender gender;
     private BloodType bloodType;
@@ -220,6 +221,15 @@ public class Client {
     public void setMiddleName(String middleName) {
         addUpdate("middleNames");
         this.middleName = middleName;
+    }
+
+    public String getPreferredName() {
+        return preferredName;
+    }
+
+    public void setPreferredName(String preferredName) {
+        addUpdate("preferredName");
+        this.preferredName = preferredName;
     }
 
     public LocalDate getDateOfBirth() {
@@ -496,32 +506,45 @@ public class Client {
         return isMatch;
     }
 
-    public Collection<String> getNameCollection() {
+    /**
+     * Returns a HashSet of all names of the Client. If they do not have a middle/preferred name, this is set as "".
+     * @return the Hashset of all the Clients names.
+     */
+    public HashSet<String> getNameCollection() {
         String mname = middleName;
+        String pname = preferredName;
         if (middleName  == null) {
             mname = "";
         }
-        String[] allNames = {firstName.toLowerCase(), lastName.toLowerCase(), mname.toLowerCase()};
+        if (preferredName == null) {
+            pname = "";
+        }
+        String[] allNames = {firstName, lastName, mname, pname};
         return new HashSet<>(Arrays.asList(allNames));
     }
 
+    /**
+     * Takes a string and checks if each space separated string section begins with the same values as the search
+     * parameter.
+     * @param searchParam The string to be checked
+     * @return True if all sections of the passed string match any of the names of the client
+     */
     public boolean profileSearch(String searchParam) {
         //Last name -> Pref name -> First name -> Middle name [-> suffix/prefixes]
         String lowerSearch = searchParam.toLowerCase();
         String[] splitSearchItems = lowerSearch.split("\\s+");
 
         Collection<String> searched = new HashSet<>(Arrays.asList(splitSearchItems));
-        String mname = middleName;
-        if (middleName  == null) {
-            mname = "";
-        }
 
-        String[] allNames = {firstName.toLowerCase(), lastName.toLowerCase(), mname.toLowerCase()};
-        Collection<String> names = new HashSet<>(Arrays.asList(allNames));
+        Collection<String> names = this.getNameCollection();
+        Collection<String> lowercaseNames = new HashSet<>();
+        for (String name: names) {
+            lowercaseNames.add(name.toLowerCase());
+        }
 
         boolean isMatch = false;
         for (String searchedString: searched) {
-            for (String name: names) {
+            for (String name: lowercaseNames) {
                 if (name.startsWith(searchedString)) {
                     isMatch = true;
                 }
