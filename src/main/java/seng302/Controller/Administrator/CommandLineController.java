@@ -41,7 +41,7 @@ public class CommandLineController extends SubController {
     private BatchedTextStream batchedTextStream;
 
     private BaseCommand command;
-    PrintStream outputStream;
+    private PrintStream outputStream;
     private Thread currentRunningCommandThread;
 
     @Override
@@ -126,7 +126,7 @@ public class CommandLineController extends SubController {
                 return null;
             }
         };
-        currentRunningCommandThread = new  Thread(task);
+        currentRunningCommandThread = new Thread(task);
         currentRunningCommandThread.run();
     }
 }
