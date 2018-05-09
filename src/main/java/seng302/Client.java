@@ -24,9 +24,7 @@ import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
 /**
  * The main Client class.
  */
-
-public class
-Client {
+public class Client {
 
     private int uid;
     private String firstName;
@@ -566,7 +564,6 @@ Client {
 
     /**
      * Marks the client as dead and marks all organs as no for reception
-     *
      * @param dateOfDeath LocalDate that the client died
      */
     public void markDead(LocalDate dateOfDeath) {
