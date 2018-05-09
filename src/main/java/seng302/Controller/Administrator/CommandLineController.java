@@ -1,4 +1,4 @@
-package seng302.Controller;
+package seng302.Controller.Administrator;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -15,7 +15,10 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.HBox;
 
 import seng302.Commands.BaseCommand;
+import seng302.Commands.CommandParser;
 import seng302.Controller.Components.BatchedTextStream;
+import seng302.Controller.MainController;
+import seng302.Controller.SubController;
 import seng302.Utilities.View.PageNavigator;
 
 import picocli.CommandLine;
@@ -38,19 +41,21 @@ public class CommandLineController extends SubController {
     private BatchedTextStream batchedTextStream;
 
     private BaseCommand command;
+    PrintStream outputStream;
     private Thread currentRunningCommandThread;
 
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
-        mainController.setTitle("Command line interface");
+        mainController.setTitle("Administrator command line interface");
+        //TODO: Enable the sidebar
         //mainController.loadSidebar(sidebarPane);
     }
 
     @FXML
     private void initialize() {
         batchedTextStream = new BatchedTextStream();
-        PrintStream outputStream = new PrintStream(batchedTextStream);
+        outputStream = new PrintStream(batchedTextStream);
 
         inputTextField.setOnKeyPressed(event -> {
             if (event.getCode().equals(KeyCode.DOWN)) {
@@ -66,6 +71,7 @@ public class CommandLineController extends SubController {
         System.setOut(outputStream);
         CommandLine.usage(command, outputStream);
         outputTextArea.appendText(batchedTextStream.getNewText());
+        System.setOut(System.out);
     }
 
     private void onUp() {
@@ -95,32 +101,28 @@ public class CommandLineController extends SubController {
 
     @FXML
     public void onEnter() {
-        if (inputTextField.getText().isEmpty()) {
+        String commandText = inputTextField.getText();
+        if (commandText.isEmpty()) {
             return;
         } else if (currentRunningCommandThread != null && currentRunningCommandThread.isAlive()) {
             PageNavigator.showAlert(AlertType.WARNING, "Command already running",
                     "Please wait until the last command has finished running.");
         }
-        //Regex matcher that separates on space but allows for double quoted strings to be considered single strings
-        List<String> inputs = new ArrayList<>();
-        Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(inputTextField.getText());
-        while (m.find()) {
-            inputs.add(m.group(1).replace("\"", ""));
-        }
-        String[] currArgs = inputs.toArray(new String[0]);
 
-        commandHistoryList.add(inputTextField.getText());
+        commandHistoryList.add(commandText);
         currentHistoryIndex = commandHistoryList.size();
 
-        outputTextArea.appendText("> " + inputTextField.getText() + "\n");
+        outputTextArea.appendText("> " + commandText + "\n");
         inputTextField.setText("");
 
         Task task = new Task<Void>() {
             @Override
             protected Void call() {
-                CommandLine.run(command, System.out, currArgs);
+                System.setOut(outputStream);
+                CommandLine.run(command, System.out, CommandParser.parseCommands(commandText));
                 outputTextArea.appendText(batchedTextStream.getNewText());
                 outputTextArea.appendText("\n");
+                System.setOut(System.out);
                 return null;
             }
         };

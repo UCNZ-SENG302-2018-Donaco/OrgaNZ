@@ -53,6 +53,7 @@ public class LandingController extends SubController {
         PageNavigator.loadPage(Page.CREATE_CLINICIAN, mainController);
     }
 
+    //TODO: Remove this test button and remove it from FXML too
     @FXML
     private void goToCLI() {PageNavigator.loadPage(Page.COMMAND_LINE, mainController);}
 }
