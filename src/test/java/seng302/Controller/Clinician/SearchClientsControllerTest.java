@@ -33,6 +33,8 @@ public class SearchClientsControllerTest extends ControllerTest {
 
     private Client[] clients = {client1, client2, client3};
 
+    private String tick = "\u2713";
+
 
     // Overridden classes from parent class
 
@@ -82,4 +84,18 @@ public class SearchClientsControllerTest extends ControllerTest {
         verifyThat("#displayingXToYOfZText", hasText("Displaying 1-30 of 121"));
     }
 
+    @Test
+    public void testClientIsReceiver() {
+
+    }
+
+    @Test
+    public void testClientIsDonor() {
+
+    }
+
+    @Test
+    public void testClientNotDonorOrReceiver() {
+
+    }
 }

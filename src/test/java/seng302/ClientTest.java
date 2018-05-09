@@ -275,5 +275,18 @@ public class ClientTest {
         assertTrue(client.profileSearch("First"));
     }
 
+    @Test
+    public void testClientIsReceiver() {
+        client = new Client("First", null, "First", LocalDate.of(1970, 1, 1), 1);
+        TransplantRequest transplantRequest = new TransplantRequest(client, Organ.LIVER);
+        client.addTransplantRequest(transplantRequest);
+        assertTrue(client.isReceiver());
+    }
 
+    @Test
+    public void testClientIsDonor() throws OrganAlreadyRegisteredException{
+        client = new Client("First", null, "First", LocalDate.of(1970, 1, 1), 1);
+        client.setOrganDonationStatus(Organ.HEART, true);
+        assertTrue(client.isDonor());
+    }
 }
