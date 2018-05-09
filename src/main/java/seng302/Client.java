@@ -25,7 +25,8 @@ import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
  * The main Client class.
  */
 
-public class Client {
+public class
+Client {
 
     private int uid;
     private String firstName;

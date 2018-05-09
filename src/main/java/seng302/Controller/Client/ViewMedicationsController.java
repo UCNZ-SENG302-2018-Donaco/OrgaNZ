@@ -31,6 +31,7 @@ import seng302.Controller.MainController;
 import seng302.Controller.SubController;
 import seng302.MedicationRecord;
 import seng302.State.Session;
+import seng302.State.Session.UserType;
 import seng302.State.State;
 import seng302.Utilities.Exceptions.BadDrugNameException;
 import seng302.Utilities.Exceptions.BadGatewayException;
@@ -150,13 +151,19 @@ public class ViewMedicationsController extends SubController {
         }
 
         refreshMedicationLists();
-        mainController.setTitle("Medications: " + client.getPreferredName());
 
+        refresh();
         trackControlOrShiftKeyPressed();
     }
 
     @Override
     public void refresh() {
+        if (session.getLoggedInUserType() == UserType.CLIENT) {
+            mainController.setTitle("View Medications:  " + client.getPreferredName());
+        } else if (windowContext.isClinViewClientWindow()) {
+            mainController.setTitle("View Medications:  " + client.getFullName());
+
+        }
         refreshMedicationLists();
     }
 

@@ -212,8 +212,9 @@ public class ClientMedicalHistoryController extends SubController {
             illnessButtonsPane.setManaged(false);
         } else if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
+
         }
-        mainController.setTitle("Medication History:  " + client.getPreferredName());
+
         refresh();
         enableAppropriateButtons();
     }
@@ -236,6 +237,13 @@ public class ClientMedicalHistoryController extends SubController {
 
         currentIllnessView.sort();
         pastIllnessView.sort();
+
+        if (session.getLoggedInUserType() == UserType.CLIENT) {
+            mainController.setTitle("Medication History:  " + client.getPreferredName());
+        } else if (windowContext.isClinViewClientWindow()) {
+            mainController.setTitle("Medication History:  " + client.getFullName());
+
+        }
 
         errorMessage.setText(null);
     }

@@ -16,7 +16,7 @@ public class SidebarControllerClientTest extends ControllerTest{
 
     private Clinician testClinician = new Clinician("Mr", null, "Tester",
             "9 Fake St", Region.AUCKLAND, 3, "k");
-    private Client client = new Client("Client", "Number", "One", LocalDate.now(), 1);
+    private Client client = new Client("Client", "Number","One", LocalDate.now(), 1);
 
 
     @Override

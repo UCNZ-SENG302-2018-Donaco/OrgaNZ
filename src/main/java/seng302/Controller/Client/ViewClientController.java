@@ -26,6 +26,7 @@ import seng302.Controller.SubController;
 import seng302.HistoryItem;
 import seng302.State.ClientManager;
 import seng302.State.Session;
+import seng302.State.Session.UserType;
 import seng302.State.State;
 import seng302.Utilities.Enums.BloodType;
 import seng302.Utilities.Enums.Gender;
@@ -108,7 +109,13 @@ public class ViewClientController extends SubController {
     @Override
     public void refresh() {
         searchClient();
+
         mainController.setTitle("Client profile: " + viewedClient.getFullName());
+        if (session.getLoggedInUserType() == UserType.CLIENT) {
+            mainController.setTitle("View Client:  " + viewedClient.getPreferredName());
+        } else if (windowContext.isClinViewClientWindow()) {
+            mainController.setTitle("View Client:  " + viewedClient.getFullName());
+        }
     }
 
     /**

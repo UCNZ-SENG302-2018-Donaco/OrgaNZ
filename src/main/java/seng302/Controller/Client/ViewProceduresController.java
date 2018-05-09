@@ -286,6 +286,13 @@ public class ViewProceduresController extends SubController {
         pendingProcedureView.sort();
         pastProcedureView.sort();
 
+        if (session.getLoggedInUserType() == UserType.CLIENT) {
+            mainController.setTitle("View Procedures:  " + client.getPreferredName());
+        } else if (windowContext.isClinViewClientWindow()) {
+            mainController.setTitle("View Procedures:  " + client.getFullName());
+
+        }
+
         errorMessage.setText(null);
     }
 

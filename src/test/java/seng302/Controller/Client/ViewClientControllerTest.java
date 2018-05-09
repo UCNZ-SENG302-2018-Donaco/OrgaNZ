@@ -60,7 +60,7 @@ public class ViewClientControllerTest extends ControllerTest {
         clickOn("#fname").type(KeyCode.BACK_SPACE).write("z");
         clickOn("#lname").type(KeyCode.BACK_SPACE).write("q");
         clickOn("#mname").write("m");
-        clickOn("#pname").write("p");
+        clickOn("#pname").type(KeyCode.BACK_SPACE).write("p");
         clickOn("#dod").write(LocalDate.now().minusDays(2).format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         clickOn("#region");
         clickOn("West Coast");
@@ -74,7 +74,7 @@ public class ViewClientControllerTest extends ControllerTest {
         assertEquals("z", testClient.getFirstName());
         assertEquals("q", testClient.getLastName());
         assertEquals("m", testClient.getMiddleName());
-        assertEquals("p", testClient.getPreferredName());
+        assertEquals("a p", testClient.getPreferredName());
         assertTrue(testClient.getDateOfDeath() != null);
         assertEquals(Region.WEST_COAST, testClient.getRegion());
         assertEquals(Gender.MALE, testClient.getGender());
