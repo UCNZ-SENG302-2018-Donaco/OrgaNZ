@@ -17,7 +17,7 @@ public enum Page {
     HISTORY("/fxml/history.fxml"),
     SEARCH("/fxml/search_clients.fxml"),
     TRANSPLANTS("/fxml/transplants.fxml"),
-    LOGIN_CLINICIAN("/fxml/login_clinician.fxml"),
+    LOGIN_STAFF("/fxml/login_staff.fxml"),
     CREATE_CLINICIAN("/fxml/create_clinician.fxml"),
     VIEW_MEDICATIONS("/fxml/view_medications.fxml"),
     VIEW_MEDICAL_HISTORY("/fxml/view_medical_history.fxml"),
