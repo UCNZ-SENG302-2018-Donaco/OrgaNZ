@@ -6,6 +6,8 @@ import java.util.List;
 
 import seng302.Administrator;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * The class to handle the Administrators.
  */
@@ -52,6 +54,12 @@ public class AdministratorManager {
      * @param username The username of the administrator
      */
     public boolean collisionExists(String username) {
+        // Check if it is not numeric (this could collide with a clinician ID)
+        if (StringUtils.isNumeric(username)) {
+            return true;
+        }
+
+        // Check it is not already being used by another administrator
         for (Administrator administrator : administrators) {
             if (administrator.getUsername().equals(username)) {
                 return true;
