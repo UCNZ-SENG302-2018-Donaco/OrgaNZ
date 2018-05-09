@@ -590,6 +590,23 @@ public class Client {
         transplantRequests.remove(request);
     }
 
+    /**
+     * Indicates whether the client is a donor (has chosen to donate at least one organ)
+     * @return boolean of whether the client has chosen to donate any organs
+     */
+    public boolean isDonor() {
+        for (Map.Entry<Organ, Boolean> entry: organDonationStatus.entrySet()) {
+            if (entry.getValue()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Indicates whether the client is a receiver (has at least one transplant request)
+     * @return boolean of whether the client has any organ transplant requests
+     */
     public boolean isReceiver() {
         return transplantRequests.size() > 0;
     }

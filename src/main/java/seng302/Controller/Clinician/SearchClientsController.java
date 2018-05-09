@@ -11,6 +11,7 @@ import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Pagination;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
@@ -55,6 +56,10 @@ public class SearchClientsController extends SubController {
     private TableColumn<Client, Gender> genderCol;
     @FXML
     private TableColumn<Client, Region> regionCol;
+    @FXML
+    private TableColumn<Client, Boolean> donorCol;
+    @FXML
+    private TableColumn<Client, Boolean> receiverCol;
 
     @FXML
     private Pagination pagination;
@@ -111,6 +116,27 @@ public class SearchClientsController extends SubController {
         ageCol.setCellValueFactory(new PropertyValueFactory<>("age"));
         genderCol.setCellValueFactory(new PropertyValueFactory<>("gender"));
         regionCol.setCellValueFactory(new PropertyValueFactory<>("region"));
+        donorCol.setCellValueFactory(new PropertyValueFactory<>("donor"));
+        receiverCol.setCellValueFactory(new PropertyValueFactory<>("receiver"));
+
+        // Setting the donor and receiver columns to have ticks if the client is a donor or receiver
+        donorCol.setCellFactory(tc -> new TableCell<Client, Boolean>() {
+            @Override
+            protected void updateItem(Boolean item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty ? null :
+                        item.booleanValue() ? "\u2713" : "");
+            }
+        });
+
+        receiverCol.setCellFactory(tc -> new TableCell<Client, Boolean>() {
+            @Override
+            protected void updateItem(Boolean item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty ? null :
+                        item.booleanValue() ? "\u2713" : "");
+            }
+        });
 
         tableView.setRowFactory(tv -> new TableRow<Client>() {
             private Tooltip tooltip = new Tooltip();
