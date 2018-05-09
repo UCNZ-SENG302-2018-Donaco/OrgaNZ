@@ -7,6 +7,8 @@ import static org.testfx.matcher.control.TextMatchers.hasText;
 
 import java.time.LocalDate;
 
+import javafx.scene.control.TableView;
+
 import seng302.Client;
 import seng302.Clinician;
 import seng302.Controller.ControllerTest;
@@ -14,9 +16,11 @@ import seng302.State.State;
 import seng302.TransplantRequest;
 import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.Enums.Region;
+import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.WindowContext;
 
+import org.junit.Assert;
 import org.junit.Test;
 
 public class SearchClientsControllerTest extends ControllerTest {
@@ -86,16 +90,30 @@ public class SearchClientsControllerTest extends ControllerTest {
 
     @Test
     public void testClientIsReceiver() {
+        TransplantRequest transplantRequest = new TransplantRequest(client1, Organ.MIDDLE_EAR);
+        client1.addTransplantRequest(transplantRequest);
 
+        TableView<Client> tableView = lookup("#tableView").query();
+        boolean isReceiver = (Boolean) (tableView.getColumns().get(5).getCellObservableValue(client1).getValue());
+        Assert.assertTrue(isReceiver);
     }
 
     @Test
-    public void testClientIsDonor() {
+    public void testClientIsDonor() throws OrganAlreadyRegisteredException {
+        client1.setOrganDonationStatus(Organ.PANCREAS, true);
 
+        TableView<Client> tableView = lookup("#tableView").query();
+        boolean isDonor = (Boolean) (tableView.getColumns().get(4).getCellObservableValue(client1).getValue());
+        Assert.assertTrue(isDonor);
     }
 
     @Test
     public void testClientNotDonorOrReceiver() {
+        TableView<Client> tableView = lookup("#tableView").query();
+        boolean isDonor = (Boolean) (tableView.getColumns().get(4).getCellObservableValue(client1).getValue());
+        boolean isReceiver = (Boolean) (tableView.getColumns().get(5).getCellObservableValue(client1).getValue());
 
+        Assert.assertFalse(isDonor);
+        Assert.assertFalse(isReceiver);
     }
 }
