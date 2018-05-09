@@ -48,8 +48,8 @@ public class AdministratorManager {
     }
 
     /**
-     * Checks if an administartor already exists with that username
-     * @param username The username of the administartor
+     * Checks if an administrator already exists with that username
+     * @param username The username of the administrator
      */
     public boolean collisionExists(String username) {
         for (Administrator administrator : administrators) {
