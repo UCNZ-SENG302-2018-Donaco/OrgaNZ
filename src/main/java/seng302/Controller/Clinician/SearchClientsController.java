@@ -256,6 +256,11 @@ public class SearchClientsController extends SubController {
         return regionsToFilter.size() == 0 || regionsToFilter.contains(client.getRegion());
     }
 
+    private boolean donatingFilter(Client client) {
+        Collection<Organ> organsToFilter = organsDonatingFilter.getCheckModel().getCheckedItems();
+        return organsToFilter.size() == 0 || organsToFilter.stream()
+                .anyMatch(organ -> client.getCurrentlyDonatedOrgans().contains(organ));
+    }
 
     /**
      * Checks all filters in the controller and returns whether or not the client matches all the filters.
@@ -266,7 +271,10 @@ public class SearchClientsController extends SubController {
         String searchText = searchBox.getText();
         boolean searchTextNull = searchText == null || searchText.length() == 0;
         if (searchTextNull) {
-            return regionFilter(client) && birthGenderFilter(client) && ageFilter(client);
+            return regionFilter(client) &&
+                    birthGenderFilter(client) &&
+                    ageFilter(client) &&
+                    donatingFilter(client);
         } else {
             return client.nameContains(searchText) && regionFilter(client) && birthGenderFilter(client) &&
                     ageFilter(client);
