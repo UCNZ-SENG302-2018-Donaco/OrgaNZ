@@ -240,6 +240,12 @@ public class SearchClientsController extends SubController {
     }
 
 
+    private boolean requestOrganFilter(Client client) {
+        Collection<Organ> organsToRequestFilter = organsRequestingFilter.getCheckModel().getCheckedItems();
+        return organsToRequestFilter.size() == 0 || organsToRequestFilter.stream()
+                .anyMatch(organ -> client.getCurrentlyRequestedOrgans().contains(organ));
+    }
+
     /**
      * Checks if a client is from a region in the regions CheckComboBox. If so, returns true, otherwise false.
      * @param client the client whos region is being checked
@@ -274,10 +280,12 @@ public class SearchClientsController extends SubController {
             return regionFilter(client) &&
                     birthGenderFilter(client) &&
                     ageFilter(client) &&
+                    requestOrganFilter(client) &&
                     donatingFilter(client);
+
         } else {
             return client.nameContains(searchText) && regionFilter(client) && birthGenderFilter(client) &&
-                    ageFilter(client);
+                    ageFilter(client) && donatingFilter(client) && requestOrganFilter(client);
         }
     }
 
