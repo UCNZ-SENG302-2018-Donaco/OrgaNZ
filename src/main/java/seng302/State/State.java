@@ -62,6 +62,10 @@ public final class State {
         session = new Session(clinician);
     }
 
+    public static void login(Administrator administrator) {
+        session = new Session(administrator);
+    }
+
     public static void setUnsavedChanges(boolean changes) {
         unsavedChanges = changes;
     }

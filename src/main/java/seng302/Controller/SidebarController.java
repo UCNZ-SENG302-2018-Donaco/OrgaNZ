@@ -29,6 +29,7 @@ import org.controlsfx.control.Notifications;
  * Controller for the sidebar pane imported into every page in the main part of the GUI.
  */
 public class SidebarController extends SubController {
+
     private static final Logger LOGGER = Logger.getLogger(SidebarController.class.getName());
 
     private static final String ERROR_SAVING_MESSAGE = "There was an error saving to the file specified.";
