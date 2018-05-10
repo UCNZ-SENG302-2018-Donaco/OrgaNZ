@@ -14,8 +14,8 @@ public class DeleteAdministratorAction extends Action {
 
     /**
      * Create a new Action
-     * @param administrator The Clinician to be removed
-     * @param manager The ClinicianManager to apply changes to
+     * @param administrator The Administrator to be removed
+     * @param manager The AdministratorManager to apply changes to
      */
     public DeleteAdministratorAction(Administrator administrator, AdministratorManager manager) {
         this.administrator = administrator;

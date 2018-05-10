@@ -14,8 +14,8 @@ public class CreateAdministratorAction extends Action {
 
     /**
      * Create a new Action
-     * @param administrator The Clinician to be created
-     * @param manager The ClinicianManager to apply changes to
+     * @param administrator The administrator to be created
+     * @param manager The AdministratorManager to apply changes to
      */
     public CreateAdministratorAction(Administrator administrator, AdministratorManager manager) {
         this.administrator = administrator;
@@ -23,7 +23,7 @@ public class CreateAdministratorAction extends Action {
     }
 
     /**
-     * Simply add the administrator to the ClinicianManager
+     * Simply add the administrator to the AdministratorManager
      */
     @Override
     protected void execute() {
@@ -31,7 +31,7 @@ public class CreateAdministratorAction extends Action {
     }
 
     /**
-     * Simply remove the administrator from the ClinicianManager
+     * Simply remove the administrator from the AdministratorManager
      */
     @Override
     protected void unExecute() {
