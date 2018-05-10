@@ -1,17 +1,16 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
-  <groupId>seng302</groupId>
-  <artifactId>app</artifactId>
+  <groupId>com.humanharvest.organz</groupId>
+  <artifactId>organz</artifactId>
   <packaging>jar</packaging>
-  <version>1.1</version>
-  <name>app</name>
-  <url>https://eng-git.canterbury.ac.nz/SENG302-2016/team-21</url>
+  <version>0.4</version>
+  <name>organz</name>
+  <url>https://eng-git.canterbury.ac.nz/seng302-2018/team-700</url>
 
   <developers>
     <developer>
-      <name>Jack Steel</name>
-      <email>jes143@uclive.ac.nz</email>
+      <name>Alex Tompkins</name>
+      <email>ato47@uclive.ac.nz</email>
       <organization>University of Canterbury</organization>
       <organizationUrl>http://www.canterbury.ac.nz</organizationUrl>
     </developer>
@@ -22,20 +21,20 @@
       <organizationUrl>http://www.canterbury.ac.nz</organizationUrl>
     </developer>
     <developer>
-      <name>Alex Tompkins</name>
-      <email>ato47@uclive.ac.nz</email>
+      <name>Elizabeth Wilson</name>
+      <email>ewi32@uclive.ac.nz</email>
+      <organization>University of Canterbury</organization>
+      <organizationUrl>http://www.canterbury.ac.nz</organizationUrl>
+    </developer>
+    <developer>
+      <name>Jack Steel</name>
+      <email>jes143@uclive.ac.nz</email>
       <organization>University of Canterbury</organization>
       <organizationUrl>http://www.canterbury.ac.nz</organizationUrl>
     </developer>
     <developer>
       <name>James Toohey</name>
       <email>jto59@uclive.ac.nz</email>
-      <organization>University of Canterbury</organization>
-      <organizationUrl>http://www.canterbury.ac.nz</organizationUrl>
-    </developer>
-    <developer>
-      <name>Elizabeth Wilson</name>
-      <email>ewi32@uclive.ac.nz</email>
       <organization>University of Canterbury</organization>
       <organizationUrl>http://www.canterbury.ac.nz</organizationUrl>
     </developer>
@@ -137,10 +136,12 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>3.5.1</version>
       </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
         <version>2.4.3</version>
+
         <configuration>
           <transformers>
             <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
@@ -152,6 +153,7 @@
             </transformer>
           </transformers>
         </configuration>
+
         <executions>
           <execution>
             <phase>package</phase>
@@ -159,11 +161,12 @@
               <goal>shade</goal>
             </goals>
           </execution>
+
           <execution>
             <id>CLI</id>
             <phase>package</phase>
             <configuration>
-              <finalName>CLI</finalName>
+              <finalName>${pom.name}-${pom.version}-cli</finalName>
               <transformers>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                   <manifestEntries>
@@ -178,11 +181,12 @@
               <goal>shade</goal>
             </goals>
           </execution>
+
           <execution>
             <id>GUI</id>
             <phase>package</phase>
             <configuration>
-              <finalName>GUI</finalName>
+              <finalName>${pom.name}-${pom.version}-gui</finalName>
               <transformers>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                   <manifestEntries>
@@ -227,6 +231,7 @@
       </plugin>
     </plugins>
   </build>
+
   <reporting>
     <plugins>
       <plugin>
@@ -234,6 +239,7 @@
         <artifactId>maven-jxr-plugin</artifactId>
         <version>2.5</version>
       </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
@@ -254,6 +260,7 @@
           <sourceEncoding>utf-8</sourceEncoding>
         </configuration>
       </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
@@ -261,11 +268,13 @@
         <configuration>
         </configuration>
       </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-report-plugin</artifactId>
         <version>2.19.1</version>
       </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-project-info-reports-plugin</artifactId>
