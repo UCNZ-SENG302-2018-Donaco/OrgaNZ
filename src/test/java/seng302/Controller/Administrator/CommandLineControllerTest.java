@@ -2,11 +2,12 @@ package seng302.Controller.Administrator;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.testfx.api.FxAssert.verifyThat;
-import static org.testfx.matcher.control.TextMatchers.hasText;
+import static org.testfx.matcher.control.TextInputControlMatchers.hasText;
 
 import java.time.LocalDate;
 
 import javafx.scene.control.TextArea;
+import javafx.scene.input.KeyCode;
 
 import seng302.Client;
 import seng302.Controller.ControllerTest;
@@ -41,11 +42,53 @@ public class CommandLineControllerTest extends ControllerTest {
         assertTrue(area.getText().contains("load"));
     }
 
-    @Test@Ignore
-    public void aCommandTest() {
+    @Test
+    public void anInvalidCommandTest() {
+
+        clickOn("#inputTextField").write("notacmd").type(KeyCode.ENTER);
+
         TextArea area = lookup("#outputTextArea").query();
-        assertTrue(area.getText().contains("Usage: ClientCLI"));
-        assertTrue(area.getText().contains("Commands:"));
-        assertTrue(area.getText().contains("load"));
+        assertTrue(area.getText().contains("Unmatched argument [notacmd]"));
+    }
+
+
+    @Test
+    public void upDownArrowsTest() {
+
+        clickOn("#inputTextField").write("notacmd").type(KeyCode.ENTER);
+        clickOn("#inputTextField").write("second").type(KeyCode.ENTER);
+        clickOn("#inputTextField").write("third").type(KeyCode.ENTER);
+        clickOn("#inputTextField").write("fourth").type(KeyCode.ENTER);
+        clickOn("#inputTextField").write("newtext").type(KeyCode.UP);
+
+        verifyThat("#inputTextField", hasText("fourth"));
+
+        type(KeyCode.UP);
+
+        verifyThat("#inputTextField", hasText("third"));
+
+        type(KeyCode.UP);
+        type(KeyCode.UP);
+
+        verifyThat("#inputTextField", hasText("notacmd"));
+
+        type(KeyCode.UP);
+
+        verifyThat("#inputTextField", hasText("notacmd"));
+
+        type(KeyCode.DOWN);
+
+        verifyThat("#inputTextField", hasText("second"));
+
+        type(KeyCode.DOWN);
+        type(KeyCode.DOWN);
+        type(KeyCode.DOWN);
+
+        verifyThat("#inputTextField", hasText("newtext"));
+
+        type(KeyCode.DOWN);
+        type(KeyCode.DOWN);
+
+        verifyThat("#inputTextField", hasText("newtext"));
     }
 }

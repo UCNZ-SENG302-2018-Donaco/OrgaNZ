@@ -13,7 +13,7 @@
     <SplitPane dividerPositions="0.298" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
       <items>
         <HBox fx:id="sidebarPane" maxWidth="200.0" minWidth="200.0" prefWidth="200.0" />
-        <BorderPane>
+        <BorderPane fx:id="borderPane">
                <bottom>
                   <TextField fx:id="inputTextField" onAction="#onEnter" BorderPane.alignment="CENTER">
                      <BorderPane.margin>

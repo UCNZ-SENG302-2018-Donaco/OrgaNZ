@@ -3,6 +3,8 @@ package seng302.Controller.Administrator;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,7 +13,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.input.Clipboard;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 
 import seng302.Commands.BaseCommand;
@@ -28,11 +33,13 @@ public class CommandLineController extends SubController {
     @FXML
     public HBox sidebarPane;
 
-    @FXML
     public TextField inputTextField;
 
     @FXML
     public TextArea outputTextArea;
+
+    @FXML
+    public BorderPane borderPane;
 
     private List<String> commandHistoryList = new ArrayList<>();
     private int currentHistoryIndex = 0;
@@ -42,7 +49,7 @@ public class CommandLineController extends SubController {
 
     private BaseCommand command;
     private PrintStream outputStream;
-    private Thread currentRunningCommandThread;
+    private final Executor executor = Executors.newSingleThreadExecutor();
 
     @Override
     public void setup(MainController mainController) {
@@ -57,12 +64,35 @@ public class CommandLineController extends SubController {
         batchedTextStream = new BatchedTextStream();
         outputStream = new PrintStream(batchedTextStream);
 
+        inputTextField = new TextField() {
+            @Override
+            public void paste() {
+                Clipboard c = Clipboard.getSystemClipboard();
+                if (c.hasString()) {
+                    String[] strings = c.getString().split("\n");
+                    if (strings.length > 1) {
+                        for (int i = 0; i < strings.length - 1; i++) {
+                            createAndRunCommand(strings[i]);
+                        }
+                        replaceSelection(strings[strings.length - 1]);
+                    } else {
+                        replaceSelection(strings[0]);
+                    }
+                }
+            }
+        };
+
+        borderPane.setBottom(inputTextField);
+
         inputTextField.setOnKeyPressed(event -> {
             if (event.getCode().equals(KeyCode.DOWN)) {
                 onDown();
                 event.consume();
             } else if (event.getCode().equals(KeyCode.UP)) {
                 onUp();
+                event.consume();
+            } else if (event.getCode().equals(KeyCode.ENTER)) {
+                onEnter();
                 event.consume();
             }
         });
@@ -99,25 +129,26 @@ public class CommandLineController extends SubController {
         inputTextField.end();
     }
 
-    @FXML
     public void onEnter() {
         String commandText = inputTextField.getText();
         if (commandText.isEmpty()) {
             return;
-        } else if (currentRunningCommandThread != null && currentRunningCommandThread.isAlive()) {
-            PageNavigator.showAlert(AlertType.WARNING, "Command already running",
-                    "Please wait until the last command has finished running.");
         }
 
-        commandHistoryList.add(commandText);
-        currentHistoryIndex = commandHistoryList.size();
+        for (String line : commandText.split("\n")) {
+            commandHistoryList.add(commandText);
+            currentHistoryIndex = commandHistoryList.size();
+            inputTextField.setText("");
+            createAndRunCommand(line);
+        }
+    }
 
-        outputTextArea.appendText("> " + commandText + "\n");
-        inputTextField.setText("");
-
+    private void createAndRunCommand(String commandText) {
         Task task = new Task<Void>() {
             @Override
             protected Void call() {
+                outputTextArea.appendText("> " + commandText + "\n");
+
                 System.setOut(outputStream);
                 CommandLine.run(command, System.out, CommandParser.parseCommands(commandText));
                 outputTextArea.appendText(batchedTextStream.getNewText());
@@ -126,7 +157,6 @@ public class CommandLineController extends SubController {
                 return null;
             }
         };
-        currentRunningCommandThread = new Thread(task);
-        currentRunningCommandThread.run();
+        executor.execute(task);
     }
 }
