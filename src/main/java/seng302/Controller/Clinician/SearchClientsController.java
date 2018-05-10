@@ -214,6 +214,33 @@ public class SearchClientsController extends SubController {
     }
 
     /**
+     * Checks if the clients age falls within the ageSlider current max and min parameters.
+     * @param client the client whose age is being compared.
+     * @return true if the clients age falls within the ageSlider current range.
+     */
+    private boolean ageFilter(Client client) {
+        return ageSlider.getLowValue() < client.getAge() && client.getAge() < ageSlider.getHighValue();
+    }
+
+
+    /**
+     * Checks if a client has the birth gender in the birthGender CheckComboBox. If so, returns true, otherwise false.
+     * @param client the client whos birth gender is being checked
+     * @return true if the client has the selected birth gender. False otherwise.
+     */
+    private boolean birthGenderFilter(Client client) {
+        Collection<Gender> gendersToFilter = new ArrayList<>();
+
+        for (Gender gender: Gender.values()) {
+            if (birthGenderFilter.getCheckModel().isChecked(gender)) {
+                gendersToFilter.add(gender);
+            }
+        }
+        return gendersToFilter.size() == 0 || gendersToFilter.contains(client.getGender());
+    }
+
+
+    /**
      * Checks if a client is from a region in the regions CheckComboBox. If so, returns true, otherwise false.
      * @param client the client whos region is being checked
      * @return true if the client is from a region selected. False otherwise.
@@ -239,9 +266,10 @@ public class SearchClientsController extends SubController {
         String searchText = searchBox.getText();
         boolean searchTextNull = searchText == null || searchText.length() == 0;
         if (searchTextNull) {
-            return regionFilter(client);
+            return regionFilter(client) && birthGenderFilter(client) && ageFilter(client);
         } else {
-            return client.nameContains(searchText) && regionFilter(client);
+            return client.nameContains(searchText) && regionFilter(client) && birthGenderFilter(client) &&
+                    ageFilter(client);
         }
     }
 
