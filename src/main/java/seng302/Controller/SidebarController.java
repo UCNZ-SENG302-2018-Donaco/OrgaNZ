@@ -38,7 +38,7 @@ public class SidebarController extends SubController {
     @FXML
     private Button viewClientButton, registerOrganDonationButton, viewMedicationsButton, viewClinicianButton,
             searchButton, transplantsButton, logoutButton, requestOrganDonationButton, illnessHistoryButton,
-            viewProceduresButton, undoButton, redoButton;
+            viewProceduresButton, createAdminButton, undoButton, redoButton;
 
     private ActionInvoker invoker;
     private Session session;
@@ -59,6 +59,7 @@ public class SidebarController extends SubController {
             hideButton(viewClinicianButton);
             hideButton(searchButton);
             hideButton(transplantsButton);
+            hideButton(createAdminButton);
         } else if (userType == Session.UserType.CLINICIAN) {
             hideButton(viewClientButton);
             hideButton(registerOrganDonationButton);
@@ -188,6 +189,14 @@ public class SidebarController extends SubController {
     @FXML
     private void goToViewProcedures() {
         PageNavigator.loadPage(Page.VIEW_PROCEDURES, mainController);
+    }
+
+    /**
+     * Redirects the GUI to the View Procedures page.
+     */
+    @FXML
+    private void goToCreateAdmin() {
+        PageNavigator.loadPage(Page.CREATE_ADMINISTRATOR, mainController);
     }
 
     /**

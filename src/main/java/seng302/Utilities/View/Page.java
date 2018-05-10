@@ -19,6 +19,7 @@ public enum Page {
     TRANSPLANTS("/fxml/transplants.fxml"),
     LOGIN_STAFF("/fxml/login_staff.fxml"),
     CREATE_CLINICIAN("/fxml/create_clinician.fxml"),
+    CREATE_ADMINISTRATOR("/fxml/create_administrator.fxml"),
     VIEW_MEDICATIONS("/fxml/view_medications.fxml"),
     VIEW_MEDICAL_HISTORY("/fxml/view_medical_history.fxml"),
     VIEW_PROCEDURES("/fxml/view_procedures.fxml");

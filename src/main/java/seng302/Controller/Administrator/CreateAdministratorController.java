@@ -124,8 +124,6 @@ public class CreateAdministratorController extends SubController {
                     "Administrator " + usernameTextField.getText() + " created.");
             JSONConverter.updateHistory(save, "action_history.json");
 
-            State.login(administrator);
-
             PageNavigator.loadPage(Page.SEARCH, mainController);
         }
     }
