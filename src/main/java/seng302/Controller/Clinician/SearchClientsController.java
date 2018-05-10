@@ -3,6 +3,7 @@ package seng302.Controller.Clinician;
 import java.util.ArrayList;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
@@ -96,6 +97,9 @@ public class SearchClientsController extends SubController {
 
         setupTable();
 
+        tableView.setOnSort((o) -> createPage(pagination.getCurrentPageIndex()));
+
+        // Match values in text boxes beside age slider to the values on the slider
         ageMinField.setOnAction(event -> {
             int newMin;
             try {
@@ -105,7 +109,6 @@ public class SearchClientsController extends SubController {
             }
             ageSlider.setLowValue(newMin);
         });
-
         ageMaxField.setOnAction(event -> {
             int newMax;
             try {
@@ -116,23 +119,31 @@ public class SearchClientsController extends SubController {
             ageSlider.setHighValue(newMax);
         });
 
+        // Refresh table when any filter controls change
         ageSlider.lowValueProperty().addListener((observable, oldValue, newValue) -> {
             ageMinField.setText(Integer.toString(newValue.intValue()));
             refresh();
         });
-
         ageSlider.highValueProperty().addListener((observable, oldValue, newValue) -> {
             ageMaxField.setText(Integer.toString(newValue.intValue()));
             refresh();
         });
+        birthGenderFilter.getCheckModel().getCheckedItems().addListener(
+                (ListChangeListener<Gender>) change -> refresh());
+        regionFilter.getCheckModel().getCheckedItems().addListener(
+                (ListChangeListener<Region>) change -> refresh());
+        clientTypeFilter.getCheckModel().getCheckedItems().addListener(
+                (ListChangeListener<String>) change -> refresh());
+        organsDonatingFilter.getCheckModel().getCheckedItems().addListener(
+                (ListChangeListener<Organ>) change -> refresh());
+        organsRequestingFilter.getCheckModel().getCheckedItems().addListener(
+                (ListChangeListener<Organ>) change -> refresh());
 
         birthGenderFilter.getItems().setAll(Gender.values());
         regionFilter.getItems().setAll(Region.values());
         clientTypeFilter.getItems().setAll("Donor", "Receiver");
         organsDonatingFilter.getItems().setAll(Organ.values());
         organsRequestingFilter.getItems().setAll(Organ.values());
-
-        tableView.setOnSort((o) -> createPage(pagination.getCurrentPageIndex()));
         searchBox.textProperty().addListener(((o) -> refresh()));
 
         //Create a filtered list, that defaults to allow all using lambda function
