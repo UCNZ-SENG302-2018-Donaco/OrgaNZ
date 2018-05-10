@@ -55,7 +55,7 @@
                 <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
               </rowConstraints>
               <children>
-                <TitledPane expanded="false" text="Filters" GridPane.rowIndex="2">
+                <TitledPane text="Filters" GridPane.rowIndex="2">
                   <content>
                     <VBox spacing="5.0">
                       <children>

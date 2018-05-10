@@ -1,6 +1,7 @@
 package seng302.Controller.Clinician;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -212,6 +213,37 @@ public class SearchClientsController extends SubController {
         });
     }
 
+    /**
+     * Checks if a client is from a region in the regions CheckComboBox. If so, returns true, otherwise false.
+     * @param client the client whos region is being checked
+     * @return true if the client is from a region selected. False otherwise.
+     */
+    private boolean regionFilter(Client client) {
+        Collection<Region> regionsToFilter = new ArrayList<>();
+
+        for (Region region : Region.values()) {
+            if (regionFilter.getCheckModel().isChecked(region)) {
+                regionsToFilter.add(region);
+            }
+        }
+        return regionsToFilter.size() == 0 || regionsToFilter.contains(client.getRegion());
+    }
+
+
+    /**
+     * Checks all filters in the controller and returns whether or not the client matches all the filters.
+     * @param client the client who is being compared for each filter.
+     * @return true if the client matches all the filters. False otherwise.
+     */
+    private boolean filter(Client client) {
+        String searchText = searchBox.getText();
+        boolean searchTextNull = searchText == null || searchText.length() == 0;
+        if (searchTextNull) {
+            return regionFilter(client);
+        } else {
+            return client.nameContains(searchText) && regionFilter(client);
+        }
+    }
 
     /**
      * Upon filtering update, refresh the filters to the new string and update pagination
@@ -219,12 +251,7 @@ public class SearchClientsController extends SubController {
      */
     @Override
     public void refresh() {
-        String searchText = searchBox.getText();
-        if (searchText == null || searchText.length() == 0) {
-            filteredClients.setPredicate(client -> true);
-        } else {
-            filteredClients.setPredicate(client -> client.nameContains(searchText));
-        }
+        filteredClients.setPredicate(this::filter);
 
         //If the pagination count wont change, force a refresh of the page, if it will, change it and that will trigger the update.
         int newPageCount = Math.max(1, (filteredClients.size() + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE);
