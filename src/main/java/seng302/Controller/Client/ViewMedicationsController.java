@@ -327,7 +327,6 @@ public class ViewMedicationsController extends SubController {
                     }
                     alert.setContentText(sb.toString());
                 }
-                PageNavigator.resizeAlert(alert);
             });
 
             task.setOnFailed(e -> {
@@ -381,7 +380,6 @@ public class ViewMedicationsController extends SubController {
                 alert.setContentText("An error occurred when retrieving drug interactions: \n" +
                         task.getException().getMessage());
                 task.getException().printStackTrace();
-                PageNavigator.resizeAlert(alert);
             });
 
             task.setOnSucceeded(event -> {
@@ -396,8 +394,6 @@ public class ViewMedicationsController extends SubController {
                     String interactionsText = interactions.stream().collect(Collectors.joining("\n"));
                     alert.setContentText(interactionsText);
                 }
-
-                PageNavigator.resizeAlert(alert);
             });
 
             new Thread(task).start();
