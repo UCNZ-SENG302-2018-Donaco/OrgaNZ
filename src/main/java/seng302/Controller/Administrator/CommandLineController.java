@@ -5,17 +5,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert.AlertType;
+import javafx.geometry.Insets;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 
@@ -24,7 +21,6 @@ import seng302.Commands.CommandParser;
 import seng302.Controller.Components.BatchedTextStream;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
-import seng302.Utilities.View.PageNavigator;
 
 import picocli.CommandLine;
 
@@ -82,6 +78,7 @@ public class CommandLineController extends SubController {
             }
         };
 
+        BorderPane.setMargin(inputTextField, new Insets(0, 20, 20, 20));
         borderPane.setBottom(inputTextField);
 
         inputTextField.setOnKeyPressed(event -> {
@@ -129,7 +126,7 @@ public class CommandLineController extends SubController {
         inputTextField.end();
     }
 
-    public void onEnter() {
+    private void onEnter() {
         String commandText = inputTextField.getText();
         if (commandText.isEmpty()) {
             return;
