@@ -100,8 +100,6 @@ public class ViewClientController extends SubController {
         } else if (windowContext.isClinViewClientWindow()) {
             viewedClient = windowContext.getViewClient();
         }
-
-        mainController.setTitle("Client profile: " + viewedClient.getPreferredName());
         id.setText(Integer.toString(viewedClient.getUid()));
         searchClient();
     }
@@ -109,12 +107,10 @@ public class ViewClientController extends SubController {
     @Override
     public void refresh() {
         searchClient();
-
-        mainController.setTitle("Client profile: " + viewedClient.getFullName());
         if (session.getLoggedInUserType() == UserType.CLIENT) {
-            mainController.setTitle("View Client:  " + viewedClient.getPreferredName());
+            mainController.setTitle("View Client: " + viewedClient.getPreferredName());
         } else if (windowContext.isClinViewClientWindow()) {
-            mainController.setTitle("View Client:  " + viewedClient.getFullName());
+            mainController.setTitle("View Client: " + viewedClient.getFullName());
         }
     }
 

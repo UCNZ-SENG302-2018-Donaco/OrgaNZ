@@ -230,7 +230,6 @@ public class RequestOrgansController extends SubController {
             client = windowContext.getViewClient();
         }
 
-        mainController.setTitle("Receive Organs: " + client.getPreferredName());
         refresh();
         enableAppropriateButtons();
     }
