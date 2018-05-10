@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.OptionalInt;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -28,7 +29,7 @@ import seng302.HistoryItem;
 import seng302.State.ClientManager;
 import seng302.State.Session;
 import seng302.State.State;
-import seng302.UI.Validation.NumberValidator;
+import seng302.UI.Validation.IntValidator;
 import seng302.UI.Validation.UIValidation;
 import seng302.Utilities.Enums.BloodType;
 import seng302.Utilities.Enums.Gender;
@@ -109,7 +110,22 @@ public class ViewClientController extends SubController {
         updateClientFields();
 
         new UIValidation()
-                .add(id, new NumberValidator())
+                .add(id, new IntValidator() {
+                    @Override
+                    public boolean isValid(Object value) {
+                        OptionalInt clientId = getAsInt(value);
+                        if (!clientId.isPresent()) {
+                            return false;
+                        }
+
+                        return State.getClientManager().getClientByID(clientId.getAsInt()) != null;
+                    }
+
+                    @Override
+                    public String getErrorMessage() {
+                        return "Invalid client id";
+                    }
+                })
                 .addDisableButton(searchClientButton);
     }
 
