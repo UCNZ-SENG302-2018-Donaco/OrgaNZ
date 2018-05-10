@@ -1,8 +1,8 @@
-package seng302.UI.Watchers;
+package seng302.UI.Validation;
 
 import java.util.regex.Pattern;
 
-public class NumberWatcher extends Watcher {
+public class NumberValidator extends Validator {
     private static final Pattern pattern = Pattern.compile("^\\d+$");
 
     @Override
@@ -18,5 +18,10 @@ public class NumberWatcher extends Watcher {
             return pattern.matcher(sequence).matches();
         }
         return false;
+    }
+
+    @Override
+    public String getErrorMessage() {
+        return "Not a valid number";
     }
 }

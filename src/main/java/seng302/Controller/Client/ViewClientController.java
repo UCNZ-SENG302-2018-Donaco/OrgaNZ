@@ -28,8 +28,8 @@ import seng302.HistoryItem;
 import seng302.State.ClientManager;
 import seng302.State.Session;
 import seng302.State.State;
-import seng302.UI.Watchers.NumberWatcher;
-import seng302.UI.Watchers.UIWatcher;
+import seng302.UI.Validation.NumberValidator;
+import seng302.UI.Validation.UIValidation;
 import seng302.Utilities.Enums.BloodType;
 import seng302.Utilities.Enums.Gender;
 import seng302.Utilities.Enums.Region;
@@ -108,8 +108,8 @@ public class ViewClientController extends SubController {
         id.setText(Integer.toString(viewedClient.getUid()));
         updateClientFields();
 
-        new UIWatcher()
-                .add(id, new NumberWatcher())
+        new UIValidation()
+                .add(id, new NumberValidator())
                 .addDisableButton(searchClientButton);
     }
 
