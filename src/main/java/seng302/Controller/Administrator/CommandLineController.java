@@ -77,6 +77,7 @@ public class CommandLineController extends SubController {
                 }
             }
         };
+        inputTextField.setId("inputTextField");
 
         BorderPane.setMargin(inputTextField, new Insets(0, 20, 20, 20));
         borderPane.setBottom(inputTextField);
