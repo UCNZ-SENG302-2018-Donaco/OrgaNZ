@@ -1,15 +1,19 @@
-package seng302.Controller;
+package seng302.Controller.Clinician;
 
 import static org.junit.Assert.assertEquals;
+import static org.testfx.api.FxAssert.verifyThat;
+import static org.testfx.matcher.base.NodeMatchers.isInvisible;
+
 import org.junit.Test;
 import seng302.Clinician;
+import seng302.Controller.ControllerTest;
 import seng302.State.State;
 import seng302.Utilities.Enums.Region;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.WindowContext.WindowContextBuilder;
 
 
-public class SidebarControllerClinicianTest extends ControllerTest{
+public class SidebarControllerClinicianTest extends ControllerTest {
 
     private Clinician testClinician = new Clinician("Mr", null, "Tester",
             "9 Fake St", Region.AUCKLAND, 3, "k");
@@ -23,11 +27,11 @@ public class SidebarControllerClinicianTest extends ControllerTest{
     @Override
     protected void initState() {
         State.init();
-        State.getClinicianManager().addClinician(testClinician);
-        State.getClientManager().getClientByID(1);
         State.login(testClinician);
         mainController.setWindowContext(new WindowContextBuilder().build());
     }
+
+    // Test clicking on action buttons
 
     @Test
     public void testClickOnUndo() {
@@ -38,6 +42,14 @@ public class SidebarControllerClinicianTest extends ControllerTest{
     public void testClickOnRedo() {
         clickOn("#redoButton");
     }
+
+    @Test
+    public void testClickOnLogout() {
+        clickOn("#logoutButton");
+        assertEquals(Page.LANDING, mainController.getCurrentPage());
+    }
+
+    // Test clicking on buttons to go to another screen
 
     @Test
     public void testClickOnViewClinician() {
@@ -63,10 +75,38 @@ public class SidebarControllerClinicianTest extends ControllerTest{
         assertEquals(Page.HISTORY, mainController.getCurrentPage());
     }
 
+    // Test admin-only buttons are hidden
+
     @Test
-    public void testClickOnLogout() {
-        clickOn("#logoutButton");
-        assertEquals(Page.LANDING, mainController.getCurrentPage());
+    public void testCreateAdminHidden() {
+        verifyThat("#createAdminButton", isInvisible());
+    }
+
+    // Test client-only buttons are hidden
+
+    @Test
+    public void testClientDetailsHidden() {
+        verifyThat("#viewClientButton", isInvisible());
+    }
+
+    @Test
+    public void testDonateOrgansHidden() {
+        verifyThat("#registerOrganDonationButton", isInvisible());
+    }
+
+    @Test
+    public void testRequestOrgansHidden() {
+        verifyThat("#requestOrganDonationButton", isInvisible());
+    }
+
+    @Test
+    public void testMedicationsHidden() {
+        verifyThat("#viewMedicationsButton", isInvisible());
+    }
+
+    @Test
+    public void testMedicalHistoryHidden() {
+        verifyThat("#illnessHistoryButton", isInvisible());
     }
 
 

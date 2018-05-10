@@ -54,18 +54,31 @@ public class SidebarController extends SubController {
     @Override
     public void setup(MainController controller) {
         super.setup(controller);
-        Session.UserType userType = session.getLoggedInUserType();
-        if (userType == Session.UserType.CLIENT || windowContext.isClinViewClientWindow()) {
-            hideButton(viewClinicianButton);
+        UserType userType = session.getLoggedInUserType();
+
+        if (userType == UserType.CLIENT || windowContext.isClinViewClientWindow()) {
+            // hide staff-related buttons
             hideButton(searchButton);
             hideButton(transplantsButton);
+            // hide clinician-related buttons
+            hideButton(viewClinicianButton);
+            // hide admin-related buttons
             hideButton(createAdminButton);
-        } else if (userType == Session.UserType.CLINICIAN) {
+        } else if (userType == UserType.CLINICIAN || userType == UserType.ADMINISTRATOR) {
+            // hide client-related buttons
             hideButton(viewClientButton);
             hideButton(registerOrganDonationButton);
             hideButton(viewMedicationsButton);
             hideButton(illnessHistoryButton);
             hideButton(viewProceduresButton);
+        }
+
+        if (userType == UserType.CLINICIAN) {
+            //hide admin-related buttons
+            hideButton(createAdminButton);
+        } else if (userType == UserType.ADMINISTRATOR) {
+            //hide clinician-related buttons
+            hideButton(viewClinicianButton);
         }
 
         if (windowContext.isClinViewClientWindow()) {
