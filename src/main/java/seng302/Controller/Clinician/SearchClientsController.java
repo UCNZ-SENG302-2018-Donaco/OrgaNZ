@@ -213,6 +213,11 @@ public class SearchClientsController extends SubController {
         });
     }
 
+    private boolean nameFilter(Client client) {
+        String searchText = searchBox.getText();
+        return searchText == null || searchText.length() == 0 || client.nameContains(searchText);
+    }
+
     /**
      * Checks if the clients age falls within the ageSlider current max and min parameters.
      * @param client the client whose age is being compared.
@@ -229,21 +234,8 @@ public class SearchClientsController extends SubController {
      * @return true if the client has the selected birth gender. False otherwise.
      */
     private boolean birthGenderFilter(Client client) {
-        Collection<Gender> gendersToFilter = new ArrayList<>();
-
-        for (Gender gender: Gender.values()) {
-            if (birthGenderFilter.getCheckModel().isChecked(gender)) {
-                gendersToFilter.add(gender);
-            }
-        }
+        Collection<Gender> gendersToFilter = birthGenderFilter.getCheckModel().getCheckedItems();
         return gendersToFilter.size() == 0 || gendersToFilter.contains(client.getGender());
-    }
-
-
-    private boolean requestOrganFilter(Client client) {
-        Collection<Organ> organsToRequestFilter = organsRequestingFilter.getCheckModel().getCheckedItems();
-        return organsToRequestFilter.size() == 0 || organsToRequestFilter.stream()
-                .anyMatch(organ -> client.getCurrentlyRequestedOrgans().contains(organ));
     }
 
     /**
@@ -252,13 +244,7 @@ public class SearchClientsController extends SubController {
      * @return true if the client is from a region selected. False otherwise.
      */
     private boolean regionFilter(Client client) {
-        Collection<Region> regionsToFilter = new ArrayList<>();
-
-        for (Region region : Region.values()) {
-            if (regionFilter.getCheckModel().isChecked(region)) {
-                regionsToFilter.add(region);
-            }
-        }
+        Collection<Region> regionsToFilter = regionFilter.getCheckModel().getCheckedItems();
         return regionsToFilter.size() == 0 || regionsToFilter.contains(client.getRegion());
     }
 
@@ -268,25 +254,24 @@ public class SearchClientsController extends SubController {
                 .anyMatch(organ -> client.getCurrentlyDonatedOrgans().contains(organ));
     }
 
+    private boolean requestingFilter(Client client) {
+        Collection<Organ> organsToRequestFilter = organsRequestingFilter.getCheckModel().getCheckedItems();
+        return organsToRequestFilter.size() == 0 || organsToRequestFilter.stream()
+                .anyMatch(organ -> client.getCurrentlyRequestedOrgans().contains(organ));
+    }
+
     /**
      * Checks all filters in the controller and returns whether or not the client matches all the filters.
      * @param client the client who is being compared for each filter.
      * @return true if the client matches all the filters. False otherwise.
      */
     private boolean filter(Client client) {
-        String searchText = searchBox.getText();
-        boolean searchTextNull = searchText == null || searchText.length() == 0;
-        if (searchTextNull) {
-            return regionFilter(client) &&
-                    birthGenderFilter(client) &&
-                    ageFilter(client) &&
-                    requestOrganFilter(client) &&
-                    donatingFilter(client);
-
-        } else {
-            return client.nameContains(searchText) && regionFilter(client) && birthGenderFilter(client) &&
-                    ageFilter(client) && donatingFilter(client) && requestOrganFilter(client);
-        }
+        return nameFilter(client) &&
+                regionFilter(client) &&
+                birthGenderFilter(client) &&
+                ageFilter(client) &&
+                requestingFilter(client) &&
+                donatingFilter(client);
     }
 
     /**
