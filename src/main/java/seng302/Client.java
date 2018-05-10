@@ -190,7 +190,7 @@ public class Client {
         if (middleName != null) {
             fullName += middleName + " ";
         }
-        if (preferredName != null) {
+        if (preferredName != null && !preferredName.equals("")) {
             fullName += "\"" + preferredName + "\" ";
         }
         fullName += lastName;
@@ -225,11 +225,14 @@ public class Client {
     }
 
     public String getPreferredName() {
-        if (preferredName != null) {
-            return preferredName;
-        } else {
-            return firstName + " " + lastName;
+        if (preferredName == null || preferredName.equals("")) {
+            return getFullName();
         }
+        return preferredName;
+    }
+
+    public String getPreferredNameOnly() {
+        return preferredName;
     }
 
     public void setPreferredName(String preferredName) {

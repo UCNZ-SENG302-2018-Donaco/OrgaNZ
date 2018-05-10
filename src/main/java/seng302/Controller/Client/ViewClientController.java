@@ -101,7 +101,7 @@ public class ViewClientController extends SubController {
             viewedClient = windowContext.getViewClient();
         }
         id.setText(Integer.toString(viewedClient.getUid()));
-        searchClient();
+        refresh();
     }
 
     @Override
@@ -140,7 +140,7 @@ public class ViewClientController extends SubController {
             fname.setText(viewedClient.getFirstName());
             lname.setText(viewedClient.getLastName());
             mname.setText(viewedClient.getMiddleName());
-            pname.setText(viewedClient.getPreferredName());
+            pname.setText(viewedClient.getPreferredNameOnly());
             dob.setValue(viewedClient.getDateOfBirth());
             dod.setValue(viewedClient.getDateOfDeath());
             gender.setValue(viewedClient.getGender());
@@ -187,12 +187,14 @@ public class ViewClientController extends SubController {
             updateChanges();
             displayBMI();
             displayAge();
-            lastModified.setText(viewedClient.getModifiedTimestamp().format(dateTimeFormat));
-            //TODO show what in particular was updated
-            HistoryItem save = new HistoryItem("UPDATE CLIENT INFO",
-                    "Updated changes to client " + viewedClient.getFirstName() + " " + viewedClient.getLastName()
-                            + "updated client info: " + viewedClient.getClientInfoString());
-            JSONConverter.updateHistory(save, "action_history.json");
+            if (viewedClient.getModifiedTimestamp() != null) {
+                lastModified.setText(viewedClient.getModifiedTimestamp().format(dateTimeFormat));
+                //TODO show what in particular was updated
+                HistoryItem save = new HistoryItem("UPDATE CLIENT INFO",
+                        "Updated changes to client " + viewedClient.getFirstName() + " " + viewedClient.getLastName()
+                                + "updated client info: " + viewedClient.getClientInfoString());
+                JSONConverter.updateHistory(save, "action_history.json");
+            }
         }
     }
 
@@ -288,7 +290,7 @@ public class ViewClientController extends SubController {
         addChangeIfDifferent(action, "setFirstName", viewedClient.getFirstName(), fname.getText());
         addChangeIfDifferent(action, "setLastName", viewedClient.getLastName(), lname.getText());
         addChangeIfDifferent(action, "setMiddleName", viewedClient.getMiddleName(), mname.getText());
-        addChangeIfDifferent(action, "setPreferredName", viewedClient.getPreferredName(), pname.getText());
+        addChangeIfDifferent(action, "setPreferredName", viewedClient.getPreferredNameOnly(), pname.getText());
         addChangeIfDifferent(action, "setDateOfBirth", viewedClient.getDateOfBirth(), dob.getValue());
         addChangeIfDifferent(action, "setGender", viewedClient.getGender(), gender.getValue());
         addChangeIfDifferent(action, "setGenderIdentity", viewedClient.getGenderIdentity(), genderIdentity.getValue());
