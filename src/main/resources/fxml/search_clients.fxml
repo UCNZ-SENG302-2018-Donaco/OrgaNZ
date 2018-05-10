@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Pagination?>
 <?import javafx.scene.control.SplitPane?>
@@ -93,7 +94,7 @@
                         <HBox alignment="CENTER_LEFT" spacing="10.0">
                           <children>
                             <Label text="Client Type:" />
-                            <CheckComboBox fx:id="clientTypeFilter" prefWidth="100.0" />
+                                          <ChoiceBox fx:id="clientTypeFilter" prefWidth="150.0" />
                             <Label text="Donating:" />
                             <CheckComboBox fx:id="organsDonatingFilter" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                             <Label text="Requesting:" />

@@ -10,6 +10,7 @@ import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
@@ -54,7 +55,7 @@ public class SearchClientsController extends SubController {
     private CheckComboBox<Region> regionFilter;
 
     @FXML
-    private CheckComboBox<String> clientTypeFilter;
+    private ChoiceBox<String> clientTypeFilter;
 
     @FXML
     private CheckComboBox<Organ> organsDonatingFilter, organsRequestingFilter;
@@ -120,6 +121,14 @@ public class SearchClientsController extends SubController {
             ageSlider.setHighValue(newMax);
         });
 
+        // Set options for choice boxes and check combo boxes
+        birthGenderFilter.getItems().setAll(Gender.values());
+        regionFilter.getItems().setAll(Region.values());
+        clientTypeFilter.getItems().setAll("Any", "Only Donor", "Only Receiver", "Both", "Neither");
+        clientTypeFilter.getSelectionModel().select(0);
+        organsDonatingFilter.getItems().setAll(Organ.values());
+        organsRequestingFilter.getItems().setAll(Organ.values());
+
         // Refresh table when any filter controls change
         ageSlider.lowValueProperty().addListener((observable, oldValue, newValue) -> {
             ageMinField.setText(Integer.toString(newValue.intValue()));
@@ -133,18 +142,12 @@ public class SearchClientsController extends SubController {
                 (ListChangeListener<Gender>) change -> refresh());
         regionFilter.getCheckModel().getCheckedItems().addListener(
                 (ListChangeListener<Region>) change -> refresh());
-        clientTypeFilter.getCheckModel().getCheckedItems().addListener(
-                (ListChangeListener<String>) change -> refresh());
+        clientTypeFilter.getSelectionModel().selectedItemProperty().addListener(
+                (observable, oldValue, newValue) -> changeClientType(newValue));
         organsDonatingFilter.getCheckModel().getCheckedItems().addListener(
                 (ListChangeListener<Organ>) change -> refresh());
         organsRequestingFilter.getCheckModel().getCheckedItems().addListener(
                 (ListChangeListener<Organ>) change -> refresh());
-
-        birthGenderFilter.getItems().setAll(Gender.values());
-        regionFilter.getItems().setAll(Region.values());
-        clientTypeFilter.getItems().setAll("Donor", "Receiver");
-        organsDonatingFilter.getItems().setAll(Organ.values());
-        organsRequestingFilter.getItems().setAll(Organ.values());
         searchBox.textProperty().addListener(((o) -> refresh()));
 
         //Create a filtered list, that defaults to allow all using lambda function
@@ -213,6 +216,40 @@ public class SearchClientsController extends SubController {
         });
     }
 
+    private void changeClientType(String newClientType) {
+        switch (newClientType) {
+            case "Only Donor":
+                organsRequestingFilter.getCheckModel().clearChecks();
+                organsDonatingFilter.setManaged(true);
+                organsDonatingFilter.setVisible(true);
+                organsRequestingFilter.setManaged(false);
+                organsRequestingFilter.setVisible(false);
+                break;
+            case "Only Receiver":
+                organsDonatingFilter.getCheckModel().clearChecks();
+                organsRequestingFilter.setManaged(true);
+                organsRequestingFilter.setVisible(true);
+                organsDonatingFilter.setManaged(false);
+                organsDonatingFilter.setVisible(false);
+                break;
+            case "Neither":
+                organsRequestingFilter.getCheckModel().clearChecks();
+                organsDonatingFilter.getCheckModel().clearChecks();
+                organsRequestingFilter.setManaged(false);
+                organsRequestingFilter.setVisible(false);
+                organsDonatingFilter.setManaged(false);
+                organsDonatingFilter.setVisible(false);
+                break;
+            default:
+                organsRequestingFilter.setManaged(true);
+                organsRequestingFilter.setVisible(true);
+                organsDonatingFilter.setManaged(true);
+                organsDonatingFilter.setVisible(true);
+                break;
+        }
+        refresh();
+    }
+
     private boolean nameFilter(Client client) {
         String searchText = searchBox.getText();
         return searchText == null || searchText.length() == 0 || client.nameContains(searchText);
@@ -266,12 +303,22 @@ public class SearchClientsController extends SubController {
      * @return true if the client matches all the filters. False otherwise.
      */
     private boolean filter(Client client) {
-        return nameFilter(client) &&
-                regionFilter(client) &&
-                birthGenderFilter(client) &&
-                ageFilter(client) &&
-                requestingFilter(client) &&
-                donatingFilter(client);
+        if (nameFilter(client) && regionFilter(client) && birthGenderFilter(client) && ageFilter(client)) {
+            switch (clientTypeFilter.getValue()) {
+                case "Any":
+                    return donatingFilter(client) && requestingFilter(client);
+                case "Only Donor":
+                    return client.isDonor() && donatingFilter(client);
+                case "Only Receiver":
+                    return client.isReceiver() && requestingFilter(client);
+                case "Neither":
+                    return !client.isReceiver() && !client.isDonor();
+                case "Both":
+                    return client.isReceiver() && client.isDonor() &&
+                            donatingFilter(client) && requestingFilter(client);
+            }
+        }
+        return false;
     }
 
     /**

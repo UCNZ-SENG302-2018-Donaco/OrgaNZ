@@ -539,6 +539,10 @@ public class Client {
         transplantRequests.remove(request);
     }
 
+    public boolean isDonor() {
+        return getCurrentlyDonatedOrgans().size() > 0;
+    }
+
     public boolean isReceiver() {
         return transplantRequests.size() > 0;
     }
