@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.Client.ViewClientController">
+<VBox prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.Client.ViewClientController">
   <children>
     <SplitPane dividerPositions="0.29797979797979796" VBox.vgrow="ALWAYS">
       <items>
@@ -41,7 +41,7 @@
                       </rowConstraints>
                       <children>
                         <TextField fx:id="id" prefHeight="30.0" promptText="ID Number" GridPane.columnIndex="1" />
-                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#searchClient" prefHeight="30.0" text="Search" GridPane.columnIndex="2" />
+                        <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#searchClient" prefHeight="30.0" text="Load client" GridPane.columnIndex="2" />
                         <Label fx:id="noClientLabel" text="No Client with this ID exists!" textFill="#c60000" visible="false" wrapText="true" GridPane.columnIndex="3" />
                       </children>
                       <VBox.margin>
@@ -64,40 +64,45 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       </rowConstraints>
                       <children>
-                        <TextField fx:id="fname" layoutX="122.0" layoutY="80.0" prefHeight="30.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <TextField fx:id="mname" layoutX="122.0" layoutY="191.0" prefHeight="30.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <TextField fx:id="lname" layoutX="122.0" layoutY="136.0" prefHeight="30.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <TextField fx:id="fname" layoutX="122.0" layoutY="80.0" prefHeight="30.0" GridPane.columnIndex="1" />
+                        <TextField fx:id="mname" layoutX="122.0" layoutY="191.0" prefHeight="30.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <TextField fx:id="lname" layoutX="122.0" layoutY="136.0" prefHeight="30.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                         <DatePicker fx:id="dob" maxWidth="1.7976931348623157E308" prefHeight="30.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                         <DatePicker fx:id="dod" maxWidth="1.7976931348623157E308" prefHeight="30.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                        <ChoiceBox fx:id="gender" maxWidth="1.7976931348623157E308" prefHeight="30.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
-                        <TextField fx:id="height" layoutX="530.0" layoutY="80.0" prefHeight="30.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                        <TextField fx:id="weight" layoutX="530.0" layoutY="136.0" prefHeight="30.0" GridPane.columnIndex="3" GridPane.rowIndex="2" />
-                        <ChoiceBox fx:id="btype" maxWidth="1.7976931348623157E308" prefHeight="30.0" GridPane.columnIndex="3" GridPane.rowIndex="3" />
-                        <TextField fx:id="address" layoutX="530.0" layoutY="245.0" prefHeight="30.0" GridPane.columnIndex="3" GridPane.rowIndex="4" />
-                        <Button fx:id="viewOrgans" mnemonicParsing="false" onAction="#viewOrgansForClient" prefHeight="30.0" text="Organs" GridPane.columnIndex="2" GridPane.rowIndex="7" />
-                        <Button fx:id="saveChanges" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#saveChanges" prefHeight="30.0" text="Save Changes" GridPane.columnIndex="3" GridPane.rowIndex="7" />
-                        <Label layoutX="41.0" text="Creation Date" />
-                        <Label fx:id="fnameLabel" layoutY="85.0" text="First Name *" GridPane.rowIndex="1" />
-                        <Label fx:id="mnameLabel" layoutY="196.0" text="Middle Name" GridPane.rowIndex="2" />
-                        <Label fx:id="lnameLabel" layoutY="141.0" text="Last Name *" GridPane.rowIndex="3" />
-                        <Label fx:id="dobLabel" layoutX="1.0" layoutY="250.0" text="Date of Birth *" GridPane.rowIndex="4" />
-                        <Label fx:id="dodLabel" layoutX="1.0" layoutY="307.0" text="Date of Death" GridPane.rowIndex="5" />
-                        <Label fx:id="genderLabel" layoutY="366.0" text="Gender" GridPane.rowIndex="7" />
-                        <Label layoutX="446.0" text="Last Modified" GridPane.columnIndex="2" />
-                        <Label fx:id="heightLabel" layoutX="424.0" layoutY="85.0" text="Height" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                        <Label fx:id="weightLabel" layoutX="422.0" layoutY="141.0" text="Weight" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                        <Label fx:id="btypeLabel" layoutX="423.0" layoutY="196.0" text="Blood type" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-                        <Label fx:id="addressLabel" layoutX="419.0" layoutY="250.0" text="Address" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-                        <Label fx:id="regionLabel" layoutX="419.0" layoutY="307.0" text="Region" GridPane.columnIndex="2" GridPane.rowIndex="5" />
-                        <Label fx:id="creationDate" layoutX="146.0" text="DATE" textFill="#0200c4" wrapText="true" GridPane.columnIndex="1" />
-                        <Label fx:id="lastModified" layoutX="539.0" text="DATE" textFill="#0200c4" wrapText="true" GridPane.columnIndex="3" />
-                        <Label fx:id="ageDisplayLabel" prefHeight="15.0" prefWidth="105.0" text="Age" GridPane.rowIndex="6" />
+                        <ChoiceBox fx:id="gender" maxWidth="1.7976931348623157E308" prefHeight="30.0" GridPane.columnIndex="3" GridPane.rowIndex="6" />
+                        <TextField fx:id="height" layoutX="530.0" layoutY="80.0" prefHeight="30.0" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                        <TextField fx:id="weight" layoutX="530.0" layoutY="136.0" prefHeight="30.0" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                        <ChoiceBox fx:id="btype" maxWidth="1.7976931348623157E308" prefHeight="30.0" GridPane.columnIndex="3" GridPane.rowIndex="5" />
+                        <TextField fx:id="address" layoutX="530.0" layoutY="245.0" prefHeight="30.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                        <Button fx:id="viewOrgans" mnemonicParsing="false" onAction="#viewOrgansForClient" prefHeight="30.0" text="Donate organs" GridPane.columnIndex="2" GridPane.rowIndex="8" />
+                        <Button fx:id="saveChanges" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#saveChanges" prefHeight="30.0" text="Save changes" GridPane.columnIndex="3" GridPane.rowIndex="8" />
+                        <Label layoutX="41.0" text="Created:" GridPane.columnIndex="2" />
+                        <Label fx:id="fnameLabel" layoutY="85.0" text="First name:" />
+                        <Label fx:id="mnameLabel" layoutY="196.0" text="Middle name:" GridPane.rowIndex="1" />
+                        <Label fx:id="lnameLabel" layoutY="141.0" text="Last name:" GridPane.rowIndex="2" />
+                        <Label fx:id="dobLabel" layoutX="1.0" layoutY="250.0" text="Date of birth:" GridPane.rowIndex="4" />
+                        <Label fx:id="dodLabel" layoutX="1.0" layoutY="307.0" text="Date of death:" GridPane.rowIndex="5" />
+                        <Label fx:id="genderLabel" layoutY="366.0" text="Birth gender:" GridPane.columnIndex="2" GridPane.rowIndex="6" />
+                        <Label layoutX="446.0" text="Last modified:" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                        <Label fx:id="heightLabel" layoutX="424.0" layoutY="85.0" text="Height (cm):" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                        <Label fx:id="weightLabel" layoutX="422.0" layoutY="141.0" text="Weight (kg):" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                        <Label fx:id="btypeLabel" layoutX="423.0" layoutY="196.0" text="Blood type:" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+                        <Label fx:id="addressLabel" layoutX="419.0" layoutY="250.0" text="Address:" GridPane.rowIndex="7" />
+                        <Label fx:id="regionLabel" layoutX="419.0" layoutY="307.0" text="Region:" GridPane.rowIndex="8" />
+                        <Label fx:id="creationDate" layoutX="146.0" text="DATE" textFill="#0200c4" wrapText="true" GridPane.columnIndex="3" />
+                        <Label fx:id="lastModified" layoutX="539.0" text="DATE" textFill="#0200c4" wrapText="true" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                        <Label fx:id="ageDisplayLabel" prefHeight="15.0" prefWidth="105.0" text="Age:" GridPane.rowIndex="6" />
                         <Label fx:id="ageLabel" prefHeight="15.0" prefWidth="105.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                        <Label fx:id="dodLabel2" text="BMI" GridPane.columnIndex="2" GridPane.rowIndex="6" />
-                        <Label fx:id="BMILabel" prefHeight="15.0" prefWidth="105.0" GridPane.columnIndex="3" GridPane.rowIndex="6" />
-                        <ChoiceBox fx:id="region" layoutX="488.0" layoutY="167.0" maxWidth="1.7976931348623157E308" prefHeight="30.0" GridPane.columnIndex="3" GridPane.rowIndex="5" />
+                        <Label fx:id="dodLabel2" text="BMI:" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+                        <Label fx:id="BMILabel" prefHeight="15.0" prefWidth="105.0" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+                        <ChoiceBox fx:id="region" layoutX="488.0" layoutY="167.0" maxWidth="1.7976931348623157E308" prefHeight="30.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                                    <Label fx:id="genderIdentityLabel" text="Gender identity:" GridPane.columnIndex="2" GridPane.rowIndex="7" />
+                                    <Label fx:id="pnameLabel" text="Preferred name:" GridPane.rowIndex="3" />
+                                    <TextField fx:id="pname" prefHeight="30.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                    <ChoiceBox fx:id="genderIdentity" maxWidth="1.7976931348623157E308" prefHeight="30.0" GridPane.columnIndex="3" GridPane.rowIndex="7" />
                       </children>
                       <VBox.margin>
                         <Insets />
@@ -107,7 +112,7 @@
                 </VBox>
               </center>
               <top>
-                <Label text="View/edit client" BorderPane.alignment="CENTER">
+                <Label text="Client" BorderPane.alignment="CENTER">
                   <font>
                     <Font size="24.0" />
                   </font>
