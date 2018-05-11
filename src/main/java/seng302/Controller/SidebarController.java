@@ -57,9 +57,9 @@ public class SidebarController extends SubController {
         super.setup(controller);
         UserType userType = session.getLoggedInUserType();
 
-        Button staffButtons[] = {searchButton, transplantsButton};
+        Button staffButtons[] = {viewClinicianButton, searchButton, transplantsButton};
         Button adminButtons[] = {createAdminButton, createClinicianButton, saveToFileButton, loadFromFileButton};
-        Button clinicianButtons[] = {viewClinicianButton};
+        Button clinicianButtons[] = {};
         Button clientButtons[] = {viewClientButton, registerOrganDonationButton, viewMedicationsButton,
                 illnessHistoryButton, viewProceduresButton};
 

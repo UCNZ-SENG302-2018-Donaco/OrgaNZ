@@ -6,6 +6,7 @@ import java.util.Objects;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
@@ -16,6 +17,7 @@ import seng302.Controller.MainController;
 import seng302.Controller.SubController;
 import seng302.HistoryItem;
 import seng302.State.Session;
+import seng302.State.Session.UserType;
 import seng302.State.State;
 import seng302.Utilities.Enums.Region;
 import seng302.Utilities.JSONConverter;
@@ -37,23 +39,28 @@ public class ViewClinicianController extends SubController {
     private String updatedPassword;
 
     @FXML
-    private Pane sidebarPane, idPane, inputsPane;
+    private Pane sidebarPane, loadClinicianPane, inputsPane;
     @FXML
     private Label creationDate, lastModified, fnameLabel, lnameLabel, passwordLabel;
     @FXML
-    private TextField staffID, fname, lname, mname, workAddress;
+    private TextField staffID, fname, lname, mname, workAddress, loadStaffIdTextField;
     @FXML
     private PasswordField password;
     @FXML
     private ChoiceBox<Region> region;
     @FXML
-    private Button saveChangesButton;
+    private Button saveChangesButton, loadClinicianButton;
 
     public ViewClinicianController() {
         invoker = State.getInvoker();
         session = State.getSession();
 
-        currentClinician = session.getLoggedInClinician();
+        if (session.getLoggedInUserType() == UserType.ADMINISTRATOR) {
+            currentClinician = State.getClinicianManager().getDefaultClinician();
+        } else {
+            //should be logged in as clinician
+            currentClinician = session.getLoggedInClinician();
+        }
     }
 
     /**
@@ -77,6 +84,32 @@ public class ViewClinicianController extends SubController {
 
     @Override
     public void refresh() {
+        loadClinicianData();
+    }
+
+
+    /**
+     * Loads the clinician identified by the staff ID in loadStaffIdTextField.
+     */
+    @FXML
+    void loadClinician() {
+        int id_value;
+        try {
+            id_value = Integer.parseInt(loadStaffIdTextField.getText());
+        } catch (Exception e) {
+            e.printStackTrace();
+            PageNavigator.showAlert(Alert.AlertType.ERROR, "Invalid Staff ID",
+                    "The Staff ID must be an integer.");
+            return;
+        }
+
+        currentClinician = State.getClinicianManager().getClinicianByStaffId(id_value);
+        if (currentClinician == null) {
+            PageNavigator.showAlert(Alert.AlertType.ERROR, "Invalid Staff ID",
+                    "This staff ID does not exist in the system.");
+            return;
+        }
+
         loadClinicianData();
     }
 

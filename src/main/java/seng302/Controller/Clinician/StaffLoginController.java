@@ -97,6 +97,12 @@ public class StaffLoginController extends SubController {
     @FXML
     private void signIn() {
         if (validStaffIdInput()) {
+            //TODO remove this if statement - this is just for testing
+            if (id==5) {
+                State.login(State.getAdministratorManager().getAdministratorByUsername("admin"));
+                PageNavigator.loadPage(Page.SEARCH, mainController);
+                return;
+            }
             Clinician clinician = clinicianManager.getClinicianByStaffId(id);
             if (clinician == null) {
                 staffIdDoesntExistAlert();
