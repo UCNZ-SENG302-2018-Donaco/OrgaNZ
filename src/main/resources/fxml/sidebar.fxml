@@ -73,6 +73,11 @@
                   <Font size="16.0" />
                </font>
             </Button>
+            <Button fx:id="createClinicianButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToCreateClinician" text="Create clinician" VBox.vgrow="ALWAYS">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Button>
         <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToHistory" text="Action history" VBox.vgrow="ALWAYS">
           <font>
             <Font size="16.0" />

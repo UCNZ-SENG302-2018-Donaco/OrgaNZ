@@ -38,7 +38,7 @@ public class SidebarController extends SubController {
     @FXML
     private Button viewClientButton, registerOrganDonationButton, viewMedicationsButton, viewClinicianButton,
             searchButton, transplantsButton, logoutButton, requestOrganDonationButton, illnessHistoryButton,
-            viewProceduresButton, createAdminButton, undoButton, redoButton;
+            viewProceduresButton, createAdminButton, createClinicianButton, undoButton, redoButton;
 
     private ActionInvoker invoker;
     private Session session;
@@ -56,29 +56,24 @@ public class SidebarController extends SubController {
         super.setup(controller);
         UserType userType = session.getLoggedInUserType();
 
+        Button staffButtons[] = {searchButton, transplantsButton};
+        Button adminButtons[] = {createAdminButton, createClinicianButton};
+        Button clinicianButtons[] = {viewClinicianButton};
+        Button clientButtons[] = {viewClientButton, registerOrganDonationButton, viewMedicationsButton,
+                illnessHistoryButton, viewProceduresButton};
+
         if (userType == UserType.CLIENT || windowContext.isClinViewClientWindow()) {
-            // hide staff-related buttons
-            hideButton(searchButton);
-            hideButton(transplantsButton);
-            // hide clinician-related buttons
-            hideButton(viewClinicianButton);
-            // hide admin-related buttons
-            hideButton(createAdminButton);
+            hideButtons(staffButtons);
+            hideButtons(adminButtons);
+            hideButtons(clinicianButtons);
         } else if (userType == UserType.CLINICIAN || userType == UserType.ADMINISTRATOR) {
-            // hide client-related buttons
-            hideButton(viewClientButton);
-            hideButton(registerOrganDonationButton);
-            hideButton(viewMedicationsButton);
-            hideButton(illnessHistoryButton);
-            hideButton(viewProceduresButton);
+            hideButtons(clientButtons);
         }
 
         if (userType == UserType.CLINICIAN) {
-            //hide admin-related buttons
-            hideButton(createAdminButton);
+            hideButtons(adminButtons);
         } else if (userType == UserType.ADMINISTRATOR) {
-            //hide clinician-related buttons
-            hideButton(viewClinicianButton);
+            hideButtons(clinicianButtons);
         }
 
         if (windowContext.isClinViewClientWindow()) {
@@ -104,6 +99,16 @@ public class SidebarController extends SubController {
             return currentClient.isReceiver();
         } else {
             return windowContext.isClinViewClientWindow();
+        }
+    }
+
+    /**
+     * Hides all the buttons in the passed-in array.
+     * @param buttons The buttons to hide
+     */
+    private void hideButtons(Button buttons[]) {
+        for (Button button : buttons) {
+            hideButton(button);
         }
     }
 
@@ -205,11 +210,19 @@ public class SidebarController extends SubController {
     }
 
     /**
-     * Redirects the GUI to the View Procedures page.
+     * Redirects the GUI to the Create administrator page.
      */
     @FXML
     private void goToCreateAdmin() {
         PageNavigator.loadPage(Page.CREATE_ADMINISTRATOR, mainController);
+    }
+
+    /**
+     * Redirects the GUI to the Create clinician page.
+     */
+    @FXML
+    private void goToCreateClinician() {
+        PageNavigator.loadPage(Page.CREATE_CLINICIAN, mainController);
     }
 
     /**
