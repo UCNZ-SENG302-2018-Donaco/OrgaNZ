@@ -67,9 +67,7 @@ public class SidebarController extends SubController {
             hideButtons(staffButtons);
             hideButtons(adminButtons);
             hideButtons(clinicianButtons);
-        }
-
-        if (userType == UserType.CLINICIAN) {
+        } else if (userType == UserType.CLINICIAN) {
             hideButtons(adminButtons);
             hideButtons(clientButtons);
         } else if (userType == UserType.ADMINISTRATOR) {
