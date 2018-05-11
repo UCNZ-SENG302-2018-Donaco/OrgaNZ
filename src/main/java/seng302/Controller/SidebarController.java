@@ -38,7 +38,8 @@ public class SidebarController extends SubController {
     @FXML
     private Button viewClientButton, registerOrganDonationButton, viewMedicationsButton, viewClinicianButton,
             searchButton, transplantsButton, logoutButton, requestOrganDonationButton, illnessHistoryButton,
-            viewProceduresButton, createAdminButton, createClinicianButton, undoButton, redoButton;
+            viewProceduresButton, createAdminButton, createClinicianButton, undoButton, redoButton, saveToFileButton,
+            loadFromFileButton;
 
     private ActionInvoker invoker;
     private Session session;
@@ -57,7 +58,7 @@ public class SidebarController extends SubController {
         UserType userType = session.getLoggedInUserType();
 
         Button staffButtons[] = {searchButton, transplantsButton};
-        Button adminButtons[] = {createAdminButton, createClinicianButton};
+        Button adminButtons[] = {createAdminButton, createClinicianButton, saveToFileButton, loadFromFileButton};
         Button clinicianButtons[] = {viewClinicianButton};
         Button clientButtons[] = {viewClientButton, registerOrganDonationButton, viewMedicationsButton,
                 illnessHistoryButton, viewProceduresButton};
@@ -66,14 +67,14 @@ public class SidebarController extends SubController {
             hideButtons(staffButtons);
             hideButtons(adminButtons);
             hideButtons(clinicianButtons);
-        } else if (userType == UserType.CLINICIAN || userType == UserType.ADMINISTRATOR) {
-            hideButtons(clientButtons);
         }
 
         if (userType == UserType.CLINICIAN) {
             hideButtons(adminButtons);
+            hideButtons(clientButtons);
         } else if (userType == UserType.ADMINISTRATOR) {
             hideButtons(clinicianButtons);
+            hideButtons(clientButtons);
         }
 
         if (windowContext.isClinViewClientWindow()) {
