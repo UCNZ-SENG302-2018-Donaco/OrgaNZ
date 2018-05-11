@@ -70,6 +70,12 @@ public class SidebarControllerAdministratorTest  extends ControllerTest {
     }
 
     @Test
+    public void testClickOnCreateClinician() {
+        clickOn("#createClinicianButton");
+        assertEquals(Page.CREATE_CLINICIAN, mainController.getCurrentPage());
+    }
+
+    @Test
     public void testClickOnHistory() {
         clickOn("Action history");
         assertEquals(Page.HISTORY, mainController.getCurrentPage());

@@ -83,6 +83,21 @@ public class SidebarControllerClinicianTest extends ControllerTest {
         verifyThat("#createAdminButton", isInvisible());
     }
 
+    @Test
+    public void testCreateClinicianHidden() {
+        verifyThat("#createClinicianButton", isInvisible());
+    }
+
+    @Test
+    public void testSaveHidden() {
+        verifyThat("#saveToFileButton", isInvisible());
+    }
+
+    @Test
+    public void testoadHidden() {
+        verifyThat("#loadFromFileButton", isInvisible());
+    }
+
     // Test client-only buttons are hidden
 
     @Test
@@ -108,18 +123,6 @@ public class SidebarControllerClinicianTest extends ControllerTest {
     @Test
     public void testMedicalHistoryHidden() {
         verifyThat("#illnessHistoryButton", isInvisible());
-    }
-
-    // Clinician should not have access to the save to file and load form file buttons
-
-    @Test
-    public void testSaveHidden() {
-        verifyThat("#saveToFileButton", isInvisible());
-    }
-
-    @Test
-    public void testoadHidden() {
-        verifyThat("#loadFromFileButton", isInvisible());
     }
 
 

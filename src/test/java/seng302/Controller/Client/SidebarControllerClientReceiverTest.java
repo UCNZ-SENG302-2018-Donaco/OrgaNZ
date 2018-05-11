@@ -98,7 +98,12 @@ public class SidebarControllerClientReceiverTest extends ControllerTest {
         verifyThat("#createAdminButton", isInvisible());
     }
 
-    // Test clinician (and admin)-only buttons are hidden
+    @Test
+    public void testCreateClinicianHidden() {
+        verifyThat("#createClinicianButton", isInvisible());
+    }
+
+    // Test staff-only buttons are hidden
 
     @Test
     public void testClinicianDetailsHidden() {
