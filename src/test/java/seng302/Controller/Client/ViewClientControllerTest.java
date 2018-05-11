@@ -141,13 +141,4 @@ public class ViewClientControllerTest extends ControllerTest {
         assertEquals(Page.REGISTER_ORGAN_DONATIONS, mainController.getCurrentPage());
 
     }
-
-    @Ignore
-    public void checkTitleSetTest() {
-        testClient = new Client("a", "", "b", LocalDate.now().minusDays(10), 1);
-        clickOn("#pname").type(KeyCode.BACK_SPACE).type(KeyCode.BACK_SPACE).type(KeyCode.BACK_SPACE).write("Dad");
-        sleep(1000);
-        clickOn("#saveChanges");
-        assertEquals("View Client: Dad", mainController.getTitle());
-    }
 }
