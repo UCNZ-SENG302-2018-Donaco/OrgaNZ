@@ -19,7 +19,7 @@ public class SidebarControllerClinViewClientTest extends ControllerTest {
 
     private Clinician testClinician = new Clinician("Mr", null, "Tester",
             "9 Fake St", Region.AUCKLAND, 3, "k");
-    private Client client = new Client("Client", "Number", "One", LocalDate.now(), 1);
+    private Client client = new Client("Client", "Number","One", LocalDate.now(), 1);
 
 
     @Override
@@ -31,6 +31,7 @@ public class SidebarControllerClinViewClientTest extends ControllerTest {
     protected void initState() {
         State.init();
         State.login(testClinician);
+        State.getClientManager().addClient(client);
         mainController.setWindowContext(new WindowContextBuilder().setAsClinViewClientWindow().viewClient(client).build());
     }
 
