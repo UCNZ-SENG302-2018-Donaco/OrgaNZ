@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.matcher.base.NodeMatchers.isInvisible;
 
+import org.apache.commons.lang3.builder.ToStringExclude;
 import org.junit.Test;
 import seng302.Clinician;
 import seng302.Controller.ControllerTest;
@@ -107,6 +108,18 @@ public class SidebarControllerClinicianTest extends ControllerTest {
     @Test
     public void testMedicalHistoryHidden() {
         verifyThat("#illnessHistoryButton", isInvisible());
+    }
+
+    // Clinician should not have access to the save to file and load form file buttons
+
+    @Test
+    public void testSaveHidden() {
+        verifyThat("#saveToFileButton", isInvisible());
+    }
+
+    @Test
+    public void testoadHidden() {
+        verifyThat("#loadFromFileButton", isInvisible());
     }
 
 

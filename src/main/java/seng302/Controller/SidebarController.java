@@ -38,7 +38,7 @@ public class SidebarController extends SubController {
     @FXML
     private Button viewClientButton, registerOrganDonationButton, viewMedicationsButton, viewClinicianButton,
             searchButton, transplantsButton, logoutButton, requestOrganDonationButton, illnessHistoryButton,
-            viewProceduresButton, createAdminButton, undoButton, redoButton;
+            viewProceduresButton, createAdminButton, undoButton, redoButton, saveToFileButton, loadFromFileButton;
 
     private ActionInvoker invoker;
     private Session session;
@@ -71,6 +71,11 @@ public class SidebarController extends SubController {
             hideButton(viewMedicationsButton);
             hideButton(illnessHistoryButton);
             hideButton(viewProceduresButton);
+             if (userType == UserType.CLINICIAN) {
+                 // hide save and load buttons
+                 hideButton(saveToFileButton);
+                 hideButton(loadFromFileButton);
+             }
         }
 
         if (userType == UserType.CLINICIAN) {

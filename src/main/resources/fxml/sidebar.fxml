@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="600.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.SidebarController">
+<VBox prefHeight="600.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.SidebarController">
   <children>
     <VBox VBox.vgrow="ALWAYS">
       <children>
@@ -78,12 +78,12 @@
             <Font size="16.0" />
           </font>
         </Button>
-        <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#save" style="-fx-base: rgba(255, 220, 188, 0.8);" text="Save to file" VBox.vgrow="ALWAYS">
+        <Button fx:id="saveToFileButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#save" style="-fx-base: rgba(255, 220, 188, 0.8);" text="Save to file" VBox.vgrow="ALWAYS">
           <font>
             <Font size="16.0" />
           </font>
         </Button>
-        <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#load" style="-fx-base: rgba(255, 220, 188, 0.8);" text="Load from file" VBox.vgrow="ALWAYS">
+        <Button fx:id="loadFromFileButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#load" style="-fx-base: rgba(255, 220, 188, 0.8);" text="Load from file" VBox.vgrow="ALWAYS">
           <font>
             <Font size="16.0" />
           </font>
