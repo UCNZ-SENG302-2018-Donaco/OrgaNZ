@@ -32,6 +32,7 @@ public class SidebarControllerClientReceiverTest extends ControllerTest {
         client.addTransplantRequest(new TransplantRequest(client, Organ.LIVER));
         State.init();
         State.login(client);
+        State.getClientManager().addClient(client);
         mainController.setWindowContext(new WindowContextBuilder().build());
     }
 

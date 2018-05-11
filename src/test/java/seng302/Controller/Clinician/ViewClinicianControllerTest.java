@@ -34,8 +34,7 @@ public class ViewClinicianControllerTest extends ControllerTest {
 
     @Test
     public void correctSetup() {
-        verifyThat("#staffID", isDisabled()); // Clinician should not be able to edit their staff id as this
-        assertEquals("x", testClinician.getFirstName()); // is the unique identifier.
+        assertEquals("x", testClinician.getFirstName());
         assertEquals("y", testClinician.getMiddleName());
         assertEquals("z", testClinician.getLastName());
         assertEquals("t", testClinician.getWorkAddress());

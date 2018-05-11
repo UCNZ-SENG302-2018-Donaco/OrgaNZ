@@ -32,6 +32,7 @@ public class SidebarControllerClinViewClientTest extends ControllerTest {
         State.init();
         State.login(testClinician);
         State.getClientManager().addClient(client);
+        State.getClinicianManager().addClinician(testClinician);
         mainController.setWindowContext(new WindowContextBuilder().setAsClinViewClientWindow().viewClient(client).build());
     }
 

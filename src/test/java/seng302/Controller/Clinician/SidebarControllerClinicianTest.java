@@ -29,6 +29,7 @@ public class SidebarControllerClinicianTest extends ControllerTest {
     protected void initState() {
         State.init();
         State.login(testClinician);
+        State.getClinicianManager().addClinician(testClinician);
         mainController.setWindowContext(new WindowContextBuilder().build());
     }
 

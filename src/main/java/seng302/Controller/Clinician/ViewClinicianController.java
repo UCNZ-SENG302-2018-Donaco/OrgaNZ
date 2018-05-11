@@ -43,7 +43,7 @@ public class ViewClinicianController extends SubController {
     @FXML
     private Label creationDate, lastModified, fnameLabel, lnameLabel, passwordLabel;
     @FXML
-    private TextField staffID, fname, lname, mname, workAddress, loadStaffIdTextField;
+    private TextField fname, lname, mname, workAddress, loadStaffIdTextField;
     @FXML
     private PasswordField password;
     @FXML
@@ -69,7 +69,6 @@ public class ViewClinicianController extends SubController {
     @FXML
     private void initialize() {
         region.setItems(FXCollections.observableArrayList(Region.values()));
-        staffID.setDisable(true);
         inputsPane.setVisible(true);
 
         loadClinicianData();
@@ -117,11 +116,11 @@ public class ViewClinicianController extends SubController {
      * Loads all of the currently logged in Clinician's details, except for their password.
      */
     private void loadClinicianData() {
+        loadStaffIdTextField.setText(String.valueOf(currentClinician.getStaffId()));
         fname.setText(currentClinician.getFirstName());
         mname.setText(currentClinician.getMiddleName());
         lname.setText(currentClinician.getLastName());
         workAddress.setText(currentClinician.getWorkAddress());
-        staffID.setText(String.valueOf(currentClinician.getStaffId()));
         region.setValue(currentClinician.getRegion());
 
         creationDate.setText(currentClinician.getCreatedOn().format(dateTimeFormat));

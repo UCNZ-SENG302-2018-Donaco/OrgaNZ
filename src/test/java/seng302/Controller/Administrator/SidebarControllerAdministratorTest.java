@@ -28,6 +28,7 @@ public class SidebarControllerAdministratorTest  extends ControllerTest {
     protected void initState() {
         State.init();
         State.login(testAdmin);
+        State.getAdministratorManager().addAdministrator(testAdmin);
         mainController.setWindowContext(new WindowContextBuilder().build());
     }
 
@@ -81,11 +82,10 @@ public class SidebarControllerAdministratorTest  extends ControllerTest {
         assertEquals(Page.HISTORY, mainController.getCurrentPage());
     }
 
-    // Test clinician-only buttons are hidden
-
     @Test
-    public void testClinicianDetailsHidden() {
-        verifyThat("#viewClinicianButton", isInvisible());
+    public void testClickOnClinicianDetails() {
+        clickOn("#viewClinicianButton");
+        assertEquals(Page.VIEW_CLINICIAN, mainController.getCurrentPage());
     }
 
     // Test client-only buttons are hidden
