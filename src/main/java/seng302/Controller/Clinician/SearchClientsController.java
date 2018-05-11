@@ -96,7 +96,6 @@ public class SearchClientsController extends SubController {
     @FXML
     private void initialize() {
         ArrayList<Client> allClients = State.getClientManager().getClients();
-
         setupTable();
 
         tableView.setOnSort((o) -> createPage(pagination.getCurrentPageIndex()));
@@ -110,6 +109,7 @@ public class SearchClientsController extends SubController {
                 newMin = AGE_LOWER_BOUND;
             }
             ageSlider.setLowValue(newMin);
+            ageMinField.setText("" + newMin);
         });
         ageMaxField.setOnAction(event -> {
             int newMax;
@@ -119,6 +119,7 @@ public class SearchClientsController extends SubController {
                 newMax = 0;
             }
             ageSlider.setHighValue(newMax);
+            ageMaxField.setText("" + newMax);
         });
 
         // Set options for choice boxes and check combo boxes
