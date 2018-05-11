@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.Clinician.ViewClinicianController">
+<VBox prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.Clinician.ViewClinicianController">
   <children>
     <SplitPane dividerPositions="0.29797979797979796" VBox.vgrow="ALWAYS">
       <items>
@@ -60,28 +60,25 @@
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                       </rowConstraints>
                       <children>
-                        <TextField fx:id="fname" layoutX="122.0" layoutY="80.0" prefHeight="30.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <TextField fx:id="mname" layoutX="122.0" layoutY="191.0" prefHeight="30.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <TextField fx:id="lname" layoutX="122.0" layoutY="136.0" prefHeight="30.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                        <TextField fx:id="workAddress" prefHeight="30.0" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                        <TextField fx:id="staffID" editable="false" layoutX="530.0" layoutY="80.0" prefHeight="30.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                        <ChoiceBox fx:id="region" maxWidth="1.7976931348623157E308" prefHeight="30.0" GridPane.columnIndex="3" GridPane.rowIndex="2" />
-                        <Button fx:id="saveChangesButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#saveChanges" prefHeight="30.0" text="Save changes" GridPane.columnIndex="3" GridPane.rowIndex="5" />
-                        <Label layoutX="41.0" text="Creation Date" />
-                        <Label fx:id="fnameLabel" layoutY="85.0" text="First Name *" GridPane.rowIndex="1" />
-                        <Label fx:id="mnameLabel" layoutY="196.0" text="Middle Name" GridPane.rowIndex="2" />
-                        <Label fx:id="lnameLabel" layoutY="141.0" text="Last Name *" GridPane.rowIndex="3" />
-                        <Label fx:id="workAddressLabel" layoutX="1.0" layoutY="250.0" text="Work Address" GridPane.rowIndex="4" />
-                        <Label layoutX="446.0" text="Last Modified" GridPane.columnIndex="2" />
-                        <Label fx:id="staffIDLabel" layoutX="424.0" layoutY="85.0" text="Staff ID*" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                        <Label fx:id="regionLabel" layoutX="423.0" layoutY="196.0" text="Region*" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                        <Label fx:id="passwordLabel" layoutX="419.0" layoutY="250.0" text="Password*" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-                        <Label fx:id="creationDate" layoutX="146.0" text="DATE" textFill="#0200c4" wrapText="true" GridPane.columnIndex="1" />
-                        <Label fx:id="lastModified" layoutX="539.0" text="DATE" textFill="#0200c4" wrapText="true" GridPane.columnIndex="3" />
-                        <PasswordField fx:id="password" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                        <TextField fx:id="fname" layoutX="122.0" layoutY="80.0" prefHeight="30.0" GridPane.columnIndex="1" />
+                        <TextField fx:id="mname" layoutX="122.0" layoutY="191.0" prefHeight="30.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <TextField fx:id="lname" layoutX="122.0" layoutY="136.0" prefHeight="30.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <TextField fx:id="workAddress" prefHeight="30.0" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                        <ChoiceBox fx:id="region" maxWidth="1.7976931348623157E308" prefHeight="30.0" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                        <Button fx:id="saveChangesButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#saveChanges" prefHeight="30.0" text="Save changes" GridPane.columnIndex="3" GridPane.rowIndex="4" />
+                        <Label layoutX="41.0" text="Created:" GridPane.columnIndex="2" />
+                        <Label fx:id="fnameLabel" layoutY="85.0" text="First name:" />
+                        <Label fx:id="mnameLabel" layoutY="196.0" text="Middle name:" GridPane.rowIndex="1" />
+                        <Label fx:id="lnameLabel" layoutY="141.0" text="Last name:" GridPane.rowIndex="2" />
+                        <Label fx:id="workAddressLabel" layoutX="1.0" layoutY="250.0" text="Work address:" GridPane.columnIndex="2" GridPane.rowIndex="2" />
+                        <Label layoutX="446.0" text="Last modified:" GridPane.columnIndex="2" GridPane.rowIndex="1" />
+                        <Label fx:id="regionLabel" layoutX="423.0" layoutY="196.0" text="Region:" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                        <Label fx:id="passwordLabel" layoutX="419.0" layoutY="250.0" text="Password:" GridPane.rowIndex="3" />
+                        <Label fx:id="creationDate" layoutX="146.0" text="DATE" textFill="#0200c4" wrapText="true" GridPane.columnIndex="3" />
+                        <Label fx:id="lastModified" layoutX="539.0" text="DATE" textFill="#0200c4" wrapText="true" GridPane.columnIndex="3" GridPane.rowIndex="1" />
+                        <PasswordField fx:id="password" prefHeight="30.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                       </children>
                       <VBox.margin>
                         <Insets />
