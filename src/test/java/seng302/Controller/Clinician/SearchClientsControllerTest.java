@@ -16,6 +16,7 @@ import seng302.Clinician;
 import seng302.Controller.ControllerTest;
 import seng302.State.State;
 import seng302.TransplantRequest;
+import seng302.Utilities.Enums.Gender;
 import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.Enums.Region;
 import seng302.Utilities.View.Page;
@@ -62,6 +63,12 @@ public class SearchClientsControllerTest extends ControllerTest{
         testClient3.setRegion(Region.NORTHLAND);
         testClient4.setRegion(Region.WEST_COAST);
 
+        //Set Genders
+        testClient1.setGender(Gender.MALE);
+        testClient2.setGender(Gender.FEMALE);
+        testClient3.setGender(Gender.FEMALE);
+        testClient4.setGender(Gender.FEMALE);
+
         //add organ requests
         testClient1.addTransplantRequest(getRequestKidney1);
         testClient1.addTransplantRequest(getRequestLiver1);
@@ -105,6 +112,53 @@ public class SearchClientsControllerTest extends ControllerTest{
         doubleClickOn("#ageMinField").type(KeyCode.BACK_SPACE).write("50").type(KeyCode.ENTER);
         // check 1 value in table
     }
+
+    @Test
+    public void requestMaleGender(){
+        clickOn("#birthGenderFilter");
+        clickOn( (Node) lookup(".check-box").nth(0).query());
+        verifyThat("#tableView",hasNumRows(1));
+    }
+
+    @Test
+    public void requestFemaleGender(){
+        clickOn("#birthGenderFilter");
+        clickOn( (Node) lookup(".check-box").nth(1).query());
+        verifyThat("#tableView",hasNumRows(3));
+    }
+
+    @Test
+    public void requestMaleAndFemaleGender(){
+        clickOn("#birthGenderFilter");
+        clickOn( (Node) lookup(".check-box").nth(0).query());
+        clickOn( (Node) lookup(".check-box").nth(1).query());
+        verifyThat("#tableView",hasNumRows(4));
+    }
+
+    @Test
+    public void requestOtherGender(){
+        clickOn("#birthGenderFilter");
+        testClient1.setGender(Gender.OTHER);
+        testClient2.setGender(Gender.OTHER);
+        clickOn( (Node) lookup(".check-box").nth(2).query());
+        verifyThat("#tableView",hasNumRows(2));
+    }
+
+    @Test
+    public void requestUnspecifiedGender(){
+        clickOn("#birthGenderFilter");
+        testClient1.setGender(Gender.UNSPECIFIED);
+        testClient2.setGender(Gender.UNSPECIFIED);
+        clickOn( (Node) lookup(".check-box").nth(3).query());
+        verifyThat("#tableView",hasNumRows(2));
+    }
+
+
+
+
+
+
+
 
     @Test
     public void requestOrganFilterOne() {
