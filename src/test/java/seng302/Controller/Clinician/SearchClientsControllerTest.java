@@ -24,6 +24,9 @@ import seng302.Utilities.View.WindowContext;
 
 import org.junit.Test;
 
+/**
+ * Class to test the search clients controller. Used only for the clinician/admin to search and find a particular client.
+ */
 public class SearchClientsControllerTest extends ControllerTest{
 
     private Clinician testClinician = new Clinician("Admin", "Da", "Nimda", "2 Two Street", Region.CANTERBURY,
@@ -57,6 +60,9 @@ public class SearchClientsControllerTest extends ControllerTest{
 
     }
 
+    /**
+     * Method to set up the test details for the test client
+     */
     private void setupClientDetails() {
         testClient1.setRegion(Region.AUCKLAND);
         testClient2.setRegion(Region.AUCKLAND);
@@ -76,24 +82,36 @@ public class SearchClientsControllerTest extends ControllerTest{
         testClient4.addTransplantRequest(getRequestKidney4);
     }
 
+    /**
+     * Test to make sure that the lowest age that can be set is zero.
+     */
     @Test
     public void ageFilterUnderMin() {
         doubleClickOn("#ageMinField").type(KeyCode.BACK_SPACE).write("-500").type(KeyCode.ENTER);
         verifyThat("#ageMinField", hasText("0"));
     }
 
+    /**
+     * Test to make sure that the maximum age is 120.
+     */
     @Test
     public void ageFilterOverMax() {
         doubleClickOn("#ageMaxField").type(KeyCode.BACK_SPACE).write("500").type(KeyCode.ENTER);
         verifyThat("#ageMaxField", hasText("120"));
     }
 
+    /**
+     * Checks that the default min and max ages to filter are 0 and 120 respectively.
+     */
     @Test
     public void ageFilterDefault() {
         verifyThat("#ageMinField", hasText("0"));
         verifyThat("#ageMaxField", hasText("120"));
     }
 
+    /**
+     * Tests for the filter of an age of one year.
+     */
     @Test
     public void ageFilterOneYear() {
         doubleClickOn("#ageMaxField").type(KeyCode.BACK_SPACE).write("2").type(KeyCode.ENTER);
@@ -101,18 +119,27 @@ public class SearchClientsControllerTest extends ControllerTest{
 //        clickOn((Node) lookup("john").query());
     }
 
+    /**
+     * Test for the filtering of ten years.
+     */
     @Test
     public void ageFilterTenYears() {
         doubleClickOn("#ageMaxField").type(KeyCode.BACK_SPACE).write("12").type(KeyCode.ENTER);
         // check 3 values in table
     }
 
+    /**
+     * Test to filter between 0 and 100 years.
+     */
     @Test
     public void ageFilter100Years() {
         doubleClickOn("#ageMinField").type(KeyCode.BACK_SPACE).write("50").type(KeyCode.ENTER);
         // check 1 value in table
     }
 
+    /**
+     * Tests for filtering one region.
+     */
     @Test
     public void regionFilterOneRegion(){
         clickOn("#regionFilter");
@@ -124,9 +151,11 @@ public class SearchClientsControllerTest extends ControllerTest{
                 testClient3.getGender(),
                 testClient3.getRegion()));
         verifyThat("#tableView",hasNumRows(1));
-
     }
 
+    /**
+     * Tests for filtering two regions.
+     */
     @Test
     public void regionFilterTwoRegions(){
         clickOn("#regionFilter");
@@ -150,12 +179,12 @@ public class SearchClientsControllerTest extends ControllerTest{
                 testClient3.getAge(),
                 testClient3.getGender(),
                 testClient3.getRegion()));
-        verifyThat("#tableView",hasNumRows(1));
-
-
+        verifyThat("#tableView",hasNumRows(3));
     }
 
-
+    /**
+     * Tests for filtering a gender and region.
+     */
     @Test
     public void GenderAndRegionFilterTest(){
         clickOn("#regionFilter");
@@ -169,10 +198,11 @@ public class SearchClientsControllerTest extends ControllerTest{
                 testClient3.getGender(),
                 testClient3.getRegion()));
         verifyThat("#tableView",hasNumRows(1));
-
-
     }
 
+    /**
+     * Tests for the filtering of a gender and a region within the same time.
+     */
     @Test
     public void GenderAgeAndRegionFilterTest(){
         clickOn("#regionFilter");
@@ -190,9 +220,9 @@ public class SearchClientsControllerTest extends ControllerTest{
 
     }
 
-
-
-
+    /**
+     * Male gender Test
+     */
     @Test
     public void MaleGenderFilterTest(){
         clickOn("#birthGenderFilter");
@@ -205,7 +235,9 @@ public class SearchClientsControllerTest extends ControllerTest{
                 testClient1.getRegion()));
         verifyThat("#tableView",hasNumRows(1));
     }
-
+    /**
+     * Tests for the filtering of a female.
+     */
     @Test
     public void FemaleGenderFilterTest(){
         clickOn("#birthGenderFilter");
@@ -231,6 +263,9 @@ public class SearchClientsControllerTest extends ControllerTest{
         verifyThat("#tableView",hasNumRows(3));
     }
 
+    /**
+     * Tests for the filtering of both male and female genders.
+     */
     @Test
     public void MaleAndFemaleGenderFilterTest(){
         clickOn("#birthGenderFilter");
@@ -239,6 +274,9 @@ public class SearchClientsControllerTest extends ControllerTest{
         verifyThat("#tableView",hasNumRows(4));
     }
 
+    /**
+     * Tests for the filtering of an "Other" gender.
+     */
     @Test
     public void OtherGenderFilter(){
         clickOn("#birthGenderFilter");
@@ -248,6 +286,9 @@ public class SearchClientsControllerTest extends ControllerTest{
         verifyThat("#tableView",hasNumRows(2));
     }
 
+    /**
+     * Tests for the filtering of an unspecified gender.
+     */
     @Test
     public void UnspecifiedGenderFilterTest(){
         clickOn("#birthGenderFilter");
@@ -257,13 +298,9 @@ public class SearchClientsControllerTest extends ControllerTest{
         verifyThat("#tableView",hasNumRows(2));
     }
 
-
-
-
-
-
-
-
+    /**
+     * Tests for the requesting organs are filtered correctly with one organ to filter selected.
+     */
     @Test
     public void requestOrganFilterOne() {
         clickOn("#organsRequestingFilter");
@@ -279,6 +316,9 @@ public class SearchClientsControllerTest extends ControllerTest{
         verifyThat("#tableView", hasNumRows(3));
     }
 
+    /**
+     * Tests for the requesting organs are filtered correctly with >1 organ filtered.
+     */
     @Test
     public void requestOrganFilterMultiple() {
         clickOn("#organsRequestingFilter");
@@ -294,5 +334,44 @@ public class SearchClientsControllerTest extends ControllerTest{
                 getRequestKidney1.getClient().getRegion()));
         verifyThat("#tableView", hasNumRows(3));
 
+    }
+
+    /**
+     * Test for a requesting organ and a specific gender
+     */
+    @Test
+    public void filterRequestOrgansAndGender() {
+        clickOn("#birthGenderFilter");
+        clickOn( (Node) lookup(".check-box").nth(0).query());
+        clickOn("#organsRequestingFilter");
+        clickOn("#organsRequestingFilter");
+        clickOn("#organsRequestingFilter");
+        clickOn((Node) lookup(".check-box").nth(1).query());
+        verifyThat("#tableView", containsRowAtIndex(0,
+                testClient1.getUid(),
+                testClient1.getFullName(),
+                testClient1.getAge(),
+                testClient1.getGender(),
+                testClient1.getRegion()));
+        verifyThat("#tableView", hasNumRows(1));
+    }
+
+    /**
+     * Tests for a requesting organ and a specific age filter
+     */
+    @Test
+    public void filterRequestOrgansAndAge() {
+        doubleClickOn("#ageMaxField").type(KeyCode.BACK_SPACE).write("12").type(KeyCode.ENTER);
+        clickOn("#organsRequestingFilter");
+        clickOn("#organsRequestingFilter");
+        clickOn("#organsRequestingFilter");
+        clickOn((Node) lookup(".check-box").nth(1).query());
+        verifyThat("#tableView", containsRowAtIndex(1,
+                testClient2.getUid(),
+                testClient2.getFullName(),
+                testClient2.getAge(),
+                testClient2.getGender(),
+                testClient2.getRegion()));
+        verifyThat("#tableView", hasNumRows(2));
     }
 }
