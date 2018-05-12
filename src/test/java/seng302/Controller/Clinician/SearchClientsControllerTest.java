@@ -2,6 +2,8 @@ package seng302.Controller.Clinician;
 
 
 import static org.testfx.api.FxAssert.verifyThat;
+import static org.testfx.matcher.control.TableViewMatchers.containsRowAtIndex;
+import static org.testfx.matcher.control.TableViewMatchers.hasNumRows;
 import static org.testfx.matcher.control.TextInputControlMatchers.hasText;
 
 import java.time.LocalDate;
@@ -13,6 +15,8 @@ import seng302.Client;
 import seng302.Clinician;
 import seng302.Controller.ControllerTest;
 import seng302.State.State;
+import seng302.TransplantRequest;
+import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.Enums.Region;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.WindowContext;
@@ -28,6 +32,11 @@ public class SearchClientsControllerTest extends ControllerTest{
     private Client testClient3 = new Client("steve", null, "3", LocalDate.now().minusDays(3650), 3);
     private Client testClient4 = new Client("tom", null, "4", LocalDate.now().minusDays(36500), 4); // 100 years old
     private Client[] testClients = {testClient1, testClient2, testClient3, testClient4};
+
+    private TransplantRequest getRequestLiver1  = new TransplantRequest(testClient1, Organ.LIVER);
+    private TransplantRequest getRequestKidney1  = new TransplantRequest(testClient1, Organ.KIDNEY);
+    private TransplantRequest getRequestKidney2  = new TransplantRequest(testClient1, Organ.KIDNEY);
+    private TransplantRequest getRequestKidney4 = new TransplantRequest(testClient1, Organ.KIDNEY);
 
     @Override
     protected Page getPage() {
@@ -52,6 +61,12 @@ public class SearchClientsControllerTest extends ControllerTest{
         testClient2.setRegion(Region.AUCKLAND);
         testClient3.setRegion(Region.NORTHLAND);
         testClient4.setRegion(Region.WEST_COAST);
+
+        //add organ requests
+        testClient1.addTransplantRequest(getRequestKidney1);
+        testClient1.addTransplantRequest(getRequestLiver1);
+        testClient2.addTransplantRequest(getRequestKidney2);
+        testClient4.addTransplantRequest(getRequestKidney4);
     }
 
     @Test
@@ -91,4 +106,35 @@ public class SearchClientsControllerTest extends ControllerTest{
         // check 1 value in table
     }
 
+    @Test
+    public void requestOrganFilterOne() {
+        clickOn("#organsRequestingFilter");
+        clickOn("#organsRequestingFilter");
+        clickOn("#organsRequestingFilter");
+        clickOn((Node) lookup(".check-box").nth(1).query());
+        verifyThat("#tableView", containsRowAtIndex(0,
+                getRequestKidney1.getClient().getUid(),
+                getRequestKidney1.getClient().getFullName(),
+                testClient1.getAge(),
+                testClient1.getGender(),
+                getRequestKidney1.getClient().getRegion()));
+        verifyThat("#tableView", hasNumRows(3));
+    }
+
+    @Test
+    public void requestOrganFilterMultiple() {
+        clickOn("#organsRequestingFilter");
+        clickOn("#organsRequestingFilter");
+        clickOn("#organsRequestingFilter");
+        clickOn((Node) lookup(".check-box").nth(1).query());
+        clickOn((Node) lookup(".check-box").nth(3).query());
+        verifyThat("#tableView", containsRowAtIndex(0,
+                getRequestKidney1.getClient().getUid(),
+                getRequestLiver1.getClient().getFullName(),
+                testClient1.getAge(),
+                testClient1.getGender(),
+                getRequestKidney1.getClient().getRegion()));
+        verifyThat("#tableView", hasNumRows(3));
+
+    }
 }
