@@ -114,21 +114,125 @@ public class SearchClientsControllerTest extends ControllerTest{
     }
 
     @Test
-    public void requestMaleGender(){
+    public void regionFilterOneRegion(){
+        clickOn("#regionFilter");
+        clickOn( (Node) lookup(".check-box").nth(0).query());
+        verifyThat("#tableView",containsRowAtIndex(0,
+                testClient3.getUid(),
+                testClient3.getFullName(),
+                testClient3.getAge(),
+                testClient3.getGender(),
+                testClient3.getRegion()));
+        verifyThat("#tableView",hasNumRows(1));
+
+    }
+
+    @Test
+    public void regionFilterTwoRegions(){
+        clickOn("#regionFilter");
+        clickOn( (Node) lookup(".check-box").nth(0).query());
+        clickOn( (Node) lookup(".check-box").nth(1).query());
+        verifyThat("#tableView",containsRowAtIndex(0,
+                testClient1.getUid(),
+                testClient1.getFullName(),
+                testClient1.getAge(),
+                testClient1.getGender(),
+                testClient1.getRegion()));
+        verifyThat("#tableView",containsRowAtIndex(1,
+                testClient2.getUid(),
+                testClient2.getFullName(),
+                testClient2.getAge(),
+                testClient2.getGender(),
+                testClient2.getRegion()));
+        verifyThat("#tableView",containsRowAtIndex(2,
+                testClient3.getUid(),
+                testClient3.getFullName(),
+                testClient3.getAge(),
+                testClient3.getGender(),
+                testClient3.getRegion()));
+        verifyThat("#tableView",hasNumRows(1));
+
+
+    }
+
+
+    @Test
+    public void GenderAndRegionFilterTest(){
+        clickOn("#regionFilter");
+        clickOn( (Node) lookup(".check-box").nth(0).query()); //Northland
+        clickOn("#birthGenderFilter");
+        clickOn( (Node) lookup(".check-box").nth(1).query());
+        verifyThat("#tableView",containsRowAtIndex(0,
+                testClient3.getUid(),
+                testClient3.getFullName(),
+                testClient3.getAge(),
+                testClient3.getGender(),
+                testClient3.getRegion()));
+        verifyThat("#tableView",hasNumRows(1));
+
+
+    }
+
+    @Test
+    public void GenderAgeAndRegionFilterTest(){
+        clickOn("#regionFilter");
+        clickOn( (Node) lookup(".check-box").nth(1).query()); //Auckland
+        clickOn("#birthGenderFilter");
+        clickOn( (Node) lookup(".check-box").nth(1).query()); //Female
+        doubleClickOn("#ageMaxField").type(KeyCode.BACK_SPACE).write("12").type(KeyCode.ENTER);
+        verifyThat("#tableView",containsRowAtIndex(0,
+                testClient2.getUid(),
+                testClient2.getFullName(),
+                testClient2.getAge(),
+                testClient2.getGender(),
+                testClient2.getRegion()));
+        verifyThat("#tableView",hasNumRows(1));
+
+    }
+
+
+
+
+    @Test
+    public void MaleGenderFilterTest(){
         clickOn("#birthGenderFilter");
         clickOn( (Node) lookup(".check-box").nth(0).query());
+        verifyThat("#tableView",containsRowAtIndex(0,
+                testClient1.getUid(),
+                testClient1.getFullName(),
+                testClient1.getAge(),
+                testClient1.getGender(),
+                testClient1.getRegion()));
         verifyThat("#tableView",hasNumRows(1));
     }
 
     @Test
-    public void requestFemaleGender(){
+    public void FemaleGenderFilterTest(){
         clickOn("#birthGenderFilter");
         clickOn( (Node) lookup(".check-box").nth(1).query());
+        verifyThat("#tableView",containsRowAtIndex(0,
+                testClient2.getUid(),
+                testClient2.getFullName(),
+                testClient2.getAge(),
+                testClient2.getGender(),
+                testClient2.getRegion()));
+        verifyThat("#tableView",containsRowAtIndex(1,
+                testClient3.getUid(),
+                testClient3.getFullName(),
+                testClient3.getAge(),
+                testClient3.getGender(),
+                testClient3.getRegion()));
+        verifyThat("#tableView",containsRowAtIndex(2,
+                testClient4.getUid(),
+                testClient4.getFullName(),
+                testClient4.getAge(),
+                testClient4.getGender(),
+                testClient4.getRegion()));
         verifyThat("#tableView",hasNumRows(3));
     }
 
     @Test
-    public void requestMaleAndFemaleGender(){
+    public void MaleAndFemaleGenderFilterTest(){
         clickOn("#birthGenderFilter");
         clickOn( (Node) lookup(".check-box").nth(0).query());
         clickOn( (Node) lookup(".check-box").nth(1).query());
@@ -136,7 +240,7 @@ public class SearchClientsControllerTest extends ControllerTest{
     }
 
     @Test
-    public void requestOtherGender(){
+    public void OtherGenderFilter(){
         clickOn("#birthGenderFilter");
         testClient1.setGender(Gender.OTHER);
         testClient2.setGender(Gender.OTHER);
@@ -145,7 +249,7 @@ public class SearchClientsControllerTest extends ControllerTest{
     }
 
     @Test
-    public void requestUnspecifiedGender(){
+    public void UnspecifiedGenderFilterTest(){
         clickOn("#birthGenderFilter");
         testClient1.setGender(Gender.UNSPECIFIED);
         testClient2.setGender(Gender.UNSPECIFIED);
