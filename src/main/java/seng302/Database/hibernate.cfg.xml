@@ -3,7 +3,6 @@
   "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
   <session-factory>
-
     <property name = "hibernate.dialect">
       org.hibernate.dialect.MySQLDialect
     </property>
@@ -12,7 +11,6 @@
       com.mysql.jdbc.Driver
     </property>
 
-    <!-- Assume test is the database name -->
 
     <property name = "hibernate.connection.url">
       jdbc:mysql://mysql2.csse.canterbury.ac.nz/seng302-2018-team700-test
