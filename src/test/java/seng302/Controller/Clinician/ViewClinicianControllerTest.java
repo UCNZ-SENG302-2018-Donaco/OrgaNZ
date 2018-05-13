@@ -4,8 +4,10 @@ import static org.testfx.api.FxAssert.verifyThat;
 
 import javafx.scene.input.KeyCode;
 import javafx.stage.Window;
+
 import org.junit.Test;
 import org.testfx.api.FxRobotException;
+
 import seng302.Clinician;
 import seng302.Controller.ControllerTest;
 import seng302.State.State;
@@ -15,8 +17,10 @@ import seng302.Utilities.View.WindowContext;
 
 import static org.junit.Assert.*;
 import static org.testfx.matcher.base.NodeMatchers.isDisabled;
+import static org.testfx.matcher.base.NodeMatchers.isInvisible;
 
 public class ViewClinicianControllerTest extends ControllerTest {
+
     private Clinician testClinician = new Clinician("x", "y", "z", "t", Region.UNSPECIFIED, 3, "p");
 
     @Override
@@ -75,6 +79,11 @@ public class ViewClinicianControllerTest extends ControllerTest {
         clickOn("#saveChangesButton");
         assertEquals("x", testClinician.getFirstName());
         assertEquals("z", testClinician.getLastName());
+    }
+
+    @Test
+    public void testLoadClinicianPaneIsHidden() {
+        verifyThat("#loadClinicianPane", isInvisible());
     }
 
 //    private void alterFieldsValid() {
