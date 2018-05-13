@@ -128,6 +128,17 @@
       <scope>system</scope>
       <systemPath>${project.basedir}/lib/openjfx-monocle-8u76-b04.jar</systemPath>
     </dependency>
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-entitymanager</artifactId>
+      <version>5.2.17.Final</version>
+    </dependency>
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>5.1.6</version>
+    </dependency>
+
   </dependencies>
 
   <build>
