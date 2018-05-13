@@ -17,12 +17,12 @@ public class AdministratorManager {
 
     public AdministratorManager() {
         administrators = new ArrayList<>();
-        administrators.add(new Administrator("admin", null));
+        administrators.add(new Administrator("admin", ""));
     }
 
     public AdministratorManager(List<Administrator> administrators) {
         this.administrators = administrators;
-        administrators.add(new Administrator("admin", null));
+        administrators.add(new Administrator("admin", ""));
     }
 
     /**
