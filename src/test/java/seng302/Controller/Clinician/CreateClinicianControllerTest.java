@@ -80,13 +80,6 @@ public class CreateClinicianControllerTest extends ControllerTest {
         assertEquals(Page.CREATE_CLINICIAN, mainController.getCurrentPage());
     }
 
-    @Test
-    public void goBackButtonTest() {
-
-        clickOn("#goBackButton");
-        assertEquals(Page.LANDING, mainController.getCurrentPage());
-    }
-
     //TODO find why page won't navigate?
     @Test
     public void validClinician1() {

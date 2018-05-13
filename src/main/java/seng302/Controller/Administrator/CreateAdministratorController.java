@@ -7,6 +7,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
 import seng302.Actions.Administrator.CreateAdministratorAction;
@@ -25,9 +26,6 @@ import seng302.Utilities.View.PageNavigator;
 public class CreateAdministratorController extends SubController {
 
     @FXML
-    private Button goBackButton;
-
-    @FXML
     private Label usernameLabel;
 
     @FXML
@@ -41,6 +39,9 @@ public class CreateAdministratorController extends SubController {
 
     @FXML
     private Button createButton;
+
+    @FXML
+    private Pane sidebarPane;
 
     private AdministratorManager administratorManager;
 
@@ -60,6 +61,7 @@ public class CreateAdministratorController extends SubController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
+        mainController.loadSidebar(sidebarPane);
         mainController.setTitle("Create a new administrator");
     }
 
