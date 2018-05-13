@@ -74,11 +74,19 @@ public class ViewClinicianController extends SubController {
         loadClinicianData();
     }
 
+    /**
+     * Sets the page title, loads the sidebar, and hides the "Load clincian" pane if the user is a clinician.
+     */
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
-        mainController.setTitle("Clinician profile: " + currentClinician.getFullName());
+        mainController.setTitle("Clinician details: " + currentClinician.getFullName());
         mainController.loadSidebar(sidebarPane);
+
+        if (session.getLoggedInUserType() == Session.UserType.CLINICIAN) {
+            loadClinicianPane.setVisible(false);
+            loadClinicianPane.setManaged(false);
+        }
     }
 
     @Override
