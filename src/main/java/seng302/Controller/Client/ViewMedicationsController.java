@@ -31,6 +31,7 @@ import seng302.Controller.MainController;
 import seng302.Controller.SubController;
 import seng302.MedicationRecord;
 import seng302.State.Session;
+import seng302.State.Session.UserType;
 import seng302.State.State;
 import seng302.Utilities.Exceptions.BadDrugNameException;
 import seng302.Utilities.Exceptions.BadGatewayException;
@@ -150,13 +151,19 @@ public class ViewMedicationsController extends SubController {
         }
 
         refreshMedicationLists();
-        mainController.setTitle("Medication history: " + client.getFullName());
 
+        refresh();
         trackControlOrShiftKeyPressed();
     }
 
     @Override
     public void refresh() {
+        if (session.getLoggedInUserType() == UserType.CLIENT) {
+            mainController.setTitle("View Medications:  " + client.getPreferredName());
+        } else if (windowContext.isClinViewClientWindow()) {
+            mainController.setTitle("View Medications:  " + client.getFullName());
+
+        }
         refreshMedicationLists();
     }
 
@@ -327,7 +334,6 @@ public class ViewMedicationsController extends SubController {
                     }
                     alert.setContentText(sb.toString());
                 }
-                PageNavigator.resizeAlert(alert);
             });
 
             task.setOnFailed(e -> {
@@ -381,7 +387,6 @@ public class ViewMedicationsController extends SubController {
                 alert.setContentText("An error occurred when retrieving drug interactions: \n" +
                         task.getException().getMessage());
                 task.getException().printStackTrace();
-                PageNavigator.resizeAlert(alert);
             });
 
             task.setOnSucceeded(event -> {
@@ -396,8 +401,6 @@ public class ViewMedicationsController extends SubController {
                     String interactionsText = interactions.stream().collect(Collectors.joining("\n"));
                     alert.setContentText(interactionsText);
                 }
-
-                PageNavigator.resizeAlert(alert);
             });
 
             new Thread(task).start();

@@ -13,8 +13,6 @@ import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
 
 import org.junit.Before;
 import org.junit.Test;
-import seng302.Utilities.Enums.Organ;
-import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
 
 public class ClientTest {
 
@@ -82,6 +80,13 @@ public class ClientTest {
     }
 
     @Test
+    public void CheckNameContainsPreferredNameValidTest() {
+        client = new Client("First", "middlename", "Last", LocalDate.of(1970, 1, 1), 1);
+        client.setPreferredName("Preferred");
+        assertTrue(client.nameContains("Preferred"));
+    }
+
+    @Test
     public void CheckNameContainsNotValidTest() {
         client = new Client("First", "middlename", "Last", LocalDate.of(1970, 1, 1), 1);
         assertFalse(client.nameContains("notin"));
@@ -100,15 +105,29 @@ public class ClientTest {
     }
 
     @Test
-    public void GetFullNameNoMiddleNameTest() {
+    public void GetFullNameNoMiddleNameNoPreferredNameTest() {
         client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
         assertEquals("First Last", client.getFullName());
     }
 
     @Test
-    public void GetFullNameWithMiddleNameTest() {
+    public void GetFullNameWithMiddleNameNoPreferredNameTest() {
         client = new Client("First", "Mid Name", "Last", LocalDate.of(1970, 1, 1), 1);
         assertEquals("First Mid Name Last", client.getFullName());
+    }
+
+    @Test
+    public void GetFullNameNoMiddleNameWithPreferredNameTest() {
+        client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        client.setPreferredName("Pref");
+        assertEquals("First \"Pref\" Last", client.getFullName());
+    }
+
+    @Test
+    public void GetFullNameWithMiddleNameWithPreferredNameTest() {
+        client = new Client("First", "Mid Name", "Last", LocalDate.of(1970, 1, 1), 1);
+        client.setPreferredName("Pref");
+        assertEquals("First Mid Name \"Pref\" Last", client.getFullName());
     }
 
     /*

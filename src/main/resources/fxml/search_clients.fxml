@@ -23,7 +23,7 @@
                 <TableColumn fx:id="idCol" editable="false" prefWidth="75.0" text="ID" />
                 <TableColumn fx:id="nameCol" editable="false" prefWidth="204.0" text="Name" />
                 <TableColumn fx:id="ageCol" editable="false" prefWidth="51.0" text="Age" />
-                <TableColumn fx:id="genderCol" editable="false" prefWidth="97.0" text="Gender" />
+                <TableColumn fx:id="genderCol" editable="false" prefWidth="97.0" text="Birth Gender" />
                 <TableColumn fx:id="donorCol" prefWidth="72.0" text="Donor" />
                 <TableColumn fx:id="receiverCol" prefWidth="75.0" text="Receiver" />
                 <TableColumn fx:id="regionCol" editable="false" prefWidth="195.0" text="Region" />

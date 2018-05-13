@@ -26,17 +26,18 @@ import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
 /**
  * The main Client class.
  */
-
 public class Client {
 
     private int uid;
     private String firstName;
     private String lastName;
     private String middleName;
+    private String preferredName;
     private String currentAddress;
     private String preferredName;
     private Region region;
     private Gender gender;
+    private Gender genderIdentity;
     private BloodType bloodType;
     private double height;
     private double weight;
@@ -192,6 +193,9 @@ public class Client {
         if (middleName != null) {
             fullName += middleName + " ";
         }
+        if (preferredName != null && !preferredName.equals("")) {
+            fullName += "\"" + preferredName + "\" ";
+        }
         fullName += lastName;
         return fullName;
     }
@@ -224,6 +228,13 @@ public class Client {
     }
 
     public String getPreferredName() {
+        if (preferredName == null || preferredName.equals("")) {
+            return getFullName();
+        }
+        return preferredName;
+    }
+
+    public String getPreferredNameOnly() {
         return preferredName;
     }
 
@@ -257,6 +268,15 @@ public class Client {
     public void setGender(Gender gender) {
         addUpdate("gender");
         this.gender = gender;
+    }
+
+    public Gender getGenderIdentity() {
+        return genderIdentity;
+    }
+
+    public void setGenderIdentity(Gender genderIdentity) {
+        addUpdate("genderIdentity");
+        this.genderIdentity = genderIdentity;
     }
 
     public double getHeight() {
@@ -462,7 +482,7 @@ public class Client {
      */
     public List<ProcedureRecord> getPendingProcedures() {
         return procedures.stream()
-                .filter(record -> LocalDate.now().isBefore(record.getDate()))
+                .filter(record -> !record.getDate().isBefore(LocalDate.now()))
                 .collect(Collectors.toList());
     }
 
@@ -497,6 +517,7 @@ public class Client {
         for (String string : splitSearchItems) {
             if (!firstName.toLowerCase().contains(string) &&
                     (middleName == null || !middleName.toLowerCase().contains(string)) &&
+                    (preferredName == null || !preferredName.toLowerCase().contains(string)) &&
                     !lastName.toLowerCase().contains(string)) {
                 isMatch = false;
                 break;
@@ -613,7 +634,6 @@ public class Client {
 
     /**
      * Marks the client as dead and marks all organs as no for reception
-     *
      * @param dateOfDeath LocalDate that the client died
      */
     public void markDead(LocalDate dateOfDeath) {
