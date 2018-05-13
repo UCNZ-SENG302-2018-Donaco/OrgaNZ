@@ -18,11 +18,13 @@ import seng302.State.State;
 import seng302.TransplantRequest;
 import seng302.Utilities.Enums.Gender;
 import seng302.Utilities.Enums.Organ;
+import seng302.Utilities.Enums.Gender;
 import seng302.Utilities.Enums.Region;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.WindowContext;
 
 import org.junit.Test;
+import org.testfx.api.FxRobotException;
 
 /**
  * Class to test the search clients controller. Used only for the clinician/admin to search and find a particular client.
@@ -51,7 +53,6 @@ public class SearchClientsControllerTest extends ControllerTest{
     protected void initState() {
         State.init();
         State.login(testClinician);
-        //WindowContext.defaultContext();
         setupClientDetails();
         for (Client client: testClients) {
             State.getClientManager().addClient(client);
@@ -71,7 +72,7 @@ public class SearchClientsControllerTest extends ControllerTest{
 
         //Set Genders
         testClient1.setGender(Gender.MALE);
-        testClient2.setGender(Gender.FEMALE);
+        testClient2.setGender(Gender.FEMALE); // Dylans tests
         testClient3.setGender(Gender.FEMALE);
         testClient4.setGender(Gender.FEMALE);
 
@@ -80,6 +81,19 @@ public class SearchClientsControllerTest extends ControllerTest{
         testClient1.addTransplantRequest(getRequestLiver1);
         testClient2.addTransplantRequest(getRequestKidney2);
         testClient4.addTransplantRequest(getRequestKidney4);
+
+    }
+
+    @Test
+    public void filterDefault() {
+        verifyThat("#ageMinField", hasText("0"));
+        verifyThat("#ageMaxField", hasText("120"));
+
+        // check that all 4 clients are visible by default
+        clickOn((Node) lookup("john 1").query());
+        clickOn((Node) lookup("jack 2").query());
+        clickOn((Node) lookup("steve 3").query());
+        clickOn((Node) lookup("tom 4").query());
     }
 
     /**
@@ -88,6 +102,7 @@ public class SearchClientsControllerTest extends ControllerTest{
     @Test
     public void ageFilterUnderMin() {
         doubleClickOn("#ageMinField").type(KeyCode.BACK_SPACE).write("-500").type(KeyCode.ENTER);
+        release(KeyCode.ENTER);
         verifyThat("#ageMinField", hasText("0"));
     }
 
@@ -97,6 +112,7 @@ public class SearchClientsControllerTest extends ControllerTest{
     @Test
     public void ageFilterOverMax() {
         doubleClickOn("#ageMaxField").type(KeyCode.BACK_SPACE).write("500").type(KeyCode.ENTER);
+        release(KeyCode.ENTER);
         verifyThat("#ageMaxField", hasText("120"));
     }
 
@@ -115,8 +131,9 @@ public class SearchClientsControllerTest extends ControllerTest{
     @Test
     public void ageFilterOneYear() {
         doubleClickOn("#ageMaxField").type(KeyCode.BACK_SPACE).write("2").type(KeyCode.ENTER);
+        release(KeyCode.ENTER);
         // check 1 value in table
-//        clickOn((Node) lookup("john").query());
+        clickOn((Node) lookup("john 1").query());
     }
 
     /**
@@ -125,7 +142,11 @@ public class SearchClientsControllerTest extends ControllerTest{
     @Test
     public void ageFilterTenYears() {
         doubleClickOn("#ageMaxField").type(KeyCode.BACK_SPACE).write("12").type(KeyCode.ENTER);
+        release(KeyCode.ENTER);
         // check 3 values in table
+        clickOn((Node) lookup("john 1").query());
+        clickOn((Node) lookup("jack 2").query());
+        clickOn((Node) lookup("steve 3").query());
     }
 
     /**
@@ -134,7 +155,39 @@ public class SearchClientsControllerTest extends ControllerTest{
     @Test
     public void ageFilter100Years() {
         doubleClickOn("#ageMinField").type(KeyCode.BACK_SPACE).write("50").type(KeyCode.ENTER);
+        release(KeyCode.ENTER);
         // check 1 value in table
+        clickOn((Node) lookup("tom 4").query());
+    }
+
+    @Test
+    public void genderFilterMale() {
+        clickOn("#birthGenderFilter");
+        clickOn((Node) lookup(".check-box").nth(0).query());
+        clickOn("#birthGenderFilter");
+        clickOn((Node) lookup("john 1").query());
+    }
+
+    @Test
+    public void genderFilterFemale() {
+        clickOn("#birthGenderFilter");
+        clickOn((Node) lookup(".check-box").nth(1).query());
+        clickOn("#birthGenderFilter");
+        clickOn((Node) lookup("jack 2").query());
+        clickOn((Node) lookup("steve 3").query());
+        clickOn((Node) lookup("tom 4").query());
+    }
+
+
+    @Test(expected = NullPointerException.class) // There shouldn't be any of the test data in the results
+    public void genderFilterOther() {
+        clickOn("#birthGenderFilter");
+        clickOn((Node) lookup(".check-box").nth(2).query());
+        clickOn("#birthGenderFilter");
+        clickOn((Node) lookup("john 1").query());
+        clickOn((Node) lookup("jack 2").query());
+        clickOn((Node) lookup("steve 3").query());
+        clickOn((Node) lookup("tom 4").query());
     }
 
     /**
