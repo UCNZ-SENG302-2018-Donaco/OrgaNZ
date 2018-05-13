@@ -1,9 +1,13 @@
 package seng302.Controller.Clinician;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
+import java.util.Observer;
 
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -90,10 +94,19 @@ public class SearchClientsController extends SubController {
         //Create a filtered list, that defaults to allow all using lambda function
         filteredClients = new FilteredList<>(FXCollections.observableArrayList(allClients), client -> true);
         //Create a sorted list that links to the filtered list
+//        Collections.sort(filteredClients, this::compare);
+
         sortedClients = new SortedList<>(filteredClients);
+
         //Link the sorted list sort to the tableView sort
         sortedClients.comparatorProperty().bind(tableView.comparatorProperty());
 
+//        sortedClients.sort(new Comparator<Client>() {
+//            @Override
+//            public int compare(Client o1, Client o2) {
+//                return 0;
+//            }
+//        });
         //Set initial pagination
         int numberOfPages = Math.max(1, (sortedClients.size() + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE);
         pagination.setPageCount(numberOfPages);
@@ -104,6 +117,62 @@ public class SearchClientsController extends SubController {
         observableClientList.setAll(sortedClients);
         //Bind the tableView to the observable list
         tableView.setItems(observableClientList);
+    }
+
+    private int compareNames(Client c1, Client c2) {
+        String searchTerm = searchBox.getText().toLowerCase();
+        System.out.println("Comparing " + c1.getUid() + " and " + c2.getUid());
+
+        if (c1.getLastName().toLowerCase().startsWith(searchTerm)) {
+            System.out.println("1");
+            if (c2.getLastName().toLowerCase().startsWith(searchTerm)) {
+                System.out.println("c");
+                return c1.getLastName().compareTo(c2.getLastName());
+            } else {
+                //c2 doesn't
+                System.out.println("b");
+                return -1;
+            }
+        } else if (c2.getLastName().toLowerCase().startsWith(searchTerm)) {
+            System.out.println("2");
+            System.out.println("a");
+            return 1;
+
+        } else if (c1.getPreferredName().toLowerCase().startsWith(searchTerm)) {
+            System.out.println("3");
+            if (c2.getPreferredName().toLowerCase().startsWith(searchTerm)) {
+                return c1.getPreferredName().compareTo(c2.getPreferredName());
+            } else {
+                //c2 doesn't
+                return -1;
+            }
+        } else if (c2.getPreferredName().toLowerCase().startsWith(searchTerm)) {
+            return 1;
+
+        } else if (c1.getFirstName().toLowerCase().startsWith(searchTerm)) {
+            if (c2.getFirstName().toLowerCase().startsWith(searchTerm)) {
+                return c1.getFirstName().compareTo(c2.getFirstName());
+            } else {
+                //c2 doesn't
+                return -1;
+            }
+        } else if (c2.getFirstName().toLowerCase().startsWith(searchTerm)) {
+            return 1;
+
+        } else if (c1.getMiddleName().toLowerCase().startsWith(searchTerm)) {
+            if (c2.getMiddleName().toLowerCase().startsWith(searchTerm)) {
+                return c1.getMiddleName().compareTo(c2.getMiddleName());
+            } else {
+                //c2 doesn't
+                return -1;
+            }
+        } else if (c2.getMiddleName().toLowerCase().startsWith(searchTerm)) {
+            return 1;
+        } else {
+            System.out.println(searchTerm);
+            System.out.println("bottomn");
+            return 0;
+        }
     }
 
     /**
@@ -174,7 +243,6 @@ public class SearchClientsController extends SubController {
         });
     }
 
-
     /**
      * Upon filtering update, refresh the filters to the new string and update pagination
      * Every refresh triggers the pagination to update and go to page zero
@@ -188,6 +256,13 @@ public class SearchClientsController extends SubController {
             filteredClients.setPredicate(client -> client.profileSearch(searchText));
         }
 
+        ArrayList<Client> preSortedClients = new ArrayList<>(filteredClients);
+        preSortedClients.sort(this::compareNames);
+        for (Client c : preSortedClients) {
+            System.out.print(c.getUid() + " ");
+        }
+        sortedClients = new SortedList<>(FXCollections.observableArrayList(preSortedClients));
+
         //If the pagination count wont change, force a refresh of the page, if it will, change it and that will trigger the update.
         int newPageCount = Math.max(1, (filteredClients.size() + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE);
         if (pagination.getPageCount() == newPageCount) {
@@ -196,7 +271,6 @@ public class SearchClientsController extends SubController {
             pagination.setPageCount(newPageCount);
         }
     }
-
 
     /**
      * Upon pagination, update the table to show the correct items

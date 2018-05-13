@@ -31,10 +31,9 @@ public class Client {
     private int uid;
     private String firstName;
     private String lastName;
-    private String middleName;
-    private String preferredName;
+    private String middleName="";
+    private String preferredName="";
     private String currentAddress;
-    private String preferredName;
     private Region region;
     private Gender gender;
     private Gender genderIdentity;
