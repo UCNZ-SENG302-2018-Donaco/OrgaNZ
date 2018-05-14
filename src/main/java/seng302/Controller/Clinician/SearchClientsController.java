@@ -117,7 +117,14 @@ public class SearchClientsController extends SubController {
         tableView.setItems(observableClientList);
     }
 
+    /**
+     * Compares the names based off the priority Last name -> Pref name -> First name -> Middle name [-> suffix/prefixes]
+     * @param c1 The first client object being compared
+     * @param c2 The second client object being compared
+     * @return -1 if c1 is higher priority. 1 if c1 is lower priority. 0 if equal priority.
+     */
     private int compareNames(Client c1, Client c2) {
+        //Last name -> Pref name -> First name -> Middle name [-> suffix/prefixes]
         String searchTerm = searchBox.getText().toLowerCase();
 
 
@@ -240,6 +247,7 @@ public class SearchClientsController extends SubController {
         if (searchText == null || searchText.length() == 0) {
             filteredClients.setPredicate(client -> true);
         } else {
+
             filteredClients.setPredicate(client -> client.profileSearch(searchText));
         }
 

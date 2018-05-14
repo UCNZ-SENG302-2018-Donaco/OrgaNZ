@@ -526,6 +526,31 @@ public class Client {
         return isMatch;
     }
 
+    private HashSet<String> splitNames() {
+
+        String[] fname = firstName.split("\\s+");
+        String[] lname = lastName.split("\\s+");
+        String[] mname;
+        String[] pname;
+
+        if (middleName  == null) {
+            mname = new String[0];
+        } else {
+            mname = middleName.split("\\s+");
+        }
+        if (preferredName  == null) {
+            pname = new String[0];
+        } else {
+            pname = preferredName.split("\\s+");
+        }
+
+        HashSet<String> names = new HashSet<>(Arrays.asList(fname));
+        names.addAll(Arrays.asList(lname));
+        names.addAll(Arrays.asList(mname));
+        names.addAll(Arrays.asList(pname));
+        return names;
+    }
+
     /**
      * Returns a HashSet of all names of the Client. If they do not have a middle/preferred name, this is set as "".
      * @return the Hashset of all the Clients names.
@@ -550,29 +575,31 @@ public class Client {
      * @return True if all sections of the passed string match any of the names of the client
      */
     public boolean profileSearch(String searchParam) {
-        //Last name -> Pref name -> First name -> Middle name [-> suffix/prefixes]
         String lowerSearch = searchParam.toLowerCase();
         String[] splitSearchItems = lowerSearch.split("\\s+");
 
-        Collection<String> searched = new HashSet<>(Arrays.asList(splitSearchItems));
+        Collection<String> searched = new ArrayList<>(Arrays.asList(splitSearchItems));
 
-        Collection<String> names = this.getNameCollection();
-        Collection<String> lowercaseNames = new HashSet<>();
+        Collection<String> names = this.splitNames();
+        Collection<String> lowercaseNames = new ArrayList<>();
         for (String name: names) {
             lowercaseNames.add(name.toLowerCase());
         }
 
         boolean isMatch = false;
+        Collection<String> matchedNames = new ArrayList<>();
 
-        for (String searchedString: searched) {
+        for (String searchedParam: searched) {
             for (String name: lowercaseNames) {
-                if (name.startsWith(searchedString)) {
-                    System.out.println("true");
-                    isMatch = true;
+
+                if (name.startsWith(searchedParam)) {
+                    matchedNames.add(name);
+                    break;
                 }
             }
+
         }
-        return isMatch;
+        return matchedNames.size() == searched.size();
     }
 
     /**
