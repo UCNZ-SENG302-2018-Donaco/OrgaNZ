@@ -22,7 +22,7 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * Controller to handle the login of staff.
  * It allows them to log into a valid staff account (clinician or administrator) that exists on the
- * system, e.g. the default clinician. TODO: add support for admins logging in
+ * system, e.g. the default clinician.
  */
 public class StaffLoginController extends SubController {
 
