@@ -553,9 +553,6 @@ public class Client {
         //Last name -> Pref name -> First name -> Middle name [-> suffix/prefixes]
         String lowerSearch = searchParam.toLowerCase();
         String[] splitSearchItems = lowerSearch.split("\\s+");
-        for (String s: splitSearchItems) {
-            System.out.println(s);
-        }
 
         Collection<String> searched = new HashSet<>(Arrays.asList(splitSearchItems));
 
@@ -566,9 +563,11 @@ public class Client {
         }
 
         boolean isMatch = false;
+
         for (String searchedString: searched) {
             for (String name: lowercaseNames) {
                 if (name.startsWith(searchedString)) {
+                    System.out.println("true");
                     isMatch = true;
                 }
             }

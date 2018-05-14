@@ -101,12 +101,10 @@ public class SearchClientsController extends SubController {
         //Link the sorted list sort to the tableView sort
         sortedClients.comparatorProperty().bind(tableView.comparatorProperty());
 
-//        sortedClients.sort(new Comparator<Client>() {
-//            @Override
-//            public int compare(Client o1, Client o2) {
-//                return 0;
-//            }
-//        });
+        ArrayList<Client> preSortedClients = new ArrayList<>(filteredClients);
+        preSortedClients.sort(this::compareNames);
+        sortedClients = new SortedList<>(FXCollections.observableArrayList(preSortedClients));
+
         //Set initial pagination
         int numberOfPages = Math.max(1, (sortedClients.size() + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE);
         pagination.setPageCount(numberOfPages);
@@ -247,7 +245,6 @@ public class SearchClientsController extends SubController {
 
         ArrayList<Client> preSortedClients = new ArrayList<>(filteredClients);
         preSortedClients.sort(this::compareNames);
-
         sortedClients = new SortedList<>(FXCollections.observableArrayList(preSortedClients));
 
         //If the pagination count wont change, force a refresh of the page, if it will, change it and that will trigger the update.
