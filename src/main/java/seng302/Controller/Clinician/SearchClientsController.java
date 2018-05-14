@@ -121,39 +121,31 @@ public class SearchClientsController extends SubController {
 
     private int compareNames(Client c1, Client c2) {
         String searchTerm = searchBox.getText().toLowerCase();
-        System.out.println("Comparing " + c1.getUid() + " and " + c2.getUid());
+
 
         if (c1.getLastName().toLowerCase().startsWith(searchTerm)) {
-            System.out.println("1");
-            if (c2.getLastName().toLowerCase().startsWith(searchTerm)) {
-                System.out.println("c");
+            if (c2.getLastName().toLowerCase().startsWith(searchTerm)) { ;
                 return c1.getLastName().compareTo(c2.getLastName());
             } else {
-                //c2 doesn't
-                System.out.println("b");
                 return -1;
             }
         } else if (c2.getLastName().toLowerCase().startsWith(searchTerm)) {
-            System.out.println("2");
-            System.out.println("a");
+
             return 1;
 
-        } else if (c1.getPreferredName().toLowerCase().startsWith(searchTerm)) {
-            System.out.println("3");
-            if (c2.getPreferredName().toLowerCase().startsWith(searchTerm)) {
-                return c1.getPreferredName().compareTo(c2.getPreferredName());
+        } else if (c1.getPreferredNameOnly().toLowerCase().startsWith(searchTerm)) {
+            if (c2.getPreferredNameOnly().toLowerCase().startsWith(searchTerm)) {
+                return c1.getPreferredNameOnly().compareTo(c2.getPreferredNameOnly());
             } else {
-                //c2 doesn't
                 return -1;
             }
-        } else if (c2.getPreferredName().toLowerCase().startsWith(searchTerm)) {
+        } else if (c2.getPreferredNameOnly().toLowerCase().startsWith(searchTerm)) {
             return 1;
 
         } else if (c1.getFirstName().toLowerCase().startsWith(searchTerm)) {
             if (c2.getFirstName().toLowerCase().startsWith(searchTerm)) {
                 return c1.getFirstName().compareTo(c2.getFirstName());
             } else {
-                //c2 doesn't
                 return -1;
             }
         } else if (c2.getFirstName().toLowerCase().startsWith(searchTerm)) {
@@ -163,14 +155,11 @@ public class SearchClientsController extends SubController {
             if (c2.getMiddleName().toLowerCase().startsWith(searchTerm)) {
                 return c1.getMiddleName().compareTo(c2.getMiddleName());
             } else {
-                //c2 doesn't
                 return -1;
             }
         } else if (c2.getMiddleName().toLowerCase().startsWith(searchTerm)) {
             return 1;
         } else {
-            System.out.println(searchTerm);
-            System.out.println("bottomn");
             return 0;
         }
     }
@@ -258,9 +247,7 @@ public class SearchClientsController extends SubController {
 
         ArrayList<Client> preSortedClients = new ArrayList<>(filteredClients);
         preSortedClients.sort(this::compareNames);
-        for (Client c : preSortedClients) {
-            System.out.print(c.getUid() + " ");
-        }
+
         sortedClients = new SortedList<>(FXCollections.observableArrayList(preSortedClients));
 
         //If the pagination count wont change, force a refresh of the page, if it will, change it and that will trigger the update.

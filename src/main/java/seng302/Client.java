@@ -189,7 +189,7 @@ public class Client {
      */
     public String getFullName() {
         String fullName = firstName + " ";
-        if (middleName != null) {
+        if (middleName != null && !middleName.equals("")) {
             fullName += middleName + " ";
         }
         if (preferredName != null && !preferredName.equals("")) {
@@ -553,6 +553,9 @@ public class Client {
         //Last name -> Pref name -> First name -> Middle name [-> suffix/prefixes]
         String lowerSearch = searchParam.toLowerCase();
         String[] splitSearchItems = lowerSearch.split("\\s+");
+        for (String s: splitSearchItems) {
+            System.out.println(s);
+        }
 
         Collection<String> searched = new HashSet<>(Arrays.asList(splitSearchItems));
 
