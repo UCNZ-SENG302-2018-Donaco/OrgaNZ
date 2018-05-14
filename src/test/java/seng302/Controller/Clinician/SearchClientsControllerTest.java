@@ -20,6 +20,7 @@ import seng302.Utilities.Enums.Gender;
 import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.Enums.Gender;
 import seng302.Utilities.Enums.Region;
+import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.WindowContext;
 
@@ -82,6 +83,14 @@ public class SearchClientsControllerTest extends ControllerTest{
         testClient2.addTransplantRequest(getRequestKidney2);
         testClient4.addTransplantRequest(getRequestKidney4);
 
+        //add organ donating
+        try {
+            testClient3.setOrganDonationStatus(Organ.HEART, true);
+            testClient3.setOrganDonationStatus(Organ.INTESTINE, true);
+        }
+        catch (OrganAlreadyRegisteredException e) {
+            System.out.println("Organ donating not handled correctly.");
+        }
     }
 
     @Test
@@ -442,5 +451,21 @@ public class SearchClientsControllerTest extends ControllerTest{
                 testClient2.getGender(),
                 testClient2.getRegion()));
         verifyThat("#tableView", hasNumRows(3));
+    }
+
+    /**
+     * Tests for the organ donating filter
+     */
+    @Test
+    public void donateOrganFilterOne() {
+        clickOn("#organsDonatingFilter");
+        clickOn((Node) lookup(".check-box").nth(5).query());
+        verifyThat("#tableView", containsRowAtIndex(0,
+                testClient3.getUid(),
+                testClient3.getFullName(),
+                testClient3.getAge(),
+                testClient3.getGender(),
+                testClient3.getRegion()));
+        verifyThat("#tableView", hasNumRows(1));
     }
 }
