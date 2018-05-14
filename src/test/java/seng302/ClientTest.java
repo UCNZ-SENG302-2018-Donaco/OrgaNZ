@@ -234,25 +234,6 @@ public class ClientTest {
     }
 
     @Test
-    public void getNameCollectionFirstLast() {
-        client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
-        String array[] = {"First", "Last", "", ""};
-        HashSet<String> testSet = new HashSet<>(Arrays.asList(array));
-
-        assertEquals(testSet, client.getNameCollection());
-    }
-
-    @Test
-    public void getNameCollectionAll() {
-        client = new Client("First", "Middle", "Last", LocalDate.of(1970, 1, 1), 1);
-        client.setPreferredName("Preferred");
-        String array[] = {"First", "Last", "Middle", "Preferred"};
-        HashSet<String> testSet = new HashSet<>(Arrays.asList(array));
-
-        assertEquals(testSet, client.getNameCollection());
-    }
-
-    @Test
     public void profileSearchFullFirst() {
         client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
         assertTrue(client.profileSearch("First"));
@@ -293,6 +274,27 @@ public class ClientTest {
         client = new Client("First", null, "First", LocalDate.of(1970, 1, 1), 1);
         assertTrue(client.profileSearch("First"));
     }
+
+    @Test
+    public void profileSearchCaseInsensitive() {
+        client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        assertTrue(client.profileSearch("fIrSt"));
+    }
+
+    @Test
+    public void profileSearchFirstAndLast() {
+        client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        assertTrue(client.profileSearch("first last "));
+    }
+
+    @Test
+    public void profileSearchTwoPrefNames() {
+        client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        client.setPreferredName("Jan Michael Vincent");
+        assertTrue(client.profileSearch("jan Michael vinc "));
+        assertTrue(client.profileSearch("first michael"));
+    }
+
 
     @Test
     public void testClientIsReceiver() {

@@ -31,8 +31,8 @@ public class Client {
     private int uid;
     private String firstName;
     private String lastName;
-    private String middleName="";
-    private String preferredName="";
+    private String middleName = "";
+    private String preferredName = "";
     private String currentAddress;
     private Region region;
     private Gender gender;
@@ -526,6 +526,11 @@ public class Client {
         return isMatch;
     }
 
+
+    /**
+     * Returns a HashSet of all names of the Client. If they do not have a middle/preferred name, this is set as "".
+     * @return the Hashset of all the Clients names.
+     */
     private HashSet<String> splitNames() {
 
         String[] fname = firstName.split("\\s+");
@@ -533,12 +538,12 @@ public class Client {
         String[] mname;
         String[] pname;
 
-        if (middleName  == null) {
+        if (middleName == null) {
             mname = new String[0];
         } else {
             mname = middleName.split("\\s+");
         }
-        if (preferredName  == null) {
+        if (preferredName == null) {
             pname = new String[0];
         } else {
             pname = preferredName.split("\\s+");
@@ -551,22 +556,6 @@ public class Client {
         return names;
     }
 
-    /**
-     * Returns a HashSet of all names of the Client. If they do not have a middle/preferred name, this is set as "".
-     * @return the Hashset of all the Clients names.
-     */
-    public HashSet<String> getNameCollection() {
-        String mname = middleName;
-        String pname = preferredName;
-        if (middleName  == null) {
-            mname = "";
-        }
-        if (preferredName == null) {
-            pname = "";
-        }
-        String[] allNames = {firstName, lastName, mname, pname};
-        return new HashSet<>(Arrays.asList(allNames));
-    }
 
     /**
      * Takes a string and checks if each space separated string section begins with the same values as the search
@@ -582,15 +571,14 @@ public class Client {
 
         Collection<String> names = this.splitNames();
         Collection<String> lowercaseNames = new ArrayList<>();
-        for (String name: names) {
+        for (String name : names) {
             lowercaseNames.add(name.toLowerCase());
         }
 
-        boolean isMatch = false;
         Collection<String> matchedNames = new ArrayList<>();
 
-        for (String searchedParam: searched) {
-            for (String name: lowercaseNames) {
+        for (String searchedParam : searched) {
+            for (String name : lowercaseNames) {
 
                 if (name.startsWith(searchedParam)) {
                     matchedNames.add(name);
@@ -644,7 +632,7 @@ public class Client {
      * @return boolean of whether the client has chosen to donate any organs
      */
     public boolean isDonor() {
-        for (Map.Entry<Organ, Boolean> entry: organDonationStatus.entrySet()) {
+        for (Map.Entry<Organ, Boolean> entry : organDonationStatus.entrySet()) {
             if (entry.getValue()) {
                 return true;
             }
