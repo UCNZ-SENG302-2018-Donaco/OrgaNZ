@@ -1,0 +1,29 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+  "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+  "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+<session-factory>
+  <!-- SQL Dialect -->
+  <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+
+  <!-- Database Connection Settings -->
+  <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+  <property name="hibernate.connection.url">jdbc:mysql://mysql2.csse.canterbury.ac.nz/seng302-2018-team700-test</property>
+  <property name="hibernate.connection.username">seng302-team700</property>
+  <property name="hibernate.connection.password">FormulaCadres2252</property>
+
+  <!-- Disable Debug Output
+  <property name="show_sql">false</property>
+  <property name="generate_statistics">false</property>
+  <property name="use_sql_comments">false</property>
+  -->
+
+  <!-- Specifying Session Context -->
+  <property name="hibernate.current_session_context_class">org.hibernate.context.internal.ThreadLocalSessionContext</property>
+
+  <!-- Mapping With Model Class Containing Annotations -->
+  <mapping class="seng302.MedicationRecord"/>
+</session-factory>
+</hibernate-configuration>
