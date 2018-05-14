@@ -22,6 +22,7 @@ public class App {
 
     public static void main(String[] args) {
         LoggerSetup.setup(Level.INFO);
+        LoggerSetup.enableConsole();
 
         State.init();
 
