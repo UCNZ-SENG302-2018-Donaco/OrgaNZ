@@ -427,4 +427,20 @@ public class SearchClientsControllerTest extends ControllerTest{
                 testClient2.getRegion()));
         verifyThat("#tableView", hasNumRows(2));
     }
+
+    /**
+     * Tests that the client type is filtered correctly
+     */
+    @Test
+    public void filterClientType() {
+        clickOn("#clientTypeFilter");
+        clickOn("Only Receiver");
+        verifyThat("#tableView", containsRowAtIndex(1,
+                testClient2.getUid(),
+                testClient2.getFullName(),
+                testClient2.getAge(),
+                testClient2.getGender(),
+                testClient2.getRegion()));
+        verifyThat("#tableView", hasNumRows(3));
+    }
 }
