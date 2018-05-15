@@ -12,7 +12,16 @@ public class TransplantRequest {
     public enum RequestStatus {
         WAITING,
         CANCELLED,
-        COMPLETED
+        COMPLETED;
+
+        public static RequestStatus fromString(String text) {
+            for (RequestStatus rs : RequestStatus.values()) {
+                if (rs.toString().equalsIgnoreCase(text)) {
+                    return rs;
+                }
+            }
+            throw new IllegalArgumentException("Invalid request status.");
+        }
     }
 
     private transient Client client;

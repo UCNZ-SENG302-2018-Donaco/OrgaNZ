@@ -4,6 +4,7 @@ import seng302.Commands.Modify.CreateClient;
 import seng302.Commands.Modify.DeleteClient;
 import seng302.Commands.Modify.Load;
 import seng302.Commands.Modify.Redo;
+import seng302.Commands.Modify.RequestOrgan;
 import seng302.Commands.Modify.Save;
 import seng302.Commands.Modify.SetAttribute;
 import seng302.Commands.Modify.SetOrganStatus;
@@ -29,6 +30,7 @@ import picocli.CommandLine.Command;
                 SetAttribute.class,
                 SetOrganStatus.class,
                 DeleteClient.class,
+                RequestOrgan.class,
                 PrintAllInfo.class,
                 PrintAllOrgan.class,
                 PrintClientInfo.class,
