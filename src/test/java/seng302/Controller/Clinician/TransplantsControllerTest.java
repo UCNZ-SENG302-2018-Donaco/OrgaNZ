@@ -301,6 +301,7 @@ public class TransplantsControllerTest extends ControllerTest {
         assertEquals(4, totalChecks); // it should have checked 4 fields
 
         WaitForAsyncUtils.asyncFx(topModalStage::close);
+        WaitForAsyncUtils.waitForFxEvents();
     }
 
     @Test
