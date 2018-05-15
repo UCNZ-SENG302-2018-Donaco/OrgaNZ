@@ -51,8 +51,8 @@ public class DeleteClient implements Runnable {
 
                 System.out.println("Client " + uid
                         + " removed. This removal will only be permanent once the 'save' command is used");
-                HistoryItem printAllOrgan = new HistoryItem("DELETE", "Client " + uid + " deleted.");
-                JSONConverter.updateHistory(printAllOrgan, "action_history.json");
+                HistoryItem deleteClient = new HistoryItem("DELETE", "Client " + uid + " deleted.");
+                JSONConverter.updateHistory(deleteClient, "action_history.json");
             } else {
                 System.out.println("User not removed");
             }
