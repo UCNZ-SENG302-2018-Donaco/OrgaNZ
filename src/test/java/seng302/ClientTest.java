@@ -24,14 +24,14 @@ public class ClientTest {
     public void getBMI1Test() {
         client.setWeight(70);
         client.setHeight(180);
-        assertEquals(client.getBMI(), 21.6, 0.01);
+        assertEquals(21.6, client.getBMI(), 0.01);
     }
 
     @Test
     public void getBMI2Test() {
         client.setWeight(0);
         client.setHeight(180);
-        assertEquals(client.getBMI(), 0, 0.0);
+        assertEquals(0, client.getBMI(), 0.0);
     }
 
     @Test

@@ -1,6 +1,7 @@
 package seng302.State;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import seng302.Actions.ActionInvoker;
 import seng302.Client;
@@ -17,7 +18,7 @@ public final class State {
     private static ActionInvoker actionInvoker;
     private static Session session;
     private static boolean unsavedChanges = false;
-    private static ArrayList<MainController> mainControllers = new ArrayList<>();
+    private static List<MainController> mainControllers = new ArrayList<>();
 
     private State() {
     }
@@ -72,7 +73,11 @@ public final class State {
         mainControllers.add(mainController);
     }
 
-    public static ArrayList<MainController> getMainControllers() {
+    public static void removeMainController(MainController mainController) {
+        mainControllers.remove(mainController);
+    }
+
+    public static List<MainController> getMainControllers() {
         return mainControllers;
     }
 }

@@ -33,7 +33,7 @@ public class MainController {
     private StackPane pageHolder;
 
     public Stage getStage() {
-        return this.stage;
+        return stage;
     }
 
     public Page getCurrentPage() {
@@ -46,6 +46,9 @@ public class MainController {
 
     public void setStage(Stage stage) {
         this.stage = stage;
+        stage.setOnCloseRequest(event -> {
+            State.removeMainController(this);
+        });
     }
 
     /**
@@ -59,11 +62,11 @@ public class MainController {
     }
 
     public void setWindowContext(WindowContext context) {
-        this.windowContext = context;
+        windowContext = context;
     }
 
     void resetWindowContext() {
-        this.windowContext = WindowContext.defaultContext();
+        windowContext = WindowContext.defaultContext();
     }
 
     /**
@@ -123,7 +126,7 @@ public class MainController {
      */
     private void updateTitle() {
         if (State.isUnsavedChanges()) {
-            stage.setTitle("*" + windowTitle);
+            stage.setTitle('*' + windowTitle);
         } else {
             stage.setTitle(windowTitle);
         }
