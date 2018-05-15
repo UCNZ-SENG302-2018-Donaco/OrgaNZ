@@ -11,9 +11,10 @@ import seng302.Utilities.Enums.Region;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.WindowContext.WindowContextBuilder;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
-
+@Ignore
 public class SidebarControllerClinicianTest extends ControllerTest {
 
     private Clinician testClinician = new Clinician("Mr", null, "Tester",

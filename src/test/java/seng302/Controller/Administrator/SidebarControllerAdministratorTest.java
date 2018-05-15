@@ -10,8 +10,10 @@ import seng302.State.State;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.WindowContext.WindowContextBuilder;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 public class SidebarControllerAdministratorTest extends ControllerTest {
 
     private Administrator testAdmin = new Administrator("username", "password");

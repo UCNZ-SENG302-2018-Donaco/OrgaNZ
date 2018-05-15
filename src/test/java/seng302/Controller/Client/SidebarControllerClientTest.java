@@ -12,8 +12,10 @@ import seng302.State.State;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.WindowContext.WindowContextBuilder;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 public class SidebarControllerClientTest extends ControllerTest {
 
     private Client client = new Client("Client", "Number", "One", LocalDate.now(), 1);

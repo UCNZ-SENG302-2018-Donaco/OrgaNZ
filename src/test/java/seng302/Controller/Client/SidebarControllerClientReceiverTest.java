@@ -14,8 +14,10 @@ import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.WindowContext.WindowContextBuilder;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 public class SidebarControllerClientReceiverTest extends ControllerTest {
 
     private Client client = new Client("Client", "Number", "One", LocalDate.now(), 1);
