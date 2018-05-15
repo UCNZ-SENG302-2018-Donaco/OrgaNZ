@@ -40,6 +40,11 @@ public class StaffListController extends SubController {
     private ContextMenu contextMenu;
 
 
+    private String defaultAdministratorUsername = State.getAdministratorManager().getDefaultAdministrator()
+            .getUsername();
+    private String defaultClinicianId = Integer.toString(State.getClinicianManager().getDefaultClinician().getStaffId());
+
+
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
@@ -71,6 +76,27 @@ public class StaffListController extends SubController {
 
             cell.textProperty().bind(cell.itemProperty());
 
+            // Listener to disable deleting of defaults
+            cell.textProperty().addListener((obs, oldValue, newValue) -> {
+
+
+                if (newValue == null) {
+                    // IThe new value is null (the cell is now empty)
+                    cell.setContextMenu(null);
+                    cell.setStyle("");
+                }
+                else if (newValue.equals(defaultAdministratorUsername) || newValue.equals(defaultClinicianId)) {
+                    // It is either the default admin username or default clinician id
+                    cell.setContextMenu(null);
+                    cell.setStyle("-fx-background-color: grey");
+                } else {
+                    // Normal cell, with a non-default staff member
+                    cell.setContextMenu(contextMenu);
+                    cell.setStyle("");
+                }
+            });
+/*
+            // Listener to remove context menu from empty cells
             cell.emptyProperty().addListener((obs, wasEmpty, isNowEmpty) -> {
                 if (isNowEmpty) {
                     cell.setContextMenu(null);
@@ -78,7 +104,7 @@ public class StaffListController extends SubController {
                     cell.setContextMenu(contextMenu);
                 }
             });
-
+*/
             return cell;
 
         });
