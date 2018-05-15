@@ -2,18 +2,30 @@ package seng302;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  * Represents an instance of a user having an illness for a period of time.
  */
+@Entity
+@Table
 public class IllnessRecord {
 
     private static DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
+    @Id
+    @GeneratedValue
+    private long id;
     private String illnessName;
     private LocalDate diagnosisDate;
     private LocalDate curedDate;
     private boolean isChronic;
+
+    protected IllnessRecord() {
+    }
 
     /**
      * Creates a new IllnessRecord for a given illness.

@@ -4,26 +4,34 @@
   "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 
 <hibernate-configuration>
-<session-factory>
-  <!-- SQL Dialect -->
-  <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+  <session-factory>
+    <!-- SQL Dialect -->
+    <property name="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</property>
 
-  <!-- Database Connection Settings -->
-  <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
-  <property name="hibernate.connection.url">jdbc:mysql://mysql2.csse.canterbury.ac.nz/seng302-2018-team700-test</property>
-  <property name="hibernate.connection.username">seng302-team700</property>
-  <property name="hibernate.connection.password">FormulaCadres2252</property>
+    <!-- Create/update tables automatically from mappings (when needed) -->
+    <property name="hibernate.hbm2ddl.auto">create-drop</property>
 
-  <!-- Disable Debug Output
-  <property name="show_sql">false</property>
-  <property name="generate_statistics">false</property>
-  <property name="use_sql_comments">false</property>
-  -->
+    <!-- Fixes issue with @GeneratedValue AUTO mode -->
+    <property name="hibernate.id.new_generator_mappings">false</property>
 
-  <!-- Specifying Session Context -->
-  <property name="hibernate.current_session_context_class">org.hibernate.context.internal.ThreadLocalSessionContext</property>
+    <!-- Database Connection Settings -->
+    <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+    <property name="hibernate.connection.url">jdbc:mysql://mysql2.csse.canterbury.ac.nz/seng302-2018-team700-test</property>
+    <property name="hibernate.connection.username">seng302-team700</property>
+    <property name="hibernate.connection.password">FormulaCadres2252</property>
 
-  <!-- Mapping With Model Class Containing Annotations -->
-  <mapping class="seng302.MedicationRecord"/>
-</session-factory>
+    <!-- Debug Output -->
+    <property name="show_sql">true</property>
+    <property name="format_sql">true</property>
+    <property name="use_sql_comments">true</property>
+    <property name="generate_statistics">false</property>
+
+    <!-- Specifying Session Context -->
+    <property name="hibernate.current_session_context_class">org.hibernate.context.internal.ThreadLocalSessionContext</property>
+
+    <!-- Mapping With Model Class Containing Annotations -->
+    <mapping class="seng302.MedicationRecord"/>
+    <mapping class="seng302.IllnessRecord"/>
+    <mapping class="seng302.ProcedureRecord"/>
+  </session-factory>
 </hibernate-configuration>

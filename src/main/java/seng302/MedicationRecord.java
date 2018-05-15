@@ -2,8 +2,8 @@ package seng302;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
@@ -17,13 +17,10 @@ public class MedicationRecord implements Comparable<MedicationRecord> {
     private static DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     @Id
-    @Column(updatable = false, nullable = false)
+    @GeneratedValue
     private long id;
-    @Column
     private String medicationName;
-    @Column
     private LocalDate started;
-    @Column
     private LocalDate stopped;
 
     protected MedicationRecord() {
