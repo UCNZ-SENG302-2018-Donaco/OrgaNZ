@@ -21,7 +21,7 @@ public class DeleteClinician implements Runnable{
     private ActionInvoker invoker;
 
     @Option(names = {"-s", "--staffId"}, description = "Staff id", required = true)
-    private int id;
+    private int id; // staffId of the clinician
 
     public DeleteClinician() {
         manager = State.getClinicianManager();
@@ -38,6 +38,8 @@ public class DeleteClinician implements Runnable{
 
         if (clinician == null) {
             System.out.println("No clinician exists with that user ID");
+        } else if (clinician.getStaffId() == 0){
+            System.out.println("Default clinician cannot be deleted");
         } else {
             System.out.println(
                     String.format("Removing clinician: %s, with staff id: %s, would you like to proceed? (y/n)",
@@ -50,11 +52,11 @@ public class DeleteClinician implements Runnable{
                 Action action = new DeleteClinicianAction(clinician, manager);
                 invoker.execute(action);
 
-                System.out.println("Clinician" + id + "removed. This removal will only be permanent once the 'save' "
+                System.out.println("Clinician " + id + " removed. This removal will only be permanent once the 'save' "
                         + "command is used");
                 HistoryItem deleteClinician = new HistoryItem("DELETE", "Clinician" + id + "deleted");
                 JSONConverter.updateHistory(deleteClinician, "action_history.json");
-            }else {
+            } else {
                 System.out.println("Clinician not removed");
             }
         }
