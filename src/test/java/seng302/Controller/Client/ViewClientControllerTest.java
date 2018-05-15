@@ -11,6 +11,7 @@ import javafx.scene.input.KeyCode;
 import seng302.Client;
 import seng302.Controller.ControllerTest;
 import seng302.State.State;
+import seng302.UITest;
 import seng302.Utilities.Enums.BloodType;
 import seng302.Utilities.Enums.Gender;
 import seng302.Utilities.Enums.Region;
@@ -18,10 +19,11 @@ import seng302.Utilities.View.Page;
 import seng302.Utilities.View.WindowContext;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 import org.testfx.api.FxRobotException;
 
+@Category({UITest.class})
 public class ViewClientControllerTest extends ControllerTest {
     private Client testClient = new Client("a", "", "b", LocalDate.now().minusDays(10), 1);
 

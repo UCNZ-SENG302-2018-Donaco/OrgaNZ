@@ -1,26 +1,25 @@
 package seng302.Controller.Client;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 import javafx.scene.input.KeyCode;
 
 import seng302.Client;
 import seng302.Controller.ControllerTest;
 import seng302.State.State;
+import seng302.UITest;
 import seng302.Utilities.Enums.BloodType;
-import seng302.Utilities.Enums.Gender;
 import seng302.Utilities.Enums.Region;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.WindowContext;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.testfx.api.FxRobotException;
+import org.junit.experimental.categories.Category;
 
+@Category({UITest.class})
 public class ViewClientControllerSetTitleTest extends ControllerTest {
     private Client testClient = new Client("a", "", "b", LocalDate.now().minusDays(10), 1);
 

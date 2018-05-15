@@ -28,6 +28,7 @@ import seng302.Utilities.View.WindowContext;
 import org.junit.Before;
 import org.junit.Test;
 import org.testfx.util.NodeQueryUtils;
+import org.testfx.util.WaitForAsyncUtils;
 
 public class ViewProceduresControllerClinicianTest extends ControllerTest {
 
@@ -343,6 +344,7 @@ public class ViewProceduresControllerClinicianTest extends ControllerTest {
 
         boolean hasMatch = false;
 
+        WaitForAsyncUtils.waitForFxEvents();
         assertEquals(2, testClient.getPendingProcedures().size());
 
         for (ProcedureRecord record : testClient.getPendingProcedures()) {

@@ -1,13 +1,17 @@
 package seng302.Controller.Client;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+
 import seng302.Controller.ControllerTest;
 import seng302.State.State;
+import seng302.UITest;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.WindowContext;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
+@Category({UITest.class})
 public class CreateClientControllerTest extends ControllerTest {
 
 

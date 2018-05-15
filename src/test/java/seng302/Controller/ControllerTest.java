@@ -1,15 +1,13 @@
 package seng302.Controller;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.DialogPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -18,10 +16,11 @@ import seng302.State.State;
 import seng302.Utilities.View.Page;
 
 import org.junit.After;
-import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit.ApplicationTest;
+import org.testfx.util.WaitForAsyncUtils;
 
 public abstract class ControllerTest extends ApplicationTest {
 
@@ -67,8 +66,6 @@ public abstract class ControllerTest extends ApplicationTest {
         mainController.setSubController(pageController);
     }
 
-
-
     /**
      * Get the top modal window.
      * @return the top modal window
@@ -86,19 +83,23 @@ public abstract class ControllerTest extends ApplicationTest {
                 .orElse(null);
     }
 
-
     @After
     public void killAllWindows() {
         Stage stage = getTopModalStage();
-        try {
-            Parent parent = stage.getScene().getRoot();
-            if (parent instanceof DialogPane) {
+
+        WaitForAsyncUtils.asyncFx(() -> {
+            if (stage != null) {
                 stage.close();
             }
-        } catch (NullPointerException e) {
+        });
+        WaitForAsyncUtils.waitForFxEvents();
 
+        Collection<Window> allWindows = new FxRobot().robotContext().getWindowFinder().listWindows();
+        if (!allWindows.isEmpty()) {
+            Assert.fail();
         }
 
+        System.gc();
     }
 
     protected abstract Page getPage();

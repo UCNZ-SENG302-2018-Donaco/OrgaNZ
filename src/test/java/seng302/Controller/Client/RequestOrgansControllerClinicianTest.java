@@ -25,6 +25,7 @@ import seng302.Clinician;
 import seng302.Controller.ControllerTest;
 import seng302.State.State;
 import seng302.TransplantRequest;
+import seng302.UITest;
 import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.Enums.Region;
 import seng302.Utilities.View.Page;
@@ -32,7 +33,9 @@ import seng302.Utilities.View.WindowContext.WindowContextBuilder;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.experimental.categories.Category;
 
+@Category({UITest.class})
 public class RequestOrgansControllerClinicianTest extends ControllerTest {
 
     TransplantRequest heartRequest;

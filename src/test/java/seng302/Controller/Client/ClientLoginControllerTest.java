@@ -1,17 +1,22 @@
 package seng302.Controller.Client;
 
-import javafx.scene.Node;
-import org.junit.Test;
-import seng302.Client;
-import seng302.Controller.ControllerTest;
-import seng302.State.State;
-import seng302.Utilities.View.Page;
-import seng302.Utilities.View.WindowContext;
+import static org.junit.Assert.assertEquals;
 
 import java.time.LocalDate;
 
-import static org.junit.Assert.*;
+import javafx.scene.Node;
 
+import seng302.Client;
+import seng302.Controller.ControllerTest;
+import seng302.State.State;
+import seng302.UITest;
+import seng302.Utilities.View.Page;
+import seng302.Utilities.View.WindowContext;
+
+import org.junit.Test;
+import org.junit.experimental.categories.Category;
+
+@Category({UITest.class})
 public class ClientLoginControllerTest extends ControllerTest {
     Client testClient = new Client("test", "", "er", LocalDate.now(), 1);
 
