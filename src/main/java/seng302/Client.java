@@ -27,7 +27,7 @@ import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
  */
 public class Client {
 
-    private int uid;
+    private final int uid;
     private String firstName;
     private String lastName;
     private String middleName;
@@ -56,11 +56,6 @@ public class Client {
     private List<IllnessRecord> illnessHistory = new ArrayList<>();
 
     private List<ProcedureRecord> procedures = new ArrayList<>();
-
-    public Client() {
-        createdTimestamp = LocalDateTime.now();
-        initDonationOrgans();
-    }
 
     public Client(int uid) {
         this.uid = uid;
@@ -554,7 +549,7 @@ public class Client {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(uid);
+        return Integer.hashCode(uid);
     }
 
     public Collection<TransplantRequest> getTransplantRequests() {
@@ -570,11 +565,11 @@ public class Client {
     }
 
     public boolean isDonor() {
-        return getCurrentlyDonatedOrgans().size() > 0;
+        return !getCurrentlyDonatedOrgans().isEmpty();
     }
 
     public boolean isReceiver() {
-        return transplantRequests.size() > 0;
+        return !transplantRequests.isEmpty();
     }
 
     /**

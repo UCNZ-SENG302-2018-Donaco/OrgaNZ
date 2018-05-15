@@ -18,32 +18,31 @@ import seng302.State.State;
 import seng302.TransplantRequest;
 import seng302.Utilities.Enums.Gender;
 import seng302.Utilities.Enums.Organ;
-import seng302.Utilities.Enums.Gender;
 import seng302.Utilities.Enums.Region;
 import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.WindowContext;
 
 import org.junit.Test;
-import org.testfx.api.FxRobotException;
 
 /**
- * Class to test the search clients controller. Used only for the clinician/admin to search and find a particular client.
+ * Class to test the search clients controller.
+ * Used only for the clinician/admin to search and find a particular client.
  */
 public class SearchClientsControllerTest extends ControllerTest{
 
-    private Clinician testClinician = new Clinician("Admin", "Da", "Nimda", "2 Two Street", Region.CANTERBURY,
+    private final Clinician testClinician = new Clinician("Admin", "Da", "Nimda", "2 Two Street", Region.CANTERBURY,
             55, "admin");
-    private Client testClient1 = new Client("john", null, "1", LocalDate.of(2017, 1, 1), 1); //One year old
-    private Client testClient2 = new Client("jack", null, "2", LocalDate.of(2008, 1, 1), 2); // Ten years old
-    private Client testClient3 = new Client("steve", null, "3", LocalDate.of(2008, 1, 1), 3);
-    private Client testClient4 = new Client("tom", null, "4", LocalDate.of(1918, 1, 1), 4); // 100 years old
-    private Client[] testClients = {testClient1, testClient2, testClient3, testClient4};
+    private final Client testClient1 = new Client("john", null, "1", LocalDate.of(2017, 1, 1), 1); //One year old
+    private final Client testClient2 = new Client("jack", null, "2", LocalDate.of(2008, 1, 1), 2); // Ten years old
+    private final Client testClient3 = new Client("steve", null, "3", LocalDate.of(2008, 1, 1), 3);
+    private final Client testClient4 = new Client("tom", null, "4", LocalDate.of(1918, 1, 1), 4); // 100 years old
+    private final Client[] testClients = {testClient1, testClient2, testClient3, testClient4};
 
-    private TransplantRequest getRequestLiver1  = new TransplantRequest(testClient1, Organ.LIVER);
-    private TransplantRequest getRequestKidney1  = new TransplantRequest(testClient1, Organ.KIDNEY);
-    private TransplantRequest getRequestKidney2  = new TransplantRequest(testClient1, Organ.KIDNEY);
-    private TransplantRequest getRequestKidney4 = new TransplantRequest(testClient1, Organ.KIDNEY);
+    private final TransplantRequest getRequestLiver1  = new TransplantRequest(testClient1, Organ.LIVER);
+    private final TransplantRequest getRequestKidney1  = new TransplantRequest(testClient1, Organ.KIDNEY);
+    private final TransplantRequest getRequestKidney2  = new TransplantRequest(testClient1, Organ.KIDNEY);
+    private final TransplantRequest getRequestKidney4 = new TransplantRequest(testClient1, Organ.KIDNEY);
 
     @Override
     protected Page getPage() {

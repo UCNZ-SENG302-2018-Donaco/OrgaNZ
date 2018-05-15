@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import seng302.Client;
 import seng302.TransplantRequest;
@@ -38,7 +39,7 @@ public class ClientManagerTest {
         clientList.add(client4);
 
         ClientManager manager = new ClientManager(clientList);
-        ArrayList<Client> managerClientList = manager.getClients();
+        List<Client> managerClientList = manager.getClients();
         assertEquals(clientList, managerClientList);
     }
 

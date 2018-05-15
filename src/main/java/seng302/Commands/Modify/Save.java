@@ -4,6 +4,7 @@ package seng302.Commands.Modify;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 import seng302.Client;
 import seng302.HistoryItem;
@@ -35,8 +36,8 @@ public class Save implements Runnable {
 
     @Override
     public void run() {
-        ArrayList<Client> clients = manager.getClients();
-        if (clients.size() == 0) {
+        List<Client> clients = manager.getClients();
+        if (clients.isEmpty()) {
             System.out.println("No clients exist, nothing to save");
             return;
         }

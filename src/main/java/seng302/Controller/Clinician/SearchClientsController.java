@@ -1,6 +1,5 @@
 package seng302.Controller.Clinician;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 import javafx.collections.FXCollections;
@@ -43,7 +42,13 @@ public class SearchClientsController extends SubController {
     private static final int AGE_UPPER_BOUND = 120;
 
     @FXML
-    private TextField searchBox, ageMinField, ageMaxField;
+    private TextField searchBox;
+
+    @FXML
+    private TextField ageMinField;
+
+    @FXML
+    private TextField ageMaxField;
 
     @FXML
     private RangeSlider ageSlider;
@@ -58,7 +63,10 @@ public class SearchClientsController extends SubController {
     private ChoiceBox<String> clientTypeFilter;
 
     @FXML
-    private CheckComboBox<Organ> organsDonatingFilter, organsRequestingFilter;
+    private CheckComboBox<Organ> organsDonatingFilter;
+
+    @FXML
+    private CheckComboBox<Organ> organsRequestingFilter;
 
     @FXML
     private HBox sidebarPane;
@@ -80,7 +88,7 @@ public class SearchClientsController extends SubController {
     @FXML
     private Pagination pagination;
 
-    private ObservableList<Client> observableClientList = FXCollections.observableArrayList();
+    private final ObservableList<Client> observableClientList = FXCollections.observableArrayList();
     private FilteredList<Client> filteredClients;
     private SortedList<Client> sortedClients;
 
@@ -95,7 +103,7 @@ public class SearchClientsController extends SubController {
 
     @FXML
     private void initialize() {
-        ArrayList<Client> allClients = State.getClientManager().getClients();
+        Collection<Client> allClients = State.getClientManager().getClients();
         setupTable();
 
         tableView.setOnSort((o) -> createPage(pagination.getCurrentPageIndex()));
@@ -109,17 +117,17 @@ public class SearchClientsController extends SubController {
                 newMin = AGE_LOWER_BOUND;
             }
             ageSlider.setLowValue(newMin);
-            ageMinField.setText("" + newMin);
+            ageMinField.setText(String.valueOf(newMin));
         });
         ageMaxField.setOnAction(event -> {
             int newMax;
             try {
                 newMax = Integer.min(Integer.parseInt(ageMaxField.getText()), AGE_UPPER_BOUND);
-            } catch (NumberFormatException exc) {
+            } catch (NumberFormatException ignored) {
                 newMax = 0;
             }
             ageSlider.setHighValue(newMax);
-            ageMaxField.setText("" + newMax);
+            ageMaxField.setText(String.valueOf(newMax));
         });
 
         // Set options for choice boxes and check combo boxes
@@ -164,7 +172,7 @@ public class SearchClientsController extends SubController {
         //On pagination update call createPage
         pagination.setPageFactory(this::createPage);
 
-        //Initialize the observable list to all clients
+        //Initialise the observable list to all clients
         observableClientList.setAll(sortedClients);
         //Bind the tableView to the observable list
         tableView.setItems(observableClientList);
@@ -182,26 +190,26 @@ public class SearchClientsController extends SubController {
         regionCol.setCellValueFactory(new PropertyValueFactory<>("region"));
 
         tableView.setRowFactory(tv -> new TableRow<Client>() {
-            private Tooltip tooltip = new Tooltip();
+            private final Tooltip tooltip = new Tooltip();
 
             @Override
-            public void updateItem(Client client, boolean empty) {
-                super.updateItem(client, empty);
-                if (client == null) {
+            public void updateItem(Client item, boolean empty) {
+                super.updateItem(item, empty);
+                if (item == null) {
                     setTooltip(null);
                 } else {
                     tooltip.setText(String.format("%s %s with blood type %s. Donating: %s",
-                            client.getFirstName(),
-                            client.getLastName(),
-                            client.getBloodType(),
-                            client.getOrganStatusString("donations")));
+                            item.getFirstName(),
+                            item.getLastName(),
+                            item.getBloodType(),
+                            item.getOrganStatusString("donations")));
                     setTooltip(tooltip);
                 }
             }
         });
 
         tableView.setOnMouseClicked(mouseEvent -> {
-            if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2) {
+            if (mouseEvent.getButton() == MouseButton.PRIMARY && mouseEvent.getClickCount() == 2) {
                 Client client = tableView.getSelectionModel().getSelectedItem();
                 if (client != null) {
                     MainController newMain = PageNavigator.openNewWindow();
@@ -253,7 +261,7 @@ public class SearchClientsController extends SubController {
 
     private boolean nameFilter(Client client) {
         String searchText = searchBox.getText();
-        return searchText == null || searchText.length() == 0 || client.nameContains(searchText);
+        return searchText == null || searchText.isEmpty() || client.nameContains(searchText);
     }
 
     /**
@@ -273,7 +281,7 @@ public class SearchClientsController extends SubController {
      */
     private boolean birthGenderFilter(Client client) {
         Collection<Gender> gendersToFilter = birthGenderFilter.getCheckModel().getCheckedItems();
-        return gendersToFilter.size() == 0 || gendersToFilter.contains(client.getGender());
+        return gendersToFilter.isEmpty() || gendersToFilter.contains(client.getGender());
     }
 
     /**
@@ -283,18 +291,18 @@ public class SearchClientsController extends SubController {
      */
     private boolean regionFilter(Client client) {
         Collection<Region> regionsToFilter = regionFilter.getCheckModel().getCheckedItems();
-        return regionsToFilter.size() == 0 || regionsToFilter.contains(client.getRegion());
+        return regionsToFilter.isEmpty() || regionsToFilter.contains(client.getRegion());
     }
 
     private boolean donatingFilter(Client client) {
         Collection<Organ> organsToFilter = organsDonatingFilter.getCheckModel().getCheckedItems();
-        return organsToFilter.size() == 0 || organsToFilter.stream()
+        return organsToFilter.isEmpty() || organsToFilter.stream()
                 .anyMatch(organ -> client.getCurrentlyDonatedOrgans().contains(organ));
     }
 
     private boolean requestingFilter(Client client) {
         Collection<Organ> organsToRequestFilter = organsRequestingFilter.getCheckModel().getCheckedItems();
-        return organsToRequestFilter.size() == 0 || organsToRequestFilter.stream()
+        return organsToRequestFilter.isEmpty() || organsToRequestFilter.stream()
                 .anyMatch(organ -> client.getCurrentlyRequestedOrgans().contains(organ));
     }
 
@@ -330,7 +338,8 @@ public class SearchClientsController extends SubController {
     public void refresh() {
         filteredClients.setPredicate(this::filter);
 
-        //If the pagination count wont change, force a refresh of the page, if it will, change it and that will trigger the update.
+        // If the pagination count wont change, force a refresh of the page,
+        // if it will, change it and that will trigger the update.
         int newPageCount = Math.max(1, (filteredClients.size() + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE);
         if (pagination.getPageCount() == newPageCount) {
             createPage(pagination.getCurrentPageIndex());

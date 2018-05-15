@@ -1,6 +1,7 @@
 package seng302.Commands.View;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import seng302.Client;
 import seng302.HistoryItem;
@@ -32,9 +33,9 @@ public class PrintAllInfo implements Runnable {
 
     @Override
     public void run() {
-        ArrayList<Client> clients = manager.getClients();
+        List<Client> clients = manager.getClients();
 
-        if (clients.size() == 0) {
+        if (clients.isEmpty()) {
             System.out.println("No clients exist");
         } else {
             for (Client client : clients) {

@@ -1,7 +1,5 @@
 package seng302.State;
 
-import static seng302.TransplantRequest.RequestStatus.*;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.OptionalInt;
@@ -11,6 +9,7 @@ import java.util.stream.Collectors;
 
 import seng302.Client;
 import seng302.TransplantRequest;
+import seng302.TransplantRequest.RequestStatus;
 
 /**
  * Handles the manipulation of the clients currently stored in the system.
@@ -18,17 +17,17 @@ import seng302.TransplantRequest;
 
 public class ClientManager {
 
-    private ArrayList<Client> clients;
+    private List<Client> clients;
 
     public ClientManager() {
         clients = new ArrayList<>();
     }
 
-    public ClientManager(ArrayList<Client> clients) {
+    public ClientManager(List<Client> clients) {
         this.clients = clients;
     }
 
-    public void setClients(ArrayList<Client> clients) {
+    public void setClients(List<Client> clients) {
         this.clients = clients;
     }
 
@@ -44,7 +43,7 @@ public class ClientManager {
      * Get the list of clients
      * @return ArrayList of current clients
      */
-    public ArrayList<Client> getClients() {
+    public List<Client> getClients() {
         return clients;
     }
 
@@ -119,7 +118,7 @@ public class ClientManager {
         return clients.stream()
                 .map(Client::getTransplantRequests)
                 .flatMap(Collection::stream)
-                .filter(request -> request.getStatus() == WAITING)
+                .filter(request -> request.getStatus() == RequestStatus.WAITING)
                 .collect(Collectors.toList());
     }
 }
