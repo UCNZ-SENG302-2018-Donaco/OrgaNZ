@@ -5,6 +5,7 @@ import seng302.Commands.Modify.CreateClinician;
 import seng302.Commands.Modify.DeleteClient;
 import seng302.Commands.Modify.DeleteClinician;
 import seng302.Commands.Modify.Load;
+import seng302.Commands.Modify.ModifyClinician;
 import seng302.Commands.Modify.Redo;
 import seng302.Commands.Modify.Save;
 import seng302.Commands.Modify.SetAttribute;
@@ -27,6 +28,7 @@ import picocli.CommandLine.Command;
                 CreateClient.class,
                 CreateClinician.class,
                 SetAttribute.class,
+                ModifyClinician.class,
                 SetOrganStatus.class,
                 DeleteClient.class,
                 DeleteClinician.class,

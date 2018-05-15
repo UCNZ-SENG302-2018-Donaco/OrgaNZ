@@ -14,6 +14,9 @@ import seng302.Utilities.JSONConverter;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
+/**
+ * Command line to modify attributes of clinicians, using their staff id as a reference key
+ */
 @Command(name = "deleteclinician", description = "Deletes a clinician.")
 public class DeleteClinician implements Runnable{
 
@@ -33,6 +36,7 @@ public class DeleteClinician implements Runnable{
         this.invoker = invoker;
     }
 
+    @Override
     public void run() {
         Clinician clinician = manager.getClinicianByStaffId(id);
 
