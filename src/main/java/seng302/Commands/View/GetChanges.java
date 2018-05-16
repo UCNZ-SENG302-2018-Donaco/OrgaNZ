@@ -3,9 +3,9 @@ package seng302.Commands.View;
 
 import seng302.Client;
 import seng302.HistoryItem;
+import seng302.HistoryManager;
 import seng302.State.ClientManager;
 import seng302.State.State;
-import seng302.Utilities.JSONConverter;
 
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -41,8 +41,8 @@ public class GetChanges implements Runnable {
             return;
         }
         System.out.println(client.getUpdatesString());
-        HistoryItem printAllHistory = new HistoryItem("PRINT UPDATE HISTORY", "All client's history printed.");
-        JSONConverter.updateHistory(printAllHistory, "action_history.json");
+        HistoryItem historyItem = new HistoryItem("PRINT UPDATE HISTORY", "All client's history printed.");
+        HistoryManager.INSTANCE.updateHistory(historyItem);
     }
 }
 

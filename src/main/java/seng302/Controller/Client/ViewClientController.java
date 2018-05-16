@@ -24,6 +24,7 @@ import seng302.Client;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
 import seng302.HistoryItem;
+import seng302.HistoryManager;
 import seng302.State.ClientManager;
 import seng302.State.Session;
 import seng302.State.Session.UserType;
@@ -158,10 +159,10 @@ public class ViewClientController extends SubController {
                 lastModified.setText(viewedClient.getModifiedTimestamp().format(dateTimeFormat));
             }
 
-            HistoryItem save = new HistoryItem("SEARCH CLIENT",
+            HistoryItem historyItem = new HistoryItem("SEARCH CLIENT",
                     "Client " + viewedClient.getFirstName() + " " + viewedClient.getLastName() + " (" + viewedClient
                             .getUid() + ") was searched");
-            JSONConverter.updateHistory(save, "action_history.json");
+            HistoryManager.INSTANCE.updateHistory(historyItem);
 
             displayBMI();
             displayAge();
@@ -190,10 +191,10 @@ public class ViewClientController extends SubController {
             if (viewedClient.getModifiedTimestamp() != null) {
                 lastModified.setText(viewedClient.getModifiedTimestamp().format(dateTimeFormat));
                 //TODO show what in particular was updated
-                HistoryItem save = new HistoryItem("UPDATE CLIENT INFO",
+                HistoryItem historyItem = new HistoryItem("UPDATE CLIENT INFO",
                         "Updated changes to client " + viewedClient.getFirstName() + " " + viewedClient.getLastName()
                                 + "updated client info: " + viewedClient.getClientInfoString());
-                JSONConverter.updateHistory(save, "action_history.json");
+                HistoryManager.INSTANCE.updateHistory(historyItem);
             }
         }
     }

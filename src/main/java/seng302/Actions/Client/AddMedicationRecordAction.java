@@ -3,8 +3,8 @@ package seng302.Actions.Client;
 import seng302.Actions.Action;
 import seng302.Client;
 import seng302.HistoryItem;
+import seng302.HistoryManager;
 import seng302.MedicationRecord;
-import seng302.Utilities.JSONConverter;
 
 /**
  * A reversible action that will add the given medication record to the given Client's medication history.
@@ -27,10 +27,10 @@ public class AddMedicationRecordAction extends Action {
     @Override
     protected void execute() {
         client.addMedicationRecord(record);
-        HistoryItem save = new HistoryItem("ADD_MEDICATION",
+        HistoryItem historyItem = new HistoryItem("ADD_MEDICATION",
                 String.format("Medication record for %s added to %s %s",
                         record.getMedicationName(), client.getFirstName(), client.getLastName()));
-        JSONConverter.updateHistory(save, "action_history.json");
+        HistoryManager.INSTANCE.updateHistory(historyItem);
     }
 
     @Override

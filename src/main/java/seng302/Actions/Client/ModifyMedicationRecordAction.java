@@ -5,8 +5,8 @@ import java.util.Objects;
 
 import seng302.Actions.Action;
 import seng302.HistoryItem;
+import seng302.HistoryManager;
 import seng302.MedicationRecord;
-import seng302.Utilities.JSONConverter;
 
 /**
  * A reversible action to modify a given medication record (specifically, its 'started' and 'stopped' dates).
@@ -63,8 +63,8 @@ public class ModifyMedicationRecordAction extends Action {
         if (!Objects.equals(newStopped, oldStopped)) {
             record.setStopped(newStopped);
         }
-        HistoryItem save = new HistoryItem("MODIFY_MEDICATION", getExecuteText());
-        JSONConverter.updateHistory(save, "action_history.json");
+        HistoryItem historyItem = new HistoryItem("MODIFY_MEDICATION", getExecuteText());
+        HistoryManager.INSTANCE.updateHistory(historyItem);
     }
 
     @Override

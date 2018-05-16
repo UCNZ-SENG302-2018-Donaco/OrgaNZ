@@ -1,5 +1,7 @@
 package seng302.Controller.Client;
 
+import java.util.Objects;
+
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -10,13 +12,11 @@ import seng302.Client;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
 import seng302.HistoryItem;
+import seng302.HistoryManager;
 import seng302.State.ClientManager;
 import seng302.State.State;
-import seng302.Utilities.JSONConverter;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
-
-import java.util.Objects;
 
 /**
  * Controller for the login page.
@@ -76,9 +76,9 @@ public class ClientLoginController extends SubController {
         Client selectedClient = clientList.getSelectionModel().getSelectedItem();
 
         if (selectedClient != null) {
-            HistoryItem loginHistory = new HistoryItem("LOGIN_CLIENT", String.format("Client %s %s (%d) logged in.",
+            HistoryItem historyItem = new HistoryItem("LOGIN_CLIENT", String.format("Client %s %s (%d) logged in.",
                     selectedClient.getFirstName(), selectedClient.getLastName(), selectedClient.getUid()));
-            JSONConverter.updateHistory(loginHistory, "action_history.json");
+            HistoryManager.INSTANCE.updateHistory(historyItem);
 
             State.login(selectedClient);
             PageNavigator.loadPage(Page.VIEW_CLIENT, mainController);

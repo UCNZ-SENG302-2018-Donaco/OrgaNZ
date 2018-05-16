@@ -1,13 +1,12 @@
 package seng302.Commands.View;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import seng302.Client;
 import seng302.HistoryItem;
+import seng302.HistoryManager;
 import seng302.State.ClientManager;
 import seng302.State.State;
-import seng302.Utilities.JSONConverter;
 
 import picocli.CommandLine.Command;
 
@@ -41,8 +40,8 @@ public class PrintAllOrgan implements Runnable {
             for (Client client : clients) {
                 System.out.println(client.getClientOrganStatusString("donations"));
             }
-            HistoryItem printAllOrgan = new HistoryItem("PRINT ALL ORGAN", "All client organ information printed.");
-            JSONConverter.updateHistory(printAllOrgan, "action_history.json");
+            HistoryItem historyItem = new HistoryItem("PRINT ALL ORGAN", "All client organ information printed.");
+            HistoryManager.INSTANCE.updateHistory(historyItem);
         }
     }
 }

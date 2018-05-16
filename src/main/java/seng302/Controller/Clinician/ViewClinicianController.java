@@ -5,7 +5,11 @@ import java.util.Objects;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
@@ -15,10 +19,10 @@ import seng302.Clinician;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
 import seng302.HistoryItem;
+import seng302.HistoryManager;
 import seng302.State.Session;
 import seng302.State.State;
 import seng302.Utilities.Enums.Region;
-import seng302.Utilities.JSONConverter;
 import seng302.Utilities.View.PageNavigator;
 
 import org.controlsfx.control.Notifications;
@@ -174,9 +178,9 @@ public class ViewClinicianController extends SubController {
         String actionText = invoker.execute(action);
         PageNavigator.refreshAllWindows();
 
-        HistoryItem save = new HistoryItem("UPDATE CLINICIAN",
+        HistoryItem historyItem = new HistoryItem("UPDATE CLINICIAN",
                 "The Clinician's information was updated. New details are: " + currentClinician.getUpdateLog());
-        JSONConverter.updateHistory(save, "action_history.json");
+        HistoryManager.INSTANCE.updateHistory(historyItem);
 
         Notifications.create()
                 .title("Updated Clinician")

@@ -16,6 +16,7 @@ import seng302.Actions.ActionInvoker;
 import seng302.AppUI;
 import seng302.Client;
 import seng302.HistoryItem;
+import seng302.HistoryManager;
 import seng302.State.Session;
 import seng302.State.Session.UserType;
 import seng302.State.State;
@@ -209,8 +210,8 @@ public class SidebarController extends SubController {
                 Notifications.create().title("Saved").text(String.format("Successfully saved %s clients to file %s",
                         State.getClientManager().getClients().size(), file.getName())).showInformation();
 
-                HistoryItem save = new HistoryItem("SAVE", "The systems current state was saved.");
-                JSONConverter.updateHistory(save, "action_history.json");
+                HistoryItem historyItem = new HistoryItem("SAVE", "The systems current state was saved.");
+                HistoryManager.INSTANCE.updateHistory(historyItem);
 
                 invoker.resetUnsavedUpdates();
                 PageNavigator.refreshAllWindows();
@@ -239,8 +240,8 @@ public class SidebarController extends SubController {
             if (file != null) {
                 JSONConverter.loadFromFile(file);
 
-                HistoryItem load = new HistoryItem("LOAD", "The systems state was loaded from " + file.getName());
-                JSONConverter.updateHistory(load, "action_history.json");
+                HistoryItem historyItem = new HistoryItem("LOAD", "The systems state was loaded from " + file.getName());
+                HistoryManager.INSTANCE.updateHistory(historyItem);
 
                 //State.logout();
                 mainController.resetWindowContext();
@@ -273,8 +274,8 @@ public class SidebarController extends SubController {
         State.addMainController(mainController);
         mainController.resetWindowContext();
         PageNavigator.loadPage(Page.LANDING, mainController);
-        HistoryItem save = new HistoryItem("LOGOUT", "The user logged out");
-        JSONConverter.updateHistory(save, "action_history.json");
+        HistoryItem historyItem = new HistoryItem("LOGOUT", "The user logged out");
+        HistoryManager.INSTANCE.updateHistory(historyItem);
     }
 
     /**
@@ -284,8 +285,8 @@ public class SidebarController extends SubController {
     private void undo() {
         String undoneText = invoker.undo();
         Notifications.create().title("Undo").text(undoneText).showInformation();
-        HistoryItem save = new HistoryItem("UNDO", undoneText);
-        JSONConverter.updateHistory(save, "action_history.json");
+        HistoryItem historyItem = new HistoryItem("UNDO", undoneText);
+        HistoryManager.INSTANCE.updateHistory(historyItem);
         PageNavigator.refreshAllWindows();
     }
 
@@ -296,8 +297,8 @@ public class SidebarController extends SubController {
     private void redo() {
         String redoneText = invoker.redo();
         Notifications.create().title("Redo").text(redoneText).showInformation();
-        HistoryItem save = new HistoryItem("REDO", redoneText);
-        JSONConverter.updateHistory(save, "action_history.json");
+        HistoryItem historyItem = new HistoryItem("REDO", redoneText);
+        HistoryManager.INSTANCE.updateHistory(historyItem);
         PageNavigator.refreshAllWindows();
     }
 }

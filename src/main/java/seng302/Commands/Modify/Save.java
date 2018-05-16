@@ -3,11 +3,11 @@ package seng302.Commands.Modify;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import seng302.Client;
 import seng302.HistoryItem;
+import seng302.HistoryManager;
 import seng302.State.ClientManager;
 import seng302.State.State;
 import seng302.Utilities.JSONConverter;
@@ -44,8 +44,8 @@ public class Save implements Runnable {
         try {
             JSONConverter.saveToFile(new File("savefile.json"));
             System.out.println(String.format("Saved %s users to file", manager.getClients().size()));
-            HistoryItem save = new HistoryItem("SAVE", "The systems current state was saved.");
-            JSONConverter.updateHistory(save, "action_history.json");
+            HistoryItem historyItem = new HistoryItem("SAVE", "The systems current state was saved.");
+            HistoryManager.INSTANCE.updateHistory(historyItem);
         } catch (IOException e) {
             System.out.println("Could not save to file");
         }

@@ -239,7 +239,6 @@
           <forkCount>2</forkCount>
           <reuseForks>false</reuseForks>
           <argLine>-Xmx512m -XX:MaxPermSize=256m</argLine>
-          <workingDirectory>FORK_DIRECTORY_${surefire.forkNumber}</workingDirectory>
           <additionalClasspathElements>
             <additionalClasspathElement>${java.home}/lib/ext/jfxrt.jar</additionalClasspathElement>
           </additionalClasspathElements>

@@ -1,7 +1,5 @@
 package seng302.Controller;
 
-import java.io.File;
-import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -13,7 +11,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.layout.Pane;
 
 import seng302.HistoryItem;
-import seng302.Utilities.JSONConverter;
+import seng302.HistoryManager;
 
 /**
  * Controller for the history page.
@@ -50,9 +48,9 @@ public class HistoryController extends SubController {
         );
 
         try {
-            List<HistoryItem> history = JSONConverter.loadJSONtoHistory(new File("action_history.json"));
+            List<HistoryItem> history = HistoryManager.INSTANCE.loadHistory();
             historyTable.setItems(FXCollections.observableArrayList(history));
-        } catch (IOException exc) {
+        } catch (IllegalArgumentException exc) {
             System.out.println(exc.getMessage());
         }
 

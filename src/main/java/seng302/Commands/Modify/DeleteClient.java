@@ -7,9 +7,9 @@ import seng302.Actions.ActionInvoker;
 import seng302.Actions.Client.DeleteClientAction;
 import seng302.Client;
 import seng302.HistoryItem;
+import seng302.HistoryManager;
 import seng302.State.ClientManager;
 import seng302.State.State;
-import seng302.Utilities.JSONConverter;
 
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -51,8 +51,8 @@ public class DeleteClient implements Runnable {
 
                 System.out.println("Client " + uid
                         + " removed. This removal will only be permanent once the 'save' command is used");
-                HistoryItem printAllOrgan = new HistoryItem("DELETE", "Client " + uid + " deleted.");
-                JSONConverter.updateHistory(printAllOrgan, "action_history.json");
+                HistoryItem historyItem = new HistoryItem("DELETE", "Client " + uid + " deleted.");
+                HistoryManager.INSTANCE.updateHistory(historyItem);
             } else {
                 System.out.println("User not removed");
             }

@@ -9,12 +9,12 @@ import seng302.Actions.ActionInvoker;
 import seng302.Actions.Client.ModifyClientAction;
 import seng302.Client;
 import seng302.HistoryItem;
+import seng302.HistoryManager;
 import seng302.State.ClientManager;
 import seng302.State.State;
 import seng302.Utilities.Enums.BloodType;
 import seng302.Utilities.Enums.Gender;
 import seng302.Utilities.Enums.Region;
-import seng302.Utilities.JSONConverter;
 import seng302.Utilities.TypeConverters.BloodTypeConverter;
 import seng302.Utilities.TypeConverters.GenderConverter;
 import seng302.Utilities.TypeConverters.LocalDateConverter;
@@ -117,7 +117,7 @@ public class SetAttribute implements Runnable {
             }
         }
         invoker.execute(action);
-        HistoryItem setAttribute = new HistoryItem("ATTRIBUTE UPDATE", "DETAILS were updated for user " + uid);
-        JSONConverter.updateHistory(setAttribute, "action_history.json");
+        HistoryItem historyItem = new HistoryItem("ATTRIBUTE UPDATE", "DETAILS were updated for user " + uid);
+        HistoryManager.INSTANCE.updateHistory(historyItem);
     }
 }

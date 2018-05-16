@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import seng302.HistoryItem;
+import seng302.HistoryManager;
 import seng302.State.ClientManager;
 import seng302.State.State;
 import seng302.Utilities.JSONConverter;
@@ -37,9 +38,9 @@ public class Load implements Runnable {
         try {
             JSONConverter.loadFromFile(new File("savefile.json"));
             System.out.println(String.format("Loaded %s users from file", manager.getClients().size()));
-            HistoryItem load = new HistoryItem("LOAD", "The systems state was loaded from "
+            HistoryItem historyItem = new HistoryItem("LOAD", "The systems state was loaded from "
                     + "savefile.json"); // Are we going to allow them to load from different files?
-            JSONConverter.updateHistory(load, "action_history.json");
+            HistoryManager.INSTANCE.updateHistory(historyItem);
         } catch (FileNotFoundException e) {
             System.out.println("No save file found");
         } catch (IOException e) {

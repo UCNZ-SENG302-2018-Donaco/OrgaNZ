@@ -17,6 +17,7 @@ import seng302.Client;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
 import seng302.HistoryItem;
+import seng302.HistoryManager;
 import seng302.State.ClientManager;
 import seng302.State.Session;
 import seng302.State.Session.UserType;
@@ -24,7 +25,6 @@ import seng302.State.State;
 import seng302.TransplantRequest;
 import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
-import seng302.Utilities.JSONConverter;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
 
@@ -165,9 +165,9 @@ public class RegisterOrganDonationController extends SubController {
         }
         if (hasChanged) {
             String actionText = invoker.execute(action);
-            HistoryItem save = new HistoryItem("UPDATE ORGANS",
+            HistoryItem historyItem = new HistoryItem("UPDATE ORGANS",
                     "The Client's organs were updated: " + client.getOrganStatusString("donations"));
-            JSONConverter.updateHistory(save, "action_history.json");
+            HistoryManager.INSTANCE.updateHistory(historyItem);
 
             PageNavigator.refreshAllWindows();
             Notifications.create()

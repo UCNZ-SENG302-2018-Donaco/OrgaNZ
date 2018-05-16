@@ -3,9 +3,9 @@ package seng302.Commands.View;
 
 import seng302.Client;
 import seng302.HistoryItem;
+import seng302.HistoryManager;
 import seng302.State.ClientManager;
 import seng302.State.State;
-import seng302.Utilities.JSONConverter;
 
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -42,8 +42,8 @@ public class PrintClientInfo implements Runnable {
             return;
         }
         System.out.println(client.getClientInfoString());
-        HistoryItem printUserInfo = new HistoryItem("PRINT CLIENT INFO", "Information was printed about client " + uid);
-        JSONConverter.updateHistory(printUserInfo, "action_history.json");
+        HistoryItem historyItem = new HistoryItem("PRINT CLIENT INFO", "Information was printed about client " + uid);
+        HistoryManager.INSTANCE.updateHistory(historyItem);
     }
 }
 

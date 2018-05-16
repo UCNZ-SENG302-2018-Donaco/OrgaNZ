@@ -14,9 +14,9 @@ import seng302.Client;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
 import seng302.HistoryItem;
+import seng302.HistoryManager;
 import seng302.State.ClientManager;
 import seng302.State.State;
-import seng302.Utilities.JSONConverter;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
 
@@ -83,9 +83,9 @@ public class CreateClientController extends SubController {
                     dobFld.getValue(), uid);
             Action action = new CreateClientAction(client, manager);
             invoker.execute(action);
-            HistoryItem save = new HistoryItem("CREATE CLIENT",
+            HistoryItem historyItem = new HistoryItem("CREATE CLIENT",
                     "Client " + firstNameFld.getText() + " " + lastNamefld.getText() + "was created with ID " + uid);
-            JSONConverter.updateHistory(save, "action_history.json");
+            HistoryManager.INSTANCE.updateHistory(historyItem);
 
             State.login(client);
             PageNavigator.loadPage(Page.VIEW_CLIENT, mainController);

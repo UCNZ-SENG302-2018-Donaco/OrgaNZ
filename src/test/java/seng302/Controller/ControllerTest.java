@@ -12,6 +12,7 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
+import seng302.HistoryManager;
 import seng302.State.State;
 import seng302.Utilities.View.Page;
 
@@ -38,6 +39,8 @@ public abstract class ControllerTest extends ApplicationTest {
             System.setProperty("prism.text", "t2k");
             System.setProperty("java.awt.headless", "true");
         }
+
+        HistoryManager.createTestManager();
     }
 
     @Override
@@ -98,8 +101,6 @@ public abstract class ControllerTest extends ApplicationTest {
         if (!allWindows.isEmpty()) {
             Assert.fail();
         }
-
-        System.gc();
     }
 
     protected abstract Page getPage();

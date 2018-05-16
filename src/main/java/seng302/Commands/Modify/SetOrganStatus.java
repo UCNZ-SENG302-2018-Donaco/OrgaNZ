@@ -9,11 +9,11 @@ import seng302.Actions.ActionInvoker;
 import seng302.Actions.Client.ModifyClientOrgansAction;
 import seng302.Client;
 import seng302.HistoryItem;
+import seng302.HistoryManager;
 import seng302.State.ClientManager;
 import seng302.State.State;
 import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
-import seng302.Utilities.JSONConverter;
 
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -126,7 +126,7 @@ public class SetOrganStatus implements Runnable {
 
         invoker.execute(action);
 
-        HistoryItem setOrganStatus = new HistoryItem("SET ORGAN STATUS", "The organ status was updated for " + uid);
-        JSONConverter.updateHistory(setOrganStatus, "action_history.json");
+        HistoryItem historyItem = new HistoryItem("SET ORGAN STATUS", "The organ status was updated for " + uid);
+        HistoryManager.INSTANCE.updateHistory(historyItem);
     }
 }
