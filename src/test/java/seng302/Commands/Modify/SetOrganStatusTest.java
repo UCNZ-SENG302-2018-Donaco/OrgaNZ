@@ -12,6 +12,7 @@ import java.time.LocalDate;
 
 import seng302.Actions.ActionInvoker;
 import seng302.Client;
+import seng302.HistoryManager;
 import seng302.State.ClientManager;
 import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
@@ -30,8 +31,9 @@ public class SetOrganStatusTest {
 
     @Before
     public void init() {
-        spyClientManager = spy(new ClientManager());
+        HistoryManager.createTestManager();
 
+        spyClientManager = spy(new ClientManager());
         spySetOrganStatus = spy(new SetOrganStatus(spyClientManager, new ActionInvoker()));
 
         System.setOut(new PrintStream(outContent));

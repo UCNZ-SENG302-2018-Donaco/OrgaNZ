@@ -6,6 +6,7 @@ import java.time.LocalDate;
 
 import seng302.Actions.ActionInvoker;
 import seng302.Client;
+import seng302.HistoryManager;
 import seng302.MedicationRecord;
 
 import org.junit.Before;
@@ -19,6 +20,8 @@ public class DeleteMedicationRecordActionTest {
 
     @Before
     public void init() {
+        HistoryManager.createTestManager();
+
         invoker = new ActionInvoker();
         baseClient = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
         record = new MedicationRecord("Generic Name", LocalDate.of(2018, 4, 9), null);

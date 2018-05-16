@@ -8,6 +8,7 @@ import java.time.LocalDate;
 
 import seng302.Actions.ActionInvoker;
 import seng302.Client;
+import seng302.HistoryManager;
 import seng302.State.ClientManager;
 
 import org.junit.Before;
@@ -21,6 +22,8 @@ public class DeleteClientTest {
 
     @Before
     public void init() {
+        HistoryManager.createTestManager();
+
         spyClientManager = spy(new ClientManager());
         spyDeleteClient = spy(new DeleteClient(spyClientManager, new ActionInvoker()));
 

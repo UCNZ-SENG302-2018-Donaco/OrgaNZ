@@ -4,6 +4,7 @@ package seng302.Commands.Modify;
 import static org.mockito.Mockito.*;
 
 import seng302.Actions.ActionInvoker;
+import seng302.HistoryManager;
 import seng302.State.ClientManager;
 
 import org.junit.Before;
@@ -18,10 +19,10 @@ public class CreateClientTest {
 
     @Before
     public void init() {
+        HistoryManager.createTestManager();
+
         spyClientManager = spy(new ClientManager());
-
         spyCreateClient = spy(new CreateClient(spyClientManager, new ActionInvoker()));
-
     }
 
     @Test

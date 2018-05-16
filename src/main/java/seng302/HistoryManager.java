@@ -68,7 +68,8 @@ public abstract class HistoryManager {
                     JSONConverter.createEmptyJSONFileIfNotExists(historyFile);
 
                     try (JsonReader reader = new JsonReader(new FileReader(historyFile))) {
-                        historyItems = Arrays.asList(JSONConverter.getGson().fromJson(reader, HistoryItem[].class));
+                        historyItems = new ArrayList<>(
+                                Arrays.asList(JSONConverter.getGson().fromJson(reader, HistoryItem[].class)));
                     }
                 } catch (IOException | IllegalStateException exc) {
                     throw new IllegalArgumentException("An error occurred when reading historyItem history from the "
