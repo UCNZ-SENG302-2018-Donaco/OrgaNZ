@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -14,7 +15,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 
 import seng302.Commands.BaseCommand;
 import seng302.Commands.CommandParser;
@@ -26,20 +26,17 @@ import picocli.CommandLine;
 
 public class CommandLineController extends SubController {
 
-    @FXML
-    public HBox sidebarPane;
-
-    public TextField inputTextField;
+    private TextField inputTextField;
 
     @FXML
-    public TextArea outputTextArea;
+    private TextArea outputTextArea;
 
     @FXML
-    public BorderPane borderPane;
+    private BorderPane borderPane;
 
     private List<String> commandHistoryList = new ArrayList<>();
     private int currentHistoryIndex = 0;
-    private String unexecutedPreviousText;
+    private String unexecutedPreviousText = "";
 
     private BatchedTextStream batchedTextStream;
 
@@ -60,6 +57,7 @@ public class CommandLineController extends SubController {
         batchedTextStream = new BatchedTextStream();
         outputStream = new PrintStream(batchedTextStream);
 
+        //Create a custom TextField that overrides the paste method to allow multiline execution
         inputTextField = new TextField() {
             @Override
             public void paste() {
@@ -77,8 +75,10 @@ public class CommandLineController extends SubController {
                 }
             }
         };
+        //Set the ID of the TextField for testing purpose
         inputTextField.setId("inputTextField");
 
+        //Place the TextField in the scene, as we create it programmatically rather than in the FXML
         BorderPane.setMargin(inputTextField, new Insets(0, 20, 20, 20));
         borderPane.setBottom(inputTextField);
 
@@ -102,6 +102,10 @@ public class CommandLineController extends SubController {
         System.setOut(System.out);
     }
 
+    /**
+     * Iterate up the commandHistoryList, if we're at the bottom the firstly save the unexecuted text so we can come
+     * back to it
+     */
     private void onUp() {
         if (commandHistoryList.size() == 0) {
             return;
@@ -116,41 +120,52 @@ public class CommandLineController extends SubController {
         inputTextField.end();
     }
 
+    /**
+     * Iterate down on the commandHistoryList, if we're at the bottom, then set the text to the previous unexecuted text
+     * instead
+     */
     private void onDown() {
         if (currentHistoryIndex + 1 < commandHistoryList.size()) {
             currentHistoryIndex++;
             inputTextField.setText(commandHistoryList.get(currentHistoryIndex));
-        } else if (unexecutedPreviousText != null && currentHistoryIndex + 1 == commandHistoryList.size()) {
+        } else if (currentHistoryIndex + 1 == commandHistoryList.size()) {
             currentHistoryIndex++;
             inputTextField.setText(unexecutedPreviousText);
         }
         inputTextField.end();
     }
 
+
+    /**
+     * When the enter key is pressed, if there is text in the input then add it to the command history
+     * then execute that command
+     */
     private void onEnter() {
         String commandText = inputTextField.getText();
-        if (commandText.isEmpty()) {
-            return;
-        }
-
-        for (String line : commandText.split("\n")) {
+        if (!commandText.isEmpty()) {
             commandHistoryList.add(commandText);
             currentHistoryIndex = commandHistoryList.size();
             inputTextField.setText("");
-            createAndRunCommand(line);
+            createAndRunCommand(commandText);
         }
     }
 
+    /**
+     * Create a new Task that first adds the run command to the output text area
+     * then run the command using CommandLine.run.
+     * Once the task has run, append the resulting text to the output text area
+     * Run using a SingleThreadExecutor to ensure multiple commands are run in order rather than concurrently
+     * @param commandText The string to run as a command
+     */
     private void createAndRunCommand(String commandText) {
         Task task = new Task<Void>() {
             @Override
             protected Void call() {
-                outputTextArea.appendText("> " + commandText + "\n");
+                Platform.runLater(() -> outputTextArea.appendText("> " + commandText + "\n"));
 
                 System.setOut(outputStream);
                 CommandLine.run(command, System.out, CommandParser.parseCommands(commandText));
-                outputTextArea.appendText(batchedTextStream.getNewText());
-                outputTextArea.appendText("\n");
+                Platform.runLater(() -> outputTextArea.appendText(batchedTextStream.getNewText() + "\n"));
                 System.setOut(System.out);
                 return null;
             }
