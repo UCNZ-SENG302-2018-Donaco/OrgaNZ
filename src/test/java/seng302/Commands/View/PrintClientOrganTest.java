@@ -37,7 +37,7 @@ public class PrintClientOrganTest {
     @Test
     public void printuserorgan_invalid_format_id() {
         doNothing().when(spyClientManager).addClient(any());
-        String[] inputs = {"-u", "notint"};
+        String[] inputs = {"-u", "notint", "-t", "donations"};
 
         CommandLine.run(spyPrintClientOrgan, System.out, inputs);
 
@@ -56,7 +56,7 @@ public class PrintClientOrganTest {
     @Test
     public void printuserorgan_non_existent_id() {
         when(spyClientManager.getClientByID(anyInt())).thenReturn(null);
-        String[] inputs = {"-u", "2"};
+        String[] inputs = {"-u", "2", "-t", "donations"};
 
         CommandLine.run(spyPrintClientOrgan, System.out, inputs);
 
@@ -70,7 +70,7 @@ public class PrintClientOrganTest {
 
         when(spyClientManager.getClientByID(anyInt())).thenReturn(client);
 
-        String[] inputs = {"-u", "1"};
+        String[] inputs = {"-u", "1", "-t", "donations"};
 
         CommandLine.run(spyPrintClientOrgan, System.out, inputs);
 
@@ -85,7 +85,7 @@ public class PrintClientOrganTest {
 
         when(spyClientManager.getClientByID(anyInt())).thenReturn(client);
 
-        String[] inputs = {"-u", "1"};
+        String[] inputs = {"-u", "1", "-t", "donations"};
 
         CommandLine.run(spyPrintClientOrgan, System.out, inputs);
 
@@ -100,7 +100,7 @@ public class PrintClientOrganTest {
 
         when(spyClientManager.getClientByID(anyInt())).thenReturn(client);
 
-        String[] inputs = {"-u", "1"};
+        String[] inputs = {"-u", "1", "-t", "donations"};
 
         CommandLine.run(spyPrintClientOrgan, System.out, inputs);
 

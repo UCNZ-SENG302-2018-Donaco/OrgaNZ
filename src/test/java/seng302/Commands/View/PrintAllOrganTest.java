@@ -41,7 +41,7 @@ public class PrintAllOrganTest {
         ArrayList<Client> clients = new ArrayList<>();
 
         when(spyClientManager.getClients()).thenReturn(clients);
-        String[] inputs = {};
+        String[] inputs = {"-t", "donations"};
 
         CommandLine.run(spyPrintAllOrgan, System.out, inputs);
 
@@ -58,7 +58,7 @@ public class PrintAllOrganTest {
         clients.add(client);
 
         when(spyClientManager.getClients()).thenReturn(clients);
-        String[] inputs = {};
+        String[] inputs = {"-t", "donations"};
 
         CommandLine.run(spyPrintAllOrgan, System.out, inputs);
 
@@ -81,7 +81,7 @@ public class PrintAllOrganTest {
         clients.add(client3);
 
         when(spyClientManager.getClients()).thenReturn(clients);
-        String[] inputs = {};
+        String[] inputs = {"-t", "donations"};
 
         CommandLine.run(spyPrintAllOrgan, System.out, inputs);
 
