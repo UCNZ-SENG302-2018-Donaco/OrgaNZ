@@ -40,64 +40,21 @@ public class RequestOrgan implements Runnable {
     @Option(names = {"-u", "--uid"}, description = "User ID of user organ being requested", required = true)
     private int uid;
 
-    @Option(names = {"-request", "-req"}, description = "Request organ transplant flag")
-    private Boolean requestFlag;
-
-    @Option(names = {"-resolve", "-res"}, description = "Resolve organ request flag")
-    private Boolean resolveFlag;
-
-    @Option(names = {"-m"}, description = "Reason for resolving request")
-    private String message;
-
 
     public void run() {
-        State.getClientManager().addClient(new Client("t", "t", "t", LocalDate.now(), 1));
+        // requestorgan -u=1 -o=liver
+        State.getClientManager().addClient(new Client("Jan", "Michael", "Vincent", LocalDate.now(), 1));
         client = manager.getClientByID(uid);
         if (client == null) {
             System.out.println("No client exists with that user ID");
 
-        } else {
-            if (requestFlag != null && resolveFlag != null) {
-                System.out.println("Invalid command, cannot request and resolve an organ at once.");
-
-            } else if (requestFlag != null) {
-                makeRequest();
-
-            } else if (resolveFlag != null) {
-                resolveRequest();
-
-            } else {
-                System.out.println("Specify whether organ is being requested or resolved.");
-            }
-
-        }
-    }
-
-    private void makeRequest() {
-        // requestorgan -o=liver -u=1 -req=true
-        if (organType == null) {
+        } else if (organType == null) {
             System.out.println("The type of organ to be donated has not been defined.");
         } else {
             TransplantRequest newRequest = new TransplantRequest(client, organType);
             Action action = new AddTransplantRequestAction(client, newRequest);
             invoker.execute(action);
             System.out.println("Successfully requested a " + organType + " for " + client.getFullName());
-        }
-    }
-
-    private void resolveRequest() {
-        boolean organCurrentlyRequested = false;
-        for (TransplantRequest tr: client.getTransplantRequests()) {
-            if (tr.getRequestedOrgan() == organType && tr.getStatus() == RequestStatus.WAITING) {
-                organCurrentlyRequested = true;
-                break;
-            }
-        }
-        if (organCurrentlyRequested) {
-            // Resolve request.
-
-        } else {
-            System.out.println("User is not currently requesting this organ.");
         }
     }
 }
