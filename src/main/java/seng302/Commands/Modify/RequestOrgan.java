@@ -74,6 +74,7 @@ public class RequestOrgan implements Runnable {
     }
 
     private void makeRequest() {
+        // requestorgan -o=liver -u=1 -req=true
         if (organType == null) {
             System.out.println("The type of organ to be donated has not been defined.");
         } else {
