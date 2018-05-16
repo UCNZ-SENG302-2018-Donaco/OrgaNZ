@@ -58,7 +58,7 @@ public class DeleteClinician implements Runnable{
 
                 System.out.println("Clinician " + id + " removed. This removal will only be permanent once the 'save' "
                         + "command is used");
-                HistoryItem deleteClinician = new HistoryItem("DELETE", "Clinician" + id + "deleted");
+                HistoryItem deleteClinician = new HistoryItem("DELETE", "Clinician " + id + " deleted");
                 JSONConverter.updateHistory(deleteClinician, "action_history.json");
             } else {
                 System.out.println("Clinician not removed");
