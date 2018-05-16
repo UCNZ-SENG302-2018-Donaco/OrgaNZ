@@ -378,7 +378,7 @@ public class SearchClientsControllerTest extends ControllerTest{
     }
 
     /**
-     * Tests for the requesting organs are filtered correctly with >1 organ filtered.
+     * Tests for the requesting organs are filtered correctly with more then 1 organ filtered.
      */
     @Test
     public void requestOrganFilterMultiple() {
