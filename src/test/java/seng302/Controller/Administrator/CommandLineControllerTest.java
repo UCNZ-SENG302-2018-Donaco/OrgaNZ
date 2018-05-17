@@ -117,6 +117,29 @@ public class CommandLineControllerTest extends ControllerTest {
     }
 
     @Test
+    public void pasteSingleLineTest() {
+        clickOn("#inputTextField").write("copy text");
+
+        clickOn("#inputTextField");
+        clickOn("#inputTextField");
+        clickOn("#inputTextField");
+
+        press(KeyCode.CONTROL);
+        type(KeyCode.C);
+        release(KeyCode.CONTROL);
+        type(KeyCode.DELETE);
+        write("new text ");
+
+        press(KeyCode.CONTROL);
+        type(KeyCode.V);
+        release(KeyCode.CONTROL);
+
+
+        verifyThat("#inputTextField", hasText("new text copy text"));
+
+    }
+
+    @Test
     public void validCreateUserCommandTest() throws InterruptedException {
         clickOn("#inputTextField").write("createuser -f Jack -l Steel -d 21/04/1997").type(KeyCode.ENTER);
 
