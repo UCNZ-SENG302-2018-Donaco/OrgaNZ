@@ -78,14 +78,11 @@ public class StaffListController extends SubController {
 
             // Listener to disable deleting of defaults
             cell.textProperty().addListener((obs, oldValue, newValue) -> {
-
-
                 if (newValue == null) {
-                    // IThe new value is null (the cell is now empty)
+                    // The new value is null (the cell is now empty)
                     cell.setContextMenu(null);
                     cell.setStyle("");
-                }
-                else if (newValue.equals(defaultAdministratorUsername) || newValue.equals(defaultClinicianId)) {
+                }                else if (newValue.equals(defaultAdministratorUsername) || newValue.equals(defaultClinicianId)) {
                     // It is either the default admin username or default clinician id
                     cell.setContextMenu(null);
                     cell.setStyle("-fx-background-color: grey");
@@ -95,18 +92,8 @@ public class StaffListController extends SubController {
                     cell.setStyle("");
                 }
             });
-/*
-            // Listener to remove context menu from empty cells
-            cell.emptyProperty().addListener((obs, wasEmpty, isNowEmpty) -> {
-                if (isNowEmpty) {
-                    cell.setContextMenu(null);
-                } else {
-                    cell.setContextMenu(contextMenu);
-                }
-            });
-*/
-            return cell;
 
+            return cell;
         });
     }
 
