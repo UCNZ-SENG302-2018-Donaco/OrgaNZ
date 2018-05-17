@@ -25,6 +25,7 @@ import javafx.scene.layout.Pane;
 import seng302.Client;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
+import seng302.State.Session.UserType;
 import seng302.State.State;
 import seng302.Utilities.Enums.Gender;
 import seng302.Utilities.Enums.Region;
@@ -97,27 +98,30 @@ public class SearchClientsController extends SubController {
         //Bind the tableView to the observable list
         tableView.setItems(observableClientList);
 
-        tableView.setRowFactory(tableView -> {
-            final TableRow<Client> row = new TableRow<>();
-            final ContextMenu rowMenu = new ContextMenu();
-            MenuItem removeItem = new MenuItem("Delete");
-            removeItem.setOnAction(event -> {
-                // Remove item
-                Client client = row.getItem(); //client to remove
-                tableView.getItems().remove(client); // remove from table view
-                State.getClientManager().getClients().remove(client); // remove from client manager
-                PageNavigator.refreshAllWindows();
+        if (State.getSession().getLoggedInUserType() == UserType.ADMINISTRATOR) {
 
+            tableView.setRowFactory(tableView -> {
+                final TableRow<Client> row = new TableRow<>();
+                final ContextMenu rowMenu = new ContextMenu();
+                MenuItem removeItem = new MenuItem("Delete");
+                removeItem.setOnAction(event -> {
+                    // Remove item
+                    Client client = row.getItem(); //client to remove
+                    tableView.getItems().remove(client); // remove from table view
+                    State.getClientManager().getClients().remove(client); // remove from client manager
+                    PageNavigator.refreshAllWindows();
+
+                });
+                rowMenu.getItems().add(removeItem);
+
+                // Only display context menu for non-null items
+                row.contextMenuProperty().bind(
+                        Bindings.when(Bindings.isNotNull(row.itemProperty()))
+                                .then(rowMenu)
+                                .otherwise((ContextMenu) null));
+                return row;
             });
-            rowMenu.getItems().add(removeItem);
-
-            // Only display context menu for non-null items
-            row.contextMenuProperty().bind(
-                    Bindings.when(Bindings.isNotNull(row.itemProperty()))
-                            .then(rowMenu)
-                            .otherwise((ContextMenu) null));
-            return row;
-        });
+        }
     }
 
     /**
