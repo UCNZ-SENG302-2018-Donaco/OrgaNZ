@@ -2,12 +2,15 @@ package seng302.Controller.Clinician;
 
 import java.util.ArrayList;
 
+import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
@@ -93,6 +96,28 @@ public class SearchClientsController extends SubController {
         observableClientList.setAll(sortedClients);
         //Bind the tableView to the observable list
         tableView.setItems(observableClientList);
+
+        tableView.setRowFactory(tableView -> {
+            final TableRow<Client> row = new TableRow<>();
+            final ContextMenu rowMenu = new ContextMenu();
+            MenuItem removeItem = new MenuItem("Delete");
+            removeItem.setOnAction(event -> {
+                // Remove item
+                Client client = row.getItem(); //client to remove
+                tableView.getItems().remove(client); // remove from table view
+                State.getClientManager().getClients().remove(client); // remove from client manager
+                PageNavigator.refreshAllWindows();
+
+            });
+            rowMenu.getItems().add(removeItem);
+
+            // Only display context menu for non-null items
+            row.contextMenuProperty().bind(
+                    Bindings.when(Bindings.isNotNull(row.itemProperty()))
+                            .then(rowMenu)
+                            .otherwise((ContextMenu) null));
+            return row;
+        });
     }
 
     /**
@@ -149,6 +174,9 @@ public class SearchClientsController extends SubController {
      */
     @Override
     public void refresh() {
+
+        initialize();
+
         String searchText = searchBox.getText();
         if (searchText == null || searchText.length() == 0) {
             filteredClients.setPredicate(client -> true);

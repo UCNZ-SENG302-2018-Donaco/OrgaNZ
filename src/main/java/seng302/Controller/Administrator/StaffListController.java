@@ -42,7 +42,8 @@ public class StaffListController extends SubController {
 
     private String defaultAdministratorUsername = State.getAdministratorManager().getDefaultAdministrator()
             .getUsername();
-    private String defaultClinicianId = Integer.toString(State.getClinicianManager().getDefaultClinician().getStaffId());
+    private String defaultClinicianId = Integer
+            .toString(State.getClinicianManager().getDefaultClinician().getStaffId());
 
 
     @Override
@@ -82,7 +83,7 @@ public class StaffListController extends SubController {
                     // The new value is null (the cell is now empty)
                     cell.setContextMenu(null);
                     cell.setStyle("");
-                }                else if (newValue.equals(defaultAdministratorUsername) || newValue.equals(defaultClinicianId)) {
+                } else if (newValue.equals(defaultAdministratorUsername) || newValue.equals(defaultClinicianId)) {
                     // It is either the default admin username or default clinician id
                     cell.setContextMenu(null);
                     cell.setStyle("-fx-background-color: grey");
