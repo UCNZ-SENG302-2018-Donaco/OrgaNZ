@@ -103,6 +103,11 @@ public class SidebarControllerClientTest extends ControllerTest {
         verifyThat("#createClinicianButton", isInvisible());
     }
 
+    @Test
+    public void testStaffListHidden() {
+        verifyThat("#staffListButton", isInvisible());
+    }
+
     // Test staff-only buttons are hidden
 
     @Test

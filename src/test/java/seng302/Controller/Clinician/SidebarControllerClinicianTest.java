@@ -100,6 +100,11 @@ public class SidebarControllerClinicianTest extends ControllerTest {
         verifyThat("#loadFromFileButton", isInvisible());
     }
 
+    @Test
+    public void testStaffListHidden() {
+        verifyThat("#staffListButton", isInvisible());
+    }
+
     // Test client-only buttons are hidden
 
     @Test
