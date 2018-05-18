@@ -73,7 +73,7 @@ public class StaffListControllerTest extends ControllerTest {
         verifyThat("#staffList", hasListCell(clinicianId));
 
         rightClickOn(clinicianId);
-        moveTo("Delete");
+        clickOn("Delete");
 
         try {
             verifyThat("#staffList", hasListCell(clinicianId));
@@ -96,7 +96,7 @@ public class StaffListControllerTest extends ControllerTest {
         verifyThat("#staffList", hasListCell(adminUsername));
 
         rightClickOn(adminUsername);
-        moveTo("Delete");
+        clickOn("Delete");
 
         try {
             verifyThat("#staffList", hasListCell(adminUsername));
