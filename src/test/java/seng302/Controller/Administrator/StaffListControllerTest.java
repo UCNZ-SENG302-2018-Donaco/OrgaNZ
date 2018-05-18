@@ -14,7 +14,6 @@ import seng302.Utilities.Enums.Region;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.WindowContext;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class StaffListControllerTest extends ControllerTest {
@@ -64,7 +63,6 @@ public class StaffListControllerTest extends ControllerTest {
      * This test passes in headless mode but not in headful mode.
      * See https://github.com/TestFX/Monocle/issues/12
      */
-    @Ignore
     @Test
     public void testDeleteClinician() {
         String clinicianId = Integer.toString(clinician1.getStaffId());
@@ -87,7 +85,6 @@ public class StaffListControllerTest extends ControllerTest {
      * This test passes in headless mode but not in headful mode.
      * Seehttps://github.com/TestFX/Monocle/issues/12
      */
-    @Ignore
     @Test
     public void testDeleteAdministrator() {
         String adminUsername = admin2.getUsername();
