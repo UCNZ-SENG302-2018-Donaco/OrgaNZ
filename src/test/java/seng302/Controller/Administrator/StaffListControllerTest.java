@@ -131,4 +131,17 @@ public class StaffListControllerTest extends ControllerTest {
         // check that Delete is not an option
         verifyThat("Delete", isNull());
     }
+
+    @Test
+    public void testUnableToDeleteDefaultSelf() {
+        String adminUsername = admin2.getUsername();
+
+        //check the administrator is in the list
+        verifyThat("#staffList", hasListCell(adminUsername));
+
+        rightClickOn(adminUsername);
+
+        // check that Delete is not an option
+        verifyThat("Delete", isNull());
+    }
 }
