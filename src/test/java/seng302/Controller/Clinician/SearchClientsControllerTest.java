@@ -11,6 +11,7 @@ import static org.testfx.matcher.control.TextMatchers.hasText;
 
 import java.time.LocalDate;
 
+import javafx.scene.Node;
 import javafx.scene.control.TableView;
 
 import seng302.Client;
@@ -18,6 +19,7 @@ import seng302.Clinician;
 import seng302.Controller.ControllerTest;
 import seng302.State.State;
 import seng302.TransplantRequest;
+import seng302.Utilities.Enums.Gender;
 import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.Enums.Region;
 import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
@@ -153,4 +155,57 @@ public class SearchClientsControllerTest extends ControllerTest {
 
         assertEquals(result.getFullName(), client7.getFullName());
     }
+
+    @Test
+    public void testNameColReverseOrder() {
+        clickOn("#nameCol");
+        TableView<Client> tableView = lookup("#tableView").query();
+        Client result0 = tableView.getItems().get(0);
+        Client result1 = tableView.getItems().get(1);
+        Client result2 = tableView.getItems().get(2);
+
+        assertEquals(result0.getFullName(), "Client Number num217");
+        assertEquals(result1.getFullName(), "Client Number num216");
+        assertEquals(result2.getFullName(), "Client Number num215");
+    }
+
+    @Test
+    public void testNameColReverseOrderLastPage() {
+        clickOn("#nameCol");
+
+        TableView<Client> tableView = lookup("#tableView").query();
+
+        clickOn((Node) lookup("5").query()); // Click on the last page
+        Client result = tableView.getItems().get(5);
+        assertEquals(result.getFullName(), "Zeta Zeta Alpha");
+    }
+
+    // Tests to ensure the custom comparator hasn't broken the other column default comps.
+
+    @Test
+    public void testIDOrderStillWorks() {
+        clickOn("#idCol");
+        TableView<Client> tableView = lookup("#tableView").query();
+        Client result = tableView.getItems().get(0);
+        assertEquals(result.getUid(), 1);
+    }
+
+    @Test
+    public void testGenderOrderStillWorks() {
+        client1.setGender(Gender.MALE);
+        clickOn("#genderCol");
+        TableView<Client> tableView = lookup("#tableView").query();
+        Client result = tableView.getItems().get(0);
+        assertEquals(result.getGender(), Gender.MALE);
+    }
+
+    @Test
+    public void testRegionOrderStillWorks() {
+        doubleClickOn("#regionCol");
+        TableView<Client> tableView = lookup("#tableView").query();
+        Client result = tableView.getItems().get(0);
+
+        assertEquals(result.getRegion(), Region.CANTERBURY);
+    }
+
 }
