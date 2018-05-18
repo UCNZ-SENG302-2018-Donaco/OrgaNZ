@@ -164,3 +164,9 @@ use this method for filtering.
 You can also sort the table columns in alphabetical order (or by date/time for the date one) by clicking
 on the head of the table. You can also choose to view a client by double-clicking on their row. This 
 will navigate you to their client page.
+
+## Story 32
+
+#### AC3
+
+Run all the tests in `seng302/Controller/Administrator/StaffListControllerTest.java` in headful mode.

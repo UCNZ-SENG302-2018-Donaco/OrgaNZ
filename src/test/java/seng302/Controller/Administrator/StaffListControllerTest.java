@@ -1,5 +1,6 @@
 package seng302.Controller.Administrator;
 
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.matcher.base.NodeMatchers.isNull;
@@ -79,7 +80,7 @@ public class StaffListControllerTest extends ControllerTest {
             verifyThat("#staffList", hasListCell(clinicianId));
             fail("Still in staff list");
         } catch (AssertionError e) {
-            // passes test
+            assertNull(State.getClinicianManager().getClinicianByStaffId(Integer.parseInt(clinicianId)));
         }
     }
 
@@ -102,7 +103,7 @@ public class StaffListControllerTest extends ControllerTest {
             verifyThat("#staffList", hasListCell(adminUsername));
             fail("Still in staff list");
         } catch (AssertionError e) {
-            // passes test
+            assertNull(State.getAdministratorManager().getAdministratorByUsername(adminUsername));
         }
     }
 
