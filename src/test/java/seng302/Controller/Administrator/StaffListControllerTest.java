@@ -2,6 +2,7 @@ package seng302.Controller.Administrator;
 
 import static org.junit.Assert.fail;
 import static org.testfx.api.FxAssert.verifyThat;
+import static org.testfx.matcher.base.NodeMatchers.isNull;
 import static org.testfx.matcher.control.ListViewMatchers.hasItems;
 import static org.testfx.matcher.control.ListViewMatchers.hasListCell;
 
@@ -61,7 +62,7 @@ public class StaffListControllerTest extends ControllerTest {
 
     /**
      * This test passes in headless mode but not in headful mode.
-     * See
+     * See https://github.com/TestFX/Monocle/issues/12
      */
     @Ignore
     @Test
@@ -80,6 +81,54 @@ public class StaffListControllerTest extends ControllerTest {
         } catch (AssertionError e) {
             // passes test
         }
+    }
 
+    /**
+     * This test passes in headless mode but not in headful mode.
+     * Seehttps://github.com/TestFX/Monocle/issues/12
+     */
+    @Ignore
+    @Test
+    public void testDeleteAdministrator() {
+        String adminUsername = admin2.getUsername();
+
+        //check the clinician is in the list
+        verifyThat("#staffList", hasListCell(adminUsername));
+
+        rightClickOn(adminUsername);
+        moveTo("Delete");
+
+        try {
+            verifyThat("#staffList", hasListCell(adminUsername));
+            fail("Still in staff list");
+        } catch (AssertionError e) {
+            // passes test
+        }
+    }
+
+    @Test
+    public void testUnableToDeleteDefaultClinician() {
+        String defaultClinicianId = Integer.toString(State.getClinicianManager().getDefaultClinician().getStaffId());
+
+        //check the clinician is in the list
+        verifyThat("#staffList", hasListCell(defaultClinicianId));
+
+        rightClickOn(defaultClinicianId);
+
+        // check that Delete is not an option
+        verifyThat("Delete", isNull());
+    }
+
+    @Test
+    public void testUnableToDeleteDefaultAdministrator() {
+        String defaultAdministratorUsername = State.getAdministratorManager().getDefaultAdministrator().getUsername();
+
+        //check the administrator is in the list
+        verifyThat("#staffList", hasListCell(defaultAdministratorUsername));
+
+        rightClickOn(defaultAdministratorUsername);
+
+        // check that Delete is not an option
+        verifyThat("Delete", isNull());
     }
 }
