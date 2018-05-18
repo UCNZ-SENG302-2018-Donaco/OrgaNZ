@@ -1,5 +1,6 @@
 package seng302.Controller.Administrator;
 
+import static org.junit.Assert.fail;
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.matcher.control.ListViewMatchers.hasItems;
 import static org.testfx.matcher.control.ListViewMatchers.hasListCell;
@@ -12,6 +13,7 @@ import seng302.Utilities.Enums.Region;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.WindowContext;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class StaffListControllerTest extends ControllerTest {
@@ -55,5 +57,29 @@ public class StaffListControllerTest extends ControllerTest {
         verifyThat("#staffList", hasListCell(Integer.toString(clinician1.getStaffId())));
 
         verifyThat("#staffList", hasItems(5));
+    }
+
+    /**
+     * This test passes in headless mode but not in headful mode.
+     * See
+     */
+    @Ignore
+    @Test
+    public void testDeleteClinician() {
+        String clinicianId = Integer.toString(clinician1.getStaffId());
+
+        //check the clinician is in the list
+        verifyThat("#staffList", hasListCell(clinicianId));
+
+        rightClickOn(clinicianId);
+        moveTo("Delete");
+
+        try {
+            verifyThat("#staffList", hasListCell(clinicianId));
+            fail("Still in staff list");
+        } catch (AssertionError e) {
+            // passes test
+        }
+
     }
 }

@@ -36,9 +36,6 @@ public class StaffListController extends SubController {
     @FXML
     private ListView<String> staffList;
 
-    @FXML
-    private ContextMenu contextMenu;
-
 
     private String defaultAdministratorUsername = State.getAdministratorManager().getDefaultAdministrator()
             .getUsername();
