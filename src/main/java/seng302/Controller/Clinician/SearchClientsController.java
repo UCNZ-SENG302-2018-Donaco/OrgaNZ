@@ -128,7 +128,7 @@ public class SearchClientsController extends SubController {
 
 
         if (c1.getLastName().toLowerCase().startsWith(searchTerm)) {
-            if (c2.getLastName().toLowerCase().startsWith(searchTerm)) { ;
+            if (c2.getLastName().toLowerCase().startsWith(searchTerm)) {
                 return c1.getLastName().compareTo(c2.getLastName());
             } else {
                 return -1;
