@@ -2,10 +2,14 @@ package seng302.Database;
 
 import java.time.LocalDate;
 
+import seng302.Client;
 import seng302.IllnessRecord;
 import seng302.MedicationRecord;
 import seng302.ProcedureRecord;
+import seng302.Utilities.Enums.BloodType;
+import seng302.Utilities.Enums.Gender;
 import seng302.Utilities.Enums.Organ;
+import seng302.Utilities.Enums.Region;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -19,7 +23,7 @@ public class DBManagerTest {
     }
 
     @Test
-    public void main() {
+    public void main() throws Exception {
         // Testing that the database works.
         MedicationRecord medRecord = new MedicationRecord("droog", LocalDate.now(), null);
         dbManager.saveEntity(medRecord);
@@ -32,7 +36,20 @@ public class DBManagerTest {
         procRecord.getAffectedOrgans().add(Organ.HEART);
         procRecord.getAffectedOrgans().add(Organ.LIVER);
         procRecord.getAffectedOrgans().add(Organ.SKIN);
-
         dbManager.saveEntity(procRecord);
+
+        Client client = new Client("Testboi", null, "Testerson", LocalDate.now().minusYears(49), 1);
+        client.setDateOfDeath(LocalDate.now());
+        client.setGender(Gender.MALE);
+        client.setBloodType(BloodType.O_NEG);
+        client.setRegion(Region.CANTERBURY);
+        client.setWeight(50.0);
+        client.setHeight(120.0);
+        client.setOrganDonationStatus(Organ.LUNG, true);
+        client.setOrganDonationStatus(Organ.INTESTINE, true);
+        client.addMedicationRecord(medRecord);
+        client.addIllnessRecord(illRecord);
+        client.addProcedureRecord(procRecord);
+        dbManager.saveEntity(client);
     }
 }

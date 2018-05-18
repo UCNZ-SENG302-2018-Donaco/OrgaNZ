@@ -11,10 +11,21 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import javax.persistence.Access;
+import javax.persistence.AccessType;
+import javax.persistence.CascadeType;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import seng302.Utilities.Enums.BloodType;
 import seng302.Utilities.Enums.Gender;
@@ -22,55 +33,80 @@ import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.Enums.Region;
 import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
 
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
-import org.hibernate.cfg.Configuration;
-
 /**
  * The main Client class.
  */
-
+@Entity
+@Table
+@Access(AccessType.FIELD)
 public class Client {
 
-    private int uid;
+    @Id
+    @GeneratedValue
+    private Integer uid;
     private String firstName;
     private String lastName;
     private String middleName;
     private String currentAddress;
+
+    @Enumerated(EnumType.STRING)
     private Region region;
+    @Enumerated(EnumType.STRING)
     private Gender gender;
+    @Enumerated(EnumType.STRING)
     private BloodType bloodType;
+
     private double height;
     private double weight;
+
     private LocalDate dateOfBirth;
     private LocalDate dateOfDeath;
 
     private final LocalDateTime createdTimestamp;
     private LocalDateTime modifiedTimestamp;
 
-    private Map<Organ, Boolean> organDonationStatus;
+    @ElementCollection(targetClass = Organ.class)
+    @Enumerated(EnumType.STRING)
+    private Set<Organ> organsDonating = EnumSet.noneOf(Organ.class);
 
-    private List<MedicationRecord> medicationHistory = new ArrayList<>();
-
+    @OneToMany(
+            mappedBy = "client",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
     private Collection<TransplantRequest> transplantRequests = new ArrayList<>();
 
-    private List<String> updateLog = new ArrayList<>();
+    @OneToMany(
+            mappedBy = "client",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    private List<MedicationRecord> medicationHistory = new ArrayList<>();
 
+    @OneToMany(
+            mappedBy = "client",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
     private List<IllnessRecord> illnessHistory = new ArrayList<>();
 
+    @OneToMany(
+            mappedBy = "client",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
     private List<ProcedureRecord> procedures = new ArrayList<>();
 
+    @ElementCollection
+    private List<String> updateLog = new ArrayList<>();
+
     public Client() {
-        createdTimestamp = LocalDateTime.now();
-        initDonationOrgans();
+        this.createdTimestamp = LocalDateTime.now();
     }
 
     public Client(int uid) {
         this.uid = uid;
-        createdTimestamp = LocalDateTime.now();
-        initDonationOrgans();
+        this.createdTimestamp = LocalDateTime.now();
     }
 
     /**
@@ -87,18 +123,8 @@ public class Client {
         this.middleName = middleName;
         this.lastName = lastName;
         this.dateOfBirth = dateOfBirth;
-
         this.gender = Gender.UNSPECIFIED;
         this.createdTimestamp = LocalDateTime.now();
-
-        initDonationOrgans();
-    }
-
-    private void initDonationOrgans() {
-        organDonationStatus = new HashMap<>();
-        for (Organ o : Organ.values()) {
-            organDonationStatus.put(o, false);
-        }
     }
 
     private void addUpdate(String function) {
@@ -114,11 +140,16 @@ public class Client {
      * @throws OrganAlreadyRegisteredException Thrown if the organ is set to true when it already is
      */
     public void setOrganDonationStatus(Organ organ, boolean value) throws OrganAlreadyRegisteredException {
-        if (value && organDonationStatus.get(organ)) {
-            throw new OrganAlreadyRegisteredException(organ.toString() + " is already registered for donation");
+        if (value) {
+            if (organsDonating.contains(organ)) {
+                throw new OrganAlreadyRegisteredException(organ.toString() + " is already registered for donation");
+            } else {
+                organsDonating.add(organ);
+            }
+        } else {
+            organsDonating.remove(organ);
         }
         addUpdate(organ.toString());
-        organDonationStatus.replace(organ, value);
     }
 
     /**
@@ -134,7 +165,7 @@ public class Client {
                 organsList = getOrganRequestStatus();
                 break;
             case "donations":
-                organsList = organDonationStatus;
+                organsList = getOrganDonationStatus();
                 break;
             default:
                 return "Invalid input";
@@ -312,14 +343,15 @@ public class Client {
     }
 
     public Map<Organ, Boolean> getOrganDonationStatus() {
+        Map<Organ, Boolean> organDonationStatus = new HashMap<>();
+        for (Organ organ : Organ.values()) {
+            organDonationStatus.put(organ, organsDonating.contains(organ));
+        }
         return organDonationStatus;
     }
 
     public Set<Organ> getCurrentlyDonatedOrgans() {
-        return organDonationStatus.entrySet().stream()
-                .filter(Entry::getValue)
-                .map(Entry::getKey)
-                .collect(Collectors.toCollection(() -> EnumSet.noneOf(Organ.class)));
+        return organsDonating;
     }
 
     public Set<Organ> getCurrentlyRequestedOrgans() {
@@ -366,6 +398,7 @@ public class Client {
      */
     public void addMedicationRecord(MedicationRecord record) {
         medicationHistory.add(record);
+        record.setClient(this);
         addUpdate("medicationHistory");
     }
 
@@ -375,6 +408,7 @@ public class Client {
      */
     public void deleteMedicationRecord(MedicationRecord record) {
         medicationHistory.remove(record);
+        record.setClient(null);
         addUpdate("medicationHistory");
     }
 
@@ -436,6 +470,7 @@ public class Client {
      */
     public void addIllnessRecord(IllnessRecord record) {
         illnessHistory.add(record);
+        record.setClient(this);
         addUpdate("illnessHistory");
     }
 
@@ -445,6 +480,7 @@ public class Client {
      */
     public void deleteIllnessRecord(IllnessRecord record) {
         illnessHistory.remove(record);
+        record.setClient(null);
         addUpdate("illnessHistory");
     }
 
@@ -474,6 +510,7 @@ public class Client {
      */
     public void addProcedureRecord(ProcedureRecord record) {
         procedures.add(record);
+        record.setClient(this);
         addUpdate("procedures");
     }
 
@@ -483,6 +520,7 @@ public class Client {
      */
     public void deleteProcedureRecord(ProcedureRecord record) {
         procedures.remove(record);
+        record.setClient(null);
         addUpdate("procedures");
     }
 
@@ -522,7 +560,7 @@ public class Client {
             return false;
         }
         Client client = (Client) o;
-        return client.uid == this.uid;
+        return client.uid.equals(this.uid);
     }
 
     /**
@@ -539,10 +577,12 @@ public class Client {
 
     public void addTransplantRequest(TransplantRequest request) {
         transplantRequests.add(request);
+        request.setClient(this);
     }
 
     public void removeTransplantRequest(TransplantRequest request) {
         transplantRequests.remove(request);
+        request.setClient(null);
     }
 
     public boolean isDonor() {

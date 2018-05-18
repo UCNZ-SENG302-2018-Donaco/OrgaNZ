@@ -4,23 +4,32 @@ import java.time.LocalDate;
 import java.util.EnumSet;
 import java.util.Set;
 
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import seng302.Utilities.Enums.Organ;
 
 @Entity
 @Table
+@Access(AccessType.FIELD)
 public class ProcedureRecord {
 
     @Id
     @GeneratedValue
-    private long id;
+    private Long id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "Client_uid")
+    private Client client;
     private String summary;
     private String description;
     private LocalDate date;
@@ -37,6 +46,10 @@ public class ProcedureRecord {
         this.date = date;
     }
 
+    public Client getClient() {
+        return client;
+    }
+
     public String getSummary() {
         return summary;
     }
@@ -51,6 +64,15 @@ public class ProcedureRecord {
 
     public Set<Organ> getAffectedOrgans() {
         return affectedOrgans;
+    }
+
+    /**
+     * This method should be called only when this record is added to/removed from a client's collection.
+     * Therefore it is package-private so it may only be called from Client.
+     * @param client The client to set this record as belonging to.
+     */
+    void setClient(Client client) {
+        this.client = client;
     }
 
     public void setSummary(String procedureSummary) {

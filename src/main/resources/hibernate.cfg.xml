@@ -30,6 +30,8 @@
     <property name="hibernate.current_session_context_class">org.hibernate.context.internal.ThreadLocalSessionContext</property>
 
     <!-- Mapping With Model Class Containing Annotations -->
+    <mapping class="seng302.Client"/>
+    <mapping class="seng302.TransplantRequest"/>
     <mapping class="seng302.MedicationRecord"/>
     <mapping class="seng302.IllnessRecord"/>
     <mapping class="seng302.ProcedureRecord"/>

@@ -95,7 +95,7 @@ public final class JSONConverter {
                     clients = gson.fromJson(reader, collectionType);
                     for (Client client : clients) {
                         for (TransplantRequest request : client.getTransplantRequests()) {
-                            request.setClient(client);
+                            //request.setClient(client); TODO: look at how this can be done whilst maintaining package
                         }
                     }
                     ClientManager clientManager = State.getClientManager();
