@@ -80,10 +80,15 @@ public class StaffListController extends SubController {
                     // The new value is null (the cell is now empty)
                     cell.setContextMenu(null);
                     cell.setStyle("");
-                } else if (newValue.equals(defaultAdministratorUsername) || newValue.equals(defaultClinicianId)) {
-                    // It is either the default admin username or default clinician id
+
+                } else if (newValue.equals(defaultAdministratorUsername)
+                        || newValue.equals(defaultClinicianId)
+                        || newValue.equals(State.getSession().getLoggedInAdministrator().getUsername())) {
+                    // It is either the default admin username or default clinician id, or the currently
+                    // logged-in admin
                     cell.setContextMenu(null);
                     cell.setStyle("-fx-background-color: grey");
+
                 } else {
                     // Normal cell, with a non-default staff member
                     cell.setContextMenu(contextMenu);

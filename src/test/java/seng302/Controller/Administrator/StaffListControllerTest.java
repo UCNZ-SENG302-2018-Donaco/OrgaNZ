@@ -134,7 +134,7 @@ public class StaffListControllerTest extends ControllerTest {
 
     @Test
     public void testUnableToDeleteDefaultSelf() {
-        String adminUsername = admin2.getUsername();
+        String adminUsername = admin1.getUsername();
 
         //check the administrator is in the list
         verifyThat("#staffList", hasListCell(adminUsername));
