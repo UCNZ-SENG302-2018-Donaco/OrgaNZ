@@ -10,7 +10,7 @@ import seng302.Clinician;
 import seng302.State.ClientManager;
 import seng302.State.State;
 import seng302.TransplantRequest;
-import seng302.TransplantRequest.RequestStatus;
+
 import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.TypeConverters.OrganConverter;
 

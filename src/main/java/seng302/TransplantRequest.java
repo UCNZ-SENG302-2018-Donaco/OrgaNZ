@@ -3,26 +3,12 @@ package seng302;
 import java.time.LocalDateTime;
 
 import seng302.Utilities.Enums.Organ;
+import seng302.Utilities.Enums.RequestStatus;
 
 /**
  * Represents a request for a client to receive a transplant for a given organ.
  */
 public class TransplantRequest {
-
-    public enum RequestStatus {
-        WAITING,
-        CANCELLED,
-        COMPLETED;
-
-        public static RequestStatus fromString(String text) {
-            for (RequestStatus rs : RequestStatus.values()) {
-                if (rs.toString().equalsIgnoreCase(text)) {
-                    return rs;
-                }
-            }
-            throw new IllegalArgumentException("Invalid request status.");
-        }
-    }
 
     private transient Client client;
     private Organ requestedOrgan;

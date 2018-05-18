@@ -1,18 +1,20 @@
 package seng302.Commands.Modify;
 
+
 import seng302.Actions.ActionInvoker;
 import seng302.Actions.Client.ResolveTransplantRequestAction;
 import seng302.Client;
-import seng302.Controller.Client.RequestOrgansController.ResolveReason;
 import seng302.State.ClientManager;
 import seng302.State.State;
 import seng302.TransplantRequest;
-import seng302.TransplantRequest.RequestStatus;
 import seng302.Utilities.Enums.Organ;
+import seng302.Utilities.Enums.RequestStatus;
+import seng302.Utilities.Enums.ResolveReason;
 import seng302.Utilities.TypeConverters.OrganConverter;
 
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
+import seng302.Utilities.TypeConverters.ResolveReasonConverter;
 
 @Command(name = "resolveorgan", description = "Resolves a users organ request.")
 public class ResolveOrgan implements Runnable {
@@ -34,11 +36,11 @@ public class ResolveOrgan implements Runnable {
     @Option(names = {"-u", "--uid"}, description = "User ID of user organ being requested", required = true)
     private int uid;
 
-    @Option(names = {"-o", "organ", "organType"}, description = "Organ type", converter = OrganConverter.class)
+    @Option(names = {"-o", "organ", "organType"}, description = "Organ type", required = true, converter = OrganConverter.class)
     private Organ organType;
 
-    @Option(names = {"-r", "-reason"}, description = "Reason for resolving request")
-    private String reason;
+    @Option(names = {"-r", "-reason"}, description = "Reason for resolving request", required = true, converter = ResolveReasonConverter.class)
+    private ResolveReason reason;
 
 
     public void run() {
@@ -60,7 +62,7 @@ public class ResolveOrgan implements Runnable {
             }
         }
         if (organCurrentlyRequested) {
-            // Resolve request.
+            // Resolve request
             ResolveReason rs = ResolveReason.CUSTOM;
 //            ResolveTransplantRequestAction(selectedTransplantRequest, rs, reason);
 //            client.getTransplantRequests();
