@@ -130,7 +130,7 @@ public class StaffListControllerTest extends ControllerTest {
     }
 
     @Test
-    public void testUnableToDeleteDefaultSelf() {
+    public void testUnableToDeleteSelf() {
         String adminUsername = admin1.getUsername();
 
         //check the administrator is in the list
