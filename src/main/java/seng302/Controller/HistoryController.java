@@ -58,15 +58,12 @@ public class HistoryController extends SubController {
 
     }
 
-    private void getSidebar() {
-        mainController.loadSidebar(sidebarPane);
-        mainController.loadMenuBar(menuBarPane);
-    }
 
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
         mainController.setTitle("Action history");
-        getSidebar();
+        mainController.loadSidebar(sidebarPane);
+        mainController.loadMenuBar(menuBarPane);
     }
 }

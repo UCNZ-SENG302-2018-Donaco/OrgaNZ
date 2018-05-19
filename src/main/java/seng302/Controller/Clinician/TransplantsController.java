@@ -52,8 +52,6 @@ public class TransplantsController extends SubController {
     @FXML
     private HBox menuBarPane;
 
-    @FXML
-    private HBox sidebarPane;
 
     @FXML
     private TableView<TransplantRequest> tableView;
@@ -146,7 +144,6 @@ public class TransplantsController extends SubController {
     public void setup(MainController mainController) {
         super.setup(mainController);
         mainController.setTitle("Transplant requests");
-        mainController.loadSidebar(sidebarPane);
         mainController.loadMenuBar(menuBarPane);
         refresh();
     }
