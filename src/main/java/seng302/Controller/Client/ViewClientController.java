@@ -50,7 +50,7 @@ public class ViewClientController extends SubController {
     private Client viewedClient;
 
     @FXML
-    private Pane sidebarPane, idPane, inputsPane;
+    private Pane sidebarPane, idPane, inputsPane, menuBarPane;
     @FXML
     private Label creationDate, lastModified, noClientLabel, fnameLabel, lnameLabel, dobLabel,
             dodLabel, heightLabel, weightLabel, ageDisplayLabel, ageLabel, BMILabel;
@@ -99,6 +99,7 @@ public class ViewClientController extends SubController {
             idPane.setManaged(false);
         } else if (windowContext.isClinViewClientWindow()) {
             viewedClient = windowContext.getViewClient();
+            mainController.loadMenuBar(menuBarPane);
         }
         id.setText(Integer.toString(viewedClient.getUid()));
         refresh();

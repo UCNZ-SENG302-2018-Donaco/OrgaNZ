@@ -25,7 +25,7 @@ public class MainController {
     private WindowContext windowContext;
     private String windowTitle;
     private SidebarController sidebarController;
-    private menuBarController menuBarController;
+    private MenuBarController MenuBarController;
     private SubController subController;
 
     /**
@@ -104,8 +104,8 @@ public class MainController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(Page.MENU_BAR.getPath()));
             HBox menuBar = loader.load();
-            menuBarController = loader.getController();
-            menuBarController.setup(this);
+            MenuBarController = loader.getController();
+            MenuBarController.setup(this);
             menuBarPane.getChildren().setAll(menuBar);
         } catch (IOException exc) {
             System.err.println("Couldn't load sidebar from fxml file.");

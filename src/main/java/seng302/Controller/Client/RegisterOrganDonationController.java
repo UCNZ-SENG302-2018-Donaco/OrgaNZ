@@ -41,7 +41,7 @@ public class RegisterOrganDonationController extends SubController {
     private Client client;
 
     @FXML
-    private Pane sidebarPane, idPane;
+    private Pane sidebarPane, idPane, menuBarPane;
     @FXML
     private CheckBox checkBoxLiver, checkBoxKidney, checkBoxPancreas, checkBoxHeart, checkBoxLung, checkBoxIntestine,
             checkBoxCornea, checkBoxMiddleEar, checkBoxSkin, checkBoxBone, checkBoxBoneMarrow, checkBoxConnTissue;
@@ -91,6 +91,7 @@ public class RegisterOrganDonationController extends SubController {
             idPane.setDisable(true);
         } else if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
+            mainController.loadMenuBar(menuBarPane);
         }
         fieldUserID.setText(Integer.toString(client.getUid()));
         updateUserID();

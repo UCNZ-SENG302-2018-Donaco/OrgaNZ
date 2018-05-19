@@ -56,7 +56,7 @@ public class ViewMedicationsController extends SubController {
     private DrugInteractionsHandler drugInteractionsHandler;
 
     @FXML
-    private Pane sidebarPane;
+    private Pane sidebarPane, menuBarPane;
 
     @FXML
     private TextField newMedField;
@@ -78,11 +78,11 @@ public class ViewMedicationsController extends SubController {
         invoker = State.getInvoker();
     }
 
-    public void setDrugInteractionsHandler(DrugInteractionsHandler handler) {
+    void setDrugInteractionsHandler(DrugInteractionsHandler handler) {
         this.drugInteractionsHandler = handler;
     }
 
-    public void setActiveIngredientsHandler(MedActiveIngredientsHandler handler) {
+    void setActiveIngredientsHandler(MedActiveIngredientsHandler handler) {
         this.activeIngredientsHandler = handler;
     }
 
@@ -148,6 +148,7 @@ public class ViewMedicationsController extends SubController {
             deleteButton.setDisable(true);
         } else if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
+            mainController.loadMenuBar(menuBarPane);
         }
 
         refreshMedicationLists();

@@ -50,7 +50,7 @@ public class ViewProceduresController extends SubController {
     @FXML
     private Pane sidebarPane;
     @FXML
-    private Pane newProcedurePane, procedureButtonsPane;
+    private Pane newProcedurePane, procedureButtonsPane, menuBarPane;
 
     @FXML
     private TextField summaryField;
@@ -260,6 +260,7 @@ public class ViewProceduresController extends SubController {
             affectedPastCol.setEditable(false);
         } else if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
+            mainController.loadMenuBar(menuBarPane);
         }
 
         mainController.setTitle("Procedures: " + client.getPreferredName());

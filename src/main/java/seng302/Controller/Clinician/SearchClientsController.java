@@ -37,9 +37,6 @@ public class SearchClientsController extends SubController {
     private TextField searchBox;
 
     @FXML
-    private HBox sidebarPane;
-
-    @FXML
     private HBox menuBarPane;
 
     @FXML
@@ -67,7 +64,6 @@ public class SearchClientsController extends SubController {
     public void setup(MainController mainController) {
         super.setup(mainController);
         mainController.setTitle("Client search");
-        mainController.loadSidebar(sidebarPane);
         mainController.loadMenuBar(menuBarPane);
     }
 

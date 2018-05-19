@@ -62,7 +62,7 @@ public class RequestOrgansController extends SubController {
     private FilteredList<TransplantRequest> pastRequests;
 
     @FXML
-    private Pane sidebarPane;
+    private Pane sidebarPane, menuBarPane;
     @FXML
     private HBox newRequestForm, resolveRequestBar;
     @FXML
@@ -228,6 +228,7 @@ public class RequestOrgansController extends SubController {
             resolveRequestBar.setVisible(false);
         } else if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
+            mainController.loadMenuBar(menuBarPane);
         }
 
         refresh();

@@ -46,7 +46,7 @@ public class ClientMedicalHistoryController extends SubController {
     private Client client;
 
     @FXML
-    private Pane sidebarPane;
+    private Pane sidebarPane, menuBarPane;
     @FXML
     private HBox newIllnessPane, illnessButtonsPane;
 
@@ -212,6 +212,7 @@ public class ClientMedicalHistoryController extends SubController {
             illnessButtonsPane.setManaged(false);
         } else if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
+            mainController.loadMenuBar(menuBarPane);
 
         }
 

@@ -31,9 +31,9 @@ import org.controlsfx.control.Notifications;
 /**
  * Controller for the sidebar pane imported into every page in the main part of the GUI.
  */
-public class menuBarController extends SubController {
+public class MenuBarController extends SubController {
 
-    private static final Logger LOGGER = Logger.getLogger(menuBarController.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(MenuBarController.class.getName());
 
     private static final String ERROR_SAVING_MESSAGE = "There was an error saving to the file specified.";
     private static final String ERROR_LOADING_MESSAGE = "There was an error loading the file specified.";
@@ -56,7 +56,6 @@ public class menuBarController extends SubController {
     public MenuItem saveItem;
     public MenuItem loadItem;
 
-
     public Menu clientPrimaryItem;
     public Menu organPrimaryItem;
     public Menu medicationsPrimaryItem;
@@ -65,15 +64,13 @@ public class menuBarController extends SubController {
     public Menu profilePrimaryItem;
     public Menu filePrimaryItem;
 
-
-
     private ActionInvoker invoker;
     private Session session;
 
     /**
      * Gets the ActionInvoker from the current state.
      */
-    public menuBarController() {
+    public MenuBarController() {
         invoker = State.getInvoker();
         session = State.getSession();
     }
@@ -83,38 +80,42 @@ public class menuBarController extends SubController {
         super.setup(controller);
         UserType userType = session.getLoggedInUserType();
 
-        Menu jumboMenu[] = {clientPrimaryItem, organPrimaryItem, medicationsPrimaryItem, staffPrimaryItem,
-                transplantsPrimaryItem, filePrimaryItem, profilePrimaryItem};
-        Menu viewClientMenu[] = {clientPrimaryItem, organPrimaryItem, medicationsPrimaryItem};
-        Menu viewClinicianMenu[] = {clientPrimaryItem, transplantsPrimaryItem, profilePrimaryItem};
-        Menu viewAdminMenu[] = {clientPrimaryItem, staffPrimaryItem, transplantsPrimaryItem, filePrimaryItem,
+        Menu viewAllMenus[] = {clientPrimaryItem, organPrimaryItem, medicationsPrimaryItem, staffPrimaryItem,
+                transplantsPrimaryItem, profilePrimaryItem, filePrimaryItem};
+        Menu viewClinicianMenu[] = {transplantsPrimaryItem, profilePrimaryItem};
+        Menu viewAdminMenu[] = {staffPrimaryItem, transplantsPrimaryItem, filePrimaryItem,
                 profilePrimaryItem};
 
-        if (userType == UserType.CLIENT) {
-            hideMenus(jumboMenu);
-        }
-         else if (userType == UserType.CLINICIAN) {
-            hideMenuItem(createAdministratorItem);
-            hideMenuItem(staffPrimaryItem);
-            hideMenuItem(filePrimaryItem);
-            hideMenuItem(cliItem);
-            hideMenuItem(organPrimaryItem);
-            hideMenuItem(medicationsPrimaryItem);
-            hideMenuItem(viewClientItem);
-            hideMenuItem(viewAdministratorItem);
+        if (userType == UserType.CLINICIAN) {
 
-
-            //TODO add administrator rights
+            if (windowContext.isClinViewClientWindow()) {
+                hideMenus(viewAdminMenu);
+                hideMenuItem(searchClientItem);
+                hideMenus(viewClinicianMenu);
+            }
+            else if (!windowContext.isClinViewClientWindow()){
+                hideMenuItem(createAdministratorItem);
+                hideMenuItem(staffPrimaryItem);
+                hideMenuItem(filePrimaryItem);
+                hideMenuItem(cliItem);
+                hideMenuItem(organPrimaryItem);
+                hideMenuItem(medicationsPrimaryItem);
+                hideMenuItem(viewClientItem);
+                hideMenuItem(viewAdministratorItem);
+            }
         }
-        //else if (userType == UserType.ADMINISTRATOR) {
-           // hideMenus(viewClinicianMenu);
-          //  hideMenus(viewClientMenu);
-       // }
 
-        if (windowContext.isClinViewClientWindow()) {
-            hideMenus(viewClinicianMenu);
-            hideMenus(viewAdminMenu);
+        if (userType == UserType.CLIENT == true) {
+            hideMenus(viewAllMenus);
         }
+
+        //TODO add administrator rights
+        /*
+        if (userType == UserType.ADMIN) {
+            if (windowContext.isClinViewClientWindow() == true) {
+                hideMenus(viewClinicianMenu);
+            }
+        }*/
 
 
         //undoButton.setDisable(!invoker.canUndo());
