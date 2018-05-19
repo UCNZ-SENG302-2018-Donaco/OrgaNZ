@@ -10,7 +10,6 @@ import java.util.logging.Logger;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
@@ -32,9 +31,9 @@ import org.controlsfx.control.Notifications;
 /**
  * Controller for the sidebar pane imported into every page in the main part of the GUI.
  */
-public class MenubarController extends SubController {
+public class menuBarController extends SubController {
 
-    private static final Logger LOGGER = Logger.getLogger(MenubarController.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(menuBarController.class.getName());
 
     private static final String ERROR_SAVING_MESSAGE = "There was an error saving to the file specified.";
     private static final String ERROR_LOADING_MESSAGE = "There was an error loading the file specified.";
@@ -74,7 +73,7 @@ public class MenubarController extends SubController {
     /**
      * Gets the ActionInvoker from the current state.
      */
-    public MenubarController() {
+    public menuBarController() {
         invoker = State.getInvoker();
         session = State.getSession();
     }
@@ -91,11 +90,13 @@ public class MenubarController extends SubController {
         Menu viewAdminMenu[] = {clientPrimaryItem, staffPrimaryItem, transplantsPrimaryItem, filePrimaryItem,
                 profilePrimaryItem};
 
-        if (userType == UserType.CLIENT || windowContext.isClinViewClientWindow()) {
+        if (userType == UserType.CLIENT) {
             hideMenus(jumboMenu);
-        } else if (userType == UserType.CLINICIAN) {
-            hideMenus(viewAdminMenu);
+        }
+         else if (userType == UserType.CLINICIAN) {
             hideMenus(viewClientMenu);
+            //hideMenus(viewAdminMenu);
+
 
             //TODO add administrator rights
         }

@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.layout.HBox?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.MenubarController">
-  <MenuBar layoutX="82.0" layoutY="14.0">
+
+<HBox maxWidth="1.7976931348623157E308" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.111"
+      xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.menuBarController">
+  <MenuBar maxWidth="1.7976931348623157E308" minWidth="-Infinity" HBox.hgrow="ALWAYS">
     <Menu fx:id="clientPrimaryItem" mnemonicParsing="false" text="Client">
       <MenuItem fx:id="searchClientItem" mnemonicParsing="false" text="Search"/>
       <MenuItem fx:id="viewClientItem" mnemonicParsing="false" text="View Client Profile"/>
@@ -38,4 +42,4 @@
       <MenuItem fx:id="logOutItem" mnemonicParsing="false" text="Log Out"/>
     </Menu>
   </MenuBar>
-</AnchorPane>
+</HBox>
