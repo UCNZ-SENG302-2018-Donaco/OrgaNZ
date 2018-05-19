@@ -37,7 +37,7 @@ public class ViewClinicianController extends SubController {
     private String updatedPassword;
 
     @FXML
-    private Pane sidebarPane, idPane, inputsPane;
+    private Pane menuBarPane, sidebarPane, idPane, inputsPane;
     @FXML
     private Label creationDate, lastModified, fnameLabel, lnameLabel, passwordLabel;
     @FXML
@@ -73,6 +73,7 @@ public class ViewClinicianController extends SubController {
         super.setup(mainController);
         mainController.setTitle("Clinician profile: " + currentClinician.getFullName());
         mainController.loadSidebar(sidebarPane);
+        mainController.loadMenuBar(menuBarPane);
     }
 
     @Override

@@ -27,7 +27,7 @@ public class HistoryController extends SubController {
     @FXML
     private TableView<HistoryItem> historyTable;
     @FXML
-    private Pane sidebarPane;
+    private Pane menuBarPane,sidebarPane;
 
     /**
      * Initializes the UI for this page.
@@ -60,6 +60,7 @@ public class HistoryController extends SubController {
 
     private void getSidebar() {
         mainController.loadSidebar(sidebarPane);
+        mainController.loadMenuBar(menuBarPane);
     }
 
     @Override

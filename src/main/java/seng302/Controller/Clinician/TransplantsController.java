@@ -50,6 +50,9 @@ public class TransplantsController extends SubController {
     private static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("d MMM yyyy hh:mm a");
 
     @FXML
+    private HBox menuBarPane;
+
+    @FXML
     private HBox sidebarPane;
 
     @FXML
@@ -144,6 +147,7 @@ public class TransplantsController extends SubController {
         super.setup(mainController);
         mainController.setTitle("Transplant requests");
         mainController.loadSidebar(sidebarPane);
+        mainController.loadMenuBar(menuBarPane);
         refresh();
     }
 

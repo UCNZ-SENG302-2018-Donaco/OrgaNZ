@@ -94,8 +94,14 @@ public class menuBarController extends SubController {
             hideMenus(jumboMenu);
         }
          else if (userType == UserType.CLINICIAN) {
-            hideMenus(viewClientMenu);
-            //hideMenus(viewAdminMenu);
+            hideMenuItem(createAdministratorItem);
+            hideMenuItem(staffPrimaryItem);
+            hideMenuItem(filePrimaryItem);
+            hideMenuItem(cliItem);
+            hideMenuItem(organPrimaryItem);
+            hideMenuItem(medicationsPrimaryItem);
+            hideMenuItem(viewClientItem);
+            hideMenuItem(viewAdministratorItem);
 
 
             //TODO add administrator rights
