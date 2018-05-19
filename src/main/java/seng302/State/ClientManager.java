@@ -18,6 +18,8 @@ import seng302.TransplantRequest;
 
 public class ClientManager {
 
+    
+
     private ArrayList<Client> clients;
 
     public ClientManager() {

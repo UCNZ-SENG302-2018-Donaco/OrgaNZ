@@ -18,12 +18,12 @@ public class DBManagerTest {
     private DBManager dbManager;
 
     @Before
-    public void setUp() {
-        dbManager = new DBManager();
+    public void setUp() { dbManager = DBManager.getInstance();
     }
 
     @Test
     public void main() throws Exception {
+
         // Testing that the database works.
         MedicationRecord medRecord = new MedicationRecord("droog", LocalDate.now(), null);
         dbManager.saveEntity(medRecord);

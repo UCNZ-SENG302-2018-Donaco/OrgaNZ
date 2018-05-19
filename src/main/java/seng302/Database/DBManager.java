@@ -1,6 +1,5 @@
 package seng302.Database;
 
-
 import java.util.Set;
 import javax.persistence.PersistenceException;
 import javax.persistence.RollbackException;
@@ -12,28 +11,19 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
 
-
 /**
  * A handler for all database requests.
  * Uses a Hibernate SessionFactory (that can be dependency-injected) for all database interactions.
  */
 public class DBManager {
 
-    private SessionFactory sessionFactory;
-
-    /**
-     * Builds the default Hibernate SessionFactory based on the Hibernate config file.
-     * @return A new Hibernate SessionFactory.
-     */
-    private static SessionFactory buildSessionFactory() {
-        return new Configuration().configure("hibernate.cfg.xml").buildSessionFactory();
-    }
+    private static DBManager dbManager = new DBManager();
 
     /**
      * Default no-args constructor that sets the manager's SessionFactory to the default one returned by
      * {@link #buildSessionFactory()}.
      */
-    public DBManager() {
+    private DBManager() {
         this.sessionFactory = buildSessionFactory();
     }
 
@@ -41,8 +31,22 @@ public class DBManager {
      * Constructor that can be used to dependency-inject the manager's SessionFactory.
      * @param sessionFactory The SessionFactory for this manager to use for its database interactions.
      */
-    public DBManager(SessionFactory sessionFactory) {
+    protected DBManager(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
+    }
+
+    private SessionFactory sessionFactory;
+
+    /**
+     * Builds the default Hibernate SessionFactory based on the Hibernate config file.
+     * @return A new Hibernate SessionFactory.
+     */
+    protected static SessionFactory buildSessionFactory() {
+        return new Configuration().configure("hibernate.cfg.xml").buildSessionFactory();
+    }
+
+    public static DBManager getInstance() {
+        return dbManager;
     }
 
     /**
@@ -53,7 +57,7 @@ public class DBManager {
      * table within the database.
      * @throws PersistenceException If an error occurs when saving the entity to the database.
      */
-    public void saveEntity(Object entity) throws PersistenceException {
+    protected void saveEntity(Object entity) throws PersistenceException {
         Transaction trns = null;
         try (Session session = sessionFactory.getCurrentSession()) {
             trns = session.beginTransaction();
@@ -67,7 +71,7 @@ public class DBManager {
         }
     }
 
-    public Set<MedicationRecord> retrieveAllMedicationRecords() {
+    protected Set<MedicationRecord> retrieveAllMedicationRecords() {
         return null;
     }
 }
