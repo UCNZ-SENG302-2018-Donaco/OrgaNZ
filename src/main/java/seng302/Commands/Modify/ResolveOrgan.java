@@ -1,6 +1,7 @@
 package seng302.Commands.Modify;
 
 
+import seng302.Actions.Action;
 import seng302.Actions.ActionInvoker;
 import seng302.Actions.Client.ResolveTransplantRequestAction;
 import seng302.Client;
@@ -16,6 +17,10 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import seng302.Utilities.TypeConverters.ResolveReasonConverter;
 
+/**
+ * A command to allow admins to resolve the organ request of a client if it exists with reasoning of why it is being
+ * resolved.
+ */
 @Command(name = "resolveorgan", description = "Resolves a users organ request.")
 public class ResolveOrgan implements Runnable {
 
@@ -40,11 +45,17 @@ public class ResolveOrgan implements Runnable {
     private Organ organType;
 
     @Option(names = {"-r", "-reason"}, description = "Reason for resolving request", required = true, converter = ResolveReasonConverter.class)
-    private ResolveReason reason;
+    private ResolveReason resolveReason;
+
+    @Option(names = {"-m, -message"}, description = "Message for why the request was resolved")
+    private String message;
 
 
+    /**
+     * Runs the resolve organ command
+     */
     public void run() {
-        //resolveorgan -u=1 -o=liver -r="input error"
+        //resolveorgan -u 1 -o liver -r "input error"
         client = State.getClientManager().getClientByID(uid);
         if (client == null) {
             System.out.println("No client exists with that user ID");
@@ -62,13 +73,42 @@ public class ResolveOrgan implements Runnable {
             }
         }
         if (organCurrentlyRequested) {
-            // Resolve request
-            ResolveReason rs = ResolveReason.CUSTOM;
-//            ResolveTransplantRequestAction(selectedTransplantRequest, rs, reason);
-//            client.getTransplantRequests();
-
+            resolveRequest(selectedTransplantRequest);
         } else {
-            System.out.println("User is not currently requesting this organ.");
+            System.out.println(client.getFullName() + " is not currently requesting this organ.");
+        }
+    }
+
+    /**
+     * Helper function to resolve a request and excecute the action if a valid custom reason has been given.
+     * @param selectedTransplantRequest the transplant request potentially being resolved.
+     */
+    private void resolveRequest(TransplantRequest selectedTransplantRequest) {
+        Action action = null;
+        if (resolveReason == ResolveReason.COMPLETED) {
+            action = new ResolveTransplantRequestAction(selectedTransplantRequest, RequestStatus.COMPLETED, "Transplant took place.");
+
+        } else if (resolveReason == ResolveReason.DECEASED) {
+
+
+        } else if (resolveReason == ResolveReason.CURED) {
+            action = new ResolveTransplantRequestAction(selectedTransplantRequest, RequestStatus.CANCELLED, "The disease was cured.");
+
+        } else if (resolveReason == ResolveReason.ERROR) {
+            action = new ResolveTransplantRequestAction(selectedTransplantRequest, RequestStatus.CANCELLED, "Request was a mistake.");
+
+        } else if (resolveReason == ResolveReason.CUSTOM) {
+            if (message != null) {
+                action = new ResolveTransplantRequestAction(selectedTransplantRequest, RequestStatus.CANCELLED,
+                        message);
+            } else {
+                System.out.println("Custom resolve reason must have a message specified for why the organ has been "
+                        + "resolved. The request is still active.");
+            }
+        }
+        if (action != null) {
+            invoker.execute(action);
+            System.out.println("Organ request has successfully been resolved.");
         }
     }
 }

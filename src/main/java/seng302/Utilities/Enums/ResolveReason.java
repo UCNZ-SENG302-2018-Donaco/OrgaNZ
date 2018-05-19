@@ -1,5 +1,8 @@
 package seng302.Utilities.Enums;
 
+/**
+ * Enum for resolve reasons. Allows for to/from string conversion
+ */
 public enum ResolveReason {
     ERROR("Input error"),
     COMPLETED("Transplant completed"),

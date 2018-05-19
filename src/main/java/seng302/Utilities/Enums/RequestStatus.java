@@ -1,5 +1,8 @@
 package seng302.Utilities.Enums;
 
+/**
+ * Enum for Request statuses. Allows for to/from string conversion
+ */
 public enum RequestStatus {
     WAITING,
     CANCELLED,
