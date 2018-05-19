@@ -1,16 +1,15 @@
 package seng302.State;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import javax.persistence.RollbackException;
 
 import seng302.Client;
 import seng302.Database.DBManager;
 import seng302.TransplantRequest;
 
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
@@ -59,12 +58,32 @@ public class ClientManagerDBPure implements ClientManager {
 
     @Override
     public Client getClientByID(int id) {
-        return null;
+        return dbManager.getDBSession().find(Client.class, id);
     }
 
     @Override
     public boolean collisionExists(String firstName, String lastName, LocalDate dateOfBirth) {
-        return false;
+        boolean collision = false;
+        Transaction trns = null;
+
+        try (Session session = dbManager.getDBSession()) {
+            trns = session.beginTransaction();
+            collision = dbManager.getDBSession().createQuery("SELECT c FROM Client c "
+                    + "WHERE c.firstName = :firstName "
+                    + "AND c.lastName = :lastName "
+                    + "AND c.dateOfBirth = :dateOfBirth", Client.class)
+                    .setParameter("firstName", firstName)
+                    .setParameter("lastName", lastName)
+                    .setParameter("dateOfBirth", dateOfBirth)
+                    .getResultList().size() > 0;
+            trns.commit();
+        } catch (RollbackException exc) {
+            if (trns != null) {
+                trns.rollback();
+            }
+        }
+
+        return collision;
     }
 
     @Override

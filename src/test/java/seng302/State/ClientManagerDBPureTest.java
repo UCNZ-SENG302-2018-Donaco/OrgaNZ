@@ -11,4 +11,9 @@ public class ClientManagerDBPureTest {
         System.out.println(test.getClients());
 
     }
+
+    @Test
+    public void collisionExistsTest() {
+
+    }
 }
