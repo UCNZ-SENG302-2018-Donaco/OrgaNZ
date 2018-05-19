@@ -1,12 +1,9 @@
 package seng302.Utilities.Web;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.List;
 
 import seng302.Client;
 import seng302.Utilities.CacheManager;
@@ -15,12 +12,14 @@ import seng302.Utilities.Exceptions.BadDrugNameException;
 import seng302.Utilities.Exceptions.BadGatewayException;
 
 import com.google.api.client.testing.http.MockHttpTransport;
+import org.junit.Assert;
 import org.junit.Test;
 
-public class DrugInteractionsHandlerTest {
+public class CacheTest {
     @Test
-    public void testValidDrugInteractions() {
-        CacheManager.INSTANCE = new MockCacheManager();
+    public void testCaching() {
+        MockCacheManager mockCacheManager = new MockCacheManager();
+        CacheManager.INSTANCE = mockCacheManager;
 
         String EXPECTED_RESPONSE_BODY = "{\"age_interaction\":{\"0-1\":[\"foetal exposure during pregnancy\","
                 + "\"congenital arterial malformation\",\"premature baby\",\"ventricular septal defect\","
@@ -73,19 +72,14 @@ public class DrugInteractionsHandlerTest {
         Client client = new Client("first", null, "last", LocalDate.now().minusYears(32).minusDays(10), 0);
         client.setGender(Gender.FEMALE);
 
-        List<String> interactions = Collections.emptyList();
+        Assert.assertTrue(mockCacheManager.isEmpty());
+
         try {
-            interactions = handler.getInteractions(client, "leflunomide", "prednisone");
+            handler.getInteractions(client, "leflunomide", "prednisone");
         } catch (IOException | BadDrugNameException | BadGatewayException e) {
             fail(e.getMessage());
         }
-        assertEquals(7, interactions.size());
-        assertEquals("pain (1 - 6 months, 2 - 5 years)", interactions.get(0));
-        assertEquals("fatigue", interactions.get(1));
-        assertEquals("arthralgia (2 - 5 years)", interactions.get(2));
-        assertEquals("pain in extremity", interactions.get(3));
-        assertEquals("drug ineffective (1 month - 5 years, 10+ years)", interactions.get(4));
-        assertEquals("headache", interactions.get(5));
-        assertEquals("nausea (1 - 12 months)", interactions.get(6));
+
+        Assert.assertTrue(!mockCacheManager.isEmpty());
     }
 }

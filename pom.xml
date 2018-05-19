@@ -127,6 +127,11 @@
       <scope>system</scope>
       <systemPath>${project.basedir}/lib/openjfx-monocle-8u76-b04.jar</systemPath>
     </dependency>
+    <dependency>
+      <groupId>net.java.dev.jna</groupId>
+      <artifactId>jna-platform</artifactId>
+      <version>4.5.1</version>
+    </dependency>
   </dependencies>
 
   <build>

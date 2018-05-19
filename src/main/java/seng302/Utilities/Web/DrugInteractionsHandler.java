@@ -3,6 +3,7 @@ package seng302.Utilities.Web;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import seng302.Client;
 import seng302.Utilities.Exceptions.BadDrugNameException;
@@ -15,6 +16,7 @@ import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonObjectParser;
+import com.google.gson.reflect.TypeToken;
 
 /**
  * A handler for requests to a drug interaction API.
@@ -56,7 +58,7 @@ public class DrugInteractionsHandler extends WebAPIHandler {
      * @param drug2 The second drug name to use for the request.
      * @return The URL for the request.
      */
-    private GenericUrl createURL(String drug1, String drug2) {
+    private static GenericUrl createURL(String drug1, String drug2) {
         // Drug names containing '/' will mess with the urls of the web api
         drug1 = drug1.replaceAll("/", "");
         drug2 = drug2.replaceAll("/", "");
@@ -93,6 +95,11 @@ public class DrugInteractionsHandler extends WebAPIHandler {
      */
     public List<String> getInteractions(Client client, String drug1, String drug2)
             throws IOException, BadDrugNameException, BadGatewayException {
+        Optional<List<String>> cachedResponse = getCachedData(new TypeToken<List<String>>() {}.getType(), drug1, drug2);
+        if (cachedResponse.isPresent()) {
+            return cachedResponse.get();
+        }
+
         try {
             HttpResponse response = makeRequest(createURL(drug1, drug2));
             int statusCode = response.getStatusCode();
@@ -107,21 +114,30 @@ public class DrugInteractionsHandler extends WebAPIHandler {
                 }
             }
 
-            if (statusCode == OK) {
+            return addCachedData(handleInteractionsResponse(client, response, statusCode), drug1, drug2);
+        } catch (IOException exc) {
+            throw new IOException("The drug interactions API could not be reached. "
+                    + "Check your internet connection and try again.", exc);
+        }
+    }
+
+    /**
+     * Using the response data, returns a formatted interaction response.
+     */
+    private static List<String> handleInteractionsResponse(Client client, HttpResponse response, int statusCode)
+            throws IOException, BadDrugNameException, BadGatewayException {
+        switch (statusCode) {
+            case OK:
                 DrugInteractionsResponse interactionsResponse = response.parseAs(DrugInteractionsResponse.class);
                 return interactionsResponse.calculateClientInteractions(client);
-            } else if (statusCode == STUDY_NOT_DONE) {
+            case STUDY_NOT_DONE:
                 return Collections.emptyList();
-            } else if (statusCode == BAD_DRUG_NAME) {
+            case BAD_DRUG_NAME:
                 throw new BadDrugNameException("One or both of the drug names are invalid.");
-            } else if (statusCode == BAD_GATEWAY) {
+            case BAD_GATEWAY:
                 throw new BadGatewayException("The drug interactions web API could not retrieve the results.");
-            } else {
+            default:
                 throw new IllegalArgumentException("The drug interactions API responded in an unexpected way.");
-            }
-        } catch (IOException exc) {
-            throw new IOException("The drug interactions API could not be reached. Check your internet connection and"
-                    + " try again.");
         }
     }
 }

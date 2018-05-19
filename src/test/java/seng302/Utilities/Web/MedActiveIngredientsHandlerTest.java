@@ -8,16 +8,19 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import seng302.Utilities.CacheManager;
+
 import com.google.api.client.http.HttpTransport;
 import org.junit.Test;
 
 public class MedActiveIngredientsHandlerTest {
-
     private HttpTransport mockTransport;
     private MedActiveIngredientsHandler handler;
 
     @Test
     public void getActiveIngredients1() {
+        CacheManager.INSTANCE = new MockCacheManager();
+
         final String EXPECTED_RESPONSE_BODY = "[\"Hydralazine hydrochloride; hydrochlorothiazide; reserpine\",\"Hydroch"
                 + "lorothiazide; reserpine\",\"Hydroflumethiazide; reserpine\",\"Reserpine\"]";
 
