@@ -1,10 +1,7 @@
 package seng302.Database;
 
-import java.util.Set;
 import javax.persistence.PersistenceException;
 import javax.persistence.RollbackException;
-
-import seng302.MedicationRecord;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -41,12 +38,22 @@ public class DBManager {
      * Builds the default Hibernate SessionFactory based on the Hibernate config file.
      * @return A new Hibernate SessionFactory.
      */
-    protected static SessionFactory buildSessionFactory() {
+    private static SessionFactory buildSessionFactory() {
         return new Configuration().configure("hibernate.cfg.xml").buildSessionFactory();
     }
 
     public static DBManager getInstance() {
         return dbManager;
+    }
+
+    /**
+     * Returns a new DB session that can be used for executing database requests. IMPORTANT: This should only by used
+     * by classes that are inherently coupled to using a database, e.g. ClientManagerDBPure. You should always avoid
+     * using this if there is any other alternative (e.g. using methods from a ClientManager instead).
+     * @return A new DB session.
+     */
+    public Session getDBSession() {
+        return sessionFactory.getCurrentSession();
     }
 
     /**
@@ -57,9 +64,9 @@ public class DBManager {
      * table within the database.
      * @throws PersistenceException If an error occurs when saving the entity to the database.
      */
-    protected void saveEntity(Object entity) throws PersistenceException {
+    public void saveEntity(Object entity) throws PersistenceException {
         Transaction trns = null;
-        try (Session session = sessionFactory.getCurrentSession()) {
+        try (Session session = getDBSession()) {
             trns = session.beginTransaction();
             session.save(entity);
             trns.commit();
@@ -69,9 +76,5 @@ public class DBManager {
             }
             throw new PersistenceException("An error occurred while saving an entity: \n" + exc.getMessage());
         }
-    }
-
-    protected Set<MedicationRecord> retrieveAllMedicationRecords() {
-        return null;
     }
 }
