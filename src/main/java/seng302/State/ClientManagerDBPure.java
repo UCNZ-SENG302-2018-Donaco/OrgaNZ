@@ -1,6 +1,7 @@
 package seng302.State;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import javax.persistence.RollbackException;
@@ -11,7 +12,6 @@ import seng302.TransplantRequest;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-import org.hibernate.query.Query;
 
 /**
  * A pure database implementation of {@link ClientManager} that uses a database to store clients, then retrieves them
@@ -31,29 +31,61 @@ public class ClientManagerDBPure implements ClientManager {
 
     @Override
     public List<Client> getClients() {
-        Session session = dbManager.getDBSession();
-        Transaction transaction = session.beginTransaction();
-        Query<Client> query = session.createQuery("from Client", Client.class);
-        List<Client> result = query.getResultList();
-        transaction.commit();
-        return result;
+        List<Client> clients = null;
+        Transaction trns = null;
 
+        try (Session session = dbManager.getDBSession()) {
+            trns = session.beginTransaction();
+            clients = dbManager.getDBSession()
+                    .createQuery("FROM Client", Client.class)
+                    .getResultList();
+            trns.commit();
+        } catch (RollbackException exc) {
+            if (trns != null) {
+                trns.rollback();
+            }
+        }
 
+        return clients == null ? new ArrayList<>() : clients;
     }
 
     @Override
     public void setClients(Collection<Client> clients) {
+        Transaction trns = null;
+        try (Session session = dbManager.getDBSession()) {
+            trns = session.beginTransaction();
 
+            for (Client client : clients) {
+                session.save(client);
+            }
+
+            trns.commit();
+        } catch (RollbackException exc) {
+            if (trns != null) {
+                trns.rollback();
+            }
+        }
     }
 
     @Override
     public void addClient(Client client) {
-
+        dbManager.saveEntity(client);
     }
 
     @Override
     public void removeClient(Client client) {
+        Transaction trns = null;
+        try (Session session = dbManager.getDBSession()) {
+            trns = session.beginTransaction();
 
+            dbManager.getDBSession().remove(client);
+
+            trns.commit();
+        } catch (RollbackException exc) {
+            if (trns != null) {
+                trns.rollback();
+            }
+        }
     }
 
     @Override
@@ -93,11 +125,42 @@ public class ClientManagerDBPure implements ClientManager {
 
     @Override
     public Collection<TransplantRequest> getAllTransplantRequests() {
-        return null;
+        List<TransplantRequest> requests = null;
+        Transaction trns = null;
+
+        try (Session session = dbManager.getDBSession()) {
+            trns = session.beginTransaction();
+            requests = dbManager.getDBSession()
+                    .createQuery("FROM TransplantRequest", TransplantRequest.class)
+                    .getResultList();
+            trns.commit();
+        } catch (RollbackException exc) {
+            if (trns != null) {
+                trns.rollback();
+            }
+        }
+
+        return requests == null ? new ArrayList<>() : requests;
     }
 
     @Override
     public Collection<TransplantRequest> getAllCurrentTransplantRequests() {
-        return null;
+        List<TransplantRequest> requests = null;
+        Transaction trns = null;
+
+        try (Session session = dbManager.getDBSession()) {
+            trns = session.beginTransaction();
+            requests = dbManager.getDBSession()
+                    .createQuery("SELECT req FROM TransplantRequest req "
+                            + "WHERE req.status = RequestStatus.WAITING", TransplantRequest.class)
+                    .getResultList();
+            trns.commit();
+        } catch (RollbackException exc) {
+            if (trns != null) {
+                trns.rollback();
+            }
+        }
+
+        return requests == null ? new ArrayList<>() : requests;
     }
 }
