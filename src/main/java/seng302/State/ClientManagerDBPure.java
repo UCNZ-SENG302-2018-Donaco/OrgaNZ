@@ -1,12 +1,18 @@
 package seng302.State;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import seng302.Client;
 import seng302.Database.DBManager;
 import seng302.TransplantRequest;
+
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.query.Query;
 
 /**
  * A pure database implementation of {@link ClientManager} that uses a database to store clients, then retrieves them
@@ -26,6 +32,13 @@ public class ClientManagerDBPure implements ClientManager {
 
     @Override
     public List<Client> getClients() {
+        Session session = dbManager.getDBSession();
+        Transaction transaction = session.beginTransaction();
+        Query<Client> query = session.createQuery("from Client", Client.class);
+        List<Client> result = query.getResultList();
+        transaction.commit();
+        return result;
+
 
     }
 
