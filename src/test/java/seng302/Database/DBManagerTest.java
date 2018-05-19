@@ -3,6 +3,7 @@ package seng302.Database;
 import java.time.LocalDate;
 
 import seng302.Client;
+import seng302.Clinician;
 import seng302.IllnessRecord;
 import seng302.MedicationRecord;
 import seng302.ProcedureRecord;
@@ -15,28 +16,26 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class DBManagerTest {
+
     private DBManager dbManager;
 
     @Before
-    public void setUp() { dbManager = DBManager.getInstance();
+    public void setUp() {
+        dbManager = DBManager.getInstance();
     }
 
     @Test
     public void main() throws Exception {
-
         // Testing that the database works.
         MedicationRecord medRecord = new MedicationRecord("droog", LocalDate.now(), null);
-        dbManager.saveEntity(medRecord);
 
         IllnessRecord illRecord = new IllnessRecord("the cray crays", LocalDate.now().minusYears(1),
                 LocalDate.now(), false);
-        dbManager.saveEntity(illRecord);
 
         ProcedureRecord procRecord = new ProcedureRecord("got cut open", "etc", LocalDate.now());
         procRecord.getAffectedOrgans().add(Organ.HEART);
         procRecord.getAffectedOrgans().add(Organ.LIVER);
         procRecord.getAffectedOrgans().add(Organ.SKIN);
-        dbManager.saveEntity(procRecord);
 
         Client client = new Client("Testboi", null, "Testerson", LocalDate.now().minusYears(49), 1);
         client.setDateOfDeath(LocalDate.now());
@@ -51,5 +50,9 @@ public class DBManagerTest {
         client.addIllnessRecord(illRecord);
         client.addProcedureRecord(procRecord);
         dbManager.saveEntity(client);
+
+        Clinician clinician = new Clinician("Testwoman", "Malorie", "Testerson", "The Moon", Region.NELSON,
+                1001, "therecanbeonlyone");
+        dbManager.saveEntity(clinician);
     }
 }

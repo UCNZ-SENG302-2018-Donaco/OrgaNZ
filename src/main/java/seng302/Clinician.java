@@ -2,29 +2,45 @@ package seng302;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 import seng302.Utilities.Enums.Region;
 
 /**
  * The main Clinician class.
  */
+@Entity
+@Table
 public class Clinician {
 
-    private final int staffId;
-
-    private final LocalDateTime created_on;
-    private LocalDateTime modified_on;
-    private ArrayList<String> updateLog = new ArrayList<>();
-
+    @Id
+    private Integer staffId;
     private String firstName;
     private String lastName;
     private String middleName;
-
     private String workAddress;
+    private String password;
+
+    @Enumerated(EnumType.STRING)
     private Region region;
 
-    private String password;
+    private final LocalDateTime created_on;
+    private LocalDateTime modified_on;
+
+    @ElementCollection
+    private List<String> updateLog = new ArrayList<>();
+
+    protected Clinician() {
+        created_on = LocalDateTime.now();
+    }
 
     /**
      * Create a new Clinician object
@@ -59,7 +75,7 @@ public class Clinician {
         return created_on;
     }
 
-    public ArrayList<String> getUpdateLog() {
+    public List<String> getUpdateLog() {
         return updateLog;
     }
 
@@ -153,7 +169,7 @@ public class Clinician {
             return false;
         }
         Clinician clinician = (Clinician) o;
-        return clinician.staffId == this.staffId;
+        return clinician.staffId.equals(this.staffId);
     }
 
     /**

@@ -35,5 +35,6 @@
     <mapping class="seng302.MedicationRecord"/>
     <mapping class="seng302.IllnessRecord"/>
     <mapping class="seng302.ProcedureRecord"/>
+    <mapping class="seng302.Clinician"/>
   </session-factory>
 </hibernate-configuration>
