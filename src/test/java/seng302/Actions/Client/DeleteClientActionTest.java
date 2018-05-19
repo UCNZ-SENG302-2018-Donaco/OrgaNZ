@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import seng302.Actions.ActionInvoker;
 import seng302.Client;
 import seng302.State.ClientManager;
+import seng302.State.ClientManagerMemory;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -21,7 +22,7 @@ public class DeleteClientActionTest {
     @Before
     public void init() {
         invoker = new ActionInvoker();
-        manager = new ClientManager();
+        manager = new ClientManagerMemory();
         baseClient = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
         manager.addClient(baseClient);
     }

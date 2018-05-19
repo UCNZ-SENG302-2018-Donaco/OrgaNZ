@@ -14,6 +14,7 @@ import java.util.List;
 import seng302.Actions.ActionInvoker;
 import seng302.Client;
 import seng302.State.ClientManager;
+import seng302.State.ClientManagerMemory;
 import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
 
@@ -28,7 +29,7 @@ public class ModifyClientOrgansActionTest {
     @Before
     public void init() {
         invoker = new ActionInvoker();
-        ClientManager manager = new ClientManager();
+        ClientManager manager = new ClientManagerMemory();
         baseClient = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
         manager.addClient(baseClient);
     }

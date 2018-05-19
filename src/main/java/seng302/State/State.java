@@ -27,7 +27,7 @@ public final class State {
      */
     public static void init() {
         actionInvoker = new ActionInvoker();
-        clientManager = new ClientManager();
+        clientManager = new ClientManagerMemory();
         clinicianManager = new ClinicianManager();
     }
 

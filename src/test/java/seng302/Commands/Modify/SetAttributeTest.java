@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import seng302.Actions.ActionInvoker;
 import seng302.Client;
 import seng302.State.ClientManager;
+import seng302.State.ClientManagerMemory;
 import seng302.Utilities.Enums.BloodType;
 import seng302.Utilities.Enums.Gender;
 import seng302.Utilities.Enums.Region;
@@ -24,7 +25,7 @@ public class SetAttributeTest {
 
     @Before
     public void initTest() {
-        spyClientManager = spy(new ClientManager());
+        spyClientManager = spy(new ClientManagerMemory());
 
         spySetAttribute = spy(new SetAttribute(spyClientManager, new ActionInvoker()));
 

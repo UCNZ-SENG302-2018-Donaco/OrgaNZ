@@ -1,13 +1,8 @@
 package seng302.State;
 
-import static seng302.TransplantRequest.RequestStatus.*;
-
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.OptionalInt;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import seng302.Client;
 import seng302.TransplantRequest;
@@ -15,113 +10,49 @@ import seng302.TransplantRequest;
 /**
  * Handles the manipulation of the clients currently stored in the system.
  */
+public interface ClientManager {
 
-public class ClientManager {
+    List<Client> getClients();
 
-    
+    void setClients(Collection<Client> clients);
 
-    private ArrayList<Client> clients;
+    void addClient(Client client);
 
-    public ClientManager() {
-        clients = new ArrayList<>();
-    }
-
-    public ClientManager(ArrayList<Client> clients) {
-        this.clients = clients;
-    }
-
-    public void setClients(ArrayList<Client> clients) {
-        this.clients = clients;
-    }
+    void removeClient(Client client);
 
     /**
-     * Add a client
-     * @param client Client to be added
+     * Returns the client that has the given id.
+     * @param id The ID to match.
+     * @return The client with that id, or null if no such client exists.
      */
-    public void addClient(Client client) {
-        clients.add(client);
-    }
+    Client getClientByID(int id);
 
     /**
-     * Get the list of clients
-     * @return ArrayList of current clients
-     */
-    public ArrayList<Client> getClients() {
-        return clients;
-    }
-
-    /**
-     * Remove a client object
-     * @param client Client to be removed
-     */
-    public void removeClient(Client client) {
-        clients.remove(client);
-    }
-
-    /**
-     * Checks if a user already exists with that first + last name and date of birth
+     * Checks if a client already exists with the same first name, last name, and date of birth.
      * @param firstName First name
      * @param lastName Last name
-     * @param dateOfBirth Date of birth (LocalDate)
-     * @return Boolean
+     * @param dateOfBirth Date of birth
+     * @return true if a colliding client exists in the manager, false otherwise.
      */
-    public boolean collisionExists(String firstName, String lastName, LocalDate dateOfBirth) {
-        for (Client client : clients) {
-            if (client.getFirstName().equals(firstName) &&
-                    client.getLastName().equals(lastName) &&
-                    client.getDateOfBirth().isEqual(dateOfBirth)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Return a client matching that UID
-     * @param id To be matched
-     * @return Client object or null if none exists
-     */
-    public Client getClientByID(int id) {
-        return clients.stream()
-                .filter(d -> d.getUid() == id).findFirst().orElse(null);
-    }
+    boolean collisionExists(String firstName, String lastName, LocalDate dateOfBirth);
 
     /**
      * Returns the next unused id number for a new client.
      * @return The next free UID.
      */
-    public int nextUid() {
-        OptionalInt max = clients.stream()
-                .mapToInt(Client::getUid)
-                .max();
-
-        if (max.isPresent()) {
-            return max.getAsInt() + 1;
-        } else {
-            return 1;
-        }
-    }
+    int nextUid();
 
     /**
-     * Gets all transplant requests, regardless of whether or not they are current
-     * @return List of all transplant requests
+     * Gets all transplant requests for all clients stored by the manager, regardless of whether or not they are
+     * current.
+     * @return All transplant requests.
      */
-    public Collection<TransplantRequest> getAllTransplantRequests() {
-        return clients.stream()
-                .map(Client::getTransplantRequests)
-                .flatMap(Collection::stream)
-                .collect(Collectors.toList());
-    }
+    Collection<TransplantRequest> getAllTransplantRequests();
 
     /**
-     * Gets all current transplant requests.
-     * @return List of all current transplant requests
+     * Gets all transplant requests for all clients stored by the manager that are CURRENT, i.e. have not yet taken
+     * place/been cancelled.
+     * @return All current transplant requests.
      */
-    public Collection<TransplantRequest> getAllCurrentTransplantRequests() {
-        return clients.stream()
-                .map(Client::getTransplantRequests)
-                .flatMap(Collection::stream)
-                .filter(request -> request.getStatus() == WAITING)
-                .collect(Collectors.toList());
-    }
+    Collection<TransplantRequest> getAllCurrentTransplantRequests();
 }

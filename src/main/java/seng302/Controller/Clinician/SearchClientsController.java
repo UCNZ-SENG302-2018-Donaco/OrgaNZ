@@ -1,7 +1,7 @@
 package seng302.Controller.Clinician;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -95,7 +95,7 @@ public class SearchClientsController extends SubController {
 
     @FXML
     private void initialize() {
-        ArrayList<Client> allClients = State.getClientManager().getClients();
+        List<Client> allClients = State.getClientManager().getClients();
 
         setupTable();
 

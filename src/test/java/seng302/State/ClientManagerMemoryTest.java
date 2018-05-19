@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import seng302.Client;
 import seng302.TransplantRequest;
@@ -15,7 +16,7 @@ import seng302.Utilities.Enums.Organ;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ClientManagerTest {
+public class ClientManagerMemoryTest {
 
     private ClientManager manager;
     private Client client1;
@@ -23,7 +24,7 @@ public class ClientManagerTest {
 
     @Before
     public void init() {
-        manager = new ClientManager();
+        manager = new ClientManagerMemory();
         client1 = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
         manager.addClient(client1);
         client2 = new Client("FirstTwo", null, "LastTwo", LocalDate.of(1970, 1, 1), 2);
@@ -37,8 +38,8 @@ public class ClientManagerTest {
         clientList.add(client3);
         clientList.add(client4);
 
-        ClientManager manager = new ClientManager(clientList);
-        ArrayList<Client> managerClientList = manager.getClients();
+        ClientManager manager = new ClientManagerMemory(clientList);
+        List<Client> managerClientList = manager.getClients();
         assertEquals(clientList, managerClientList);
     }
 
@@ -79,7 +80,7 @@ public class ClientManagerTest {
     public void collisionExsistsNoCollisionNameTest() {
         ArrayList<Client> clients = new ArrayList<>();
         clients.add(client1);
-        manager = new ClientManager(clients);
+        manager = new ClientManagerMemory(clients);
 
         assertFalse(manager.collisionExists("Not", "Same", LocalDate.of(1970, 1, 1)));
     }
@@ -88,7 +89,7 @@ public class ClientManagerTest {
     public void collisionExsistsNoCollisionDateTest() {
         ArrayList<Client> clients = new ArrayList<>();
         clients.add(client1);
-        manager = new ClientManager(clients);
+        manager = new ClientManagerMemory(clients);
 
         assertFalse(manager.collisionExists("First", "Last", LocalDate.of(2018, 12, 12)));
     }
@@ -97,7 +98,7 @@ public class ClientManagerTest {
     public void collisionExsistsValidCollisionTest() {
         ArrayList<Client> clients = new ArrayList<>();
         clients.add(client1);
-        manager = new ClientManager(clients);
+        manager = new ClientManagerMemory(clients);
 
         assertTrue(manager.collisionExists("First", "Last", LocalDate.of(1970, 1, 1)));
     }
@@ -106,7 +107,7 @@ public class ClientManagerTest {
     public void getClientByIDExistsTest() {
         ArrayList<Client> clients = new ArrayList<>();
         clients.add(client1);
-        manager = new ClientManager(clients);
+        manager = new ClientManagerMemory(clients);
 
         assertNotNull(manager.getClientByID(1));
     }
@@ -115,7 +116,7 @@ public class ClientManagerTest {
     public void getClientByIDDoesNotExistTest() {
         ArrayList<Client> clients = new ArrayList<>();
         clients.add(client1);
-        manager = new ClientManager(clients);
+        manager = new ClientManagerMemory(clients);
 
         assertNull(manager.getClientByID(2));
     }

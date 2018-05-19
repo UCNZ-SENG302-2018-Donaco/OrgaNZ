@@ -5,6 +5,7 @@ import static org.mockito.Mockito.*;
 
 import seng302.Actions.ActionInvoker;
 import seng302.State.ClientManager;
+import seng302.State.ClientManagerMemory;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -18,7 +19,7 @@ public class CreateClientTest {
 
     @Before
     public void init() {
-        spyClientManager = spy(new ClientManager());
+        spyClientManager = spy(new ClientManagerMemory());
 
         spyCreateClient = spy(new CreateClient(spyClientManager, new ActionInvoker()));
 

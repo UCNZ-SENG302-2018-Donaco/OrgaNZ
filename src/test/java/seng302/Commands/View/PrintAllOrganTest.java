@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 import seng302.Client;
 import seng302.State.ClientManager;
+import seng302.State.ClientManagerMemory;
 import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
 
@@ -29,7 +30,7 @@ public class PrintAllOrganTest {
 
     @Before
     public void init() {
-        spyClientManager = spy(new ClientManager());
+        spyClientManager = spy(new ClientManagerMemory());
 
         spyPrintAllOrgan = spy(new PrintAllOrgan(spyClientManager));
         System.setOut(new PrintStream(outContent));
