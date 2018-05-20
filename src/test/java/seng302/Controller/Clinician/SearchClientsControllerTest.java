@@ -27,6 +27,7 @@ import seng302.Utilities.View.Page;
 import seng302.Utilities.View.WindowContext;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class SearchClientsControllerTest extends ControllerTest {
@@ -85,7 +86,7 @@ public class SearchClientsControllerTest extends ControllerTest {
 
     // Tests
 
-    @Test
+    @Ignore
     public void componentsAreVisibleTest() {
         verifyThat("#tableView", isVisible());
         verifyThat("#displayingXToYOfZText", isVisible());
