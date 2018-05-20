@@ -8,7 +8,9 @@ import java.util.List;
 import java.util.Observer;
 
 import javafx.beans.value.ObservableValue;
+import javafx.beans.value.ObservableValueBase;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
@@ -17,6 +19,7 @@ import javafx.scene.Node;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.SortType;
 import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -53,7 +56,7 @@ public class SearchClientsController extends SubController {
     @FXML
     private TableColumn<Client, Integer> idCol;
     @FXML
-    private TableColumn<Client, String> nameCol;
+    private TableColumn<Client, Client> nameCol;
     @FXML
     private TableColumn<Client, Integer> ageCol;
     @FXML
@@ -93,17 +96,13 @@ public class SearchClientsController extends SubController {
 
         //Create a filtered list, that defaults to allow all using lambda function
         filteredClients = new FilteredList<>(FXCollections.observableArrayList(allClients), client -> true);
-        //Create a sorted list that links to the filtered list
-//        Collections.sort(filteredClients, this::compare);
 
+        //Create a sorted list that links to the filtered list
         sortedClients = new SortedList<>(filteredClients);
 
         //Link the sorted list sort to the tableView sort
         sortedClients.comparatorProperty().bind(tableView.comparatorProperty());
 
-        ArrayList<Client> preSortedClients = new ArrayList<>(filteredClients);
-        preSortedClients.sort(this::compareNames);
-        sortedClients = new SortedList<>(FXCollections.observableArrayList(preSortedClients));
 
         //Set initial pagination
         int numberOfPages = Math.max(1, (sortedClients.size() + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE);
@@ -129,7 +128,7 @@ public class SearchClientsController extends SubController {
 
 
         if (c1.getLastName().toLowerCase().startsWith(searchTerm)) {
-            if (c2.getLastName().toLowerCase().startsWith(searchTerm)) { ;
+            if (c2.getLastName().toLowerCase().startsWith(searchTerm)) {
                 return c1.getLastName().compareTo(c2.getLastName());
             } else {
                 return -1;
@@ -175,12 +174,45 @@ public class SearchClientsController extends SubController {
      */
     private void setupTable() {
         idCol.setCellValueFactory(new PropertyValueFactory<>("uid"));
-        nameCol.setCellValueFactory(new PropertyValueFactory<>("fullName"));
+        //Link the nameCol to that row's client
+        nameCol.setCellValueFactory(cellData -> new ObservableValueBase<Client>() {
+            @Override
+            public Client getValue() {
+                return cellData.getValue();
+            }
+        });
+        //Link the nameCol text to the client fullName
+        nameCol.setCellFactory(c -> new TableCell<Client, Client>() {
+            @Override
+            protected void updateItem(Client client, boolean empty) {
+                super.updateItem(client, empty);
+
+                if (client == null || empty) {
+                    setText(null);
+                } else {
+                    setText(client.getFullName());
+                }
+            }
+        });
+        //Use the custom name comparator for sorting when sorting on the name column
+        nameCol.setComparator(this::compareNames);
         ageCol.setCellValueFactory(new PropertyValueFactory<>("age"));
         genderCol.setCellValueFactory(new PropertyValueFactory<>("gender"));
         regionCol.setCellValueFactory(new PropertyValueFactory<>("region"));
         donorCol.setCellValueFactory(new PropertyValueFactory<>("donor"));
         receiverCol.setCellValueFactory(new PropertyValueFactory<>("receiver"));
+
+
+        //Setup a table sortOrder change listener, so that whenever another sort is removed, the table updates to
+        // default sort by name ascending.
+        ObservableList<TableColumn<Client, ?>> sortOrder = tableView.getSortOrder();
+        sortOrder.add(nameCol);
+        sortOrder.addListener((ListChangeListener<TableColumn<Client, ?>>) c -> {
+            if (sortOrder.size() == 0) {
+                nameCol.sortTypeProperty().setValue(SortType.ASCENDING);
+                sortOrder.add(nameCol);
+            }
+        });
 
         // Setting the donor and receiver columns to have ticks if the client is a donor or receiver
         donorCol.setCellFactory(tc -> new TableCell<Client, Boolean>() {
@@ -188,7 +220,7 @@ public class SearchClientsController extends SubController {
             protected void updateItem(Boolean item, boolean empty) {
                 super.updateItem(item, empty);
                 setText(empty ? null :
-                        item.booleanValue() ? "\u2713" : "");
+                        item ? "\u2713" : "");
             }
         });
 
@@ -197,10 +229,11 @@ public class SearchClientsController extends SubController {
             protected void updateItem(Boolean item, boolean empty) {
                 super.updateItem(item, empty);
                 setText(empty ? null :
-                        item.booleanValue() ? "\u2713" : "");
+                        item ? "\u2713" : "");
             }
         });
 
+        //Enable the tooltip to show organ donation status
         tableView.setRowFactory(tv -> new TableRow<Client>() {
             private Tooltip tooltip = new Tooltip();
 
@@ -210,9 +243,8 @@ public class SearchClientsController extends SubController {
                 if (client == null) {
                     setTooltip(null);
                 } else {
-                    tooltip.setText(String.format("%s %s with blood type %s. Donating: %s",
-                            client.getFirstName(),
-                            client.getLastName(),
+                    tooltip.setText(String.format("%s with blood type %s. Donating: %s",
+                            client.getFullName(),
                             client.getBloodType(),
                             client.getOrganStatusString("donations")));
                     setTooltip(tooltip);
@@ -220,6 +252,7 @@ public class SearchClientsController extends SubController {
             }
         });
 
+        //When double clicking on a client, open their account on a new page
         tableView.setOnMouseClicked(mouseEvent -> {
             if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2) {
                 Client client = tableView.getSelectionModel().getSelectedItem();
@@ -251,10 +284,6 @@ public class SearchClientsController extends SubController {
             filteredClients.setPredicate(client -> client.profileSearch(searchText));
         }
 
-        ArrayList<Client> preSortedClients = new ArrayList<>(filteredClients);
-        preSortedClients.sort(this::compareNames);
-        sortedClients = new SortedList<>(FXCollections.observableArrayList(preSortedClients));
-
         //If the pagination count wont change, force a refresh of the page, if it will, change it and that will trigger the update.
         int newPageCount = Math.max(1, (filteredClients.size() + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE);
         if (pagination.getPageCount() == newPageCount) {
@@ -262,6 +291,9 @@ public class SearchClientsController extends SubController {
         } else {
             pagination.setPageCount(newPageCount);
         }
+
+        //Remove the current sorting, and will be reset to name.
+        tableView.getSortOrder().remove(0);
     }
 
     /**
