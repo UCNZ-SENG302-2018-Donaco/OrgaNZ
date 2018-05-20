@@ -91,12 +91,11 @@ public class ViewClientController extends SubController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
-        mainController.loadSidebar(sidebarPane);
-
         if (session.getLoggedInUserType() == Session.UserType.CLIENT) {
             viewedClient = session.getLoggedInClient();
             idPane.setVisible(false);
             idPane.setManaged(false);
+            mainController.loadSidebar(sidebarPane);
         } else if (windowContext.isClinViewClientWindow()) {
             viewedClient = windowContext.getViewClient();
             mainController.loadMenuBar(menuBarPane);
