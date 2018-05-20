@@ -9,7 +9,6 @@ import java.util.Collections;
 import java.util.List;
 
 import seng302.Client;
-import seng302.Utilities.CacheManager;
 import seng302.Utilities.Enums.Gender;
 import seng302.Utilities.Exceptions.BadDrugNameException;
 import seng302.Utilities.Exceptions.BadGatewayException;
@@ -20,7 +19,7 @@ import org.junit.Test;
 public class DrugInteractionsHandlerTest {
     @Test
     public void testValidDrugInteractions() {
-        CacheManager.INSTANCE = new MockCacheManager();
+        MockCacheManager.Create();
 
         String EXPECTED_RESPONSE_BODY = "{\"age_interaction\":{\"0-1\":[\"foetal exposure during pregnancy\","
                 + "\"congenital arterial malformation\",\"premature baby\",\"ventricular septal defect\","

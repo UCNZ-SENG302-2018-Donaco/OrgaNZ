@@ -29,12 +29,23 @@ public abstract class WebAPIHandler {
         this.httpTransport = httpTransport;
     }
 
+    /**
+     * Adds the given data to the cache, with the arguments as the key.
+     * @param value The value to be stored in the cache.
+     * @param arguments The key used to retrieve the cached value.
+     * @return The value variable.
+     */
     protected <T> T addCachedData(T value, Object... arguments) {
         Optional<Instant> expires = Optional.of(Instant.now().plus(Period.ofDays(7)));
         CacheManager.INSTANCE.addCachedData(getClass().getTypeName(), arguments, value, expires);
         return value;
     }
 
+    /**
+     * Retrieves the value from the cache, or an empty optional if it doesn't exist or is expired.
+     * @param type The type of the value in the cache. Must be deserialisable using the GSON library.
+     * @param arguments The key used to store the cached value.
+     */
     protected <T> Optional<T> getCachedData(Type type, Object... arguments) {
         return CacheManager.INSTANCE.getCachedData(getClass().getTypeName(), type, arguments);
     }

@@ -20,6 +20,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -35,7 +37,14 @@ import com.google.gson.TypeAdapterFactory;
 import com.google.gson.internal.bind.TreeTypeAdapter;
 import com.google.gson.reflect.TypeToken;
 
-public class CacheManager {
+/**
+ * Stores and retrieves arbitrary values from a persistent location.
+ */
+public abstract class CacheManager {
+
+    /**
+     * A Type factory for GSON de/serialisation.
+     */
     public static final TypeAdapterFactory GSON_FACTORY = new TypeAdapterFactory() {
         @Override
         @SuppressWarnings("unchecked")
@@ -47,13 +56,25 @@ public class CacheManager {
         }
     };
 
-    public static CacheManager INSTANCE = new Impl();
+    /**
+     * The instance of the cache.
+     */
+    public static final CacheManager INSTANCE = new Impl();
+
+    static final Logger LOGGER = Logger.getLogger(CacheManager.class.getName());
 
     protected Map<String, Category> categories;
 
     protected CacheManager() {
     }
 
+    /**
+     * Adds data to a cache, given a category, key, value and optional expiry date.
+     * @param categoryName The category of the cached value.
+     * @param arguments The key used to store/retrieve the cached value.
+     * @param value The cached value.
+     * @param expires An optional expiry date.
+     */
     public <T> void addCachedData(String categoryName, Object[] arguments, T value, Optional<Instant> expires) {
         Category category = categories.get(categoryName);
         if (category == null) {
@@ -66,6 +87,13 @@ public class CacheManager {
         category.setData(key, realValue);
     }
 
+    /**
+     * Gets data from a cache, given a category and key.
+     * @param categoryName The category of the cached value.
+     * @param type The type of the cached value, must be deserialisable using GSON.
+     * @param arguments The key used to store/retrieve the cached value.
+     * @return The stored data, or an empty optional if it cannot be found or has expired.
+     */
     public <T> Optional<T> getCachedData(String categoryName, Type type, Object[] arguments) {
         Category category = categories.get(categoryName);
         if (category == null) {
@@ -79,7 +107,6 @@ public class CacheManager {
     }
 
     private static final class CategoryMap extends HashMap<String, Category> {
-
     }
 
     private static final class Category {
@@ -213,6 +240,9 @@ public class CacheManager {
         }
     }
 
+    /**
+     * Default implementation of CacheManager, stores in a json file in the user cache directory.
+     */
     private static class Impl extends CacheManager {
         @Override
         public <T> void addCachedData(String categoryName, Object[] arguments, T value, Optional<Instant> expires) {
@@ -227,6 +257,9 @@ public class CacheManager {
             return super.getCachedData(categoryName, type, arguments);
         }
 
+        /**
+         * Saves data into a cache file.
+         */
         private void saveData() {
             String result = JSONConverter.getGson().toJson(categories);
 
@@ -238,10 +271,13 @@ public class CacheManager {
                     writer.write(result);
                 }
             } catch (IOException e) {
-                // TODO: Log error
+                LOGGER.log(Level.SEVERE, "Unable to save cache data", e);
             }
         }
 
+        /**
+         * Loads data from a cached file, if not already done.
+         */
         private void lazyInitialise() {
             if (categories != null) {
                 return;
@@ -254,10 +290,11 @@ public class CacheManager {
                 try (Reader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
                     categories = JSONConverter.getGson().fromJson(reader, CategoryMap.class);
                 }
-            } catch (JsonSyntaxException | FileNotFoundException e) {
+            } catch (FileNotFoundException e) {
                 categories = new HashMap<>();
-            } catch (IOException e) {
-                // TODO: Log error
+            } catch (JsonSyntaxException | IOException e) {
+                LOGGER.log(Level.SEVERE, "Unable to load cache data", e);
+                categories = new HashMap<>();
             }
         }
     }

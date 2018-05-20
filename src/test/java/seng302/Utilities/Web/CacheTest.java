@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.time.LocalDate;
 
 import seng302.Client;
-import seng302.Utilities.CacheManager;
 import seng302.Utilities.Enums.Gender;
 import seng302.Utilities.Exceptions.BadDrugNameException;
 import seng302.Utilities.Exceptions.BadGatewayException;
@@ -18,8 +17,7 @@ import org.junit.Test;
 public class CacheTest {
     @Test
     public void testCaching() {
-        MockCacheManager mockCacheManager = new MockCacheManager();
-        CacheManager.INSTANCE = mockCacheManager;
+        MockCacheManager mockCacheManager = MockCacheManager.Create();
 
         String EXPECTED_RESPONSE_BODY = "{\"age_interaction\":{\"0-1\":[\"foetal exposure during pregnancy\","
                 + "\"congenital arterial malformation\",\"premature baby\",\"ventricular septal defect\","
