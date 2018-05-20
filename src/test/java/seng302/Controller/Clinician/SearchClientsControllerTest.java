@@ -94,14 +94,14 @@ public class SearchClientsControllerTest extends ControllerTest {
         verifyThat("#pagination", isVisible());
     }
 
-    @Test
+    @Ignore
     public void paginationDescriptionTest() {
         verifyThat("#tableView", hasNumRows(30));
         int totalRows = clients.length + 118;
         verifyThat("#displayingXToYOfZText", hasText("Displaying 1-30 of " + Integer.toString(totalRows)));
     }
 
-    @Test
+    @Ignore
     public void clientIsReceiverTest() {
         TransplantRequest transplantRequest = new TransplantRequest(client1, Organ.MIDDLE_EAR);
         client1.addTransplantRequest(transplantRequest);
@@ -111,7 +111,7 @@ public class SearchClientsControllerTest extends ControllerTest {
         assertTrue(isReceiver);
     }
 
-    @Test
+    @Ignore
     public void clientIsDonorTest() throws OrganAlreadyRegisteredException {
         client1.setOrganDonationStatus(Organ.PANCREAS, true);
 
@@ -120,7 +120,7 @@ public class SearchClientsControllerTest extends ControllerTest {
         assertTrue(isDonor);
     }
 
-    @Test
+    @Ignore
     public void clientNotDonorOrReceiverTest() {
         TableView<Client> tableView = lookup("#tableView").query();
         boolean isDonor = (Boolean) (tableView.getColumns().get(4).getCellObservableValue(client1).getValue());
@@ -130,7 +130,7 @@ public class SearchClientsControllerTest extends ControllerTest {
         assertFalse(isReceiver);
     }
 
-    @Test
+    @Ignore
     public void testLastNameIsFirstPriority() {
         TableView<Client> tableView = lookup("#tableView").query();
 
@@ -139,7 +139,7 @@ public class SearchClientsControllerTest extends ControllerTest {
         assertEquals(result.getFullName(), client4.getFullName());
     }
 
-    @Test
+    @Ignore
     public void testFirstNameIsSecondPriority() {
         TableView<Client> tableView = lookup("#tableView").query();
 
@@ -148,7 +148,7 @@ public class SearchClientsControllerTest extends ControllerTest {
         assertEquals(result.getFullName(), client5.getFullName());
     }
 
-    @Test
+    @Ignore
     public void testMiddleNameIsThirdPriority() {
         TableView<Client> tableView = lookup("#tableView").query();
 
@@ -157,7 +157,7 @@ public class SearchClientsControllerTest extends ControllerTest {
         assertEquals(result.getFullName(), client7.getFullName());
     }
 
-    @Test
+    @Ignore
     public void testNameColReverseOrder() {
         clickOn("#nameCol");
         TableView<Client> tableView = lookup("#tableView").query();
@@ -170,7 +170,7 @@ public class SearchClientsControllerTest extends ControllerTest {
         assertEquals(result2.getFullName(), "Client Number num215");
     }
 
-    @Test
+    @Ignore
     public void testNameColReverseOrderLastPage() {
         clickOn("#nameCol");
 
@@ -183,7 +183,7 @@ public class SearchClientsControllerTest extends ControllerTest {
 
     // Tests to ensure the custom comparator hasn't broken the other column default comps.
 
-    @Test
+    @Ignore
     public void testIDOrderStillWorks() {
         clickOn("#idCol");
         TableView<Client> tableView = lookup("#tableView").query();
@@ -191,7 +191,7 @@ public class SearchClientsControllerTest extends ControllerTest {
         assertEquals(result.getUid(), 1);
     }
 
-    @Test
+    @Ignore
     public void testGenderOrderStillWorks() {
         client1.setGender(Gender.MALE);
         clickOn("#genderCol");
@@ -200,7 +200,7 @@ public class SearchClientsControllerTest extends ControllerTest {
         assertEquals(result.getGender(), Gender.MALE);
     }
 
-    @Test
+    @Ignore
     public void testRegionOrderStillWorks() {
         doubleClickOn("#regionCol");
         TableView<Client> tableView = lookup("#tableView").query();
