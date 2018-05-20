@@ -86,7 +86,7 @@ public class SearchClientsControllerTest extends ControllerTest {
 
     // Tests
 
-    @Ignore
+    @Test
     public void componentsAreVisibleTest() {
         verifyThat("#tableView", isVisible());
         verifyThat("#displayingXToYOfZText", isVisible());
