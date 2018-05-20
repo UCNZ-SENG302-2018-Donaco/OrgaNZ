@@ -41,13 +41,14 @@ public class ResolveOrgan implements Runnable {
     @Option(names = {"-u", "--uid"}, description = "User ID of user organ being requested", required = true)
     private int uid;
 
-    @Option(names = {"-o", "organ", "organType"}, description = "Organ type", required = true, converter = OrganConverter.class)
+    @Option(names = {"-o", "-organ", "-organType"}, description = "Organ type", required = true, converter =
+            OrganConverter.class)
     private Organ organType;
 
     @Option(names = {"-r", "-reason"}, description = "Reason for resolving request", required = true, converter = ResolveReasonConverter.class)
     private ResolveReason resolveReason;
 
-    @Option(names = {"-m, -message"}, description = "Message for why the request was resolved")
+    @Option(names = {"-m", "-message"}, description = "Message for why the request was resolved")
     private String message;
 
 
@@ -56,7 +57,7 @@ public class ResolveOrgan implements Runnable {
      */
     public void run() {
         //resolveorgan -u 1 -o liver -r "input error"
-        client = State.getClientManager().getClientByID(uid);
+        client = manager.getClientByID(uid);
         if (client == null) {
             System.out.println("No client exists with that user ID");
             return;
@@ -89,7 +90,8 @@ public class ResolveOrgan implements Runnable {
             action = new ResolveTransplantRequestAction(selectedTransplantRequest, RequestStatus.COMPLETED, "Transplant took place.");
 
         } else if (resolveReason == ResolveReason.DECEASED) {
-
+            action = new ResolveTransplantRequestAction(selectedTransplantRequest, RequestStatus.CANCELLED, "The "
+                    + "client has deceased.");
 
         } else if (resolveReason == ResolveReason.CURED) {
             action = new ResolveTransplantRequestAction(selectedTransplantRequest, RequestStatus.CANCELLED, "The disease was cured.");

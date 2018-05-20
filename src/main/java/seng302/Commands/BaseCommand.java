@@ -16,7 +16,7 @@ import picocli.CommandLine.Command;
  * date 05/03/2018
  */
 
-@Command(name = "ClientCLI", description = "ClientCLI is a command based management tool for the team-21 client registration system.",
+@Command(name = "ClientCLI", description = "ClientCLI is a command based management tool for the team-700 ODMS.",
         subcommands = {
                 CreateClient.class,
                 SetAttribute.class,

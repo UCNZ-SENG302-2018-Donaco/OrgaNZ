@@ -11,6 +11,7 @@ import seng302.State.State;
 import seng302.TransplantRequest;
 
 import seng302.Utilities.Enums.Organ;
+import seng302.Utilities.Enums.RequestStatus;
 import seng302.Utilities.TypeConverters.OrganConverter;
 
 import picocli.CommandLine.Command;
@@ -36,7 +37,7 @@ public class RequestOrgan implements Runnable {
         this.invoker = invoker;
     }
 
-    @Option(names = {"-o", "organ", "organType"}, description = "Organ type", converter = OrganConverter.class)
+    @Option(names = {"-o", "-organ", "-organType"}, description = "Organ type", converter = OrganConverter.class)
     private Organ organType;
 
     @Option(names = {"-u", "--uid"}, description = "User ID of user organ being requested", required = true)
@@ -48,18 +49,30 @@ public class RequestOrgan implements Runnable {
      */
     public void run() {
         // requestorgan -u 1 -o liver
-        State.getClientManager().addClient(new Client("Jan", "Michael", "Vincent", LocalDate.now(), 1));
         client = manager.getClientByID(uid);
         if (client == null) {
             System.out.println("No client exists with that user ID");
 
         } else if (organType == null) {
             System.out.println("The type of organ to be donated has not been defined.");
+
         } else {
-            TransplantRequest newRequest = new TransplantRequest(client, organType);
-            Action action = new AddTransplantRequestAction(client, newRequest);
-            invoker.execute(action);
-            System.out.println("Successfully requested a " + organType + " for " + client.getFullName());
+            boolean organCurrentlyRequested = false;
+
+            for (TransplantRequest tr: client.getTransplantRequests()) {
+                if (tr.getRequestedOrgan() == organType && tr.getStatus() == RequestStatus.WAITING) {
+                    organCurrentlyRequested = true;
+                    break;
+                }
+            }
+            if (organCurrentlyRequested) {
+                System.out.println("This organ is already requested.");
+            } else {
+                TransplantRequest newRequest = new TransplantRequest(client, organType);
+                Action action = new AddTransplantRequestAction(client, newRequest);
+                invoker.execute(action);
+                System.out.println("Successfully requested a " + organType + " for " + client.getFullName());
+            }
         }
     }
 }
