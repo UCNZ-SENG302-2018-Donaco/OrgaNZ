@@ -379,7 +379,7 @@ public class ClientMedicalHistoryController extends SubController {
         boolean isChronic = chronicBox.isSelected();
 
         boolean beforeBirth = dateDiagnosed.isBefore(client.getDateOfBirth());
-        boolean inFuture = dateDiagnosed.isAfter(LocalDate.now().plus(1, ChronoUnit.DAYS));
+        boolean inFuture = dateDiagnosed.isAfter(LocalDate.now());
 
         if (illnessName == null || illnessName.equals("")) {
             errorMessage.setText("Illness name must not be blank.");
