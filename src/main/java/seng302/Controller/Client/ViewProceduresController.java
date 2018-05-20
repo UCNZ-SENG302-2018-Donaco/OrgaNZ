@@ -243,11 +243,11 @@ public class ViewProceduresController extends SubController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
-        mainController.loadSidebar(sidebarPane);
+
 
         if (session.getLoggedInUserType() == UserType.CLIENT) {
             client = session.getLoggedInClient();
-
+            mainController.loadSidebar(sidebarPane);
             newProcedurePane.setVisible(false);
             newProcedurePane.setManaged(false);
             procedureButtonsPane.setVisible(false);

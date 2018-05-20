@@ -201,11 +201,11 @@ public class ClientMedicalHistoryController extends SubController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
-        mainController.loadSidebar(sidebarPane);
+
 
         if (session.getLoggedInUserType() == UserType.CLIENT) {
             client = session.getLoggedInClient();
-
+            mainController.loadSidebar(sidebarPane);
             newIllnessPane.setVisible(false);
             newIllnessPane.setManaged(false);
             illnessButtonsPane.setVisible(false);

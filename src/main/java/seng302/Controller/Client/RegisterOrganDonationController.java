@@ -84,11 +84,12 @@ public class RegisterOrganDonationController extends SubController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
-        mainController.loadSidebar(sidebarPane);
+
 
         if (session.getLoggedInUserType() == Session.UserType.CLIENT) {
             client = session.getLoggedInClient();
             idPane.setDisable(true);
+            mainController.loadSidebar(sidebarPane);
         } else if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
             mainController.loadMenuBar(menuBarPane);

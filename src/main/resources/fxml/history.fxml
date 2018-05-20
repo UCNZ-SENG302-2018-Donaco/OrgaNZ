@@ -12,9 +12,9 @@
 
 <VBox prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.HistoryController">
   <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
-  <HBox fx:id="menuBarPane" maxHeight="20.0" minHeight="-Infinity" />
+  <HBox fx:id="menuBarPane" maxHeight="-Infinity" minHeight="-Infinity" />
     <SplitPane dividerPositions="0.5" VBox.vgrow="ALWAYS">
-      <HBox fx:id="sidebarPane" maxWidth="200.0" minWidth="200.0" prefWidth="200.0" />
+      <HBox fx:id="sidebarPane" maxWidth="-Infinity" />
       <VBox prefHeight="600.0" prefWidth="800.0">
         <BorderPane VBox.vgrow="ALWAYS">
           <top>

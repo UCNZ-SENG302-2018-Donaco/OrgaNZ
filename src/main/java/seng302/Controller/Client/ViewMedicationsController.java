@@ -136,11 +136,9 @@ public class ViewMedicationsController extends SubController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
-        mainController.loadSidebar(sidebarPane);
-
         if (session.getLoggedInUserType() == Session.UserType.CLIENT) {
             client = session.getLoggedInClient();
-
+            mainController.loadSidebar(sidebarPane);
             newMedicationPane.setVisible(false);
             newMedicationPane.setManaged(false);
             moveToHistoryButton.setDisable(true);

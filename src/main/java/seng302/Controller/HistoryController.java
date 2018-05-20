@@ -12,7 +12,9 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.Pane;
 
+import seng302.Client;
 import seng302.HistoryItem;
+import seng302.State.Session;
 import seng302.Utilities.JSONConverter;
 
 /**
@@ -27,7 +29,7 @@ public class HistoryController extends SubController {
     @FXML
     private TableView<HistoryItem> historyTable;
     @FXML
-    private Pane menuBarPane,sidebarPane;
+    private Pane menuBarPane;
 
     /**
      * Initializes the UI for this page.
@@ -63,7 +65,7 @@ public class HistoryController extends SubController {
     public void setup(MainController mainController) {
         super.setup(mainController);
         mainController.setTitle("Action history");
-        mainController.loadSidebar(sidebarPane);
         mainController.loadMenuBar(menuBarPane);
+
     }
 }

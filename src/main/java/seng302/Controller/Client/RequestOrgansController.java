@@ -218,7 +218,6 @@ public class RequestOrgansController extends SubController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
-        mainController.loadSidebar(sidebarPane);
 
         if (session.getLoggedInUserType() == Session.UserType.CLIENT) {
             client = session.getLoggedInClient();
@@ -226,6 +225,7 @@ public class RequestOrgansController extends SubController {
             newRequestForm.setVisible(false);
             resolveRequestBar.setManaged(false);
             resolveRequestBar.setVisible(false);
+            mainController.loadSidebar(sidebarPane);
         } else if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
             mainController.loadMenuBar(menuBarPane);

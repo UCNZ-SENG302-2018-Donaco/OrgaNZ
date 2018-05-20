@@ -189,7 +189,6 @@ public class ViewClientController extends SubController {
             displayAge();
             if (viewedClient.getModifiedTimestamp() != null) {
                 lastModified.setText(viewedClient.getModifiedTimestamp().format(dateTimeFormat));
-                //TODO show what in particular was updated
                 HistoryItem save = new HistoryItem("UPDATE CLIENT INFO",
                         "Updated changes to client " + viewedClient.getFirstName() + " " + viewedClient.getLastName()
                                 + "updated client info: " + viewedClient.getClientInfoString());
