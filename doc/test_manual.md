@@ -170,3 +170,4 @@ will navigate you to their client page.
 #### AC3
 
 Run the `@Ignore`d tests in `seng302/Controller/Administrator/StaffListControllerTest.java` and `seng302/Controller/Administrator/SearchClientsControllerAdministratorTest.java` in headful mode.
+Run the `@Ignore`d test file `seng302/Controller/Clinicna/ViewClinicianControllerTest.java`
