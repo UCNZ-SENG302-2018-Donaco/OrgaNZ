@@ -1,15 +1,17 @@
 package seng302.Controller.Clinician;
 
-
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.testfx.api.FxAssert.verifyThat;
-import static org.testfx.matcher.control.TableViewMatchers.containsRowAtIndex;
+import static org.testfx.matcher.base.NodeMatchers.isVisible;
 import static org.testfx.matcher.control.TableViewMatchers.hasNumRows;
 import static org.testfx.matcher.control.TextInputControlMatchers.hasText;
 
 import java.time.LocalDate;
 
 import javafx.scene.Node;
-import javafx.scene.input.KeyCode;
+import javafx.scene.control.TableView;
 
 import seng302.Client;
 import seng302.Clinician;
@@ -23,13 +25,10 @@ import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.WindowContext;
 
-import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
 public class SearchClientsControllerTest extends ControllerTest {
-
-
     // Test data
 
     private Clinician testClinician = new Clinician("A", "B", "C", "D",
@@ -48,10 +47,10 @@ public class SearchClientsControllerTest extends ControllerTest {
 
     private String tick = "\u2713";
 
-    private final TransplantRequest getRequestLiver1  = new TransplantRequest(testClient1, Organ.LIVER);
-    private final TransplantRequest getRequestKidney1  = new TransplantRequest(testClient1, Organ.KIDNEY);
-    private final TransplantRequest getRequestKidney2  = new TransplantRequest(testClient1, Organ.KIDNEY);
-    private final TransplantRequest getRequestKidney4 = new TransplantRequest(testClient1, Organ.KIDNEY);
+    private final TransplantRequest getRequestLiver1  = new TransplantRequest(client1, Organ.LIVER);
+    private final TransplantRequest getRequestKidney1  = new TransplantRequest(client1, Organ.KIDNEY);
+    private final TransplantRequest getRequestKidney2  = new TransplantRequest(client1, Organ.KIDNEY);
+    private final TransplantRequest getRequestKidney4 = new TransplantRequest(client1, Organ.KIDNEY);
 
 
     // Overridden classes from parent class
