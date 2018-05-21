@@ -40,7 +40,7 @@ public class MainController {
         return currentPage;
     }
 
-    public WindowContext getWindowContext() {
+    WindowContext getWindowContext() {
         return windowContext;
     }
 
@@ -62,7 +62,7 @@ public class MainController {
         this.windowContext = context;
     }
 
-    public void resetWindowContext() {
+    void resetWindowContext() {
         this.windowContext = WindowContext.defaultContext();
     }
 
@@ -70,7 +70,7 @@ public class MainController {
      * Closes the window.
      */
     @FXML
-    public void closeWindow() {
+    void closeWindow() {
         stage.close();
     }
 
@@ -106,6 +106,8 @@ public class MainController {
             sidebarController.refresh();
         }
     }
+
+    public String getTitle() {return windowTitle;}
 
     /**
      * Sets the title of the window to the given text.

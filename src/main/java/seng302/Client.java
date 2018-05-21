@@ -1,14 +1,14 @@
 package seng302;
 
-import static seng302.TransplantRequest.RequestStatus.*;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -33,6 +33,9 @@ import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.Enums.Region;
 import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
 
+import static seng302.Utilities.Enums.RequestStatus.CANCELLED;
+import static seng302.Utilities.Enums.RequestStatus.WAITING;
+
 /**
  * The main Client class.
  */
@@ -46,7 +49,8 @@ public class Client {
     private Integer uid;
     private String firstName;
     private String lastName;
-    private String middleName;
+    private String middleName = "";
+    private String preferredName = "";
     private String currentAddress;
 
     @Enumerated(EnumType.STRING)
@@ -55,6 +59,8 @@ public class Client {
     private Gender gender;
     @Enumerated(EnumType.STRING)
     private BloodType bloodType;
+    @Enumerated(EnumType.STRING)
+    private Gender genderIdentity;
 
     private double height;
     private double weight;
@@ -224,8 +230,11 @@ public class Client {
      */
     public String getFullName() {
         String fullName = firstName + " ";
-        if (middleName != null) {
+        if (middleName != null && !middleName.equals("")) {
             fullName += middleName + " ";
+        }
+        if (preferredName != null && !preferredName.equals("")) {
+            fullName += "\"" + preferredName + "\" ";
         }
         fullName += lastName;
         return fullName;
@@ -258,6 +267,22 @@ public class Client {
         this.middleName = middleName;
     }
 
+    public String getPreferredName() {
+        if (preferredName == null || preferredName.equals("")) {
+            return getFullName();
+        }
+        return preferredName;
+    }
+
+    public String getPreferredNameOnly() {
+        return preferredName;
+    }
+
+    public void setPreferredName(String preferredName) {
+        addUpdate("preferredName");
+        this.preferredName = preferredName;
+    }
+
     public LocalDate getDateOfBirth() {
         return dateOfBirth;
     }
@@ -283,6 +308,15 @@ public class Client {
     public void setGender(Gender gender) {
         addUpdate("gender");
         this.gender = gender;
+    }
+
+    public Gender getGenderIdentity() {
+        return genderIdentity;
+    }
+
+    public void setGenderIdentity(Gender genderIdentity) {
+        addUpdate("genderIdentity");
+        this.genderIdentity = genderIdentity;
     }
 
     public double getHeight() {
@@ -500,7 +534,7 @@ public class Client {
      */
     public List<ProcedureRecord> getPendingProcedures() {
         return procedures.stream()
-                .filter(record -> LocalDate.now().isBefore(record.getDate()))
+                .filter(record -> !record.getDate().isBefore(LocalDate.now()))
                 .collect(Collectors.toList());
     }
 
@@ -537,6 +571,7 @@ public class Client {
         for (String string : splitSearchItems) {
             if (!firstName.toLowerCase().contains(string) &&
                     (middleName == null || !middleName.toLowerCase().contains(string)) &&
+                    (preferredName == null || !preferredName.toLowerCase().contains(string)) &&
                     !lastName.toLowerCase().contains(string)) {
                 isMatch = false;
                 break;
@@ -544,6 +579,70 @@ public class Client {
         }
 
         return isMatch;
+    }
+
+
+    /**
+     * Returns a HashSet of all names of the Client. If they do not have a middle/preferred name, this is set as "".
+     * @return the Hashset of all the Clients names.
+     */
+    private HashSet<String> splitNames() {
+
+        String[] fname = firstName.split("\\s+");
+        String[] lname = lastName.split("\\s+");
+        String[] mname;
+        String[] pname;
+
+        if (middleName == null) {
+            mname = new String[0];
+        } else {
+            mname = middleName.split("\\s+");
+        }
+        if (preferredName == null) {
+            pname = new String[0];
+        } else {
+            pname = preferredName.split("\\s+");
+        }
+
+        HashSet<String> names = new HashSet<>(Arrays.asList(fname));
+        names.addAll(Arrays.asList(lname));
+        names.addAll(Arrays.asList(mname));
+        names.addAll(Arrays.asList(pname));
+        return names;
+    }
+
+
+    /**
+     * Takes a string and checks if each space separated string section begins with the same values as the search
+     * parameter.
+     * @param searchParam The string to be checked
+     * @return True if all sections of the passed string match any of the names of the client
+     */
+    public boolean profileSearch(String searchParam) {
+        String lowerSearch = searchParam.toLowerCase();
+        String[] splitSearchItems = lowerSearch.split("\\s+");
+
+        Collection<String> searched = new ArrayList<>(Arrays.asList(splitSearchItems));
+
+        Collection<String> names = this.splitNames();
+        Collection<String> lowercaseNames = new ArrayList<>();
+        for (String name : names) {
+            lowercaseNames.add(name.toLowerCase());
+        }
+
+        Collection<String> matchedNames = new ArrayList<>();
+
+        for (String searchedParam : searched) {
+            for (String name : lowercaseNames) {
+
+                if (name.startsWith(searchedParam)) {
+                    matchedNames.add(name);
+                    break;
+                }
+            }
+
+        }
+        return matchedNames.size() == searched.size();
     }
 
     /**
@@ -589,13 +688,29 @@ public class Client {
         return getCurrentlyDonatedOrgans().size() > 0;
     }
 
+    /**
+     * Indicates whether the client is a donor (has chosen to donate at least one organ)
+     * @return boolean of whether the client has chosen to donate any organs
+     */
+    public boolean isDonor() {
+        for (Map.Entry<Organ, Boolean> entry : organDonationStatus.entrySet()) {
+            if (entry.getValue()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Indicates whether the client is a receiver (has at least one transplant request)
+     * @return boolean of whether the client has any organ transplant requests
+     */
     public boolean isReceiver() {
         return transplantRequests.size() > 0;
     }
 
     /**
      * Marks the client as dead and marks all organs as no for reception
-     *
      * @param dateOfDeath LocalDate that the client died
      */
     public void markDead(LocalDate dateOfDeath) {

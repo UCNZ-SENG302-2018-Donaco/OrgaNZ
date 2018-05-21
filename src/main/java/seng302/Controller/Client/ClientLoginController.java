@@ -16,6 +16,8 @@ import seng302.Utilities.JSONConverter;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
 
+import java.util.Objects;
+
 /**
  * Controller for the login page.
  */
@@ -53,7 +55,12 @@ public class ClientLoginController extends SubController {
                 if (empty) {
                     setText(null);
                 } else {
-                    setText(String.format("ID %d: %s %s", item.getUid(), item.getFirstName(), item.getLastName()));
+                    String originalName = item.getFirstName() + " " + item.getLastName();
+                    if (Objects.equals(originalName, item.getPreferredName())) {
+                        setText(String.format("ID %d: %s %s", item.getUid(), item.getFirstName(), item.getLastName()));
+                    } else {
+                        setText(String.format("ID %d: %s", item.getUid(), item.getPreferredName()));
+                    }
                 }
             }
         });

@@ -13,6 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import seng302.Utilities.Enums.Organ;
+import seng302.Utilities.Enums.RequestStatus;
 
 /**
  * Represents a request for a client to receive a transplant for a given organ.

@@ -11,13 +11,13 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
 /**
- * Command line to print all of the information of a single user.
+ * Command line to print all of the information of a single client.
  * @author Dylan Carlyle, Jack Steel
  * @version sprint 1.
  * date 06/03/2018
  */
 
-@Command(name = "printuserinfo", description = "Print a single user with their personal information.", sortOptions =
+@Command(name = "printuserinfo", description = "Print a single client with their personal information.", sortOptions =
         false)
 public class PrintClientInfo implements Runnable {
 
