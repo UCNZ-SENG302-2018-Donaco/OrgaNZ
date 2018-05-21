@@ -86,7 +86,7 @@ public class StaffListControllerTest extends ControllerTest {
 
     /**
      * This test passes in headless mode but not in headful mode.
-     * Seehttps://github.com/TestFX/Monocle/issues/12
+     * See https://github.com/TestFX/Monocle/issues/12
      */
     @Ignore
     @Test

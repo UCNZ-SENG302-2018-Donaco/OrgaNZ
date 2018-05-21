@@ -16,6 +16,7 @@ import seng302.Utilities.Enums.Region;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.WindowContext;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class SearchClientsControllerAdministratorTest extends ControllerTest {
@@ -68,6 +69,11 @@ public class SearchClientsControllerAdministratorTest extends ControllerTest {
 
     // Tests
 
+    /**
+     * This test passes in headless mode but not in headful mode.
+     * See https://github.com/TestFX/Monocle/issues/12
+     */
+    @Ignore
     @Test
     public void testDeleteClient() {
         Client client = client1;
