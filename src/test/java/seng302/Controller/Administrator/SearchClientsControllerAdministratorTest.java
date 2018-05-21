@@ -12,8 +12,6 @@ import seng302.Administrator;
 import seng302.Client;
 import seng302.Controller.ControllerTest;
 import seng302.State.State;
-import seng302.TransplantRequest;
-import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.Enums.Region;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.WindowContext;
@@ -55,14 +53,14 @@ public class SearchClientsControllerAdministratorTest extends ControllerTest {
         client1.setRegion(Region.CANTERBURY);
         client2.setRegion(Region.AUCKLAND);
         // client3's region is left as null
-
+/*
         for (int i = 100; i < 218; i++) {
             Client client = new Client("Client", "Number", Integer.toString(i), LocalDate.now(), i);
             TransplantRequest request = new TransplantRequest(client, Organ.MIDDLE_EAR);
             client.addTransplantRequest(request);
             client.setRegion(Region.NELSON);
             State.getClientManager().addClient(client);
-        }
+        }*/
 
         mainController.setWindowContext(new WindowContext.WindowContextBuilder()
                 .build());
@@ -88,7 +86,7 @@ public class SearchClientsControllerAdministratorTest extends ControllerTest {
             // check it has been deleted from the client manager
             assertNull(State.getClientManager().getClientByID(client.getUid()));
             // check it still has 30 rows
-            verifyThat("#tableView", hasNumRows(30));
+            verifyThat("#tableView", hasNumRows(2)); //just clients 2 and 3 left
         }
     }
 }
