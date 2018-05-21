@@ -27,7 +27,7 @@
         <HBox fx:id="sidebarPane" maxWidth="200.0" minWidth="200.0" prefWidth="200.0" />
         <BorderPane>
           <center>
-            <TableView fx:id="tableView">
+            <TableView fx:id="tableView" maxWidth="1.7976931348623157E308">
               <columns>
                 <TableColumn fx:id="idCol" editable="false" prefWidth="75.0" text="ID" />
                 <TableColumn fx:id="nameCol" editable="false" prefWidth="204.0" text="Name" />
@@ -38,7 +38,7 @@
                 <TableColumn fx:id="receiverCol" prefWidth="75.0" text="Receiver" />
               </columns>
               <BorderPane.margin>
-                <Insets left="10.0" right="10.0" top="20.0" />
+                <Insets left="10.0" right="10.0" top="10.0" />
               </BorderPane.margin>
             </TableView>
           </center>
@@ -56,7 +56,13 @@
                 <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
               </rowConstraints>
               <children>
-                <TitledPane text="Filters" GridPane.rowIndex="2">
+                <Label text="Search Clients">
+                  <font>
+                    <Font size="20.0" />
+                  </font>
+                </Label>
+                <TextField fx:id="searchBox" promptText="Client Name" GridPane.rowIndex="1" />
+                <TitledPane expanded="false" text="Filters" GridPane.rowIndex="2">
                   <content>
                     <VBox spacing="5.0">
                       <children>
@@ -125,21 +131,21 @@
                     </VBox>
                   </content>
                 </TitledPane>
-                <Label text="Search Clients">
-                  <font>
-                    <Font size="20.0" />
-                  </font>
-                </Label>
-                <TextField fx:id="searchBox" promptText="Client Name" GridPane.rowIndex="1" />
               </children>
             </GridPane>
           </top>
                <bottom>
-                  <VBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                  <VBox alignment="CENTER" prefWidth="200.0" BorderPane.alignment="CENTER">
                      <children>
-                  <Pagination fx:id="pagination" prefHeight="70.0" prefWidth="200.0" />
+                  <Pagination fx:id="pagination">
+                           <VBox.margin>
+                              <Insets />
+                           </VBox.margin></Pagination>
                         <Text fx:id="displayingXToYOfZText" strokeType="OUTSIDE" strokeWidth="0.0" text="Displaying x-y of z" />
                      </children>
+                     <BorderPane.margin>
+                        <Insets bottom="10.0" top="5.0" />
+                     </BorderPane.margin>
                   </VBox>
                </bottom>
         </BorderPane>
