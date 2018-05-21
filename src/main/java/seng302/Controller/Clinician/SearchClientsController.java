@@ -76,6 +76,9 @@ public class SearchClientsController extends SubController {
     private CheckComboBox<Organ> organsDonatingFilter, organsRequestingFilter;
 
     @FXML
+    private HBox donatingFilterBox, requestingFilterBox;
+
+    @FXML
     private HBox sidebarPane;
 
     @FXML
@@ -381,31 +384,31 @@ public class SearchClientsController extends SubController {
         switch (newClientType) {
             case "Only Donor":
                 organsRequestingFilter.getCheckModel().clearChecks();
-                organsDonatingFilter.setManaged(true);
-                organsDonatingFilter.setVisible(true);
-                organsRequestingFilter.setManaged(false);
-                organsRequestingFilter.setVisible(false);
+                donatingFilterBox.setManaged(true);
+                donatingFilterBox.setVisible(true);
+                requestingFilterBox.setManaged(false);
+                requestingFilterBox.setVisible(false);
                 break;
             case "Only Receiver":
                 organsDonatingFilter.getCheckModel().clearChecks();
-                organsRequestingFilter.setManaged(true);
-                organsRequestingFilter.setVisible(true);
-                organsDonatingFilter.setManaged(false);
-                organsDonatingFilter.setVisible(false);
+                requestingFilterBox.setManaged(true);
+                requestingFilterBox.setVisible(true);
+                donatingFilterBox.setManaged(false);
+                donatingFilterBox.setVisible(false);
                 break;
             case "Neither":
                 organsRequestingFilter.getCheckModel().clearChecks();
                 organsDonatingFilter.getCheckModel().clearChecks();
-                organsRequestingFilter.setManaged(false);
-                organsRequestingFilter.setVisible(false);
-                organsDonatingFilter.setManaged(false);
-                organsDonatingFilter.setVisible(false);
+                requestingFilterBox.setManaged(false);
+                requestingFilterBox.setVisible(false);
+                donatingFilterBox.setManaged(false);
+                donatingFilterBox.setVisible(false);
                 break;
             default:
-                organsRequestingFilter.setManaged(true);
-                organsRequestingFilter.setVisible(true);
-                organsDonatingFilter.setManaged(true);
-                organsDonatingFilter.setVisible(true);
+                requestingFilterBox.setManaged(true);
+                requestingFilterBox.setVisible(true);
+                donatingFilterBox.setManaged(true);
+                donatingFilterBox.setVisible(true);
                 break;
         }
         refresh();
