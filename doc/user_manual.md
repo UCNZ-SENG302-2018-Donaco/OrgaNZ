@@ -24,9 +24,16 @@ setattribute [--bloodtype=<bloodType>] [--currentaddress=<address>]
 
 setorganstatus [--bone] [--bonemarrow] [--connectivetissue] [--cornea]
                       [--heart] [--intestine] [--kidney] [--liver] [--lung]
-                      [--middleear] [--pancreas] [--skin] -u=<uid>
+                      [--middleear] [--pancreas] [--skin] -u=\<uid>
 
 
+## Request an organ
+
+requestorgan [-o=\<organType>] -u=\<uid>
+
+## Resolve an organ request
+
+resolveorgan [-m=\<message\>] -o=\<organType> -r=\<resolveReason> -u=\<uid>
 
 ## Deletes a user
 
