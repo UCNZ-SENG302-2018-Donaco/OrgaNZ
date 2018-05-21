@@ -287,6 +287,7 @@ public class SidebarController extends SubController {
                     HistoryItem load = new HistoryItem("LOAD", "The systems state was loaded from " + file.getName());
                     JSONConverter.updateHistory(load, "action_history.json");
 
+                    invoker.resetUnsavedUpdates();
                     mainController.resetWindowContext();
                     Notifications.create().title("Loaded data").text(
                             String.format("Successfully loaded %d clients from file",
