@@ -1,22 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="600.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.SidebarController">
+<VBox prefHeight="600.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.SidebarController">
   <children>
     <VBox VBox.vgrow="ALWAYS">
       <children>
         <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
           <children>
-            <Button fx:id="undoButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#undo" text="Undo" style="-fx-base: rgba(255, 220, 188, 0.8);" HBox.hgrow="ALWAYS">
+            <Button fx:id="undoButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#undo" style="-fx-base: rgba(255, 220, 188, 0.8);" text="Undo" HBox.hgrow="ALWAYS">
               <font>
                 <Font size="16.0" />
               </font>
             </Button>
-            <Button fx:id="redoButton" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#redo" text="Redo" style="-fx-base: rgba(255, 220, 188, 0.8);" HBox.hgrow="ALWAYS">
+            <Button fx:id="redoButton" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#redo" style="-fx-base: rgba(255, 220, 188, 0.8);" text="Redo" HBox.hgrow="ALWAYS">
               <font>
                 <Font size="16.0" />
               </font>
@@ -63,27 +67,42 @@
             <Font size="16.0" />
           </font>
         </Button>
+            <Button fx:id="staffListButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToStaffList" text="Staff list" VBox.vgrow="ALWAYS">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Button>
         <Button fx:id="transplantsButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToTransplants" text="Transplant requests" VBox.vgrow="ALWAYS">
           <font>
             <Font size="16.0" />
           </font>
         </Button>
+            <Button fx:id="createAdminButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToCreateAdmin" text="Create administrator" VBox.vgrow="ALWAYS">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Button>
+            <Button fx:id="createClinicianButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToCreateClinician" text="Create clinician" VBox.vgrow="ALWAYS">
+               <font>
+                  <Font size="16.0" />
+               </font>
+            </Button>
         <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToHistory" text="Action history" VBox.vgrow="ALWAYS">
           <font>
             <Font size="16.0" />
           </font>
         </Button>
-        <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#save" text="Save to file" style="-fx-base: rgba(255, 220, 188, 0.8);" VBox.vgrow="ALWAYS">
+        <Button fx:id="saveToFileButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#save" style="-fx-base: rgba(255, 220, 188, 0.8);" text="Save to file" VBox.vgrow="ALWAYS">
           <font>
             <Font size="16.0" />
           </font>
         </Button>
-        <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#load" text="Load from file" style="-fx-base: rgba(255, 220, 188, 0.8);" VBox.vgrow="ALWAYS">
+        <Button fx:id="loadFromFileButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#load" style="-fx-base: rgba(255, 220, 188, 0.8);" text="Load from file" VBox.vgrow="ALWAYS">
           <font>
             <Font size="16.0" />
           </font>
         </Button>
-        <Button fx:id="logoutButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#logout" text="Logout" style="-fx-base: rgba(255, 220, 188, 0.8);" VBox.vgrow="ALWAYS">
+        <Button fx:id="logoutButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#logout" style="-fx-base: rgba(255, 220, 188, 0.8);" text="Logout" VBox.vgrow="ALWAYS">
           <font>
             <Font size="16.0" />
           </font>

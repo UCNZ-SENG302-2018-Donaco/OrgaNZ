@@ -29,6 +29,7 @@ import org.controlsfx.control.Notifications;
  * Controller for the sidebar pane imported into every page in the main part of the GUI.
  */
 public class SidebarController extends SubController {
+
     private static final Logger LOGGER = Logger.getLogger(SidebarController.class.getName());
 
     private static final String ERROR_SAVING_MESSAGE = "There was an error saving to the file specified.";
@@ -37,7 +38,8 @@ public class SidebarController extends SubController {
     @FXML
     private Button viewClientButton, registerOrganDonationButton, viewMedicationsButton, viewClinicianButton,
             searchButton, transplantsButton, logoutButton, requestOrganDonationButton, illnessHistoryButton,
-            viewProceduresButton, undoButton, redoButton;
+            viewProceduresButton, createAdminButton, createClinicianButton, undoButton, redoButton, saveToFileButton,
+            loadFromFileButton, staffListButton;
 
     private ActionInvoker invoker;
     private Session session;
@@ -53,27 +55,39 @@ public class SidebarController extends SubController {
     @Override
     public void setup(MainController controller) {
         super.setup(controller);
-        Session.UserType userType = session.getLoggedInUserType();
-        if (userType == Session.UserType.CLIENT || windowContext.isClinViewClientWindow()) {
-            hideButton(viewClinicianButton);
-            hideButton(searchButton);
-            hideButton(transplantsButton);
-        } else if (userType == Session.UserType.CLINICIAN) {
-            hideButton(viewClientButton);
-            hideButton(registerOrganDonationButton);
-            hideButton(viewMedicationsButton);
-            hideButton(illnessHistoryButton);
-            hideButton(viewProceduresButton);
+        UserType userType = session.getLoggedInUserType();
+
+        Button staffButtons[] = {viewClinicianButton, searchButton, transplantsButton};
+        Button adminButtons[] = {createAdminButton, createClinicianButton, staffListButton, saveToFileButton,
+                loadFromFileButton};
+        Button clinicianButtons[] = {};
+        Button clientButtons[] = {viewClientButton, registerOrganDonationButton, viewMedicationsButton,
+                illnessHistoryButton, viewProceduresButton};
+
+        // Hide buttons depending on the type of user logged in/the view window type
+        if (userType == UserType.CLIENT || windowContext.isClinViewClientWindow()) {
+            hideButtons(staffButtons);
+            hideButtons(adminButtons);
+            hideButtons(clinicianButtons);
+        } else if (userType == UserType.CLINICIAN) {
+            hideButtons(adminButtons);
+            hideButtons(clientButtons);
+        } else if (userType == UserType.ADMINISTRATOR) {
+            hideButtons(clinicianButtons);
+            hideButtons(clientButtons);
         }
 
+        // Staff viewing a client shouldn't see the logout button
         if (windowContext.isClinViewClientWindow()) {
             hideButton(logoutButton);
         }
 
+        // Non-receivers shouldn't see the receiver tab
         if (!shouldShowRequestOrgans(userType)) {
             hideButton(requestOrganDonationButton);
         }
 
+        // Set undo and redo button depending on if they're able to be pressed
         undoButton.setDisable(!invoker.canUndo());
         redoButton.setDisable(!invoker.canRedo());
     }
@@ -89,6 +103,16 @@ public class SidebarController extends SubController {
             return currentClient.isReceiver();
         } else {
             return windowContext.isClinViewClientWindow();
+        }
+    }
+
+    /**
+     * Hides all the buttons in the passed-in array.
+     * @param buttons The buttons to hide
+     */
+    private void hideButtons(Button buttons[]) {
+        for (Button button : buttons) {
+            hideButton(button);
         }
     }
 
@@ -158,6 +182,14 @@ public class SidebarController extends SubController {
     }
 
     /**
+     * Redirects the GUI to the Staff list page.
+     */
+    @FXML
+    private void goToStaffList() {
+        PageNavigator.loadPage(Page.STAFF_LIST, mainController);
+    }
+
+    /**
      * Redirects the GUI to the Transplants page.
      */
     @FXML
@@ -187,6 +219,22 @@ public class SidebarController extends SubController {
     @FXML
     private void goToViewProcedures() {
         PageNavigator.loadPage(Page.VIEW_PROCEDURES, mainController);
+    }
+
+    /**
+     * Redirects the GUI to the Create administrator page.
+     */
+    @FXML
+    private void goToCreateAdmin() {
+        PageNavigator.loadPage(Page.CREATE_ADMINISTRATOR, mainController);
+    }
+
+    /**
+     * Redirects the GUI to the Create clinician page.
+     */
+    @FXML
+    private void goToCreateClinician() {
+        PageNavigator.loadPage(Page.CREATE_CLINICIAN, mainController);
     }
 
     /**

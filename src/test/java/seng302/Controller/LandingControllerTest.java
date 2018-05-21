@@ -1,12 +1,13 @@
 package seng302.Controller;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+
 import seng302.State.State;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.WindowContext;
 
-import static org.junit.Assert.*;
+import org.junit.Ignore;
+import org.junit.Test;
 
 /**
  * Testing that the landing page allows for navigation to the correct pages.
@@ -45,6 +46,6 @@ public class LandingControllerTest extends ControllerTest {
     @Test@Ignore
     public void goToClinicianLoginTest() {
         clickOn("#loginClinicianButton");
-        assertEquals(Page.LOGIN_CLINICIAN, mainController.getCurrentPage());
+        assertEquals(Page.LOGIN_STAFF, mainController.getCurrentPage());
     }
 }
