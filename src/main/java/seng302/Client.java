@@ -6,9 +6,11 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -29,8 +31,8 @@ public class Client {
     private int uid;
     private String firstName;
     private String lastName;
-    private String middleName;
-    private String preferredName;
+    private String middleName = "";
+    private String preferredName = "";
     private String currentAddress;
     private Region region;
     private Gender gender;
@@ -187,7 +189,7 @@ public class Client {
      */
     public String getFullName() {
         String fullName = firstName + " ";
-        if (middleName != null) {
+        if (middleName != null && !middleName.equals("")) {
             fullName += middleName + " ";
         }
         if (preferredName != null && !preferredName.equals("")) {
@@ -524,6 +526,70 @@ public class Client {
         return isMatch;
     }
 
+
+    /**
+     * Returns a HashSet of all names of the Client. If they do not have a middle/preferred name, this is set as "".
+     * @return the Hashset of all the Clients names.
+     */
+    private HashSet<String> splitNames() {
+
+        String[] fname = firstName.split("\\s+");
+        String[] lname = lastName.split("\\s+");
+        String[] mname;
+        String[] pname;
+
+        if (middleName == null) {
+            mname = new String[0];
+        } else {
+            mname = middleName.split("\\s+");
+        }
+        if (preferredName == null) {
+            pname = new String[0];
+        } else {
+            pname = preferredName.split("\\s+");
+        }
+
+        HashSet<String> names = new HashSet<>(Arrays.asList(fname));
+        names.addAll(Arrays.asList(lname));
+        names.addAll(Arrays.asList(mname));
+        names.addAll(Arrays.asList(pname));
+        return names;
+    }
+
+
+    /**
+     * Takes a string and checks if each space separated string section begins with the same values as the search
+     * parameter.
+     * @param searchParam The string to be checked
+     * @return True if all sections of the passed string match any of the names of the client
+     */
+    public boolean profileSearch(String searchParam) {
+        String lowerSearch = searchParam.toLowerCase();
+        String[] splitSearchItems = lowerSearch.split("\\s+");
+
+        Collection<String> searched = new ArrayList<>(Arrays.asList(splitSearchItems));
+
+        Collection<String> names = this.splitNames();
+        Collection<String> lowercaseNames = new ArrayList<>();
+        for (String name : names) {
+            lowercaseNames.add(name.toLowerCase());
+        }
+
+        Collection<String> matchedNames = new ArrayList<>();
+
+        for (String searchedParam : searched) {
+            for (String name : lowercaseNames) {
+
+                if (name.startsWith(searchedParam)) {
+                    matchedNames.add(name);
+                    break;
+                }
+            }
+
+        }
+        return matchedNames.size() == searched.size();
+    }
+
     /**
      * Client objects are identified by their uid
      * @param o The object to compare
@@ -561,6 +627,23 @@ public class Client {
         transplantRequests.remove(request);
     }
 
+    /**
+     * Indicates whether the client is a donor (has chosen to donate at least one organ)
+     * @return boolean of whether the client has chosen to donate any organs
+     */
+    public boolean isDonor() {
+        for (Map.Entry<Organ, Boolean> entry : organDonationStatus.entrySet()) {
+            if (entry.getValue()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Indicates whether the client is a receiver (has at least one transplant request)
+     * @return boolean of whether the client has any organ transplant requests
+     */
     public boolean isReceiver() {
         return transplantRequests.size() > 0;
     }
