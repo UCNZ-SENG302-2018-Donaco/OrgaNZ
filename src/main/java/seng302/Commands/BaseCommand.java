@@ -1,13 +1,6 @@
 package seng302.Commands;
 
-import seng302.Commands.Modify.CreateClient;
-import seng302.Commands.Modify.DeleteClient;
-import seng302.Commands.Modify.Load;
-import seng302.Commands.Modify.Redo;
-import seng302.Commands.Modify.Save;
-import seng302.Commands.Modify.SetAttribute;
-import seng302.Commands.Modify.SetOrganStatus;
-import seng302.Commands.Modify.Undo;
+import seng302.Commands.Modify.*;
 import seng302.Commands.View.GetChanges;
 import seng302.Commands.View.PrintAllInfo;
 import seng302.Commands.View.PrintAllOrgan;
@@ -20,13 +13,14 @@ import picocli.CommandLine.Command;
  * The main command hub used to access the other commands within the program such as save, help, createuser etc.
  */
 
-@Command(name = "ClientCLI", description = "ClientCLI is a command based management tool for the OrgaNZ client "
-        + "registration system.",
+@Command(name = "ClientCLI", description = "ClientCLI is a command based management tool for the team-700 ODMS.",
         subcommands = {
                 CreateClient.class,
                 SetAttribute.class,
                 SetOrganStatus.class,
                 DeleteClient.class,
+                RequestOrgan.class,
+                ResolveOrgan.class,
                 PrintAllInfo.class,
                 PrintAllOrgan.class,
                 PrintClientInfo.class,

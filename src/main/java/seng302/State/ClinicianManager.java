@@ -15,15 +15,18 @@ import seng302.Utilities.Enums.Region;
 public class ClinicianManager {
 
     private final List<Clinician> clinicians;
+    private int defaultClinicianId = 0;
+    private Clinician defaultClinician = new Clinician("admin", null, "admin", "admin", Region.UNSPECIFIED,
+            defaultClinicianId, "admin");
 
     public ClinicianManager() {
         clinicians = new ArrayList<>();
-        clinicians.add(new Clinician("admin", null, "admin", "admin", Region.UNSPECIFIED, 0, "admin"));
+        clinicians.add(defaultClinician);
     }
 
     public ClinicianManager(List<Clinician> clinicians) {
         this.clinicians = clinicians;
-        clinicians.add(new Clinician("admin", null, "admin", "admin", Region.UNSPECIFIED, 0, "admin"));
+        clinicians.add(defaultClinician);
     }
 
     /**
@@ -74,5 +77,13 @@ public class ClinicianManager {
                 .filter(o -> o.getStaffId() == id)
                 .findFirst()
                 .orElse(null);
+    }
+
+    /**
+     * Return the default clinician
+     * @return the default clinician
+     */
+    public Clinician getDefaultClinician() {
+        return getClinicianByStaffId(defaultClinicianId);
     }
 }
