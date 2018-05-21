@@ -2,7 +2,6 @@ package seng302.Controller;
 
 import javafx.fxml.FXML;
 
-import javafx.scene.control.Button;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
 
@@ -38,18 +37,10 @@ public class LandingController extends SubController {
     }
 
     /**
-     * Redirects the GUI to clinician login page
+     * Redirects the GUI to staff login page
      */
     @FXML
-    private void goToClinicianLogin() {
-        PageNavigator.loadPage(Page.LOGIN_CLINICIAN, mainController);
-    }
-
-    /**
-     * Redirects the GUI to create clinician page
-     */
-    @FXML
-    private void goToCreateClinician() {
-        PageNavigator.loadPage(Page.CREATE_CLINICIAN, mainController);
+    private void goToStaffLogin() {
+        PageNavigator.loadPage(Page.LOGIN_STAFF, mainController);
     }
 }

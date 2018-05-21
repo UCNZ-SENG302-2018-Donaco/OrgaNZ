@@ -5,9 +5,11 @@ import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertFalse;
 import static org.testfx.api.FxAssert.verifyThat;
+import static org.testfx.matcher.base.NodeMatchers.isNull;
 import static org.testfx.matcher.base.NodeMatchers.isVisible;
 import static org.testfx.matcher.control.TableViewMatchers.containsRowAtIndex;
 import static org.testfx.matcher.control.TableViewMatchers.hasNumRows;
+import static org.testfx.matcher.control.TableViewMatchers.hasTableCell;
 import static org.testfx.matcher.control.TextInputControlMatchers.hasText;
 
 import java.time.LocalDate;
@@ -509,6 +511,20 @@ public class SearchClientsControllerTest extends ControllerTest{
                 testClient3.isDonor(),
                 testClient3.isReceiver()));
         verifyThat("#tableView", hasNumRows(1));
+    }
+
+    @Test
+    public void testUnableToDeleteClient() {
+        Client client = testClient4;
+        String clientName = client.getFullName();
+
+        //check the client is in the table
+        verifyThat("#tableView", hasTableCell(clientName));
+
+        rightClickOn(clientName);
+
+        // check that Delete is not an option
+        verifyThat("Delete", isNull());
     }
 
     @Test

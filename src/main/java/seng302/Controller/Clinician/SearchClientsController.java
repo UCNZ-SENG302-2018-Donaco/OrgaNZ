@@ -3,6 +3,8 @@ package seng302.Controller.Clinician;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import javafx.beans.binding.Bindings;
+import javafx.beans.value.ObservableValue;
 import javafx.beans.value.ObservableValueBase;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -11,6 +13,8 @@ import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableCell;
@@ -29,6 +33,7 @@ import javafx.scene.text.Text;
 import seng302.Client;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
+import seng302.State.Session.UserType;
 import seng302.State.State;
 import seng302.Utilities.Enums.Gender;
 import seng302.Utilities.Enums.Organ;
@@ -182,6 +187,31 @@ public class SearchClientsController extends SubController {
         observableClientList.setAll(sortedClients);
         //Bind the tableView to the observable list
         tableView.setItems(observableClientList);
+
+        if (State.getSession().getLoggedInUserType() == UserType.ADMINISTRATOR) {
+
+            tableView.setRowFactory(tableView -> {
+                final TableRow<Client> row = new TableRow<>();
+                final ContextMenu rowMenu = new ContextMenu();
+                MenuItem removeItem = new MenuItem("Delete");
+                removeItem.setOnAction(event -> {
+                    // Remove item
+                    Client client = row.getItem(); //client to remove
+                    tableView.getItems().remove(client); // remove from table view
+                    State.getClientManager().getClients().remove(client); // remove from client manager
+                    PageNavigator.refreshAllWindows();
+
+                });
+                rowMenu.getItems().add(removeItem);
+
+                // Only display context menu for non-null items
+                row.contextMenuProperty().bind(
+                        Bindings.when(Bindings.isNotNull(row.itemProperty()))
+                                .then(rowMenu)
+                                .otherwise((ContextMenu) null));
+                return row;
+            });
+        }
     }
 
     /**
