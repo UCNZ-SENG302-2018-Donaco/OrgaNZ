@@ -173,7 +173,7 @@
             <id>CLI</id>
             <phase>package</phase>
             <configuration>
-              <finalName>${pom.name}-${pom.version}-cli</finalName>
+              <finalName>${project.name}-${project.version}-cli</finalName>
               <transformers>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                   <manifestEntries>
@@ -193,7 +193,7 @@
             <id>GUI</id>
             <phase>package</phase>
             <configuration>
-              <finalName>${pom.name}-${pom.version}-gui</finalName>
+              <finalName>${project.name}-${project.version}-gui</finalName>
               <transformers>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                   <manifestEntries>
@@ -235,6 +235,16 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <version>2.21.0</version>
+        <configuration>
+          <argLine>-Xms512m -Xmx1536m</argLine>
+        </configuration>
       </plugin>
     </plugins>
   </build>
@@ -279,7 +289,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-report-plugin</artifactId>
-        <version>2.19.1</version>
+        <version>2.21.0</version>
       </plugin>
 
       <plugin>

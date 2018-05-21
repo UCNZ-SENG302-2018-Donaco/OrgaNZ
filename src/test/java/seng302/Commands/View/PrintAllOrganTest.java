@@ -13,6 +13,7 @@ import java.util.ArrayList;
 
 import seng302.Client;
 import seng302.State.ClientManager;
+import seng302.TransplantRequest;
 import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
 
@@ -41,11 +42,23 @@ public class PrintAllOrganTest {
         ArrayList<Client> clients = new ArrayList<>();
 
         when(spyClientManager.getClients()).thenReturn(clients);
-        String[] inputs = {};
+        String[] inputs = {"-t", "donations"};
 
         CommandLine.run(spyPrintAllOrgan, System.out, inputs);
 
         assertThat(outContent.toString(), containsString("No clients exist"));
+    }
+
+    @Test
+    public void printallorgan_no_type_def() {
+        ArrayList<Client> clients = new ArrayList<>();
+
+        when(spyClientManager.getClients()).thenReturn(clients);
+        String[] inputs = {};
+
+        CommandLine.run(spyPrintAllOrgan, System.out, inputs);
+
+        assertThat(outContent.toString(), containsString("Missing required option '-t=<type>'"));
     }
 
     @Test
@@ -58,7 +71,27 @@ public class PrintAllOrganTest {
         clients.add(client);
 
         when(spyClientManager.getClients()).thenReturn(clients);
-        String[] inputs = {};
+        String[] inputs = {"-t", "donations"};
+
+        CommandLine.run(spyPrintAllOrgan, System.out, inputs);
+
+        assertTrue(outContent.toString().contains("User: 1. Name: First mid Last, Donation status: Kidney, Liver")
+                || outContent.toString().contains("User: 1. Name: First mid Last, Donation status: Liver, Kidney"));
+    }
+
+    @Test
+    public void printallorgan_single_client_receiving() {
+        Client client = new Client("First", "mid", "Last", LocalDate.of(1970, 1, 1), 1);
+        TransplantRequest tr1 = new TransplantRequest(client, Organ.LIVER);
+        TransplantRequest tr2 = new TransplantRequest(client, Organ.KIDNEY);
+        client.addTransplantRequest(tr1);
+        client.addTransplantRequest(tr2);
+
+        ArrayList<Client> clients = new ArrayList<>();
+        clients.add(client);
+
+        when(spyClientManager.getClients()).thenReturn(clients);
+        String[] inputs = {"-t", "requests"};
 
         CommandLine.run(spyPrintAllOrgan, System.out, inputs);
 
@@ -81,7 +114,7 @@ public class PrintAllOrganTest {
         clients.add(client3);
 
         when(spyClientManager.getClients()).thenReturn(clients);
-        String[] inputs = {};
+        String[] inputs = {"-t", "donations"};
 
         CommandLine.run(spyPrintAllOrgan, System.out, inputs);
 
