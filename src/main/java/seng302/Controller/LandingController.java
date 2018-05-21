@@ -43,8 +43,5 @@ public class LandingController extends SubController {
     private void goToStaffLogin() {
         PageNavigator.loadPage(Page.LOGIN_STAFF, mainController);
     }
-
-    //TODO: Remove this test button and remove it from FXML too
-    @FXML
-    private void goToCLI() {PageNavigator.loadPage(Page.COMMAND_LINE, mainController);}
+    
 }

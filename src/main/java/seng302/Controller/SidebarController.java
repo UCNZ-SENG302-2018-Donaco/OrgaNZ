@@ -42,7 +42,7 @@ public class SidebarController extends SubController {
     private Button viewClientButton, registerOrganDonationButton, viewMedicationsButton, viewClinicianButton,
             searchButton, transplantsButton, logoutButton, requestOrganDonationButton, illnessHistoryButton,
             viewProceduresButton, createAdminButton, createClinicianButton, undoButton, redoButton, saveToFileButton,
-            loadFromFileButton, staffListButton;
+            loadFromFileButton, staffListButton, commandLineButton;
 
     private ActionInvoker invoker;
     private Session session;
@@ -62,7 +62,7 @@ public class SidebarController extends SubController {
 
         Button staffButtons[] = {viewClinicianButton, searchButton, transplantsButton};
         Button adminButtons[] = {createAdminButton, createClinicianButton, staffListButton, saveToFileButton,
-                loadFromFileButton};
+                loadFromFileButton, commandLineButton};
         Button clinicianButtons[] = {};
         Button clientButtons[] = {viewClientButton, registerOrganDonationButton, viewMedicationsButton,
                 illnessHistoryButton, viewProceduresButton};
@@ -238,6 +238,14 @@ public class SidebarController extends SubController {
     @FXML
     private void goToCreateClinician() {
         PageNavigator.loadPage(Page.CREATE_CLINICIAN, mainController);
+    }
+
+    /**
+     * Redirects the GUI to the Admin command line page.
+     */
+    @FXML
+    private void goToCommandLine() {
+        PageNavigator.loadPage(Page.COMMAND_LINE, mainController);
     }
 
     /**
