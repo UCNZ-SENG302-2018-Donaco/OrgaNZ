@@ -88,10 +88,10 @@ public class SearchClientsControllerTest extends ControllerTest {
 
     @Test
     public void testUnableToDeleteClient() {
-        Client client = client1;
+        Client client = client4;
         String clientName = client.getFullName();
 
-        //check the administrator is in the list
+        //check the client is in the table
         verifyThat("#tableView", hasTableCell(clientName));
 
         rightClickOn(clientName);
