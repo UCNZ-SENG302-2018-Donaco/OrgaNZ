@@ -43,18 +43,12 @@ public class SearchClientsControllerTest extends ControllerTest{
     private Client testClient2 = new Client("jack", null, "2", LocalDate.of(2008, 1, 1), 2); // Ten years old
     private Client testClient3 = new Client("steve", null, "3", LocalDate.of(2008, 1, 1), 3);
     private Client testClient4 = new Client("tom", null, "4", LocalDate.of(1918, 1, 1), 4); // 100 years old
-    private Client[] testClients = {testClient1, testClient2, testClient3, testClient4};
+    private Client testClient5 = new Client("Alpha", "Zeta", "Beta", LocalDate.now(), 5);
+    private Client testClient6 = new Client("Zeta", "Alpha", "Beta", LocalDate.now(), 6);
+    private Client testClient7 = new Client("Alpha", "Beta", "Charlie", LocalDate.now(), 7);
+    private Client testClient8 = new Client("Alpha", "Alpha", "Charlie", LocalDate.now(), 8);
 
-    private Client client1 = new Client("Client", "Number", "One", LocalDate.now(), 1);
-    private Client client2 = new Client("Client", "Number", "Two", LocalDate.now(), 2);
-    private Client client3 = new Client("Client", "Number", "Three", LocalDate.now(), 3);
-    private Client client4 = new Client("Zeta", "Zeta", "Alpha", LocalDate.now(), 4);
-    private Client client5 = new Client("Alpha", "Zeta", "Beta", LocalDate.now(), 5);
-    private Client client6 = new Client("Zeta", "Alpha", "Beta", LocalDate.now(), 6);
-    private Client client7 = new Client("Alpha", "Beta", "Charlie", LocalDate.now(), 7);
-    private Client client8 = new Client("Alpha", "Alpha", "Charlie", LocalDate.now(), 8);
-
-    private Client[] clients = {client1, client2, client3, client4, client5, client6, client7, client8};
+    private Client[] testClients = {testClient1, testClient2, testClient3, testClient4, testClient5, testClient6, testClient7, testClient8};
 
     private TransplantRequest getRequestLiver1  = new TransplantRequest(testClient1, Organ.LIVER);
     private TransplantRequest getRequestKidney1  = new TransplantRequest(testClient1, Organ.KIDNEY);
@@ -74,12 +68,9 @@ public class SearchClientsControllerTest extends ControllerTest{
         for (Client client: testClients) {
             State.getClientManager().addClient(client);
         }
-        for (Client client : clients) {
-            State.getClientManager().addClient(client);
-        }
 
-        client1.setRegion(Region.CANTERBURY);
-        client2.setRegion(Region.AUCKLAND);
+        testClient1.setRegion(Region.CANTERBURY);
+        testClient2.setRegion(Region.AUCKLAND);
         // client3's region is left as null
 
         for (int i = 100; i < 218; i++) {
@@ -239,10 +230,12 @@ public class SearchClientsControllerTest extends ControllerTest{
         clickOn( (Node) lookup(".check-box").nth(0).query());
         verifyThat("#tableView",containsRowAtIndex(0,
                 testClient3.getUid(),
-                testClient3.getFullName(),
+                testClient3,
                 testClient3.getAge(),
                 testClient3.getGender(),
-                testClient3.getRegion()));
+                testClient3.getRegion(),
+                testClient3.isDonor(),
+                testClient3.isReceiver()));
         verifyThat("#tableView",hasNumRows(1));
     }
 
@@ -256,22 +249,28 @@ public class SearchClientsControllerTest extends ControllerTest{
         clickOn( (Node) lookup(".check-box").nth(1).query());
         verifyThat("#tableView",containsRowAtIndex(0,
                 testClient1.getUid(),
-                testClient1.getFullName(),
+                testClient1,
                 testClient1.getAge(),
                 testClient1.getGender(),
-                testClient1.getRegion()));
+                testClient1.getRegion(),
+                testClient1.isDonor(),
+                testClient1.isReceiver()));
         verifyThat("#tableView",containsRowAtIndex(1,
                 testClient2.getUid(),
-                testClient2.getFullName(),
+                testClient2,
                 testClient2.getAge(),
                 testClient2.getGender(),
-                testClient2.getRegion()));
+                testClient2.getRegion(),
+                testClient2.isDonor(),
+                testClient2.isReceiver()));
         verifyThat("#tableView",containsRowAtIndex(2,
                 testClient3.getUid(),
-                testClient3.getFullName(),
+                testClient3,
                 testClient3.getAge(),
                 testClient3.getGender(),
-                testClient3.getRegion()));
+                testClient3.getRegion(),
+                testClient3.isDonor(),
+                testClient3.isReceiver()));
         verifyThat("#tableView",hasNumRows(3));
     }
 
@@ -286,10 +285,12 @@ public class SearchClientsControllerTest extends ControllerTest{
         clickOn( (Node) lookup(".check-box").nth(1).query());
         verifyThat("#tableView",containsRowAtIndex(0,
                 testClient3.getUid(),
-                testClient3.getFullName(),
+                testClient3,
                 testClient3.getAge(),
                 testClient3.getGender(),
-                testClient3.getRegion()));
+                testClient3.getRegion(),
+                testClient3.isDonor(),
+                testClient3.isReceiver()));
         verifyThat("#tableView",hasNumRows(1));
     }
 
@@ -305,10 +306,12 @@ public class SearchClientsControllerTest extends ControllerTest{
         doubleClickOn("#ageMaxField").type(KeyCode.BACK_SPACE).write("12").type(KeyCode.ENTER);
         verifyThat("#tableView",containsRowAtIndex(0,
                 testClient2.getUid(),
-                testClient2.getFullName(),
+                testClient2,
                 testClient2.getAge(),
                 testClient2.getGender(),
-                testClient2.getRegion()));
+                testClient2.getRegion(),
+                testClient2.isDonor(),
+                testClient2.isReceiver()));
         verifyThat("#tableView",hasNumRows(1));
 
     }
@@ -322,10 +325,12 @@ public class SearchClientsControllerTest extends ControllerTest{
         clickOn( (Node) lookup(".check-box").nth(0).query());
         verifyThat("#tableView",containsRowAtIndex(0,
                 testClient1.getUid(),
-                testClient1.getFullName(),
+                testClient1,
                 testClient1.getAge(),
                 testClient1.getGender(),
-                testClient1.getRegion()));
+                testClient1.getRegion(),
+                testClient1.isDonor(),
+                testClient1.isReceiver()));
         verifyThat("#tableView",hasNumRows(1));
     }
     /**
@@ -337,22 +342,28 @@ public class SearchClientsControllerTest extends ControllerTest{
         clickOn( (Node) lookup(".check-box").nth(1).query());
         verifyThat("#tableView",containsRowAtIndex(0,
                 testClient2.getUid(),
-                testClient2.getFullName(),
+                testClient2,
                 testClient2.getAge(),
                 testClient2.getGender(),
-                testClient2.getRegion()));
+                testClient2.getRegion(),
+                testClient2.isDonor(),
+                testClient2.isReceiver()));
         verifyThat("#tableView",containsRowAtIndex(1,
                 testClient3.getUid(),
-                testClient3.getFullName(),
+                testClient3,
                 testClient3.getAge(),
                 testClient3.getGender(),
-                testClient3.getRegion()));
+                testClient3.getRegion(),
+                testClient3.isDonor(),
+                testClient3.isReceiver()));
         verifyThat("#tableView",containsRowAtIndex(2,
                 testClient4.getUid(),
-                testClient4.getFullName(),
+                testClient4,
                 testClient4.getAge(),
                 testClient4.getGender(),
-                testClient4.getRegion()));
+                testClient4.getRegion(),
+                testClient4.isDonor(),
+                testClient4.isReceiver()));
         verifyThat("#tableView",hasNumRows(3));
     }
 
@@ -402,10 +413,12 @@ public class SearchClientsControllerTest extends ControllerTest{
         clickOn((Node) lookup(".check-box").nth(1).query());
         verifyThat("#tableView", containsRowAtIndex(0,
                 getRequestKidney1.getClient().getUid(),
-                getRequestKidney1.getClient().getFullName(),
+                getRequestKidney1.getClient(),
                 testClient1.getAge(),
                 testClient1.getGender(),
-                getRequestKidney1.getClient().getRegion()));
+                getRequestKidney1.getClient().getRegion(),
+                testClient1.isDonor(),
+                testClient1.isReceiver()));
         verifyThat("#tableView", hasNumRows(3));
     }
 
@@ -421,7 +434,7 @@ public class SearchClientsControllerTest extends ControllerTest{
         clickOn((Node) lookup(".check-box").nth(3).query());
         verifyThat("#tableView", containsRowAtIndex(0,
                 getRequestKidney1.getClient().getUid(),
-                getRequestLiver1.getClient().getFullName(),
+                getRequestLiver1.getClient(),
                 testClient1.getAge(),
                 testClient1.getGender(),
                 getRequestKidney1.getClient().getRegion()));
@@ -442,7 +455,7 @@ public class SearchClientsControllerTest extends ControllerTest{
         clickOn((Node) lookup(".check-box").nth(1).query());
         verifyThat("#tableView", containsRowAtIndex(0,
                 testClient1.getUid(),
-                testClient1.getFullName(),
+                testClient1,
                 testClient1.getAge(),
                 testClient1.getGender(),
                 testClient1.getRegion()));
@@ -461,10 +474,12 @@ public class SearchClientsControllerTest extends ControllerTest{
         clickOn((Node) lookup(".check-box").nth(1).query());
         verifyThat("#tableView", containsRowAtIndex(1,
                 testClient2.getUid(),
-                testClient2.getFullName(),
+                testClient2,
                 testClient2.getAge(),
                 testClient2.getGender(),
-                testClient2.getRegion()));
+                testClient2.getRegion(),
+                testClient2.isDonor(),
+                testClient2.isReceiver()));
         verifyThat("#tableView", hasNumRows(2));
     }
 
@@ -477,10 +492,12 @@ public class SearchClientsControllerTest extends ControllerTest{
         clickOn("Only Receiver");
         verifyThat("#tableView", containsRowAtIndex(1,
                 testClient2.getUid(),
-                testClient2.getFullName(),
+                testClient2,
                 testClient2.getAge(),
                 testClient2.getGender(),
-                testClient2.getRegion()));
+                testClient2.getRegion(),
+                testClient2.isDonor(),
+                testClient2.isReceiver()));
         verifyThat("#tableView", hasNumRows(3));
     }
 
@@ -493,10 +510,12 @@ public class SearchClientsControllerTest extends ControllerTest{
         clickOn((Node) lookup(".check-box").nth(5).query());
         verifyThat("#tableView", containsRowAtIndex(0,
                 testClient3.getUid(),
-                testClient3.getFullName(),
+                testClient3,
                 testClient3.getAge(),
                 testClient3.getGender(),
-                testClient3.getRegion()));
+                testClient3.getRegion(),
+                testClient3.isDonor(),
+                testClient3.isReceiver()));
         verifyThat("#tableView", hasNumRows(1));
     }
 
@@ -512,28 +531,28 @@ public class SearchClientsControllerTest extends ControllerTest{
     @Test
     public void paginationDescriptionTest() {
         verifyThat("#tableView", hasNumRows(30));
-        int totalRows = clients.length + 118;
+        int totalRows = testClients.length + 118;
         verifyThat("#displayingXToYOfZText", TextMatchers.hasText("Displaying 1-30 of " + Integer.toString(totalRows)));
     }
 
     @Ignore
     @Test
     public void clientIsReceiverTest() {
-        TransplantRequest transplantRequest = new TransplantRequest(client1, Organ.MIDDLE_EAR);
-        client1.addTransplantRequest(transplantRequest);
+        TransplantRequest transplantRequest = new TransplantRequest(testClient1, Organ.MIDDLE_EAR);
+        testClient1.addTransplantRequest(transplantRequest);
 
         TableView<Client> tableView = lookup("#tableView").query();
-        boolean isReceiver = (Boolean) (tableView.getColumns().get(5).getCellObservableValue(client1).getValue());
+        boolean isReceiver = (Boolean) (tableView.getColumns().get(5).getCellObservableValue(testClient1).getValue());
         assertTrue(isReceiver);
     }
 
     @Ignore
     @Test
     public void clientIsDonorTest() throws OrganAlreadyRegisteredException {
-        client1.setOrganDonationStatus(Organ.PANCREAS, true);
+        testClient2.setOrganDonationStatus(Organ.PANCREAS, true);
 
         TableView<Client> tableView = lookup("#tableView").query();
-        boolean isDonor = (Boolean) (tableView.getColumns().get(4).getCellObservableValue(client1).getValue());
+        boolean isDonor = (Boolean) (tableView.getColumns().get(4).getCellObservableValue(testClient1).getValue());
         assertTrue(isDonor);
     }
 
@@ -541,8 +560,8 @@ public class SearchClientsControllerTest extends ControllerTest{
     @Test
     public void clientNotDonorOrReceiverTest() {
         TableView<Client> tableView = lookup("#tableView").query();
-        boolean isDonor = (Boolean) (tableView.getColumns().get(4).getCellObservableValue(client1).getValue());
-        boolean isReceiver = (Boolean) (tableView.getColumns().get(5).getCellObservableValue(client1).getValue());
+        boolean isDonor = (Boolean) (tableView.getColumns().get(4).getCellObservableValue(testClient1).getValue());
+        boolean isReceiver = (Boolean) (tableView.getColumns().get(5).getCellObservableValue(testClient1).getValue());
 
         assertFalse(isDonor);
         assertFalse(isReceiver);
@@ -555,7 +574,7 @@ public class SearchClientsControllerTest extends ControllerTest{
 
         Client result = tableView.getItems().get(0);
 
-        assertEquals(result.getFullName(), client4.getFullName());
+        assertEquals(result, testClient4);
     }
 
     @Ignore
@@ -565,7 +584,7 @@ public class SearchClientsControllerTest extends ControllerTest{
 
         Client result = tableView.getItems().get(1);
 
-        assertEquals(result.getFullName(), client5.getFullName());
+        assertEquals(result, testClient5);
     }
 
     @Ignore
@@ -575,7 +594,7 @@ public class SearchClientsControllerTest extends ControllerTest{
 
         Client result = tableView.getItems().get(3);
 
-        assertEquals(result.getFullName(), client7.getFullName());
+        assertEquals(result, testClient7);
     }
 
     @Ignore
@@ -618,7 +637,7 @@ public class SearchClientsControllerTest extends ControllerTest{
     @Ignore
     @Test
     public void testGenderOrderStillWorks() {
-        client1.setGender(Gender.MALE);
+        testClient1.setGender(Gender.MALE);
         clickOn("#genderCol");
         TableView<Client> tableView = lookup("#tableView").query();
         Client result = tableView.getItems().get(0);
