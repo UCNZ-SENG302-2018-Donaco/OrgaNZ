@@ -14,7 +14,7 @@ import seng302.Utilities.JSONConverter;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
-@Command(name = "deleteuser", description = "Deletes a user.")
+@Command(name = "deleteclient", description = "Deletes a client.")
 public class DeleteClient implements Runnable {
 
     private ClientManager manager;
@@ -39,7 +39,7 @@ public class DeleteClient implements Runnable {
             System.out.println("No client exists with that user ID");
         } else {
             System.out.println(
-                    String.format("Removing user: %s %s %s, with date of birth: %s, would you like to proceed? (y/n)",
+                    String.format("Removing client: %s %s %s, with date of birth: %s, would you like to proceed? (y/n)",
                             client.getFirstName(), client.getMiddleName(), client.getLastName(),
                             client.getDateOfBirth()));
             Scanner scanner = new Scanner(System.in);

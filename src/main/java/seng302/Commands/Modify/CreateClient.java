@@ -24,7 +24,7 @@ import picocli.CommandLine.Option;
  * date 05/03/2018
  */
 
-@Command(name = "createuser", description = "Creates a user.")
+@Command(name = "createclient", description = "Creates a client.")
 public class CreateClient implements Runnable {
 
     private ClientManager manager;
@@ -53,12 +53,12 @@ public class CreateClient implements Runnable {
     @Option(names = {"-m", "--middlenames", "--middlename"}, description = "Middle name(s)")
     private String middleNames;
 
-    @Option(names = "--force", description = "Force even if a duplicate user is found")
+    @Option(names = "--force", description = "Force even if a duplicate client is found")
     private boolean force;
 
     public void run() {
         if (!force && manager.collisionExists(firstName, lastName, dateOfBirth)) {
-            System.out.println("Duplicate user found, use --force to create anyway");
+            System.out.println("Duplicate client found, use --force to create anyway");
             return;
         }
         int uid = manager.nextUid();

@@ -4,51 +4,47 @@ Open JAR file
 
 Here are the current usable Commands:
 
-## Create a user
+## Create a client
 
-createuser [--force] -d=<dateOfBirth> -f=<firstName> -l=<lastName>
-                  [-m=<middleNames>]
-
-
-## Set the attributes of an existing user
-
-setattribute [--bloodtype=<bloodType>] [--currentaddress=<address>]
-                    [--dateofbirth=<dateOfBirth>] [--dateofdeath=<dateOfDeath>]
-                    [--firstname=<firstName>] [--gender=<gender>]
-                    [--height=<height>] [--lastname=<lastName>]
-                    [--middlename=<middleName>] [--region=<region>]
-                    [--weight=<weight>] -u=<uid>
+createclient [--force] -d=\<dateOfBirth> -f=\<firstName> -l=\<lastName>
+                  [-m=\<middleNames>]
 
 
-## Set the organ donation choices of an existing user
+## Set the attributes of an existing client
+
+setattribute [--bloodtype=\<bloodType>] [--currentaddress=\<address>]
+                    [--dateofbirth=\<dateOfBirth>] [--dateofdeath=\<dateOfDeath>]
+                    [--firstname=\<firstName>] [--gender=\<gender>]
+                    [--height=\<height>] [--lastname=\<lastName>]
+                    [--middlename=\<middleName>] [--region=\<region>]
+                    [--weight=\<weight>] -u=\<uid>
+
+
+## Set organ donation choices of an existing client
 
 setorganstatus [--bone] [--bonemarrow] [--connectivetissue] [--cornea]
                       [--heart] [--intestine] [--kidney] [--liver] [--lung]
-                      [--middleear] [--pancreas] [--skin] -u=<uid>
+                      [--middleear] [--pancreas] [--skin] -u=\<uid>
 
 
+## Delete a client
 
-## Deletes a user
-
-deleteuser -u=<uid>
-
+deleteclient -u=\<uid>
 
 
-## Print all users with their personal information.
+## Print all clients with their personal information
 
 printallinfo
 
 
-## Print a single user with their personal information.
+## Print a single clients information
 
-printuser -u=<uid>
+printclient -u=\<uid>
 
 
+## Print a single client with their organ information
 
-## Print a single user with their organ information.
-
-printuserorgan -u=<uid>
-
+printclientorgan -u=\<uid>
 
 
 ## Save clients to file
@@ -60,10 +56,32 @@ save
 
 load
 
+* This will override all current data
 
-## Get help on commands.
+## Create a clinician
 
-help [command]...
+createclinician [-a=\<workAddress\>] -f=\<firstName\> -l=\<lastName\>
+                       [-m=\<middleNames\>] [-p=\<password\>] [-r=\<region\>]
+                       
+* First name and last name are required
+
+## Update a clinician
+
+modifyclinician [-a=\<workAddress\>] [-f=\<firstName\>] [-l=\<lastName\>]
+                       [-m=\<middleNames>] [-p=\<password>] [-r=\<region>] -s=\<id>
+                       
+
+## Delete a clinician
+
+deleteclinician -s=\<id>
+
+* Note that the default clinician (id = 0) cannot be deleted
+
+## Get help on commands
+
+help [command]
+
+Displays detailed information on the given [command]
 
 ## Undo
 
