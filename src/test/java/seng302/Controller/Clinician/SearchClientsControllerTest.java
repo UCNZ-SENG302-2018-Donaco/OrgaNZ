@@ -4,6 +4,7 @@ import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertFalse;
 import static org.testfx.api.FxAssert.verifyThat;
+import static org.testfx.matcher.base.NodeMatchers.isNull;
 import static org.testfx.matcher.base.NodeMatchers.isVisible;
 import static org.testfx.matcher.control.TableViewMatchers.hasNumRows;
 import static org.testfx.matcher.control.TableViewMatchers.hasTableCell;
@@ -14,22 +15,11 @@ import java.time.LocalDate;
 import javafx.scene.Node;
 import javafx.scene.control.TableView;
 
-import static org.testfx.api.FxAssert.verifyThat;
-import static org.testfx.matcher.base.NodeMatchers.isNull;
-import static org.testfx.matcher.control.TableViewMatchers.hasTableCell;
-
-import java.time.LocalDate;
-
 import seng302.Client;
 import seng302.Clinician;
 import seng302.Controller.ControllerTest;
 import seng302.State.State;
 import seng302.TransplantRequest;
-import seng302.Utilities.Enums.Organ;
-import seng302.Utilities.Enums.Region;
-import seng302.Utilities.View.Page;
-import seng302.Utilities.View.WindowContext;
-
 import seng302.Utilities.Enums.Gender;
 import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.Enums.Region;
@@ -37,7 +27,6 @@ import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.WindowContext;
 
-import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -111,6 +100,7 @@ public class SearchClientsControllerTest extends ControllerTest {
         verifyThat("Delete", isNull());
     }
 
+    @Test
     public void componentsAreVisibleTest() {
         verifyThat("#tableView", isVisible());
         verifyThat("#displayingXToYOfZText", isVisible());
