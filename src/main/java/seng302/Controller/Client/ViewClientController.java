@@ -292,6 +292,7 @@ public class ViewClientController extends SubController {
         addChangeIfDifferent(action, "setMiddleName", viewedClient.getMiddleName(), mname.getText());
         addChangeIfDifferent(action, "setPreferredName", viewedClient.getPreferredNameOnly(), pname.getText());
         addChangeIfDifferent(action, "setDateOfBirth", viewedClient.getDateOfBirth(), dob.getValue());
+        addChangeIfDifferent(action, "setDateOfDeath", viewedClient.getDateOfDeath(), dod.getValue());
         addChangeIfDifferent(action, "setGender", viewedClient.getGender(), gender.getValue());
         addChangeIfDifferent(action, "setGenderIdentity", viewedClient.getGenderIdentity(), genderIdentity.getValue());
         addChangeIfDifferent(action, "setHeight", viewedClient.getHeight(), Double.parseDouble(height.getText()));
