@@ -23,7 +23,6 @@ import seng302.State.State;
 import seng302.TransplantRequest;
 import seng302.Utilities.Enums.Gender;
 import seng302.Utilities.Enums.Organ;
-import seng302.Utilities.Enums.Gender;
 import seng302.Utilities.Enums.Region;
 import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
 import seng302.Utilities.View.Page;
@@ -31,7 +30,6 @@ import seng302.Utilities.View.WindowContext;
 
 import org.junit.Ignore;
 import org.junit.Test;
-import org.testfx.api.FxRobotException;
 import org.testfx.matcher.control.TextMatchers;
 
 /**
@@ -57,8 +55,6 @@ public class SearchClientsControllerTest extends ControllerTest{
     private Client client8 = new Client("Alpha", "Alpha", "Charlie", LocalDate.now(), 8);
 
     private Client[] clients = {client1, client2, client3, client4, client5, client6, client7, client8};
-
-    private String tick = "\u2713";
 
     private TransplantRequest getRequestLiver1  = new TransplantRequest(testClient1, Organ.LIVER);
     private TransplantRequest getRequestKidney1  = new TransplantRequest(testClient1, Organ.KIDNEY);
@@ -513,6 +509,7 @@ public class SearchClientsControllerTest extends ControllerTest{
     }
 
     @Ignore
+    @Test
     public void paginationDescriptionTest() {
         verifyThat("#tableView", hasNumRows(30));
         int totalRows = clients.length + 118;
@@ -520,6 +517,7 @@ public class SearchClientsControllerTest extends ControllerTest{
     }
 
     @Ignore
+    @Test
     public void clientIsReceiverTest() {
         TransplantRequest transplantRequest = new TransplantRequest(client1, Organ.MIDDLE_EAR);
         client1.addTransplantRequest(transplantRequest);
@@ -530,6 +528,7 @@ public class SearchClientsControllerTest extends ControllerTest{
     }
 
     @Ignore
+    @Test
     public void clientIsDonorTest() throws OrganAlreadyRegisteredException {
         client1.setOrganDonationStatus(Organ.PANCREAS, true);
 
@@ -539,6 +538,7 @@ public class SearchClientsControllerTest extends ControllerTest{
     }
 
     @Ignore
+    @Test
     public void clientNotDonorOrReceiverTest() {
         TableView<Client> tableView = lookup("#tableView").query();
         boolean isDonor = (Boolean) (tableView.getColumns().get(4).getCellObservableValue(client1).getValue());
@@ -549,6 +549,7 @@ public class SearchClientsControllerTest extends ControllerTest{
     }
 
     @Ignore
+    @Test
     public void testLastNameIsFirstPriority() {
         TableView<Client> tableView = lookup("#tableView").query();
 
@@ -558,6 +559,7 @@ public class SearchClientsControllerTest extends ControllerTest{
     }
 
     @Ignore
+    @Test
     public void testFirstNameIsSecondPriority() {
         TableView<Client> tableView = lookup("#tableView").query();
 
@@ -567,6 +569,7 @@ public class SearchClientsControllerTest extends ControllerTest{
     }
 
     @Ignore
+    @Test
     public void testMiddleNameIsThirdPriority() {
         TableView<Client> tableView = lookup("#tableView").query();
 
@@ -576,6 +579,7 @@ public class SearchClientsControllerTest extends ControllerTest{
     }
 
     @Ignore
+    @Test
     public void testNameColReverseOrder() {
         clickOn("#nameCol");
         TableView<Client> tableView = lookup("#tableView").query();
@@ -589,6 +593,7 @@ public class SearchClientsControllerTest extends ControllerTest{
     }
 
     @Ignore
+    @Test
     public void testNameColReverseOrderLastPage() {
         clickOn("#nameCol");
 
@@ -602,6 +607,7 @@ public class SearchClientsControllerTest extends ControllerTest{
     // Tests to ensure the custom comparator hasn't broken the other column default comps.
 
     @Ignore
+    @Test
     public void testIDOrderStillWorks() {
         clickOn("#idCol");
         TableView<Client> tableView = lookup("#tableView").query();
@@ -610,6 +616,7 @@ public class SearchClientsControllerTest extends ControllerTest{
     }
 
     @Ignore
+    @Test
     public void testGenderOrderStillWorks() {
         client1.setGender(Gender.MALE);
         clickOn("#genderCol");
@@ -619,6 +626,7 @@ public class SearchClientsControllerTest extends ControllerTest{
     }
 
     @Ignore
+    @Test
     public void testRegionOrderStillWorks() {
         doubleClickOn("#regionCol");
         TableView<Client> tableView = lookup("#tableView").query();
