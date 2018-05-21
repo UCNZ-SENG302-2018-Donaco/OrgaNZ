@@ -17,8 +17,6 @@ import seng302.Utilities.JSONConverter;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
 
-import org.apache.commons.lang3.StringUtils;
-
 /**
  * Controller to handle the login of staff.
  * It allows them to log into a valid staff account (clinician or administrator) that exists on the
@@ -125,7 +123,7 @@ public class StaffLoginController extends SubController {
         if (administrator == null) {
             staffIdDoesntExistAlert();
 
-        } else if (!StringUtils.equals(administrator.getPassword(), password.getText()) ) {
+        } else if (!administrator.getPassword().equals(password.getText())) {
             staffIdPasswordMismatchAlert();
 
         } else {
@@ -145,7 +143,7 @@ public class StaffLoginController extends SubController {
     private void signIn() {
 
         if(validStaffIdInput()) {
-            if (StringUtils.isNumeric(staffId.getText())) {
+            if (staffId.getText().matches("[0-9]+")) {
                 signInClinician();
             } else {
                 signInAdministrator();

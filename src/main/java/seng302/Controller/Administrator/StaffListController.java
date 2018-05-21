@@ -25,10 +25,13 @@ import seng302.State.AdministratorManager;
 import seng302.State.ClinicianManager;
 import seng302.State.State;
 import seng302.Utilities.JSONConverter;
-
-import org.apache.commons.lang3.StringUtils;
+import seng302.Utilities.View.PageNavigator;
 
 public class StaffListController extends SubController {
+
+    private ClinicianManager clinicianManager;
+    private AdministratorManager adminManager;
+    private ActionInvoker invoker;
 
     @FXML
     private HBox sidebarPane;
@@ -36,12 +39,17 @@ public class StaffListController extends SubController {
     @FXML
     private ListView<String> staffList;
 
+    private final String defaultAdminUsername;
+    private final String defaultClinicianId;
 
-    private String defaultAdministratorUsername = State.getAdministratorManager().getDefaultAdministrator()
-            .getUsername();
-    private String defaultClinicianId = Integer
-            .toString(State.getClinicianManager().getDefaultClinician().getStaffId());
+    public StaffListController() {
+        this.adminManager = State.getAdministratorManager();
+        this.clinicianManager = State.getClinicianManager();
+        this.invoker = State.getInvoker();
 
+        this.defaultAdminUsername = adminManager.getDefaultAdministrator().getUsername();
+        this.defaultClinicianId = Integer.toString(clinicianManager.getDefaultClinician().getStaffId());
+    }
 
     @Override
     public void setup(MainController mainController) {
@@ -59,18 +67,13 @@ public class StaffListController extends SubController {
 
     @FXML
     private void initialize() {
-        staffList.setItems(getStaffIds());
-
         staffList.setCellFactory(lv -> {
             ListCell<String> cell = new ListCell<>();
-
-            ContextMenu contextMenu = new ContextMenu();
 
             MenuItem deleteItem = new MenuItem();
             deleteItem.textProperty().setValue("Delete");
             deleteItem.setOnAction(event -> delete(cell.getItem()));
-
-            contextMenu.getItems().add(deleteItem);
+            ContextMenu contextMenu = new ContextMenu(deleteItem);
 
             cell.textProperty().bind(cell.itemProperty());
 
@@ -81,7 +84,7 @@ public class StaffListController extends SubController {
                     cell.setContextMenu(null);
                     cell.setStyle("");
 
-                } else if (newValue.equals(defaultAdministratorUsername)
+                } else if (newValue.equals(defaultAdminUsername)
                         || newValue.equals(defaultClinicianId)
                         || newValue.equals(State.getSession().getLoggedInAdministrator().getUsername())) {
                     // It is either the default admin username or default clinician id, or the currently
@@ -98,6 +101,8 @@ public class StaffListController extends SubController {
 
             return cell;
         });
+
+        refresh();
     }
 
     /**
@@ -105,29 +110,26 @@ public class StaffListController extends SubController {
      * @param id the staff member to delete
      */
     private void delete(String id) {
-        ActionInvoker invoker = new ActionInvoker();
         String action_history_filename = "action_history.json";
 
-        if (StringUtils.isNumeric(id)) {
-            ClinicianManager manager = State.getClinicianManager();
-            Clinician clinician = manager.getClinicianByStaffId(Integer.parseInt(id));
+        if (id.matches("[0-9]+")) {
+            Clinician clinician = clinicianManager.getClinicianByStaffId(Integer.parseInt(id));
 
-            Action action = new DeleteClinicianAction(clinician, manager);
+            Action action = new DeleteClinicianAction(clinician, clinicianManager);
             invoker.execute(action);
 
             HistoryItem deleteClinician = new HistoryItem("DELETE", "Clinician " + id + " deleted");
             JSONConverter.updateHistory(deleteClinician, action_history_filename);
         } else {
-            AdministratorManager manager = State.getAdministratorManager();
-            Administrator administrator = manager.getAdministratorByUsername(id);
+            Administrator administrator = adminManager.getAdministratorByUsername(id);
 
-            Action action = new DeleteAdministratorAction(administrator, manager);
+            Action action = new DeleteAdministratorAction(administrator, adminManager);
             invoker.execute(action);
 
             HistoryItem deleteAdministrator = new HistoryItem("DELETE", "Administrator " + id + " deleted");
             JSONConverter.updateHistory(deleteAdministrator, action_history_filename);
         }
-        refresh();
+        PageNavigator.refreshAllWindows();
     }
 
     /**
@@ -137,8 +139,8 @@ public class StaffListController extends SubController {
     private ObservableList<String> getStaffIds() {
         List<String> staffIds = new ArrayList<>();
 
-        List<Clinician> clinicians = State.getClinicianManager().getClinicians();
-        List<Administrator> administrators = State.getAdministratorManager().getAdministrators();
+        List<Clinician> clinicians = clinicianManager.getClinicians();
+        List<Administrator> administrators = adminManager.getAdministrators();
 
         for (Clinician clinician : clinicians) {
             staffIds.add(Integer.toString(clinician.getStaffId()));
@@ -150,5 +152,4 @@ public class StaffListController extends SubController {
 
         return FXCollections.observableArrayList(staffIds);
     }
-
 }
