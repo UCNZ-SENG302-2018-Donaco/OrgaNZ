@@ -2,8 +2,10 @@ package seng302.Controller.Clinician;
 
 
 import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.matcher.base.NodeMatchers.isNull;
 import static org.testfx.matcher.base.NodeMatchers.isVisible;
@@ -16,6 +18,7 @@ import java.time.LocalDate;
 
 import javafx.scene.Node;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TitledPane;
 import javafx.scene.input.KeyCode;
 
 import seng302.Client;
@@ -41,16 +44,12 @@ public class SearchClientsControllerTest extends ControllerTest{
 
     private Clinician testClinician = new Clinician("Admin", "Da", "Nimda", "2 Two Street", Region.CANTERBURY,
             55, "admin");
-    private Client testClient1 = new Client("john", null, "1", LocalDate.of(2017, 1, 1), 1); //One year old
-    private Client testClient2 = new Client("jack", null, "2", LocalDate.of(2008, 1, 1), 2); // Ten years old
-    private Client testClient3 = new Client("steve", null, "3", LocalDate.of(2008, 1, 1), 3);
-    private Client testClient4 = new Client("tom", null, "4", LocalDate.of(1918, 1, 1), 4); // 100 years old
-    private Client testClient5 = new Client("Alpha", "Zeta", "Beta", LocalDate.now(), 5);
-    private Client testClient6 = new Client("Zeta", "Alpha", "Beta", LocalDate.now(), 6);
-    private Client testClient7 = new Client("Alpha", "Beta", "Charlie", LocalDate.now(), 7);
-    private Client testClient8 = new Client("Alpha", "Alpha", "Charlie", LocalDate.now(), 8);
+    private Client testClient1 = new Client("tom", "Delta", "1", LocalDate.now().minusYears(100), 4); // 100 years old
+    private Client testClient2 = new Client("steve", "Charlie", "2", LocalDate.now().minusYears(11), 3); // 11 years old
+    private Client testClient3 = new Client("john", "Alpha", "2", LocalDate.now().minusYears(10), 2); // 10 years old
+    private Client testClient4 = new Client("john", "Beta", "2", LocalDate.now().minusYears(1), 1); // 1 year old
 
-    private Client[] testClients = {testClient1, testClient2, testClient3, testClient4, testClient5, testClient6, testClient7, testClient8};
+    private Client[] testClients = {testClient1, testClient2, testClient3, testClient4};
 
     private TransplantRequest getRequestLiver1  = new TransplantRequest(testClient1, Organ.LIVER);
     private TransplantRequest getRequestKidney1  = new TransplantRequest(testClient1, Organ.KIDNEY);
@@ -75,15 +74,7 @@ public class SearchClientsControllerTest extends ControllerTest{
         testClient2.setRegion(Region.AUCKLAND);
         // client3's region is left as null
 
-        for (int i = 100; i < 218; i++) {
-            Client client = new Client("Client", "Number", "num" + Integer.toString(i), LocalDate.now(), i);
-            TransplantRequest request = new TransplantRequest(client, Organ.MIDDLE_EAR);
-            client.addTransplantRequest(request);
-            client.setRegion(Region.NELSON);
-            State.getClientManager().addClient(client);
-        }
         mainController.setWindowContext(WindowContext.defaultContext());
-
     }
 
     /**
@@ -117,16 +108,22 @@ public class SearchClientsControllerTest extends ControllerTest{
         }
     }
 
+    private void expandFilterPane() {
+        clickOn(lookup("Filters").queryAs(TitledPane.class));
+        sleep(500);
+    }
+
     @Test
     public void filterDefault() {
+        expandFilterPane();
         verifyThat("#ageMinField", hasText("0"));
         verifyThat("#ageMaxField", hasText("120"));
 
         // check that all 4 clients are visible by default
-        clickOn((Node) lookup("john 1").query());
-        clickOn((Node) lookup("jack 2").query());
-        clickOn((Node) lookup("steve 3").query());
-        clickOn((Node) lookup("tom 4").query());
+        clickOn((Node) lookup(testClient1.getFullName()).query());
+        clickOn((Node) lookup(testClient2.getFullName()).query());
+        clickOn((Node) lookup(testClient3.getFullName()).query());
+        clickOn((Node) lookup(testClient4.getFullName()).query());
     }
 
     /**
@@ -134,6 +131,7 @@ public class SearchClientsControllerTest extends ControllerTest{
      */
     @Test
     public void ageFilterUnderMin() {
+        expandFilterPane();
         doubleClickOn("#ageMinField").type(KeyCode.BACK_SPACE).write("-500").type(KeyCode.ENTER);
         release(KeyCode.ENTER);
         verifyThat("#ageMinField", hasText("0"));
@@ -144,6 +142,7 @@ public class SearchClientsControllerTest extends ControllerTest{
      */
     @Test
     public void ageFilterOverMax() {
+        expandFilterPane();
         doubleClickOn("#ageMaxField").type(KeyCode.BACK_SPACE).write("500").type(KeyCode.ENTER);
         release(KeyCode.ENTER);
         verifyThat("#ageMaxField", hasText("120"));
@@ -154,6 +153,7 @@ public class SearchClientsControllerTest extends ControllerTest{
      */
     @Test
     public void ageFilterDefault() {
+        expandFilterPane();
         verifyThat("#ageMinField", hasText("0"));
         verifyThat("#ageMaxField", hasText("120"));
     }
@@ -163,23 +163,25 @@ public class SearchClientsControllerTest extends ControllerTest{
      */
     @Test
     public void ageFilterOneYear() {
+        expandFilterPane();
         doubleClickOn("#ageMaxField").type(KeyCode.BACK_SPACE).write("2").type(KeyCode.ENTER);
         release(KeyCode.ENTER);
         // check 1 value in table
-        clickOn((Node) lookup("john 1").query());
+        assertNotNull(lookup(testClient4.getFullName()).query());
     }
 
     /**
      * Test for the filtering of ten years.
      */
     @Test
-    public void ageFilterTenYears() {
+    public void ageFilterTenAndElevenYears() {
+        expandFilterPane();
+        doubleClickOn("#ageMinField").type(KeyCode.BACK_SPACE).write("9").type(KeyCode.ENTER);
         doubleClickOn("#ageMaxField").type(KeyCode.BACK_SPACE).write("12").type(KeyCode.ENTER);
         release(KeyCode.ENTER);
-        // check 3 values in table
-        clickOn((Node) lookup("john 1").query());
-        clickOn((Node) lookup("jack 2").query());
-        clickOn((Node) lookup("steve 3").query());
+        // check 2 values in table
+        assertNotNull(lookup(testClient2.getFullName()).query());
+        assertNotNull(lookup(testClient3.getFullName()).query());
     }
 
     /**
@@ -187,47 +189,52 @@ public class SearchClientsControllerTest extends ControllerTest{
      */
     @Test
     public void ageFilter100Years() {
+        expandFilterPane();
         doubleClickOn("#ageMinField").type(KeyCode.BACK_SPACE).write("50").type(KeyCode.ENTER);
         release(KeyCode.ENTER);
         // check 1 value in table
-        clickOn((Node) lookup("tom 4").query());
+        assertNotNull(lookup(testClient1.getFullName()).query());
     }
 
     @Test
     public void genderFilterMale() {
+        expandFilterPane();
         clickOn("#birthGenderFilter");
         clickOn((Node) lookup(".check-box").nth(0).query());
         clickOn("#birthGenderFilter");
-        clickOn((Node) lookup("john 1").query());
+        assertNotNull(lookup(testClient1.getFullName()).query());
     }
 
     @Test
     public void genderFilterFemale() {
+        expandFilterPane();
         clickOn("#birthGenderFilter");
         clickOn((Node) lookup(".check-box").nth(1).query());
         clickOn("#birthGenderFilter");
-        clickOn((Node) lookup("jack 2").query());
-        clickOn((Node) lookup("steve 3").query());
-        clickOn((Node) lookup("tom 4").query());
+        assertNotNull(lookup(testClient2.getFullName()).query());
+        assertNotNull(lookup(testClient3.getFullName()).query());
+        assertNotNull(lookup(testClient4.getFullName()).query());
     }
 
 
-    @Test(expected = NullPointerException.class) // There shouldn't be any of the test data in the results
+    @Test // There shouldn't be any of the test data in the results
     public void genderFilterOther() {
+        expandFilterPane();
         clickOn("#birthGenderFilter");
         clickOn((Node) lookup(".check-box").nth(2).query());
         clickOn("#birthGenderFilter");
-        clickOn((Node) lookup("john 1").query());
-        clickOn((Node) lookup("jack 2").query());
-        clickOn((Node) lookup("steve 3").query());
-        clickOn((Node) lookup("tom 4").query());
+        assertNull(lookup(testClient1.getFullName()).query());
+        assertNull(lookup(testClient2.getFullName()).query());
+        assertNull(lookup(testClient3.getFullName()).query());
+        assertNull(lookup(testClient4.getFullName()).query());
     }
 
     /**
      * Tests for filtering one region.
      */
     @Test
-    public void regionFilterOneRegion(){
+    public void regionFilterOneRegion() {
+        expandFilterPane();
         clickOn("#regionFilter");
         clickOn( (Node) lookup(".check-box").nth(0).query());
         verifyThat("#tableView",containsRowAtIndex(0,
@@ -245,7 +252,8 @@ public class SearchClientsControllerTest extends ControllerTest{
      * Tests for filtering two regions.
      */
     @Test
-    public void regionFilterTwoRegions(){
+    public void regionFilterTwoRegions() {
+        expandFilterPane();
         clickOn("#regionFilter");
         clickOn( (Node) lookup(".check-box").nth(0).query());
         clickOn( (Node) lookup(".check-box").nth(1).query());
@@ -272,7 +280,8 @@ public class SearchClientsControllerTest extends ControllerTest{
      * Tests for filtering a gender and region.
      */
     @Test
-    public void GenderAndRegionFilterTest(){
+    public void GenderAndRegionFilterTest() {
+        expandFilterPane();
         clickOn("#regionFilter");
         clickOn( (Node) lookup(".check-box").nth(0).query()); //Northland
         clickOn("#birthGenderFilter");
@@ -292,7 +301,8 @@ public class SearchClientsControllerTest extends ControllerTest{
      * Tests for the filtering of a gender and a region within the same time.
      */
     @Test
-    public void GenderAgeAndRegionFilterTest(){
+    public void GenderAgeAndRegionFilterTest() {
+        expandFilterPane();
         clickOn("#regionFilter");
         clickOn( (Node) lookup(".check-box").nth(1).query()); //Auckland
         clickOn("#birthGenderFilter");
@@ -314,7 +324,8 @@ public class SearchClientsControllerTest extends ControllerTest{
      * Male gender Test
      */
     @Test
-    public void MaleGenderFilterTest(){
+    public void MaleGenderFilterTest() {
+        expandFilterPane();
         clickOn("#birthGenderFilter");
         clickOn( (Node) lookup(".check-box").nth(0).query());
         verifyThat("#tableView",containsRowAtIndex(0,
@@ -331,7 +342,8 @@ public class SearchClientsControllerTest extends ControllerTest{
      * Tests for the filtering of a female.
      */
     @Test
-    public void FemaleGenderFilterTest(){
+    public void FemaleGenderFilterTest() {
+        expandFilterPane();
         clickOn("#birthGenderFilter");
         clickOn( (Node) lookup(".check-box").nth(1).query());
         verifyThat("#tableView",containsRowAtIndex(0,
@@ -365,7 +377,8 @@ public class SearchClientsControllerTest extends ControllerTest{
      * Tests for the filtering of both male and female genders.
      */
     @Test
-    public void MaleAndFemaleGenderFilterTest(){
+    public void MaleAndFemaleGenderFilterTest() {
+        expandFilterPane();
         clickOn("#birthGenderFilter");
         clickOn( (Node) lookup(".check-box").nth(0).query());
         clickOn( (Node) lookup(".check-box").nth(1).query());
@@ -376,7 +389,8 @@ public class SearchClientsControllerTest extends ControllerTest{
      * Tests for the filtering of an "Other" gender.
      */
     @Test
-    public void OtherGenderFilter(){
+    public void OtherGenderFilter() {
+        expandFilterPane();
         clickOn("#birthGenderFilter");
         testClient1.setGender(Gender.OTHER);
         testClient2.setGender(Gender.OTHER);
@@ -388,7 +402,8 @@ public class SearchClientsControllerTest extends ControllerTest{
      * Tests for the filtering of an unspecified gender.
      */
     @Test
-    public void UnspecifiedGenderFilterTest(){
+    public void UnspecifiedGenderFilterTest() {
+        expandFilterPane();
         clickOn("#birthGenderFilter");
         testClient1.setGender(Gender.UNSPECIFIED);
         testClient2.setGender(Gender.UNSPECIFIED);
@@ -401,6 +416,7 @@ public class SearchClientsControllerTest extends ControllerTest{
      */
     @Test
     public void requestOrganFilterOne() {
+        expandFilterPane();
         clickOn("#organsRequestingFilter");
         clickOn("#organsRequestingFilter");
         clickOn("#organsRequestingFilter");
@@ -421,6 +437,7 @@ public class SearchClientsControllerTest extends ControllerTest{
      */
     @Test
     public void requestOrganFilterMultiple() {
+        expandFilterPane();
         clickOn("#organsRequestingFilter");
         clickOn("#organsRequestingFilter");
         clickOn("#organsRequestingFilter");
@@ -441,6 +458,7 @@ public class SearchClientsControllerTest extends ControllerTest{
      */
     @Test
     public void filterRequestOrgansAndGender() {
+        expandFilterPane();
         clickOn("#birthGenderFilter");
         clickOn( (Node) lookup(".check-box").nth(0).query());
         clickOn("#organsRequestingFilter");
@@ -461,12 +479,11 @@ public class SearchClientsControllerTest extends ControllerTest{
      */
     @Test
     public void filterRequestOrgansAndAge() {
+        expandFilterPane();
         doubleClickOn("#ageMaxField").type(KeyCode.BACK_SPACE).write("12").type(KeyCode.ENTER);
         clickOn("#organsRequestingFilter");
-        clickOn("#organsRequestingFilter");
-        clickOn("#organsRequestingFilter");
         clickOn((Node) lookup(".check-box").nth(1).query());
-        verifyThat("#tableView", containsRowAtIndex(1,
+        verifyThat("#tableView", containsRowAtIndex(0,
                 testClient2.getUid(),
                 testClient2,
                 testClient2.getAge(),
@@ -482,6 +499,7 @@ public class SearchClientsControllerTest extends ControllerTest{
      */
     @Test
     public void filterClientType() {
+        expandFilterPane();
         clickOn("#clientTypeFilter");
         clickOn("Only Receiver");
         verifyThat("#tableView", containsRowAtIndex(1,
@@ -500,6 +518,7 @@ public class SearchClientsControllerTest extends ControllerTest{
      */
     @Test
     public void donateOrganFilterOne() {
+        expandFilterPane();
         clickOn("#organsDonatingFilter");
         clickOn((Node) lookup(".check-box").nth(5).query());
         verifyThat("#tableView", containsRowAtIndex(0,
@@ -535,88 +554,95 @@ public class SearchClientsControllerTest extends ControllerTest{
         verifyThat("#pagination", isVisible());
     }
 
-    @Ignore
+    private void createManyClients() {
+        for (int i = 100; i < 218; i++) {
+            Client client = new Client("Client", "Number", "num" + Integer.toString(i), LocalDate.now(), i);
+            TransplantRequest request = new TransplantRequest(client, Organ.MIDDLE_EAR);
+            client.addTransplantRequest(request);
+            client.setRegion(Region.NELSON);
+            State.getClientManager().addClient(client);
+        }
+        pageController.refresh();
+    }
+
+    @Ignore  // doesn't work because page can't get refreshed to display many clients (not in FX app thread)
     @Test
     public void paginationDescriptionTest() {
+        createManyClients();
         verifyThat("#tableView", hasNumRows(30));
         int totalRows = testClients.length + 118;
         verifyThat("#displayingXToYOfZText", TextMatchers.hasText("Displaying 1-30 of " + Integer.toString(totalRows)));
     }
 
-    @Ignore
     @Test
     public void clientIsReceiverTest() {
         TransplantRequest transplantRequest = new TransplantRequest(testClient1, Organ.MIDDLE_EAR);
         testClient1.addTransplantRequest(transplantRequest);
 
         TableView<Client> tableView = lookup("#tableView").query();
-        boolean isReceiver = (Boolean) (tableView.getColumns().get(5).getCellObservableValue(testClient1).getValue());
+        boolean isReceiver = (Boolean) (tableView.getColumns().get(6).getCellObservableValue(testClient1).getValue());
         assertTrue(isReceiver);
     }
 
-    @Ignore
     @Test
     public void clientIsDonorTest() throws OrganAlreadyRegisteredException {
         testClient2.setOrganDonationStatus(Organ.PANCREAS, true);
 
         TableView<Client> tableView = lookup("#tableView").query();
-        boolean isDonor = (Boolean) (tableView.getColumns().get(4).getCellObservableValue(testClient1).getValue());
+        boolean isDonor = (Boolean) (tableView.getColumns().get(5).getCellObservableValue(testClient3).getValue());
         assertTrue(isDonor);
     }
 
-    @Ignore
     @Test
     public void clientNotDonorOrReceiverTest() {
         TableView<Client> tableView = lookup("#tableView").query();
-        boolean isDonor = (Boolean) (tableView.getColumns().get(4).getCellObservableValue(testClient1).getValue());
-        boolean isReceiver = (Boolean) (tableView.getColumns().get(5).getCellObservableValue(testClient1).getValue());
+        boolean isDonor = (Boolean) (tableView.getColumns().get(5).getCellObservableValue(testClient1).getValue());
+        boolean isReceiver = (Boolean) (tableView.getColumns().get(6).getCellObservableValue(testClient1).getValue());
 
         assertFalse(isDonor);
-        assertFalse(isReceiver);
+        assertTrue(isReceiver);
     }
 
-    @Ignore
     @Test
     public void testLastNameIsFirstPriority() {
         TableView<Client> tableView = lookup("#tableView").query();
 
         Client result = tableView.getItems().get(0);
 
-        assertEquals(result, testClient4);
+        assertEquals(result, testClient1);
     }
 
-    @Ignore
     @Test
     public void testFirstNameIsSecondPriority() {
         TableView<Client> tableView = lookup("#tableView").query();
 
         Client result = tableView.getItems().get(1);
 
-        assertEquals(result, testClient5);
+        assertEquals(result, testClient2);
     }
 
-    @Ignore
     @Test
     public void testMiddleNameIsThirdPriority() {
+        sleep(5000);
         TableView<Client> tableView = lookup("#tableView").query();
+        Client result = tableView.getItems().get(2);
 
-        Client result = tableView.getItems().get(3);
-
-        assertEquals(result, testClient7);
+        assertEquals(result, testClient3);
     }
 
-    @Ignore
     @Test
     public void testNameColReverseOrder() {
+        sleep(5000);
         clickOn("#nameCol");
+        sleep(5000);
         TableView<Client> tableView = lookup("#tableView").query();
         Client result0 = tableView.getItems().get(0);
         Client result1 = tableView.getItems().get(1);
         Client result2 = tableView.getItems().get(2);
 
-        assertEquals(result0.getFullName(), "Client Number num217");
-        assertEquals(result1.getFullName(), "Client Number num216");
-        assertEquals(result2.getFullName(), "Client Number num215");
+        assertEquals(testClient2.getFullName(), result0.getFullName());
+        assertEquals(testClient4.getFullName(), result1.getFullName());
+        assertEquals(testClient3.getFullName(), result2.getFullName());
     }
 
     @Ignore
@@ -627,13 +653,12 @@ public class SearchClientsControllerTest extends ControllerTest{
         TableView<Client> tableView = lookup("#tableView").query();
 
         clickOn((Node) lookup("5").query()); // Click on the last page
-        Client result = tableView.getItems().get(5);
+        Client result = tableView.getItems().get(6);
         assertEquals(result.getFullName(), "Zeta Zeta Alpha");
     }
 
     // Tests to ensure the custom comparator hasn't broken the other column default comps.
 
-    @Ignore
     @Test
     public void testIDOrderStillWorks() {
         clickOn("#idCol");
@@ -642,7 +667,6 @@ public class SearchClientsControllerTest extends ControllerTest{
         assertEquals(result.getUid(), 1);
     }
 
-    @Ignore
     @Test
     public void testGenderOrderStillWorks() {
         testClient1.setGender(Gender.MALE);
@@ -652,7 +676,6 @@ public class SearchClientsControllerTest extends ControllerTest{
         assertEquals(result.getGender(), Gender.MALE);
     }
 
-    @Ignore
     @Test
     public void testRegionOrderStillWorks() {
         doubleClickOn("#regionCol");
