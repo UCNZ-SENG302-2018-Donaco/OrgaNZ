@@ -5,6 +5,7 @@ import static org.testfx.api.FxAssert.verifyThat;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Window;
 
+import org.junit.Ignore;
 import org.junit.Test;
 import org.testfx.api.FxRobotException;
 
@@ -19,6 +20,7 @@ import static org.junit.Assert.*;
 import static org.testfx.matcher.base.NodeMatchers.isDisabled;
 import static org.testfx.matcher.base.NodeMatchers.isInvisible;
 
+@Ignore
 public class ViewClinicianControllerTest extends ControllerTest {
 
     private Clinician testClinician = new Clinician("x", "y", "z", "t", Region.UNSPECIFIED, 3, "p");

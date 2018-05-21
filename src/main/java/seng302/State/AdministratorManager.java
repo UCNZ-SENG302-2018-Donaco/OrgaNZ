@@ -14,15 +14,16 @@ import org.apache.commons.lang3.StringUtils;
 public class AdministratorManager {
 
     private final List<Administrator> administrators;
+    private String defaultAdministratorUsername = "admin";
 
     public AdministratorManager() {
         administrators = new ArrayList<>();
-        administrators.add(new Administrator("admin", ""));
+        administrators.add(new Administrator(defaultAdministratorUsername, ""));
     }
 
     public AdministratorManager(List<Administrator> administrators) {
         this.administrators = administrators;
-        administrators.add(new Administrator("admin", ""));
+        administrators.add(new Administrator(defaultAdministratorUsername, ""));
     }
 
     /**
@@ -78,5 +79,13 @@ public class AdministratorManager {
                 .filter(o -> o.getUsername().equals(username))
                 .findFirst()
                 .orElse(null);
+    }
+
+    /**
+     * Return the default administrator
+     * @return the default administrator
+     */
+    public Administrator getDefaultAdministrator() {
+        return getAdministratorByUsername(defaultAdministratorUsername);
     }
 }

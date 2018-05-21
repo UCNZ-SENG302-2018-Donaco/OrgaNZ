@@ -42,7 +42,7 @@ public class SidebarController extends SubController {
     private Button viewClientButton, registerOrganDonationButton, viewMedicationsButton, viewClinicianButton,
             searchButton, transplantsButton, logoutButton, requestOrganDonationButton, illnessHistoryButton,
             viewProceduresButton, createAdminButton, createClinicianButton, undoButton, redoButton, saveToFileButton,
-            loadFromFileButton;
+            loadFromFileButton, staffListButton;
 
     private ActionInvoker invoker;
     private Session session;
@@ -61,11 +61,13 @@ public class SidebarController extends SubController {
         UserType userType = session.getLoggedInUserType();
 
         Button staffButtons[] = {viewClinicianButton, searchButton, transplantsButton};
-        Button adminButtons[] = {createAdminButton, createClinicianButton, saveToFileButton, loadFromFileButton};
+        Button adminButtons[] = {createAdminButton, createClinicianButton, staffListButton, saveToFileButton,
+                loadFromFileButton};
         Button clinicianButtons[] = {};
         Button clientButtons[] = {viewClientButton, registerOrganDonationButton, viewMedicationsButton,
                 illnessHistoryButton, viewProceduresButton};
 
+        // Hide buttons depending on the type of user logged in/the view window type
         if (userType == UserType.CLIENT || windowContext.isClinViewClientWindow()) {
             hideButtons(staffButtons);
             hideButtons(adminButtons);
@@ -78,14 +80,17 @@ public class SidebarController extends SubController {
             hideButtons(clientButtons);
         }
 
+        // Staff viewing a client shouldn't see the logout button
         if (windowContext.isClinViewClientWindow()) {
             hideButton(logoutButton);
         }
 
+        // Non-receivers shouldn't see the receiver tab
         if (!shouldShowRequestOrgans(userType)) {
             hideButton(requestOrganDonationButton);
         }
 
+        // Set undo and redo button depending on if they're able to be pressed
         undoButton.setDisable(!invoker.canUndo());
         redoButton.setDisable(!invoker.canRedo());
     }
@@ -177,6 +182,14 @@ public class SidebarController extends SubController {
     @FXML
     private void goToSearch() {
         PageNavigator.loadPage(Page.SEARCH, mainController);
+    }
+
+    /**
+     * Redirects the GUI to the Staff list page.
+     */
+    @FXML
+    private void goToStaffList() {
+        PageNavigator.loadPage(Page.STAFF_LIST, mainController);
     }
 
     /**
