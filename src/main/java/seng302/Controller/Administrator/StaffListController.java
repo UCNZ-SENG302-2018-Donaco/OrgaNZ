@@ -26,8 +26,6 @@ import seng302.State.ClinicianManager;
 import seng302.State.State;
 import seng302.Utilities.JSONConverter;
 
-import org.apache.commons.lang3.StringUtils;
-
 public class StaffListController extends SubController {
 
     @FXML
@@ -108,7 +106,7 @@ public class StaffListController extends SubController {
         ActionInvoker invoker = new ActionInvoker();
         String action_history_filename = "action_history.json";
 
-        if (StringUtils.isNumeric(id)) {
+        if (id.matches("[0-9]+")) {
             ClinicianManager manager = State.getClinicianManager();
             Clinician clinician = manager.getClinicianByStaffId(Integer.parseInt(id));
 
