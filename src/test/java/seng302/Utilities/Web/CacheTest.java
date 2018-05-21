@@ -1,11 +1,15 @@
 package seng302.Utilities.Web;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.Optional;
 
 import seng302.Client;
+import seng302.Utilities.CacheManager;
 import seng302.Utilities.Enums.Gender;
 import seng302.Utilities.Exceptions.BadDrugNameException;
 import seng302.Utilities.Exceptions.BadGatewayException;
@@ -16,9 +20,8 @@ import org.junit.Test;
 
 public class CacheTest {
     @Test
-    public void testCaching() {
+    public void testCachingInteractions() {
         MockCacheManager mockCacheManager = MockCacheManager.Create();
-
         String EXPECTED_RESPONSE_BODY = "{\"age_interaction\":{\"0-1\":[\"foetal exposure during pregnancy\","
                 + "\"congenital arterial malformation\",\"premature baby\",\"ventricular septal defect\","
                 + "\"cytogenetic abnormality\",\"heart disease congenital\",\"pyloric stenosis\"],"
@@ -79,5 +82,52 @@ public class CacheTest {
         }
 
         Assert.assertTrue(!mockCacheManager.isEmpty());
+    }
+
+    @Test
+    public void testCachingIngredients() {
+        MockCacheManager mockCacheManager = MockCacheManager.Create();
+        String EXPECTED_RESPONSE_BODY = "[\"Hydralazine hydrochloride; hydrochlorothiazide; reserpine\","
+                + "\"Hydrochlorothiazide; reserpine\",\"Hydroflumethiazide; reserpine\",\"Reserpine\"]";
+
+        MockHttpTransport mockTransport = MockHelper.makeMockHttpTransport(EXPECTED_RESPONSE_BODY);
+        MedActiveIngredientsHandler handler = new MedActiveIngredientsHandler(mockTransport);
+
+        Assert.assertTrue(mockCacheManager.isEmpty());
+
+        try {
+            handler.getActiveIngredients("reserpine");
+        } catch (IOException e) {
+            fail(e.getMessage());
+        }
+
+        Assert.assertTrue(!mockCacheManager.isEmpty());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testNoArguments() {
+        CacheManager mockCacheManager = new MockCacheManager();
+        mockCacheManager.addCachedData("test", new Object[0], "test", Optional.empty());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testNoCategory() {
+        CacheManager mockCacheManager = new MockCacheManager();
+        mockCacheManager.addCachedData(null, new Object[]{"foo"}, "test", Optional.empty());
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testNoValue() {
+        CacheManager mockCacheManager = new MockCacheManager();
+        mockCacheManager.addCachedData("test", new Object[]{"foo"}, null, Optional.empty());
+    }
+
+    @Test
+    public void testWorks() {
+        CacheManager mockCacheManager = new MockCacheManager();
+        mockCacheManager.addCachedData("test", new Object[]{"foo"}, "test", Optional.empty());
+        Optional<String> value = mockCacheManager.getCachedData("test", String.class, new Object[]{"foo"});
+        assertTrue(value.isPresent());
+        assertEquals("test", value.get());
     }
 }

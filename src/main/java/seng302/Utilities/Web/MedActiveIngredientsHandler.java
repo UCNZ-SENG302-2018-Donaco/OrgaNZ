@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequest;
@@ -12,6 +13,7 @@ import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpResponseException;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonObjectParser;
+import com.google.gson.reflect.TypeToken;
 
 /**
  * A handler for requests to the medication active ingredients web API provided by MAPI.
@@ -45,12 +47,19 @@ public class MedActiveIngredientsHandler extends WebAPIHandler {
     }
 
     public List<String> getActiveIngredients(String medicationName) throws IOException {
+        Optional<List<String>> cachedResponse = getCachedData(
+                new TypeToken<List<String>>() {}.getType()
+                , medicationName);
+        if (cachedResponse.isPresent()) {
+            return cachedResponse.get();
+        }
+
         List<String> activeIngredients;
         try {
             GenericUrl url = new GenericUrl(String.format(ACTIVE_INGREDIENTS_ENDPOINT, medicationName));
             HttpRequest request = requestFactory.buildGetRequest(url);
             HttpResponse response = request.execute();
-            activeIngredients = Arrays.asList(response.parseAs(String[].class));
+            activeIngredients = addCachedData(Arrays.asList(response.parseAs(String[].class)), medicationName);
         } catch (HttpResponseException exc) {
             // Any non 2xx response (e.g. 404)
             activeIngredients = Collections.emptyList();

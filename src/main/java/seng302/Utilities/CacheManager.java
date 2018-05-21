@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -76,6 +77,16 @@ public abstract class CacheManager {
      * @param expires An optional expiry date.
      */
     public <T> void addCachedData(String categoryName, Object[] arguments, T value, Optional<Instant> expires) {
+        if (Objects.isNull(arguments) || arguments.length == 0) {
+            throw new IllegalArgumentException("arguments must contain at least one value");
+        }
+        if (Objects.isNull(categoryName)) {
+            throw new IllegalArgumentException("categoryName must not be null");
+        }
+        if (Objects.isNull(value)) {
+            throw new IllegalArgumentException("value must not be null");
+        }
+
         Category category = categories.get(categoryName);
         if (category == null) {
             category = new Category();
@@ -95,6 +106,16 @@ public abstract class CacheManager {
      * @return The stored data, or an empty optional if it cannot be found or has expired.
      */
     public <T> Optional<T> getCachedData(String categoryName, Type type, Object[] arguments) {
+        if (Objects.isNull(arguments) || arguments.length == 0) {
+            throw new IllegalArgumentException("arguments must contain at least one value");
+        }
+        if (Objects.isNull(type)) {
+            throw new IllegalArgumentException("type must not be null");
+        }
+        if (Objects.isNull(categoryName)) {
+            throw new IllegalArgumentException("categoryName must not be null");
+        }
+
         Category category = categories.get(categoryName);
         if (category == null) {
             return Optional.empty();
