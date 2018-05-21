@@ -248,14 +248,6 @@ public class SearchClientsControllerTest extends ControllerTest{
         clickOn( (Node) lookup(".check-box").nth(0).query());
         clickOn( (Node) lookup(".check-box").nth(1).query());
         verifyThat("#tableView",containsRowAtIndex(0,
-                testClient1.getUid(),
-                testClient1,
-                testClient1.getAge(),
-                testClient1.getGender(),
-                testClient1.getRegion(),
-                testClient1.isDonor(),
-                testClient1.isReceiver()));
-        verifyThat("#tableView",containsRowAtIndex(1,
                 testClient2.getUid(),
                 testClient2,
                 testClient2.getAge(),
@@ -263,7 +255,7 @@ public class SearchClientsControllerTest extends ControllerTest{
                 testClient2.getRegion(),
                 testClient2.isDonor(),
                 testClient2.isReceiver()));
-        verifyThat("#tableView",containsRowAtIndex(2,
+        verifyThat("#tableView",containsRowAtIndex(1,
                 testClient3.getUid(),
                 testClient3,
                 testClient3.getAge(),
@@ -271,7 +263,7 @@ public class SearchClientsControllerTest extends ControllerTest{
                 testClient3.getRegion(),
                 testClient3.isDonor(),
                 testClient3.isReceiver()));
-        verifyThat("#tableView",hasNumRows(3));
+        verifyThat("#tableView",hasNumRows(2));
     }
 
     /**
