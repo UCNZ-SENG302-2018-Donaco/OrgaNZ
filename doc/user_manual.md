@@ -27,6 +27,14 @@ setorganstatus [--bone] [--bonemarrow] [--connectivetissue] [--cornea]
                       [--middleear] [--pancreas] [--skin] -u=\<uid>
 
 
+## Creates an organ request for a user.
+
+requestorgan [-o=\<organType>] -u=\<uid>
+
+## Resolves a users organ request.
+
+resolveorgan [-m=\<message>] -o=\<organType> -r=<\resolveReason> -u=\<uid>
+
 ## Delete a client
 
 deleteclient -u=\<uid>

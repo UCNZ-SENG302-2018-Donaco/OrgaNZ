@@ -4,6 +4,7 @@ import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertFalse;
 import static org.testfx.api.FxAssert.verifyThat;
+import static org.testfx.matcher.base.NodeMatchers.isNull;
 import static org.testfx.matcher.base.NodeMatchers.isVisible;
 import static org.testfx.matcher.control.TableViewMatchers.hasNumRows;
 import static org.testfx.matcher.control.TableViewMatchers.hasTableCell;
@@ -26,7 +27,6 @@ import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.WindowContext;
 
-import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -85,6 +85,20 @@ public class SearchClientsControllerTest extends ControllerTest {
     }
 
     // Tests
+
+    @Test
+    public void testUnableToDeleteClient() {
+        Client client = client4;
+        String clientName = client.getFullName();
+
+        //check the client is in the table
+        verifyThat("#tableView", hasTableCell(clientName));
+
+        rightClickOn(clientName);
+
+        // check that Delete is not an option
+        verifyThat("Delete", isNull());
+    }
 
     @Test
     public void componentsAreVisibleTest() {
@@ -208,5 +222,4 @@ public class SearchClientsControllerTest extends ControllerTest {
 
         assertEquals(result.getRegion(), Region.CANTERBURY);
     }
-
 }

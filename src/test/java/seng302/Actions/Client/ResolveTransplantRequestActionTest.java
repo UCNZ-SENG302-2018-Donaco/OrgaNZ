@@ -2,9 +2,9 @@ package seng302.Actions.Client;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static seng302.TransplantRequest.RequestStatus.CANCELLED;
-import static seng302.TransplantRequest.RequestStatus.COMPLETED;
-import static seng302.TransplantRequest.RequestStatus.WAITING;
+import static seng302.Utilities.Enums.RequestStatus.CANCELLED;
+import static seng302.Utilities.Enums.RequestStatus.COMPLETED;
+import static seng302.Utilities.Enums.RequestStatus.WAITING;
 
 import java.time.Duration;
 import java.time.LocalDateTime;

@@ -1,8 +1,5 @@
 package seng302.Controller.Client;
 
-import static seng302.TransplantRequest.RequestStatus.CANCELLED;
-import static seng302.TransplantRequest.RequestStatus.COMPLETED;
-import static seng302.TransplantRequest.RequestStatus.WAITING;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -40,8 +37,9 @@ import seng302.State.Session;
 import seng302.State.Session.UserType;
 import seng302.State.State;
 import seng302.TransplantRequest;
-import seng302.TransplantRequest.RequestStatus;
 import seng302.Utilities.Enums.Organ;
+import seng302.Utilities.Enums.RequestStatus;
+import seng302.Utilities.Enums.ResolveReason;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
 
@@ -83,24 +81,6 @@ public class RequestOrgansController extends SubController {
     private TextField customReason;
     @FXML
     private DatePicker deathDatePicker;
-
-    public enum ResolveReason {
-        ERROR("Input error"),
-        COMPLETED("Transplant completed"),
-        CURED("Disease was cured"),
-        DECEASED("Client is deceased"),
-        CUSTOM("Custom reason...");
-
-        private final String text;
-
-        ResolveReason(String text) {
-            this.text = text;
-        }
-
-        public String toString() {
-            return text;
-        }
-    }
 
     /**
      * Formats a table cell that holds a {@link LocalDateTime} value to display that value in the date time format.
@@ -243,11 +223,11 @@ public class RequestOrgansController extends SubController {
 
         currentRequests = new FilteredList<>(
                 FXCollections.observableArrayList(allRequests),
-                request -> request.getStatus() == WAITING
+                request -> request.getStatus() == RequestStatus.WAITING
         );
         pastRequests = new FilteredList<>(
                 FXCollections.observableArrayList(allRequests),
-                request -> request.getStatus() != WAITING
+                request -> request.getStatus() != RequestStatus.WAITING
         );
 
         currentRequestsTable.setItems(currentRequests);
@@ -308,7 +288,7 @@ public class RequestOrgansController extends SubController {
             Action action = null;
 
             if (resolveReason == ResolveReason.COMPLETED) {
-                action = new ResolveTransplantRequestAction(selectedRequest, COMPLETED, "Transplant took place.");
+                action = new ResolveTransplantRequestAction(selectedRequest, RequestStatus.COMPLETED, "Transplant took place.");
 
             } else if (resolveReason == ResolveReason.DECEASED) {
                 LocalDate deathDate = deathDatePicker.getValue();
@@ -328,7 +308,7 @@ public class RequestOrgansController extends SubController {
                 }
 
             } else if (resolveReason == ResolveReason.CURED) {
-                action = new ResolveTransplantRequestAction(selectedRequest, CANCELLED, "The disease was cured.");
+                action = new ResolveTransplantRequestAction(selectedRequest, RequestStatus.CANCELLED, "The disease was cured.");
                 Optional<ButtonType> buttonOpt = PageNavigator.showAlert(AlertType.CONFIRMATION,
                         "Go to Medical History Page",
                         "Do you want to go to the medical history page to mark the disease that was cured?");
@@ -337,10 +317,10 @@ public class RequestOrgansController extends SubController {
                 }
 
             } else if (resolveReason == ResolveReason.ERROR) {
-                action = new ResolveTransplantRequestAction(selectedRequest, CANCELLED, "Request was a mistake.");
+                action = new ResolveTransplantRequestAction(selectedRequest, RequestStatus.CANCELLED, "Request was a mistake.");
 
             } else if (resolveReason == ResolveReason.CUSTOM) {
-                action = new ResolveTransplantRequestAction(selectedRequest, CANCELLED, customReason.getText());
+                action = new ResolveTransplantRequestAction(selectedRequest, RequestStatus.CANCELLED, customReason.getText());
                 customReason.clear();
             }
 
