@@ -227,55 +227,67 @@ public class SearchClientsController extends SubController {
     }
 
     /**
-     * Compares the names based off the priority Last name -> Pref name -> First name -> Middle name [-> suffix/prefixes]
-     * @param c1 The first client object being compared
-     * @param c2 The second client object being compared
-     * @return -1 if c1 is higher priority. 1 if c1 is lower priority. 0 if equal priority.
+     * Compare two string, and return an integer value representing which one is greater
+     * Will always favor one name if it matches the search string, if both match it will compare the strings directly
+     * If neither match, it will return 0 always.
+     * @param searchTerm The search term to consider
+     * @param name1 The first name to check
+     * @param name2 The second name to check
+     * @return The resulting sort integer
      */
-    private int compareNames(Client c1, Client c2) {
-        //Last name -> Pref name -> First name -> Middle name [-> suffix/prefixes]
-        String searchTerm = searchBox.getText().toLowerCase();
+    private int compareName(String searchTerm, String name1, String name2) {
+        boolean name1Matches = name1.toLowerCase().startsWith(searchTerm);
+        boolean name2Matches = name2.toLowerCase().startsWith(searchTerm);
 
-
-        if (c1.getLastName().toLowerCase().startsWith(searchTerm)) {
-            if (c2.getLastName().toLowerCase().startsWith(searchTerm)) {
-                return c1.getLastName().compareTo(c2.getLastName());
-            } else {
-                return -1;
-            }
-        } else if (c2.getLastName().toLowerCase().startsWith(searchTerm)) {
-
-            return 1;
-
-        } else if (c1.getPreferredNameOnly().toLowerCase().startsWith(searchTerm)) {
-            if (c2.getPreferredNameOnly().toLowerCase().startsWith(searchTerm)) {
-                return c1.getPreferredNameOnly().compareTo(c2.getPreferredNameOnly());
-            } else {
-                return -1;
-            }
-        } else if (c2.getPreferredNameOnly().toLowerCase().startsWith(searchTerm)) {
-            return 1;
-
-        } else if (c1.getFirstName().toLowerCase().startsWith(searchTerm)) {
-            if (c2.getFirstName().toLowerCase().startsWith(searchTerm)) {
-                return c1.getFirstName().compareTo(c2.getFirstName());
-            } else {
-                return -1;
-            }
-        } else if (c2.getFirstName().toLowerCase().startsWith(searchTerm)) {
-            return 1;
-
-        } else if (c1.getMiddleName().toLowerCase().startsWith(searchTerm)) {
-            if (c2.getMiddleName().toLowerCase().startsWith(searchTerm)) {
-                return c1.getMiddleName().compareTo(c2.getMiddleName());
-            } else {
-                return -1;
-            }
-        } else if (c2.getMiddleName().toLowerCase().startsWith(searchTerm)) {
+        if (name1Matches && name2Matches) {
+            return name1.compareTo(name2);
+        } else if (name1Matches) {
+            return -1;
+        } else if (name2Matches) {
             return 1;
         } else {
             return 0;
         }
+    }
+
+    /**
+     * Compares the names based off the priority Last name -> Pref name -> First name -> Middle name [-> suffix/prefixes]
+     * Falls back to comparing the user id's if the names are identical to have a consistent order
+     * @param client1 The first client object being compared
+     * @param client2 The second client object being compared
+     * @return -1 if c1 is higher priority. 1 if c1 is lower priority. 0 only if they are the same user ID.
+     */
+    private int compareNames(Client client1, Client client2) {
+        //Last name -> Pref name -> First name -> Middle name [-> suffix/prefixes]
+        String searchTerm = searchBox.getText().toLowerCase();
+
+        int result;
+
+        //Last name check
+        result = compareName(searchTerm, client1.getLastName(), client2.getLastName());
+        if (result != 0) {
+            return result;
+        }
+
+        //Preferred name check
+        result = compareName(searchTerm, client1.getPreferredNameOnly(), client2.getPreferredNameOnly());
+        if (result != 0) {
+            return result;
+        }
+
+        //First name check
+        result = compareName(searchTerm, client1.getFirstName(), client2.getFirstName());
+        if (result != 0) {
+            return result;
+        }
+
+        //Middle name check
+        result = compareName(searchTerm, client1.getMiddleName(), client2.getMiddleName());
+        if (result != 0) {
+            return result;
+        }
+
+        return client1.getUid() - client2.getUid();
     }
 
     /**

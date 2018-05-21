@@ -632,9 +632,7 @@ public class SearchClientsControllerTest extends ControllerTest{
 
     @Test
     public void testNameColReverseOrder() {
-        sleep(5000);
         clickOn("#nameCol");
-        sleep(5000);
         TableView<Client> tableView = lookup("#tableView").query();
         Client result0 = tableView.getItems().get(0);
         Client result1 = tableView.getItems().get(1);
