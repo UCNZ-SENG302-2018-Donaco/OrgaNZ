@@ -4,12 +4,15 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.stage.FileChooser;
 
 import seng302.Actions.ActionInvoker;
@@ -274,34 +277,43 @@ public class SidebarController extends SubController {
      */
     @FXML
     private void load() {
-        try {
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Load Clients File");
-            fileChooser.setInitialDirectory(
-                    new File(Paths.get(AppUI.class.getProtectionDomain().getCodeSource().getLocation().toURI())
-                            .getParent().toString())
-            );
-            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json"));
-            File file = fileChooser.showOpenDialog(AppUI.getWindow());
 
-            if (file != null) {
-                JSONConverter.loadFromFile(file);
+        // Confirm that the user wants to overwrite current data with data from a file
+        Optional<ButtonType> response = PageNavigator.showAlert(AlertType.CONFIRMATION,
+                "Confirm load from file",
+                "Loading from a file will overwrite all current data. Would you like to proceed?");
 
-                HistoryItem load = new HistoryItem("LOAD", "The systems state was loaded from " + file.getName());
-                JSONConverter.updateHistory(load, "action_history.json");
+        if (response.isPresent() && response.get() == ButtonType.OK) {
+            try {
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.setTitle("Load Clients File");
+                fileChooser.setInitialDirectory(
+                        new File(Paths.get(AppUI.class.getProtectionDomain().getCodeSource().getLocation().toURI())
+                                .getParent().toString())
+                );
+                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json"));
+                File file = fileChooser.showOpenDialog(AppUI.getWindow());
 
-                mainController.resetWindowContext();
-                Notifications.create().title("Loaded data").text(
-                        String.format("Successfully loaded %d clients from file",
-                                State.getClientManager().getClients().size()))
-                        .showInformation();
+                if (file != null) {
+                    JSONConverter.loadFromFile(file);
 
+                    HistoryItem load = new HistoryItem("LOAD", "The systems state was loaded from " + file.getName());
+                    JSONConverter.updateHistory(load, "action_history.json");
+
+                    invoker.resetUnsavedUpdates();
+                    mainController.resetWindowContext();
+                    Notifications.create().title("Loaded data").text(
+                            String.format("Successfully loaded %d clients from file",
+                                    State.getClientManager().getClients().size()))
+                            .showInformation();
+                    PageNavigator.loadPage(Page.LANDING, mainController);
+                }
+            } catch (URISyntaxException | IOException | IllegalArgumentException e) {
+                PageNavigator.showAlert(Alert.AlertType.WARNING, "Load Failed",
+                        "Warning: unrecognisable or invalid file. please make\n"
+                                + "sure that you have selected the correct file type.");
+                LOGGER.log(Level.SEVERE, ERROR_LOADING_MESSAGE, e);
             }
-        } catch (URISyntaxException | IOException | IllegalArgumentException e) {
-            PageNavigator.showAlert(Alert.AlertType.WARNING, "Load Failed",
-                    "Warning: unrecognisable or invalid file. please make\n"
-                            + "sure that you have selected the correct file type.");
-            LOGGER.log(Level.SEVERE, ERROR_LOADING_MESSAGE, e);
         }
     }
 
