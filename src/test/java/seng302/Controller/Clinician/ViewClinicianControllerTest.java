@@ -3,8 +3,8 @@ package seng302.Controller.Clinician;
 import static org.testfx.api.FxAssert.verifyThat;
 
 import javafx.scene.input.KeyCode;
-import javafx.stage.Window;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.testfx.api.FxRobotException;
 
@@ -16,7 +16,6 @@ import seng302.Utilities.View.Page;
 import seng302.Utilities.View.WindowContext;
 
 import static org.junit.Assert.*;
-import static org.testfx.matcher.base.NodeMatchers.isDisabled;
 import static org.testfx.matcher.base.NodeMatchers.isInvisible;
 
 public class ViewClinicianControllerTest extends ControllerTest {
@@ -31,12 +30,23 @@ public class ViewClinicianControllerTest extends ControllerTest {
     @Override
     protected void initState() {
         State.init();
+        setClinicianDetails();
         State.getClinicianManager().addClinician(testClinician);
         State.login(testClinician);
         mainController.setWindowContext(WindowContext.defaultContext());
     }
 
-    @Test
+    @Before
+    public void setClinicianDetails() {
+        testClinician.setFirstName("x");
+        testClinician.setMiddleName("y");
+        testClinician.setLastName("z");
+        testClinician.setWorkAddress("t");
+        testClinician.setRegion(Region.UNSPECIFIED);
+        testClinician.setPassword("p");
+    }
+
+    @Test//Pass
     public void correctSetup() {
         assertEquals("x", testClinician.getFirstName());
         assertEquals("y", testClinician.getMiddleName());
@@ -44,10 +54,9 @@ public class ViewClinicianControllerTest extends ControllerTest {
         assertEquals("t", testClinician.getWorkAddress());
         assertEquals(Region.UNSPECIFIED, testClinician.getRegion());
         assertEquals(3, testClinician.getStaffId());
-        clickOn("Not yet modified."); // Checking the FxRobot can see this text.
     }
 
-    @Test
+    @Test//Fail
     public void validChanges() {
         clickOn("#fname").write("a");
         clickOn("#lname").write("b");
@@ -65,14 +74,14 @@ public class ViewClinicianControllerTest extends ControllerTest {
 //        assertEquals("hi", testClinician.getPassword());
 //    }
 
-    @Test(expected = FxRobotException.class)
+    @Test(expected = FxRobotException.class)//Fail
     public void updateDisplayed() {
         clickOn("#fname").write("a");
         clickOn("#saveChangesButton");
         clickOn("Not yet modified."); // This text should be updated to the time of updates.
     }
 
-    @Test
+    @Test//Fail x2
     public void invalidNames() {
         clickOn("#fname").type(KeyCode.BACK_SPACE);
         clickOn("#lname").type(KeyCode.BACK_SPACE);
@@ -81,7 +90,7 @@ public class ViewClinicianControllerTest extends ControllerTest {
         assertEquals("z", testClinician.getLastName());
     }
 
-    @Test
+    @Test//Pass
     public void testLoadClinicianPaneIsHidden() {
         verifyThat("#loadClinicianPane", isInvisible());
     }
