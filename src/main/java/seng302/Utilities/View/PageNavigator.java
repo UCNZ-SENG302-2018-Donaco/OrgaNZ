@@ -41,6 +41,7 @@ public class PageNavigator {
             controller.setSubController(subController);
             controller.setPage(page, loadedPage);
         } catch (IOException e) {
+            e.printStackTrace();
             LOGGER.log(Level.SEVERE, "Couldn't load the page", e);
             showAlert(Alert.AlertType.ERROR, "Could not load page: " + page,
                     "The page loader failed to load the layout for the page.");

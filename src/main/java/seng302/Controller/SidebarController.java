@@ -243,13 +243,12 @@ public class SidebarController extends SubController {
                 HistoryItem historyItem = new HistoryItem("LOAD", "The systems state was loaded from " + file.getName());
                 HistoryManager.INSTANCE.updateHistory(historyItem);
 
-                //State.logout();
                 mainController.resetWindowContext();
                 Notifications.create().title("Loaded data").text(
                         String.format("Successfully loaded %d clients from file",
                                 State.getClientManager().getClients().size()))
                         .showInformation();
-                PageNavigator.loadPage(Page.LANDING, mainController);
+
             }
         } catch (URISyntaxException | IOException | IllegalArgumentException e) {
             PageNavigator.showAlert(Alert.AlertType.WARNING, "Load Failed",
