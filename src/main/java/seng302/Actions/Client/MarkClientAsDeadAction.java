@@ -1,7 +1,7 @@
 package seng302.Actions.Client;
 
-import static seng302.Utilities.Enums.RequestStatus.CANCELLED;
-import static seng302.Utilities.Enums.RequestStatus.WAITING;
+import static seng302.Utilities.Enums.TransplantRequestStatus.WAITING;
+import static seng302.Utilities.Enums.TransplantRequestStatus.CANCELLED;
 
 import java.time.LocalDate;
 import java.util.List;

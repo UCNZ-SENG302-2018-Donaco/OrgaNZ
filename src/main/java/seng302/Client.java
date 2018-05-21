@@ -1,5 +1,8 @@
 package seng302;
 
+import static seng302.Utilities.Enums.TransplantRequestStatus.CANCELLED;
+import static seng302.Utilities.Enums.TransplantRequestStatus.WAITING;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
@@ -27,14 +30,13 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import seng302.State.State;
 import seng302.Utilities.Enums.BloodType;
 import seng302.Utilities.Enums.Gender;
 import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.Enums.Region;
 import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
 
-import static seng302.Utilities.Enums.RequestStatus.CANCELLED;
-import static seng302.Utilities.Enums.RequestStatus.WAITING;
 
 /**
  * The main Client class.
@@ -107,6 +109,7 @@ public class Client {
     private List<String> updateLog = new ArrayList<>();
 
     public Client() {
+        this.uid = State.getClientManager().nextUid();
         this.createdTimestamp = LocalDateTime.now();
     }
 
@@ -684,21 +687,12 @@ public class Client {
         request.setClient(null);
     }
 
-    public boolean isDonor() {
-        return getCurrentlyDonatedOrgans().size() > 0;
-    }
-
     /**
      * Indicates whether the client is a donor (has chosen to donate at least one organ)
      * @return boolean of whether the client has chosen to donate any organs
      */
     public boolean isDonor() {
-        for (Map.Entry<Organ, Boolean> entry : organDonationStatus.entrySet()) {
-            if (entry.getValue()) {
-                return true;
-            }
-        }
-        return false;
+        return getCurrentlyDonatedOrgans().size() > 0;
     }
 
     /**

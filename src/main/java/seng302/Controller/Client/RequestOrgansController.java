@@ -1,6 +1,8 @@
 package seng302.Controller.Client;
 
 
+import static seng302.Utilities.Enums.TransplantRequestStatus.WAITING;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -38,7 +40,7 @@ import seng302.State.Session.UserType;
 import seng302.State.State;
 import seng302.TransplantRequest;
 import seng302.Utilities.Enums.Organ;
-import seng302.Utilities.Enums.RequestStatus;
+import seng302.Utilities.Enums.TransplantRequestStatus;
 import seng302.Utilities.Enums.ResolveReason;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
@@ -72,7 +74,7 @@ public class RequestOrgansController extends SubController {
     @FXML
     private TableColumn<TransplantRequest, LocalDateTime> requestDateCurrCol, requestDatePastCol, resolvedDatePastCol;
     @FXML
-    private TableColumn<TransplantRequest, RequestStatus> requestStatusPastCol;
+    private TableColumn<TransplantRequest, TransplantRequestStatus> requestStatusPastCol;
     @FXML
     private TableColumn<TransplantRequest, String> resolvedReasonPastCol;
     @FXML
@@ -223,11 +225,11 @@ public class RequestOrgansController extends SubController {
 
         currentRequests = new FilteredList<>(
                 FXCollections.observableArrayList(allRequests),
-                request -> request.getStatus() == RequestStatus.WAITING
+                request -> request.getStatus() == WAITING
         );
         pastRequests = new FilteredList<>(
                 FXCollections.observableArrayList(allRequests),
-                request -> request.getStatus() != RequestStatus.WAITING
+                request -> request.getStatus() != WAITING
         );
 
         currentRequestsTable.setItems(currentRequests);
@@ -288,7 +290,7 @@ public class RequestOrgansController extends SubController {
             Action action = null;
 
             if (resolveReason == ResolveReason.COMPLETED) {
-                action = new ResolveTransplantRequestAction(selectedRequest, RequestStatus.COMPLETED, "Transplant took place.");
+                action = new ResolveTransplantRequestAction(selectedRequest, TransplantRequestStatus.COMPLETED, "Transplant took place.");
 
             } else if (resolveReason == ResolveReason.DECEASED) {
                 LocalDate deathDate = deathDatePicker.getValue();
@@ -308,7 +310,7 @@ public class RequestOrgansController extends SubController {
                 }
 
             } else if (resolveReason == ResolveReason.CURED) {
-                action = new ResolveTransplantRequestAction(selectedRequest, RequestStatus.CANCELLED, "The disease was cured.");
+                action = new ResolveTransplantRequestAction(selectedRequest, TransplantRequestStatus.CANCELLED, "The disease was cured.");
                 Optional<ButtonType> buttonOpt = PageNavigator.showAlert(AlertType.CONFIRMATION,
                         "Go to Medical History Page",
                         "Do you want to go to the medical history page to mark the disease that was cured?");
@@ -317,10 +319,10 @@ public class RequestOrgansController extends SubController {
                 }
 
             } else if (resolveReason == ResolveReason.ERROR) {
-                action = new ResolveTransplantRequestAction(selectedRequest, RequestStatus.CANCELLED, "Request was a mistake.");
+                action = new ResolveTransplantRequestAction(selectedRequest, TransplantRequestStatus.CANCELLED, "Request was a mistake.");
 
             } else if (resolveReason == ResolveReason.CUSTOM) {
-                action = new ResolveTransplantRequestAction(selectedRequest, RequestStatus.CANCELLED, customReason.getText());
+                action = new ResolveTransplantRequestAction(selectedRequest, TransplantRequestStatus.CANCELLED, customReason.getText());
                 customReason.clear();
             }
 

@@ -13,7 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import seng302.Utilities.Enums.Organ;
-import seng302.Utilities.Enums.RequestStatus;
+import seng302.Utilities.Enums.TransplantRequestStatus;
 
 /**
  * Represents a request for a client to receive a transplant for a given organ.
@@ -22,12 +22,6 @@ import seng302.Utilities.Enums.RequestStatus;
 @Table
 @Access(AccessType.FIELD)
 public class TransplantRequest {
-
-    public enum RequestStatus {
-        WAITING,
-        CANCELLED,
-        COMPLETED
-    }
 
     @Id
     @GeneratedValue
@@ -38,7 +32,7 @@ public class TransplantRequest {
     private Organ requestedOrgan;
     private LocalDateTime requestDate;
     private LocalDateTime resolvedDate;
-    private RequestStatus status = RequestStatus.WAITING;
+    private TransplantRequestStatus status = TransplantRequestStatus.WAITING;
     private String resolvedReason;
 
     protected TransplantRequest() {
@@ -66,7 +60,7 @@ public class TransplantRequest {
         return resolvedDate;
     }
 
-    public RequestStatus getStatus() {
+    public TransplantRequestStatus getStatus() {
         return status;
     }
 
@@ -87,7 +81,7 @@ public class TransplantRequest {
         this.resolvedDate = resolvedDate;
     }
 
-    public void setStatus(RequestStatus status) {
+    public void setStatus(TransplantRequestStatus status) {
         this.status = status;
     }
 

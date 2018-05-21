@@ -87,7 +87,7 @@ public class SearchClientsController extends SubController {
 
     @FXML
     private void initialize() {
-        ArrayList<Client> allClients = State.getClientManager().getClients();
+        List<Client> allClients = State.getClientManager().getClients();
 
         setupTable();
 

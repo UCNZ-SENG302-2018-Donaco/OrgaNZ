@@ -1,17 +1,17 @@
 package seng302.Actions.Client;
 
 
+import static seng302.Utilities.Enums.TransplantRequestStatus.WAITING;
+import static seng302.Utilities.Enums.TransplantRequestStatus.CANCELLED;
+import static seng302.Utilities.Enums.TransplantRequestStatus.COMPLETED;
+
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 
 import seng302.Actions.Action;
 import seng302.TransplantRequest;
-import seng302.Utilities.Enums.RequestStatus;
-
-import static seng302.Utilities.Enums.RequestStatus.CANCELLED;
-import static seng302.Utilities.Enums.RequestStatus.COMPLETED;
-import static seng302.Utilities.Enums.RequestStatus.WAITING;
+import seng302.Utilities.Enums.TransplantRequestStatus;
 
 /**
  * A reversible action that will resolve the given transplant request with a given status. This status must be one of
@@ -19,12 +19,12 @@ import static seng302.Utilities.Enums.RequestStatus.WAITING;
  */
 public class ResolveTransplantRequestAction extends Action {
 
-    private static final Collection<RequestStatus> RESOLVED_STATUSES = Arrays.asList(
+    private static final Collection<TransplantRequestStatus> RESOLVED_STATUSES = Arrays.asList(
             CANCELLED, COMPLETED
     );
 
     private TransplantRequest request;
-    private RequestStatus newStatus;
+    private TransplantRequestStatus newStatus;
     private String reason;
 
     /**
@@ -34,7 +34,7 @@ public class ResolveTransplantRequestAction extends Action {
      * ResolveTransplantRequestAction#RESOLVED_STATUSES}.
      * @param reason The reason for this request being resolved.
      */
-    public ResolveTransplantRequestAction(TransplantRequest request, RequestStatus newStatus, String reason) {
+    public ResolveTransplantRequestAction(TransplantRequest request, TransplantRequestStatus newStatus, String reason) {
         this.request = request;
         this.newStatus = newStatus;
         this.reason = reason;

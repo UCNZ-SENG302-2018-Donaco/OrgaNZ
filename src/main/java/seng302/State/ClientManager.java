@@ -1,7 +1,5 @@
 package seng302.State;
 
-import static seng302.Utilities.Enums.RequestStatus.WAITING;
-
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;

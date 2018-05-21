@@ -5,8 +5,8 @@ import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.matcher.control.TableViewMatchers.containsRow;
 
 import static seng302.Utilities.Enums.Organ.*;
-import static seng302.Utilities.Enums.RequestStatus.CANCELLED;
-import static seng302.Utilities.Enums.RequestStatus.WAITING;
+import static seng302.Utilities.Enums.TransplantRequestStatus.CANCELLED;
+import static seng302.Utilities.Enums.TransplantRequestStatus.WAITING;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -28,6 +28,7 @@ import seng302.State.State;
 import seng302.TransplantRequest;
 import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.Enums.Region;
+import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.WindowContext.WindowContextBuilder;
 
@@ -80,11 +81,12 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
     }
 
     @Before
-    public void beforeEach() {
+    public void beforeEach() throws OrganAlreadyRegisteredException {
         setSampleRequests();
 
-        testClient.getOrganDonationStatus().put(BONE, true);
-        testClient.getOrganDonationStatus().put(LIVER, true);
+        testClient.setOrganDonationStatus(BONE, true);
+        testClient.setOrganDonationStatus(LIVER, true);
+
         for (TransplantRequest request : sampleRequests) {
             testClient.addTransplantRequest(request);
         }
@@ -110,9 +112,11 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
     }
 
     @Test
-    public void conflictingRequestsAreColouredTest() {
+    public void conflictingRequestsAreColouredTest() throws InterruptedException {
         TableView<TransplantRequest> currRequestsTable = lookup("#currentRequestsTable").queryTableView();
         clickOn(currRequestsTable); // click on the table so lookups know where abouts to look
+
+        Thread.sleep(10000);
 
         // Get conflicting request
         TransplantRequest conflictingRequest = currRequestsTable.getItems().get(1);

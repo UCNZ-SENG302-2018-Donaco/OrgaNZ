@@ -1,6 +1,6 @@
 package seng302.State;
 
-import static seng302.TransplantRequest.RequestStatus.WAITING;
+import static seng302.Utilities.Enums.TransplantRequestStatus.WAITING;
 
 import java.time.LocalDate;
 import java.util.ArrayList;

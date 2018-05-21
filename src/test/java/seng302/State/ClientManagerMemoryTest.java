@@ -15,7 +15,7 @@ import seng302.Utilities.Enums.Organ;
 
 import org.junit.Before;
 import org.junit.Test;
-import seng302.Utilities.Enums.RequestStatus;
+import seng302.Utilities.Enums.TransplantRequestStatus;
 
 public class ClientManagerMemoryTest {
 
@@ -140,7 +140,7 @@ public class ClientManagerMemoryTest {
     public void getAllCurrentTransplantRequests() {
         TransplantRequest transplantRequest = new TransplantRequest(client1, Organ.LIVER);
         TransplantRequest transplantRequest2 = new TransplantRequest(client2, Organ.HEART);
-        transplantRequest2.setStatus(RequestStatus.COMPLETED);
+        transplantRequest2.setStatus(TransplantRequestStatus.COMPLETED);
         transplantRequest2.setResolvedDate(LocalDateTime.now());
         client1.addTransplantRequest(transplantRequest);
         client2.addTransplantRequest(transplantRequest2);
