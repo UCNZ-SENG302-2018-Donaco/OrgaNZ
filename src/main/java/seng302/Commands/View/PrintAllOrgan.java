@@ -9,6 +9,7 @@ import seng302.State.State;
 import seng302.Utilities.JSONConverter;
 
 import picocli.CommandLine.Command;
+import picocli.CommandLine.Option;
 
 /**
  * Command line to print all of the information of all the users, including their ID. Not Sorted.
@@ -30,18 +31,25 @@ public class PrintAllOrgan implements Runnable {
         this.manager = manager;
     }
 
+    @Option(names = {"-t", "-type"}, description = "Organ donations or requests", required = true)
+    private String type;
+
     @Override
     public void run() {
         ArrayList<Client> clients = manager.getClients();
 
         if (clients.size() == 0) {
             System.out.println("No clients exist");
-        } else {
+        } else if(type.equals("donations") || type.equals("requests")) {
             for (Client client : clients) {
-                System.out.println(client.getClientOrganStatusString("donations"));
+                System.out.println(client.getClientOrganStatusString(type));
+
             }
             HistoryItem printAllOrgan = new HistoryItem("PRINT ALL ORGAN", "All client organ information printed.");
             JSONConverter.updateHistory(printAllOrgan, "action_history.json");
+        } else {
+            System.out.println("Define if organs to print are donations or requests e.g. 'printuserorgan "
+                    + "-uid=1 -t=requests'");
         }
     }
 }

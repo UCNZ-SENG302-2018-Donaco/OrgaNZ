@@ -13,7 +13,7 @@ public class RegionConverter implements CommandLine.ITypeConverter<Region> {
      * Convert a string to a Region, matches case insensitive
      * @param value String input from user via PicoCLI
      * @return Region object
-     * @throws CommandLine.TypeConversionException Throws exception if invalid blood type
+     * @throws CommandLine.TypeConversionException Throws exception if invalid region
      */
     @Override
     public Region convert(String value) throws CommandLine.TypeConversionException {
