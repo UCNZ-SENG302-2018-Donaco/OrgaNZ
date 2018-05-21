@@ -251,14 +251,14 @@ public class SearchClientsController extends SubController {
     }
 
     /**
-     * Compares the names based off the priority Last name -> Pref name -> First name -> Middle name [-> suffix/prefixes]
-     * Falls back to comparing the user id's if the names are identical to have a consistent order
+     * Compares the names based off the priority Last name -> Pref name -> First name -> Middle name -> Client ID
+     * Falls back to comparing the user id's if the names are identical to ensure a consistent order
      * @param client1 The first client object being compared
      * @param client2 The second client object being compared
-     * @return -1 if c1 is higher priority. 1 if c1 is lower priority. 0 only if they are the same user ID.
+     * @return -1 if client1 is higher priority. 1 if client1 is lower priority. 0 only if they have the same user ID.
      */
     private int compareNames(Client client1, Client client2) {
-        //Last name -> Pref name -> First name -> Middle name [-> suffix/prefixes]
+        //Last name -> Pref name -> First name -> Middle name -> Client ID
         String searchTerm = searchBox.getText().toLowerCase();
 
         int result;
