@@ -1,8 +1,5 @@
 package seng302.Actions.Client;
 
-import static seng302.TransplantRequest.RequestStatus.CANCELLED;
-import static seng302.TransplantRequest.RequestStatus.COMPLETED;
-import static seng302.TransplantRequest.RequestStatus.WAITING;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -10,7 +7,11 @@ import java.util.Collection;
 
 import seng302.Actions.Action;
 import seng302.TransplantRequest;
-import seng302.TransplantRequest.RequestStatus;
+import seng302.Utilities.Enums.RequestStatus;
+
+import static seng302.Utilities.Enums.RequestStatus.CANCELLED;
+import static seng302.Utilities.Enums.RequestStatus.COMPLETED;
+import static seng302.Utilities.Enums.RequestStatus.WAITING;
 
 /**
  * A reversible action that will resolve the given transplant request with a given status. This status must be one of

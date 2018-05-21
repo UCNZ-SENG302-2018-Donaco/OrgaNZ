@@ -9,11 +9,12 @@ import java.util.Collection;
 
 import seng302.Client;
 import seng302.TransplantRequest;
-import seng302.TransplantRequest.RequestStatus;
+
 import seng302.Utilities.Enums.Organ;
 
 import org.junit.Before;
 import org.junit.Test;
+import seng302.Utilities.Enums.RequestStatus;
 
 public class ClientManagerTest {
 
