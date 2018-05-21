@@ -44,10 +44,10 @@ public class SearchClientsControllerTest extends ControllerTest{
 
     private Clinician testClinician = new Clinician("Admin", "Da", "Nimda", "2 Two Street", Region.CANTERBURY,
             55, "admin");
-    private Client testClient1 = new Client("tom", "Delta", "1", LocalDate.now().minusYears(100), 4); // 100 years old
-    private Client testClient2 = new Client("steve", "Charlie", "2", LocalDate.now().minusYears(11), 3); // 11 years old
-    private Client testClient3 = new Client("john", "Alpha", "2", LocalDate.now().minusYears(10), 2); // 10 years old
-    private Client testClient4 = new Client("john", "Beta", "2", LocalDate.now().minusYears(1), 1); // 1 year old
+    private Client testClient1 = new Client("tom", "Delta", "1", LocalDate.now().minusYears(100), 1); // 100 years old
+    private Client testClient2 = new Client("bobby", "Charlie", "2", LocalDate.now().minusYears(11), 2); // 11 years old
+    private Client testClient3 = new Client("john", "Alpha", "2", LocalDate.now().minusYears(10), 3); // 10 years old
+    private Client testClient4 = new Client("john", "Beta", "2", LocalDate.now().minusYears(1), 4); // 1 year old
 
     private Client[] testClients = {testClient1, testClient2, testClient3, testClient4};
 
@@ -623,7 +623,6 @@ public class SearchClientsControllerTest extends ControllerTest{
 
     @Test
     public void testMiddleNameIsThirdPriority() {
-        sleep(5000);
         TableView<Client> tableView = lookup("#tableView").query();
         Client result = tableView.getItems().get(2);
 
@@ -638,9 +637,9 @@ public class SearchClientsControllerTest extends ControllerTest{
         Client result1 = tableView.getItems().get(1);
         Client result2 = tableView.getItems().get(2);
 
-        assertEquals(testClient2.getFullName(), result0.getFullName());
-        assertEquals(testClient4.getFullName(), result1.getFullName());
-        assertEquals(testClient3.getFullName(), result2.getFullName());
+        assertEquals(testClient4.getFullName(), result0.getFullName());
+        assertEquals(testClient3.getFullName(), result1.getFullName());
+        assertEquals(testClient2.getFullName(), result2.getFullName());
     }
 
     @Ignore
