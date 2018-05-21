@@ -25,7 +25,8 @@ import picocli.CommandLine.Option;
  * date 05/03/2018
  */
 
-@Command(name = "setorganstatus", description = "Set the organ donation choices of an existing user.", sortOptions = false)
+@Command(name = "setorganstatus", description = "Set the organ donation choices of an existing client.", sortOptions =
+        false)
 public class SetOrganStatus implements Runnable {
 
     private ClientManager manager;

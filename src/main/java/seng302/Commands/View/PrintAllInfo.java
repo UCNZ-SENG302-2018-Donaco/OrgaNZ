@@ -11,7 +11,7 @@ import seng302.Utilities.JSONConverter;
 import picocli.CommandLine.Command;
 
 /**
- * Command line to print all of the information of all the users, including their ID. Not Sorted.
+ * Command line to print all of the information of all the clients, including their ID. Not Sorted.
  * @author Dylan Carlyle, Jack Steel
  * @version sprint 1.
  * date 05/03/2018

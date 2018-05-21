@@ -30,7 +30,7 @@ import picocli.CommandLine.Option;
  * date 05/03/2018
  */
 
-@Command(name = "setattribute", description = "Set the attributes of an existing user.", sortOptions = false)
+@Command(name = "setattribute", description = "Set the attributes of an existing client.", sortOptions = false)
 public class SetAttribute implements Runnable {
 
     private ClientManager manager;
@@ -117,7 +117,7 @@ public class SetAttribute implements Runnable {
             }
         }
         invoker.execute(action);
-        HistoryItem setAttribute = new HistoryItem("ATTRIBUTE UPDATE", "DETAILS were updated for user " + uid);
+        HistoryItem setAttribute = new HistoryItem("ATTRIBUTE UPDATE", "DETAILS were updated for client " + uid);
         JSONConverter.updateHistory(setAttribute, "action_history.json");
     }
 }
