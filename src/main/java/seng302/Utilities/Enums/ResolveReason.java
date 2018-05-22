@@ -12,6 +12,8 @@ public enum ResolveReason {
 
     private final String text;
 
+    private static String mismatchText;
+
     ResolveReason(String text) {
         this.text = text;
     }
@@ -26,6 +28,18 @@ public enum ResolveReason {
                 return r;
             }
         }
-        throw new IllegalArgumentException("Unsupported resolve reason");
+
+        //No match
+        if (mismatchText != null) {
+            throw new IllegalArgumentException(mismatchText);
+        } else {
+            StringBuilder mismatchTextBuilder = new StringBuilder("Unsupported resolve reason, please use one of the "
+                    + "following:");
+            for (ResolveReason rr : ResolveReason.values()) {
+                mismatchTextBuilder.append("\n").append(rr.text);
+            }
+            mismatchText = mismatchTextBuilder.toString();
+            throw new IllegalArgumentException(mismatchText);
+        }
     }
 }
