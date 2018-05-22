@@ -19,6 +19,8 @@ public enum Organ {
 
     private final String text;
 
+    private static String mismatchText;
+
     Organ(String text) {
         this.text = text;
     }
@@ -34,11 +36,24 @@ public enum Organ {
      * @throws IllegalArgumentException Thrown when no matching organ is found
      */
     public static Organ fromString(String text) {
+
         for (Organ o : Organ.values()) {
             if (o.toString().equalsIgnoreCase(text)) {
                 return o;
             }
         }
-        throw new IllegalArgumentException("Unsupported organ");
+
+        //No match
+        if (mismatchText != null) {
+            throw new IllegalArgumentException(mismatchText);
+        } else {
+            StringBuilder mismatchTextBuilder = new StringBuilder("Unsupported organ, please use one of the "
+                    + "following:");
+            for (Organ o : Organ.values()) {
+                mismatchTextBuilder.append("\n").append(o.text);
+            }
+            mismatchText = mismatchTextBuilder.toString();
+            throw new IllegalArgumentException(mismatchText);
+        }
     }
 }

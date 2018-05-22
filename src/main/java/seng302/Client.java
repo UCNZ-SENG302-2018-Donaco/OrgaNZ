@@ -1,16 +1,17 @@
 package seng302;
 
-import static seng302.TransplantRequest.RequestStatus.*;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -21,6 +22,9 @@ import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.Enums.Region;
 import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
 
+import static seng302.Utilities.Enums.RequestStatus.CANCELLED;
+import static seng302.Utilities.Enums.RequestStatus.WAITING;
+
 /**
  * The main Client class.
  */
@@ -29,8 +33,8 @@ public class Client {
     private int uid;
     private String firstName;
     private String lastName;
-    private String middleName;
-    private String preferredName;
+    private String middleName = "";
+    private String preferredName = "";
     private String currentAddress;
     private Region region;
     private Gender gender;
@@ -187,7 +191,7 @@ public class Client {
      */
     public String getFullName() {
         String fullName = firstName + " ";
-        if (middleName != null) {
+        if (middleName != null && !middleName.equals("")) {
             fullName += middleName + " ";
         }
         if (preferredName != null && !preferredName.equals("")) {
@@ -335,6 +339,13 @@ public class Client {
 
     public Map<Organ, Boolean> getOrganDonationStatus() {
         return organDonationStatus;
+    }
+
+    public Set<Organ> getCurrentlyDonatedOrgans() {
+        return organDonationStatus.entrySet().stream()
+                .filter(Entry::getValue)
+                .map(Entry::getKey)
+                .collect(Collectors.toCollection(() -> EnumSet.noneOf(Organ.class)));
     }
 
     public Set<Organ> getCurrentlyRequestedOrgans() {
@@ -524,6 +535,70 @@ public class Client {
         return isMatch;
     }
 
+
+    /**
+     * Returns a HashSet of all names of the Client. If they do not have a middle/preferred name, this is set as "".
+     * @return the Hashset of all the Clients names.
+     */
+    private HashSet<String> splitNames() {
+
+        String[] fname = firstName.split("\\s+");
+        String[] lname = lastName.split("\\s+");
+        String[] mname;
+        String[] pname;
+
+        if (middleName == null) {
+            mname = new String[0];
+        } else {
+            mname = middleName.split("\\s+");
+        }
+        if (preferredName == null) {
+            pname = new String[0];
+        } else {
+            pname = preferredName.split("\\s+");
+        }
+
+        HashSet<String> names = new HashSet<>(Arrays.asList(fname));
+        names.addAll(Arrays.asList(lname));
+        names.addAll(Arrays.asList(mname));
+        names.addAll(Arrays.asList(pname));
+        return names;
+    }
+
+
+    /**
+     * Takes a string and checks if each space separated string section begins with the same values as the search
+     * parameter.
+     * @param searchParam The string to be checked
+     * @return True if all sections of the passed string match any of the names of the client
+     */
+    public boolean profileSearch(String searchParam) {
+        String lowerSearch = searchParam.toLowerCase();
+        String[] splitSearchItems = lowerSearch.split("\\s+");
+
+        Collection<String> searched = new ArrayList<>(Arrays.asList(splitSearchItems));
+
+        Collection<String> names = this.splitNames();
+        Collection<String> lowercaseNames = new ArrayList<>();
+        for (String name : names) {
+            lowercaseNames.add(name.toLowerCase());
+        }
+
+        Collection<String> matchedNames = new ArrayList<>();
+
+        for (String searchedParam : searched) {
+            for (String name : lowercaseNames) {
+
+                if (name.startsWith(searchedParam)) {
+                    matchedNames.add(name);
+                    break;
+                }
+            }
+
+        }
+        return matchedNames.size() == searched.size();
+    }
+
     /**
      * Client objects are identified by their uid
      * @param o The object to compare
@@ -561,6 +636,18 @@ public class Client {
         transplantRequests.remove(request);
     }
 
+    /**
+     * Indicates whether the client is a donor (has chosen to donate at least one organ)
+     * @return boolean of whether the client has chosen to donate any organs
+     */
+    public boolean isDonor() {
+        return getCurrentlyDonatedOrgans().size() > 0;
+    }
+
+    /**
+     * Indicates whether the client is a receiver (has at least one transplant request)
+     * @return boolean of whether the client has any organ transplant requests
+     */
     public boolean isReceiver() {
         return transplantRequests.size() > 0;
     }

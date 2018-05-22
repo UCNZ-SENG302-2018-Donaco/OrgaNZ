@@ -1,16 +1,17 @@
 package seng302.Controller.Clinician;
 
-import javafx.scene.input.KeyCode;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+
+import seng302.Administrator;
 import seng302.Controller.ControllerTest;
-import seng302.State.Session;
 import seng302.State.State;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.WindowContext;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class CreateClinicianControllerTest extends ControllerTest {
+    private Administrator testAdmin = new Administrator("username", "password");
 
     @Override
     protected Page getPage() {
@@ -20,6 +21,7 @@ public class CreateClinicianControllerTest extends ControllerTest {
     @Override
     protected void initState() {
         State.init();
+        State.login(testAdmin);
         mainController.setWindowContext(WindowContext.defaultContext());
     }
 
@@ -80,14 +82,6 @@ public class CreateClinicianControllerTest extends ControllerTest {
         assertEquals(Page.CREATE_CLINICIAN, mainController.getCurrentPage());
     }
 
-    @Test
-    public void goBackButtonTest() {
-
-        clickOn("#goBackButton");
-        assertEquals(Page.LANDING, mainController.getCurrentPage());
-    }
-
-    //TODO find why page won't navigate?
     @Test
     public void validClinician1() {
         clickOn("#fname").write("f");

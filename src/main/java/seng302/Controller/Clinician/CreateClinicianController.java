@@ -3,6 +3,7 @@ package seng302.Controller.Clinician;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
 import seng302.Actions.Clinician.CreateClinicianAction;
@@ -33,6 +34,8 @@ public class CreateClinicianController extends SubController {
     private ChoiceBox<Region> region;
     @FXML
     private Button createButton, goBackButton;
+    @FXML
+    private Pane sidebarPane;
 
     private ClinicianManager clinicianManager;
 
@@ -52,6 +55,7 @@ public class CreateClinicianController extends SubController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
+        mainController.loadSidebar(sidebarPane);
         mainController.setTitle("Create a new Clinician");
     }
 
@@ -121,8 +125,6 @@ public class CreateClinicianController extends SubController {
                         "Clinician " + fname.getText() + " " + lname.getText() + " with staff ID " + staffId.getText()
                                 + " Created.");
                 JSONConverter.updateHistory(save, "action_history.json");
-
-                State.login(clinician);
 
                 PageNavigator.loadPage(Page.VIEW_CLINICIAN, mainController);
             }

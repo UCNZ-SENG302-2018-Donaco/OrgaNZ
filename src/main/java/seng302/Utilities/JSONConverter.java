@@ -17,6 +17,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 
 import seng302.Client;
 import seng302.HistoryItem;
@@ -35,6 +36,8 @@ import com.google.gson.stream.JsonReader;
  * to Java objects.
  */
 public final class JSONConverter {
+
+    private static final Logger LOGGER = Logger.getLogger(JSONConverter.class.getName());
 
     private static final Gson gson = new GsonBuilder()
             .setPrettyPrinting()
@@ -143,7 +146,8 @@ public final class JSONConverter {
         try (Writer writer = new FileWriter(filename)) {
             gson.toJson(historyHistoryItemList, writer);
         } catch (IOException | IllegalStateException exc) {
-            System.out.println(exc);
+            LOGGER.severe("Error writing history to JSON");
+            LOGGER.severe(exc.getMessage());
         }
     }
 

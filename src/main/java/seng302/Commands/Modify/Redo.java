@@ -20,6 +20,6 @@ public class Redo implements Runnable {
     }
 
     public void run() {
-        invoker.redo();
+        System.out.println(invoker.redo());
     }
 }

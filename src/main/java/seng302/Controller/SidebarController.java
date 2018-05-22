@@ -4,12 +4,15 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.stage.FileChooser;
 
 import seng302.Actions.ActionInvoker;
@@ -29,6 +32,7 @@ import org.controlsfx.control.Notifications;
  * Controller for the sidebar pane imported into every page in the main part of the GUI.
  */
 public class SidebarController extends SubController {
+
     private static final Logger LOGGER = Logger.getLogger(SidebarController.class.getName());
 
     private static final String ERROR_SAVING_MESSAGE = "There was an error saving to the file specified.";
@@ -37,7 +41,8 @@ public class SidebarController extends SubController {
     @FXML
     private Button viewClientButton, registerOrganDonationButton, viewMedicationsButton, viewClinicianButton,
             searchButton, transplantsButton, logoutButton, requestOrganDonationButton, illnessHistoryButton,
-            viewProceduresButton, undoButton, redoButton;
+            viewProceduresButton, createAdminButton, createClinicianButton, undoButton, redoButton, saveToFileButton,
+            loadFromFileButton, staffListButton, commandLineButton;
 
     private ActionInvoker invoker;
     private Session session;
@@ -53,27 +58,39 @@ public class SidebarController extends SubController {
     @Override
     public void setup(MainController controller) {
         super.setup(controller);
-        Session.UserType userType = session.getLoggedInUserType();
-        if (userType == Session.UserType.CLIENT || windowContext.isClinViewClientWindow()) {
-            hideButton(viewClinicianButton);
-            hideButton(searchButton);
-            hideButton(transplantsButton);
-        } else if (userType == Session.UserType.CLINICIAN) {
-            hideButton(viewClientButton);
-            hideButton(registerOrganDonationButton);
-            hideButton(viewMedicationsButton);
-            hideButton(illnessHistoryButton);
-            hideButton(viewProceduresButton);
+        UserType userType = session.getLoggedInUserType();
+
+        Button staffButtons[] = {viewClinicianButton, searchButton, transplantsButton};
+        Button adminButtons[] = {createAdminButton, createClinicianButton, staffListButton, saveToFileButton,
+                loadFromFileButton, commandLineButton};
+        Button clinicianButtons[] = {};
+        Button clientButtons[] = {viewClientButton, registerOrganDonationButton, viewMedicationsButton,
+                illnessHistoryButton, viewProceduresButton};
+
+        // Hide buttons depending on the type of user logged in/the view window type
+        if (userType == UserType.CLIENT || windowContext.isClinViewClientWindow()) {
+            hideButtons(staffButtons);
+            hideButtons(adminButtons);
+            hideButtons(clinicianButtons);
+        } else if (userType == UserType.CLINICIAN) {
+            hideButtons(adminButtons);
+            hideButtons(clientButtons);
+        } else if (userType == UserType.ADMINISTRATOR) {
+            hideButtons(clinicianButtons);
+            hideButtons(clientButtons);
         }
 
+        // Staff viewing a client shouldn't see the logout button
         if (windowContext.isClinViewClientWindow()) {
             hideButton(logoutButton);
         }
 
+        // Non-receivers shouldn't see the receiver tab
         if (!shouldShowRequestOrgans(userType)) {
             hideButton(requestOrganDonationButton);
         }
 
+        // Set undo and redo button depending on if they're able to be pressed
         undoButton.setDisable(!invoker.canUndo());
         redoButton.setDisable(!invoker.canRedo());
     }
@@ -89,6 +106,16 @@ public class SidebarController extends SubController {
             return currentClient.isReceiver();
         } else {
             return windowContext.isClinViewClientWindow();
+        }
+    }
+
+    /**
+     * Hides all the buttons in the passed-in array.
+     * @param buttons The buttons to hide
+     */
+    private void hideButtons(Button buttons[]) {
+        for (Button button : buttons) {
+            hideButton(button);
         }
     }
 
@@ -158,6 +185,14 @@ public class SidebarController extends SubController {
     }
 
     /**
+     * Redirects the GUI to the Staff list page.
+     */
+    @FXML
+    private void goToStaffList() {
+        PageNavigator.loadPage(Page.STAFF_LIST, mainController);
+    }
+
+    /**
      * Redirects the GUI to the Transplants page.
      */
     @FXML
@@ -187,6 +222,30 @@ public class SidebarController extends SubController {
     @FXML
     private void goToViewProcedures() {
         PageNavigator.loadPage(Page.VIEW_PROCEDURES, mainController);
+    }
+
+    /**
+     * Redirects the GUI to the Create administrator page.
+     */
+    @FXML
+    private void goToCreateAdmin() {
+        PageNavigator.loadPage(Page.CREATE_ADMINISTRATOR, mainController);
+    }
+
+    /**
+     * Redirects the GUI to the Create clinician page.
+     */
+    @FXML
+    private void goToCreateClinician() {
+        PageNavigator.loadPage(Page.CREATE_CLINICIAN, mainController);
+    }
+
+    /**
+     * Redirects the GUI to the Admin command line page.
+     */
+    @FXML
+    private void goToCommandLine() {
+        PageNavigator.loadPage(Page.COMMAND_LINE, mainController);
     }
 
     /**
@@ -226,35 +285,43 @@ public class SidebarController extends SubController {
      */
     @FXML
     private void load() {
-        try {
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Load Clients File");
-            fileChooser.setInitialDirectory(
-                    new File(Paths.get(AppUI.class.getProtectionDomain().getCodeSource().getLocation().toURI())
-                            .getParent().toString())
-            );
-            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json"));
-            File file = fileChooser.showOpenDialog(AppUI.getWindow());
 
-            if (file != null) {
-                JSONConverter.loadFromFile(file);
+        // Confirm that the user wants to overwrite current data with data from a file
+        Optional<ButtonType> response = PageNavigator.showAlert(AlertType.CONFIRMATION,
+                "Confirm load from file",
+                "Loading from a file will overwrite all current data. Would you like to proceed?");
 
-                HistoryItem load = new HistoryItem("LOAD", "The systems state was loaded from " + file.getName());
-                JSONConverter.updateHistory(load, "action_history.json");
+        if (response.isPresent() && response.get() == ButtonType.OK) {
+            try {
+                FileChooser fileChooser = new FileChooser();
+                fileChooser.setTitle("Load Clients File");
+                fileChooser.setInitialDirectory(
+                        new File(Paths.get(AppUI.class.getProtectionDomain().getCodeSource().getLocation().toURI())
+                                .getParent().toString())
+                );
+                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json"));
+                File file = fileChooser.showOpenDialog(AppUI.getWindow());
 
-                //State.logout();
-                mainController.resetWindowContext();
-                Notifications.create().title("Loaded data").text(
-                        String.format("Successfully loaded %d clients from file",
-                                State.getClientManager().getClients().size()))
-                        .showInformation();
-                PageNavigator.loadPage(Page.LANDING, mainController);
+                if (file != null) {
+                    JSONConverter.loadFromFile(file);
+
+                    HistoryItem load = new HistoryItem("LOAD", "The systems state was loaded from " + file.getName());
+                    JSONConverter.updateHistory(load, "action_history.json");
+
+                    invoker.resetUnsavedUpdates();
+                    mainController.resetWindowContext();
+                    Notifications.create().title("Loaded data").text(
+                            String.format("Successfully loaded %d clients from file",
+                                    State.getClientManager().getClients().size()))
+                            .showInformation();
+                    PageNavigator.loadPage(Page.LANDING, mainController);
+                }
+            } catch (URISyntaxException | IOException | IllegalArgumentException e) {
+                PageNavigator.showAlert(Alert.AlertType.WARNING, "Load Failed",
+                        "Warning: unrecognisable or invalid file. please make\n"
+                                + "sure that you have selected the correct file type.");
+                LOGGER.log(Level.SEVERE, ERROR_LOADING_MESSAGE, e);
             }
-        } catch (URISyntaxException | IOException | IllegalArgumentException e) {
-            PageNavigator.showAlert(Alert.AlertType.WARNING, "Load Failed",
-                    "Warning: unrecognisable or invalid file. please make\n"
-                            + "sure that you have selected the correct file type.");
-            LOGGER.log(Level.SEVERE, ERROR_LOADING_MESSAGE, e);
         }
     }
 
