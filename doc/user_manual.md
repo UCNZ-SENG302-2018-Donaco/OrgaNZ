@@ -69,9 +69,9 @@ load
 ## Create a clinician
 
 createclinician [-a=\<workAddress\>] -f=\<firstName\> -l=\<lastName\>
-                       [-m=\<middleNames\>] [-p=\<password\>] [-r=\<region\>]
+                       [-m=\<middleNames\>] [-p=\<password\>] [-r=\<region\>] -s=\<id>
                        
-* First name and last name are required
+* First name, last name, and staff ID are required
 
 ## Update a clinician
 
