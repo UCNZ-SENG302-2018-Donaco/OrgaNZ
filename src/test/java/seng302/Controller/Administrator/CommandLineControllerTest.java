@@ -46,7 +46,7 @@ public class CommandLineControllerTest extends ControllerTest {
     public void checkInitialTextAreaTest() {
         TextArea area = lookup("#outputTextArea").query();
         String outText = area.getText();
-        assertTrue(outText.contains("Usage: ClientCLI"));
+        assertTrue(outText.contains("Usage: OrgaNZ"));
         assertTrue(outText.contains("Commands:"));
         assertTrue(outText.contains("load"));
     }
