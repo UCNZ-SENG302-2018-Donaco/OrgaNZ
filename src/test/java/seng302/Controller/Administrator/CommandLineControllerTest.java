@@ -12,6 +12,7 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
 
+import seng302.Administrator;
 import seng302.Client;
 import seng302.Controller.ControllerTest;
 import seng302.State.State;
@@ -32,6 +33,7 @@ public class CommandLineControllerTest extends ControllerTest {
     @Override
     protected void initState() {
         State.init();
+        State.login(new Administrator("username", "password"));
         mainController.setWindowContext(WindowContext.defaultContext());
 
         State.getClientManager().addClient(testClient);
@@ -141,11 +143,12 @@ public class CommandLineControllerTest extends ControllerTest {
     }
 
     @Test
-    public void validCreateClientCommandTest() throws InterruptedException {
+    public void validCreateClientCommandTest() {
         clickOn("#inputTextField").write("createclient -f Jack -l Steel -d 21/04/1997").type(KeyCode.ENTER);
 
-        //Need to give the command a little bit of time to execute
-        Thread.sleep(150);
+        //Need to give the command a little bit of time to execute and force a refresh (TestFX bug)
+        write("waiting");
+        type(KeyCode.ENTER);
 
         TextArea area = lookup("#outputTextArea").query();
         assertTrue(area.getText().contains("Created client Jack Steel with user id:"));
