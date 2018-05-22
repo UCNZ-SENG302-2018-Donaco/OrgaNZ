@@ -68,9 +68,8 @@ public class CreateClient implements Runnable {
 
         Action action = new CreateClientAction(client, manager);
 
-        invoker.execute(action);
+        System.out.println(invoker.execute(action));
 
-        System.out.println(String.format("New client %s created with userID %s", client.getFullName(), uid));
         HistoryItem create = new HistoryItem("CREATE", "Client profile ID: " + uid + " created.");
         JSONConverter.updateHistory(create, "action_history.json");
     }

@@ -46,10 +46,10 @@ public class DeleteClient implements Runnable {
                             client.getDateOfBirth()));
         } else {
             Action action = new DeleteClientAction(client, manager);
-            invoker.execute(action);
 
-            System.out.println("Client " + uid + " removed. This removal will only be permanent once the 'save' "
-                    + "command is used");
+            System.out.println(invoker.execute(action));
+            System.out.println("This removal will only be permanent once the 'save' command is used");
+
             HistoryItem deleteClient = new HistoryItem("DELETE", "Client " + uid + " deleted.");
             JSONConverter.updateHistory(deleteClient, "action_history.json");
         }

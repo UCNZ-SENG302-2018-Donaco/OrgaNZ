@@ -116,7 +116,9 @@ public class SetAttribute implements Runnable {
                 e.printStackTrace();
             }
         }
-        invoker.execute(action);
+
+        System.out.println(invoker.execute(action));
+
         HistoryItem setAttribute = new HistoryItem("ATTRIBUTE UPDATE", "DETAILS were updated for client " + uid);
         JSONConverter.updateHistory(setAttribute, "action_history.json");
     }

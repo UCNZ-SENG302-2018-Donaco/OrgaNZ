@@ -125,7 +125,7 @@ public class SetOrganStatus implements Runnable {
             }
         }
 
-        invoker.execute(action);
+        System.out.println(invoker.execute(action));
 
         HistoryItem setOrganStatus = new HistoryItem("SET ORGAN STATUS", "The organ status was updated for " + uid);
         JSONConverter.updateHistory(setOrganStatus, "action_history.json");
