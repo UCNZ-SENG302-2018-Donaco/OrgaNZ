@@ -103,8 +103,7 @@ public class MenuBarController extends SubController {
                 hideMenus(viewAdminMenu);
                 hideMenuItem(searchClientItem);
                 hideMenus(viewClinicianMenu);
-            }
-            else if (!windowContext.isClinViewClientWindow()){
+            } else if (!windowContext.isClinViewClientWindow()) {
                 hideMenuItem(createAdministratorItem);
                 hideMenuItem(staffPrimaryItem);
                 hideMenuItem(filePrimaryItem);
@@ -115,18 +114,24 @@ public class MenuBarController extends SubController {
                 hideMenuItem(viewAdministratorItem);
             }
         }
+        if (userType == UserType.ADMINISTRATOR) {
+
+            if (windowContext.isClinViewClientWindow()){
+
+
+            } else if (!windowContext.isClinViewClientWindow()) {
+                hideMenuItem(organPrimaryItem);
+                hideMenuItem(medicationsPrimaryItem);
+                hideMenuItem(viewClinicianItem);
+                hideMenuItem(viewClientItem);
+            }
+        }
 
         if (userType == UserType.CLIENT == true) {
             hideMenus(viewAllMenus);
         }
 
-        //TODO add administrator rights
-        /*
-        if (userType == UserType.ADMIN) {
-            if (windowContext.isClinViewClientWindow() == true) {
-                hideMenus(viewClinicianMenu);
-            }
-        }*/
+
 
         undoItem.setDisable(!invoker.canUndo());
         redoItem.setDisable(!invoker.canRedo());
@@ -228,8 +233,14 @@ public class MenuBarController extends SubController {
      * Redirects the GUI to the Search clients page.
      */
     @FXML
-    private void goToSearch() {
-        PageNavigator.loadPage(Page.SEARCH, mainController);
+    private void goToSearch() { PageNavigator.loadPage(Page.SEARCH, mainController);}
+
+    /**
+     * Redirects the GUI to the Staff list page.
+     */
+    @FXML
+    private void goToStaffList() {
+        PageNavigator.loadPage(Page.STAFF_LIST, mainController);
     }
 
     /**
@@ -264,18 +275,14 @@ public class MenuBarController extends SubController {
         PageNavigator.loadPage(Page.VIEW_PROCEDURES, mainController);
     }
 
-    //TODO administrator rights
-/*
+
     /**
      * Redirects the GUI to the Create administrator page.
      */
-
-/*
     @FXML
     private void goToCreateAdmin() {
         PageNavigator.loadPage(Page.CREATE_ADMINISTRATOR, mainController);
     }
-*/
     /**
      * Redirects the GUI to the Create clinician page.
      */
@@ -283,6 +290,16 @@ public class MenuBarController extends SubController {
     private void goToCreateClinician() {
         PageNavigator.loadPage(Page.CREATE_CLINICIAN, mainController);
     }
+
+
+    /**
+     * Redirects the GUI to the Admin command line page.
+     */
+    @FXML
+    private void goToCommandLine() {
+        PageNavigator.loadPage(Page.COMMAND_LINE, mainController);
+    }
+
 
     /**
      * Opens a save file dialog to choose where to save all clients in the system to a file.
