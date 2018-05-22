@@ -550,7 +550,7 @@ public class SearchClientsControllerTest extends ControllerTest{
     public void componentsAreVisibleTest() {
         verifyThat("#tableView", isVisible());
         verifyThat("#displayingXToYOfZText", isVisible());
-        verifyThat("#sidebarPane", isVisible());
+        verifyThat("#menuBarPane", isVisible());
         verifyThat("#pagination", isVisible());
     }
 
