@@ -18,11 +18,14 @@ public enum Page {
     HISTORY("/fxml/history.fxml"),
     SEARCH("/fxml/search_clients.fxml"),
     TRANSPLANTS("/fxml/transplants.fxml"),
-    LOGIN_CLINICIAN("/fxml/login_clinician.fxml"),
+    LOGIN_STAFF("/fxml/login_staff.fxml"),
     CREATE_CLINICIAN("/fxml/create_clinician.fxml"),
+    CREATE_ADMINISTRATOR("/fxml/create_administrator.fxml"),
     VIEW_MEDICATIONS("/fxml/view_medications.fxml"),
     VIEW_MEDICAL_HISTORY("/fxml/view_medical_history.fxml"),
-    VIEW_PROCEDURES("/fxml/view_procedures.fxml");
+    VIEW_PROCEDURES("/fxml/view_procedures.fxml"),
+    STAFF_LIST("/fxml/staff_list.fxml"),
+    COMMAND_LINE("/fxml/command_line.fxml");
 
     private String path;
 

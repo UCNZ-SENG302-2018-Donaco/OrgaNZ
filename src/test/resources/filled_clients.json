@@ -1,0 +1,48 @@
+[
+  {
+    "uid": 1,
+    "firstName": "First",
+    "lastName": "Last",
+    "preferredName": "",
+    "gender": "UNSPECIFIED",
+    "height": 0.0,
+    "weight": 0.0,
+    "dateOfBirth": {
+      "year": 1970,
+      "month": 1,
+      "day": 1
+    },
+    "createdTimestamp": {
+      "date": {
+        "year": 2018,
+        "month": 5,
+        "day": 22
+      },
+      "time": {
+        "hour": 21,
+        "minute": 12,
+        "second": 26,
+        "nano": 236000000
+      }
+    },
+    "organDonationStatus": {
+      "INTESTINE": false,
+      "BONE_MARROW": false,
+      "HEART": false,
+      "CORNEA": false,
+      "SKIN": false,
+      "BONE": false,
+      "PANCREAS": false,
+      "KIDNEY": false,
+      "MIDDLE_EAR": false,
+      "LUNG": false,
+      "LIVER": false,
+      "CONNECTIVE_TISSUE": false
+    },
+    "medicationHistory": [],
+    "transplantRequests": [],
+    "updateLog": [],
+    "illnessHistory": [],
+    "procedures": []
+  }
+]

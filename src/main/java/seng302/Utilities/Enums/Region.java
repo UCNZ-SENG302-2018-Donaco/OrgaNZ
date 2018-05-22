@@ -24,6 +24,8 @@ public enum Region {
 
     private final String text;
 
+    private static String mismatchText;
+
     Region(String text) {
         this.text = text;
     }
@@ -44,6 +46,18 @@ public enum Region {
                 return r;
             }
         }
-        throw new IllegalArgumentException("Unsupported region");
+
+        //No match
+        if (mismatchText != null) {
+            throw new IllegalArgumentException(mismatchText);
+        } else {
+            StringBuilder mismatchTextBuilder = new StringBuilder("Unsupported region, please use one of the "
+                    + "following:");
+            for (Region r : Region.values()) {
+                mismatchTextBuilder.append("\n").append(r.text);
+            }
+            mismatchText = mismatchTextBuilder.toString();
+            throw new IllegalArgumentException(mismatchText);
+        }
     }
 }

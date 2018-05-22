@@ -42,7 +42,7 @@ public class Save implements Runnable {
         }
         try {
             JSONConverter.saveToFile(new File("savefile.json"));
-            System.out.println(String.format("Saved %s users to file", manager.getClients().size()));
+            System.out.println(String.format("Saved %s clients to file", manager.getClients().size()));
             HistoryItem save = new HistoryItem("SAVE", "The systems current state was saved.");
             JSONConverter.updateHistory(save, "action_history.json");
         } catch (IOException e) {
