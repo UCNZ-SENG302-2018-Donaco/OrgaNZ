@@ -34,17 +34,23 @@ public class DeleteClinicianTest {
     }
 
     @Test
-    public void testValid() {
+    public void ValidDeleteWithYesFlagTest() {
         doNothing().when(spyClinicianManager).removeClinician(any());
-        String[] inputs = {"-s", Integer.toString(staffId)};
-
-        // Input "y" to confirm deleting the clinician
-        ByteArrayInputStream in = new ByteArrayInputStream("y".getBytes());
-        System.setIn(in);
+        String[] inputs = {"-s", Integer.toString(staffId), "-y"};
 
         CommandLine.run(spyDeleteClinician, System.out, inputs);
 
         Mockito.verify(spyClinicianManager, times(1)).removeClinician(any());
+    }
+
+    @Test
+    public void ValidDeleteWithoutYesFlagTest() {
+        doNothing().when(spyClinicianManager).removeClinician(any());
+        String[] inputs = {"-s", Integer.toString(staffId)};
+
+        CommandLine.run(spyDeleteClinician, System.out, inputs);
+
+        Mockito.verify(spyClinicianManager, times(0)).removeClinician(any());
     }
 
     @Test
