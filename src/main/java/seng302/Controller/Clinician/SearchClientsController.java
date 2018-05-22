@@ -207,8 +207,26 @@ public class SearchClientsController extends SubController {
         if (State.getSession().getLoggedInUserType() == UserType.ADMINISTRATOR) {
 
             tableView.setRowFactory(tableView -> {
-                TableRow<Client> row = new TableRow<>();
+                //Enable the tooltip to show organ donation status
+                TableRow<Client> row = new TableRow<Client>() {
+                    private Tooltip tooltip = new Tooltip();
 
+                    @Override
+                    public void updateItem(Client client, boolean empty) {
+                        super.updateItem(client, empty);
+                        if (client == null) {
+                            setTooltip(null);
+                        } else {
+                            tooltip.setText(String.format("%s with blood type %s. Donating: %s",
+                                    client.getFullName(),
+                                    client.getBloodType(),
+                                    client.getOrganStatusString("donations")));
+                            setTooltip(tooltip);
+                        }
+                    }
+                };
+
+                //Enable right click to delete
                 MenuItem removeItem = new MenuItem("Delete");
                 removeItem.setOnAction(event -> {
                     Action deleteAction = new DeleteClientAction(row.getItem(), clientManager);
