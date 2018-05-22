@@ -11,13 +11,13 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
 /**
- * Command line to print all of the information of a single user.
+ * Command line to print all of the information of a single client.
  * @author Dylan Carlyle, Jack Steel
  * @version sprint 1.
  * date 06/03/2018
  */
 
-@Command(name = "getchanges", description = "Print a single users update history.", sortOptions = false)
+@Command(name = "getchanges", description = "Print a single clients update history.", sortOptions = false)
 public class GetChanges implements Runnable {
 
     private ClientManager manager;
