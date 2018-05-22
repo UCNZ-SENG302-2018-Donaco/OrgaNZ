@@ -287,6 +287,29 @@ public class ViewClientController extends SubController {
     private void updateChanges() {
         ModifyClientAction action = new ModifyClientAction(viewedClient);
 
+        boolean clientDied = false;
+
+        if (viewedClient.getDateOfDeath() == null && dod.getValue() != null) {
+            Optional<ButtonType> buttonOpt = PageNavigator.showAlert(AlertType.CONFIRMATION,
+                    "Are you sure you want to mark this client as dead?",
+                    "This will cancel all waiting transplant requests for this client.");
+
+            if (buttonOpt.isPresent() && buttonOpt.get() == ButtonType.OK) {
+                Action markDeadAction = new MarkClientAsDeadAction(viewedClient, dod.getValue());
+                String actionText = invoker.execute(markDeadAction);
+
+                clientDied = true;
+
+                Notifications.create()
+                        .title("Marked Client as Dead")
+                        .text(actionText)
+                        .showConfirm();
+            }
+        } else {
+            addChangeIfDifferent(action, "setDateOfDeath", viewedClient.getDateOfDeath(), dod.getValue());
+        }
+
+
         addChangeIfDifferent(action, "setFirstName", viewedClient.getFirstName(), fname.getText());
         addChangeIfDifferent(action, "setLastName", viewedClient.getLastName(), lname.getText());
         addChangeIfDifferent(action, "setMiddleName", viewedClient.getMiddleName(), mname.getText());
@@ -308,27 +331,11 @@ public class ViewClientController extends SubController {
                     .text(actionText)
                     .showInformation();
         } catch (IllegalStateException exc) {
-            if (Objects.equals(viewedClient.getDateOfDeath(), dod.getValue())) {
+            if (!clientDied) {
                 Notifications.create()
                         .title("No changes were made.")
                         .text("No changes were made to the client.")
                         .showWarning();
-            }
-        }
-
-        if (viewedClient.getDateOfDeath() == null && dod.getValue() != null) {
-            Optional<ButtonType> buttonOpt = PageNavigator.showAlert(AlertType.CONFIRMATION,
-                    "Are you sure you want to mark this client as dead?",
-                    "This will cancel all waiting transplant requests for this client.");
-
-            if (buttonOpt.isPresent() && buttonOpt.get() == ButtonType.OK) {
-                Action markDeadAction = new MarkClientAsDeadAction(viewedClient, dod.getValue());
-                String actionText = invoker.execute(markDeadAction);
-
-                Notifications.create()
-                        .title("Marked Client as Dead")
-                        .text(actionText)
-                        .showConfirm();
             }
         }
 
