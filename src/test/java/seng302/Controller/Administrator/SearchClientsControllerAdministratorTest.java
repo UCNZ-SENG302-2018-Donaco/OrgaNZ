@@ -68,13 +68,10 @@ public class SearchClientsControllerAdministratorTest extends ControllerTest {
     }
 
     // Tests
-
-    @Ignore
     /**
      * This test passes in headless mode but not in headful mode.
      * See https://github.com/TestFX/Monocle/issues/12
      */
-    @Ignore
     @Test
     public void testDeleteClient() {
         Client client = client1;
