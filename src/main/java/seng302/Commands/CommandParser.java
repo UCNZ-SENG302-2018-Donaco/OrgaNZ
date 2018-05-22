@@ -45,8 +45,9 @@ public class CommandParser {
             }
             lastCharWasBackSlash = ch == '\\';
         }
-        inputs.add(currentItem);
-
+        if (!currentItem.equals("")) {
+            inputs.add(currentItem);
+        }
         return inputs.toArray(new String[0]);
     }
 
