@@ -55,6 +55,8 @@ public class MenuBarController extends SubController {
     public MenuItem logOutItem;
     public MenuItem saveItem;
     public MenuItem loadItem;
+    public MenuItem undoItem;
+    public MenuItem redoItem;
 
     public Menu clientPrimaryItem;
     public Menu organPrimaryItem;
@@ -172,15 +174,6 @@ public class MenuBarController extends SubController {
     private void hideMenu(Menu menu) {
         menu.setVisible(false);
         //menu.setManaged(false);
-    }
-
-    /**
-     * Refreshes the undo/redo buttons based on if there are changes to be made
-     */
-    public void refresh() {
-        //TODO get the undo/redo buttons back in the scene.
-        //undoButton.setDisable(!invoker.canUndo());
-        //redoButton.setDisable(!invoker.canRedo());
     }
 
     /**
@@ -376,6 +369,14 @@ public class MenuBarController extends SubController {
         PageNavigator.loadPage(Page.LANDING, mainController);
         HistoryItem save = new HistoryItem("LOGOUT", "The user logged out");
         JSONConverter.updateHistory(save, "action_history.json");
+    }
+
+    /**
+     * Refreshes the undo/redo buttons based on if there are changes to be made
+     */
+    public void refresh() {
+        undoItem.setDisable(!invoker.canUndo());
+        redoItem.setDisable(!invoker.canRedo());
     }
 
     /**
