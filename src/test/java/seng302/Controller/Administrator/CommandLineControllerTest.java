@@ -33,6 +33,7 @@ public class CommandLineControllerTest extends ControllerTest {
     protected void initState() {
         State.init();
         mainController.setWindowContext(WindowContext.defaultContext());
+
         State.getClientManager().addClient(testClient);
 
         //Used only for the clipboard test, but needs to be in the initState so it gets executed on the JavaFX thread
@@ -46,7 +47,7 @@ public class CommandLineControllerTest extends ControllerTest {
     public void checkInitialTextAreaTest() {
         TextArea area = lookup("#outputTextArea").query();
         String outText = area.getText();
-        assertTrue(outText.contains("Usage: ClientCLI"));
+        assertTrue(outText.contains("Usage: OrgaNZ"));
         assertTrue(outText.contains("Commands:"));
         assertTrue(outText.contains("load"));
     }
@@ -140,13 +141,13 @@ public class CommandLineControllerTest extends ControllerTest {
     }
 
     @Test
-    public void validCreateUserCommandTest() throws InterruptedException {
-        clickOn("#inputTextField").write("createuser -f Jack -l Steel -d 21/04/1997").type(KeyCode.ENTER);
+    public void validCreateClientCommandTest() throws InterruptedException {
+        clickOn("#inputTextField").write("createclient -f Jack -l Steel -d 21/04/1997").type(KeyCode.ENTER);
 
         //Need to give the command a little bit of time to execute
         Thread.sleep(150);
 
         TextArea area = lookup("#outputTextArea").query();
-        assertTrue(area.getText().contains("New client Jack Steel created"));
+        assertTrue(area.getText().contains("Created client Jack Steel with user id:"));
     }
 }

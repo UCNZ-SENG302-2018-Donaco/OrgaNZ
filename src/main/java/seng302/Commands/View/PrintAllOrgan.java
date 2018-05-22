@@ -12,13 +12,14 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
 /**
- * Command line to print all of the information of all the users, including their ID. Not Sorted.
+ * Command line to print all of the information of all the client, including their ID. Not Sorted.
  * @author Dylan Carlyle, Jack Steel
  * @version sprint 1.
  * date 08/03/2018
  */
 
-@Command(name = "printallorgan", description = "Print all users with their organ donation status.", sortOptions = false)
+@Command(name = "printallorgan", description = "Print all clients with their organ donation status.", sortOptions =
+        false)
 public class PrintAllOrgan implements Runnable {
 
     private ClientManager manager;
