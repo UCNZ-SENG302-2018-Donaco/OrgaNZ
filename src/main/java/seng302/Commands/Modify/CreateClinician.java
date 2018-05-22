@@ -12,6 +12,7 @@ import seng302.State.ClinicianManager;
 import seng302.State.State;
 import seng302.Utilities.Enums.Region;
 import seng302.Utilities.JSONConverter;
+import seng302.Utilities.TypeConverters.RegionConverter;
 
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -50,8 +51,8 @@ public class CreateClinician implements Runnable {
     @Option(names = {"-a", "--address"}, description = "Work Address.")
     private String workAddress;
 
-    @Option(names = {"-r", "--region"}, description = "Region.")
-    private String region;
+    @Option(names = {"-r", "--region"}, description = "Region", converter = RegionConverter.class)
+    private Region region;
 
     @Option(names = {"-p", "--password"}, description = "Clinician Password.")
     private String password;
@@ -62,16 +63,6 @@ public class CreateClinician implements Runnable {
             // staff ID is taken
             System.out.println("Staff ID " + staffId + " is already taken");
             return;
-        }
-
-        Region realRegion = null;
-        if (region != null) {
-            try {
-                realRegion = Region.fromString(region);
-            } catch (IllegalArgumentException e) {
-                LOGGER.log(Level.WARNING, "Unknown region: " + region, e);
-                return;
-            }
         }
 
         Clinician clinician = new Clinician(firstName, middleNames, lastName, workAddress, realRegion, staffId,

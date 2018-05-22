@@ -22,13 +22,24 @@ public class CreateClinicianTest {
     }
 
     @Test
-    public void valid() {
+    public void ValidWithStaffIdTest() {
+        doNothing().when(spyClientManager).addClinician(any());
+        String[] inputs = {"-f", "Jack", "-l", "Steel", "-s", "2"};
+
+        CommandLine.run(spyCreateClient, System.out, inputs);
+
+        verify(spyClientManager, times(1)).addClinician(any());
+    }
+
+
+    @Test
+    public void ValidNoStaffIdTest() {
         doNothing().when(spyClientManager).addClinician(any());
         String[] inputs = {"-f", "Jack", "-l", "Steel"};
 
         CommandLine.run(spyCreateClient, System.out, inputs);
 
-        verify(spyClientManager, times(1)).addClinician(any());
+        verify(spyClientManager, times(0)).addClinician(any());
     }
 
 
