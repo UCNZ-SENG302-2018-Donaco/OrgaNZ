@@ -33,6 +33,7 @@ public class CommandLineControllerTest extends ControllerTest {
     protected void initState() {
         State.init();
         mainController.setWindowContext(WindowContext.defaultContext());
+
         State.getClientManager().addClient(testClient);
 
         //Used only for the clipboard test, but needs to be in the initState so it gets executed on the JavaFX thread
@@ -147,6 +148,6 @@ public class CommandLineControllerTest extends ControllerTest {
         Thread.sleep(150);
 
         TextArea area = lookup("#outputTextArea").query();
-        assertTrue(area.getText().contains("New client Jack Steel created"));
+        assertTrue(area.getText().contains("Created client Jack Steel with user id:"));
     }
 }
