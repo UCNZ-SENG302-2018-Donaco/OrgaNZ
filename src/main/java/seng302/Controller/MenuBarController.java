@@ -131,8 +131,7 @@ public class MenuBarController extends SubController {
             hideMenus(viewAllMenus);
         }
 
-
-
+        closeItem.setDisable(!windowContext.isClinViewClientWindow());
         undoItem.setDisable(!invoker.canUndo());
         redoItem.setDisable(!invoker.canRedo());
     }
@@ -428,12 +427,18 @@ public class MenuBarController extends SubController {
         PageNavigator.refreshAllWindows();
     }
 
+    /**
+     * Closes the current window
+     */
     @FXML
     private void closeWindow() {
         Stage stage = (Stage) menuBar.getScene().getWindow();
         stage.close();
     }
 
+    /**
+     * Prompts the user to save their changes if there are changes unsaved, then exits the program.
+     */
     @FXML
     private void quitProgram() {
         if (State.isUnsavedChanges()) {
@@ -460,6 +465,9 @@ public class MenuBarController extends SubController {
 
     }
 
+    /**
+     * Exit program.
+     */
     private void exit() {
         Platform.exit();
         System.exit(0);
