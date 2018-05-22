@@ -42,6 +42,7 @@
                         </Button>
                      </children>
                   </HBox>
+                  <Button mnemonicParsing="false" onAction="#refreshCache" text="Refresh cache" GridPane.rowIndex="1" />
           </children>
           <BorderPane.margin>
             <Insets />
