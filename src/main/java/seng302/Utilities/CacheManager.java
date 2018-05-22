@@ -18,6 +18,7 @@ import java.time.Instant;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -64,6 +65,15 @@ public abstract class CacheManager {
 
     static final Logger LOGGER = Logger.getLogger(CacheManager.class.getName());
 
+    /**
+     * A map of category names to categories.
+     * E.g.:
+     * Category name: seng302.Utilities.Web.DrugInteractionsHandler
+     * Category: Has a variable `values`, which is a Map< Key, Value >
+     *     Key: Has a variable `value`, which is an Object[] (used to store medication name/s)
+     *     Value: Has a variable value, which is a JsonElement, and a variable expires, which is an Optional< Instant >
+     *         (used to store ingredients/interactions, and expiry datetime)
+     */
     protected Map<String, Category> categories;
 
     protected CacheManager() {
@@ -94,8 +104,19 @@ public abstract class CacheManager {
         }
 
         Key key = new Key(arguments);
+        System.out.println(value);
+        System.out.println(expires);
+        System.out.println("Tree");
+        System.out.println(JSONConverter.getGson().toJsonTree(value));
         Value realValue = new Value(JSONConverter.getGson().toJsonTree(value), expires);
         category.setData(key, realValue);
+        System.out.println(categoryName);
+        System.out.println(category);
+        System.out.println(category.values);
+        System.out.println(category.getValues());
+        System.out.println(category.getValues().get(key));
+        System.out.println(category.getValues().get(key).getValue());
+        System.out.println(category.getValues().get(key).getExpires());
     }
 
     /**
@@ -118,19 +139,51 @@ public abstract class CacheManager {
 
         Category category = categories.get(categoryName);
         if (category == null) {
+            // Not cached
             return Optional.empty();
         }
 
         return category.get(type, arguments);
     }
 
+    public void refreshCachedData() {
+
+        Map<String, Category> oldCategories = categories;
+
+
+        // Iterate through categories
+        Iterator it = categories.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            String categoryName = (String) pair.getKey();
+            Category category = (Category) pair.getValue();
+
+            // Iterate through category's values
+            category.getValues().clear();
+            Map<Key, Value> oldValues = category.getValues();
+            category.getValues().clear();
+            Iterator it2 = oldValues.entrySet().iterator();
+            while (it2.hasNext()) {
+                Map.Entry pair2 = (Map.Entry) it2.next();
+                Key key = (Key) pair2.getKey();
+                Value value = (Value) pair2.getValue();
+                addCachedData(categoryName, key.getValue(), value.getValue(), value.getExpires());
+            }
+
+
+        }
+    }
+
     private abstract static class JsonBaseSerialiser<T> implements JsonSerializer<T>, JsonDeserializer<T> {
+
     }
 
     private static final class CategoryMap extends HashMap<String, Category> {
+
     }
 
     private static final class Category {
+
         public static final JsonBaseSerialiser<Category> GSON_ADAPTER = new CategorySerialiser();
 
         private final Map<Key, Value> values;
@@ -168,6 +221,7 @@ public abstract class CacheManager {
         }
 
         private static class CategorySerialiser extends JsonBaseSerialiser<Category> {
+
             @Override
             public Category deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
                 JsonArray array = json.getAsJsonArray();
@@ -215,6 +269,7 @@ public abstract class CacheManager {
     }
 
     private static final class Key {
+
         private final Object[] value;
 
         public Key(Object[] value) {
@@ -244,6 +299,7 @@ public abstract class CacheManager {
     }
 
     private static final class Value {
+
         private final JsonElement value;
         private final Optional<Instant> expires;
 
@@ -265,6 +321,7 @@ public abstract class CacheManager {
      * Default implementation of CacheManager, stores in a json file in the user cache directory.
      */
     private static class Impl extends CacheManager {
+
         @Override
         public <T> void addCachedData(String categoryName, Object[] arguments, T value, Optional<Instant> expires) {
             lazyInitialise();
@@ -276,6 +333,12 @@ public abstract class CacheManager {
         public <T> Optional<T> getCachedData(String categoryName, Type type, Object[] arguments) {
             lazyInitialise();
             return super.getCachedData(categoryName, type, arguments);
+        }
+
+        @Override
+        public void refreshCachedData() {
+            lazyInitialise();
+            super.refreshCachedData();
         }
 
         /**
@@ -301,6 +364,7 @@ public abstract class CacheManager {
          */
         private void lazyInitialise() {
             if (categories != null) {
+                // Data has already been loaded from cached file
                 return;
             }
 
