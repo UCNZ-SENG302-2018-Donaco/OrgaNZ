@@ -6,6 +6,7 @@ import seng302.Commands.View.PrintAllInfo;
 import seng302.Commands.View.PrintAllOrgan;
 import seng302.Commands.View.PrintClientInfo;
 import seng302.Commands.View.PrintClientOrgan;
+import seng302.Commands.View.SQL;
 
 import picocli.CommandLine.Command;
 
@@ -33,7 +34,8 @@ import picocli.CommandLine.Command;
                 Load.class,
                 Help.class,
                 Undo.class,
-                Redo.class
+                Redo.class,
+                SQL.class
         })
 
 public class BaseCommand implements Runnable {

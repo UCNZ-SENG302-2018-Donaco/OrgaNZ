@@ -1,8 +1,11 @@
 package seng302.Database;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import javax.persistence.PersistenceException;
 import javax.persistence.RollbackException;
 
+import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -41,6 +44,21 @@ public class DBManager {
     private static SessionFactory buildSessionFactory() {
         return new Configuration().configure("hibernate.cfg.xml").buildSessionFactory();
     }
+
+    /**
+     * Returns a standard JDBC SQL Connection
+     * @return The connection object
+     * @throws SQLException Thrown if there are any issues connecting to the database
+     */
+    public Connection getStandardSqlConnection() throws SQLException {
+        MysqlDataSource dataSource = new MysqlDataSource();
+        Configuration cfg = new Configuration().configure(("hibernate.cfg.xml"));
+        dataSource.setURL(cfg.getProperty("hibernate.connection.url"));
+        dataSource.setUser(cfg.getProperty("hibernate.connection.username"));
+        dataSource.setPassword(cfg.getProperty("hibernate.connection.password"));
+        return dataSource.getConnection();
+    }
+
 
     public static DBManager getInstance() {
         return dbManager;

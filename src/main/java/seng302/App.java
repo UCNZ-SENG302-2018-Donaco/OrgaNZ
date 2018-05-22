@@ -1,9 +1,8 @@
 package seng302;
 
-import java.util.ArrayList;
+import static seng302.Commands.CommandParser.parseCommands;
+
 import java.util.logging.Level;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import seng302.Commands.BaseCommand;
 import seng302.State.State;
@@ -34,14 +33,7 @@ public class App {
 
         while (!(input = scanIn.readLine()).equals("exit")) {
 
-            //Regex matcher that separates on space but allows for double quoted strings to be considered single strings
-            ArrayList<String> inputs = new ArrayList<>();
-            Matcher m = Pattern.compile("([^\"]\\S*|\".+?\")\\s*").matcher(input);
-            while (m.find()) {
-                inputs.add(m.group(1).replace("\"", ""));
-            }
-            String[] currArgs = inputs.toArray(new String[0]);
-            CommandLine.run(command, System.out, currArgs);
+            CommandLine.run(command, System.out, parseCommands(input));
         }
     }
 }
