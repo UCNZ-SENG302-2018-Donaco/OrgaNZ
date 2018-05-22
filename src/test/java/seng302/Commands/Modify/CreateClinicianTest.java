@@ -58,4 +58,13 @@ public class CreateClinicianTest {
 
         verify(spyClientManager, times(0)).addClinician(any());
     }
+
+    @Test
+    public void duplicateStaffId() {
+        String[] inputs = {"-f", "Jack", "-l", "Steel", "-s", "0"};
+
+        CommandLine.run(spyCreateClient, System.out, inputs);
+
+        verify(spyClientManager, times(0)).addClinician(any());
+    }
 }

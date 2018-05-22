@@ -58,6 +58,12 @@ public class CreateClinician implements Runnable {
 
     public void run() {
 
+        if (manager.collisionExists(staffId)) {
+            // staff ID is taken
+            System.out.println("Staff ID " + staffId + " is already taken");
+            return;
+        }
+
         Region realRegion = null;
         if (region != null) {
             try {
