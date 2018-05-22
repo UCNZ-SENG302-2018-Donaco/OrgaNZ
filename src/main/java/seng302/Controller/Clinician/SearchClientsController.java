@@ -1,14 +1,8 @@
 package seng302.Controller.Clinician;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Observer;
 
 import javafx.beans.binding.Bindings;
-import javafx.beans.value.ObservableValue;
 import javafx.beans.value.ObservableValueBase;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -33,9 +27,13 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 
+import seng302.Actions.Action;
+import seng302.Actions.ActionInvoker;
+import seng302.Actions.Client.DeleteClientAction;
 import seng302.Client;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
+import seng302.State.ClientManager;
 import seng302.State.Session.UserType;
 import seng302.State.State;
 import seng302.Utilities.Enums.Gender;
@@ -47,6 +45,9 @@ import seng302.Utilities.View.WindowContext;
 public class SearchClientsController extends SubController {
 
     private static final int ROWS_PER_PAGE = 30;
+
+    private ClientManager clientManager;
+    private ActionInvoker invoker;
 
     @FXML
     private TextField searchBox;
@@ -82,6 +83,11 @@ public class SearchClientsController extends SubController {
     private FilteredList<Client> filteredClients;
     private SortedList<Client> sortedClients;
 
+    public SearchClientsController() {
+        this.clientManager = State.getClientManager();
+        this.invoker = State.getInvoker();
+    }
+
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
@@ -91,7 +97,7 @@ public class SearchClientsController extends SubController {
 
     @FXML
     private void initialize() {
-        ArrayList<Client> allClients = State.getClientManager().getClients();
+        ArrayList<Client> allClients = clientManager.getClients();
 
         setupTable();
 
@@ -122,18 +128,15 @@ public class SearchClientsController extends SubController {
         if (State.getSession().getLoggedInUserType() == UserType.ADMINISTRATOR) {
 
             tableView.setRowFactory(tableView -> {
-                final TableRow<Client> row = new TableRow<>();
-                final ContextMenu rowMenu = new ContextMenu();
+                TableRow<Client> row = new TableRow<>();
+
                 MenuItem removeItem = new MenuItem("Delete");
                 removeItem.setOnAction(event -> {
-                    // Remove item
-                    Client client = row.getItem(); //client to remove
-                    tableView.getItems().remove(client); // remove from table view
-                    State.getClientManager().getClients().remove(client); // remove from client manager
+                    Action deleteAction = new DeleteClientAction(row.getItem(), clientManager);
+                    invoker.execute(deleteAction);
                     PageNavigator.refreshAllWindows();
-
                 });
-                rowMenu.getItems().add(removeItem);
+                ContextMenu rowMenu = new ContextMenu(removeItem);
 
                 // Only display context menu for non-null items
                 row.contextMenuProperty().bind(
