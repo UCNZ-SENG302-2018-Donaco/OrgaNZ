@@ -123,8 +123,8 @@ public class MainController {
     public void refresh() {
         updateTitle();
         subController.refresh();
-        if (sidebarController != null) {
-            sidebarController.refresh();
+        if (MenuBarController != null) {
+            MenuBarController.refresh();
         }
     }
 
