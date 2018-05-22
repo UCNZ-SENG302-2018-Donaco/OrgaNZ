@@ -1,7 +1,5 @@
 package seng302.Commands.Modify;
 
-import java.util.Scanner;
-
 import seng302.Actions.Action;
 import seng302.Actions.ActionInvoker;
 import seng302.Actions.Clinician.DeleteClinicianAction;
@@ -18,13 +16,16 @@ import picocli.CommandLine.Option;
  * Command line to modify attributes of clinicians, using their staff id as a reference key
  */
 @Command(name = "deleteclinician", description = "Deletes a clinician.")
-public class DeleteClinician implements Runnable{
+public class DeleteClinician implements Runnable {
 
     private ClinicianManager manager;
     private ActionInvoker invoker;
 
     @Option(names = {"-s", "--staffId"}, description = "Staff id", required = true)
     private int id; // staffId of the clinician
+
+    @Option(names = "-y", description = "Confirms you would like to execute the removal")
+    private boolean yes;
 
     public DeleteClinician() {
         manager = State.getClinicianManager();
@@ -42,27 +43,22 @@ public class DeleteClinician implements Runnable{
 
         if (clinician == null) {
             System.out.println("No clinician exists with that user ID");
-        } else if (clinician.getStaffId() == State.getClinicianManager().getDefaultClinician().getStaffId()){
+        } else if (clinician.getStaffId() == State.getClinicianManager().getDefaultClinician().getStaffId()) {
             System.out.println("Default clinician cannot be deleted");
-        } else {
+        } else if (!yes) {
             System.out.println(
-                    String.format("Removing clinician: %s, with staff id: %s, would you like to proceed? (y/n)",
-                            clinician.getFullName(), clinician.getStaffId())
-            );
-            Scanner scanner = new Scanner(System.in);
-            String response = scanner.next();
+                    String.format("Removing clinician: %s, with staff id: %s,\nto proceed please rerun the command "
+                                    + "with the -y flag",
+                            clinician.getFullName(),
+                            clinician.getStaffId()));
+        } else {
+            Action action = new DeleteClinicianAction(clinician, manager);
+            invoker.execute(action);
 
-            if (response.equals("y")) {
-                Action action = new DeleteClinicianAction(clinician, manager);
-                invoker.execute(action);
-
-                System.out.println("Clinician " + id + " removed. This removal will only be permanent once the 'save' "
-                        + "command is used");
-                HistoryItem deleteClinician = new HistoryItem("DELETE", "Clinician " + id + " deleted");
-                JSONConverter.updateHistory(deleteClinician, "action_history.json");
-            } else {
-                System.out.println("Clinician not removed");
-            }
+            System.out.println("Clinician " + id + " removed. This removal will only be permanent once the 'save' "
+                    + "command is used");
+            HistoryItem deleteClinician = new HistoryItem("DELETE", "Clinician " + id + " deleted");
+            JSONConverter.updateHistory(deleteClinician, "action_history.json");
         }
     }
 }

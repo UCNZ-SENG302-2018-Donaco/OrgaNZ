@@ -1,7 +1,5 @@
 package seng302.Commands.Modify;
 
-import java.util.Scanner;
-
 import seng302.Actions.Action;
 import seng302.Actions.ActionInvoker;
 import seng302.Actions.Client.DeleteClientAction;
@@ -33,29 +31,27 @@ public class DeleteClient implements Runnable {
     @Option(names = {"-u", "--uid"}, description = "User ID", required = true)
     private int uid;
 
+    @Option(names = "-y", description = "Confirms you would like to execute the removal")
+    private boolean yes;
+
     public void run() {
         Client client = manager.getClientByID(uid);
         if (client == null) {
             System.out.println("No client exists with that user ID");
-        } else {
+        } else if (!yes) {
             System.out.println(
-                    String.format("Removing client: %s, with date of birth: %s, would you like to proceed? (y/n)",
+                    String.format("Removing client: %s, with date of birth: %s,\nto proceed please rerun the command "
+                                    + "with the -y flag",
                             client.getFullName(),
                             client.getDateOfBirth()));
-            Scanner scanner = new Scanner(System.in);
-            String response = scanner.next();
+        } else {
+            Action action = new DeleteClientAction(client, manager);
+            invoker.execute(action);
 
-            if (response.equals("y")) {
-                Action action = new DeleteClientAction(client, manager);
-                invoker.execute(action);
-
-                System.out.println("Client " + uid
-                        + " removed. This removal will only be permanent once the 'save' command is used");
-                HistoryItem deleteClient = new HistoryItem("DELETE", "Client " + uid + " deleted.");
-                JSONConverter.updateHistory(deleteClient, "action_history.json");
-            } else {
-                System.out.println("User not removed");
-            }
+            System.out.println("Client " + uid + " removed. This removal will only be permanent once the 'save' "
+                    + "command is used");
+            HistoryItem deleteClient = new HistoryItem("DELETE", "Client " + uid + " deleted.");
+            JSONConverter.updateHistory(deleteClient, "action_history.json");
         }
     }
 }
