@@ -42,7 +42,7 @@ public class DeleteClinician implements Runnable{
 
         if (clinician == null) {
             System.out.println("No clinician exists with that user ID");
-        } else if (clinician.getStaffId() == State.getClinicianManager().getDefaultClinician().getStaffId()){
+        } else if (clinician.getStaffId() == manager.getDefaultClinician().getStaffId()){
             System.out.println("Default clinician cannot be deleted");
         } else {
             System.out.println(
