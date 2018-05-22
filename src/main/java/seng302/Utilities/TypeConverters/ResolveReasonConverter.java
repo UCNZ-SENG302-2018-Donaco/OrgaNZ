@@ -10,7 +10,7 @@ public class ResolveReasonConverter implements CommandLine.ITypeConverter<Resolv
         try {
             return ResolveReason.fromString(value);
         } catch(IllegalArgumentException e) {
-            throw new CommandLine.TypeConversionException(value + " is not a valid resolve reason");
+            throw new CommandLine.TypeConversionException(e.getMessage());
         }
     }
 

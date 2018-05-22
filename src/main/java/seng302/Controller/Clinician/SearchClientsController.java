@@ -437,7 +437,7 @@ public class SearchClientsController extends SubController {
      * @return true if the clients age falls within the ageSlider current range.
      */
     private boolean ageFilter(Client client) {
-        return ageSlider.getLowValue() < client.getAge() && client.getAge() < ageSlider.getHighValue();
+        return ageSlider.getLowValue() <= client.getAge() && client.getAge() <= ageSlider.getHighValue();
     }
 
 
