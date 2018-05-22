@@ -8,12 +8,18 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import javafx.scene.control.Alert;
+import javafx.stage.WindowEvent;
 
 import seng302.Actions.ActionInvoker;
 import seng302.AppUI;
@@ -57,6 +63,9 @@ public class MenuBarController extends SubController {
     public MenuItem loadItem;
     public MenuItem undoItem;
     public MenuItem redoItem;
+    public MenuItem closeItem;
+
+    public MenuBar menuBar;
 
     public Menu clientPrimaryItem;
     public Menu organPrimaryItem;
@@ -400,5 +409,42 @@ public class MenuBarController extends SubController {
         HistoryItem save = new HistoryItem("REDO", redoneText);
         JSONConverter.updateHistory(save, "action_history.json");
         PageNavigator.refreshAllWindows();
+    }
+
+    @FXML
+    private void closeWindow() {
+        Stage stage = (Stage) menuBar.getScene().getWindow();
+        stage.close();
+    }
+
+    @FXML
+    private void quitProgram() {
+        if (State.isUnsavedChanges()) {
+            Alert unsavedAlert = PageNavigator.generateAlert(AlertType.WARNING, "Do you want to save the changes you have made?",
+                    "Your changes will be lost if you do not save them.");
+            ButtonType dontSave = new ButtonType("Don't Save");
+            ButtonType cancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+            ButtonType save = new ButtonType("Save");
+            unsavedAlert.getButtonTypes().setAll(dontSave, cancel, save);
+
+            Optional<ButtonType> result = unsavedAlert.showAndWait();
+            if (result.get() == dontSave) {
+                exit();
+            } else if (result.get() == save) {
+                save();
+                exit();
+            } else {
+                unsavedAlert.hide();
+            }
+
+        } else {
+            exit();
+        }
+
+    }
+
+    private void exit() {
+        Platform.exit();
+        System.exit(0);
     }
 }

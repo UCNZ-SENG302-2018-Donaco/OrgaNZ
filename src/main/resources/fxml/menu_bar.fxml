@@ -3,13 +3,17 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.layout.HBox?>
 
 <HBox maxWidth="1.7976931348623157E308" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.MenuBarController">
-  <MenuBar maxWidth="1.7976931348623157E308" minWidth="-Infinity" HBox.hgrow="ALWAYS">
+  <MenuBar fx:id="menuBar" maxWidth="1.7976931348623157E308" minWidth="-Infinity" HBox.hgrow="ALWAYS">
     <Menu fx:id="filePrimaryItem" mnemonicParsing="false" text="File">
       <MenuItem fx:id="saveItem" mnemonicParsing="false" onAction="#save" text="Save" />
       <MenuItem fx:id="loadItem" mnemonicParsing="false" onAction="#load" text="Load" />
+         <SeparatorMenuItem mnemonicParsing="false" />
+         <MenuItem fx:id="closeItem" mnemonicParsing="false" onAction="#closeWindow" text="Close Window" />
+         <MenuItem mnemonicParsing="false" onAction="#quitProgram" text="Quit" />
     </Menu>
       <Menu fx:id="editItem" mnemonicParsing="false" text="Edit">
          <items>
