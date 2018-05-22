@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -340,6 +341,13 @@ public class Client {
         return organDonationStatus;
     }
 
+    public Set<Organ> getCurrentlyDonatedOrgans() {
+        return organDonationStatus.entrySet().stream()
+                .filter(Entry::getValue)
+                .map(Entry::getKey)
+                .collect(Collectors.toCollection(() -> EnumSet.noneOf(Organ.class)));
+    }
+
     public Set<Organ> getCurrentlyRequestedOrgans() {
         return transplantRequests
                 .stream()
@@ -633,12 +641,7 @@ public class Client {
      * @return boolean of whether the client has chosen to donate any organs
      */
     public boolean isDonor() {
-        for (Map.Entry<Organ, Boolean> entry : organDonationStatus.entrySet()) {
-            if (entry.getValue()) {
-                return true;
-            }
-        }
-        return false;
+        return getCurrentlyDonatedOrgans().size() > 0;
     }
 
     /**
