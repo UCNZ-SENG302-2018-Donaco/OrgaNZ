@@ -69,9 +69,9 @@ public abstract class CacheManager {
      * A map of category names to categories.
      * E.g.:
      * Category name: seng302.Utilities.Web.DrugInteractionsHandler
-     * Category: Has a variable `values`, which is a Map< Key, Value >
-     *     Key: Has a variable `value`, which is an Object[] (used to store medication name/s)
-     *     Value: Has a variable value, which is a JsonElement, and a variable expires, which is an Optional< Instant >
+     * Category: Has a variable `values`, which is a Map(Key, Value)
+     * Key: Has a variable `value`, which is an Object[] (used to store medication name/s)
+     *     Value: Has a variable value, which is a JsonElement, and a variable expires, which is an Optional(Instant)
      *         (used to store ingredients/interactions, and expiry datetime)
      */
     protected Map<String, Category> categories;
