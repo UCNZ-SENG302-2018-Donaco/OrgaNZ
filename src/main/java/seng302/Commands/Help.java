@@ -27,7 +27,6 @@ public class Help implements Runnable {
             }
         } else {
             CommandLine.Help help = new CommandLine.Help(parent).addAllSubcommands(commandLine.getSubcommands());
-            System.out.println(help);
             StringBuilder sb = new StringBuilder()
                     .append(help.headerHeading())
                     .append(help.header())
