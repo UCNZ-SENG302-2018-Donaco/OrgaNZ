@@ -1,6 +1,5 @@
 package seng302.Controller.Clinician;
 
-import java.util.ArrayList;
 import java.util.Collection;
 
 import javafx.beans.binding.Bindings;
@@ -12,9 +11,9 @@ import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -105,6 +104,7 @@ public class SearchClientsController extends SubController {
     @FXML
     private Text displayingXToYOfZText;
 
+    private ObservableList<Client> allClients = FXCollections.observableArrayList();
     private ObservableList<Client> observableClientList = FXCollections.observableArrayList();
     private FilteredList<Client> filteredClients;
     private SortedList<Client> sortedClients;
@@ -125,7 +125,6 @@ public class SearchClientsController extends SubController {
 
     @FXML
     private void initialize() {
-        ArrayList<Client> allClients = clientManager.getClients();
 
         setupTable();
 
@@ -182,15 +181,17 @@ public class SearchClientsController extends SubController {
                 (ListChangeListener<Organ>) change -> refresh());
         searchBox.textProperty().addListener(((o) -> refresh()));
 
+        //Link the initial observable list to the list of all clients
+        allClients.setAll(clientManager.getClients());
+
         //Create a filtered list, that defaults to allow all using lambda function
-        filteredClients = new FilteredList<>(FXCollections.observableArrayList(allClients), client -> true);
+        filteredClients = new FilteredList<>(allClients, this::filter);
 
         //Create a sorted list that links to the filtered list
         sortedClients = new SortedList<>(filteredClients);
 
         //Link the sorted list sort to the tableView sort
         sortedClients.comparatorProperty().bind(tableView.comparatorProperty());
-
 
         //Set initial pagination
         int numberOfPages = Math.max(1, (sortedClients.size() + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE);
@@ -323,7 +324,6 @@ public class SearchClientsController extends SubController {
         regionCol.setCellValueFactory(new PropertyValueFactory<>("region"));
         donorCol.setCellValueFactory(new PropertyValueFactory<>("donor"));
         receiverCol.setCellValueFactory(new PropertyValueFactory<>("receiver"));
-
 
         //Setup a table sortOrder change listener, so that whenever another sort is removed, the table updates to
         // default sort by name ascending.
@@ -503,7 +503,8 @@ public class SearchClientsController extends SubController {
      */
     @Override
     public void refresh() {
-        filteredClients.setPredicate(this::filter);
+        //Refresh the client list to ensure any additions or removals are updated
+        allClients.setAll(clientManager.getClients());
 
         //If the pagination count wont change, force a refresh of the page, if it will, change it and that will trigger the update.
         int newPageCount = Math.max(1, (filteredClients.size() + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE);
