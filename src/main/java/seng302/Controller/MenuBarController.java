@@ -107,8 +107,7 @@ public class MenuBarController extends SubController {
         }
         if (userType == UserType.ADMINISTRATOR) {
 
-            if (windowContext.isClinViewClientWindow()) {
-                hideMenus(viewClinicianMenu);
+            if (windowContext.isClinViewClientWindow()){
 
 
             } else if (!windowContext.isClinViewClientWindow()) {
