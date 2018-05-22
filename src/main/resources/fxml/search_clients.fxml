@@ -85,7 +85,7 @@
                           <children>
                             <HBox alignment="CENTER_LEFT" spacing="10.0">
                               <children>
-                                <Label minWidth="85.0" text="Birth Gender:" />
+                                <Label minWidth="90.0" text="Birth Gender:" />
                                 <CheckComboBox fx:id="birthGenderFilter" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                               </children>
                             </HBox>
@@ -97,7 +97,7 @@
                             </HBox>
                           </children>
                         </GridPane>
-                                    <GridPane hgap="25.0">
+                                    <GridPane hgap="15.0">
                                        <columnConstraints>
                                           <ColumnConstraints hgrow="SOMETIMES" percentWidth="50.0" />
                                           <ColumnConstraints hgrow="SOMETIMES" percentWidth="50.0" />
@@ -121,7 +121,7 @@
                                           </HBox>
                                           <HBox fx:id="requestingFilterBox" alignment="CENTER_LEFT" GridPane.columnIndex="2">
                                              <children>
-                                  <Label minWidth="75.0" text="Requesting:" />
+                                  <Label minWidth="80.0" text="Requesting:" />
                                   <CheckComboBox fx:id="organsRequestingFilter" maxWidth="1.7976931348623157E308" HBox.hgrow="ALWAYS" />
                                              </children>
                                           </HBox>
