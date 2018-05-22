@@ -123,8 +123,9 @@ public class Client {
      * Returns a string listing the organs that the client is currently donating, or a message that the client currently
      * has no organs registered for donation if that is the case.
      * @return The client's organ status string.
+     * @throws IllegalArgumentException If the type is not either requests or donations
      */
-    public String getOrganStatusString(String type) {
+    public String getOrganStatusString(String type) throws IllegalArgumentException {
         StringBuilder builder = new StringBuilder();
         Set<Organ> organSet;
         switch (type) {
@@ -135,7 +136,7 @@ public class Client {
                 organSet = getCurrentlyDonatedOrgans();
                 break;
             default:
-                return "Organ type should either be \"donations\" or \"requests\"";
+                throw new IllegalArgumentException("Organ type should either be \"donations\" or \"requests\"");
         }
         for (Organ organ : organSet) {
             if (builder.length() != 0) {
@@ -153,8 +154,9 @@ public class Client {
     /**
      * Returns a formatted string listing the client's ID number, full name, and the organs they are donating.
      * @return The formatted client info string.
+     * @throws IllegalArgumentException If the type is not either requests or donations
      */
-    public String getClientOrganStatusString(String type) {
+    public String getClientOrganStatusString(String type) throws IllegalArgumentException {
         switch (type) {
             case "donations":
                 return String.format("User: %s. Name: %s. Donation status: %s", uid, getFullName(),
@@ -163,7 +165,7 @@ public class Client {
                 return String.format("User: %s. Name: %s. Request status: %s", uid, getFullName(),
                         getOrganStatusString(type));
             default:
-                return "Organ type should either be \"donations\" or \"requests\"";
+                throw new IllegalArgumentException("Organ type should either be \"donations\" or \"requests\"");
         }
     }
 
