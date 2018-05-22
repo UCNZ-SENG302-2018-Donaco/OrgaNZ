@@ -36,6 +36,10 @@ public class SQL implements Runnable {
 
     @Override
     public void run() {
+        if (allParams == null) {
+            System.out.println("No SQL input, please enter a valid SQL command");
+            return;
+        }
         String sql = String.join(" ", allParams);
 
         //Standard implementation with normal connection
