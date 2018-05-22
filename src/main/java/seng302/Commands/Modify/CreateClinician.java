@@ -35,6 +35,9 @@ public class CreateClinician implements Runnable {
         this.invoker = invoker;
     }
 
+    @Option(names = {"-s", "--staffId"}, description = "Staff id", required = true)
+    private int staffId; // staffId of the clinician
+
     @Option(names = {"-f", "--firstname"}, description = "First name.", required = true)
     private String firstName;
 
@@ -54,7 +57,6 @@ public class CreateClinician implements Runnable {
     private String password;
 
     public void run() {
-        int staffId = manager.nextStaffId();
 
         Region realRegion = null;
         if (region != null) {

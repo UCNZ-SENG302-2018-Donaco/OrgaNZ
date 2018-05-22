@@ -3,7 +3,6 @@ package seng302.State;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.OptionalInt;
 
 import seng302.Clinician;
 import seng302.Utilities.Enums.Region;
@@ -78,18 +77,6 @@ public class ClinicianManager {
                 .filter(o -> o.getStaffId() == id)
                 .findFirst()
                 .orElse(null);
-    }
-
-    /**
-     * Returns the next unused staff id number for a new clinician.
-     * @return The next free StaffID.
-     */
-    public int nextStaffId() {
-        OptionalInt max = clinicians.stream()
-                .mapToInt(Clinician::getStaffId)
-                .max();
-
-        return max.orElse(0) + 1;
     }
 
     /**
