@@ -140,8 +140,8 @@ public class CommandLineControllerTest extends ControllerTest {
     }
 
     @Test
-    public void validCreateUserCommandTest() throws InterruptedException {
-        clickOn("#inputTextField").write("createuser -f Jack -l Steel -d 21/04/1997").type(KeyCode.ENTER);
+    public void validCreateClientCommandTest() throws InterruptedException {
+        clickOn("#inputTextField").write("createclient -f Jack -l Steel -d 21/04/1997").type(KeyCode.ENTER);
 
         //Need to give the command a little bit of time to execute
         Thread.sleep(150);
