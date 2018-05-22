@@ -34,7 +34,11 @@ public class ModifyAdministratorAction extends Action {
      */
     public void addChange(String field, Object oldValue, Object newValue)
             throws NoSuchMethodException, NoSuchFieldException {
-        actions.add(new ModifyObjectByFieldAction(administrator, field, oldValue, newValue));
+        if (field.equals("setPassword")) {
+            actions.add(new ModifyObjectByFieldAction(administrator, field, oldValue, newValue, true));
+        } else {
+            actions.add(new ModifyObjectByFieldAction(administrator, field, oldValue, newValue, false));
+        }
     }
 
     @Override
