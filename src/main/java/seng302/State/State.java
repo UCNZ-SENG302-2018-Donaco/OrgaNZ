@@ -79,6 +79,13 @@ public final class State {
         session = null;
     }
 
+    public static void reset() {
+        init();
+        logout();
+        unsavedChanges = false;
+        mainControllers = new ArrayList<>();
+    }
+
     public static void addMainController(MainController mainController) {
         mainControllers.add(mainController);
     }

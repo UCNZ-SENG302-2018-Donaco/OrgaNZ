@@ -20,6 +20,6 @@ public class Undo implements Runnable {
     }
 
     public void run() {
-        invoker.undo();
+        System.out.println(invoker.undo());
     }
 }

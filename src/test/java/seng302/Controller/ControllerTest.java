@@ -89,6 +89,7 @@ public abstract class ControllerTest extends ApplicationTest {
 
     @After
     public void killAllWindows() {
+        State.reset();
         Stage stage = getTopModalStage();
         try {
             Parent parent = stage.getScene().getRoot();

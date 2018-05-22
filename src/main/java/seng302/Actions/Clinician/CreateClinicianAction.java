@@ -40,7 +40,7 @@ public class CreateClinicianAction extends Action {
 
     @Override
     public String getExecuteText() {
-        return String.format("Created clinician %s", clinician.getFullName());
+        return String.format("Created clinician %s with staff ID %d", clinician.getFullName(), clinician.getStaffId());
     }
 
     @Override
