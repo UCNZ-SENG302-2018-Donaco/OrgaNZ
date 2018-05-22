@@ -125,9 +125,8 @@ public class MenuBarController extends SubController {
 
 
 
-
-        //undoButton.setDisable(!invoker.canUndo());
-        //redoButton.setDisable(!invoker.canRedo());
+        undoItem.setDisable(!invoker.canUndo());
+        redoItem.setDisable(!invoker.canRedo());
     }
 
     /**
