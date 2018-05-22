@@ -5,12 +5,18 @@ import java.lang.reflect.Method;
 
 import seng302.Utilities.TypeConverters.PrimitiveConverter;
 
+/**
+ * Create a new modification on any object using it's field name and the old and new values
+ * Exceptions are thrown if the object does not contain that field, or if the values are the wrong type
+ * If you have a field such as a password, use the isPrivate boolean to ensure the values are not leaked
+ */
 public class ModifyObjectByFieldAction extends Action {
 
     private Object toModify;
     private String field;
     private Object[] oldValue;
     private Object[] newValue;
+    private boolean isPrivate = false;
 
     /**
      * Create a new modification
@@ -22,6 +28,27 @@ public class ModifyObjectByFieldAction extends Action {
      * @throws NoSuchFieldException Thrown if the object setter expected type does not match one of the value types
      */
     public ModifyObjectByFieldAction(Object toModify, String field, Object oldValue, Object newValue)
+            throws NoSuchMethodException, NoSuchFieldException {
+        setupAction(toModify, field, oldValue, newValue);
+    }
+
+    /**
+     * Create a new modification with the option to hide the values
+     * @param toModify The object to be modified
+     * @param field The setter field of the object. Must match a valid setter
+     * @param oldValue The object the field initially had. Should be taken from the objects equivalent getter
+     * @param newValue The object the field should be update to. Must match the setters object type
+     * @param isPrivate If set to true, the text returns will only return the field, not the values
+     * @throws NoSuchMethodException Thrown if the object does not have the field specified
+     * @throws NoSuchFieldException Thrown if the object setter expected type does not match one of the value types
+     */
+    public ModifyObjectByFieldAction(Object toModify, String field, Object oldValue, Object newValue, boolean isPrivate)
+            throws NoSuchMethodException, NoSuchFieldException {
+        setupAction(toModify, field, oldValue, newValue);
+        this.isPrivate = isPrivate;
+    }
+
+    private void setupAction(Object toModify, String field, Object oldValue, Object newValue)
             throws NoSuchMethodException, NoSuchFieldException {
         Method[] objectMethods = toModify.getClass().getMethods();
         for (Method method : objectMethods) {
@@ -66,12 +93,20 @@ public class ModifyObjectByFieldAction extends Action {
 
     @Override
     public String getExecuteText() {
-        return String.format("%s from %s to %s.", unCamelCase(field), formatValue(oldValue), formatValue(newValue));
+        if (isPrivate) {
+            return unCamelCase(field) + ".";
+        } else {
+            return String.format("%s from %s to %s.", unCamelCase(field), formatValue(oldValue), formatValue(newValue));
+        }
     }
 
     @Override
     public String getUnexecuteText() {
-        return String.format("%s from %s to %s.", unCamelCase(field), formatValue(newValue), formatValue(oldValue));
+        if (isPrivate) {
+            return unCamelCase(field) + ".";
+        } else {
+            return String.format("%s from %s to %s.", unCamelCase(field), formatValue(newValue), formatValue(oldValue));
+        }
     }
 
     /**

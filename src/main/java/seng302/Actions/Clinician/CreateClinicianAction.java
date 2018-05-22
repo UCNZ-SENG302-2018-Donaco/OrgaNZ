@@ -9,8 +9,8 @@ import seng302.State.ClinicianManager;
  */
 public class CreateClinicianAction extends Action {
 
-    private Clinician clinician;
-    private ClinicianManager manager;
+    private final Clinician clinician;
+    private final ClinicianManager manager;
 
     /**
      * Create a new Action

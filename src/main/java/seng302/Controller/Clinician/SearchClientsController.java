@@ -1,13 +1,8 @@
 package seng302.Controller.Clinician;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Observer;
 
-import javafx.beans.value.ObservableValue;
+import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableValueBase;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -16,6 +11,8 @@ import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -30,9 +27,14 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 
+import seng302.Actions.Action;
+import seng302.Actions.ActionInvoker;
+import seng302.Actions.Client.DeleteClientAction;
 import seng302.Client;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
+import seng302.State.ClientManager;
+import seng302.State.Session.UserType;
 import seng302.State.State;
 import seng302.Utilities.Enums.Gender;
 import seng302.Utilities.Enums.Region;
@@ -43,6 +45,9 @@ import seng302.Utilities.View.WindowContext;
 public class SearchClientsController extends SubController {
 
     private static final int ROWS_PER_PAGE = 30;
+
+    private ClientManager clientManager;
+    private ActionInvoker invoker;
 
     @FXML
     private TextField searchBox;
@@ -78,6 +83,11 @@ public class SearchClientsController extends SubController {
     private FilteredList<Client> filteredClients;
     private SortedList<Client> sortedClients;
 
+    public SearchClientsController() {
+        this.clientManager = State.getClientManager();
+        this.invoker = State.getInvoker();
+    }
+
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
@@ -87,7 +97,7 @@ public class SearchClientsController extends SubController {
 
     @FXML
     private void initialize() {
-        List<Client> allClients = State.getClientManager().getClients();
+        List<Client> allClients = clientManager.getClients();
 
         setupTable();
 
@@ -114,6 +124,28 @@ public class SearchClientsController extends SubController {
         observableClientList.setAll(sortedClients);
         //Bind the tableView to the observable list
         tableView.setItems(observableClientList);
+
+        if (State.getSession().getLoggedInUserType() == UserType.ADMINISTRATOR) {
+
+            tableView.setRowFactory(tableView -> {
+                TableRow<Client> row = new TableRow<>();
+
+                MenuItem removeItem = new MenuItem("Delete");
+                removeItem.setOnAction(event -> {
+                    Action deleteAction = new DeleteClientAction(row.getItem(), clientManager);
+                    invoker.execute(deleteAction);
+                    PageNavigator.refreshAllWindows();
+                });
+                ContextMenu rowMenu = new ContextMenu(removeItem);
+
+                // Only display context menu for non-null items
+                row.contextMenuProperty().bind(
+                        Bindings.when(Bindings.isNotNull(row.itemProperty()))
+                                .then(rowMenu)
+                                .otherwise((ContextMenu) null));
+                return row;
+            });
+        }
     }
 
     /**
@@ -276,6 +308,9 @@ public class SearchClientsController extends SubController {
      */
     @Override
     public void refresh() {
+
+        initialize();
+
         String searchText = searchBox.getText();
         if (searchText == null || searchText.length() == 0) {
             filteredClients.setPredicate(client -> true);
