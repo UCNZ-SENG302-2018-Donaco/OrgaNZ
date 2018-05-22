@@ -3,17 +3,12 @@ package seng302;
 import java.time.LocalDateTime;
 
 import seng302.Utilities.Enums.Organ;
+import seng302.Utilities.Enums.RequestStatus;
 
 /**
  * Represents a request for a client to receive a transplant for a given organ.
  */
 public class TransplantRequest {
-
-    public enum RequestStatus {
-        WAITING,
-        CANCELLED,
-        COMPLETED
-    }
 
     private transient Client client;
     private Organ requestedOrgan;

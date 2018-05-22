@@ -3,9 +3,10 @@ package seng302.Controller.Client;
 import static org.junit.Assert.*;
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.matcher.control.TableViewMatchers.containsRow;
-import static seng302.TransplantRequest.RequestStatus.CANCELLED;
-import static seng302.TransplantRequest.RequestStatus.WAITING;
+
 import static seng302.Utilities.Enums.Organ.*;
+import static seng302.Utilities.Enums.RequestStatus.CANCELLED;
+import static seng302.Utilities.Enums.RequestStatus.WAITING;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
