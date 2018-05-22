@@ -43,4 +43,5 @@ public class LandingController extends SubController {
     private void goToStaffLogin() {
         PageNavigator.loadPage(Page.LOGIN_STAFF, mainController);
     }
+    
 }

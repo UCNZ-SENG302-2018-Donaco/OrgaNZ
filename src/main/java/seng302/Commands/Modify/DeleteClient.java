@@ -39,8 +39,8 @@ public class DeleteClient implements Runnable {
             System.out.println("No client exists with that user ID");
         } else {
             System.out.println(
-                    String.format("Removing user: %s %s %s, with date of birth: %s, would you like to proceed? (y/n)",
-                            client.getFirstName(), client.getMiddleName(), client.getLastName(),
+                    String.format("Removing user: %s, with date of birth: %s, would you like to proceed? (y/n)",
+                            client.getFullName(),
                             client.getDateOfBirth()));
             Scanner scanner = new Scanner(System.in);
             String response = scanner.next();
