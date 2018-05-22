@@ -6,7 +6,7 @@ import seng302.Commands.View.*;
 import picocli.CommandLine.Command;
 
 /**
- * The main command hub used to access the other commands within the program such as save, help, create user etc.
+ * The main command hub used to access the other commands within the program such as save, help, createuser etc.
  */
 @Command(name = "OrgaNZ",
         description = "OrgaNZ is a command based management tool for the team-700 ODMS.",

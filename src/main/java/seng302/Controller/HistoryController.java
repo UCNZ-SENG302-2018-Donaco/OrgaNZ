@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
@@ -19,6 +20,8 @@ import seng302.Utilities.JSONConverter;
  * Controller for the history page.
  */
 public class HistoryController extends SubController {
+
+    private static final Logger LOGGER = Logger.getLogger(HistoryController.class.getName());
 
     private final DateTimeFormatter datetimeformat = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm:ss");
 
@@ -53,7 +56,8 @@ public class HistoryController extends SubController {
             List<HistoryItem> history = JSONConverter.loadJSONtoHistory(new File("action_history.json"));
             historyTable.setItems(FXCollections.observableArrayList(history));
         } catch (IOException exc) {
-            System.out.println(exc.getMessage());
+            LOGGER.severe("IO Exception while loading history table");
+            LOGGER.severe(exc.getMessage());
         }
 
     }
