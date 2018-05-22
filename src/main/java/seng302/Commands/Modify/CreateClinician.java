@@ -70,7 +70,7 @@ public class CreateClinician implements Runnable {
 
         Action action = new CreateClinicianAction(clinician, manager);
 
-        invoker.execute(action);
+        System.out.println(invoker.execute(action));
 
         LOGGER.log(Level.INFO, action.getExecuteText());
         HistoryItem create = new HistoryItem("CREATE_CLINICIAN", "Clinician staff ID: " + staffId + " created.");

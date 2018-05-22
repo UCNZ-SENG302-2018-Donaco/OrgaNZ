@@ -87,7 +87,8 @@ public class ModifyClinician implements Runnable {
             }
         }
 
-        invoker.execute(action);
+        System.out.println(invoker.execute(action));
+
         HistoryItem setAttribute = new HistoryItem("ATTRIBUTE UPDATE", "DETAILS were updated for clinician " + id);
         JSONConverter.updateHistory(setAttribute, "action_history.json");
 

@@ -109,8 +109,7 @@ public class ResolveOrgan implements Runnable {
             }
         }
         if (action != null) {
-            invoker.execute(action);
-            System.out.println("Organ request has successfully been resolved.");
+            System.out.println(invoker.execute(action));
         }
     }
 }
