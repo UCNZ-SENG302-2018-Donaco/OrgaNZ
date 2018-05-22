@@ -1,7 +1,7 @@
 package seng302.Controller.Clinician;
 
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableValueBase;
@@ -12,9 +12,9 @@ import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -125,7 +125,7 @@ public class SearchClientsController extends SubController {
 
     @FXML
     private void initialize() {
-        ArrayList<Client> allClients = clientManager.getClients();
+        List<Client> allClients = clientManager.getClients();
 
         setupTable();
 
