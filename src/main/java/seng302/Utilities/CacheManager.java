@@ -15,15 +15,23 @@ import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.time.Instant;
+import java.time.Period;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import seng302.Utilities.Web.DrugInteractionsHandler;
+import seng302.Utilities.Web.MedActiveIngredientsHandler;
+import seng302.Utilities.Web.WebAPIHandler;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -70,9 +78,9 @@ public abstract class CacheManager {
      * E.g.:
      * Category name: seng302.Utilities.Web.DrugInteractionsHandler
      * Category: Has a variable `values`, which is a Map< Key, Value >
-     *     Key: Has a variable `value`, which is an Object[] (used to store medication name/s)
-     *     Value: Has a variable value, which is a JsonElement, and a variable expires, which is an Optional< Instant >
-     *         (used to store ingredients/interactions, and expiry datetime)
+     * Key: Has a variable `value`, which is an Object[] (used to store medication name/s)
+     * Value: Has a variable value, which is a JsonElement, and a variable expires, which is an Optional< Instant >
+     * (used to store ingredients/interactions, and expiry datetime)
      */
     protected Map<String, Category> categories;
 
@@ -103,13 +111,13 @@ public abstract class CacheManager {
             categories.put(categoryName, category);
         }
 
-        Key key = new Key(arguments);
+        Key key = new Key(arguments);/*
         System.out.println(value);
         System.out.println(expires);
         System.out.println("Tree");
-        System.out.println(JSONConverter.getGson().toJsonTree(value));
+        System.out.println(JSONConverter.getGson().toJsonTree(value));*/
         Value realValue = new Value(JSONConverter.getGson().toJsonTree(value), expires);
-        category.setData(key, realValue);
+        category.setData(key, realValue);/*
         System.out.println(categoryName);
         System.out.println(category);
         System.out.println(category.values);
@@ -117,6 +125,7 @@ public abstract class CacheManager {
         System.out.println(category.getValues().get(key));
         System.out.println(category.getValues().get(key).getValue());
         System.out.println(category.getValues().get(key).getExpires());
+        System.out.println(category.getValues().get(key).getExpires());*/
     }
 
     /**
@@ -147,10 +156,6 @@ public abstract class CacheManager {
     }
 
     public void refreshCachedData() {
-
-        Map<String, Category> oldCategories = categories;
-
-
         // Iterate through categories
         Iterator it = categories.entrySet().iterator();
         while (it.hasNext()) {
@@ -158,20 +163,76 @@ public abstract class CacheManager {
             String categoryName = (String) pair.getKey();
             Category category = (Category) pair.getValue();
 
-            // Iterate through category's values
-            category.getValues().clear();
-            Map<Key, Value> oldValues = category.getValues();
-            category.getValues().clear();
-            Iterator it2 = oldValues.entrySet().iterator();
+            // Store a list of the keys' values currently in the category
+            Collection<Object[]> keys = new ArrayList<>();
+
+            // Iterate through category's values, adding each key to keys
+            Iterator it2 = category.getValues().entrySet().iterator();
             while (it2.hasNext()) {
                 Map.Entry pair2 = (Map.Entry) it2.next();
                 Key key = (Key) pair2.getKey();
-                Value value = (Value) pair2.getValue();
-                addCachedData(categoryName, key.getValue(), value.getValue(), value.getExpires());
+                keys.add(key.getValue());
+            }
+
+            // Clear the category's Map (values)
+            Map<Key, Value> oldValues = new HashMap<>(category.getValues());
+            category.clearValues();
+            System.out.println(oldValues);
+
+            WebAPIHandler handler;
+            switch (categoryName) {
+                case "seng302.Utilities.Web.MedActiveIngredientsHandler":
+                    handler = new MedActiveIngredientsHandler();
+                    break;
+                case "seng302.Utilities.Web.DrugInteractionsHandler":
+                    handler = new DrugInteractionsHandler();
+                    break;
+                default:
+                    LOGGER.log(Level.SEVERE, "Unrecognised handler: " + categoryName);
+                    return;
+            }
+
+            // Iterate through keys, adding a new item to the cache for each one.
+            for (Object[] rawKey : keys) {
+                Key key = new Key(rawKey);
+                System.out.println(rawKey);
+                switch (categoryName) {
+                    case "seng302.Utilities.Web.MedActiveIngredientsHandler":
+                        try {
+                            List<String> result = handler.getData(rawKey[0]);
+                            category.setData(key, new Value(JSONConverter.getGson().toJsonTree(result),
+                                    Optional.of(Instant.now().plus(Period.ofDays(7)))));
+                        } catch (Exception e) {
+                            LOGGER.log(Level.WARNING, "Couldn't refresh " + rawKey[0] + " in cache.");
+                            Value result = oldValues.get(key);
+                            category.setData(key, new Value(JSONConverter.getGson().toJsonTree(result),
+                                    Optional.of(Instant.now().plus(Period.ofDays(7)))));
+                        }
+                        break;
+                    case "seng302.Utilities.Web.DrugInteractionsHandler":
+                        System.out.println(rawKey.length);
+                        System.out.println(rawKey[0]);
+                        try {
+                            List<String> result = handler.getData(rawKey[0], rawKey[1]);
+                            category.setData(key, new Value(JSONConverter.getGson().toJsonTree(result),
+                                    Optional.of(Instant.now().plus(Period.ofDays(7)))));
+                        } catch (Exception e) {
+                            LOGGER.log(Level.WARNING,
+                                    "Couldn't refresh [" + rawKey[0] + ", " + rawKey[1] + "] in cache.");
+                            Value result = oldValues.get(key);
+                            category.setData(key, new Value(JSONConverter.getGson().toJsonTree(result),
+                                    Optional.of(Instant.now().plus(Period.ofDays(7)))));
+                        }
+                        break;
+
+                        //addCachedData(categoryName, key.getValue(), value.getValue(), value.getExpires());
+                }
             }
 
 
+
         }
+        System.out.println("Done");
     }
 
     private abstract static class JsonBaseSerialiser<T> implements JsonSerializer<T>, JsonDeserializer<T> {
@@ -218,6 +279,13 @@ public abstract class CacheManager {
 
         public Map<Key, Value> getValues() {
             return Collections.unmodifiableMap(values);
+        }
+
+        /**
+         * Removes all the values from the category.
+         */
+        public void clearValues() {
+            values.clear();
         }
 
         private static class CategorySerialiser extends JsonBaseSerialiser<Category> {
@@ -337,8 +405,10 @@ public abstract class CacheManager {
 
         @Override
         public void refreshCachedData() {
+            System.out.println("in impl");
             lazyInitialise();
             super.refreshCachedData();
+            saveData();
         }
 
         /**
