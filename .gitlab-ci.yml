@@ -8,15 +8,15 @@ tag_checker:
   only:
     - tags
 
-sonar:
-  stage: test
-  script:
-    - mvn sonar:sonar
-
 junit:
   stage: test
   script:
     - mvn -B clean test
+
+sonar:
+  stage: test
+  script:
+    - mvn -B verify sonar:sonar
 
 recent-artifacts:
   stage: deploy
