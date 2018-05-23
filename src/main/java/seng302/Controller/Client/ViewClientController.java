@@ -178,11 +178,11 @@ public class ViewClientController extends SubController {
     }
 
     /**
-     * Saves the changes a user makes to the viewed client if all their inputs are valid. Otherwise the invalid fields
-     * text turns red.
+     * Saves the changes a user makes to the viewed client if all their inputs are valid.
+     * Otherwise the invalid fields text turns red.
      */
     @FXML
-    private void saveChanges() {
+    private void apply() {
         if (checkMandatoryFields() && checkNonMandatoryFields()) {
             updateChanges();
             displayBMI();
@@ -195,6 +195,14 @@ public class ViewClientController extends SubController {
                 JSONConverter.updateHistory(save, "action_history.json");
             }
         }
+    }
+
+    /**
+     * Resets the page back to its default state.
+     */
+    @FXML
+    private void cancel() {
+        refresh();
     }
 
     /**
@@ -345,11 +353,7 @@ public class ViewClientController extends SubController {
      * Displays the currently viewed clients BMI.
      */
     private void displayBMI() {
-        if (viewedClient.getDateOfDeath() == null) {
-            BMILabel.setText(String.format("%.01f", viewedClient.getBMI()));
-        } else {
-            BMILabel.setText(String.format("%.01f", viewedClient.getBMI()));
-        }
+        BMILabel.setText(String.format("%.01f", viewedClient.getBMI()));
     }
 
     /**
@@ -363,13 +367,5 @@ public class ViewClientController extends SubController {
             ageDisplayLabel.setText("Age at death:");
         }
         ageLabel.setText(String.valueOf(viewedClient.getAge()));
-    }
-
-    /**
-     * Navigate to the page to display organs for the currently specified client.
-     */
-    @FXML
-    public void viewOrgansForClient() {
-        PageNavigator.loadPage(Page.REGISTER_ORGAN_DONATIONS, mainController);
     }
 }

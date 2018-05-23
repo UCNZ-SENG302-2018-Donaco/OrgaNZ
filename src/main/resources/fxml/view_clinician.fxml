@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.Clinician.ViewClinicianController">
+<VBox prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.Clinician.ViewClinicianController">
   <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
   <HBox fx:id="menuBarPane" maxHeight="20.0" minHeight="-Infinity" />
     <SplitPane VBox.vgrow="ALWAYS">
@@ -56,7 +56,6 @@
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                   <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                 </rowConstraints>
                 <children>
                   <TextField fx:id="fname" layoutX="122.0" layoutY="80.0" prefHeight="30.0" GridPane.columnIndex="1" />
@@ -64,7 +63,6 @@
                   <TextField fx:id="lname" layoutX="122.0" layoutY="136.0" prefHeight="30.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   <TextField fx:id="workAddress" prefHeight="30.0" GridPane.columnIndex="3" GridPane.rowIndex="2" />
                   <ChoiceBox fx:id="region" maxWidth="1.7976931348623157E308" prefHeight="30.0" GridPane.columnIndex="3" GridPane.rowIndex="3" />
-                  <Button fx:id="saveChangesButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#saveChanges" prefHeight="30.0" text="Save changes" GridPane.columnIndex="3" GridPane.rowIndex="4" />
                   <Label layoutX="41.0" text="Created:" GridPane.columnIndex="2" />
                   <Label fx:id="fnameLabel" layoutY="85.0" text="First name:" />
                   <Label fx:id="mnameLabel" layoutY="196.0" text="Middle name:" GridPane.rowIndex="1" />
@@ -97,4 +95,21 @@
       </VBox>
     </SplitPane>
   </SplitPane>
+   <HBox alignment="CENTER_RIGHT" prefHeight="50.0" prefWidth="200.0">
+      <children>
+         <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" onAction="#cancel" prefHeight="30.0" prefWidth="100.0" text="Cancel">
+            <HBox.margin>
+               <Insets />
+            </HBox.margin>
+         </Button>
+         <Button fx:id="applyButton" mnemonicParsing="false" onAction="#apply" prefHeight="30.0" prefWidth="100.0" text="Apply">
+            <HBox.margin>
+               <Insets left="20.0" right="20.0" />
+            </HBox.margin>
+         </Button>
+      </children>
+      <opaqueInsets>
+         <Insets />
+      </opaqueInsets>
+   </HBox>
 </VBox>
