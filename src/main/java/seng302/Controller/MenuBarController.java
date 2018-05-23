@@ -104,6 +104,7 @@ public class MenuBarController extends SubController {
                 hideMenus(viewAdminMenu);
                 hideMenuItem(searchClientItem);
                 hideMenus(viewClinicianMenu);
+                hideMenuItem(createClientItem);
             } else if (!windowContext.isClinViewClientWindow()) {
                 hideMenuItem(createAdministratorItem);
                 hideMenuItem(staffPrimaryItem);
@@ -113,6 +114,7 @@ public class MenuBarController extends SubController {
                 hideMenuItem(medicationsPrimaryItem);
                 hideMenuItem(viewClientItem);
                 hideMenuItem(viewAdministratorItem);
+                hideMenuItem(createClientItem);
             }
         }
         if (userType == UserType.ADMINISTRATOR) {
@@ -120,6 +122,7 @@ public class MenuBarController extends SubController {
             if (windowContext.isClinViewClientWindow()){
                 hideMenuItem(profilePrimaryItem);
                 hideMenuItem(staffPrimaryItem);
+                hideMenuItem(createClientItem);
             } else if (!windowContext.isClinViewClientWindow()) {
                 hideMenuItem(organPrimaryItem);
                 hideMenuItem(medicationsPrimaryItem);
