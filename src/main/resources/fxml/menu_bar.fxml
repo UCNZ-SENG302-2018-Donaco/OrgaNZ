@@ -6,7 +6,7 @@
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.layout.HBox?>
 
-<HBox maxWidth="1.7976931348623157E308" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.MenuBarController">
+<HBox maxWidth="1.7976931348623157E308" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.MenuBarController">
   <MenuBar fx:id="menuBar" maxWidth="1.7976931348623157E308" minWidth="-Infinity" HBox.hgrow="ALWAYS">
     <Menu fx:id="filePrimaryItem" mnemonicParsing="false" text="File">
       <MenuItem fx:id="saveItem" mnemonicParsing="false" onAction="#save" text="Save" />
@@ -16,12 +16,13 @@
          <MenuItem mnemonicParsing="false" onAction="#quitProgram" text="Quit" />
     </Menu>
     <Menu fx:id="editItem" mnemonicParsing="false" text="Edit">
-      <MenuItem fx:id="undoItem" mnemonicParsing="false" onAction="#undo" text="Undo"/>
-      <MenuItem fx:id="redoItem" mnemonicParsing="false" onAction="#redo" text="Redo"/>
+      <MenuItem fx:id="undoItem" mnemonicParsing="false" onAction="#undo" text="Undo" />
+      <MenuItem fx:id="redoItem" mnemonicParsing="false" onAction="#redo" text="Redo" />
     </Menu>
     <Menu fx:id="clientPrimaryItem" mnemonicParsing="false" text="Client">
       <MenuItem fx:id="searchClientItem" mnemonicParsing="false" onAction="#goToSearch" text="Search" />
       <MenuItem fx:id="viewClientItem" mnemonicParsing="false" onAction="#goToViewClient" text="View Client Profile" />
+         <MenuItem fx:id="createClientItem" mnemonicParsing="false" onAction="#goToCreateClient" text="Create Client" />
     </Menu>
     <Menu fx:id="organPrimaryItem" mnemonicParsing="false" text="Organ">
       <MenuItem fx:id="donateOrganItem" mnemonicParsing="false" onAction="#goToRegisterOrganDonation" text="Donate Organs" />

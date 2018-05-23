@@ -64,6 +64,7 @@ public class MenuBarController extends SubController {
     public MenuItem undoItem;
     public MenuItem redoItem;
     public MenuItem closeItem;
+    public MenuItem createClientItem;
 
     public MenuBar menuBar;
 
@@ -117,8 +118,8 @@ public class MenuBarController extends SubController {
         if (userType == UserType.ADMINISTRATOR) {
 
             if (windowContext.isClinViewClientWindow()){
-
-
+                hideMenuItem(profilePrimaryItem);
+                hideMenuItem(staffPrimaryItem);
             } else if (!windowContext.isClinViewClientWindow()) {
                 hideMenuItem(organPrimaryItem);
                 hideMenuItem(medicationsPrimaryItem);
@@ -126,11 +127,9 @@ public class MenuBarController extends SubController {
                 hideMenuItem(viewClientItem);
             }
         }
-
         if (userType == UserType.CLIENT == true) {
             hideMenus(viewAllMenus);
         }
-
         closeItem.setDisable(!windowContext.isClinViewClientWindow());
         undoItem.setDisable(!invoker.canUndo());
         redoItem.setDisable(!invoker.canRedo());
@@ -274,7 +273,6 @@ public class MenuBarController extends SubController {
         PageNavigator.loadPage(Page.VIEW_PROCEDURES, mainController);
     }
 
-
     /**
      * Redirects the GUI to the Create administrator page.
      */
@@ -282,6 +280,7 @@ public class MenuBarController extends SubController {
     private void goToCreateAdmin() {
         PageNavigator.loadPage(Page.CREATE_ADMINISTRATOR, mainController);
     }
+
     /**
      * Redirects the GUI to the Create clinician page.
      */
@@ -290,7 +289,12 @@ public class MenuBarController extends SubController {
         PageNavigator.loadPage(Page.CREATE_CLINICIAN, mainController);
     }
 
+    /**
+     * Redirects the GUI to the Create clinician page.
+     */
 
+    @FXML
+    private void goToCreateClient() {PageNavigator.loadPage(Page.CREATE_CLIENT, mainController);}
     /**
      * Redirects the GUI to the Admin command line page.
      */

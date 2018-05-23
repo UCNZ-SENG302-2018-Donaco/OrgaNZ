@@ -16,28 +16,28 @@
       "date": {
         "year": 2018,
         "month": 5,
-        "day": 22
+        "day": 23
       },
       "time": {
-        "hour": 21,
-        "minute": 12,
-        "second": 26,
-        "nano": 236000000
+        "hour": 13,
+        "minute": 42,
+        "second": 7,
+        "nano": 352000000
       }
     },
     "organDonationStatus": {
-      "INTESTINE": false,
-      "BONE_MARROW": false,
-      "HEART": false,
-      "CORNEA": false,
-      "SKIN": false,
-      "BONE": false,
-      "PANCREAS": false,
       "KIDNEY": false,
-      "MIDDLE_EAR": false,
+      "HEART": false,
       "LUNG": false,
+      "MIDDLE_EAR": false,
       "LIVER": false,
-      "CONNECTIVE_TISSUE": false
+      "INTESTINE": false,
+      "PANCREAS": false,
+      "CONNECTIVE_TISSUE": false,
+      "BONE_MARROW": false,
+      "SKIN": false,
+      "CORNEA": false,
+      "BONE": false
     },
     "medicationHistory": [],
     "transplantRequests": [],
