@@ -85,7 +85,7 @@ public class DrugInteractionsHandler extends WebAPIHandler {
         String drug1, drug2;
         if (arguments.length == 2 && arguments[0] instanceof String && arguments[1] instanceof String) {
             drug1 = (String) arguments[0];
-            drug2 = (String) arguments[0];
+            drug2 = (String) arguments[1];
         } else {
             throw new UnsupportedOperationException(
                     "Must have exactly 2 argument, which are both (castable to) a String.");
