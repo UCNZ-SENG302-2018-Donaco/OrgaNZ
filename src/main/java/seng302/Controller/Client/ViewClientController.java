@@ -158,11 +158,6 @@ public class ViewClientController extends SubController {
                 lastModified.setText(viewedClient.getModifiedTimestamp().format(dateTimeFormat));
             }
 
-            HistoryItem save = new HistoryItem("SEARCH CLIENT",
-                    "Client " + viewedClient.getFirstName() + " " + viewedClient.getLastName() + " (" + viewedClient
-                            .getUid() + ") was searched");
-            JSONConverter.updateHistory(save, "action_history.json");
-
             displayBMI();
             displayAge();
         }
@@ -184,16 +179,10 @@ public class ViewClientController extends SubController {
     @FXML
     private void saveChanges() {
         if (checkMandatoryFields() && checkNonMandatoryFields()) {
-            updateChanges();
-            displayBMI();
-            displayAge();
-            if (viewedClient.getModifiedTimestamp() != null) {
+            if (updateChanges()) {
+                displayBMI();
+                displayAge();
                 lastModified.setText(viewedClient.getModifiedTimestamp().format(dateTimeFormat));
-                //TODO show what in particular was updated
-                HistoryItem save = new HistoryItem("UPDATE CLIENT INFO",
-                        "Updated changes to client " + viewedClient.getFirstName() + " " + viewedClient.getLastName()
-                                + "updated client info: " + viewedClient.getClientInfoString());
-                JSONConverter.updateHistory(save, "action_history.json");
             }
         }
     }
@@ -283,8 +272,9 @@ public class ViewClientController extends SubController {
 
     /**
      * Records the changes updated as a ModifyClientAction to trace the change in record.
+     * @return If there were any changes made
      */
-    private void updateChanges() {
+    private boolean updateChanges() {
         ModifyClientAction action = new ModifyClientAction(viewedClient);
 
         boolean clientDied = false;
@@ -330,16 +320,24 @@ public class ViewClientController extends SubController {
                     .title("Updated Client")
                     .text(actionText)
                     .showInformation();
+
+            HistoryItem save = new HistoryItem("UPDATE CLIENT INFO",
+                    String.format("Updated client %s with values: %s", viewedClient.getFullName(), actionText));
+            JSONConverter.updateHistory(save, "action_history.json");
+
         } catch (IllegalStateException exc) {
             if (!clientDied) {
                 Notifications.create()
                         .title("No changes were made.")
                         .text("No changes were made to the client.")
                         .showWarning();
+                return false;
             }
         }
 
         PageNavigator.refreshAllWindows();
+        return true;
+
     }
 
     /**

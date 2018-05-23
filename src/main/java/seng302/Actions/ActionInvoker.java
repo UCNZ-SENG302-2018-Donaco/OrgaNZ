@@ -28,7 +28,7 @@ public class ActionInvoker {
             State.setUnsavedChanges(unsavedUpdates != 0);
             return action.getUnexecuteText();
         }
-        return null;
+        return "No more actions to undo";
     }
 
     /**
@@ -45,7 +45,7 @@ public class ActionInvoker {
             State.setUnsavedChanges(unsavedUpdates != 0);
             return action.getExecuteText();
         }
-        return null;
+        return "No more actions to redo";
     }
 
     /**

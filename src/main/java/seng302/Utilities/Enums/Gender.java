@@ -11,6 +11,8 @@ public enum Gender {
 
     private final String text;
 
+    private static String mismatchText;
+
     Gender(String text) {
         this.text = text;
     }
@@ -31,7 +33,19 @@ public enum Gender {
                 return g;
             }
         }
-        throw new IllegalArgumentException("Unsupported gender");
+
+        //No match
+        if (mismatchText != null) {
+            throw new IllegalArgumentException(mismatchText);
+        } else {
+            StringBuilder mismatchTextBuilder = new StringBuilder("Unsupported gender, please use one of the "
+                    + "following:");
+            for (Gender g : Gender.values()) {
+                mismatchTextBuilder.append("\n").append(g.text);
+            }
+            mismatchText = mismatchTextBuilder.toString();
+            throw new IllegalArgumentException(mismatchText);
+        }
     }
 }
 

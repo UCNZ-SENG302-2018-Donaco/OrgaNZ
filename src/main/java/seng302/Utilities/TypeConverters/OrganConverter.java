@@ -19,8 +19,7 @@ public class OrganConverter implements CommandLine.ITypeConverter<Organ> {
         try {
             return Organ.fromString(value);
         } catch (IllegalArgumentException e) {
-            throw new CommandLine.TypeConversionException(
-                    value + " is not a valid organ. See the help text for organ request options.");
+            throw new CommandLine.TypeConversionException(e.getMessage());
         }
     }
 }

@@ -1,7 +1,6 @@
 package seng302.Controller.Clinician;
 
 import java.util.Collection;
-import java.util.List;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableValueBase;
@@ -105,6 +104,7 @@ public class SearchClientsController extends SubController {
     @FXML
     private Text displayingXToYOfZText;
 
+    private ObservableList<Client> allClients = FXCollections.observableArrayList();
     private ObservableList<Client> observableClientList = FXCollections.observableArrayList();
     private FilteredList<Client> filteredClients;
     private SortedList<Client> sortedClients;
@@ -125,7 +125,6 @@ public class SearchClientsController extends SubController {
 
     @FXML
     private void initialize() {
-        List<Client> allClients = clientManager.getClients();
 
         setupTable();
 
@@ -182,15 +181,17 @@ public class SearchClientsController extends SubController {
                 (ListChangeListener<Organ>) change -> refresh());
         searchBox.textProperty().addListener(((o) -> refresh()));
 
+        //Link the initial observable list to the list of all clients
+        allClients.setAll(clientManager.getClients());
+
         //Create a filtered list, that defaults to allow all using lambda function
-        filteredClients = new FilteredList<>(FXCollections.observableArrayList(allClients), client -> true);
+        filteredClients = new FilteredList<>(allClients, this::filter);
 
         //Create a sorted list that links to the filtered list
         sortedClients = new SortedList<>(filteredClients);
 
         //Link the sorted list sort to the tableView sort
         sortedClients.comparatorProperty().bind(tableView.comparatorProperty());
-
 
         //Set initial pagination
         int numberOfPages = Math.max(1, (sortedClients.size() + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE);
@@ -206,8 +207,26 @@ public class SearchClientsController extends SubController {
         if (State.getSession().getLoggedInUserType() == UserType.ADMINISTRATOR) {
 
             tableView.setRowFactory(tableView -> {
-                TableRow<Client> row = new TableRow<>();
+                //Enable the tooltip to show organ donation status
+                TableRow<Client> row = new TableRow<Client>() {
+                    private Tooltip tooltip = new Tooltip();
 
+                    @Override
+                    public void updateItem(Client client, boolean empty) {
+                        super.updateItem(client, empty);
+                        if (client == null) {
+                            setTooltip(null);
+                        } else {
+                            tooltip.setText(String.format("%s with blood type %s. Donating: %s",
+                                    client.getFullName(),
+                                    client.getBloodType(),
+                                    client.getOrganStatusString("donations")));
+                            setTooltip(tooltip);
+                        }
+                    }
+                };
+
+                //Enable right click to delete
                 MenuItem removeItem = new MenuItem("Delete");
                 removeItem.setOnAction(event -> {
                     Action deleteAction = new DeleteClientAction(row.getItem(), clientManager);
@@ -324,7 +343,6 @@ public class SearchClientsController extends SubController {
         donorCol.setCellValueFactory(new PropertyValueFactory<>("donor"));
         receiverCol.setCellValueFactory(new PropertyValueFactory<>("receiver"));
 
-
         //Setup a table sortOrder change listener, so that whenever another sort is removed, the table updates to
         // default sort by name ascending.
         ObservableList<TableColumn<Client, ?>> sortOrder = tableView.getSortOrder();
@@ -437,7 +455,7 @@ public class SearchClientsController extends SubController {
      * @return true if the clients age falls within the ageSlider current range.
      */
     private boolean ageFilter(Client client) {
-        return ageSlider.getLowValue() < client.getAge() && client.getAge() < ageSlider.getHighValue();
+        return ageSlider.getLowValue() <= client.getAge() && client.getAge() <= ageSlider.getHighValue();
     }
 
 
@@ -503,7 +521,8 @@ public class SearchClientsController extends SubController {
      */
     @Override
     public void refresh() {
-        filteredClients.setPredicate(this::filter);
+        //Refresh the client list to ensure any additions or removals are updated
+        allClients.setAll(clientManager.getClients());
 
         //If the pagination count wont change, force a refresh of the page, if it will, change it and that will trigger the update.
         int newPageCount = Math.max(1, (filteredClients.size() + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE);
