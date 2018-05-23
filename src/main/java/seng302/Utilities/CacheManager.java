@@ -21,7 +21,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -196,7 +195,7 @@ public abstract class CacheManager {
 
                     try {
                         removeCachedData(categoryName, rawKey);
-                        List<String> result = handler.getData(rawKey);
+                        handler.getData(rawKey);
                     } catch (Exception e) {
                         LOGGER.log(Level.WARNING, "Couldn't refresh " + rawKey[0] + " in cache.");
                         //todo should the old data be kept if new data can't be retrieved? it currently is not.
