@@ -8,6 +8,11 @@ tag_checker:
   only:
     - tags
 
+sonar:
+  stage: test
+  script:
+    - mvn sonar:sonar
+
 junit:
   stage: test
   script:
