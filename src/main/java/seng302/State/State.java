@@ -30,7 +30,7 @@ public final class State {
     public static void init() {
         actionInvoker = new ActionInvoker();
         clientManager = new ClientManagerMemory();
-        clinicianManager = new ClinicianManager();
+        clinicianManager = new ClinicianManagerMemory();
         administratorManager = new AdministratorManager();
     }
 

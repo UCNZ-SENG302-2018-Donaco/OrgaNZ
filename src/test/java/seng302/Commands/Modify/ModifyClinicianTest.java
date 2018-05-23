@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 import seng302.Actions.ActionInvoker;
 import seng302.Clinician;
 import seng302.State.ClinicianManager;
+import seng302.State.ClinicianManagerMemory;
 import seng302.Utilities.Enums.Region;
 
 import org.junit.Before;
@@ -27,7 +28,7 @@ public class ModifyClinicianTest {
 
     @Before
     public void init() {
-        spyClinicianManager = spy(new ClinicianManager());
+        spyClinicianManager = spy(new ClinicianManagerMemory());
         spyModifyClinician = spy(new ModifyClinician(spyClinicianManager, new ActionInvoker()));
 
         Clinician clinician = new Clinician("first", "middle", "last",
