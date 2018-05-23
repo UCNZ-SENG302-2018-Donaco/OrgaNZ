@@ -1,11 +1,15 @@
 package seng302.Utilities.Web;
 
+import java.io.IOException;
 import java.lang.reflect.Type;
 import java.time.Instant;
 import java.time.Period;
+import java.util.List;
 import java.util.Optional;
 
 import seng302.Utilities.CacheManager;
+import seng302.Utilities.Exceptions.BadDrugNameException;
+import seng302.Utilities.Exceptions.BadGatewayException;
 
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -28,6 +32,8 @@ public abstract class WebAPIHandler {
     protected WebAPIHandler(HttpTransport httpTransport) {
         this.httpTransport = httpTransport;
     }
+
+    public abstract List<String> getData(Object... arguments) throws IOException, BadDrugNameException, BadGatewayException;
 
     /**
      * Adds the given data to the cache, with the arguments as the key.
