@@ -15,7 +15,6 @@ import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.time.Instant;
-import java.time.Period;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -111,21 +110,9 @@ public abstract class CacheManager {
             categories.put(categoryName, category);
         }
 
-        Key key = new Key(arguments);/*
-        System.out.println(value);
-        System.out.println(expires);
-        System.out.println("Tree");
-        System.out.println(JSONConverter.getGson().toJsonTree(value));*/
+        Key key = new Key(arguments);
         Value realValue = new Value(JSONConverter.getGson().toJsonTree(value), expires);
-        category.setData(key, realValue);/*
-        System.out.println(categoryName);
-        System.out.println(category);
-        System.out.println(category.values);
-        System.out.println(category.getValues());
-        System.out.println(category.getValues().get(key));
-        System.out.println(category.getValues().get(key).getValue());
-        System.out.println(category.getValues().get(key).getExpires());
-        System.out.println(category.getValues().get(key).getExpires());*/
+        category.setData(key, realValue);
     }
 
     /**
@@ -188,36 +175,35 @@ public abstract class CacheManager {
                     break;
                 default:
                     LOGGER.log(Level.SEVERE, "Unrecognised handler: " + categoryName);
-                    return;
+                    handler = null;
             }
 
-            // Store a list of the keys' values currently in the category
-            Collection<Key> keys = new ArrayList<>();
+            if (handler != null) {
 
-            // Iterate through category's values, adding each key to keys
-            Iterator it2 = category.getValues().entrySet().iterator();
-            while (it2.hasNext()) {
-                Map.Entry pair2 = (Map.Entry) it2.next();
+                // Store a list of the keys' values currently in the category
+                Collection<Key> keys = new ArrayList<>();
 
-                Key key = (Key) pair2.getKey();
-                keys.add(key);
-            }
+                // Iterate through category's values, adding each key to keys
+                Iterator it2 = category.getValues().entrySet().iterator();
+                while (it2.hasNext()) {
+                    Map.Entry pair2 = (Map.Entry) it2.next();
+                    Key key = (Key) pair2.getKey();
+                    keys.add(key);
+                }
 
-            for (Key key: keys) {
-                Object[] rawKey = key.getValue();
-                System.out.println(rawKey);
+                for (Key key : keys) {
+                    Object[] rawKey = key.getValue();
 
-                try {
-                    removeCachedData(categoryName, rawKey);
-                    List<String> result = handler.getData(rawKey);
-                    System.out.println("setting 3");
-                } catch (Exception e) {
-                    LOGGER.log(Level.WARNING, "Couldn't refresh " + rawKey[0] + " in cache.");
-                    //todo should the old data be kept if new data can't be retrieved? it currently is not.
+                    try {
+                        removeCachedData(categoryName, rawKey);
+                        List<String> result = handler.getData(rawKey);
+                    } catch (Exception e) {
+                        LOGGER.log(Level.WARNING, "Couldn't refresh " + rawKey[0] + " in cache.");
+                        //todo should the old data be kept if new data can't be retrieved? it currently is not.
+                    }
                 }
             }
         }
-        System.out.println("Done");
     }
 
     private abstract static class JsonBaseSerialiser<T> implements JsonSerializer<T>, JsonDeserializer<T> {
@@ -395,7 +381,6 @@ public abstract class CacheManager {
 
         @Override
         public void refreshCachedData() {
-            System.out.println("in impl");
             lazyInitialise();
             super.refreshCachedData();
             saveData();
