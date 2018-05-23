@@ -1,11 +1,13 @@
 package seng302.Utilities.Web;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import seng302.Client;
@@ -82,6 +84,35 @@ public class CacheTest {
         }
 
         Assert.assertTrue(!mockCacheManager.isEmpty());
+    }
+
+    @Test
+    public void testCachingInteractionsMultipleClients() {
+        MockCacheManager mockCacheManager = MockCacheManager.Create();
+
+        MockHttpTransport mockTransport =
+                MockHelper.makeMockHttpTransport(DrugInteractionsHandlerTest.EXPECTED_RESPONSE_BODY);
+        DrugInteractionsHandler handler = new DrugInteractionsHandler(mockTransport);
+
+        Client client1 = new Client("first", null, "last", LocalDate.now().minusYears(32).minusDays(10), 0);
+        client1.setGender(Gender.FEMALE);
+
+        Client client2 = new Client("first", null, "last", LocalDate.now().minusYears(32).minusDays(10), 0);
+        client2.setGender(Gender.MALE);
+
+        assertTrue(mockCacheManager.isEmpty());
+
+        try {
+            List<String> client1Interactions = handler.getInteractions(client1, DrugInteractionsHandlerTest.DRUG1,
+                    DrugInteractionsHandlerTest.DRUG2);
+            List<String> client2Interactions = handler.getInteractions(client2, DrugInteractionsHandlerTest.DRUG1,
+                    DrugInteractionsHandlerTest.DRUG2);
+            assertNotEquals(client1Interactions, client2Interactions);
+        } catch (IOException | BadDrugNameException | BadGatewayException e) {
+            fail(e.getMessage());
+        }
+
+        assertTrue(!mockCacheManager.isEmpty());
     }
 
     @Test

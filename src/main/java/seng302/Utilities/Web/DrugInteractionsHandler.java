@@ -108,10 +108,10 @@ public class DrugInteractionsHandler extends WebAPIHandler {
      */
     public List<String> getInteractions(Client client, String drug1, String drug2)
             throws IOException, BadDrugNameException, BadGatewayException {
-        Optional<List<String>> cachedResponse = getCachedData(new TypeToken<List<String>>() {
+        Optional<DrugInteractionsResponse> cachedResponse = getCachedData(new TypeToken<DrugInteractionsResponse>() {
         }.getType(), drug1, drug2);
         if (cachedResponse.isPresent()) {
-            return cachedResponse.get();
+            return cachedResponse.get().calculateClientInteractions(client);
         }
 
         try {
@@ -128,7 +128,7 @@ public class DrugInteractionsHandler extends WebAPIHandler {
                 }
             }
 
-            return addCachedData(handleInteractionsResponse(client, response, statusCode), drug1, drug2);
+            return handleInteractionsResponse(client, response, statusCode, drug1, drug2);
         } catch (IOException exc) {
             throw new IOException("The drug interactions API could not be reached. "
                     + "Check your internet connection and try again.", exc);
@@ -138,11 +138,13 @@ public class DrugInteractionsHandler extends WebAPIHandler {
     /**
      * Using the response data, returns a formatted interaction response.
      */
-    private static List<String> handleInteractionsResponse(Client client, HttpResponse response, int statusCode)
+    private List<String> handleInteractionsResponse(Client client, HttpResponse response, int statusCode,
+            String drug1, String drug2)
             throws IOException, BadDrugNameException, BadGatewayException {
         switch (statusCode) {
             case OK:
                 DrugInteractionsResponse interactionsResponse = response.parseAs(DrugInteractionsResponse.class);
+                addCachedData(interactionsResponse, drug1, drug2);
                 return interactionsResponse.calculateClientInteractions(client);
             case STUDY_NOT_DONE:
                 return Collections.emptyList();
