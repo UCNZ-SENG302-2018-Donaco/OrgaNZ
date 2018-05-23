@@ -155,6 +155,21 @@ public abstract class CacheManager {
         return category.get(type, arguments);
     }
 
+    public void removeCachedData(String categoryName, Object[] arguments) {
+        if (Objects.isNull(arguments) || arguments.length == 0) {
+            throw new IllegalArgumentException("arguments must contain at least one value");
+        }
+        if (Objects.isNull(categoryName)) {
+            throw new IllegalArgumentException("categoryName must not be null");
+        }
+
+        Category category = categories.get(categoryName);
+        if (category != null) {
+            category.remove(arguments);
+        }
+
+    }
+
     public void refreshCachedData() {
         // Iterate through categories
         Iterator it = categories.entrySet().iterator();
@@ -162,22 +177,6 @@ public abstract class CacheManager {
             Map.Entry pair = (Map.Entry) it.next();
             String categoryName = (String) pair.getKey();
             Category category = (Category) pair.getValue();
-
-            // Store a list of the keys' values currently in the category
-            Collection<Object[]> keys = new ArrayList<>();
-
-            // Iterate through category's values, adding each key to keys
-            Iterator it2 = category.getValues().entrySet().iterator();
-            while (it2.hasNext()) {
-                Map.Entry pair2 = (Map.Entry) it2.next();
-                Key key = (Key) pair2.getKey();
-                keys.add(key.getValue());
-            }
-
-            // Clear the category's Map (values)
-            Map<Key, Value> oldValues = new HashMap<>(category.getValues());
-            category.clearValues();
-            System.out.println(oldValues);
 
             WebAPIHandler handler;
             switch (categoryName) {
@@ -192,45 +191,31 @@ public abstract class CacheManager {
                     return;
             }
 
-            // Iterate through keys, adding a new item to the cache for each one.
-            for (Object[] rawKey : keys) {
-                Key key = new Key(rawKey);
-                System.out.println(rawKey);
-                switch (categoryName) {
-                    case "seng302.Utilities.Web.MedActiveIngredientsHandler":
-                        try {
-                            List<String> result = handler.getData(rawKey[0]);
-                            category.setData(key, new Value(JSONConverter.getGson().toJsonTree(result),
-                                    Optional.of(Instant.now().plus(Period.ofDays(7)))));
-                        } catch (Exception e) {
-                            LOGGER.log(Level.WARNING, "Couldn't refresh " + rawKey[0] + " in cache.");
-                            Value result = oldValues.get(key);
-                            category.setData(key, new Value(JSONConverter.getGson().toJsonTree(result),
-                                    Optional.of(Instant.now().plus(Period.ofDays(7)))));
-                        }
-                        break;
-                    case "seng302.Utilities.Web.DrugInteractionsHandler":
-                        System.out.println(rawKey.length);
-                        System.out.println(rawKey[0]);
-                        try {
-                            List<String> result = handler.getData(rawKey[0], rawKey[1]);
-                            category.setData(key, new Value(JSONConverter.getGson().toJsonTree(result),
-                                    Optional.of(Instant.now().plus(Period.ofDays(7)))));
-                        } catch (Exception e) {
-                            LOGGER.log(Level.WARNING,
-                                    "Couldn't refresh [" + rawKey[0] + ", " + rawKey[1] + "] in cache.");
-                            Value result = oldValues.get(key);
-                            category.setData(key, new Value(JSONConverter.getGson().toJsonTree(result),
-                                    Optional.of(Instant.now().plus(Period.ofDays(7)))));
-                        }
-                        break;
+            // Store a list of the keys' values currently in the category
+            Collection<Key> keys = new ArrayList<>();
 
-                        //addCachedData(categoryName, key.getValue(), value.getValue(), value.getExpires());
-                }
+            // Iterate through category's values, adding each key to keys
+            Iterator it2 = category.getValues().entrySet().iterator();
+            while (it2.hasNext()) {
+                Map.Entry pair2 = (Map.Entry) it2.next();
+
+                Key key = (Key) pair2.getKey();
+                keys.add(key);
             }
 
+            for (Key key: keys) {
+                Object[] rawKey = key.getValue();
+                System.out.println(rawKey);
 
-
+                try {
+                    removeCachedData(categoryName, rawKey);
+                    List<String> result = handler.getData(rawKey);
+                    System.out.println("setting 3");
+                } catch (Exception e) {
+                    LOGGER.log(Level.WARNING, "Couldn't refresh " + rawKey[0] + " in cache.");
+                    //todo should the old data be kept if new data can't be retrieved? it currently is not.
+                }
+            }
         }
         System.out.println("Done");
     }
@@ -271,6 +256,11 @@ public abstract class CacheManager {
             }
 
             return Optional.of(JSONConverter.getGson().fromJson(value.getValue(), type));
+        }
+
+        public void remove(Object[] arguments) {
+            Key key = new Key(arguments);
+            values.remove(key);
         }
 
         public void setData(Key key, Value value) {
