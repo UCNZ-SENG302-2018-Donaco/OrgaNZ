@@ -81,6 +81,19 @@ public class DrugInteractionsHandler extends WebAPIHandler {
         return request.execute();
     }
 
+    public List<String> getData(Object... arguments) throws IOException, BadDrugNameException, BadGatewayException {
+        String drug1, drug2;
+        if (arguments.length == 2 && arguments[0] instanceof String && arguments[1] instanceof String) {
+            drug1 = (String) arguments[0];
+            drug2 = (String) arguments[1];
+        } else {
+            throw new UnsupportedOperationException(
+                    "Must have exactly 2 argument, which are both (castable to) a String.");
+        }
+        //todo pass in a client
+        return getInteractions(new Client(), drug1, drug2);
+    }
+
     /**
      * Makes a request to the drug interactions web API and returns a list of interactions between the two drugs
      * given that apply for the given client (based on age and gender).
@@ -95,7 +108,8 @@ public class DrugInteractionsHandler extends WebAPIHandler {
      */
     public List<String> getInteractions(Client client, String drug1, String drug2)
             throws IOException, BadDrugNameException, BadGatewayException {
-        Optional<List<String>> cachedResponse = getCachedData(new TypeToken<List<String>>() {}.getType(), drug1, drug2);
+        Optional<List<String>> cachedResponse = getCachedData(new TypeToken<List<String>>() {
+        }.getType(), drug1, drug2);
         if (cachedResponse.isPresent()) {
             return cachedResponse.get();
         }

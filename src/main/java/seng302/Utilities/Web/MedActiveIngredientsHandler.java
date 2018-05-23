@@ -46,6 +46,16 @@ public class MedActiveIngredientsHandler extends WebAPIHandler {
         );
     }
 
+    public List<String> getData(Object... arguments) throws IOException {
+        String medicationName;
+        if (arguments.length == 1 && arguments[0] instanceof String) {
+            medicationName = (String) arguments[0];
+        } else {
+            throw new UnsupportedOperationException("Must have exactly 1 argument, which is (castable to) a String.");
+        }
+        return getActiveIngredients(medicationName);
+    }
+
     public List<String> getActiveIngredients(String medicationName) throws IOException {
         Optional<List<String>> cachedResponse = getCachedData(
                 new TypeToken<List<String>>() {}.getType()
