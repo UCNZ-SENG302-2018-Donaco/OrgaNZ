@@ -34,13 +34,21 @@ public class ModifyClinicianAction extends Action {
      */
     public void addChange(String field, Object oldValue, Object newValue)
             throws NoSuchMethodException, NoSuchFieldException {
-        actions.add(new ModifyObjectByFieldAction(clinician, field, oldValue, newValue));
+        if (field.equals("setPassword")) {
+            actions.add(new ModifyObjectByFieldAction(clinician, field, oldValue, newValue, true));
+        } else {
+            actions.add(new ModifyObjectByFieldAction(clinician, field, oldValue, newValue, false));
+        }
     }
 
     @Override
     protected void execute() {
-        for (ModifyObjectByFieldAction action : actions) {
-            action.execute();
+        if (actions.size() == 0) {
+            throw new IllegalStateException("No changes were made to the clinician.");
+        } else {
+            for (ModifyObjectByFieldAction action : actions) {
+                action.execute();
+            }
         }
     }
 

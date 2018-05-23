@@ -15,6 +15,8 @@ public enum BloodType {
 
     private final String text;
 
+    private static String mismatchText;
+
     BloodType(String text) {
         this.text = text;
     }
@@ -35,6 +37,18 @@ public enum BloodType {
                 return b;
             }
         }
-        throw new IllegalArgumentException("No blood type of type " + text + "found");
+
+        //No match
+        if (mismatchText != null) {
+            throw new IllegalArgumentException(mismatchText);
+        } else {
+            StringBuilder mismatchTextBuilder = new StringBuilder("Unsupported blood type, please use one of the "
+                    + "following:");
+            for (BloodType b : BloodType.values()) {
+                mismatchTextBuilder.append("\n").append(b.text);
+            }
+            mismatchText = mismatchTextBuilder.toString();
+            throw new IllegalArgumentException(mismatchText);
+        }
     }
 }

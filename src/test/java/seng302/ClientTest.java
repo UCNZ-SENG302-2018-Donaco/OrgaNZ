@@ -4,14 +4,15 @@ import static org.junit.Assert.*;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.Arrays;
+
+import java.util.HashSet;
 
 import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
 
 import org.junit.Before;
 import org.junit.Test;
-import seng302.Utilities.Enums.Organ;
-import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
 
 public class ClientTest {
 
@@ -79,6 +80,13 @@ public class ClientTest {
     }
 
     @Test
+    public void CheckNameContainsPreferredNameValidTest() {
+        client = new Client("First", "middlename", "Last", LocalDate.of(1970, 1, 1), 1);
+        client.setPreferredName("Preferred");
+        assertTrue(client.nameContains("Preferred"));
+    }
+
+    @Test
     public void CheckNameContainsNotValidTest() {
         client = new Client("First", "middlename", "Last", LocalDate.of(1970, 1, 1), 1);
         assertFalse(client.nameContains("notin"));
@@ -97,15 +105,29 @@ public class ClientTest {
     }
 
     @Test
-    public void GetFullNameNoMiddleNameTest() {
+    public void GetFullNameNoMiddleNameNoPreferredNameTest() {
         client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
         assertEquals("First Last", client.getFullName());
     }
 
     @Test
-    public void GetFullNameWithMiddleNameTest() {
+    public void GetFullNameWithMiddleNameNoPreferredNameTest() {
         client = new Client("First", "Mid Name", "Last", LocalDate.of(1970, 1, 1), 1);
         assertEquals("First Mid Name Last", client.getFullName());
+    }
+
+    @Test
+    public void GetFullNameNoMiddleNameWithPreferredNameTest() {
+        client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        client.setPreferredName("Pref");
+        assertEquals("First \"Pref\" Last", client.getFullName());
+    }
+
+    @Test
+    public void GetFullNameWithMiddleNameWithPreferredNameTest() {
+        client = new Client("First", "Mid Name", "Last", LocalDate.of(1970, 1, 1), 1);
+        client.setPreferredName("Pref");
+        assertEquals("First Mid Name \"Pref\" Last", client.getFullName());
     }
 
     /*
@@ -209,5 +231,83 @@ public class ClientTest {
         assertEquals(deathDate, client.getDateOfDeath());
         assertTrue(client.getOrganDonationStatus().get(Organ.BONE));
         assertFalse(client.getOrganRequestStatus().get(Organ.LIVER));
+    }
+
+    @Test
+    public void profileSearchFullFirst() {
+        client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        assertTrue(client.profileSearch("First"));
+    }
+
+    @Test
+    public void profileSearchHalfFirst() {
+        client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        assertTrue(client.profileSearch("Fir"));
+    }
+
+    @Test
+    public void profileSearchHalfLast() {
+        client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        assertTrue(client.profileSearch("La"));
+    }
+
+    @Test
+    public void profileSearchMiddleTrue() {
+        client = new Client("First", "Middle", "Last", LocalDate.of(1970, 1, 1), 1);
+        assertTrue(client.profileSearch("Mi"));
+    }
+
+    @Test
+    public void profileSearchMiddleFalse() {
+        client = new Client("First", "Middle", "Last", LocalDate.of(1970, 1, 1), 1);
+        assertFalse(client.profileSearch("ddle"));
+    }
+
+    @Test
+    public void profileSearchNoMatch() {
+        client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        assertFalse(client.profileSearch("Wrong"));
+    }
+
+    @Test
+    public void profileSearchTwoMatch() {
+        client = new Client("First", null, "First", LocalDate.of(1970, 1, 1), 1);
+        assertTrue(client.profileSearch("First"));
+    }
+
+    @Test
+    public void profileSearchCaseInsensitive() {
+        client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        assertTrue(client.profileSearch("fIrSt"));
+    }
+
+    @Test
+    public void profileSearchFirstAndLast() {
+        client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        assertTrue(client.profileSearch("first last "));
+    }
+
+    @Test
+    public void profileSearchTwoPrefNames() {
+        client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        client.setPreferredName("Jan Michael Vincent");
+        assertTrue(client.profileSearch("jan Michael vinc "));
+        assertTrue(client.profileSearch("first michael"));
+    }
+
+
+    @Test
+    public void testClientIsReceiver() {
+        client = new Client("First", null, "First", LocalDate.of(1970, 1, 1), 1);
+        TransplantRequest transplantRequest = new TransplantRequest(client, Organ.LIVER);
+        client.addTransplantRequest(transplantRequest);
+        assertTrue(client.isReceiver());
+    }
+
+    @Test
+    public void testClientIsDonor() throws OrganAlreadyRegisteredException{
+        client = new Client("First", null, "First", LocalDate.of(1970, 1, 1), 1);
+        client.setOrganDonationStatus(Organ.HEART, true);
+        assertTrue(client.isDonor());
     }
 }

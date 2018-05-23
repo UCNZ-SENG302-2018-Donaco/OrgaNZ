@@ -8,9 +8,11 @@ import static org.mockito.Mockito.*;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.time.LocalDate;
+import java.util.ArrayList;
 
 import seng302.Client;
 import seng302.State.ClientManager;
+import seng302.TransplantRequest;
 import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
 
@@ -37,7 +39,7 @@ public class PrintClientOrganTest {
     @Test
     public void printuserorgan_invalid_format_id() {
         doNothing().when(spyClientManager).addClient(any());
-        String[] inputs = {"-u", "notint"};
+        String[] inputs = {"-u", "notint", "-t", "donations"};
 
         CommandLine.run(spyPrintClientOrgan, System.out, inputs);
 
@@ -56,7 +58,7 @@ public class PrintClientOrganTest {
     @Test
     public void printuserorgan_non_existent_id() {
         when(spyClientManager.getClientByID(anyInt())).thenReturn(null);
-        String[] inputs = {"-u", "2"};
+        String[] inputs = {"-u", "2", "-t", "donations"};
 
         CommandLine.run(spyPrintClientOrgan, System.out, inputs);
 
@@ -70,12 +72,12 @@ public class PrintClientOrganTest {
 
         when(spyClientManager.getClientByID(anyInt())).thenReturn(client);
 
-        String[] inputs = {"-u", "1"};
+        String[] inputs = {"-u", "1", "-t", "donations"};
 
         CommandLine.run(spyPrintClientOrgan, System.out, inputs);
 
         assertThat(outContent.toString(),
-                containsString("User: 1. Name: First mid Last, Donation status: No organs found"));
+                containsString("User: 1. Name: First mid Last. Donation status: None"));
     }
 
     @Test
@@ -85,11 +87,11 @@ public class PrintClientOrganTest {
 
         when(spyClientManager.getClientByID(anyInt())).thenReturn(client);
 
-        String[] inputs = {"-u", "1"};
+        String[] inputs = {"-u", "1", "-t", "donations"};
 
         CommandLine.run(spyPrintClientOrgan, System.out, inputs);
 
-        assertThat(outContent.toString(), containsString("User: 1. Name: First mid Last, Donation status: Kidney"));
+        assertThat(outContent.toString(), containsString("User: 1. Name: First mid Last. Donation status: Kidney"));
     }
 
     @Test
@@ -100,11 +102,26 @@ public class PrintClientOrganTest {
 
         when(spyClientManager.getClientByID(anyInt())).thenReturn(client);
 
-        String[] inputs = {"-u", "1"};
+        String[] inputs = {"-u", "1", "-t", "donations"};
 
         CommandLine.run(spyPrintClientOrgan, System.out, inputs);
 
-        assertTrue(outContent.toString().contains("User: 1. Name: First mid Last, Donation status: Kidney, Liver")
-                || outContent.toString().contains("User: 1. Name: First mid Last, Donation status: Liver, Kidney"));
+        assertTrue(outContent.toString().contains("User: 1. Name: First mid Last. Donation status: Kidney, Liver")
+                || outContent.toString().contains("User: 1. Name: First mid Last. Donation status: Liver, Kidney"));
+    }
+
+    @Test
+    public void printuserorgan_valid_one_organ_request() {
+        Client client = new Client("First", "mid", "Last", LocalDate.of(1970, 1, 1), 1);
+        TransplantRequest tr = new TransplantRequest(client, Organ.KIDNEY);
+        client.addTransplantRequest(tr);
+
+        when(spyClientManager.getClientByID(anyInt())).thenReturn(client);
+
+        String[] inputs = {"-u", "1", "-t", "requests"};
+
+        CommandLine.run(spyPrintClientOrgan, System.out, inputs);
+
+        assertThat(outContent.toString(), containsString("User: 1. Name: First mid Last. Request status: Kidney"));
     }
 }
