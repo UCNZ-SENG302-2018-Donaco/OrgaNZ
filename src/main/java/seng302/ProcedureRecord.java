@@ -19,6 +19,8 @@ import javax.persistence.Table;
 
 import seng302.Utilities.Enums.Organ;
 
+import com.google.gson.annotations.Expose;
+
 @Entity
 @Table
 @Access(AccessType.FIELD)
@@ -27,6 +29,7 @@ public class ProcedureRecord {
     @Id
     @GeneratedValue
     private Long id;
+    @Expose(serialize = false)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "Client_uid")
     private Client client;
@@ -71,7 +74,7 @@ public class ProcedureRecord {
      * Therefore it is package-private so it may only be called from Client.
      * @param client The client to set this record as belonging to.
      */
-    void setClient(Client client) {
+    public void setClient(Client client) {
         this.client = client;
     }
 

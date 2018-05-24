@@ -29,7 +29,7 @@ public final class State {
      */
     public static void init() {
         actionInvoker = new ActionInvoker();
-        clientManager = new ClientManagerMemory();
+        clientManager = new ClientManagerDBPure();
         clinicianManager = new ClinicianManagerMemory();
         administratorManager = new AdministratorManager();
     }
