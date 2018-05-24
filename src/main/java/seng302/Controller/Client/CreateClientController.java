@@ -15,10 +15,12 @@ import seng302.Controller.MainController;
 import seng302.Controller.SubController;
 import seng302.HistoryItem;
 import seng302.State.ClientManager;
+import seng302.State.Session.UserType;
 import seng302.State.State;
 import seng302.Utilities.JSONConverter;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
+import seng302.Utilities.View.WindowContext;
 
 /**
  * Controller for the create client page.
@@ -86,16 +88,37 @@ public class CreateClientController extends SubController {
                     "Client " + firstNameFld.getText() + " " + lastNamefld.getText() + "was created with ID " + uid);
             JSONConverter.updateHistory(save, "action_history.json");
 
-            State.login(client);
-            PageNavigator.loadPage(Page.VIEW_CLIENT, mainController);
+
+            if (State.getSession().getLoggedInUserType() == UserType.CLIENT) {
+                State.login(client);
+                PageNavigator.loadPage(Page.VIEW_CLIENT, mainController);
+
+            } else {
+
+                MainController newMain = PageNavigator.openNewWindow();
+                if (newMain != null) {
+                    newMain.setWindowContext(new WindowContext.WindowContextBuilder()
+                            .setAsClinViewClientWindow()
+                            .viewClient(client)
+                            .build());
+                    PageNavigator.loadPage(Page.VIEW_CLIENT, newMain);
+                }
+            }
         }
     }
 
     /**
-     * Redirects the UI back to the landing page.
+     * Redirects the UI back to the previous page.
      */
     @FXML
     private void goBack() {
-        PageNavigator.loadPage(Page.LANDING, mainController);
+        if (State.getSession() == null) { // Someone creating a user
+            PageNavigator.loadPage(Page.LANDING, mainController);
+
+        } else if (State.getSession().getLoggedInUserType() == UserType.CLINICIAN) {
+            PageNavigator.loadPage(Page.VIEW_CLINICIAN, mainController);
+        } else {
+            // View admin profile.
+        }
     }
 }

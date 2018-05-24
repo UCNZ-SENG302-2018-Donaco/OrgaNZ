@@ -97,12 +97,12 @@ public class MenuBarController extends SubController {
 
         Menu viewAllMenus[] = {clientPrimaryItem, organPrimaryItem, medicationsPrimaryItem, staffPrimaryItem,
                 transplantsPrimaryItem, profilePrimaryItem, filePrimaryItem};
-        Menu viewClinicianMenu[] = {transplantsPrimaryItem, profilePrimaryItem};
+
         Menu viewAdminMenu[] = {staffPrimaryItem, transplantsPrimaryItem, filePrimaryItem,
                 profilePrimaryItem};
 
         Menu clinicianWindowMenu[] = {staffPrimaryItem, medicationsPrimaryItem, };
-        MenuItem clinicianWindowMenuItems[] = {createClientItem, organPrimaryItem, viewClientItem, medicationsPrimaryItem};
+        MenuItem clinicianWindowMenuItems[] = {organPrimaryItem, viewClientItem, medicationsPrimaryItem};
 
         Menu clinViewClientMenu[] = {staffPrimaryItem, profilePrimaryItem, transplantsPrimaryItem};
         MenuItem clinViewClientMenuItem[] = {searchClientItem, createClientItem};
@@ -118,10 +118,7 @@ public class MenuBarController extends SubController {
                 removeAdminMenuItems();
                 hideMenus(clinicianWindowMenu);
                 hideMenuItems(clinicianWindowMenuItems);
-
                 // staff primary item - seng302.Controller.Administrator.StaffListController.lambda$null$1(StaffListController.java:89)
-                // create client item - this item logs the clinician out.
-
             }
         }
         if (userType == UserType.ADMINISTRATOR) {
@@ -146,6 +143,9 @@ public class MenuBarController extends SubController {
     }
 
 
+    /**
+     * Removes all menu items that only admins should have.
+     */
     private void removeAdminMenuItems() {
         // Remove administrator file rights.
         hideMenuItem(createAdministratorItem);
