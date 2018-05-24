@@ -274,7 +274,7 @@ public class RequestOrgansController extends SubController {
                     "Client already has a waiting request for this organ.");
         } else {
             TransplantRequest newRequest = new TransplantRequest(client, selectedOrgan);
-            Action action = new AddTransplantRequestAction(client, newRequest);
+            Action action = new AddTransplantRequestAction(client, newRequest, manager);
             invoker.execute(action);
             PageNavigator.refreshAllWindows();
         }

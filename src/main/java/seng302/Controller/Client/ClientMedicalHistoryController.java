@@ -392,7 +392,7 @@ public class ClientMedicalHistoryController extends SubController {
             errorMessage.setText("Diagnosis date cannot be in the future.");
         } else {
             IllnessRecord record = new IllnessRecord(illnessName, dateDiagnosed, null, isChronic);
-            AddIllnessRecordAction action = new AddIllnessRecordAction(client, record);
+            AddIllnessRecordAction action = new AddIllnessRecordAction(client, record, manager);
             invoker.execute(action);
 
             illnessNameField.setText(null);
