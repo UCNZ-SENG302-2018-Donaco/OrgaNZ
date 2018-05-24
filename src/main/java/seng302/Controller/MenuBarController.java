@@ -65,6 +65,7 @@ public class MenuBarController extends SubController {
     public MenuItem redoItem;
     public MenuItem closeItem;
     public MenuItem createClientItem;
+    public MenuItem refreshCacheItem;
 
     public SeparatorMenuItem topSeparator;
 
@@ -77,6 +78,7 @@ public class MenuBarController extends SubController {
     public Menu transplantsPrimaryItem;
     public Menu profilePrimaryItem;
     public Menu filePrimaryItem;
+    public Menu administrationPrimaryItem;
 
     private ActionInvoker invoker;
     private Session session;
@@ -143,7 +145,7 @@ public class MenuBarController extends SubController {
 
 
     /**
-     * Removes all menu items that only admins should have.
+     * Removes all menu items and menus that only admins should have.
      */
     private void removeAdminMenuItems() {
         // Remove administrator file rights.
@@ -153,6 +155,7 @@ public class MenuBarController extends SubController {
         hideMenuItem(loadItem);
         hideMenuItem(viewAdministratorItem);
         hideMenuItem(cliItem);
+        hideMenu(administrationPrimaryItem);
 
     }
 
@@ -171,8 +174,8 @@ public class MenuBarController extends SubController {
     }
 
     /**
-     * Hides all the buttons in the passed-in array.
-     * @param items The buttons to hide
+     * Hides all the menu items in the passed-in array.
+     * @param items The menu items to hide
      */
     private void hideMenuItems(MenuItem items[]) {
         for (MenuItem menuItem : items) {
@@ -181,8 +184,8 @@ public class MenuBarController extends SubController {
     }
 
     /**
-     * Hides the button from the sidebar.
-     * @param menuItem the button to hide
+     * Hides the menu item from the menu.
+     * @param menuItem the menu item to hide
      */
     private void hideMenuItem(MenuItem menuItem) {
         menuItem.setVisible(false);
@@ -190,8 +193,8 @@ public class MenuBarController extends SubController {
     }
 
     /**
-     * Hides all the buttons in the passed-in array.
-     * @param menus The buttons to hide
+     * Hides all the menus in the passed-in array.
+     * @param menus The menus to hide
      */
     private void hideMenus(Menu menus[]) {
         for (Menu menu : menus) {
@@ -200,7 +203,7 @@ public class MenuBarController extends SubController {
     }
 
     /**
-     * Hides the Primary menu type from the menu bar.
+     * Hides the Primary menu from the menu bar.
      * @param menu the menu to hide
      */
     private void hideMenu(Menu menu) {
