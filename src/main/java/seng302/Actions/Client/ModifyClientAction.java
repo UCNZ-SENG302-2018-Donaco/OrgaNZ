@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import seng302.Actions.Action;
 import seng302.Actions.ModifyObjectByFieldAction;
 import seng302.Client;
+import seng302.State.ClientManager;
 
 /**
  * A reversible client modification Action
@@ -14,13 +15,16 @@ public class ModifyClientAction extends Action {
 
     private ArrayList<ModifyObjectByFieldAction> actions = new ArrayList<>();
     private Client client;
+    private ClientManager manager;
 
     /**
      * Create a new Action
      * @param client The client to be modified
+     * @param manager // TODO
      */
-    public ModifyClientAction(Client client) {
+    public ModifyClientAction(Client client, ClientManager manager) {
         this.client = client;
+        this.manager = manager;
     }
 
     /**
@@ -45,6 +49,7 @@ public class ModifyClientAction extends Action {
             for (ModifyObjectByFieldAction action : actions) {
                 action.execute();
             }
+            manager.applyChangesTo(client);
         }
     }
 
@@ -53,6 +58,7 @@ public class ModifyClientAction extends Action {
         for (ModifyObjectByFieldAction action : actions) {
             action.unExecute();
         }
+        manager.applyChangesTo(client);
     }
 
     @Override

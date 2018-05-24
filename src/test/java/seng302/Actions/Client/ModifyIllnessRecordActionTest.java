@@ -7,6 +7,8 @@ import java.time.LocalDate;
 import seng302.Actions.ActionInvoker;
 import seng302.Client;
 import seng302.IllnessRecord;
+import seng302.State.ClientManager;
+import seng302.State.ClientManagerMemory;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -14,12 +16,14 @@ import org.junit.Test;
 public class ModifyIllnessRecordActionTest {
 
     private ActionInvoker invoker;
+    private ClientManager manager;
     private Client baseClient;
     private IllnessRecord record;
 
     @Before
     public void init() {
         invoker = new ActionInvoker();
+        manager = new ClientManagerMemory();
         baseClient = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
         record = new IllnessRecord("Generic Name", LocalDate.of(2018, 4, 9), null, false);
         baseClient.addIllnessRecord(record);
@@ -27,7 +31,7 @@ public class ModifyIllnessRecordActionTest {
 
     @Test
     public void ModifySingleIllnessCurrentTest() {
-        ModifyIllnessRecordAction action = new ModifyIllnessRecordAction(record);
+        ModifyIllnessRecordAction action = new ModifyIllnessRecordAction(record, manager);
 
         LocalDate newDate = LocalDate.of(2018, 4, 11);
 
@@ -43,7 +47,7 @@ public class ModifyIllnessRecordActionTest {
 
     @Test
     public void ModifySingleIllnessCurrentToPastTest() {
-        ModifyIllnessRecordAction action = new ModifyIllnessRecordAction(record);
+        ModifyIllnessRecordAction action = new ModifyIllnessRecordAction(record, manager);
 
         LocalDate newDate = LocalDate.of(2018, 4, 11);
 
@@ -58,7 +62,7 @@ public class ModifyIllnessRecordActionTest {
 
     @Test
     public void ModifySingleIllnessCurrentUndoTest() {
-        ModifyIllnessRecordAction action = new ModifyIllnessRecordAction(record);
+        ModifyIllnessRecordAction action = new ModifyIllnessRecordAction(record, manager);
 
         LocalDate newDate = LocalDate.of(2018, 4, 11);
 
@@ -75,7 +79,7 @@ public class ModifyIllnessRecordActionTest {
 
     @Test
     public void ModifySingleIllnessCurrentUndoRedoTest() {
-        ModifyIllnessRecordAction action = new ModifyIllnessRecordAction(record);
+        ModifyIllnessRecordAction action = new ModifyIllnessRecordAction(record, manager);
 
         LocalDate newDate = LocalDate.of(2018, 4, 11);
 

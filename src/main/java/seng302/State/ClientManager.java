@@ -20,6 +20,8 @@ public interface ClientManager {
 
     void removeClient(Client client);
 
+    void applyChangesTo(Client client);
+
     /**
      * Returns the client that has the given id.
      * @param id The ID to match.
@@ -40,7 +42,7 @@ public interface ClientManager {
      * Returns the next unused id number for a new client.
      * @return The next free UID.
      */
-    int nextUid();
+    int nextUid();  // TODO does this need to be here? perhaps refactor
 
     /**
      * Gets all transplant requests for all clients stored by the manager, regardless of whether or not they are

@@ -89,6 +89,11 @@ public class ClientManagerDBPure implements ClientManager {
     }
 
     @Override
+    public void applyChangesTo(Client client) {
+        dbManager.saveEntity(client);
+    }
+
+    @Override
     public Client getClientByID(int id) {
         return dbManager.getDBSession().find(Client.class, id);
     }
@@ -120,7 +125,7 @@ public class ClientManagerDBPure implements ClientManager {
 
     @Override
     public int nextUid() {
-        return 0;
+        return 0;  // TODO change this, probably doesn't need to exist in interface
     }
 
     @Override

@@ -35,6 +35,7 @@ import seng302.Actions.Client.ResolveTransplantRequestAction;
 import seng302.Client;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
+import seng302.State.ClientManager;
 import seng302.State.Session;
 import seng302.State.Session.UserType;
 import seng302.State.State;
@@ -55,6 +56,7 @@ public class RequestOrgansController extends SubController {
 
     private Session session;
     private ActionInvoker invoker;
+    private ClientManager manager;
     private Client client;
 
     private Collection<TransplantRequest> allRequests;
@@ -132,6 +134,7 @@ public class RequestOrgansController extends SubController {
     public RequestOrgansController() {
         session = State.getSession();
         invoker = State.getInvoker();
+        manager = State.getClientManager();
     }
 
     /**
@@ -290,7 +293,10 @@ public class RequestOrgansController extends SubController {
             Action action = null;
 
             if (resolveReason == ResolveReason.COMPLETED) {
-                action = new ResolveTransplantRequestAction(selectedRequest, TransplantRequestStatus.COMPLETED, "Transplant took place.");
+                action = new ResolveTransplantRequestAction(selectedRequest,
+                        TransplantRequestStatus.COMPLETED,
+                        "Transplant took place.",
+                        manager);
 
             } else if (resolveReason == ResolveReason.DECEASED) {
                 LocalDate deathDate = deathDatePicker.getValue();
@@ -304,13 +310,16 @@ public class RequestOrgansController extends SubController {
                             "This will cancel all waiting transplant requests for this client.");
 
                     if (buttonOpt.isPresent() && buttonOpt.get() == ButtonType.OK) {
-                        action = new MarkClientAsDeadAction(client, deathDate);
+                        action = new MarkClientAsDeadAction(client, deathDate, manager);
                         deathDatePicker.setValue(LocalDate.now());
                     }
                 }
 
             } else if (resolveReason == ResolveReason.CURED) {
-                action = new ResolveTransplantRequestAction(selectedRequest, TransplantRequestStatus.CANCELLED, "The disease was cured.");
+                action = new ResolveTransplantRequestAction(selectedRequest,
+                        TransplantRequestStatus.CANCELLED,
+                        "The disease was cured.",
+                        manager);
                 Optional<ButtonType> buttonOpt = PageNavigator.showAlert(AlertType.CONFIRMATION,
                         "Go to Medical History Page",
                         "Do you want to go to the medical history page to mark the disease that was cured?");
@@ -319,10 +328,16 @@ public class RequestOrgansController extends SubController {
                 }
 
             } else if (resolveReason == ResolveReason.ERROR) {
-                action = new ResolveTransplantRequestAction(selectedRequest, TransplantRequestStatus.CANCELLED, "Request was a mistake.");
+                action = new ResolveTransplantRequestAction(selectedRequest,
+                        TransplantRequestStatus.CANCELLED,
+                        "Request was a mistake.",
+                        manager);
 
             } else if (resolveReason == ResolveReason.CUSTOM) {
-                action = new ResolveTransplantRequestAction(selectedRequest, TransplantRequestStatus.CANCELLED, customReason.getText());
+                action = new ResolveTransplantRequestAction(selectedRequest,
+                        TransplantRequestStatus.CANCELLED,
+                        customReason.getText(),
+                        manager);
                 customReason.clear();
             }
 
