@@ -55,6 +55,8 @@ public class ClientManagerDBPure implements ClientManager {
         try (Session session = dbManager.getDBSession()) {
             trns = session.beginTransaction();
 
+            session.createQuery("DELETE FROM Client").executeUpdate();
+
             for (Client client : clients) {
                 session.save(client);
             }
