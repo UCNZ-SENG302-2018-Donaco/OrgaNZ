@@ -89,11 +89,11 @@ public class CreateClientController extends SubController {
             JSONConverter.updateHistory(save, "action_history.json");
 
 
-            if (State.getSession().getLoggedInUserType() == UserType.CLIENT) {
+            if (State.getSession() == null) { // Someone creating a user
                 State.login(client);
                 PageNavigator.loadPage(Page.VIEW_CLIENT, mainController);
 
-            } else {
+            } else { // Clinician or admin are creating a user.
 
                 MainController newMain = PageNavigator.openNewWindow();
                 if (newMain != null) {
