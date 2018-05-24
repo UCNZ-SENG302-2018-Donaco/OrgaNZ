@@ -14,6 +14,8 @@
     <!-- Fixes issue with @GeneratedValue AUTO mode -->
     <property name="hibernate.id.new_generator_mappings">false</property>
 
+    <property name="hibernate.enable_lazy_load_no_trans">true</property>
+
     <!-- Database Connection Settings -->
     <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
     <property name="hibernate.connection.url">jdbc:mysql://mysql2.csse.canterbury.ac.nz/seng302-2018-team700-test</property>

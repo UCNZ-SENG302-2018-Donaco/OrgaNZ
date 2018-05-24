@@ -92,7 +92,19 @@ public class ClientManagerDBPure implements ClientManager {
 
     @Override
     public void applyChangesTo(Client client) {
-        dbManager.saveEntity(client);
+        Transaction trns = null;
+
+        try (Session session = dbManager.getDBSession()) {
+            trns = session.beginTransaction();
+
+            dbManager.getDBSession().update(client);
+
+            trns.commit();
+        } catch (RollbackException exc) {
+            if (trns != null) {
+                trns.rollback();
+            }
+        }
     }
 
     @Override
@@ -174,7 +186,8 @@ public class ClientManagerDBPure implements ClientManager {
             trns = session.beginTransaction();
             requests = dbManager.getDBSession()
                     .createQuery("SELECT req FROM TransplantRequest req "
-                            + "WHERE req.status = TransplantRequestStatus.WAITING", TransplantRequest.class)
+                            + "WHERE req.status = seng302.Utilities.Enums.TransplantRequestStatus.WAITING",
+                            TransplantRequest.class)
                     .getResultList();
             trns.commit();
         } catch (RollbackException exc) {
