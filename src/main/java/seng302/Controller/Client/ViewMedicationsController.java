@@ -30,6 +30,7 @@ import seng302.Client;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
 import seng302.MedicationRecord;
+import seng302.State.ClientManager;
 import seng302.State.Session;
 import seng302.State.Session.UserType;
 import seng302.State.State;
@@ -49,6 +50,7 @@ public class ViewMedicationsController extends SubController {
 
     private Session session;
     private ActionInvoker invoker;
+    private ClientManager manager;
     private Client client;
     private List<String> lastResponse;
     private MedAutoCompleteHandler autoCompleteHandler;
@@ -76,6 +78,7 @@ public class ViewMedicationsController extends SubController {
     public ViewMedicationsController() {
         session = State.getSession();
         invoker = State.getInvoker();
+        manager = State.getClientManager();
     }
 
     public void setDrugInteractionsHandler(DrugInteractionsHandler handler) {
@@ -185,7 +188,7 @@ public class ViewMedicationsController extends SubController {
     private void moveMedicationToHistory() {
         MedicationRecord record = currentMedicationsView.getSelectionModel().getSelectedItem();
         if (record != null) {
-            ModifyMedicationRecordAction action = new ModifyMedicationRecordAction(record);
+            ModifyMedicationRecordAction action = new ModifyMedicationRecordAction(record, manager);
             action.changeStopped(LocalDate.now());
 
             invoker.execute(action);
@@ -205,7 +208,7 @@ public class ViewMedicationsController extends SubController {
     private void moveMedicationToCurrent() {
         MedicationRecord record = pastMedicationsView.getSelectionModel().getSelectedItem();
         if (record != null) {
-            ModifyMedicationRecordAction action = new ModifyMedicationRecordAction(record);
+            ModifyMedicationRecordAction action = new ModifyMedicationRecordAction(record, manager);
             action.changeStopped(null);
 
             invoker.execute(action);

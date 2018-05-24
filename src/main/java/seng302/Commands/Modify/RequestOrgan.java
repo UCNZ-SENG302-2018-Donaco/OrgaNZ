@@ -69,8 +69,8 @@ public class RequestOrgan implements Runnable {
             } else {
                 TransplantRequest newRequest = new TransplantRequest(client, organType);
                 Action action = new AddTransplantRequestAction(client, newRequest);
-                invoker.execute(action);
-                System.out.println("Successfully requested a " + organType + " for " + client.getFullName());
+
+                System.out.println(invoker.execute(action));
             }
         }
     }

@@ -30,7 +30,7 @@ public class ModifyClientActionTest {
 
     @Test
     public void CheckClientModifyNameTest() throws Exception {
-        ModifyClientAction action = new ModifyClientAction(baseClient);
+        ModifyClientAction action = new ModifyClientAction(baseClient, manager);
         action.addChange("setFirstName", baseClient.getFirstName(), "New");
         invoker.execute(action);
         assertEquals("New", manager.getClients().get(0).getFirstName());
@@ -38,7 +38,7 @@ public class ModifyClientActionTest {
 
     @Test
     public void CheckClientModifyUndoNameTest() throws Exception {
-        ModifyClientAction action = new ModifyClientAction(baseClient);
+        ModifyClientAction action = new ModifyClientAction(baseClient, manager);
         action.addChange("setFirstName", baseClient.getFirstName(), "New");
         invoker.execute(action);
         invoker.undo();
@@ -47,7 +47,7 @@ public class ModifyClientActionTest {
 
     @Test
     public void CheckClientMultipleUpdateValuesTest() throws Exception {
-        ModifyClientAction action = new ModifyClientAction(baseClient);
+        ModifyClientAction action = new ModifyClientAction(baseClient, manager);
         action.addChange("setFirstName", baseClient.getFirstName(), "New");
         action.addChange("setGender", baseClient.getGender(), Gender.FEMALE);
         invoker.execute(action);
@@ -57,7 +57,7 @@ public class ModifyClientActionTest {
 
     @Test
     public void CheckClientMultipleUpdateValuesUndoTest() throws Exception {
-        ModifyClientAction action = new ModifyClientAction(baseClient);
+        ModifyClientAction action = new ModifyClientAction(baseClient, manager);
         action.addChange("setFirstName", baseClient.getFirstName(), "New");
         action.addChange("setGender", baseClient.getGender(), Gender.FEMALE);
         invoker.execute(action);
@@ -68,14 +68,14 @@ public class ModifyClientActionTest {
 
     @Test(expected = NoSuchMethodException.class)
     public void InvalidSetterFieldTest() throws Exception {
-        ModifyClientAction action = new ModifyClientAction(baseClient);
+        ModifyClientAction action = new ModifyClientAction(baseClient, manager);
         action.addChange("notAField", "Old", "New");
         invoker.execute(action);
     }
 
     @Test(expected = NoSuchFieldException.class)
     public void InvalidSetterAttributeTest() throws Exception {
-        ModifyClientAction action = new ModifyClientAction(baseClient);
+        ModifyClientAction action = new ModifyClientAction(baseClient, manager);
         action.addChange("setFirstName", 1, "New");
         invoker.execute(action);
     }

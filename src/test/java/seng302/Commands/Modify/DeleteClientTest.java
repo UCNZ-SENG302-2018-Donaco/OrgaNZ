@@ -72,16 +72,25 @@ public class DeleteClientTest {
     }
 
     @Test
-    public void deleteuser_valid_accept() {
+    public void DeleteUserValidWithYesFlag() {
         Client client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
         when(spyClientManager.getClientByID(anyInt())).thenReturn(client);
-        String[] inputs = {"-u", "1"};
-
-        ByteArrayInputStream in = new ByteArrayInputStream("y".getBytes());
-        System.setIn(in);
+        String[] inputs = {"-u", "1", "-y"};
 
         CommandLine.run(spyDeleteClient, System.out, inputs);
 
         verify(spyClientManager, times(1)).removeClient(client);
+    }
+
+
+    @Test
+    public void DeleteUserValidNoYesFlag() {
+        Client client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        when(spyClientManager.getClientByID(anyInt())).thenReturn(client);
+        String[] inputs = {"-u", "1"};
+
+        CommandLine.run(spyDeleteClient, System.out, inputs);
+
+        verify(spyClientManager, times(0)).removeClient(client);
     }
 }

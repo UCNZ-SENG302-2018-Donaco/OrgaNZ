@@ -3,6 +3,7 @@ package seng302.State;
 import java.util.ArrayList;
 
 import seng302.Actions.ActionInvoker;
+import seng302.Administrator;
 import seng302.Client;
 import seng302.Clinician;
 import seng302.Controller.MainController;
@@ -14,6 +15,7 @@ public final class State {
 
     private static ClientManager clientManager;
     private static ClinicianManager clinicianManager;
+    private static AdministratorManager administratorManager;
     private static ActionInvoker actionInvoker;
     private static Session session;
     private static boolean unsavedChanges = false;
@@ -27,8 +29,22 @@ public final class State {
      */
     public static void init() {
         actionInvoker = new ActionInvoker();
-        clientManager = new ClientManagerMemory();
-        clinicianManager = new ClinicianManager();
+        clientManager = new ClientManagerDBPure();
+        clinicianManager = new ClinicianManagerDBPure();
+        administratorManager = new AdministratorManagerDBPure();
+    }
+
+    private static void init(boolean isDB) {
+        actionInvoker = new ActionInvoker();
+        if (isDB) {
+            clientManager = new ClientManagerDBPure();
+            clinicianManager = new ClinicianManagerDBPure();
+            administratorManager = new AdministratorManagerDBPure();
+        } else {
+            clientManager = new ClientManagerMemory();
+            clinicianManager = new ClinicianManagerMemory();
+            administratorManager = new AdministratorManagerMemory();
+        }
     }
 
     public static ClientManager getClientManager() {
@@ -37,6 +53,10 @@ public final class State {
 
     public static ClinicianManager getClinicianManager() {
         return clinicianManager;
+    }
+
+    public static AdministratorManager getAdministratorManager() {
+        return administratorManager;
     }
 
     public static ActionInvoker getInvoker() {
@@ -55,6 +75,10 @@ public final class State {
         session = new Session(clinician);
     }
 
+    public static void login(Administrator administrator) {
+        session = new Session(administrator);
+    }
+
     public static void setUnsavedChanges(boolean changes) {
         unsavedChanges = changes;
     }
@@ -66,6 +90,14 @@ public final class State {
     public static void logout() {
         // Do something with the old session
         session = null;
+    }
+
+
+    public static void reset(boolean isDB) {
+        init(isDB);
+        logout();
+        unsavedChanges = false;
+        mainControllers = new ArrayList<>();
     }
 
     public static void addMainController(MainController mainController) {

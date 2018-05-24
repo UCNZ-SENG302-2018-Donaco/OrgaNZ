@@ -17,7 +17,7 @@ import picocli.CommandLine.Option;
  * date 06/03/2018
  */
 
-@Command(name = "printuserinfo", description = "Print a single client with their personal information.", sortOptions =
+@Command(name = "printclientinfo", description = "Print a single client with their personal information.", sortOptions =
         false)
 public class PrintClientInfo implements Runnable {
 

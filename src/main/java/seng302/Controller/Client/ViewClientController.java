@@ -158,11 +158,6 @@ public class ViewClientController extends SubController {
                 lastModified.setText(viewedClient.getModifiedTimestamp().format(dateTimeFormat));
             }
 
-            HistoryItem save = new HistoryItem("SEARCH CLIENT",
-                    "Client " + viewedClient.getFirstName() + " " + viewedClient.getLastName() + " (" + viewedClient
-                            .getUid() + ") was searched");
-            JSONConverter.updateHistory(save, "action_history.json");
-
             displayBMI();
             displayAge();
         }
@@ -184,16 +179,10 @@ public class ViewClientController extends SubController {
     @FXML
     private void saveChanges() {
         if (checkMandatoryFields() && checkNonMandatoryFields()) {
-            updateChanges();
-            displayBMI();
-            displayAge();
-            if (viewedClient.getModifiedTimestamp() != null) {
+            if (updateChanges()) {
+                displayBMI();
+                displayAge();
                 lastModified.setText(viewedClient.getModifiedTimestamp().format(dateTimeFormat));
-                //TODO show what in particular was updated
-                HistoryItem save = new HistoryItem("UPDATE CLIENT INFO",
-                        "Updated changes to client " + viewedClient.getFirstName() + " " + viewedClient.getLastName()
-                                + "updated client info: " + viewedClient.getClientInfoString());
-                JSONConverter.updateHistory(save, "action_history.json");
             }
         }
     }
@@ -283,9 +272,33 @@ public class ViewClientController extends SubController {
 
     /**
      * Records the changes updated as a ModifyClientAction to trace the change in record.
+     * @return If there were any changes made
      */
-    private void updateChanges() {
-        ModifyClientAction action = new ModifyClientAction(viewedClient);
+    private boolean updateChanges() {
+        ModifyClientAction action = new ModifyClientAction(viewedClient, manager);
+
+        boolean clientDied = false;
+
+        if (viewedClient.getDateOfDeath() == null && dod.getValue() != null) {
+            Optional<ButtonType> buttonOpt = PageNavigator.showAlert(AlertType.CONFIRMATION,
+                    "Are you sure you want to mark this client as dead?",
+                    "This will cancel all waiting transplant requests for this client.");
+
+            if (buttonOpt.isPresent() && buttonOpt.get() == ButtonType.OK) {
+                Action markDeadAction = new MarkClientAsDeadAction(viewedClient, dod.getValue(), manager);
+                String actionText = invoker.execute(markDeadAction);
+
+                clientDied = true;
+
+                Notifications.create()
+                        .title("Marked Client as Dead")
+                        .text(actionText)
+                        .showConfirm();
+            }
+        } else {
+            addChangeIfDifferent(action, "setDateOfDeath", viewedClient.getDateOfDeath(), dod.getValue());
+        }
+
 
         addChangeIfDifferent(action, "setFirstName", viewedClient.getFirstName(), fname.getText());
         addChangeIfDifferent(action, "setLastName", viewedClient.getLastName(), lname.getText());
@@ -307,32 +320,24 @@ public class ViewClientController extends SubController {
                     .title("Updated Client")
                     .text(actionText)
                     .showInformation();
+
+            HistoryItem save = new HistoryItem("UPDATE CLIENT INFO",
+                    String.format("Updated client %s with values: %s", viewedClient.getFullName(), actionText));
+            JSONConverter.updateHistory(save, "action_history.json");
+
         } catch (IllegalStateException exc) {
-            if (Objects.equals(viewedClient.getDateOfDeath(), dod.getValue())) {
+            if (!clientDied) {
                 Notifications.create()
                         .title("No changes were made.")
                         .text("No changes were made to the client.")
                         .showWarning();
-            }
-        }
-
-        if (viewedClient.getDateOfDeath() == null && dod.getValue() != null) {
-            Optional<ButtonType> buttonOpt = PageNavigator.showAlert(AlertType.CONFIRMATION,
-                    "Are you sure you want to mark this client as dead?",
-                    "This will cancel all waiting transplant requests for this client.");
-
-            if (buttonOpt.isPresent() && buttonOpt.get() == ButtonType.OK) {
-                Action markDeadAction = new MarkClientAsDeadAction(viewedClient, dod.getValue());
-                String actionText = invoker.execute(markDeadAction);
-
-                Notifications.create()
-                        .title("Marked Client as Dead")
-                        .text(actionText)
-                        .showConfirm();
+                return false;
             }
         }
 
         PageNavigator.refreshAllWindows();
+        return true;
+
     }
 
     /**

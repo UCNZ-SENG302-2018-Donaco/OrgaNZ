@@ -147,7 +147,7 @@ public class RegisterOrganDonationController extends SubController {
      */
     @FXML
     private void modifyOrgans() {
-        ModifyClientOrgansAction action = new ModifyClientOrgansAction(client);
+        ModifyClientOrgansAction action = new ModifyClientOrgansAction(client, manager);
         boolean hasChanged = false;
 
         for (Organ organ : organCheckBoxes.keySet()) {
@@ -174,6 +174,11 @@ public class RegisterOrganDonationController extends SubController {
                     .title("Updated Donating Organs")
                     .text(actionText)
                     .showInformation();
+        } else {
+            Notifications.create()
+                    .title("No changes were made.")
+                    .text("No changes were made to the client's organ status.")
+                    .showWarning();
         }
     }
 

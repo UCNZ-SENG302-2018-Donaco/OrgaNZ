@@ -32,14 +32,14 @@ public class Clinician {
     @Enumerated(EnumType.STRING)
     private Region region;
 
-    private final LocalDateTime created_on;
-    private LocalDateTime modified_on;
+    private final LocalDateTime createdOn;
+    private LocalDateTime modifiedOn;
 
     @ElementCollection
     private List<String> updateLog = new ArrayList<>();
 
     protected Clinician() {
-        created_on = LocalDateTime.now();
+        createdOn = LocalDateTime.now();
     }
 
     /**
@@ -54,7 +54,7 @@ public class Clinician {
      */
     public Clinician(String firstName, String middleName, String lastName, String workAddress, Region region,
             int staffId, String password) {
-        created_on = LocalDateTime.now();
+        createdOn = LocalDateTime.now();
 
         this.firstName = firstName;
         this.middleName = middleName;
@@ -68,11 +68,11 @@ public class Clinician {
     private void addUpdate(String function) {
         LocalDateTime timestamp = LocalDateTime.now();
         updateLog.add(String.format("%s; updated %s", timestamp, function));
-        modified_on = LocalDateTime.now();
+        modifiedOn = LocalDateTime.now();
     }
 
-    public LocalDateTime getCreated_on() {
-        return created_on;
+    public LocalDateTime getCreatedOn() {
+        return createdOn;
     }
 
     public List<String> getUpdateLog() {
@@ -137,8 +137,8 @@ public class Clinician {
         addUpdate("password");
     }
 
-    public LocalDateTime getModified_on() {
-        return modified_on;
+    public LocalDateTime getModifiedOn() {
+        return modifiedOn;
     }
 
 
@@ -157,18 +157,18 @@ public class Clinician {
 
     /**
      * Clinician objects are identified by their staffID
-     * @param o The object to compare
+     * @param obj The object to compare
      * @return If the Clinician is a match
      */
     @Override
-    public boolean equals(Object o) {
-        if (this == o) {
+    public boolean equals(Object obj) {
+        if (this == obj) {
             return true;
         }
-        if (!(o instanceof Clinician)) {
+        if (!(obj instanceof Clinician)) {
             return false;
         }
-        Clinician clinician = (Clinician) o;
+        Clinician clinician = (Clinician) obj;
         return clinician.staffId.equals(this.staffId);
     }
 
@@ -177,6 +177,6 @@ public class Clinician {
      */
     @Override
     public int hashCode() {
-        return Objects.hash(staffId);
+        return staffId;
     }
 }

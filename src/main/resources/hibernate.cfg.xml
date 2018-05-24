@@ -9,10 +9,12 @@
     <property name="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</property>
 
     <!-- Create/update tables automatically from mappings (when needed) -->
-    <property name="hibernate.hbm2ddl.auto">create-drop</property>
+    <property name="hibernate.hbm2ddl.auto">update</property>
 
     <!-- Fixes issue with @GeneratedValue AUTO mode -->
     <property name="hibernate.id.new_generator_mappings">false</property>
+
+    <property name="hibernate.enable_lazy_load_no_trans">true</property>
 
     <!-- Database Connection Settings -->
     <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
@@ -26,6 +28,7 @@
     <property name="use_sql_comments">true</property>
     <property name="generate_statistics">false</property>
 
+
     <!-- Specifying Session Context -->
     <property name="hibernate.current_session_context_class">org.hibernate.context.internal.ThreadLocalSessionContext</property>
 
@@ -36,5 +39,6 @@
     <mapping class="seng302.IllnessRecord"/>
     <mapping class="seng302.ProcedureRecord"/>
     <mapping class="seng302.Clinician"/>
+    <mapping class="seng302.Administrator"/>
   </session-factory>
 </hibernate-configuration>

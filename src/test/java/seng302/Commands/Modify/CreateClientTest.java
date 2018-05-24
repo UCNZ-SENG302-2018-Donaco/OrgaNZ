@@ -26,7 +26,7 @@ public class CreateClientTest {
     }
 
     @Test
-    public void createuser_valid() {
+    public void createclient_valid() {
         doNothing().when(spyClientManager).addClient(any());
         String[] inputs = {"-f", "Jack", "-l", "Steel", "-d", "21/04/1997"};
 
@@ -36,7 +36,7 @@ public class CreateClientTest {
     }
 
     @Test
-    public void createuser_invalidDOB() {
+    public void createclient_invalidDOB() {
         doNothing().when(spyClientManager).addClient(any());
         String[] inputs = {"-f", "Jack", "-l", "Steel", "-d", "21/04/197"};
 
@@ -47,7 +47,7 @@ public class CreateClientTest {
 
 
     @Test
-    public void createuser_invalidFieldCountLow() {
+    public void createclient_invalidFieldCountLow() {
         String[] inputs = {"-f", "Jack", "-l", "Steel"};
 
         CommandLine.run(spyCreateClient, System.out, inputs);
@@ -56,7 +56,7 @@ public class CreateClientTest {
     }
 
     @Test
-    public void createuser_invalidFieldCountHigh() {
+    public void createclient_invalidFieldCountHigh() {
         String[] inputs = {"-f", "Jack", "-l", "Steel", "-d", "21/04/1997", "extra"};
 
         CommandLine.run(spyCreateClient, System.out, inputs);
@@ -65,7 +65,7 @@ public class CreateClientTest {
     }
 
     @Test
-    public void createuser_duplicateAccept() {
+    public void createclient_duplicateAccept() {
         when(spyClientManager.collisionExists(any(), any(), any())).thenReturn(true);
         doNothing().when(spyClientManager).addClient(any());
         String[] inputs = {"-f", "Jack", "-l", "Steel", "-d", "21/04/1997", "--force"};
@@ -76,7 +76,7 @@ public class CreateClientTest {
     }
 
     @Test
-    public void createuser_duplicateReject() {
+    public void createclient_duplicateReject() {
         when(spyClientManager.collisionExists(any(), any(), any())).thenReturn(true);
         doNothing().when(spyClientManager).addClient(any());
         String[] inputs = {"-f", "Jack", "-l", "Steel", "-d", "21/04/1997"};

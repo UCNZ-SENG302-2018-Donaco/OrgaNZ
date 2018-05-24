@@ -49,7 +49,7 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
 
     @Override
     protected void initState() {
-        State.init();
+        State.reset(false);
         State.login(testClinician);
         mainController.setWindowContext(new WindowContextBuilder()
                 .setAsClinViewClientWindow()

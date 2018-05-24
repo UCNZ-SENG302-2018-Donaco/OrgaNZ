@@ -46,12 +46,17 @@ public class AppUI extends Application {
         stage.setScene(createScene(loadMainPane(stage)));
         stage.show();
 
+        stage.setMinHeight(639);
+        stage.setMinWidth(1016);
+
         State.init();
 
         // Loads the initial client data from the save file, or creates it if it does not yet exist. //
+        /*
         File saveFile = new File("savefile.json");
         JSONConverter.createEmptyJSONFileIfNotExists(saveFile);
         JSONConverter.loadFromFile(saveFile);
+        */
     }
 
     /**

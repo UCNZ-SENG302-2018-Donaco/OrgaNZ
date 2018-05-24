@@ -7,6 +7,8 @@ import java.time.LocalDate;
 import seng302.Actions.ActionInvoker;
 import seng302.Client;
 import seng302.MedicationRecord;
+import seng302.State.ClientManager;
+import seng302.State.ClientManagerMemory;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -14,12 +16,14 @@ import org.junit.Test;
 public class ModifyMedicationRecordActionTest {
 
     private ActionInvoker invoker;
+    private ClientManager manager;
     private Client baseClient;
     private MedicationRecord record;
 
     @Before
     public void init() {
         invoker = new ActionInvoker();
+        manager = new ClientManagerMemory();
         baseClient = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
         record = new MedicationRecord("Generic Name", LocalDate.of(2018, 4, 9), null);
         baseClient.addMedicationRecord(record);
@@ -27,7 +31,7 @@ public class ModifyMedicationRecordActionTest {
 
     @Test
     public void ModifySingleMedicationCurrentTest() {
-        ModifyMedicationRecordAction action = new ModifyMedicationRecordAction(record);
+        ModifyMedicationRecordAction action = new ModifyMedicationRecordAction(record, manager);
 
         LocalDate newDate = LocalDate.of(2018, 4, 11);
 
@@ -41,7 +45,7 @@ public class ModifyMedicationRecordActionTest {
 
     @Test
     public void ModifySingleMedicationCurrentToPastTest() {
-        ModifyMedicationRecordAction action = new ModifyMedicationRecordAction(record);
+        ModifyMedicationRecordAction action = new ModifyMedicationRecordAction(record, manager);
 
         LocalDate newDate = LocalDate.of(2018, 4, 11);
 
@@ -56,7 +60,7 @@ public class ModifyMedicationRecordActionTest {
 
     @Test
     public void ModifySingleMedicationCurrentUndoTest() {
-        ModifyMedicationRecordAction action = new ModifyMedicationRecordAction(record);
+        ModifyMedicationRecordAction action = new ModifyMedicationRecordAction(record, manager);
 
         LocalDate newDate = LocalDate.of(2018, 4, 11);
 
@@ -71,7 +75,7 @@ public class ModifyMedicationRecordActionTest {
 
     @Test
     public void ModifySingleMedicationCurrentUndoRedoTest() {
-        ModifyMedicationRecordAction action = new ModifyMedicationRecordAction(record);
+        ModifyMedicationRecordAction action = new ModifyMedicationRecordAction(record, manager);
 
         LocalDate newDate = LocalDate.of(2018, 4, 11);
 

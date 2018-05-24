@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.time.LocalDate;
 
+import seng302.Administrator;
 import seng302.Client;
 import seng302.Clinician;
 import seng302.State.Session.UserType;
@@ -16,7 +17,7 @@ public class StateTest {
 
     @Before
     public void init() {
-        State.init();
+        State.reset(false);
         State.logout();
     }
 
@@ -38,5 +39,15 @@ public class StateTest {
 
         assertEquals(UserType.CLINICIAN, State.getSession().getLoggedInUserType());
         assertEquals(clinician, State.getSession().getLoggedInClinician());
+    }
+
+    @Test
+    public void LoginAdministratorValidTest() {
+        Administrator administrator = new Administrator("username", "password");
+
+        State.login(administrator);
+
+        assertEquals(UserType.ADMINISTRATOR, State.getSession().getLoggedInUserType());
+        assertEquals(administrator, State.getSession().getLoggedInAdministrator());
     }
 }

@@ -12,6 +12,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.google.gson.annotations.Expose;
+
 /**
  * Represents an instance of a user taking a medication for a period of time.
  */
@@ -25,6 +27,7 @@ public class MedicationRecord implements Comparable<MedicationRecord> {
     @Id
     @GeneratedValue
     private Long id;
+    @Expose(serialize = false)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "Client_uid")
     private Client client;
@@ -69,7 +72,7 @@ public class MedicationRecord implements Comparable<MedicationRecord> {
      * Therefore it is package-private so it may only be called from Client.
      * @param client The client to set this record as belonging to.
      */
-    void setClient(Client client) {
+    public void setClient(Client client) {
         this.client = client;
     }
 

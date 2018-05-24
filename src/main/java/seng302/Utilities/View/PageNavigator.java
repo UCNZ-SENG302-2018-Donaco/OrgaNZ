@@ -67,7 +67,6 @@ public class PageNavigator {
         try {
             Stage newStage = new Stage();
             newStage.setTitle("Organ Client Management System");
-
             FXMLLoader loader = new FXMLLoader();
             Pane mainPane = loader.load(PageNavigator.class.getResourceAsStream(Page.MAIN.getPath()));
             MainController mainController = loader.getController();
@@ -76,6 +75,9 @@ public class PageNavigator {
 
             newStage.setScene(new Scene(mainPane));
             newStage.show();
+
+            newStage.setMinHeight(639);
+            newStage.setMinWidth(1016);
 
             return mainController;
         } catch (IOException e) {

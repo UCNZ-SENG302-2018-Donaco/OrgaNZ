@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -14,6 +16,8 @@ import javax.persistence.Table;
 
 import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.Enums.TransplantRequestStatus;
+
+import com.google.gson.annotations.Expose;
 
 /**
  * Represents a request for a client to receive a transplant for a given organ.
@@ -26,12 +30,14 @@ public class TransplantRequest {
     @Id
     @GeneratedValue
     private Long id;
+    @Expose(serialize = false)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "Client_uid")
     private Client client;
     private Organ requestedOrgan;
     private LocalDateTime requestDate;
     private LocalDateTime resolvedDate;
+    @Enumerated(EnumType.STRING)
     private TransplantRequestStatus status = TransplantRequestStatus.WAITING;
     private String resolvedReason;
 
@@ -73,7 +79,7 @@ public class TransplantRequest {
      * Therefore it is package-private so it may only be called from Client.
      * @param client The client to set this record as belonging to.
      */
-    void setClient(Client client) {
+    public void setClient(Client client) {
         this.client = client;
     }
 

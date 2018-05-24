@@ -26,6 +26,7 @@ public class ClientManagerMemory implements ClientManager {
         this.clients.addAll(clients);
     }
 
+    @Override
     public void setClients(Collection<Client> clients) {
         this.clients.addAll(clients);
     }
@@ -34,6 +35,7 @@ public class ClientManagerMemory implements ClientManager {
      * Add a client
      * @param client Client to be added
      */
+    @Override
     public void addClient(Client client) {
         clients.add(client);
     }
@@ -42,6 +44,7 @@ public class ClientManagerMemory implements ClientManager {
      * Get the list of clients
      * @return ArrayList of current clients
      */
+    @Override
     public List<Client> getClients() {
         return clients;
     }
@@ -50,8 +53,14 @@ public class ClientManagerMemory implements ClientManager {
      * Remove a client object
      * @param client Client to be removed
      */
+    @Override
     public void removeClient(Client client) {
         clients.remove(client);
+    }
+
+    @Override
+    public void applyChangesTo(Client client) {
+        // Doesn't need to do anything
     }
 
     /**
@@ -61,6 +70,7 @@ public class ClientManagerMemory implements ClientManager {
      * @param dateOfBirth Date of birth (LocalDate)
      * @return Boolean
      */
+    @Override
     public boolean collisionExists(String firstName, String lastName, LocalDate dateOfBirth) {
         for (Client client : clients) {
             if (client.getFirstName().equals(firstName) &&
@@ -77,6 +87,7 @@ public class ClientManagerMemory implements ClientManager {
      * @param id To be matched
      * @return Client object or null if none exists
      */
+    @Override
     public Client getClientByID(int id) {
         return clients.stream()
                 .filter(d -> d.getUid() == id).findFirst().orElse(null);
@@ -86,6 +97,7 @@ public class ClientManagerMemory implements ClientManager {
      * Returns the next unused id number for a new client.
      * @return The next free UID.
      */
+    @Override
     public int nextUid() {
         OptionalInt max = clients.stream()
                 .mapToInt(Client::getUid)
@@ -102,6 +114,7 @@ public class ClientManagerMemory implements ClientManager {
      * Gets all transplant requests, regardless of whether or not they are current
      * @return List of all transplant requests
      */
+    @Override
     public Collection<TransplantRequest> getAllTransplantRequests() {
         return clients.stream()
                 .map(Client::getTransplantRequests)
@@ -113,6 +126,7 @@ public class ClientManagerMemory implements ClientManager {
      * Gets all current transplant requests.
      * @return List of all current transplant requests
      */
+    @Override
     public Collection<TransplantRequest> getAllCurrentTransplantRequests() {
         return clients.stream()
                 .map(Client::getTransplantRequests)
