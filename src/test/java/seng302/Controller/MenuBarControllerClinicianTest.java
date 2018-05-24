@@ -57,6 +57,14 @@ public class MenuBarControllerClinicianTest extends  ControllerTest {
         assertEquals(Page.SEARCH, mainController.getCurrentPage());
     }
 
+    //Test creating a client
+    @Test
+    public void testCreateClient() {
+        clickOn("#clientPrimaryItem");
+        clickOn("#createClientItem");
+        assertEquals(Page.CREATE_CLIENT, mainController.getCurrentPage());
+    }
+
 
     @Test
     public void testClickOnHistory() {
