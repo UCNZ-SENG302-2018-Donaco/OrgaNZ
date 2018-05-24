@@ -1,5 +1,8 @@
 package seng302;
 
+import static seng302.Utilities.Enums.RequestStatus.CANCELLED;
+import static seng302.Utilities.Enums.RequestStatus.WAITING;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
@@ -21,9 +24,6 @@ import seng302.Utilities.Enums.Gender;
 import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.Enums.Region;
 import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
-
-import static seng302.Utilities.Enums.RequestStatus.CANCELLED;
-import static seng302.Utilities.Enums.RequestStatus.WAITING;
 
 /**
  * The main Client class.
@@ -123,42 +123,50 @@ public class Client {
      * Returns a string listing the organs that the client is currently donating, or a message that the client currently
      * has no organs registered for donation if that is the case.
      * @return The client's organ status string.
+     * @throws IllegalArgumentException If the type is not either requests or donations
      */
-    public String getOrganStatusString(String type) {
+    public String getOrganStatusString(String type) throws IllegalArgumentException {
         StringBuilder builder = new StringBuilder();
-        Map<Organ, Boolean> organsList;
+        Set<Organ> organSet;
         switch (type) {
             case "requests":
-                organsList = getOrganRequestStatus();
+                organSet = getCurrentlyRequestedOrgans();
                 break;
             case "donations":
-                organsList = organDonationStatus;
+                organSet = getCurrentlyDonatedOrgans();
                 break;
             default:
-                return "Invalid input";
+                throw new IllegalArgumentException("Organ type should either be \"donations\" or \"requests\"");
         }
-        for (Map.Entry<Organ, Boolean> entry : organsList.entrySet()) {
-            if (entry.getValue()) {
-                if (builder.length() != 0) {
-                    builder.append(", ");
-                }
-                builder.append(entry.getKey().toString());
+        for (Organ organ : organSet) {
+            if (builder.length() != 0) {
+                builder.append(", ");
             }
+            builder.append(organ.toString());
         }
-        if (builder.length() == 0) {
-            return "No organs found";
-        } else {
+        if (builder.length() != 0) {
             return builder.toString();
+        } else {
+            return "None";
         }
     }
 
     /**
      * Returns a formatted string listing the client's ID number, full name, and the organs they are donating.
      * @return The formatted client info string.
+     * @throws IllegalArgumentException If the type is not either requests or donations
      */
-    public String getClientOrganStatusString(String type) {
-        return String.format("User: %s. Name: %s, Donation status: %s.", uid, getFullName(), getOrganStatusString
-                (type));
+    public String getClientOrganStatusString(String type) throws IllegalArgumentException {
+        switch (type) {
+            case "donations":
+                return String.format("User: %s. Name: %s. Donation status: %s", uid, getFullName(),
+                        getOrganStatusString(type));
+            case "requests":
+                return String.format("User: %s. Name: %s. Request status: %s", uid, getFullName(),
+                        getOrganStatusString(type));
+            default:
+                throw new IllegalArgumentException("Organ type should either be \"donations\" or \"requests\"");
+        }
     }
 
     /**

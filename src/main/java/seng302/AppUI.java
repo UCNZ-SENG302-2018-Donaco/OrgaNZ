@@ -46,6 +46,9 @@ public class AppUI extends Application {
         primaryStage.setScene(createScene(loadMainPane(primaryStage)));
         primaryStage.show();
 
+        stage.setMinHeight(639);
+        stage.setMinWidth(1016);
+
         State.init();
 
         // Loads the initial client data from the save file, or creates it if it does not yet exist. //

@@ -77,7 +77,7 @@ public class PrintClientOrganTest {
         CommandLine.run(spyPrintClientOrgan, System.out, inputs);
 
         assertThat(outContent.toString(),
-                containsString("User: 1. Name: First mid Last, Donation status: No organs found"));
+                containsString("User: 1. Name: First mid Last. Donation status: None"));
     }
 
     @Test
@@ -91,7 +91,7 @@ public class PrintClientOrganTest {
 
         CommandLine.run(spyPrintClientOrgan, System.out, inputs);
 
-        assertThat(outContent.toString(), containsString("User: 1. Name: First mid Last, Donation status: Kidney"));
+        assertThat(outContent.toString(), containsString("User: 1. Name: First mid Last. Donation status: Kidney"));
     }
 
     @Test
@@ -106,8 +106,8 @@ public class PrintClientOrganTest {
 
         CommandLine.run(spyPrintClientOrgan, System.out, inputs);
 
-        assertTrue(outContent.toString().contains("User: 1. Name: First mid Last, Donation status: Kidney, Liver")
-                || outContent.toString().contains("User: 1. Name: First mid Last, Donation status: Liver, Kidney"));
+        assertTrue(outContent.toString().contains("User: 1. Name: First mid Last. Donation status: Kidney, Liver")
+                || outContent.toString().contains("User: 1. Name: First mid Last. Donation status: Liver, Kidney"));
     }
 
     @Test
@@ -122,6 +122,6 @@ public class PrintClientOrganTest {
 
         CommandLine.run(spyPrintClientOrgan, System.out, inputs);
 
-        assertThat(outContent.toString(), containsString("User: 1. Name: First mid Last, Donation status: Kidney"));
+        assertThat(outContent.toString(), containsString("User: 1. Name: First mid Last. Request status: Kidney"));
     }
 }
