@@ -3,6 +3,7 @@ package seng302.Actions.Client;
 import seng302.Actions.Action;
 import seng302.Client;
 import seng302.ProcedureRecord;
+import seng302.State.ClientManager;
 
 /**
  * A reversible action that will add the given procedure record to the given client's medical history.
@@ -11,26 +12,29 @@ public class AddProcedureRecordAction extends Action {
 
     private Client client;
     private ProcedureRecord record;
+    private ClientManager manager;
 
     /**
      * Creates a new action to add an procedure record.
      * @param client The client whose medical history to add to.
      * @param record The procedure record to add.
      */
-    public AddProcedureRecordAction(Client client, ProcedureRecord record) {
+    public AddProcedureRecordAction(Client client, ProcedureRecord record, ClientManager manager) {
         this.client = client;
         this.record = record;
+        this.manager = manager;
     }
 
     @Override
     public void execute() {
         client.addProcedureRecord(record);
-
+        manager.applyChangesTo(client);
     }
 
     @Override
     public void unExecute() {
         client.deleteProcedureRecord(record);
+        manager.applyChangesTo(client);
     }
 
     @Override

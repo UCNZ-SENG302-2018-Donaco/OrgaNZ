@@ -39,7 +39,7 @@ public class TransplantsControllerOneItemTest extends ControllerTest {
 
     @Override
     protected void initState() {
-        State.init();
+        State.reset(false);
         State.login(testClinician);
 
         State.getClientManager().addClient(client);

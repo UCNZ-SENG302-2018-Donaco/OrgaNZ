@@ -2,18 +2,41 @@ package seng302;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Objects;
+import javax.persistence.Access;
+import javax.persistence.AccessType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+import com.google.gson.annotations.Expose;
 
 /**
  * Represents an instance of a user taking a medication for a period of time.
  */
+@Entity
+@Table
+@Access(AccessType.FIELD)
 public class MedicationRecord implements Comparable<MedicationRecord> {
 
     private static DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
+    @Id
+    @GeneratedValue
+    private Long id;
+    @Expose(serialize = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "Client_uid")
+    private Client client;
     private String medicationName;
     private LocalDate started;
     private LocalDate stopped;
+
+    protected MedicationRecord() {
+    }
 
     /**
      * Creates a new MedicationRecord for a given medication name, with the given started date and stopped date.
@@ -28,6 +51,10 @@ public class MedicationRecord implements Comparable<MedicationRecord> {
         this.stopped = stopped;
     }
 
+    public Client getClient() {
+        return client;
+    }
+
     public String getMedicationName() {
         return medicationName;
     }
@@ -38,6 +65,15 @@ public class MedicationRecord implements Comparable<MedicationRecord> {
 
     public LocalDate getStopped() {
         return stopped;
+    }
+
+    /**
+     * This method should be called only when this record is added to/removed from a client's collection.
+     * Therefore it is package-private so it may only be called from Client.
+     * @param client The client to set this record as belonging to.
+     */
+    public void setClient(Client client) {
+        this.client = client;
     }
 
     public void setStarted(LocalDate started) {

@@ -6,6 +6,7 @@ import static org.junit.Assert.assertEquals;
 import seng302.Actions.ActionInvoker;
 import seng302.Administrator;
 import seng302.State.AdministratorManager;
+import seng302.State.AdministratorManagerMemory;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -19,7 +20,7 @@ public class CreateAdministratorActionTest {
     @Before
     public void init() {
         invoker = new ActionInvoker();
-        manager = new AdministratorManager();
+        manager = new AdministratorManagerMemory();
         baseAdministrator = new Administrator("First", "pass");
     }
 

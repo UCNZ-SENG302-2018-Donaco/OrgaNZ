@@ -91,7 +91,7 @@ public class SetAttribute implements Runnable {
             return;
         }
 
-        ModifyClientAction action = new ModifyClientAction(client);
+        ModifyClientAction action = new ModifyClientAction(client, manager);
 
         Map<String, Object[]> states = new HashMap<>();
         states.put("setFirstName", new String[]{client.getFirstName(), firstName});

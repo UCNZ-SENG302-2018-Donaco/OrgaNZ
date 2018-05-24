@@ -90,7 +90,7 @@ public class SetOrganStatus implements Runnable {
             return;
         }
 
-        ModifyClientOrgansAction action = new ModifyClientOrgansAction(client);
+        ModifyClientOrgansAction action = new ModifyClientOrgansAction(client, manager);
 
         Map<Organ, Boolean> states = new HashMap<>();
         states.put(LIVER, liver);

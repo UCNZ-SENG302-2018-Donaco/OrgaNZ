@@ -44,7 +44,7 @@ public class SearchClientsControllerAdministratorTest extends ControllerTest {
 
     @Override
     protected void initState() {
-        State.init();
+        State.reset(false);
         State.login(testAdmin);
 
         for (Client client : clients) {

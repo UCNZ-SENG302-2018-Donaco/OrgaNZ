@@ -43,7 +43,7 @@ public class JSONConverterTest {
         Client client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
         ArrayList<Client> clients = new ArrayList<>();
         clients.add(client);
-        State.init();
+        State.reset(false);
         ClientManager manager = State.getClientManager();
         manager.setClients(clients);
 
@@ -70,11 +70,11 @@ public class JSONConverterTest {
 //        Client client = new Client("First", null, "Last", LocalDate.of(1970,1, 1), 1);
 //        ArrayList<Client> clients = new ArrayList<>();
 //        clients.add(client);
-//        //manager = new ClientManager(clients);
+//        //manager = new ClientManagerMemory(clients);
 //
 //        manager.saveToFile(file);
 //
-//        manager = new ClientManager();
+//        manager = new ClientManagerMemory();
 //
 //        manager.loadFromFile(file);
 //

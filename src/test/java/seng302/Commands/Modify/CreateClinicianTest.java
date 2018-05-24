@@ -4,6 +4,7 @@ import static org.mockito.Mockito.*;
 
 import seng302.Actions.ActionInvoker;
 import seng302.State.ClinicianManager;
+import seng302.State.ClinicianManagerMemory;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -17,7 +18,7 @@ public class CreateClinicianTest {
 
     @Before
     public void init() {
-        spyClientManager = spy(new ClinicianManager());
+        spyClientManager = spy(new ClinicianManagerMemory());
         spyCreateClient = spy(new CreateClinician(spyClientManager, new ActionInvoker()));
     }
 

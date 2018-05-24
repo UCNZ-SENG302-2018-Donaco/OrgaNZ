@@ -2,9 +2,9 @@ package seng302.Actions.Client;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static seng302.Utilities.Enums.RequestStatus.CANCELLED;
-import static seng302.Utilities.Enums.RequestStatus.COMPLETED;
-import static seng302.Utilities.Enums.RequestStatus.WAITING;
+import static seng302.Utilities.Enums.TransplantRequestStatus.CANCELLED;
+import static seng302.Utilities.Enums.TransplantRequestStatus.COMPLETED;
+import static seng302.Utilities.Enums.TransplantRequestStatus.WAITING;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -13,6 +13,8 @@ import org.junit.Ignore;
 import seng302.Actions.Action;
 import seng302.Actions.ActionInvoker;
 import seng302.Client;
+import seng302.State.ClientManager;
+import seng302.State.ClientManagerMemory;
 import seng302.TransplantRequest;
 import seng302.Utilities.Enums.Organ;
 
@@ -22,37 +24,39 @@ import org.junit.Test;
 public class ResolveTransplantRequestActionTest {
 
     private ActionInvoker invoker;
+    private ClientManager manager;
     private TransplantRequest testRequest;
 
     @Before
     public void beforeEach() {
         invoker = new ActionInvoker();
+        manager = new ClientManagerMemory();
         testRequest = new TransplantRequest(new Client(1), Organ.BONE_MARROW);
     }
 
     @Test
     public void cancelTest() {
-        Action action = new ResolveTransplantRequestAction(testRequest, CANCELLED, "Cancelled.");
+        Action action = new ResolveTransplantRequestAction(testRequest, CANCELLED, "Cancelled.", manager);
         invoker.execute(action);
         assertEquals(CANCELLED, testRequest.getStatus());
     }
 
     @Test
     public void completeTest() {
-        Action action = new ResolveTransplantRequestAction(testRequest, COMPLETED, "Completed.");
+        Action action = new ResolveTransplantRequestAction(testRequest, COMPLETED, "Completed.", manager);
         invoker.execute(action);
         assertEquals(COMPLETED, testRequest.getStatus());
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void statusNotValidResolutionTest() {
-        new ResolveTransplantRequestAction(testRequest, WAITING, "Waiting.");
+        new ResolveTransplantRequestAction(testRequest, WAITING, "Waiting.", manager);
     }
 
     @Ignore
     @Test
     public void correctResolvedDateTest() {
-        Action action = new ResolveTransplantRequestAction(testRequest, CANCELLED, "Cancelled.");
+        Action action = new ResolveTransplantRequestAction(testRequest, CANCELLED, "Cancelled.", manager);
         invoker.execute(action);
 
         Duration timeDiff = Duration.between(LocalDateTime.now(), testRequest.getResolvedDate());

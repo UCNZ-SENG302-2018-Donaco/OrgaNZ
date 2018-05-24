@@ -1,7 +1,7 @@
 package seng302.Actions.Client;
 
-import static seng302.Utilities.Enums.RequestStatus.CANCELLED;
-import static seng302.Utilities.Enums.RequestStatus.WAITING;
+import static seng302.Utilities.Enums.TransplantRequestStatus.WAITING;
+import static seng302.Utilities.Enums.TransplantRequestStatus.CANCELLED;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import seng302.Actions.Action;
 import seng302.Client;
+import seng302.State.ClientManager;
 
 /**
  * A reversible action that will change the client's date of death to the date given, and cancel all their currently
@@ -16,6 +17,7 @@ import seng302.Client;
  */
 public class MarkClientAsDeadAction extends Action {
 
+    private ClientManager manager;
     private Client client;
     private LocalDate deathDate;
     private List<ResolveTransplantRequestAction> resolveTransplantActions;
@@ -24,14 +26,16 @@ public class MarkClientAsDeadAction extends Action {
      * Creates a new action to mark the given client as dead, with the given date of death.
      * @param client The client to mark as dead.
      * @param deathDate Their date of death.
+     * @param manager // TODO
      */
-    public MarkClientAsDeadAction(Client client, LocalDate deathDate) {
+    public MarkClientAsDeadAction(Client client, LocalDate deathDate, ClientManager manager) {
         this.client = client;
         this.deathDate = deathDate;
+        this.manager = manager;
         this.resolveTransplantActions = client.getTransplantRequests()
                 .stream()
                 .filter(request -> request.getStatus() == WAITING)
-                .map(request -> new ResolveTransplantRequestAction(request, CANCELLED, "The client died."))
+                .map(request -> new ResolveTransplantRequestAction(request, CANCELLED, "The client died.", manager))
                 .collect(Collectors.toList());
     }
 
@@ -45,6 +49,7 @@ public class MarkClientAsDeadAction extends Action {
         for (ResolveTransplantRequestAction action : resolveTransplantActions) {
             action.execute();
         }
+        manager.applyChangesTo(client);
     }
 
     @Override
@@ -53,6 +58,7 @@ public class MarkClientAsDeadAction extends Action {
         for (ResolveTransplantRequestAction action : resolveTransplantActions) {
             action.unExecute();
         }
+        manager.applyChangesTo(client);
     }
 
     @Override
