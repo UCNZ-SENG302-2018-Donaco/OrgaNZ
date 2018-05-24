@@ -46,8 +46,8 @@ public class AppUI extends Application {
         primaryStage.setScene(createScene(loadMainPane(primaryStage)));
         primaryStage.show();
 
-        stage.setMinHeight(639);
-        stage.setMinWidth(1016);
+        primaryStage.setMinHeight(639);
+        primaryStage.setMinWidth(1016);
 
         State.init();
 
