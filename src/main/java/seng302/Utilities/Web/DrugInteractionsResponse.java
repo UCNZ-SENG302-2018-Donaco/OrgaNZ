@@ -1,6 +1,7 @@
 package seng302.Utilities.Web;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -36,24 +37,29 @@ public class DrugInteractionsResponse {
     public static final DrugInteractionsResponse EMPTY = new DrugInteractionsResponse();
 
     @Key("co_existing_conditions")
-    private Map<String, Integer> coexistingConditions = new HashMap<>();
+    private Map<String, Integer> coexistingConditions;
 
     @Key("reports")
-    private Map<String, Integer> reports = new HashMap<>();
+    private Map<String, Integer> reports;
 
     @Key("age_interaction")
-    private Map<String, List<String>> ageInteraction = new HashMap<>();
+    private Map<String, List<String>> ageInteraction;
 
     @Key("duration_interaction")
-    private Map<String, List<String>> durationInteraction = new HashMap<>();
+    private Map<String, List<String>> durationInteraction;
 
     @Key("gender_interaction")
-    private Map<String, List<String>> genderInteraction = new HashMap<>();
+    private Map<String, List<String>> genderInteraction;
 
     /**
      * Calculates a list of possible drug interactions given a client.
      */
     public List<String> calculateClientInteractions(Client client) {
+        // This happens when the drug interactions is not valid.
+        if (coexistingConditions == null) {
+            return Collections.emptyList();
+        }
+
         int clientAge = client.getAge();
         Set<String> ageInteractions = calculateAgeInteractions(clientAge);
 
