@@ -10,6 +10,7 @@ import java.time.LocalDate;
 import seng302.Actions.ActionInvoker;
 import seng302.Client;
 import seng302.State.ClientManager;
+import seng302.State.ClientManagerMemory;
 import seng302.State.State;
 
 import org.junit.Before;
@@ -23,7 +24,7 @@ public class RequestOrganTest {
 
     @Before
     public void init() {
-        spyClientManager = spy(new ClientManager());
+        spyClientManager = spy(new ClientManagerMemory());
         spyRequestOrgan = spy(new RequestOrgan(spyClientManager, new ActionInvoker()));
         testClient = new Client("Jan", "Michael", "Vincent", LocalDate.now(), 1);
         spyClientManager.addClient(testClient);

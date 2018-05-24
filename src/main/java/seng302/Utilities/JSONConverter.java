@@ -21,6 +21,9 @@ import java.util.logging.Logger;
 
 import seng302.Client;
 import seng302.HistoryItem;
+import seng302.IllnessRecord;
+import seng302.MedicationRecord;
+import seng302.ProcedureRecord;
 import seng302.State.ClientManager;
 import seng302.State.State;
 import seng302.TransplantRequest;
@@ -99,6 +102,24 @@ public final class JSONConverter {
                     for (Client client : clients) {
                         for (TransplantRequest request : client.getTransplantRequests()) {
                             request.setClient(client);
+                        }
+                        for (IllnessRecord record : client.getCurrentIllnesses()) {
+                            record.setClient(client);
+                        }
+                        for (IllnessRecord record : client.getPastIllnesses()) {
+                            record.setClient(client);
+                        }
+                        for (ProcedureRecord record : client.getPastProcedures()) {
+                            record.setClient(client);
+                        }
+                        for (ProcedureRecord record : client.getPendingProcedures()) {
+                            record.setClient(client);
+                        }
+                        for (MedicationRecord record : client.getCurrentMedications()) {
+                            record.setClient(client);
+                        }
+                        for (MedicationRecord record : client.getPastMedications()) {
+                            record.setClient(client);
                         }
                     }
                     ClientManager clientManager = State.getClientManager();

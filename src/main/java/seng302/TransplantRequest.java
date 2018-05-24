@@ -2,20 +2,47 @@ package seng302;
 
 import java.time.LocalDateTime;
 
+import javax.persistence.Access;
+import javax.persistence.AccessType;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
 import seng302.Utilities.Enums.Organ;
-import seng302.Utilities.Enums.RequestStatus;
+import seng302.Utilities.Enums.TransplantRequestStatus;
+
+import com.google.gson.annotations.Expose;
 
 /**
  * Represents a request for a client to receive a transplant for a given organ.
  */
+@Entity
+@Table
+@Access(AccessType.FIELD)
 public class TransplantRequest {
 
-    private transient Client client;
+    @Id
+    @GeneratedValue
+    private Long id;
+    @Expose(serialize = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "Client_uid")
+    private Client client;
     private Organ requestedOrgan;
     private LocalDateTime requestDate;
     private LocalDateTime resolvedDate;
-    private RequestStatus status = RequestStatus.WAITING;
+    @Enumerated(EnumType.STRING)
+    private TransplantRequestStatus status = TransplantRequestStatus.WAITING;
     private String resolvedReason;
+
+    protected TransplantRequest() {
+    }
 
     public TransplantRequest(Client client, Organ requestedOrgan) {
         this.client = client;
@@ -39,7 +66,7 @@ public class TransplantRequest {
         return resolvedDate;
     }
 
-    public RequestStatus getStatus() {
+    public TransplantRequestStatus getStatus() {
         return status;
     }
 
@@ -47,6 +74,11 @@ public class TransplantRequest {
         return resolvedReason;
     }
 
+    /**
+     * This method should be called only when this record is added to/removed from a client's collection.
+     * Therefore it is package-private so it may only be called from Client.
+     * @param client The client to set this record as belonging to.
+     */
     public void setClient(Client client) {
         this.client = client;
     }
@@ -55,7 +87,7 @@ public class TransplantRequest {
         this.resolvedDate = resolvedDate;
     }
 
-    public void setStatus(RequestStatus status) {
+    public void setStatus(TransplantRequestStatus status) {
         this.status = status;
     }
 

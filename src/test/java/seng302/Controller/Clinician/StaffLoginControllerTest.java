@@ -26,7 +26,7 @@ public class StaffLoginControllerTest extends ControllerTest {
 
     @Override
     protected void initState() {
-        State.init();
+        State.reset(false);
         testAdministrator = new Administrator(adminUsername, adminPassword);
         State.getAdministratorManager().addAdministrator(testAdministrator);
         State.getClinicianManager().addClinician(testClinician);

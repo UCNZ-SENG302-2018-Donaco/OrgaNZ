@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import seng302.Actions.ActionInvoker;
 import seng302.Client;
 import seng302.State.ClientManager;
+import seng302.State.ClientManagerMemory;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -21,7 +22,7 @@ public class DeleteClientTest {
 
     @Before
     public void init() {
-        spyClientManager = spy(new ClientManager());
+        spyClientManager = spy(new ClientManagerMemory());
         spyDeleteClient = spy(new DeleteClient(spyClientManager, new ActionInvoker()));
 
     }

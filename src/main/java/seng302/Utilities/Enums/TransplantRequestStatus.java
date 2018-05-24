@@ -3,13 +3,13 @@ package seng302.Utilities.Enums;
 /**
  * Enum for Request statuses. Allows for to/from string conversion
  */
-public enum RequestStatus {
+public enum TransplantRequestStatus {
     WAITING,
     CANCELLED,
     COMPLETED;
 
-    public static RequestStatus fromString(String text) {
-        for (RequestStatus rs : RequestStatus.values()) {
+    public static TransplantRequestStatus fromString(String text) {
+        for (TransplantRequestStatus rs : TransplantRequestStatus.values()) {
             if (rs.toString().equalsIgnoreCase(text)) {
                 return rs;
             }

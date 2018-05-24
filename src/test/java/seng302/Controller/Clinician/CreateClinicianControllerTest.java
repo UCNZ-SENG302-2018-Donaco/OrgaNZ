@@ -20,7 +20,7 @@ public class CreateClinicianControllerTest extends ControllerTest {
 
     @Override
     protected void initState() {
-        State.init();
+        State.reset(false);
         State.login(testAdmin);
         mainController.setWindowContext(WindowContext.defaultContext());
     }

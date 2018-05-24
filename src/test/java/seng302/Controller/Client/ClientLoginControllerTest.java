@@ -24,7 +24,7 @@ public class ClientLoginControllerTest extends ControllerTest {
 
     @Override
     protected void initState() {
-        State.init();
+        State.reset(false);
         State.getClientManager().addClient(testClient);
         mainController.setWindowContext(WindowContext.defaultContext());
     }

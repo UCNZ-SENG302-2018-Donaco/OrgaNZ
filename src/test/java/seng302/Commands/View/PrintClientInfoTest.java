@@ -10,6 +10,7 @@ import java.time.LocalDate;
 
 import seng302.Client;
 import seng302.State.ClientManager;
+import seng302.State.ClientManagerMemory;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -24,7 +25,7 @@ public class PrintClientInfoTest {
 
     @Before
     public void init() {
-        spyClientManager = spy(new ClientManager());
+        spyClientManager = spy(new ClientManagerMemory());
 
         spyPrintClientInfo = spy(new PrintClientInfo(spyClientManager));
         System.setOut(new PrintStream(outContent));

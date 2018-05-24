@@ -28,7 +28,7 @@ public class SidebarControllerClientTest extends ControllerTest {
 
     @Override
     protected void initState() {
-        State.init();
+        State.reset(false);
         State.login(client);
         State.getClientManager().addClient(client);
         mainController.setWindowContext(new WindowContextBuilder().build());

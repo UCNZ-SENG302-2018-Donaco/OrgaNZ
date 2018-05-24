@@ -6,6 +6,7 @@ import static org.junit.Assert.assertEquals;
 import seng302.Actions.ActionInvoker;
 import seng302.Clinician;
 import seng302.State.ClinicianManager;
+import seng302.State.ClinicianManagerMemory;
 import seng302.Utilities.Enums.Region;
 
 import org.junit.Before;
@@ -20,14 +21,14 @@ public class ModifyClinicianActionTest {
     @Before
     public void init() {
         invoker = new ActionInvoker();
-        manager = new ClinicianManager();
+        manager = new ClinicianManagerMemory();
         baseClinician = new Clinician("First", null, "Last", "Address", Region.UNSPECIFIED, 1, "pass");
         manager.addClinician(baseClinician);
     }
 
     @Test
     public void CheckClinicianModifyNameTest() throws Exception {
-        ModifyClinicianAction action = new ModifyClinicianAction(baseClinician);
+        ModifyClinicianAction action = new ModifyClinicianAction(baseClinician,manager);
         action.addChange("setFirstName", baseClinician.getFirstName(), "New");
         invoker.execute(action);
         assertEquals("New", manager.getClinicians().get(1).getFirstName());
@@ -35,7 +36,7 @@ public class ModifyClinicianActionTest {
 
     @Test
     public void CheckClinicianModifyUndoNameTest() throws Exception {
-        ModifyClinicianAction action = new ModifyClinicianAction(baseClinician);
+        ModifyClinicianAction action = new ModifyClinicianAction(baseClinician,manager);
         action.addChange("setFirstName", baseClinician.getFirstName(), "New");
         invoker.execute(action);
         invoker.undo();
@@ -44,7 +45,7 @@ public class ModifyClinicianActionTest {
 
     @Test
     public void CheckClinicianMultipleUpdateValuesTest() throws Exception {
-        ModifyClinicianAction action = new ModifyClinicianAction(baseClinician);
+        ModifyClinicianAction action = new ModifyClinicianAction(baseClinician,manager);
         action.addChange("setFirstName", baseClinician.getFirstName(), "New");
         action.addChange("setRegion", baseClinician.getRegion(), Region.CANTERBURY);
         invoker.execute(action);
@@ -54,7 +55,7 @@ public class ModifyClinicianActionTest {
 
     @Test
     public void CheckClinicianMultipleUpdateValuesUndoTest() throws Exception {
-        ModifyClinicianAction action = new ModifyClinicianAction(baseClinician);
+        ModifyClinicianAction action = new ModifyClinicianAction(baseClinician,manager);
         action.addChange("setFirstName", baseClinician.getFirstName(), "New");
         action.addChange("setRegion", baseClinician.getRegion(), Region.CANTERBURY);
         invoker.execute(action);
@@ -65,14 +66,14 @@ public class ModifyClinicianActionTest {
 
     @Test(expected = NoSuchMethodException.class)
     public void InvalidSetterFieldTest() throws Exception {
-        ModifyClinicianAction action = new ModifyClinicianAction(baseClinician);
+        ModifyClinicianAction action = new ModifyClinicianAction(baseClinician,manager);
         action.addChange("notAField", "Old", "New");
         invoker.execute(action);
     }
 
     @Test(expected = NoSuchFieldException.class)
     public void InvalidSetterAttributeTest() throws Exception {
-        ModifyClinicianAction action = new ModifyClinicianAction(baseClinician);
+        ModifyClinicianAction action = new ModifyClinicianAction(baseClinician,manager);
         action.addChange("setFirstName", 1, "New");
         invoker.execute(action);
     }

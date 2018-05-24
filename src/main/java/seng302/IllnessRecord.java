@@ -2,18 +2,42 @@ package seng302;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import javax.persistence.Access;
+import javax.persistence.AccessType;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+import com.google.gson.annotations.Expose;
 
 /**
  * Represents an instance of a user having an illness for a period of time.
  */
+@Entity
+@Table
+@Access(AccessType.FIELD)
 public class IllnessRecord {
 
     private static DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
+    @Id
+    @GeneratedValue
+    private Long id;
+    @Expose(serialize = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "Client_uid")
+    private Client client;
     private String illnessName;
     private LocalDate diagnosisDate;
     private LocalDate curedDate;
     private boolean isChronic;
+
+    protected IllnessRecord() {
+    }
 
     /**
      * Creates a new IllnessRecord for a given illness.
@@ -27,6 +51,10 @@ public class IllnessRecord {
         this.diagnosisDate = diagnosisDate;
         this.curedDate = curedDate;
         this.isChronic = isChronic;
+    }
+
+    public Client getClient() {
+        return client;
     }
 
     public String getIllnessName() {
@@ -43,6 +71,15 @@ public class IllnessRecord {
 
     public boolean isChronic() {
         return isChronic;
+    }
+
+    /**
+     * This method should be called only when this record is added to/removed from a client's collection.
+     * Therefore it is package-private so it may only be called from Client.
+     * @param client The client to set this record as belonging to.
+     */
+    public void setClient(Client client) {
+        this.client = client;
     }
 
     public void setDiagnosisDate(LocalDate diagnosisDate) {

@@ -28,7 +28,7 @@ public class SidebarControllerClinicianTest extends ControllerTest {
 
     @Override
     protected void initState() {
-        State.init();
+        State.reset(false);
         State.login(testClinician);
         State.getClinicianManager().addClinician(testClinician);
         mainController.setWindowContext(new WindowContextBuilder().build());

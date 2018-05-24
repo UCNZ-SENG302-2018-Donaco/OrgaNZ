@@ -39,7 +39,7 @@ public class ViewIllnessHistoryClientTest extends ControllerTest {
                     null,
                     false)
     };
-    private Client testClient = new Client();
+    private Client testClient = new Client(1);
 
     @Override
     protected Page getPage() {
@@ -48,7 +48,7 @@ public class ViewIllnessHistoryClientTest extends ControllerTest {
 
     @Override
     protected void initState() {
-        State.init();
+        State.reset(false);
         State.login(testClient);
         mainController.setWindowContext(WindowContext.defaultContext());
         resetTestClientIllnessHistory();

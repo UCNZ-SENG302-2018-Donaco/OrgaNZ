@@ -3,19 +3,17 @@ package seng302.Commands.Modify;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
 
 import seng302.Actions.ActionInvoker;
 import seng302.Client;
 import seng302.State.ClientManager;
+import seng302.State.ClientManagerMemory;
 import seng302.TransplantRequest;
 import seng302.Utilities.Enums.Organ;
-import seng302.Utilities.Enums.RequestStatus;
+import seng302.Utilities.Enums.TransplantRequestStatus;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -28,7 +26,7 @@ public class ResolveOrganTest {
 
     @Before
     public void init() {
-        spyClientManager = spy(new ClientManager());
+        spyClientManager = spy(new ClientManagerMemory());
         spyResolveOrgan = spy(new ResolveOrgan(spyClientManager, new ActionInvoker()));
         testClient = new Client("Jan", "Michael", "Vincent", LocalDate.now(), 1);
         spyClientManager.addClient(testClient);
@@ -41,7 +39,7 @@ public class ResolveOrganTest {
         testClient.addTransplantRequest(tr);
         String[] inputs = {"-u", "1", "-o", "liver", "-r", "input error"};
         CommandLine.run(spyResolveOrgan, System.out, inputs);
-        assertTrue(tr.getStatus() == RequestStatus.CANCELLED);
+        assertTrue(tr.getStatus() == TransplantRequestStatus.CANCELLED);
     }
 
     @Test
@@ -50,7 +48,7 @@ public class ResolveOrganTest {
         testClient.addTransplantRequest(tr);
         String[] inputs = {"-u", "1", "-o", "heart", "-reason", "Transplant completed"};
         CommandLine.run(spyResolveOrgan, System.out, inputs);
-        assertTrue(tr.getStatus() == RequestStatus.COMPLETED);
+        assertTrue(tr.getStatus() == TransplantRequestStatus.COMPLETED);
     }
 
     @Test
@@ -60,7 +58,7 @@ public class ResolveOrganTest {
         String[] inputs = {"-u", "1", "-o", "pancreas", "-reason", "Custom reason...", "-m", "A message for a custom "
                 + "reason"};
         CommandLine.run(spyResolveOrgan, System.out, inputs);
-        assertTrue(tr.getStatus() == RequestStatus.CANCELLED);
+        assertTrue(tr.getStatus() == TransplantRequestStatus.CANCELLED);
     }
 
     @Test
@@ -69,7 +67,7 @@ public class ResolveOrganTest {
         testClient.addTransplantRequest(tr);
         String[] inputs = {"-u", "1", "-o", "liver", "-reason", "input error"};
         CommandLine.run(spyResolveOrgan, System.out, inputs);
-        assertTrue(tr.getStatus() == RequestStatus.WAITING);
+        assertTrue(tr.getStatus() == TransplantRequestStatus.WAITING);
     }
 
     @Test
@@ -78,7 +76,7 @@ public class ResolveOrganTest {
         testClient.addTransplantRequest(tr);
         String[] inputs = {"-u", "1", "-o", "liver", "-r", "ops this input is invalid"};
         CommandLine.run(spyResolveOrgan, System.out, inputs);
-        assertTrue(tr.getStatus() == RequestStatus.WAITING);
+        assertTrue(tr.getStatus() == TransplantRequestStatus.WAITING);
     }
 
     @Test
@@ -87,7 +85,7 @@ public class ResolveOrganTest {
         testClient.addTransplantRequest(tr);
         String[] inputs = {"-u", "1", "-o", "liver", "-r", "input error"};
         CommandLine.run(spyResolveOrgan, System.out, inputs);
-        assertTrue(tr.getStatus() == RequestStatus.WAITING);
+        assertTrue(tr.getStatus() == TransplantRequestStatus.WAITING);
     }
 
     @Test
@@ -96,7 +94,7 @@ public class ResolveOrganTest {
         testClient.addTransplantRequest(tr);
         String[] inputs = {"-u", "1", "-o", "liver", "-r", "input error", "-m"};
         CommandLine.run(spyResolveOrgan, System.out, inputs);
-        assertTrue(tr.getStatus() == RequestStatus.WAITING);
+        assertTrue(tr.getStatus() == TransplantRequestStatus.WAITING);
     }
 
 }

@@ -10,6 +10,7 @@ import java.io.ByteArrayInputStream;
 import seng302.Actions.ActionInvoker;
 import seng302.Clinician;
 import seng302.State.ClinicianManager;
+import seng302.State.ClinicianManagerMemory;
 import seng302.Utilities.Enums.Region;
 
 import org.junit.Before;
@@ -25,7 +26,7 @@ public class DeleteClinicianTest {
 
     @Before
     public void init() {
-        spyClinicianManager = spy(new ClinicianManager());
+        spyClinicianManager = spy(new ClinicianManagerMemory());
         spyDeleteClinician = spy(new DeleteClinician(spyClinicianManager, new ActionInvoker()));
 
         Clinician clinician = new Clinician("first", "middle", "last",

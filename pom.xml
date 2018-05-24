@@ -133,6 +133,17 @@
       <artifactId>jna-platform</artifactId>
       <version>4.5.1</version>
     </dependency>
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-entitymanager</artifactId>
+      <version>5.2.17.Final</version>
+    </dependency>
+    <dependency>
+      <groupId>mysql</groupId>
+      <artifactId>mysql-connector-java</artifactId>
+      <version>5.1.6</version>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -219,6 +230,7 @@
           <destFile>${basedir}/target/coverage-reports/jacoco-unit.exec</destFile>
           <dataFile>${basedir}/target/coverage-reports/jacoco-unit.exec</dataFile>
         </configuration>
+
         <executions>
           <execution>
             <id>jacoco-initialize</id>
