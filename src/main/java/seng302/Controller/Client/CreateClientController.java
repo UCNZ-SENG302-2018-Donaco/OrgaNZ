@@ -7,6 +7,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 
+import javafx.scene.layout.Pane;
 import seng302.Actions.Action;
 import seng302.Actions.ActionInvoker;
 import seng302.Actions.Client.CreateClientAction;
@@ -14,6 +15,7 @@ import seng302.Client;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
 import seng302.HistoryItem;
+import seng302.State.AdministratorManager;
 import seng302.State.ClientManager;
 import seng302.State.Session.UserType;
 import seng302.State.State;
@@ -35,10 +37,13 @@ public class CreateClientController extends SubController {
     @FXML
     private TextField firstNameFld, middleNamefld, lastNamefld;
     @FXML
-    private Button createButton;
+    private Button createButton, goBackButton;
+    @FXML
+    private Pane menuBarPane;
 
     private final ClientManager manager;
     private final ActionInvoker invoker;
+
 
     /**
      * Initializes the UI for this page.
@@ -57,6 +62,11 @@ public class CreateClientController extends SubController {
     public void setup(MainController mainController) {
         super.setup(mainController);
         mainController.setTitle("Create a new Client");
+
+        if (State.getSession().getLoggedInUserType() == UserType.ADMINISTRATOR) {
+            mainController.loadMenuBar(menuBarPane);
+            goBackButton.setVisible(false);
+        }
 
         new UIValidation()
                 .add(firstNameFld, new StringValidator())
@@ -94,7 +104,7 @@ public class CreateClientController extends SubController {
                 String.format("Client %s was created with ID %d", client.getFullName(), uid));
         JSONConverter.updateHistory(save, "action_history.json");
 
-        if (State.getSession() == null) { // Someone creating a user
+        if (State.getSession() == null) { // Someone creating a client
             State.login(client);
             PageNavigator.loadPage(Page.VIEW_CLIENT, mainController);
 
@@ -121,8 +131,6 @@ public class CreateClientController extends SubController {
 
         } else if (State.getSession().getLoggedInUserType() == UserType.CLINICIAN) {
             PageNavigator.loadPage(Page.VIEW_CLINICIAN, mainController);
-        } else {
-            // View admin profile.
         }
     }
 }
