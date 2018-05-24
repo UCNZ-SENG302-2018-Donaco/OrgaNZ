@@ -16,6 +16,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.scene.control.Alert;
@@ -66,6 +67,8 @@ public class MenuBarController extends SubController {
     public MenuItem closeItem;
     public MenuItem createClientItem;
 
+    public SeparatorMenuItem topSeparator;
+
     public MenuBar menuBar;
 
     public Menu clientPrimaryItem;
@@ -98,23 +101,27 @@ public class MenuBarController extends SubController {
         Menu viewAdminMenu[] = {staffPrimaryItem, transplantsPrimaryItem, filePrimaryItem,
                 profilePrimaryItem};
 
+        Menu clinicianWindowMenu[] = {staffPrimaryItem, medicationsPrimaryItem, };
+        MenuItem clinicianWindowMenuItems[] = {createClientItem, organPrimaryItem, viewClientItem, medicationsPrimaryItem};
+
+        Menu clinViewClientMenu[] = {staffPrimaryItem, profilePrimaryItem, transplantsPrimaryItem};
+        MenuItem clinViewClientMenuItem[] = {searchClientItem, createClientItem};
+
         if (userType == UserType.CLINICIAN) {
 
             if (windowContext.isClinViewClientWindow()) {
-                hideMenus(viewAdminMenu);
-                hideMenuItem(searchClientItem);
-                hideMenus(viewClinicianMenu);
-                hideMenuItem(createClientItem);
+                removeAdminMenuItems();
+                hideMenus(clinViewClientMenu);
+                hideMenuItems(clinViewClientMenuItem);
+
             } else if (!windowContext.isClinViewClientWindow()) {
-                hideMenuItem(createAdministratorItem);
-                hideMenuItem(staffPrimaryItem);
-                hideMenuItem(filePrimaryItem);
-                hideMenuItem(cliItem);
-                hideMenuItem(organPrimaryItem);
-                hideMenuItem(medicationsPrimaryItem);
-                hideMenuItem(viewClientItem);
-                hideMenuItem(viewAdministratorItem);
-                hideMenuItem(createClientItem);
+                removeAdminMenuItems();
+                hideMenus(clinicianWindowMenu);
+                hideMenuItems(clinicianWindowMenuItems);
+
+                // staff primary item - seng302.Controller.Administrator.StaffListController.lambda$null$1(StaffListController.java:89)
+                // create client item - this item logs the clinician out.
+
             }
         }
         if (userType == UserType.ADMINISTRATOR) {
@@ -136,6 +143,18 @@ public class MenuBarController extends SubController {
         closeItem.setDisable(!windowContext.isClinViewClientWindow());
         undoItem.setDisable(!invoker.canUndo());
         redoItem.setDisable(!invoker.canRedo());
+    }
+
+
+    private void removeAdminMenuItems() {
+        // Remove administrator file rights.
+        hideMenuItem(createAdministratorItem);
+        topSeparator.setVisible(false);
+        hideMenuItem(saveItem);
+        hideMenuItem(loadItem);
+        hideMenuItem(viewAdministratorItem);
+        hideMenuItem(cliItem);
+
     }
 
     /**
