@@ -36,7 +36,6 @@ import seng302.Utilities.Enums.BloodType;
 import seng302.Utilities.Enums.Gender;
 import seng302.Utilities.Enums.Region;
 import seng302.Utilities.JSONConverter;
-import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
 
 import org.controlsfx.control.Notifications;
@@ -191,7 +190,7 @@ public class ViewClientController extends SubController {
 
             displayBMI();
             displayAge();
-        }
+
     }
 
     /**
