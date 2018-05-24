@@ -79,29 +79,25 @@ public class Client {
 
     @OneToMany(
             mappedBy = "client",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
+            cascade = CascadeType.ALL
     )
     private Collection<TransplantRequest> transplantRequests = new ArrayList<>();
 
     @OneToMany(
             mappedBy = "client",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
+            cascade = CascadeType.ALL
     )
     private List<MedicationRecord> medicationHistory = new ArrayList<>();
 
     @OneToMany(
             mappedBy = "client",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
+            cascade = CascadeType.ALL
     )
     private List<IllnessRecord> illnessHistory = new ArrayList<>();
 
     @OneToMany(
             mappedBy = "client",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
+            cascade = CascadeType.ALL
     )
     private List<ProcedureRecord> procedures = new ArrayList<>();
 
