@@ -2,7 +2,6 @@ package seng302.Controller;
 
 import javafx.fxml.FXML;
 
-import seng302.Utilities.CacheManager;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
 
@@ -43,11 +42,6 @@ public class LandingController extends SubController {
     @FXML
     private void goToStaffLogin() {
         PageNavigator.loadPage(Page.LOGIN_STAFF, mainController);
-    }
-
-    @FXML
-    private void refreshCache() {
-        CacheManager.INSTANCE.refreshCachedData();
     }
     
 }
