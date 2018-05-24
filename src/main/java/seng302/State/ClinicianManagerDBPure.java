@@ -1,12 +1,10 @@
 package seng302.State;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import javax.persistence.RollbackException;
 
-import seng302.Client;
 import seng302.Clinician;
 import seng302.Database.DBManager;
 import seng302.Utilities.Enums.Region;
@@ -113,18 +111,19 @@ public class ClinicianManagerDBPure implements ClinicianManager {
     public Clinician getClinicianByStaffId(int id) {
         Transaction trns = null;
         Clinician result = null;
+
         try (Session session = dbManager.getDBSession()){
             trns = session.beginTransaction();
+
             result = dbManager.getDBSession().find(Clinician.class, id);
+
             trns.commit();
-            return result;
         } catch (RollbackException exc){
             if(trns != null){
                 trns.rollback();
             }
         }
         return result;
-
     }
 
     @Override
@@ -149,8 +148,7 @@ public class ClinicianManagerDBPure implements ClinicianManager {
     }
 
     @Override
-    public Clinician getDefaultClinician(){
-        return dbManager.getDBSession().find(Clinician.class,0);
+    public Clinician getDefaultClinician() {
+        return getClinicianByStaffId(0);
     }
-
 }
