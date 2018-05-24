@@ -4,13 +4,9 @@ import static org.junit.Assert.*;
 
 import java.time.LocalDate;
 import java.time.Period;
-import java.util.Arrays;
 
-import java.util.HashSet;
-
-import seng302.Utilities.Enums.Organ;
-import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
-
+import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
 import org.junit.Before;
 import org.junit.Test;
 

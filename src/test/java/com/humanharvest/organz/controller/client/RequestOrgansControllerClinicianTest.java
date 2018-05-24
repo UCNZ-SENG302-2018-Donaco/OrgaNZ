@@ -4,9 +4,6 @@ import static org.junit.Assert.*;
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.matcher.control.TableViewMatchers.containsRow;
 
-import static com.humanharvest.organz.utilities.enums.TransplantRequestStatus.CANCELLED;
-import static com.humanharvest.organz.utilities.enums.TransplantRequestStatus.WAITING;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -27,6 +24,7 @@ import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
+import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
@@ -57,25 +55,25 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
     }
 
     private void setSampleRequests() {
-        heartRequest = new TransplantRequest(testClient, HEART);
+        heartRequest = new TransplantRequest(testClient, Organ.HEART);
         sampleRequests.add(heartRequest);
-        sampleRequests.add(new TransplantRequest(testClient, BONE));
+        sampleRequests.add(new TransplantRequest(testClient, Organ.BONE));
 
-        TransplantRequest pastRequest = new TransplantRequest(testClient, LIVER);
-        pastRequest.setStatus(CANCELLED);
+        TransplantRequest pastRequest = new TransplantRequest(testClient, Organ.LIVER);
+        pastRequest.setStatus(TransplantRequestStatus.CANCELLED);
         pastRequest.setResolvedDate(LocalDateTime.now());
         sampleRequests.add(pastRequest);
     }
 
     private Collection<TransplantRequest> getCurrSampleRequests() {
         return sampleRequests.stream()
-                .filter(req -> req.getStatus() == WAITING)
+                .filter(req -> req.getStatus() == TransplantRequestStatus.WAITING)
                 .collect(Collectors.toList());
     }
 
     private Collection<TransplantRequest> getPastSampleRequests() {
         return sampleRequests.stream()
-                .filter(req -> req.getStatus() != WAITING)
+                .filter(req -> req.getStatus() != TransplantRequestStatus.WAITING)
                 .collect(Collectors.toList());
     }
 
@@ -83,8 +81,8 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
     public void beforeEach() throws OrganAlreadyRegisteredException {
         setSampleRequests();
 
-        testClient.setOrganDonationStatus(BONE, true);
-        testClient.setOrganDonationStatus(LIVER, true);
+        testClient.setOrganDonationStatus(Organ.BONE, true);
+        testClient.setOrganDonationStatus(Organ.LIVER, true);
 
         for (TransplantRequest request : sampleRequests) {
             testClient.addTransplantRequest(request);
@@ -137,12 +135,12 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
     public void submitNewRequestTest() {
         Node organChoiceBox = lookup("#newOrganChoiceBox").queryAs(ChoiceBox.class);
         clickOn(organChoiceBox);
-        clickOn((Node) lookup(LUNG.toString()).query());
+        clickOn((Node) lookup(Organ.LUNG.toString()).query());
         clickOn("Submit Request");
 
         Optional<TransplantRequest> findRequest = testClient.getTransplantRequests()
                 .stream()
-                .filter(req -> req.getRequestedOrgan() == LUNG)
+                .filter(req -> req.getRequestedOrgan() == Organ.LUNG)
                 .findFirst();
 
         if (findRequest.isPresent()) {

@@ -7,9 +7,9 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 
 import com.humanharvest.organz.Client;
-import seng302.Controller.MainController;
-import seng302.Controller.SubController;
 import com.humanharvest.organz.HistoryItem;
+import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.JSONConverter;

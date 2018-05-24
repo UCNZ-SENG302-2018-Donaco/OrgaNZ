@@ -91,18 +91,18 @@ public class SetOrganStatus implements Runnable {
         ModifyClientOrgansAction action = new ModifyClientOrgansAction(client, manager);
 
         Map<Organ, Boolean> states = new HashMap<>();
-        states.put(LIVER, liver);
-        states.put(KIDNEY, kidney);
-        states.put(PANCREAS, pancreas);
-        states.put(HEART, heart);
-        states.put(LUNG, lung);
-        states.put(INTESTINE, intestine);
-        states.put(CORNEA, cornea);
-        states.put(MIDDLE_EAR, middleear);
-        states.put(SKIN, skin);
-        states.put(BONE, bone);
-        states.put(BONE_MARROW, bonemarrow);
-        states.put(CONNECTIVE_TISSUE, connectivetissue);
+        states.put(Organ.LIVER, liver);
+        states.put(Organ.KIDNEY, kidney);
+        states.put(Organ.PANCREAS, pancreas);
+        states.put(Organ.HEART, heart);
+        states.put(Organ.LUNG, lung);
+        states.put(Organ.INTESTINE, intestine);
+        states.put(Organ.CORNEA, cornea);
+        states.put(Organ.MIDDLE_EAR, middleear);
+        states.put(Organ.SKIN, skin);
+        states.put(Organ.BONE, bone);
+        states.put(Organ.BONE_MARROW, bonemarrow);
+        states.put(Organ.CONNECTIVE_TISSUE, connectivetissue);
 
         for (Map.Entry<Organ, Boolean> entry : states.entrySet()) {
             Organ organ = entry.getKey();

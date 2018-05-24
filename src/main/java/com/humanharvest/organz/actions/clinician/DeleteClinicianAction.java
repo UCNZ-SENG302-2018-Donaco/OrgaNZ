@@ -1,7 +1,7 @@
 package com.humanharvest.organz.actions.clinician;
 
-import seng302.Actions.Action;
 import com.humanharvest.organz.Clinician;
+import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.state.ClinicianManager;
 
 /**
