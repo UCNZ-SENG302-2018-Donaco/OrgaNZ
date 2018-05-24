@@ -2,6 +2,7 @@ package seng302;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -19,7 +20,7 @@ public class Administrator {
     private LocalDateTime modifiedOn;
 
     @ElementCollection
-    private ArrayList<String> updateLog = new ArrayList<>();
+    private List<String> updateLog = new ArrayList<>();
 
     protected Administrator() {
         createdOn = LocalDateTime.now();
@@ -47,7 +48,7 @@ public class Administrator {
         return createdOn;
     }
 
-    public ArrayList<String> getUpdateLog() {
+    public List<String> getUpdateLog() {
         return updateLog;
     }
 

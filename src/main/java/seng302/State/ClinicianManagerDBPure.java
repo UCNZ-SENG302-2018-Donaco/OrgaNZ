@@ -3,6 +3,7 @@ package seng302.State;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import javax.persistence.PersistenceException;
 import javax.persistence.RollbackException;
 
 import seng302.Clinician;
@@ -20,12 +21,19 @@ public class ClinicianManagerDBPure implements ClinicianManager {
 
     public ClinicianManagerDBPure(){
         this.dbManager = DBManager.getInstance();
-        dbManager.saveEntity(defaultClinician);
+        tryInsertDefault();
     }
 
     public ClinicianManagerDBPure(DBManager dbManager) {
         this.dbManager = dbManager;
-        dbManager.saveEntity(defaultClinician);
+        tryInsertDefault();
+    }
+
+    private void tryInsertDefault() {
+        try {
+            dbManager.saveEntity(defaultClinician);
+        } catch (PersistenceException ignored) {
+        }
     }
 
     @Override

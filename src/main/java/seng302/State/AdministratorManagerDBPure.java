@@ -2,6 +2,7 @@ package seng302.State;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.PersistenceException;
 import javax.persistence.RollbackException;
 
 import seng302.Administrator;
@@ -17,12 +18,19 @@ public class AdministratorManagerDBPure implements AdministratorManager {
 
     public AdministratorManagerDBPure() {
         this.dbManager = DBManager.getInstance();
-        dbManager.saveEntity(defaultAdministrator);
+        tryInsertDefault();
     }
 
     public AdministratorManagerDBPure(DBManager dbManager) {
         this.dbManager = dbManager;
-        dbManager.saveEntity(defaultAdministrator);
+        tryInsertDefault();
+    }
+
+    private void tryInsertDefault() {
+        try {
+            dbManager.saveEntity(defaultAdministrator);
+        } catch (PersistenceException ignored) {
+        }
     }
 
     @Override
