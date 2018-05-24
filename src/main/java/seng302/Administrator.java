@@ -2,15 +2,28 @@ package seng302;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
+@Entity
+@Table
 public class Administrator {
-    private final String username;
+
+    @Id
+    private String username;
+    private String password;
 
     private final LocalDateTime createdOn;
     private LocalDateTime modifiedOn;
-    private final ArrayList<String> updateLog = new ArrayList<>();
 
-    private String password;
+    @ElementCollection
+    private ArrayList<String> updateLog = new ArrayList<>();
+
+    protected Administrator() {
+        createdOn = LocalDateTime.now();
+    }
 
     /**
      * Create a new Administrator object
