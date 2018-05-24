@@ -87,22 +87,35 @@ public class ResolveOrgan implements Runnable {
     private void resolveRequest(TransplantRequest selectedTransplantRequest) {
         Action action = null;
         if (resolveReason == ResolveReason.COMPLETED) {
-            action = new ResolveTransplantRequestAction(selectedTransplantRequest, TransplantRequestStatus.COMPLETED, "Transplant took place.");
+            action = new ResolveTransplantRequestAction(selectedTransplantRequest,
+                    TransplantRequestStatus.COMPLETED,
+                    "Transplant took place.",
+                    manager);
 
         } else if (resolveReason == ResolveReason.DECEASED) {
-            action = new ResolveTransplantRequestAction(selectedTransplantRequest, TransplantRequestStatus.CANCELLED, "The "
-                    + "client has deceased.");
+            action = new ResolveTransplantRequestAction(selectedTransplantRequest,
+                    TransplantRequestStatus.CANCELLED,
+                    "The client has deceased.",
+                    manager);
 
         } else if (resolveReason == ResolveReason.CURED) {
-            action = new ResolveTransplantRequestAction(selectedTransplantRequest, TransplantRequestStatus.CANCELLED, "The disease was cured.");
+            action = new ResolveTransplantRequestAction(selectedTransplantRequest,
+                    TransplantRequestStatus.CANCELLED,
+                    "The disease was cured.",
+                    manager);
 
         } else if (resolveReason == ResolveReason.ERROR) {
-            action = new ResolveTransplantRequestAction(selectedTransplantRequest, TransplantRequestStatus.CANCELLED, "Request was a mistake.");
+            action = new ResolveTransplantRequestAction(selectedTransplantRequest,
+                    TransplantRequestStatus.CANCELLED,
+                    "Request was a mistake.",
+                    manager);
 
         } else if (resolveReason == ResolveReason.CUSTOM) {
             if (message != null) {
-                action = new ResolveTransplantRequestAction(selectedTransplantRequest, TransplantRequestStatus.CANCELLED,
-                        message);
+                action = new ResolveTransplantRequestAction(selectedTransplantRequest,
+                        TransplantRequestStatus.CANCELLED,
+                        message,
+                        manager);
             } else {
                 System.out.println("Custom resolve reason must have a message specified for why the organ has been "
                         + "resolved. The request is still active.");

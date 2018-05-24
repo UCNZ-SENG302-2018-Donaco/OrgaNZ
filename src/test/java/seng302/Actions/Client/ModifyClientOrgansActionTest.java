@@ -24,19 +24,20 @@ import org.junit.Test;
 public class ModifyClientOrgansActionTest {
 
     private ActionInvoker invoker;
+    private ClientManager manager;
     private Client baseClient;
 
     @Before
     public void init() {
         invoker = new ActionInvoker();
-        ClientManager manager = new ClientManagerMemory();
+        manager = new ClientManagerMemory();
         baseClient = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
         manager.addClient(baseClient);
     }
 
     @Test
     public void UpdateSingleOrganValidTest() throws OrganAlreadyRegisteredException {
-        ModifyClientOrgansAction action = new ModifyClientOrgansAction(baseClient);
+        ModifyClientOrgansAction action = new ModifyClientOrgansAction(baseClient, manager);
         action.addChange(Organ.LIVER, true);
         invoker.execute(action);
         assertTrue(baseClient.getOrganDonationStatus().get(Organ.LIVER));
@@ -45,7 +46,7 @@ public class ModifyClientOrgansActionTest {
 
     @Test
     public void UpdateMultipleOrganValidTest() throws OrganAlreadyRegisteredException {
-        ModifyClientOrgansAction action = new ModifyClientOrgansAction(baseClient);
+        ModifyClientOrgansAction action = new ModifyClientOrgansAction(baseClient, manager);
         action.addChange(Organ.LIVER, true);
         action.addChange(Organ.PANCREAS, true);
         action.addChange(Organ.BONE, true);
@@ -59,7 +60,7 @@ public class ModifyClientOrgansActionTest {
 
     @Test
     public void UpdateMultipleOrganValidUndoTest() throws OrganAlreadyRegisteredException {
-        ModifyClientOrgansAction action = new ModifyClientOrgansAction(baseClient);
+        ModifyClientOrgansAction action = new ModifyClientOrgansAction(baseClient, manager);
         action.addChange(Organ.LIVER, true);
         action.addChange(Organ.PANCREAS, true);
         action.addChange(Organ.BONE, true);
@@ -76,8 +77,8 @@ public class ModifyClientOrgansActionTest {
 
     @Test
     public void UpdateTwoSeparateValidUndoTest() throws OrganAlreadyRegisteredException {
-        ModifyClientOrgansAction action = new ModifyClientOrgansAction(baseClient);
-        ModifyClientOrgansAction action2 = new ModifyClientOrgansAction(baseClient);
+        ModifyClientOrgansAction action = new ModifyClientOrgansAction(baseClient, manager);
+        ModifyClientOrgansAction action2 = new ModifyClientOrgansAction(baseClient, manager);
         action.addChange(Organ.LIVER, true);
         action2.addChange(Organ.PANCREAS, true);
         action2.addChange(Organ.BONE, true);
@@ -94,8 +95,8 @@ public class ModifyClientOrgansActionTest {
 
     @Test
     public void UpdateTwoSeparateValidUndoUndoTest() throws OrganAlreadyRegisteredException {
-        ModifyClientOrgansAction action = new ModifyClientOrgansAction(baseClient);
-        ModifyClientOrgansAction action2 = new ModifyClientOrgansAction(baseClient);
+        ModifyClientOrgansAction action = new ModifyClientOrgansAction(baseClient, manager);
+        ModifyClientOrgansAction action2 = new ModifyClientOrgansAction(baseClient, manager);
         action.addChange(Organ.LIVER, true);
         action2.addChange(Organ.PANCREAS, true);
         action2.addChange(Organ.BONE, true);
@@ -113,9 +114,9 @@ public class ModifyClientOrgansActionTest {
 
     @Test
     public void UpdateThreeSeparateValidUndoUndoRedoTest() throws OrganAlreadyRegisteredException {
-        ModifyClientOrgansAction action = new ModifyClientOrgansAction(baseClient);
-        ModifyClientOrgansAction action2 = new ModifyClientOrgansAction(baseClient);
-        ModifyClientOrgansAction action3 = new ModifyClientOrgansAction(baseClient);
+        ModifyClientOrgansAction action = new ModifyClientOrgansAction(baseClient, manager);
+        ModifyClientOrgansAction action2 = new ModifyClientOrgansAction(baseClient, manager);
+        ModifyClientOrgansAction action3 = new ModifyClientOrgansAction(baseClient, manager);
         action.addChange(Organ.LIVER, true);
         action2.addChange(Organ.PANCREAS, true);
         action3.addChange(Organ.BONE, true);
@@ -136,11 +137,11 @@ public class ModifyClientOrgansActionTest {
 
     @Test
     public void UpdateSingleOrganTrueThenFalseTest() throws OrganAlreadyRegisteredException {
-        ModifyClientOrgansAction action = new ModifyClientOrgansAction(baseClient);
+        ModifyClientOrgansAction action = new ModifyClientOrgansAction(baseClient, manager);
         action.addChange(Organ.LIVER, true);
         invoker.execute(action);
 
-        ModifyClientOrgansAction action2 = new ModifyClientOrgansAction(baseClient);
+        ModifyClientOrgansAction action2 = new ModifyClientOrgansAction(baseClient, manager);
         action2.addChange(Organ.LIVER, false);
         invoker.execute(action2);
 
@@ -150,11 +151,11 @@ public class ModifyClientOrgansActionTest {
 
     @Test
     public void UpdateSingleOrganTrueThenFalseUndoOneTest() throws OrganAlreadyRegisteredException {
-        ModifyClientOrgansAction action = new ModifyClientOrgansAction(baseClient);
+        ModifyClientOrgansAction action = new ModifyClientOrgansAction(baseClient, manager);
         action.addChange(Organ.LIVER, true);
         invoker.execute(action);
 
-        ModifyClientOrgansAction action2 = new ModifyClientOrgansAction(baseClient);
+        ModifyClientOrgansAction action2 = new ModifyClientOrgansAction(baseClient, manager);
         action2.addChange(Organ.LIVER, false);
         invoker.execute(action2);
 
@@ -170,7 +171,7 @@ public class ModifyClientOrgansActionTest {
                 + "\n"
                 + "Registered Liver for donation.", baseClient.getUid());
 
-        ModifyClientOrgansAction action = new ModifyClientOrgansAction(baseClient);
+        ModifyClientOrgansAction action = new ModifyClientOrgansAction(baseClient, manager);
 
         action.addChange(Organ.LIVER, true);
         String result = invoker.execute(action);
@@ -179,7 +180,7 @@ public class ModifyClientOrgansActionTest {
 
     @Test(expected = OrganAlreadyRegisteredException.class)
     public void CheckAddExistingTest() throws OrganAlreadyRegisteredException {
-        ModifyClientOrgansAction action = new ModifyClientOrgansAction(baseClient);
+        ModifyClientOrgansAction action = new ModifyClientOrgansAction(baseClient, manager);
         baseClient.setOrganDonationStatus(Organ.LIVER, true);
 
         action.addChange(Organ.LIVER, true);
@@ -190,7 +191,7 @@ public class ModifyClientOrgansActionTest {
         ByteArrayOutputStream errContent = new ByteArrayOutputStream();
         System.setErr(new PrintStream(errContent));
 
-        ModifyClientOrgansAction action = new ModifyClientOrgansAction(baseClient);
+        ModifyClientOrgansAction action = new ModifyClientOrgansAction(baseClient, manager);
 
         action.addChange(Organ.LIVER, true);
 
@@ -209,7 +210,7 @@ public class ModifyClientOrgansActionTest {
                 "Registered Liver for donation.",
                 "Registered Pancreas for donation.");
 
-        ModifyClientOrgansAction action = new ModifyClientOrgansAction(baseClient);
+        ModifyClientOrgansAction action = new ModifyClientOrgansAction(baseClient, manager);
 
         action.addChange(Organ.LIVER, true);
         action.addChange(Organ.PANCREAS, true);
@@ -229,7 +230,7 @@ public class ModifyClientOrgansActionTest {
                 + "\n"
                 + "Registered Liver for donation.", baseClient.getUid());
 
-        ModifyClientOrgansAction action = new ModifyClientOrgansAction(baseClient);
+        ModifyClientOrgansAction action = new ModifyClientOrgansAction(baseClient, manager);
 
         action.addChange(Organ.LIVER, true);
         invoker.execute(action);

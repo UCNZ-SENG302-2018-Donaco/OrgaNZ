@@ -275,7 +275,7 @@ public class ViewClientController extends SubController {
      * @return If there were any changes made
      */
     private boolean updateChanges() {
-        ModifyClientAction action = new ModifyClientAction(viewedClient);
+        ModifyClientAction action = new ModifyClientAction(viewedClient, manager);
 
         boolean clientDied = false;
 
@@ -285,7 +285,7 @@ public class ViewClientController extends SubController {
                     "This will cancel all waiting transplant requests for this client.");
 
             if (buttonOpt.isPresent() && buttonOpt.get() == ButtonType.OK) {
-                Action markDeadAction = new MarkClientAsDeadAction(viewedClient, dod.getValue());
+                Action markDeadAction = new MarkClientAsDeadAction(viewedClient, dod.getValue(), manager);
                 String actionText = invoker.execute(markDeadAction);
 
                 clientDied = true;

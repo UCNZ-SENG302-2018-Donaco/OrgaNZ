@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 
 import seng302.Actions.Action;
 import seng302.ProcedureRecord;
+import seng302.State.ClientManager;
 import seng302.Utilities.Enums.Organ;
 
 /**
@@ -14,6 +15,7 @@ import seng302.Utilities.Enums.Organ;
  */
 public class ModifyProcedureRecordAction extends Action {
 
+    private ClientManager manager;
     private ProcedureRecord record;
     private String oldSummary, newSummary;
     private String oldDescription, newDescription;
@@ -25,8 +27,9 @@ public class ModifyProcedureRecordAction extends Action {
      * current ones.
      * @param record The procedure record to modify.
      */
-    public ModifyProcedureRecordAction(ProcedureRecord record) {
+    public ModifyProcedureRecordAction(ProcedureRecord record, ClientManager manager) {
         this.record = record;
+        this.manager = manager;
 
         oldSummary = record.getSummary();
         oldDescription = record.getDescription();
@@ -83,6 +86,7 @@ public class ModifyProcedureRecordAction extends Action {
         if (!Objects.equals(newAffectedOrgans, oldAffectedOrgans)) {
             record.setAffectedOrgans(newAffectedOrgans);
         }
+        manager.applyChangesTo(record.getClient());
     }
 
     @Override
@@ -99,6 +103,7 @@ public class ModifyProcedureRecordAction extends Action {
         if (!Objects.equals(newAffectedOrgans, oldAffectedOrgans)) {
             record.setAffectedOrgans(oldAffectedOrgans);
         }
+        manager.applyChangesTo(record.getClient());
     }
 
     @Override

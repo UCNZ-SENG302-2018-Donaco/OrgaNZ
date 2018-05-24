@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import seng302.Actions.Action;
 import seng302.Client;
+import seng302.State.ClientManager;
 import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
 
@@ -14,6 +15,7 @@ import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
  */
 public class ModifyClientOrgansAction extends Action {
 
+    private ClientManager manager;
     private Map<Organ, Boolean> changes = new HashMap<>();
     private Client client;
 
@@ -21,8 +23,9 @@ public class ModifyClientOrgansAction extends Action {
      * Create a new Action
      * @param client The client to be modified
      */
-    public ModifyClientOrgansAction(Client client) {
+    public ModifyClientOrgansAction(Client client, ClientManager manager) {
         this.client = client;
+        this.manager = manager;
     }
 
     /**
@@ -41,11 +44,13 @@ public class ModifyClientOrgansAction extends Action {
     @Override
     protected void execute() {
         runChanges(false);
+        manager.applyChangesTo(client);
     }
 
     @Override
     protected void unExecute() {
         runChanges(true);
+        manager.applyChangesTo(client);
     }
 
     private String formatChange(Organ organ, boolean newValue) {

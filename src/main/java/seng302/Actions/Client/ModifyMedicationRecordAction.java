@@ -6,6 +6,7 @@ import java.util.Objects;
 import seng302.Actions.Action;
 import seng302.HistoryItem;
 import seng302.MedicationRecord;
+import seng302.State.ClientManager;
 import seng302.Utilities.JSONConverter;
 
 /**
@@ -13,6 +14,7 @@ import seng302.Utilities.JSONConverter;
  */
 public class ModifyMedicationRecordAction extends Action {
 
+    private ClientManager manager;
     private MedicationRecord record;
     private LocalDate oldStarted;
     private LocalDate oldStopped;
@@ -24,8 +26,9 @@ public class ModifyMedicationRecordAction extends Action {
      * same as the current ones.
      * @param record The medication record to modify.
      */
-    public ModifyMedicationRecordAction(MedicationRecord record) {
+    public ModifyMedicationRecordAction(MedicationRecord record, ClientManager manager) {
         this.record = record;
+        this.manager = manager;
         this.oldStarted = record.getStarted();
         this.oldStopped = record.getStopped();
         this.newStarted = oldStarted;
@@ -63,12 +66,14 @@ public class ModifyMedicationRecordAction extends Action {
         if (!Objects.equals(newStopped, oldStopped)) {
             record.setStopped(newStopped);
         }
+        manager.applyChangesTo(record.getClient());
         HistoryItem save = new HistoryItem("MODIFY_MEDICATION", getExecuteText());
         JSONConverter.updateHistory(save, "action_history.json");
     }
 
     @Override
     protected void unExecute() {
+        manager.applyChangesTo(record.getClient());
         if (!Objects.equals(newStarted, oldStarted)) {
             record.setStarted(oldStarted);
         }

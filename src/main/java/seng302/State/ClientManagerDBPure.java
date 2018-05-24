@@ -55,6 +55,8 @@ public class ClientManagerDBPure implements ClientManager {
         try (Session session = dbManager.getDBSession()) {
             trns = session.beginTransaction();
 
+            session.createQuery("DELETE FROM Client").executeUpdate();
+
             for (Client client : clients) {
                 session.save(client);
             }
@@ -89,8 +91,28 @@ public class ClientManagerDBPure implements ClientManager {
     }
 
     @Override
+    public void applyChangesTo(Client client) {
+        dbManager.saveEntity(client);
+    }
+
+    @Override
     public Client getClientByID(int id) {
-        return dbManager.getDBSession().find(Client.class, id);
+        Transaction trns = null;
+        Client client = null;
+
+        try (Session session = dbManager.getDBSession()) {
+            trns = session.beginTransaction();
+
+            client = dbManager.getDBSession().find(Client.class, id);
+
+            trns.commit();
+        } catch (RollbackException exc) {
+            if (trns != null) {
+                trns.rollback();
+            }
+        }
+
+        return client;
     }
 
     @Override
@@ -120,7 +142,7 @@ public class ClientManagerDBPure implements ClientManager {
 
     @Override
     public int nextUid() {
-        return 0;
+        return 0;  // TODO change this, probably doesn't need to exist in interface
     }
 
     @Override

@@ -147,7 +147,7 @@ public class RegisterOrganDonationController extends SubController {
      */
     @FXML
     private void modifyOrgans() {
-        ModifyClientOrgansAction action = new ModifyClientOrgansAction(client);
+        ModifyClientOrgansAction action = new ModifyClientOrgansAction(client, manager);
         boolean hasChanged = false;
 
         for (Organ organ : organCheckBoxes.keySet()) {

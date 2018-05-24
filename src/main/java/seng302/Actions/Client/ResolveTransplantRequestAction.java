@@ -10,6 +10,7 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import seng302.Actions.Action;
+import seng302.State.ClientManager;
 import seng302.TransplantRequest;
 import seng302.Utilities.Enums.TransplantRequestStatus;
 
@@ -23,6 +24,7 @@ public class ResolveTransplantRequestAction extends Action {
             CANCELLED, COMPLETED
     );
 
+    private ClientManager manager;
     private TransplantRequest request;
     private TransplantRequestStatus newStatus;
     private String reason;
@@ -34,10 +36,12 @@ public class ResolveTransplantRequestAction extends Action {
      * ResolveTransplantRequestAction#RESOLVED_STATUSES}.
      * @param reason The reason for this request being resolved.
      */
-    public ResolveTransplantRequestAction(TransplantRequest request, TransplantRequestStatus newStatus, String reason) {
+    public ResolveTransplantRequestAction(TransplantRequest request, TransplantRequestStatus newStatus, String
+            reason, ClientManager manager) {
         this.request = request;
         this.newStatus = newStatus;
         this.reason = reason;
+        this.manager = manager;
 
         if (!RESOLVED_STATUSES.contains(newStatus)) {
             throw new IllegalArgumentException("New status must be a valid resolved status.");
@@ -53,6 +57,7 @@ public class ResolveTransplantRequestAction extends Action {
         request.setStatus(newStatus);
         request.setResolvedDate(LocalDateTime.now());
         request.setResolvedReason(reason);
+        manager.applyChangesTo(request.getClient());
     }
 
     @Override
@@ -60,6 +65,7 @@ public class ResolveTransplantRequestAction extends Action {
         request.setStatus(WAITING);
         request.setResolvedDate(null);
         request.setResolvedReason(null);
+        manager.applyChangesTo(request.getClient());
     }
 
     @Override
