@@ -126,11 +126,13 @@ public class MenuBarController extends SubController {
                 hideMenuItem(profilePrimaryItem);
                 hideMenuItem(staffPrimaryItem);
                 hideMenuItem(createClientItem);
+                hideMenuItem(viewAdministratorItem);
             } else if (!windowContext.isClinViewClientWindow()) {
                 hideMenuItem(organPrimaryItem);
                 hideMenuItem(medicationsPrimaryItem);
                 hideMenuItem(viewClinicianItem);
                 hideMenuItem(viewClientItem);
+                hideMenuItem(viewAdministratorItem);
             }
         }
         if (userType == UserType.CLIENT == true) {
