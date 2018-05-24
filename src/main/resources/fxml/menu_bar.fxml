@@ -17,6 +17,7 @@
              <items>
                <MenuItem fx:id="saveItem" mnemonicParsing="false" onAction="#save" text="Save" />
                <MenuItem fx:id="loadItem" mnemonicParsing="false" onAction="#load" text="Load" />
+              <MenuItem fx:id="refreshCacheItem" mnemonicParsing="false" onAction="#refreshCache" text="Refresh cache" />
                   <SeparatorMenuItem fx:id="topSeparator" mnemonicParsing="false" />
                <MenuItem fx:id="logOutItem" mnemonicParsing="false" onAction="#logout" text="Log Out" />
                   <SeparatorMenuItem mnemonicParsing="false" />
@@ -70,11 +71,7 @@
                <MenuItem fx:id="cliItem" mnemonicParsing="false" onAction="#goToCommandLine" text="CLI" />
              </items>
           </Menu>
-          <Menu fx:id="administrationPrimaryItem" mnemonicParsing="false" text="Administration">
-            <items>
-              <MenuItem fx:id="refreshCacheItem" mnemonicParsing="false" onAction="#refreshCache" text="Refresh medications cache" />
-            </items>
-          </Menu>
+          <Menu fx:id="administrationPrimaryItem" mnemonicParsing="false" text="Administration" />
         </menus>
      </MenuBar>
    </children>
