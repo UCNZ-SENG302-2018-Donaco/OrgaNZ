@@ -64,6 +64,11 @@ public class ClinicianManagerDBPure implements ClinicianManager{
         }
     }
 
+    @Override
+    public void applyChangesTo(Clinician clinician){
+        dbManager.saveEntity(clinician);
+    }
+
 
     @Override
     public void addClinician(Clinician clinician) {
@@ -86,7 +91,20 @@ public class ClinicianManagerDBPure implements ClinicianManager{
 
     @Override
     public Clinician getClinicianByStaffId(int id) {
-        return dbManager.getDBSession().find(Clinician.class, id);
+        Transaction trns = null;
+        Clinician result = null;
+        try (Session session = dbManager.getDBSession()){
+            trns = session.beginTransaction();
+            result = dbManager.getDBSession().find(Clinician.class, id);
+            trns.commit();
+            return result;
+        } catch (RollbackException exc){
+            if(trns != null){
+                trns.rollback();
+            }
+        }
+        return result;
+
     }
 
     @Override

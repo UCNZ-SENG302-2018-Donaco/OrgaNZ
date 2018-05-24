@@ -16,6 +16,7 @@ import seng302.Clinician;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
 import seng302.HistoryItem;
+import seng302.State.ClinicianManager;
 import seng302.State.Session;
 import seng302.State.Session.UserType;
 import seng302.State.State;
@@ -204,7 +205,8 @@ public class ViewClinicianController extends SubController {
      * @return If there were any changes made
      */
     private boolean updateChanges() {
-        ModifyClinicianAction action = new ModifyClinicianAction(currentClinician);
+        ClinicianManager manager = State.getClinicianManager();
+        ModifyClinicianAction action = new ModifyClinicianAction(currentClinician,manager);
 
         addChangeIfDifferent(action, "setFirstName", currentClinician.getFirstName(), fname.getText());
         addChangeIfDifferent(action, "setLastName", currentClinician.getLastName(), lname.getText());
