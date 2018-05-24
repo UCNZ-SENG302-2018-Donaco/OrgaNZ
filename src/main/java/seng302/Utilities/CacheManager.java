@@ -31,6 +31,7 @@ import seng302.Utilities.Web.DrugInteractionsHandler;
 import seng302.Utilities.Web.MedActiveIngredientsHandler;
 import seng302.Utilities.Web.WebAPIHandler;
 
+import com.google.api.client.http.HttpTransport;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
@@ -141,7 +142,7 @@ public abstract class CacheManager {
         return category.get(type, arguments);
     }
 
-    public void removeCachedData(String categoryName, Object[] arguments) {
+    private void removeCachedData(String categoryName, Object[] arguments) {
         if (Objects.isNull(arguments) || arguments.length == 0) {
             throw new IllegalArgumentException("arguments must contain at least one value");
         }
@@ -157,6 +158,10 @@ public abstract class CacheManager {
     }
 
     public void refreshCachedData() {
+        refreshCachedData(null);
+    }
+
+    public void refreshCachedData(HttpTransport httpTransport) {
         // Iterate through categories
         Iterator it = categories.entrySet().iterator();
         while (it.hasNext()) {
@@ -167,10 +172,18 @@ public abstract class CacheManager {
             WebAPIHandler handler;
             switch (categoryName) {
                 case "seng302.Utilities.Web.MedActiveIngredientsHandler":
-                    handler = new MedActiveIngredientsHandler();
+                    if (httpTransport == null) {
+                        handler = new MedActiveIngredientsHandler();
+                    } else {
+                        handler = new MedActiveIngredientsHandler(httpTransport);
+                    }
                     break;
                 case "seng302.Utilities.Web.DrugInteractionsHandler":
-                    handler = new DrugInteractionsHandler();
+                    if (httpTransport == null) {
+                        handler = new DrugInteractionsHandler();
+                    } else {
+                        handler = new DrugInteractionsHandler(httpTransport);
+                    }
                     break;
                 default:
                     LOGGER.log(Level.SEVERE, "Unrecognised handler: " + categoryName);
@@ -195,7 +208,6 @@ public abstract class CacheManager {
 
                     try {
                         removeCachedData(categoryName, rawKey);
-                        handler.getData(rawKey);
                     } catch (Exception e) {
                         LOGGER.log(Level.WARNING, "Couldn't refresh " + rawKey[0] + " in cache.");
                         //todo should the old data be kept if new data can't be retrieved? it currently is not.

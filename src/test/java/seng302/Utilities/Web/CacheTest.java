@@ -1,9 +1,6 @@
 package seng302.Utilities.Web;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -160,5 +157,32 @@ public class CacheTest {
         Optional<String> value = mockCacheManager.getCachedData("test", String.class, new Object[]{"foo"});
         assertTrue(value.isPresent());
         assertEquals("test", value.get());
+    }
+
+    @Test
+    public void testRefreshingCache() {
+        MockCacheManager mockCacheManager = MockCacheManager.Create();
+        String EXPECTED_RESPONSE_BODY = "[\"Hydralazine hydrochloride; hydrochlorothiazide; reserpine\","
+                + "\"Hydrochlorothiazide; reserpine\",\"Hydroflumethiazide; reserpine\",\"Reserpine\"]";
+        MockHttpTransport mockTransport = MockHelper.makeMockHttpTransport(EXPECTED_RESPONSE_BODY);
+
+        mockCacheManager.addCachedData("seng302.Utilities.Web.MedActiveIngredientsHandler", new Object[]{"foo"}, "test", Optional.empty());
+
+        // Check the pre-refresh value
+        Optional<String> initialValue = mockCacheManager.getCachedData("seng302.Utilities.Web" 
+                        + ".MedActiveIngredientsHandler",
+                String.class, new Object[]{"foo"});
+        assertTrue(initialValue.isPresent());
+        assertEquals("test", initialValue.get());
+
+        // Refresh it
+        mockCacheManager.refreshCachedData(mockTransport);
+
+        // Check it has the new value
+        Optional<String[]> refreshedValue = mockCacheManager.getCachedData("seng302.Utilities.Web.MedActiveIngredientsHandler",
+                String[].class, new Object[]{"foo"});
+        assertTrue(refreshedValue.isPresent());
+        assertEquals(EXPECTED_RESPONSE_BODY, "[\"" + String.join("\",\"", refreshedValue.get()) + "\"]");
+
     }
 }
