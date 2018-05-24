@@ -261,7 +261,7 @@ public class ViewMedicationsController extends SubController {
     private void addMedication(String newMedName) {
         if (!newMedName.equals("")) {
             MedicationRecord record = new MedicationRecord(newMedName, LocalDate.now(), null);
-            AddMedicationRecordAction action = new AddMedicationRecordAction(client, record);
+            AddMedicationRecordAction action = new AddMedicationRecordAction(client, record, manager);
 
             invoker.execute(action);
             newMedField.setText("");

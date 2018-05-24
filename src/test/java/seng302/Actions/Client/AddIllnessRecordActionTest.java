@@ -8,6 +8,8 @@ import seng302.Actions.Action;
 import seng302.Actions.ActionInvoker;
 import seng302.Client;
 import seng302.IllnessRecord;
+import seng302.State.ClientManager;
+import seng302.State.ClientManagerMemory;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -16,18 +18,20 @@ public class AddIllnessRecordActionTest {
 
 
     private ActionInvoker invoker;
+    private ClientManager manager;
     private Client testClient;
 
     @Before
     public void init() {
         invoker = new ActionInvoker();
+        manager = new ClientManagerMemory();
         testClient = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
     }
 
     @Test
     public void AddSingleIllnessCurrentTest() {
         IllnessRecord record = new IllnessRecord("Generic Name", LocalDate.of(2018, 4, 9), null, false);
-        Action action = new AddIllnessRecordAction(testClient, record);
+        Action action = new AddIllnessRecordAction(testClient, record, manager);
 
         invoker.execute(action);
 
@@ -40,7 +44,7 @@ public class AddIllnessRecordActionTest {
     public void AddSingleIllnessPastTest() {
         IllnessRecord record = new IllnessRecord("Generic Name", LocalDate.of(2018, 4, 9),
                 LocalDate.of(2018, 4, 10), false);
-        Action action = new AddIllnessRecordAction(testClient, record);
+        Action action = new AddIllnessRecordAction(testClient, record, manager);
 
         invoker.execute(action);
 
@@ -56,9 +60,9 @@ public class AddIllnessRecordActionTest {
         IllnessRecord record2 = new IllnessRecord("Second Generic Name", LocalDate.of(2018, 4, 8), null, false);
 
         IllnessRecord record3 = new IllnessRecord("Third Generic Name", LocalDate.of(2018, 4, 7), null, false);
-        Action action = new AddIllnessRecordAction(testClient, record);
-        Action action2 = new AddIllnessRecordAction(testClient, record2);
-        Action action3 = new AddIllnessRecordAction(testClient, record3);
+        Action action = new AddIllnessRecordAction(testClient, record, manager);
+        Action action2 = new AddIllnessRecordAction(testClient, record2, manager);
+        Action action3 = new AddIllnessRecordAction(testClient, record3, manager);
 
         invoker.execute(action);
         invoker.execute(action2);
@@ -76,9 +80,9 @@ public class AddIllnessRecordActionTest {
         IllnessRecord record2 = new IllnessRecord("Second Generic Name", LocalDate.of(2018, 4, 8), null, false);
 
         IllnessRecord record3 = new IllnessRecord("Third Generic Name", LocalDate.of(2018, 4, 7), null, false);
-        Action action = new AddIllnessRecordAction(testClient, record);
-        Action action2 = new AddIllnessRecordAction(testClient, record2);
-        Action action3 = new AddIllnessRecordAction(testClient, record3);
+        Action action = new AddIllnessRecordAction(testClient, record, manager);
+        Action action2 = new AddIllnessRecordAction(testClient, record2, manager);
+        Action action3 = new AddIllnessRecordAction(testClient, record3, manager);
 
         invoker.execute(action);
         invoker.execute(action2);
@@ -98,9 +102,9 @@ public class AddIllnessRecordActionTest {
         IllnessRecord record2 = new IllnessRecord("Second Generic Name", LocalDate.of(2018, 4, 8), null, false);
 
         IllnessRecord record3 = new IllnessRecord("Third Generic Name", LocalDate.of(2018, 4, 7), null, false);
-        Action action = new AddIllnessRecordAction(testClient, record);
-        Action action2 = new AddIllnessRecordAction(testClient, record2);
-        Action action3 = new AddIllnessRecordAction(testClient, record3);
+        Action action = new AddIllnessRecordAction(testClient, record, manager);
+        Action action2 = new AddIllnessRecordAction(testClient, record2, manager);
+        Action action3 = new AddIllnessRecordAction(testClient, record3, manager);
 
         invoker.execute(action);
         invoker.execute(action2);
