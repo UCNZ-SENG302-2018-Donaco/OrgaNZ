@@ -33,21 +33,22 @@ public class DrugInteractionsResponse {
             + "(?:(?<greaterYear>\\d+)\\+ years?)|"
             + "(?:(?<lowMonth>\\d+)\\s+-\\s+(?<highMonth>\\d+)\\s+months?)|"
             + "(?:(?<lowYear>\\d+)\\s+-\\s+(?<highYear>\\d+)\\s+years?))$");
+    public static final DrugInteractionsResponse EMPTY = new DrugInteractionsResponse();
 
     @Key("co_existing_conditions")
-    private Map<String, Integer> coexistingConditions;
+    private Map<String, Integer> coexistingConditions = new HashMap<>();
 
     @Key("reports")
-    private Map<String, Integer> reports;
+    private Map<String, Integer> reports = new HashMap<>();
 
     @Key("age_interaction")
-    private Map<String, List<String>> ageInteraction;
+    private Map<String, List<String>> ageInteraction = new HashMap<>();
 
     @Key("duration_interaction")
-    private Map<String, List<String>> durationInteraction;
+    private Map<String, List<String>> durationInteraction = new HashMap<>();
 
     @Key("gender_interaction")
-    private Map<String, List<String>> genderInteraction;
+    private Map<String, List<String>> genderInteraction = new HashMap<>();
 
     /**
      * Calculates a list of possible drug interactions given a client.

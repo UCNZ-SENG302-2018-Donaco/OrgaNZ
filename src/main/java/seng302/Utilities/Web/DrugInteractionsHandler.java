@@ -147,6 +147,7 @@ public class DrugInteractionsHandler extends WebAPIHandler {
                 addCachedData(interactionsResponse, drug1, drug2);
                 return interactionsResponse.calculateClientInteractions(client);
             case STUDY_NOT_DONE:
+                addCachedData(DrugInteractionsResponse.EMPTY, drug1, drug2);
                 return Collections.emptyList();
             case BAD_DRUG_NAME:
                 throw new BadDrugNameException("One or both of the drug names are invalid.");
