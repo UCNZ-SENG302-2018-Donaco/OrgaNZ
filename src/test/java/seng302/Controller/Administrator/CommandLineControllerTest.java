@@ -32,7 +32,7 @@ public class CommandLineControllerTest extends ControllerTest {
 
     @Override
     protected void initState() {
-        State.init();
+        State.reset(false);
         State.login(new Administrator("username", "password"));
         mainController.setWindowContext(WindowContext.defaultContext());
 

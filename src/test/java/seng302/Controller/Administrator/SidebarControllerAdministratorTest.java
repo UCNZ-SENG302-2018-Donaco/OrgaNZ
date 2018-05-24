@@ -26,7 +26,7 @@ public class SidebarControllerAdministratorTest extends ControllerTest {
 
     @Override
     protected void initState() {
-        State.init();
+        State.reset(false);
         State.login(testAdmin);
         State.getAdministratorManager().addAdministrator(testAdmin);
         mainController.setWindowContext(new WindowContextBuilder().build());

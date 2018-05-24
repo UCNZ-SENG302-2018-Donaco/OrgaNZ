@@ -31,7 +31,7 @@ public class ViewClientControllerSetTitleTest extends ControllerTest {
 
     @Override
     protected void initState() {
-        State.init();
+        State.reset(false);
         setClientDetails();
         State.getClientManager().addClient(testClient);
         State.login(testClient);

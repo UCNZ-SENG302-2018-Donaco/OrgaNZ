@@ -22,7 +22,7 @@ public class ViewClinicianControllerAdministratorTest extends ControllerTest {
 
     @Override
     protected void initState() {
-        State.init();
+        State.reset(false);
         State.getAdministratorManager().addAdministrator(testAdmin);
         State.login(testAdmin);
         mainController.setWindowContext(WindowContext.defaultContext());

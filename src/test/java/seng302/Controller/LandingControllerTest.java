@@ -21,7 +21,7 @@ public class LandingControllerTest extends ControllerTest {
 
     @Override
     protected void initState() {
-        State.init();
+        State.reset(false);
         mainController.setWindowContext(WindowContext.defaultContext());
     }
 

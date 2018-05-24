@@ -89,7 +89,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
 
     @Override
     protected void initState() {
-        State.init();
+        State.reset(false);
         State.login(testClinician);
         mainController.setWindowContext(new WindowContext.WindowContextBuilder()
                 .setAsClinViewClientWindow()

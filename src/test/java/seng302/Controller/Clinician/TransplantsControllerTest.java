@@ -76,7 +76,7 @@ public class TransplantsControllerTest extends ControllerTest {
 
     @Override
     protected void initState() {
-        State.init();
+        State.reset(false);
         State.login(testClinician);
 
         for (Client client : clients) {
