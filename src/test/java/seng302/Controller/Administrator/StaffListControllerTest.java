@@ -32,7 +32,7 @@ public class StaffListControllerTest extends ControllerTest {
 
     @Override
     protected void initState() {
-        State.init();
+        State.reset(false);
 
         // Add clinician and admins
         State.getAdministratorManager().addAdministrator(admin1);

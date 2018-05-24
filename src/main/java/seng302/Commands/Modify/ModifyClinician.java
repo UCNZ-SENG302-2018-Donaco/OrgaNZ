@@ -66,7 +66,7 @@ public class ModifyClinician implements Runnable {
             return;
         }
 
-        ModifyClinicianAction action = new ModifyClinicianAction(clinician);
+        ModifyClinicianAction action = new ModifyClinicianAction(clinician,manager);
 
         Map<String, Object[]> updates = new HashMap<>();
         updates.put("setFirstName", new String[]{clinician.getFirstName(), firstName});

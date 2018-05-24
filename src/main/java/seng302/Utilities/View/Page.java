@@ -9,6 +9,7 @@ public enum Page {
     LANDING("/fxml/landing.fxml"),
     LOGIN_CLIENT("/fxml/login_client.fxml"),
     CREATE_CLIENT("/fxml/create_client.fxml"),
+    MENU_BAR("/fxml/menu_bar.fxml"),
     SIDEBAR("/fxml/sidebar.fxml"),
     VIEW_CLIENT("/fxml/view_client.fxml"),
     VIEW_CLINICIAN("/fxml/view_clinician.fxml"),

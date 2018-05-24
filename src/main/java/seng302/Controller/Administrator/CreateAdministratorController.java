@@ -41,7 +41,7 @@ public class CreateAdministratorController extends SubController {
     private Button createButton;
 
     @FXML
-    private Pane sidebarPane;
+    private Pane menuBarPane;
 
     private AdministratorManager administratorManager;
 
@@ -61,7 +61,7 @@ public class CreateAdministratorController extends SubController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
-        mainController.loadSidebar(sidebarPane);
+        mainController.loadMenuBar(menuBarPane);
         mainController.setTitle("Create a new administrator");
     }
 

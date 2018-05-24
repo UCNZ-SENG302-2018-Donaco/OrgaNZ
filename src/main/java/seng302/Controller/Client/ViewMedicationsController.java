@@ -30,6 +30,7 @@ import seng302.Client;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
 import seng302.MedicationRecord;
+import seng302.State.ClientManager;
 import seng302.State.Session;
 import seng302.State.Session.UserType;
 import seng302.State.State;
@@ -49,6 +50,7 @@ public class ViewMedicationsController extends SubController {
 
     private Session session;
     private ActionInvoker invoker;
+    private ClientManager manager;
     private Client client;
     private List<String> lastResponse;
     private MedAutoCompleteHandler autoCompleteHandler;
@@ -56,7 +58,7 @@ public class ViewMedicationsController extends SubController {
     private DrugInteractionsHandler drugInteractionsHandler;
 
     @FXML
-    private Pane sidebarPane;
+    private Pane sidebarPane, menuBarPane;
 
     @FXML
     private TextField newMedField;
@@ -76,13 +78,14 @@ public class ViewMedicationsController extends SubController {
     public ViewMedicationsController() {
         session = State.getSession();
         invoker = State.getInvoker();
+        manager = State.getClientManager();
     }
 
-    public void setDrugInteractionsHandler(DrugInteractionsHandler handler) {
+    void setDrugInteractionsHandler(DrugInteractionsHandler handler) {
         this.drugInteractionsHandler = handler;
     }
 
-    public void setActiveIngredientsHandler(MedActiveIngredientsHandler handler) {
+    void setActiveIngredientsHandler(MedActiveIngredientsHandler handler) {
         this.activeIngredientsHandler = handler;
     }
 
@@ -136,11 +139,9 @@ public class ViewMedicationsController extends SubController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
-        mainController.loadSidebar(sidebarPane);
-
         if (session.getLoggedInUserType() == Session.UserType.CLIENT) {
             client = session.getLoggedInClient();
-
+            mainController.loadSidebar(sidebarPane);
             newMedicationPane.setVisible(false);
             newMedicationPane.setManaged(false);
             moveToHistoryButton.setDisable(true);
@@ -148,6 +149,7 @@ public class ViewMedicationsController extends SubController {
             deleteButton.setDisable(true);
         } else if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
+            mainController.loadMenuBar(menuBarPane);
         }
 
         refreshMedicationLists();
@@ -185,7 +187,7 @@ public class ViewMedicationsController extends SubController {
     private void moveMedicationToHistory() {
         MedicationRecord record = currentMedicationsView.getSelectionModel().getSelectedItem();
         if (record != null) {
-            ModifyMedicationRecordAction action = new ModifyMedicationRecordAction(record);
+            ModifyMedicationRecordAction action = new ModifyMedicationRecordAction(record, manager);
             action.changeStopped(LocalDate.now());
 
             invoker.execute(action);
@@ -205,7 +207,7 @@ public class ViewMedicationsController extends SubController {
     private void moveMedicationToCurrent() {
         MedicationRecord record = pastMedicationsView.getSelectionModel().getSelectedItem();
         if (record != null) {
-            ModifyMedicationRecordAction action = new ModifyMedicationRecordAction(record);
+            ModifyMedicationRecordAction action = new ModifyMedicationRecordAction(record, manager);
             action.changeStopped(null);
 
             invoker.execute(action);
@@ -259,7 +261,7 @@ public class ViewMedicationsController extends SubController {
     private void addMedication(String newMedName) {
         if (!newMedName.equals("")) {
             MedicationRecord record = new MedicationRecord(newMedName, LocalDate.now(), null);
-            AddMedicationRecordAction action = new AddMedicationRecordAction(client, record);
+            AddMedicationRecordAction action = new AddMedicationRecordAction(client, record, manager);
 
             invoker.execute(action);
             newMedField.setText("");

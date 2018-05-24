@@ -35,7 +35,7 @@ public class CreateClinicianController extends SubController {
     @FXML
     private Button createButton, goBackButton;
     @FXML
-    private Pane sidebarPane;
+    private Pane menuBarPane;
 
     private ClinicianManager clinicianManager;
 
@@ -55,7 +55,7 @@ public class CreateClinicianController extends SubController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
-        mainController.loadSidebar(sidebarPane);
+        mainController.loadMenuBar(menuBarPane);
         mainController.setTitle("Create a new Clinician");
     }
 

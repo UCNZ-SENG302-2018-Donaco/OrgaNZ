@@ -32,7 +32,7 @@ public class ViewClientControllerTest extends ControllerTest {
 
     @Override
     protected void initState() {
-        State.init();
+        State.reset(false);
         setClientDetails();
         State.getClientManager().addClient(testClient);
         State.login(testClient);
@@ -69,7 +69,7 @@ public class ViewClientControllerTest extends ControllerTest {
         clickOn("Male");
         clickOn("#genderIdentity");
         clickOn("Female");
-        clickOn("#saveChanges");
+        clickOn("#applyButton");
         press(KeyCode.ENTER);
 
         assertEquals("z", testClient.getFirstName());
@@ -87,7 +87,7 @@ public class ViewClientControllerTest extends ControllerTest {
     public void invalidChangesWeightAndHeight1() {
         clickOn("#weight").type(KeyCode.BACK_SPACE).write("z");
         clickOn("#height").type(KeyCode.BACK_SPACE).write("z");
-        clickOn("#saveChanges");
+        clickOn("#applyButton");
         assertEquals(180, testClient.getHeight(), 0.1);
         assertEquals(80, testClient.getWeight(), 0.1);
     }
@@ -96,7 +96,7 @@ public class ViewClientControllerTest extends ControllerTest {
     public void invalidChangesWeightAndHeight2() {
         clickOn("#weight").type(KeyCode.BACK_SPACE).type(KeyCode.BACK_SPACE).type(KeyCode.BACK_SPACE).type(KeyCode.BACK_SPACE).type(KeyCode.BACK_SPACE).write("-50");
         clickOn("#height").type(KeyCode.BACK_SPACE).type(KeyCode.BACK_SPACE).type(KeyCode.BACK_SPACE).type(KeyCode.BACK_SPACE).type(KeyCode.BACK_SPACE).write("-2");
-        clickOn("#saveChanges");
+        clickOn("#applyButton");
         assertEquals(180, testClient.getHeight(), 0.1);
         assertEquals(80, testClient.getWeight(), 0.1);
     }
@@ -105,7 +105,7 @@ public class ViewClientControllerTest extends ControllerTest {
     public void invalidChangesNames() {
         clickOn("#fname").type(KeyCode.BACK_SPACE);
         clickOn("#lname").type(KeyCode.BACK_SPACE);
-        clickOn("#saveChanges");
+        clickOn("#applyButton");
         assertEquals("a", testClient.getFirstName());
         assertEquals("b", testClient.getLastName());
     }
@@ -122,7 +122,7 @@ public class ViewClientControllerTest extends ControllerTest {
                 .type(KeyCode.BACK_SPACE)
                 .type(KeyCode.BACK_SPACE)
                 .type(KeyCode.BACK_SPACE);
-        clickOn("#saveChanges");
+        clickOn("#applyButton");
         assertEquals(LocalDate.now().minusDays(10), testClient.getDateOfBirth());
     }
 
@@ -130,15 +130,8 @@ public class ViewClientControllerTest extends ControllerTest {
     public void invalidChangesDODAfterToday() {
         testClient = new Client("a", "", "b", LocalDate.now().minusDays(10), 1);
         clickOn("#dod").write(LocalDate.now().plusDays(1).format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-        clickOn("#saveChanges");
+        clickOn("#applyButton");
         press(KeyCode.ENTER);
         assertEquals(null, testClient.getDateOfDeath());
-    }
-
-    @Test
-    public void viewOrgansButtonTest() {
-        clickOn("#viewOrgans");
-        assertEquals(Page.REGISTER_ORGAN_DONATIONS, mainController.getCurrentPage());
-
     }
 }

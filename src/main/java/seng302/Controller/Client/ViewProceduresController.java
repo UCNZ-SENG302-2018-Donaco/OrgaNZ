@@ -30,6 +30,7 @@ import seng302.Controller.Components.OrganCheckComboBoxCell;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
 import seng302.ProcedureRecord;
+import seng302.State.ClientManager;
 import seng302.State.Session;
 import seng302.State.Session.UserType;
 import seng302.State.State;
@@ -45,12 +46,13 @@ public class ViewProceduresController extends SubController {
 
     private Session session;
     private ActionInvoker invoker;
+    private ClientManager manager;
     private Client client;
 
     @FXML
     private Pane sidebarPane;
     @FXML
-    private Pane newProcedurePane, procedureButtonsPane;
+    private Pane newProcedurePane, procedureButtonsPane, menuBarPane;
 
     @FXML
     private TextField summaryField;
@@ -102,7 +104,7 @@ public class ViewProceduresController extends SubController {
      * @param event The cell edit event.
      */
     private void editSummaryCell(CellEditEvent<ProcedureRecord,String> event) {
-        ModifyProcedureRecordAction action = new ModifyProcedureRecordAction(event.getRowValue());
+        ModifyProcedureRecordAction action = new ModifyProcedureRecordAction(event.getRowValue(), manager);
         action.changeSummary(event.getNewValue());
 
         try {
@@ -117,7 +119,7 @@ public class ViewProceduresController extends SubController {
      * @param event The cell edit event.
      */
     private void editDescriptionCell(CellEditEvent<ProcedureRecord,String> event) {
-        ModifyProcedureRecordAction action = new ModifyProcedureRecordAction(event.getRowValue());
+        ModifyProcedureRecordAction action = new ModifyProcedureRecordAction(event.getRowValue(), manager);
         action.changeDescription(event.getNewValue());
 
         try {
@@ -138,7 +140,7 @@ public class ViewProceduresController extends SubController {
                     "Invalid Date",
                     "New procedure date must be after the client's date of birth.");
         } else {
-            ModifyProcedureRecordAction action = new ModifyProcedureRecordAction(event.getRowValue());
+            ModifyProcedureRecordAction action = new ModifyProcedureRecordAction(event.getRowValue(), manager);
             action.changeDate(newDate);
 
             try {
@@ -154,7 +156,7 @@ public class ViewProceduresController extends SubController {
      * @param event The cell edit event.
      */
     private void editAffectedOrgansCell(CellEditEvent<ProcedureRecord, Set<Organ>> event) {
-        ModifyProcedureRecordAction action = new ModifyProcedureRecordAction(event.getRowValue());
+        ModifyProcedureRecordAction action = new ModifyProcedureRecordAction(event.getRowValue(), manager);
         action.changeAffectedOrgans(event.getNewValue());
 
         try {
@@ -170,6 +172,7 @@ public class ViewProceduresController extends SubController {
     public ViewProceduresController() {
         session = State.getSession();
         invoker = State.getInvoker();
+        manager = State.getClientManager();
     }
 
     /**
@@ -243,11 +246,11 @@ public class ViewProceduresController extends SubController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
-        mainController.loadSidebar(sidebarPane);
+
 
         if (session.getLoggedInUserType() == UserType.CLIENT) {
             client = session.getLoggedInClient();
-
+            mainController.loadSidebar(sidebarPane);
             newProcedurePane.setVisible(false);
             newProcedurePane.setManaged(false);
             procedureButtonsPane.setVisible(false);
@@ -260,6 +263,7 @@ public class ViewProceduresController extends SubController {
             affectedPastCol.setEditable(false);
         } else if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
+            mainController.loadMenuBar(menuBarPane);
         }
 
         mainController.setTitle("Procedures: " + client.getPreferredName());
@@ -353,7 +357,7 @@ public class ViewProceduresController extends SubController {
             for (Organ organ : affectedOrgansField.getCheckModel().getCheckedItems()) {
                 record.getAffectedOrgans().add(organ);
             }
-            AddProcedureRecordAction action = new AddProcedureRecordAction(client, record);
+            AddProcedureRecordAction action = new AddProcedureRecordAction(client, record, manager);
             invoker.execute(action);
 
             summaryField.setText(null);

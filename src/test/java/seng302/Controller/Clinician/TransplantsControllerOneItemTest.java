@@ -39,7 +39,7 @@ public class TransplantsControllerOneItemTest extends ControllerTest {
 
     @Override
     protected void initState() {
-        State.init();
+        State.reset(false);
         State.login(testClinician);
 
         State.getClientManager().addClient(client);
@@ -55,7 +55,7 @@ public class TransplantsControllerOneItemTest extends ControllerTest {
     public void testComponentsAreVisible() {
         verifyThat("#tableView", isVisible());
         verifyThat("#displayingXToYOfZText", isVisible());
-        verifyThat("#sidebarPane", isVisible());
+        verifyThat("#menuBarPane", isVisible());
         verifyThat("#pagination", isVisible());
     }
 

@@ -17,7 +17,7 @@ public class StateTest {
 
     @Before
     public void init() {
-        State.init();
+        State.reset(false);
         State.logout();
     }
 

@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import seng302.Actions.Action;
 import seng302.IllnessRecord;
+import seng302.State.ClientManager;
 
 /**
  * A reversible action to modify a given illness record. Only the diagnosis date, cured date and chronic status
@@ -12,6 +13,7 @@ import seng302.IllnessRecord;
  */
 public class ModifyIllnessRecordAction extends Action {
 
+    private ClientManager manager;
     private IllnessRecord record;
     private LocalDate oldDiagnosisDate;
     private LocalDate oldCuredDate;
@@ -25,8 +27,9 @@ public class ModifyIllnessRecordAction extends Action {
      * status to be the same as the current ones.
      * @param record The illness record to modify.
      */
-    public ModifyIllnessRecordAction(IllnessRecord record) {
+    public ModifyIllnessRecordAction(IllnessRecord record, ClientManager manager) {
         this.record = record;
+        this.manager = manager;
         oldDiagnosisDate = record.getDiagnosisDate();
         oldCuredDate = record.getCuredDate();
         oldChronic = record.isChronic();
@@ -81,6 +84,7 @@ public class ModifyIllnessRecordAction extends Action {
         if (!Objects.equals(newChronic, oldChronic)) {
             record.setChronic(newChronic);
         }
+        manager.applyChangesTo(record.getClient());
     }
 
     @Override
@@ -96,6 +100,7 @@ public class ModifyIllnessRecordAction extends Action {
         if (!Objects.equals(newChronic, oldChronic)) {
             record.setChronic(oldChronic);
         }
+        manager.applyChangesTo(record.getClient());
     }
 
     @Override

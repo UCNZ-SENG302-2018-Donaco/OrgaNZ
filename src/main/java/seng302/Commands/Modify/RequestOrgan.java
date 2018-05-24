@@ -1,6 +1,6 @@
 package seng302.Commands.Modify;
 
-import java.time.LocalDate;
+import static seng302.Utilities.Enums.TransplantRequestStatus.WAITING;
 
 import seng302.Actions.Action;
 import seng302.Actions.ActionInvoker;
@@ -11,7 +11,6 @@ import seng302.State.State;
 import seng302.TransplantRequest;
 
 import seng302.Utilities.Enums.Organ;
-import seng302.Utilities.Enums.RequestStatus;
 import seng302.Utilities.TypeConverters.OrganConverter;
 
 import picocli.CommandLine.Command;
@@ -60,7 +59,7 @@ public class RequestOrgan implements Runnable {
             boolean organCurrentlyRequested = false;
 
             for (TransplantRequest tr: client.getTransplantRequests()) {
-                if (tr.getRequestedOrgan() == organType && tr.getStatus() == RequestStatus.WAITING) {
+                if (tr.getRequestedOrgan() == organType && tr.getStatus() == WAITING) {
                     organCurrentlyRequested = true;
                     break;
                 }
@@ -69,7 +68,7 @@ public class RequestOrgan implements Runnable {
                 System.out.println("This organ is already requested.");
             } else {
                 TransplantRequest newRequest = new TransplantRequest(client, organType);
-                Action action = new AddTransplantRequestAction(client, newRequest);
+                Action action = new AddTransplantRequestAction(client, newRequest, manager);
 
                 System.out.println(invoker.execute(action));
             }

@@ -7,6 +7,8 @@ import java.time.LocalDate;
 import seng302.Actions.ActionInvoker;
 import seng302.Client;
 import seng302.MedicationRecord;
+import seng302.State.ClientManager;
+import seng302.State.ClientManagerMemory;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -14,18 +16,20 @@ import org.junit.Test;
 public class AddMedicationRecordActionTest {
 
     private ActionInvoker invoker;
+    private ClientManager manager;
     private Client testClient;
 
     @Before
     public void init() {
         invoker = new ActionInvoker();
+        manager = new ClientManagerMemory();
         testClient = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
     }
 
     @Test
     public void AddSingleMedicationCurrentTest() {
         MedicationRecord record = new MedicationRecord("Generic Name", LocalDate.of(2018, 4, 9), null);
-        AddMedicationRecordAction action = new AddMedicationRecordAction(testClient, record);
+        AddMedicationRecordAction action = new AddMedicationRecordAction(testClient, record, manager);
 
         invoker.execute(action);
 
@@ -38,7 +42,7 @@ public class AddMedicationRecordActionTest {
     public void AddSingleMedicationPastTest() {
         MedicationRecord record = new MedicationRecord("Generic Name", LocalDate.of(2018, 4, 9), LocalDate.of(2018,
                 4, 10));
-        AddMedicationRecordAction action = new AddMedicationRecordAction(testClient, record);
+        AddMedicationRecordAction action = new AddMedicationRecordAction(testClient, record, manager);
 
         invoker.execute(action);
 
@@ -54,9 +58,9 @@ public class AddMedicationRecordActionTest {
         MedicationRecord record2 = new MedicationRecord("Second Generic Name", LocalDate.of(2018, 4, 8), null);
 
         MedicationRecord record3 = new MedicationRecord("Third Generic Name", LocalDate.of(2018, 4, 7), null);
-        AddMedicationRecordAction action = new AddMedicationRecordAction(testClient, record);
-        AddMedicationRecordAction action2 = new AddMedicationRecordAction(testClient, record2);
-        AddMedicationRecordAction action3 = new AddMedicationRecordAction(testClient, record3);
+        AddMedicationRecordAction action = new AddMedicationRecordAction(testClient, record, manager);
+        AddMedicationRecordAction action2 = new AddMedicationRecordAction(testClient, record2, manager);
+        AddMedicationRecordAction action3 = new AddMedicationRecordAction(testClient, record3, manager);
 
         invoker.execute(action);
         invoker.execute(action2);
@@ -74,9 +78,9 @@ public class AddMedicationRecordActionTest {
         MedicationRecord record2 = new MedicationRecord("Second Generic Name", LocalDate.of(2018, 4, 8), null);
 
         MedicationRecord record3 = new MedicationRecord("Third Generic Name", LocalDate.of(2018, 4, 7), null);
-        AddMedicationRecordAction action = new AddMedicationRecordAction(testClient, record);
-        AddMedicationRecordAction action2 = new AddMedicationRecordAction(testClient, record2);
-        AddMedicationRecordAction action3 = new AddMedicationRecordAction(testClient, record3);
+        AddMedicationRecordAction action = new AddMedicationRecordAction(testClient, record, manager);
+        AddMedicationRecordAction action2 = new AddMedicationRecordAction(testClient, record2, manager);
+        AddMedicationRecordAction action3 = new AddMedicationRecordAction(testClient, record3, manager);
 
         invoker.execute(action);
         invoker.execute(action2);
@@ -96,9 +100,9 @@ public class AddMedicationRecordActionTest {
         MedicationRecord record2 = new MedicationRecord("Second Generic Name", LocalDate.of(2018, 4, 8), null);
 
         MedicationRecord record3 = new MedicationRecord("Third Generic Name", LocalDate.of(2018, 4, 7), null);
-        AddMedicationRecordAction action = new AddMedicationRecordAction(testClient, record);
-        AddMedicationRecordAction action2 = new AddMedicationRecordAction(testClient, record2);
-        AddMedicationRecordAction action3 = new AddMedicationRecordAction(testClient, record3);
+        AddMedicationRecordAction action = new AddMedicationRecordAction(testClient, record, manager);
+        AddMedicationRecordAction action2 = new AddMedicationRecordAction(testClient, record2, manager);
+        AddMedicationRecordAction action3 = new AddMedicationRecordAction(testClient, record3, manager);
 
         invoker.execute(action);
         invoker.execute(action2);
@@ -116,7 +120,7 @@ public class AddMedicationRecordActionTest {
     @Test
     public void AddMedicationStringTest() {
         MedicationRecord record = new MedicationRecord("Generic Name", LocalDate.of(2018, 4, 9), null);
-        AddMedicationRecordAction action = new AddMedicationRecordAction(testClient, record);
+        AddMedicationRecordAction action = new AddMedicationRecordAction(testClient, record, manager);
 
         String result = invoker.execute(action);
 
@@ -129,7 +133,7 @@ public class AddMedicationRecordActionTest {
     @Test
     public void AddMedicationUndoStringTest() {
         MedicationRecord record = new MedicationRecord("Generic Name", LocalDate.of(2018, 4, 9), null);
-        AddMedicationRecordAction action = new AddMedicationRecordAction(testClient, record);
+        AddMedicationRecordAction action = new AddMedicationRecordAction(testClient, record, manager);
 
         invoker.execute(action);
 

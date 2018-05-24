@@ -1,6 +1,7 @@
 package seng302.Utilities.Web;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,6 +34,7 @@ public class DrugInteractionsResponse {
             + "(?:(?<greaterYear>\\d+)\\+ years?)|"
             + "(?:(?<lowMonth>\\d+)\\s+-\\s+(?<highMonth>\\d+)\\s+months?)|"
             + "(?:(?<lowYear>\\d+)\\s+-\\s+(?<highYear>\\d+)\\s+years?))$");
+    public static final DrugInteractionsResponse EMPTY = new DrugInteractionsResponse();
 
     @Key("co_existing_conditions")
     private Map<String, Integer> coexistingConditions;
@@ -53,6 +55,11 @@ public class DrugInteractionsResponse {
      * Calculates a list of possible drug interactions given a client.
      */
     public List<String> calculateClientInteractions(Client client) {
+        // This happens when the drug interactions is not valid.
+        if (coexistingConditions == null) {
+            return Collections.emptyList();
+        }
+
         int clientAge = client.getAge();
         Set<String> ageInteractions = calculateAgeInteractions(clientAge);
 

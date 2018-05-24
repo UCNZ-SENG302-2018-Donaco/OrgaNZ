@@ -6,6 +6,7 @@ import static org.junit.Assert.assertEquals;
 import seng302.Actions.ActionInvoker;
 import seng302.Clinician;
 import seng302.State.ClinicianManager;
+import seng302.State.ClinicianManagerMemory;
 import seng302.Utilities.Enums.Region;
 
 import org.junit.Before;
@@ -20,7 +21,7 @@ public class DeleteClinicianActionTest {
     @Before
     public void init() {
         invoker = new ActionInvoker();
-        manager = new ClinicianManager();
+        manager = new ClinicianManagerMemory();
         baseClinician = new Clinician("First", null, "Last", "Address", Region.UNSPECIFIED, 1, "pass");
         manager.addClinician(baseClinician);
     }

@@ -23,7 +23,7 @@ public class ClinicianManagerTest {
 
     @Before
     public void init() {
-        manager = new ClinicianManager();
+        manager = new ClinicianManagerMemory();
     }
 
     @Test
@@ -41,7 +41,7 @@ public class ClinicianManagerTest {
         ArrayList<Clinician> clinicians = new ArrayList<>();
         clinicians.add(clinician);
         clinicians.add(clinician2);
-        manager = new ClinicianManager(clinicians);
+        manager = new ClinicianManagerMemory(clinicians);
 
         assertTrue(manager.getClinicians().contains(clinician));
         assertTrue(manager.getClinicians().contains(clinician2));
@@ -54,7 +54,7 @@ public class ClinicianManagerTest {
         ArrayList<Clinician> clinicians = new ArrayList<>();
         clinicians.add(clinician);
         clinicians.add(clinician2);
-        manager = new ClinicianManager(clinicians);
+        manager = new ClinicianManagerMemory(clinicians);
 
         manager.removeClinician(clinician2);
 
@@ -69,7 +69,7 @@ public class ClinicianManagerTest {
         ArrayList<Clinician> clinicians = new ArrayList<>();
         clinicians.add(clinician);
         clinicians.add(clinician2);
-        manager = new ClinicianManager(clinicians);
+        manager = new ClinicianManagerMemory(clinicians);
 
         clinician.setFirstName("New");
 
@@ -83,7 +83,7 @@ public class ClinicianManagerTest {
         Clinician clinician = new Clinician("First", null, "Last", "Address", Region.UNSPECIFIED, 1, "pass");
         ArrayList<Clinician> clinicians = new ArrayList<>();
         clinicians.add(clinician);
-        manager = new ClinicianManager(clinicians);
+        manager = new ClinicianManagerMemory(clinicians);
 
         assertFalse(manager.collisionExists(2));
     }
@@ -93,7 +93,7 @@ public class ClinicianManagerTest {
         Clinician clinician = new Clinician("First", null, "Last", "Address", Region.UNSPECIFIED, 1, "pass");
         ArrayList<Clinician> clinicians = new ArrayList<>();
         clinicians.add(clinician);
-        manager = new ClinicianManager(clinicians);
+        manager = new ClinicianManagerMemory(clinicians);
 
         assertTrue(manager.collisionExists(1));
     }
@@ -105,7 +105,7 @@ public class ClinicianManagerTest {
         ArrayList<Clinician> clinicians = new ArrayList<>();
         clinicians.add(clinician);
         clinicians.add(clinician2);
-        manager = new ClinicianManager(clinicians);
+        manager = new ClinicianManagerMemory(clinicians);
 
         assertTrue(manager.collisionExists(2));
     }

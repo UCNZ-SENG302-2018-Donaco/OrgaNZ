@@ -21,10 +21,10 @@
 <?import org.controlsfx.control.RangeSlider?>
 
 <VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.Clinician.SearchClientsController">
-  <children>
-    <SplitPane dividerPositions="0.298" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+  <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+    <HBox fx:id="menuBarPane" maxHeight="20.0" minHeight="-Infinity" />
+    <SplitPane prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
       <items>
-        <HBox fx:id="sidebarPane" maxWidth="200.0" minWidth="200.0" prefWidth="200.0" />
         <BorderPane>
           <center>
             <TableView fx:id="tableView" maxWidth="1.7976931348623157E308">
@@ -151,5 +151,5 @@
         </BorderPane>
       </items>
     </SplitPane>
-  </children>
+  </SplitPane>
 </VBox>

@@ -74,7 +74,7 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
     };
 
     private Clinician testClinician = new Clinician("A", "B", "C", "D", Region.UNSPECIFIED, 0, "E");
-    private Client testClient = new Client();
+    private Client testClient = new Client(1);
 
     @Override
     protected Page getPage() {
@@ -83,7 +83,7 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
 
     @Override
     protected void initState() {
-        State.init();
+        State.reset(false);
         State.login(testClinician);
         mainController.setWindowContext(new WindowContext.WindowContextBuilder()
                 .setAsClinViewClientWindow()

@@ -29,9 +29,22 @@ public final class State {
      */
     public static void init() {
         actionInvoker = new ActionInvoker();
-        clientManager = new ClientManager();
-        clinicianManager = new ClinicianManager();
-        administratorManager = new AdministratorManager();
+        clientManager = new ClientManagerDBPure();
+        clinicianManager = new ClinicianManagerDBPure();
+        administratorManager = new AdministratorManagerDBPure();
+    }
+
+    private static void init(boolean isDB) {
+        actionInvoker = new ActionInvoker();
+        if (isDB) {
+            clientManager = new ClientManagerDBPure();
+            clinicianManager = new ClinicianManagerDBPure();
+            administratorManager = new AdministratorManagerDBPure();
+        } else {
+            clientManager = new ClientManagerMemory();
+            clinicianManager = new ClinicianManagerMemory();
+            administratorManager = new AdministratorManagerMemory();
+        }
     }
 
     public static ClientManager getClientManager() {
@@ -79,8 +92,9 @@ public final class State {
         session = null;
     }
 
-    public static void reset() {
-        init();
+
+    public static void reset(boolean isDB) {
+        init(isDB);
         logout();
         unsavedChanges = false;
         mainControllers = new ArrayList<>();

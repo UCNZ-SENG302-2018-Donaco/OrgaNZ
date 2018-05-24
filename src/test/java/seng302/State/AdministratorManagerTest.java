@@ -23,7 +23,7 @@ public class AdministratorManagerTest {
 
     @Before
     public void init() {
-        manager = new AdministratorManager();
+        manager = new AdministratorManagerMemory();
     }
 
     @Test
@@ -38,7 +38,7 @@ public class AdministratorManagerTest {
         ArrayList<Administrator> administrators = new ArrayList<>();
         administrators.add(administrator);
         administrators.add(administrator2);
-        manager = new AdministratorManager(administrators);
+        manager = new AdministratorManagerMemory(administrators);
 
         assertTrue(manager.getAdministrators().contains(administrator));
         assertTrue(manager.getAdministrators().contains(administrator2));
@@ -49,7 +49,7 @@ public class AdministratorManagerTest {
         ArrayList<Administrator> administrators = new ArrayList<>();
         administrators.add(administrator);
         administrators.add(administrator2);
-        manager = new AdministratorManager(administrators);
+        manager = new AdministratorManagerMemory(administrators);
 
         manager.removeAdministrator(administrator2);
 
@@ -62,7 +62,7 @@ public class AdministratorManagerTest {
         ArrayList<Administrator> administrators = new ArrayList<>();
         administrators.add(administrator);
         administrators.add(administrator2);
-        manager = new AdministratorManager(administrators);
+        manager = new AdministratorManagerMemory(administrators);
 
         administrator.setPassword("somethingsecure");
 
@@ -75,7 +75,7 @@ public class AdministratorManagerTest {
     public void collisionExistsNoCollisionTest() {
         ArrayList<Administrator> administrators = new ArrayList<>();
         administrators.add(administrator);
-        manager = new AdministratorManager(administrators);
+        manager = new AdministratorManagerMemory(administrators);
 
         assertFalse(manager.collisionExists("some new username"));
     }
@@ -84,7 +84,7 @@ public class AdministratorManagerTest {
     public void collisionExistsTrueTest() {
         ArrayList<Administrator> administrators = new ArrayList<>();
         administrators.add(administrator);
-        manager = new AdministratorManager(administrators);
+        manager = new AdministratorManagerMemory(administrators);
 
         assertTrue(manager.collisionExists(username1));
     }
@@ -93,7 +93,7 @@ public class AdministratorManagerTest {
     public void collisionExistsTrueNumericTest() {
         ArrayList<Administrator> administrators = new ArrayList<>();
         administrators.add(administrator);
-        manager = new AdministratorManager(administrators);
+        manager = new AdministratorManagerMemory(administrators);
 
         assertTrue(manager.collisionExists("5"));
     }
@@ -103,7 +103,7 @@ public class AdministratorManagerTest {
         ArrayList<Administrator> administrators = new ArrayList<>();
         administrators.add(administrator);
         administrators.add(administrator2);
-        manager = new AdministratorManager(administrators);
+        manager = new AdministratorManagerMemory(administrators);
 
         assertTrue(manager.collisionExists(username2));
     }

@@ -29,6 +29,7 @@ import seng302.Client;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
 import seng302.IllnessRecord;
+import seng302.State.ClientManager;
 import seng302.State.Session;
 import seng302.State.Session.UserType;
 import seng302.State.State;
@@ -43,10 +44,11 @@ public class ClientMedicalHistoryController extends SubController {
 
     private Session session;
     private ActionInvoker invoker;
+    private ClientManager manager;
     private Client client;
 
     @FXML
-    private Pane sidebarPane;
+    private Pane sidebarPane, menuBarPane;
     @FXML
     private HBox newIllnessPane, illnessButtonsPane;
 
@@ -145,6 +147,7 @@ public class ClientMedicalHistoryController extends SubController {
     public ClientMedicalHistoryController() {
         session = State.getSession();
         invoker = State.getInvoker();
+        manager = State.getClientManager();
     }
 
     /**
@@ -201,17 +204,18 @@ public class ClientMedicalHistoryController extends SubController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
-        mainController.loadSidebar(sidebarPane);
+
 
         if (session.getLoggedInUserType() == UserType.CLIENT) {
             client = session.getLoggedInClient();
-
+            mainController.loadSidebar(sidebarPane);
             newIllnessPane.setVisible(false);
             newIllnessPane.setManaged(false);
             illnessButtonsPane.setVisible(false);
             illnessButtonsPane.setManaged(false);
         } else if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
+            mainController.loadMenuBar(menuBarPane);
 
         }
 
@@ -308,14 +312,14 @@ public class ClientMedicalHistoryController extends SubController {
                                 + " not chronic.");
             } else if (selectedTableView == currentIllnessView) {
                 // Moving from current to past (marking as cured)
-                ModifyIllnessRecordAction action = new ModifyIllnessRecordAction(record);
+                ModifyIllnessRecordAction action = new ModifyIllnessRecordAction(record, manager);
                 action.changeCuredDate(LocalDate.now());
 
                 invoker.execute(action);
                 PageNavigator.refreshAllWindows();
             } else if (selectedTableView == pastIllnessView) {
                 // Moving from past to current (marking as not cured)
-                ModifyIllnessRecordAction action = new ModifyIllnessRecordAction(record);
+                ModifyIllnessRecordAction action = new ModifyIllnessRecordAction(record, manager);
                 action.changeCuredDate(null);
                 invoker.execute(action);
                 PageNavigator.refreshAllWindows();
@@ -349,7 +353,7 @@ public class ClientMedicalHistoryController extends SubController {
     private void toggleChronic() {
         IllnessRecord record = getSelectedRecord();
         if (record != null) {
-            ModifyIllnessRecordAction action = new ModifyIllnessRecordAction(record);
+            ModifyIllnessRecordAction action = new ModifyIllnessRecordAction(record, manager);
             if (record.isChronic()) {
                 // Current, chronic illness -> Current illness
                 action.changeChronicStatus(false);
@@ -389,7 +393,7 @@ public class ClientMedicalHistoryController extends SubController {
             errorMessage.setText("Diagnosis date cannot be in the future.");
         } else {
             IllnessRecord record = new IllnessRecord(illnessName, dateDiagnosed, null, isChronic);
-            AddIllnessRecordAction action = new AddIllnessRecordAction(client, record);
+            AddIllnessRecordAction action = new AddIllnessRecordAction(client, record, manager);
             invoker.execute(action);
 
             illnessNameField.setText(null);

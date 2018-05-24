@@ -11,7 +11,7 @@ tag_checker:
 junit:
   stage: test
   script:
-    - mvn -B clean test
+    - mvn -B clean test verify sonar:sonar
 
 recent-artifacts:
   stage: deploy

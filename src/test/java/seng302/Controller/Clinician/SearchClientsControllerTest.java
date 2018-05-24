@@ -63,7 +63,7 @@ public class SearchClientsControllerTest extends ControllerTest{
 
     @Override
     protected void initState() {
-        State.init();
+        State.reset(false);
         State.login(testClinician);
         setupClientDetails();
         for (Client client: testClients) {
@@ -550,7 +550,7 @@ public class SearchClientsControllerTest extends ControllerTest{
     public void componentsAreVisibleTest() {
         verifyThat("#tableView", isVisible());
         verifyThat("#displayingXToYOfZText", isVisible());
-        verifyThat("#sidebarPane", isVisible());
+        verifyThat("#menuBarPane", isVisible());
         verifyThat("#pagination", isVisible());
     }
 

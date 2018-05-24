@@ -21,6 +21,7 @@ import javafx.scene.input.MouseButton;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
@@ -76,7 +77,7 @@ public class TransplantsControllerTest extends ControllerTest {
 
     @Override
     protected void initState() {
-        State.init();
+        State.reset(false);
         State.login(testClinician);
 
         for (Client client : clients) {
@@ -181,7 +182,7 @@ public class TransplantsControllerTest extends ControllerTest {
     public void testComponentsAreVisible() {
         verifyThat("#tableView", isVisible());
         verifyThat("#displayingXToYOfZText", isVisible());
-        verifyThat("#sidebarPane", isVisible());
+        verifyThat("#menuBarPane", isVisible());
         verifyThat("#pagination", isVisible());
     }
 
@@ -236,7 +237,10 @@ public class TransplantsControllerTest extends ControllerTest {
         SplitPane splitPane = (SplitPane) clientVbox.getChildren().get(0); // Main SplitPane
         assertNotNull(splitPane);
 
-        VBox vbox2 = (VBox) splitPane.getItems().get(1); // Vbox containing a borderpane
+        SplitPane splitPane2 = (SplitPane) splitPane.getItems().get(1); // Secondary SplitPane
+        assertNotNull(splitPane2);
+
+        VBox vbox2 = (VBox) splitPane2.getItems().get(1); // Vbox containing a borderpane
         assertNotNull(vbox2);
 
         BorderPane borderPane = (BorderPane) vbox2.getChildren().get(0); //Borderpane containing header and data

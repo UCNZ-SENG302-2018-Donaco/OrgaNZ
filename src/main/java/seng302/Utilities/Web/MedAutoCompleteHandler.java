@@ -41,6 +41,16 @@ public class MedAutoCompleteHandler extends WebAPIHandler {
         );
     }
 
+    public List<String> getData(Object... arguments) {
+        String queryString;
+        if (arguments.length == 1 && arguments[0] instanceof String) {
+            queryString = (String) arguments[0];
+        } else {
+            throw new UnsupportedOperationException("Must have exactly 1 argument, which is (castable to) a String.");
+        }
+        return getSuggestions(queryString);
+    }
+
     /**
      * Makes a request to the drug autocompletion web API and returns the results.
      * @param queryString The query string to send to the API.

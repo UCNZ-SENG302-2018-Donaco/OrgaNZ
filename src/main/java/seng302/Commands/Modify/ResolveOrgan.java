@@ -9,7 +9,7 @@ import seng302.State.ClientManager;
 import seng302.State.State;
 import seng302.TransplantRequest;
 import seng302.Utilities.Enums.Organ;
-import seng302.Utilities.Enums.RequestStatus;
+import seng302.Utilities.Enums.TransplantRequestStatus;
 import seng302.Utilities.Enums.ResolveReason;
 import seng302.Utilities.TypeConverters.OrganConverter;
 
@@ -67,7 +67,7 @@ public class ResolveOrgan implements Runnable {
         TransplantRequest selectedTransplantRequest = new TransplantRequest(client, Organ.LIVER);
 
         for (TransplantRequest tr: client.getTransplantRequests()) {
-            if (tr.getRequestedOrgan() == organType && tr.getStatus() == RequestStatus.WAITING) {
+            if (tr.getRequestedOrgan() == organType && tr.getStatus() == TransplantRequestStatus.WAITING) {
                 organCurrentlyRequested = true;
                 selectedTransplantRequest = tr;
                 break;
@@ -87,22 +87,35 @@ public class ResolveOrgan implements Runnable {
     private void resolveRequest(TransplantRequest selectedTransplantRequest) {
         Action action = null;
         if (resolveReason == ResolveReason.COMPLETED) {
-            action = new ResolveTransplantRequestAction(selectedTransplantRequest, RequestStatus.COMPLETED, "Transplant took place.");
+            action = new ResolveTransplantRequestAction(selectedTransplantRequest,
+                    TransplantRequestStatus.COMPLETED,
+                    "Transplant took place.",
+                    manager);
 
         } else if (resolveReason == ResolveReason.DECEASED) {
-            action = new ResolveTransplantRequestAction(selectedTransplantRequest, RequestStatus.CANCELLED, "The "
-                    + "client has deceased.");
+            action = new ResolveTransplantRequestAction(selectedTransplantRequest,
+                    TransplantRequestStatus.CANCELLED,
+                    "The client has deceased.",
+                    manager);
 
         } else if (resolveReason == ResolveReason.CURED) {
-            action = new ResolveTransplantRequestAction(selectedTransplantRequest, RequestStatus.CANCELLED, "The disease was cured.");
+            action = new ResolveTransplantRequestAction(selectedTransplantRequest,
+                    TransplantRequestStatus.CANCELLED,
+                    "The disease was cured.",
+                    manager);
 
         } else if (resolveReason == ResolveReason.ERROR) {
-            action = new ResolveTransplantRequestAction(selectedTransplantRequest, RequestStatus.CANCELLED, "Request was a mistake.");
+            action = new ResolveTransplantRequestAction(selectedTransplantRequest,
+                    TransplantRequestStatus.CANCELLED,
+                    "Request was a mistake.",
+                    manager);
 
         } else if (resolveReason == ResolveReason.CUSTOM) {
             if (message != null) {
-                action = new ResolveTransplantRequestAction(selectedTransplantRequest, RequestStatus.CANCELLED,
-                        message);
+                action = new ResolveTransplantRequestAction(selectedTransplantRequest,
+                        TransplantRequestStatus.CANCELLED,
+                        message,
+                        manager);
             } else {
                 System.out.println("Custom resolve reason must have a message specified for why the organ has been "
                         + "resolved. The request is still active.");

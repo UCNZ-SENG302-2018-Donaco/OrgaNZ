@@ -14,6 +14,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 
+import seng302.AppUI;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
 import seng302.State.State;
@@ -67,16 +68,19 @@ public class PageNavigator {
         try {
             Stage newStage = new Stage();
             newStage.setTitle("Organ Client Management System");
-            newStage.setMinHeight(639);
-            newStage.setMinWidth(1016);
             FXMLLoader loader = new FXMLLoader();
             Pane mainPane = loader.load(PageNavigator.class.getResourceAsStream(Page.MAIN.getPath()));
             MainController mainController = loader.getController();
             mainController.setStage(newStage);
             State.addMainController(mainController);
 
-            newStage.setScene(new Scene(mainPane));
+            Scene scene = new Scene(mainPane);
+            AppUI.addCss(scene);
+            newStage.setScene(scene);
             newStage.show();
+
+            newStage.setMinHeight(639);
+            newStage.setMinWidth(1016);
 
             return mainController;
         } catch (IOException e) {
