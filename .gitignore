@@ -21,6 +21,7 @@
 
 # Log file for the app
 organz.log
+organz.log.*
 
 # Lock files, such as the one for the log file
 *.lck
@@ -77,6 +78,7 @@ Icon
 .TemporaryItems
 .Trashes
 .VolumeIcon.icns
+.Rhistory
 
 # Directories potentially created on remote AFP share
 .AppleDB
