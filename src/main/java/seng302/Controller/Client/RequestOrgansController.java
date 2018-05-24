@@ -64,7 +64,7 @@ public class RequestOrgansController extends SubController {
     private FilteredList<TransplantRequest> pastRequests;
 
     @FXML
-    private Pane sidebarPane;
+    private Pane sidebarPane, menuBarPane;
     @FXML
     private HBox newRequestForm, resolveRequestBar;
     @FXML
@@ -203,7 +203,6 @@ public class RequestOrgansController extends SubController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
-        mainController.loadSidebar(sidebarPane);
 
         if (session.getLoggedInUserType() == Session.UserType.CLIENT) {
             client = session.getLoggedInClient();
@@ -211,8 +210,10 @@ public class RequestOrgansController extends SubController {
             newRequestForm.setVisible(false);
             resolveRequestBar.setManaged(false);
             resolveRequestBar.setVisible(false);
+            mainController.loadSidebar(sidebarPane);
         } else if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
+            mainController.loadMenuBar(menuBarPane);
         }
 
         refresh();
@@ -274,7 +275,7 @@ public class RequestOrgansController extends SubController {
                     "Client already has a waiting request for this organ.");
         } else {
             TransplantRequest newRequest = new TransplantRequest(client, selectedOrgan);
-            Action action = new AddTransplantRequestAction(client, newRequest);
+            Action action = new AddTransplantRequestAction(client, newRequest, manager);
             invoker.execute(action);
             PageNavigator.refreshAllWindows();
         }

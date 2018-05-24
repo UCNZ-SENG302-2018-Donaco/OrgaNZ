@@ -40,7 +40,7 @@ public class ViewClinicianController extends SubController {
     private String updatedPassword;
 
     @FXML
-    private Pane sidebarPane, loadClinicianPane, inputsPane;
+    private Pane menuBarPane, loadClinicianPane, inputsPane;
     @FXML
     private Label creationDate, lastModified, fnameLabel, lnameLabel, passwordLabel;
     @FXML
@@ -81,8 +81,8 @@ public class ViewClinicianController extends SubController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
-        mainController.setTitle("Clinician details: " + currentClinician.getFullName());
-        mainController.loadSidebar(sidebarPane);
+        mainController.setTitle("Clinician profile: " + currentClinician.getFullName());
+        mainController.loadMenuBar(menuBarPane);
 
         if (session.getLoggedInUserType() == Session.UserType.CLINICIAN) {
             loadClinicianPane.setVisible(false);
@@ -110,12 +110,14 @@ public class ViewClinicianController extends SubController {
                     "The Staff ID must be an integer.");
             return;
         }
+        Clinician newClin = State.getClinicianManager().getClinicianByStaffId(id_value);
 
-        currentClinician = State.getClinicianManager().getClinicianByStaffId(id_value);
-        if (currentClinician == null) {
+        if (newClin == null) {
             PageNavigator.showAlert(Alert.AlertType.ERROR, "Invalid Staff ID",
                     "This staff ID does not exist in the system.");
             return;
+        } else {
+            currentClinician = newClin;
         }
 
         loadClinicianData();
@@ -145,13 +147,21 @@ public class ViewClinicianController extends SubController {
      * fields text turns red.
      */
     @FXML
-    private void saveChanges() {
+    private void apply() {
         if (checkMandatoryFields()) {
             updatedPassword = checkPassword();
              if (updateChanges()) {
                  lastModified.setText(currentClinician.getModifiedOn().format(dateTimeFormat));
              }
         }
+    }
+
+    /**
+     * Resets the page back to its default state.
+     */
+    @FXML
+    private void cancel() {
+        refresh();
     }
 
     /**

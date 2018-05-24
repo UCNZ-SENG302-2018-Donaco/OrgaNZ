@@ -78,7 +78,7 @@ public class SearchClientsController extends SubController {
     private HBox donatingFilterBox, requestingFilterBox;
 
     @FXML
-    private HBox sidebarPane;
+    private HBox menuBarPane;
 
     @FXML
     private TableView<Client> tableView;
@@ -118,7 +118,7 @@ public class SearchClientsController extends SubController {
     public void setup(MainController mainController) {
         super.setup(mainController);
         mainController.setTitle("Client search");
-        mainController.loadSidebar(sidebarPane);
+        mainController.loadMenuBar(menuBarPane);
         ageSlider.setLowValue(AGE_LOWER_BOUND);
         ageSlider.setHighValue(AGE_UPPER_BOUND);
     }

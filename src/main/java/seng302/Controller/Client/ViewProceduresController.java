@@ -52,7 +52,7 @@ public class ViewProceduresController extends SubController {
     @FXML
     private Pane sidebarPane;
     @FXML
-    private Pane newProcedurePane, procedureButtonsPane;
+    private Pane newProcedurePane, procedureButtonsPane, menuBarPane;
 
     @FXML
     private TextField summaryField;
@@ -246,11 +246,11 @@ public class ViewProceduresController extends SubController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
-        mainController.loadSidebar(sidebarPane);
+
 
         if (session.getLoggedInUserType() == UserType.CLIENT) {
             client = session.getLoggedInClient();
-
+            mainController.loadSidebar(sidebarPane);
             newProcedurePane.setVisible(false);
             newProcedurePane.setManaged(false);
             procedureButtonsPane.setVisible(false);
@@ -263,6 +263,7 @@ public class ViewProceduresController extends SubController {
             affectedPastCol.setEditable(false);
         } else if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
+            mainController.loadMenuBar(menuBarPane);
         }
 
         mainController.setTitle("Procedures: " + client.getPreferredName());

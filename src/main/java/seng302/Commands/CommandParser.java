@@ -21,13 +21,15 @@ public class CommandParser {
         boolean lastCharWasBackSlash = false;
 
         for (char ch : input.toCharArray()) {
-            if ((ch == ' ' || ch == '=') && !betweenQuotes) {
+            if ((ch == ' ') && !betweenQuotes) {
                 if (currentItem.equals("")) {
                     continue;
                 }
                 inputs.add(currentItem);
                 currentItem = "";
             } else if (ch == '"') {
+                //If the previous character was a backslash, the backslash is removed and the quote included in the
+                // actual string rather than counting as a quote for a multi word string
                 if (lastCharWasBackSlash) {
                     currentItem = currentItem.substring(0, currentItem.length() -1);
                     currentItem += ch;

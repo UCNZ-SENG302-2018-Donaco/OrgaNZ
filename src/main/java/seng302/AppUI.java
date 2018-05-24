@@ -29,25 +29,25 @@ public class AppUI extends Application {
     private static Stage window;
 
     public static Stage getWindow() {
-        return AppUI.window;
+        return window;
     }
 
     /**
      * Starts the JavaFX GUI. Sets up the main stage and initialises the state of the system.
      * Loads from the save file or creates one if one does not yet exist.
-     * @param stage The stage given by the JavaFX launcher.
+     * @param primaryStage The stage given by the JavaFX launcher.
      * @throws IOException If the save file cannot be loaded/created.
      */
     @Override
-    public void start(Stage stage) throws IOException {
+    public void start(Stage primaryStage) throws IOException {
         LoggerSetup.setup(Level.INFO);
 
-        stage.setTitle("Organ Client Management System");
-        stage.setScene(createScene(loadMainPane(stage)));
-        stage.show();
+        primaryStage.setTitle("Organ Client Management System");
+        primaryStage.setScene(createScene(loadMainPane(primaryStage)));
+        primaryStage.show();
 
-        stage.setMinHeight(639);
-        stage.setMinWidth(1016);
+        primaryStage.setMinHeight(639);
+        primaryStage.setMinWidth(1016);
 
         State.init();
 
@@ -85,10 +85,13 @@ public class AppUI extends Application {
      * @param mainPane The main application layout.
      * @return Returns the created scene.
      */
-    private Scene createScene(Pane mainPane) {
+    private static Scene createScene(Pane mainPane) {
         Scene scene = new Scene(mainPane);
-        // TODO Add CSS files for styling.
-        // scene.getStylesheets().setAll(getClass().getResource("page.css").toExternalForm());
+        addCss(scene);
         return scene;
+    }
+
+    public static void addCss(Scene scene) {
+        scene.getStylesheets().add(AppUI.class.getResource("/css/validation.css").toExternalForm());
     }
 }

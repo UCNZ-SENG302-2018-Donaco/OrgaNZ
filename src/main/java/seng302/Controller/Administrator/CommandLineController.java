@@ -16,6 +16,7 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
 import seng302.Commands.BaseCommand;
 import seng302.Commands.CommandParser;
@@ -29,7 +30,7 @@ import picocli.CommandLine;
 public class CommandLineController extends SubController {
 
     @FXML
-    public HBox sidebarPane;
+    public HBox menuBarPane;
 
     private TextField inputTextField;
 
@@ -53,7 +54,7 @@ public class CommandLineController extends SubController {
     public void setup(MainController mainController) {
         super.setup(mainController);
         mainController.setTitle("Administrator command line interface");
-        mainController.loadSidebar(sidebarPane);
+        mainController.loadMenuBar(menuBarPane);
     }
 
     @FXML

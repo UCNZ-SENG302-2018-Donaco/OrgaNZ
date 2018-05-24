@@ -4,10 +4,12 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.OptionalInt;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
@@ -28,11 +30,12 @@ import seng302.State.ClientManager;
 import seng302.State.Session;
 import seng302.State.Session.UserType;
 import seng302.State.State;
+import seng302.UI.Validation.IntValidator;
+import seng302.UI.Validation.UIValidation;
 import seng302.Utilities.Enums.BloodType;
 import seng302.Utilities.Enums.Gender;
 import seng302.Utilities.Enums.Region;
 import seng302.Utilities.JSONConverter;
-import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
 
 import org.controlsfx.control.Notifications;
@@ -50,7 +53,9 @@ public class ViewClientController extends SubController {
     private Client viewedClient;
 
     @FXML
-    private Pane sidebarPane, idPane, inputsPane;
+    private Pane sidebarPane, idPane, inputsPane, menuBarPane;
+    @FXML
+    public Button searchClientButton;
     @FXML
     private Label creationDate, lastModified, noClientLabel, fnameLabel, lnameLabel, dobLabel,
             dodLabel, heightLabel, weightLabel, ageDisplayLabel, ageLabel, BMILabel;
@@ -91,22 +96,42 @@ public class ViewClientController extends SubController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
-        mainController.loadSidebar(sidebarPane);
-
         if (session.getLoggedInUserType() == Session.UserType.CLIENT) {
             viewedClient = session.getLoggedInClient();
             idPane.setVisible(false);
             idPane.setManaged(false);
+            mainController.loadSidebar(sidebarPane);
         } else if (windowContext.isClinViewClientWindow()) {
             viewedClient = windowContext.getViewClient();
+            mainController.loadMenuBar(menuBarPane);
         }
         id.setText(Integer.toString(viewedClient.getUid()));
         refresh();
+
+        new UIValidation()
+                .add(id, new IntValidator() {
+                    @Override
+                    public boolean isValid(Object value) {
+                        OptionalInt clientId = getAsInt(value);
+                        if (!clientId.isPresent()) {
+                            return false;
+                        }
+
+                        return State.getClientManager().getClientByID(clientId.getAsInt()) != null;
+                    }
+
+                    @Override
+                    public String getErrorMessage() {
+                        return "Invalid client id";
+                    }
+                })
+                .addDisableButton(searchClientButton)
+                .validate();
     }
 
     @Override
     public void refresh() {
-        searchClient();
+        updateClientFields();
         if (session.getLoggedInUserType() == UserType.CLIENT) {
             mainController.setTitle("View Client: " + viewedClient.getPreferredName());
         } else if (windowContext.isClinViewClientWindow()) {
@@ -120,47 +145,52 @@ public class ViewClientController extends SubController {
      */
     @FXML
     private void searchClient() {
-        int id_value;
+        int idValue;
         try {
-            id_value = Integer.parseInt(id.getText());
-        } catch (Exception e) {
+            idValue = Integer.parseInt(id.getText());
+        } catch (NumberFormatException e) {
             noClientLabel.setVisible(true);
             setFieldsDisabled(true);
             return;
         }
 
-        viewedClient = manager.getClientByID(id_value);
+        viewedClient = manager.getClientByID(idValue);
         if (viewedClient == null) {
             noClientLabel.setVisible(true);
             setFieldsDisabled(true);
         } else {
-            noClientLabel.setVisible(false);
-            setFieldsDisabled(false);
+            updateClientFields();
+        }
+    }
 
-            fname.setText(viewedClient.getFirstName());
-            lname.setText(viewedClient.getLastName());
-            mname.setText(viewedClient.getMiddleName());
-            pname.setText(viewedClient.getPreferredNameOnly());
-            dob.setValue(viewedClient.getDateOfBirth());
-            dod.setValue(viewedClient.getDateOfDeath());
-            gender.setValue(viewedClient.getGender());
-            genderIdentity.setValue(viewedClient.getGenderIdentity());
-            height.setText(String.valueOf(viewedClient.getHeight()));
-            weight.setText(String.valueOf(viewedClient.getWeight()));
-            btype.setValue(viewedClient.getBloodType());
-            region.setValue(viewedClient.getRegion());
-            address.setText(viewedClient.getCurrentAddress());
+    private void updateClientFields() {
+        noClientLabel.setVisible(false);
+        setFieldsDisabled(false);
 
-            creationDate.setText(viewedClient.getCreatedTimestamp().format(dateTimeFormat));
-            if (viewedClient.getModifiedTimestamp() == null) {
-                lastModified.setText("User has not been modified yet.");
-            } else {
-                lastModified.setText(viewedClient.getModifiedTimestamp().format(dateTimeFormat));
-            }
+        fname.setText(viewedClient.getFirstName());
+        lname.setText(viewedClient.getLastName());
+        mname.setText(viewedClient.getMiddleName());
+        pname.setText(viewedClient.getPreferredNameOnly());
+        dob.setValue(viewedClient.getDateOfBirth());
+        dod.setValue(viewedClient.getDateOfDeath());
+        gender.setValue(viewedClient.getGender());
+        genderIdentity.setValue(viewedClient.getGenderIdentity());
+        height.setText(String.valueOf(viewedClient.getHeight()));
+        weight.setText(String.valueOf(viewedClient.getWeight()));
+        btype.setValue(viewedClient.getBloodType());
+        region.setValue(viewedClient.getRegion());
+        address.setText(viewedClient.getCurrentAddress());
+
+        creationDate.setText(viewedClient.getCreatedTimestamp().format(dateTimeFormat));
+        if (viewedClient.getModifiedTimestamp() == null) {
+            lastModified.setText("User has not been modified yet.");
+        } else {
+            lastModified.setText(viewedClient.getModifiedTimestamp().format(dateTimeFormat));
+        }
 
             displayBMI();
             displayAge();
-        }
+
     }
 
     /**
@@ -173,11 +203,11 @@ public class ViewClientController extends SubController {
     }
 
     /**
-     * Saves the changes a user makes to the viewed client if all their inputs are valid. Otherwise the invalid fields
-     * text turns red.
+     * Saves the changes a user makes to the viewed client if all their inputs are valid.
+     * Otherwise the invalid fields text turns red.
      */
     @FXML
-    private void saveChanges() {
+    private void apply() {
         if (checkMandatoryFields() && checkNonMandatoryFields()) {
             if (updateChanges()) {
                 displayBMI();
@@ -185,6 +215,14 @@ public class ViewClientController extends SubController {
                 lastModified.setText(viewedClient.getModifiedTimestamp().format(dateTimeFormat));
             }
         }
+    }
+
+    /**
+     * Resets the page back to its default state.
+     */
+    @FXML
+    private void cancel() {
+        refresh();
     }
 
     /**
@@ -344,11 +382,7 @@ public class ViewClientController extends SubController {
      * Displays the currently viewed clients BMI.
      */
     private void displayBMI() {
-        if (viewedClient.getDateOfDeath() == null) {
-            BMILabel.setText(String.format("%.01f", viewedClient.getBMI()));
-        } else {
-            BMILabel.setText(String.format("%.01f", viewedClient.getBMI()));
-        }
+        BMILabel.setText(String.format("%.01f", viewedClient.getBMI()));
     }
 
     /**
@@ -362,13 +396,5 @@ public class ViewClientController extends SubController {
             ageDisplayLabel.setText("Age at death:");
         }
         ageLabel.setText(String.valueOf(viewedClient.getAge()));
-    }
-
-    /**
-     * Navigate to the page to display organs for the currently specified client.
-     */
-    @FXML
-    public void viewOrgansForClient() {
-        PageNavigator.loadPage(Page.REGISTER_ORGAN_DONATIONS, mainController);
     }
 }

@@ -48,7 +48,7 @@ public class ClientMedicalHistoryController extends SubController {
     private Client client;
 
     @FXML
-    private Pane sidebarPane;
+    private Pane sidebarPane, menuBarPane;
     @FXML
     private HBox newIllnessPane, illnessButtonsPane;
 
@@ -204,17 +204,18 @@ public class ClientMedicalHistoryController extends SubController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
-        mainController.loadSidebar(sidebarPane);
+
 
         if (session.getLoggedInUserType() == UserType.CLIENT) {
             client = session.getLoggedInClient();
-
+            mainController.loadSidebar(sidebarPane);
             newIllnessPane.setVisible(false);
             newIllnessPane.setManaged(false);
             illnessButtonsPane.setVisible(false);
             illnessButtonsPane.setManaged(false);
         } else if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
+            mainController.loadMenuBar(menuBarPane);
 
         }
 
@@ -392,7 +393,7 @@ public class ClientMedicalHistoryController extends SubController {
             errorMessage.setText("Diagnosis date cannot be in the future.");
         } else {
             IllnessRecord record = new IllnessRecord(illnessName, dateDiagnosed, null, isChronic);
-            AddIllnessRecordAction action = new AddIllnessRecordAction(client, record);
+            AddIllnessRecordAction action = new AddIllnessRecordAction(client, record, manager);
             invoker.execute(action);
 
             illnessNameField.setText(null);

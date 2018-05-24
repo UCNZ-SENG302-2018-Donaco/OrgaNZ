@@ -6,6 +6,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.Pane;
 
 import seng302.Actions.Action;
 import seng302.Actions.ActionInvoker;
@@ -15,10 +16,15 @@ import seng302.Controller.MainController;
 import seng302.Controller.SubController;
 import seng302.HistoryItem;
 import seng302.State.ClientManager;
+import seng302.State.Session.UserType;
 import seng302.State.State;
+import seng302.UI.Validation.NotNullValidator;
+import seng302.UI.Validation.StringValidator;
+import seng302.UI.Validation.UIValidation;
 import seng302.Utilities.JSONConverter;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
+import seng302.Utilities.View.WindowContext;
 
 /**
  * Controller for the create client page.
@@ -31,9 +37,12 @@ public class CreateClientController extends SubController {
     private TextField firstNameFld, middleNamefld, lastNamefld;
     @FXML
     private Button createButton, goBackButton;
+    @FXML
+    private Pane menuBarPane;
 
-    private ClientManager manager;
-    private ActionInvoker invoker;
+    private final ClientManager manager;
+    private final ActionInvoker invoker;
+    private UIValidation validation;
 
     /**
      * Initializes the UI for this page.
@@ -52,6 +61,17 @@ public class CreateClientController extends SubController {
     public void setup(MainController mainController) {
         super.setup(mainController);
         mainController.setTitle("Create a new Client");
+
+        if (State.getSession() != null) { //they're a clinician or admin
+            mainController.loadMenuBar(menuBarPane);
+            goBackButton.setVisible(false);
+        }
+
+        validation = new UIValidation()
+                .add(firstNameFld, new StringValidator())
+                .add(lastNamefld, new StringValidator())
+                .add(dobFld, new NotNullValidator())
+                .validate();
     }
 
     /**
@@ -61,7 +81,7 @@ public class CreateClientController extends SubController {
      */
     @FXML
     private void createClient() {
-        if (firstNameFld.getText().equals("") || lastNamefld.getText().equals("") || dobFld.getValue() == null) {
+        if (validation.isInvalid()) {
             PageNavigator.showAlert(AlertType.ERROR, "Required Field Empty",
                     "Please make sure that all the required fields are given.");
         } else {
@@ -70,7 +90,7 @@ public class CreateClientController extends SubController {
                 ButtonType option = PageNavigator.showAlert(AlertType.CONFIRMATION,
                         "Duplicate Client Warning",
                         "This client is a duplicate of one that already exists. Would you still like to create it?")
-                        .get();
+                        .orElse(ButtonType.CANCEL);
                 if (option != ButtonType.OK) {
                     // ... user chose CANCEL or closed the dialog
                     return;
@@ -83,19 +103,37 @@ public class CreateClientController extends SubController {
             Action action = new CreateClientAction(client, manager);
             invoker.execute(action);
             HistoryItem save = new HistoryItem("CREATE CLIENT",
-                    "Client " + firstNameFld.getText() + " " + lastNamefld.getText() + "was created with ID " + uid);
+                    String.format("Client %s was created with ID %d", client.getFullName(), uid));
             JSONConverter.updateHistory(save, "action_history.json");
 
-            State.login(client);
-            PageNavigator.loadPage(Page.VIEW_CLIENT, mainController);
+            if (State.getSession() == null) { // Someone creating a client
+                State.login(client);
+                PageNavigator.loadPage(Page.VIEW_CLIENT, mainController);
+
+            } else { // Clinician or admin are creating a user.
+
+                MainController newMain = PageNavigator.openNewWindow();
+                if (newMain != null) {
+                    newMain.setWindowContext(new WindowContext.WindowContextBuilder()
+                            .setAsClinViewClientWindow()
+                            .viewClient(client)
+                            .build());
+                    PageNavigator.loadPage(Page.VIEW_CLIENT, newMain);
+                }
+            }
         }
     }
 
     /**
-     * Redirects the UI back to the landing page.
+     * Redirects the UI back to the previous page.
      */
     @FXML
     private void goBack() {
-        PageNavigator.loadPage(Page.LANDING, mainController);
+        if (State.getSession() == null) { // Someone creating a user
+            PageNavigator.loadPage(Page.LANDING, mainController);
+
+        } else if (State.getSession().getLoggedInUserType() == UserType.CLINICIAN) {
+            PageNavigator.loadPage(Page.VIEW_CLINICIAN, mainController);
+        }
     }
 }

@@ -1,6 +1,7 @@
 package seng302;
 
-import java.util.ArrayList;
+import static seng302.Commands.CommandParser.parseCommands;
+
 import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -23,7 +24,6 @@ public class App {
 
     public static void main(String[] args) {
         LoggerSetup.setup(Level.INFO);
-        LoggerSetup.enableConsole();
 
         State.init();
 
@@ -35,8 +35,8 @@ public class App {
         CommandLine.usage(command, System.out);
 
         while (!(input = scanIn.readLine()).equals("exit")) {
-            String[] currArgs = CommandParser.parseCommands(input);
-            CommandLine.run(command, System.out, currArgs);
+
+            CommandLine.run(command, System.out, parseCommands(input));
         }
     }
 }

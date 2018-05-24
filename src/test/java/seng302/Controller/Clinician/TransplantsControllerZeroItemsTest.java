@@ -43,7 +43,7 @@ public class TransplantsControllerZeroItemsTest extends ControllerTest {
     public void testComponentsAreVisible() {
         verifyThat("#tableView", isVisible());
         verifyThat("#displayingXToYOfZText", isVisible());
-        verifyThat("#sidebarPane", isVisible());
+        verifyThat("#menuBarPane", isVisible());
         verifyThat("#pagination", isVisible());
     }
 

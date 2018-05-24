@@ -41,7 +41,7 @@ public class RegisterOrganDonationController extends SubController {
     private Client client;
 
     @FXML
-    private Pane sidebarPane, idPane;
+    private Pane sidebarPane, idPane, menuBarPane;
     @FXML
     private CheckBox checkBoxLiver, checkBoxKidney, checkBoxPancreas, checkBoxHeart, checkBoxLung, checkBoxIntestine,
             checkBoxCornea, checkBoxMiddleEar, checkBoxSkin, checkBoxBone, checkBoxBoneMarrow, checkBoxConnTissue;
@@ -84,13 +84,15 @@ public class RegisterOrganDonationController extends SubController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
-        mainController.loadSidebar(sidebarPane);
+
 
         if (session.getLoggedInUserType() == Session.UserType.CLIENT) {
             client = session.getLoggedInClient();
             idPane.setDisable(true);
+            mainController.loadSidebar(sidebarPane);
         } else if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
+            mainController.loadMenuBar(menuBarPane);
         }
         fieldUserID.setText(Integer.toString(client.getUid()));
         updateUserID();
@@ -126,7 +128,6 @@ public class RegisterOrganDonationController extends SubController {
         } else {
             setCheckboxesDisabled();
         }
-
     }
 
     /**
@@ -146,8 +147,8 @@ public class RegisterOrganDonationController extends SubController {
      * Checks which organs check boxes have been changed, and applies those changes with a ModifyClientOrgansAction.
      */
     @FXML
-    private void modifyOrgans() {
-        ModifyClientOrgansAction action = new ModifyClientOrgansAction(client, manager);
+    private void apply() {
+        ModifyClientOrgansAction action = new ModifyClientOrgansAction(client, State.getClientManager());
         boolean hasChanged = false;
 
         for (Organ organ : organCheckBoxes.keySet()) {
@@ -183,6 +184,14 @@ public class RegisterOrganDonationController extends SubController {
     }
 
     /**
+     * Resets the page back to its default state.
+     */
+    @FXML
+    private void cancel() {
+        refresh();
+    }
+
+    /**
      * Sets the state of all checkboxes to not selected, then disables them.
      */
     private void setCheckboxesDisabled() {
@@ -199,10 +208,5 @@ public class RegisterOrganDonationController extends SubController {
         for (CheckBox box : organCheckBoxes.values()) {
             box.setDisable(false);
         }
-    }
-
-    @FXML
-    private void returnToViewClient() {
-        PageNavigator.loadPage(Page.VIEW_CLIENT, mainController);
     }
 }

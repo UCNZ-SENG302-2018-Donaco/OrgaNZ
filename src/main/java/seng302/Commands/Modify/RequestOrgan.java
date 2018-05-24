@@ -68,7 +68,7 @@ public class RequestOrgan implements Runnable {
                 System.out.println("This organ is already requested.");
             } else {
                 TransplantRequest newRequest = new TransplantRequest(client, organType);
-                Action action = new AddTransplantRequestAction(client, newRequest);
+                Action action = new AddTransplantRequestAction(client, newRequest, manager);
 
                 System.out.println(invoker.execute(action));
             }
