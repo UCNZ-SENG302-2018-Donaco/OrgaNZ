@@ -13,8 +13,10 @@ import seng302.Utilities.Enums.Organ;
 import seng302.Utilities.Enums.Region;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 public class DBManagerTest {
 
     private DBManager dbManager;
