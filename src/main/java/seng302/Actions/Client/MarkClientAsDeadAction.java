@@ -57,6 +57,11 @@ public class MarkClientAsDeadAction extends Action {
 
     @Override
     public String getExecuteText() {
+        if (resolveTransplantActions.size() == 0) {
+            return String.format("Marked client %d: %s as dead. \n"
+                            + "They did not have any pending transplant requests",
+                    client.getUid(), client.getFullName());
+        }
         String resolvedRequestsText = resolveTransplantActions.stream()
                 .map(ResolveTransplantRequestAction::getExecuteText)
                 .collect(Collectors.joining("\n"));
@@ -68,6 +73,12 @@ public class MarkClientAsDeadAction extends Action {
 
     @Override
     public String getUnexecuteText() {
+        if (resolveTransplantActions.size() == 0) {
+            return String.format("Reversed marking client %d: %s as dead. \n"
+                            + "They did not have any pending transplant requests",
+                    client.getUid(), client.getFullName());
+        }
+
         String resolvedRequestsText = resolveTransplantActions.stream()
                 .map(ResolveTransplantRequestAction::getUnexecuteText)
                 .collect(Collectors.joining("\n"));

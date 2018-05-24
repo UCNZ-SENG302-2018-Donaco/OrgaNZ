@@ -23,6 +23,7 @@ import seng302.Commands.CommandParser;
 import seng302.Controller.Components.BatchedTextStream;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
+import seng302.Utilities.View.PageNavigator;
 
 import picocli.CommandLine;
 
@@ -169,7 +170,10 @@ public class CommandLineController extends SubController {
 
                 System.setOut(outputStream);
                 CommandLine.run(command, System.out, CommandParser.parseCommands(commandText));
-                Platform.runLater(() -> outputTextArea.appendText(batchedTextStream.getNewText() + "\n"));
+                Platform.runLater(() -> {
+                    outputTextArea.appendText(batchedTextStream.getNewText() + "\n");
+                    PageNavigator.refreshAllWindows();
+                });
                 System.setOut(System.out);
                 return null;
             }

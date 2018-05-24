@@ -140,15 +140,16 @@ public class ViewClinicianController extends SubController {
     }
 
     /**
-     * Saves the changes a user makes to the viewed client if all their inputs are valid. Otherwise the invalid fields
-     * text turns red.
+     * Saves the changes a user makes to the viewed clinician if all their inputs are valid. Otherwise the invalid
+     * fields text turns red.
      */
     @FXML
     private void apply() {
         if (checkMandatoryFields()) {
             updatedPassword = checkPassword();
-            updateChanges();
-            lastModified.setText(currentClinician.getModifiedOn().format(dateTimeFormat));
+             if (updateChanges()) {
+                 lastModified.setText(currentClinician.getModifiedOn().format(dateTimeFormat));
+             }
         }
     }
 
@@ -207,9 +208,10 @@ public class ViewClinicianController extends SubController {
     }
 
     /**
-     * Records the changes updated as a ModifyClientAction to trace the change in record.
+     * Records the changes updated as a ModifyClinicianAction to trace the change in record.
+     * @return If there were any changes made
      */
-    private void updateChanges() {
+    private boolean updateChanges() {
         ModifyClinicianAction action = new ModifyClinicianAction(currentClinician);
 
         addChangeIfDifferent(action, "setFirstName", currentClinician.getFirstName(), fname.getText());
@@ -219,16 +221,28 @@ public class ViewClinicianController extends SubController {
         addChangeIfDifferent(action, "setPassword", currentClinician.getPassword(), updatedPassword);
         addChangeIfDifferent(action, "setRegion", currentClinician.getRegion(), region.getValue());
 
-        String actionText = invoker.execute(action);
-        PageNavigator.refreshAllWindows();
+        try {
+            String actionText = invoker.execute(action);
 
-        HistoryItem save = new HistoryItem("UPDATE CLINICIAN",
-                "The Clinician's information was updated. New details are: " + currentClinician.getUpdateLog());
-        JSONConverter.updateHistory(save, "action_history.json");
+            Notifications.create()
+                    .title("Updated Clinician")
+                    .text(actionText)
+                    .showInformation();
 
-        Notifications.create()
-                .title("Updated Clinician")
-                .text(actionText)
-                .showInformation();
+            HistoryItem save = new HistoryItem("UPDATE CLINICIAN",
+                    "The Clinician's information was updated. New details are: " + actionText);
+            JSONConverter.updateHistory(save, "action_history.json");
+
+            PageNavigator.refreshAllWindows();
+            return true;
+
+        } catch (IllegalStateException exc) {
+                Notifications.create()
+                        .title("No changes were made.")
+                        .text("No changes were made to the clinician.")
+                        .showWarning();
+                return false;
+        }
+
     }
 }

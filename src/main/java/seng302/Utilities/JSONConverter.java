@@ -13,7 +13,6 @@ import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.lang.reflect.Type;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,6 +42,7 @@ public final class JSONConverter {
     private static final Gson gson = new GsonBuilder()
             .setPrettyPrinting()
             .enableComplexMapKeySerialization()
+            .registerTypeAdapterFactory(CacheManager.GSON_FACTORY)
             .create();
 
     private JSONConverter() {
@@ -160,4 +160,7 @@ public final class JSONConverter {
         return historyItemList;
     }
 
+    public static Gson getGson() {
+        return gson;
+    }
 }
