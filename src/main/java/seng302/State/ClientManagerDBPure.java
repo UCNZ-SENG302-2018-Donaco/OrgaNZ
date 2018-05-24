@@ -97,7 +97,22 @@ public class ClientManagerDBPure implements ClientManager {
 
     @Override
     public Client getClientByID(int id) {
-        return dbManager.getDBSession().find(Client.class, id);
+        Transaction trns = null;
+        Client client = null;
+
+        try (Session session = dbManager.getDBSession()) {
+            trns = session.beginTransaction();
+
+            client = dbManager.getDBSession().find(Client.class, id);
+
+            trns.commit();
+        } catch (RollbackException exc) {
+            if (trns != null) {
+                trns.rollback();
+            }
+        }
+
+        return client;
     }
 
     @Override
