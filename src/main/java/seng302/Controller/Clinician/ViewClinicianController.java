@@ -144,12 +144,20 @@ public class ViewClinicianController extends SubController {
      * text turns red.
      */
     @FXML
-    private void saveChanges() {
+    private void apply() {
         if (checkMandatoryFields()) {
             updatedPassword = checkPassword();
             updateChanges();
             lastModified.setText(currentClinician.getModifiedOn().format(dateTimeFormat));
         }
+    }
+
+    /**
+     * Resets the page back to its default state.
+     */
+    @FXML
+    private void cancel() {
+        refresh();
     }
 
     /**

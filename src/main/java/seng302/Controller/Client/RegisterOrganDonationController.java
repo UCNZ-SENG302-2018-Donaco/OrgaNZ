@@ -128,7 +128,6 @@ public class RegisterOrganDonationController extends SubController {
         } else {
             setCheckboxesDisabled();
         }
-
     }
 
     /**
@@ -148,7 +147,7 @@ public class RegisterOrganDonationController extends SubController {
      * Checks which organs check boxes have been changed, and applies those changes with a ModifyClientOrgansAction.
      */
     @FXML
-    private void modifyOrgans() {
+    private void apply() {
         ModifyClientOrgansAction action = new ModifyClientOrgansAction(client);
         boolean hasChanged = false;
 
@@ -180,6 +179,14 @@ public class RegisterOrganDonationController extends SubController {
     }
 
     /**
+     * Resets the page back to its default state.
+     */
+    @FXML
+    private void cancel() {
+        refresh();
+    }
+
+    /**
      * Sets the state of all checkboxes to not selected, then disables them.
      */
     private void setCheckboxesDisabled() {
@@ -196,10 +203,5 @@ public class RegisterOrganDonationController extends SubController {
         for (CheckBox box : organCheckBoxes.values()) {
             box.setDisable(false);
         }
-    }
-
-    @FXML
-    private void returnToViewClient() {
-        PageNavigator.loadPage(Page.VIEW_CLIENT, mainController);
     }
 }

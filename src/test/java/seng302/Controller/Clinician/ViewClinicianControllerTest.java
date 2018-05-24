@@ -9,8 +9,11 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.testfx.api.FxRobotException;
 
+
+import seng302.Administrator;
 import seng302.Clinician;
 import seng302.Controller.ControllerTest;
+import seng302.State.Session;
 import seng302.State.State;
 import seng302.Utilities.Enums.Region;
 import seng302.Utilities.View.Page;

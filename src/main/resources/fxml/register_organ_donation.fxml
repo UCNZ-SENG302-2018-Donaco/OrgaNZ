@@ -14,7 +14,7 @@
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.Client.RegisterOrganDonationController">
+<VBox prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.Client.RegisterOrganDonationController">
   <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
   <HBox fx:id="menuBarPane" maxHeight="-Infinity" minHeight="-Infinity" />
     <SplitPane dividerPositions="0.5" VBox.vgrow="ALWAYS">
@@ -80,22 +80,27 @@
                 <CheckBox fx:id="checkBoxBoneMarrow" layoutX="535.0" layoutY="379.0" mnemonicParsing="false" text="Bone Marrow" GridPane.columnIndex="1" GridPane.rowIndex="4" />
                 <CheckBox fx:id="checkBoxConnTissue" layoutX="535.0" layoutY="463.0" mnemonicParsing="false" text="Connective Tissue" GridPane.columnIndex="1" GridPane.rowIndex="5" />
               </GridPane>
-              <GridPane hgap="50.0">
-                <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                </columnConstraints>
-                <rowConstraints>
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                </rowConstraints>
-                <VBox.margin>
-                  <Insets top="15.0" />
-                </VBox.margin>
-                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#returnToViewClient" prefHeight="30.0" text="Return to Client Details" />
-                <Button maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#modifyOrgans" prefHeight="30.0" text="Apply Changes" GridPane.columnIndex="1" />
-              </GridPane>
             </VBox>
           </center>
+               <bottom>
+                  <HBox alignment="CENTER_RIGHT" prefHeight="50.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                     <children>
+                        <Button fx:id="cancelButton" cancelButton="true" mnemonicParsing="false" onAction="#cancel" prefHeight="30.0" prefWidth="100.0" text="Cancel">
+                           <HBox.margin>
+                              <Insets />
+                           </HBox.margin>
+                        </Button>
+                        <Button fx:id="applyButton" mnemonicParsing="false" onAction="#apply" prefHeight="30.0" prefWidth="100.0" text="Apply">
+                           <HBox.margin>
+                              <Insets left="20.0" right="20.0" />
+                           </HBox.margin>
+                        </Button>
+                     </children>
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                  </HBox>
+               </bottom>
         </BorderPane>
       </VBox>
     </SplitPane>

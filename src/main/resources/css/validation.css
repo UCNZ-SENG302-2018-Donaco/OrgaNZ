@@ -1,0 +1,33 @@
+.invalid {
+
+  /* A bright blue for highlighting/accenting objects.  For example: selected
+   * text; selected items in menus, lists, trees, and tables; progress bars;
+   * default buttons.
+   */
+  -fx-accent: #ff0000;
+
+  /* A bright blue for the focus indicator of objects. Typically used as the
+   * first color in -fx-background-color for the "focused" pseudo-class. Also
+   * typically used with insets of -1.4 to provide a glowing effect.
+   *
+   * TODO: should this be derived from -fx-accent?
+   */
+  -fx-focus-color: #ff0000;
+
+  -fx-background-color: -fx-focus-color, -fx-inner-border, -fx-body-color, -fx-faint-focus-color, -fx-body-color;
+  -fx-background-insets: -0.2, 1, 2, -1.4, 2.6;
+  -fx-background-radius: 3, 2, 1, 4, 1;
+}
+
+.text-input.invalid {
+  -fx-highlight-fill: -fx-accent;
+  -fx-highlight-text-fill: white;
+  -fx-background-color:
+      -fx-focus-color,
+      -fx-control-inner-background,
+      -fx-faint-focus-color,
+      linear-gradient(from 0px 0px to 0px 5px, derive(-fx-control-inner-background, -9%), -fx-control-inner-background);
+  -fx-background-insets: -0.2, 1, -1.4, 3;
+  -fx-background-radius: 3, 2, 4, 0;
+  -fx-prompt-text-fill: transparent;
+}

@@ -8,12 +8,19 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import javafx.scene.control.Alert;
+import javafx.stage.WindowEvent;
 
 import seng302.Actions.ActionInvoker;
 import seng302.AppUI;
@@ -57,6 +64,12 @@ public class MenuBarController extends SubController {
     public MenuItem loadItem;
     public MenuItem undoItem;
     public MenuItem redoItem;
+    public MenuItem closeItem;
+    public MenuItem createClientItem;
+
+    public SeparatorMenuItem topSeparator;
+
+    public MenuBar menuBar;
 
     public Menu clientPrimaryItem;
     public Menu organPrimaryItem;
@@ -84,44 +97,64 @@ public class MenuBarController extends SubController {
 
         Menu viewAllMenus[] = {clientPrimaryItem, organPrimaryItem, medicationsPrimaryItem, staffPrimaryItem,
                 transplantsPrimaryItem, profilePrimaryItem, filePrimaryItem};
-        Menu viewClinicianMenu[] = {transplantsPrimaryItem, profilePrimaryItem};
+
         Menu viewAdminMenu[] = {staffPrimaryItem, transplantsPrimaryItem, filePrimaryItem,
                 profilePrimaryItem};
+
+        Menu clinicianWindowMenu[] = {staffPrimaryItem, medicationsPrimaryItem, };
+        MenuItem clinicianWindowMenuItems[] = {organPrimaryItem, viewClientItem, medicationsPrimaryItem};
+
+        Menu clinViewClientMenu[] = {staffPrimaryItem, profilePrimaryItem, transplantsPrimaryItem};
+        MenuItem clinViewClientMenuItem[] = {searchClientItem, createClientItem};
 
         if (userType == UserType.CLINICIAN) {
 
             if (windowContext.isClinViewClientWindow()) {
-                hideMenus(viewAdminMenu);
-                hideMenuItem(searchClientItem);
-                hideMenus(viewClinicianMenu);
-            }
-            else if (!windowContext.isClinViewClientWindow()){
-                hideMenuItem(createAdministratorItem);
-                hideMenuItem(staffPrimaryItem);
-                hideMenuItem(filePrimaryItem);
-                hideMenuItem(cliItem);
-                hideMenuItem(organPrimaryItem);
-                hideMenuItem(medicationsPrimaryItem);
-                hideMenuItem(viewClientItem);
-                hideMenuItem(viewAdministratorItem);
+                removeAdminMenuItems();
+                hideMenus(clinViewClientMenu);
+                hideMenuItems(clinViewClientMenuItem);
+
+            } else if (!windowContext.isClinViewClientWindow()) {
+                removeAdminMenuItems();
+                hideMenus(clinicianWindowMenu);
+                hideMenuItems(clinicianWindowMenuItems);
+                // staff primary item - seng302.Controller.Administrator.StaffListController.lambda$null$1(StaffListController.java:89)
             }
         }
+        if (userType == UserType.ADMINISTRATOR) {
 
+            if (windowContext.isClinViewClientWindow()){
+                hideMenuItem(profilePrimaryItem);
+                hideMenuItem(staffPrimaryItem);
+                hideMenuItem(createClientItem);
+            } else if (!windowContext.isClinViewClientWindow()) {
+                hideMenuItem(organPrimaryItem);
+                hideMenuItem(medicationsPrimaryItem);
+                hideMenuItem(viewClinicianItem);
+                hideMenuItem(viewClientItem);
+            }
+        }
         if (userType == UserType.CLIENT == true) {
             hideMenus(viewAllMenus);
         }
-
-        //TODO add administrator rights
-        /*
-        if (userType == UserType.ADMIN) {
-            if (windowContext.isClinViewClientWindow() == true) {
-                hideMenus(viewClinicianMenu);
-            }
-        }*/
+        closeItem.setDisable(!windowContext.isClinViewClientWindow());
+        undoItem.setDisable(!invoker.canUndo());
+        redoItem.setDisable(!invoker.canRedo());
+    }
 
 
-        //undoButton.setDisable(!invoker.canUndo());
-        //redoButton.setDisable(!invoker.canRedo());
+    /**
+     * Removes all menu items that only admins should have.
+     */
+    private void removeAdminMenuItems() {
+        // Remove administrator file rights.
+        hideMenuItem(createAdministratorItem);
+        topSeparator.setVisible(false);
+        hideMenuItem(saveItem);
+        hideMenuItem(loadItem);
+        hideMenuItem(viewAdministratorItem);
+        hideMenuItem(cliItem);
+
     }
 
     /**
@@ -220,8 +253,14 @@ public class MenuBarController extends SubController {
      * Redirects the GUI to the Search clients page.
      */
     @FXML
-    private void goToSearch() {
-        PageNavigator.loadPage(Page.SEARCH, mainController);
+    private void goToSearch() { PageNavigator.loadPage(Page.SEARCH, mainController);}
+
+    /**
+     * Redirects the GUI to the Staff list page.
+     */
+    @FXML
+    private void goToStaffList() {
+        PageNavigator.loadPage(Page.STAFF_LIST, mainController);
     }
 
     /**
@@ -256,18 +295,14 @@ public class MenuBarController extends SubController {
         PageNavigator.loadPage(Page.VIEW_PROCEDURES, mainController);
     }
 
-    //TODO administrator rights
-/*
     /**
      * Redirects the GUI to the Create administrator page.
      */
-
-/*
     @FXML
     private void goToCreateAdmin() {
         PageNavigator.loadPage(Page.CREATE_ADMINISTRATOR, mainController);
     }
-*/
+
     /**
      * Redirects the GUI to the Create clinician page.
      */
@@ -275,6 +310,21 @@ public class MenuBarController extends SubController {
     private void goToCreateClinician() {
         PageNavigator.loadPage(Page.CREATE_CLINICIAN, mainController);
     }
+
+    /**
+     * Redirects the GUI to the Create clinician page.
+     */
+
+    @FXML
+    private void goToCreateClient() {PageNavigator.loadPage(Page.CREATE_CLIENT, mainController);}
+    /**
+     * Redirects the GUI to the Admin command line page.
+     */
+    @FXML
+    private void goToCommandLine() {
+        PageNavigator.loadPage(Page.COMMAND_LINE, mainController);
+    }
+
 
     /**
      * Opens a save file dialog to choose where to save all clients in the system to a file.
@@ -401,5 +451,51 @@ public class MenuBarController extends SubController {
         HistoryItem save = new HistoryItem("REDO", redoneText);
         JSONConverter.updateHistory(save, "action_history.json");
         PageNavigator.refreshAllWindows();
+    }
+
+    /**
+     * Closes the current window
+     */
+    @FXML
+    private void closeWindow() {
+        Stage stage = (Stage) menuBar.getScene().getWindow();
+        stage.close();
+    }
+
+    /**
+     * Prompts the user to save their changes if there are changes unsaved, then exits the program.
+     */
+    @FXML
+    private void quitProgram() {
+        if (State.isUnsavedChanges()) {
+            Alert unsavedAlert = PageNavigator.generateAlert(AlertType.WARNING, "Do you want to save the changes you have made?",
+                    "Your changes will be lost if you do not save them.");
+            ButtonType dontSave = new ButtonType("Don't Save");
+            ButtonType cancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+            ButtonType save = new ButtonType("Save");
+            unsavedAlert.getButtonTypes().setAll(dontSave, cancel, save);
+
+            Optional<ButtonType> result = unsavedAlert.showAndWait();
+            if (result.get() == dontSave) {
+                exit();
+            } else if (result.get() == save) {
+                save();
+                exit();
+            } else {
+                unsavedAlert.hide();
+            }
+
+        } else {
+            exit();
+        }
+
+    }
+
+    /**
+     * Exit program.
+     */
+    private void exit() {
+        Platform.exit();
+        System.exit(0);
     }
 }

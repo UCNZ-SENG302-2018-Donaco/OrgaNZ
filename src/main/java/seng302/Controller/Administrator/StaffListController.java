@@ -34,7 +34,7 @@ public class StaffListController extends SubController {
     private ActionInvoker invoker;
 
     @FXML
-    private HBox sidebarPane;
+    private HBox menuBarPane;
 
     @FXML
     private ListView<String> staffList;
@@ -55,7 +55,7 @@ public class StaffListController extends SubController {
     public void setup(MainController mainController) {
         super.setup(mainController);
         mainController.setTitle("Staff list");
-        mainController.loadSidebar(sidebarPane);
+        mainController.loadMenuBar(menuBarPane);
     }
 
     @Override
