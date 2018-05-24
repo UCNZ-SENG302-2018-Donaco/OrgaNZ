@@ -46,16 +46,24 @@ public class SQLTest {
     private Session session;
 
     @Before
-    public void init() {
+    public void init() throws SQLException {
         sessionFactory = mock(SessionFactory.class);
         session = mock(Session.class);
         connection = mock(Connection.class);
         statement = mock(Statement.class);
         resultSet = mock(ResultSet.class);
         resultSetMetaData = mock(ResultSetMetaData.class);
-
         spyDBManager = spy(new DBManager(sessionFactory));
+
         when(spyDBManager.getDBSession()).thenReturn(session);
+
+        when(spyDBManager.getStandardSqlConnection()).thenReturn(connection);
+        when(connection.createStatement()).thenReturn(statement);
+        when(statement.executeQuery(anyString())).thenReturn(resultSet);
+        when(resultSet.getMetaData()).thenReturn(resultSetMetaData);
+        when(resultSetMetaData.getColumnCount()).thenReturn(0);
+        when(resultSet.next()).thenReturn(false);
+
 
         spySQL = spy(new SQL(spyDBManager));
         System.setOut(new PrintStream(outContent));
@@ -64,15 +72,7 @@ public class SQLTest {
 
     @Test
     public void CheckValidCommandIsExecutedTest() throws SQLException {
-        when(spyDBManager.getStandardSqlConnection()).thenReturn(connection);
-        when(connection.createStatement()).thenReturn(statement);
-        when(statement.executeQuery(anyString())).thenReturn(resultSet);
-        when(resultSet.getMetaData()).thenReturn(resultSetMetaData);
-        when(resultSetMetaData.getColumnCount()).thenReturn(0);
-        when(resultSet.next()).thenReturn(false);
-
         String[] inputs = {"SELECT * FROM TEST"};
-
 
         CommandLine.run(spySQL, System.out, inputs);
 
@@ -86,5 +86,69 @@ public class SQLTest {
         CommandLine.run(spySQL, System.out, inputs);
 
         verify(spyDBManager, times(0)).getStandardSqlConnection();
+    }
+
+    @Test
+    public void CheckValidCommandWithSpacesIsExecutedTest() throws SQLException {
+        String[] inputs = {"SELECT", "*", "FROM", "TEST"};
+
+        CommandLine.run(spySQL, System.out, inputs);
+
+        verify(statement, times(1)).executeQuery("SELECT * FROM TEST");
+    }
+
+
+    @Test
+    public void CheckValidCommandWithEscapedQuotesIsExecutedTest() throws SQLException {
+        String[] inputs = {"SELECT", "\"\"*\"\"", "FROM", "TEST"};
+
+        CommandLine.run(spySQL, System.out, inputs);
+
+        verify(statement, times(1)).executeQuery("SELECT \"*\" FROM TEST");
+    }
+
+    @Test
+    public void CheckCommandMultipleRowsOutputTest() throws SQLException {
+        String[] inputs = {"SELECT * FROM TEST"};
+        //Setup fake ResultSet with three columns and 2 rows
+        when(resultSet.isBeforeFirst()).thenReturn(true);
+        when(resultSetMetaData.getColumnCount()).thenReturn(3);
+        when(resultSet.next()).thenReturn(true).thenReturn(true).thenReturn(false);
+        when(resultSet.getString(1)).thenReturn("First").thenReturn("Row 2 First");
+        when(resultSet.getString(2)).thenReturn("Second").thenReturn("Row 2 Second");
+        when(resultSet.getString(3)).thenReturn("Third").thenReturn("Row 2 Third");
+
+        CommandLine.run(spySQL, System.out, inputs);
+
+        verify(statement, times(1)).executeQuery("SELECT * FROM TEST");
+        assertTrue(outContent.toString().contains("First; Second; Third"));
+        assertTrue(outContent.toString().contains("Row 2 First; Row 2 Second; Row 2 Third"));
+    }
+
+
+    @Test
+    public void CheckCommandZeroRowsOutputTest() throws SQLException {
+        String[] inputs = {"SELECT * FROM TEST"};
+        //Setup fake empty ResultSet
+        when(resultSet.isBeforeFirst()).thenReturn(false);
+
+        CommandLine.run(spySQL, System.out, inputs);
+
+        verify(statement, times(1)).executeQuery("SELECT * FROM TEST");
+        assertTrue(outContent.toString().contains("No rows"));
+        System.out.println(outContent.toString());
+    }
+
+    @Test
+    public void SQLExceptionInExecutionTest() throws SQLException {
+        String[] inputs = {"Invalid SQL"};
+        //Setup fake ResultSet with three columns and 2 rows
+        when(statement.executeQuery(anyString())).thenThrow(new SQLException("Fake Exception Message"));
+
+        CommandLine.run(spySQL, System.out, inputs);
+
+        verify(statement, times(1)).executeQuery("Invalid SQL");
+        assertTrue(outContent.toString().contains("An error occurred with your query."));
+        assertTrue(outContent.toString().contains("\nInvalid SQL\nFake Exception Message"));
     }
 }

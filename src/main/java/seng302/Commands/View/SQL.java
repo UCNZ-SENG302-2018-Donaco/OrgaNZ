@@ -2,12 +2,9 @@ package seng302.Commands.View;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
-
-import javax.management.Query;
 
 import seng302.Database.DBManager;
 
@@ -55,22 +52,29 @@ public class SQL implements Runnable {
         try {
             Statement stmt = conn.createStatement();
             ResultSet resultSet = stmt.executeQuery(sql);
-            ResultSetMetaData rsmd = resultSet.getMetaData();
-            int columns = rsmd.getColumnCount();
+
+            if (!resultSet.isBeforeFirst()) {
+                System.out.println("No rows were returned for that query");
+                return;
+            }
+
+            int columns = resultSet.getMetaData().getColumnCount();
             while (resultSet.next()) {
                 for (int i = 1; i <= columns; i++) {
-                    if (i > 1) System.out.print(" | ");
+                    if (i > 1) {
+                        System.out.print("; ");
+                    }
                     System.out.print(resultSet.getString(i));
                 }
                 System.out.print("\n");
             }
         } catch (SQLException e) {
             System.out.println("An error occurred with your query. If you were using double quotes, please ensure "
-                    + "they were escaped with a backslash. The command as it was sent to the database was:");
+                    + "they were escaped with a backslash and enclosed in a quoted string. The command as it was sent "
+                    + "to the database was:");
             System.out.println(sql);
             System.out.println(e.getMessage());
         }
-
 
         //May work with the hibernate setup
 //        org.hibernate.query.Query query = dbManager.getDBSession().createNativeQuery( sql );
