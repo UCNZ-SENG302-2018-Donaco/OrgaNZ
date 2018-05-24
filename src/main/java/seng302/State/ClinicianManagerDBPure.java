@@ -18,7 +18,6 @@ public class ClinicianManagerDBPure implements ClinicianManager {
     private Clinician defaultClinician = new Clinician("admin", null, "admin", "admin", Region.UNSPECIFIED,
             0, "admin");
 
-
     public ClinicianManagerDBPure(){
         this.dbManager = DBManager.getInstance();
         dbManager.saveEntity(defaultClinician);
@@ -28,7 +27,6 @@ public class ClinicianManagerDBPure implements ClinicianManager {
         this.dbManager = dbManager;
         dbManager.saveEntity(defaultClinician);
     }
-
 
     @Override
     public List<Clinician> getClinicians() {
@@ -49,8 +47,6 @@ public class ClinicianManagerDBPure implements ClinicianManager {
 
         return clinicians == null ? new ArrayList<>() : clinicians;
     }
-
-
 
     @Override
     public void setClinicians(Collection<Clinician> clinicians) {
@@ -86,7 +82,6 @@ public class ClinicianManagerDBPure implements ClinicianManager {
             }
         }
     }
-
 
     @Override
     public void addClinician(Clinician clinician) {

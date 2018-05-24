@@ -31,7 +31,7 @@ public final class State {
         actionInvoker = new ActionInvoker();
         clientManager = new ClientManagerDBPure();
         clinicianManager = new ClinicianManagerDBPure();
-        administratorManager = new AdministratorManager();
+        administratorManager = new AdministratorManagerDBPure();
     }
 
     private static void init(boolean isDB) {
@@ -39,11 +39,11 @@ public final class State {
         if (isDB) {
             clientManager = new ClientManagerDBPure();
             clinicianManager = new ClinicianManagerDBPure();
-            administratorManager = new AdministratorManager();
+            administratorManager = new AdministratorManagerDBPure();
         } else {
             clientManager = new ClientManagerMemory();
             clinicianManager = new ClinicianManagerMemory();
-            administratorManager = new AdministratorManager();
+            administratorManager = new AdministratorManagerMemory();
         }
     }
 
