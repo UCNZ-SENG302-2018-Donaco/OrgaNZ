@@ -110,12 +110,14 @@ public class ViewClinicianController extends SubController {
                     "The Staff ID must be an integer.");
             return;
         }
+        Clinician newClin = State.getClinicianManager().getClinicianByStaffId(id_value);
 
-        currentClinician = State.getClinicianManager().getClinicianByStaffId(id_value);
-        if (currentClinician == null) {
+        if (newClin == null) {
             PageNavigator.showAlert(Alert.AlertType.ERROR, "Invalid Staff ID",
                     "This staff ID does not exist in the system.");
             return;
+        } else {
+            currentClinician = newClin;
         }
 
         loadClinicianData();

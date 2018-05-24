@@ -160,7 +160,6 @@ public class MenuBarController extends SubController {
         hideMenuItem(loadItem);
         hideMenuItem(viewAdministratorItem);
         hideMenuItem(cliItem);
-        hideMenu(administrationPrimaryItem);
 
     }
 
