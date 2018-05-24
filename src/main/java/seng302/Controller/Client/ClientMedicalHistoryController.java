@@ -46,7 +46,7 @@ public class ClientMedicalHistoryController extends SubController {
     private Client client;
 
     @FXML
-    private Pane sidebarPane;
+    private Pane sidebarPane, menuBarPane;
     @FXML
     private HBox newIllnessPane, illnessButtonsPane;
 
@@ -201,17 +201,19 @@ public class ClientMedicalHistoryController extends SubController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
-        mainController.loadSidebar(sidebarPane);
+
 
         if (session.getLoggedInUserType() == UserType.CLIENT) {
             client = session.getLoggedInClient();
-
+            mainController.loadSidebar(sidebarPane);
             newIllnessPane.setVisible(false);
             newIllnessPane.setManaged(false);
             illnessButtonsPane.setVisible(false);
             illnessButtonsPane.setManaged(false);
         } else if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
+            mainController.loadMenuBar(menuBarPane);
+
         }
 
         refresh();
@@ -236,6 +238,13 @@ public class ClientMedicalHistoryController extends SubController {
 
         currentIllnessView.sort();
         pastIllnessView.sort();
+
+        if (session.getLoggedInUserType() == UserType.CLIENT) {
+            mainController.setTitle("Medication History:  " + client.getPreferredName());
+        } else if (windowContext.isClinViewClientWindow()) {
+            mainController.setTitle("Medication History:  " + client.getFullName());
+
+        }
 
         errorMessage.setText(null);
     }
@@ -371,7 +380,7 @@ public class ClientMedicalHistoryController extends SubController {
         boolean isChronic = chronicBox.isSelected();
 
         boolean beforeBirth = dateDiagnosed.isBefore(client.getDateOfBirth());
-        boolean inFuture = dateDiagnosed.isAfter(LocalDate.now().plus(1, ChronoUnit.DAYS));
+        boolean inFuture = dateDiagnosed.isAfter(LocalDate.now());
 
         if (illnessName == null || illnessName.equals("")) {
             errorMessage.setText("Illness name must not be blank.");

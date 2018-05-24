@@ -19,6 +19,7 @@ import seng302.Controller.SubController;
 import seng302.HistoryItem;
 import seng302.State.ClientManager;
 import seng302.State.Session;
+import seng302.State.Session.UserType;
 import seng302.State.State;
 import seng302.TransplantRequest;
 import seng302.Utilities.Enums.Organ;
@@ -40,7 +41,7 @@ public class RegisterOrganDonationController extends SubController {
     private Client client;
 
     @FXML
-    private Pane sidebarPane, idPane;
+    private Pane sidebarPane, idPane, menuBarPane;
     @FXML
     private CheckBox checkBoxLiver, checkBoxKidney, checkBoxPancreas, checkBoxHeart, checkBoxLung, checkBoxIntestine,
             checkBoxCornea, checkBoxMiddleEar, checkBoxSkin, checkBoxBone, checkBoxBoneMarrow, checkBoxConnTissue;
@@ -83,18 +84,20 @@ public class RegisterOrganDonationController extends SubController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
-        mainController.loadSidebar(sidebarPane);
+
 
         if (session.getLoggedInUserType() == Session.UserType.CLIENT) {
             client = session.getLoggedInClient();
             idPane.setDisable(true);
+            mainController.loadSidebar(sidebarPane);
         } else if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
+            mainController.loadMenuBar(menuBarPane);
         }
-
-        mainController.setTitle("Organ donation registration: " + client.getFullName());
         fieldUserID.setText(Integer.toString(client.getUid()));
         updateUserID();
+
+
     }
 
     @Override
@@ -117,8 +120,11 @@ public class RegisterOrganDonationController extends SubController {
                     entry.getValue().setTooltip(null);
                 }
             }
-            HistoryItem save = new HistoryItem("UPDATE ID", "The Client's ID was updated to " + client.getUid());
-            JSONConverter.updateHistory(save, "action_history.json");
+            if (session.getLoggedInUserType() == UserType.CLIENT) {
+                mainController.setTitle("Register Organs:  " + client.getPreferredName());
+            } else if (windowContext.isClinViewClientWindow()) {
+                mainController.setTitle("Register Organs:  " + client.getFullName());
+            }
         } else {
             setCheckboxesDisabled();
         }
@@ -141,7 +147,7 @@ public class RegisterOrganDonationController extends SubController {
      * Checks which organs check boxes have been changed, and applies those changes with a ModifyClientOrgansAction.
      */
     @FXML
-    private void modifyOrgans() {
+    private void apply() {
         ModifyClientOrgansAction action = new ModifyClientOrgansAction(client);
         boolean hasChanged = false;
 
@@ -173,6 +179,14 @@ public class RegisterOrganDonationController extends SubController {
     }
 
     /**
+     * Resets the page back to its default state.
+     */
+    @FXML
+    private void cancel() {
+        refresh();
+    }
+
+    /**
      * Sets the state of all checkboxes to not selected, then disables them.
      */
     private void setCheckboxesDisabled() {
@@ -189,10 +203,5 @@ public class RegisterOrganDonationController extends SubController {
         for (CheckBox box : organCheckBoxes.values()) {
             box.setDisable(false);
         }
-    }
-
-    @FXML
-    private void returnToViewClient() {
-        PageNavigator.loadPage(Page.VIEW_CLIENT, mainController);
     }
 }

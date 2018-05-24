@@ -10,8 +10,8 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 
 import seng302.AppUI;
@@ -42,6 +42,7 @@ public class PageNavigator {
             controller.setSubController(subController);
             controller.setPage(page, loadedPage);
         } catch (IOException e) {
+            e.printStackTrace();
             LOGGER.log(Level.SEVERE, "Couldn't load the page", e);
             showAlert(Alert.AlertType.ERROR, "Could not load page: " + page,
                     "The page loader failed to load the layout for the page.");
@@ -92,7 +93,7 @@ public class PageNavigator {
     /**
      * Sets the alert window at the right size so that all the text can be read.
      */
-    public static void resizeAlert(Alert alert) {
+    private static void resizeAlert(Alert alert) {
         alert.getDialogPane().getScene().getWindow().sizeToScene();
     }
 
@@ -105,11 +106,12 @@ public class PageNavigator {
      */
     public static Alert generateAlert(Alert.AlertType alertType, String title, String bodyText) {
         Alert alert = new Alert(alertType);
+        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+        alert.contentTextProperty().addListener(observable -> resizeAlert(alert));
+
         alert.setTitle(title);
         alert.setHeaderText(title);
         alert.setContentText(bodyText);
-        alert.getDialogPane().setContent(new Label(bodyText));
-        resizeAlert(alert);
         return alert;
     }
 

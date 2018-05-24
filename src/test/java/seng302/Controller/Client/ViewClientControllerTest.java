@@ -1,28 +1,26 @@
 package seng302.Controller.Client;
 
-import javafx.scene.Node;
-import javafx.scene.control.DatePicker;
-import javafx.scene.input.KeyCode;
-import javafx.scene.layout.Pane;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.testfx.api.FxRobotException;
-import seng302.Client;
-import seng302.Clinician;
-import seng302.Controller.ControllerTest;
-import seng302.State.State;
-import seng302.Utilities.Enums.BloodType;
-import seng302.Utilities.Enums.Region;
-import seng302.Utilities.View.Page;
-import seng302.Utilities.View.WindowContext;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-import static org.junit.Assert.*;
-import static org.testfx.api.FxAssert.verifyThat;
-import static org.testfx.util.NodeQueryUtils.isVisible;
+import javafx.scene.input.KeyCode;
+
+import seng302.Client;
+import seng302.Controller.ControllerTest;
+import seng302.State.State;
+import seng302.Utilities.Enums.BloodType;
+import seng302.Utilities.Enums.Gender;
+import seng302.Utilities.Enums.Region;
+import seng302.Utilities.View.Page;
+import seng302.Utilities.View.WindowContext;
+
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.testfx.api.FxRobotException;
 
 public class ViewClientControllerTest extends ControllerTest {
     private Client testClient = new Client("a", "", "b", LocalDate.now().minusDays(10), 1);
@@ -62,23 +60,34 @@ public class ViewClientControllerTest extends ControllerTest {
     public void validChangesAll() {
         clickOn("#fname").type(KeyCode.BACK_SPACE).write("z");
         clickOn("#lname").type(KeyCode.BACK_SPACE).write("q");
+        clickOn("#mname").write("m");
+        clickOn("#pname").type(KeyCode.BACK_SPACE).type(KeyCode.BACK_SPACE).type(KeyCode.BACK_SPACE).write("p");
         clickOn("#dod").write(LocalDate.now().minusDays(2).format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         clickOn("#region");
         clickOn("West Coast");
-        clickOn("#saveChanges");
+        clickOn("#gender");
+        clickOn("Male");
+        clickOn("#genderIdentity");
+        clickOn("Female");
+        clickOn("#applyButton");
         press(KeyCode.ENTER);
 
         assertEquals("z", testClient.getFirstName());
         assertEquals("q", testClient.getLastName());
+        assertEquals("m", testClient.getMiddleName());
+        assertEquals("p", testClient.getPreferredName());
         assertTrue(testClient.getDateOfDeath() != null);
         assertEquals(Region.WEST_COAST, testClient.getRegion());
+        assertEquals(Gender.MALE, testClient.getGender());
+        assertEquals(Gender.FEMALE, testClient.getGenderIdentity());
+
     }
 
     @Test
     public void invalidChangesWeightAndHeight1() {
         clickOn("#weight").type(KeyCode.BACK_SPACE).write("z");
         clickOn("#height").type(KeyCode.BACK_SPACE).write("z");
-        clickOn("#saveChanges");
+        clickOn("#applyButton");
         assertEquals(180, testClient.getHeight(), 0.1);
         assertEquals(80, testClient.getWeight(), 0.1);
     }
@@ -87,7 +96,7 @@ public class ViewClientControllerTest extends ControllerTest {
     public void invalidChangesWeightAndHeight2() {
         clickOn("#weight").type(KeyCode.BACK_SPACE).type(KeyCode.BACK_SPACE).type(KeyCode.BACK_SPACE).type(KeyCode.BACK_SPACE).type(KeyCode.BACK_SPACE).write("-50");
         clickOn("#height").type(KeyCode.BACK_SPACE).type(KeyCode.BACK_SPACE).type(KeyCode.BACK_SPACE).type(KeyCode.BACK_SPACE).type(KeyCode.BACK_SPACE).write("-2");
-        clickOn("#saveChanges");
+        clickOn("#applyButton");
         assertEquals(180, testClient.getHeight(), 0.1);
         assertEquals(80, testClient.getWeight(), 0.1);
     }
@@ -96,7 +105,7 @@ public class ViewClientControllerTest extends ControllerTest {
     public void invalidChangesNames() {
         clickOn("#fname").type(KeyCode.BACK_SPACE);
         clickOn("#lname").type(KeyCode.BACK_SPACE);
-        clickOn("#saveChanges");
+        clickOn("#applyButton");
         assertEquals("a", testClient.getFirstName());
         assertEquals("b", testClient.getLastName());
     }
@@ -113,7 +122,7 @@ public class ViewClientControllerTest extends ControllerTest {
                 .type(KeyCode.BACK_SPACE)
                 .type(KeyCode.BACK_SPACE)
                 .type(KeyCode.BACK_SPACE);
-        clickOn("#saveChanges");
+        clickOn("#applyButton");
         assertEquals(LocalDate.now().minusDays(10), testClient.getDateOfBirth());
     }
 
@@ -121,15 +130,8 @@ public class ViewClientControllerTest extends ControllerTest {
     public void invalidChangesDODAfterToday() {
         testClient = new Client("a", "", "b", LocalDate.now().minusDays(10), 1);
         clickOn("#dod").write(LocalDate.now().plusDays(1).format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-        clickOn("#saveChanges");
+        clickOn("#applyButton");
         press(KeyCode.ENTER);
         assertEquals(null, testClient.getDateOfDeath());
-    }
-
-    @Test
-    public void viewOrgansButtonTest() {
-        clickOn("#viewOrgans");
-        assertEquals(Page.REGISTER_ORGAN_DONATIONS, mainController.getCurrentPage());
-
     }
 }

@@ -5,6 +5,7 @@ import java.io.IOException;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
@@ -24,6 +25,7 @@ public class MainController {
     private WindowContext windowContext;
     private String windowTitle;
     private SidebarController sidebarController;
+    private MenuBarController MenuBarController;
     private SubController subController;
 
     /**
@@ -40,7 +42,7 @@ public class MainController {
         return currentPage;
     }
 
-    public WindowContext getWindowContext() {
+    WindowContext getWindowContext() {
         return windowContext;
     }
 
@@ -62,7 +64,7 @@ public class MainController {
         this.windowContext = context;
     }
 
-    public void resetWindowContext() {
+    void resetWindowContext() {
         this.windowContext = WindowContext.defaultContext();
     }
 
@@ -70,7 +72,7 @@ public class MainController {
      * Closes the window.
      */
     @FXML
-    public void closeWindow() {
+    void closeWindow() {
         stage.close();
     }
 
@@ -92,6 +94,25 @@ public class MainController {
         }
     }
 
+
+    /**
+     * Method that can be called from other controllers to load the sidebar into that page.
+     * Will set the sidebar as the child of the pane given.
+     * @param menuBarPane The container pane for the menu bar, given by the importer.
+     */
+    public void loadMenuBar(Pane menuBarPane) {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(Page.MENU_BAR.getPath()));
+            HBox menuBar = loader.load();
+            MenuBarController = loader.getController();
+            MenuBarController.setup(this);
+            menuBarPane.getChildren().setAll(menuBar);
+        } catch (IOException exc) {
+            System.err.println("Couldn't load sidebar from fxml file.");
+            exc.printStackTrace();
+        }
+    }
+
     public void setSubController(SubController subController) {
         this.subController = subController;
     }
@@ -102,10 +123,12 @@ public class MainController {
     public void refresh() {
         updateTitle();
         subController.refresh();
-        if (sidebarController != null) {
-            sidebarController.refresh();
+        if (MenuBarController != null) {
+            MenuBarController.refresh();
         }
     }
+
+    public String getTitle() {return windowTitle;}
 
     /**
      * Sets the title of the window to the given text.

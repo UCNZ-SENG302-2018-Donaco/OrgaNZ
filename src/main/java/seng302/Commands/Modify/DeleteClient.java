@@ -1,7 +1,5 @@
 package seng302.Commands.Modify;
 
-import java.util.Scanner;
-
 import seng302.Actions.Action;
 import seng302.Actions.ActionInvoker;
 import seng302.Actions.Client.DeleteClientAction;
@@ -14,7 +12,7 @@ import seng302.Utilities.JSONConverter;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
-@Command(name = "deleteuser", description = "Deletes a user.")
+@Command(name = "deleteclient", description = "Deletes a client.")
 public class DeleteClient implements Runnable {
 
     private ClientManager manager;
@@ -33,29 +31,27 @@ public class DeleteClient implements Runnable {
     @Option(names = {"-u", "--uid"}, description = "User ID", required = true)
     private int uid;
 
+    @Option(names = "-y", description = "Confirms you would like to execute the removal")
+    private boolean yes;
+
     public void run() {
         Client client = manager.getClientByID(uid);
         if (client == null) {
             System.out.println("No client exists with that user ID");
-        } else {
+        } else if (!yes) {
             System.out.println(
-                    String.format("Removing user: %s %s %s, with date of birth: %s, would you like to proceed? (y/n)",
-                            client.getFirstName(), client.getMiddleName(), client.getLastName(),
+                    String.format("Removing client: %s, with date of birth: %s,\nto proceed please rerun the command "
+                                    + "with the -y flag",
+                            client.getFullName(),
                             client.getDateOfBirth()));
-            Scanner scanner = new Scanner(System.in);
-            String response = scanner.next();
+        } else {
+            Action action = new DeleteClientAction(client, manager);
 
-            if (response.equals("y")) {
-                Action action = new DeleteClientAction(client, manager);
-                invoker.execute(action);
+            System.out.println(invoker.execute(action));
+            System.out.println("This removal will only be permanent once the 'save' command is used");
 
-                System.out.println("Client " + uid
-                        + " removed. This removal will only be permanent once the 'save' command is used");
-                HistoryItem printAllOrgan = new HistoryItem("DELETE", "Client " + uid + " deleted.");
-                JSONConverter.updateHistory(printAllOrgan, "action_history.json");
-            } else {
-                System.out.println("User not removed");
-            }
+            HistoryItem deleteClient = new HistoryItem("DELETE", "Client " + uid + " deleted.");
+            JSONConverter.updateHistory(deleteClient, "action_history.json");
         }
     }
 }

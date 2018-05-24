@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.logging.Logger;
 
 import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
@@ -12,13 +13,17 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.layout.Pane;
 
+import seng302.Client;
 import seng302.HistoryItem;
+import seng302.State.Session;
 import seng302.Utilities.JSONConverter;
 
 /**
  * Controller for the history page.
  */
 public class HistoryController extends SubController {
+
+    private static final Logger LOGGER = Logger.getLogger(HistoryController.class.getName());
 
     private final DateTimeFormatter datetimeformat = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm:ss");
 
@@ -27,7 +32,7 @@ public class HistoryController extends SubController {
     @FXML
     private TableView<HistoryItem> historyTable;
     @FXML
-    private Pane sidebarPane;
+    private Pane menuBarPane;
 
     /**
      * Initializes the UI for this page.
@@ -53,19 +58,18 @@ public class HistoryController extends SubController {
             List<HistoryItem> history = JSONConverter.loadJSONtoHistory(new File("action_history.json"));
             historyTable.setItems(FXCollections.observableArrayList(history));
         } catch (IOException exc) {
-            System.out.println(exc.getMessage());
+            LOGGER.severe("IO Exception while loading history table");
+            LOGGER.severe(exc.getMessage());
         }
 
     }
 
-    private void getSidebar() {
-        mainController.loadSidebar(sidebarPane);
-    }
 
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
         mainController.setTitle("Action history");
-        getSidebar();
+        mainController.loadMenuBar(menuBarPane);
+
     }
 }

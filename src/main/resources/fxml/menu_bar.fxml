@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
+<?import javafx.scene.layout.HBox?>
+
+<HBox maxWidth="1.7976931348623157E308" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="seng302.Controller.MenuBarController">
+  <MenuBar fx:id="menuBar" maxWidth="1.7976931348623157E308" minWidth="-Infinity" HBox.hgrow="ALWAYS">
+    <Menu fx:id="filePrimaryItem" mnemonicParsing="false" text="File">
+      <MenuItem fx:id="saveItem" mnemonicParsing="false" onAction="#save" text="Save" />
+      <MenuItem fx:id="loadItem" mnemonicParsing="false" onAction="#load" text="Load" />
+         <SeparatorMenuItem mnemonicParsing="false" />
+         <MenuItem fx:id="closeItem" mnemonicParsing="false" onAction="#closeWindow" text="Close Window" />
+         <MenuItem mnemonicParsing="false" onAction="#quitProgram" text="Quit" />
+    </Menu>
+    <Menu fx:id="editItem" mnemonicParsing="false" text="Edit">
+      <MenuItem fx:id="undoItem" mnemonicParsing="false" onAction="#undo" text="Undo" />
+      <MenuItem fx:id="redoItem" mnemonicParsing="false" onAction="#redo" text="Redo" />
+    </Menu>
+    <Menu fx:id="clientPrimaryItem" mnemonicParsing="false" text="Client">
+      <MenuItem fx:id="searchClientItem" mnemonicParsing="false" onAction="#goToSearch" text="Search" />
+      <MenuItem fx:id="viewClientItem" mnemonicParsing="false" onAction="#goToViewClient" text="View Client Profile" />
+         <MenuItem fx:id="createClientItem" mnemonicParsing="false" onAction="#goToCreateClient" text="Create Client" />
+    </Menu>
+    <Menu fx:id="organPrimaryItem" mnemonicParsing="false" text="Organ">
+      <MenuItem fx:id="donateOrganItem" mnemonicParsing="false" onAction="#goToRegisterOrganDonation" text="Donate Organs" />
+      <MenuItem fx:id="requestOrganItem" mnemonicParsing="false" onAction="#goToRequestOrganDonation" text="Request Organs" />
+    </Menu>
+    <Menu fx:id="medicationsPrimaryItem" mnemonicParsing="false" text="Medications">
+      <MenuItem fx:id="viewMedicationsItem" mnemonicParsing="false" onAction="#goToViewMedications" text="View Medications" />
+      <MenuItem fx:id="medicalHistoryItem" mnemonicParsing="false" onAction="#goToIllnessHistory" text="Medical History" />
+      <MenuItem fx:id="proceduresItem" mnemonicParsing="false" onAction="#goToViewProcedures" text="Procedures" />
+    </Menu>
+    <Menu fx:id="staffPrimaryItem" mnemonicParsing="false" text="Staff">
+      <MenuItem fx:id="searchStaffItem" mnemonicParsing="false" onAction="#goToStaffList" text="Search" />
+      <MenuItem fx:id="createAdministratorItem" mnemonicParsing="false" onAction="#goToCreateAdmin" text="Create Administrator" />
+      <MenuItem fx:id="createClinicianItem" mnemonicParsing="false" onAction="#goToCreateClinician" text="Create Clinician" />
+    </Menu>
+    <Menu fx:id="transplantsPrimaryItem" mnemonicParsing="false" text="Transplants">
+      <MenuItem fx:id="searchTransplantsItem" mnemonicParsing="false" onAction="#goToTransplants" text="Search" />
+    </Menu>
+    <Menu fx:id="profilePrimaryItem" mnemonicParsing="false" text="Profile">
+      <MenuItem fx:id="viewAdministratorItem" mnemonicParsing="false" text="View Admin" />
+      <MenuItem fx:id="viewClinicianItem" mnemonicParsing="false" onAction="#goToViewClinician" text="View Clinician" />
+      <MenuItem fx:id="historyItem" mnemonicParsing="false" onAction="#goToHistory" text="History" />
+      <MenuItem fx:id="cliItem" mnemonicParsing="false" onAction="#goToCommandLine" text="CLI" />
+      <MenuItem fx:id="logOutItem" mnemonicParsing="false" onAction="#logout" text="Log Out" />
+    </Menu>
+  </MenuBar>
+</HBox>
