@@ -3,39 +3,32 @@ package seng302.UI.Validation;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import javafx.beans.InvalidationListener;
+import javafx.beans.Observable;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Control;
+import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
-import javafx.scene.control.Labeled;
 import javafx.scene.control.TextField;
 
 import org.controlsfx.control.PopOver;
 import org.controlsfx.control.PopOver.ArrowLocation;
 
 public class UIValidation {
-
     private final Collection<Watched> components = new ArrayList<>();
     private final Collection<Control> disables = new ArrayList<>();
 
     public UIValidation add(TextField textField, Validator validator) {
         Watched watched = new TextWatched(textField, validator);
         components.add(watched);
-        textField.textProperty().addListener(observable -> {
-            if (watched.isValid()) {
-                watched.setValid();
+        textField.textProperty().addListener(new ValidationListener(watched));
+        return this;
+    }
 
-                if (!disables.isEmpty()) {
-                    if (isAllValid()) {
-                        enableAll();
-                    } else {
-                        disableAll();
-                    }
-                }
-            } else {
-                watched.setInvalid();
-                disableAll();
-            }
-        });
+    public UIValidation add(DatePicker datePicker, Validator validator) {
+        Watched watched = new DateWatched(datePicker, validator);
+        components.add(watched);
+        datePicker.valueProperty().addListener(new ValidationListener(watched));
         return this;
     }
 
@@ -64,6 +57,14 @@ public class UIValidation {
     public UIValidation addDisableButton(Control control) {
         disables.add(control);
         return this;
+    }
+
+    public void validate() {
+        if (isAllValid()) {
+            enableAll();
+        } else {
+            disableAll();
+        }
     }
 
     private abstract static class Watched {
@@ -156,6 +157,47 @@ public class UIValidation {
         @Override
         public boolean isValid() {
             return getValidator().isValid(textField.getText());
+        }
+    }
+
+    private static class DateWatched extends Watched {
+
+        private final DatePicker datePicker;
+
+        DateWatched(DatePicker datePicker, Validator validator) {
+            super(datePicker, validator);
+            this.datePicker = datePicker;
+        }
+
+        @Override
+        public boolean isValid() {
+            return getValidator().isValid(datePicker.getValue());
+        }
+    }
+
+    private class ValidationListener implements InvalidationListener {
+        private final Watched watched;
+
+        ValidationListener(Watched watched) {
+            this.watched = watched;
+        }
+
+        @Override
+        public void invalidated(Observable observable) {
+            if (watched.isValid()) {
+                watched.setValid();
+
+                if (!disables.isEmpty()) {
+                    if (isAllValid()) {
+                        enableAll();
+                    } else {
+                        disableAll();
+                    }
+                }
+            } else {
+                watched.setInvalid();
+                disableAll();
+            }
         }
     }
 }

@@ -36,3 +36,4 @@ public class IntValidator extends Validator {
         return OptionalInt.empty();
     }
 }
+

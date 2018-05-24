@@ -126,7 +126,8 @@ public class ViewClientController extends SubController {
                         return "Invalid client id";
                     }
                 })
-                .addDisableButton(searchClientButton);
+                .addDisableButton(searchClientButton)
+                .validate();
     }
 
     @Override
