@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.ButtonType;
@@ -19,8 +20,6 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.SeparatorMenuItem;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import javafx.scene.control.Alert;
-import javafx.stage.WindowEvent;
 
 import seng302.Actions.ActionInvoker;
 import seng302.AppUI;
@@ -314,9 +313,9 @@ public class MenuBarController extends SubController {
     /**
      * Redirects the GUI to the Create clinician page.
      */
-
     @FXML
     private void goToCreateClient() {PageNavigator.loadPage(Page.CREATE_CLIENT, mainController);}
+
     /**
      * Redirects the GUI to the Admin command line page.
      */
@@ -419,6 +418,11 @@ public class MenuBarController extends SubController {
         PageNavigator.loadPage(Page.LANDING, mainController);
         HistoryItem save = new HistoryItem("LOGOUT", "The user logged out");
         JSONConverter.updateHistory(save, "action_history.json");
+    }
+
+    @FXML
+    private void refreshCache() {
+        System.out.println("Refreshing the cache has not yet been implemented on this branch.");
     }
 
     /**
