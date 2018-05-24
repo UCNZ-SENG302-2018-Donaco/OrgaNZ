@@ -9,18 +9,26 @@ import javax.persistence.RollbackException;
 import seng302.Client;
 import seng302.Clinician;
 import seng302.Database.DBManager;
+import seng302.Utilities.Enums.Region;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
-public class ClinicianManagerDBPure implements ClinicianManager{
+public class ClinicianManagerDBPure implements ClinicianManager {
 
     private final DBManager dbManager;
+    private Clinician defaultClinician = new Clinician("admin", null, "admin", "admin", Region.UNSPECIFIED,
+            0, "admin");
 
-    public ClinicianManagerDBPure(){this.dbManager = DBManager.getInstance();}
+
+    public ClinicianManagerDBPure(){
+        this.dbManager = DBManager.getInstance();
+        dbManager.saveEntity(defaultClinician);
+    }
 
     public ClinicianManagerDBPure(DBManager dbManager) {
         this.dbManager = dbManager;
+        dbManager.saveEntity(defaultClinician);
     }
 
 
@@ -65,8 +73,20 @@ public class ClinicianManagerDBPure implements ClinicianManager{
     }
 
     @Override
-    public void applyChangesTo(Clinician clinician){
-        dbManager.saveEntity(clinician);
+    public void applyChangesTo(Clinician clinician) {
+        Transaction trns = null;
+
+        try (Session session = dbManager.getDBSession()) {
+            trns = session.beginTransaction();
+
+            dbManager.getDBSession().update(clinician);
+
+            trns.commit();
+        } catch (RollbackException exc) {
+            if (trns != null) {
+                trns.rollback();
+            }
+        }
     }
 
 
