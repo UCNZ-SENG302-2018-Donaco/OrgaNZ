@@ -43,10 +43,11 @@ public class AppUI extends Application {
         LoggerSetup.setup(Level.INFO);
 
         stage.setTitle("Organ Client Management System");
-        stage.setMinHeight(639);
-        stage.setMinWidth(1016);
         stage.setScene(createScene(loadMainPane(stage)));
         stage.show();
+
+        stage.setMinHeight(639);
+        stage.setMinWidth(1016);
 
         State.init();
 

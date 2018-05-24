@@ -12,12 +12,13 @@ import com.google.api.client.http.HttpTransport;
 import org.junit.Test;
 
 public class MedActiveIngredientsHandlerTest {
-
     private HttpTransport mockTransport;
     private MedActiveIngredientsHandler handler;
 
     @Test
     public void getActiveIngredients1() {
+        MockCacheManager.Create();
+
         final String EXPECTED_RESPONSE_BODY = "[\"Hydralazine hydrochloride; hydrochlorothiazide; reserpine\",\"Hydroch"
                 + "lorothiazide; reserpine\",\"Hydroflumethiazide; reserpine\",\"Reserpine\"]";
 
