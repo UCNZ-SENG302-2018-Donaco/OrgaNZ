@@ -4,11 +4,14 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -28,6 +31,7 @@ import seng302.HistoryItem;
 import seng302.State.Session;
 import seng302.State.Session.UserType;
 import seng302.State.State;
+import seng302.Utilities.CacheManager;
 import seng302.Utilities.JSONConverter;
 import seng302.Utilities.View.Page;
 import seng302.Utilities.View.PageNavigator;
@@ -425,7 +429,37 @@ public class MenuBarController extends SubController {
 
     @FXML
     private void refreshCache() {
-        System.out.println("Refreshing the cache has not yet been implemented on this branch.");
+
+        // Generate initial alert popup
+        String alertTitle = "Refreshing cache...";
+        Alert alert = PageNavigator.generateAlert(AlertType.INFORMATION, alertTitle, "The cache is refreshing.");
+        alert.show();
+
+        Task<List<String>> task = new Task<List<String>>() {
+            @Override
+            public List<String> call() throws IOException {
+                CacheManager.INSTANCE.refreshCachedData();
+                return new ArrayList<String>();
+            }
+        };
+
+        task.setOnSucceeded(e -> {
+            String title = "Cache refreshed.";
+            alert.setHeaderText(title);
+            alert.setTitle(title);
+            alert.setContentText("The cache has been refreshed.");
+        });
+
+        task.setOnFailed(e -> {
+            alert.setAlertType(AlertType.ERROR);
+            String title = "Error refreshing cache.";
+            alert.setHeaderText(title);
+            alert.setTitle(title);
+            alert.setContentText("Error refreshing cache. Please try again later.");
+
+        });
+
+        new Thread(task).start();
     }
 
     /**
