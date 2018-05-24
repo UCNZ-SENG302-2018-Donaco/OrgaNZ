@@ -109,7 +109,6 @@ public class Client {
     private List<String> updateLog = new ArrayList<>();
 
     public Client() {
-        this.uid = State.getClientManager().nextUid();
         this.createdTimestamp = LocalDateTime.now();
     }
 

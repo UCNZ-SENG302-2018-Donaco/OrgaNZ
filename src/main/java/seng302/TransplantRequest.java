@@ -5,6 +5,8 @@ import java.time.LocalDateTime;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -32,6 +34,7 @@ public class TransplantRequest {
     private Organ requestedOrgan;
     private LocalDateTime requestDate;
     private LocalDateTime resolvedDate;
+    @Enumerated(EnumType.STRING)
     private TransplantRequestStatus status = TransplantRequestStatus.WAITING;
     private String resolvedReason;
 

@@ -152,7 +152,7 @@ public class ClientManagerDBPure implements ClientManager {
             trns = session.beginTransaction();
             requests = dbManager.getDBSession()
                     .createQuery("SELECT req FROM TransplantRequest req "
-                            + "WHERE req.status = RequestStatus.WAITING", TransplantRequest.class)
+                            + "WHERE req.status = TransplantRequestStatus.WAITING", TransplantRequest.class)
                     .getResultList();
             trns.commit();
         } catch (RollbackException exc) {
