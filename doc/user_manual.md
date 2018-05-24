@@ -91,6 +91,6 @@ sql [readonly statement]
 ```
 ##### Read only SQL statements are allow to be executed from the admins command line. When using quotation marks in the SQL, they must be escaped with a "\\" character. e.g.
 ```
-sql SELECT \"firstName\" FROM Client
+sql "SELECT \"firstName\" FROM Client"
 ```
 
