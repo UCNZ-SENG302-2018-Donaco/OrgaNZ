@@ -43,7 +43,7 @@ public class CreateClientController extends SubController {
 
     private final ClientManager manager;
     private final ActionInvoker invoker;
-
+    private UIValidation validation;
 
     /**
      * Initializes the UI for this page.
@@ -68,11 +68,10 @@ public class CreateClientController extends SubController {
             goBackButton.setVisible(false);
         }
 
-        new UIValidation()
+        validation = new UIValidation()
                 .add(firstNameFld, new StringValidator())
                 .add(lastNamefld, new StringValidator())
                 .add(dobFld, new NotNullValidator())
-                .addDisableButton(createButton)
                 .validate();
     }
 
@@ -83,40 +82,45 @@ public class CreateClientController extends SubController {
      */
     @FXML
     private void createClient() {
-        //Duplicate user warning alert
-        if (manager.collisionExists(firstNameFld.getText(), lastNamefld.getText(), dobFld.getValue())) {
-            ButtonType option = PageNavigator.showAlert(AlertType.CONFIRMATION,
-                    "Duplicate Client Warning",
-                    "This client is a duplicate of one that already exists. Would you still like to create it?")
-                    .orElse(ButtonType.CANCEL);
-            if (option != ButtonType.OK) {
-                // ... user chose CANCEL or closed the dialog
-                return;
+        if (validation.isInvalid()) {
+            PageNavigator.showAlert(AlertType.ERROR, "Required Field Empty",
+                    "Please make sure that all the required fields are given.");
+        } else {
+            //Duplicate user warning alert
+            if (manager.collisionExists(firstNameFld.getText(), lastNamefld.getText(), dobFld.getValue())) {
+                ButtonType option = PageNavigator.showAlert(AlertType.CONFIRMATION,
+                        "Duplicate Client Warning",
+                        "This client is a duplicate of one that already exists. Would you still like to create it?")
+                        .orElse(ButtonType.CANCEL);
+                if (option != ButtonType.OK) {
+                    // ... user chose CANCEL or closed the dialog
+                    return;
+                }
             }
-        }
 
-        int uid = manager.nextUid();
-        Client client = new Client(firstNameFld.getText(), middleNamefld.getText(), lastNamefld.getText(),
-                dobFld.getValue(), uid);
-        Action action = new CreateClientAction(client, manager);
-        invoker.execute(action);
-        HistoryItem save = new HistoryItem("CREATE CLIENT",
-                String.format("Client %s was created with ID %d", client.getFullName(), uid));
-        JSONConverter.updateHistory(save, "action_history.json");
+            int uid = manager.nextUid();
+            Client client = new Client(firstNameFld.getText(), middleNamefld.getText(), lastNamefld.getText(),
+                    dobFld.getValue(), uid);
+            Action action = new CreateClientAction(client, manager);
+            invoker.execute(action);
+            HistoryItem save = new HistoryItem("CREATE CLIENT",
+                    String.format("Client %s was created with ID %d", client.getFullName(), uid));
+            JSONConverter.updateHistory(save, "action_history.json");
 
-        if (State.getSession() == null) { // Someone creating a client
-            State.login(client);
-            PageNavigator.loadPage(Page.VIEW_CLIENT, mainController);
+            if (State.getSession() == null) { // Someone creating a client
+                State.login(client);
+                PageNavigator.loadPage(Page.VIEW_CLIENT, mainController);
 
-        } else { // Clinician or admin are creating a user.
+            } else { // Clinician or admin are creating a user.
 
-            MainController newMain = PageNavigator.openNewWindow();
-            if (newMain != null) {
-                newMain.setWindowContext(new WindowContext.WindowContextBuilder()
-                        .setAsClinViewClientWindow()
-                        .viewClient(client)
-                        .build());
-                PageNavigator.loadPage(Page.VIEW_CLIENT, newMain);
+                MainController newMain = PageNavigator.openNewWindow();
+                if (newMain != null) {
+                    newMain.setWindowContext(new WindowContext.WindowContextBuilder()
+                            .setAsClinViewClientWindow()
+                            .viewClient(client)
+                            .build());
+                    PageNavigator.loadPage(Page.VIEW_CLIENT, newMain);
+                }
             }
         }
     }

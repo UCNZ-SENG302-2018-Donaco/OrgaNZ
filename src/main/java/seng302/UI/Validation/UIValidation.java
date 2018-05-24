@@ -59,12 +59,17 @@ public class UIValidation {
         return this;
     }
 
-    public void validate() {
+    public UIValidation validate() {
         if (isAllValid()) {
             enableAll();
         } else {
             disableAll();
         }
+        return this;
+    }
+
+    public boolean isInvalid() {
+        return !isAllValid();
     }
 
     private abstract static class Watched {
