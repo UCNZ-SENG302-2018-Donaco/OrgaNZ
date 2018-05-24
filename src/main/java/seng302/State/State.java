@@ -13,8 +13,8 @@ import seng302.Controller.MainController;
  */
 public final class State {
 
-    private static ClientManager clientManager;
-    private static ClinicianManager clinicianManager;
+    private static ClientManagerMemory clientManager;
+    private static ClinicianManagerMemory clinicianManager;
     private static AdministratorManager administratorManager;
     private static ActionInvoker actionInvoker;
     private static Session session;

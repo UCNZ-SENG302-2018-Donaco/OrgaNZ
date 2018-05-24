@@ -37,6 +37,8 @@ public interface ClinicianManager {
      */
     void removeClinician(Clinician clinician);
 
+    void applyChangesTo(Clinician clinician);
+
     /**
      * Checks if a user already exists with that staff id
      * @param staffId The id of the clinician

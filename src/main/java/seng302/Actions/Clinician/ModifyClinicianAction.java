@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import seng302.Actions.Action;
 import seng302.Actions.ModifyObjectByFieldAction;
 import seng302.Clinician;
+import seng302.State.ClinicianManager;
 
 /**
  * A reversible clinician modification Action
@@ -14,13 +15,14 @@ public class ModifyClinicianAction extends Action {
 
     private ArrayList<ModifyObjectByFieldAction> actions = new ArrayList<>();
     private Clinician clinician;
-
+    private ClinicianManager clinicianManager;
     /**
      * Create a new Action
      * @param clinician The clinician to be modified
      */
-    public ModifyClinicianAction(Clinician clinician) {
+    public ModifyClinicianAction(Clinician clinician,ClinicianManager clinicianManager) {
         this.clinician = clinician;
+        this.clinicianManager = clinicianManager;
     }
 
     /**
@@ -49,6 +51,7 @@ public class ModifyClinicianAction extends Action {
             for (ModifyObjectByFieldAction action : actions) {
                 action.execute();
             }
+            clinicianManager.applyChangesTo(clinician);
         }
     }
 
@@ -57,6 +60,7 @@ public class ModifyClinicianAction extends Action {
         for (ModifyObjectByFieldAction action : actions) {
             action.unExecute();
         }
+        clinicianManager.applyChangesTo(clinician);
     }
 
     @Override

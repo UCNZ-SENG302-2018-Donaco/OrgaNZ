@@ -68,6 +68,10 @@ public class ClinicianManagerMemory implements ClinicianManager{
         return false;
     }
 
+    public void applyChangesTo(Clinician clinician){
+        //Do Nothing for now....
+    }
+
     /**
      * Return a clinician matching that UID
      * @param id To be matched
