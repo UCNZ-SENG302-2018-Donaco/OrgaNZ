@@ -6,8 +6,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
-
 import javafx.scene.layout.Pane;
+
 import seng302.Actions.Action;
 import seng302.Actions.ActionInvoker;
 import seng302.Actions.Client.CreateClientAction;
@@ -15,7 +15,6 @@ import seng302.Client;
 import seng302.Controller.MainController;
 import seng302.Controller.SubController;
 import seng302.HistoryItem;
-import seng302.State.AdministratorManager;
 import seng302.State.ClientManager;
 import seng302.State.Session.UserType;
 import seng302.State.State;
@@ -63,7 +62,7 @@ public class CreateClientController extends SubController {
         super.setup(mainController);
         mainController.setTitle("Create a new Client");
 
-        if (State.getSession().getLoggedInUserType() == UserType.ADMINISTRATOR) {
+        if (State.getSession() != null) { //they're a clinician or admin
             mainController.loadMenuBar(menuBarPane);
             goBackButton.setVisible(false);
         }
