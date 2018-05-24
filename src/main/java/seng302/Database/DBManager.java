@@ -1,8 +1,11 @@
 package seng302.Database;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import javax.persistence.PersistenceException;
 import javax.persistence.RollbackException;
 
+import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -14,7 +17,7 @@ import org.hibernate.cfg.Configuration;
  */
 public class DBManager {
 
-    private static DBManager dbManager = new DBManager();
+    private static DBManager dbManager;
 
     /**
      * Default no-args constructor that sets the manager's SessionFactory to the default one returned by
@@ -28,7 +31,7 @@ public class DBManager {
      * Constructor that can be used to dependency-inject the manager's SessionFactory.
      * @param sessionFactory The SessionFactory for this manager to use for its database interactions.
      */
-    protected DBManager(SessionFactory sessionFactory) {
+    public DBManager(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
 
@@ -42,7 +45,25 @@ public class DBManager {
         return new Configuration().configure("hibernate.cfg.xml").buildSessionFactory();
     }
 
+    /**
+     * Returns a standard JDBC SQL Connection
+     * @return The connection object
+     * @throws SQLException Thrown if there are any issues connecting to the database
+     */
+    public Connection getStandardSqlConnection() throws SQLException {
+        MysqlDataSource dataSource = new MysqlDataSource();
+        Configuration cfg = new Configuration().configure(("hibernate.cfg.xml"));
+        dataSource.setURL(cfg.getProperty("hibernate.connection.url"));
+        dataSource.setUser(cfg.getProperty("hibernate.connection.username"));
+        dataSource.setPassword(cfg.getProperty("hibernate.connection.password"));
+        return dataSource.getConnection();
+    }
+
+
     public static DBManager getInstance() {
+        if (dbManager == null) {
+            dbManager = new DBManager();
+        }
         return dbManager;
     }
 
