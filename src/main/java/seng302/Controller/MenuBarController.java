@@ -136,7 +136,6 @@ public class MenuBarController extends SubController {
             } else if (!windowContext.isClinViewClientWindow()) {
                 hideMenuItem(organPrimaryItem);
                 hideMenuItem(medicationsPrimaryItem);
-                hideMenuItem(viewClinicianItem);
                 hideMenuItem(viewClientItem);
                 hideMenuItem(viewAdministratorItem);
             }

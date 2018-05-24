@@ -68,7 +68,6 @@
                <MenuItem fx:id="cliItem" mnemonicParsing="false" onAction="#goToCommandLine" text="CLI" />
              </items>
           </Menu>
-          <Menu fx:id="administrationPrimaryItem" mnemonicParsing="false" text="Administration" />
         </menus>
      </MenuBar>
    </children>
