@@ -186,7 +186,8 @@ public class ClientManagerDBPure implements ClientManager {
             trns = session.beginTransaction();
             requests = dbManager.getDBSession()
                     .createQuery("SELECT req FROM TransplantRequest req "
-                            + "WHERE req.status = seng302.Utilities.Enums.TransplantRequestStatus.WAITING",
+                            + "WHERE req.status = "
+                                    + "com.humanharvest.organz.utilities.enums.TransplantRequestStatus.WAITING",
                             TransplantRequest.class)
                     .getResultList();
             trns.commit();

@@ -169,8 +169,8 @@ public class CacheTest {
         mockCacheManager.addCachedData("MedActiveIngredientsHandler", new Object[]{"foo"}, "test", Optional.empty());
 
         // Check the pre-refresh value
-        Optional<String> initialValue = mockCacheManager.getCachedData("seng302.Utilities.Web" 
-                        + ".MedActiveIngredientsHandler",
+        Optional<String> initialValue = mockCacheManager.getCachedData(
+                "com.humanharvest.organz.utilities.web.MedActiveIngredientsHandler",
                 String.class, new Object[]{"foo"});
         assertTrue(initialValue.isPresent());
         assertEquals("test", initialValue.get());
