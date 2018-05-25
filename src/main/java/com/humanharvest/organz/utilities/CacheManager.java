@@ -171,14 +171,14 @@ public abstract class CacheManager {
 
             WebAPIHandler handler;
             switch (categoryName) {
-                case "MedActiveIngredientsHandler":
+                case "com.humanharvest.organz.utilities.web.MedActiveIngredientsHandler":
                     if (httpTransport == null) {
                         handler = new MedActiveIngredientsHandler();
                     } else {
                         handler = new MedActiveIngredientsHandler(httpTransport);
                     }
                     break;
-                case "DrugInteractionsHandler":
+                case "com.humanharvest.organz.utilities.web.DrugInteractionsHandler":
                     if (httpTransport == null) {
                         handler = new DrugInteractionsHandler();
                     } else {

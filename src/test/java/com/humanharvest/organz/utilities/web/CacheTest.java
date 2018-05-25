@@ -166,7 +166,8 @@ public class CacheTest {
                 + "\"Hydrochlorothiazide; reserpine\",\"Hydroflumethiazide; reserpine\",\"Reserpine\"]";
         MockHttpTransport mockTransport = MockHelper.makeMockHttpTransport(EXPECTED_RESPONSE_BODY);
 
-        mockCacheManager.addCachedData("MedActiveIngredientsHandler", new Object[]{"foo"}, "test", Optional.empty());
+        mockCacheManager.addCachedData("com.humanharvest.organz.utilities.web.MedActiveIngredientsHandler",
+                new Object[]{"foo"}, "test", Optional.empty());
 
         // Check the pre-refresh value
         Optional<String> initialValue = mockCacheManager.getCachedData(
@@ -179,7 +180,8 @@ public class CacheTest {
         mockCacheManager.refreshCachedData(mockTransport);
 
         // Check it has the new value
-        Optional<String[]> refreshedValue = mockCacheManager.getCachedData("MedActiveIngredientsHandler",
+        Optional<String[]> refreshedValue = mockCacheManager.getCachedData(
+                "com.humanharvest.organz.utilities.web.MedActiveIngredientsHandler",
                 String[].class, new Object[]{"foo"});
         assertTrue(refreshedValue.isPresent());
         assertEquals(EXPECTED_RESPONSE_BODY, "[\"" + String.join("\",\"", refreshedValue.get()) + "\"]");
