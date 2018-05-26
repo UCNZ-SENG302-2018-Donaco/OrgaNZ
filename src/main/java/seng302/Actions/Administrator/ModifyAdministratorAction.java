@@ -10,7 +10,7 @@ import seng302.Administrator;
 /**
  * A reversible administrator modification Action
  */
-public class ModifyAdministratorAction extends Action {
+public class ModifyAdministratorAction extends AdministratorAction {
 
     private ArrayList<ModifyObjectByFieldAction> actions = new ArrayList<>();
     private Administrator administrator;
@@ -43,6 +43,7 @@ public class ModifyAdministratorAction extends Action {
 
     @Override
     protected void execute() {
+        super.execute();
         for (ModifyObjectByFieldAction action : actions) {
             action.execute();
         }
@@ -50,6 +51,7 @@ public class ModifyAdministratorAction extends Action {
 
     @Override
     protected void unExecute() {
+        super.unExecute();
         for (ModifyObjectByFieldAction action : actions) {
             action.unExecute();
         }
@@ -73,5 +75,10 @@ public class ModifyAdministratorAction extends Action {
 
         return String.format("Reversed update for administrator %s.\nThese changes were reversed:\n\n%s",
                 administrator.getUsername(), changesText);
+    }
+
+    @Override
+    protected Administrator getAffectedAdministrator() {
+        return administrator;
     }
 }

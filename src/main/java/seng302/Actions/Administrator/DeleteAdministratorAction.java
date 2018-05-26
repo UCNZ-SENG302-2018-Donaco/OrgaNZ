@@ -7,7 +7,7 @@ import seng302.State.AdministratorManager;
 /**
  * A reversible administrator deletion action
  */
-public class DeleteAdministratorAction extends Action {
+public class DeleteAdministratorAction extends AdministratorAction {
 
     private final Administrator administrator;
     private final AdministratorManager manager;
@@ -24,11 +24,13 @@ public class DeleteAdministratorAction extends Action {
 
     @Override
     protected void execute() {
+        super.execute();
         manager.removeAdministrator(administrator);
     }
 
     @Override
     protected void unExecute() {
+        super.unExecute();
         manager.addAdministrator(administrator);
     }
 
@@ -40,5 +42,10 @@ public class DeleteAdministratorAction extends Action {
     @Override
     public String getUnexecuteText() {
         return String.format("Re-added administrator %s", administrator.getUsername());
+    }
+
+    @Override
+    protected Administrator getAffectedAdministrator() {
+        return administrator;
     }
 }

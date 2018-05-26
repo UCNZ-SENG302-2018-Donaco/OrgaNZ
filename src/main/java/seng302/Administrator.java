@@ -2,10 +2,12 @@ package seng302;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-import javax.persistence.ElementCollection;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -19,8 +21,10 @@ public class Administrator {
     private final LocalDateTime createdOn;
     private LocalDateTime modifiedOn;
 
-    @ElementCollection
-    private List<String> updateLog = new ArrayList<>();
+    @OneToMany(
+            cascade = CascadeType.ALL
+    )
+    private List<HistoryItem> changesHistory = new ArrayList<>();
 
     protected Administrator() {
         createdOn = LocalDateTime.now();
@@ -38,20 +42,6 @@ public class Administrator {
         this.password = password;
     }
 
-    private void addUpdate(String function) {
-        LocalDateTime timestamp = LocalDateTime.now();
-        updateLog.add(String.format("%s; updated %s", timestamp, function));
-        modifiedOn = LocalDateTime.now();
-    }
-
-    public LocalDateTime getCreatedOn() {
-        return createdOn;
-    }
-
-    public List<String> getUpdateLog() {
-        return updateLog;
-    }
-
     public String getUsername() {
         return username;
     }
@@ -62,7 +52,7 @@ public class Administrator {
 
     public void setPassword(String newPassword) {
         password = newPassword;
-        addUpdate("password");
+        updateModifiedTimestamp();
     }
 
     /**
@@ -74,8 +64,28 @@ public class Administrator {
         return password.equals(testPassword);
     }
 
+    public LocalDateTime getCreatedOn() {
+        return createdOn;
+    }
+
     public LocalDateTime getModifiedOn() {
         return modifiedOn;
+    }
+
+    private void updateModifiedTimestamp() {
+        modifiedOn = LocalDateTime.now();
+    }
+
+    public List<HistoryItem> getChangesHistory() {
+        return Collections.unmodifiableList(changesHistory);
+    }
+
+    public void addToChangesHistory(HistoryItem historyItem) {
+        changesHistory.add(historyItem);
+    }
+
+    public void removeFromChangesHistory(HistoryItem historyItem) {
+        changesHistory.remove(historyItem);
     }
 
     /**

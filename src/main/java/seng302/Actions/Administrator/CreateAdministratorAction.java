@@ -1,13 +1,12 @@
 package seng302.Actions.Administrator;
 
-import seng302.Actions.Action;
 import seng302.Administrator;
 import seng302.State.AdministratorManager;
 
 /**
  * A reversible administrator creation action
  */
-public class CreateAdministratorAction extends Action {
+public class CreateAdministratorAction extends AdministratorAction {
 
     private final Administrator administrator;
     private final AdministratorManager manager;
@@ -27,6 +26,7 @@ public class CreateAdministratorAction extends Action {
      */
     @Override
     protected void execute() {
+        super.execute();
         manager.addAdministrator(administrator);
     }
 
@@ -35,6 +35,7 @@ public class CreateAdministratorAction extends Action {
      */
     @Override
     protected void unExecute() {
+        super.unExecute();
         manager.removeAdministrator(administrator);
     }
 
@@ -46,5 +47,10 @@ public class CreateAdministratorAction extends Action {
     @Override
     public String getUnexecuteText() {
         return String.format("Removed administrator %s", administrator.getUsername());
+    }
+
+    @Override
+    protected Administrator getAffectedAdministrator() {
+        return administrator;
     }
 }
