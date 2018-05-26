@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import seng302.Actions.Action;
 import seng302.Client;
 import seng302.State.ClientManager;
 import seng302.Utilities.Enums.Organ;
@@ -13,7 +12,7 @@ import seng302.Utilities.Exceptions.OrganAlreadyRegisteredException;
 /**
  * A reversible client organ modification Action
  */
-public class ModifyClientOrgansAction extends Action {
+public class ModifyClientOrgansAction extends ClientAction {
 
     private ClientManager manager;
     private Map<Organ, Boolean> changes = new HashMap<>();
@@ -43,12 +42,14 @@ public class ModifyClientOrgansAction extends Action {
 
     @Override
     protected void execute() {
+        super.execute();
         runChanges(false);
         manager.applyChangesTo(client);
     }
 
     @Override
     protected void unExecute() {
+        super.unExecute();
         runChanges(true);
         manager.applyChangesTo(client);
     }
@@ -98,5 +99,10 @@ public class ModifyClientOrgansAction extends Action {
                 e.printStackTrace();
             }
         }
+    }
+
+    @Override
+    protected Client getAffectedClient() {
+        return client;
     }
 }

@@ -1,18 +1,15 @@
 package seng302.Actions.Client;
 
-import seng302.Actions.Action;
 import seng302.Client;
 import seng302.State.ClientManager;
 
 /**
  * A reversible client creation action
  */
-public class CreateClientAction extends Action {
-
+public class CreateClientAction extends ClientAction {
 
     private Client client;
     private ClientManager manager;
-
 
     /**
      * Create a new Action
@@ -30,6 +27,7 @@ public class CreateClientAction extends Action {
      */
     @Override
     public void execute() {
+        super.execute();
         manager.addClient(client);
     }
 
@@ -38,6 +36,7 @@ public class CreateClientAction extends Action {
      */
     @Override
     public void unExecute() {
+        super.unExecute();
         manager.removeClient(client);
     }
 
@@ -53,4 +52,8 @@ public class CreateClientAction extends Action {
                 client.getUid());
     }
 
+    @Override
+    protected Client getAffectedClient() {
+        return client;
+    }
 }

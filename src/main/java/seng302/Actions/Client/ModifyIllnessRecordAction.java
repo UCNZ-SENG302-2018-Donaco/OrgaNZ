@@ -3,7 +3,7 @@ package seng302.Actions.Client;
 import java.time.LocalDate;
 import java.util.Objects;
 
-import seng302.Actions.Action;
+import seng302.Client;
 import seng302.IllnessRecord;
 import seng302.State.ClientManager;
 
@@ -11,7 +11,7 @@ import seng302.State.ClientManager;
  * A reversible action to modify a given illness record. Only the diagnosis date, cured date and chronic status
  * attributes of the record can be changed.
  */
-public class ModifyIllnessRecordAction extends Action {
+public class ModifyIllnessRecordAction extends ClientAction {
 
     private ClientManager manager;
     private IllnessRecord record;
@@ -73,6 +73,7 @@ public class ModifyIllnessRecordAction extends Action {
                 Objects.equals(newChronic, oldChronic)) {
             throw new IllegalStateException("No changes were made to the IllnessRecord.");
         }
+        super.execute();
         if (!Objects.equals(newDiagnosisDate, oldDiagnosisDate)) {
             record.setDiagnosisDate(newDiagnosisDate);
         }
@@ -89,6 +90,7 @@ public class ModifyIllnessRecordAction extends Action {
 
     @Override
     protected void unExecute() {
+        super.unExecute();
         if (!Objects.equals(newDiagnosisDate, oldDiagnosisDate)) {
             record.setDiagnosisDate(oldDiagnosisDate);
         }
@@ -137,5 +139,10 @@ public class ModifyIllnessRecordAction extends Action {
         }
 
         return builder.toString();
+    }
+
+    @Override
+    protected Client getAffectedClient() {
+        return record.getClient();
     }
 }

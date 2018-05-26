@@ -1,15 +1,14 @@
 package seng302.Actions.Client;
 
-
-import static seng302.Utilities.Enums.TransplantRequestStatus.WAITING;
 import static seng302.Utilities.Enums.TransplantRequestStatus.CANCELLED;
 import static seng302.Utilities.Enums.TransplantRequestStatus.COMPLETED;
+import static seng302.Utilities.Enums.TransplantRequestStatus.WAITING;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 
-import seng302.Actions.Action;
+import seng302.Client;
 import seng302.State.ClientManager;
 import seng302.TransplantRequest;
 import seng302.Utilities.Enums.TransplantRequestStatus;
@@ -18,7 +17,7 @@ import seng302.Utilities.Enums.TransplantRequestStatus;
  * A reversible action that will resolve the given transplant request with a given status. This status must be one of
  * the valid {@link ResolveTransplantRequestAction#RESOLVED_STATUSES}.
  */
-public class ResolveTransplantRequestAction extends Action {
+public class ResolveTransplantRequestAction extends ClientAction {
 
     private static final Collection<TransplantRequestStatus> RESOLVED_STATUSES = Arrays.asList(
             CANCELLED, COMPLETED
@@ -54,6 +53,7 @@ public class ResolveTransplantRequestAction extends Action {
      */
     @Override
     public void execute() {
+        super.execute();
         request.setStatus(newStatus);
         request.setResolvedDate(LocalDateTime.now());
         request.setResolvedReason(reason);
@@ -62,6 +62,7 @@ public class ResolveTransplantRequestAction extends Action {
 
     @Override
     public void unExecute() {
+        super.unExecute();
         request.setStatus(WAITING);
         request.setResolvedDate(null);
         request.setResolvedReason(null);
@@ -78,5 +79,10 @@ public class ResolveTransplantRequestAction extends Action {
     public String getUnexecuteText() {
         return String.format("Reversed resolution of transplant request for '%s' with status '%s'",
                 request.getRequestedOrgan(), newStatus);
+    }
+
+    @Override
+    protected Client getAffectedClient() {
+        return request.getClient();
     }
 }

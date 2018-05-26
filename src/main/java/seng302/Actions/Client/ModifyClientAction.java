@@ -3,7 +3,6 @@ package seng302.Actions.Client;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
-import seng302.Actions.Action;
 import seng302.Actions.ModifyObjectByFieldAction;
 import seng302.Client;
 import seng302.State.ClientManager;
@@ -11,7 +10,7 @@ import seng302.State.ClientManager;
 /**
  * A reversible client modification Action
  */
-public class ModifyClientAction extends Action {
+public class ModifyClientAction extends ClientAction {
 
     private ArrayList<ModifyObjectByFieldAction> actions = new ArrayList<>();
     private Client client;
@@ -43,6 +42,7 @@ public class ModifyClientAction extends Action {
 
     @Override
     protected void execute() {
+        super.execute();
         if (actions.size() == 0) {
             throw new IllegalStateException("No changes were made to the client.");
         } else {
@@ -55,6 +55,7 @@ public class ModifyClientAction extends Action {
 
     @Override
     protected void unExecute() {
+        super.unExecute();
         for (ModifyObjectByFieldAction action : actions) {
             action.unExecute();
         }
@@ -81,5 +82,10 @@ public class ModifyClientAction extends Action {
         return String.format("Reversed update for client %d: %s. \n"
                         + "These changes were reversed: \n\n%s",
                 client.getUid(), client.getFullName(), changesText);
+    }
+
+    @Override
+    protected Client getAffectedClient() {
+        return client;
     }
 }

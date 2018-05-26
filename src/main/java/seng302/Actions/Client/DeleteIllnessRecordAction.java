@@ -1,13 +1,12 @@
 package seng302.Actions.Client;
 
-import seng302.Actions.Action;
 import seng302.Client;
 import seng302.IllnessRecord;
 
 /**
  * A reversible action that will delete the given illness record from the given client's medication history.
  */
-public class DeleteIllnessRecordAction extends Action {
+public class DeleteIllnessRecordAction extends ClientAction {
 
     private Client client;
     private IllnessRecord record;
@@ -24,12 +23,13 @@ public class DeleteIllnessRecordAction extends Action {
 
     @Override
     public void execute() {
+        super.execute();
         client.deleteIllnessRecord(record);
-
     }
 
     @Override
     public void unExecute() {
+        super.unExecute();
         client.addIllnessRecord(record);
     }
 
@@ -43,5 +43,10 @@ public class DeleteIllnessRecordAction extends Action {
     public String getUnexecuteText() {
         return String.format("Re-added record for illness '%s' to the history of client %d: %s.",
                 record.getIllnessName(), client.getUid(), client.getFullName());
+    }
+
+    @Override
+    protected Client getAffectedClient() {
+        return client;
     }
 }

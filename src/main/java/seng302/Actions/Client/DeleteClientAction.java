@@ -1,13 +1,12 @@
 package seng302.Actions.Client;
 
-import seng302.Actions.Action;
 import seng302.Client;
 import seng302.State.ClientManager;
 
 /**
  * A reversible client deletion action
  */
-public class DeleteClientAction extends Action {
+public class DeleteClientAction extends ClientAction {
 
     private Client client;
     private ClientManager manager;
@@ -24,11 +23,13 @@ public class DeleteClientAction extends Action {
 
     @Override
     public void execute() {
+        super.execute();
         manager.removeClient(client);
     }
 
     @Override
     public void unExecute() {
+        super.unExecute();
         manager.addClient(client);
     }
 
@@ -42,4 +43,8 @@ public class DeleteClientAction extends Action {
         return String.format("Re-added client %s", client.getFullName());
     }
 
+    @Override
+    protected Client getAffectedClient() {
+        return client;
+    }
 }

@@ -1,16 +1,13 @@
 package seng302.Actions.Client;
 
-import seng302.Actions.Action;
 import seng302.Client;
-import seng302.HistoryItem;
 import seng302.MedicationRecord;
 import seng302.State.ClientManager;
-import seng302.Utilities.JSONConverter;
 
 /**
  * A reversible action that will add the given medication record to the given Client's medication history.
  */
-public class AddMedicationRecordAction extends Action {
+public class AddMedicationRecordAction extends ClientAction {
 
     private Client client;
     private MedicationRecord record;
@@ -29,16 +26,14 @@ public class AddMedicationRecordAction extends Action {
 
     @Override
     protected void execute() {
+        super.execute();
         client.addMedicationRecord(record);
         manager.applyChangesTo(client);
-        HistoryItem save = new HistoryItem("ADD_MEDICATION",
-                String.format("Medication record for %s added to %s %s",
-                        record.getMedicationName(), client.getFirstName(), client.getLastName()));
-        JSONConverter.updateHistory(save, "action_history.json");
     }
 
     @Override
     protected void unExecute() {
+        super.unExecute();
         client.deleteMedicationRecord(record);
         manager.applyChangesTo(client);
     }
@@ -53,5 +48,10 @@ public class AddMedicationRecordAction extends Action {
     public String getUnexecuteText() {
         return String.format("Reversed the addition of record for medication '%s' to the history of client %d: %s.",
                 record.getMedicationName(), client.getUid(), client.getFullName());
+    }
+
+    @Override
+    protected Client getAffectedClient() {
+        return client;
     }
 }

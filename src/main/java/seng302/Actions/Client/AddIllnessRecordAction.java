@@ -1,6 +1,5 @@
 package seng302.Actions.Client;
 
-import seng302.Actions.Action;
 import seng302.Client;
 import seng302.IllnessRecord;
 import seng302.State.ClientManager;
@@ -8,7 +7,7 @@ import seng302.State.ClientManager;
 /**
  * A reversible action that will add the given illness record to the given client's medical history.
  */
-public class AddIllnessRecordAction extends Action {
+public class AddIllnessRecordAction extends ClientAction {
 
     private Client client;
     private IllnessRecord record;
@@ -27,12 +26,14 @@ public class AddIllnessRecordAction extends Action {
 
     @Override
     public void execute() {
+        super.execute();
         client.addIllnessRecord(record);
         manager.applyChangesTo(client);
     }
 
     @Override
     public void unExecute() {
+        super.unExecute();
         client.deleteIllnessRecord(record);
         manager.applyChangesTo(client);
     }
@@ -47,5 +48,10 @@ public class AddIllnessRecordAction extends Action {
     public String getUnexecuteText() {
         return String.format("Reversed the addition of record for illness '%s' from the history of client %d: %s.",
                 record.getIllnessName(), client.getUid(), client.getFullName());
+    }
+
+    @Override
+    protected Client getAffectedClient() {
+        return client;
     }
 }

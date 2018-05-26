@@ -1,13 +1,12 @@
 package seng302.Actions.Client;
 
-import seng302.Actions.Action;
 import seng302.Client;
 import seng302.ProcedureRecord;
 
 /**
  * A reversible action that will delete the given procedure record from the given client's medication history.
  */
-public class DeleteProcedureRecordAction extends Action {
+public class DeleteProcedureRecordAction extends ClientAction {
 
     private Client client;
     private ProcedureRecord record;
@@ -24,12 +23,13 @@ public class DeleteProcedureRecordAction extends Action {
 
     @Override
     public void execute() {
+        super.execute();
         client.deleteProcedureRecord(record);
-
     }
 
     @Override
     public void unExecute() {
+        super.unExecute();
         client.addProcedureRecord(record);
     }
 
@@ -43,5 +43,10 @@ public class DeleteProcedureRecordAction extends Action {
     public String getUnexecuteText() {
         return String.format("Re-added record for procedure '%s' to client %d: %s.",
                 record.getSummary(), client.getUid(), client.getFullName());
+    }
+
+    @Override
+    protected Client getAffectedClient() {
+        return client;
     }
 }

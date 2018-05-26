@@ -5,7 +5,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import seng302.Actions.Action;
+import seng302.Client;
 import seng302.ProcedureRecord;
 import seng302.State.ClientManager;
 import seng302.Utilities.Enums.Organ;
@@ -13,7 +13,7 @@ import seng302.Utilities.Enums.Organ;
 /**
  * A reversible action to modify a given procedure record.
  */
-public class ModifyProcedureRecordAction extends Action {
+public class ModifyProcedureRecordAction extends ClientAction {
 
     private ClientManager manager;
     private ProcedureRecord record;
@@ -74,6 +74,7 @@ public class ModifyProcedureRecordAction extends Action {
                 Objects.equals(newAffectedOrgans, oldAffectedOrgans)) {
             throw new IllegalStateException("No changes were made to the ProcedureRecord.");
         }
+        super.execute();
         if (!Objects.equals(newSummary, oldSummary)) {
             record.setSummary(newSummary);
         }
@@ -91,6 +92,7 @@ public class ModifyProcedureRecordAction extends Action {
 
     @Override
     protected void unExecute() {
+        super.unExecute();
         if (!Objects.equals(newSummary, oldSummary)) {
             record.setSummary(oldSummary);
         }
@@ -150,5 +152,10 @@ public class ModifyProcedureRecordAction extends Action {
         }
 
         return builder.toString();
+    }
+
+    @Override
+    protected Client getAffectedClient() {
+        return record.getClient();
     }
 }

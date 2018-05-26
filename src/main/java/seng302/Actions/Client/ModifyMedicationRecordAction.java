@@ -3,16 +3,14 @@ package seng302.Actions.Client;
 import java.time.LocalDate;
 import java.util.Objects;
 
-import seng302.Actions.Action;
-import seng302.HistoryItem;
+import seng302.Client;
 import seng302.MedicationRecord;
 import seng302.State.ClientManager;
-import seng302.Utilities.JSONConverter;
 
 /**
  * A reversible action to modify a given medication record (specifically, its 'started' and 'stopped' dates).
  */
-public class ModifyMedicationRecordAction extends Action {
+public class ModifyMedicationRecordAction extends ClientAction {
 
     private ClientManager manager;
     private MedicationRecord record;
@@ -60,6 +58,7 @@ public class ModifyMedicationRecordAction extends Action {
         if (Objects.equals(newStarted, oldStarted) && Objects.equals(newStopped, oldStopped)) {
             throw new IllegalStateException("No changes were made to the MedicationRecord.");
         }
+        super.execute();
         if (!Objects.equals(newStarted, oldStarted)) {
             record.setStarted(newStarted);
         }
@@ -67,19 +66,18 @@ public class ModifyMedicationRecordAction extends Action {
             record.setStopped(newStopped);
         }
         manager.applyChangesTo(record.getClient());
-        HistoryItem save = new HistoryItem("MODIFY_MEDICATION", getExecuteText());
-        JSONConverter.updateHistory(save, "action_history.json");
     }
 
     @Override
     protected void unExecute() {
-        manager.applyChangesTo(record.getClient());
+        super.unExecute();
         if (!Objects.equals(newStarted, oldStarted)) {
             record.setStarted(oldStarted);
         }
         if (!Objects.equals(newStopped, oldStopped)) {
             record.setStopped(oldStopped);
         }
+        manager.applyChangesTo(record.getClient());
     }
 
     @Override
@@ -111,5 +109,10 @@ public class ModifyMedicationRecordAction extends Action {
         }
 
         return builder.toString();
+    }
+
+    @Override
+    protected Client getAffectedClient() {
+        return record.getClient();
     }
 }

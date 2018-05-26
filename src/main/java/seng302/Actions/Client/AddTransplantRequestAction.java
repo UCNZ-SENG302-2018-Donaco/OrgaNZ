@@ -1,6 +1,5 @@
 package seng302.Actions.Client;
 
-import seng302.Actions.Action;
 import seng302.Client;
 import seng302.State.ClientManager;
 import seng302.TransplantRequest;
@@ -8,7 +7,7 @@ import seng302.TransplantRequest;
 /**
  * A reversible action that will add the given transplant request for the given Client to the system.
  */
-public class AddTransplantRequestAction extends Action {
+public class AddTransplantRequestAction extends ClientAction {
 
     private Client client;
     private TransplantRequest request;
@@ -27,12 +26,14 @@ public class AddTransplantRequestAction extends Action {
 
     @Override
     protected void execute() {
+        super.execute();
         client.addTransplantRequest(request);
         clientManager.applyChangesTo(client);
     }
 
     @Override
     protected void unExecute() {
+        super.unExecute();
         client.removeTransplantRequest(request);
         clientManager.applyChangesTo(client);
     }
@@ -47,5 +48,10 @@ public class AddTransplantRequestAction extends Action {
     public String getUnexecuteText() {
         return String.format("Reversed addition of new transplant request for '%s' to client %d: %s.",
                 request.getRequestedOrgan(), client.getUid(), client.getFullName());
+    }
+
+    @Override
+    protected Client getAffectedClient() {
+        return client;
     }
 }

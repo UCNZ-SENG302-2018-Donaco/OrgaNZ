@@ -7,7 +7,6 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import seng302.Actions.Action;
 import seng302.Client;
 import seng302.State.ClientManager;
 
@@ -15,7 +14,7 @@ import seng302.State.ClientManager;
  * A reversible action that will change the client's date of death to the date given, and cancel all their currently
  * pending transplant requests with the reason "The client died.".
  */
-public class MarkClientAsDeadAction extends Action {
+public class MarkClientAsDeadAction extends ClientAction {
 
     private ClientManager manager;
     private Client client;
@@ -45,6 +44,7 @@ public class MarkClientAsDeadAction extends Action {
      */
     @Override
     protected void execute() {
+        super.execute();
         client.setDateOfDeath(deathDate);
         for (ResolveTransplantRequestAction action : resolveTransplantActions) {
             action.execute();
@@ -54,6 +54,7 @@ public class MarkClientAsDeadAction extends Action {
 
     @Override
     protected void unExecute() {
+        super.unExecute();
         client.setDateOfDeath(null);
         for (ResolveTransplantRequestAction action : resolveTransplantActions) {
             action.unExecute();
@@ -92,5 +93,10 @@ public class MarkClientAsDeadAction extends Action {
         return String.format("Reversed marking client %d: %s as dead. \n"
                         + "These requests were therefore uncancelled: \n\n%s",
                 client.getUid(), client.getFullName(), resolvedRequestsText);
+    }
+
+    @Override
+    protected Client getAffectedClient() {
+        return client;
     }
 }
