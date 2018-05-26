@@ -100,7 +100,6 @@ public class Client {
     private List<ProcedureRecord> procedures = new ArrayList<>();
 
     @OneToMany(
-            mappedBy = "client",
             cascade = CascadeType.ALL
     )
     private List<HistoryItem> changesHistory = new ArrayList<>();
