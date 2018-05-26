@@ -2,13 +2,15 @@ package seng302;
 
 import static seng302.Commands.CommandParser.parseCommands;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import seng302.Commands.BaseCommand;
-import seng302.Commands.CommandParser;
 import seng302.State.State;
+import seng302.State.State.DataStorageType;
 import seng302.Utilities.ConsoleScanner;
 import seng302.Utilities.LoggerSetup;
 
@@ -25,7 +27,34 @@ public class App {
     public static void main(String[] args) {
         LoggerSetup.setup(Level.INFO);
 
-        State.init();
+        Map<String, String> namedArgs = new HashMap<>();
+        for (String arg : args) {
+            if (arg.contains("=")) {
+                namedArgs.put(arg.substring(0, arg.indexOf('=')), arg.substring(arg.indexOf('=') + 1));
+            }
+        }
+
+        try {
+            String storageArg = namedArgs.get("storage");
+            DataStorageType storageType;
+
+            if (storageArg == null) {
+                storageType = DataStorageType.PUREDB;
+            } else {
+                storageType = DataStorageType.valueOf(storageArg);
+            }
+
+            State.init(storageType);
+
+        } catch (IllegalArgumentException exc) {
+            System.err.println(String.format(
+                    "FATAL: invalid argument for storage. Valid arguments are: %s",
+                    Arrays.stream(DataStorageType.values())
+                            .map(Enum::toString)
+                            .collect(Collectors.joining(", "))
+            ));
+            System.exit(1);
+        }
 
         String input;
         ConsoleScanner scanIn = new ConsoleScanner();
