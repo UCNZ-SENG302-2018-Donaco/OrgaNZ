@@ -3,7 +3,6 @@ package seng302.Actions.Clinician;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
-import seng302.Actions.Action;
 import seng302.Actions.ModifyObjectByFieldAction;
 import seng302.Clinician;
 import seng302.State.ClinicianManager;
@@ -11,7 +10,7 @@ import seng302.State.ClinicianManager;
 /**
  * A reversible clinician modification Action
  */
-public class ModifyClinicianAction extends Action {
+public class ModifyClinicianAction extends ClinicianAction {
 
     private ArrayList<ModifyObjectByFieldAction> actions = new ArrayList<>();
     private Clinician clinician;
@@ -48,6 +47,7 @@ public class ModifyClinicianAction extends Action {
         if (actions.size() == 0) {
             throw new IllegalStateException("No changes were made to the clinician.");
         } else {
+            super.execute();
             for (ModifyObjectByFieldAction action : actions) {
                 action.execute();
             }
@@ -57,6 +57,7 @@ public class ModifyClinicianAction extends Action {
 
     @Override
     protected void unExecute() {
+        super.unExecute();
         for (ModifyObjectByFieldAction action : actions) {
             action.unExecute();
         }
@@ -83,5 +84,10 @@ public class ModifyClinicianAction extends Action {
         return String.format("Reversed update for clinician %d: %s %s. \n"
                         + "These changes were reversed: \n\n%s",
                 clinician.getStaffId(), clinician.getFirstName(), clinician.getLastName(), changesText);
+    }
+
+    @Override
+    protected Clinician getAffectedClinician() {
+        return clinician;
     }
 }

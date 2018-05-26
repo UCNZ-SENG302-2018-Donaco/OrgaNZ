@@ -1,13 +1,12 @@
 package seng302.Actions.Clinician;
 
-import seng302.Actions.Action;
 import seng302.Clinician;
 import seng302.State.ClinicianManager;
 
 /**
  * A reversible clinician creation action
  */
-public class CreateClinicianAction extends Action {
+public class CreateClinicianAction extends ClinicianAction {
 
     private final Clinician clinician;
     private final ClinicianManager manager;
@@ -27,6 +26,7 @@ public class CreateClinicianAction extends Action {
      */
     @Override
     protected void execute() {
+        super.execute();
         manager.addClinician(clinician);
     }
 
@@ -35,6 +35,7 @@ public class CreateClinicianAction extends Action {
      */
     @Override
     protected void unExecute() {
+        super.unExecute();
         manager.removeClinician(clinician);
     }
 
@@ -46,5 +47,10 @@ public class CreateClinicianAction extends Action {
     @Override
     public String getUnexecuteText() {
         return String.format("Removed clinician %s", clinician.getFullName());
+    }
+
+    @Override
+    protected Clinician getAffectedClinician() {
+        return clinician;
     }
 }
