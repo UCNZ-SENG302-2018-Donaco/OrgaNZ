@@ -7,6 +7,8 @@ import java.time.LocalDate;
 import seng302.Actions.ActionInvoker;
 import seng302.Client;
 import seng302.MedicationRecord;
+import seng302.State.ClientManager;
+import seng302.State.ClientManagerMemory;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -16,10 +18,12 @@ public class DeleteMedicationRecordActionTest {
     private Client baseClient;
     private MedicationRecord record;
     private ActionInvoker invoker;
+    private ClientManager manager;
 
     @Before
     public void init() {
         invoker = new ActionInvoker();
+        manager = new ClientManagerMemory();
         baseClient = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
         record = new MedicationRecord("Generic Name", LocalDate.of(2018, 4, 9), null);
         baseClient.addMedicationRecord(record);
@@ -27,7 +31,7 @@ public class DeleteMedicationRecordActionTest {
 
     @Test
     public void DeleteSingleMedicationCurrentTest() {
-        DeleteMedicationRecordAction action = new DeleteMedicationRecordAction(baseClient, record);
+        DeleteMedicationRecordAction action = new DeleteMedicationRecordAction(baseClient, record, manager);
 
         assertEquals(1, baseClient.getCurrentMedications().size());
 
@@ -42,7 +46,7 @@ public class DeleteMedicationRecordActionTest {
                 4, 10));
         baseClient.addMedicationRecord(newRecord);
 
-        DeleteMedicationRecordAction action = new DeleteMedicationRecordAction(baseClient, newRecord);
+        DeleteMedicationRecordAction action = new DeleteMedicationRecordAction(baseClient, newRecord, manager);
 
         assertEquals(1, baseClient.getPastMedications().size());
 
@@ -54,7 +58,7 @@ public class DeleteMedicationRecordActionTest {
 
     @Test
     public void DeleteSingleMedicationCurrentUndoTest() {
-        DeleteMedicationRecordAction action = new DeleteMedicationRecordAction(baseClient, record);
+        DeleteMedicationRecordAction action = new DeleteMedicationRecordAction(baseClient, record, manager);
 
         invoker.execute(action);
         invoker.undo();
@@ -65,7 +69,7 @@ public class DeleteMedicationRecordActionTest {
 
     @Test
     public void DeleteSingleMedicationCurrentUndoRedoTest() {
-        DeleteMedicationRecordAction action = new DeleteMedicationRecordAction(baseClient, record);
+        DeleteMedicationRecordAction action = new DeleteMedicationRecordAction(baseClient, record, manager);
 
         invoker.execute(action);
         invoker.undo();
