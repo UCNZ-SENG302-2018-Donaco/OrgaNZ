@@ -8,6 +8,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.state.ClinicianManager;
@@ -19,7 +20,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import picocli.CommandLine;
 
-public class ModifyClinicianTest {
+public class ModifyClinicianTest extends BaseTest {
 
     private ClinicianManager spyClinicianManager;
     private ModifyClinician spyModifyClinician;

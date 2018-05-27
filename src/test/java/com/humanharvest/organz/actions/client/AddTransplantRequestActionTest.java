@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.time.LocalDate;
 
+import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.Client;
@@ -16,7 +17,7 @@ import com.humanharvest.organz.utilities.enums.Organ;
 import org.junit.Before;
 import org.junit.Test;
 
-public class AddTransplantRequestActionTest {
+public class AddTransplantRequestActionTest extends BaseTest {
 
     private ActionInvoker invoker;
     private ClientManager manager;

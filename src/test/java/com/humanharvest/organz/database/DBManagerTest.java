@@ -2,6 +2,7 @@ package com.humanharvest.organz.database;
 
 import java.time.LocalDate;
 
+import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.IllnessRecord;
@@ -17,7 +18,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 @Ignore
-public class DBManagerTest {
+public class DBManagerTest extends BaseTest {
 
     private DBManager dbManager;
 

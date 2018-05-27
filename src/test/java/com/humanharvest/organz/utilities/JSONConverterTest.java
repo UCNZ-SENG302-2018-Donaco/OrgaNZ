@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
 
+import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
@@ -19,7 +20,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-public class JSONConverterTest {
+public class JSONConverterTest extends BaseTest {
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();

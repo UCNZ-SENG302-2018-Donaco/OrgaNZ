@@ -10,7 +10,7 @@ import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredExcept
 import org.junit.Before;
 import org.junit.Test;
 
-public class ClientTest {
+public class ClientTest extends BaseTest {
 
     private Client client;
 

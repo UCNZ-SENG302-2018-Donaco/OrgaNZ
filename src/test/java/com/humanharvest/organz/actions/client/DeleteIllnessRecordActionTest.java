@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.time.LocalDate;
 
+import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.IllnessRecord;
@@ -11,7 +12,7 @@ import com.humanharvest.organz.IllnessRecord;
 import org.junit.Before;
 import org.junit.Test;
 
-public class DeleteIllnessRecordActionTest {
+public class DeleteIllnessRecordActionTest extends BaseTest {
 
     private Client baseClient;
     private IllnessRecord record;

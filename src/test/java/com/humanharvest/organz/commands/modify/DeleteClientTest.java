@@ -6,6 +6,7 @@ import static org.mockito.Mockito.*;
 import java.io.ByteArrayInputStream;
 import java.time.LocalDate;
 
+import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.state.ClientManager;
@@ -15,7 +16,7 @@ import org.junit.Before;
 import org.junit.Test;
 import picocli.CommandLine;
 
-public class DeleteClientTest {
+public class DeleteClientTest extends BaseTest {
 
     private ClientManager spyClientManager;
     private DeleteClient spyDeleteClient;

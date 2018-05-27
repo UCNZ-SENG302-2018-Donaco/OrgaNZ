@@ -3,6 +3,7 @@ package com.humanharvest.organz.state;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.database.DBManager;
 import com.humanharvest.organz.utilities.enums.Region;
@@ -12,7 +13,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 @Ignore
-public class ClinicianManagerDBPureTest {
+public class ClinicianManagerDBPureTest extends BaseTest {
 
     private DBManager dbManager;
 

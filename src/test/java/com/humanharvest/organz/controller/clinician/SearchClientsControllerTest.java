@@ -40,7 +40,7 @@ import org.testfx.matcher.control.TextMatchers;
 /**
  * Class to test the search clients controller. Used only for the clinician/admin to search and find a particular client.
  */
-public class SearchClientsControllerTest extends ControllerTest{
+public class SearchClientsControllerTest extends ControllerTest {
 
     private Clinician testClinician = new Clinician("Admin", "Da", "Nimda", "2 Two Street", Region.CANTERBURY,
             55, "admin");

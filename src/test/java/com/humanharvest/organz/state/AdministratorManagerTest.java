@@ -8,10 +8,11 @@ import java.util.ArrayList;
 
 import com.humanharvest.organz.Administrator;
 
+import com.humanharvest.organz.BaseTest;
 import org.junit.Before;
 import org.junit.Test;
 
-public class AdministratorManagerTest {
+public class AdministratorManagerTest extends BaseTest {
 
     private AdministratorManager manager;
 

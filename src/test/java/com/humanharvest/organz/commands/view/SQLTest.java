@@ -12,15 +12,18 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.database.DBManager;
 
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import picocli.CommandLine;
 
-public class SQLTest {
+@Ignore
+public class SQLTest extends BaseTest {
 
     private DBManager spyDBManager;
     private SQL spySQL;

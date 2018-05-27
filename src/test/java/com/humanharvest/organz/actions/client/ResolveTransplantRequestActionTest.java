@@ -9,6 +9,7 @@ import static com.humanharvest.organz.utilities.enums.TransplantRequestStatus.WA
 import java.time.Duration;
 import java.time.LocalDateTime;
 
+import com.humanharvest.organz.BaseTest;
 import org.junit.Ignore;
 import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.actions.ActionInvoker;
@@ -21,7 +22,7 @@ import com.humanharvest.organz.utilities.enums.Organ;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ResolveTransplantRequestActionTest {
+public class ResolveTransplantRequestActionTest extends BaseTest {
 
     private ActionInvoker invoker;
     private ClientManager manager;

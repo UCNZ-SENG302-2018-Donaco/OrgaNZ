@@ -5,6 +5,7 @@ import static org.mockito.Mockito.spy;
 
 import java.time.LocalDate;
 
+import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.state.ClientManager;
@@ -14,7 +15,7 @@ import org.junit.Before;
 import org.junit.Test;
 import picocli.CommandLine;
 
-public class RequestOrganTest {
+public class RequestOrganTest extends BaseTest {
     private ClientManager spyClientManager;
     private RequestOrgan spyRequestOrgan;
     private Client testClient;

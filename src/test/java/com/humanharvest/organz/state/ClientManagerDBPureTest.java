@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.database.DBManager;
 
@@ -12,7 +13,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 @Ignore
-public class ClientManagerDBPureTest {
+public class ClientManagerDBPureTest extends BaseTest {
 
     private  DBManager dbManager;
 

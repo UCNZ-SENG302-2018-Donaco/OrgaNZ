@@ -4,12 +4,13 @@ import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
+import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.state.State;
 
 import org.junit.Before;
 import org.junit.Test;
 
-public class ActionInvokerTest {
+public class ActionInvokerTest extends BaseTest {
 
     private ActionInvoker invoker;
     private SettableItem item;

@@ -9,9 +9,10 @@ import java.util.Collections;
 import java.util.List;
 
 import com.google.api.client.http.HttpTransport;
+import com.humanharvest.organz.BaseTest;
 import org.junit.Test;
 
-public class MedActiveIngredientsHandlerTest {
+public class MedActiveIngredientsHandlerTest extends BaseTest {
     private HttpTransport mockTransport;
     private MedActiveIngredientsHandler handler;
 

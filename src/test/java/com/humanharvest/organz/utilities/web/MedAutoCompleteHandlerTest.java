@@ -7,13 +7,14 @@ import java.util.Collections;
 import java.util.List;
 
 import com.google.api.client.http.HttpTransport;
+import com.humanharvest.organz.BaseTest;
 import org.junit.Test;
 
 /**
  * Tests for the medication autocompletion handler. These tests do not connect to the web API, they instead use a
  * mock HttpTransport that will always return a given response.
  */
-public class MedAutoCompleteHandlerTest {
+public class MedAutoCompleteHandlerTest extends BaseTest {
 
     private HttpTransport mockTransport;
     private MedAutoCompleteHandler handler;

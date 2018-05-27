@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.utilities.CacheManager;
 import com.humanharvest.organz.utilities.enums.Gender;
@@ -17,7 +18,7 @@ import com.google.api.client.testing.http.MockHttpTransport;
 import org.junit.Assert;
 import org.junit.Test;
 
-public class CacheTest {
+public class CacheTest extends BaseTest {
     @Test
     public void testCachingInteractions() {
         MockCacheManager mockCacheManager = MockCacheManager.Create();

@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 
+import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.utilities.enums.Region;
 
@@ -14,7 +15,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
-public class ClinicianManagerTest {
+public class ClinicianManagerTest extends BaseTest {
 
     private ClinicianManager manager;
 

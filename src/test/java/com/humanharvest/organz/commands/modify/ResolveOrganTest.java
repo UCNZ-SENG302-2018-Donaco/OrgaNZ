@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verify;
 
 import java.time.LocalDate;
 
+import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.state.ClientManager;
@@ -19,7 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 import picocli.CommandLine;
 
-public class ResolveOrganTest {
+public class ResolveOrganTest extends BaseTest {
     private ClientManager spyClientManager;
     private ResolveOrgan spyResolveOrgan;
     private Client testClient;

@@ -2,6 +2,7 @@ package com.humanharvest.organz.commands.modify;
 
 import static org.mockito.Mockito.*;
 
+import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.state.ClinicianManager;
 import com.humanharvest.organz.state.ClinicianManagerMemory;
@@ -11,7 +12,7 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import picocli.CommandLine;
 
-public class CreateClinicianTest {
+public class CreateClinicianTest extends BaseTest {
 
     private ClinicianManager spyClientManager;
 

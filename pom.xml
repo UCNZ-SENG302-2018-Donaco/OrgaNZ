@@ -255,6 +255,7 @@
         <version>2.21.0</version>
         <configuration>
           <argLine>-Xms512m -Xmx1536m ${argLine}</argLine>
+          <excludedGroups>com.humanharvest.organz.GUICategory</excludedGroups>
         </configuration>
       </plugin>
     </plugins>

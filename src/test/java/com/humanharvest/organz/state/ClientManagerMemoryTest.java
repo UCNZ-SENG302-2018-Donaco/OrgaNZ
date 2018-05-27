@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.TransplantRequest;
 
@@ -17,7 +18,7 @@ import org.junit.Before;
 import org.junit.Test;
 import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 
-public class ClientManagerMemoryTest {
+public class ClientManagerMemoryTest extends BaseTest {
 
     private ClientManager manager;
     private Client client1;

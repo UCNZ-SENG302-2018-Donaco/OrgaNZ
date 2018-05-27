@@ -13,14 +13,17 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
+import com.humanharvest.organz.GUICategory;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.view.Page;
 
 import org.junit.After;
 import org.junit.BeforeClass;
+import org.junit.experimental.categories.Category;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit.ApplicationTest;
 
+@Category(GUICategory.class)
 public abstract class ControllerTest extends ApplicationTest {
 
     protected MainController mainController;

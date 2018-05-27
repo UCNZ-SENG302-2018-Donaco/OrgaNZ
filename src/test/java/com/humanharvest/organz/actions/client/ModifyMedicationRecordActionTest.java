@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.time.LocalDate;
 
+import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.MedicationRecord;
@@ -13,7 +14,7 @@ import com.humanharvest.organz.state.ClientManagerMemory;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ModifyMedicationRecordActionTest {
+public class ModifyMedicationRecordActionTest extends BaseTest {
 
     private ActionInvoker invoker;
     private ClientManager manager;

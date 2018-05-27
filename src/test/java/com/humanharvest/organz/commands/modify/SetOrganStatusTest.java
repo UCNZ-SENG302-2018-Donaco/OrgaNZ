@@ -10,6 +10,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.time.LocalDate;
 
+import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.state.ClientManager;
@@ -22,7 +23,7 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import picocli.CommandLine;
 
-public class SetOrganStatusTest {
+public class SetOrganStatusTest extends BaseTest {
 
     private ClientManager spyClientManager;
     private SetOrganStatus spySetOrganStatus;

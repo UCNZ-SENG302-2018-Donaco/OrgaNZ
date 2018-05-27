@@ -11,6 +11,7 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
+import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.state.ClientManager;
@@ -21,7 +22,7 @@ import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredExcept
 import org.junit.Before;
 import org.junit.Test;
 
-public class ModifyClientOrgansActionTest {
+public class ModifyClientOrgansActionTest extends BaseTest {
 
     private ActionInvoker invoker;
     private ClientManager manager;

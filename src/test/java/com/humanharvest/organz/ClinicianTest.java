@@ -6,7 +6,7 @@ import com.humanharvest.organz.utilities.enums.Region;
 
 import org.junit.Test;
 
-public class ClinicianTest {
+public class ClinicianTest extends BaseTest {
     @Test
     public void getFullNameNoMiddleNameTest() {
         Clinician clinician = new Clinician("First", null, "Last", "Address", Region.UNSPECIFIED, 1, "pass");

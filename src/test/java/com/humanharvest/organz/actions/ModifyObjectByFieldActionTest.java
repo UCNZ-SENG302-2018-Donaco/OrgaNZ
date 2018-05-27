@@ -2,10 +2,11 @@ package com.humanharvest.organz.actions;
 
 import static org.junit.Assert.assertEquals;
 
+import com.humanharvest.organz.BaseTest;
 import org.junit.Before;
 import org.junit.Test;
 
-public class ModifyObjectByFieldActionTest {
+public class ModifyObjectByFieldActionTest extends BaseTest {
 
     private ActionInvoker invoker;
 
