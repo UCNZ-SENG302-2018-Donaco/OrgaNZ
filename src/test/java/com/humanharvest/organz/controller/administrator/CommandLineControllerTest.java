@@ -19,6 +19,7 @@ import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class CommandLineControllerTest extends ControllerTest {
@@ -54,6 +55,7 @@ public class CommandLineControllerTest extends ControllerTest {
         assertTrue(outText.contains("load"));
     }
 
+    @Ignore
     @Test
     public void anInvalidCommandTest() {
         clickOn("#inputTextField").write("notacmd").type(KeyCode.ENTER);
