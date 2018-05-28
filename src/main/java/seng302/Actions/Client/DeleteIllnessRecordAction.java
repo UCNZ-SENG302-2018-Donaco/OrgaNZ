@@ -3,6 +3,7 @@ package seng302.Actions.Client;
 import seng302.Actions.Action;
 import seng302.Client;
 import seng302.IllnessRecord;
+import seng302.State.ClientManager;
 
 /**
  * A reversible action that will delete the given illness record from the given client's medication history.
@@ -11,26 +12,29 @@ public class DeleteIllnessRecordAction extends Action {
 
     private Client client;
     private IllnessRecord record;
+    private ClientManager manager;
 
     /**
      * Creates a new action to delete an illness record.
      * @param client The client whose medical history to delete it from.
      * @param record The illness record to delete.
      */
-    public DeleteIllnessRecordAction(Client client, IllnessRecord record) {
+    public DeleteIllnessRecordAction(Client client, IllnessRecord record, ClientManager manager) {
         this.client = client;
         this.record = record;
+        this.manager = manager;
     }
 
     @Override
     public void execute() {
         client.deleteIllnessRecord(record);
-
+        manager.applyChangesTo(client);
     }
 
     @Override
     public void unExecute() {
         client.addIllnessRecord(record);
+        manager.applyChangesTo(client);
     }
 
     @Override

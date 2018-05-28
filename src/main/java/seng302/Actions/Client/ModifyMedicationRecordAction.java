@@ -73,13 +73,13 @@ public class ModifyMedicationRecordAction extends Action {
 
     @Override
     protected void unExecute() {
-        manager.applyChangesTo(record.getClient());
         if (!Objects.equals(newStarted, oldStarted)) {
             record.setStarted(oldStarted);
         }
         if (!Objects.equals(newStopped, oldStopped)) {
             record.setStopped(oldStopped);
         }
+        manager.applyChangesTo(record.getClient());
     }
 
     @Override
