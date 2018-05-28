@@ -1,6 +1,9 @@
 package com.humanharvest.organz.state;
 
+import static seng302.State.State.DataStorageType.*;
+
 import java.util.ArrayList;
+import java.util.List;
 
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.Administrator;
@@ -13,13 +16,17 @@ import com.humanharvest.organz.controller.MainController;
  */
 public final class State {
 
+    public enum DataStorageType {
+        MEMORY, PUREDB
+    }
+
     private static ClientManager clientManager;
     private static ClinicianManager clinicianManager;
     private static AdministratorManager administratorManager;
     private static ActionInvoker actionInvoker;
     private static Session session;
     private static boolean unsavedChanges = false;
-    private static ArrayList<MainController> mainControllers = new ArrayList<>();
+    private static List<MainController> mainControllers = new ArrayList<>();
 
     private State() {
     }
@@ -27,23 +34,19 @@ public final class State {
     /**
      * Initialises a new action invoker, client manager and clinician manager.
      */
-    public static void init() {
+    public static void init(DataStorageType storageType) {
         actionInvoker = new ActionInvoker();
-        clientManager = new ClientManagerDBPure();
-        clinicianManager = new ClinicianManagerDBPure();
-        administratorManager = new AdministratorManagerDBPure();
-    }
 
-    private static void init(boolean isDB) {
-        actionInvoker = new ActionInvoker();
-        if (isDB) {
+        if (storageType == PUREDB) {
             clientManager = new ClientManagerDBPure();
             clinicianManager = new ClinicianManagerDBPure();
             administratorManager = new AdministratorManagerDBPure();
-        } else {
+        } else if (storageType == MEMORY) {
             clientManager = new ClientManagerMemory();
             clinicianManager = new ClinicianManagerMemory();
             administratorManager = new AdministratorManagerMemory();
+        } else {
+            throw new IllegalArgumentException("DataStorageType cannot be null.");
         }
     }
 
@@ -92,9 +95,12 @@ public final class State {
         session = null;
     }
 
-
     public static void reset(boolean isDB) {
-        init(isDB);
+        if (isDB) {
+            init(PUREDB);
+        } else {
+            init(MEMORY);
+        }
         logout();
         unsavedChanges = false;
         mainControllers = new ArrayList<>();
@@ -104,7 +110,7 @@ public final class State {
         mainControllers.add(mainController);
     }
 
-    public static ArrayList<MainController> getMainControllers() {
+    public static List<MainController> getMainControllers() {
         return mainControllers;
     }
 }

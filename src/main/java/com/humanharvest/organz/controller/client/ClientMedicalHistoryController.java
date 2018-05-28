@@ -336,7 +336,7 @@ public class ClientMedicalHistoryController extends SubController {
     private void deleteIllness() {
         IllnessRecord record = getSelectedRecord();
         if (record != null) {
-            DeleteIllnessRecordAction action = new DeleteIllnessRecordAction(client, record);
+            DeleteIllnessRecordAction action = new DeleteIllnessRecordAction(client, record, manager);
 
             invoker.execute(action);
             PageNavigator.refreshAllWindows();

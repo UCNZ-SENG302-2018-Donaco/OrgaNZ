@@ -291,7 +291,7 @@ public class ViewMedicationsController extends SubController {
     private void deleteMedication() {
         MedicationRecord record = getSelectedRecord();
         if (record != null) {
-            DeleteMedicationRecordAction action = new DeleteMedicationRecordAction(client, record);
+            DeleteMedicationRecordAction action = new DeleteMedicationRecordAction(client, record, manager);
 
             invoker.execute(action);
             PageNavigator.refreshAllWindows();

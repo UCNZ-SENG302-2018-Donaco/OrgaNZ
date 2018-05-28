@@ -17,10 +17,12 @@ public class DeleteIllnessRecordActionTest extends BaseTest {
     private Client baseClient;
     private IllnessRecord record;
     private ActionInvoker invoker;
+    private ClientManager manager;
 
     @Before
     public void init() {
         invoker = new ActionInvoker();
+        manager = new ClientManagerMemory();
         baseClient = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
         record = new IllnessRecord("Generic Name", LocalDate.of(2018, 4, 9), null, false);
         baseClient.addIllnessRecord(record);
@@ -28,7 +30,7 @@ public class DeleteIllnessRecordActionTest extends BaseTest {
 
     @Test
     public void DeleteSingleIllnessCurrentTest() {
-        DeleteIllnessRecordAction action = new DeleteIllnessRecordAction(baseClient, record);
+        DeleteIllnessRecordAction action = new DeleteIllnessRecordAction(baseClient, record, manager);
 
         assertEquals(1, baseClient.getCurrentIllnesses().size());
 
@@ -43,7 +45,7 @@ public class DeleteIllnessRecordActionTest extends BaseTest {
                 LocalDate.of(2018, 4, 10), false);
         baseClient.addIllnessRecord(newRecord);
 
-        DeleteIllnessRecordAction action = new DeleteIllnessRecordAction(baseClient, newRecord);
+        DeleteIllnessRecordAction action = new DeleteIllnessRecordAction(baseClient, newRecord, manager);
 
         assertEquals(1, baseClient.getPastIllnesses().size());
 
@@ -55,7 +57,7 @@ public class DeleteIllnessRecordActionTest extends BaseTest {
 
     @Test
     public void DeleteSingleIllnessCurrentUndoTest() {
-        DeleteIllnessRecordAction action = new DeleteIllnessRecordAction(baseClient, record);
+        DeleteIllnessRecordAction action = new DeleteIllnessRecordAction(baseClient, record, manager);
 
         invoker.execute(action);
         invoker.undo();
@@ -66,7 +68,7 @@ public class DeleteIllnessRecordActionTest extends BaseTest {
 
     @Test
     public void DeleteSingleIllnessCurrentUndoRedoTest() {
-        DeleteIllnessRecordAction action = new DeleteIllnessRecordAction(baseClient, record);
+        DeleteIllnessRecordAction action = new DeleteIllnessRecordAction(baseClient, record, manager);
 
         invoker.execute(action);
         invoker.undo();

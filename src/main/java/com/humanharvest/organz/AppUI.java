@@ -1,9 +1,12 @@
 package com.humanharvest.organz;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
@@ -47,7 +50,27 @@ public class AppUI extends Application {
         primaryStage.setMinHeight(639);
         primaryStage.setMinWidth(1016);
 
-        State.init();
+        try {
+            String storageArg = getParameters().getNamed().get("storage");
+            DataStorageType storageType;
+
+            if (storageArg == null) {
+                storageType = DataStorageType.PUREDB;
+            } else {
+                storageType = DataStorageType.valueOf(storageArg);
+            }
+
+            State.init(storageType);
+
+        } catch (IllegalArgumentException exc) {
+            System.err.println(String.format(
+                    "FATAL: invalid argument for storage. Valid arguments are: %s",
+                    Arrays.stream(DataStorageType.values())
+                            .map(Enum::toString)
+                            .collect(Collectors.joining(", "))
+            ));
+            Platform.exit();
+        }
 
         // Loads the initial client data from the save file, or creates it if it does not yet exist. //
         /*

@@ -163,23 +163,23 @@ public class SearchClientsController extends SubController {
         // Refresh table when any filter controls change
         ageSlider.lowValueProperty().addListener((observable, oldValue, newValue) -> {
             ageMinField.setText(Integer.toString(newValue.intValue()));
-            refresh();
+            repaginate();
         });
         ageSlider.highValueProperty().addListener((observable, oldValue, newValue) -> {
             ageMaxField.setText(Integer.toString(newValue.intValue()));
-            refresh();
+            repaginate();
         });
         birthGenderFilter.getCheckModel().getCheckedItems().addListener(
-                (ListChangeListener<Gender>) change -> refresh());
+                (ListChangeListener<Gender>) change -> repaginate());
         regionFilter.getCheckModel().getCheckedItems().addListener(
-                (ListChangeListener<Region>) change -> refresh());
+                (ListChangeListener<Region>) change -> repaginate());
         clientTypeFilter.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> changeClientType(newValue));
         organsDonatingFilter.getCheckModel().getCheckedItems().addListener(
-                (ListChangeListener<Organ>) change -> refresh());
+                (ListChangeListener<Organ>) change -> repaginate());
         organsRequestingFilter.getCheckModel().getCheckedItems().addListener(
-                (ListChangeListener<Organ>) change -> refresh());
-        searchBox.textProperty().addListener(((o) -> refresh()));
+                (ListChangeListener<Organ>) change -> repaginate());
+        searchBox.textProperty().addListener(((o) -> repaginate()));
 
         //Link the initial observable list to the list of all clients
         allClients.setAll(clientManager.getClients());
@@ -243,6 +243,14 @@ public class SearchClientsController extends SubController {
                 return row;
             });
         }
+    }
+
+    @Override
+    public void refresh() {
+        super.refresh();
+        // Refresh the client list to ensure any additions or removals are updated
+        allClients.setAll(clientManager.getClients());
+        repaginate();
     }
 
     /**
@@ -441,7 +449,7 @@ public class SearchClientsController extends SubController {
                 donatingFilterBox.setVisible(true);
                 break;
         }
-        refresh();
+        repaginate();
     }
 
     private boolean nameFilter(Client client) {
@@ -516,15 +524,13 @@ public class SearchClientsController extends SubController {
     }
 
     /**
-     * Upon filtering update, refresh the filters to the new string and update pagination
-     * Every refresh triggers the pagination to update and go to page zero
+     * Re-paginates the clients table.
      */
-    @Override
-    public void refresh() {
-        //Refresh the client list to ensure any additions or removals are updated
-        allClients.setAll(clientManager.getClients());
+    private void repaginate() {
+        filteredClients.setPredicate(this::filter);
 
-        //If the pagination count wont change, force a refresh of the page, if it will, change it and that will trigger the update.
+        // If the pagination count wont change, force a refresh of the page, if it will, change it and that will
+        // trigger the update.
         int newPageCount = Math.max(1, (filteredClients.size() + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE);
         if (pagination.getPageCount() == newPageCount) {
             createPage(pagination.getCurrentPageIndex());
@@ -532,7 +538,7 @@ public class SearchClientsController extends SubController {
             pagination.setPageCount(newPageCount);
         }
 
-        //Remove the current sorting, and will be reset to name.
+        // Remove the current sorting, and will be reset to name.
         tableView.getSortOrder().remove(0);
     }
 

@@ -13,20 +13,23 @@ public class DeleteMedicationRecordAction extends Action {
 
     private Client client;
     private MedicationRecord record;
+    private ClientManager manager;
 
     /**
      * Creates a new action to delete a medication record.
      * @param client The client whose history to delete it from.
      * @param record The medication record to delete.
      */
-    public DeleteMedicationRecordAction(Client client, MedicationRecord record) {
+    public DeleteMedicationRecordAction(Client client, MedicationRecord record, ClientManager manager) {
         this.client = client;
         this.record = record;
+        this.manager = manager;
     }
 
     @Override
     protected void execute() {
         client.deleteMedicationRecord(record);
+        manager.applyChangesTo(client);
         HistoryItem save = new HistoryItem("DELETE_MEDICATION",
                 String.format("Medication record for %s deleted from %s",
                         record.getMedicationName(), client.getFullName()));
@@ -36,6 +39,7 @@ public class DeleteMedicationRecordAction extends Action {
     @Override
     protected void unExecute() {
         client.addMedicationRecord(record);
+        manager.applyChangesTo(client);
     }
 
     @Override

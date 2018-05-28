@@ -333,7 +333,7 @@ public class ViewProceduresController extends SubController {
     private void deleteProcedure() {
         ProcedureRecord record = getSelectedRecord();
         if (record != null) {
-            DeleteProcedureRecordAction action = new DeleteProcedureRecordAction(client, record);
+            DeleteProcedureRecordAction action = new DeleteProcedureRecordAction(client, record, manager);
 
             invoker.execute(action);
             PageNavigator.refreshAllWindows();
