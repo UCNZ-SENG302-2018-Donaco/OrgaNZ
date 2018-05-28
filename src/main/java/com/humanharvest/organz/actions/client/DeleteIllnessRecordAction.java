@@ -3,6 +3,7 @@ package com.humanharvest.organz.actions.client;
 import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.IllnessRecord;
+import com.humanharvest.organz.state.ClientManager;
 
 /**
  * A reversible action that will delete the given illness record from the given client's medication history.

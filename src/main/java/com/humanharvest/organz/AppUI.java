@@ -14,6 +14,7 @@ import javafx.stage.Stage;
 
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.state.State.DataStorageType;
 import com.humanharvest.organz.utilities.LoggerSetup;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;

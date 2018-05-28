@@ -1,7 +1,5 @@
 package com.humanharvest.organz.state;
 
-import static seng302.State.State.DataStorageType.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,11 +35,11 @@ public final class State {
     public static void init(DataStorageType storageType) {
         actionInvoker = new ActionInvoker();
 
-        if (storageType == PUREDB) {
+        if (storageType == DataStorageType.PUREDB) {
             clientManager = new ClientManagerDBPure();
             clinicianManager = new ClinicianManagerDBPure();
             administratorManager = new AdministratorManagerDBPure();
-        } else if (storageType == MEMORY) {
+        } else if (storageType == DataStorageType.MEMORY) {
             clientManager = new ClientManagerMemory();
             clinicianManager = new ClinicianManagerMemory();
             administratorManager = new AdministratorManagerMemory();
@@ -97,9 +95,9 @@ public final class State {
 
     public static void reset(boolean isDB) {
         if (isDB) {
-            init(PUREDB);
+            init(DataStorageType.PUREDB);
         } else {
-            init(MEMORY);
+            init(DataStorageType.MEMORY);
         }
         logout();
         unsavedChanges = false;
