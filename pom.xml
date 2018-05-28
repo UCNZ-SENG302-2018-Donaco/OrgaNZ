@@ -3,7 +3,7 @@
   <groupId>com.humanharvest.organz</groupId>
   <artifactId>organz</artifactId>
   <packaging>jar</packaging>
-  <version>0.4</version>
+  <version>0.5</version>
   <name>organz</name>
   <url>https://eng-git.canterbury.ac.nz/seng302-2018/team-700</url>
 
@@ -255,7 +255,7 @@
         <version>2.21.0</version>
         <configuration>
           <argLine>-Xms512m -Xmx1536m ${argLine}</argLine>
-          <excludedGroups>com.humanharvest.organz.GUICategory</excludedGroups>
+          <!--<excludedGroups>com.humanharvest.organz.GUICategory</excludedGroups>-->
         </configuration>
       </plugin>
     </plugins>

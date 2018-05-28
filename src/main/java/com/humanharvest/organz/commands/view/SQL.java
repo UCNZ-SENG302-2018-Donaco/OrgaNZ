@@ -21,7 +21,6 @@ public class SQL implements Runnable {
     private DBManager dbManager;
 
     public SQL() {
-        dbManager = DBManager.getInstance();
     }
 
     public SQL(DBManager dbManager) {
@@ -37,6 +36,12 @@ public class SQL implements Runnable {
             System.out.println("No SQL input, please enter a valid SQL command");
             return;
         }
+
+        if (dbManager == null) {
+            // Laxy initialise DB Manager
+            dbManager = DBManager.getInstance();
+        }
+
         String sql = String.join(" ", allParams);
 
         //Standard implementation with normal connection
