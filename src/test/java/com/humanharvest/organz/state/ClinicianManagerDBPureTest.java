@@ -17,9 +17,10 @@ public class ClinicianManagerDBPureTest extends BaseTest {
 
     private DBManager dbManager;
 
-    Clinician c = new Clinician("Thomas","Test","Tety","21 Ok", Region.NORTHLAND,3,"password");
+    private Clinician c = new Clinician("Thomas","Test","Tety","21 Ok", Region.NORTHLAND,3,"password");
 
     @Ignore
+    @Test
     public void retrieveAllUsers(){
         ClinicianManagerDBPure test = new ClinicianManagerDBPure();
         Clinician clinician = new Clinician("First", null, "Last", "Address", Region.UNSPECIFIED, 1, "pass");
@@ -34,6 +35,7 @@ public class ClinicianManagerDBPureTest extends BaseTest {
     }
 
     @Ignore
+    @Test
     public void addClinician(){
         ClinicianManagerDBPure test = new ClinicianManagerDBPure();
         test.addClinician(c);
@@ -49,6 +51,7 @@ public class ClinicianManagerDBPureTest extends BaseTest {
     }
 
     @Ignore
+    @Test
     public void mergeConflictClinician(){
         ClinicianManagerDBPure test = new ClinicianManagerDBPure();
         test.addClinician(c);
@@ -58,6 +61,7 @@ public class ClinicianManagerDBPureTest extends BaseTest {
     }
 
     @Ignore
+    @Test
     public void alterClientFirstName(){
         ClinicianManagerDBPure test = new ClinicianManagerDBPure();
         test.addClinician(c);
