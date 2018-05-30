@@ -31,7 +31,7 @@ public class ModifyClinicianTest extends BaseTest {
     @Before
     public void init() {
         spyClinicianManager = spy(new ClinicianManagerMemory());
-        spyModifyClinician = Mockito.spy(new ModifyClinician(spyClinicianManager, new ActionInvoker()));
+        spyModifyClinician = spy(new ModifyClinician(spyClinicianManager, new ActionInvoker()));
 
         Clinician clinician = new Clinician("first", "middle", "last",
                 "address", Region.CANTERBURY, staffId, "password");

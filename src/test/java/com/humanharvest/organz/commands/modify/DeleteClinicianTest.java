@@ -26,7 +26,7 @@ public class DeleteClinicianTest extends BaseTest {
     @Before
     public void init() {
         spyClinicianManager = spy(new ClinicianManagerMemory());
-        spyDeleteClinician = Mockito.spy(new DeleteClinician(spyClinicianManager, new ActionInvoker()));
+        spyDeleteClinician = spy(new DeleteClinician(spyClinicianManager, new ActionInvoker()));
 
         Clinician clinician = new Clinician("first", "middle", "last",
                 "address", Region.CANTERBURY, staffId, "password");

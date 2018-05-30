@@ -21,7 +21,7 @@ public class CreateClinicianTest extends BaseTest {
     @Before
     public void init() {
         spyClientManager = spy(new ClinicianManagerMemory());
-        spyCreateClient = Mockito.spy(new CreateClinician(spyClientManager, new ActionInvoker()));
+        spyCreateClient = spy(new CreateClinician(spyClientManager, new ActionInvoker()));
     }
 
     @Test
