@@ -401,7 +401,7 @@ public class MenuBarController extends SubController {
                 }
             } catch (URISyntaxException | IOException | IllegalArgumentException e) {
                 PageNavigator.showAlert(AlertType.WARNING, "Load Failed",
-                        "Warning: unrecognisable or invalid file. please make\n"
+                        "Warning: unrecognisable or invalid file. Please make "
                                 + "sure that you have selected the correct file type.");
                 LOGGER.log(Level.SEVERE, ERROR_LOADING_MESSAGE, e);
             }

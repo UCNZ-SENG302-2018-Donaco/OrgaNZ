@@ -77,8 +77,8 @@ public final class JSONConverter {
      * @throws IOException Throws IOExceptions
      */
     public static void saveToFile(File file) throws IOException {
-        try(OutputStream outputStream = new FileOutputStream(file)) {
-            try(Writer writer = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8)) {
+        try (OutputStream outputStream = new FileOutputStream(file)) {
+            try (Writer writer = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8)) {
                 ClientManager clientManager = State.getClientManager();
                 gson.toJson(clientManager.getClients(), writer);
             }
@@ -91,15 +91,20 @@ public final class JSONConverter {
      * @throws IOException Throws IOExceptions
      */
     public static void loadFromFile(File file) throws IOException {
-        try(InputStream fileStream = new FileInputStream(file)) {
-            try(Reader reader = new InputStreamReader(fileStream, StandardCharsets.UTF_8)) {
+        try (InputStream fileStream = new FileInputStream(file)) {
+            try (Reader reader = new InputStreamReader(fileStream, StandardCharsets.UTF_8)) {
                 try {
                     ArrayList<Client> clients;
                     Type collectionType = new TypeToken<ArrayList<Client>>() {
                     }.getType();
 
                     clients = gson.fromJson(reader, collectionType);
+
                     for (Client client : clients) {
+                        if (client.getUid() == 0) {
+                            // Either their UID was not defined (so invalid client) or it was set to 0 (not allowed)
+                            throw new IllegalArgumentException("Not a valid clients file.");
+                        }
                         for (TransplantRequest request : client.getTransplantRequests()) {
                             request.setClient(client);
                         }
@@ -124,7 +129,7 @@ public final class JSONConverter {
                     }
                     ClientManager clientManager = State.getClientManager();
                     clientManager.setClients(clients);
-                }  catch (JsonSyntaxException e) {
+                } catch (JsonSyntaxException e) {
                     throw new IllegalArgumentException("Not a valid json file", e);
                 }
             }

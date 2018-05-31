@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.CascadeType;
@@ -30,7 +29,6 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import seng302.State.State;
 import seng302.Utilities.Enums.BloodType;
 import seng302.Utilities.Enums.Gender;
 import seng302.Utilities.Enums.Organ;
@@ -372,7 +370,11 @@ public class Client {
     }
 
     public int getUid() {
-        return uid;
+        if (uid == null) {
+            return 0;
+        } else {
+            return uid;
+        }
     }
 
     public LocalDateTime getCreatedTimestamp() {
