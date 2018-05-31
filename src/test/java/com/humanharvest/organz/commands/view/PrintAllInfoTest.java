@@ -31,7 +31,7 @@ public class PrintAllInfoTest extends BaseTest {
     public void init() {
         spyClientManager = spy(new ClientManagerMemory());
 
-        spyPrintAllInfo = Mockito.spy(new PrintAllInfo(spyClientManager));
+        spyPrintAllInfo = spy(new PrintAllInfo(spyClientManager));
         System.setOut(new PrintStream(outContent));
         System.setErr(new PrintStream(errContent));
     }
