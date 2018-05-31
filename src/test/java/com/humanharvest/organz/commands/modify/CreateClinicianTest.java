@@ -6,10 +6,8 @@ import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.state.ClinicianManager;
 import com.humanharvest.organz.state.ClinicianManagerMemory;
-
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import picocli.CommandLine;
 
 public class CreateClinicianTest extends BaseTest {
@@ -34,7 +32,6 @@ public class CreateClinicianTest extends BaseTest {
         verify(spyClientManager, times(1)).addClinician(any());
     }
 
-
     @Test
     public void ValidNoStaffIdTest() {
         doNothing().when(spyClientManager).addClinician(any());
@@ -44,7 +41,6 @@ public class CreateClinicianTest extends BaseTest {
 
         verify(spyClientManager, times(0)).addClinician(any());
     }
-
 
     @Test
     public void invalidFieldCountLow() {

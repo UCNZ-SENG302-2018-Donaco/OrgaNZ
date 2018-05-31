@@ -1,23 +1,17 @@
 package com.humanharvest.organz.commands.modify;
 
 import static org.junit.Assert.assertEquals;
-
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import com.humanharvest.organz.BaseTest;
-import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.Clinician;
+import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.state.ClinicianManager;
 import com.humanharvest.organz.state.ClinicianManagerMemory;
 import com.humanharvest.organz.utilities.enums.Region;
-
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import picocli.CommandLine;
 
 public class ModifyClinicianTest extends BaseTest {
@@ -59,7 +53,7 @@ public class ModifyClinicianTest extends BaseTest {
 
     @Test
     public void testModifyClinicianRegionValid() {
-        String[] inputs = {"-s", Integer.toString(staffId),"-r", "Canterbury"};
+        String[] inputs = {"-s", Integer.toString(staffId), "-r", "Canterbury"};
         CommandLine.run(spyModifyClinician, System.out, inputs);
 
         verify(spyModifyClinician, times(1)).run();
@@ -75,7 +69,7 @@ public class ModifyClinicianTest extends BaseTest {
 
     @Test
     public void testModifyClinicianInvalidOption() {
-        String[] inputs = {"-s", Integer.toString(staffId),"-r", "Canterbury", "--panda", "panda"};
+        String[] inputs = {"-s", Integer.toString(staffId), "-r", "Canterbury", "--panda", "panda"};
 
         CommandLine.run(spyModifyClinician, System.out, inputs);
 
@@ -85,7 +79,7 @@ public class ModifyClinicianTest extends BaseTest {
     @Test
     public void testModifyClinicianFirstName() {
         String newName = "catface";
-        String[] inputs = {"-s", Integer.toString(staffId),"-f", newName};
+        String[] inputs = {"-s", Integer.toString(staffId), "-f", newName};
         when(spyClinicianManager.getClinicianByStaffId(anyInt())).thenReturn(testClinician);
         CommandLine.run(spyModifyClinician, System.out, inputs);
 

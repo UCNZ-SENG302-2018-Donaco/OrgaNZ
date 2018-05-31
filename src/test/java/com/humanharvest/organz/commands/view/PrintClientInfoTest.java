@@ -12,10 +12,8 @@ import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.ClientManagerMemory;
-
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.Mockito;
 import picocli.CommandLine;
 
 public class PrintClientInfoTest extends BaseTest {
