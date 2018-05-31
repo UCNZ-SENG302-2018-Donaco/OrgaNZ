@@ -50,7 +50,7 @@ public enum Organ {
             StringBuilder mismatchTextBuilder = new StringBuilder("Unsupported organ, please use one of the "
                     + "following:");
             for (Organ o : Organ.values()) {
-                mismatchTextBuilder.append("\n").append(o.text);
+                mismatchTextBuilder.append('\n').append(o.text);
             }
             mismatchText = mismatchTextBuilder.toString();
             throw new IllegalArgumentException(mismatchText);

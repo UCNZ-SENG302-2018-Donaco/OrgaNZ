@@ -41,7 +41,7 @@ public enum Gender {
             StringBuilder mismatchTextBuilder = new StringBuilder("Unsupported gender, please use one of the "
                     + "following:");
             for (Gender g : Gender.values()) {
-                mismatchTextBuilder.append("\n").append(g.text);
+                mismatchTextBuilder.append('\n').append(g.text);
             }
             mismatchText = mismatchTextBuilder.toString();
             throw new IllegalArgumentException(mismatchText);

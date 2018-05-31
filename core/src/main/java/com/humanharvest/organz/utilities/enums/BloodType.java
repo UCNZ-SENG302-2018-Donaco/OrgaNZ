@@ -31,10 +31,10 @@ public enum BloodType {
      * @return The matching bloodtype
      * @throws IllegalArgumentException Thrown when no matching bloodtype is found
      */
-    public static BloodType fromString(String text) throws IllegalArgumentException {
-        for (BloodType b : BloodType.values()) {
-            if (b.toString().equalsIgnoreCase(text)) {
-                return b;
+    public static BloodType fromString(String text) {
+        for (BloodType bloodType : BloodType.values()) {
+            if (bloodType.toString().equalsIgnoreCase(text)) {
+                return bloodType;
             }
         }
 
@@ -44,8 +44,8 @@ public enum BloodType {
         } else {
             StringBuilder mismatchTextBuilder = new StringBuilder("Unsupported blood type, please use one of the "
                     + "following:");
-            for (BloodType b : BloodType.values()) {
-                mismatchTextBuilder.append("\n").append(b.text);
+            for (BloodType bloodType : BloodType.values()) {
+                mismatchTextBuilder.append('\n').append(bloodType.text);
             }
             mismatchText = mismatchTextBuilder.toString();
             throw new IllegalArgumentException(mismatchText);

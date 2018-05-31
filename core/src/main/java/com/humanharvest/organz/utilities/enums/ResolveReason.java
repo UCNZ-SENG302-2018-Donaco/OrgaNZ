@@ -36,7 +36,7 @@ public enum ResolveReason {
             StringBuilder mismatchTextBuilder = new StringBuilder("Unsupported resolve reason, please use one of the "
                     + "following:");
             for (ResolveReason rr : ResolveReason.values()) {
-                mismatchTextBuilder.append("\n").append(rr.text);
+                mismatchTextBuilder.append('\n').append(rr.text);
             }
             mismatchText = mismatchTextBuilder.toString();
             throw new IllegalArgumentException(mismatchText);
