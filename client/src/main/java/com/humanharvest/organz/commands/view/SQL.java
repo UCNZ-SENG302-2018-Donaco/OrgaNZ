@@ -5,9 +5,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.humanharvest.organz.database.DBManager;
-
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
 
@@ -17,6 +18,7 @@ import picocli.CommandLine.Parameters;
 
 @Command(name = "sql", description = "Execute a SQL SELECT statement and get the results", sortOptions = false)
 public class SQL implements Runnable {
+    private static final Logger LOGGER = Logger.getLogger(SQL.class.getName());
 
     private DBManager dbManager;
 
@@ -45,51 +47,41 @@ public class SQL implements Runnable {
         String sql = String.join(" ", allParams);
 
         //Standard implementation with normal connection
-        Connection conn;
-        try {
-            conn = dbManager.getStandardSqlConnection();
-            conn.setReadOnly(true);
+        try (Connection connection = dbManager.getStandardSqlConnection()) {
+            connection.setReadOnly(true);
+
+            executeQuery(connection, sql);
         } catch (SQLException e) {
-            System.out.println("Couldn't connect to the database");
-            e.printStackTrace();
-            return;
+            LOGGER.log(Level.SEVERE, "Couldn't connect to the database", e);
         }
-        try {
-            Statement stmt = conn.createStatement();
-            ResultSet resultSet = stmt.executeQuery(sql);
+    }
 
-            if (!resultSet.isBeforeFirst()) {
-                System.out.println("No rows were returned for that query");
-                return;
-            }
-
-            int columns = resultSet.getMetaData().getColumnCount();
-            while (resultSet.next()) {
-                for (int i = 1; i <= columns; i++) {
-                    if (i > 1) {
-                        System.out.print("; ");
-                    }
-                    System.out.print(resultSet.getString(i));
+    private static void executeQuery(Connection connection, String sql) {
+        try(Statement stmt = connection.createStatement()) {
+            //This is allowed since the administrator is the one executing the statement
+            //noinspection JDBCExecuteWithNonConstantString
+            try (ResultSet resultSet = stmt.executeQuery(sql)) {
+                if (!resultSet.isBeforeFirst()) {
+                    System.out.println("No rows were returned for that query");
+                    return;
                 }
-                System.out.print("\n");
+
+                int columns = resultSet.getMetaData().getColumnCount();
+                while (resultSet.next()) {
+                    for (int i = 1; i <= columns; i++) {
+                        if (i > 1) {
+                            System.out.print("; ");
+                        }
+                        System.out.print(resultSet.getString(i));
+                    }
+                    System.out.print("\n");
+                }
             }
         } catch (SQLException e) {
-            System.out.println("An error occurred with your query. If you were using double quotes, please ensure "
-                    + "they were escaped with a backslash and enclosed in a quoted string. The command as it was sent "
-                    + "to the database was:");
-            System.out.println(sql);
-            System.out.println(e.getMessage());
+            LOGGER.log(Level.SEVERE, "An error occurred with your query."
+                    + "If you were using double quotes, please ensure they were escaped with a backslash and "
+                    + "enclosed in a quoted string. The command as it was sent "
+                    + "to the database was: " + sql, e);
         }
-
-        //May work with the hibernate setup
-//        org.hibernate.query.Query query = dbManager.getDBSession().createNativeQuery( sql );
-//        List<Object> rows = query.list();
-//        for (Object row : rows) {
-//            Object[] columns = (Object[]) row;
-//            for (Object cell : columns) {
-//                System.out.print(cell + ",");
-//            }
-//            System.out.print("\n");
-//        }
     }
 }

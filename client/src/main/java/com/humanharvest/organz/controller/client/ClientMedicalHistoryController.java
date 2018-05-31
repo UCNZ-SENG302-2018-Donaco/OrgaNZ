@@ -128,7 +128,8 @@ public class ClientMedicalHistoryController extends SubController {
                 if (tableComparator != null) {
                     return table.getComparator().compare(r1, r2);
                 } else {
-                    return -r1.getDiagnosisDate().compareTo(r2.getDiagnosisDate());  // negative because sorting DESC
+                    // negative because sorting DESC
+                    return -Integer.signum(r1.getDiagnosisDate().compareTo(r2.getDiagnosisDate()));
                 }
             } else if (r1.isChronic()) {
                 return -1;

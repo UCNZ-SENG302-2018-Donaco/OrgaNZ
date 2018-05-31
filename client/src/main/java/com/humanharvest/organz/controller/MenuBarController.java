@@ -517,9 +517,9 @@ public class MenuBarController extends SubController {
             unsavedAlert.getButtonTypes().setAll(dontSave, cancel, save);
 
             Optional<ButtonType> result = unsavedAlert.showAndWait();
-            if (result.get() == dontSave) {
+            if (result.isPresent() && result.get() == dontSave) {
                 exit();
-            } else if (result.get() == save) {
+            } else if (result.isPresent() && result.get() == save) {
                 save();
                 exit();
             } else {

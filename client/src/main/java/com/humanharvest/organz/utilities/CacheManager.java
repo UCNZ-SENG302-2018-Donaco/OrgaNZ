@@ -247,8 +247,9 @@ public abstract class CacheManager {
                 return Optional.empty();
             }
 
-            if (value.getExpires().isPresent()) {
-                if (Instant.now().isAfter(value.getExpires().get())) {
+            Optional<Instant> expires = value.getExpires();
+            if (expires.isPresent()) {
+                if (Instant.now().isAfter(expires.get())) {
                     return Optional.empty();
                 }
             }
@@ -314,9 +315,8 @@ public abstract class CacheManager {
                     JsonObject object = new JsonObject();
                     object.add("key", context.serialize(entry.getKey().getValue()));
                     object.add("value", context.serialize(value.getValue()));
-                    if (value.getExpires().isPresent()) {
-                        object.addProperty("expires", value.getExpires().get().toString());
-                    }
+                    Optional<Instant> expires = value.getExpires();
+                    expires.ifPresent(instant -> object.addProperty("expires", instant.toString()));
                     array.add(object);
                 }
                 return array;

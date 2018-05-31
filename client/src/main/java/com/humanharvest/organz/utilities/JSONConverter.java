@@ -60,10 +60,10 @@ public final class JSONConverter {
     public static void createEmptyJSONFileIfNotExists(File file) throws IOException {
         try {
             if (file.createNewFile()) {
-                FileWriter writer = new FileWriter(file);
-                writer.write("[]\n");
-                writer.flush();
-                writer.close();
+                try (FileWriter writer = new FileWriter(file)) {
+                    writer.write("[]\n");
+                    writer.flush();
+                }
             }
         } catch (IOException exc) {
             throw new IOException(String.format("An error occurred when creating this file: %s\n%s",
