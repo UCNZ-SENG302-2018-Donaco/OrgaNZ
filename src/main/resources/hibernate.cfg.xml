@@ -33,12 +33,12 @@
     <property name="hibernate.current_session_context_class">org.hibernate.context.internal.ThreadLocalSessionContext</property>
 
     <!-- Mapping With Model Class Containing Annotations -->
-    <mapping class="seng302.Client"/>
-    <mapping class="seng302.TransplantRequest"/>
-    <mapping class="seng302.MedicationRecord"/>
-    <mapping class="seng302.IllnessRecord"/>
-    <mapping class="seng302.ProcedureRecord"/>
-    <mapping class="seng302.Clinician"/>
-    <mapping class="seng302.Administrator"/>
+    <mapping class="com.humanharvest.organz.Client"/>
+    <mapping class="com.humanharvest.organz.TransplantRequest"/>
+    <mapping class="com.humanharvest.organz.MedicationRecord"/>
+    <mapping class="com.humanharvest.organz.IllnessRecord"/>
+    <mapping class="com.humanharvest.organz.ProcedureRecord"/>
+    <mapping class="com.humanharvest.organz.Clinician"/>
+    <mapping class="com.humanharvest.organz.Administrator"/>
   </session-factory>
 </hibernate-configuration>
