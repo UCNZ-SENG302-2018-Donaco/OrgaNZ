@@ -64,6 +64,9 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <sonar.jacoco.reportPaths>${basedir}/target/coverage-reports/jacoco-unit.exec</sonar.jacoco.reportPaths>
+    <sonar.host.url>
+      http://csse-s302g0.canterbury.ac.nz:9000/
+    </sonar.host.url>
   </properties>
 
   <dependencies>
