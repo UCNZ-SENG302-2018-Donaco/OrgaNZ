@@ -10,4 +10,12 @@
 
   <artifactId>organz-server</artifactId>
   <packaging>jar</packaging>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.humanharvest.organz</groupId>
+      <artifactId>organz-core</artifactId>
+      <version>0.5</version>
+    </dependency>
+  </dependencies>
 </project>
