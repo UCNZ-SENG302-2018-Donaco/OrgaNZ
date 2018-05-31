@@ -3,7 +3,7 @@
   <groupId>com.humanharvest.organz</groupId>
   <artifactId>organz</artifactId>
   <packaging>jar</packaging>
-  <version>0.4</version>
+  <version>0.5</version>
   <name>organz</name>
   <url>https://eng-git.canterbury.ac.nz/seng302-2018/team-700</url>
 
@@ -64,6 +64,9 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <sonar.jacoco.reportPaths>${basedir}/target/coverage-reports/jacoco-unit.exec</sonar.jacoco.reportPaths>
+    <sonar.host.url>
+      http://csse-s302g0.canterbury.ac.nz:9000/
+    </sonar.host.url>
   </properties>
 
   <dependencies>
@@ -163,7 +166,7 @@
           <transformers>
             <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
               <manifestEntries>
-                <Main-Class>seng302.App</Main-Class>
+                <Main-Class>com.humanharvest.organz.App</Main-Class>
                 <X-Compile-Source-JDK>${maven.compiler.source}</X-Compile-Source-JDK>
                 <X-Compile-Target-JDK>${maven.compiler.target}</X-Compile-Target-JDK>
               </manifestEntries>
@@ -187,7 +190,7 @@
               <transformers>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                   <manifestEntries>
-                    <Main-Class>seng302.App</Main-Class>
+                    <Main-Class>com.humanharvest.organz.App</Main-Class>
                     <X-Compile-Source-JDK>${maven.compiler.source}</X-Compile-Source-JDK>
                     <X-Compile-Target-JDK>${maven.compiler.target}</X-Compile-Target-JDK>
                   </manifestEntries>
@@ -207,7 +210,7 @@
               <transformers>
                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                   <manifestEntries>
-                    <Main-Class>seng302.AppUI</Main-Class>
+                    <Main-Class>com.humanharvest.organz.AppUI</Main-Class>
                     <X-Compile-Source-JDK>${maven.compiler.source}</X-Compile-Source-JDK>
                     <X-Compile-Target-JDK>${maven.compiler.target}</X-Compile-Target-JDK>
                   </manifestEntries>
@@ -255,6 +258,7 @@
         <version>2.21.0</version>
         <configuration>
           <argLine>-Xms512m -Xmx1536m ${argLine}</argLine>
+          <!--<excludedGroups>com.humanharvest.organz.GUICategory</excludedGroups>-->
         </configuration>
       </plugin>
     </plugins>
