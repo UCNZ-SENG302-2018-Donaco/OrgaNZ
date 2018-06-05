@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<VBox prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.client.ViewMedicationsController">
+    <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+    <HBox fx:id="menuBarPane" maxHeight="-Infinity" minHeight="-Infinity" />
+        <SplitPane dividerPositions="0.5" VBox.vgrow="ALWAYS">
+            <HBox fx:id="sidebarPane" maxWidth="-Infinity" />
+            <BorderPane>
+                <top>
+                    <Text strokeType="OUTSIDE" strokeWidth="0.0" text="View/edit medications" textAlignment="CENTER" BorderPane.alignment="CENTER">
+                        <font>
+                            <Font size="24.0" />
+                        </font>
+                        <BorderPane.margin>
+                            <Insets top="50.0" />
+                        </BorderPane.margin>
+                    </Text>
+                </top>
+                <center>
+                </center>
+                <center>
+                    <VBox BorderPane.alignment="CENTER">
+                        <HBox fx:id="newMedicationPane">
+                            <VBox.margin>
+                                <Insets left="10.0" right="10.0" top="20.0" />
+                            </VBox.margin>
+                            <Label maxHeight="1.7976931348623157E308" text="Enter new medication: ">
+                                <font>
+                                    <Font size="14.0" />
+                                </font>
+                                <HBox.margin>
+                                    <Insets />
+                                </HBox.margin>
+                            </Label>
+                            <TextField fx:id="newMedField" onKeyPressed="#newMedKeyPressed" HBox.hgrow="ALWAYS" />
+                            <Button mnemonicParsing="false" onAction="#addButtonPressed" text="Add Medication" />
+                        </HBox>
+                        <HBox VBox.vgrow="ALWAYS">
+                            <VBox.margin>
+                                <Insets bottom="20.0" left="10.0" right="10.0" top="20.0" />
+                            </VBox.margin>
+                            <VBox HBox.hgrow="ALWAYS">
+                                <Label text="Past Medications">
+                                    <font>
+                                        <Font name="System Bold" size="12.0" />
+                                    </font>
+                                    <VBox.margin>
+                                        <Insets bottom="10.0" />
+                                    </VBox.margin>
+                                </Label>
+                                <ListView fx:id="pastMedicationsView" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+                            </VBox>
+                            <VBox spacing="5.0">
+                                <HBox.margin>
+                                    <Insets left="10.0" right="10.0" top="27.0" />
+                                </HBox.margin>
+                                <Button fx:id="moveToHistoryButton" mnemonicParsing="false" onAction="#moveMedicationToHistory" text="&lt;" textAlignment="CENTER" />
+                                <Button fx:id="moveToCurrentButton" mnemonicParsing="false" onAction="#moveMedicationToCurrent" text="&gt;" textAlignment="CENTER" />
+                            </VBox>
+                            <VBox HBox.hgrow="ALWAYS">
+                                <children>
+                                    <Label text="Current Medications">
+                                        <font>
+                                            <Font name="System Bold" size="12.0" />
+                                        </font>
+                                        <VBox.margin>
+                                            <Insets bottom="10.0" />
+                                        </VBox.margin>
+                                    </Label>
+                                    <ListView fx:id="currentMedicationsView" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
+                                </children>
+                            </VBox>
+                        </HBox>
+                    </VBox>
+                </center>
+                <bottom>
+                    <HBox alignment="CENTER" prefHeight="50.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                        <Button fx:id="viewActiveIngredientsButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#viewActiveIngredients" text="View active ingredients">
+                            <HBox.margin>
+                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                            </HBox.margin>
+                        </Button>
+                        <Button fx:id="viewInteractionsButton" mnemonicParsing="false" onAction="#viewInteractions" text="View interactions" />
+                        <Button fx:id="deleteButton" alignment="CENTER" contentDisplay="CENTER" mnemonicParsing="false" onAction="#deleteMedication" text="Delete">
+                            <HBox.margin>
+                                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                            </HBox.margin>
+                        </Button>
+                    </HBox>
+                </bottom>
+            </BorderPane>
+        </SplitPane>
+    </SplitPane>
+</VBox>

@@ -1,3 +1,6 @@
+variables:
+  _JAVA_OPTIONS: "-Djava.awt.headless=true -Dtestfx.robot=glass -Dtestfx.headless=true -Dprism.order=sw -Dprism.text=t2k -Dtestfx.setup.timeout=2500"
+
 tag_checker:
   stage: build
   script:
@@ -8,15 +11,16 @@ tag_checker:
 junit:
   stage: test
   script:
-    - mvn -B clean test
+    - mvn -B clean test verify sonar:sonar
 
 recent-artifacts:
   stage: deploy
   script:
-    - mvn -B clean site package
+    - mvn -B clean site package -Dmaven.test.skip=true
+
   artifacts:
     paths:
-      - target/*.jar
+      - target/organz-*-*.jar
     expire_in: 1 week
   except:
     - tags
@@ -27,7 +31,7 @@ release-artifacts:
     - mvn -B clean site package
   artifacts:
     paths:
-    - target/*.jar
-    - target/site/jacoco/*
+      - target/organz-*-*.jar
+      - target/site/jacoco/*
   only:
     - tags

@@ -10,9 +10,9 @@ that it implemented and the Authors and date created.
 
 Our project was set up in two main files: Commands and Utilities. As weird as it may sound,
 any classes inheriting off our command base was put into the commands section and anything that related to
-the utilisation of the data surrounding the donor was put into the utilities section, including blood type converter,
-gender and the local date converter. We also had a donor manager that used functions requested from the commands and
-updated the donor's information using the utilities section.
+the utilisation of the data surrounding the client was put into the utilities section, including blood type converter,
+gender and the local date converter. We also had a client manager that used functions requested from the commands and
+updated the client's information using the utilities section.
 
 **Testing**
 
@@ -21,7 +21,7 @@ valid results, what would happen if a user forgot to enter a necessary part into
 would occur if there were duplicate results entered, and any other valid acceptance or rejecting tests.
 
 
-**APIs' used**
+**APIs used**
 
 
 **Picocli**
@@ -47,3 +47,9 @@ There are a few open-source projects that can convert Java objects to JSON.
 However, most of them require that you place Java annotations in your classes; something that you
 can not do if you do not have access to the source-code. Most also do not fully support the use
 of Java Generics. Gson considers both of these as very important design goals.
+
+
+
+S25 - CheckComboBoxes
+These were chosen as they reduce the number of clicks that users require to filter their lists. It allows them to select
+multiple regions/organs at once, rather than only one using a drop down box.

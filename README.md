@@ -17,9 +17,10 @@ Scrum Master:
 ## Product Info
 *Title:* OrgaNZ
 
-*Version*: Sprint 2 Release
+*Version*: Sprint 4 Release
 
-*Description:* This project has been designed to increase the deceased organ donation rates in New Zealand. It provides people in New Zealand with a system they can use to register as organ donors.
+*Description:* This project has been designed to increase the deceased organ donation rates in New Zealand.
+It provides people in New Zealand with a system they can use to register as organ donors, or request organ transplants.
 
 ## External Libraries
 
@@ -27,10 +28,15 @@ This application makes use of a number of external libraries, including:
 * JLine 2
 * GSON
 * PicoCLI
+* ControlsFX
+* Google HTPP Client
+* Hibernate
+* MySqlConnector
 
 And also makes use of these external libraries for testing purposes:
 * JUnit 4
 * Mockito
+* TestFX
 
 All applicable copyright notices and licenses for the libraries used are provided in the `LICENSES.txt` file.
 
@@ -38,10 +44,10 @@ All applicable copyright notices and licenses for the libraries used are provide
 
 To start the application, run as a JAR file.
 
-Please refer to the documentation found in "doc/user_manual" to find out more on how to use the application.
+Please refer to the documentation found in `doc/user_manual.md` to find out more on how to use the application.
 
 For more information on the design decisions that were made, please refer to the documentation found in
-"doc/design_decisions".
+`doc/design_decisions.md`.
 
 To see an example of a JSON file that loads in the user data, please direct your attention to
 `doc/examples/savefile.JSON`.
