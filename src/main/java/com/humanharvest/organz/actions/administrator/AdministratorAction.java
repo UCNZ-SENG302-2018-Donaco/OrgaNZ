@@ -19,14 +19,13 @@ public abstract class AdministratorAction extends Action {
     protected abstract Administrator getAffectedAdministrator();
 
     private void recordInClientHistory() {
-        HistoryItem item = new HistoryItem("ACTION", this.getExecuteText());
-        getAffectedAdministrator().addToChangesHistory(item);
+        getAffectedAdministrator().addToChangesHistory(getExecuteHistoryItem());
     }
 
     private void eraseFromClientHistory() {
         HistoryItem toErase = null;
         for (HistoryItem item : getAffectedAdministrator().getChangesHistory()) {
-            if (item.getDetails().equals(this.getExecuteText())) {
+            if (item.getDetails().equals(getExecuteHistoryItem().getDetails())) {
                 toErase = item;
                 break;
             }

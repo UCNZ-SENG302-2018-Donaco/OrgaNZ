@@ -19,14 +19,13 @@ public abstract class ClientAction extends Action {
     protected abstract Client getAffectedClient();
 
     private void recordInClientHistory() {
-        HistoryItem item = new HistoryItem("ACTION", this.getExecuteText());
-        getAffectedClient().addToChangesHistory(item);
+        getAffectedClient().addToChangesHistory(getExecuteHistoryItem());
     }
 
     private void eraseFromClientHistory() {
         HistoryItem toErase = null;
         for (HistoryItem item : getAffectedClient().getChangesHistory()) {
-            if (item.getDetails().equals(this.getExecuteText())) {
+            if (item.getDetails().equals(getExecuteHistoryItem().getDetails())) {
                 toErase = item;
                 break;
             }

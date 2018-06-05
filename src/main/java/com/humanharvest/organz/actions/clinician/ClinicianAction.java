@@ -19,14 +19,13 @@ public abstract class ClinicianAction extends Action {
     protected abstract Clinician getAffectedClinician();
 
     private void recordInClientHistory() {
-        HistoryItem item = new HistoryItem("ACTION", this.getExecuteText());
-        getAffectedClinician().addToChangesHistory(item);
+        getAffectedClinician().addToChangesHistory(getExecuteHistoryItem());
     }
 
     private void eraseFromClientHistory() {
         HistoryItem toErase = null;
         for (HistoryItem item : getAffectedClinician().getChangesHistory()) {
-            if (item.getDetails().equals(this.getExecuteText())) {
+            if (item.getDetails().equals(getExecuteHistoryItem().getDetails())) {
                 toErase = item;
                 break;
             }
