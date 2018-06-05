@@ -58,7 +58,7 @@ public class JSONFileReaderTest {
 
     @Test
     public void readAllFromValidFileTest() throws Exception {
-        File inputFile = new File("src/test/resources/many_Clients.json");
+        File inputFile = new File("src/test/resources/many_clients.json");
         JSONFileReader<Client> ClientFileReader = new JSONFileReader<>(inputFile, Client.class);
         List<Client> outputClients = ClientFileReader.getAll();
         ClientFileReader.close();
@@ -68,7 +68,7 @@ public class JSONFileReaderTest {
 
     @Test
     public void readAsStreamFromValidFileTest() throws Exception {
-        File inputFile = new File("src/test/resources/many_Clients.json");
+        File inputFile = new File("src/test/resources/many_clients.json");
         JSONFileReader<Client> ClientFileReader = new JSONFileReader<>(inputFile, Client.class);
         List<Client> outputClients = new ArrayList<>();
         Client current;
@@ -91,7 +91,7 @@ public class JSONFileReaderTest {
 
     @Test(expected = IllegalStateException.class)
     public void readAsStreamWithoutStartingStreamTest() throws Exception {
-        File inputFile = new File("src/test/resources/many_Clients.json");
+        File inputFile = new File("src/test/resources/many_clients.json");
         JSONFileReader<Client> ClientFileReader = new JSONFileReader<>(inputFile, Client.class);
 
         ClientFileReader.getNext();
@@ -99,7 +99,7 @@ public class JSONFileReaderTest {
 
     @Test(expected = IllegalStateException.class)
     public void readAllAfterStartingStreamTest() throws Exception {
-        File inputFile = new File("src/test/resources/many_Clients.json");
+        File inputFile = new File("src/test/resources/many_clients.json");
         JSONFileReader<Client> ClientFileReader = new JSONFileReader<>(inputFile, Client.class);
 
         ClientFileReader.startStream();
