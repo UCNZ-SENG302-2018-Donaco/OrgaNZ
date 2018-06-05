@@ -63,6 +63,7 @@
     <maven.compiler.target>1.8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <resource.delimiter>@</resource.delimiter>
     <outputDirectory>${project.basedir}/../target</outputDirectory>
     <sonar.jacoco.reportPaths>${outputDirectory}/coverage-reports/jacoco-unit.exec</sonar.jacoco.reportPaths>
     <sonar.host.url>
@@ -118,6 +119,32 @@
           <argLine>-Xms512m -Xmx1536m ${argLine}</argLine>
           <!--<excludedGroups>com.humanharvest.organz.GUICategory</excludedGroups>-->
         </configuration>
+      </plugin>
+
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-dependency-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>copy-artifact</id>
+            <phase>package</phase>
+            <goals>
+              <goal>copy</goal>
+            </goals>
+            <configuration>
+              <artifactItems>
+                <artifactItem>
+                  <groupId>${project.groupId}</groupId>
+                  <artifactId>${project.artifactId}</artifactId>
+                  <version>${project.version}</version>
+                  <type>${project.packaging}</type>
+                </artifactItem>
+              </artifactItems>
+              <outputDirectory>../target</outputDirectory>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
     </plugins>
   </build>

@@ -113,13 +113,6 @@
 
         <executions>
           <execution>
-            <phase>package</phase>
-            <goals>
-              <goal>shade</goal>
-            </goals>
-          </execution>
-
-          <execution>
             <id>CLI</id>
             <phase>package</phase>
             <configuration>
