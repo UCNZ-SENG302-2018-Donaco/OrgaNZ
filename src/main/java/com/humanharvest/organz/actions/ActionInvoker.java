@@ -28,11 +28,13 @@ public class ActionInvoker {
             unsavedUpdates--;
             State.setUnsavedChanges(unsavedUpdates != 0);
 
-            HistoryItem originalHistoryItem = action.getUnExecuteHistoryItem();
-            State.getSession().addToSessionHistory(new HistoryItem(
-                    "UNDO",
-                    originalHistoryItem.getDetails()
-            ));
+            if (State.getSession() != null) {
+                HistoryItem originalHistoryItem = action.getUnExecuteHistoryItem();
+                State.getSession().addToSessionHistory(new HistoryItem(
+                        "UNDO",
+                        originalHistoryItem.getDetails()
+                ));
+            }
 
             return action.getUnexecuteText();
         }
@@ -52,11 +54,13 @@ public class ActionInvoker {
             unsavedUpdates++;
             State.setUnsavedChanges(unsavedUpdates != 0);
 
-            HistoryItem originalHistoryItem = action.getExecuteHistoryItem();
-            State.getSession().addToSessionHistory(new HistoryItem(
-                    "REDO",
-                    "Redid action:\n" + originalHistoryItem.getDetails()
-            ));
+            if (State.getSession() != null) {
+                HistoryItem originalHistoryItem = action.getExecuteHistoryItem();
+                State.getSession().addToSessionHistory(new HistoryItem(
+                        "REDO",
+                        "Redid action:\n" + originalHistoryItem.getDetails()
+                ));
+            }
 
             return action.getExecuteText();
         }
@@ -74,7 +78,10 @@ public class ActionInvoker {
         redoStack.clear();
         unsavedUpdates++;
         State.setUnsavedChanges(true);
-        State.getSession().addToSessionHistory(action.getExecuteHistoryItem());
+
+        if (State.getSession() != null) {
+            State.getSession().addToSessionHistory(action.getExecuteHistoryItem());
+        }
 
         return action.getExecuteText();
     }

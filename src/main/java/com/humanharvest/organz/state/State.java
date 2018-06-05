@@ -111,7 +111,7 @@ public final class State {
         } else {
             init(DataStorageType.MEMORY);
         }
-        logout();
+        session = null;
         unsavedChanges = false;
         mainControllers = new ArrayList<>();
     }
