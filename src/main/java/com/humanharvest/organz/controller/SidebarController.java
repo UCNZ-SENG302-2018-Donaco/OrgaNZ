@@ -15,17 +15,16 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.stage.FileChooser;
 
-import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.AppUI;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
+import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
-
 import org.controlsfx.control.Notifications;
 
 /**
@@ -265,11 +264,12 @@ public class SidebarController extends SubController {
             if (file != null) {
                 JSONConverter.saveToFile(file);
 
-                Notifications.create().title("Saved").text(String.format("Successfully saved %s clients to file %s",
+                Notifications.create().title("Saved").text(String.format("Successfully saved %s clients to file '%s'.",
                         State.getClientManager().getClients().size(), file.getName())).showInformation();
 
-                HistoryItem save = new HistoryItem("SAVE", "The systems current state was saved.");
-                JSONConverter.updateHistory(save, "action_history.json");
+                HistoryItem historyItem = new HistoryItem("SAVE",
+                        String.format("The system's current state was saved to file '%s'.", file.getName()));
+                State.getSession().addToSessionHistory(historyItem);
 
                 invoker.resetUnsavedUpdates();
                 PageNavigator.refreshAllWindows();
@@ -305,8 +305,8 @@ public class SidebarController extends SubController {
                 if (file != null) {
                     JSONConverter.loadFromFile(file);
 
-                    HistoryItem load = new HistoryItem("LOAD", "The systems state was loaded from " + file.getName());
-                    JSONConverter.updateHistory(load, "action_history.json");
+                    HistoryItem historyItem = new HistoryItem("LOAD", "The systems state was loaded from " + file.getName());
+                    State.getSession().addToSessionHistory(historyItem);
 
                     invoker.resetUnsavedUpdates();
                     mainController.resetWindowContext();
@@ -340,8 +340,6 @@ public class SidebarController extends SubController {
         State.addMainController(mainController);
         mainController.resetWindowContext();
         PageNavigator.loadPage(Page.LANDING, mainController);
-        HistoryItem save = new HistoryItem("LOGOUT", "The user logged out");
-        JSONConverter.updateHistory(save, "action_history.json");
     }
 
     /**
@@ -351,8 +349,6 @@ public class SidebarController extends SubController {
     private void undo() {
         String undoneText = invoker.undo();
         Notifications.create().title("Undo").text(undoneText).showInformation();
-        HistoryItem save = new HistoryItem("UNDO", undoneText);
-        JSONConverter.updateHistory(save, "action_history.json");
         PageNavigator.refreshAllWindows();
     }
 
@@ -363,8 +359,6 @@ public class SidebarController extends SubController {
     private void redo() {
         String redoneText = invoker.redo();
         Notifications.create().title("Redo").text(redoneText).showInformation();
-        HistoryItem save = new HistoryItem("REDO", redoneText);
-        JSONConverter.updateHistory(save, "action_history.json");
         PageNavigator.refreshAllWindows();
     }
 }

@@ -9,11 +9,9 @@ import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.state.AdministratorManager;
 import com.humanharvest.organz.state.ClinicianManager;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 
@@ -106,10 +104,6 @@ public class StaffLoginController extends SubController {
         } else {
             State.login(clinician);
             PageNavigator.loadPage(Page.VIEW_CLINICIAN, mainController);
-
-            HistoryItem save = new HistoryItem("LOGIN_STAFF", String.format("Clinician %s %s logged in.",
-                    clinician.getFirstName(), clinician.getLastName()));
-            JSONConverter.updateHistory(save, "action_history.json");
         }
     }
 
@@ -129,9 +123,6 @@ public class StaffLoginController extends SubController {
         } else {
             State.login(administrator);
             PageNavigator.loadPage(Page.SEARCH, mainController);
-            HistoryItem save = new HistoryItem("LOGIN_STAFF", String.format("Administrator %s logged in.",
-                    administrator.getUsername()));
-            JSONConverter.updateHistory(save, "action_history.json");
         }
     }
 

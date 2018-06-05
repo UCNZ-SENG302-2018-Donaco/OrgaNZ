@@ -5,21 +5,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.humanharvest.organz.Client;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.actions.client.ModifyClientAction;
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.BloodType;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Region;
-import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.type_converters.BloodTypeConverter;
 import com.humanharvest.organz.utilities.type_converters.GenderConverter;
 import com.humanharvest.organz.utilities.type_converters.LocalDateConverter;
 import com.humanharvest.organz.utilities.type_converters.RegionConverter;
-
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
@@ -118,8 +115,5 @@ public class SetAttribute implements Runnable {
         }
 
         System.out.println(invoker.execute(action));
-
-        HistoryItem setAttribute = new HistoryItem("ATTRIBUTE UPDATE", "DETAILS were updated for client " + uid);
-        JSONConverter.updateHistory(setAttribute, "action_history.json");
     }
 }

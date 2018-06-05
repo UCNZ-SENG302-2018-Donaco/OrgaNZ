@@ -1,12 +1,8 @@
 package com.humanharvest.organz.commands.view;
 
-
 import com.humanharvest.organz.Client;
-import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.JSONConverter;
-
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
@@ -41,8 +37,6 @@ public class GetChanges implements Runnable {
             return;
         }
         System.out.println(client.getUpdatesString());
-        HistoryItem printAllHistory = new HistoryItem("PRINT UPDATE HISTORY", "All client's history printed.");
-        JSONConverter.updateHistory(printAllHistory, "action_history.json");
     }
 }
 

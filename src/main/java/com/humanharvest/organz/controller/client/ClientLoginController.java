@@ -1,5 +1,7 @@
 package com.humanharvest.organz.controller.client;
 
+import java.util.Objects;
+
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -7,16 +9,12 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 
 import com.humanharvest.organz.Client;
-import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
-
-import java.util.Objects;
 
 /**
  * Controller for the login page.
@@ -76,10 +74,6 @@ public class ClientLoginController extends SubController {
         Client selectedClient = clientList.getSelectionModel().getSelectedItem();
 
         if (selectedClient != null) {
-            HistoryItem loginHistory = new HistoryItem("LOGIN_CLIENT", String.format("Client %s %s (%d) logged in.",
-                    selectedClient.getFirstName(), selectedClient.getLastName(), selectedClient.getUid()));
-            JSONConverter.updateHistory(loginHistory, "action_history.json");
-
             State.login(selectedClient);
             PageNavigator.loadPage(Page.VIEW_CLIENT, mainController);
         }

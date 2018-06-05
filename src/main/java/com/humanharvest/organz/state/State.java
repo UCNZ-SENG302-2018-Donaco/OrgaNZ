@@ -3,6 +3,7 @@ package com.humanharvest.organz.state;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.Client;
@@ -70,14 +71,23 @@ public final class State {
 
     public static void login(Client client) {
         session = new Session(client);
+        HistoryItem historyItem = new HistoryItem("LOGIN", String.format("Client %d (%s) logged in.",
+                client.getUid(), client.getFullName()));
+        session.addToSessionHistory(historyItem);
     }
 
     public static void login(Clinician clinician) {
         session = new Session(clinician);
+        HistoryItem historyItem = new HistoryItem("LOGIN", String.format("Clinician %d (%s) logged in.",
+                clinician.getStaffId(), clinician.getFullName()));
+        session.addToSessionHistory(historyItem);
     }
 
     public static void login(Administrator administrator) {
         session = new Session(administrator);
+        HistoryItem historyItem = new HistoryItem("LOGIN", String.format("Administrator %s logged in.",
+                administrator.getUsername()));
+        session.addToSessionHistory(historyItem);
     }
 
     public static void setUnsavedChanges(boolean changes) {
@@ -89,6 +99,8 @@ public final class State {
     }
 
     public static void logout() {
+        HistoryItem historyItem = new HistoryItem("LOGOUT", "The user logged out.");
+        session.addToSessionHistory(historyItem);
         // Do something with the old session
         session = null;
     }
