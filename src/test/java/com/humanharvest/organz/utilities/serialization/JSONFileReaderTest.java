@@ -1,4 +1,4 @@
-package com.humanharvest.organz.utilities;
+package com.humanharvest.organz.utilities.serialization;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
