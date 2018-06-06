@@ -10,7 +10,7 @@ import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredExcept
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-class ClientTest {
+public class ClientTest {
     private static final String FIRST_NAME = "First";
     private static final String MIDDLE_NAME = "middlename";
     private static final String PREFERRED_NAME = "Preferred";

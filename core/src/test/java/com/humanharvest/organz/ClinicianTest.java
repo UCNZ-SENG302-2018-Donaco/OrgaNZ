@@ -6,7 +6,7 @@ import com.humanharvest.organz.utilities.enums.Region;
 
 import org.junit.jupiter.api.Test;
 
-class ClinicianTest {
+public class ClinicianTest {
     @Test
     void getFullNameNoMiddleNameTest() {
         Clinician clinician = new Clinician("First", null, "Last", "Address", Region.UNSPECIFIED, 1, "pass");

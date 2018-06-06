@@ -127,6 +127,13 @@
             <version>5.2.0</version>
           </dependency>
 
+          <!-- https://mvnrepository.com/artifact/org.junit.vintage/junit-vintage-engine -->
+          <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <version>5.2.0</version>
+          </dependency>
+
           <!-- https://mvnrepository.com/artifact/org.junit.platform/junit-platform-surefire-provider -->
           <dependency>
             <groupId>org.junit.platform</groupId>
