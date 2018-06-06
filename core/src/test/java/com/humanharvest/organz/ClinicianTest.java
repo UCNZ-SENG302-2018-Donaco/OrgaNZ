@@ -1,20 +1,20 @@
 package com.humanharvest.organz;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 import com.humanharvest.organz.utilities.enums.Region;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class ClinicianTest extends BaseTest {
+class ClinicianTest {
     @Test
-    public void getFullNameNoMiddleNameTest() {
+    void getFullNameNoMiddleNameTest() {
         Clinician clinician = new Clinician("First", null, "Last", "Address", Region.UNSPECIFIED, 1, "pass");
         assertEquals("First Last", clinician.getFullName());
     }
 
     @Test
-    public void getFullNameWithMiddleNameTest() {
+    void getFullNameWithMiddleNameTest() {
         Clinician clinician = new Clinician("First", "Mid Name", "Last", "Address", Region.UNSPECIFIED, 1, "pass");
         assertEquals("First Mid Name Last", clinician.getFullName());
     }
