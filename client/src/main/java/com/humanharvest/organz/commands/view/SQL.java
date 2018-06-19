@@ -35,7 +35,7 @@ public class SQL implements Runnable {
     @Override
     public void run() {
         if (allParams == null) {
-            System.out.println("No SQL input, please enter a valid SQL command");
+            LOGGER.log(Level.WARNING, "No SQL input, please enter a valid SQL command");
             return;
         }
 
@@ -57,25 +57,27 @@ public class SQL implements Runnable {
     }
 
     private static void executeQuery(Connection connection, String sql) {
-        try(Statement stmt = connection.createStatement()) {
+        try (Statement stmt = connection.createStatement()) {
             //This is allowed since the administrator is the one executing the statement
             //noinspection JDBCExecuteWithNonConstantString
             try (ResultSet resultSet = stmt.executeQuery(sql)) {
                 if (!resultSet.isBeforeFirst()) {
-                    System.out.println("No rows were returned for that query");
+                    LOGGER.log(Level.INFO, "No rows were returned for that query");
                     return;
                 }
 
                 int columns = resultSet.getMetaData().getColumnCount();
+                StringBuilder buffer = new StringBuilder();
                 while (resultSet.next()) {
                     for (int i = 1; i <= columns; i++) {
                         if (i > 1) {
-                            System.out.print("; ");
+                            buffer.append("; ");
                         }
-                        System.out.print(resultSet.getString(i));
+                        buffer.append(resultSet.getString(i));
                     }
-                    System.out.print("\n");
+                    buffer.append('\n');
                 }
+                LOGGER.log(Level.INFO, buffer.toString());
             }
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "An error occurred with your query."

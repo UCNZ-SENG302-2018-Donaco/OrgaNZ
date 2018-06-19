@@ -22,11 +22,14 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.humanharvest.organz.utilities.exceptions.BadDrugNameException;
+import com.humanharvest.organz.utilities.exceptions.BadGatewayException;
 import com.humanharvest.organz.utilities.web.DrugInteractionsHandler;
 import com.humanharvest.organz.utilities.web.MedActiveIngredientsHandler;
 import com.humanharvest.organz.utilities.web.WebAPIHandler;
@@ -163,27 +166,21 @@ public abstract class CacheManager {
 
     public void refreshCachedData(HttpTransport httpTransport) {
         // Iterate through categories
-        Iterator it = categories.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry) it.next();
-            String categoryName = (String) pair.getKey();
-            Category category = (Category) pair.getValue();
+        for (Entry pair : categories.entrySet()) {
+            String categoryName = (String)pair.getKey();
+            Category category = (Category)pair.getValue();
 
             WebAPIHandler handler;
             switch (categoryName) {
                 case "com.humanharvest.organz.utilities.web.MedActiveIngredientsHandler":
-                    if (httpTransport == null) {
-                        handler = new MedActiveIngredientsHandler();
-                    } else {
-                        handler = new MedActiveIngredientsHandler(httpTransport);
-                    }
+                    handler = httpTransport == null ?
+                            new MedActiveIngredientsHandler() :
+                            new MedActiveIngredientsHandler(httpTransport);
                     break;
                 case "com.humanharvest.organz.utilities.web.DrugInteractionsHandler":
-                    if (httpTransport == null) {
-                        handler = new DrugInteractionsHandler();
-                    } else {
-                        handler = new DrugInteractionsHandler(httpTransport);
-                    }
+                    handler = httpTransport == null ?
+                            new DrugInteractionsHandler() :
+                            new DrugInteractionsHandler(httpTransport);
                     break;
                 default:
                     LOGGER.log(Level.SEVERE, "Unrecognised handler: " + categoryName);
@@ -191,15 +188,11 @@ public abstract class CacheManager {
             }
 
             if (handler != null) {
-
                 // Store a list of the keys' values currently in the category
                 Collection<Key> keys = new ArrayList<>();
 
                 // Iterate through category's values, adding each key to keys
-                Iterator it2 = category.getValues().entrySet().iterator();
-                while (it2.hasNext()) {
-                    Map.Entry pair2 = (Map.Entry) it2.next();
-                    Key key = (Key) pair2.getKey();
+                for (Key key : category.getValues().keySet()) {
                     keys.add(key);
                 }
 
@@ -209,9 +202,9 @@ public abstract class CacheManager {
                     try {
                         removeCachedData(categoryName, rawKey);
                         handler.getData(rawKey);
-                    } catch (Exception e) {
-                        LOGGER.log(Level.WARNING, "Couldn't refresh " + rawKey[0] + " in cache.");
-                        //todo should the old data be kept if new data can't be retrieved? it currently is not.
+                    } catch (BadDrugNameException | BadGatewayException | IOException e) {
+                        LOGGER.log(Level.WARNING, "Couldn't refresh " + rawKey[0] + " in cache.", e);
+                        //Todo: should the old data be kept if new data can't be retrieved? it currently is not.
                     }
                 }
             }
