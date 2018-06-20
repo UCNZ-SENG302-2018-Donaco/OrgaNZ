@@ -1,6 +1,7 @@
 package com.humanharvest.organz.controller;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
@@ -24,18 +25,22 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.AppUI;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
+import com.humanharvest.organz.actions.ActionInvoker;
+import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.CacheManager;
 import com.humanharvest.organz.utilities.JSONConverter;
+import com.humanharvest.organz.utilities.serialization.CSVReadClientStrategy;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
-
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 import org.controlsfx.control.Notifications;
 
 /**
@@ -85,6 +90,7 @@ public class MenuBarController extends SubController {
     public Menu administrationPrimaryItem;
 
     private ActionInvoker invoker;
+    private ClientManager clientManager;
     private Session session;
 
     /**
@@ -92,6 +98,7 @@ public class MenuBarController extends SubController {
      */
     public MenuBarController() {
         invoker = State.getInvoker();
+        clientManager = State.getClientManager();
         session = State.getSession();
     }
 
@@ -350,7 +357,7 @@ public class MenuBarController extends SubController {
                 JSONConverter.saveToFile(file);
 
                 Notifications.create().title("Saved").text(String.format("Successfully saved %s clients to file %s",
-                        State.getClientManager().getClients().size(), file.getName())).showInformation();
+                        clientManager.getClients().size(), file.getName())).showInformation();
 
                 HistoryItem save = new HistoryItem("SAVE", "The systems current state was saved.");
                 JSONConverter.updateHistory(save, "action_history.json");
@@ -376,36 +383,108 @@ public class MenuBarController extends SubController {
                 "Loading from a file will overwrite all current data. Would you like to proceed?");
 
         if (response.isPresent() && response.get() == ButtonType.OK) {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Load Clients File");
             try {
-                FileChooser fileChooser = new FileChooser();
-                fileChooser.setTitle("Load Clients File");
                 fileChooser.setInitialDirectory(
                         new File(Paths.get(AppUI.class.getProtectionDomain().getCodeSource().getLocation().toURI())
-                                .getParent().toString())
-                );
-                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json"));
-                File file = fileChooser.showOpenDialog(AppUI.getWindow());
+                                .getParent().toString()));
+            } catch (URISyntaxException exc) {
+                exc.printStackTrace();
+            }
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(
+                    "JSON/CSV files (*.json, *.csv)",
+                    "*.json", "*.csv"));
+            File file = fileChooser.showOpenDialog(AppUI.getWindow());
 
-                if (file != null) {
-                    JSONConverter.loadFromFile(file);
+            if (file != null) {
+                String format = getFileExtension(file.getName());
 
-                    HistoryItem load = new HistoryItem("LOAD", "The systems state was loaded from " + file.getName());
+                try {
+                    switch (format) {
+                        case "csv":
+                            loadCsv(file);
+                            break;
+                        case "json":
+                            loadJson(file);
+                            break;
+                        default:
+                            PageNavigator.showAlert(AlertType.ERROR,
+                                    "Load Failed",
+                                    "Unknown file format or extension: " + format);
+                            break;
+                    }
+
+                    HistoryItem load = new HistoryItem("LOAD",
+                            "The systems state was loaded from " + file.getAbsolutePath());
                     JSONConverter.updateHistory(load, "action_history.json");
 
                     mainController.resetWindowContext();
-                    Notifications.create().title("Loaded data").text(
-                            String.format("Successfully loaded %d clients from file",
-                                    State.getClientManager().getClients().size()))
-                            .showInformation();
                     PageNavigator.loadPage(Page.LANDING, mainController);
+
+                } catch (IOException exc) {
+                    PageNavigator.showAlert(AlertType.ERROR, "Load Failed",
+                            "Warning: unrecognisable or invalid file. please make\n"
+                                    + "sure that you have selected the correct file type.");
+                    LOGGER.log(Level.SEVERE, ERROR_LOADING_MESSAGE, exc);
                 }
-            } catch (URISyntaxException | IOException | IllegalArgumentException e) {
-                PageNavigator.showAlert(AlertType.WARNING, "Load Failed",
-                        "Warning: unrecognisable or invalid file. please make\n"
-                                + "sure that you have selected the correct file type.");
-                LOGGER.log(Level.SEVERE, ERROR_LOADING_MESSAGE, e);
             }
         }
+    }
+
+    private static String getFileExtension(String fileName) {
+        int lastIndex = fileName.lastIndexOf('.');
+        if (lastIndex >= 0) {
+            return fileName.substring(lastIndex + 1).toLowerCase();
+        } else {
+            return "";
+        }
+    }
+
+    /**
+     * Loads a json file from the stored fileName field.
+     */
+    private void loadJson(File file) throws IOException {
+        JSONConverter.loadFromFile(file);
+
+        Notifications.create()
+                .title("Loaded data")
+                .text(String.format("Successfully loaded %d clients from file", clientManager.getClients().size()))
+                .showInformation();
+        LOGGER.log(Level.INFO, String.format("Loaded %s clients from file", clientManager.getClients().size()));
+    }
+
+    /**
+     * Loads a csv file from the stored fileName field.
+     */
+    private void loadCsv(File file) throws IOException {
+        int valid = 0;
+        int invalid = 0;
+
+        try (CSVParser parser = CSVFormat.RFC4180.withFirstRecordAsHeader().parse(new FileReader(file))) {
+            CSVReadClientStrategy strategy = new CSVReadClientStrategy();
+            List<Client> clients = new ArrayList<>();
+
+            for (CSVRecord record : parser) {
+                try {
+                    clients.add(strategy.deserialise(record));
+                    valid++;
+                } catch (IllegalArgumentException exc) {
+                    invalid++;
+                }
+            }
+            clientManager.setClients(clients);
+        }
+
+        Notifications.create()
+                .title("Loaded data")
+                .text(String.format(
+                        "Clients loaded from CSV file:" +
+                                "\n%d records were valid," +
+                                "\n%d records were invalid.",
+                        valid, invalid))
+                .showInformation();
+        LOGGER.log(Level.INFO, String.format("Loaded %s clients from file", valid));
     }
 
     /**
