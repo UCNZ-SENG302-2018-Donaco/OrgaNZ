@@ -53,12 +53,16 @@ public class Load implements Runnable {
         }
 
         try {
-            if ("csv".equalsIgnoreCase(format)) {
-                loadCsv();
-            } else if ("json".equalsIgnoreCase(format)) {
-                loadJson();
-            } else {
-                System.out.println("Unknown file format or extension: " + format);
+            switch (format) {
+                case "csv":
+                    loadCsv(fileName);
+                    break;
+                case "json":
+                    loadJson(fileName);
+                    break;
+                default:
+                    System.out.println("Unknown file format or extension: " + format);
+                    break;
             }
 
             LOGGER.log(Level.INFO, String.format("Loaded %s clients from file", manager.getClients().size()));
@@ -75,18 +79,18 @@ public class Load implements Runnable {
     /**
      * Loads a json file from the stored fileName field.
      */
-    private void loadJson() throws IOException {
-        JSONConverter.loadFromFile(fileName);
+    private void loadJson(File file) throws IOException {
+        JSONConverter.loadFromFile(file);
     }
 
     /**
      * Loads a csv file from the stored fileName field.
      */
-    private void loadCsv() throws IOException {
+    private void loadCsv(File file) throws IOException {
         int valid = 0;
         int invalid = 0;
 
-        try (CSVParser parser = CSVFormat.RFC4180.withFirstRecordAsHeader().parse(new FileReader(fileName))) {
+        try (CSVParser parser = CSVFormat.RFC4180.withFirstRecordAsHeader().parse(new FileReader(file))) {
             CSVReadClientStrategy strategy = new CSVReadClientStrategy();
             List<Client> clients = new ArrayList<>();
 
@@ -103,16 +107,17 @@ public class Load implements Runnable {
 
         System.out.println(String.format(
                 "Clients loaded from CSV file:" +
-                        "\n%d were valid," +
-                        "\n%d were invalid.",
+                        "\n%d records were valid," +
+                        "\n%d records were invalid.",
                 valid, invalid));
     }
 
     private static String getFileExtension(String fileName) {
         int lastIndex = fileName.lastIndexOf('.');
         if (lastIndex >= 0) {
-            return fileName.substring(lastIndex + 1);
+            return fileName.substring(lastIndex + 1).toLowerCase();
+        } else {
+            return "";
         }
-        return "";
     }
 }
