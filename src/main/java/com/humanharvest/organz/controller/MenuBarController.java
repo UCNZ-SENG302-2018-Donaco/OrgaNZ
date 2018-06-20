@@ -28,6 +28,10 @@ import javafx.stage.Stage;
 import com.humanharvest.organz.AppUI;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
+import com.humanharvest.organz.IllnessRecord;
+import com.humanharvest.organz.MedicationRecord;
+import com.humanharvest.organz.ProcedureRecord;
+import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
@@ -36,6 +40,7 @@ import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.CacheManager;
 import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.serialization.CSVReadClientStrategy;
+import com.humanharvest.organz.utilities.serialization.JSONFileReader;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import org.apache.commons.csv.CSVFormat;
@@ -415,6 +420,8 @@ public class MenuBarController extends SubController {
                             break;
                     }
 
+                    LOGGER.log(Level.INFO, "Loaded clients from file");
+
                     HistoryItem load = new HistoryItem("LOAD",
                             "The systems state was loaded from " + file.getAbsolutePath());
                     JSONConverter.updateHistory(load, "action_history.json");
@@ -442,20 +449,49 @@ public class MenuBarController extends SubController {
     }
 
     /**
-     * Loads a json file from the stored fileName field.
+     * Loads Clients from the given JSON file.
      */
     private void loadJson(File file) throws IOException {
-        JSONConverter.loadFromFile(file);
+        List<Client> clients;
+
+        try (JSONFileReader<Client> clientReader = new JSONFileReader<>(file, Client.class)) {
+            clients = clientReader.getAll();
+
+            for (Client client : clients) {
+                for (TransplantRequest request : client.getTransplantRequests()) {
+                    request.setClient(client);
+                }
+                for (IllnessRecord record : client.getCurrentIllnesses()) {
+                    record.setClient(client);
+                }
+                for (IllnessRecord record : client.getPastIllnesses()) {
+                    record.setClient(client);
+                }
+                for (ProcedureRecord record : client.getPastProcedures()) {
+                    record.setClient(client);
+                }
+                for (ProcedureRecord record : client.getPendingProcedures()) {
+                    record.setClient(client);
+                }
+                for (MedicationRecord record : client.getCurrentMedications()) {
+                    record.setClient(client);
+                }
+                for (MedicationRecord record : client.getPastMedications()) {
+                    record.setClient(client);
+                }
+            }
+
+            clientManager.setClients(clients);
+        }
 
         Notifications.create()
                 .title("Loaded data")
-                .text(String.format("Successfully loaded %d clients from file", clientManager.getClients().size()))
+                .text(String.format("Successfully loaded %d clients from file", clients.size()))
                 .showInformation();
-        LOGGER.log(Level.INFO, String.format("Loaded %s clients from file", clientManager.getClients().size()));
     }
 
     /**
-     * Loads a csv file from the stored fileName field.
+     * Loads Clients from the given CSV file.
      */
     private void loadCsv(File file) throws IOException {
         int valid = 0;
@@ -484,7 +520,6 @@ public class MenuBarController extends SubController {
                                 "\n%d records were invalid.",
                         valid, invalid))
                 .showInformation();
-        LOGGER.log(Level.INFO, String.format("Loaded %s clients from file", valid));
     }
 
     /**

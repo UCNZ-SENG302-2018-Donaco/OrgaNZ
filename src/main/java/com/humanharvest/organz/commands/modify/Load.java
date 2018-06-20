@@ -11,10 +11,15 @@ import java.util.logging.Logger;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
+import com.humanharvest.organz.IllnessRecord;
+import com.humanharvest.organz.MedicationRecord;
+import com.humanharvest.organz.ProcedureRecord;
+import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.serialization.CSVReadClientStrategy;
+import com.humanharvest.organz.utilities.serialization.JSONFileReader;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -77,14 +82,46 @@ public class Load implements Runnable {
     }
 
     /**
-     * Loads a json file from the stored fileName field.
+     * Loads Clients from the given JSON file.
      */
     private void loadJson(File file) throws IOException {
-        JSONConverter.loadFromFile(file);
+        List<Client> clients;
+
+        try (JSONFileReader<Client> clientReader = new JSONFileReader<>(file, Client.class)) {
+            clients = clientReader.getAll();
+
+            for (Client client : clients) {
+                for (TransplantRequest request : client.getTransplantRequests()) {
+                    request.setClient(client);
+                }
+                for (IllnessRecord record : client.getCurrentIllnesses()) {
+                    record.setClient(client);
+                }
+                for (IllnessRecord record : client.getPastIllnesses()) {
+                    record.setClient(client);
+                }
+                for (ProcedureRecord record : client.getPastProcedures()) {
+                    record.setClient(client);
+                }
+                for (ProcedureRecord record : client.getPendingProcedures()) {
+                    record.setClient(client);
+                }
+                for (MedicationRecord record : client.getCurrentMedications()) {
+                    record.setClient(client);
+                }
+                for (MedicationRecord record : client.getPastMedications()) {
+                    record.setClient(client);
+                }
+            }
+
+            manager.setClients(clients);
+        }
+
+        System.out.println(String.format("%d clients loaded from JSON file.", clients.size()));
     }
 
     /**
-     * Loads a csv file from the stored fileName field.
+     * Loads Clients from the given CSV file.
      */
     private void loadCsv(File file) throws IOException {
         int valid = 0;
