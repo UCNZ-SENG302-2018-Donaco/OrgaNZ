@@ -4,9 +4,12 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
@@ -86,15 +89,17 @@ public class Load implements Runnable {
 
         try (CSVParser parser = CSVFormat.RFC4180.withFirstRecordAsHeader().parse(new FileReader(fileName))) {
             CSVReadClientStrategy strategy = new CSVReadClientStrategy();
+            List<Client> clients = new ArrayList<>();
 
             for (CSVRecord record : parser) {
                 try {
-                    manager.addClient(strategy.deserialise(record));
+                    clients.add(strategy.deserialise(record));
                     valid++;
                 } catch (IllegalArgumentException exc) {
                     invalid++;
                 }
             }
+            manager.setClients(clients);
         }
 
         System.out.println(String.format(
