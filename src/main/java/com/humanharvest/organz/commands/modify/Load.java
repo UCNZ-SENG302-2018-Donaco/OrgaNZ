@@ -1,14 +1,9 @@
 package com.humanharvest.organz.commands.modify;
 
-
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.nio.charset.StandardCharsets;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,6 +11,7 @@ import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.JSONConverter;
+import com.humanharvest.organz.utilities.serialization.CSVReadClientStrategy;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -28,6 +24,7 @@ import picocli.CommandLine.Parameters;
  */
 @Command(name = "load", description = "Load clients from file", sortOptions = false)
 public class Load implements Runnable {
+
     private static final Logger LOGGER = Logger.getLogger(Load.class.getName());
 
     private final ClientManager manager;
@@ -84,22 +81,27 @@ public class Load implements Runnable {
      * Loads a csv file from the stored fileName field.
      */
     private void loadCsv() throws IOException {
-        try (InputStream inputStream = new FileInputStream(fileName)) {
-            try (Reader streamReader = new InputStreamReader(inputStream, StandardCharsets.UTF_8)) {
-                try (CSVParser records = CSVFormat.RFC4180.withFirstRecordAsHeader().parse(streamReader)) {
-                    loadClientsFromCsv(records);
-                    HistoryItem load = new HistoryItem("LOAD",
-                            "The systems state was loaded from " + fileName.getAbsolutePath());
-                    JSONConverter.updateHistory(load, "action_history.json");
+        int valid = 0;
+        int invalid = 0;
+
+        try (CSVParser parser = CSVFormat.RFC4180.withFirstRecordAsHeader().parse(new FileReader(fileName))) {
+            CSVReadClientStrategy strategy = new CSVReadClientStrategy();
+
+            for (CSVRecord record : parser) {
+                try {
+                    manager.addClient(strategy.deserialise(record));
+                    valid++;
+                } catch (IllegalArgumentException exc) {
+                    invalid++;
                 }
             }
         }
-    }
 
-    private void loadClientsFromCsv(Iterable<CSVRecord> records) {
-        for (CSVRecord record : records) {
-            throw new RuntimeException();
-        }
+        System.out.println(String.format(
+                "Clients loaded from CSV file:" +
+                        "\n%d were valid," +
+                        "\n%d were invalid.",
+                valid, invalid));
     }
 
     private static String getFileExtension(String fileName) {
