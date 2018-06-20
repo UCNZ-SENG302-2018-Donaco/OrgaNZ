@@ -14,36 +14,40 @@ import org.apache.commons.csv.CSVRecord;
 
 public class CSVReadClientStrategy {
 
-    private static final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+    private static final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("M/dd/yyyy");
 
     public enum Header {
-        NHI, FIRST_NAME, LAST_NAME, DATE_OF_BIRTH, DATE_OF_DEATH, BIRTH_GENDER, GENDER_IDENTITY, BLOOD_TYPE, HEIGHT,
-        WEIGHT, STREET_NUMBER, STREET_NAME, NEIGHBORHOOD, CITY, REGION, POSTCODE, CURRENT_COUNTRY, BIRTH_COUNTRY,
-        PHONE_HOME, PHONE_MOBILE, EMAIL
+        nhi, first_names, last_names, date_of_birth, date_of_death, birth_gender, gender, blood_type, height, weight,
+        street_number, street_name, neighborhood, city, region, zip_code, country, birth_country, home_number,
+        mobile_number, email
     }
 
     public Client deserialise(CSVRecord record) throws IllegalArgumentException {
         Client client = new Client();
-        client.setFirstName(record.get(FIRST_NAME));
-        client.setLastName(record.get(LAST_NAME));
-        client.setDateOfBirth(parseDate(record.get(DATE_OF_BIRTH)));
-        client.setDateOfDeath(parseDate(record.get(DATE_OF_DEATH)));
-        client.setGender(Gender.fromString(record.get(BIRTH_GENDER)));
-        client.setGenderIdentity(Gender.fromString(record.get(GENDER_IDENTITY)));
-        client.setBloodType(BloodType.fromString(record.get(BLOOD_TYPE)));
-        client.setHeight(Double.parseDouble(record.get(HEIGHT)));
-        client.setWeight(Double.parseDouble(record.get(WEIGHT)));
+        client.setFirstName(record.get(first_names));
+        client.setLastName(record.get(last_names));
+        client.setDateOfBirth(parseDate(record.get(date_of_birth)));
+        client.setDateOfDeath(parseDate(record.get(date_of_death)));
+        client.setGender(Gender.fromString(record.get(birth_gender)));
+        client.setGenderIdentity(Gender.fromString(record.get(gender)));
+        client.setBloodType(BloodType.fromString(record.get(blood_type)));
+        client.setHeight(Double.parseDouble(record.get(height)));
+        client.setWeight(Double.parseDouble(record.get(weight)));
         client.setCurrentAddress(
-                record.get(STREET_NUMBER) + " " +
-                record.get(STREET_NAME) + ", " +
-                record.get(NEIGHBORHOOD) + ", " +
-                record.get(CITY) + ", " +
-                record.get(POSTCODE));
-        client.setRegion(Region.fromString(record.get(REGION)));
+                record.get(street_number) + " " +
+                record.get(street_name) + ", " +
+                record.get(neighborhood) + ", " +
+                record.get(city) + ", " +
+                record.get(zip_code));
+        client.setRegion(Region.fromString(record.get(region)));
         return client;
     }
 
     private LocalDate parseDate(String string) throws IllegalArgumentException {
+        if (string.equals("")) {
+            return null;
+        }
+
         try {
             return LocalDate.parse(string, dateFormat);
         } catch (DateTimeParseException exc) {
