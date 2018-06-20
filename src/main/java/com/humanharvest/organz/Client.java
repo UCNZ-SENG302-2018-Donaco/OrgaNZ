@@ -370,8 +370,12 @@ public class Client {
         this.region = region;
     }
 
-    public int getUid() {
+    public Integer getUid() {
         return uid;
+    }
+
+    public void setUid(Integer uid) {
+        this.uid = uid;
     }
 
     public LocalDateTime getCreatedTimestamp() {
