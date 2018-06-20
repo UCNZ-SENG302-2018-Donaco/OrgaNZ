@@ -41,6 +41,7 @@ import com.humanharvest.organz.utilities.CacheManager;
 import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.serialization.CSVReadClientStrategy;
 import com.humanharvest.organz.utilities.serialization.JSONFileReader;
+import com.humanharvest.organz.utilities.serialization.JSONFileWriter;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import org.apache.commons.csv.CSVFormat;
@@ -359,7 +360,9 @@ public class MenuBarController extends SubController {
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json"));
             File file = fileChooser.showSaveDialog(AppUI.getWindow());
             if (file != null) {
-                JSONConverter.saveToFile(file);
+                try (JSONFileWriter<Client> clientWriter = new JSONFileWriter<>(file, Client.class)) {
+                    clientWriter.overwriteWith(clientManager.getClients());
+                }
 
                 Notifications.create().title("Saved").text(String.format("Successfully saved %s clients to file %s",
                         clientManager.getClients().size(), file.getName())).showInformation();

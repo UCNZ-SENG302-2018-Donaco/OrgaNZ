@@ -11,7 +11,7 @@ import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.JSONConverter;
-
+import com.humanharvest.organz.utilities.serialization.JSONFileWriter;
 import picocli.CommandLine.Command;
 
 /**
@@ -19,7 +19,9 @@ import picocli.CommandLine.Command;
  */
 @Command(name = "save", description = "Save clients to file", sortOptions = false)
 public class Save implements Runnable {
+
     private static final Logger LOGGER = Logger.getLogger(Save.class.getName());
+    private static final String filename = "savefile.json";
 
     private final ClientManager manager;
 
@@ -38,13 +40,13 @@ public class Save implements Runnable {
             System.out.println("No clients exist, nothing to save");
             return;
         }
-        try {
-            JSONConverter.saveToFile(new File("savefile.json"));
-            LOGGER.log(Level.INFO, String.format("Saved %s clients to file", manager.getClients().size()));
+        try (JSONFileWriter<Client> clientWriter = new JSONFileWriter<>(new File(filename), Client.class)) {
+            clientWriter.overwriteWith(clients);
+            LOGGER.log(Level.INFO, String.format("Saved %s clients to file", clients.size()));
             HistoryItem save = new HistoryItem("SAVE", "The systems current state was saved.");
             JSONConverter.updateHistory(save, "action_history.json");
         } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Could not save to file: savefile.json", e);
+            LOGGER.log(Level.SEVERE, "Could not save to file: " + filename, e);
         }
     }
 }

@@ -9,8 +9,11 @@ import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
 
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.Expose;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 
@@ -25,6 +28,17 @@ public class JSONFileWriter<T> implements Closeable {
     private final Gson gson = new GsonBuilder()
             .setPrettyPrinting()
             .enableComplexMapKeySerialization()
+            .addSerializationExclusionStrategy(new ExclusionStrategy() {
+                @Override
+                public boolean shouldSkipField(FieldAttributes f) {
+                    return f.getAnnotation(Expose.class) != null && !f.getAnnotation(Expose.class).serialize();
+                }
+
+                @Override
+                public boolean shouldSkipClass(Class<?> clazz) {
+                    return false;
+                }
+            })
             .create();
     private final Type listType;
     private final File file;
