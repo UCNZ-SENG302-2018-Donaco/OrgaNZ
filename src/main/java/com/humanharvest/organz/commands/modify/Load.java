@@ -48,18 +48,17 @@ public class Load implements Runnable {
 
     @Override
     public void run() {
-        String realFormat = format;
-        if (realFormat == null) {
-            realFormat = getFileExtension(fileName.getName());
+        if (format == null) {
+            format = getFileExtension(fileName.getName());
         }
 
         try {
-            if ("csv".equalsIgnoreCase(realFormat)) {
+            if ("csv".equalsIgnoreCase(format)) {
                 loadCsv();
-            } else if ("json".equalsIgnoreCase(realFormat)) {
+            } else if ("json".equalsIgnoreCase(format)) {
                 loadJson();
             } else {
-                System.out.println("Unknown file format or extension: " + realFormat);
+                System.out.println("Unknown file format or extension: " + format);
             }
 
             LOGGER.log(Level.INFO, String.format("Loaded %s clients from file", manager.getClients().size()));
