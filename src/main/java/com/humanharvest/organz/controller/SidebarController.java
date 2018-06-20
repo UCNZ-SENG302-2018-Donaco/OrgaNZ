@@ -250,6 +250,7 @@ public class SidebarController extends SubController {
 
     /**
      * Opens a save file dialog to choose where to save all clients in the system to a file.
+     * TODO remove as saving should not be allowed from sidebar
      */
     @FXML
     private void save() {
@@ -282,6 +283,7 @@ public class SidebarController extends SubController {
 
     /**
      * Opens a load file dialog to choose a file to load all clients from.
+     * TODO remove as loading should not be allowed from sidebar
      */
     @FXML
     private void load() {
@@ -327,6 +329,7 @@ public class SidebarController extends SubController {
 
     /**
      * Logs out the current user and sends them to the Landing page.
+     * TODO duplicated in menubarcontroller - code smell
      */
     @FXML
     private void logout() {
@@ -346,6 +349,7 @@ public class SidebarController extends SubController {
 
     /**
      * Undoes the most recent action performed in the system, and refreshes the current page to reflect the change.
+     * TODO duplicated in menubarcontroller - code smell
      */
     @FXML
     private void undo() {
@@ -358,6 +362,7 @@ public class SidebarController extends SubController {
 
     /**
      * Redoes the most recent action performed in the system, and refreshes the current page to reflect the change.
+     * TODO duplicated in menubarcontroller - code smell
      */
     @FXML
     private void redo() {
