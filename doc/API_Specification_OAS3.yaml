@@ -1,0 +1,546 @@
+openapi: "3.0.1"
+info:
+  version: 1.0.0
+  title: "Organz API"
+  description: |
+    An API used to access the Human Harvest Inc server.
+    Versioning: Adding new endpoints, adding parameters or key value pairs are all minor changes, as they are still valid with a past client.
+      Major changes include: Modifying the data types of any parameters or values, removing key value pairs, removing endpoints. These CANNOT be pushed without maintaining a legacy version and upgrading the system to a new version.
+      
+security: 
+  - bearerAuth: []
+  
+paths:
+  /clients:
+    get:
+      summary: "Returns all clients from the system"
+      parameters:
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/offset'
+        - $ref: '#/components/parameters/count'
+        - $ref: '#/components/parameters/minimumAge'
+        - $ref: '#/components/parameters/maximumAge'
+        - $ref: '#/components/parameters/region'
+        - $ref: '#/components/parameters/birthGender'
+        - $ref: '#/components/parameters/clientType'
+        - $ref: '#/components/parameters/donating'
+        - $ref: '#/components/parameters/requesting'
+      responses:
+        '200':
+          description: A list of clients
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/clients'
+                
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      summary: Create a new client
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/clientOverview'
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/clientOverview'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  '/clients/{uid}':
+    parameters:
+    - in: path
+      name: uid
+      description: Client User ID
+      required: true
+      schema:
+        type: integer
+        minimum: 0
+    get:
+      summary: Get detailed client information
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/clientDetails'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    patch:
+      summary: Change some information about a client
+      description: Only those properties included in the request body will be changed.
+      requestBody:
+        content:
+          application/json:
+            schema:
+                $ref: '#/components/schemas/clientModifiableDetails'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/clientDetails'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      summary: Delete a client
+      responses:
+        '201':
+          description: Deleted
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+          
+  '/clients/{uid}/donationStatus':
+    parameters:
+    - in: path
+      name: uid
+      description: Client User ID
+      required: true
+      schema:
+        type: integer
+        minimum: 0
+    get:
+      summary: Get the list of a given clients donation status
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/organDonationStatus'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    patch:
+      summary: Change a clients organ donation status
+      description: Only those organs included in the request body will be changed.
+      requestBody:
+        content:
+          application/json:
+            schema:
+                $ref: '#/components/schemas/organDonationStatus'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/organDonationStatus'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+          
+  '/clients/{uid}/medications':
+    parameters:
+    - in: path
+      name: uid
+      description: Client User ID
+      required: true
+      schema:
+        type: integer
+        minimum: 0
+    get:
+      summary: Get the list of a given clients medications
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/medicationRecord'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+          
+  '/clients/{uid}/medications/{id}':
+    parameters:
+    - in: path
+      name: uid
+      description: Client User ID
+      required: true
+      schema:
+        type: integer
+        minimum: 0
+    - in: path
+      name: id
+      description: Medication record ID
+      required: true
+      schema:
+        type: integer
+    patch:
+      summary: Update a medication record
+      requestBody:
+        content:
+          application/json:
+            schema:
+                $ref: '#/components/schemas/medicationRecord'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/medicationRecord'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      summary: Delete a medication record
+      responses:
+        '201':
+          description: Deleted
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  
+components:
+  parameters:
+    q:
+      name: q
+      in: query
+      description: "The search string"
+      schema:
+        type: string
+        
+    offset:
+      name: offset
+      in: query
+      description: "The offset from the start of the result set, used for pagination"
+      schema:
+        type: integer
+        
+    count:
+      name: count
+      in: query
+      description: "How many results to return, used for pagination"
+      schema:
+        type: integer
+                
+    minimumAge:
+      name: minimumAge
+      in: query
+      description: "The minimum age to filter"
+      schema:
+        type: integer
+                
+    maximumAge:
+      name: maximumAge
+      in: query
+      description: "The maximum age to filter"
+      schema:
+        type: integer
+        
+    region:
+      name: region
+      in: query
+      description: "The region to filter, may be comma seperated for multiple"
+      schema:
+        $ref: '#/components/schemas/regionEnum'
+        
+    birthGender:
+      name: birthGender
+      in: query
+      description: "The birth gender to filter, may be comma seperated for multiple"
+      schema:
+        $ref: '#/components/schemas/genderEnum'
+        
+    clientType:
+      name: clientType
+      in: query
+      description: "The client type to filter"
+      schema:
+        $ref: '#/components/schemas/clientTypeEnum'
+        
+    donating:
+      name: donating
+      in: query
+      description: "Only return clients that are donating the given organs, may be comma seperated for multiple"
+      schema:
+        $ref: '#/components/schemas/organsEnum'
+        
+    requesting:
+      name: requesting
+      in: query
+      description: "Only return clients that are requesting the given organs, may be comma seperated for multiple"
+      schema:
+        $ref: '#/components/schemas/organsEnum'
+        
+    
+        
+  schemas:
+    #Client attributes
+    
+    
+  
+  
+    clientOverview:
+      type: object
+      properties:
+        uid:
+          type: integer
+        firstName:
+          type: string
+        lastName:
+          type: string
+        middleName:
+          type: string
+        dateOfBirth:
+            $ref: '#/components/schemas/date'
+          
+    clientDetails:
+      type: object
+      properties:
+        uid:
+          type: integer
+        firstName:
+          type: string
+        middleName:
+          type: string
+        lastName:
+          type: string
+        preferredName:
+          type: string
+        currentAddress:
+          type: string
+        height:
+          type: number
+        weight:
+          type: number
+        region:
+          $ref: '#/components/schemas/regionEnum'
+        birthGender:
+          $ref: '#/components/schemas/genderEnum'
+        genderIdentity:
+          $ref: '#/components/schemas/genderEnum'
+        dateOfBirth:
+          $ref: '#/components/schemas/date'
+        dateOfDeath:
+          $ref: '#/components/schemas/date'
+        createdTimestamp:
+          $ref: '#/components/schemas/dateTime'
+        modifiedTimestamp:
+          $ref: '#/components/schemas/dateTime'
+    
+    clientModifiableDetails:
+      type: object
+      properties:
+        firstName:
+          type: string
+        middleName:
+          type: string
+        lastName:
+          type: string
+        preferredName:
+          type: string
+        currentAddress:
+          type: string
+        height:
+          type: number
+        weight:
+          type: number
+        region:
+          $ref: '#/components/schemas/regionEnum'
+        birthGender:
+          $ref: '#/components/schemas/genderEnum'
+        genderIdentity:
+          $ref: '#/components/schemas/genderEnum'
+        dateOfBirth:
+          $ref: '#/components/schemas/date'
+        dateOfDeath:
+          $ref: '#/components/schemas/date'
+          
+    date:
+      type: object
+      properties:
+        year:
+          type: integer
+        month:
+          type: integer
+        day:
+          type: integer
+    time:
+      type: object
+      properties:
+        hour:
+          type: integer
+        minute:
+          type: integer
+        second:
+          type: integer
+        nano:
+          type: integer
+    dateTime:
+      type: object
+      properties:
+        date:
+          $ref: '#/components/schemas/date'
+        time:
+          $ref: '#/components/schemas/time'
+    
+          
+    clients:
+      type: array
+      items:
+        $ref: '#/components/schemas/clientOverview'
+        
+    organDonationStatus:
+      type: object
+      properties:
+        LIVER:
+          type: boolean
+        KIDNEY:
+          type: boolean
+        PANCREAS:
+          type: boolean
+        HEART:
+          type: boolean
+        LUNG:
+          type: boolean
+        INTESTINE:
+          type: boolean
+        CORNEA:
+          type: boolean
+        MIDDLE_EAR:
+          type: boolean
+        SKIN:
+          type: boolean
+        BONE:
+          type: boolean
+        BONE_MARROW:
+          type: boolean
+        CONNECTIVE_TISSUE:
+          type: boolean
+    
+    medicationRecord:
+      type: object
+      properties:
+        id:
+          type: number
+        clientId: #References the Client ID, is this required? It's in the Object but we will know what client it is by the request
+          type: number
+        name:
+          type: string
+        started:
+          $ref: '#/components/schemas/date'
+        stopped:
+          $ref: '#/components/schemas/date'
+        
+    #ENUMs
+    
+    regionEnum:
+      type: string
+      enum: [a, b]
+      
+    genderEnum:
+      type: string
+      enum: [MALE, FEMALE, OTHER, UNSPECIFIED]
+      
+    clientTypeEnum:
+      type: string
+      enum: [any, onlyDonor, onlyReceiver, both, neither]
+      
+    organsEnum:
+      type: string
+      enum: [LIVER, KIDNEY, PANCREAS, HEART, LUNG, INTESTINE, CORNEA, MIDDLE_EAR, SKIN, BONE, BONE_MARROW, CONNECTIVE_TISSUE]
+      
+    bloodTypeEnum:
+      type: string
+      enum: [A_POS, A_NEG, B_POS, B_NEG, AB_POS, AB_NEG, O_POS, O_NEG]
+      
+  responses:
+    BadRequestError: #400
+      description: Bad request
+    NotFoundError: #404
+      description: The specified resource was not found
+    UnauthorizedError: #401
+      description: Access token is missing or invalid
+    ForbiddenError: #403
+      description: You do not have permission to perform that action
+    InternalServerError: #500
+      description: Internal server error
+    
+      
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
