@@ -14,6 +14,9 @@ import java.io.Reader;
 import java.io.Writer;
 import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -33,6 +36,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
+import com.mysql.jdbc.StringUtils;
 
 /**
  * Uses GSON to convert Java objects into JSON files and from JSON files
@@ -101,10 +105,71 @@ public final class JSONConverter {
                     clients = gson.fromJson(reader, collectionType);
 
                     for (Client client : clients) {
-                        if (client.getUid() == 0) {
-                            // Either their UID was not defined (so invalid client) or it was set to 0 (not allowed)
-                            throw new IllegalArgumentException("Not a valid clients file.");
+
+                        // Test validity of client
+
+                        if (client.getUid() <= 0) {
+                            // Either their UID was not defined (so .getUid() will return 0, indicating an invalid
+                            // client) or it was set to <=0 (not allowed)
+                            String message = "Not a valid clients file: every client should have a "
+                                    + "positive, non-zero integer UID.";
+                            if (client.getUid() != 0) {
+                                // If it is 0, the field may be null, so only include this in the message if it isn't 0.
+                                message += "\nCurrently, user " + client.getUid() + " doesn't.";
+                            }
+                            throw new IllegalArgumentException(message);
                         }
+                        if (StringUtils.isNullOrEmpty(client.getFirstName())) {
+                            throw new IllegalArgumentException("Not a valid clients file: every client should have a "
+                                    + "non-empty first name.\n"
+                                    + "Currently, user " + client.getUid() + " doesn't.");
+                        }
+                        if (StringUtils.isNullOrEmpty(client.getLastName())) {
+                            throw new IllegalArgumentException("Not a valid clients file: every client should have a "
+                                    + "non-empty last name.\n"
+                                    + "Currently, user " + client.getUid() + " doesn't.");
+                        }
+                        if (client.getDateOfBirth() == null) {
+                            throw new IllegalArgumentException("Not a valid clients file: every client should have a "
+                                    + "non-null date of birth.\n"
+                                    + "Currently, user " + client.getUid() + " doesn't.");
+                        }
+
+                        // Catch any invalid dates of birth (eg date >31), or dates with null months, etc.
+                        try {
+                            LocalDate.parse(client.getDateOfBirth().toString());
+                        } catch (DateTimeParseException e) {
+                            throw new IllegalArgumentException("Not a valid clients file: every client should have a "
+                                    + "valid date of birth.\n"
+                                    + "Currently, user " + client.getUid() + " doesn't.");
+                        }
+
+                        // Catch future birthday
+                        if (client.getDateOfBirth().isAfter(LocalDate.now())) {
+                            throw new IllegalArgumentException("Not a valid clients file: every client should have a "
+                                    + "date of birth that isn't after today.\n"
+                                    + "Currently, user " + client.getUid() + " doesn't.");
+                        }
+
+                        // Catch any invalid creation timestamps (eg date >31), or dates with null months, etc.
+                        try {
+                            LocalDateTime.parse(client.getCreatedTimestamp().toString());
+                        } catch (DateTimeParseException e) {
+                            throw new IllegalArgumentException("Not a valid clients file: every client should have a "
+                                    + "valid creation timestamp, or none at all (then one will be created based on "
+                                    + "the current timestamp).\n"
+                                    + "Currently, user " + client.getUid() + " doesn't.");
+                        }
+
+                        // Catch future profile creation timestamp
+                        if (client.getCreatedTimestamp().isAfter(LocalDateTime.now())) {
+                            throw new IllegalArgumentException("Not a valid clients file: every client should have a "
+                                    + "profile creation timestamp that isn't after the current time and date.\n"
+                                    + "Currently, user " + client.getUid() + " doesn't.");
+                        }
+
+                        // Add client to each record it has
+
                         for (TransplantRequest request : client.getTransplantRequests()) {
                             request.setClient(client);
                         }
@@ -130,7 +195,9 @@ public final class JSONConverter {
                     ClientManager clientManager = State.getClientManager();
                     clientManager.setClients(clients);
                 } catch (JsonSyntaxException e) {
-                    throw new IllegalArgumentException("Not a valid json file", e);
+                    // This can happen because of invalid JSON or invalid values (e.g. float/string where there should
+                    // be an int)
+                    throw new IllegalArgumentException("Not a valid clients file.", e);
                 }
             }
         }
