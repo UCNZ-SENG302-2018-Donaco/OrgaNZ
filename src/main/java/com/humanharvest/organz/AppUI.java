@@ -56,7 +56,7 @@ public class AppUI extends Application {
             DataStorageType storageType;
 
             if (storageArg == null) {
-                storageType = DataStorageType.MEMORY;
+                storageType = DataStorageType.PUREDB;
             } else {
                 storageType = DataStorageType.valueOf(storageArg);
             }
