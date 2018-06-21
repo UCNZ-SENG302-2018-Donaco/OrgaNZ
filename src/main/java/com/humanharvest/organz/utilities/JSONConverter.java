@@ -22,6 +22,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Logger;
 
+import com.google.gson.ExclusionStrategy;
+import com.google.gson.FieldAttributes;
+import com.google.gson.annotations.Expose;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.IllnessRecord;
@@ -36,6 +39,9 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
+import com.humanharvest.organz.utilities.enums.BloodType;
+import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.enums.Region;
 import com.mysql.jdbc.StringUtils;
 
 /**
@@ -45,11 +51,24 @@ import com.mysql.jdbc.StringUtils;
 public final class JSONConverter {
 
     private static final Logger LOGGER = Logger.getLogger(JSONConverter.class.getName());
+    private static final double DELTA = 1e-6;
 
     private static final Gson gson = new GsonBuilder()
             .setPrettyPrinting()
             .enableComplexMapKeySerialization()
             .registerTypeAdapterFactory(CacheManager.GSON_FACTORY)
+            .addSerializationExclusionStrategy(new ExclusionStrategy() {
+                @Override
+                public boolean shouldSkipField(FieldAttributes f) {
+                    return f.getAnnotation(Expose.class) != null && !f.getAnnotation(Expose.class).serialize();
+                }
+
+                @Override
+                public boolean shouldSkipClass(Class<?> clazz) {
+                    return false;
+                }
+            })
+
             .create();
 
     private JSONConverter() {
@@ -106,7 +125,7 @@ public final class JSONConverter {
 
                     for (Client client : clients) {
 
-                        // Test validity of client
+                        // Test validity of client's compulsory fields
 
                         if (client.getUid() <= 0) {
                             // Either their UID was not defined (so .getUid() will return 0, indicating an invalid
@@ -151,6 +170,42 @@ public final class JSONConverter {
                                     + "Currently, user " + client.getUid() + " doesn't.");
                         }
 
+                        // Test validity of client's optional fields
+
+                        // Catch negative heights
+                        if (client.getHeight() < -DELTA) {
+                            throw new IllegalArgumentException("Not a valid clients file: no client should have a "
+                                    + "negative height.\n"
+                                    + "Currently, user " + client.getUid() + " does.");
+                        }
+
+                        // Catch negative weights
+                        if (client.getWeight() < -DELTA) {
+                            throw new IllegalArgumentException("Not a valid clients file: no client should have a "
+                                    + "negative weight.\n"
+                                    + "Currently, user " + client.getUid() + " does.");
+                        }
+
+                        if (client.getDateOfDeath() != null) {
+                            // Catch any invalid dates of death (eg date >31), or dates with null months, etc.
+                            try {
+                                LocalDate.parse(client.getDateOfDeath().toString());
+                            } catch (DateTimeParseException e) {
+                                throw new IllegalArgumentException(
+                                        "Not a valid clients file: dead clients should have a "
+                                                + "valid date of death.\n"
+                                                + "Currently, user " + client.getUid() + " doesn't.");
+                            }
+
+                            // Catch future deathday
+                            if (client.getDateOfDeath().isAfter(LocalDate.now())) {
+                                throw new IllegalArgumentException(
+                                        "Not a valid clients file: every client should have a "
+                                                + "date of death that isn't after today.\n"
+                                                + "Currently, user " + client.getUid() + " doesn't.");
+                            }
+                        }
+
                         // Catch any invalid creation timestamps (eg date >31), or dates with null months, etc.
                         try {
                             LocalDateTime.parse(client.getCreatedTimestamp().toString());
@@ -167,6 +222,94 @@ public final class JSONConverter {
                                     + "profile creation timestamp that isn't after the current time and date.\n"
                                     + "Currently, user " + client.getUid() + " doesn't.");
                         }
+
+                        if (client.getModifiedTimestamp() != null) {
+                            // Catch any invalid last modification timestamps (eg date >31), or dates with null months, etc.
+                            try {
+                                LocalDateTime.parse(client.getModifiedTimestamp().toString());
+                            } catch (DateTimeParseException e) {
+                                throw new IllegalArgumentException(
+                                        "Not a valid clients file: every client should have a "
+                                                + "valid last modified timestamp, or none at all.\n"
+                                                + "Currently, user " + client.getUid() + " doesn't.");
+                            }
+
+                            // Catch future last modification timestamp
+                            if (client.getModifiedTimestamp().isAfter(LocalDateTime.now())) {
+                                throw new IllegalArgumentException(
+                                        "Not a valid clients file: every client should have a "
+                                                + "last modified timestamp that isn't after the current time and date,"
+                                                + "or none at all.\n"
+                                                + "Currently, user " + client.getUid() + " doesn't.");
+                            }
+
+                            // Catch last modification timestamp before creation timestamp
+                            if (client.getModifiedTimestamp().isBefore(client.getCreatedTimestamp())) {
+                                throw new IllegalArgumentException(
+                                        "Not a valid clients file: every client should have a "
+                                                + "last modified timestamp that is after the creation timestamp,"
+                                                + "or none at all.\n"
+                                                + "Currently, user " + client.getUid() + " doesn't.");
+                            }
+                        }
+
+                        // Check all donating organs are valid
+                        for (Organ organ : client.getCurrentlyDonatedOrgans()) {
+                            if (organ == null) {
+                                throw new IllegalArgumentException("Not a valid clients file: all organs being "
+                                        + "donated should be valid organs.\n"
+                                        + "Currently, user " + client.getUid() + " has at least one that isn't.");
+                            }
+                        }
+
+                        // Check all organ requests are valid
+                        for (TransplantRequest request : client.getTransplantRequests()) {
+                            // Check for valid organ
+                            if (request.getRequestedOrgan() == null) {
+                                throw new IllegalArgumentException("Not a valid clients file: "
+                                        + "all organs being requested should be valid organs.\n"
+                                        + "Currently, user " + client.getUid() + " has at least one that isn't.");
+                            }
+
+                            // Check for valid request date
+                            try {
+                                LocalDateTime.parse(request.getRequestDate().toString());
+                            } catch (DateTimeParseException e) {
+                                throw new IllegalArgumentException("Not a valid clients file: "
+                                        + "all transplant requests should have valid dates.\n"
+                                        + "Currently, user " + client.getUid() + " has at least one that isn't.");
+                            }
+
+                            // Catch any future request dates
+                            if (request.getRequestDate().isAfter(LocalDateTime.now())) {
+                                throw new IllegalArgumentException("Not a valid clients file: "
+                                        + "all transplant requests should have dates in the past.\n"
+                                        + "Currently, user " + client.getUid() + " has at least one that isn't.");
+                            }
+
+                            // Check for valid request status
+                            if (request.getStatus() == null) {
+                                throw new IllegalArgumentException("Not a valid clients file: "
+                                        + "all transplant requests should have a valid status.\n"
+                                        + "Currently, user " + client.getUid() + " has at least one that doesn't.");
+                            }
+
+                            if (request.getResolvedDate() != null) {
+                                // Check for valid resolve date
+                                try {
+                                    LocalDateTime.parse(request.getResolvedDate().toString());
+                                } catch (DateTimeParseException e) {
+                                    throw new IllegalArgumentException("Not a valid clients file: "
+                                            + "all transplant requests should have valid resolution dates (if they have a"
+                                            + " resolution date).\n"
+                                            + "Currently, user " + client.getUid() + " has at least one that isn't.");
+                                }
+
+                                // Catch any future resolve dates
+                            }
+
+                        }
+
 
                         // Add client to each record it has
 

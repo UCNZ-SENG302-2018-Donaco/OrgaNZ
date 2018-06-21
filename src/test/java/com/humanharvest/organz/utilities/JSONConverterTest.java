@@ -18,22 +18,35 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
+import java.util.regex.Pattern;
 
 import javax.sql.DataSource;
 
 import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.ClientManagerMemory;
 import com.humanharvest.organz.state.State;
 
 import com.humanharvest.organz.state.State.DataStorageType;
+import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.enums.Region;
+import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
+import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
 public class JSONConverterTest extends BaseTest {
+
+    int uid;
+    Client client;
+    Organ organ;
+    TransplantRequest request;
+    int nextYear;
+    int currentYear;
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
@@ -52,6 +65,18 @@ public class JSONConverterTest extends BaseTest {
     @Before
     public void initialise() {
         State.init(DataStorageType.MEMORY);
+        uid = 5;
+        client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), uid);
+        organ = Organ.CORNEA;
+        try {
+            client.setOrganDonationStatus(organ, true);
+        } catch (OrganAlreadyRegisteredException e) {
+            fail();
+        }
+        request = new TransplantRequest(client, organ);
+        client.addTransplantRequest(request);
+        currentYear = LocalDate.now().getYear();
+        nextYear = currentYear + 1;
     }
 
     @Test
@@ -116,8 +141,8 @@ public class JSONConverterTest extends BaseTest {
 
     @Test
     public void failToLoadFromFileNegativeUidTest() throws Exception {
-        int uid = -1;
-        Client client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), uid);
+        uid = -1;
+        client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), uid);
         try {
             saveClientToAndLoadFromFile(client);
             fail();
@@ -128,8 +153,8 @@ public class JSONConverterTest extends BaseTest {
 
     @Test
     public void failToLoadFromFileZeroUidTest() throws Exception {
-        int uid = 0;
-        Client client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), uid);
+        uid = 0;
+        client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), uid);
         try {
             saveClientToAndLoadFromFile(client);
             fail();
@@ -140,8 +165,7 @@ public class JSONConverterTest extends BaseTest {
 
     @Test
     public void failToLoadFromFileEmptyFirstNameTest() throws Exception {
-        int uid = 5;
-        Client client = new Client("", null, "Last", LocalDate.of(1970, 1, 1), uid);
+        client.setFirstName("");
         try {
             saveClientToAndLoadFromFile(client);
             fail();
@@ -152,8 +176,7 @@ public class JSONConverterTest extends BaseTest {
 
     @Test
     public void failToLoadFromFileEmptyLastNameTest() throws Exception {
-        int uid = 5;
-        Client client = new Client("First", null, "", LocalDate.of(1970, 1, 1), uid);
+        client.setLastName("");
         try {
             saveClientToAndLoadFromFile(client);
             fail();
@@ -164,8 +187,7 @@ public class JSONConverterTest extends BaseTest {
 
     @Test
     public void failToLoadFromFileNullDateOfBirthTest() throws Exception {
-        int uid = 5;
-        Client client = new Client("First", null, "Last", null, uid);
+        client.setDateOfBirth(null);
         try {
             saveClientToAndLoadFromFile(client);
             fail();
@@ -176,8 +198,7 @@ public class JSONConverterTest extends BaseTest {
 
     @Test
     public void failToLoadFromFileInvalidDateOfBirthTest() throws Exception {
-        int uid = 5;
-        Client client = new Client("First", null, "Last", LocalDate.of(1970, 2, 22), uid);
+        client.setDateOfBirth(LocalDate.of(1970, 2, 22));
         File file = folder.newFile("testfile.json");
         saveClientToFile(client, file);
 
@@ -194,9 +215,60 @@ public class JSONConverterTest extends BaseTest {
 
     @Test
     public void failToLoadFromFileFutureDateOfBirthTest() throws Exception {
-        int uid = 5;
-        int nextYear = LocalDate.now().getYear() + 1;
-        Client client = new Client("First", null, "Last", LocalDate.of(nextYear, 2, 22), uid);
+        client.setDateOfBirth(LocalDate.of(nextYear, 2, 22));
+        try {
+            saveClientToAndLoadFromFile(client);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains(String.valueOf(uid)));
+        }
+    }
+
+    @Test
+    public void failToLoadFromFileNegativeHeightTest() throws Exception {
+        client.setHeight(-8);
+
+        try {
+            saveClientToAndLoadFromFile(client);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains(String.valueOf(uid)));
+        }
+    }
+
+    @Test
+    public void failToLoadFromFileNegativeWeightTest() throws Exception {
+        client.setWeight(-8);
+
+        try {
+            saveClientToAndLoadFromFile(client);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains(String.valueOf(uid)));
+        }
+    }
+
+    @Test
+    public void failToLoadFromFileInvalidDateOfDeathTest() throws Exception {
+        client.setDateOfDeath(LocalDate.of(2018, 2, 22));
+        File file = folder.newFile("testfile.json");
+        saveClientToFile(client, file);
+
+        // Replace day of month (22) with 30, which is invalid (30 February does not exist)
+        replaceAllInFile(file, "22", "30");
+
+        try {
+            JSONConverter.loadFromFile(file);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains(String.valueOf(uid)));
+        }
+    }
+
+    @Test
+    public void failToLoadFromFileFutureDateOfDeathTest() throws Exception {
+        client.setDateOfDeath(LocalDate.of(nextYear, 2, 22));
+
         try {
             saveClientToAndLoadFromFile(client);
             fail();
@@ -207,15 +279,18 @@ public class JSONConverterTest extends BaseTest {
 
     @Test
     public void failToLoadFromFileFutureCreationTimestampTest() throws Exception {
-        int uid = 5;
-        Client client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), uid);
         File file = folder.newFile("testfile.json");
         saveClientToFile(client, file);
 
         // Replace year of creation (current year) with next year - future creation dates are invalid
-        int currentYear = LocalDate.now().getYear();
-        int nextYear = currentYear + 1;
-        replaceAllInFile(file, String.valueOf(currentYear), String.valueOf(nextYear));
+        String createdTimestampYearPrefixRegex = "\"createdTimestamp\":\\s*\\{\n"
+                + "\\s*\"date\":\\s*\\{\n"
+                + "\\s*\"year\":\\s*";
+        String createdTimestampYearPrefix = "\"createdTimestamp\":\\{\n"
+                + "\"date\":\\{\n"
+                + "\"year\":";
+        replaceAllInFile(file, createdTimestampYearPrefixRegex + String.valueOf(currentYear),
+                createdTimestampYearPrefix + String.valueOf(nextYear));
 
         try {
             JSONConverter.loadFromFile(file);
@@ -224,5 +299,197 @@ public class JSONConverterTest extends BaseTest {
             assertTrue(e.getMessage().contains(String.valueOf(uid)));
         }
     }
+
+    @Test
+    public void failToLoadFromFileFutureLastModifiedTimestampTest() throws Exception {
+        File file = folder.newFile("testfile.json");
+        client.setLastName("Alt Last"); //a modification
+        saveClientToFile(client, file);
+
+        // Replace year of last modification (current year) with next year - future last modification dates are invalid
+        String modifiedTimestampYearPrefixRegex = "\"modifiedTimestamp\":\\s*\\{\n"
+                + "\\s*\"date\":\\s*\\{\n"
+                + "\\s*\"year\":\\s*";
+        String modifiedTimestampYearPrefix = "\"modifiedTimestamp\":\\{\n"
+                + "\"date\":\\{\n"
+                + "\"year\":";
+        replaceAllInFile(file, modifiedTimestampYearPrefixRegex + String.valueOf(currentYear),
+                modifiedTimestampYearPrefix + String.valueOf(nextYear));
+
+        try {
+            JSONConverter.loadFromFile(file);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains(String.valueOf(uid)));
+        }
+    }
+
+    @Test
+    public void failToLoadFromFileLastModifiedTimestampBeforeCreationTest() throws Exception {
+        File file = folder.newFile("testfile.json");
+        client.setLastName("Alt Last"); //a modification
+        saveClientToFile(client, file);
+
+        // Replace year of last modification (current year) with last year - this will be before creation
+        int currentYear = LocalDate.now().getYear();
+        int lastYear = currentYear - 1;
+        String modifiedTimestampYearPrefixRegex = "\"modifiedTimestamp\":\\s*\\{\n"
+                + "\\s*\"date\":\\s*\\{\n"
+                + "\\s*\"year\":\\s*";
+        String modifiedTimestampYearPrefix = "\"modifiedTimestamp\":\\{\n"
+                + "\"date\":\\{\n"
+                + "\"year\":";
+        replaceAllInFile(file, modifiedTimestampYearPrefixRegex + String.valueOf(currentYear),
+                modifiedTimestampYearPrefix + String.valueOf(lastYear));
+
+        try {
+            JSONConverter.loadFromFile(file);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains(String.valueOf(uid)));
+        }
+    }
+
+    @Test
+    public void failToLoadFromFileInvalidOrganDonatingTest() throws Exception {
+        File file = folder.newFile("testfile.json");
+        saveClientToFile(client, file);
+        replaceAllInFile(file, organ.name(), "INVALID_ORGAN");
+
+        try {
+            JSONConverter.loadFromFile(file);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains(String.valueOf(uid)));
+        }
+    }
+
+    @Test
+    public void failToLoadFromFileInvalidOrganRequestOrganTest() throws Exception {
+        File file = folder.newFile("testfile.json");
+        saveClientToFile(client, file);
+        replaceAllInFile(file, organ.name(), "INVALID_ORGAN");
+
+        try {
+            JSONConverter.loadFromFile(file);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains(String.valueOf(uid)));
+        }
+    }
+
+    @Test
+    public void failToLoadFromFileInvalidOrganRequestDateTest() throws Exception {
+        File file = folder.newFile("testfile.json");
+        saveClientToFile(client, file);
+
+        String partialJsonTimestampRegex = "\"transplantRequests\":\\s*\\[\n"
+                + "\\s*\\{\n"
+                + "\\s*\"requestedOrgan\": \"" + organ.name() + "\",\n"
+                + "\\s*\"requestDate\":\\s*\\{\n"
+                + "\\s*\"date\":\\s*\\{\n"
+                + "\\s*\"year\":\\s*[0-9]+,\n"
+                + "\\s*\"month\":\\s*[0-9]+,\n"
+                + "\\s*\"day\":";
+        String partialJsonTimestampModified = "\"transplantRequests\": [\n"
+                + "      {\n"
+                + "        \"requestedOrgan\": \"LIVER\",\n"
+                + "        \"requestDate\": {\n"
+                + "          \"date\": {\n"
+                + "            \"day\":";
+        replaceAllInFile(file, partialJsonTimestampRegex, partialJsonTimestampModified);
+
+        try {
+            JSONConverter.loadFromFile(file);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains(String.valueOf(uid)));
+        }
+    }
+
+    @Test
+    public void failToLoadFromFileFutureOrganRequestDateTest() throws Exception {
+        File file = folder.newFile("testfile.json");
+        saveClientToFile(client, file);
+
+        String partialJsonTimestampRegex = "\"transplantRequests\":\\s*\\[\n"
+                + "\\s*\\{\n"
+                + "\\s*\"requestedOrgan\": \"" + organ.name() + "\",\n"
+                + "\\s*\"requestDate\":\\s*\\{\n"
+                + "\\s*\"date\":\\s*\\{\n"
+                + "\\s*\"year\": " + String.valueOf(currentYear);
+        String partialJsonTimestampModified = "\"transplantRequests\": [\n"
+                + "      {\n"
+                + "        \"requestedOrgan\": \"LIVER\",\n"
+                + "        \"requestDate\": {\n"
+                + "          \"date\": {\n"
+                + "            \"year\": " + String.valueOf(nextYear);
+        replaceAllInFile(file, partialJsonTimestampRegex, partialJsonTimestampModified);
+
+        try {
+            JSONConverter.loadFromFile(file);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains(String.valueOf(uid)));
+        }
+    }
+
+    @Test
+    public void failToLoadFromFileInvalidTransplantRequestStatusTest() throws Exception {
+        TransplantRequestStatus status = TransplantRequestStatus.WAITING;
+        File file = folder.newFile("testfile.json");
+        saveClientToFile(client, file);
+        replaceAllInFile(file, status.name(), "INVALID_STATUS");
+
+        try {
+            JSONConverter.loadFromFile(file);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains(String.valueOf(uid)));
+        }
+    }
+
+    //TODO
+    @Test
+    public void failToLoadFromFileInvalidResolveDateTest() throws Exception {
+        File file = folder.newFile("testfile.json");
+        request.setStatus(TransplantRequestStatus.COMPLETED);
+        request.setResolvedDate(LocalDateTime.now());
+        saveClientToFile(client, file);
+
+        String partialJsonTimestampRegex = "\"resolvedDate\":\\s*\\{\n"
+                + "\\s*\"date\":\\s*\\{\n"
+                + "\\s*\"year\":\\s*[0-9]+,\n"
+                + "\\s*\"month\":\\s*[0-9]+,\n"
+                + "\\s*\"day\":";
+        String partialJsonTimestampModified = "\"resolvedDate\": {\n"
+                + "          \"date\": {\n"
+                + "            \"day\":";
+        replaceAllInFile(file, partialJsonTimestampRegex, partialJsonTimestampModified);
+
+        try {
+            JSONConverter.loadFromFile(file);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains(String.valueOf(uid)));
+        }
+    }
+
+    //TODO
+    @Test
+    public void failToLoadFromFileTest() throws Exception {
+        File file = folder.newFile("testfile.json");
+        saveClientToFile(client, file);
+        replaceAllInFile(file, "a", "b");
+
+        try {
+            JSONConverter.loadFromFile(file);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains(String.valueOf(uid)));
+        }
+    }
+
+
 
 }
