@@ -10,9 +10,23 @@ info:
 security: 
   - bearerAuth: []
   
+tags:
+    - name: Client
+      description: All base client paths
+    - name: Client Donation Status
+      description: All client donation status paths
+    - name: Client Medications
+      description: All client medication paths
+    - name: Client Illnesses
+      description: All client illness paths
+    - name: Client Procedures
+      description: All client procedure paths
+  
 paths:
   /clients:
     get:
+      tags:
+        - Client
       summary: "Returns all clients from the system"
       parameters:
         - $ref: '#/components/parameters/q'
@@ -42,6 +56,8 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
     post:
+      tags:
+        - Client
       summary: Create a new client
       requestBody:
         content:
@@ -74,6 +90,8 @@ paths:
         type: integer
         minimum: 0
     get:
+      tags:
+        - Client
       summary: Get detailed client information
       responses:
         '200':
@@ -93,6 +111,8 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
     patch:
+      tags:
+        - Client
       summary: Change some information about a client
       description: Only those properties included in the request body will be changed.
       requestBody:
@@ -118,6 +138,8 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
     delete:
+      tags:
+        - Client
       summary: Delete a client
       responses:
         '201':
@@ -143,6 +165,8 @@ paths:
         type: integer
         minimum: 0
     get:
+      tags:
+        - Client Donation Status
       summary: Get the list of a given clients donation status
       responses:
         '200':
@@ -162,6 +186,8 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
     patch:
+      tags:
+        - Client Donation Status
       summary: Change a clients organ donation status
       description: Only those organs included in the request body will be changed.
       requestBody:
@@ -197,10 +223,41 @@ paths:
         type: integer
         minimum: 0
     get:
+      tags:
+        - Client Medications
       summary: Get the list of a given clients medications
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/medicationRecord'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags:
+        - Client Medications
+      summary: Create a new medication record
+      description: Returns the full list of medication records in response upon success.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/medicationRecordCreate'
+      responses:
+        '201':
+          description: Created
           content:
             application/json:
               schema:
@@ -234,12 +291,15 @@ paths:
       schema:
         type: integer
     patch:
+      tags:
+        - Client Medications
       summary: Update a medication record
+      description: Only those properties included in the request body will be changed.
       requestBody:
         content:
           application/json:
             schema:
-                $ref: '#/components/schemas/medicationRecord'
+                $ref: '#/components/schemas/medicationRecordCreate'
       responses:
         '200':
           description: OK
@@ -258,6 +318,8 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
     delete:
+      tags:
+        - Client Medications
       summary: Delete a medication record
       responses:
         '201':
@@ -272,6 +334,496 @@ paths:
           $ref: '#/components/responses/NotFoundError'
         '500':
           $ref: '#/components/responses/InternalServerError'
+          
+  '/clients/{uid}/medications/{id}/start':
+    parameters:
+    - in: path
+      name: uid
+      description: Client User ID
+      required: true
+      schema:
+        type: integer
+        minimum: 0
+    - in: path
+      name: id
+      description: Medication record ID
+      required: true
+      schema:
+        type: integer
+    post:
+      tags:
+        - Client Medications
+      summary: Move a medication to current medications
+      description: Returns the medication record in response upon success.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/medicationRecord'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+          
+  '/clients/{uid}/medications/{id}/stop':
+    parameters:
+    - in: path
+      name: uid
+      description: Client User ID
+      required: true
+      schema:
+        type: integer
+        minimum: 0
+    - in: path
+      name: id
+      description: Medication record ID
+      required: true
+      schema:
+        type: integer
+    post:
+      tags:
+        - Client Medications
+      summary: Move a medication to past medications
+      description: Returns the medication record in response upon success.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/medicationRecord'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  
+  '/clients/{uid}/illnesses':
+    parameters:
+    - in: path
+      name: uid
+      description: Client User ID
+      required: true
+      schema:
+        type: integer
+        minimum: 0
+    get:
+      tags:
+        - Client Illnesses
+      summary: Get the list of a given clients illnesses
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/illnessRecord'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags:
+        - Client Illnesses
+      summary: Create a new illness record
+      description: Returns the full list of illness records in response upon success. The chronic flag cannot be set to true and have the cured date set. Cured date is nullable
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/illnessRecordCreate'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/illnessRecord'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+          
+  '/clients/{uid}/illnesses/{id}':
+    parameters:
+    - in: path
+      name: uid
+      description: Client User ID
+      required: true
+      schema:
+        type: integer
+        minimum: 0
+    - in: path
+      name: id
+      description: Medication record ID
+      required: true
+      schema:
+        type: integer
+    patch:
+      tags:
+        - Client Illnesses
+      summary: Update an illness record
+      description: Only those properties included in the request body will be changed. An illness cannot have it's curedDate set if the chronic flag is currently true.
+      requestBody:
+        content:
+          application/json:
+            schema:
+                $ref: '#/components/schemas/illnessRecordModify'
+      responses:
+        '201':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/illnessRecord'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+          
+  '/clients/{uid}/illnesses/{id}/chronic':
+    parameters:
+    - in: path
+      name: uid
+      description: Client User ID
+      required: true
+      schema:
+        type: integer
+        minimum: 0
+    - in: path
+      name: id
+      description: Illness record ID
+      required: true
+      schema:
+        type: integer
+    post:
+      tags:
+        - Client Illnesses
+      summary: Set an illness to chronic
+      description: Returns the illness record after success
+      responses:
+        '201':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/illnessRecord'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags:
+        - Client Illnesses
+      summary: Remove the chronic flag from an illness
+      description: Returns the illness record after success
+      responses:
+        '201':
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/illnessRecord'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  
+  
+  '/clients/{uid}/procedures':
+    parameters:
+    - in: path
+      name: uid
+      description: Client User ID
+      required: true
+      schema:
+        type: integer
+        minimum: 0
+    get:
+      tags:
+        - Client Procedures
+      summary: Get the list of a given clients medical procedures
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/procedureRecord'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags:
+        - Client Procedures
+      summary: Create a new procedure record
+      description: Returns the full list of procedure records in response upon success.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/procedureRecordCreate'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/procedureRecord'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+          
+  '/clients/{uid}/procedures/{id}':
+    parameters:
+    - in: path
+      name: uid
+      description: Client User ID
+      required: true
+      schema:
+        type: integer
+        minimum: 0
+    - in: path
+      name: id
+      description: Procedure record ID
+      required: true
+      schema:
+        type: integer
+    patch:
+      tags:
+        - Client Procedures
+      summary: Update a procedure record
+      description: Only those properties included in the request body will be changed.
+      requestBody:
+        content:
+          application/json:
+            schema:
+                $ref: '#/components/schemas/procedureRecordCreate'
+      responses:
+        '201':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/procedureRecord'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags:
+        - Client Procedures
+      summary: Delete a procedure record
+      responses:
+        '201':
+          description: Deleted
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+          
+  
+  
+  '/clients/{uid}/transplantRequests':
+    parameters:
+    - in: path
+      name: uid
+      description: Client User ID
+      required: true
+      schema:
+        type: integer
+        minimum: 0
+    get:
+      tags:
+        - Client Transplant Requests
+      summary: Get the list of a given clients transplant requests
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/transplantRequest'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags:
+        - Client Transplant Requests
+      summary: Create a new transplant request
+      description: Returns the full list of transplant requests in response upon success.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/transplantRequestCreate'
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/transplantRequest'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+          
+  '/clients/{uid}/transplantRequests/{id}':
+    parameters:
+    - in: path
+      name: uid
+      description: Client User ID
+      required: true
+      schema:
+        type: integer
+        minimum: 0
+    - in: path
+      name: id
+      description: Transplant Request ID
+      required: true
+      schema:
+        type: integer
+    patch:
+      tags:
+        - Client Transplant Requests
+      summary: Update a transpant request
+      description: Only those properties included in the request body will be changed.
+      requestBody:
+        content:
+          application/json:
+            schema:
+                $ref: '#/components/schemas/transplantRequestCreate'
+      responses:
+        '201':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/transplantRequest'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags:
+        - Client Transplant Requests
+      summary: Delete a transpant request
+      responses:
+        '201':
+          description: Deleted
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+          
+  
   
 components:
   parameters:
@@ -348,9 +900,10 @@ components:
     
         
   schemas:
+        
+  
+  
     #Client attributes
-    
-    
   
   
     clientOverview:
@@ -504,6 +1057,124 @@ components:
           $ref: '#/components/schemas/date'
         stopped:
           $ref: '#/components/schemas/date'
+          
+    medicationRecordCreate:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          example: Paracetamol
+    
+    illnessRecord:
+      type: object
+      properties:
+        id:
+          type: number
+        clientId: #References the Client ID, is this required? It's in the Object but we will know what client it is by the request
+          type: number
+        name:
+          type: string
+        diagnosisDate:
+          $ref: '#/components/schemas/date'
+        curedDate:
+          $ref: '#/components/schemas/date'
+        isChronic:
+          type: boolean
+    
+    illnessRecordCreate:
+      type: object
+      properties:
+        name:
+          type: string
+        diagnosisDate:
+          $ref: '#/components/schemas/date'
+        curedDate:
+          $ref: '#/components/schemas/date'
+        isChronic:
+          type: boolean
+    
+    illnessRecordModify:
+      type: object
+      properties:
+        diagnosisDate:
+          $ref: '#/components/schemas/date'
+        curedDate:
+          $ref: '#/components/schemas/date'
+          
+          
+    procedureRecord:
+      type: object
+      properties:
+        id:
+          type: number
+        clientId: #References the Client ID, is this required? It's in the Object but we will know what client it is by the request
+          type: number
+        summary:
+          type: string
+        description:
+          type: string
+        date:
+          $ref: '#/components/schemas/date'
+        affectedOrgans:
+          type: array
+          items:
+            $ref: '#/components/schemas/organsEnum'
+    
+    procedureRecordCreate:
+      type: object
+      properties:
+        summary:
+          type: string
+        description:
+          type: string
+        date:
+          $ref: '#/components/schemas/date'
+        affectedOrgans:
+          type: array
+          items:
+            $ref: '#/components/schemas/organsEnum'
+            
+    transplantRequest:
+      type: object
+      properties:
+        id:
+          type: number
+        clientId: #References the Client ID, is this required? It's in the Object but we will know what client it is by the request
+          type: number
+        requestedOrgan:
+          $ref: '#/components/schemas/organsEnum'
+        description:
+          type: string
+        requestedDate:
+          $ref: '#/components/schemas/date'
+        resolvedDate:
+          $ref: '#/components/schemas/date'
+        status:
+          $ref: '#/components/schemas/transplantRequestStatusEnum'
+        resolvedReason:
+          type: string
+          nullable: true
+          
+    transplantRequestCreate:
+      type: object
+      properties:
+        requestedOrgan:
+          $ref: '#/components/schemas/organsEnum'
+        description:
+          type: string
+        requestedDate:
+          $ref: '#/components/schemas/date'
+        resolvedDate:
+          $ref: '#/components/schemas/date'
+        status:
+          $ref: '#/components/schemas/transplantRequestStatusEnum'
+        resolvedReason:
+          type: string
+          nullable: true
+        
+        
         
     #ENUMs
     
@@ -526,6 +1197,10 @@ components:
     bloodTypeEnum:
       type: string
       enum: [A_POS, A_NEG, B_POS, B_NEG, AB_POS, AB_NEG, O_POS, O_NEG]
+      
+    transplantRequestStatusEnum:
+      type: string
+      enum: [WAITING, CANCELLED, COMPLETED]
       
   responses:
     BadRequestError: #400
