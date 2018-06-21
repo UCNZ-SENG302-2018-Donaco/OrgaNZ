@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.utilities.CacheManager;
@@ -155,7 +156,21 @@ public class CacheTest extends BaseTest {
     public void testWorks() {
         CacheManager mockCacheManager = new MockCacheManager();
         mockCacheManager.addCachedData("test", new Object[]{"foo"}, "test", Optional.empty());
-        Optional<String> value = mockCacheManager.getCachedData("test", String.class, new Object[]{"foo"});
+        Optional<String> value = mockCacheManager.getCachedData("test", new TypeReference<String>() {
+        }, new Object[]{"foo"});
+        assertTrue(value.isPresent());
+        assertEquals("test", value.get());
+    }
+
+    @Test
+    public void testCacheSaveLoad() throws IOException {
+        MockCacheManager mockCacheManager = new MockCacheManager();
+        mockCacheManager.addCachedData("test", new Object[]{"foo"}, "test", Optional.empty());
+        String result = mockCacheManager.save();
+
+        mockCacheManager.load(result);
+        Optional<String> value = mockCacheManager.getCachedData("test", new TypeReference<String>() {
+        }, new Object[]{"foo"});
         assertTrue(value.isPresent());
         assertEquals("test", value.get());
     }
@@ -173,7 +188,8 @@ public class CacheTest extends BaseTest {
         // Check the pre-refresh value
         Optional<String> initialValue = mockCacheManager.getCachedData(
                 "com.humanharvest.organz.utilities.web.MedActiveIngredientsHandler",
-                String.class, new Object[]{"foo"});
+                new TypeReference<String>() {
+                }, new Object[]{"foo"});
         assertTrue(initialValue.isPresent());
         assertEquals("test", initialValue.get());
 
@@ -183,7 +199,8 @@ public class CacheTest extends BaseTest {
         // Check it has the new value
         Optional<String[]> refreshedValue = mockCacheManager.getCachedData(
                 "com.humanharvest.organz.utilities.web.MedActiveIngredientsHandler",
-                String[].class, new Object[]{"foo"});
+                new TypeReference<String[]>() {
+                }, new Object[]{"foo"});
         assertTrue(refreshedValue.isPresent());
         assertEquals(EXPECTED_RESPONSE_BODY, "[\"" + String.join("\",\"", refreshedValue.get()) + "\"]");
 

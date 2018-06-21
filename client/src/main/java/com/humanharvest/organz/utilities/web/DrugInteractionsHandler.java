@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.utilities.exceptions.BadDrugNameException;
 import com.humanharvest.organz.utilities.exceptions.BadGatewayException;
@@ -16,7 +17,6 @@ import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonObjectParser;
-import com.google.gson.reflect.TypeToken;
 
 /**
  * A handler for requests to a drug interaction API.
@@ -108,8 +108,8 @@ public class DrugInteractionsHandler extends WebAPIHandler {
      */
     public List<String> getInteractions(Client client, String drug1, String drug2)
             throws IOException, BadDrugNameException, BadGatewayException {
-        Optional<DrugInteractionsResponse> cachedResponse = getCachedData(new TypeToken<DrugInteractionsResponse>() {
-        }.getType(), drug1, drug2);
+        Optional<DrugInteractionsResponse> cachedResponse = getCachedData(new TypeReference<DrugInteractionsResponse>() {
+        }, drug1, drug2);
         if (cachedResponse.isPresent()) {
             return cachedResponse.get().calculateClientInteractions(client);
         }

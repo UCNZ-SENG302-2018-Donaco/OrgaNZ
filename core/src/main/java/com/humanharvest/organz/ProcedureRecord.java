@@ -17,9 +17,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.humanharvest.organz.utilities.enums.Organ;
-
-import com.google.gson.annotations.Expose;
 
 @Entity
 @Table
@@ -29,9 +28,9 @@ public class ProcedureRecord {
     @Id
     @GeneratedValue
     private Long id;
-    @Expose(serialize = false)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "Client_uid")
+    @JsonIgnore
     private Client client;
     private String summary;
     private String description;

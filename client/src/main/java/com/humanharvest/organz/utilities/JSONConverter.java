@@ -2,37 +2,30 @@ package com.humanharvest.organz.utilities;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.Reader;
-import java.io.Writer;
-import java.lang.reflect.Type;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
-import com.humanharvest.organz.IllnessRecord;
-import com.humanharvest.organz.MedicationRecord;
-import com.humanharvest.organz.ProcedureRecord;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.TransplantRequest;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
-import com.google.gson.stream.JsonReader;
 
 /**
  * Uses GSON to convert Java objects into JSON files and from JSON files
@@ -42,14 +35,16 @@ public final class JSONConverter {
 
     private static final Logger LOGGER = Logger.getLogger(JSONConverter.class.getName());
 
-    private static final Gson gson = new GsonBuilder()
-            .setPrettyPrinting()
-            .enableComplexMapKeySerialization()
-            .registerTypeAdapterFactory(CacheManager.GSON_FACTORY)
-            .create();
+    private static final ObjectMapper mapper = new ObjectMapper()
+            .enable(SerializationFeature.INDENT_OUTPUT)
+            .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+            .registerModule(new ParameterNamesModule())
+            .registerModule(new Jdk8Module())
+            .registerModule(new JavaTimeModule());
 
     private JSONConverter() {
-    } // To ensure that this UTILITY class cannot be instantiated.
+        // To ensure that this UTILITY class cannot be instantiated.
+    }
 
     /**
      * If the given file does not exist, creates an empty JSON array in that file.
@@ -77,12 +72,8 @@ public final class JSONConverter {
      * @throws IOException Throws IOExceptions
      */
     public static void saveToFile(File file) throws IOException {
-        try(OutputStream outputStream = new FileOutputStream(file)) {
-            try(Writer writer = new OutputStreamWriter(outputStream, StandardCharsets.UTF_8)) {
-                ClientManager clientManager = State.getClientManager();
-                gson.toJson(clientManager.getClients(), writer);
-            }
-        }
+        ClientManager clientManager = State.getClientManager();
+        mapper.writeValue(file, clientManager);
     }
 
     /**
@@ -91,43 +82,39 @@ public final class JSONConverter {
      * @throws IOException Throws IOExceptions
      */
     public static void loadFromFile(File file) throws IOException {
-        try(InputStream fileStream = new FileInputStream(file)) {
-            try(Reader reader = new InputStreamReader(fileStream, StandardCharsets.UTF_8)) {
-                try {
-                    ArrayList<Client> clients;
-                    Type collectionType = new TypeToken<ArrayList<Client>>() {
-                    }.getType();
+        TypeReference type = new TypeReference<ArrayList<Client>>() {
+        };
+        try {
+            ArrayList<Client> clients = mapper.readValue(file, type);
 
-                    clients = gson.fromJson(reader, collectionType);
-                    for (Client client : clients) {
-                        for (TransplantRequest request : client.getTransplantRequests()) {
-                            request.setClient(client);
-                        }
-                        for (IllnessRecord record : client.getCurrentIllnesses()) {
-                            record.setClient(client);
-                        }
-                        for (IllnessRecord record : client.getPastIllnesses()) {
-                            record.setClient(client);
-                        }
-                        for (ProcedureRecord record : client.getPastProcedures()) {
-                            record.setClient(client);
-                        }
-                        for (ProcedureRecord record : client.getPendingProcedures()) {
-                            record.setClient(client);
-                        }
-                        for (MedicationRecord record : client.getCurrentMedications()) {
-                            record.setClient(client);
-                        }
-                        for (MedicationRecord record : client.getPastMedications()) {
-                            record.setClient(client);
-                        }
-                    }
-                    ClientManager clientManager = State.getClientManager();
-                    clientManager.setClients(clients);
-                }  catch (JsonSyntaxException e) {
-                    throw new IllegalArgumentException("Not a valid json file", e);
-                }
-            }
+//                    for (Client client : clients) {
+//                        for (TransplantRequest request : client.getTransplantRequests()) {
+//                            request.setClient(client);
+//                        }
+//                        for (IllnessRecord record : client.getCurrentIllnesses()) {
+//                            record.setClient(client);
+//                        }
+//                        for (IllnessRecord record : client.getPastIllnesses()) {
+//                            record.setClient(client);
+//                        }
+//                        for (ProcedureRecord record : client.getPastProcedures()) {
+//                            record.setClient(client);
+//                        }
+//                        for (ProcedureRecord record : client.getPendingProcedures()) {
+//                            record.setClient(client);
+//                        }
+//                        for (MedicationRecord record : client.getCurrentMedications()) {
+//                            record.setClient(client);
+//                        }
+//                        for (MedicationRecord record : client.getPastMedications()) {
+//                            record.setClient(client);
+//                        }
+//                    }
+//                    ClientManager clientManager = State.getClientManager();
+//                    clientManager.setClients(clients);
+            throw new UnsupportedOperationException();
+        } catch (JsonParseException | JsonMappingException e) {
+            throw new IllegalArgumentException("Not a valid json file", e);
         }
     }
 
@@ -144,16 +131,15 @@ public final class JSONConverter {
         } catch (IOException exc) {
             System.err.println(exc.getMessage());
         }
-        try (JsonReader reader = new JsonReader(new FileReader(filename))) {
-            HistoryItem[] historyItems = gson.fromJson(reader, HistoryItem[].class);
+
+        try {
+            HistoryItem[] historyItems = mapper.readValue(historyFile, HistoryItem[].class);
             ArrayList<HistoryItem> historyList = new ArrayList<>(Arrays.asList(historyItems));
             historyList.add(historyItem);
 
             writeHistoryToJSON(historyList, filename);
-
-        } catch (IOException | IllegalStateException exc) {
-            System.err.println(
-                    "An error occurred when reading historyItem history from the JSON file: \n" + exc.getMessage());
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "An error occurred when reading historyItem history from the JSON file", e);
         }
     }
 
@@ -161,27 +147,24 @@ public final class JSONConverter {
      * Helper function for updateActionHistoryFromJSON; writes the historyHistoryItemList to a
      * JSON file.
      * @param filename The file to save the history to
-     * @param historyHistoryItemList An ArrayList of all history the system has recorded.
+     * @param historyItemList An ArrayList of all history the system has recorded.
      */
-    private static void writeHistoryToJSON(ArrayList<HistoryItem> historyHistoryItemList, String filename) {
-        try (Writer writer = new FileWriter(filename)) {
-            gson.toJson(historyHistoryItemList, writer);
-        } catch (IOException | IllegalStateException exc) {
-            LOGGER.severe("Error writing history to JSON");
-            LOGGER.severe(exc.getMessage());
+    private static void writeHistoryToJSON(ArrayList<HistoryItem> historyItemList, String filename) {
+        File historyFile = new File(filename);
+        try {
+            mapper.writeValue(historyFile, historyItemList);
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Error writing history to JSON", e);
         }
     }
 
     public static List<HistoryItem> loadJSONtoHistory(File filename) throws IOException {
-        Reader reader = new FileReader(filename);
-        ArrayList<HistoryItem> historyItemList;
-        Type historyCollection = new TypeToken<ArrayList<HistoryItem>>() {
-        }.getType();
-        historyItemList = gson.fromJson(reader, historyCollection);
-        return historyItemList;
+        TypeReference type = new TypeReference<ArrayList<HistoryItem>>() {
+        };
+        return mapper.<ArrayList<HistoryItem>>readValue(filename, type);
     }
 
-    public static Gson getGson() {
-        return gson;
+    public static ObjectMapper getObjectMapper() {
+        return mapper;
     }
 }

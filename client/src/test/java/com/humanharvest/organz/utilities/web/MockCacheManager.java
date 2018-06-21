@@ -1,10 +1,15 @@
 package com.humanharvest.organz.utilities.web;
 
+import java.io.IOException;
+import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.HashMap;
+import java.util.Map;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.humanharvest.organz.utilities.CacheManager;
+import com.humanharvest.organz.utilities.JSONConverter;
 
 public class MockCacheManager extends CacheManager {
     public MockCacheManager() {
@@ -31,5 +36,17 @@ public class MockCacheManager extends CacheManager {
 
     public boolean isEmpty() {
         return categories.isEmpty();
+    }
+
+    public String save() throws IOException {
+        StringWriter writer = new StringWriter();
+        JSONConverter.getObjectMapper().writeValue(writer, categories);
+        return writer.toString();
+    }
+
+    public void load(String value) throws IOException {
+        categories = JSONConverter.getObjectMapper().readValue(value,
+                new TypeReference<Map<String, CacheManager.Category>>(){
+                });
     }
 }

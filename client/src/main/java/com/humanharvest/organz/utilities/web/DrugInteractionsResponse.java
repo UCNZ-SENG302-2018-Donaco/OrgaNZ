@@ -13,6 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.utilities.enums.Gender;
 
@@ -37,18 +38,23 @@ public class DrugInteractionsResponse {
     public static final DrugInteractionsResponse EMPTY = new DrugInteractionsResponse();
 
     @Key("co_existing_conditions")
+    @JsonProperty("co_existing_conditions")
     private Map<String, Integer> coexistingConditions;
 
     @Key("reports")
+    @JsonProperty("reports")
     private Map<String, Integer> reports;
 
     @Key("age_interaction")
+    @JsonProperty("age_interaction")
     private Map<String, List<String>> ageInteraction;
 
     @Key("duration_interaction")
+    @JsonProperty("duration_interaction")
     private Map<String, List<String>> durationInteraction;
 
     @Key("gender_interaction")
+    @JsonProperty("gender_interaction")
     private Map<String, List<String>> genderInteraction;
 
     /**

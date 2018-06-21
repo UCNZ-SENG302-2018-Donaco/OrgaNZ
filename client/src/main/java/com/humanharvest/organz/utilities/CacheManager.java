@@ -1,18 +1,8 @@
 package com.humanharvest.organz.utilities;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.io.Reader;
-import java.io.Writer;
-import java.lang.reflect.Type;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -20,54 +10,35 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.api.client.http.HttpTransport;
 import com.humanharvest.organz.utilities.exceptions.BadDrugNameException;
 import com.humanharvest.organz.utilities.exceptions.BadGatewayException;
 import com.humanharvest.organz.utilities.web.DrugInteractionsHandler;
 import com.humanharvest.organz.utilities.web.MedActiveIngredientsHandler;
 import com.humanharvest.organz.utilities.web.WebAPIHandler;
 
-import com.google.api.client.http.HttpTransport;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonDeserializationContext;
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
-import com.google.gson.JsonSyntaxException;
-import com.google.gson.TypeAdapter;
-import com.google.gson.TypeAdapterFactory;
-import com.google.gson.internal.bind.TreeTypeAdapter;
-import com.google.gson.reflect.TypeToken;
-
 /**
  * Stores and retrieves arbitrary values from a persistent location.
  */
 public abstract class CacheManager {
-
-    /**
-     * A Type factory for GSON de/serialisation.
-     */
-    public static final TypeAdapterFactory GSON_FACTORY = new TypeAdapterFactory() {
-        @Override
-        @SuppressWarnings("unchecked")
-        public TypeAdapter create(Gson gson, TypeToken type) {
-            if (type.getRawType().equals(Category.class)) {
-                return new TreeTypeAdapter(Category.GSON_ADAPTER, Category.GSON_ADAPTER, gson, type, this);
-            }
-            return null;
-        }
-    };
-
     /**
      * The instance of the cache.
      */
@@ -114,7 +85,9 @@ public abstract class CacheManager {
         }
 
         Key key = new Key(arguments);
-        Value realValue = new Value(JSONConverter.getGson().toJsonTree(value), expires);
+        Value realValue =
+                new Value(JSONConverter.getObjectMapper().convertValue(value, JsonNode.class),
+                expires);
         category.setData(key, realValue);
     }
 
@@ -125,7 +98,7 @@ public abstract class CacheManager {
      * @param arguments The key used to store/retrieve the cached value.
      * @return The stored data, or an empty optional if it cannot be found or has expired.
      */
-    public <T> Optional<T> getCachedData(String categoryName, Type type, Object[] arguments) {
+    public <T> Optional<T> getCachedData(String categoryName, TypeReference<?> type, Object[] arguments) {
         if (Objects.isNull(arguments) || arguments.length == 0) {
             throw new IllegalArgumentException("arguments must contain at least one value");
         }
@@ -157,7 +130,6 @@ public abstract class CacheManager {
         if (category != null) {
             category.remove(arguments);
         }
-
     }
 
     public void refreshCachedData() {
@@ -166,9 +138,9 @@ public abstract class CacheManager {
 
     public void refreshCachedData(HttpTransport httpTransport) {
         // Iterate through categories
-        for (Entry pair : categories.entrySet()) {
-            String categoryName = (String)pair.getKey();
-            Category category = (Category)pair.getValue();
+        for (Map.Entry<String, CacheManager.Category> pair : categories.entrySet()) {
+            String categoryName = pair.getKey();
+            Category category = pair.getValue();
 
             WebAPIHandler handler;
             switch (categoryName) {
@@ -185,16 +157,12 @@ public abstract class CacheManager {
                 default:
                     LOGGER.log(Level.SEVERE, "Unrecognised handler: " + categoryName);
                     handler = null;
+                    break;
             }
 
             if (handler != null) {
                 // Store a list of the keys' values currently in the category
-                Collection<Key> keys = new ArrayList<>();
-
-                // Iterate through category's values, adding each key to keys
-                for (Key key : category.getValues().keySet()) {
-                    keys.add(key);
-                }
+                Collection<Key> keys = new ArrayList<>(category.getValues().keySet());
 
                 for (Key key : keys) {
                     Object[] rawKey = key.getValue();
@@ -211,18 +179,9 @@ public abstract class CacheManager {
         }
     }
 
-    private abstract static class JsonBaseSerialiser<T> implements JsonSerializer<T>, JsonDeserializer<T> {
-
-    }
-
-    private static final class CategoryMap extends HashMap<String, Category> {
-
-    }
-
-    private static final class Category {
-
-        public static final JsonBaseSerialiser<Category> GSON_ADAPTER = new CategorySerialiser();
-
+    @JsonSerialize(using = CategorySerialiser.class)
+    @JsonDeserialize(using = CategoryDeserialiser.class)
+    protected static final class Category {
         private final Map<Key, Value> values;
 
         public Category() {
@@ -233,7 +192,7 @@ public abstract class CacheManager {
             this.values = values;
         }
 
-        public <T> Optional<T> get(Type type, Object[] arguments) {
+        public <T> Optional<T> get(TypeReference<?> type, Object[] arguments) {
             Key key = new Key(arguments);
             Value value = values.get(key);
             if (value == null) {
@@ -247,7 +206,7 @@ public abstract class CacheManager {
                 }
             }
 
-            return Optional.of(JSONConverter.getGson().fromJson(value.getValue(), type));
+            return Optional.of(JSONConverter.getObjectMapper().convertValue(value.getValue(), type));
         }
 
         public void remove(Object[] arguments) {
@@ -269,51 +228,53 @@ public abstract class CacheManager {
         public void clearValues() {
             values.clear();
         }
+    }
 
-        private static class CategorySerialiser extends JsonBaseSerialiser<Category> {
+    private static final class CategorySerialiser extends JsonSerializer<Category> {
+        @Override
+        public void serialize(Category value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+            gen.writeStartArray();
+            for (Map.Entry<Key, Value> entries : value.getValues().entrySet()) {
+                gen.writeStartObject();
+                gen.writeObjectField("key", entries.getKey().getValue());
+                Optional<Instant> expires = entries.getValue().getExpires();
+                if (expires.isPresent()) {
+                    gen.writeObjectField("expires", expires.get());
+                }
+                gen.writeObjectField("value", entries.getValue().getValue());
+                gen.writeEndObject();
+            }
+            gen.writeEndArray();
+        }
+    }
 
-            @Override
-            public Category deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) {
-                JsonArray array = json.getAsJsonArray();
+    private static final class CategoryDeserialiser extends StdDeserializer<Category> {
+        protected CategoryDeserialiser() {
+            super(Category.class);
+        }
 
-                Map<Key, Value> values = new HashMap<>();
+        @Override
+        public Category deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+            ObjectNode[] nodes = p.readValueAs(ObjectNode[].class);
 
-                for (JsonElement childElement : array) {
-                    JsonObject object = childElement.getAsJsonObject();
-                    Object[] key = context.deserialize(object.get("key"), Object[].class);
-                    Key realKey = new Key(key);
+            Category category = new Category();
+            for (ObjectNode node : nodes) {
+                JsonNode keyNode = node.get("key");
+                JsonNode expiresNode = node.get("expires");
+                JsonNode valueNode = node.get("value");
 
-                    JsonElement value = object.get("value");
-                    JsonElement expires = object.get("expires");
-                    Value realValue;
-                    if (expires.isJsonNull()) {
-                        realValue = new Value(value, Optional.empty());
-                    } else {
-                        Optional<Instant> realExpires = Optional.of(Instant.parse(expires.getAsString()));
-                        realValue = new Value(value, realExpires);
-                    }
-
-                    values.put(realKey, realValue);
+                if (keyNode == null || valueNode == null) {
+                    throw new JsonParseException(p, "Object nodes ned a key and value key");
                 }
 
-                return new Category(values);
-            }
-
-            @Override
-            public JsonElement serialize(Category src, Type typeOfSrc, JsonSerializationContext context) {
-                JsonArray array = new JsonArray();
-                for (Map.Entry<Key, Value> entry : src.getValues().entrySet()) {
-                    Value value = entry.getValue();
-
-                    JsonObject object = new JsonObject();
-                    object.add("key", context.serialize(entry.getKey().getValue()));
-                    object.add("value", context.serialize(value.getValue()));
-                    Optional<Instant> expires = value.getExpires();
-                    expires.ifPresent(instant -> object.addProperty("expires", instant.toString()));
-                    array.add(object);
+                Object[] keys = JSONConverter.getObjectMapper().convertValue(keyNode, Object[].class);
+                Optional<Instant> expires = Optional.empty();
+                if (expiresNode != null) {
+                    expires = Optional.of(JSONConverter.getObjectMapper().convertValue(expiresNode, Instant.class));
                 }
-                return array;
+                category.setData(new Key(keys), new Value(valueNode, expires));
             }
+            return category;
         }
     }
 
@@ -348,16 +309,15 @@ public abstract class CacheManager {
     }
 
     private static final class Value {
-
-        private final JsonElement value;
+        private final JsonNode value;
         private final Optional<Instant> expires;
 
-        public Value(JsonElement value, Optional<Instant> expires) {
+        public Value(JsonNode value, Optional<Instant> expires) {
             this.value = value;
             this.expires = expires;
         }
 
-        public JsonElement getValue() {
+        public JsonNode getValue() {
             return value;
         }
 
@@ -379,7 +339,7 @@ public abstract class CacheManager {
         }
 
         @Override
-        public <T> Optional<T> getCachedData(String categoryName, Type type, Object[] arguments) {
+        public <T> Optional<T> getCachedData(String categoryName, TypeReference<?> type, Object[] arguments) {
             lazyInitialise();
             return super.getCachedData(categoryName, type, arguments);
         }
@@ -395,15 +355,10 @@ public abstract class CacheManager {
          * Saves data into a cache file.
          */
         private void saveData() {
-            String result = JSONConverter.getGson().toJson(categories);
-
             String cacheDirectory = Config.getCacheDirectory();
             File cacheFile = Paths.get(cacheDirectory, "cache.json").toFile();
-
-            try (OutputStream stream = new FileOutputStream(cacheFile)) {
-                try (Writer writer = new OutputStreamWriter(stream, StandardCharsets.UTF_8)) {
-                    writer.write(result);
-                }
+            try {
+                JSONConverter.getObjectMapper().writeValue(cacheFile, categories);
             } catch (IOException e) {
                 LOGGER.log(Level.SEVERE, "Unable to save cache data", e);
             }
@@ -421,13 +376,13 @@ public abstract class CacheManager {
             String cacheDirectory = Config.getCacheDirectory();
             File cacheFile = Paths.get(cacheDirectory, "cache.json").toFile();
 
-            try (InputStream stream = new FileInputStream(cacheFile)) {
-                try (Reader reader = new InputStreamReader(stream, StandardCharsets.UTF_8)) {
-                    categories = JSONConverter.getGson().fromJson(reader, CategoryMap.class);
-                }
+            try {
+                categories = JSONConverter.getObjectMapper().readValue(cacheFile,
+                        new TypeReference<Map<String, Category>>(){
+                        });
             } catch (FileNotFoundException e) {
                 categories = new HashMap<>();
-            } catch (JsonSyntaxException | IOException e) {
+            } catch (IOException e) {
                 LOGGER.log(Level.SEVERE, "Unable to load cache data", e);
                 categories = new HashMap<>();
             }

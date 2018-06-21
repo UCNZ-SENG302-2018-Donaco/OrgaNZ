@@ -7,6 +7,7 @@ import java.time.Period;
 import java.util.List;
 import java.util.Optional;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.humanharvest.organz.utilities.CacheManager;
 import com.humanharvest.organz.utilities.exceptions.BadDrugNameException;
 import com.humanharvest.organz.utilities.exceptions.BadGatewayException;
@@ -14,7 +15,7 @@ import com.humanharvest.organz.utilities.exceptions.BadGatewayException;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
-import com.google.api.client.json.gson.GsonFactory;
+import com.google.api.client.json.jackson2.JacksonFactory;
 
 /**
  * An abstract class for a generic WebAPIHandler.
@@ -23,7 +24,7 @@ import com.google.api.client.json.gson.GsonFactory;
 public abstract class WebAPIHandler {
 
     protected HttpTransport httpTransport;
-    protected JsonFactory jsonFactory = new GsonFactory();
+    protected JsonFactory jsonFactory = new JacksonFactory();
 
     protected WebAPIHandler() {
         httpTransport = new NetHttpTransport();
@@ -52,7 +53,7 @@ public abstract class WebAPIHandler {
      * @param type The type of the value in the cache. Must be deserialisable using the GSON library.
      * @param arguments The key used to store the cached value.
      */
-    protected <T> Optional<T> getCachedData(Type type, Object... arguments) {
+    protected <T> Optional<T> getCachedData(TypeReference<?> type, Object... arguments) {
         return CacheManager.INSTANCE.getCachedData(getClass().getTypeName(), type, arguments);
     }
 }

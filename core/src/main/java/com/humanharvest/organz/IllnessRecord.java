@@ -12,7 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.google.gson.annotations.Expose;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * Represents an instance of a user having an illness for a period of time.
@@ -27,9 +27,9 @@ public class IllnessRecord {
     @Id
     @GeneratedValue
     private Long id;
-    @Expose(serialize = false)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "Client_uid")
+    @JsonIgnore
     private Client client;
     private String illnessName;
     private LocalDate diagnosisDate;
