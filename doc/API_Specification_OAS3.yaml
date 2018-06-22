@@ -21,6 +21,10 @@ tags:
       description: All client illness paths
     - name: Client Procedures
       description: All client procedure paths
+    - name: Client Transplant Requests
+      description: All client transplant request paths
+    - name: Clinician
+      description: All base clinician paths
   
 paths:
   /clients:
@@ -45,7 +49,9 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/clients'
+                type: array
+                items:
+                  $ref: '#/components/schemas/clientOverview'
                 
         '400':
           $ref: '#/components/responses/BadRequestError'
@@ -825,6 +831,140 @@ paths:
           
   
   
+  
+  
+  
+  
+  ### Clinician
+  /clinicians:
+    get:
+      tags:
+        - Clinician
+      summary: "Returns all clinicians from the system"
+      parameters:
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/offset'
+        - $ref: '#/components/parameters/count'
+        - $ref: '#/components/parameters/region'
+      responses:
+        '200':
+          description: A list of clinicians
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/clinicianOverview'
+                
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      tags:
+        - Clinician
+      summary: Create a new clinician
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/clinicianModifiableDetails'
+        required: true
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/clinicianDetails'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  '/clinicians/{staffId}':
+    parameters:
+    - in: path
+      name: staffId
+      description: Clinician Staff ID
+      required: true
+      schema:
+        type: integer
+        minimum: 0
+    get:
+      tags:
+        - Clinician
+      summary: Get detailed clinician information
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/clinicianDetails'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    patch:
+      tags:
+        - Clinician
+      summary: Change some information about a clinician
+      description: Only those properties included in the request body will be changed.
+      requestBody:
+        content:
+          application/json:
+            schema:
+                $ref: '#/components/schemas/clinicianModifiableDetails'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/clinicianDetails'
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      tags:
+        - Clinician
+      summary: Delete a clinician
+      responses:
+        '201':
+          description: Deleted
+        '400':
+          $ref: '#/components/responses/BadRequestError'
+        '401':
+          $ref: '#/components/responses/UnauthorizedError'
+        '403':
+          $ref: '#/components/responses/ForbiddenError'
+        '404':
+          $ref: '#/components/responses/NotFoundError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  
+  
 components:
   parameters:
     q:
@@ -888,23 +1028,72 @@ components:
       in: query
       description: "Only return clients that are donating the given organs, may be comma seperated for multiple"
       schema:
-        $ref: '#/components/schemas/organsEnum'
+        $ref: '#/components/schemas/organEnum'
         
     requesting:
       name: requesting
       in: query
       description: "Only return clients that are requesting the given organs, may be comma seperated for multiple"
       schema:
-        $ref: '#/components/schemas/organsEnum'
-        
-    
+        $ref: '#/components/schemas/organEnum'
+  
+  
+  
         
   schemas:
         
+    ### Clinician
+    
+    clinicianOverview:
+      type: object
+      properties:
+        staffId:
+          type: integer
+        firstName:
+          type: string
+        lastName:
+          type: string
+        middleName:
+          type: string
+        region:
+          $ref: '#/components/schemas/regionEnum'
+          
+    clinicianDetails:
+      type: object
+      properties:
+        staffId:
+          type: integer
+        firstName:
+          type: string
+        lastName:
+          type: string
+        middleName:
+          type: string
+        workAddress:
+          type: string
+        region:
+          $ref: '#/components/schemas/regionEnum'
+        createdTimestamp:
+          $ref: '#/components/schemas/dateTime'
+        modifiedTimestamp:
+          $ref: '#/components/schemas/dateTime'
+          
+    clinicianModifiableDetails:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        middleName:
+          type: string
+        workAddress:
+          type: string
+        region:
+          $ref: '#/components/schemas/regionEnum'
   
   
     #Client attributes
-  
   
     clientOverview:
       type: object
@@ -1009,12 +1198,7 @@ components:
           $ref: '#/components/schemas/date'
         time:
           $ref: '#/components/schemas/time'
-    
           
-    clients:
-      type: array
-      items:
-        $ref: '#/components/schemas/clientOverview'
         
     organDonationStatus:
       type: object
@@ -1120,7 +1304,7 @@ components:
         affectedOrgans:
           type: array
           items:
-            $ref: '#/components/schemas/organsEnum'
+            $ref: '#/components/schemas/organEnum'
     
     procedureRecordCreate:
       type: object
@@ -1134,7 +1318,7 @@ components:
         affectedOrgans:
           type: array
           items:
-            $ref: '#/components/schemas/organsEnum'
+            $ref: '#/components/schemas/organEnum'
             
     transplantRequest:
       type: object
@@ -1144,7 +1328,7 @@ components:
         clientId: #References the Client ID, is this required? It's in the Object but we will know what client it is by the request
           type: number
         requestedOrgan:
-          $ref: '#/components/schemas/organsEnum'
+          $ref: '#/components/schemas/organEnum'
         description:
           type: string
         requestedDate:
@@ -1161,7 +1345,7 @@ components:
       type: object
       properties:
         requestedOrgan:
-          $ref: '#/components/schemas/organsEnum'
+          $ref: '#/components/schemas/organEnum'
         description:
           type: string
         requestedDate:
@@ -1180,7 +1364,7 @@ components:
     
     regionEnum:
       type: string
-      enum: [a, b]
+      enum: [NORTHLAND, AUCKLAND, WAIKATO, BAY_OF_PLENTY, GISBORNE, HAWKES_BAY, TARANAKI, MANAWATU_WANGANUI, WELLINGTON, TASMAN, NELSON, MARLBOROUGH, WEST_COAST, CANTERBURY, OTAGO, SOUTHLAND, UNSPECIFIED]
       
     genderEnum:
       type: string
@@ -1190,7 +1374,7 @@ components:
       type: string
       enum: [any, onlyDonor, onlyReceiver, both, neither]
       
-    organsEnum:
+    organEnum:
       type: string
       enum: [LIVER, KIDNEY, PANCREAS, HEART, LUNG, INTESTINE, CORNEA, MIDDLE_EAR, SKIN, BONE, BONE_MARROW, CONNECTIVE_TISSUE]
       
