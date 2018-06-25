@@ -306,6 +306,21 @@ public final class JSONConverter {
                                 }
 
                                 // Catch any future resolve dates
+                                if (request.getResolvedDate().isAfter(LocalDateTime.now())) {
+                                    throw new IllegalArgumentException("Not a valid clients file: "
+                                            + "all transplant requests should have resolution dates in the past "
+                                            + "(if they have a resolution date).\n"
+                                            + "Currently, user " + client.getUid() + " has at least one that isn't.");
+                                }
+
+
+                                // Catch any resolve dates before the request date
+                                if (request.getResolvedDate().isBefore(request.getRequestDate())) {
+                                    throw new IllegalArgumentException("Not a valid clients file: "
+                                            + "all transplant requests should have resolution dates "
+                                            + "after the request date (if they have a resolution date).\n"
+                                            + "Currently, user " + client.getUid() + " has at least one that isn't.");
+                                }
                             }
 
                         }

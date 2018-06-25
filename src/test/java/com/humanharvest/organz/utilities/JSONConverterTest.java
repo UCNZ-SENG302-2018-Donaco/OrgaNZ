@@ -41,12 +41,13 @@ import org.junit.rules.TemporaryFolder;
 
 public class JSONConverterTest extends BaseTest {
 
-    int uid;
-    Client client;
-    Organ organ;
-    TransplantRequest request;
-    int nextYear;
-    int currentYear;
+    private int uid;
+    private Client client;
+    private Organ organ;
+    private TransplantRequest request;
+    private int nextYear;
+    private int currentYear;
+    private int lastYear;
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
@@ -77,6 +78,7 @@ public class JSONConverterTest extends BaseTest {
         client.addTransplantRequest(request);
         currentYear = LocalDate.now().getYear();
         nextYear = currentYear + 1;
+        lastYear = currentYear - 1;
     }
 
     @Test
@@ -331,8 +333,6 @@ public class JSONConverterTest extends BaseTest {
         saveClientToFile(client, file);
 
         // Replace year of last modification (current year) with last year - this will be before creation
-        int currentYear = LocalDate.now().getYear();
-        int lastYear = currentYear - 1;
         String modifiedTimestampYearPrefixRegex = "\"modifiedTimestamp\":\\s*\\{\n"
                 + "\\s*\"date\":\\s*\\{\n"
                 + "\\s*\"year\":\\s*";
@@ -449,7 +449,6 @@ public class JSONConverterTest extends BaseTest {
         }
     }
 
-    //TODO
     @Test
     public void failToLoadFromFileInvalidResolveDateTest() throws Exception {
         File file = folder.newFile("testfile.json");
@@ -473,6 +472,38 @@ public class JSONConverterTest extends BaseTest {
         } catch (IllegalArgumentException e) {
             assertTrue(e.getMessage().contains(String.valueOf(uid)));
         }
+    }
+
+    private void failToLoadFromFileByChangingResolveDateTest(int year) throws Exception {
+        File file = folder.newFile("testfile.json");
+        request.setStatus(TransplantRequestStatus.COMPLETED);
+        request.setResolvedDate(LocalDateTime.now());
+        saveClientToFile(client, file);
+
+        String partialJsonTimestampRegex = "\"resolvedDate\":\\s*\\{\n"
+                + "\\s*\"date\":\\s*\\{\n"
+                + "\\s*\"year\": " + String.valueOf(currentYear);
+        String partialJsonTimestampModified = "\"resolvedDate\": {\n"
+                + "          \"date\": {\n"
+                + "            \"year\": " + String.valueOf(year);
+        replaceAllInFile(file, partialJsonTimestampRegex, partialJsonTimestampModified);
+
+        try {
+            JSONConverter.loadFromFile(file);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains(String.valueOf(uid)));
+        }
+    }
+
+    @Test
+    public void failToLoadFromFileFutureResolveDateTest() throws Exception {
+        failToLoadFromFileByChangingResolveDateTest(nextYear);
+    }
+
+    @Test
+    public void failToLoadFromFileResolveDateBeforeRequestDateTest() throws Exception {
+        failToLoadFromFileByChangingResolveDateTest(lastYear);
     }
 
     //TODO
