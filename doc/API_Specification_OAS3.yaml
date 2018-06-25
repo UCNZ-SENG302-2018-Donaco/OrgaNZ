@@ -6,10 +6,7 @@ info:
     An API used to access the Human Harvest Inc server.
     Versioning: Adding new endpoints, adding parameters or key value pairs are all minor changes, as they are still valid with a past client.
       Major changes include: Modifying the data types of any parameters or values, removing key value pairs, removing endpoints. These CANNOT be pushed without maintaining a legacy version and upgrading the system to a new version.
-      
-security: 
-  - bearerAuth: []
-  
+
 tags:
     - name: Client
       description: All base client paths
@@ -18,19 +15,24 @@ tags:
     - name: Client Medications
       description: All client medication paths
     - name: Client Illnesses
-      description: All client illness paths
+      description: All client illness AKA medical history paths
     - name: Client Procedures
       description: All client procedure paths
     - name: Client Transplant Requests
       description: All client transplant request paths
     - name: Clinician
       description: All base clinician paths
+    - name: Administrator
+      description: All base administrator paths
   
 paths:
   /clients:
     get:
       tags:
         - Client
+      security:
+        - ClinicianAccess: []
+        - AdministratorAccess: []
       summary: "Returns all clients from the system"
       parameters:
         - $ref: '#/components/parameters/q'
@@ -44,7 +46,7 @@ paths:
         - $ref: '#/components/parameters/donating'
         - $ref: '#/components/parameters/requesting'
       responses:
-        '200':
+        200:
           description: A list of clients
           content:
             application/json:
@@ -53,14 +55,14 @@ paths:
                 items:
                   $ref: '#/components/schemas/clientOverview'
                 
-        '400':
-          $ref: '#/components/responses/BadRequestError'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
     post:
       tags:
         - Client
@@ -72,20 +74,20 @@ paths:
               $ref: '#/components/schemas/clientOverview'
         required: true
       responses:
-        '201':
+        201:
           description: Created
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/clientOverview'
-        '400':
-          $ref: '#/components/responses/BadRequestError'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
   '/clients/{uid}':
     parameters:
     - in: path
@@ -98,68 +100,92 @@ paths:
     get:
       tags:
         - Client
+      security:
+        - ClientAccess: []
+        - ClinicianAccess: []
+        - AdministratorAccess: []
       summary: Get detailed client information
       responses:
-        '200':
+        200:
           description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/clientDetails'
-        '400':
-          $ref: '#/components/responses/BadRequestError'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
     patch:
       tags:
         - Client
+      security:
+        - ClientAccess: []
+        - ClinicianAccess: []
+        - AdministratorAccess: []
       summary: Change some information about a client
       description: Only those properties included in the request body will be changed.
+      parameters:
+        - $ref: '#/components/parameters/etag'
       requestBody:
         content:
           application/json:
             schema:
                 $ref: '#/components/schemas/clientModifiableDetails'
       responses:
-        '200':
+        200:
           description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/clientDetails'
-        '400':
-          $ref: '#/components/responses/BadRequestError'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        412:
+          $ref: '#/components/responses/412PreconditionFailed'
+        429:
+          $ref: '#/components/responses/428PreconditionRequired'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
     delete:
       tags:
         - Client
+      security:
+        - ClientAccess: []
+        - ClinicianAccess: []
+        - AdministratorAccess: []
       summary: Delete a client
+      parameters:
+        - $ref: '#/components/parameters/etag'
       responses:
-        '201':
+        201:
           description: Deleted
-        '400':
-          $ref: '#/components/responses/BadRequestError'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        412:
+          $ref: '#/components/responses/412PreconditionFailed'
+        429:
+          $ref: '#/components/responses/428PreconditionRequired'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
           
   '/clients/{uid}/donationStatus':
     parameters:
@@ -173,51 +199,65 @@ paths:
     get:
       tags:
         - Client Donation Status
+      security:
+        - ClientAccess: []
+        - ClinicianAccess: []
+        - AdministratorAccess: []
       summary: Get the list of a given clients donation status
       responses:
-        '200':
+        200:
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/organDonationStatus'
-        '400':
-          $ref: '#/components/responses/BadRequestError'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+                $ref: '#/components/schemas/organBooleanArray'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
     patch:
       tags:
         - Client Donation Status
+      security:
+        - ClientAccess: []
+        - ClinicianAccess: []
+        - AdministratorAccess: []
       summary: Change a clients organ donation status
       description: Only those organs included in the request body will be changed.
+      parameters:
+        - $ref: '#/components/parameters/etag'
       requestBody:
         content:
           application/json:
             schema:
-                $ref: '#/components/schemas/organDonationStatus'
+                $ref: '#/components/schemas/organBooleanArray'
       responses:
-        '200':
+        200:
           description: OK
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/organDonationStatus'
-        '400':
-          $ref: '#/components/responses/BadRequestError'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+                $ref: '#/components/schemas/organBooleanArray'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        412:
+          $ref: '#/components/responses/412PreconditionFailed'
+        429:
+          $ref: '#/components/responses/428PreconditionRequired'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
           
   '/clients/{uid}/medications':
     parameters:
@@ -231,9 +271,13 @@ paths:
     get:
       tags:
         - Client Medications
+      security:
+        - ClientAccess: []
+        - ClinicianAccess: []
+        - AdministratorAccess: []
       summary: Get the list of a given clients medications
       responses:
-        '200':
+        200:
           description: OK
           content:
             application/json:
@@ -241,28 +285,33 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/medicationRecord'
-        '400':
-          $ref: '#/components/responses/BadRequestError'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
     post:
       tags:
         - Client Medications
+      security:
+        - ClinicianAccess: []
+        - AdministratorAccess: []
       summary: Create a new medication record
       description: Returns the full list of medication records in response upon success.
+      parameters:
+        - $ref: '#/components/parameters/etag'
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/medicationRecordCreate'
       responses:
-        '201':
+        201:
           description: Created
           content:
             application/json:
@@ -270,16 +319,20 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/medicationRecord'
-        '400':
-          $ref: '#/components/responses/BadRequestError'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        412:
+          $ref: '#/components/responses/412PreconditionFailed'
+        429:
+          $ref: '#/components/responses/428PreconditionRequired'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
           
   '/clients/{uid}/medications/{id}':
     parameters:
@@ -299,47 +352,65 @@ paths:
     patch:
       tags:
         - Client Medications
+      security:
+        - ClinicianAccess: []
+        - AdministratorAccess: []
       summary: Update a medication record
       description: Only those properties included in the request body will be changed.
+      parameters:
+        - $ref: '#/components/parameters/etag'
       requestBody:
         content:
           application/json:
             schema:
                 $ref: '#/components/schemas/medicationRecordCreate'
       responses:
-        '200':
+        200:
           description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/medicationRecord'
-        '400':
-          $ref: '#/components/responses/BadRequestError'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        412:
+          $ref: '#/components/responses/412PreconditionFailed'
+        429:
+          $ref: '#/components/responses/428PreconditionRequired'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
     delete:
       tags:
         - Client Medications
+      security:
+        - ClinicianAccess: []
+        - AdministratorAccess: []
       summary: Delete a medication record
+      parameters:
+        - $ref: '#/components/parameters/etag'
       responses:
-        '201':
+        201:
           description: Deleted
-        '400':
-          $ref: '#/components/responses/BadRequestError'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        412:
+          $ref: '#/components/responses/412PreconditionFailed'
+        429:
+          $ref: '#/components/responses/428PreconditionRequired'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
           
   '/clients/{uid}/medications/{id}/start':
     parameters:
@@ -359,25 +430,34 @@ paths:
     post:
       tags:
         - Client Medications
+      security:
+        - ClinicianAccess: []
+        - AdministratorAccess: []
       summary: Move a medication to current medications
       description: Returns the medication record in response upon success.
+      parameters:
+        - $ref: '#/components/parameters/etag'
       responses:
-        '200':
+        200:
           description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/medicationRecord'
-        '400':
-          $ref: '#/components/responses/BadRequestError'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        412:
+          $ref: '#/components/responses/412PreconditionFailed'
+        429:
+          $ref: '#/components/responses/428PreconditionRequired'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
           
   '/clients/{uid}/medications/{id}/stop':
     parameters:
@@ -397,25 +477,34 @@ paths:
     post:
       tags:
         - Client Medications
+      security:
+        - ClinicianAccess: []
+        - AdministratorAccess: []
       summary: Move a medication to past medications
       description: Returns the medication record in response upon success.
+      parameters:
+        - $ref: '#/components/parameters/etag'
       responses:
-        '200':
+        200:
           description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/medicationRecord'
-        '400':
-          $ref: '#/components/responses/BadRequestError'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        412:
+          $ref: '#/components/responses/412PreconditionFailed'
+        429:
+          $ref: '#/components/responses/428PreconditionRequired'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
   
   '/clients/{uid}/illnesses':
     parameters:
@@ -429,9 +518,13 @@ paths:
     get:
       tags:
         - Client Illnesses
+      security:
+        - ClientAccess: []
+        - ClinicianAccess: []
+        - AdministratorAccess: []
       summary: Get the list of a given clients illnesses
       responses:
-        '200':
+        200:
           description: OK
           content:
             application/json:
@@ -439,28 +532,33 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/illnessRecord'
-        '400':
-          $ref: '#/components/responses/BadRequestError'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
     post:
       tags:
         - Client Illnesses
+      security:
+        - ClinicianAccess: []
+        - AdministratorAccess: []
       summary: Create a new illness record
       description: Returns the full list of illness records in response upon success. The chronic flag cannot be set to true and have the cured date set. Cured date is nullable
+      parameters:
+        - $ref: '#/components/parameters/etag'
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/illnessRecordCreate'
       responses:
-        '201':
+        201:
           description: Created
           content:
             application/json:
@@ -468,16 +566,20 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/illnessRecord'
-        '400':
-          $ref: '#/components/responses/BadRequestError'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        412:
+          $ref: '#/components/responses/412PreconditionFailed'
+        429:
+          $ref: '#/components/responses/428PreconditionRequired'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
           
   '/clients/{uid}/illnesses/{id}':
     parameters:
@@ -497,30 +599,39 @@ paths:
     patch:
       tags:
         - Client Illnesses
+      security:
+        - ClinicianAccess: []
+        - AdministratorAccess: []
       summary: Update an illness record
       description: Only those properties included in the request body will be changed. An illness cannot have it's curedDate set if the chronic flag is currently true.
+      parameters:
+        - $ref: '#/components/parameters/etag'
       requestBody:
         content:
           application/json:
             schema:
                 $ref: '#/components/schemas/illnessRecordModify'
       responses:
-        '201':
+        201:
           description: Updated
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/illnessRecord'
-        '400':
-          $ref: '#/components/responses/BadRequestError'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        412:
+          $ref: '#/components/responses/412PreconditionFailed'
+        429:
+          $ref: '#/components/responses/428PreconditionRequired'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
           
   '/clients/{uid}/illnesses/{id}/chronic':
     parameters:
@@ -540,47 +651,65 @@ paths:
     post:
       tags:
         - Client Illnesses
+      security:
+        - ClinicianAccess: []
+        - AdministratorAccess: []
       summary: Set an illness to chronic
       description: Returns the illness record after success
+      parameters:
+        - $ref: '#/components/parameters/etag'
       responses:
-        '201':
+        201:
           description: Updated
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/illnessRecord'
-        '400':
-          $ref: '#/components/responses/BadRequestError'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        412:
+          $ref: '#/components/responses/412PreconditionFailed'
+        429:
+          $ref: '#/components/responses/428PreconditionRequired'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
     delete:
       tags:
         - Client Illnesses
+      security:
+        - ClinicianAccess: []
+        - AdministratorAccess: []
       summary: Remove the chronic flag from an illness
       description: Returns the illness record after success
+      parameters:
+        - $ref: '#/components/parameters/etag'
       responses:
-        '201':
+        201:
           description: Deleted
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/illnessRecord'
-        '400':
-          $ref: '#/components/responses/BadRequestError'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        412:
+          $ref: '#/components/responses/412PreconditionFailed'
+        429:
+          $ref: '#/components/responses/428PreconditionRequired'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
   
   
   '/clients/{uid}/procedures':
@@ -595,9 +724,15 @@ paths:
     get:
       tags:
         - Client Procedures
+      security:
+        - ClientAccess: []
+        - ClinicianAccess: []
+        - AdministratorAccess: []
       summary: Get the list of a given clients medical procedures
+      parameters:
+        - $ref: '#/components/parameters/etag'
       responses:
-        '200':
+        200:
           description: OK
           content:
             application/json:
@@ -605,28 +740,33 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/procedureRecord'
-        '400':
-          $ref: '#/components/responses/BadRequestError'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
     post:
       tags:
         - Client Procedures
+      security:
+        - ClinicianAccess: []
+        - AdministratorAccess: []
       summary: Create a new procedure record
       description: Returns the full list of procedure records in response upon success.
+      parameters:
+        - $ref: '#/components/parameters/etag'
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/procedureRecordCreate'
       responses:
-        '201':
+        201:
           description: Created
           content:
             application/json:
@@ -634,16 +774,20 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/procedureRecord'
-        '400':
-          $ref: '#/components/responses/BadRequestError'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        412:
+          $ref: '#/components/responses/412PreconditionFailed'
+        429:
+          $ref: '#/components/responses/428PreconditionRequired'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
           
   '/clients/{uid}/procedures/{id}':
     parameters:
@@ -663,49 +807,106 @@ paths:
     patch:
       tags:
         - Client Procedures
+      security:
+        - ClinicianAccess: []
+        - AdministratorAccess: []
       summary: Update a procedure record
       description: Only those properties included in the request body will be changed.
+      parameters:
+        - $ref: '#/components/parameters/etag'
       requestBody:
         content:
           application/json:
             schema:
                 $ref: '#/components/schemas/procedureRecordCreate'
       responses:
-        '201':
+        201:
           description: Updated
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/procedureRecord'
-        '400':
-          $ref: '#/components/responses/BadRequestError'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        412:
+          $ref: '#/components/responses/412PreconditionFailed'
+        429:
+          $ref: '#/components/responses/428PreconditionRequired'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
     delete:
       tags:
         - Client Procedures
+      security:
+        - ClinicianAccess: []
+        - AdministratorAccess: []
       summary: Delete a procedure record
+      parameters:
+        - $ref: '#/components/parameters/etag'
       responses:
-        '201':
+        201:
           description: Deleted
-        '400':
-          $ref: '#/components/responses/BadRequestError'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        412:
+          $ref: '#/components/responses/412PreconditionFailed'
+        429:
+          $ref: '#/components/responses/428PreconditionRequired'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
           
   
+  '/transplantRequests':
+    get:
+      tags:
+        - Client Transplant Requests
+      security:
+        - ClientAccess: []
+        - ClinicianAccess: []
+        - AdministratorAccess: []
+      summary: Returns a list of transplant requests
+      parameters:
+        - $ref: '#/components/parameters/offset'
+        - $ref: '#/components/parameters/count'
+        - $ref: '#/components/parameters/region'
+        - name: organs
+          in: query
+          description: "Only return transplants involving the given organs, may be comma seperated for multiple"
+          schema:
+            $ref: '#/components/schemas/organEnum'
+          
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/transplantRequest'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+      
   
   '/clients/{uid}/transplantRequests':
     parameters:
@@ -719,9 +920,13 @@ paths:
     get:
       tags:
         - Client Transplant Requests
+      security:
+        - ClientAccess: []
+        - ClinicianAccess: []
+        - AdministratorAccess: []
       summary: Get the list of a given clients transplant requests
       responses:
-        '200':
+        200:
           description: OK
           content:
             application/json:
@@ -729,28 +934,33 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/transplantRequest'
-        '400':
-          $ref: '#/components/responses/BadRequestError'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
     post:
       tags:
         - Client Transplant Requests
+      security:
+        - ClinicianAccess: []
+        - AdministratorAccess: []
       summary: Create a new transplant request
       description: Returns the full list of transplant requests in response upon success.
+      parameters:
+        - $ref: '#/components/parameters/etag'
       requestBody:
         content:
           application/json:
             schema:
               $ref: '#/components/schemas/transplantRequestCreate'
       responses:
-        '201':
+        201:
           description: Created
           content:
             application/json:
@@ -758,16 +968,20 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/transplantRequest'
-        '400':
-          $ref: '#/components/responses/BadRequestError'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        412:
+          $ref: '#/components/responses/412PreconditionFailed'
+        429:
+          $ref: '#/components/responses/428PreconditionRequired'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
           
   '/clients/{uid}/transplantRequests/{id}':
     parameters:
@@ -787,47 +1001,65 @@ paths:
     patch:
       tags:
         - Client Transplant Requests
+      security:
+        - ClinicianAccess: []
+        - AdministratorAccess: []
       summary: Update a transpant request
       description: Only those properties included in the request body will be changed.
+      parameters:
+        - $ref: '#/components/parameters/etag'
       requestBody:
         content:
           application/json:
             schema:
                 $ref: '#/components/schemas/transplantRequestCreate'
       responses:
-        '201':
+        201:
           description: Updated
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/transplantRequest'
-        '400':
-          $ref: '#/components/responses/BadRequestError'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        412:
+          $ref: '#/components/responses/412PreconditionFailed'
+        429:
+          $ref: '#/components/responses/428PreconditionRequired'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
     delete:
       tags:
         - Client Transplant Requests
+      security:
+        - ClinicianAccess: []
+        - AdministratorAccess: []
       summary: Delete a transpant request
+      parameters:
+        - $ref: '#/components/parameters/etag'
       responses:
-        '201':
+        201:
           description: Deleted
-        '400':
-          $ref: '#/components/responses/BadRequestError'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        412:
+          $ref: '#/components/responses/412PreconditionFailed'
+        429:
+          $ref: '#/components/responses/428PreconditionRequired'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
           
   
   
@@ -840,6 +1072,9 @@ paths:
     get:
       tags:
         - Clinician
+      security:
+        - ClinicianAccess: []
+        - AdministratorAccess: []
       summary: "Returns all clinicians from the system"
       parameters:
         - $ref: '#/components/parameters/q'
@@ -847,7 +1082,7 @@ paths:
         - $ref: '#/components/parameters/count'
         - $ref: '#/components/parameters/region'
       responses:
-        '200':
+        200:
           description: A list of clinicians
           content:
             application/json:
@@ -856,17 +1091,19 @@ paths:
                 items:
                   $ref: '#/components/schemas/clinicianOverview'
                 
-        '400':
-          $ref: '#/components/responses/BadRequestError'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
     post:
       tags:
         - Clinician
+      security:
+        - AdministratorAccess: []
       summary: Create a new clinician
       requestBody:
         content:
@@ -875,20 +1112,20 @@ paths:
               $ref: '#/components/schemas/clinicianModifiableDetails'
         required: true
       responses:
-        '201':
+        201:
           description: Created
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/clinicianDetails'
-        '400':
-          $ref: '#/components/responses/BadRequestError'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
   '/clinicians/{staffId}':
     parameters:
     - in: path
@@ -901,69 +1138,293 @@ paths:
     get:
       tags:
         - Clinician
+      security:
+        - ClinicianAccess: []
+        - AdministratorAccess: []
       summary: Get detailed clinician information
       responses:
-        '200':
+        200:
           description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/clinicianDetails'
-        '400':
-          $ref: '#/components/responses/BadRequestError'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
     patch:
       tags:
         - Clinician
+      security:
+        - ClinicianAccess: []
+        - AdministratorAccess: []
       summary: Change some information about a clinician
       description: Only those properties included in the request body will be changed.
+      parameters:
+        - $ref: '#/components/parameters/etag'
       requestBody:
         content:
           application/json:
             schema:
                 $ref: '#/components/schemas/clinicianModifiableDetails'
       responses:
-        '200':
+        200:
           description: OK
           content:
             application/json:
               schema:
                 $ref: '#/components/schemas/clinicianDetails'
-        '400':
-          $ref: '#/components/responses/BadRequestError'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        412:
+          $ref: '#/components/responses/412PreconditionFailed'
+        429:
+          $ref: '#/components/responses/428PreconditionRequired'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
     delete:
       tags:
         - Clinician
+      security:
+        - ClinicianAccess: []
+        - AdministratorAccess: []
       summary: Delete a clinician
+      parameters:
+        - $ref: '#/components/parameters/etag'
       responses:
-        '201':
+        201:
           description: Deleted
-        '400':
-          $ref: '#/components/responses/BadRequestError'
-        '401':
-          $ref: '#/components/responses/UnauthorizedError'
-        '403':
-          $ref: '#/components/responses/ForbiddenError'
-        '404':
-          $ref: '#/components/responses/NotFoundError'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        412:
+          $ref: '#/components/responses/412PreconditionFailed'
+        429:
+          $ref: '#/components/responses/428PreconditionRequired'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+          
+          
   
+  
+  ### Administrator
+  /administrators:
+    get:
+      tags:
+        - Administrator
+      security:
+        - AdministratorAccess: []
+      summary: Returns all administrators from the system
+      parameters:
+        - $ref: '#/components/parameters/q'
+        - $ref: '#/components/parameters/offset'
+        - $ref: '#/components/parameters/count'
+      responses:
+        200:
+          description: A list of administrators
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/administratorDetails'
+                
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+    post:
+      tags:
+        - Administrator
+      security:
+        - AdministratorAccess: []
+      summary: Create a new administrator
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/administratorCreateDetails'
+        required: true
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/administratorDetails'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+  '/administrators/{username}':
+    parameters:
+    - in: path
+      name: username
+      description: Administrator ID
+      required: true
+      schema:
+        type: integer
+        minimum: 0
+    get:
+      tags:
+        - Administrator
+      security:
+        - AdministratorAccess: []
+      summary: Get detailed administrator information
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/administratorDetails'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+    patch:
+      tags:
+        - Administrator
+      security:
+        - AdministratorAccess: []
+      summary: Change some information about an administrator
+      description: Only those properties included in the request body will be changed.
+      parameters:
+        - $ref: '#/components/parameters/etag'
+      requestBody:
+        content:
+          application/json:
+            schema:
+                $ref: '#/components/schemas/administratorModifiableDetails'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/administratorDetails'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        412:
+          $ref: '#/components/responses/412PreconditionFailed'
+        429:
+          $ref: '#/components/responses/428PreconditionRequired'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+    delete:
+      tags:
+        - Administrator
+      security:
+        - AdministratorAccess: []
+      summary: Delete an administrator
+      parameters:
+        - $ref: '#/components/parameters/etag'
+      responses:
+        201:
+          description: Deleted
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        412:
+          $ref: '#/components/responses/412PreconditionFailed'
+        429:
+          $ref: '#/components/responses/428PreconditionRequired'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+          
+  '/sql':
+    post:
+      tags:
+        - Administrator
+      security:
+        - AdministratorAccess: []
+      summary: Execute abritrary SQL on the backend database. Currently only supports read actions
+      requestBody:
+        content:
+          application/json:
+            schema:
+                $ref: '#/components/schemas/sql'
+      responses:
+        200:
+          description: The response from the SQL query
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+          
+          
+  '/login':
+    post:
+      tags:
+        - Authentication
+      summary: Login endpoint
+      description: The returned value will contain a string matching the usertype, and that users data, in the form it is represented as if a GET request was made for that item. This allow the userdata to be used straight away in an application rather than needing to query it. 
+        The response will also include the JSON Web Token, which should be included in the Authentication header for all future requests.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/loginRequestBody'
+      responses:
+        200:
+          description: Successfully logged in
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/loginResponseObject'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          description: Invalid username or password
+        500:
+          $ref: '#/components/responses/500InternalServerError'
   
 components:
   parameters:
@@ -1036,11 +1497,101 @@ components:
       description: "Only return clients that are requesting the given organs, may be comma seperated for multiple"
       schema:
         $ref: '#/components/schemas/organEnum'
+        
+    
+    etag:
+      name: etag
+      in: header
+      description: A hashed value of the object used for optimistic concurrency control
+      required: true
+      schema:
+        $ref: '#/components/schemas/etag'
   
   
-  
+  examples:
+    clientDetailsExample:
+      value:
+        {
+          "uid": 0,
+          "firstName": "Joeseph",
+          "middleName": "Freddy",
+          "lastName": "Bloggs",
+          "preferredName": "Jolene",
+          "currentAddress": "123 Fake St",
+          "height": 177,
+          "weight": 74,
+          "bloodType": "A_NEG",
+          "region": "CANTERBURY",
+          "birthGender": "MALE",
+          "genderIdentity": "FEMALE",
+          "dateOfBirth": {
+            "year": 1987,
+            "month": 04,
+            "day": 01
+          },
+          "dateOfDeath": null,
+          "createdTimestamp": {
+            "date": {
+              "year": 2018,
+              "month": 06,
+              "day": 25
+            },
+            "time": {
+              "hour": 01,
+              "minute": 02,
+              "second": 03,
+              "nano": 123456
+            }
+          },
+          "modifiedTimestamp": {
+            "date": {
+              "year": 2018,
+              "month": 06,
+              "day": 26
+            },
+            "time": {
+              "hour": 04,
+              "minute": 05,
+              "second": 06,
+              "nano": 123456
+            }
+          }
+        }
         
   schemas:
+  
+    loginRequestBody:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+  
+    loginResponseObject:
+      type: object
+      properties:
+        token:
+          $ref: '#/components/schemas/jsonWebToken'
+        userType:
+          $ref: '#/components/schemas/userTypeEnum'
+        userData:
+          oneOf:
+            - $ref: '#/components/schemas/clientDetails'
+            - $ref: '#/components/schemas/clinicianDetails'
+            - $ref: '#/components/schemas/administratorDetails'
+          example:
+            $ref: '#/components/examples/clientDetailsExample'
+      
+    userTypeEnum:
+      type: string
+      enum: [CLIENT, CLINICIAN, ADMIN]
+      
+    jsonWebToken:
+      type: string
+      description: A JSON Web Token used for all further authentication. Should be included in the Authentication header
+      example: eyJhbGR5cCI6IkpXVCJ9.eyJzdWIiDIyfQ.Vxrhpalxry4EfsAKGITz02x0
+  
         
     ### Clinician
     
@@ -1073,9 +1624,9 @@ components:
           type: string
         region:
           $ref: '#/components/schemas/regionEnum'
-        createdTimestamp:
+        createdOn:
           $ref: '#/components/schemas/dateTime'
-        modifiedTimestamp:
+        modifiedOn:
           $ref: '#/components/schemas/dateTime'
           
     clinicianModifiableDetails:
@@ -1091,6 +1642,33 @@ components:
           type: string
         region:
           $ref: '#/components/schemas/regionEnum'
+          
+          
+    ### Administrator
+    administratorDetails:
+      type: object
+      properties:
+        username:
+          type: string
+        createdOn:
+          $ref: '#/components/schemas/dateTime'
+        modifiedOn:
+          $ref: '#/components/schemas/dateTime'
+          
+    administratorCreateDetails:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+          
+    administratorModifiableDetails:
+      type: object
+      properties:
+        username:
+          type: string
+        
   
   
     #Client attributes
@@ -1128,6 +1706,8 @@ components:
           type: number
         weight:
           type: number
+        bloodType:
+          $ref: '#/components/schemas/bloodTypeEnum'
         region:
           $ref: '#/components/schemas/regionEnum'
         birthGender:
@@ -1180,6 +1760,7 @@ components:
           type: integer
         day:
           type: integer
+      nullable: true
     time:
       type: object
       properties:
@@ -1200,7 +1781,7 @@ components:
           $ref: '#/components/schemas/time'
           
         
-    organDonationStatus:
+    organBooleanArray:
       type: object
       properties:
         LIVER:
@@ -1233,9 +1814,7 @@ components:
       properties:
         id:
           type: number
-        clientId: #References the Client ID, is this required? It's in the Object but we will know what client it is by the request
-          type: number
-        name:
+        medicationName:
           type: string
         started:
           $ref: '#/components/schemas/date'
@@ -1256,9 +1835,7 @@ components:
       properties:
         id:
           type: number
-        clientId: #References the Client ID, is this required? It's in the Object but we will know what client it is by the request
-          type: number
-        name:
+        illnessName:
           type: string
         diagnosisDate:
           $ref: '#/components/schemas/date'
@@ -1293,8 +1870,6 @@ components:
       properties:
         id:
           type: number
-        clientId: #References the Client ID, is this required? It's in the Object but we will know what client it is by the request
-          type: number
         summary:
           type: string
         description:
@@ -1325,12 +1900,8 @@ components:
       properties:
         id:
           type: number
-        clientId: #References the Client ID, is this required? It's in the Object but we will know what client it is by the request
-          type: number
         requestedOrgan:
           $ref: '#/components/schemas/organEnum'
-        description:
-          type: string
         requestedDate:
           $ref: '#/components/schemas/date'
         resolvedDate:
@@ -1339,7 +1910,6 @@ components:
           $ref: '#/components/schemas/transplantRequestStatusEnum'
         resolvedReason:
           type: string
-          nullable: true
           
     transplantRequestCreate:
       type: object
@@ -1357,6 +1927,16 @@ components:
         resolvedReason:
           type: string
           nullable: true
+    
+    historyItem:
+      type: object
+      properties:
+        type: 
+          type: string
+        details:
+          type: string
+        timestamp:
+          $ref: '#/components/schemas/dateTime'
         
         
         
@@ -1385,21 +1965,55 @@ components:
     transplantRequestStatusEnum:
       type: string
       enum: [WAITING, CANCELLED, COMPLETED]
+
+
+    sql:
+      type: object
+      properties:
+        query:
+          type: string
+          example: SELECT * FROM Client
+          
+    
+    etag:
+      type: string
+      description: A hashed value of the object used for optimistic concurrency control
+      
+      
       
   responses:
-    BadRequestError: #400
+    400BadRequest:
       description: Bad request
-    NotFoundError: #404
-      description: The specified resource was not found
-    UnauthorizedError: #401
+    401Unauthorized:
       description: Access token is missing or invalid
-    ForbiddenError: #403
+    403Forbidden:
       description: You do not have permission to perform that action
-    InternalServerError: #500
+    404NotFound:
+      description: The specified resource was not found
+    412PreconditionFailed:
+      description: That resource has already been modified or the ETag header is invalid
+    428PreconditionRequired:
+      description: ETag header was missing and is required to modify a resource
+    500InternalServerError:
       description: Internal server error
     
       
   securitySchemes:
-    bearerAuth:
+          
+    ClientAccess:
+      description: A client may only access their own data, they cannot access other users. They may only modify their personal information and organ donation status. They can view all their other statuses.
       type: http
       scheme: bearer
+      bearerFormat: JWT
+      
+    ClinicianAccess:
+      description: Clincians can access and modify and client, and may view any clinician, but only modify their own information.
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      
+    AdministratorAccess:
+      description: Administrators can access and modify all user types.
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
