@@ -3,7 +3,6 @@ package com.humanharvest.organz;
 import java.time.LocalDate;
 import java.util.EnumSet;
 import java.util.Set;
-
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.ElementCollection;
@@ -17,7 +16,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.humanharvest.organz.utilities.enums.Organ;
 
 @Entity
@@ -30,7 +29,7 @@ public class ProcedureRecord {
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "Client_uid")
-    @JsonIgnore
+    @JsonBackReference
     private Client client;
     private String summary;
     private String description;

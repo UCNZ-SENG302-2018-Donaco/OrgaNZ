@@ -12,7 +12,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 /**
  * Represents an instance of a user taking a medication for a period of time.
@@ -29,7 +29,7 @@ public class MedicationRecord implements Comparable<MedicationRecord> {
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "Client_uid")
-    @JsonIgnore
+    @JsonBackReference
     private Client client;
     private String medicationName;
     private LocalDate started;

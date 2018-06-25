@@ -1,19 +1,16 @@
 package com.humanharvest.organz.utilities;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -38,6 +35,8 @@ public final class JSONConverter {
     private static final ObjectMapper mapper = new ObjectMapper()
             .enable(SerializationFeature.INDENT_OUTPUT)
             .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+            .setVisibility(PropertyAccessor.ALL, Visibility.NONE)
+            .setVisibility(PropertyAccessor.FIELD, Visibility.ANY)
             .registerModule(new ParameterNamesModule())
             .registerModule(new Jdk8Module())
             .registerModule(new JavaTimeModule());
@@ -73,7 +72,12 @@ public final class JSONConverter {
      */
     public static void saveToFile(File file) throws IOException {
         ClientManager clientManager = State.getClientManager();
-        mapper.writeValue(file, clientManager);
+        try {
+            mapper.writeValue(file, clientManager.getClients());
+        } catch (IOException e) {
+            LOGGER.severe(e.getMessage());
+            throw e;
+        }
     }
 
     /**
@@ -86,34 +90,11 @@ public final class JSONConverter {
         };
         try {
             ArrayList<Client> clients = mapper.readValue(file, type);
-
-//                    for (Client client : clients) {
-//                        for (TransplantRequest request : client.getTransplantRequests()) {
-//                            request.setClient(client);
-//                        }
-//                        for (IllnessRecord record : client.getCurrentIllnesses()) {
-//                            record.setClient(client);
-//                        }
-//                        for (IllnessRecord record : client.getPastIllnesses()) {
-//                            record.setClient(client);
-//                        }
-//                        for (ProcedureRecord record : client.getPastProcedures()) {
-//                            record.setClient(client);
-//                        }
-//                        for (ProcedureRecord record : client.getPendingProcedures()) {
-//                            record.setClient(client);
-//                        }
-//                        for (MedicationRecord record : client.getCurrentMedications()) {
-//                            record.setClient(client);
-//                        }
-//                        for (MedicationRecord record : client.getPastMedications()) {
-//                            record.setClient(client);
-//                        }
-//                    }
-//                    ClientManager clientManager = State.getClientManager();
-//                    clientManager.setClients(clients);
-            throw new UnsupportedOperationException();
+            ClientManager clientManager = State.getClientManager();
+            clientManager.setClients(clients);
         } catch (JsonParseException | JsonMappingException e) {
+            //Only a warning as an invalid file could have been selected by the user
+            LOGGER.warning(e.getMessage());
             throw new IllegalArgumentException("Not a valid json file", e);
         }
     }

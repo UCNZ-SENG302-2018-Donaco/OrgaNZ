@@ -28,6 +28,7 @@ public class ClientManagerMemory implements ClientManager {
 
     @Override
     public void setClients(Collection<Client> clients) {
+        this.clients.clear();
         this.clients.addAll(clients);
     }
 

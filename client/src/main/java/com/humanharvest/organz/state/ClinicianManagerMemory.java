@@ -93,6 +93,7 @@ public class ClinicianManagerMemory implements ClinicianManager{
     }
 
     public void setClinicians(Collection<Clinician> clinicians) {
+        this.clinicians.clear();
         this.clinicians.addAll(clinicians);
     }
 

@@ -17,7 +17,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.CascadeType;
@@ -30,6 +29,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.humanharvest.organz.utilities.enums.BloodType;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Organ;
@@ -80,24 +81,28 @@ public class Client {
             mappedBy = "client",
             cascade = CascadeType.ALL
     )
+    @JsonManagedReference
     private Collection<TransplantRequest> transplantRequests = new ArrayList<>();
 
     @OneToMany(
             mappedBy = "client",
             cascade = CascadeType.ALL
     )
+    @JsonManagedReference
     private List<MedicationRecord> medicationHistory = new ArrayList<>();
 
     @OneToMany(
             mappedBy = "client",
             cascade = CascadeType.ALL
     )
+    @JsonManagedReference
     private List<IllnessRecord> illnessHistory = new ArrayList<>();
 
     @OneToMany(
             mappedBy = "client",
             cascade = CascadeType.ALL
     )
+    @JsonManagedReference
     private List<ProcedureRecord> procedures = new ArrayList<>();
 
     @ElementCollection
@@ -694,6 +699,7 @@ public class Client {
      * Indicates whether the client is a donor (has chosen to donate at least one organ)
      * @return boolean of whether the client has chosen to donate any organs
      */
+    @JsonIgnore
     public boolean isDonor() {
         return getCurrentlyDonatedOrgans().size() > 0;
     }
@@ -702,6 +708,7 @@ public class Client {
      * Indicates whether the client is a receiver (has at least one transplant request)
      * @return boolean of whether the client has any organ transplant requests
      */
+    @JsonIgnore
     public boolean isReceiver() {
         return transplantRequests.size() > 0;
     }

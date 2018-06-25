@@ -9,7 +9,6 @@ import javax.persistence.RollbackException;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.database.DBManager;
 import com.humanharvest.organz.utilities.enums.Region;
-
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
@@ -61,6 +60,8 @@ public class ClinicianManagerDBPure implements ClinicianManager {
         Transaction trns = null;
         try (Session session = dbManager.getDBSession()) {
             trns = session.beginTransaction();
+
+            session.createQuery("DELETE FROM Clinician").executeUpdate();
 
             for (Clinician clinician : clinicians) {
                 session.save(clinician);

@@ -1,7 +1,6 @@
 package com.humanharvest.organz;
 
 import java.time.LocalDateTime;
-
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Entity;
@@ -14,7 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 
@@ -31,7 +30,7 @@ public class TransplantRequest {
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "Client_uid")
-    @JsonIgnore
+    @JsonBackReference
     private Client client;
     private Organ requestedOrgan;
     private LocalDateTime requestDate;
