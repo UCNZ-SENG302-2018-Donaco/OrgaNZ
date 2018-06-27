@@ -313,7 +313,6 @@ public final class JSONConverter {
                                             + "Currently, user " + client.getUid() + " has at least one that isn't.");
                                 }
 
-
                                 // Catch any resolve dates before the request date
                                 if (request.getResolvedDate().isBefore(request.getRequestDate())) {
                                     throw new IllegalArgumentException("Not a valid clients file: "
@@ -325,6 +324,72 @@ public final class JSONConverter {
 
                         }
 
+                        // Check medication history
+                        for (MedicationRecord medicationRecord : client.getMedications()) {
+                            // Check for non-empty medication name
+                            if (StringUtils.isNullOrEmpty(medicationRecord.getMedicationName())) {
+                                throw new IllegalArgumentException("Not a valid clients file: "
+                                        + "all medication records should have a name.\n"
+                                        + "Currently, user " + client.getUid() + " has at least one that doesn't.");
+                            }
+
+                            // Check for valid start date
+                            if (medicationRecord.getStarted() == null) {
+                                throw new IllegalArgumentException("Not a valid clients file: "
+                                        + "all medication records should have start dates.\n"
+                                        + "Currently, user " + client.getUid() + " has at least one that doesn't.");
+
+                            }
+                            try {
+                                LocalDate.parse(medicationRecord.getStarted().toString());
+                            } catch (DateTimeParseException e) {
+                                throw new IllegalArgumentException("Not a valid clients file: "
+                                        + "all medication records should have valid start dates.\n"
+                                        + "Currently, user " + client.getUid() + " has at least one that isn't.");
+                            }
+
+                            // Check that start date is not in the future
+                            if (medicationRecord.getStarted().isAfter(LocalDate.now())) {
+                                throw new IllegalArgumentException("Not a valid clients file: "
+                                        + "no medication records should start in the future.\n"
+                                        + "Currently, user " + client.getUid() + " has at least one that does.");
+
+                            }
+
+                            // Check for valid end date
+                            if (medicationRecord.getStopped() != null) {
+                                try {
+                                    LocalDate.parse(medicationRecord.getStopped().toString());
+                                } catch (DateTimeParseException e) {
+                                    throw new IllegalArgumentException("Not a valid clients file: "
+                                            + "all medication records should have valid end dates.\n"
+                                            + "Currently, user " + client.getUid() + " has at least one that isn't.");
+                                }
+
+                                // Check that end date is not in the future
+                                if (medicationRecord.getStopped().isAfter(LocalDate.now())) {
+                                    throw new IllegalArgumentException("Not a valid clients file: "
+                                            + "no medication records should end in the future.\n"
+                                            + "Currently, user " + client.getUid() + " has at least one that does.");
+
+                                }
+
+                                // Check that end date is not before start date
+                                if (medicationRecord.getStopped().isBefore(medicationRecord.getStarted())) {
+                                    throw new IllegalArgumentException("Not a valid clients file: "
+                                            + "no medication records should end before they start.\n"
+                                            + "Currently, user " + client.getUid() + " has at least one that does.");
+
+                                }
+                            }
+                        }
+
+                        // Template
+                        if (false) {
+                            throw new IllegalArgumentException("Not a valid clients file: "
+                                    + "EXPLANATION\n"
+                                    + "Currently, user " + client.getUid() + " has at least one that isn't.");
+                        }
 
                         // Add client to each record it has
 
@@ -343,10 +408,7 @@ public final class JSONConverter {
                         for (ProcedureRecord record : client.getPendingProcedures()) {
                             record.setClient(client);
                         }
-                        for (MedicationRecord record : client.getCurrentMedications()) {
-                            record.setClient(client);
-                        }
-                        for (MedicationRecord record : client.getPastMedications()) {
+                        for (MedicationRecord record : client.getMedications()) {
                             record.setClient(client);
                         }
                     }
@@ -359,6 +421,7 @@ public final class JSONConverter {
                 }
             }
         }
+
     }
 
     /**

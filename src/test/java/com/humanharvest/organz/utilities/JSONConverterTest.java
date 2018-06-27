@@ -24,6 +24,7 @@ import javax.sql.DataSource;
 
 import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.ClientManagerMemory;
@@ -48,6 +49,10 @@ public class JSONConverterTest extends BaseTest {
     private int nextYear;
     private int currentYear;
     private int lastYear;
+    private String medicationName;
+    private MedicationRecord medicationRecord;
+    private LocalDate yesterday;
+    private LocalDate tomorrow;
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
@@ -79,13 +84,18 @@ public class JSONConverterTest extends BaseTest {
         currentYear = LocalDate.now().getYear();
         nextYear = currentYear + 1;
         lastYear = currentYear - 1;
+
+        yesterday = LocalDate.now().minusDays(1);
+        tomorrow = LocalDate.now().plusDays(1);
+        medicationName = "my medication";
+        medicationRecord = new MedicationRecord(medicationName, yesterday, LocalDate.now());
+        client.addMedicationRecord(medicationRecord);
     }
 
     @Test
     public void saveToFileTest() throws Exception {
         File file = folder.newFile("filled_clients.json");
 
-        Client client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
         ArrayList<Client> clients = new ArrayList<>();
         clients.add(client);
         State.reset(false);
@@ -134,7 +144,6 @@ public class JSONConverterTest extends BaseTest {
     @Test
     public void loadFromFileTest() throws Exception {
         ClientManager manager = State.getClientManager();
-        Client client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
         saveClientToAndLoadFromFile(client);
 
         assertEquals(manager.getClients().size(), 1);
@@ -506,9 +515,160 @@ public class JSONConverterTest extends BaseTest {
         failToLoadFromFileByChangingResolveDateTest(lastYear);
     }
 
+    @Test
+    public void failToLoadFromFileNullMedicationNameTest() throws Exception {
+        MedicationRecord medicationRecordNullName = new MedicationRecord(null, LocalDate.now(), tomorrow);
+        client.addMedicationRecord(medicationRecordNullName);
+
+        try {
+            saveClientToAndLoadFromFile(client);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains(String.valueOf(uid)));
+        }
+    }
+
+    @Test
+    public void failToLoadFromFileEmptyMedicationNameTest() throws Exception {
+        MedicationRecord medicationRecordNullName = new MedicationRecord("", LocalDate.now(), tomorrow);
+        client.addMedicationRecord(medicationRecordNullName);
+
+        try {
+            saveClientToAndLoadFromFile(client);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains(String.valueOf(uid)));
+        }
+    }
+
+    @Test
+    public void failToLoadFromFileNoMedicationStartDateTest() throws Exception {
+        medicationRecord.setStarted(null);
+
+        try {
+            saveClientToAndLoadFromFile(client);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains(String.valueOf(uid)));
+        }
+    }
+
+    @Test
+    public void failToLoadFromFileInvalidMedicationStartDateTest() throws Exception {
+        File file = folder.newFile("testfile.json");
+        saveClientToFile(client, file);
+
+        String partialJsonTimestampRegex = "\"medicationName\":\\s*\"" + medicationName + "\",\n"
+                + "\\s*\"started\":\\s*\\{\n"
+                + "\\s*\"year\":\\s*[0-9]+,\n"
+                + "\\s*\"month\":\\s*[0-9]+,\n"
+                + "\\s*\"day\":";
+        String partialJsonTimestampModified = "\"medicationName\": \"" + medicationName + "\",\n"
+                + "        \"started\": {\n"
+                + "          \"day\":";
+        replaceAllInFile(file, partialJsonTimestampRegex, partialJsonTimestampModified);
+
+        try {
+            JSONConverter.loadFromFile(file);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains(String.valueOf(uid)));
+        }
+    }
+
+    @Test
+    public void failToLoadFromFileInvalidMedicationStoppedDateTest() throws Exception {
+        File file = folder.newFile("testfile.json");
+        saveClientToFile(client, file);
+
+        String partialJsonTimestampRegex = "\"medicationName\":\\s*\"" + medicationName + "\","
+                + "\\s*\"started\":\\s*\\{\n"
+                + "\\s*\"year\":\\s*[0-9]+,\n"
+                + "\\s*\"month\":\\s*[0-9]+,\n"
+                + "\\s*\"day\":\\s*[0-9]+\n"
+                + "\\s*},\n"
+                + "\\s*\"stopped\":\\s*\\{\n"
+                + "\\s*\"year\":\\s*[0-9]+,\n"
+                + "\\s*\"month\":\\s*[0-9]+,\n"
+                + "\\s*\"day\":";
+        String partialJsonTimestampModified = "\"medicationName\": \"" + medicationName + "\",\n"
+                + "        \"started\": {\n"
+                + "          \"year\": " + medicationRecord.getStarted().getYear() + ",\n"
+                + "          \"month\": " + medicationRecord.getStarted().getMonthValue() + ",\n"
+                + "          \"day\": " + medicationRecord.getStarted().getDayOfMonth() + "\n"
+                + "        },\n"
+                + "        \"stopped\": {\n"
+                + "          \"day\":";
+        replaceAllInFile(file, partialJsonTimestampRegex, partialJsonTimestampModified);
+
+        try {
+            JSONConverter.loadFromFile(file);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains(String.valueOf(uid)));
+        }
+    }
+
+    @Test
+    public void failToLoadFromFileFutureMedicationStartDateTest() throws Exception {
+        medicationRecord.setStarted(tomorrow);
+
+        try {
+            saveClientToAndLoadFromFile(client);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains(String.valueOf(uid)));
+        }
+    }
+
+    @Test
+    public void failToLoadFromFileFutureMedicationStopDateTest() throws Exception {
+        medicationRecord.setStopped(tomorrow);
+
+        try {
+            saveClientToAndLoadFromFile(client);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains(String.valueOf(uid)));
+        }
+    }
+
+    @Test
+    public void failToLoadFromFileMedicationStopDateBeforeStartDateTest() throws Exception {
+        medicationRecord.setStopped(LocalDate.now().minusYears(1));
+
+        try {
+            saveClientToAndLoadFromFile(client);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains(String.valueOf(uid)));
+        }
+    }
+
+    @Test
+    public void LoadFromFileNoMedicationStopDateTest() throws Exception {
+        medicationRecord.setStopped(null);
+        saveClientToAndLoadFromFile(client);
+    }
+
+    // ********* Templates *********
+
     //TODO
     @Test
     public void failToLoadFromFileTest() throws Exception {
+        client.setFirstName(null);
+
+        try {
+            saveClientToAndLoadFromFile(client);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains(String.valueOf(uid)));
+        }
+    }
+
+    //TODO
+    @Test
+    public void failToLoadFromFileRegexTest() throws Exception {
         File file = folder.newFile("testfile.json");
         saveClientToFile(client, file);
         replaceAllInFile(file, "a", "b");
@@ -520,7 +680,5 @@ public class JSONConverterTest extends BaseTest {
             assertTrue(e.getMessage().contains(String.valueOf(uid)));
         }
     }
-
-
 
 }

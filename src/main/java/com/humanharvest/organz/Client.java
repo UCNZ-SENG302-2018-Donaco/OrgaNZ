@@ -436,6 +436,14 @@ public class Client {
     }
 
     /**
+     * Returns a new list containing all medications used by the Client, past and current.
+     * @return The list of all medications used by the Client.
+     */
+    public List<MedicationRecord> getMedications() {
+        return new ArrayList<>(medicationHistory);
+    }
+
+    /**
      * Adds a new MedicationRecord to the client's history.
      * @param record The given MedicationRecord.
      */
