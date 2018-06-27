@@ -355,7 +355,7 @@ public class MenuBarController extends SubController {
                         String.format("The system's current state was saved to file '%s'.", file.getName()));
                 State.getSession().addToSessionHistory(historyItem);
 
-                invoker.resetUnsavedUpdates();
+                State.resetUnsavedUpdates();
                 PageNavigator.refreshAllWindows();
             }
         } catch (URISyntaxException | IOException e) {
