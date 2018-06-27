@@ -5,7 +5,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.humanharvest.organz.Client;
 import com.humanharvest.organz.ProcedureRecord;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.utilities.enums.Organ;
@@ -15,7 +14,6 @@ import com.humanharvest.organz.utilities.enums.Organ;
  */
 public class ModifyProcedureRecordAction extends ClientAction {
 
-    private ClientManager manager;
     private ProcedureRecord record;
     private String oldSummary, newSummary;
     private String oldDescription, newDescription;
@@ -28,8 +26,8 @@ public class ModifyProcedureRecordAction extends ClientAction {
      * @param record The procedure record to modify.
      */
     public ModifyProcedureRecordAction(ProcedureRecord record, ClientManager manager) {
+        super(record.getClient(), manager);
         this.record = record;
-        this.manager = manager;
 
         oldSummary = record.getSummary();
         oldDescription = record.getDescription();
@@ -152,10 +150,5 @@ public class ModifyProcedureRecordAction extends ClientAction {
         }
 
         return builder.toString();
-    }
-
-    @Override
-    protected Client getAffectedClient() {
-        return record.getClient();
     }
 }

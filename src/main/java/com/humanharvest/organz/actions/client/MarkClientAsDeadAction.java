@@ -16,8 +16,6 @@ import com.humanharvest.organz.state.ClientManager;
  */
 public class MarkClientAsDeadAction extends ClientAction {
 
-    private ClientManager manager;
-    private Client client;
     private LocalDate deathDate;
     private List<ResolveTransplantRequestAction> resolveTransplantActions;
 
@@ -25,12 +23,11 @@ public class MarkClientAsDeadAction extends ClientAction {
      * Creates a new action to mark the given client as dead, with the given date of death.
      * @param client The client to mark as dead.
      * @param deathDate Their date of death.
-     * @param manager // TODO
+     * @param manager The ClientManager to apply the changes to
      */
     public MarkClientAsDeadAction(Client client, LocalDate deathDate, ClientManager manager) {
-        this.client = client;
+        super(client, manager);
         this.deathDate = deathDate;
-        this.manager = manager;
         this.resolveTransplantActions = client.getTransplantRequests()
                 .stream()
                 .filter(request -> request.getStatus() == WAITING)
@@ -93,10 +90,5 @@ public class MarkClientAsDeadAction extends ClientAction {
         return String.format("Reversed marking client %d: %s as dead. \n"
                         + "These requests were therefore uncancelled: \n\n%s",
                 client.getUid(), client.getFullName(), resolvedRequestsText);
-    }
-
-    @Override
-    protected Client getAffectedClient() {
-        return client;
     }
 }

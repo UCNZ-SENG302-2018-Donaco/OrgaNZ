@@ -14,17 +14,15 @@ import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredExcept
  */
 public class ModifyClientOrgansAction extends ClientAction {
 
-    private ClientManager manager;
     private Map<Organ, Boolean> changes = new HashMap<>();
-    private Client client;
 
     /**
      * Create a new Action
      * @param client The client to be modified
+     * @param manager The ClientManager to apply the changes to
      */
     public ModifyClientOrgansAction(Client client, ClientManager manager) {
-        this.client = client;
-        this.manager = manager;
+        super(client, manager);
     }
 
     /**
@@ -99,10 +97,5 @@ public class ModifyClientOrgansAction extends ClientAction {
                 e.printStackTrace();
             }
         }
-    }
-
-    @Override
-    protected Client getAffectedClient() {
-        return client;
     }
 }

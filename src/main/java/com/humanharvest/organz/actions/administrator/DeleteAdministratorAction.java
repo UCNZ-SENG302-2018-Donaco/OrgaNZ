@@ -8,7 +8,6 @@ import com.humanharvest.organz.state.AdministratorManager;
  */
 public class DeleteAdministratorAction extends AdministratorAction {
 
-    private final Administrator administrator;
     private final AdministratorManager manager;
 
     /**
@@ -17,7 +16,7 @@ public class DeleteAdministratorAction extends AdministratorAction {
      * @param manager The AdministratorManager to apply changes to
      */
     public DeleteAdministratorAction(Administrator administrator, AdministratorManager manager) {
-        this.administrator = administrator;
+        super(administrator);
         this.manager = manager;
     }
 
@@ -41,10 +40,5 @@ public class DeleteAdministratorAction extends AdministratorAction {
     @Override
     public String getUnexecuteText() {
         return String.format("Re-added administrator %s", administrator.getUsername());
-    }
-
-    @Override
-    protected Administrator getAffectedAdministrator() {
-        return administrator;
     }
 }

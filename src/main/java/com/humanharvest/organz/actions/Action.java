@@ -36,23 +36,11 @@ public abstract class Action {
      * Returns the lazily-initialised {@link HistoryItem} corresponding to this action being executed.
      * @return The {@link HistoryItem} corresponding to this action's execution.
      */
-    protected HistoryItem getExecuteHistoryItem() {
+    public HistoryItem getExecuteHistoryItem() {
         // Initialise the history item if it hasn't been used already (lazy initialisation)
         if (executeHistoryItem == null) {
             executeHistoryItem = new HistoryItem("ACTION", this.getExecuteText());
         }
         return executeHistoryItem;
-    }
-
-    /**
-     * Returns the lazily-initialised {@link HistoryItem} corresponding to this action being undone.
-     * @return The {@link HistoryItem} corresponding to this action's reversal.
-     */
-    protected HistoryItem getUnExecuteHistoryItem() {
-        // Initialise the history item if it hasn't been used already (lazy initialisation)
-        if (unExecuteHistoryItem == null) {
-            unExecuteHistoryItem = new HistoryItem("ACTION", this.getUnexecuteText());
-        }
-        return unExecuteHistoryItem;
     }
 }

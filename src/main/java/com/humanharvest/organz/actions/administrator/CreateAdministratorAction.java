@@ -8,7 +8,6 @@ import com.humanharvest.organz.state.AdministratorManager;
  */
 public class CreateAdministratorAction extends AdministratorAction {
 
-    private final Administrator administrator;
     private final AdministratorManager manager;
 
     /**
@@ -17,7 +16,7 @@ public class CreateAdministratorAction extends AdministratorAction {
      * @param manager The AdministratorManager to apply changes to
      */
     public CreateAdministratorAction(Administrator administrator, AdministratorManager manager) {
-        this.administrator = administrator;
+        super(administrator);
         this.manager = manager;
     }
 
@@ -47,10 +46,5 @@ public class CreateAdministratorAction extends AdministratorAction {
     @Override
     public String getUnexecuteText() {
         return String.format("Removed administrator %s", administrator.getUsername());
-    }
-
-    @Override
-    protected Administrator getAffectedAdministrator() {
-        return administrator;
     }
 }

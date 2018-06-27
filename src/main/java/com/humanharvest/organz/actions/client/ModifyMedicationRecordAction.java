@@ -3,7 +3,6 @@ package com.humanharvest.organz.actions.client;
 import java.time.LocalDate;
 import java.util.Objects;
 
-import com.humanharvest.organz.Client;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.state.ClientManager;
 
@@ -12,7 +11,6 @@ import com.humanharvest.organz.state.ClientManager;
  */
 public class ModifyMedicationRecordAction extends ClientAction {
 
-    private ClientManager manager;
     private MedicationRecord record;
     private LocalDate oldStarted;
     private LocalDate oldStopped;
@@ -25,8 +23,8 @@ public class ModifyMedicationRecordAction extends ClientAction {
      * @param record The medication record to modify.
      */
     public ModifyMedicationRecordAction(MedicationRecord record, ClientManager manager) {
+        super(record.getClient(), manager);
         this.record = record;
-        this.manager = manager;
         this.oldStarted = record.getStarted();
         this.oldStopped = record.getStopped();
         this.newStarted = oldStarted;
@@ -109,10 +107,5 @@ public class ModifyMedicationRecordAction extends ClientAction {
         }
 
         return builder.toString();
-    }
-
-    @Override
-    protected Client getAffectedClient() {
-        return record.getClient();
     }
 }

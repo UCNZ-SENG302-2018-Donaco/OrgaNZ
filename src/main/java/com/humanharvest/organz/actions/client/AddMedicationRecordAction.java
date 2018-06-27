@@ -9,19 +9,17 @@ import com.humanharvest.organz.state.ClientManager;
  */
 public class AddMedicationRecordAction extends ClientAction {
 
-    private Client client;
     private MedicationRecord record;
-    private ClientManager manager;
 
     /**
      * Creates a new action to add a medication record.
      * @param client The client whose history to add it to.
      * @param record The medication record to add.
+     * @param manager The ClientManager to apply the changes to
      */
     public AddMedicationRecordAction(Client client, MedicationRecord record, ClientManager manager) {
-        this.client = client;
+        super(client, manager);
         this.record = record;
-        this.manager = manager;
     }
 
     @Override
@@ -48,10 +46,5 @@ public class AddMedicationRecordAction extends ClientAction {
     public String getUnexecuteText() {
         return String.format("Reversed the addition of record for medication '%s' to the history of client %d: %s.",
                 record.getMedicationName(), client.getUid(), client.getFullName());
-    }
-
-    @Override
-    protected Client getAffectedClient() {
-        return client;
     }
 }
