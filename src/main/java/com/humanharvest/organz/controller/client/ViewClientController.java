@@ -18,14 +18,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
+import com.humanharvest.organz.Client;
 import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.actions.client.MarkClientAsDeadAction;
 import com.humanharvest.organz.actions.client.ModifyClientAction;
-import com.humanharvest.organz.Client;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
@@ -35,9 +34,7 @@ import com.humanharvest.organz.ui.validation.UIValidation;
 import com.humanharvest.organz.utilities.enums.BloodType;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Region;
-import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.view.PageNavigator;
-
 import org.controlsfx.control.Notifications;
 
 /**
@@ -358,10 +355,6 @@ public class ViewClientController extends SubController {
                     .title("Updated Client")
                     .text(actionText)
                     .showInformation();
-
-            HistoryItem save = new HistoryItem("UPDATE CLIENT INFO",
-                    String.format("Updated client %s with values: %s", viewedClient.getFullName(), actionText));
-            JSONConverter.updateHistory(save, "action_history.json");
 
         } catch (IllegalStateException exc) {
             if (!clientDied) {

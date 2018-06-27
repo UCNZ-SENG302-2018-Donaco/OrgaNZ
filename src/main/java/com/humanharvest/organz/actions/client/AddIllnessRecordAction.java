@@ -1,6 +1,5 @@
 package com.humanharvest.organz.actions.client;
 
-import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.state.ClientManager;
@@ -8,31 +7,31 @@ import com.humanharvest.organz.state.ClientManager;
 /**
  * A reversible action that will add the given illness record to the given client's medical history.
  */
-public class AddIllnessRecordAction extends Action {
+public class AddIllnessRecordAction extends ClientAction {
 
-    private Client client;
     private IllnessRecord record;
-    private ClientManager manager;
 
     /**
      * Creates a new action to add an illness record.
      * @param client The client whose medical history to add to.
      * @param record The illness record to add.
+     * @param manager The ClientManager to apply the changes to
      */
     public AddIllnessRecordAction(Client client, IllnessRecord record, ClientManager manager) {
-        this.client = client;
+        super(client, manager);
         this.record = record;
-        this.manager = manager;
     }
 
     @Override
     public void execute() {
+        super.execute();
         client.addIllnessRecord(record);
         manager.applyChangesTo(client);
     }
 
     @Override
     public void unExecute() {
+        super.unExecute();
         client.deleteIllnessRecord(record);
         manager.applyChangesTo(client);
     }

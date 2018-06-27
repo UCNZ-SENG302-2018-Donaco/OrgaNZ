@@ -5,11 +5,9 @@ import java.io.IOException;
 import java.util.List;
 
 import com.humanharvest.organz.Client;
-import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.JSONConverter;
-
 import picocli.CommandLine.Command;
 
 /**
@@ -42,8 +40,6 @@ public class Save implements Runnable {
         try {
             JSONConverter.saveToFile(new File("savefile.json"));
             System.out.println(String.format("Saved %s clients to file", manager.getClients().size()));
-            HistoryItem save = new HistoryItem("SAVE", "The systems current state was saved.");
-            JSONConverter.updateHistory(save, "action_history.json");
         } catch (IOException e) {
             System.out.println("Could not save to file");
         }

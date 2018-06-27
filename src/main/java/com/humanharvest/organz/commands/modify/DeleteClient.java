@@ -1,14 +1,11 @@
 package com.humanharvest.organz.commands.modify;
 
+import com.humanharvest.organz.Client;
 import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.actions.client.DeleteClientAction;
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.JSONConverter;
-
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
@@ -49,9 +46,6 @@ public class DeleteClient implements Runnable {
 
             System.out.println(invoker.execute(action));
             System.out.println("This removal will only be permanent once the 'save' command is used");
-
-            HistoryItem deleteClient = new HistoryItem("DELETE", "Client " + uid + " deleted.");
-            JSONConverter.updateHistory(deleteClient, "action_history.json");
         }
     }
 }

@@ -6,14 +6,13 @@ import static org.junit.Assert.assertTrue;
 import java.time.LocalDate;
 
 import com.humanharvest.organz.BaseTest;
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.actions.ActionInvoker;
-import com.humanharvest.organz.Client;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.ClientManagerMemory;
-import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.enums.Organ;
-
 import org.junit.Before;
 import org.junit.Test;
 

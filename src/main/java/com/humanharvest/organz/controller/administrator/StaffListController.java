@@ -12,19 +12,17 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.HBox;
 
+import com.humanharvest.organz.Administrator;
+import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.actions.administrator.DeleteAdministratorAction;
 import com.humanharvest.organz.actions.clinician.DeleteClinicianAction;
-import com.humanharvest.organz.Administrator;
-import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.state.AdministratorManager;
 import com.humanharvest.organz.state.ClinicianManager;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 
 public class StaffListController extends SubController {
@@ -110,24 +108,16 @@ public class StaffListController extends SubController {
      * @param id the staff member to delete
      */
     private void delete(String id) {
-        String action_history_filename = "action_history.json";
-
         if (id.matches("[0-9]+")) {
             Clinician clinician = clinicianManager.getClinicianByStaffId(Integer.parseInt(id));
 
             Action action = new DeleteClinicianAction(clinician, clinicianManager);
             invoker.execute(action);
-
-            HistoryItem deleteClinician = new HistoryItem("DELETE", "Clinician " + id + " deleted");
-            JSONConverter.updateHistory(deleteClinician, action_history_filename);
         } else {
             Administrator administrator = adminManager.getAdministratorByUsername(id);
 
             Action action = new DeleteAdministratorAction(administrator, adminManager);
             invoker.execute(action);
-
-            HistoryItem deleteAdministrator = new HistoryItem("DELETE", "Administrator " + id + " deleted");
-            JSONConverter.updateHistory(deleteAdministrator, action_history_filename);
         }
         PageNavigator.refreshAllWindows();
     }

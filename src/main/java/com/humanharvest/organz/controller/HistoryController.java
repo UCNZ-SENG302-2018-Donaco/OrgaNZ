@@ -2,19 +2,25 @@ package com.humanharvest.organz.controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.logging.Logger;
 
-import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
 
 import com.humanharvest.organz.HistoryItem;
+import com.humanharvest.organz.state.Session;
+import com.humanharvest.organz.state.Session.UserType;
+import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.JSONConverter;
+import com.humanharvest.organz.utilities.view.PageNavigator;
 
 /**
  * Controller for the history page.
@@ -22,15 +28,22 @@ import com.humanharvest.organz.utilities.JSONConverter;
 public class HistoryController extends SubController {
 
     private static final Logger LOGGER = Logger.getLogger(HistoryController.class.getName());
+    private static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm:ss");
 
-    private final DateTimeFormatter datetimeformat = DateTimeFormatter.ofPattern("dd/MM/yyyy hh:mm:ss");
+    private Session session;
 
     @FXML
-    private TableColumn<HistoryItem, String> timeCol, typeCol, commandCol;
+    private TableColumn<HistoryItem, LocalDateTime> timestampCol;
+    @FXML
+    private TableColumn<HistoryItem, String> typeCol, detailsCol;
     @FXML
     private TableView<HistoryItem> historyTable;
     @FXML
-    private Pane menuBarPane;
+    private Pane sidebarPane, menuBarPane;
+
+    public HistoryController() {
+        this.session = State.getSession();
+    }
 
     /**
      * Initializes the UI for this page.
@@ -40,34 +53,71 @@ public class HistoryController extends SubController {
      */
     @FXML
     private void initialize() {
-
-        timeCol.setCellValueFactory(
-                data -> new ReadOnlyStringWrapper(
-                        data.getValue().getTimestamp().format(datetimeformat))
-        );
-        typeCol.setCellValueFactory(
-                data -> new ReadOnlyStringWrapper(data.getValue().getType())
-        );
-        commandCol.setCellValueFactory(
-                data -> new ReadOnlyStringWrapper(data.getValue().getDetails())
-        );
-
-        try {
-            List<HistoryItem> history = JSONConverter.loadJSONtoHistory(new File("action_history.json"));
-            historyTable.setItems(FXCollections.observableArrayList(history));
-        } catch (IOException exc) {
-            LOGGER.severe("IO Exception while loading history table");
-            LOGGER.severe(exc.getMessage());
-        }
-
+        timestampCol.setCellValueFactory(new PropertyValueFactory<>("timestamp"));
+        timestampCol.setCellFactory(cell -> formatDateTimeCell());
+        typeCol.setCellValueFactory(new PropertyValueFactory<>("type"));
+        detailsCol.setCellValueFactory(new PropertyValueFactory<>("details"));
     }
-
 
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
-        mainController.setTitle("Action history");
-        mainController.loadMenuBar(menuBarPane);
 
+        if (session.getLoggedInUserType() == UserType.CLIENT || windowContext.isClinViewClientWindow()) {
+            mainController.setTitle("Client History");
+            mainController.loadSidebar(sidebarPane);
+        } else {
+            mainController.setTitle("System History");
+            mainController.loadMenuBar(menuBarPane);
+        }
+
+        refresh();
+    }
+
+    @Override
+    public void refresh() {
+        if (session.getLoggedInUserType() == UserType.CLIENT) {
+            historyTable.setItems(FXCollections.observableArrayList(
+                    session.getLoggedInClient().getChangesHistory()
+            ));
+        } else if (windowContext.isClinViewClientWindow()) {
+            historyTable.setItems(FXCollections.observableArrayList(
+                    windowContext.getViewClient().getChangesHistory()
+            ));
+        } else {
+            try {
+                historyTable.setItems(FXCollections.observableArrayList(
+                        JSONConverter.loadJSONtoHistory(new File("action_history.json"))
+                ));
+            } catch (IOException exc) {
+                PageNavigator.showAlert(AlertType.ERROR,
+                        "System History Load Failed",
+                        "The full log of system history could not be loaded from file - displaying only this "
+                                + "session's history instead.");
+                historyTable.setItems(FXCollections.observableArrayList(
+                        session.getSessionHistory()
+                ));
+            }
+        }
+
+        FXCollections.sort(historyTable.getItems(), (h1, h2) -> h2.getTimestamp().compareTo(h1.getTimestamp()));
+    }
+
+    /**
+     * Formats a table cell that holds a {@link LocalDateTime} value to display that value in the date time format.
+     * @return The cell with the date time formatter set.
+     */
+    private static TableCell<HistoryItem, LocalDateTime> formatDateTimeCell() {
+        return new TableCell<HistoryItem, LocalDateTime>() {
+            @Override
+            protected void updateItem(LocalDateTime item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || (item == null)) {
+                    setText(null);
+                } else {
+                    setText(item.format(dateTimeFormat));
+                }
+            }
+        };
     }
 }

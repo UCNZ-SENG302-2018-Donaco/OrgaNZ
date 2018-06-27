@@ -23,17 +23,23 @@
                 <Font size="24.0" />
               </font>
               <BorderPane.margin>
-                <Insets top="50.0" />
+                <Insets top="10.0" />
               </BorderPane.margin>
             </Text>
           </top>
           <center>
-            <TableView fx:id="historyTable" prefHeight="520.0" prefWidth="565.0" BorderPane.alignment="CENTER">
+            <TableView fx:id="historyTable" BorderPane.alignment="CENTER">
               <columns>
-                <TableColumn fx:id="timeCol" prefWidth="166.0" text="Time" />
-                <TableColumn fx:id="typeCol" prefWidth="152.0" text="Type" />
-                <TableColumn fx:id="commandCol" maxWidth="1.7976931348623157E308" prefWidth="500.0" text="Command " />
+                <TableColumn fx:id="timestampCol" minWidth="200.0" prefWidth="-1.0" text="Timestamp" />
+                <TableColumn fx:id="typeCol" minWidth="100.0" prefWidth="-1.0" text="Type" />
+                <TableColumn fx:id="detailsCol" maxWidth="1.7976931348623157E308" prefWidth="500.0" text="Details" />
               </columns>
+                     <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                     </columnResizePolicy>
+                     <BorderPane.margin>
+                        <Insets top="10.0" />
+                     </BorderPane.margin>
             </TableView>
           </center>
         </BorderPane>

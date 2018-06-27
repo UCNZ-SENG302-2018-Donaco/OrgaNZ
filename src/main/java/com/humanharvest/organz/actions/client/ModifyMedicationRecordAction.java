@@ -3,18 +3,14 @@ package com.humanharvest.organz.actions.client;
 import java.time.LocalDate;
 import java.util.Objects;
 
-import com.humanharvest.organz.actions.Action;
-import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.state.ClientManager;
-import com.humanharvest.organz.utilities.JSONConverter;
 
 /**
  * A reversible action to modify a given medication record (specifically, its 'started' and 'stopped' dates).
  */
-public class ModifyMedicationRecordAction extends Action {
+public class ModifyMedicationRecordAction extends ClientAction {
 
-    private ClientManager manager;
     private MedicationRecord record;
     private LocalDate oldStarted;
     private LocalDate oldStopped;
@@ -27,8 +23,8 @@ public class ModifyMedicationRecordAction extends Action {
      * @param record The medication record to modify.
      */
     public ModifyMedicationRecordAction(MedicationRecord record, ClientManager manager) {
+        super(record.getClient(), manager);
         this.record = record;
-        this.manager = manager;
         this.oldStarted = record.getStarted();
         this.oldStopped = record.getStopped();
         this.newStarted = oldStarted;
@@ -60,6 +56,7 @@ public class ModifyMedicationRecordAction extends Action {
         if (Objects.equals(newStarted, oldStarted) && Objects.equals(newStopped, oldStopped)) {
             throw new IllegalStateException("No changes were made to the MedicationRecord.");
         }
+        super.execute();
         if (!Objects.equals(newStarted, oldStarted)) {
             record.setStarted(newStarted);
         }
@@ -67,12 +64,11 @@ public class ModifyMedicationRecordAction extends Action {
             record.setStopped(newStopped);
         }
         manager.applyChangesTo(record.getClient());
-        HistoryItem save = new HistoryItem("MODIFY_MEDICATION", getExecuteText());
-        JSONConverter.updateHistory(save, "action_history.json");
     }
 
     @Override
     protected void unExecute() {
+        super.unExecute();
         if (!Objects.equals(newStarted, oldStarted)) {
             record.setStarted(oldStarted);
         }

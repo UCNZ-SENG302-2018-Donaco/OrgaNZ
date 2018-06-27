@@ -8,21 +8,18 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 
+import com.humanharvest.organz.Client;
 import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.actions.client.CreateClientAction;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
-
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.ui.validation.NotNullValidator;
 import com.humanharvest.organz.ui.validation.StringValidator;
 import com.humanharvest.organz.ui.validation.UIValidation;
-import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.utilities.view.WindowContext;
@@ -103,9 +100,6 @@ public class CreateClientController extends SubController {
                     dobFld.getValue(), uid);
             Action action = new CreateClientAction(client, manager);
             invoker.execute(action);
-            HistoryItem save = new HistoryItem("CREATE CLIENT",
-                    String.format("Client %s was created with ID %d", client.getFullName(), uid));
-            JSONConverter.updateHistory(save, "action_history.json");
 
             if (State.getSession() == null) { // Someone creating a client
                 State.login(client);

@@ -1,15 +1,13 @@
 package com.humanharvest.organz.actions.administrator;
 
-import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.state.AdministratorManager;
 
 /**
  * A reversible administrator creation action
  */
-public class CreateAdministratorAction extends Action {
+public class CreateAdministratorAction extends AdministratorAction {
 
-    private final Administrator administrator;
     private final AdministratorManager manager;
 
     /**
@@ -18,7 +16,7 @@ public class CreateAdministratorAction extends Action {
      * @param manager The AdministratorManager to apply changes to
      */
     public CreateAdministratorAction(Administrator administrator, AdministratorManager manager) {
-        this.administrator = administrator;
+        super(administrator);
         this.manager = manager;
     }
 
@@ -27,6 +25,7 @@ public class CreateAdministratorAction extends Action {
      */
     @Override
     protected void execute() {
+        super.execute();
         manager.addAdministrator(administrator);
     }
 
@@ -35,6 +34,7 @@ public class CreateAdministratorAction extends Action {
      */
     @Override
     protected void unExecute() {
+        super.unExecute();
         manager.removeAdministrator(administrator);
     }
 
