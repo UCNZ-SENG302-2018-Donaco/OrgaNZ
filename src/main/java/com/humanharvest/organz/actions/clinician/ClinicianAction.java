@@ -1,10 +1,18 @@
 package com.humanharvest.organz.actions.clinician;
 
 import com.humanharvest.organz.Clinician;
-import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.actions.Action;
+import com.humanharvest.organz.state.ClinicianManager;
 
 public abstract class ClinicianAction extends Action {
+
+    final Clinician clinician;
+    final ClinicianManager manager;
+
+    ClinicianAction(Clinician clinician, ClinicianManager manager) {
+        this.clinician = clinician;
+        this.manager = manager;
+    }
 
     @Override
     protected void execute() {
@@ -16,20 +24,11 @@ public abstract class ClinicianAction extends Action {
         eraseFromClientHistory();
     }
 
-    protected abstract Clinician getAffectedClinician();
-
     private void recordInClientHistory() {
-        getAffectedClinician().addToChangesHistory(getExecuteHistoryItem());
+        clinician.addToChangesHistory(getExecuteHistoryItem());
     }
 
     private void eraseFromClientHistory() {
-        HistoryItem toErase = null;
-        for (HistoryItem item : getAffectedClinician().getChangesHistory()) {
-            if (item.getDetails().equals(getExecuteHistoryItem().getDetails())) {
-                toErase = item;
-                break;
-            }
-        }
-        getAffectedClinician().removeFromChangesHistory(toErase);
+        clinician.removeFromChangesHistory(getExecuteHistoryItem());
     }
 }

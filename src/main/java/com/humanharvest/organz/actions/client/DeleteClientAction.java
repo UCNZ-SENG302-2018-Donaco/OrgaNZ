@@ -8,17 +8,13 @@ import com.humanharvest.organz.state.ClientManager;
  */
 public class DeleteClientAction extends ClientAction {
 
-    private Client client;
-    private ClientManager manager;
-
     /**
      * Create a new Action
      * @param client The client to be removed
      * @param manager The ClientManager to apply changes to
      */
     public DeleteClientAction(Client client, ClientManager manager) {
-        this.client = client;
-        this.manager = manager;
+        super(client, manager);
     }
 
     @Override
@@ -41,10 +37,5 @@ public class DeleteClientAction extends ClientAction {
     @Override
     public String getUnexecuteText() {
         return String.format("Re-added client %s", client.getFullName());
-    }
-
-    @Override
-    protected Client getAffectedClient() {
-        return client;
     }
 }

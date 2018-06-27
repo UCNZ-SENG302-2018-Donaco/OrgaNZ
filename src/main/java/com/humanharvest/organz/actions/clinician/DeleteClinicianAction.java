@@ -8,17 +8,13 @@ import com.humanharvest.organz.state.ClinicianManager;
  */
 public class DeleteClinicianAction extends ClinicianAction {
 
-    private Clinician clinician;
-    private ClinicianManager manager;
-
     /**
      * Create a new Action
      * @param clinician The Clinician to be removed
      * @param manager The ClinicianManager to apply changes to
      */
     public DeleteClinicianAction(Clinician clinician, ClinicianManager manager) {
-        this.clinician = clinician;
-        this.manager = manager;
+        super(clinician, manager);
     }
 
     @Override
@@ -41,10 +37,5 @@ public class DeleteClinicianAction extends ClinicianAction {
     @Override
     public String getUnexecuteText() {
         return String.format("Re-added clinician %s", clinician.getFullName());
-    }
-
-    @Override
-    protected Clinician getAffectedClinician() {
-        return clinician;
     }
 }

@@ -13,15 +13,12 @@ import com.humanharvest.organz.state.ClinicianManager;
 public class ModifyClinicianAction extends ClinicianAction {
 
     private ArrayList<ModifyObjectByFieldAction> actions = new ArrayList<>();
-    private Clinician clinician;
-    private ClinicianManager clinicianManager;
     /**
      * Create a new Action
      * @param clinician The clinician to be modified
      */
-    public ModifyClinicianAction(Clinician clinician,ClinicianManager clinicianManager) {
-        this.clinician = clinician;
-        this.clinicianManager = clinicianManager;
+    public ModifyClinicianAction(Clinician clinician,ClinicianManager manager) {
+        super(clinician, manager);
     }
 
     /**
@@ -51,7 +48,7 @@ public class ModifyClinicianAction extends ClinicianAction {
             for (ModifyObjectByFieldAction action : actions) {
                 action.execute();
             }
-            clinicianManager.applyChangesTo(clinician);
+            manager.applyChangesTo(clinician);
         }
     }
 
@@ -61,7 +58,7 @@ public class ModifyClinicianAction extends ClinicianAction {
         for (ModifyObjectByFieldAction action : actions) {
             action.unExecute();
         }
-        clinicianManager.applyChangesTo(clinician);
+        manager.applyChangesTo(clinician);
     }
 
     @Override
@@ -84,10 +81,5 @@ public class ModifyClinicianAction extends ClinicianAction {
         return String.format("Reversed update for clinician %d: %s %s. \n"
                         + "These changes were reversed: \n\n%s",
                 clinician.getStaffId(), clinician.getFirstName(), clinician.getLastName(), changesText);
-    }
-
-    @Override
-    protected Clinician getAffectedClinician() {
-        return clinician;
     }
 }

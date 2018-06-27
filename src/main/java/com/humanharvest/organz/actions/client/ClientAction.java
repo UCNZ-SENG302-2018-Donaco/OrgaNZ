@@ -1,10 +1,18 @@
 package com.humanharvest.organz.actions.client;
 
 import com.humanharvest.organz.Client;
-import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.actions.Action;
+import com.humanharvest.organz.state.ClientManager;
 
 public abstract class ClientAction extends Action {
+
+    final Client client;
+    final ClientManager manager;
+
+    protected ClientAction(Client client, ClientManager manager) {
+        this.client = client;
+        this.manager = manager;
+    }
 
     @Override
     protected void execute() {
@@ -16,20 +24,11 @@ public abstract class ClientAction extends Action {
         eraseFromClientHistory();
     }
 
-    protected abstract Client getAffectedClient();
-
     private void recordInClientHistory() {
-        getAffectedClient().addToChangesHistory(getExecuteHistoryItem());
+        client.addToChangesHistory(getExecuteHistoryItem());
     }
 
     private void eraseFromClientHistory() {
-        HistoryItem toErase = null;
-        for (HistoryItem item : getAffectedClient().getChangesHistory()) {
-            if (item.getDetails().equals(getExecuteHistoryItem().getDetails())) {
-                toErase = item;
-                break;
-            }
-        }
-        getAffectedClient().removeFromChangesHistory(toErase);
+        client.removeFromChangesHistory(getExecuteHistoryItem());
     }
 }

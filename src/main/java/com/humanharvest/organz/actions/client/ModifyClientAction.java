@@ -13,17 +13,14 @@ import com.humanharvest.organz.state.ClientManager;
 public class ModifyClientAction extends ClientAction {
 
     private ArrayList<ModifyObjectByFieldAction> actions = new ArrayList<>();
-    private Client client;
-    private ClientManager manager;
 
     /**
      * Create a new Action
      * @param client The client to be modified
-     * @param manager // TODO
+     * @param manager The ClientManager to apply the changes to
      */
     public ModifyClientAction(Client client, ClientManager manager) {
-        this.client = client;
-        this.manager = manager;
+        super(client, manager);
     }
 
     /**
@@ -82,10 +79,5 @@ public class ModifyClientAction extends ClientAction {
         return String.format("Reversed update for client %d: %s. \n"
                         + "These changes were reversed: \n\n%s",
                 client.getUid(), client.getFullName(), changesText);
-    }
-
-    @Override
-    protected Client getAffectedClient() {
-        return client;
     }
 }

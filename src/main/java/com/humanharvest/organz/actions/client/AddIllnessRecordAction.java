@@ -9,19 +9,17 @@ import com.humanharvest.organz.state.ClientManager;
  */
 public class AddIllnessRecordAction extends ClientAction {
 
-    private Client client;
     private IllnessRecord record;
-    private ClientManager manager;
 
     /**
      * Creates a new action to add an illness record.
      * @param client The client whose medical history to add to.
      * @param record The illness record to add.
+     * @param manager The ClientManager to apply the changes to
      */
     public AddIllnessRecordAction(Client client, IllnessRecord record, ClientManager manager) {
-        this.client = client;
+        super(client, manager);
         this.record = record;
-        this.manager = manager;
     }
 
     @Override
@@ -48,10 +46,5 @@ public class AddIllnessRecordAction extends ClientAction {
     public String getUnexecuteText() {
         return String.format("Reversed the addition of record for illness '%s' from the history of client %d: %s.",
                 record.getIllnessName(), client.getUid(), client.getFullName());
-    }
-
-    @Override
-    protected Client getAffectedClient() {
-        return client;
     }
 }

@@ -12,14 +12,13 @@ import com.humanharvest.organz.actions.ModifyObjectByFieldAction;
 public class ModifyAdministratorAction extends AdministratorAction {
 
     private ArrayList<ModifyObjectByFieldAction> actions = new ArrayList<>();
-    private Administrator administrator;
 
     /**
      * Create a new Action
      * @param administrator The administrator to be modified
      */
     public ModifyAdministratorAction(Administrator administrator) {
-        this.administrator = administrator;
+        super(administrator);
     }
 
     /**
@@ -74,10 +73,5 @@ public class ModifyAdministratorAction extends AdministratorAction {
 
         return String.format("Reversed update for administrator %s.\nThese changes were reversed:\n\n%s",
                 administrator.getUsername(), changesText);
-    }
-
-    @Override
-    protected Administrator getAffectedAdministrator() {
-        return administrator;
     }
 }

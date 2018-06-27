@@ -9,19 +9,17 @@ import com.humanharvest.organz.state.ClientManager;
  */
 public class DeleteIllnessRecordAction extends ClientAction {
 
-    private Client client;
     private IllnessRecord record;
-    private ClientManager manager;
 
     /**
      * Creates a new action to delete an illness record.
      * @param client The client whose medical history to delete it from.
      * @param record The illness record to delete.
+     * @param manager The ClientManager to apply the changes to
      */
     public DeleteIllnessRecordAction(Client client, IllnessRecord record, ClientManager manager) {
-        this.client = client;
+        super(client, manager);
         this.record = record;
-        this.manager = manager;
     }
 
     @Override
@@ -48,10 +46,5 @@ public class DeleteIllnessRecordAction extends ClientAction {
     public String getUnexecuteText() {
         return String.format("Re-added record for illness '%s' to the history of client %d: %s.",
                 record.getIllnessName(), client.getUid(), client.getFullName());
-    }
-
-    @Override
-    protected Client getAffectedClient() {
-        return client;
     }
 }

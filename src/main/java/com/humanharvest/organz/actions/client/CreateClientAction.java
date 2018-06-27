@@ -8,17 +8,13 @@ import com.humanharvest.organz.state.ClientManager;
  */
 public class CreateClientAction extends ClientAction {
 
-    private Client client;
-    private ClientManager manager;
-
     /**
      * Create a new Action
      * @param client The Client to be created
      * @param manager The ClientManager to apply changes to
      */
     public CreateClientAction(Client client, ClientManager manager) {
-        this.client = client;
-        this.manager = manager;
+        super(client, manager);
     }
 
 
@@ -50,10 +46,5 @@ public class CreateClientAction extends ClientAction {
     public String getUnexecuteText() {
         return String.format("Removed client %s with user id: %s", client.getFullName(),
                 client.getUid());
-    }
-
-    @Override
-    protected Client getAffectedClient() {
-        return client;
     }
 }
