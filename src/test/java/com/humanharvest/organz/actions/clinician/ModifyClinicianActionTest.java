@@ -1,15 +1,13 @@
 package com.humanharvest.organz.actions.clinician;
 
-
 import static org.junit.Assert.assertEquals;
 
 import com.humanharvest.organz.BaseTest;
-import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.Clinician;
+import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.state.ClinicianManager;
 import com.humanharvest.organz.state.ClinicianManagerMemory;
 import com.humanharvest.organz.utilities.enums.Region;
-
 import org.junit.Before;
 import org.junit.Test;
 

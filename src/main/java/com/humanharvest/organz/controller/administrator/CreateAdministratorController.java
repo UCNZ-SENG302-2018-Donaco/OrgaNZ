@@ -9,15 +9,12 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
-import com.humanharvest.organz.actions.administrator.CreateAdministratorAction;
-
 import com.humanharvest.organz.Administrator;
+import com.humanharvest.organz.actions.administrator.CreateAdministratorAction;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.state.AdministratorManager;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 
@@ -119,10 +116,6 @@ public class CreateAdministratorController extends SubController {
 
             CreateAdministratorAction action = new CreateAdministratorAction(administrator, administratorManager);
             State.getInvoker().execute(action);
-
-            HistoryItem save = new HistoryItem("CREATE ADMINISTRATOR",
-                    "Administrator " + usernameTextField.getText() + " created.");
-            JSONConverter.updateHistory(save, "action_history.json");
 
             PageNavigator.loadPage(Page.SEARCH, mainController);
         }

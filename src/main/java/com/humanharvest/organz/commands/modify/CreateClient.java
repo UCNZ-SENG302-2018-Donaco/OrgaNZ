@@ -2,16 +2,13 @@ package com.humanharvest.organz.commands.modify;
 
 import java.time.LocalDate;
 
+import com.humanharvest.organz.Client;
 import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.actions.client.CreateClientAction;
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.type_converters.LocalDateConverter;
-
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
@@ -67,8 +64,5 @@ public class CreateClient implements Runnable {
         Action action = new CreateClientAction(client, manager);
 
         System.out.println(invoker.execute(action));
-
-        HistoryItem create = new HistoryItem("CREATE", "Client profile ID: " + uid + " created.");
-        JSONConverter.updateHistory(create, "action_history.json");
     }
 }

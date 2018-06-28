@@ -11,22 +11,19 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.Pane;
 
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.actions.client.ModifyClientOrgansAction;
-import com.humanharvest.organz.Client;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
-import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.view.PageNavigator;
-
 import org.controlsfx.control.Notifications;
 
 /**
@@ -165,9 +162,6 @@ public class RegisterOrganDonationController extends SubController {
         }
         if (hasChanged) {
             String actionText = invoker.execute(action);
-            HistoryItem save = new HistoryItem("UPDATE ORGANS",
-                    "The Client's organs were updated: " + client.getOrganStatusString("donations"));
-            JSONConverter.updateHistory(save, "action_history.json");
 
             PageNavigator.refreshAllWindows();
             Notifications.create()

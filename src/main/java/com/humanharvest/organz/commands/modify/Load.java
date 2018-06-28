@@ -35,7 +35,7 @@ public class Load implements Runnable {
 
     private static final Logger LOGGER = Logger.getLogger(Load.class.getName());
 
-    private final ClientManager manager;
+    private ClientManager manager;
 
     @Option(names = {"-f", "-format"}, description = "File format")
     private String format;
@@ -71,9 +71,9 @@ public class Load implements Runnable {
             }
 
             LOGGER.log(Level.INFO, String.format("Loaded %s clients from file", manager.getClients().size()));
-            HistoryItem load = new HistoryItem("LOAD",
+            HistoryItem historyItem = new HistoryItem("LOAD",
                     "The systems state was loaded from " + fileName.getAbsolutePath());
-            JSONConverter.updateHistory(load, "action_history.json");
+            State.getSession().addToSessionHistory(historyItem);
         } catch (FileNotFoundException e) {
             LOGGER.log(Level.WARNING, "Could not find file: " + fileName.getAbsolutePath(), e);
         } catch (IOException e) {

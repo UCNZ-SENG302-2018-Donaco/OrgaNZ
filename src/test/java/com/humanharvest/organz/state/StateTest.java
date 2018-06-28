@@ -19,7 +19,6 @@ public class StateTest extends BaseTest {
     @Before
     public void init() {
         State.reset(false);
-        State.logout();
     }
 
     @Test

@@ -21,9 +21,9 @@ import picocli.CommandLine.Command;
 public class Save implements Runnable {
 
     private static final Logger LOGGER = Logger.getLogger(Save.class.getName());
-    private static final String filename = "savefile.json";
+    private static final File FILE = new File("savefile.json");
 
-    private final ClientManager manager;
+    private ClientManager manager;
 
     public Save() {
         manager = State.getClientManager();
@@ -38,15 +38,16 @@ public class Save implements Runnable {
         List<Client> clients = manager.getClients();
         if (clients.isEmpty()) {
             System.out.println("No clients exist, nothing to save");
-            return;
-        }
-        try (JSONFileWriter<Client> clientWriter = new JSONFileWriter<>(new File(filename), Client.class)) {
-            clientWriter.overwriteWith(clients);
-            LOGGER.log(Level.INFO, String.format("Saved %s clients to file", clients.size()));
-            HistoryItem save = new HistoryItem("SAVE", "The systems current state was saved.");
-            JSONConverter.updateHistory(save, "action_history.json");
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Could not save to file: " + filename, e);
+        } else {
+            try (JSONFileWriter<Client> clientWriter = new JSONFileWriter<>(FILE, Client.class)) {
+                clientWriter.overwriteWith(clients);
+                LOGGER.log(Level.INFO, String.format("Saved %s clients to file", clients.size()));
+                HistoryItem save = new HistoryItem("SAVE",
+                        String.format("The system's current state was saved to '%s'.", FILE.getName()));
+                JSONConverter.updateHistory(save, "action_history.json");
+            } catch (IOException e) {
+                LOGGER.log(Level.SEVERE, "Could not save to file: " + FILE.getName(), e);
+            }
         }
     }
 }

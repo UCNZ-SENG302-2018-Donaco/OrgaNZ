@@ -2,13 +2,14 @@ package com.humanharvest.organz;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
-
-import javax.persistence.ElementCollection;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.humanharvest.organz.utilities.enums.Region;
@@ -34,8 +35,10 @@ public class Clinician {
     private final LocalDateTime createdOn;
     private LocalDateTime modifiedOn;
 
-    @ElementCollection
-    private List<String> updateLog = new ArrayList<>();
+    @OneToMany(
+            cascade = CascadeType.ALL
+    )
+    private List<HistoryItem> changesHistory = new ArrayList<>();
 
     protected Clinician() {
         createdOn = LocalDateTime.now();
@@ -64,18 +67,8 @@ public class Clinician {
         this.password = password;
     }
 
-    private void addUpdate(String function) {
-        LocalDateTime timestamp = LocalDateTime.now();
-        updateLog.add(String.format("%s; updated %s", timestamp, function));
-        modifiedOn = LocalDateTime.now();
-    }
-
     public LocalDateTime getCreatedOn() {
         return createdOn;
-    }
-
-    public List<String> getUpdateLog() {
-        return updateLog;
     }
 
     public String getFirstName() {
@@ -84,7 +77,7 @@ public class Clinician {
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
-        addUpdate("firstName");
+        updateModifiedTimestamp();
     }
 
     public String getLastName() {
@@ -93,7 +86,7 @@ public class Clinician {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
-        addUpdate("lastName");
+        updateModifiedTimestamp();
     }
 
     public String getMiddleName() {
@@ -102,7 +95,7 @@ public class Clinician {
 
     public void setMiddleName(String middleName) {
         this.middleName = middleName;
-        addUpdate("middleName");
+        updateModifiedTimestamp();
     }
 
     public String getWorkAddress() {
@@ -111,7 +104,7 @@ public class Clinician {
 
     public void setWorkAddress(String workAddress) {
         this.workAddress = workAddress;
-        addUpdate("workAddress");
+        updateModifiedTimestamp();
     }
 
     public Region getRegion() {
@@ -120,7 +113,7 @@ public class Clinician {
 
     public void setRegion(Region region) {
         this.region = region;
-        addUpdate("region");
+        updateModifiedTimestamp();
     }
 
     public int getStaffId() {
@@ -133,13 +126,16 @@ public class Clinician {
 
     public void setPassword(String password) {
         this.password = password;
-        addUpdate("password");
+        updateModifiedTimestamp();
     }
 
     public LocalDateTime getModifiedOn() {
         return modifiedOn;
     }
 
+    private void updateModifiedTimestamp() {
+        modifiedOn = LocalDateTime.now();
+    }
 
     /**
      * Get the full name of the clinician concatenating their names
@@ -152,6 +148,18 @@ public class Clinician {
         }
         fullName += lastName;
         return fullName;
+    }
+
+    public List<HistoryItem> getChangesHistory() {
+        return Collections.unmodifiableList(changesHistory);
+    }
+
+    public void addToChangesHistory(HistoryItem historyItem) {
+        changesHistory.add(historyItem);
+    }
+
+    public void removeFromChangesHistory(HistoryItem historyItem) {
+        changesHistory.remove(historyItem);
     }
 
     /**

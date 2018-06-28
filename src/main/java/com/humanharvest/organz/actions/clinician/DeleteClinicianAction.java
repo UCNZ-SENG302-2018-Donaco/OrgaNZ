@@ -1,16 +1,12 @@
 package com.humanharvest.organz.actions.clinician;
 
 import com.humanharvest.organz.Clinician;
-import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.state.ClinicianManager;
 
 /**
  * A reversible clinician deletion action
  */
-public class DeleteClinicianAction extends Action {
-
-    private Clinician clinician;
-    private ClinicianManager manager;
+public class DeleteClinicianAction extends ClinicianAction {
 
     /**
      * Create a new Action
@@ -18,17 +14,18 @@ public class DeleteClinicianAction extends Action {
      * @param manager The ClinicianManager to apply changes to
      */
     public DeleteClinicianAction(Clinician clinician, ClinicianManager manager) {
-        this.clinician = clinician;
-        this.manager = manager;
+        super(clinician, manager);
     }
 
     @Override
     protected void execute() {
+        super.execute();
         manager.removeClinician(clinician);
     }
 
     @Override
     protected void unExecute() {
+        super.unExecute();
         manager.addClinician(clinician);
     }
 

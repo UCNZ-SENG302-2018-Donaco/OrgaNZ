@@ -4,12 +4,10 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
 import com.humanharvest.organz.Client;
-import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import org.controlsfx.control.Notifications;
@@ -243,8 +241,6 @@ public class SidebarController extends SubController {
         State.addMainController(mainController);
         mainController.resetWindowContext();
         PageNavigator.loadPage(Page.LANDING, mainController);
-        HistoryItem save = new HistoryItem("LOGOUT", "The user logged out");
-        JSONConverter.updateHistory(save, "action_history.json");
     }
 
     /**
@@ -254,8 +250,6 @@ public class SidebarController extends SubController {
     private void undo() {
         String undoneText = invoker.undo();
         Notifications.create().title("Undo").text(undoneText).showInformation();
-        HistoryItem save = new HistoryItem("UNDO", undoneText);
-        JSONConverter.updateHistory(save, "action_history.json");
         PageNavigator.refreshAllWindows();
     }
 
@@ -266,8 +260,6 @@ public class SidebarController extends SubController {
     private void redo() {
         String redoneText = invoker.redo();
         Notifications.create().title("Redo").text(redoneText).showInformation();
-        HistoryItem save = new HistoryItem("REDO", redoneText);
-        JSONConverter.updateHistory(save, "action_history.json");
         PageNavigator.refreshAllWindows();
     }
 }

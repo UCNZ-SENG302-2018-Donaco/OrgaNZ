@@ -28,6 +28,7 @@ import javafx.stage.Stage;
 import com.humanharvest.organz.AppUI;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
+import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.ProcedureRecord;
@@ -364,13 +365,14 @@ public class MenuBarController extends SubController {
                     clientWriter.overwriteWith(clientManager.getClients());
                 }
 
-                Notifications.create().title("Saved").text(String.format("Successfully saved %s clients to file %s",
+                Notifications.create().title("Saved").text(String.format("Successfully saved %s clients to file '%s'.",
                         clientManager.getClients().size(), file.getName())).showInformation();
 
-                HistoryItem save = new HistoryItem("SAVE", "The systems current state was saved.");
-                JSONConverter.updateHistory(save, "action_history.json");
+                HistoryItem historyItem = new HistoryItem("SAVE",
+                        String.format("The system's current state was saved to file '%s'.", file.getName()));
+                State.getSession().addToSessionHistory(historyItem);
 
-                invoker.resetUnsavedUpdates();
+                State.resetUnsavedUpdates();
                 PageNavigator.refreshAllWindows();
             }
         } catch (URISyntaxException | IOException e) {
@@ -425,9 +427,9 @@ public class MenuBarController extends SubController {
 
                     LOGGER.log(Level.INFO, "Loaded clients from file");
 
-                    HistoryItem load = new HistoryItem("LOAD",
-                            "The systems state was loaded from " + file.getAbsolutePath());
-                    JSONConverter.updateHistory(load, "action_history.json");
+                    HistoryItem historyItem = new HistoryItem("LOAD",
+                            String.format("The systems state was loaded from '%s'.", file.getName()));
+                    State.getSession().addToSessionHistory(historyItem);
 
                     mainController.resetWindowContext();
                     PageNavigator.loadPage(Page.LANDING, mainController);
@@ -540,8 +542,6 @@ public class MenuBarController extends SubController {
         State.addMainController(mainController);
         mainController.resetWindowContext();
         PageNavigator.loadPage(Page.LANDING, mainController);
-        HistoryItem save = new HistoryItem("LOGOUT", "The user logged out");
-        JSONConverter.updateHistory(save, "action_history.json");
     }
 
     @FXML
@@ -594,8 +594,6 @@ public class MenuBarController extends SubController {
     private void undo() {
         String undoneText = invoker.undo();
         Notifications.create().title("Undo").text(undoneText).showInformation();
-        HistoryItem save = new HistoryItem("UNDO", undoneText);
-        JSONConverter.updateHistory(save, "action_history.json");
         PageNavigator.refreshAllWindows();
     }
 
@@ -606,8 +604,6 @@ public class MenuBarController extends SubController {
     private void redo() {
         String redoneText = invoker.redo();
         Notifications.create().title("Redo").text(redoneText).showInformation();
-        HistoryItem save = new HistoryItem("REDO", redoneText);
-        JSONConverter.updateHistory(save, "action_history.json");
         PageNavigator.refreshAllWindows();
     }
 

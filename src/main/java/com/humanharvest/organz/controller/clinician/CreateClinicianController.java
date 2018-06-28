@@ -2,19 +2,21 @@ package com.humanharvest.organz.controller.clinician;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
-import com.humanharvest.organz.actions.clinician.CreateClinicianAction;
 import com.humanharvest.organz.Clinician;
+import com.humanharvest.organz.actions.clinician.CreateClinicianAction;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.state.ClinicianManager;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Region;
-import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 
@@ -120,11 +122,6 @@ public class CreateClinicianController extends SubController {
 
                 CreateClinicianAction action = new CreateClinicianAction(clinician, clinicianManager);
                 State.getInvoker().execute(action);
-
-                HistoryItem save = new HistoryItem("CREATE CLINICIAN",
-                        "Clinician " + fname.getText() + " " + lname.getText() + " with staff ID " + staffId.getText()
-                                + " Created.");
-                JSONConverter.updateHistory(save, "action_history.json");
 
                 PageNavigator.loadPage(Page.VIEW_CLINICIAN, mainController);
             }
