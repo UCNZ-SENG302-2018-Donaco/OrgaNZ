@@ -41,10 +41,11 @@ public class Save implements Runnable {
         } else {
             try (JSONFileWriter<Client> clientWriter = new JSONFileWriter<>(FILE, Client.class)) {
                 clientWriter.overwriteWith(clients);
+
                 LOGGER.log(Level.INFO, String.format("Saved %s clients to file", clients.size()));
-                HistoryItem save = new HistoryItem("SAVE",
+                HistoryItem historyItem = new HistoryItem("SAVE",
                         String.format("The system's current state was saved to '%s'.", FILE.getName()));
-                JSONConverter.updateHistory(save, "action_history.json");
+                State.getSession().addToSessionHistory(historyItem);
             } catch (IOException e) {
                 LOGGER.log(Level.SEVERE, "Could not save to file: " + FILE.getName(), e);
             }

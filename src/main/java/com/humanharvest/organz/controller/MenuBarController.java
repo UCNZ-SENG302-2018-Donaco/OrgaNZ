@@ -28,7 +28,6 @@ import javafx.stage.Stage;
 import com.humanharvest.organz.AppUI;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
-import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.ProcedureRecord;
@@ -39,7 +38,6 @@ import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.CacheManager;
-import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.serialization.CSVReadClientStrategy;
 import com.humanharvest.organz.utilities.serialization.JSONFileReader;
 import com.humanharvest.organz.utilities.serialization.JSONFileWriter;
@@ -365,8 +363,11 @@ public class MenuBarController extends SubController {
                     clientWriter.overwriteWith(clientManager.getClients());
                 }
 
-                Notifications.create().title("Saved").text(String.format("Successfully saved %s clients to file '%s'.",
-                        clientManager.getClients().size(), file.getName())).showInformation();
+                Notifications.create()
+                        .title("Saved Data")
+                        .text(String.format("Successfully saved %s clients to file '%s'.",
+                                clientManager.getClients().size(), file.getName()))
+                        .showInformation();
 
                 HistoryItem historyItem = new HistoryItem("SAVE",
                         String.format("The system's current state was saved to file '%s'.", file.getName()));
@@ -428,7 +429,7 @@ public class MenuBarController extends SubController {
                     LOGGER.log(Level.INFO, "Loaded clients from file");
 
                     HistoryItem historyItem = new HistoryItem("LOAD",
-                            String.format("The systems state was loaded from '%s'.", file.getName()));
+                            String.format("The system's current state was loaded from '%s'.", file.getName()));
                     State.getSession().addToSessionHistory(historyItem);
 
                     mainController.resetWindowContext();
@@ -490,8 +491,8 @@ public class MenuBarController extends SubController {
         }
 
         Notifications.create()
-                .title("Loaded data")
-                .text(String.format("Successfully loaded %d clients from file", clients.size()))
+                .title("Loaded Data")
+                .text(String.format("Successfully loaded %d clients from file '%s'.", clients.size(), file.getName()))
                 .showInformation();
     }
 
@@ -518,12 +519,12 @@ public class MenuBarController extends SubController {
         }
 
         Notifications.create()
-                .title("Loaded data")
+                .title("Loaded Data")
                 .text(String.format(
-                        "Clients loaded from CSV file:" +
+                        "Clients loaded from CSV file '%s':" +
                                 "\n%d records were valid," +
                                 "\n%d records were invalid.",
-                        valid, invalid))
+                        file.getName(), valid, invalid))
                 .showInformation();
     }
 
@@ -593,7 +594,10 @@ public class MenuBarController extends SubController {
     @FXML
     private void undo() {
         String undoneText = invoker.undo();
-        Notifications.create().title("Undo").text(undoneText).showInformation();
+        Notifications.create()
+                .title("Undo")
+                .text(undoneText)
+                .showInformation();
         PageNavigator.refreshAllWindows();
     }
 
@@ -603,7 +607,10 @@ public class MenuBarController extends SubController {
     @FXML
     private void redo() {
         String redoneText = invoker.redo();
-        Notifications.create().title("Redo").text(redoneText).showInformation();
+        Notifications.create()
+                .title("Redo")
+                .text(redoneText)
+                .showInformation();
         PageNavigator.refreshAllWindows();
     }
 

@@ -17,7 +17,6 @@ import com.humanharvest.organz.ProcedureRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.serialization.CSVReadClientStrategy;
 import com.humanharvest.organz.utilities.serialization.JSONFileReader;
 import org.apache.commons.csv.CSVFormat;
@@ -72,7 +71,7 @@ public class Load implements Runnable {
 
             LOGGER.log(Level.INFO, String.format("Loaded %s clients from file", manager.getClients().size()));
             HistoryItem historyItem = new HistoryItem("LOAD",
-                    "The systems state was loaded from " + fileName.getAbsolutePath());
+                    String.format("The system's current state was loaded from '%s'.", fileName.getName()));
             State.getSession().addToSessionHistory(historyItem);
         } catch (FileNotFoundException e) {
             LOGGER.log(Level.WARNING, "Could not find file: " + fileName.getAbsolutePath(), e);
