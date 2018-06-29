@@ -1,6 +1,7 @@
 package com.humanharvest.organz.utilities;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -24,6 +25,7 @@ import javax.sql.DataSource;
 
 import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.state.ClientManager;
@@ -53,6 +55,8 @@ public class JSONConverterTest extends BaseTest {
     private MedicationRecord medicationRecord;
     private LocalDate yesterday;
     private LocalDate tomorrow;
+    private String illnessName;
+    private IllnessRecord illnessRecord;
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
@@ -90,6 +94,10 @@ public class JSONConverterTest extends BaseTest {
         medicationName = "my medication";
         medicationRecord = new MedicationRecord(medicationName, yesterday, LocalDate.now());
         client.addMedicationRecord(medicationRecord);
+
+        illnessName = "my illness";
+        illnessRecord = new IllnessRecord(illnessName, yesterday, LocalDate.now(), true);
+        client.addIllnessRecord(illnessRecord);
     }
 
     @Test
@@ -649,6 +657,173 @@ public class JSONConverterTest extends BaseTest {
     public void LoadFromFileNoMedicationStopDateTest() throws Exception {
         medicationRecord.setStopped(null);
         saveClientToAndLoadFromFile(client);
+    }
+
+    // ============================================= Illness tests =============================================
+
+    @Test
+    public void failToLoadFromFileEmptyIllnessNameTest() throws Exception {
+        IllnessRecord illnessRecordEmptyName = new IllnessRecord("", yesterday, null, false);
+        client.addIllnessRecord(illnessRecordEmptyName);
+
+        try {
+            saveClientToAndLoadFromFile(client);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains(String.valueOf(uid)));
+        }
+    }
+
+    @Test
+    public void failToLoadFromFileNullIllnessNameTest() throws Exception {
+        IllnessRecord illnessRecordNullName = new IllnessRecord(null, yesterday, null, false);
+        client.addIllnessRecord(illnessRecordNullName);
+
+        try {
+            saveClientToAndLoadFromFile(client);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains(String.valueOf(uid)));
+        }
+    }
+
+    @Test
+    public void failToLoadFromFileIllnessRecordNoDiagnosisDateTest() throws Exception {
+        illnessRecord.setDiagnosisDate(null);
+
+        try {
+            saveClientToAndLoadFromFile(client);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains(String.valueOf(uid)));
+        }
+    }
+
+    @Test
+    public void failToLoadFromFileInvalidDiagnosisDateTest() throws Exception {
+        File file = folder.newFile("testfile.json");
+        saveClientToFile(client, file);
+
+        String partialJsonTimestampRegex = "\"illnessName\":\\s*\"" + illnessName + "\",\n"
+                + "\\s*\"diagnosisDate\":\\s*\\{\n"
+                + "\\s*\"year\":\\s*[0-9]+,\n"
+                + "\\s*\"month\":\\s*[0-9]+,\n"
+                + "\\s*\"day\":";
+        String partialJsonTimestampModified = "\"illnessName\": \"" + illnessName + "\",\n"
+                + "        \"diagnosisDate\": {\n"
+                + "          \"day\":";
+        replaceAllInFile(file, partialJsonTimestampRegex, partialJsonTimestampModified);
+
+        try {
+            JSONConverter.loadFromFile(file);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains(String.valueOf(uid)));
+        }
+    }
+
+    @Test
+    public void failToLoadFromFileIllnessWithFutureDiagnosisDateTest() throws Exception {
+        illnessRecord.setDiagnosisDate(tomorrow);
+
+        try {
+            saveClientToAndLoadFromFile(client);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains(String.valueOf(uid)));
+        }
+    }
+
+    @Test
+    public void failToLoadFromFileInvalidCuredDateTest() throws Exception {
+        File file = folder.newFile("testfile.json");
+        saveClientToFile(client, file);
+
+        String partialJsonTimestampRegex = "\"illnessName\":\\s*\"" + illnessName + "\",\n"
+                + "\\s*\"diagnosisDate\":\\s*\\{\n"
+                + "\\s*\"year\":\\s*[0-9]+,\n"
+                + "\\s*\"month\":\\s*[0-9]+,\n"
+                + "\\s*\"day\":\\s*[0-9]+\n"
+                + "\\s*},\n"
+                + "\\s*\"curedDate\":\\s*\\{\n"
+                + "\\s*\"year\":\\s*[0-9]+,\n"
+                + "\\s*\"month\":\\s*[0-9]+,\n"
+                + "\\s*\"day\":";
+        String partialJsonTimestampModified = "\"illnessName\": \"" + illnessName + "\",\n"
+                + "        \"diagnosisDate\": {\n"
+                + "          \"year\": " + illnessRecord.getDiagnosisDate().getYear() + ",\n"
+                + "          \"month\": " + illnessRecord.getDiagnosisDate().getMonthValue() + ",\n"
+                + "          \"day\": " + illnessRecord.getDiagnosisDate().getDayOfMonth() + "\n"
+                + "        },\n"
+                + "        \"curedDate\": {\n"
+                + "          \"day\":";
+        replaceAllInFile(file, partialJsonTimestampRegex, partialJsonTimestampModified);
+
+        try {
+            JSONConverter.loadFromFile(file);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains(String.valueOf(uid)));
+        }
+    }
+
+    @Test
+    public void failToLoadFromFileIllnessWithFutureCuredDateTest() throws Exception {
+        illnessRecord.setCuredDate(tomorrow);
+
+        try {
+            saveClientToAndLoadFromFile(client);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains(String.valueOf(uid)));
+        }
+    }
+
+    @Test
+    public void failToLoadFromFileIllnessWithCuredDateBeforeDiagnosisDateTest() throws Exception {
+        illnessRecord.setDiagnosisDate(LocalDate.now());
+        illnessRecord.setCuredDate(yesterday);
+
+        try {
+            saveClientToAndLoadFromFile(client);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains(String.valueOf(uid)));
+        }
+    }
+
+    @Test
+    public void failToLoadFromFileIllnessWithNoChronicStatusTest() throws Exception {
+        File file = folder.newFile("testfile.json");
+        saveClientToFile(client, file);
+
+        String partialJsonTimestampRegex = "\"illnessName\":\\s*\"" + illnessName + "\",\n"
+                + "\\s*\"diagnosisDate\":\\s*\\{\n"
+                + "\\s*\"year\":\\s*[0-9]+,\n"
+                + "\\s*\"month\":\\s*[0-9]+,\n"
+                + "\\s*\"day\":\\s*[0-9]+\n"
+                + "\\s*},\n"
+                + "\\s*\"curedDate\":\\s*\\{\n"
+                + "\\s*\"year\":\\s*[0-9]+,\n"
+                + "\\s*\"month\":\\s*[0-9]+,\n"
+                + "\\s*\"day\":\\s*[0-9]+\n"
+                + "\\s*},\n"
+                + "\\s*\"isChronic\":\\s*true";
+        String partialJsonTimestampModified = "\"illnessName\": \"" + illnessName + "\",\n"
+                + "        \"diagnosisDate\": {\n"
+                + "          \"year\": " + illnessRecord.getDiagnosisDate().getYear() + ",\n"
+                + "          \"month\": " + illnessRecord.getDiagnosisDate().getMonthValue() + ",\n"
+                + "          \"day\": " + illnessRecord.getDiagnosisDate().getDayOfMonth() + "\n"
+                + "        },\n"
+                + "        \"curedDate\": {\n"
+                + "          \"year\": " + illnessRecord.getCuredDate().getYear() + ",\n"
+                + "          \"month\": " + illnessRecord.getCuredDate().getMonthValue() + ",\n"
+                + "          \"day\": " + illnessRecord.getCuredDate().getDayOfMonth() + "\n"
+                + "        }";
+        replaceAllInFile(file, partialJsonTimestampRegex, partialJsonTimestampModified);
+
+        JSONConverter.loadFromFile(file);
+        assertFalse(State.getClientManager().getClientByID(client.getUid()).getIllnesses().get(0).isChronic());
     }
 
     // ********* Templates *********

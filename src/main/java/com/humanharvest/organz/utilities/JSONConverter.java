@@ -384,6 +384,64 @@ public final class JSONConverter {
                             }
                         }
 
+                        // Check illness history
+                        for (IllnessRecord illnessRecord : client.getIllnesses()) {
+                            // Check for non-empty illness name
+                            if (StringUtils.isNullOrEmpty(illnessRecord.getIllnessName())) {
+                                throw new IllegalArgumentException("Not a valid clients file: "
+                                        + "all illness records should have a name.\n"
+                                        + "Currently, user " + client.getUid() + " has at least one that doesn't.");
+                            }
+
+                            // Check for valid diagnosis date
+                            if (illnessRecord.getDiagnosisDate() == null) {
+                                throw new IllegalArgumentException("Not a valid clients file: "
+                                        + "all illness records should have a valid diagnosis date.\n"
+                                        + "Currently, user " + client.getUid() + " has at least one that doesn't.");
+                            }
+                            try {
+                                LocalDate.parse(illnessRecord.getDiagnosisDate().toString());
+                            } catch (DateTimeParseException e) {
+                                throw new IllegalArgumentException("Not a valid clients file: "
+                                        + "all illness records should have a valid diagnosis date.\n"
+                                        + "Currently, user " + client.getUid() + " has at least one that doesn't.");
+                            }
+
+                            // Check diagnosis date is not in the future
+                            if (illnessRecord.getDiagnosisDate().isAfter(LocalDate.now())) {
+                                throw new IllegalArgumentException("Not a valid clients file: "
+                                        + "all illness records should have a diagnosis date that is not in the"
+                                        + "future.\n"
+                                        + "Currently, user " + client.getUid() + " has at least one that is.");
+                            }
+
+                            // Check for valid cured date
+                            if (illnessRecord.getCuredDate() != null) {
+                                try {
+                                    LocalDate.parse(illnessRecord.getCuredDate().toString());
+                                } catch (DateTimeParseException e) {
+                                    throw new IllegalArgumentException("Not a valid clients file: "
+                                            + "all illness records should have a valid cured date.\n"
+                                            + "Currently, user " + client.getUid() + " has at least one that doesn't.");
+                                }
+
+                                // Check that cured date is not in the future
+                                if (illnessRecord.getCuredDate().isAfter(LocalDate.now())) {
+                                    throw new IllegalArgumentException("Not a valid clients file: "
+                                            + "no illness records should have a cured date in the future.\n"
+                                            + "Currently, user " + client.getUid() + " has at least one that does.");
+                                }
+
+                                // Check that cured date is not before diagnosis date
+                                if (illnessRecord.getCuredDate().isBefore(illnessRecord.getDiagnosisDate())) {
+                                    throw new IllegalArgumentException("Not a valid clients file: "
+                                            + "no medication records should have a cured date before the"
+                                            + "diagnosis date.\n"
+                                            + "Currently, user " + client.getUid() + " has at least one that does.");
+                                }
+                            }
+                        }
+
                         // Template
                         if (false) {
                             throw new IllegalArgumentException("Not a valid clients file: "
@@ -396,10 +454,7 @@ public final class JSONConverter {
                         for (TransplantRequest request : client.getTransplantRequests()) {
                             request.setClient(client);
                         }
-                        for (IllnessRecord record : client.getCurrentIllnesses()) {
-                            record.setClient(client);
-                        }
-                        for (IllnessRecord record : client.getPastIllnesses()) {
+                        for (IllnessRecord record : client.getIllnesses()) {
                             record.setClient(client);
                         }
                         for (ProcedureRecord record : client.getPastProcedures()) {

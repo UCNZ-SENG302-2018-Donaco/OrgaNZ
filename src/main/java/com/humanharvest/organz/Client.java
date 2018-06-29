@@ -495,6 +495,14 @@ public class Client {
 
 
     /**
+     * Returns a list of illnesses that Client currently has or previously had
+     * @return List of illnesses held by Client
+     */
+    public List<IllnessRecord> getIllnesses() {
+        return new ArrayList<>(illnessHistory);
+    }
+
+    /**
      * Returns a list of illnesses that Client previously had
      * @return List of illnesses held by Client
      */
