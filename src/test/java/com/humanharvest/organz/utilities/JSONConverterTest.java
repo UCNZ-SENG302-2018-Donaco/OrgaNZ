@@ -1,9 +1,6 @@
 package com.humanharvest.organz.utilities;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -18,6 +15,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Scanner;
 import java.util.regex.Pattern;
 
@@ -27,6 +25,7 @@ import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.MedicationRecord;
+import com.humanharvest.organz.ProcedureRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.ClientManagerMemory;
@@ -57,6 +56,8 @@ public class JSONConverterTest extends BaseTest {
     private LocalDate tomorrow;
     private String illnessName;
     private IllnessRecord illnessRecord;
+    private Organ procedureOrgan;
+    private ProcedureRecord procedureRecord;
 
     @Rule
     public TemporaryFolder folder = new TemporaryFolder();
@@ -98,6 +99,15 @@ public class JSONConverterTest extends BaseTest {
         illnessName = "my illness";
         illnessRecord = new IllnessRecord(illnessName, yesterday, LocalDate.now(), true);
         client.addIllnessRecord(illnessRecord);
+
+        procedureRecord = new ProcedureRecord("my procedure", "procedure description", yesterday);
+        procedureOrgan = Organ.LIVER;
+        HashSet<Organ> organs = new HashSet<>();
+        organs.add(procedureOrgan);
+        procedureRecord.setAffectedOrgans(organs);
+        client.addProcedureRecord(procedureRecord);
+
+        assert organ != procedureOrgan; //to avoid multiple regex matches
     }
 
     @Test
@@ -654,7 +664,7 @@ public class JSONConverterTest extends BaseTest {
     }
 
     @Test
-    public void LoadFromFileNoMedicationStopDateTest() throws Exception {
+    public void loadFromFileNoMedicationStopDateTest() throws Exception {
         medicationRecord.setStopped(null);
         saveClientToAndLoadFromFile(client);
     }
@@ -823,7 +833,96 @@ public class JSONConverterTest extends BaseTest {
         replaceAllInFile(file, partialJsonTimestampRegex, partialJsonTimestampModified);
 
         JSONConverter.loadFromFile(file);
-        assertFalse(State.getClientManager().getClientByID(client.getUid()).getIllnesses().get(0).isChronic());
+        assertFalse(State.getClientManager().getClientByID(uid).getIllnesses().get(0).isChronic());
+    }
+
+    // ============================================= Procedure tests =============================================
+
+    @Test
+    public void failToLoadFromFileNullSummaryTest() throws Exception {
+        procedureRecord.setSummary(null);
+
+        try {
+            saveClientToAndLoadFromFile(client);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains(String.valueOf(uid)));
+        }
+    }
+
+    @Test
+    public void failToLoadFromFileEmptySummaryTest() throws Exception {
+        procedureRecord.setSummary("");
+
+        try {
+            saveClientToAndLoadFromFile(client);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains(String.valueOf(uid)));
+        }
+    }
+
+    @Test
+    public void failToLoadFromFileProcedureRecordNoDateTest() throws Exception {
+        procedureRecord.setDate(null);
+
+        try {
+            saveClientToAndLoadFromFile(client);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains(String.valueOf(uid)));
+        }
+    }
+
+    @Test
+    public void failToLoadFromFileProcedureRecordInvalidDateTest() throws Exception {
+        File file = folder.newFile("testfile.json");
+        saveClientToFile(client, file);
+
+        String partialJsonTimestampRegex = "\"procedures\":\\s*\\[\n"
+                + "\\s*\\{\n"
+                + "\\s*\"summary\":\\s*\"" + procedureRecord.getSummary() + "\",\n"
+                + "\\s*\"description\":\\s*\"" + procedureRecord.getDescription() + "\",\n"
+                + "\\s*\"date\":\\s*\\{\n"
+                + "\\s*\"year\":\\s*[0-9]+,\n"
+                + "\\s*\"month\":\\s*[0-9]+,\n"
+                + "\\s*\"day\":";
+        String partialJsonTimestampModified = "\"procedures\": [\n"
+                + "      {\n"
+                + "        \"summary\": \"" + procedureRecord.getSummary() + "\",\n"
+                + "        \"description\": \"" + procedureRecord.getDescription() + "\",\n"
+                + "        \"date\": {\n"
+                + "          \"day\":";
+        replaceAllInFile(file, partialJsonTimestampRegex, partialJsonTimestampModified);
+
+        try {
+            JSONConverter.loadFromFile(file);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains(String.valueOf(uid)));
+        }
+    }
+
+    @Test
+    public void failToLoadFromFileInvalidAffectedOrganTest() throws Exception {
+        File file = folder.newFile("testfile.json");
+        saveClientToFile(client, file);
+        replaceAllInFile(file, procedureOrgan.name(), "INVALID_ORGAN");
+
+        try {
+            JSONConverter.loadFromFile(file);
+            fail();
+        } catch (IllegalArgumentException e) {
+            assertTrue(e.getMessage().contains(String.valueOf(uid)));
+        }
+    }
+
+    @Test
+    public void loadFromFileNullAffectedOrganTest() throws Exception {
+        procedureRecord.setAffectedOrgans(null);
+
+        saveClientToAndLoadFromFile(client);
+        assertNotNull(State.getClientManager().getClientByID(uid).getProcedures().get(0).getAffectedOrgans());
     }
 
     // ********* Templates *********

@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -442,6 +443,45 @@ public final class JSONConverter {
                             }
                         }
 
+                        for (ProcedureRecord procedureRecord : client.getProcedures()) {
+                            // Check for non-empty summary
+                            if (StringUtils.isNullOrEmpty(procedureRecord.getSummary())) {
+                                throw new IllegalArgumentException("Not a valid clients file: "
+                                        + "all procedure records should have a name.\n"
+                                        + "Currently, user " + client.getUid() + " has at least one that doesn't.");
+                            }
+
+                            // Check for valid date
+                            if (procedureRecord.getDate() == null) {
+                                throw new IllegalArgumentException("Not a valid clients file: "
+                                        + "all procedure records should have a valid date.\n"
+                                        + "Currently, user " + client.getUid() + " has at least one that doesn't.");
+                            }
+                            try {
+                                LocalDate.parse(procedureRecord.getDate().toString());
+                            } catch (DateTimeParseException e) {
+                                throw new IllegalArgumentException("Not a valid clients file: "
+                                        + "all procedure records should have a valid date.\n"
+                                        + "Currently, user " + client.getUid() + " has at least one that doesn't.");
+                            }
+
+                            // Check affected organs set is not null (and instantiate it if it is)
+                            if (procedureRecord.getAffectedOrgans() == null) {
+                                procedureRecord.setAffectedOrgans(new HashSet<>());
+                            } else {
+                                // Check all affected organs are valid
+                                for (Organ organ : procedureRecord.getAffectedOrgans()) {
+                                    if (organ == null) {
+                                        throw new IllegalArgumentException(
+                                                "Not a valid clients file: all organs affected "
+                                                        + "by a procedure should be valid organs.\n"
+                                                        + "Currently, user " + client.getUid()
+                                                        + " has at least one that isn't.");
+                                    }
+                                }
+                            }
+                        }
+
                         // Template
                         if (false) {
                             throw new IllegalArgumentException("Not a valid clients file: "
@@ -457,10 +497,7 @@ public final class JSONConverter {
                         for (IllnessRecord record : client.getIllnesses()) {
                             record.setClient(client);
                         }
-                        for (ProcedureRecord record : client.getPastProcedures()) {
-                            record.setClient(client);
-                        }
-                        for (ProcedureRecord record : client.getPendingProcedures()) {
+                        for (ProcedureRecord record : client.getProcedures()) {
                             record.setClient(client);
                         }
                         for (MedicationRecord record : client.getMedications()) {
