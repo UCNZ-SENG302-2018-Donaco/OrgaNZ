@@ -1425,6 +1425,118 @@ paths:
         500:
           $ref: '#/components/responses/500InternalServerError'
 
+
+  '/actions/undo':
+    get:
+      tags:
+        - Actions
+      security:
+        - ClientAccess: []
+        - ClinicianAccess: []
+        - AdministratorAccess: []
+      summary: Get the next action to be undone. May be null if no more actions to undo
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/textResponse'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+    post:
+      tags:
+        - Actions
+      security:
+        - ClientAccess: []
+        - ClinicianAccess: []
+        - AdministratorAccess: []
+      summary: Undo the last executed action
+      description: Returns the string text of the undo action. Requires an etag of the object being modified
+      parameters:
+        - $ref: '#/components/parameters/etag'
+      responses:
+        201:
+          description: Undone
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/textResponse'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        412:
+          $ref: '#/components/responses/412PreconditionFailed'
+        429:
+          $ref: '#/components/responses/428PreconditionRequired'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+
+
+  '/actions/redo':
+    get:
+      tags:
+        - Actions
+      security:
+        - ClientAccess: []
+        - ClinicianAccess: []
+        - AdministratorAccess: []
+      summary: Get the next action to be redone. May be null if no more actions to redo
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/textResponse'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+    post:
+      tags:
+        - Actions
+      security:
+        - ClientAccess: []
+        - ClinicianAccess: []
+        - AdministratorAccess: []
+      summary: Redo the last undone action
+      description: Returns the string text of the redo action. Requires an etag of the object being modified
+      parameters:
+        - $ref: '#/components/parameters/etag'
+      responses:
+        201:
+          description: Redone
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/textResponse'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        412:
+          $ref: '#/components/responses/412PreconditionFailed'
+        429:
+          $ref: '#/components/responses/428PreconditionRequired'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+
 components:
   parameters:
     q:
@@ -1897,8 +2009,8 @@ components:
           $ref: '#/components/schemas/date'
         isChronic:
           type: boolean
-          
-          
+
+
     procedureRecord:
       type: object
       properties:
@@ -1914,7 +2026,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/organEnum'
-    
+
     procedureRecordCreate:
       type: object
       properties:
@@ -1928,7 +2040,7 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/organEnum'
-            
+
     transplantRequest:
       type: object
       properties:
@@ -1944,7 +2056,7 @@ components:
           $ref: '#/components/schemas/transplantRequestStatusEnum'
         resolvedReason:
           type: string
-          
+
     transplantRequestCreate:
       type: object
       properties:
@@ -1961,16 +2073,22 @@ components:
         resolvedReason:
           type: string
           nullable: true
-    
+
     historyItem:
       type: object
       properties:
-        type: 
+        type:
           type: string
         details:
           type: string
         timestamp:
           $ref: '#/components/schemas/dateTime'
+
+    textResponse:
+      type: object
+      properties:
+        response:
+          type: string
         
         
         
