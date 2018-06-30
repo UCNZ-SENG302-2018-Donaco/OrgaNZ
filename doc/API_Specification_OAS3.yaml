@@ -73,6 +73,8 @@ paths:
             schema:
               $ref: '#/components/schemas/clientOverview'
         required: true
+      parameters:
+        - $ref: '#/components/parameters/view'
       responses:
         201:
           description: Created
@@ -133,6 +135,7 @@ paths:
       description: Only those properties included in the request body will be changed.
       parameters:
         - $ref: '#/components/parameters/etag'
+        - $ref: '#/components/parameters/view'
       requestBody:
         content:
           application/json:
@@ -169,6 +172,7 @@ paths:
       summary: Delete a client
       parameters:
         - $ref: '#/components/parameters/etag'
+        - $ref: '#/components/parameters/view'
       responses:
         201:
           description: Deleted
@@ -186,7 +190,7 @@ paths:
           $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
-          
+
   '/clients/{uid}/donationStatus':
     parameters:
     - in: path
@@ -232,6 +236,7 @@ paths:
       description: Only those organs included in the request body will be changed.
       parameters:
         - $ref: '#/components/parameters/etag'
+        - $ref: '#/components/parameters/view'
       requestBody:
         content:
           application/json:
@@ -258,7 +263,7 @@ paths:
           $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
-          
+
   '/clients/{uid}/medications':
     parameters:
     - in: path
@@ -305,6 +310,7 @@ paths:
       description: Returns the full list of medication records in response upon success.
       parameters:
         - $ref: '#/components/parameters/etag'
+        - $ref: '#/components/parameters/view'
       requestBody:
         content:
           application/json:
@@ -333,7 +339,7 @@ paths:
           $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
-          
+
   '/clients/{uid}/medications/{id}':
     parameters:
     - in: path
@@ -349,42 +355,6 @@ paths:
       required: true
       schema:
         type: integer
-    patch:
-      tags:
-        - Client Medications
-      security:
-        - ClinicianAccess: []
-        - AdministratorAccess: []
-      summary: Update a medication record
-      description: Only those properties included in the request body will be changed.
-      parameters:
-        - $ref: '#/components/parameters/etag'
-      requestBody:
-        content:
-          application/json:
-            schema:
-                $ref: '#/components/schemas/medicationRecordCreate'
-      responses:
-        200:
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/medicationRecord'
-        400:
-          $ref: '#/components/responses/400BadRequest'
-        401:
-          $ref: '#/components/responses/401Unauthorized'
-        403:
-          $ref: '#/components/responses/403Forbidden'
-        404:
-          $ref: '#/components/responses/404NotFound'
-        412:
-          $ref: '#/components/responses/412PreconditionFailed'
-        429:
-          $ref: '#/components/responses/428PreconditionRequired'
-        500:
-          $ref: '#/components/responses/500InternalServerError'
     delete:
       tags:
         - Client Medications
@@ -394,6 +364,7 @@ paths:
       summary: Delete a medication record
       parameters:
         - $ref: '#/components/parameters/etag'
+        - $ref: '#/components/parameters/view'
       responses:
         201:
           description: Deleted
@@ -411,7 +382,7 @@ paths:
           $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
-          
+
   '/clients/{uid}/medications/{id}/start':
     parameters:
     - in: path
@@ -437,6 +408,7 @@ paths:
       description: Returns the medication record in response upon success.
       parameters:
         - $ref: '#/components/parameters/etag'
+        - $ref: '#/components/parameters/view'
       responses:
         200:
           description: OK
@@ -458,7 +430,7 @@ paths:
           $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
-          
+
   '/clients/{uid}/medications/{id}/stop':
     parameters:
     - in: path
@@ -484,6 +456,7 @@ paths:
       description: Returns the medication record in response upon success.
       parameters:
         - $ref: '#/components/parameters/etag'
+        - $ref: '#/components/parameters/view'
       responses:
         200:
           description: OK
@@ -505,7 +478,7 @@ paths:
           $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
-  
+
   '/clients/{uid}/illnesses':
     parameters:
     - in: path
@@ -552,6 +525,7 @@ paths:
       description: Returns the full list of illness records in response upon success. The chronic flag cannot be set to true and have the cured date set. Cured date is nullable
       parameters:
         - $ref: '#/components/parameters/etag'
+        - $ref: '#/components/parameters/view'
       requestBody:
         content:
           application/json:
@@ -580,7 +554,7 @@ paths:
           $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
-          
+
   '/clients/{uid}/illnesses/{id}':
     parameters:
     - in: path
@@ -606,6 +580,7 @@ paths:
       description: Only those properties included in the request body will be changed. An illness cannot have it's curedDate set if the chronic flag is currently true.
       parameters:
         - $ref: '#/components/parameters/etag'
+        - $ref: '#/components/parameters/view'
       requestBody:
         content:
           application/json:
@@ -632,63 +607,18 @@ paths:
           $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
-          
-  '/clients/{uid}/illnesses/{id}/chronic':
-    parameters:
-    - in: path
-      name: uid
-      description: Client User ID
-      required: true
-      schema:
-        type: integer
-        minimum: 0
-    - in: path
-      name: id
-      description: Illness record ID
-      required: true
-      schema:
-        type: integer
-    post:
-      tags:
-        - Client Illnesses
-      security:
-        - ClinicianAccess: []
-        - AdministratorAccess: []
-      summary: Set an illness to chronic
-      description: Returns the illness record after success
-      parameters:
-        - $ref: '#/components/parameters/etag'
-      responses:
-        201:
-          description: Updated
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/illnessRecord'
-        400:
-          $ref: '#/components/responses/400BadRequest'
-        401:
-          $ref: '#/components/responses/401Unauthorized'
-        403:
-          $ref: '#/components/responses/403Forbidden'
-        404:
-          $ref: '#/components/responses/404NotFound'
-        412:
-          $ref: '#/components/responses/412PreconditionFailed'
-        429:
-          $ref: '#/components/responses/428PreconditionRequired'
-        500:
-          $ref: '#/components/responses/500InternalServerError'
+
     delete:
       tags:
         - Client Illnesses
       security:
         - ClinicianAccess: []
         - AdministratorAccess: []
-      summary: Remove the chronic flag from an illness
+      summary: Delete an illness
       description: Returns the illness record after success
       parameters:
         - $ref: '#/components/parameters/etag'
+        - $ref: '#/components/parameters/view'
       responses:
         201:
           description: Deleted
@@ -710,8 +640,8 @@ paths:
           $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
-  
-  
+
+
   '/clients/{uid}/procedures':
     parameters:
     - in: path
@@ -729,8 +659,6 @@ paths:
         - ClinicianAccess: []
         - AdministratorAccess: []
       summary: Get the list of a given clients medical procedures
-      parameters:
-        - $ref: '#/components/parameters/etag'
       responses:
         200:
           description: OK
@@ -760,6 +688,7 @@ paths:
       description: Returns the full list of procedure records in response upon success.
       parameters:
         - $ref: '#/components/parameters/etag'
+        - $ref: '#/components/parameters/view'
       requestBody:
         content:
           application/json:
@@ -788,7 +717,7 @@ paths:
           $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
-          
+
   '/clients/{uid}/procedures/{id}':
     parameters:
     - in: path
@@ -814,6 +743,7 @@ paths:
       description: Only those properties included in the request body will be changed.
       parameters:
         - $ref: '#/components/parameters/etag'
+        - $ref: '#/components/parameters/view'
       requestBody:
         content:
           application/json:
@@ -849,6 +779,7 @@ paths:
       summary: Delete a procedure record
       parameters:
         - $ref: '#/components/parameters/etag'
+        - $ref: '#/components/parameters/view'
       responses:
         201:
           description: Deleted
@@ -866,9 +797,9 @@ paths:
           $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
-          
-  
-  '/transplantRequests':
+
+
+  '/clients/transplantRequests':
     get:
       tags:
         - Client Transplant Requests
@@ -886,7 +817,6 @@ paths:
           description: "Only return transplants involving the given organs, may be comma seperated for multiple"
           schema:
             $ref: '#/components/schemas/organEnum'
-          
       responses:
         200:
           description: OK
@@ -906,8 +836,8 @@ paths:
           $ref: '#/components/responses/404NotFound'
         500:
           $ref: '#/components/responses/500InternalServerError'
-      
-  
+
+
   '/clients/{uid}/transplantRequests':
     parameters:
     - in: path
@@ -954,6 +884,7 @@ paths:
       description: Returns the full list of transplant requests in response upon success.
       parameters:
         - $ref: '#/components/parameters/etag'
+        - $ref: '#/components/parameters/view'
       requestBody:
         content:
           application/json:
@@ -982,7 +913,7 @@ paths:
           $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
-          
+
   '/clients/{uid}/transplantRequests/{id}':
     parameters:
     - in: path
@@ -1008,6 +939,7 @@ paths:
       description: Only those properties included in the request body will be changed.
       parameters:
         - $ref: '#/components/parameters/etag'
+        - $ref: '#/components/parameters/view'
       requestBody:
         content:
           application/json:
@@ -1043,6 +975,7 @@ paths:
       summary: Delete a transpant request
       parameters:
         - $ref: '#/components/parameters/etag'
+        - $ref: '#/components/parameters/view'
       responses:
         201:
           description: Deleted
@@ -1060,13 +993,13 @@ paths:
           $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
-          
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
+
   ### Clinician
   /clinicians:
     get:
@@ -1090,7 +1023,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/clinicianOverview'
-                
+
         400:
           $ref: '#/components/responses/400BadRequest'
         401:
@@ -1105,6 +1038,8 @@ paths:
       security:
         - AdministratorAccess: []
       summary: Create a new clinician
+      parameters:
+        - $ref: '#/components/parameters/view'
       requestBody:
         content:
           application/json:
@@ -1169,6 +1104,7 @@ paths:
       description: Only those properties included in the request body will be changed.
       parameters:
         - $ref: '#/components/parameters/etag'
+        - $ref: '#/components/parameters/view'
       requestBody:
         content:
           application/json:
@@ -1204,6 +1140,7 @@ paths:
       summary: Delete a clinician
       parameters:
         - $ref: '#/components/parameters/etag'
+        - $ref: '#/components/parameters/view'
       responses:
         201:
           description: Deleted
@@ -1221,10 +1158,10 @@ paths:
           $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
-          
-          
-  
-  
+
+
+
+
   ### Administrator
   /administrators:
     get:
@@ -1246,7 +1183,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/administratorDetails'
-                
+
         400:
           $ref: '#/components/responses/400BadRequest'
         401:
@@ -1261,6 +1198,8 @@ paths:
       security:
         - AdministratorAccess: []
       summary: Create a new administrator
+      parameters:
+        - $ref: '#/components/parameters/view'
       requestBody:
         content:
           application/json:
@@ -1323,6 +1262,7 @@ paths:
       description: Only those properties included in the request body will be changed.
       parameters:
         - $ref: '#/components/parameters/etag'
+        - $ref: '#/components/parameters/view'
       requestBody:
         content:
           application/json:
@@ -1357,6 +1297,7 @@ paths:
       summary: Delete an administrator
       parameters:
         - $ref: '#/components/parameters/etag'
+        - $ref: '#/components/parameters/view'
       responses:
         201:
           description: Deleted
@@ -1374,7 +1315,7 @@ paths:
           $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
-          
+
   '/sql':
     post:
       tags:
@@ -1398,34 +1339,92 @@ paths:
           $ref: '#/components/responses/403Forbidden'
         500:
           $ref: '#/components/responses/500InternalServerError'
-          
-          
-  '/login':
+
+
+  '/login/client':
     post:
       tags:
         - Authentication
-      summary: Login endpoint
-      description: The returned value will contain a string matching the usertype, and that users data, in the form it is represented as if a GET request was made for that item. This allow the userdata to be used straight away in an application rather than needing to query it. 
+      summary: Client login endpoint
+      description: Returns the unique identifier used for future queries, and also an optional userData if the view paramater is set to details
         The response will also include the JSON Web Token, which should be included in the Authentication header for all future requests.
+      parameters:
+        - $ref: '#/components/parameters/view'
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/loginRequestBody'
+              $ref: '#/components/schemas/clientLoginBody'
       responses:
         200:
           description: Successfully logged in
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/loginResponseObject'
+                $ref: '#/components/schemas/clientLoginResponse'
         400:
           $ref: '#/components/responses/400BadRequest'
         401:
           description: Invalid username or password
         500:
           $ref: '#/components/responses/500InternalServerError'
-  
+
+  '/login/clinician':
+    post:
+      tags:
+        - Authentication
+      summary: Clinician login endpoint
+      description: Returns the unique identifier used for future queries, and also an optional userData if the view paramater is set to details
+        The response will also include the JSON Web Token, which should be included in the Authentication header for all future requests.
+      parameters:
+        - $ref: '#/components/parameters/view'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/clinicianLoginBody'
+      responses:
+        200:
+          description: Successfully logged in
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/clinicianLoginResponse'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          description: Invalid username or password
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+
+  '/login/administrator':
+    post:
+      tags:
+        - Authentication
+      summary: Administrator login endpoint
+      description: Returns the unique identifier used for future queries, and also an optional userData if the view paramater is set to details
+        The response will also include the JSON Web Token, which should be included in the Authentication header for all future requests.
+      parameters:
+        - $ref: '#/components/parameters/view'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/administratorLoginBody'
+      responses:
+        200:
+          description: Successfully logged in
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/administratorLoginResponse'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          description: Invalid username or password
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+
 components:
   parameters:
     q:
@@ -1434,71 +1433,77 @@ components:
       description: "The search string"
       schema:
         type: string
-        
+
     offset:
       name: offset
       in: query
       description: "The offset from the start of the result set, used for pagination"
       schema:
         type: integer
-        
+
     count:
       name: count
       in: query
       description: "How many results to return, used for pagination"
       schema:
         type: integer
-                
+
     minimumAge:
       name: minimumAge
       in: query
       description: "The minimum age to filter"
       schema:
         type: integer
-                
+
     maximumAge:
       name: maximumAge
       in: query
       description: "The maximum age to filter"
       schema:
         type: integer
-        
+
     region:
       name: region
       in: query
       description: "The region to filter, may be comma seperated for multiple"
       schema:
         $ref: '#/components/schemas/regionEnum'
-        
+
     birthGender:
       name: birthGender
       in: query
       description: "The birth gender to filter, may be comma seperated for multiple"
       schema:
         $ref: '#/components/schemas/genderEnum'
-        
+
     clientType:
       name: clientType
       in: query
       description: "The client type to filter"
       schema:
         $ref: '#/components/schemas/clientTypeEnum'
-        
+
     donating:
       name: donating
       in: query
       description: "Only return clients that are donating the given organs, may be comma seperated for multiple"
       schema:
         $ref: '#/components/schemas/organEnum'
-        
+
     requesting:
       name: requesting
       in: query
       description: "Only return clients that are requesting the given organs, may be comma seperated for multiple"
       schema:
         $ref: '#/components/schemas/organEnum'
-        
-    
+
+    view:
+      name: view
+      in: query
+      description: "Return either a minimal or full representation of the new object in response. Should either be minimal or full. Defaults to full"
+      schema:
+        type: string
+
     etag:
       name: etag
       in: header
@@ -1506,8 +1511,8 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/etag'
-  
-  
+
+
   examples:
     clientDetailsExample:
       value:
@@ -1557,44 +1562,69 @@ components:
             }
           }
         }
-        
+
   schemas:
-  
-    loginRequestBody:
+
+    clientLoginBody:
+      type: object
+      properties:
+        userid:
+          type: integer
+
+    clientLoginResponse:
+      type: object
+      properties:
+        token:
+          $ref: '#/components/schemas/jsonWebToken'
+        identifier:
+          type: integer
+        userData:
+          $ref: '#/components/schemas/clientDetails'
+
+    clinicianLoginBody:
+      type: object
+      properties:
+        staffId:
+          type: integer
+        password:
+          type: string
+
+    clinicianLoginResponse:
+      type: object
+      properties:
+        token:
+          $ref: '#/components/schemas/jsonWebToken'
+        identifier:
+          type: integer
+        userData:
+          $ref: '#/components/schemas/clinicianDetails'
+
+    administratorLoginBody:
       type: object
       properties:
         username:
           type: string
         password:
           type: string
-  
-    loginResponseObject:
+
+    administratorLoginResponse:
       type: object
       properties:
         token:
           $ref: '#/components/schemas/jsonWebToken'
-        userType:
-          $ref: '#/components/schemas/userTypeEnum'
+        identifier:
+          type: integer
         userData:
-          oneOf:
-            - $ref: '#/components/schemas/clientDetails'
-            - $ref: '#/components/schemas/clinicianDetails'
-            - $ref: '#/components/schemas/administratorDetails'
-          example:
-            $ref: '#/components/examples/clientDetailsExample'
-      
-    userTypeEnum:
-      type: string
-      enum: [CLIENT, CLINICIAN, ADMIN]
-      
+          $ref: '#/components/schemas/administratorDetails'
+
     jsonWebToken:
       type: string
       description: A JSON Web Token used for all further authentication. Should be included in the Authentication header
       example: eyJhbGR5cCI6IkpXVCJ9.eyJzdWIiDIyfQ.Vxrhpalxry4EfsAKGITz02x0
-  
-        
+
+
     ### Clinician
-    
+
     clinicianOverview:
       type: object
       properties:
@@ -1608,7 +1638,7 @@ components:
           type: string
         region:
           $ref: '#/components/schemas/regionEnum'
-          
+
     clinicianDetails:
       type: object
       properties:
@@ -1628,7 +1658,7 @@ components:
           $ref: '#/components/schemas/dateTime'
         modifiedOn:
           $ref: '#/components/schemas/dateTime'
-          
+
     clinicianModifiableDetails:
       type: object
       properties:
@@ -1642,8 +1672,8 @@ components:
           type: string
         region:
           $ref: '#/components/schemas/regionEnum'
-          
-          
+
+
     ### Administrator
     administratorDetails:
       type: object
@@ -1654,7 +1684,7 @@ components:
           $ref: '#/components/schemas/dateTime'
         modifiedOn:
           $ref: '#/components/schemas/dateTime'
-          
+
     administratorCreateDetails:
       type: object
       properties:
@@ -1662,17 +1692,17 @@ components:
           type: string
         password:
           type: string
-          
+
     administratorModifiableDetails:
       type: object
       properties:
         username:
           type: string
-        
-  
-  
+
+
+
     #Client attributes
-  
+
     clientOverview:
       type: object
       properties:
@@ -1686,7 +1716,7 @@ components:
           type: string
         dateOfBirth:
             $ref: '#/components/schemas/date'
-          
+
     clientDetails:
       type: object
       properties:
@@ -1722,7 +1752,9 @@ components:
           $ref: '#/components/schemas/dateTime'
         modifiedTimestamp:
           $ref: '#/components/schemas/dateTime'
-    
+      example:
+        $ref: '#/components/examples/clientDetailsExample'
+
     clientModifiableDetails:
       type: object
       properties:
@@ -1750,7 +1782,7 @@ components:
           $ref: '#/components/schemas/date'
         dateOfDeath:
           $ref: '#/components/schemas/date'
-          
+
     date:
       type: object
       properties:
@@ -1779,8 +1811,8 @@ components:
           $ref: '#/components/schemas/date'
         time:
           $ref: '#/components/schemas/time'
-          
-        
+
+
     organBooleanArray:
       type: object
       properties:
@@ -1808,7 +1840,7 @@ components:
           type: boolean
         CONNECTIVE_TISSUE:
           type: boolean
-    
+
     medicationRecord:
       type: object
       properties:
@@ -1820,7 +1852,7 @@ components:
           $ref: '#/components/schemas/date'
         stopped:
           $ref: '#/components/schemas/date'
-          
+
     medicationRecordCreate:
       type: object
       required:
@@ -1829,7 +1861,7 @@ components:
         name:
           type: string
           example: Paracetamol
-    
+
     illnessRecord:
       type: object
       properties:
@@ -1843,7 +1875,7 @@ components:
           $ref: '#/components/schemas/date'
         isChronic:
           type: boolean
-    
+
     illnessRecordCreate:
       type: object
       properties:
@@ -1855,7 +1887,7 @@ components:
           $ref: '#/components/schemas/date'
         isChronic:
           type: boolean
-    
+
     illnessRecordModify:
       type: object
       properties:
@@ -1863,6 +1895,8 @@ components:
           $ref: '#/components/schemas/date'
         curedDate:
           $ref: '#/components/schemas/date'
+        isChronic:
+          type: boolean
           
           
     procedureRecord:
