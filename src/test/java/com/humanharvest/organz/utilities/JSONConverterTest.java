@@ -76,7 +76,7 @@ public class JSONConverterTest extends BaseTest {
     @Before
     public void initialise() {
         State.init(DataStorageType.MEMORY);
-        uid = 5;
+        uid = 578645156; // long number => low chance of a false positive when checking it exists in a string
         client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), uid);
         organ = Organ.CORNEA;
         try {
@@ -925,9 +925,36 @@ public class JSONConverterTest extends BaseTest {
         assertNotNull(State.getClientManager().getClientByID(uid).getProcedures().get(0).getAffectedOrgans());
     }
 
+    // ============================================= Update log tests =============================================
+
+    @Test
+    public void loadFromFileNullUpdateLogTest() throws Exception {
+        File file = folder.newFile("testfile.json");
+        saveClientToFile(client, file);
+        replaceAllInFile(file, "\"updateLog\": (?s).*", "\"updateLog\": null\n"
+                + "  }\n"
+                + "]");
+
+        JSONConverter.loadFromFile(file);
+        String updateLog = State.getClientManager().getClientByID(uid).getUpdatesString();
+        assertEquals(String.format("User: %s. Name: %s, updates:\n", uid, client.getFullName()), updateLog);
+    }
+
+    @Test
+    public void loadFromFileEmptyUpdateLogTest() throws Exception {
+        File file = folder.newFile("testfile.json");
+        saveClientToFile(client, file);
+        replaceAllInFile(file, "\"updateLog\": (?s).*", "\"updateLog\": []\n"
+                + "  }\n"
+                + "]");
+
+        JSONConverter.loadFromFile(file);
+        String updateLog = State.getClientManager().getClientByID(uid).getUpdatesString();
+        assertEquals(String.format("User: %s. Name: %s, updates:\n", uid, client.getFullName()), updateLog);
+    }
+
     // ********* Templates *********
 
-    //TODO
     @Test
     public void failToLoadFromFileTest() throws Exception {
         client.setFirstName(null);
@@ -940,7 +967,6 @@ public class JSONConverterTest extends BaseTest {
         }
     }
 
-    //TODO
     @Test
     public void failToLoadFromFileRegexTest() throws Exception {
         File file = folder.newFile("testfile.json");

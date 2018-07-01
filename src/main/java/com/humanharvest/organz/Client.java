@@ -35,7 +35,6 @@ import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
 
-
 /**
  * The main Client class.
  */
@@ -204,12 +203,14 @@ public class Client {
         }
     }
 
-
     /**
      * Returns a preformatted string of the users change history
      * @return Formatted string with newlines
      */
     public String getUpdatesString() {
+        if (updateLog == null) {
+            updateLog = new ArrayList<>();
+        }
         StringBuilder out = new StringBuilder(String.format("User: %s. Name: %s, updates:\n", uid, getFullName()));
         for (String update : updateLog) {
             out.append(update).append('\n');
@@ -493,7 +494,6 @@ public class Client {
         return age;
     }
 
-
     /**
      * Returns a list of illnesses that Client currently has or previously had
      * @return List of illnesses held by Client
@@ -542,7 +542,6 @@ public class Client {
         record.setClient(null);
         addUpdate("illnessHistory");
     }
-
 
     /**
      * Returns a list of procedures that the client has undergone or is going to undergo.
@@ -615,7 +614,6 @@ public class Client {
         return isMatch;
     }
 
-
     /**
      * Returns a HashSet of all names of the Client. If they do not have a middle/preferred name, this is set as "".
      * @return the Hashset of all the Clients names.
@@ -644,7 +642,6 @@ public class Client {
         names.addAll(Arrays.asList(pname));
         return names;
     }
-
 
     /**
      * Takes a string and checks if each space separated string section begins with the same values as the search

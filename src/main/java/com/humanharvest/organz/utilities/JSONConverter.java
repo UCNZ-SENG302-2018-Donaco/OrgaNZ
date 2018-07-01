@@ -81,7 +81,7 @@ public final class JSONConverter {
      * @param file The file to check/create.
      * @throws IOException If an error occurs while creating the file.
      */
-    public static void createEmptyJSONFileIfNotExists(File file) throws IOException {
+    private static void createEmptyJSONFileIfNotExists(File file) throws IOException {
         try {
             if (file.createNewFile()) {
                 FileWriter writer = new FileWriter(file);
@@ -480,13 +480,6 @@ public final class JSONConverter {
                                     }
                                 }
                             }
-                        }
-
-                        // Template
-                        if (false) {
-                            throw new IllegalArgumentException("Not a valid clients file: "
-                                    + "EXPLANATION\n"
-                                    + "Currently, user " + client.getUid() + " has at least one that isn't.");
                         }
 
                         // Add client to each record it has
