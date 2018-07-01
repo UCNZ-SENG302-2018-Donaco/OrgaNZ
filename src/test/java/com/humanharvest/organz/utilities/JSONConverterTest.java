@@ -928,29 +928,29 @@ public class JSONConverterTest extends BaseTest {
     // ============================================= Update log tests =============================================
 
     @Test
-    public void loadFromFileNullUpdateLogTest() throws Exception {
+    public void loadFromFileNullChangesHistoryTest() throws Exception {
         File file = folder.newFile("testfile.json");
         saveClientToFile(client, file);
-        replaceAllInFile(file, "\"updateLog\": (?s).*", "\"updateLog\": null\n"
+        replaceAllInFile(file, "\"changesHistory\": (?s).*", "\"changesHistory\": null\n"
                 + "  }\n"
                 + "]");
 
         JSONConverter.loadFromFile(file);
-        String updateLog = State.getClientManager().getClientByID(uid).getUpdatesString();
-        assertEquals(String.format("User: %s. Name: %s, updates:\n", uid, client.getFullName()), updateLog);
+        String changesHistory = State.getClientManager().getClientByID(uid).getUpdatesString();
+        assertEquals(String.format("User: %s. Name: %s, updates:\n", uid, client.getFullName()), changesHistory);
     }
 
     @Test
-    public void loadFromFileEmptyUpdateLogTest() throws Exception {
+    public void loadFromFileEmptyChangesHistoryTest() throws Exception {
         File file = folder.newFile("testfile.json");
         saveClientToFile(client, file);
-        replaceAllInFile(file, "\"updateLog\": (?s).*", "\"updateLog\": []\n"
+        replaceAllInFile(file, "\"changesHistory\": (?s).*", "\"changesHistory\": []\n"
                 + "  }\n"
                 + "]");
 
         JSONConverter.loadFromFile(file);
-        String updateLog = State.getClientManager().getClientByID(uid).getUpdatesString();
-        assertEquals(String.format("User: %s. Name: %s, updates:\n", uid, client.getFullName()), updateLog);
+        String changesHistory = State.getClientManager().getClientByID(uid).getUpdatesString();
+        assertEquals(String.format("User: %s. Name: %s, updates:\n", uid, client.getFullName()), changesHistory);
     }
 
     // ********* Templates *********

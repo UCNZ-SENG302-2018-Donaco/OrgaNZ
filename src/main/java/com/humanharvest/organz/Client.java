@@ -209,8 +209,8 @@ public class Client {
      * @return Formatted string with newlines
      */
     public String getUpdatesString() {
-        if (updateLog == null) {
-            updateLog = new ArrayList<>();
+        if (changesHistory == null) {
+            changesHistory = new ArrayList<>();
         }
         StringBuilder out = new StringBuilder(String.format("User: %s. Name: %s, updates:\n", uid, getFullName()));
         for (HistoryItem item : changesHistory) {
