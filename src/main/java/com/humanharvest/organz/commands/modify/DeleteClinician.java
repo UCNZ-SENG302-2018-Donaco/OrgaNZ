@@ -1,14 +1,11 @@
 package com.humanharvest.organz.commands.modify;
 
+import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.actions.clinician.DeleteClinicianAction;
-import com.humanharvest.organz.Clinician;
-import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.state.ClinicianManager;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.JSONConverter;
-
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
@@ -56,9 +53,6 @@ public class DeleteClinician implements Runnable {
 
             System.out.println(invoker.execute(action));
             System.out.println("This removal will only be permanent once the 'save' command is used");
-
-            HistoryItem deleteClinician = new HistoryItem("DELETE", "Clinician " + id + " deleted");
-            JSONConverter.updateHistory(deleteClinician, "action_history.json");
         }
     }
 }

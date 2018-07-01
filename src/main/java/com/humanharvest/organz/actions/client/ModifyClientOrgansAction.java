@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.utilities.enums.Organ;
@@ -13,19 +12,17 @@ import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredExcept
 /**
  * A reversible client organ modification Action
  */
-public class ModifyClientOrgansAction extends Action {
+public class ModifyClientOrgansAction extends ClientAction {
 
-    private ClientManager manager;
     private Map<Organ, Boolean> changes = new HashMap<>();
-    private Client client;
 
     /**
      * Create a new Action
      * @param client The client to be modified
+     * @param manager The ClientManager to apply the changes to
      */
     public ModifyClientOrgansAction(Client client, ClientManager manager) {
-        this.client = client;
-        this.manager = manager;
+        super(client, manager);
     }
 
     /**
@@ -43,12 +40,14 @@ public class ModifyClientOrgansAction extends Action {
 
     @Override
     protected void execute() {
+        super.execute();
         runChanges(false);
         manager.applyChangesTo(client);
     }
 
     @Override
     protected void unExecute() {
+        super.unExecute();
         runChanges(true);
         manager.applyChangesTo(client);
     }

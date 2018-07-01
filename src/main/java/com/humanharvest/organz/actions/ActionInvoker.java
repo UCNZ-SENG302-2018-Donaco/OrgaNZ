@@ -1,18 +1,22 @@
 package com.humanharvest.organz.actions;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
-import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.update_listener.ActionOccurredListener;
 
 /**
  * The main invoker class for all model modifying actions. All actions should be using the Action implementation and
  * invoked by the invoker instance to allow undo/redo
+ * Allows for action events to be observed by implementing the ActionOccurredListener then registering it with the
+ * registerActionOccurredListener function
  */
 public class ActionInvoker {
 
     private Stack<Action> undoStack = new Stack<>();
     private Stack<Action> redoStack = new Stack<>();
-    private int unsavedUpdates = 0;
+    private List<ActionOccurredListener> listeners = new ArrayList<>();
 
     /**
      * Undo the last action
@@ -24,8 +28,9 @@ public class ActionInvoker {
             Action action = undoStack.pop();
             action.unExecute();
             redoStack.push(action);
-            unsavedUpdates--;
-            State.setUnsavedChanges(unsavedUpdates != 0);
+
+            listeners.forEach((listener -> listener.onActionUndone(action)));
+
             return action.getUnexecuteText();
         }
         return "No more actions to undo";
@@ -41,8 +46,9 @@ public class ActionInvoker {
             Action action = redoStack.pop();
             action.execute();
             undoStack.push(action);
-            unsavedUpdates++;
-            State.setUnsavedChanges(unsavedUpdates != 0);
+
+            listeners.forEach((listener -> listener.onActionRedone(action)));
+
             return action.getExecuteText();
         }
         return "No more actions to redo";
@@ -57,8 +63,9 @@ public class ActionInvoker {
         action.execute();
         undoStack.push(action);
         redoStack.clear();
-        unsavedUpdates++;
-        State.setUnsavedChanges(true);
+
+        listeners.forEach((listener -> listener.onActionExecuted(action)));
+
         return action.getExecuteText();
     }
 
@@ -79,10 +86,18 @@ public class ActionInvoker {
     }
 
     /**
-     * Reset the UnsavedUpdates counter, should be used when the state is saved
+     * Register a listener to be notified on any Action event
+     * @param listener The listener to register
      */
-    public void resetUnsavedUpdates() {
-        unsavedUpdates = 0;
-        State.setUnsavedChanges(false);
+    public void registerActionOccuredListener(ActionOccurredListener listener) {
+        listeners.add(listener);
+    }
+
+    /**
+     * Unregister an action listener
+     * @param listener The listener to unregister
+     */
+    public void unregisterActionOccuredListener(ActionOccurredListener listener) {
+        listeners.remove(listener);
     }
 }

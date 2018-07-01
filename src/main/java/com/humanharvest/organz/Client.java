@@ -9,6 +9,7 @@ import java.time.Period;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -98,8 +99,10 @@ public class Client {
     )
     private List<ProcedureRecord> procedures = new ArrayList<>();
 
-    @ElementCollection
-    private List<String> updateLog = new ArrayList<>();
+    @OneToMany(
+            cascade = CascadeType.ALL
+    )
+    private List<HistoryItem> changesHistory = new ArrayList<>();
 
     public Client() {
         this.createdTimestamp = LocalDateTime.now();
@@ -128,9 +131,7 @@ public class Client {
         this.createdTimestamp = LocalDateTime.now();
     }
 
-    private void addUpdate(String function) {
-        LocalDateTime timestamp = LocalDateTime.now();
-        updateLog.add(String.format("%s; updated %s", timestamp, function));
+    private void updateModifiedTimestamp() {
         modifiedTimestamp = LocalDateTime.now();
     }
 
@@ -150,7 +151,7 @@ public class Client {
         } else {
             organsDonating.remove(organ);
         }
-        addUpdate(organ.toString());
+        updateModifiedTimestamp();
     }
 
     /**
@@ -212,8 +213,8 @@ public class Client {
             updateLog = new ArrayList<>();
         }
         StringBuilder out = new StringBuilder(String.format("User: %s. Name: %s, updates:\n", uid, getFullName()));
-        for (String update : updateLog) {
-            out.append(update).append('\n');
+        for (HistoryItem item : changesHistory) {
+            out.append(String.format("%s: %s\n", item.getTimestamp(), item.getDetails()));
         }
         return out.toString();
     }
@@ -251,7 +252,7 @@ public class Client {
     }
 
     public void setFirstName(String firstName) {
-        addUpdate("firstName");
+        updateModifiedTimestamp();
         this.firstName = firstName;
     }
 
@@ -260,7 +261,7 @@ public class Client {
     }
 
     public void setLastName(String lastName) {
-        addUpdate("lastName");
+        updateModifiedTimestamp();
         this.lastName = lastName;
     }
 
@@ -269,7 +270,7 @@ public class Client {
     }
 
     public void setMiddleName(String middleName) {
-        addUpdate("middleNames");
+        updateModifiedTimestamp();
         this.middleName = middleName;
     }
 
@@ -285,7 +286,7 @@ public class Client {
     }
 
     public void setPreferredName(String preferredName) {
-        addUpdate("preferredName");
+        updateModifiedTimestamp();
         this.preferredName = preferredName;
     }
 
@@ -294,7 +295,7 @@ public class Client {
     }
 
     public void setDateOfBirth(LocalDate dateOfBirth) {
-        addUpdate("dateOfBirth");
+        updateModifiedTimestamp();
         this.dateOfBirth = dateOfBirth;
     }
 
@@ -303,7 +304,7 @@ public class Client {
     }
 
     public void setDateOfDeath(LocalDate dateOfDeath) {
-        addUpdate("dateOfDeath");
+        updateModifiedTimestamp();
         this.dateOfDeath = dateOfDeath;
     }
 
@@ -312,7 +313,7 @@ public class Client {
     }
 
     public void setGender(Gender gender) {
-        addUpdate("gender");
+        updateModifiedTimestamp();
         this.gender = gender;
     }
 
@@ -321,7 +322,7 @@ public class Client {
     }
 
     public void setGenderIdentity(Gender genderIdentity) {
-        addUpdate("genderIdentity");
+        updateModifiedTimestamp();
         this.genderIdentity = genderIdentity;
     }
 
@@ -330,7 +331,7 @@ public class Client {
     }
 
     public void setHeight(double height) {
-        addUpdate("height");
+        updateModifiedTimestamp();
         this.height = height;
     }
 
@@ -339,7 +340,7 @@ public class Client {
     }
 
     public void setWeight(double weight) {
-        addUpdate("weight");
+        updateModifiedTimestamp();
         this.weight = weight;
     }
 
@@ -348,7 +349,7 @@ public class Client {
     }
 
     public void setBloodType(BloodType bloodType) {
-        addUpdate("bloodType");
+        updateModifiedTimestamp();
         this.bloodType = bloodType;
     }
 
@@ -357,7 +358,7 @@ public class Client {
     }
 
     public void setCurrentAddress(String currentAddress) {
-        addUpdate("currentAddress");
+        updateModifiedTimestamp();
         this.currentAddress = currentAddress;
     }
 
@@ -366,7 +367,7 @@ public class Client {
     }
 
     public void setRegion(Region region) {
-        addUpdate("region");
+        updateModifiedTimestamp();
         this.region = region;
     }
 
@@ -436,6 +437,10 @@ public class Client {
         ).collect(Collectors.toList());
     }
 
+    public List<HistoryItem> getChangesHistory() {
+        return Collections.unmodifiableList(changesHistory);
+    }
+
     /**
      * Returns a new list containing all medications used by the Client, past and current.
      * @return The list of all medications used by the Client.
@@ -451,7 +456,7 @@ public class Client {
     public void addMedicationRecord(MedicationRecord record) {
         medicationHistory.add(record);
         record.setClient(this);
-        addUpdate("medicationHistory");
+        updateModifiedTimestamp();
     }
 
     /**
@@ -461,7 +466,7 @@ public class Client {
     public void deleteMedicationRecord(MedicationRecord record) {
         medicationHistory.remove(record);
         record.setClient(null);
-        addUpdate("medicationHistory");
+        updateModifiedTimestamp();
     }
 
     /**
@@ -530,7 +535,7 @@ public class Client {
     public void addIllnessRecord(IllnessRecord record) {
         illnessHistory.add(record);
         record.setClient(this);
-        addUpdate("illnessHistory");
+        updateModifiedTimestamp();
     }
 
     /**
@@ -540,7 +545,7 @@ public class Client {
     public void deleteIllnessRecord(IllnessRecord record) {
         illnessHistory.remove(record);
         record.setClient(null);
-        addUpdate("illnessHistory");
+        updateModifiedTimestamp();
     }
 
     /**
@@ -578,7 +583,7 @@ public class Client {
     public void addProcedureRecord(ProcedureRecord record) {
         procedures.add(record);
         record.setClient(this);
-        addUpdate("procedures");
+        updateModifiedTimestamp();
     }
 
     /**
@@ -588,7 +593,15 @@ public class Client {
     public void deleteProcedureRecord(ProcedureRecord record) {
         procedures.remove(record);
         record.setClient(null);
-        addUpdate("procedures");
+        updateModifiedTimestamp();
+    }
+
+    public void addToChangesHistory(HistoryItem historyItem) {
+        changesHistory.add(historyItem);
+    }
+
+    public void removeFromChangesHistory(HistoryItem historyItem) {
+        changesHistory.remove(historyItem);
     }
 
     /**

@@ -3,11 +3,8 @@ package com.humanharvest.organz.commands.view;
 import java.util.List;
 
 import com.humanharvest.organz.Client;
-import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.JSONConverter;
-
 import picocli.CommandLine.Command;
 
 /**
@@ -40,8 +37,6 @@ public class PrintAllInfo implements Runnable {
             for (Client client : clients) {
                 System.out.println(client.getClientInfoString());
             }
-            HistoryItem printAllInfo = new HistoryItem("PRINT ALL INFO", "All clients information printed.");
-            JSONConverter.updateHistory(printAllInfo, "action_history.json");
         }
     }
 }

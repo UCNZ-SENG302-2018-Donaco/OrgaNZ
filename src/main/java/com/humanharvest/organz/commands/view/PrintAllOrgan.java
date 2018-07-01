@@ -3,11 +3,8 @@ package com.humanharvest.organz.commands.view;
 import java.util.List;
 
 import com.humanharvest.organz.Client;
-import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.JSONConverter;
-
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
@@ -46,8 +43,6 @@ public class PrintAllOrgan implements Runnable {
                 System.out.println(client.getClientOrganStatusString(type));
 
             }
-            HistoryItem printAllOrgan = new HistoryItem("PRINT ALL ORGAN", "All client organ information printed.");
-            JSONConverter.updateHistory(printAllOrgan, "action_history.json");
         } else {
             System.out.println("Define if organs to print are donations or requests e.g. 'printuserorgan "
                     + "-uid=1 -t=requests'");
