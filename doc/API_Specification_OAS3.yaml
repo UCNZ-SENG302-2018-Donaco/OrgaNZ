@@ -190,6 +190,66 @@ paths:
           $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
+  '/clients/file':
+    get:
+      tags:
+        - Client
+      security:
+        - AdministratorAccess: []
+      summary: Get a file of all clients
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                format: binary
+                example: Raw content of JSON clients file
+            text/csv:
+              schema:
+                type: string
+                format: binary
+                example: Raw content of CSV clients file
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+    post:
+      tags:
+        - Client
+      security:
+        - AdministratorAccess: []
+      summary: Load a file of clients
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: string
+              format: binary
+              example: Raw content of JSON clients file
+          text/csv:
+            schema:
+              type: string
+              format: binary
+              example: Raw content of CSV clients file
+        description: 'Clients file in either JSON or CSV file format.'
+        required: true
+      responses:
+        201:
+          description: File loaded successfully
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
 
   '/clients/{uid}/donationStatus':
     parameters:
