@@ -1826,6 +1826,8 @@ components:
           type: string
         middleName:
           type: string
+        preferredName:
+          type: string
         dateOfBirth:
             $ref: '#/components/schemas/date'
 
