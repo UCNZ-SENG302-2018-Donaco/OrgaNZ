@@ -9,7 +9,6 @@ import javax.persistence.RollbackException;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.database.DBManager;
 import com.humanharvest.organz.utilities.enums.Region;
-import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 public class ClinicianManagerDBPure implements ClinicianManager {
@@ -40,7 +39,7 @@ public class ClinicianManagerDBPure implements ClinicianManager {
         List<Clinician> clinicians = null;
         Transaction trns = null;
 
-        try (Session session = dbManager.getDBSession()) {
+        try (org.hibernate.Session session = dbManager.getDBSession()) {
             trns = session.beginTransaction();
             clinicians = dbManager.getDBSession()
                     .createQuery("FROM Clinician ", Clinician.class)
@@ -58,7 +57,7 @@ public class ClinicianManagerDBPure implements ClinicianManager {
     @Override
     public void setClinicians(Collection<Clinician> clinicians) {
         Transaction trns = null;
-        try (Session session = dbManager.getDBSession()) {
+        try (org.hibernate.Session session = dbManager.getDBSession()) {
             trns = session.beginTransaction();
 
             session.createQuery("DELETE FROM Clinician").executeUpdate();
@@ -79,7 +78,7 @@ public class ClinicianManagerDBPure implements ClinicianManager {
     public void applyChangesTo(Clinician clinician) {
         Transaction trns = null;
 
-        try (Session session = dbManager.getDBSession()) {
+        try (org.hibernate.Session session = dbManager.getDBSession()) {
             trns = session.beginTransaction();
 
             dbManager.getDBSession().update(clinician);
@@ -100,7 +99,7 @@ public class ClinicianManagerDBPure implements ClinicianManager {
     @Override
     public void removeClinician(Clinician clinician) {
         Transaction trns = null;
-        try (Session session = dbManager.getDBSession()) {
+        try (org.hibernate.Session session = dbManager.getDBSession()) {
             trns = session.beginTransaction();
             dbManager.getDBSession().remove(clinician);
             trns.commit();
@@ -116,7 +115,7 @@ public class ClinicianManagerDBPure implements ClinicianManager {
         Transaction trns = null;
         Clinician result = null;
 
-        try (Session session = dbManager.getDBSession()){
+        try (org.hibernate.Session session = dbManager.getDBSession()){
             trns = session.beginTransaction();
 
             result = dbManager.getDBSession().find(Clinician.class, id);
@@ -135,7 +134,7 @@ public class ClinicianManagerDBPure implements ClinicianManager {
         boolean collision = false;
         Transaction trns = null;
 
-        try (Session session = dbManager.getDBSession()) {
+        try (org.hibernate.Session session = dbManager.getDBSession()) {
             trns = session.beginTransaction();
 
             collision = dbManager.getDBSession().createQuery("SELECT c from  Clinician c Where c.id = :id")

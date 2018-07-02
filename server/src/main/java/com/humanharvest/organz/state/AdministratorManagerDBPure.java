@@ -7,8 +7,6 @@ import javax.persistence.RollbackException;
 
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.database.DBManager;
-
-import org.hibernate.Session;
 import org.hibernate.Transaction;
 
 public class AdministratorManagerDBPure implements AdministratorManager {
@@ -43,7 +41,7 @@ public class AdministratorManagerDBPure implements AdministratorManager {
         List<Administrator> clinicians = null;
         Transaction trns = null;
 
-        try (Session session = dbManager.getDBSession()) {
+        try (org.hibernate.Session session = dbManager.getDBSession()) {
             trns = session.beginTransaction();
             clinicians = dbManager.getDBSession()
                     .createQuery("FROM Administrator ", Administrator.class)
@@ -61,7 +59,7 @@ public class AdministratorManagerDBPure implements AdministratorManager {
     @Override
     public void removeAdministrator(Administrator administrator) {
         Transaction trns = null;
-        try (Session session = dbManager.getDBSession()) {
+        try (org.hibernate.Session session = dbManager.getDBSession()) {
             trns = session.beginTransaction();
             dbManager.getDBSession().remove(administrator);
             trns.commit();
@@ -77,7 +75,7 @@ public class AdministratorManagerDBPure implements AdministratorManager {
         boolean collision = false;
         Transaction trns = null;
 
-        try (Session session = dbManager.getDBSession()) {
+        try (org.hibernate.Session session = dbManager.getDBSession()) {
             trns = session.beginTransaction();
 
             collision = dbManager.getDBSession().createQuery("SELECT a FROM  Administrator a "
@@ -99,7 +97,7 @@ public class AdministratorManagerDBPure implements AdministratorManager {
         Transaction trns = null;
         Administrator result = null;
 
-        try (Session session = dbManager.getDBSession()){
+        try (org.hibernate.Session session = dbManager.getDBSession()){
             trns = session.beginTransaction();
 
             result = dbManager.getDBSession().find(Administrator.class, username);

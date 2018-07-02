@@ -3,9 +3,9 @@ package com.humanharvest.organz.actions.clinician;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
+import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.actions.ModifyObjectByFieldAction;
-import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.state.ClinicianManager;
 
 /**

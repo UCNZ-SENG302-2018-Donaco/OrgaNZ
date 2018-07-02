@@ -1,13 +1,9 @@
 package com.humanharvest.organz.state;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
-import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.actions.ActionInvoker;
 
 /**
  * A static class to store the current state of the system.
@@ -24,7 +20,6 @@ public final class State {
     private static ActionInvoker actionInvoker;
     private static Session session;
     private static boolean unsavedChanges = false;
-    private static List<MainController> mainControllers = new ArrayList<>();
 
     private State() {
     }
@@ -101,14 +96,5 @@ public final class State {
         }
         logout();
         unsavedChanges = false;
-        mainControllers = new ArrayList<>();
-    }
-
-    public static void addMainController(MainController mainController) {
-        mainControllers.add(mainController);
-    }
-
-    public static List<MainController> getMainControllers() {
-        return mainControllers;
     }
 }

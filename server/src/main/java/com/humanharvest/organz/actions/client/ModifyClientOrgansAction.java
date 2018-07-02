@@ -4,8 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;

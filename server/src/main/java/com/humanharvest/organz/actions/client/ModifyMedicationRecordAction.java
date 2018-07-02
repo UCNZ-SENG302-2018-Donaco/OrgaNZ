@@ -3,9 +3,9 @@ package com.humanharvest.organz.actions.client;
 import java.time.LocalDate;
 import java.util.Objects;
 
-import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.MedicationRecord;
+import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.utilities.JSONConverter;
 

@@ -1,25 +1,25 @@
 package com.humanharvest.organz.actions.client;
 
-import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.ProcedureRecord;
+import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.state.ClientManager;
 
 /**
- * A reversible action that will add the given procedure record to the given client's medical history.
+ * A reversible action that will delete the given procedure record from the given client's medication history.
  */
-public class AddProcedureRecordAction extends Action {
+public class DeleteProcedureRecordAction extends Action {
 
     private Client client;
     private ProcedureRecord record;
     private ClientManager manager;
 
     /**
-     * Creates a new action to add an procedure record.
-     * @param client The client whose medical history to add to.
-     * @param record The procedure record to add.
+     * Creates a new action to delete an procedure record.
+     * @param client The client whose medical history to delete it from.
+     * @param record The procedure record to delete.
      */
-    public AddProcedureRecordAction(Client client, ProcedureRecord record, ClientManager manager) {
+    public DeleteProcedureRecordAction(Client client, ProcedureRecord record, ClientManager manager) {
         this.client = client;
         this.record = record;
         this.manager = manager;
@@ -27,25 +27,25 @@ public class AddProcedureRecordAction extends Action {
 
     @Override
     public void execute() {
-        client.addProcedureRecord(record);
-        manager.applyChangesTo(client);
-    }
-
-    @Override
-    public void unExecute() {
         client.deleteProcedureRecord(record);
         manager.applyChangesTo(client);
     }
 
     @Override
+    public void unExecute() {
+        client.addProcedureRecord(record);
+        manager.applyChangesTo(client);
+    }
+
+    @Override
     public String getExecuteText() {
-        return String.format("Added record for procedure '%s' to client %d: %s.",
+        return String.format("Removed record for procedure '%s' client %d: %s.",
                 record.getSummary(), client.getUid(), client.getFullName());
     }
 
     @Override
     public String getUnexecuteText() {
-        return String.format("Reversed the addition of record for procedure '%s' from client %d: %s.",
+        return String.format("Re-added record for procedure '%s' to client %d: %s.",
                 record.getSummary(), client.getUid(), client.getFullName());
     }
 }

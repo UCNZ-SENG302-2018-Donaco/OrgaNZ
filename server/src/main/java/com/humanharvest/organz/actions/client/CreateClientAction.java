@@ -1,7 +1,7 @@
 package com.humanharvest.organz.actions.client;
 
-import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.state.ClientManager;
 
 /**

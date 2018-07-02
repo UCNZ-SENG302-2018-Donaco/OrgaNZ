@@ -1,9 +1,9 @@
 package com.humanharvest.organz.actions.client;
 
-import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.Client;
-import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.TransplantRequest;
+import com.humanharvest.organz.actions.Action;
+import com.humanharvest.organz.state.ClientManager;
 
 /**
  * A reversible action that will add the given transplant request for the given Client to the system.

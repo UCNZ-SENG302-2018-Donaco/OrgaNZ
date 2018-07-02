@@ -3,9 +3,9 @@ package com.humanharvest.organz.actions.administrator;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
+import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.actions.ModifyObjectByFieldAction;
-import com.humanharvest.organz.Administrator;
 
 /**
  * A reversible administrator modification Action

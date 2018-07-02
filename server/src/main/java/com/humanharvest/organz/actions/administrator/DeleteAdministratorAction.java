@@ -1,7 +1,7 @@
 package com.humanharvest.organz.actions.administrator;
 
-import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.Administrator;
+import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.state.AdministratorManager;
 
 /**

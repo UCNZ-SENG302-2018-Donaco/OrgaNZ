@@ -21,8 +21,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
-import com.humanharvest.organz.state.ClientManager;
-import com.humanharvest.organz.state.State;
 
 /**
  * Uses GSON to convert Java objects into JSON files and from JSON files
@@ -70,34 +68,36 @@ public final class JSONConverter {
      * @param file The file to be saved to
      * @throws IOException Throws IOExceptions
      */
-    public static void saveToFile(File file) throws IOException {
-        ClientManager clientManager = State.getClientManager();
-        try {
-            mapper.writeValue(file, clientManager.getClients());
-        } catch (IOException e) {
-            LOGGER.severe(e.getMessage());
-            throw e;
-        }
-    }
+    //TODO: Fix this to use a list of clients not clientManager or something
+//    public static void saveToFile(File file) throws IOException {
+//        ClientManager clientManager = State.getClientManager();
+//        try {
+//            mapper.writeValue(file, clientManager.getClients());
+//        } catch (IOException e) {
+//            LOGGER.severe(e.getMessage());
+//            throw e;
+//        }
+//    }
 
     /**
      * Loads the clients from a specified file. Overwrites any current clients
      * @param file The file to be loaded from
      * @throws IOException Throws IOExceptions
      */
-    public static void loadFromFile(File file) throws IOException {
-        TypeReference type = new TypeReference<ArrayList<Client>>() {
-        };
-        try {
-            ArrayList<Client> clients = mapper.readValue(file, type);
-            ClientManager clientManager = State.getClientManager();
-            clientManager.setClients(clients);
-        } catch (JsonParseException | JsonMappingException e) {
-            //Only a warning as an invalid file could have been selected by the user
-            LOGGER.warning(e.getMessage());
-            throw new IllegalArgumentException("Not a valid json file", e);
-        }
-    }
+    //TODO: Fix this to use a list of clients not clientManager or something
+//    public static void loadFromFile(File file) throws IOException {
+//        TypeReference type = new TypeReference<ArrayList<Client>>() {
+//        };
+//        try {
+//            ArrayList<Client> clients = mapper.readValue(file, type);
+//            ClientManager clientManager = State.getClientManager();
+//            clientManager.setClients(clients);
+//        } catch (JsonParseException | JsonMappingException e) {
+//            //Only a warning as an invalid file could have been selected by the user
+//            LOGGER.warning(e.getMessage());
+//            throw new IllegalArgumentException("Not a valid json file", e);
+//        }
+//    }
 
     /**
      * Read's the action_history.json file into an ArrayList, appends the historyItem to the list and

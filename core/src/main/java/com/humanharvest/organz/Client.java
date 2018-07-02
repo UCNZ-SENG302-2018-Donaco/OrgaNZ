@@ -31,6 +31,7 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.utilities.enums.BloodType;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Organ;
@@ -48,29 +49,45 @@ public class Client {
 
     @Id
     @GeneratedValue
+    @JsonView(Views.Overview.class)
     private Integer uid;
+    @JsonView(Views.Overview.class)
     private String firstName;
+    @JsonView(Views.Overview.class)
     private String lastName;
+    @JsonView(Views.Overview.class)
     private String middleName = "";
+    @JsonView(Views.Overview.class)
     private String preferredName = "";
+    @JsonView(Views.Details.class)
     private String currentAddress;
 
     @Enumerated(EnumType.STRING)
+    @JsonView(Views.Details.class)
     private Region region;
     @Enumerated(EnumType.STRING)
+    @JsonView(Views.Details.class)
     private Gender gender;
     @Enumerated(EnumType.STRING)
+    @JsonView(Views.Details.class)
     private BloodType bloodType;
     @Enumerated(EnumType.STRING)
+    @JsonView(Views.Details.class)
     private Gender genderIdentity;
 
+    @JsonView(Views.Details.class)
     private double height;
+    @JsonView(Views.Details.class)
     private double weight;
 
+    @JsonView(Views.Overview.class)
     private LocalDate dateOfBirth;
+    @JsonView(Views.Details.class)
     private LocalDate dateOfDeath;
 
+    @JsonView(Views.Details.class)
     private final LocalDateTime createdTimestamp;
+    @JsonView(Views.Details.class)
     private LocalDateTime modifiedTimestamp;
 
     @ElementCollection(targetClass = Organ.class)

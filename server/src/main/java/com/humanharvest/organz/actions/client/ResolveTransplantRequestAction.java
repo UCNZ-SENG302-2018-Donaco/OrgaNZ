@@ -1,17 +1,16 @@
 package com.humanharvest.organz.actions.client;
 
-
-import static com.humanharvest.organz.utilities.enums.TransplantRequestStatus.WAITING;
 import static com.humanharvest.organz.utilities.enums.TransplantRequestStatus.CANCELLED;
 import static com.humanharvest.organz.utilities.enums.TransplantRequestStatus.COMPLETED;
+import static com.humanharvest.organz.utilities.enums.TransplantRequestStatus.WAITING;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
 
+import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.state.ClientManager;
-import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 
 /**

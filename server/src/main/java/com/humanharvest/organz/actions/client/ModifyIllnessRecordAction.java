@@ -3,8 +3,8 @@ package com.humanharvest.organz.actions.client;
 import java.time.LocalDate;
 import java.util.Objects;
 
-import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.IllnessRecord;
+import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.state.ClientManager;
 
 /**
