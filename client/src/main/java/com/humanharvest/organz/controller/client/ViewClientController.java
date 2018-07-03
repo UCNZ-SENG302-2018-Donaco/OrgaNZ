@@ -1,5 +1,6 @@
 package com.humanharvest.organz.controller.client;
 
+import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
@@ -18,6 +19,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
+import com.humanharvest.organz.ModifyClientObject;
 import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.actions.client.MarkClientAsDeadAction;
@@ -30,7 +32,8 @@ import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.ui.validation.IntValidator;
+import com.humanharvest.organz.utilities.resolvers.client.ModifyClientDetailsResolver;
+import com.humanharvest.organz.utilities.validators.IntValidator;
 import com.humanharvest.organz.ui.validation.UIValidation;
 import com.humanharvest.organz.utilities.enums.BloodType;
 import com.humanharvest.organz.utilities.enums.Gender;
@@ -131,6 +134,7 @@ public class ViewClientController extends SubController {
 
     @Override
     public void refresh() {
+        viewedClient = manager.getClientByID(viewedClient.getUid());
         updateClientFields();
         if (session.getLoggedInUserType() == UserType.CLIENT) {
             mainController.setTitle("View Client: " + viewedClient.getPreferredName());
@@ -298,6 +302,16 @@ public class ViewClientController extends SubController {
         return update;
     }
 
+    private void addChangeIfDifferent(ModifyClientObject modifyClientObject, String fieldString, Object newValue) {
+        try {
+            Field field = modifyClientObject.getClass().getDeclaredField(fieldString);
+            field.setAccessible(true);
+            field.set(modifyClientObject, newValue);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }
+    
     private void addChangeIfDifferent(ModifyClientAction action, String field, Object oldValue, Object newValue) {
         try {
             if (!Objects.equals(oldValue, newValue)) {
@@ -314,6 +328,9 @@ public class ViewClientController extends SubController {
      */
     private boolean updateChanges() {
         ModifyClientAction action = new ModifyClientAction(viewedClient, manager);
+        ModifyClientObject modifyClientObject = new ModifyClientObject();
+
+        ModifyClientDetailsResolver resolver = new ModifyClientDetailsResolver(viewedClient, modifyClientObject);
 
         boolean clientDied = false;
 
@@ -334,25 +351,26 @@ public class ViewClientController extends SubController {
                         .showConfirm();
             }
         } else {
-            addChangeIfDifferent(action, "setDateOfDeath", viewedClient.getDateOfDeath(), dod.getValue());
+            addChangeIfDifferent(modifyClientObject, "dateOfDeath", dod.getValue());
         }
 
 
-        addChangeIfDifferent(action, "setFirstName", viewedClient.getFirstName(), fname.getText());
-        addChangeIfDifferent(action, "setLastName", viewedClient.getLastName(), lname.getText());
-        addChangeIfDifferent(action, "setMiddleName", viewedClient.getMiddleName(), mname.getText());
-        addChangeIfDifferent(action, "setPreferredName", viewedClient.getPreferredNameOnly(), pname.getText());
-        addChangeIfDifferent(action, "setDateOfBirth", viewedClient.getDateOfBirth(), dob.getValue());
-        addChangeIfDifferent(action, "setGender", viewedClient.getGender(), gender.getValue());
-        addChangeIfDifferent(action, "setGenderIdentity", viewedClient.getGenderIdentity(), genderIdentity.getValue());
-        addChangeIfDifferent(action, "setHeight", viewedClient.getHeight(), Double.parseDouble(height.getText()));
-        addChangeIfDifferent(action, "setWeight", viewedClient.getWeight(), Double.parseDouble(weight.getText()));
-        addChangeIfDifferent(action, "setBloodType", viewedClient.getBloodType(), btype.getValue());
-        addChangeIfDifferent(action, "setRegion", viewedClient.getRegion(), region.getValue());
-        addChangeIfDifferent(action, "setCurrentAddress", viewedClient.getCurrentAddress(), address.getText());
+        addChangeIfDifferent(modifyClientObject, "firstName", fname.getText());
+        addChangeIfDifferent(modifyClientObject, "lastName", lname.getText());
+        addChangeIfDifferent(modifyClientObject, "middleName", mname.getText());
+        addChangeIfDifferent(modifyClientObject, "preferredName", pname.getText());
+        addChangeIfDifferent(modifyClientObject, "dateOfBirth", dob.getValue());
+        addChangeIfDifferent(modifyClientObject, "gender", gender.getValue());
+        addChangeIfDifferent(modifyClientObject, "genderIdentity",genderIdentity.getValue());
+        addChangeIfDifferent(modifyClientObject, "height", Double.parseDouble(height.getText()));
+        addChangeIfDifferent(modifyClientObject, "weight", Double.parseDouble(weight.getText()));
+        addChangeIfDifferent(modifyClientObject, "bloodType", btype.getValue());
+        addChangeIfDifferent(modifyClientObject, "region", region.getValue());
+        addChangeIfDifferent(modifyClientObject, "currentAddress", address.getText());
 
         try {
-            String actionText = invoker.execute(action);
+            resolver.execute();
+            String actionText = "test";
 
             Notifications.create()
                     .title("Updated Client")

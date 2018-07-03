@@ -1,4 +1,4 @@
-package com.humanharvest.organz.ui.validation;
+package com.humanharvest.organz.utilities.validators;
 
 public class NotNullValidator extends Validator {
     @Override

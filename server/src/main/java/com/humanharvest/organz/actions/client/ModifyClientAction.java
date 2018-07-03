@@ -1,11 +1,13 @@
 package com.humanharvest.organz.actions.client;
 
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.actions.ModifyObjectByFieldAction;
+import com.humanharvest.organz.actions.ModifyObjectByMethodAction;
 import com.humanharvest.organz.state.ClientManager;
 
 /**
@@ -32,14 +34,28 @@ public class ModifyClientAction extends Action {
      * @param field The setter field of the client. Must match a valid setter in the Client object
      * @param oldValue The object the field initially had. Should be taken from the Clients equivalent getter
      * @param newValue The object the field should be update to. Must match the setters Object type
-     * @throws NoSuchMethodException Thrown if the Client does not have the specified setter
      * @throws NoSuchFieldException Thrown if the Clients specified setter does not take the same type as given in one
      * of the values
      */
     public void addChange(String field, Object oldValue, Object newValue)
-            throws NoSuchMethodException, NoSuchFieldException {
+            throws NoSuchFieldException {
         actions.add(new ModifyObjectByFieldAction(client, field, oldValue, newValue));
     }
+
+    /**
+     * Add a modification to the client
+     * @param field The setter field of the client. Must match a valid setter in the Client object
+     * @param newValue The object the field should be update to. Must match the setters Object type
+     * @throws NoSuchFieldException Thrown if the Clients specified setter does not take the same type as given in one
+     * of the values
+     */
+    public void addChange(String field, Object newValue)
+            throws NoSuchFieldException {
+        actions.add(new ModifyObjectByFieldAction(client, field, newValue));
+    }
+
+
+
 
     @Override
     protected void execute() {

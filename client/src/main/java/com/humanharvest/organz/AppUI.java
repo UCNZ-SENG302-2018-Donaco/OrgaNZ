@@ -50,6 +50,8 @@ public class AppUI extends Application {
 
         primaryStage.setMinHeight(639);
         primaryStage.setMinWidth(1016);
+
+        State.init(DataStorageType.MEMORY);
     }
 
     /**

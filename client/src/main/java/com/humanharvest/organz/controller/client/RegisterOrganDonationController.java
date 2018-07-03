@@ -2,6 +2,7 @@ package com.humanharvest.organz.controller.client;
 
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -25,6 +26,8 @@ import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
 import com.humanharvest.organz.utilities.JSONConverter;
+import com.humanharvest.organz.utilities.resolvers.ClientResolver;
+import com.humanharvest.organz.utilities.resolvers.client.ModifyClientOrganDonationResolver;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 
 import org.controlsfx.control.Notifications;
@@ -38,6 +41,7 @@ public class RegisterOrganDonationController extends SubController {
     private ClientManager manager;
     private ActionInvoker invoker;
     private Client client;
+    private Map<Organ, Boolean> donationStatus;
 
     @FXML
     private Pane sidebarPane, idPane, menuBarPane;
@@ -104,13 +108,16 @@ public class RegisterOrganDonationController extends SubController {
         if (client != null) {
             setCheckBoxesEnabled();
 
-            EnumSet<Organ> allPreviouslyRequestedOrgans = client.getTransplantRequests()
+            List<TransplantRequest> transplantRequests = ClientResolver.getTransplantRequests(client.getUid());
+            donationStatus = ClientResolver.getOrganDonationStatus(client.getUid());
+
+            EnumSet<Organ> allPreviouslyRequestedOrgans = transplantRequests
                     .stream()
                     .map(TransplantRequest::getRequestedOrgan)
                     .collect(Collectors.toCollection(() -> EnumSet.noneOf(Organ.class)));
 
             for (Map.Entry<Organ, CheckBox> entry : organCheckBoxes.entrySet()) {
-                entry.getValue().setSelected(client.getOrganDonationStatus().get(entry.getKey()));
+                entry.getValue().setSelected(donationStatus.get(entry.getKey()));
                 if (allPreviouslyRequestedOrgans.contains(entry.getKey())) {
                     entry.getValue().setStyle("-fx-color: lightcoral;");
                     entry.getValue().setTooltip(new Tooltip("This organ was/is part of a transplant request."));
@@ -147,24 +154,22 @@ public class RegisterOrganDonationController extends SubController {
      */
     @FXML
     private void apply() {
+        ModifyClientOrganDonationResolver resolver = new ModifyClientOrganDonationResolver(client);
         ModifyClientOrgansAction action = new ModifyClientOrgansAction(client, State.getClientManager());
         boolean hasChanged = false;
 
         for (Organ organ : organCheckBoxes.keySet()) {
-            boolean oldStatus = client.getOrganDonationStatus().get(organ);
+            boolean oldStatus = donationStatus.get(organ);
             boolean newStatus = organCheckBoxes.get(organ).isSelected();
 
             if (oldStatus != newStatus) {
-                try {
-                    action.addChange(organ, newStatus);
-                    hasChanged = true;
-                } catch (OrganAlreadyRegisteredException e) {
-                    e.printStackTrace();
-                }
+                resolver.addChange(organ, newStatus);
+                hasChanged = true;
             }
         }
         if (hasChanged) {
-            String actionText = invoker.execute(action);
+            resolver.execute();
+            String actionText = "test";
             HistoryItem save = new HistoryItem("UPDATE ORGANS",
                     "The Client's organs were updated: " + client.getOrganStatusString("donations"));
             JSONConverter.updateHistory(save, "action_history.json");

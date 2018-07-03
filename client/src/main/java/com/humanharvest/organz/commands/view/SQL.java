@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.humanharvest.organz.database.DBManager;
+//import com.humanharvest.organz.database.DBManager;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;
 
@@ -20,14 +20,14 @@ import picocli.CommandLine.Parameters;
 public class SQL implements Runnable {
     private static final Logger LOGGER = Logger.getLogger(SQL.class.getName());
 
-    private DBManager dbManager;
+    //private DBManager dbManager;
 
     public SQL() {
     }
 
-    public SQL(DBManager dbManager) {
-        this.dbManager = dbManager;
-    }
+   // public SQL(DBManager dbManager) {
+   //     this.dbManager = dbManager;
+   // }
 
     @Parameters
     private List<String> allParams;
@@ -39,21 +39,21 @@ public class SQL implements Runnable {
             return;
         }
 
-        if (dbManager == null) {
-            // Laxy initialise DB Manager
-            dbManager = DBManager.getInstance();
-        }
-
-        String sql = String.join(" ", allParams);
-
-        //Standard implementation with normal connection
-        try (Connection connection = dbManager.getStandardSqlConnection()) {
-            connection.setReadOnly(true);
-
-            executeQuery(connection, sql);
-        } catch (SQLException e) {
-            LOGGER.log(Level.SEVERE, "Couldn't connect to the database", e);
-        }
+//        if (dbManager == null) {
+//            // Laxy initialise DB Manager
+//            dbManager = DBManager.getInstance();
+//        }
+//
+//        String sql = String.join(" ", allParams);
+//
+//        //Standard implementation with normal connection
+//        try (Connection connection = dbManager.getStandardSqlConnection()) {
+//            connection.setReadOnly(true);
+//
+//            executeQuery(connection, sql);
+//        } catch (SQLException e) {
+//            LOGGER.log(Level.SEVERE, "Couldn't connect to the database", e);
+//        }
     }
 
     private static void executeQuery(Connection connection, String sql) {

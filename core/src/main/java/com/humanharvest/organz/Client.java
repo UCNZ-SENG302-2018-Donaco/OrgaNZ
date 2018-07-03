@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -37,7 +38,11 @@ import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
-
+import com.humanharvest.organz.utilities.type_converters.BloodTypeConverter;
+import com.humanharvest.organz.utilities.type_converters.DoubleConverter;
+import com.humanharvest.organz.utilities.type_converters.GenderConverter;
+import com.humanharvest.organz.utilities.type_converters.LocalDateConverter;
+import com.humanharvest.organz.utilities.type_converters.RegionConverter;
 
 /**
  * The main Client class.
@@ -175,6 +180,20 @@ public class Client {
             organsDonating.remove(organ);
         }
         addUpdate(organ.toString());
+    }
+
+    public void setOrganDonationStatus(Map<Organ, Boolean> map) {
+        for (Entry<Organ, Boolean> entry : map.entrySet()) {
+            if (entry.getValue()) {
+                organsDonating.add(entry.getKey());
+            } else {
+                organsDonating.remove(entry.getKey());
+            }
+        }
+    }
+
+    public void setTransplantRequests(Collection<TransplantRequest> requests) {
+        transplantRequests = requests;
     }
 
     /**
@@ -743,6 +762,14 @@ public class Client {
                 request.setResolvedDate(LocalDateTime.now());
                 request.setResolvedReason("death");
             }
+        }
+    }
+
+    public String getEtag() {
+        if (modifiedTimestamp == null) {
+            return "\"" + String.valueOf(createdTimestamp.hashCode()) + "\"";
+        } else {
+            return "\"" + String.valueOf(modifiedTimestamp.hashCode()) + "\"";
         }
     }
 }

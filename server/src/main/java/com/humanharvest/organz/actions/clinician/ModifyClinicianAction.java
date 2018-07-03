@@ -5,7 +5,7 @@ import java.util.stream.Collectors;
 
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.actions.Action;
-import com.humanharvest.organz.actions.ModifyObjectByFieldAction;
+import com.humanharvest.organz.actions.ModifyObjectByMethodAction;
 import com.humanharvest.organz.state.ClinicianManager;
 
 /**
@@ -13,7 +13,7 @@ import com.humanharvest.organz.state.ClinicianManager;
  */
 public class ModifyClinicianAction extends Action {
 
-    private ArrayList<ModifyObjectByFieldAction> actions = new ArrayList<>();
+    private ArrayList<ModifyObjectByMethodAction> actions = new ArrayList<>();
     private Clinician clinician;
     private ClinicianManager clinicianManager;
     /**
@@ -37,9 +37,9 @@ public class ModifyClinicianAction extends Action {
     public void addChange(String field, Object oldValue, Object newValue)
             throws NoSuchMethodException, NoSuchFieldException {
         if (field.equals("setPassword")) {
-            actions.add(new ModifyObjectByFieldAction(clinician, field, oldValue, newValue, true));
+            actions.add(new ModifyObjectByMethodAction(clinician, field, oldValue, newValue, true));
         } else {
-            actions.add(new ModifyObjectByFieldAction(clinician, field, oldValue, newValue, false));
+            actions.add(new ModifyObjectByMethodAction(clinician, field, oldValue, newValue, false));
         }
     }
 
@@ -48,7 +48,7 @@ public class ModifyClinicianAction extends Action {
         if (actions.size() == 0) {
             throw new IllegalStateException("No changes were made to the clinician.");
         } else {
-            for (ModifyObjectByFieldAction action : actions) {
+            for (ModifyObjectByMethodAction action : actions) {
                 action.execute();
             }
             clinicianManager.applyChangesTo(clinician);
@@ -57,7 +57,7 @@ public class ModifyClinicianAction extends Action {
 
     @Override
     protected void unExecute() {
-        for (ModifyObjectByFieldAction action : actions) {
+        for (ModifyObjectByMethodAction action : actions) {
             action.unExecute();
         }
         clinicianManager.applyChangesTo(clinician);
@@ -66,7 +66,7 @@ public class ModifyClinicianAction extends Action {
     @Override
     public String getExecuteText() {
         String changesText = actions.stream()
-                .map(ModifyObjectByFieldAction::getExecuteText)
+                .map(ModifyObjectByMethodAction::getExecuteText)
                 .collect(Collectors.joining("\n"));
 
         return String.format("Updated details for clinician %d: %s %s. \n"
@@ -77,7 +77,7 @@ public class ModifyClinicianAction extends Action {
     @Override
     public String getUnexecuteText() {
         String changesText = actions.stream()
-                .map(ModifyObjectByFieldAction::getExecuteText)
+                .map(ModifyObjectByMethodAction::getExecuteText)
                 .collect(Collectors.joining("\n"));
 
         return String.format("Reversed update for clinician %d: %s %s. \n"

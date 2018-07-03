@@ -5,14 +5,14 @@ import java.util.stream.Collectors;
 
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.actions.Action;
-import com.humanharvest.organz.actions.ModifyObjectByFieldAction;
+import com.humanharvest.organz.actions.ModifyObjectByMethodAction;
 
 /**
  * A reversible administrator modification Action
  */
 public class ModifyAdministratorAction extends Action {
 
-    private ArrayList<ModifyObjectByFieldAction> actions = new ArrayList<>();
+    private ArrayList<ModifyObjectByMethodAction> actions = new ArrayList<>();
     private Administrator administrator;
 
     /**
@@ -35,22 +35,22 @@ public class ModifyAdministratorAction extends Action {
     public void addChange(String field, Object oldValue, Object newValue)
             throws NoSuchMethodException, NoSuchFieldException {
         if (field.equals("setPassword")) {
-            actions.add(new ModifyObjectByFieldAction(administrator, field, oldValue, newValue, true));
+            actions.add(new ModifyObjectByMethodAction(administrator, field, oldValue, newValue, true));
         } else {
-            actions.add(new ModifyObjectByFieldAction(administrator, field, oldValue, newValue, false));
+            actions.add(new ModifyObjectByMethodAction(administrator, field, oldValue, newValue, false));
         }
     }
 
     @Override
     protected void execute() {
-        for (ModifyObjectByFieldAction action : actions) {
+        for (ModifyObjectByMethodAction action : actions) {
             action.execute();
         }
     }
 
     @Override
     protected void unExecute() {
-        for (ModifyObjectByFieldAction action : actions) {
+        for (ModifyObjectByMethodAction action : actions) {
             action.unExecute();
         }
     }
@@ -58,7 +58,7 @@ public class ModifyAdministratorAction extends Action {
     @Override
     public String getExecuteText() {
         String changesText = actions.stream()
-                .map(ModifyObjectByFieldAction::getExecuteText)
+                .map(ModifyObjectByMethodAction::getExecuteText)
                 .collect(Collectors.joining("\n"));
 
         return String.format("Updated details for administrator %s.\nThese changes were made:\n\n%s",
@@ -68,7 +68,7 @@ public class ModifyAdministratorAction extends Action {
     @Override
     public String getUnexecuteText() {
         String changesText = actions.stream()
-                .map(ModifyObjectByFieldAction::getExecuteText)
+                .map(ModifyObjectByMethodAction::getExecuteText)
                 .collect(Collectors.joining("\n"));
 
         return String.format("Reversed update for administrator %s.\nThese changes were reversed:\n\n%s",

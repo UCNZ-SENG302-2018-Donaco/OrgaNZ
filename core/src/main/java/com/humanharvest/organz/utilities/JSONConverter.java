@@ -69,7 +69,7 @@ public final class JSONConverter {
      * @throws IOException Throws IOExceptions
      */
     //TODO: Fix this to use a list of clients not clientManager or something
-//    public static void saveToFile(File file) throws IOException {
+    public static void saveToFile(File file) throws IOException {
 //        ClientManager clientManager = State.getClientManager();
 //        try {
 //            mapper.writeValue(file, clientManager.getClients());
@@ -77,7 +77,7 @@ public final class JSONConverter {
 //            LOGGER.severe(e.getMessage());
 //            throw e;
 //        }
-//    }
+    }
 
     /**
      * Loads the clients from a specified file. Overwrites any current clients
@@ -85,7 +85,7 @@ public final class JSONConverter {
      * @throws IOException Throws IOExceptions
      */
     //TODO: Fix this to use a list of clients not clientManager or something
-//    public static void loadFromFile(File file) throws IOException {
+    public static void loadFromFile(File file) throws IOException {
 //        TypeReference type = new TypeReference<ArrayList<Client>>() {
 //        };
 //        try {
@@ -97,7 +97,7 @@ public final class JSONConverter {
 //            LOGGER.warning(e.getMessage());
 //            throw new IllegalArgumentException("Not a valid json file", e);
 //        }
-//    }
+    }
 
     /**
      * Read's the action_history.json file into an ArrayList, appends the historyItem to the list and
