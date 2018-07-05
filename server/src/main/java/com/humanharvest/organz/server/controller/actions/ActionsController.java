@@ -18,5 +18,4 @@ public class ActionsController {
     public ResponseEntity<String> redoAction() {
         return new ResponseEntity<>(State.getInvoker().undo(), HttpStatus.OK);
     }
-
 }

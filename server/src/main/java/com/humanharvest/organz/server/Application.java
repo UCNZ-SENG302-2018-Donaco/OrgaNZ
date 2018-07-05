@@ -12,7 +12,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class Application {
-    public static void main(String[] args) throws Exception{
+    public static void main(String[] args) throws Exception {
         State.init(DataStorageType.MEMORY);
         ClientManager clientManager = State.getClientManager();
         Client jack = new Client("Jack", "EOD", "Steel", LocalDate.of(1997,04,21), 1);
