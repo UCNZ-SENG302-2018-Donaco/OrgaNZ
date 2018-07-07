@@ -1,7 +1,7 @@
 package com.humanharvest.organz.controller;
 
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
@@ -28,10 +28,6 @@ import javafx.stage.Stage;
 import com.humanharvest.organz.AppUI;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
-import com.humanharvest.organz.IllnessRecord;
-import com.humanharvest.organz.MedicationRecord;
-import com.humanharvest.organz.ProcedureRecord;
-import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
@@ -39,13 +35,12 @@ import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.CacheManager;
 import com.humanharvest.organz.utilities.serialization.CSVReadClientStrategy;
-import com.humanharvest.organz.utilities.serialization.JSONFileReader;
+import com.humanharvest.organz.utilities.serialization.ClientImporter;
 import com.humanharvest.organz.utilities.serialization.JSONFileWriter;
+import com.humanharvest.organz.utilities.serialization.JSONReadClientStrategy;
+import com.humanharvest.organz.utilities.serialization.ReadClientStrategy;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
 import org.controlsfx.control.Notifications;
 
 /**
@@ -412,39 +407,56 @@ public class MenuBarController extends SubController {
                 String format = getFileExtension(file.getName());
 
                 try {
+                    ReadClientStrategy strategy;
                     switch (format) {
                         case "csv":
-                            loadCsv(file);
+                            strategy = new CSVReadClientStrategy();
                             break;
                         case "json":
-                            loadJson(file);
+                            strategy = new JSONReadClientStrategy();
                             break;
                         default:
-                            PageNavigator.showAlert(AlertType.ERROR,
-                                    "Load Failed",
-                                    "Unknown file format or extension: " + format);
-                            break;
+                            throw new IOException(String.format("Unknown file format or extension: '%s'", format));
                     }
 
-                    LOGGER.log(Level.INFO, "Loaded clients from file");
+                    ClientImporter importer = new ClientImporter(file, strategy);
+                    importer.importAll();
+                    clientManager.setClients(importer.getValidClients());
 
-                    HistoryItem historyItem = new HistoryItem("LOAD",
-                            String.format("The system's current state was loaded from '%s'.", file.getName()));
-                    State.getSession().addToSessionHistory(historyItem);
+                    String message = String.format("Loaded clients from file '%s'."
+                                    + "\n%d were valid, "
+                                    + "\n%d were invalid.",
+                            file.getName(), importer.getValidCount(), importer.getInvalidCount());
+
+                    LOGGER.log(Level.INFO, message);
+                    State.getSession().addToSessionHistory(new HistoryItem("LOAD", message));
+
+                    Notifications.create()
+                            .title("Loaded Clients")
+                            .text(message)
+                            .showInformation();
 
                     mainController.resetWindowContext();
                     PageNavigator.loadPage(Page.LANDING, mainController);
 
+                } catch (FileNotFoundException exc) {
+                    PageNavigator.showAlert(AlertType.ERROR, "Load Failed",
+                            String.format("Could not find file: '%s'.", file.getAbsolutePath()));
                 } catch (IOException exc) {
                     PageNavigator.showAlert(AlertType.ERROR, "Load Failed",
-                            "Warning: unrecognisable or invalid file. please make\n"
-                                    + "sure that you have selected the correct file type.");
-                    LOGGER.log(Level.SEVERE, ERROR_LOADING_MESSAGE, exc);
+                            String.format("An IO error occurred when loading from file: '%s'\n%s",
+                                    file.getName(), exc.getMessage()));
                 }
             }
         }
     }
 
+    /**
+     * Returns the file extension of the given file name string (in lowercase). The file extension is defined as the
+     * characters after the last "." in the file name.
+     * @param fileName The file name string.
+     * @return The file extension of the given file name.
+     */
     private static String getFileExtension(String fileName) {
         int lastIndex = fileName.lastIndexOf('.');
         if (lastIndex >= 0) {
@@ -452,80 +464,6 @@ public class MenuBarController extends SubController {
         } else {
             return "";
         }
-    }
-
-    /**
-     * Loads Clients from the given JSON file.
-     */
-    private void loadJson(File file) throws IOException {
-        List<Client> clients;
-
-        try (JSONFileReader<Client> clientReader = new JSONFileReader<>(file, Client.class)) {
-            clients = clientReader.getAll();
-
-            for (Client client : clients) {
-                for (TransplantRequest request : client.getTransplantRequests()) {
-                    request.setClient(client);
-                }
-                for (IllnessRecord record : client.getCurrentIllnesses()) {
-                    record.setClient(client);
-                }
-                for (IllnessRecord record : client.getPastIllnesses()) {
-                    record.setClient(client);
-                }
-                for (ProcedureRecord record : client.getPastProcedures()) {
-                    record.setClient(client);
-                }
-                for (ProcedureRecord record : client.getPendingProcedures()) {
-                    record.setClient(client);
-                }
-                for (MedicationRecord record : client.getCurrentMedications()) {
-                    record.setClient(client);
-                }
-                for (MedicationRecord record : client.getPastMedications()) {
-                    record.setClient(client);
-                }
-            }
-
-            clientManager.setClients(clients);
-        }
-
-        Notifications.create()
-                .title("Loaded Data")
-                .text(String.format("Successfully loaded %d clients from file '%s'.", clients.size(), file.getName()))
-                .showInformation();
-    }
-
-    /**
-     * Loads Clients from the given CSV file.
-     */
-    private void loadCsv(File file) throws IOException {
-        int valid = 0;
-        int invalid = 0;
-
-        try (CSVParser parser = CSVFormat.RFC4180.withFirstRecordAsHeader().parse(new FileReader(file))) {
-            CSVReadClientStrategy strategy = new CSVReadClientStrategy();
-            List<Client> clients = new ArrayList<>();
-
-            for (CSVRecord record : parser) {
-                try {
-                    clients.add(strategy.deserialise(record));
-                    valid++;
-                } catch (IllegalArgumentException exc) {
-                    invalid++;
-                }
-            }
-            clientManager.setClients(clients);
-        }
-
-        Notifications.create()
-                .title("Loaded Data")
-                .text(String.format(
-                        "Clients loaded from CSV file '%s':" +
-                                "\n%d records were valid," +
-                                "\n%d records were invalid.",
-                        file.getName(), valid, invalid))
-                .showInformation();
     }
 
     /**

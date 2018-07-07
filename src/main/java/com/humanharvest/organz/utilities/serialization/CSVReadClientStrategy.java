@@ -2,27 +2,74 @@ package com.humanharvest.organz.utilities.serialization;
 
 import static com.humanharvest.organz.utilities.serialization.CSVReadClientStrategy.Header.*;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InvalidObjectException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.NoSuchElementException;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.utilities.enums.BloodType;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Region;
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
 
-public class CSVReadClientStrategy {
+/**
+ * An implementation of {@link ReadClientStrategy} that can be used for reading clients serialized to CSV. This
+ * strategy can only read basic data about the client, not including any collections of data such as
+ * {@link com.humanharvest.organz.MedicationRecord}s or {@link com.humanharvest.organz.TransplantRequest}s.
+ */
+public class CSVReadClientStrategy implements ReadClientStrategy {
 
-    private static final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("M/dd/yyyy");
-
+    /**
+     * Describes which columns represent which client data in the CSV format.
+     */
     public enum Header {
         nhi, first_names, last_names, date_of_birth, date_of_death, birth_gender, gender, blood_type, height, weight,
         street_number, street_name, neighborhood, city, region, zip_code, country, birth_country, home_number,
         mobile_number, email
     }
 
-    public Client deserialise(CSVRecord record) throws IllegalArgumentException {
+    private static final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("M/dd/yyyy");
+
+    private CSVParser parser;
+
+    @Override
+    public void setup(File inputFile) throws IOException {
+        parser = new CSVParser(new FileReader(inputFile), CSVFormat.RFC4180.withFirstRecordAsHeader());
+    }
+
+    @Override
+    public Client readNext() throws InvalidObjectException {
+        try {
+            try {
+                return deserialize(parser.iterator().next());
+            } catch (IllegalArgumentException exc) {
+                throw new InvalidObjectException(exc.getMessage());
+            }
+        } catch (NoSuchElementException exc) {
+            return null;
+        }
+    }
+
+    @Override
+    public void close() throws IOException {
+        parser.close();
+    }
+
+    /**
+     * Deseralizes a given {@link CSVRecord} to a {@link Client} object, using the {@link Header} to determine which
+     * columns represent which data.
+     * @param record The CSVRecord to deserialise.
+     * @return The deserialized client.
+     * @throws IllegalArgumentException If any data value specified in the record is not valid for its data type.
+     */
+    private Client deserialize(CSVRecord record) throws IllegalArgumentException {
         Client client = new Client();
         client.setFirstName(record.get(first_names));
         client.setLastName(record.get(last_names));
@@ -43,6 +90,12 @@ public class CSVReadClientStrategy {
         return client;
     }
 
+    /**
+     * Creates a {@link LocalDate} object from a date in string format (M/dd/yyyy).
+     * @param string A date in string format M/dd/yyyy.
+     * @return A local date object representing the same date, or null if the string is blank.
+     * @throws IllegalArgumentException If the string does not match the M/dd/yyyy format.
+     */
     private LocalDate parseDate(String string) throws IllegalArgumentException {
         if (string.equals("")) {
             return null;
