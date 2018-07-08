@@ -21,5 +21,8 @@ public class GlobalControllerExceptionHandler {
         System.out.println(req.getHeader("If-Match"));
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public static class InvalidRequestException extends RuntimeException {}
+
 }
 

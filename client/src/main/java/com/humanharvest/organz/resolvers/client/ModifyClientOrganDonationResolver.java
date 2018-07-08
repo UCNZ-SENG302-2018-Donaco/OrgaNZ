@@ -1,13 +1,11 @@
-package com.humanharvest.organz.utilities.resolvers.client;
+package com.humanharvest.organz.resolvers.client;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import com.humanharvest.organz.Client;
-import com.humanharvest.organz.ModifyClientObject;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;

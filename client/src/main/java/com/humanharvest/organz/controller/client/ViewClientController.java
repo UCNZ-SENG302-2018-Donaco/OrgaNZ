@@ -19,28 +19,27 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
-import com.humanharvest.organz.ModifyClientObject;
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.HistoryItem;
+import com.humanharvest.organz.Views.Client.ModifyClientObject;
 import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.actions.client.MarkClientAsDeadAction;
 import com.humanharvest.organz.actions.client.ModifyClientAction;
-import com.humanharvest.organz.Client;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.HistoryItem;
+import com.humanharvest.organz.resolvers.client.ModifyClientDetailsResolver;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.resolvers.client.ModifyClientDetailsResolver;
-import com.humanharvest.organz.utilities.validators.IntValidator;
 import com.humanharvest.organz.ui.validation.UIValidation;
+import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.enums.BloodType;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Region;
-import com.humanharvest.organz.utilities.JSONConverter;
+import com.humanharvest.organz.utilities.validators.IntValidator;
 import com.humanharvest.organz.utilities.view.PageNavigator;
-
 import org.controlsfx.control.Notifications;
 
 /**

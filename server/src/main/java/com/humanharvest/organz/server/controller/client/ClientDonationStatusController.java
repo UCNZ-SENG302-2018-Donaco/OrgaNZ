@@ -3,18 +3,13 @@ package com.humanharvest.organz.server.controller.client;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Client;
-import com.humanharvest.organz.ModifyClientObject;
-import com.humanharvest.organz.Views;
-import com.humanharvest.organz.actions.client.ModifyClientByObjectAction;
 import com.humanharvest.organz.actions.client.ModifyClientOrgansAction;
 import com.humanharvest.organz.server.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.server.exceptions.IfMatchRequiredException;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -46,7 +41,8 @@ public class ClientDonationStatusController {
 
     @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "One of the organs is already set to the value you gave")
     @ExceptionHandler(OrganAlreadyRegisteredException.class)
-    public void ifMatchRequired() {}
+    public void ifMatchRequired() {
+    }
 
     @PatchMapping("/clients/{id}/donationStatus")
     public ResponseEntity<Map<Organ, Boolean>> updateClientDonationStatus(
@@ -69,11 +65,14 @@ public class ClientDonationStatusController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        //Check the ETag. These are handled in the exceptions class. Really ugly hack to deal with quotes that are
-        // messed up for some reason
-        if (ETag == null) throw new IfMatchRequiredException();
-        if (!client.getEtag().equals(ETag) && !client.getEtag().equals(ETag.substring(1, ETag.length() - 1))) throw new
-                IfMatchFailedException();
+        //Check the ETag. These are handled in the exceptions class.
+        if (ETag == null) {
+            throw new IfMatchRequiredException();
+        }
+        if (!client.getEtag().equals(ETag)) {
+            throw new
+                    IfMatchFailedException();
+        }
 
         //Create the action
         ModifyClientOrgansAction action = new ModifyClientOrgansAction(client, State.getClientManager());

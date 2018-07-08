@@ -1,9 +1,8 @@
-package com.humanharvest.organz.utilities.resolvers;
+package com.humanharvest.organz.resolvers;
 
 import java.util.List;
 import java.util.Map;
 
-import com.humanharvest.organz.Client;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;

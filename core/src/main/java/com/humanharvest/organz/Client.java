@@ -33,16 +33,12 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.humanharvest.organz.Views.Client.Views;
 import com.humanharvest.organz.utilities.enums.BloodType;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
-import com.humanharvest.organz.utilities.type_converters.BloodTypeConverter;
-import com.humanharvest.organz.utilities.type_converters.DoubleConverter;
-import com.humanharvest.organz.utilities.type_converters.GenderConverter;
-import com.humanharvest.organz.utilities.type_converters.LocalDateConverter;
-import com.humanharvest.organz.utilities.type_converters.RegionConverter;
 
 /**
  * The main Client class.

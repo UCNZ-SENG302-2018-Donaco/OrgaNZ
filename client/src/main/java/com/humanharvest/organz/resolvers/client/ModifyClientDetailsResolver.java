@@ -1,7 +1,7 @@
-package com.humanharvest.organz.utilities.resolvers.client;
+package com.humanharvest.organz.resolvers.client;
 
 import com.humanharvest.organz.Client;
-import com.humanharvest.organz.ModifyClientObject;
+import com.humanharvest.organz.Views.Client.ModifyClientObject;
 import com.humanharvest.organz.state.State;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
