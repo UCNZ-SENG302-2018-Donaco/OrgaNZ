@@ -7,6 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.IllnessRecord;
+import com.humanharvest.organz.MedicationRecord;
+import com.humanharvest.organz.ProcedureRecord;
+import com.humanharvest.organz.TransplantRequest;
 
 /**
  * A class that can handle importing serialized clients from a file using a given {@link ReadClientStrategy}.
@@ -48,6 +52,7 @@ public class ClientImporter {
                         finished = true;
                     } else {
                         // Client is fully validated, add to results
+                        setOwnerOnRelatedRecords(client);
                         validCount++;
                         validClients.add(client);
                     }
@@ -60,6 +65,36 @@ public class ClientImporter {
         } finally {
             readStrategy.close();
             imported = true;
+        }
+    }
+
+    /**
+     * Sets the given client as "owner" on all records belonging to that client, such as {@link TransplantRequest}s and
+     * {@link MedicationRecord}s. This is necessary because the relationships are referenced from both sides, but are
+     * only serialized in terms of clients "owning" records (to avoid infinite recursion in serialized form).
+     * @param client The client to set as "owner" for all their records.
+     */
+    private void setOwnerOnRelatedRecords(Client client) {
+        for (TransplantRequest request : client.getTransplantRequests()) {
+            request.setClient(client);
+        }
+        for (IllnessRecord record : client.getCurrentIllnesses()) {
+            record.setClient(client);
+        }
+        for (IllnessRecord record : client.getPastIllnesses()) {
+            record.setClient(client);
+        }
+        for (ProcedureRecord record : client.getPastProcedures()) {
+            record.setClient(client);
+        }
+        for (ProcedureRecord record : client.getPendingProcedures()) {
+            record.setClient(client);
+        }
+        for (MedicationRecord record : client.getCurrentMedications()) {
+            record.setClient(client);
+        }
+        for (MedicationRecord record : client.getPastMedications()) {
+            record.setClient(client);
         }
     }
 
