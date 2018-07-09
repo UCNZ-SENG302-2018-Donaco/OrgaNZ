@@ -228,6 +228,7 @@ public class SidebarController extends SubController {
 
     /**
      * Logs out the current user and sends them to the Landing page.
+     * TODO duplicated in menubarcontroller - code smell
      */
     @FXML
     private void logout() {
@@ -245,6 +246,7 @@ public class SidebarController extends SubController {
 
     /**
      * Undoes the most recent action performed in the system, and refreshes the current page to reflect the change.
+     * TODO duplicated in menubarcontroller - code smell
      */
     @FXML
     private void undo() {
@@ -255,6 +257,7 @@ public class SidebarController extends SubController {
 
     /**
      * Redoes the most recent action performed in the system, and refreshes the current page to reflect the change.
+     * TODO duplicated in menubarcontroller - code smell
      */
     @FXML
     private void redo() {
