@@ -443,7 +443,7 @@ public class Client {
      * @return The list of all medications used by the Client.
      */
     public List<MedicationRecord> getMedications() {
-        return new Collections.unmodifiableList(medicationHistory);
+        return Collections.unmodifiableList(medicationHistory);
     }
 
     /**
@@ -501,7 +501,7 @@ public class Client {
      * @return List of illnesses held by Client
      */
     public List<IllnessRecord> getIllnesses() {
-        return new Collections.unmodifiableList(illnessHistory);
+        return Collections.unmodifiableList(illnessHistory);
     }
 
     /**
@@ -550,7 +550,7 @@ public class Client {
      * @return A list of procedures for the client.
      */
     public List<ProcedureRecord> getProcedures() {
-        return new Collections.unmodifiableList(procedures);
+        return Collections.unmodifiableList(procedures);
     }
 
     /**

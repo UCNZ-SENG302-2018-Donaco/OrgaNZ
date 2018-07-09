@@ -78,22 +78,13 @@ public class ClientImporter {
         for (TransplantRequest request : client.getTransplantRequests()) {
             request.setClient(client);
         }
-        for (IllnessRecord record : client.getCurrentIllnesses()) {
+        for (IllnessRecord record : client.getIllnesses()) {
             record.setClient(client);
         }
-        for (IllnessRecord record : client.getPastIllnesses()) {
+        for (ProcedureRecord record : client.getProcedures()) {
             record.setClient(client);
         }
-        for (ProcedureRecord record : client.getPastProcedures()) {
-            record.setClient(client);
-        }
-        for (ProcedureRecord record : client.getPendingProcedures()) {
-            record.setClient(client);
-        }
-        for (MedicationRecord record : client.getCurrentMedications()) {
-            record.setClient(client);
-        }
-        for (MedicationRecord record : client.getPastMedications()) {
+        for (MedicationRecord record : client.getMedications()) {
             record.setClient(client);
         }
     }

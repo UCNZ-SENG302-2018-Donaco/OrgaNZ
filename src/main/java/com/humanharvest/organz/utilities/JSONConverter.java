@@ -25,24 +25,21 @@ import java.util.logging.Logger;
 
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSyntaxException;
 import com.google.gson.annotations.Expose;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.ProcedureRecord;
+import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.TransplantRequest;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonSyntaxException;
-import com.google.gson.reflect.TypeToken;
-import com.google.gson.stream.JsonReader;
-import com.humanharvest.organz.utilities.enums.BloodType;
 import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.enums.Region;
 import com.mysql.jdbc.StringUtils;
 
 /**

@@ -2,9 +2,7 @@ package com.humanharvest.organz.utilities;
 
 import static org.junit.Assert.*;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -17,9 +15,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Scanner;
-import java.util.regex.Pattern;
-
-import javax.sql.DataSource;
 
 import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.Client;
@@ -28,12 +23,9 @@ import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.ProcedureRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.state.ClientManager;
-import com.humanharvest.organz.state.ClientManagerMemory;
 import com.humanharvest.organz.state.State;
-
 import com.humanharvest.organz.state.State.DataStorageType;
 import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
 import org.junit.Before;
