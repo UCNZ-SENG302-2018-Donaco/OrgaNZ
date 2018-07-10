@@ -303,9 +303,17 @@ public class ViewClientController extends SubController {
 
     private void addChangeIfDifferent(ModifyClientObject modifyClientObject, String fieldString, Object newValue) {
         try {
+            //Get the field from the string
             Field field = modifyClientObject.getClass().getDeclaredField(fieldString);
+            Field clientField = viewedClient.getClass().getDeclaredField(fieldString);
+            //Allow access to any fields including private
             field.setAccessible(true);
-            field.set(modifyClientObject, newValue);
+            clientField.setAccessible(true);
+            //Only add the field if it differs from the client
+            if (!Objects.equals(clientField.get(viewedClient), newValue)) {
+                field.set(modifyClientObject, newValue);
+                modifyClientObject.registerChange(fieldString);
+            }
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
