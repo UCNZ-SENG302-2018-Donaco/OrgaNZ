@@ -1,6 +1,7 @@
 package com.humanharvest.organz.utilities.validators;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 
 import com.humanharvest.organz.Client;
@@ -29,14 +30,20 @@ public class ClientValidator {
         if (!dateOfBirthValid(client)) {
             errors.append("Date of birth must be in a valid format and must represent a date in the past.\n");
         } else if (!dateOfDeathValid(client)) {
-            errors.append("Date of death must be either empty, or a date in a valid format and represent a date after "
-                    + "the date of birth.\n");
+            errors.append("Date of death must be either empty, or a date in a valid format that represents a date "
+                    + "after the date of birth.\n");
         }
         if (!heightValid(client)) {
             errors.append("Height must be a non-negative number.\n");
         }
         if (!weightValid(client)) {
             errors.append("Weight must be a non-negative number.\n");
+        }
+        if (!createdTimestampValid(client)) {
+            errors.append("Created timestamp must be in a valid format and must represent a date in the past.\n");
+        } else if (!modifiedTimestampValid(client)) {
+            errors.append("Modified timestamp must be either empty, or a datetime in a valid format that represents "
+                    + "a time after the profile was created.\n");
         }
 
         if (errors.length() == 0) {
@@ -61,10 +68,9 @@ public class ClientValidator {
     }
 
     private boolean dateOfBirthValid(Client client) {
-        // Catch future date of birth
         return client.getDateOfBirth() != null &&
                 dateIsValid(client.getDateOfBirth()) &&
-                !client.getDateOfBirth().isAfter(LocalDate.now());  // Catch future date
+                !client.getDateOfBirth().isAfter(LocalDate.now());  // Catch future date of birth
     }
 
     private boolean dateOfDeathValid(Client client) {
@@ -86,6 +92,21 @@ public class ClientValidator {
         return client.getWeight() >= -DELTA;
     }
 
+    private boolean createdTimestampValid(Client client) {
+        return client.getCreatedTimestamp() != null &&
+                datetimeIsValid(client.getCreatedTimestamp()) &&
+                !client.getCreatedTimestamp().isAfter(LocalDateTime.now());  // Catch future created timestamp
+    }
+
+    private boolean modifiedTimestampValid(Client client) {
+        if (client.getModifiedTimestamp() != null) {
+            // Catch date of death before date of birth
+            return datetimeIsValid(client.getModifiedTimestamp()) &&
+                    !client.getModifiedTimestamp().isBefore(client.getCreatedTimestamp());
+        }
+        return true;
+    }
+
     // HELPERS
 
     private boolean dateIsValid(LocalDate date) {
@@ -93,7 +114,16 @@ public class ClientValidator {
         try {
             LocalDate.parse(date.toString());
             return true;
-        } catch (DateTimeParseException e) {
+        } catch (DateTimeParseException exc) {
+            return false;
+        }
+    }
+
+    private boolean datetimeIsValid(LocalDateTime datetime) {
+        try {
+            LocalDateTime.parse(datetime.toString());
+            return true;
+        } catch (DateTimeParseException exc) {
             return false;
         }
     }
