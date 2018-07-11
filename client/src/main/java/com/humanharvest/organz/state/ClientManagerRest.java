@@ -19,10 +19,10 @@ public class ClientManagerRest implements ClientManager {
 
     @Override
     public List<Client> getClients() {
-        ResponseEntity<List<RestClient>> clientResponse = State.getRestTemplate().exchange
-                (baseUrl + "clients", HttpMethod.GET, null, new ParameterizedTypeReference<List<RestClient>>() {
+        ResponseEntity<List<Client>> clientResponse = State.getRestTemplate().exchange
+                (baseUrl + "clients", HttpMethod.GET, null, new ParameterizedTypeReference<List<Client>>() {
                 });
-        List<RestClient> restClients = clientResponse.getBody();
+        List<Client> restClients = clientResponse.getBody();
         if (restClients == null) {
             return null;
         }
