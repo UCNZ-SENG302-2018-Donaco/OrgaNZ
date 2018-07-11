@@ -1,6 +1,7 @@
 package com.humanharvest.organz.utilities.validators;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.lang.reflect.Field;
 import java.time.LocalDate;
@@ -31,11 +32,27 @@ public class ClientValidatorTest {
     }
 
     @Test
+    public void validUidTest() {
+        Client client = getTestClient();
+        client.setUid(1);
+
+        assertNull(validator.validate(client));
+    }
+
+    @Test
     public void invalidUidTest() {
         Client client = getTestClient();
         client.setUid(-1);
 
         assertNotNull(validator.validate(client));
+    }
+
+    @Test
+    public void validFirstNameTest() {
+        Client client = getTestClient();
+        client.setFirstName("Amy");
+
+        assertNull(validator.validate(client));
     }
 
     @Test
@@ -47,12 +64,28 @@ public class ClientValidatorTest {
     }
 
     @Test
+    public void validLastNameTest() {
+        Client client = getTestClient();
+        client.setLastName("Williams");
+
+        assertNull(validator.validate(client));
+    }
+
+    @Test
     public void invalidLastNameTest() {
         Client client = getTestClient();
         client.setLastName("");
-        System.out.println(validator.validate(client));
 
         assertNotNull(validator.validate(client));
+    }
+
+    @Test
+    public void validDateOfBirthTest() {
+        Client client = getTestClient();
+        LocalDate dob = LocalDate.of(2000, 5, 4);
+        client.setDateOfBirth(dob);
+
+        assertNull(validator.validate(client));
     }
 
     @Test
