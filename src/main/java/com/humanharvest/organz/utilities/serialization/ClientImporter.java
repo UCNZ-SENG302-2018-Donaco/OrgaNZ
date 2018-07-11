@@ -11,6 +11,7 @@ import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.ProcedureRecord;
 import com.humanharvest.organz.TransplantRequest;
+import com.humanharvest.organz.utilities.validators.ClientValidator;
 
 /**
  * A class that can handle importing serialized clients from a file using a given {@link ReadClientStrategy}.
@@ -19,10 +20,12 @@ import com.humanharvest.organz.TransplantRequest;
 public class ClientImporter {
 
     private final ReadClientStrategy readStrategy;
+    private final ClientValidator validator = new ClientValidator();
 
     private boolean imported = false;
     private long validCount = 0;
     private long invalidCount = 0;
+    private StringBuilder errorSummary = new StringBuilder();
     private List<Client> validClients = new ArrayList<>();
 
     public ClientImporter(File file, ReadClientStrategy readStrategy) throws IOException {
@@ -51,6 +54,12 @@ public class ClientImporter {
                         // No more clients to read
                         finished = true;
                     } else {
+                        // Check that retrieved client was valid
+                        String errors = validator.validate(client);
+                        if (errors != null) {
+                            throw new InvalidObjectException(errors);
+                        }
+
                         // Client is fully validated, add to results
                         setOwnerOnRelatedRecords(client);
                         validCount++;
@@ -60,6 +69,8 @@ public class ClientImporter {
                 } catch (InvalidObjectException exc) {
                     // The client that was read was invalid
                     invalidCount++;
+                    errorSummary.append(String.format("Record #%d was invalid because: \n%s\n",
+                            validCount + invalidCount, exc.getMessage()));
                 }
             }
         } finally {
@@ -114,5 +125,14 @@ public class ClientImporter {
      */
     public List<Client> getValidClients() {
         return validClients;
+    }
+
+    /**
+     * Returns a summary of all the errors that were found when importing clients from the file.
+     * @return A string containing a summary of all the errors found when parsing the file. May be empty if there
+     * were no errors, or if {@link #importAll()} has not yet been called.
+     */
+    public String getErrorSummary() {
+        return errorSummary.toString();
     }
 }

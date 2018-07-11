@@ -423,10 +423,16 @@ public class MenuBarController extends SubController {
                     importer.importAll();
                     clientManager.setClients(importer.getValidClients());
 
+                    String errorSummary = importer.getErrorSummary();
+                    if (errorSummary.length() > 500) {
+                        errorSummary = errorSummary.substring(0, 500).concat("...");
+                    }
+
                     String message = String.format("Loaded clients from file '%s'."
                                     + "\n%d were valid, "
-                                    + "\n%d were invalid.",
-                            file.getName(), importer.getValidCount(), importer.getInvalidCount());
+                                    + "\n%d were invalid."
+                                    + "\n\n%s",
+                            file.getName(), importer.getValidCount(), importer.getInvalidCount(), errorSummary);
 
                     LOGGER.log(Level.INFO, message);
                     State.getSession().addToSessionHistory(new HistoryItem("LOAD", message));
