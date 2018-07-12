@@ -39,7 +39,9 @@ public class Clinician {
     @JsonView(Views.Overview.class)
     private Region region;
 
+    @JsonView(Views.Details.class)
     private final LocalDateTime createdOn;
+    @JsonView(Views.Details.class)
     private LocalDateTime modifiedOn;
 
     @ElementCollection
