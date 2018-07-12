@@ -39,6 +39,8 @@ public class ModifyClientObject {
     private LocalDate dateOfBirth;
     private LocalDate dateOfDeath;
 
+
+
     @JsonIgnore
     private Set<Field> modifiedFields = new HashSet<>();
 
