@@ -23,7 +23,10 @@ public class ClinicianManagerRest implements ClinicianManager {
 
     }
 
-
+    /**
+     * GET a list of all clinicians.
+     * @return all clinicians.
+     */
     @Override
     public List<Clinician> getClinicians() {
 
@@ -31,7 +34,6 @@ public class ClinicianManagerRest implements ClinicianManager {
                 "clinicians", HttpMethod.GET, null, new ParameterizedTypeReference<List<Clinician>>() {
         });
         List<Clinician> restClinicians = clinicianResponse.getBody();
-
         if (restClinicians == null) {
             return null;
         } else {
@@ -54,9 +56,18 @@ public class ClinicianManagerRest implements ClinicianManager {
         return false;
     }
 
+    /**
+     * Uses GET to retrieve details of the staff member who's staffId is supplied.
+     * @param staffId the id of the staff member who's details are being retrieved
+     * @return the details of the clinician found from the supplied staffId.
+     */
     @Override
-    public Clinician getClinicianByStaffId(int id) {
-        return null;
+    public Clinician getClinicianByStaffId(int staffId) {
+        ResponseEntity<Clinician> clinician = State.getRestTemplate().exchange(baseUrl + "/clinicians/{staffId}",
+                HttpMethod.GET, null, new ParameterizedTypeReference<Clinician>() {
+                }, staffId);
+        State.setClinicianEtag(clinician.getHeaders().getETag());
+        return clinician.getBody();
     }
 
     @Override

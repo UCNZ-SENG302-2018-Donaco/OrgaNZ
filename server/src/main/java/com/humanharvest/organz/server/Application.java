@@ -24,9 +24,9 @@ public class Application {
         jack.setOrganDonationStatus(Organ.KIDNEY, true);
         clientManager.addClient(new Client("Second", "Test", "Client", LocalDate.of(1987,12,21), 2));
 
-        ClinicianManager cm = State.getClinicianManager();
-        State.getClinicianManager().addClinician(new Clinician("a", "", "c", "d", Region.UNSPECIFIED, 0,
-                "admin"));
+//        ClinicianManager cm = State.getClinicianManager();
+//        State.getClinicianManager().addClinician(new Clinician("a", "", "c", "d", Region.UNSPECIFIED, 0,
+//                "admin"));
 
         SpringApplication.run(Application.class, args);
     }

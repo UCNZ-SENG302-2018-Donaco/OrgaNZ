@@ -30,6 +30,7 @@ public final class State {
     private static List<MainController> mainControllers = new ArrayList<>();
     private static RestTemplate restTemplate = new RestTemplate();
     private static String clientEtag = "";
+    private static String clinicianEtag = "";
 
     public static String getClientEtag() {
         return clientEtag;
@@ -37,6 +38,10 @@ public final class State {
 
     public static void setClientEtag(String etag) {
         clientEtag = etag;
+    }
+
+    public static void setClinicianEtag(String etag) {
+        clinicianEtag = etag;
     }
 
     private State() {

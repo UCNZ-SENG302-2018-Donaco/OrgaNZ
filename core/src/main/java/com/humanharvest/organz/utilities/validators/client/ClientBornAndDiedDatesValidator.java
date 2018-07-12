@@ -18,7 +18,7 @@ public class ClientBornAndDiedDatesValidator {
         }
         //Both have been modified, need to compare them to each other
         else if (!unmodifiedFields.contains("dateOfBirth") && !unmodifiedFields.contains("dateOfDeath")) {
-            return clientView.getDateOfBirth().isAfter(clientView.getDateOfDeath());
+            return clientView.getDateOfBirth().isBefore(clientView.getDateOfDeath());
         }
         //Date of birth has been modified only
         else if (!unmodifiedFields.contains("dateOfBirth")) {
