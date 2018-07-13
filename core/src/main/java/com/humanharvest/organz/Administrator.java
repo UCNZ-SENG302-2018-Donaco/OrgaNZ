@@ -8,15 +8,21 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.humanharvest.organz.Views.Client.Views;
+
 @Entity
 @Table
 public class Administrator {
 
     @Id
+    @JsonView(Views.Overview.class)
     private String username;
     private String password;
 
+    @JsonView(Views.Overview.class)
     private final LocalDateTime createdOn;
+    @JsonView(Views.Overview.class)
     private LocalDateTime modifiedOn;
 
     @ElementCollection

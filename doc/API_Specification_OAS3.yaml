@@ -1896,33 +1896,12 @@ components:
           $ref: '#/components/schemas/date'
 
     date:
-      type: object
-      properties:
-        year:
-          type: integer
-        month:
-          type: integer
-        day:
-          type: integer
+      type: string
       nullable: true
     time:
-      type: object
-      properties:
-        hour:
-          type: integer
-        minute:
-          type: integer
-        second:
-          type: integer
-        nano:
-          type: integer
+      type: string
     dateTime:
-      type: object
-      properties:
-        date:
-          $ref: '#/components/schemas/date'
-        time:
-          $ref: '#/components/schemas/time'
+      type: string
 
 
     organBooleanArray:

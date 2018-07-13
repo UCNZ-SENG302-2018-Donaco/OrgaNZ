@@ -17,5 +17,5 @@ Feature: Does GET /client/ work?
     Then the result is ok
     Then the content type is json
     Then the result has 2 elements
-    Then client 0's firstName is Jan
-    Then client 0's region does not exist
+    Then result 0's firstName is Jan
+    Then result 0's region does not exist
