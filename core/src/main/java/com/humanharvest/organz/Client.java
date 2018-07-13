@@ -470,6 +470,14 @@ public class Client {
     }
 
     /**
+     * Returns the list of all past and current medications of the client
+     * @return medicationHistory of the client
+     */
+    public List<MedicationRecord> getAllMedications() {
+        return medicationHistory;
+    }
+
+    /**
      * Adds a new MedicationRecord to the client's history.
      * @param record The given MedicationRecord.
      */
