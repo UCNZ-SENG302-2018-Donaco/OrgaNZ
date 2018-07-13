@@ -15,6 +15,7 @@ import java.time.LocalDate;
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.state.State;
+import cucumber.api.PendingException;
 import cucumber.api.java8.En;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -70,6 +71,36 @@ public final class CucumberSteps implements En {
     }
 
     private void CreateSharedWhen() {
+        When("^I get (.+)$", (String url) -> {
+            lastAction = mockMvc.perform(get(url));
+        });
+        When("^I post to (.+?) using (.+)$", (String url, String json) -> {
+            lastAction = mockMvc.perform(post(url)
+                    .contentType(jsonContentType)
+                    .content(json));
+        });
+
+        When("^I patch to (.+?) using (.+)$", (String url, String json) -> {
+            MockHttpServletRequestBuilder patchQuery = patch(url)
+                    .content(json)
+                    .contentType(jsonContentType);
+
+            if (etag != null) {
+                patchQuery = patchQuery.header("If-Match", etag);
+            }
+
+            lastAction = mockMvc.perform(patchQuery);
+        });
+
+        When("^I delete (.+)$", (String url) -> {
+            MockHttpServletRequestBuilder deleteQuery = delete(url);
+
+            if (etag != null) {
+                deleteQuery = deleteQuery.header("If-Match", etag);
+            }
+
+            lastAction = mockMvc.perform(deleteQuery);
+        });
     }
 
     private void CreateSharedThen() {
@@ -105,7 +136,6 @@ public final class CucumberSteps implements En {
         Then("^the result has (\\d+) elements$", (Integer size) -> {
             lastAction = lastAction.andExpect(jsonPath("$", hasSize(size)));
         });
-
 
         Then("^result (\\d+)'s (\\w+) is (\\w+)$", (Integer index, String fieldName, String firstName) -> {
             lastAction = lastAction.andExpect(jsonPath(String.format("$[%d].%s", index, fieldName), is(firstName)));
@@ -158,41 +188,6 @@ public final class CucumberSteps implements En {
     }
 
     private void CreateClientWhen() {
-        When("^I get client (\\d+)$", (Integer clientId) -> {
-            lastAction = mockMvc.perform(get("/clients/" + clientId));
-        });
-
-        When("^I get the clients$", () -> {
-            lastAction = mockMvc.perform(get("/clients/"));
-        });
-
-        When("^I create a client using (.+)$", (String json) -> {
-            lastAction = mockMvc.perform(post("/clients/")
-                    .contentType(jsonContentType)
-                    .content(json));
-        });
-
-        When("^I update client (\\d+) using (.+)$", (Integer clientId, String json) -> {
-            MockHttpServletRequestBuilder patchQuery = patch(String.format("/clients/%d", clientId))
-                    .content(json)
-                    .contentType(jsonContentType);
-
-            if (etag != null) {
-                patchQuery = patchQuery.header("If-Match", etag);
-            }
-
-            lastAction = mockMvc.perform(patchQuery);
-        });
-
-        When("^I delete client (\\d+)$", (Integer clientId) -> {
-            MockHttpServletRequestBuilder deleteQuery = delete(String.format("/clients/%d", clientId));
-
-            if (etag != null) {
-                deleteQuery = deleteQuery.header("If-Match", etag);
-            }
-
-            lastAction = mockMvc.perform(deleteQuery);
-        });
     }
 
     private void CreateClientThen() {
@@ -207,9 +202,6 @@ public final class CucumberSteps implements En {
     }
 
     private void CreateAdministratorWhen() {
-        When("^I get the administrators$", () -> {
-            lastAction = mockMvc.perform(get("/administrators/"));
-        });
     }
 
     private void CreateAdministratorThen() {

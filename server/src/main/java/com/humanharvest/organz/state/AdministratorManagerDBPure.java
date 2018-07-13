@@ -57,6 +57,12 @@ public class AdministratorManagerDBPure implements AdministratorManager {
     }
 
     @Override
+    public Iterable<Administrator> getAdministratorsFiltered(String nameQuery, Integer offset, Integer count) {
+        // TODO: Implement this so it's optimised
+        return AdministratorManager.super.getAdministratorsFiltered(nameQuery, offset, count);
+    }
+
+    @Override
     public void removeAdministrator(Administrator administrator) {
         Transaction trns = null;
         try (org.hibernate.Session session = dbManager.getDBSession()) {
@@ -71,7 +77,7 @@ public class AdministratorManagerDBPure implements AdministratorManager {
     }
 
     @Override
-    public boolean collisionExists(String username) {
+    public boolean doesUsernameExist(String username) {
         boolean collision = false;
         Transaction trns = null;
 

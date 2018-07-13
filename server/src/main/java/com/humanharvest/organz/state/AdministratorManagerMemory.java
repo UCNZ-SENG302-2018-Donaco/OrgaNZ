@@ -52,7 +52,7 @@ public class AdministratorManagerMemory implements AdministratorManager{
      * Checks if an administrator already exists with that username
      * @param username The username of the administrator
      */
-    public boolean collisionExists(String username) {
+    public boolean doesUsernameExist(String username) {
         // Check if it is numeric (this could collide with a clinician ID)
         if (username.matches("[0-9]+")) {
             return true;
