@@ -7,6 +7,7 @@ import java.time.format.DateTimeParseException;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.MedicationRecord;
+import com.humanharvest.organz.ProcedureRecord;
 import com.humanharvest.organz.TransplantRequest;
 
 public class ClientValidator {
@@ -16,6 +17,7 @@ public class ClientValidator {
     private final TransplantRequestValidator transplantRequestValidator = new TransplantRequestValidator();
     private final MedicationRecordValidator medicationRecordValidator = new MedicationRecordValidator();
     private final IllnessRecordValidator illnessRecordValidator = new IllnessRecordValidator();
+    private final ProcedureRecordValidator procedureRecordValidator = new ProcedureRecordValidator();
 
     /**
      * Validates a {@link Client} and returns a string explaining the errors within it.
@@ -59,16 +61,20 @@ public class ClientValidator {
                 errors.append(validationMsg);
             }
         }
-
         for (MedicationRecord record : client.getMedications()) {
             String validationMsg = medicationRecordValidator.validate(record);
             if (validationMsg != null) {
                 errors.append(validationMsg);
             }
         }
-
         for (IllnessRecord record : client.getIllnesses()) {
             String validationMsg = illnessRecordValidator.validate(record);
+            if (validationMsg != null) {
+                errors.append(validationMsg);
+            }
+        }
+        for (ProcedureRecord record : client.getProcedures()) {
+            String validationMsg = procedureRecordValidator.validate(record);
             if (validationMsg != null) {
                 errors.append(validationMsg);
             }
