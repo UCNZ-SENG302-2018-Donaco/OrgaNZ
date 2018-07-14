@@ -5,15 +5,18 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.TransplantRequest;
 
 public class ClientValidator {
 
     private static final double DELTA = 1e-6;
 
+    private final TransplantRequestValidator transplantRequestValidator = new TransplantRequestValidator();
+
     /**
-     * Validates a client and returns a string explaining the errors within it.
+     * Validates a {@link Client} and returns a string explaining the errors within it.
      * @param client The client to validate.
-     * @return A string containing the errors within a client if it is invalid, else null if the client is valid.
+     * @return A string containing the errors within the client if it is invalid, else null if the client is valid.
      */
     public String validate(Client client) {
         StringBuilder errors = new StringBuilder();
@@ -44,6 +47,13 @@ public class ClientValidator {
         } else if (!modifiedTimestampValid(client)) {
             errors.append("Modified timestamp must be either empty, or a datetime in a valid format that represents "
                     + "a time after the profile was created.\n");
+        }
+
+        for (TransplantRequest request : client.getTransplantRequests()) {
+            String validationMsg = transplantRequestValidator.validate(request);
+            if (validationMsg != null) {
+                errors.append(validationMsg);
+            }
         }
 
         if (errors.length() == 0) {
