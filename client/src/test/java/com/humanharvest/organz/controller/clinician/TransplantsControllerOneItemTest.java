@@ -17,6 +17,7 @@ import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
+import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
 import org.junit.Test;
 
 public class TransplantsControllerOneItemTest extends ControllerTest {
@@ -38,13 +39,13 @@ public class TransplantsControllerOneItemTest extends ControllerTest {
 
     @Override
     protected void initState() {
-        State.reset(false);
+        State.reset();
         State.login(testClinician);
 
         State.getClientManager().addClient(client);
         client.addTransplantRequest(request);
 
-        mainController.setWindowContext(new WindowContext.WindowContextBuilder()
+        mainController.setWindowContext(new WindowContextBuilder()
                 .build());
     }
 

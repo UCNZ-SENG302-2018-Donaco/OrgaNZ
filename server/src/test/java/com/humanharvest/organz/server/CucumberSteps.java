@@ -46,7 +46,7 @@ public final class CucumberSteps implements En {
     public CucumberSteps() {
         Before(() -> {
             mockMvc = webAppContextSetup(webApplicationContext).build();
-            State.reset(false);
+            State.reset();
             lastAction = null;
             etag = null;
         });

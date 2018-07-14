@@ -18,7 +18,7 @@ public class CreateClientControllerTest extends ControllerTest {
 
     @Override
     protected void initState() {
-        State.reset(false);
+        State.reset();
         mainController.setWindowContext(WindowContext.defaultContext());
     }
 

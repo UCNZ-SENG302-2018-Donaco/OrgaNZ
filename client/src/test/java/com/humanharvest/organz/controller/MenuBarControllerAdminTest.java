@@ -6,6 +6,7 @@ import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class MenuBarControllerAdminTest extends ControllerTest {
@@ -14,7 +15,7 @@ public class MenuBarControllerAdminTest extends ControllerTest {
 
     @Test
     public void initState() {
-        State.reset(false);
+        State.reset();
         State.login(testAdmin);
         State.getAdministratorManager().addAdministrator(testAdmin);
         mainController.setWindowContext(new WindowContextBuilder().build());
@@ -86,6 +87,7 @@ public class MenuBarControllerAdminTest extends ControllerTest {
     }
 
     @Test
+    @Ignore
     public void testClickCLI() {
         clickOn("#profilePrimaryItem");
         clickOn("#cliItem");

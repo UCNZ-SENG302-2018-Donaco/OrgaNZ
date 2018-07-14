@@ -14,6 +14,8 @@ public final class State {
         MEMORY, PUREDB
     }
 
+    private static DataStorageType currentStorageType = DataStorageType.MEMORY;
+
     private static ClientManager clientManager;
     private static ClinicianManager clinicianManager;
     private static AdministratorManager administratorManager;
@@ -29,6 +31,8 @@ public final class State {
      */
     public static void init(DataStorageType storageType) {
         actionInvoker = new ActionInvoker();
+
+        currentStorageType = storageType;
 
         if (storageType == DataStorageType.PUREDB) {
             clientManager = new ClientManagerDBPure();
@@ -88,12 +92,8 @@ public final class State {
         session = null;
     }
 
-    public static void reset(boolean isDB) {
-        if (isDB) {
-            init(DataStorageType.PUREDB);
-        } else {
-            init(DataStorageType.MEMORY);
-        }
+    public static void reset() {
+        init(currentStorageType);
         logout();
         unsavedChanges = false;
     }

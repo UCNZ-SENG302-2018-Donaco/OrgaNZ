@@ -61,7 +61,7 @@ public class SearchClientsControllerTest extends ControllerTest {
 
     @Override
     protected void initState() {
-        State.reset(false);
+        State.reset();
         State.login(testClinician);
         setupClientDetails();
         for (Client client: testClients) {

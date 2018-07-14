@@ -35,6 +35,7 @@ import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
+import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
 import org.junit.Test;
 import org.testfx.api.FxRobot;
 import org.testfx.util.NodeQueryUtils;
@@ -75,7 +76,7 @@ public class TransplantsControllerTest extends ControllerTest {
 
     @Override
     protected void initState() {
-        State.reset(false);
+        State.reset();
         State.login(testClinician);
 
         for (Client client : clients) {
@@ -106,7 +107,7 @@ public class TransplantsControllerTest extends ControllerTest {
             State.getClientManager().addClient(client);
         }
 
-        mainController.setWindowContext(new WindowContext.WindowContextBuilder()
+        mainController.setWindowContext(new WindowContextBuilder()
                 .build());
     }
 
