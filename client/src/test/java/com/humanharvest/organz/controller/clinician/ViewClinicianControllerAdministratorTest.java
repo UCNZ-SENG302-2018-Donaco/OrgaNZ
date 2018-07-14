@@ -12,7 +12,7 @@ import org.junit.Test;
 
 public class ViewClinicianControllerAdministratorTest extends ControllerTest {
 
-    private Administrator testAdmin = new Administrator("username", "password");
+    private final Administrator testAdmin = new Administrator("username", "password");
 
     @Override
     protected Page getPage() {
@@ -21,7 +21,7 @@ public class ViewClinicianControllerAdministratorTest extends ControllerTest {
 
     @Override
     protected void initState() {
-        State.reset(false);
+        State.reset();
         State.getAdministratorManager().addAdministrator(testAdmin);
         State.login(testAdmin);
         mainController.setWindowContext(WindowContext.defaultContext());
@@ -31,5 +31,4 @@ public class ViewClinicianControllerAdministratorTest extends ControllerTest {
     public void testLoadClinicianPaneIsVisible() {
         verifyThat("#loadClinicianPane", isVisible());
     }
-
 }

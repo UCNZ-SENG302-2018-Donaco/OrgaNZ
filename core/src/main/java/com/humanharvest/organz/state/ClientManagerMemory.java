@@ -72,7 +72,7 @@ public class ClientManagerMemory implements ClientManager {
      * @return Boolean
      */
     @Override
-    public boolean collisionExists(String firstName, String lastName, LocalDate dateOfBirth) {
+    public boolean doesClientExist(String firstName, String lastName, LocalDate dateOfBirth) {
         for (Client client : clients) {
             if (client.getFirstName().equals(firstName) &&
                     client.getLastName().equals(lastName) &&

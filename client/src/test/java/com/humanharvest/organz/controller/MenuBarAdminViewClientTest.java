@@ -9,6 +9,7 @@ import com.humanharvest.organz.Client;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class MenuBarAdminViewClientTest extends ControllerTest {
@@ -19,7 +20,7 @@ public class MenuBarAdminViewClientTest extends ControllerTest {
 
     @Test
     public void initState() {
-        State.reset(false);
+        State.reset();
         State.login(testAdmin);
         State.getAdministratorManager().addAdministrator(testAdmin);
         mainController.setWindowContext(new WindowContext.WindowContextBuilder()
@@ -38,6 +39,7 @@ public class MenuBarAdminViewClientTest extends ControllerTest {
     }
 
     @Test
+    @Ignore
     public void testClickViewClientProfile() {
         clickOn("#clientPrimaryItem");
         clickOn("#viewClientItem");

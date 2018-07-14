@@ -130,7 +130,7 @@ public class ClinicianManagerDBPure implements ClinicianManager {
     }
 
     @Override
-    public boolean collisionExists(int id) {
+    public boolean doesStaffIdExist(int id) {
         boolean collision = false;
         Transaction trns = null;
 

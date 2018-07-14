@@ -17,6 +17,7 @@ import com.humanharvest.organz.utilities.view.WindowContext;
 import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 public class StaffListControllerTest extends ControllerTest {
 
     private Administrator admin1 = new Administrator("admin1", "password");
@@ -31,7 +32,7 @@ public class StaffListControllerTest extends ControllerTest {
 
     @Override
     protected void initState() {
-        State.reset(false);
+        State.reset();
 
         // Add clinician and admins
         State.getAdministratorManager().addAdministrator(admin1);

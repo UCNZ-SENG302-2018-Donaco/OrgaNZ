@@ -3,7 +3,7 @@ package com.humanharvest.organz.resolvers.client;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.humanharvest.organz.Client;
-import com.humanharvest.organz.Views.Client.ModifyClientObject;
+import com.humanharvest.organz.views.client.ModifyClientObject;
 import com.humanharvest.organz.state.State;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;

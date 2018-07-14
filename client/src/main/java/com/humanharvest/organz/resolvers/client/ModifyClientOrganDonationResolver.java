@@ -55,6 +55,8 @@ public class ModifyClientOrganDonationResolver {
                         Client.class,
                         client.getUid());
 
+
+
         State.setClientEtag(responseEntity.getHeaders().getETag());
 
         if (responseEntity.getStatusCode() != HttpStatus.OK) {

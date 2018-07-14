@@ -4,7 +4,7 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
-import com.humanharvest.organz.Views.Client.ModifyClientObject;
+import com.humanharvest.organz.views.client.ModifyClientObject;
 import com.humanharvest.organz.utilities.validators.NotEmptyStringValidator;
 
 public class ModifyClientValidator {

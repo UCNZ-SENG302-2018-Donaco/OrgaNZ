@@ -90,7 +90,7 @@ public abstract class ControllerTest extends ApplicationTest {
     @After
     public void killAllWindows() {
         Stage stage = getTopModalStage();
-        State.reset(false);
+        State.reset();
         try {
             Parent parent = stage.getScene().getRoot();
             if (parent instanceof DialogPane) {

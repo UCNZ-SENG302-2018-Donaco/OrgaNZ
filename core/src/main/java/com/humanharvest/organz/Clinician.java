@@ -11,6 +11,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.humanharvest.organz.views.client.Views;
 import com.humanharvest.organz.utilities.enums.Region;
 
 /**
@@ -21,17 +23,25 @@ import com.humanharvest.organz.utilities.enums.Region;
 public class Clinician {
 
     @Id
+    @JsonView(Views.Overview.class)
     private Integer staffId;
+    @JsonView(Views.Overview.class)
     private String firstName;
+    @JsonView(Views.Overview.class)
     private String lastName;
+    @JsonView(Views.Overview.class)
     private String middleName;
+    @JsonView(Views.Overview.class)
     private String workAddress;
     private String password;
 
     @Enumerated(EnumType.STRING)
+    @JsonView(Views.Overview.class)
     private Region region;
 
+    @JsonView(Views.Details.class)
     private final LocalDateTime createdOn;
+    @JsonView(Views.Details.class)
     private LocalDateTime modifiedOn;
 
     @ElementCollection

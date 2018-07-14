@@ -1,19 +1,20 @@
 package com.humanharvest.organz.controller.clinician;
 
+import java.util.regex.Pattern;
+
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.Clinician;
+import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.HistoryItem;
-import com.humanharvest.organz.state.AdministratorManager;
-import com.humanharvest.organz.state.ClinicianManager;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.JSONConverter;
+import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 
@@ -23,19 +24,12 @@ import com.humanharvest.organz.utilities.view.PageNavigator;
  * system, e.g. the default clinician.
  */
 public class StaffLoginController extends SubController {
+    private static final Pattern IS_NUMBER = Pattern.compile("[0-9]+");
 
     @FXML
     private TextField staffId;
     @FXML
     private PasswordField password;
-
-    private ClinicianManager clinicianManager;
-    private AdministratorManager administratorManager;
-
-    public StaffLoginController() {
-        clinicianManager = State.getClinicianManager();
-        administratorManager = State.getAdministratorManager();
-    }
 
     /**
      * Override so we can set the page title.
@@ -59,33 +53,16 @@ public class StaffLoginController extends SubController {
      * Checks that the staff ID is an integer and is positive.
      * @return true if the staffID is a positive integer. False otherwise.
      */
-    private boolean validStaffIdInput() {
-
+    private boolean isValidStaffIdInput() {
         String idString = staffId.getText();
-        return !(idString == null);
-    }
-
-    /**
-     * Alert to display that the StaffId doesn't exist.
-     */
-    private void staffIdDoesntExistAlert() {
-        PageNavigator.showAlert(Alert.AlertType.ERROR, "Invalid login",
-                "This staff ID does not exist in the system.");
-    }
-
-    /**
-     * Alert to display the password and StaffId doesn't match.
-     */
-    private void staffIdPasswordMismatchAlert() {
-        PageNavigator.showAlert(Alert.AlertType.ERROR, "Invalid login",
-                "The password is incorrect.");
+        return idString != null && !idString.isEmpty();
     }
 
     /**
      * Alert to display that an invalid StaffId has been entered.
      */
-    private void invalidStaffIdAlert() {
-        PageNavigator.showAlert(Alert.AlertType.ERROR, "Invalid Staff ID",
+    private static void invalidStaffIdAlert() {
+        PageNavigator.showAlert(AlertType.ERROR, "Invalid Staff ID",
                 "Staff ID is invalid");
     }
 
@@ -95,22 +72,21 @@ public class StaffLoginController extends SubController {
      */
     private void signInClinician() {
         int id = Integer.parseInt(staffId.getText());
-        Clinician clinician = clinicianManager.getClinicianByStaffId(id);
+        Clinician clinician;
 
-        if (clinician == null) {
-            staffIdDoesntExistAlert();
-
-        } else if (!clinician.getPassword().equals(password.getText())) {
-            staffIdPasswordMismatchAlert();
-
-        } else {
-            State.login(clinician);
-            PageNavigator.loadPage(Page.VIEW_CLINICIAN, mainController);
-
-            HistoryItem save = new HistoryItem("LOGIN_STAFF", String.format("Clinician %s %s logged in.",
-                    clinician.getFirstName(), clinician.getLastName()));
-            JSONConverter.updateHistory(save, "action_history.json");
+        try {
+            clinician = State.getAuthenticationManager().loginClinician(id, password.getText());
+        } catch (AuthenticationException e) {
+            PageNavigator.showAlert(AlertType.ERROR, "Invalid login", e.getLocalizedMessage());
+            return;
         }
+
+        State.login(clinician);
+        PageNavigator.loadPage(Page.VIEW_CLINICIAN, mainController);
+
+        HistoryItem save = new HistoryItem("LOGIN_STAFF", String.format("Clinician %s %s logged in.",
+                clinician.getFirstName(), clinician.getLastName()));
+        JSONConverter.updateHistory(save, "action_history.json");
     }
 
     /**
@@ -118,21 +94,19 @@ public class StaffLoginController extends SubController {
      * Gives an alert if the password does not match the username
      */
     private void signInAdministrator() {
-        Administrator administrator = administratorManager.getAdministratorByUsername(staffId.getText());
-
-        if (administrator == null) {
-            staffIdDoesntExistAlert();
-
-        } else if (!administrator.getPassword().equals(password.getText())) {
-            staffIdPasswordMismatchAlert();
-
-        } else {
-            State.login(administrator);
-            PageNavigator.loadPage(Page.SEARCH, mainController);
-            HistoryItem save = new HistoryItem("LOGIN_STAFF", String.format("Administrator %s logged in.",
-                    administrator.getUsername()));
-            JSONConverter.updateHistory(save, "action_history.json");
+        Administrator administrator;
+        try {
+            administrator = State.getAuthenticationManager().loginAdministrator(staffId.getText(), password.getText());
+        } catch (AuthenticationException e) {
+            PageNavigator.showAlert(AlertType.ERROR, "Invalid login", e.getLocalizedMessage());
+            return;
         }
+
+        State.login(administrator);
+        PageNavigator.loadPage(Page.SEARCH, mainController);
+        HistoryItem save = new HistoryItem("LOGIN_STAFF", String.format("Administrator %s logged in.",
+                administrator.getUsername()));
+        JSONConverter.updateHistory(save, "action_history.json");
     }
 
     /**
@@ -141,9 +115,8 @@ public class StaffLoginController extends SubController {
      */
     @FXML
     private void signIn() {
-
-        if(validStaffIdInput()) {
-            if (staffId.getText().matches("[0-9]+")) {
+        if(isValidStaffIdInput()) {
+            if (IS_NUMBER.matcher(staffId.getText()).matches()) {
                 signInClinician();
             } else {
                 signInAdministrator();

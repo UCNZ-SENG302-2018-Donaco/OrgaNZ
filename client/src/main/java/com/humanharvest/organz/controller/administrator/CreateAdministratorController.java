@@ -89,7 +89,7 @@ public class CreateAdministratorController extends SubController {
                         "Username must not be an integer, so as not to clash with clincians' staff IDs.");
             } catch (NumberFormatException ex) {
                 // Non-numeric username - check if it already exists
-                if (administratorManager.collisionExists(usernameTextField.getText())) {
+                if (administratorManager.doesUsernameExist(usernameTextField.getText())) {
                     usernameLabel.setTextFill(Color.RED);
                     valid = false;
                     PageNavigator.showAlert(AlertType.ERROR, "Invalid username",

@@ -1,7 +1,7 @@
 package com.humanharvest.organz.actions.client;
 
 import com.humanharvest.organz.Client;
-import com.humanharvest.organz.Views.Client.ModifyClientObject;
+import com.humanharvest.organz.views.client.ModifyClientObject;
 import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.state.ClientManager;
 import org.springframework.beans.BeanUtils;

@@ -1,6 +1,9 @@
 package com.humanharvest.organz.state;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.humanharvest.organz.Administrator;
 
@@ -18,6 +21,25 @@ public interface AdministratorManager {
      */
     List<Administrator> getAdministrators();
 
+    default Iterable<Administrator> getAdministratorsFiltered(String nameQuery, Integer offset, Integer count) {
+        Stream<Administrator> stream = getAdministrators().stream();
+        if (nameQuery != null) {
+            stream = stream.filter(administrator ->
+                    administrator.getUsername().contains(nameQuery)
+            );
+        }
+
+        if (offset != null) {
+            stream = stream.skip(offset);
+        }
+
+        if (count != null) {
+            stream = stream.limit(count);
+        }
+
+        return stream.collect(Collectors.toList());
+    }
+
     /**
      * Remove an administrator
      * @param administrator Administrator to be removed
@@ -28,14 +50,15 @@ public interface AdministratorManager {
      * Checks if an administrator already exists with that username
      * @param username The username of the administrator
      */
-    boolean collisionExists(String username);
+    boolean doesUsernameExist(String username);
 
     /**
      * Return an administrator matching that UID
      * @param username The username to be matched
-     * @return Administrator or null if none exists
+     * @return Administrator or empty if none exists
      */
-    Administrator getAdministratorByUsername(String username);
+    Optional<Administrator> getAdministratorByUsername(String username);
+
     /**
      * Return the default administrator
      * @return the default administrator

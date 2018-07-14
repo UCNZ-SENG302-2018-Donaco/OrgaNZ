@@ -2,7 +2,7 @@ package com.humanharvest.organz.utilities.validators.client;
 
 import java.time.LocalDate;
 
-import com.humanharvest.organz.Views.Client.CreateClientView;
+import com.humanharvest.organz.views.client.CreateClientView;
 import com.humanharvest.organz.utilities.validators.NotEmptyStringValidator;
 
 public class CreateClientValidator {
