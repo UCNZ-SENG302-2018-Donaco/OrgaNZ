@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.TransplantRequest;
 
 public class ClientValidator {
@@ -12,6 +13,7 @@ public class ClientValidator {
     private static final double DELTA = 1e-6;
 
     private final TransplantRequestValidator transplantRequestValidator = new TransplantRequestValidator();
+    private final MedicationRecordValidator medicationRecordValidator = new MedicationRecordValidator();
 
     /**
      * Validates a {@link Client} and returns a string explaining the errors within it.
@@ -51,6 +53,13 @@ public class ClientValidator {
 
         for (TransplantRequest request : client.getTransplantRequests()) {
             String validationMsg = transplantRequestValidator.validate(request);
+            if (validationMsg != null) {
+                errors.append(validationMsg);
+            }
+        }
+
+        for (MedicationRecord record : client.getMedications()) {
+            String validationMsg = medicationRecordValidator.validate(record);
             if (validationMsg != null) {
                 errors.append(validationMsg);
             }
