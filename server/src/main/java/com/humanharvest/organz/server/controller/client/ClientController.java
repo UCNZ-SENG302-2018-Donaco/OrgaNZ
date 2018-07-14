@@ -4,9 +4,9 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Client;
-import com.humanharvest.organz.Views.Client.CreateClientView;
-import com.humanharvest.organz.Views.Client.ModifyClientObject;
-import com.humanharvest.organz.Views.Client.Views;
+import com.humanharvest.organz.views.client.CreateClientView;
+import com.humanharvest.organz.views.client.ModifyClientObject;
+import com.humanharvest.organz.views.client.Views;
 import com.humanharvest.organz.actions.client.DeleteClientAction;
 import com.humanharvest.organz.actions.client.ModifyClientByObjectAction;
 import com.humanharvest.organz.server.exceptions.GlobalControllerExceptionHandler.InvalidRequestException;

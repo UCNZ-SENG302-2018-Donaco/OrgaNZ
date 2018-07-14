@@ -11,7 +11,6 @@ import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.pico_type_converters.PicoLocalDateConverter;
-import com.humanharvest.organz.utilities.type_converters.LocalDateConverter;
 
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -57,7 +56,7 @@ public class CreateClient implements Runnable {
 
     public void run() {
 
-        if (!force && manager.collisionExists(firstName, lastName, dateOfBirth)) {
+        if (!force && manager.doesClientExist(firstName, lastName, dateOfBirth)) {
             System.out.println("Duplicate client found, use --force to create anyway");
             return;
         }

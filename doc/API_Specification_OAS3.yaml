@@ -1347,7 +1347,7 @@ paths:
         - Authentication
       summary: Client login endpoint
       description: Returns the unique identifier used for future queries, and also an optional userData if the view paramater is set to details
-        The response will also include the JSON Web Token, which should be included in the Authentication header for all future requests.
+        The response will also include the authentication token, which should be included in the Authentication header for all future requests.
       parameters:
         - $ref: '#/components/parameters/view'
       requestBody:
@@ -1374,8 +1374,8 @@ paths:
       tags:
         - Authentication
       summary: Clinician login endpoint
-      description: Returns the unique identifier used for future queries, and also an optional userData if the view paramater is set to details
-        The response will also include the JSON Web Token, which should be included in the Authentication header for all future requests.
+      description: Returns the authentication token, which should be included in the Authentication header for all future requests.
+                Also an optional userData if the view paramater is set to full.
       parameters:
         - $ref: '#/components/parameters/view'
       requestBody:
@@ -1402,8 +1402,8 @@ paths:
       tags:
         - Authentication
       summary: Administrator login endpoint
-      description: Returns the unique identifier used for future queries, and also an optional userData if the view paramater is set to details
-        The response will also include the JSON Web Token, which should be included in the Authentication header for all future requests.
+      description: Returns the authentication token, which should be included in the Authentication header for all future requests.
+        Also an optional userData if the view paramater is set to full.
       parameters:
         - $ref: '#/components/parameters/view'
       requestBody:
@@ -1706,8 +1706,6 @@ components:
       properties:
         token:
           $ref: '#/components/schemas/jsonWebToken'
-        identifier:
-          type: integer
         userData:
           $ref: '#/components/schemas/clinicianDetails'
 
@@ -1724,8 +1722,6 @@ components:
       properties:
         token:
           $ref: '#/components/schemas/jsonWebToken'
-        identifier:
-          type: integer
         userData:
           $ref: '#/components/schemas/administratorDetails'
 
@@ -1896,33 +1892,12 @@ components:
           $ref: '#/components/schemas/date'
 
     date:
-      type: object
-      properties:
-        year:
-          type: integer
-        month:
-          type: integer
-        day:
-          type: integer
+      type: string
       nullable: true
     time:
-      type: object
-      properties:
-        hour:
-          type: integer
-        minute:
-          type: integer
-        second:
-          type: integer
-        nano:
-          type: integer
+      type: string
     dateTime:
-      type: object
-      properties:
-        date:
-          $ref: '#/components/schemas/date'
-        time:
-          $ref: '#/components/schemas/time'
+      type: string
 
 
     organBooleanArray:

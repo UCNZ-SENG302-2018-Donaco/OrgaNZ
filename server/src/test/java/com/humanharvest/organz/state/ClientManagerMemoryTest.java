@@ -82,7 +82,7 @@ public class ClientManagerMemoryTest extends BaseTest {
         clients.add(client1);
         manager = new ClientManagerMemory(clients);
 
-        assertFalse(manager.collisionExists("Not", "Same", LocalDate.of(1970, 1, 1)));
+        assertFalse(manager.doesClientExist("Not", "Same", LocalDate.of(1970, 1, 1)));
     }
 
     @Test
@@ -91,7 +91,7 @@ public class ClientManagerMemoryTest extends BaseTest {
         clients.add(client1);
         manager = new ClientManagerMemory(clients);
 
-        assertFalse(manager.collisionExists("First", "Last", LocalDate.of(2018, 12, 12)));
+        assertFalse(manager.doesClientExist("First", "Last", LocalDate.of(2018, 12, 12)));
     }
 
     @Test
@@ -100,7 +100,7 @@ public class ClientManagerMemoryTest extends BaseTest {
         clients.add(client1);
         manager = new ClientManagerMemory(clients);
 
-        assertTrue(manager.collisionExists("First", "Last", LocalDate.of(1970, 1, 1)));
+        assertTrue(manager.doesClientExist("First", "Last", LocalDate.of(1970, 1, 1)));
     }
 
     @Test

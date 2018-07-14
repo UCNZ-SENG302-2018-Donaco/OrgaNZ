@@ -85,7 +85,7 @@ public class ClinicianManagerTest extends BaseTest {
         clinicians.add(clinician);
         manager = new ClinicianManagerMemory(clinicians);
 
-        assertFalse(manager.collisionExists(2));
+        assertFalse(manager.doesStaffIdExist(2));
     }
 
     @Test
@@ -95,7 +95,7 @@ public class ClinicianManagerTest extends BaseTest {
         clinicians.add(clinician);
         manager = new ClinicianManagerMemory(clinicians);
 
-        assertTrue(manager.collisionExists(1));
+        assertTrue(manager.doesStaffIdExist(1));
     }
 
     @Test
@@ -107,6 +107,6 @@ public class ClinicianManagerTest extends BaseTest {
         clinicians.add(clinician2);
         manager = new ClinicianManagerMemory(clinicians);
 
-        assertTrue(manager.collisionExists(2));
+        assertTrue(manager.doesStaffIdExist(2));
     }
 }

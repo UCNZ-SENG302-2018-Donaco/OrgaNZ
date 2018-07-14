@@ -65,7 +65,7 @@ public class CreateClientTest extends BaseTest {
 
     @Test
     public void createclient_duplicateAccept() {
-        when(spyClientManager.collisionExists(any(), any(), any())).thenReturn(true);
+        when(spyClientManager.doesClientExist(any(), any(), any())).thenReturn(true);
         doNothing().when(spyClientManager).addClient(any());
         String[] inputs = {"-f", "Jack", "-l", "Steel", "-d", "21/04/1997", "--force"};
 
@@ -76,7 +76,7 @@ public class CreateClientTest extends BaseTest {
 
     @Test
     public void createclient_duplicateReject() {
-        when(spyClientManager.collisionExists(any(), any(), any())).thenReturn(true);
+        when(spyClientManager.doesClientExist(any(), any(), any())).thenReturn(true);
         doNothing().when(spyClientManager).addClient(any());
         String[] inputs = {"-f", "Jack", "-l", "Steel", "-d", "21/04/1997"};
 

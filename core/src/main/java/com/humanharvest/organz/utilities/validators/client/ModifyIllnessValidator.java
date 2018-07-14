@@ -1,7 +1,6 @@
 package com.humanharvest.organz.utilities.validators.client;
 
-import com.humanharvest.organz.Views.Client.ModifyClientObject;
-import com.humanharvest.organz.Views.Client.ModifyIllnessObject;
+import com.humanharvest.organz.views.client.ModifyIllnessObject;
 import com.humanharvest.organz.utilities.validators.NotEmptyStringValidator;
 import java.time.LocalDate;
 import java.util.Arrays;

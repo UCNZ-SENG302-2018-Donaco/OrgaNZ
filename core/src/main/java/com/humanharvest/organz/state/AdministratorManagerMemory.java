@@ -3,6 +3,7 @@ package com.humanharvest.organz.state;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import com.humanharvest.organz.Administrator;
 
@@ -52,7 +53,7 @@ public class AdministratorManagerMemory implements AdministratorManager{
      * Checks if an administrator already exists with that username
      * @param username The username of the administrator
      */
-    public boolean collisionExists(String username) {
+    public boolean doesUsernameExist(String username) {
         // Check if it is numeric (this could collide with a clinician ID)
         if (username.matches("[0-9]+")) {
             return true;
@@ -72,11 +73,10 @@ public class AdministratorManagerMemory implements AdministratorManager{
      * @param username The username to be matched
      * @return Administrator or null if none exists
      */
-    public Administrator getAdministratorByUsername(String username) {
+    public Optional<Administrator> getAdministratorByUsername(String username) {
         return administrators.stream()
                 .filter(o -> o.getUsername().equals(username))
-                .findFirst()
-                .orElse(null);
+                .findFirst();
     }
 
     /**
@@ -84,6 +84,6 @@ public class AdministratorManagerMemory implements AdministratorManager{
      * @return the default administrator
      */
     public Administrator getDefaultAdministrator() {
-        return getAdministratorByUsername(defaultAdministratorUsername);
+        return getAdministratorByUsername(defaultAdministratorUsername).orElseThrow(RuntimeException::new);
     }
 }

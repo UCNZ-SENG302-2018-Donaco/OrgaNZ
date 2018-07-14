@@ -67,7 +67,8 @@ public class AdministratorManagerTest extends BaseTest {
         administrator.setPassword("somethingsecure");
 
         assertTrue(manager.getAdministrators().contains(administrator));
-        assertEquals(manager.getAdministratorByUsername("bob").getPassword(), "somethingsecure");
+        assertEquals("somethingsecure",
+                manager.getAdministratorByUsername("bob").orElseThrow(RuntimeException::new).getPassword());
     }
 
 
@@ -77,7 +78,7 @@ public class AdministratorManagerTest extends BaseTest {
         administrators.add(administrator);
         manager = new AdministratorManagerMemory(administrators);
 
-        assertFalse(manager.collisionExists("some new username"));
+        assertFalse(manager.doesUsernameExist("some new username"));
     }
 
     @Test
@@ -86,7 +87,7 @@ public class AdministratorManagerTest extends BaseTest {
         administrators.add(administrator);
         manager = new AdministratorManagerMemory(administrators);
 
-        assertTrue(manager.collisionExists(username1));
+        assertTrue(manager.doesUsernameExist(username1));
     }
 
     @Test
@@ -95,7 +96,7 @@ public class AdministratorManagerTest extends BaseTest {
         administrators.add(administrator);
         manager = new AdministratorManagerMemory(administrators);
 
-        assertTrue(manager.collisionExists("5"));
+        assertTrue(manager.doesUsernameExist("5"));
     }
 
     @Test
@@ -105,7 +106,7 @@ public class AdministratorManagerTest extends BaseTest {
         administrators.add(administrator2);
         manager = new AdministratorManagerMemory(administrators);
 
-        assertTrue(manager.collisionExists(username2));
+        assertTrue(manager.doesUsernameExist(username2));
     }
 
 }

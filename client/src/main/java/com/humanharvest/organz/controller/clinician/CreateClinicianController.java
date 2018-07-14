@@ -111,7 +111,7 @@ public class CreateClinicianController extends SubController {
     private void createUser() {
         if (checkMandatoryFields()) {
 
-            if (clinicianManager.collisionExists(Integer.parseInt(staffId.getText()))) {
+            if (clinicianManager.doesStaffIdExist(Integer.parseInt(staffId.getText()))) {
                 staffIdLabel.setTextFill(Color.RED);
             } else {
                 Clinician clinician = new Clinician(fname.getText(), mname.getText(), lname.getText(),

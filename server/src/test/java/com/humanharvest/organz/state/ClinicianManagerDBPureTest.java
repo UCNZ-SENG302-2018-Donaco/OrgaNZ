@@ -54,7 +54,7 @@ public class ClinicianManagerDBPureTest extends BaseTest {
     public void mergeConflictClinician(){
         ClinicianManagerDBPure test = new ClinicianManagerDBPure();
         test.addClinician(c);
-        Boolean result = test.collisionExists(3);
+        Boolean result = test.doesStaffIdExist(3);
         Assert.assertEquals(true,result);
 
     }

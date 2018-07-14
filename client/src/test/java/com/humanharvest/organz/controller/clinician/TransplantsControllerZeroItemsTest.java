@@ -10,15 +10,13 @@ import com.humanharvest.organz.controller.ControllerTest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.view.Page;
-import com.humanharvest.organz.utilities.view.WindowContext;
+import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
 import org.junit.Test;
 
 public class TransplantsControllerZeroItemsTest extends ControllerTest {
-
-
     // Test data
 
-    private Clinician testClinician = new Clinician("A", "B", "C", "D",
+    private final Clinician testClinician = new Clinician("A", "B", "C", "D",
             Region.UNSPECIFIED, 0, "E");
 
     // Overridden classes from parent class
@@ -30,9 +28,9 @@ public class TransplantsControllerZeroItemsTest extends ControllerTest {
 
     @Override
     protected void initState() {
-        State.reset(false);
+        State.reset();
         State.login(testClinician);
-        mainController.setWindowContext(new WindowContext.WindowContextBuilder()
+        mainController.setWindowContext(new WindowContextBuilder()
                 .build());
     }
 
