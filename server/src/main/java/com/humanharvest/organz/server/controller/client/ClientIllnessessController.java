@@ -20,6 +20,7 @@ import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.validators.client.ModifyIllnessValidator;
 import com.sun.org.apache.regexp.internal.RE;
 import java.util.List;
+import javax.validation.constraints.Null;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -77,7 +78,7 @@ public class ClientIllnessessController {
 
   @PatchMapping("/clients/{uid}/illnesses/{id}")
   @JsonView(Views.Overview.class)
-  public ResponseEntity<Client> patchIllness(@PathVariable int uid,
+  public ResponseEntity<IllnessRecord> patchIllness(@PathVariable int uid,
       @PathVariable int id,
       @RequestBody ModifyIllnessObject modifyIllnessObject,
       @RequestHeader(value = "If-Match",required = false)String ETag)
@@ -87,8 +88,19 @@ public class ClientIllnessessController {
 
     }
 
+    System.out.println(modifyIllnessObject.toString());
+
     //Fetch the client given by ID
     Client client = State.getClientManager().getClientByID(uid);
+    IllnessRecord record;
+    try {
+      record = client.getCurrentIllnesses().get(id-1); // starting index 1.
+    } catch (Exception e) {
+      //Record does not exist
+      System.out.println("Record does not exist");
+      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
     if (client == null) {
       //Return 404 if that client does not exist
       return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -104,8 +116,8 @@ public class ClientIllnessessController {
 
     //Create the old details to allow undoable action
     ModifyIllnessObject oldIllnessRecord = new ModifyIllnessObject();
-    //Copy the values from the current client to our oldClient
-    BeanUtils.copyProperties(client, oldIllnessRecord, modifyIllnessObject.getUnmodifiedFields());
+    //Copy the values from the current record to our oldrecord
+    BeanUtils.copyProperties(record, oldIllnessRecord, modifyIllnessObject.getUnmodifiedFields());
     //Make the action (this is a new action)
     ModifyIllnessRecordByObjectAction action = new ModifyIllnessRecordByObjectAction(client,
         State.getClientManager(),oldIllnessRecord,modifyIllnessObject);
@@ -116,7 +128,7 @@ public class ClientIllnessessController {
     HttpHeaders headers = new HttpHeaders();
     headers.setETag(client.getEtag());
 
-    return new ResponseEntity<>(client, headers, HttpStatus.OK);
+    return new ResponseEntity<>(record, headers, HttpStatus.OK);
 
   }
 
