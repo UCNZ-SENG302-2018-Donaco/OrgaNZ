@@ -59,8 +59,11 @@ public class TransplantRequestValidator {
     }
 
     private boolean resolvedDateValid(TransplantRequest request) {
-        return datetimeIsValid(request.getResolvedDate()) &&
-                !request.getResolvedDate().isBefore(request.getRequestDate());
+        if (request.getResolvedDate() != null) {
+            return datetimeIsValid(request.getResolvedDate()) &&
+                    !request.getResolvedDate().isBefore(request.getRequestDate());
+        }
+        return true;
     }
 
     private boolean statusValid(TransplantRequest request) {

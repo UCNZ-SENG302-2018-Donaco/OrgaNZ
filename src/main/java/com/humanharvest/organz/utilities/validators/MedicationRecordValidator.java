@@ -45,8 +45,11 @@ public class MedicationRecordValidator {
     }
 
     private boolean stoppedDateValid(MedicationRecord record) {
-        return dateIsValid(record.getStopped()) &&
-                !record.getStopped().isBefore(record.getStarted());
+        if (record.getStopped() != null) {
+            return dateIsValid(record.getStopped()) &&
+                    !record.getStopped().isBefore(record.getStarted());
+        }
+        return true;
     }
 
     // HELPERS

@@ -45,8 +45,11 @@ public class IllnessRecordValidator {
     }
 
     private boolean curedDateValid(IllnessRecord record) {
-        return dateIsValid(record.getCuredDate()) &&
-                !record.getCuredDate().isBefore(record.getDiagnosisDate());
+        if (record.getCuredDate() != null) {
+            return dateIsValid(record.getCuredDate()) &&
+                    !record.getCuredDate().isBefore(record.getDiagnosisDate());
+        }
+        return true;
     }
 
     // HELPERS
