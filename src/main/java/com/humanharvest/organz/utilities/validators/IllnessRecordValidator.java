@@ -18,11 +18,11 @@ public class IllnessRecordValidator {
         if (!illnessNameValid(record)) {
             errors.append("Illness name must not be empty.");
         }
-        if (!startedDateValid(record)) {
-            errors.append("Illness started date must be in a valid format and must represent a date in the past.\n");
-        } else if (!stoppedDateValid(record)) {
-            errors.append("Illness stopped date must be either empty, or a date in a valid format that represents a "
-                    + "date after the started date.\n");
+        if (!diagnosisDateValid(record)) {
+            errors.append("Illness diagnosis date must be in a valid format and must represent a date in the past.\n");
+        } else if (!curedDateValid(record)) {
+            errors.append("Illness cured date must be either empty, or a date in a valid format that represents a "
+                    + "date after the diagnosis date.\n");
         }
 
         if (errors.length() == 0) {
@@ -39,12 +39,12 @@ public class IllnessRecordValidator {
                 !record.getIllnessName().equals("");
     }
 
-    private boolean startedDateValid(IllnessRecord record) {
+    private boolean diagnosisDateValid(IllnessRecord record) {
         return dateIsValid(record.getDiagnosisDate()) &&
                 !record.getDiagnosisDate().isAfter(LocalDate.now());
     }
 
-    private boolean stoppedDateValid(IllnessRecord record) {
+    private boolean curedDateValid(IllnessRecord record) {
         return dateIsValid(record.getCuredDate()) &&
                 !record.getCuredDate().isBefore(record.getDiagnosisDate());
     }
