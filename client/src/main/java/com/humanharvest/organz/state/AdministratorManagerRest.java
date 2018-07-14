@@ -2,6 +2,7 @@ package com.humanharvest.organz.state;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import com.humanharvest.organz.Administrator;
 import org.springframework.core.ParameterizedTypeReference;
@@ -68,7 +69,7 @@ public class AdministratorManagerRest implements AdministratorManager {
     }
 
     @Override
-    public Administrator getAdministratorByUsername(String username) {
+    public Optional<Administrator> getAdministratorByUsername(String username) {
         throw new UnsupportedOperationException();
     }
 

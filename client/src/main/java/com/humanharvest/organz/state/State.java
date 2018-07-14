@@ -28,6 +28,8 @@ public final class State {
     private static ClientManager clientManager;
     private static ClinicianManager clinicianManager;
     private static AdministratorManager administratorManager;
+    private static AuthenticationManager authenticationManager;
+
     private static ActionInvoker actionInvoker;
     private static Session session;
     private static boolean unsavedChanges = false;
@@ -65,10 +67,12 @@ public final class State {
             clientManager = new ClientManagerRest();
             clinicianManager = new ClinicianManagerRest();
             administratorManager = new AdministratorManagerRest();
+            authenticationManager = new AuthenticationManagerRest();
         } else if (storageType == DataStorageType.MEMORY) {
             clientManager = new ClientManagerMemory();
             clinicianManager = new ClinicianManagerMemory();
             administratorManager = new AdministratorManagerMemory();
+            authenticationManager = new AuthenticationManagerMemory();
         } else {
             throw new IllegalArgumentException("DataStorageType cannot be null.");
         }
@@ -88,6 +92,10 @@ public final class State {
 
     public static AdministratorManager getAdministratorManager() {
         return administratorManager;
+    }
+
+    public static AuthenticationManager getAuthenticationManager() {
+        return authenticationManager;
     }
 
     public static ActionInvoker getInvoker() {

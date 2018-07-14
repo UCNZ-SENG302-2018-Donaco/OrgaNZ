@@ -9,7 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.humanharvest.organz.Views.Client.Views;
+import com.humanharvest.organz.views.client.Views;
 
 @Entity
 @Table

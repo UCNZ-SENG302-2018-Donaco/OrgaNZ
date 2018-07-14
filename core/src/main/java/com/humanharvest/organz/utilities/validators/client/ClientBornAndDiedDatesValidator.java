@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.humanharvest.organz.Client;
-import com.humanharvest.organz.Views.Client.ModifyClientObject;
+import com.humanharvest.organz.views.client.ModifyClientObject;
 
 public class ClientBornAndDiedDatesValidator {
 

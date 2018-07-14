@@ -1,10 +1,8 @@
 package com.humanharvest.organz.server.controller.administrator;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Administrator;
-import com.humanharvest.organz.Views.Client.Views;
+import com.humanharvest.organz.views.client.Views;
 import com.humanharvest.organz.state.AdministratorManager;
 import com.humanharvest.organz.state.State;
 import org.springframework.http.HttpStatus;

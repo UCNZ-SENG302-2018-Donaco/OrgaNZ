@@ -21,7 +21,7 @@ import javafx.scene.paint.Color;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
-import com.humanharvest.organz.Views.Client.ModifyClientObject;
+import com.humanharvest.organz.views.client.ModifyClientObject;
 import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.actions.client.MarkClientAsDeadAction;

@@ -2,6 +2,7 @@ package com.humanharvest.organz.state;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import javax.persistence.PersistenceException;
 import javax.persistence.RollbackException;
 
@@ -84,10 +85,10 @@ public class AdministratorManagerDBPure implements AdministratorManager {
         try (org.hibernate.Session session = dbManager.getDBSession()) {
             trns = session.beginTransaction();
 
-            collision = dbManager.getDBSession().createQuery("SELECT a FROM  Administrator a "
+            collision = !dbManager.getDBSession().createQuery("SELECT a FROM Administrator a "
                     + "WHERE a.username = :username")
                     .setParameter("username", username)
-                    .getResultList().size() > 0;
+                    .getResultList().isEmpty();
             trns.commit();
         } catch (RollbackException exc) {
             if (trns != null) {
@@ -99,7 +100,7 @@ public class AdministratorManagerDBPure implements AdministratorManager {
     }
 
     @Override
-    public Administrator getAdministratorByUsername(String username) {
+    public Optional<Administrator> getAdministratorByUsername(String username) {
         Transaction trns = null;
         Administrator result = null;
 
@@ -114,11 +115,12 @@ public class AdministratorManagerDBPure implements AdministratorManager {
                 trns.rollback();
             }
         }
-        return result;
+
+        return Optional.ofNullable(result);
     }
 
     @Override
     public Administrator getDefaultAdministrator() {
-        return getAdministratorByUsername("admin");
+        return getAdministratorByUsername("admin").orElseThrow(RuntimeException::new);
     }
 }

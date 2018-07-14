@@ -97,4 +97,9 @@ public final class State {
         logout();
         unsavedChanges = false;
     }
+
+    public static String getAuthenticationSecret() {
+        // TODO:
+        return "secret";
+    }
 }

@@ -67,7 +67,8 @@ public class AdministratorManagerTest extends BaseTest {
         administrator.setPassword("somethingsecure");
 
         assertTrue(manager.getAdministrators().contains(administrator));
-        assertEquals(manager.getAdministratorByUsername("bob").getPassword(), "somethingsecure");
+        assertEquals("somethingsecure",
+                manager.getAdministratorByUsername("bob").orElseThrow(RuntimeException::new).getPassword());
     }
 
 

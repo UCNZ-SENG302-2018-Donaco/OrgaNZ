@@ -1,6 +1,7 @@
 package com.humanharvest.organz.state;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -54,9 +55,10 @@ public interface AdministratorManager {
     /**
      * Return an administrator matching that UID
      * @param username The username to be matched
-     * @return Administrator or null if none exists
+     * @return Administrator or empty if none exists
      */
-    Administrator getAdministratorByUsername(String username);
+    Optional<Administrator> getAdministratorByUsername(String username);
+
     /**
      * Return the default administrator
      * @return the default administrator

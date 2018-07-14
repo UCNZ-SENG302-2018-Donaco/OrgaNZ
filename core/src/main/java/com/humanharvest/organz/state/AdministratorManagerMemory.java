@@ -3,6 +3,7 @@ package com.humanharvest.organz.state;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import com.humanharvest.organz.Administrator;
 
@@ -72,11 +73,10 @@ public class AdministratorManagerMemory implements AdministratorManager{
      * @param username The username to be matched
      * @return Administrator or null if none exists
      */
-    public Administrator getAdministratorByUsername(String username) {
+    public Optional<Administrator> getAdministratorByUsername(String username) {
         return administrators.stream()
                 .filter(o -> o.getUsername().equals(username))
-                .findFirst()
-                .orElse(null);
+                .findFirst();
     }
 
     /**
@@ -84,6 +84,6 @@ public class AdministratorManagerMemory implements AdministratorManager{
      * @return the default administrator
      */
     public Administrator getDefaultAdministrator() {
-        return getAdministratorByUsername(defaultAdministratorUsername);
+        return getAdministratorByUsername(defaultAdministratorUsername).orElseThrow(RuntimeException::new);
     }
 }

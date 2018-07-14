@@ -1,4 +1,4 @@
-package com.humanharvest.organz.Views.Client;
+package com.humanharvest.organz.views.client;
 
 import com.humanharvest.organz.IllnessRecord;
 import java.time.LocalDate;
@@ -11,7 +11,6 @@ public class CreateClientView {
     private String middleName;
     private LocalDate dateOfBirth;
     private List<IllnessRecord> illnessRecords;
-
 
     public String getFirstName() {
         return firstName;

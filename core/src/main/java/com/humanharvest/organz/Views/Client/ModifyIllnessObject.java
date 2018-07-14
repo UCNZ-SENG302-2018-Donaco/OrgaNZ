@@ -1,4 +1,4 @@
-package com.humanharvest.organz.Views.Client;
+package com.humanharvest.organz.views.client;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.humanharvest.organz.Client;
