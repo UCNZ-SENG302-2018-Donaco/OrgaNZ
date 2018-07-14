@@ -31,7 +31,7 @@ public class SidebarControllerClinViewClientTest extends ControllerTest {
 
     @Override
     protected void initState() {
-        State.reset(false);
+        State.reset();
         State.login(testClinician);
         State.getClientManager().addClient(client);
         State.getClinicianManager().addClinician(testClinician);

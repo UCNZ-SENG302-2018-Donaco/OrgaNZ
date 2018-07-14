@@ -30,7 +30,7 @@ public class SidebarControllerClientReceiverTest extends ControllerTest {
     @Override
     protected void initState() {
         client.addTransplantRequest(new TransplantRequest(client, Organ.LIVER));
-        State.reset(false);
+        State.reset();
         State.login(client);
         State.getClientManager().addClient(client);
         mainController.setWindowContext(new WindowContextBuilder().build());
