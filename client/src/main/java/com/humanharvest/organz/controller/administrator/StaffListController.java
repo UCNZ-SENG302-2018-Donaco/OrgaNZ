@@ -110,7 +110,7 @@ public class StaffListController extends SubController {
      * @param id the staff member to delete
      */
     private void delete(String id) {
-        String action_history_filename = "action_history.json";
+        String actionHistoryFilename = "action_history.json";
 
         if (id.matches("[0-9]+")) {
             Clinician clinician = clinicianManager.getClinicianByStaffId(Integer.parseInt(id));
@@ -119,15 +119,16 @@ public class StaffListController extends SubController {
             invoker.execute(action);
 
             HistoryItem deleteClinician = new HistoryItem("DELETE", "Clinician " + id + " deleted");
-            JSONConverter.updateHistory(deleteClinician, action_history_filename);
+            JSONConverter.updateHistory(deleteClinician, actionHistoryFilename);
         } else {
-            Administrator administrator = adminManager.getAdministratorByUsername(id);
+            Administrator administrator = adminManager.getAdministratorByUsername(id)
+                    .orElseThrow(IllegalArgumentException::new);
 
             Action action = new DeleteAdministratorAction(administrator, adminManager);
             invoker.execute(action);
 
             HistoryItem deleteAdministrator = new HistoryItem("DELETE", "Administrator " + id + " deleted");
-            JSONConverter.updateHistory(deleteAdministrator, action_history_filename);
+            JSONConverter.updateHistory(deleteAdministrator, actionHistoryFilename);
         }
         PageNavigator.refreshAllWindows();
     }
