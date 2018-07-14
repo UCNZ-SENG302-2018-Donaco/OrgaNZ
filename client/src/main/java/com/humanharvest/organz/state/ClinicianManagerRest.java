@@ -2,6 +2,7 @@ package com.humanharvest.organz.state;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import com.humanharvest.organz.Clinician;
@@ -11,16 +12,14 @@ import org.springframework.http.ResponseEntity;
 
 public class ClinicianManagerRest implements ClinicianManager {
 
-    private static final String baseUrl = "http://localhost:8080/";
-
     @Override
     public void addClinician(Clinician clinician) {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void setClinicians(Collection<Clinician> clinicians) {
-
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -29,13 +28,13 @@ public class ClinicianManagerRest implements ClinicianManager {
      */
     @Override
     public List<Clinician> getClinicians() {
-
-        ResponseEntity<List<Clinician>> clinicianResponse = State.getRestTemplate().exchange(baseUrl +
-                "clinicians", HttpMethod.GET, null, new ParameterizedTypeReference<List<Clinician>>() {
+        ResponseEntity<List<Clinician>> clinicianResponse = State.getRestTemplate().exchange(
+                State.BASE_URI + "clinicians", HttpMethod.GET, null,
+                new ParameterizedTypeReference<List<Clinician>>() {
         });
         List<Clinician> restClinicians = clinicianResponse.getBody();
         if (restClinicians == null) {
-            return null;
+            return Collections.emptyList();
         } else {
             return new ArrayList<>(restClinicians);
         }
@@ -43,16 +42,17 @@ public class ClinicianManagerRest implements ClinicianManager {
 
     @Override
     public void removeClinician(Clinician clinician) {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
     public void applyChangesTo(Clinician clinician) {
-
+        throw new UnsupportedOperationException();
     }
 
     @Override
-    public boolean collisionExists(int staffId) {
+    public boolean doesStaffIdExist(int staffId) {
+        // TODO?
         return false;
     }
 
@@ -63,7 +63,7 @@ public class ClinicianManagerRest implements ClinicianManager {
      */
     @Override
     public Clinician getClinicianByStaffId(int staffId) {
-        ResponseEntity<Clinician> clinician = State.getRestTemplate().exchange(baseUrl + "/clinicians/{staffId}",
+        ResponseEntity<Clinician> clinician = State.getRestTemplate().exchange(State.BASE_URI + "clinicians/{staffId}",
                 HttpMethod.GET, null, new ParameterizedTypeReference<Clinician>() {
                 }, staffId);
         State.setClinicianEtag(clinician.getHeaders().getETag());
@@ -72,6 +72,6 @@ public class ClinicianManagerRest implements ClinicianManager {
 
     @Override
     public Clinician getDefaultClinician() {
-        return null;
+        throw new UnsupportedOperationException();
     }
 }

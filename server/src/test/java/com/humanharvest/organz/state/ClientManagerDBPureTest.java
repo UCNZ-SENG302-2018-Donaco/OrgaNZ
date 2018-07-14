@@ -39,7 +39,7 @@ public class ClientManagerDBPureTest extends BaseTest {
         LocalDate date = LocalDate.now();
         Client client = new Client("Thomas","Declan","Kearsley", date,3);
         test.addClient(client);
-        Boolean result = test.collisionExists("Thomas","Kearsley",date);
+        Boolean result = test.doesClientExist("Thomas","Kearsley",date);
         Assert.assertEquals(true,result);
 
 

@@ -36,7 +36,7 @@ public interface ClientManager {
      * @param dateOfBirth Date of birth
      * @return true if a colliding client exists in the manager, false otherwise.
      */
-    boolean collisionExists(String firstName, String lastName, LocalDate dateOfBirth);
+    boolean doesClientExist(String firstName, String lastName, LocalDate dateOfBirth);
 
     /**
      * Returns the next unused id number for a new client.

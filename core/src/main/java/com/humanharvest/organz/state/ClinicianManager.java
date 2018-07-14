@@ -11,8 +11,6 @@ import com.humanharvest.organz.Clinician;
  */
 
 public interface ClinicianManager {
-
-
     /**
      * Add a clinician
      * @param clinician Clinician to be added
@@ -41,14 +39,14 @@ public interface ClinicianManager {
      * @param staffId The id of the clinician
      * @return Boolean
      */
-    boolean collisionExists(int staffId);
+    boolean doesStaffIdExist(int staffId);
 
     /**
      * Return a clinician matching that UID
-     * @param id To be matched
+     * @param staffId To be matched
      * @return Clinician object or null if none exists
      */
-    Clinician getClinicianByStaffId(int id);
+    Clinician getClinicianByStaffId(int staffId);
 
     /**
      * Return the default clinician

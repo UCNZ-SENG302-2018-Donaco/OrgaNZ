@@ -87,7 +87,7 @@ public class CreateClientController extends SubController {
                     "Please make sure that all the required fields are given.");
         } else {
             //Duplicate user warning alert
-            if (manager.collisionExists(firstNameFld.getText(), lastNamefld.getText(), dobFld.getValue())) {
+            if (manager.doesClientExist(firstNameFld.getText(), lastNamefld.getText(), dobFld.getValue())) {
                 ButtonType option = PageNavigator.showAlert(AlertType.CONFIRMATION,
                         "Duplicate Client Warning",
                         "This client is a duplicate of one that already exists. Would you still like to create it?")

@@ -59,7 +59,7 @@ public class ClinicianManagerMemory implements ClinicianManager{
      * @param staffId The id of the clinician
      * @return Boolean
      */
-    public boolean collisionExists(int staffId) {
+    public boolean doesStaffIdExist(int staffId) {
         for (Clinician clinician : clinicians) {
             if (clinician.getStaffId() == staffId) {
                 return true;

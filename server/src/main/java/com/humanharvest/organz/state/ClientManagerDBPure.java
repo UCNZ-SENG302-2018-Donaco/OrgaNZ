@@ -126,7 +126,7 @@ public class ClientManagerDBPure implements ClientManager {
     }
 
     @Override
-    public boolean collisionExists(String firstName, String lastName, LocalDate dateOfBirth) {
+    public boolean doesClientExist(String firstName, String lastName, LocalDate dateOfBirth) {
         boolean collision = false;
         Transaction trns = null;
 

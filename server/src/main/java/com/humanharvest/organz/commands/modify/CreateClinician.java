@@ -13,7 +13,6 @@ import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.pico_type_converters.PicoRegionConverter;
-import com.humanharvest.organz.utilities.type_converters.RegionConverter;
 
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
@@ -60,7 +59,7 @@ public class CreateClinician implements Runnable {
 
     public void run() {
 
-        if (manager.collisionExists(staffId)) {
+        if (manager.doesStaffIdExist(staffId)) {
             // staff ID is taken
             System.out.println("Staff ID " + staffId + " is already taken");
             return;

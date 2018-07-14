@@ -21,6 +21,8 @@ public final class State {
         MEMORY, PUREDB
     }
 
+    public static final String BASE_URI = "http://localhost:8080/";
+
     private static ClientManager clientManager;
     private static ClinicianManager clinicianManager;
     private static AdministratorManager administratorManager;
