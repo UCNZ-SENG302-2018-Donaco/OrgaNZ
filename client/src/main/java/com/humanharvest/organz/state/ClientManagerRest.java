@@ -7,10 +7,10 @@ import java.util.Collections;
 import java.util.List;
 
 import com.humanharvest.organz.Client;
-import com.humanharvest.organz.RestClient;
 import com.humanharvest.organz.TransplantRequest;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
@@ -40,7 +40,20 @@ public class ClientManagerRest implements ClientManager {
 
     @Override
     public void removeClient(Client client) {
-        throw new UnsupportedOperationException();
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setIfMatch(State.getClientEtag());
+        HttpEntity entity = new HttpEntity<>(null, httpHeaders);
+
+
+        ResponseEntity response = State.getRestTemplate().exchange(State.BASE_URI + "clients/{uid}", HttpMethod.DELETE,
+                entity,
+                String.class, client.getUid());
+
+        if (response.getStatusCode().is2xxSuccessful()) {
+            System.out.println("worked");
+        } else if (response.getStatusCode().is5xxServerError()) {
+            System.out.println("Server error");
+        }
     }
 
     @Override
