@@ -1,5 +1,6 @@
 package com.humanharvest.organz.server;
 
+import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
@@ -116,6 +117,10 @@ public final class CucumberSteps implements En {
             lastAction = lastAction.andExpect(content().contentType(jsonContentType));
         });
 
+        Then("^the field (\\w+) exists$", (String fieldName) -> {
+            lastAction = lastAction.andExpect(jsonPath(String.format("$.%s", fieldName), anything()));
+        });
+
         Then("^the field (\\w+) is (\\d+)$", (String fieldName, Integer value) -> {
             lastAction = lastAction.andExpect(jsonPath(String.format("$.%s", fieldName), is(value)));
         });
@@ -159,6 +164,10 @@ public final class CucumberSteps implements En {
 
         Then("^the result is precondition failed$", () -> {
             lastAction = lastAction.andExpect(status().isPreconditionFailed());
+        });
+
+        Then("^the result is unauthenticated$", () -> {
+            lastAction = lastAction.andExpect(status().isUnauthorized());
         });
     }
 

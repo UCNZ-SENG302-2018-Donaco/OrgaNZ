@@ -1,4 +1,4 @@
-Feature: Does GET /administrator/ work?
+Feature: Does GET /administrators/ work?
   Scenario: Get all administrators
     Given there is a test administrator with the username Test1 and password Test1
     Given there is a test administrator with the username Test2 and password Test2
