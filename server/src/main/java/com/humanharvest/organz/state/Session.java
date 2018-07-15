@@ -22,22 +22,21 @@ public class Session {
 
     public Session(Client client) {
         sessionHistory = new ArrayList<>();
-        this.loggedInClient = client;
-        this.loggedInUserType = UserType.CLIENT;
+        loggedInClient = client;
+        loggedInUserType = UserType.CLIENT;
     }
 
     public Session(Clinician clinician) {
         sessionHistory = new ArrayList<>();
-        this.loggedInClinician = clinician;
-        this.loggedInUserType = UserType.CLINICIAN;
+        loggedInClinician = clinician;
+        loggedInUserType = UserType.CLINICIAN;
     }
 
     public Session(Administrator administrator) {
         sessionHistory = new ArrayList<>();
-        this.loggedInAdministrator = administrator;
-        this.loggedInUserType = UserType.ADMINISTRATOR;
+        loggedInAdministrator = administrator;
+        loggedInUserType = UserType.ADMINISTRATOR;
     }
-
 
     public Client getLoggedInClient() {
         return loggedInClient;

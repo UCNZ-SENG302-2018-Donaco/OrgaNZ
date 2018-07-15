@@ -1,7 +1,5 @@
 package com.humanharvest.organz.server.controller.authentication;
 
-import java.time.Instant;
-import java.util.Date;
 import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonView;
@@ -11,8 +9,6 @@ import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.views.administrator.AdministratorLoginRequest;
 import com.humanharvest.organz.views.administrator.AdministratorLoginResponse;
 import com.humanharvest.organz.views.client.Views;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -43,12 +39,7 @@ public class AuthenticationController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
 
-        String token = Jwts.builder()
-                .setSubject(administrator.get().getUsername())
-                .setIssuedAt(Date.from(Instant.now()))
-                .setExpiration(Date.from(Instant.now().plusSeconds(86400))) // 24 hours
-                .signWith(SignatureAlgorithm.HS512, State.getAuthenticationSecret())
-                .compact();
+        String token = State.getAuthenticationManager().generateAdministratorToken(administrator.get().getUsername());
 
         AdministratorLoginResponse loginResponse =
                 ("full".equals(view) || view == null) ?

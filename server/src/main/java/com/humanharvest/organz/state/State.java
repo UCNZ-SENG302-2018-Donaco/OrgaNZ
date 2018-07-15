@@ -19,6 +19,7 @@ public final class State {
     private static ClientManager clientManager;
     private static ClinicianManager clinicianManager;
     private static AdministratorManager administratorManager;
+    private static AuthenticationManager authenticationManager;
     private static ActionInvoker actionInvoker;
     private static Session session;
     private static boolean unsavedChanges = false;
@@ -34,6 +35,7 @@ public final class State {
 
         currentStorageType = storageType;
 
+        authenticationManager = new AuthenticationManager();
         if (storageType == DataStorageType.PUREDB) {
             clientManager = new ClientManagerDBPure();
             clinicianManager = new ClinicianManagerDBPure();
@@ -57,6 +59,14 @@ public final class State {
 
     public static AdministratorManager getAdministratorManager() {
         return administratorManager;
+    }
+
+    public static AuthenticationManager getAuthenticationManager() {
+        return authenticationManager;
+    }
+
+    public static void setAuthenticationManager(AuthenticationManager authenticationManager) {
+        State.authenticationManager = authenticationManager;
     }
 
     public static ActionInvoker getInvoker() {
@@ -96,10 +106,5 @@ public final class State {
         init(currentStorageType);
         logout();
         unsavedChanges = false;
-    }
-
-    public static String getAuthenticationSecret() {
-        // TODO:
-        return "secret";
     }
 }

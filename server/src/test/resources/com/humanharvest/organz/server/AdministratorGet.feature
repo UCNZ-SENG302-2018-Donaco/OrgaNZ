@@ -32,3 +32,15 @@ Feature: Does GET /administrators/ work?
     When I get /administrators/
     Then the result is ok
     Then result 0's password does not exist
+
+  Scenario: Not being authenticated fails
+    Given authentication is required
+    When I get /administrators/
+    Then the result is unauthenticated
+
+  Scenario: Given authentication succeeds
+    Given authentication is required
+    Given there is a test administrator with the username Test and password Test
+    Given the authentication token is from administrator Test
+    When I get /administrators/
+    Then the result is ok
