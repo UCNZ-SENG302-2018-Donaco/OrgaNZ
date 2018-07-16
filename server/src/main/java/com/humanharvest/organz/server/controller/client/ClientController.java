@@ -4,18 +4,18 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Client;
-import com.humanharvest.organz.views.client.CreateClientView;
-import com.humanharvest.organz.views.client.ModifyClientObject;
-import com.humanharvest.organz.views.client.Views;
 import com.humanharvest.organz.actions.client.DeleteClientAction;
 import com.humanharvest.organz.actions.client.ModifyClientByObjectAction;
 import com.humanharvest.organz.server.exceptions.GlobalControllerExceptionHandler.InvalidRequestException;
-import com.humanharvest.organz.server.exceptions.IfMatchFailedException;
-import com.humanharvest.organz.server.exceptions.IfMatchRequiredException;
+import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
+import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.validators.client.ClientBornAndDiedDatesValidator;
 import com.humanharvest.organz.utilities.validators.client.CreateClientValidator;
 import com.humanharvest.organz.utilities.validators.client.ModifyClientValidator;
+import com.humanharvest.organz.views.client.CreateClientView;
+import com.humanharvest.organz.views.client.ModifyClientObject;
+import com.humanharvest.organz.views.client.Views;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -149,6 +149,7 @@ public class ClientController {
         if (!client.getEtag().equals(ETag)) {
             throw new IfMatchFailedException();
         }
+
 
         //Create the old details to allow undoable action
         ModifyClientObject oldClient = new ModifyClientObject();

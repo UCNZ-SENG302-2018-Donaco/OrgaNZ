@@ -2,6 +2,7 @@ package com.humanharvest.organz.controller.client;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -13,9 +14,11 @@ import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.JSONConverter;
+import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -64,7 +67,17 @@ public class ClientLoginController extends SubController {
                 }
             }
         });
-        clientList.setItems(FXCollections.observableArrayList(clientManager.getClients()));
+
+        try {
+            List<Client> clients = clientManager.getClients();
+            clientList.setItems(FXCollections.observableArrayList(clients));
+        } catch (ServerRestException e) {
+            e.printStackTrace();
+            PageNavigator.showAlert(AlertType.ERROR,
+                    "Server Error",
+                    "An error occurred while trying to fetch from the server.\nPlease try again later.");
+            PageNavigator.loadPage(Page.LANDING, mainController);
+        }
     }
 
     /**

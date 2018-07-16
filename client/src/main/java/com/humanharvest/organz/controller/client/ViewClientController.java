@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.OptionalInt;
+import java.util.logging.Logger;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -21,6 +22,9 @@ import javafx.scene.paint.Color;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
+import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
+import com.humanharvest.organz.utilities.exceptions.NotFoundException;
+import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.views.client.ModifyClientObject;
 import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.actions.ActionInvoker;
@@ -48,6 +52,7 @@ import org.controlsfx.control.Notifications;
 public class ViewClientController extends SubController {
 
     private final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy\nh:mm:ss a");
+    private static final Logger LOGGER = Logger.getLogger(ViewClientController.class.getName());
 
     private Session session;
     private ClientManager manager;
@@ -133,7 +138,14 @@ public class ViewClientController extends SubController {
 
     @Override
     public void refresh() {
-        viewedClient = manager.getClientByID(viewedClient.getUid());
+        try {
+            viewedClient = manager.getClientByID(viewedClient.getUid());
+        } catch (ServerRestException e) {
+            e.printStackTrace();
+            PageNavigator.showAlert(AlertType.ERROR,
+                    "Server Error",
+                    "An error occurred while trying to fetch from the server.\nPlease try again later.");
+        }
         updateClientFields();
         if (session.getLoggedInUserType() == UserType.CLIENT) {
             mainController.setTitle("View Client: " + viewedClient.getPreferredName());
@@ -156,13 +168,20 @@ public class ViewClientController extends SubController {
             setFieldsDisabled(true);
             return;
         }
-
-        viewedClient = manager.getClientByID(idValue);
-        if (viewedClient == null) {
+        try {
+            viewedClient = manager.getClientByID(idValue);
+            updateClientFields();
+        } catch (ServerRestException e) {
+            e.printStackTrace();
+            PageNavigator.showAlert(AlertType.ERROR,
+                    "Server Error",
+                    "An error occurred while trying to fetch from the server.\nPlease try again later.");
+        } catch (NotFoundException e) {
+            PageNavigator.showAlert(AlertType.WARNING,
+                        "Client Not Found",
+                            "The specified client could not be located. Please enter a different ID");
             noClientLabel.setVisible(true);
             setFieldsDisabled(true);
-        } else {
-            updateClientFields();
         }
     }
 
@@ -396,6 +415,8 @@ public class ViewClientController extends SubController {
                         .showWarning();
                 return false;
             }
+        } catch (NotFoundException | IfMatchRequiredException e) {
+            LOGGER.log(e.getMessage());
         }
 
         PageNavigator.refreshAllWindows();

@@ -1,6 +1,6 @@
-package com.humanharvest.organz.server.exceptions;
+package com.humanharvest.organz.utilities.exceptions;
 
-public class IfMatchRequiredException extends Exception {
+public class IfMatchRequiredException extends RuntimeException {
 
     public IfMatchRequiredException() {
     }

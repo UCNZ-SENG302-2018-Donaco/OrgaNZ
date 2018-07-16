@@ -5,8 +5,8 @@ import java.util.Map.Entry;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.actions.client.ModifyClientOrgansAction;
-import com.humanharvest.organz.server.exceptions.IfMatchFailedException;
-import com.humanharvest.organz.server.exceptions.IfMatchRequiredException;
+import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
+import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;

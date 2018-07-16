@@ -8,6 +8,7 @@ import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.utilities.RestErrorHandler;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
@@ -63,6 +64,7 @@ public final class State {
         if (storageType == DataStorageType.REST) {
             ClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
             restTemplate.setRequestFactory(requestFactory);
+            restTemplate.setErrorHandler(new RestErrorHandler());
 
             clientManager = new ClientManagerRest();
             clinicianManager = new ClinicianManagerRest();
