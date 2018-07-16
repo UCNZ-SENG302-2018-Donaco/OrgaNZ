@@ -1,6 +1,7 @@
 package com.humanharvest.organz.server.controller.clinician;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Clinician;
@@ -56,13 +57,13 @@ public class ClinicianController {
     public ResponseEntity<Clinician> getCliniciansById(@PathVariable int staffId) {
 
 
-        Clinician clinician = State.getClinicianManager().getClinicianByStaffId(staffId);
-        if (clinician == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } else {
+        Optional<Clinician> clinician = State.getClinicianManager().getClinicianByStaffId(staffId);
+        if (clinician.isPresent()) {
             HttpHeaders headers = new HttpHeaders();
 //            headers.setETag(clinician.getEtag());
-            return new ResponseEntity<>(clinician, headers, HttpStatus.OK);
+            return new ResponseEntity<>(clinician.get(), headers, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 

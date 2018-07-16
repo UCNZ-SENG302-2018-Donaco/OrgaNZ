@@ -3,6 +3,7 @@ package com.humanharvest.organz.state;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import javax.persistence.PersistenceException;
 import javax.persistence.RollbackException;
 
@@ -111,7 +112,7 @@ public class ClinicianManagerDBPure implements ClinicianManager {
     }
 
     @Override
-    public Clinician getClinicianByStaffId(int id) {
+    public Optional<Clinician> getClinicianByStaffId(int id) {
         Transaction trns = null;
         Clinician result = null;
 
@@ -126,7 +127,7 @@ public class ClinicianManagerDBPure implements ClinicianManager {
                 trns.rollback();
             }
         }
-        return result;
+        return Optional.ofNullable(result);
     }
 
     @Override
@@ -137,7 +138,7 @@ public class ClinicianManagerDBPure implements ClinicianManager {
         try (org.hibernate.Session session = dbManager.getDBSession()) {
             trns = session.beginTransaction();
 
-            collision = dbManager.getDBSession().createQuery("SELECT c from  Clinician c Where c.id = :id")
+            collision = dbManager.getDBSession().createQuery("SELECT c from Clinician c Where c.id = :id")
                     .setParameter("id", id)
                     .getResultList().size() > 0;
             trns.commit();
@@ -152,6 +153,6 @@ public class ClinicianManagerDBPure implements ClinicianManager {
 
     @Override
     public Clinician getDefaultClinician() {
-        return getClinicianByStaffId(0);
+        return getClinicianByStaffId(0).orElseThrow(IllegalStateException::new);
     }
 }

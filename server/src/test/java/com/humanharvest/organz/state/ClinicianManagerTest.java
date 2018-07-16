@@ -74,7 +74,7 @@ public class ClinicianManagerTest extends BaseTest {
         clinician.setFirstName("New");
 
         assertTrue(manager.getClinicians().contains(clinician));
-        assertEquals(manager.getClinicianByStaffId(1).getFirstName(), "New");
+        assertEquals("New", manager.getClinicianByStaffId(1).orElseThrow(IllegalStateException::new).getFirstName());
     }
 
 

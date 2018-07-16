@@ -1,5 +1,7 @@
 package com.humanharvest.organz.state;
 
+import java.util.Optional;
+
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
@@ -8,16 +10,16 @@ public class AuthenticationManagerMemory implements AuthenticationManager {
 
     @Override
     public Clinician loginClinician(int staffId, String password) throws AuthenticationException {
-        Clinician clinician = State.getClinicianManager().getClinicianByStaffId(staffId);
+        Optional<Clinician> clinician = State.getClinicianManager().getClinicianByStaffId(staffId);
 
-        if (clinician == null) {
+        if (!clinician.isPresent()) {
             throw new AuthenticationException("Clinician Staff ID does not exist.");
         }
 
-        if (!clinician.getPassword().equals(password)) {
+        if (!clinician.get().getPassword().equals(password)) {
             throw new AuthenticationException("Password is incorrect.");
         }
-        return clinician;
+        return clinician.get();
     }
 
     @Override

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.utilities.enums.Region;
@@ -75,13 +76,12 @@ public class ClinicianManagerMemory implements ClinicianManager{
     /**
      * Return a clinician matching that UID
      * @param id To be matched
-     * @return Clinician object or null if none exists
+     * @return Clinician object or empty if none exists
      */
-    public Clinician getClinicianByStaffId(int id) {
+    public Optional<Clinician> getClinicianByStaffId(int id) {
         return clinicians.stream()
                 .filter(o -> o.getStaffId() == id)
-                .findFirst()
-                .orElse(null);
+                .findFirst();
     }
 
     /**
@@ -89,7 +89,7 @@ public class ClinicianManagerMemory implements ClinicianManager{
      * @return the default clinician
      */
     public Clinician getDefaultClinician() {
-        return getClinicianByStaffId(defaultClinicianId);
+        return getClinicianByStaffId(defaultClinicianId).orElseThrow(IllegalStateException::new);
     }
 
     public void setClinicians(Collection<Clinician> clinicians) {
