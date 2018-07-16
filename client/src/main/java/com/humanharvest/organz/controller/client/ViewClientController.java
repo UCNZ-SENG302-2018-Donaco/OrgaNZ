@@ -416,7 +416,7 @@ public class ViewClientController extends SubController {
                 return false;
             }
         } catch (NotFoundException | IfMatchRequiredException e) {
-            LOGGER.log(e.getMessage());
+            LOGGER.severe(e.getMessage());
         }
 
         PageNavigator.refreshAllWindows();

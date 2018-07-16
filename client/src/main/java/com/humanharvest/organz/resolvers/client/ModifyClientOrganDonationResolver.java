@@ -14,8 +14,6 @@ import org.springframework.http.ResponseEntity;
 
 public class ModifyClientOrganDonationResolver {
 
-    private static final String baseUrl = "http://localhost:8080/";
-
     private Client client;
     private Map<Organ, Boolean> changes;
 
@@ -49,7 +47,7 @@ public class ModifyClientOrganDonationResolver {
 
         ResponseEntity<Client> responseEntity = State.getRestTemplate()
                 .exchange(
-                        baseUrl + "clients/{uid}/donationStatus",
+                        State.BASE_URI + "clients/{uid}/donationStatus",
                         HttpMethod.PATCH,
                         entity,
                         Client.class,

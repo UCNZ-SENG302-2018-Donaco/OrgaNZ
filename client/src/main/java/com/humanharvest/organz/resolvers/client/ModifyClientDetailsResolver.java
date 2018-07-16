@@ -14,8 +14,6 @@ import org.springframework.http.ResponseEntity;
 
 public class ModifyClientDetailsResolver {
 
-    private static final String baseUrl = "http://localhost:8080/";
-
     private Client client;
     private ModifyClientObject modifyClientObject;
 
@@ -43,7 +41,7 @@ public class ModifyClientDetailsResolver {
 
         ResponseEntity<Client> responseEntity = State.getRestTemplate()
                 .exchange(
-                        baseUrl + "clients/{uid}",
+                        State.BASE_URI + "clients/{uid}",
                         HttpMethod.PATCH,
                         entity,
                         Client.class,

@@ -11,17 +11,11 @@ import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
-import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ReactiveHttpOutputMessage;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.reactive.function.BodyInserter;
-import org.springframework.web.reactive.function.BodyInserters;
-import org.springframework.web.reactive.function.client.WebClient;
 
 public class ClientManagerRest implements ClientManager {
 
@@ -48,7 +42,8 @@ public class ClientManagerRest implements ClientManager {
     }
 
     @Override
-    public void removeClient(Client client) throws AuthenticationException, IfMatchFailedException, IfMatchRequiredException {
+    public void removeClient(Client client)
+            throws AuthenticationException, IfMatchFailedException, IfMatchRequiredException {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setIfMatch(State.getClientEtag());
         HttpEntity entity = new HttpEntity<>(null, httpHeaders);
@@ -64,7 +59,8 @@ public class ClientManagerRest implements ClientManager {
     }
 
     @Override
-    public Client getClientByID(int id) throws AuthenticationException, IfMatchFailedException, IfMatchRequiredException {
+    public Client getClientByID(int id)
+            throws AuthenticationException, IfMatchFailedException, IfMatchRequiredException {
         ResponseEntity<Client> responseEntity = State.getRestTemplate()
                 .exchange(State.BASE_URI + "clients/{id}", HttpMethod.GET, null, Client.class, id);
         State.setClientEtag(responseEntity.getHeaders().getETag());
