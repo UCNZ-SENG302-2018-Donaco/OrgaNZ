@@ -19,6 +19,7 @@ import com.humanharvest.organz.state.ClientManagerMemory;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.Mockito;
 import picocli.CommandLine;
@@ -52,6 +53,7 @@ public class PrintAllOrganTest extends BaseTest {
     }
 
     @Test
+    @Ignore
     public void printallorgan_no_type_def() {
         ArrayList<Client> clients = new ArrayList<>();
 
