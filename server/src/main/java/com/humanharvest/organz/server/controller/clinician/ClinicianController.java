@@ -4,14 +4,14 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Clinician;
+import com.humanharvest.organz.server.exceptions.GlobalControllerExceptionHandler;
+import com.humanharvest.organz.utilities.validators.clinician.CreateClinicianValidator;
 import com.humanharvest.organz.views.client.Views;
 import com.humanharvest.organz.state.State;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class ClinicianController {
@@ -25,6 +25,26 @@ public class ClinicianController {
     public ResponseEntity<List<Clinician>> getClinicians() {
         return new ResponseEntity<>(State.getClinicianManager().getClinicians(), HttpStatus.OK);
     }
+
+    /**
+     * The POST /clinicians endpoint which creates a clinician from the request body parameters.
+     * @param clinician details of the clinician being posted
+     * @return a detailed view of the newly created clinician
+     * @throws GlobalControllerExceptionHandler.InvalidRequestException When invalid parameters are given
+     */
+    @PostMapping("/clinicians")
+    @JsonView(Views.Details.class)
+    public ResponseEntity<Clinician> createClinician(@RequestBody Clinician clinician) throws GlobalControllerExceptionHandler.InvalidRequestException {
+        if (!CreateClinicianValidator.isValid(clinician)) {
+            throw new GlobalControllerExceptionHandler.InvalidRequestException();
+        }
+
+        State.getClinicianManager().addClinician(clinician);
+        HttpHeaders headers = new HttpHeaders();
+        //headers.setETag(clinician.getEtag());
+        return new ResponseEntity<>(clinician, headers, HttpStatus.CREATED);
+    }
+
 
     /**
      * The GET /clinicians/{staffId} endpoint which returns the specified clinicians details

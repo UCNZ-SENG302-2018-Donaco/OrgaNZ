@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.humanharvest.organz.Clinician;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
@@ -14,7 +15,7 @@ public class ClinicianManagerRest implements ClinicianManager {
 
     @Override
     public void addClinician(Clinician clinician) {
-        throw new UnsupportedOperationException();
+        State.getRestTemplate().postForObject(State.BASE_URI + "clinicians", new HttpEntity<>(clinician), Clinician.class);
     }
 
     @Override
