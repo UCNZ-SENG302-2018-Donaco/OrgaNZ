@@ -47,6 +47,8 @@ public class ClinicianController {
     }
 
 
+
+
     /**
      * The GET /clinicians/{staffId} endpoint which returns the specified clinicians details
      * @param staffId the id of the clinician
@@ -67,4 +69,49 @@ public class ClinicianController {
         }
     }
 
+
+    /**
+     * Edits the details of the specified clinician. Note that the staffId cannot be changed.
+     * @param staffId identifier of the clinician
+     * @param editedClinician the body containing all updated information
+     * @return response status
+     */
+    @PatchMapping("/clinicians/{staffId}")
+    @JsonView(Views.Details.class)
+    public ResponseEntity<Clinician> editClinician(@PathVariable int staffId, @RequestBody Clinician editedClinician) {
+        Optional<Clinician> clinician = State.getClinicianManager().getClinicianByStaffId(staffId);
+        if (clinician.isPresent()) {
+            if (!CreateClinicianValidator.isValid(editedClinician)) {
+                throw new GlobalControllerExceptionHandler.InvalidRequestException();
+
+            } else {
+                //Need to create patch logic
+
+                //clinician = editedClinician;
+
+                HttpHeaders headers = new HttpHeaders();
+                return new ResponseEntity<>(clinician.get(), headers, HttpStatus.OK);
+            }
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+    }
+
+
+    @DeleteMapping("/clinicians/{staffId}")
+    public ResponseEntity deleteClient(@PathVariable int staffId) {
+        Optional<Clinician> clinician = State.getClinicianManager().getClinicianByStaffId(staffId);
+        if (clinician.isPresent()) {
+            // if authorised
+            // can the default clinician be removed?
+            // Delete clinician
+            State.getClinicianManager().removeClinician(clinician.get());
+            return new ResponseEntity<>(HttpStatus.OK);
+            // else 403
+
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
 }
