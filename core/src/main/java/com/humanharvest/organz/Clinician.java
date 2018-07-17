@@ -80,6 +80,10 @@ public class Clinician {
         modifiedOn = LocalDateTime.now();
     }
 
+    public boolean isPasswordValid(String password) {
+        return this.password.equals(password);
+    }
+
     public LocalDateTime getCreatedOn() {
         return createdOn;
     }
@@ -149,7 +153,6 @@ public class Clinician {
     public LocalDateTime getModifiedOn() {
         return modifiedOn;
     }
-
 
     /**
      * Get the full name of the clinician concatenating their names

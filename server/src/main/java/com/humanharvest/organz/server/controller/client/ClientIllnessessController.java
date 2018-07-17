@@ -3,18 +3,15 @@ package com.humanharvest.organz.server.controller.client;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.IllnessRecord;
-import com.humanharvest.organz.views.client.CreateIllnessView;
-import com.humanharvest.organz.views.client.ModifyIllnessObject;
-import com.humanharvest.organz.views.client.Views;
+import com.humanharvest.organz.views.client.*;
 import com.humanharvest.organz.actions.client.ModifyIllnessRecordByObjectAction;
 import com.humanharvest.organz.server.exceptions.GlobalControllerExceptionHandler.InvalidRequestException;
 import com.humanharvest.organz.server.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.server.exceptions.IfMatchRequiredException;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.validators.client.ModifyIllnessValidator;
-
+import java.util.ArrayList;
 import java.util.List;
-import javax.validation.constraints.Null;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -31,11 +28,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class ClientIllnessessController {
 
   /**
-   * Gets Clients Current Illnesses
+   * Gets Clients Illnesses
    * @param id Id Of Client
-   * @return Returns list of Current Illnesses
+   * @return Returns list of Illnesses
    */
-  @GetMapping("/clients/{id}/current-illnesses")
+  @GetMapping("/clients/{id}/illnesses")
   public ResponseEntity<List<IllnessRecord>> getClientCurrentIllnesses(@PathVariable int id) {
       Client client = State.getClientManager().getClientByID(id);
       // Client does not exist
@@ -44,29 +41,11 @@ public class ClientIllnessessController {
       } else {
         HttpHeaders headers = new HttpHeaders();
         headers.add("ETag", client.getEtag());
+        List<IllnessRecord> illnesses = new ArrayList<>(client.getCurrentIllnesses());
+        illnesses.addAll(client.getPastIllnesses());
 
-        return new ResponseEntity<List<IllnessRecord>>(client.getCurrentIllnesses(),headers,HttpStatus.OK);
+        return new ResponseEntity<List<IllnessRecord>>(illnesses,headers,HttpStatus.OK);
       }
-
-  }
-
-  /**
-   * Gets Clients Past Illnesses
-   * @param id Id Of Client
-   * @return Returns list of past Illnesses, if client exists.
-   */
-  @GetMapping("/clients/{id}/past-illnesses")
-  public ResponseEntity<List<IllnessRecord>> getClientPastIllnesses(@PathVariable int id){
-    Client client = State.getClientManager().getClientByID(id);
-    if (client == null){
-      return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-
-    } else {
-      HttpHeaders headers = new HttpHeaders();
-      headers.add("ETag",client.getEtag());
-      return  new ResponseEntity<List<IllnessRecord>>(client.getPastIllnesses(),headers,HttpStatus.OK);
-    }
-
 
   }
 
@@ -82,7 +61,6 @@ public class ClientIllnessessController {
 
     }
 
-    System.out.println(modifyIllnessObject.toString());
 
     //Fetch the client given by ID
     Client client = State.getClientManager().getClientByID(uid);

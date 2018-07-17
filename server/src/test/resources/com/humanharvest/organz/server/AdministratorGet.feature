@@ -1,4 +1,4 @@
-Feature: Does GET /administrator/ work?
+Feature: Does GET /administrators/ work?
   Scenario: Get all administrators
     Given there is a test administrator with the username Test1 and password Test1
     Given there is a test administrator with the username Test2 and password Test2
@@ -32,3 +32,15 @@ Feature: Does GET /administrator/ work?
     When I get /administrators/
     Then the result is ok
     Then result 0's password does not exist
+
+  Scenario: Not being authenticated fails
+    Given authentication is required
+    When I get /administrators/
+    Then the result is unauthenticated
+
+  Scenario: Given authentication succeeds
+    Given authentication is required
+    Given there is a test administrator with the username Test and password Test
+    Given the authentication token is from administrator Test
+    When I get /administrators/
+    Then the result is ok

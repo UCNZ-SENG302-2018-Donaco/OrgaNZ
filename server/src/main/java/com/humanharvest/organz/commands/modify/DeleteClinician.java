@@ -1,5 +1,7 @@
 package com.humanharvest.organz.commands.modify;
 
+import java.util.Optional;
+
 import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.actions.clinician.DeleteClinicianAction;
@@ -39,20 +41,20 @@ public class DeleteClinician implements Runnable {
 
     @Override
     public void run() {
-        Clinician clinician = manager.getClinicianByStaffId(id);
+        Optional<Clinician> clinician = manager.getClinicianByStaffId(id);
 
-        if (clinician == null) {
+        if (!clinician.isPresent()) {
             System.out.println("No clinician exists with that user ID");
-        } else if (clinician.getStaffId() == manager.getDefaultClinician().getStaffId()) {
+        } else if (clinician.get().getStaffId() == manager.getDefaultClinician().getStaffId()) {
             System.out.println("Default clinician cannot be deleted");
         } else if (!yes) {
             System.out.println(
                     String.format("Removing clinician: %s, with staff id: %s,\nto proceed please rerun the command "
                                     + "with the -y flag",
-                            clinician.getFullName(),
-                            clinician.getStaffId()));
+                            clinician.get().getFullName(),
+                            clinician.get().getStaffId()));
         } else {
-            Action action = new DeleteClinicianAction(clinician, manager);
+            Action action = new DeleteClinicianAction(clinician.get(), manager);
 
             System.out.println(invoker.execute(action));
             System.out.println("This removal will only be permanent once the 'save' command is used");

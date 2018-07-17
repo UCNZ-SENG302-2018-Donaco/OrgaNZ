@@ -1,20 +1,18 @@
 package com.humanharvest.organz.commands.modify;
-;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 
-import com.humanharvest.organz.actions.ActionInvoker;
-import com.humanharvest.organz.actions.clinician.ModifyClinicianAction;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.HistoryItem;
+import com.humanharvest.organz.actions.ActionInvoker;
+import com.humanharvest.organz.actions.clinician.ModifyClinicianAction;
 import com.humanharvest.organz.state.ClinicianManager;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.JSONConverter;
+import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.pico_type_converters.PicoRegionConverter;
-import com.humanharvest.organz.utilities.type_converters.RegionConverter;
-
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
@@ -60,22 +58,22 @@ public class ModifyClinician implements Runnable {
 
     @Override
     public void run() {
-        Clinician clinician = manager.getClinicianByStaffId(id);
+        Optional<Clinician> clinician = manager.getClinicianByStaffId(id);
 
-        if (clinician == null) {
+        if (!clinician.isPresent()) {
             System.out.println("No clinician exists with that staff ID");
             return;
         }
 
-        ModifyClinicianAction action = new ModifyClinicianAction(clinician,manager);
+        ModifyClinicianAction action = new ModifyClinicianAction(clinician.get(), manager);
 
         Map<String, Object[]> updates = new HashMap<>();
-        updates.put("setFirstName", new String[]{clinician.getFirstName(), firstName});
-        updates.put("setMiddleName", new String[]{clinician.getMiddleName(), middleNames});
-        updates.put("setLastName", new String[]{clinician.getLastName(), lastName});
-        updates.put("setWorkAddress", new String[]{clinician.getWorkAddress(), workAddress});
-        updates.put("setRegion", new Region[]{clinician.getRegion(), region});
-        updates.put("setPassword", new String[]{clinician.getPassword(), password});
+        updates.put("setFirstName", new String[]{clinician.get().getFirstName(), firstName});
+        updates.put("setMiddleName", new String[]{clinician.get().getMiddleName(), middleNames});
+        updates.put("setLastName", new String[]{clinician.get().getLastName(), lastName});
+        updates.put("setWorkAddress", new String[]{clinician.get().getWorkAddress(), workAddress});
+        updates.put("setRegion", new Region[]{clinician.get().getRegion(), region});
+        updates.put("setPassword", new String[]{clinician.get().getPassword(), password});
 
         for (Entry<String, Object[]> entry : updates.entrySet()) {
             if (entry.getValue()[1] == null) {

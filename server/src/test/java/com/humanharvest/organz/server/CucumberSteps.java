@@ -1,8 +1,6 @@
 package com.humanharvest.organz.server;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -14,8 +12,9 @@ import java.time.LocalDate;
 
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.state.AuthenticationManager;
+import com.humanharvest.organz.state.AuthenticationManagerFake;
 import com.humanharvest.organz.state.State;
-import cucumber.api.PendingException;
 import cucumber.api.java8.En;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -37,6 +36,7 @@ public final class CucumberSteps implements En {
 
     private ResultActions lastAction;
     private String etag;
+    private String xAuthToken;
 
     @Autowired
     WebApplicationContext webApplicationContext;
@@ -44,12 +44,7 @@ public final class CucumberSteps implements En {
     private MockMvc mockMvc;
 
     public CucumberSteps() {
-        Before(() -> {
-            mockMvc = webAppContextSetup(webApplicationContext).build();
-            State.reset();
-            lastAction = null;
-            etag = null;
-        });
+        Before(this::stepSetup);
 
         CreateSharedGiven();
         CreateClientGiven();
@@ -68,39 +63,50 @@ public final class CucumberSteps implements En {
         Given("^I have an etag of value (x)$", (String etagValue) -> {
             etag = etagValue;
         });
+
+        Given("^authentication is required$", () -> {
+            State.setAuthenticationManager(new AuthenticationManager());
+        });
     }
 
     private void CreateSharedWhen() {
         When("^I get (.+)$", (String url) -> {
-            lastAction = mockMvc.perform(get(url));
+            MockHttpServletRequestBuilder request = get(url);
+            request = setupSharedHeaders(request);
+            lastAction = mockMvc.perform(request);
         });
+
         When("^I post to (.+?) using (.+)$", (String url, String json) -> {
-            lastAction = mockMvc.perform(post(url)
+            MockHttpServletRequestBuilder request = post(url)
                     .contentType(jsonContentType)
-                    .content(json));
+                    .content(json);
+            request = setupSharedHeaders(request);
+            lastAction = mockMvc.perform(request);
         });
 
         When("^I patch to (.+?) using (.+)$", (String url, String json) -> {
-            MockHttpServletRequestBuilder patchQuery = patch(url)
+            MockHttpServletRequestBuilder request = patch(url)
                     .content(json)
                     .contentType(jsonContentType);
-
-            if (etag != null) {
-                patchQuery = patchQuery.header("If-Match", etag);
-            }
-
-            lastAction = mockMvc.perform(patchQuery);
+            request = setupSharedHeaders(request);
+            lastAction = mockMvc.perform(request);
         });
 
         When("^I delete (.+)$", (String url) -> {
-            MockHttpServletRequestBuilder deleteQuery = delete(url);
-
-            if (etag != null) {
-                deleteQuery = deleteQuery.header("If-Match", etag);
-            }
-
-            lastAction = mockMvc.perform(deleteQuery);
+            MockHttpServletRequestBuilder request = delete(url);
+            request = setupSharedHeaders(request);
+            lastAction = mockMvc.perform(request);
         });
+    }
+
+    private MockHttpServletRequestBuilder setupSharedHeaders(MockHttpServletRequestBuilder request) {
+        if (etag != null) {
+            request = request.header("If-Match", etag);
+        }
+        if (xAuthToken != null) {
+            request = request.header("x-Auth-Token", xAuthToken);
+        }
+        return request;
     }
 
     private void CreateSharedThen() {
@@ -114,6 +120,10 @@ public final class CucumberSteps implements En {
 
         Then("^the content type is json$", () -> {
             lastAction = lastAction.andExpect(content().contentType(jsonContentType));
+        });
+
+        Then("^the field (\\w+) exists$", (String fieldName) -> {
+            lastAction = lastAction.andExpect(jsonPath(String.format("$.%s", fieldName), anything()));
         });
 
         Then("^the field (\\w+) is (\\d+)$", (String fieldName, Integer value) -> {
@@ -160,6 +170,10 @@ public final class CucumberSteps implements En {
         Then("^the result is precondition failed$", () -> {
             lastAction = lastAction.andExpect(status().isPreconditionFailed());
         });
+
+        Then("^the result is unauthenticated$", () -> {
+            lastAction = lastAction.andExpect(status().isUnauthorized());
+        });
     }
 
     private void CreateClientGiven() {
@@ -199,11 +213,23 @@ public final class CucumberSteps implements En {
                     Administrator administrator = new Administrator(username, password);
                     State.getAdministratorManager().addAdministrator(administrator);
                 });
+
+        Given("^the authentication token is from administrator (\\w+)", (String username) -> {
+            xAuthToken = State.getAuthenticationManager().generateAdministratorToken(username);
+        });
     }
 
     private void CreateAdministratorWhen() {
     }
 
     private void CreateAdministratorThen() {
+    }
+
+    private void stepSetup() {
+        mockMvc = webAppContextSetup(webApplicationContext).build();
+        State.reset();
+        State.setAuthenticationManager(new AuthenticationManagerFake());
+        lastAction = null;
+        etag = null;
     }
 }
