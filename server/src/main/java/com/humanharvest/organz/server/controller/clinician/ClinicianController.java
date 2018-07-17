@@ -46,9 +46,6 @@ public class ClinicianController {
         return new ResponseEntity<>(clinician, headers, HttpStatus.CREATED);
     }
 
-
-
-
     /**
      * The GET /clinicians/{staffId} endpoint which returns the specified clinicians details
      * @param staffId the id of the clinician
@@ -68,7 +65,6 @@ public class ClinicianController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
-
 
     /**
      * Edits the details of the specified clinician. Note that the staffId cannot be changed.

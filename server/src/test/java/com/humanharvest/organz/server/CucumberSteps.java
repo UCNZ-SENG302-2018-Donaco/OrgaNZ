@@ -12,9 +12,11 @@ import java.time.LocalDate;
 
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.state.AuthenticationManager;
 import com.humanharvest.organz.state.AuthenticationManagerFake;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.enums.Region;
 import cucumber.api.java8.En;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -46,20 +48,33 @@ public final class CucumberSteps implements En {
     public CucumberSteps() {
         Before(this::stepSetup);
 
-        CreateSharedGiven();
-        CreateClientGiven();
-        CreateAdministratorGiven();
+        createSharedGiven();
+        createClientGiven();
+        createClinicianGiven();
+        createAdministratorGiven();
 
-        CreateSharedWhen();
-        CreateClientWhen();
-        CreateAdministratorWhen();
+        createSharedWhen();
+        createClientWhen();
+        createClinicianWhen();
+        createAdministratorWhen();
 
-        CreateSharedThen();
-        CreateClientThen();
-        CreateAdministratorThen();
+        createSharedThen();
+        createClientThen();
+        createClinicianThen();
+        createAdministratorThen();
     }
 
-    private void CreateSharedGiven() {
+    private MockHttpServletRequestBuilder setupSharedHeaders(MockHttpServletRequestBuilder request) {
+        if (etag != null) {
+            request = request.header("If-Match", etag);
+        }
+        if (xAuthToken != null) {
+            request = request.header("x-Auth-Token", xAuthToken);
+        }
+        return request;
+    }
+
+    private void createSharedGiven() {
         Given("^I have an etag of value (x)$", (String etagValue) -> {
             etag = etagValue;
         });
@@ -69,7 +84,7 @@ public final class CucumberSteps implements En {
         });
     }
 
-    private void CreateSharedWhen() {
+    private void createSharedWhen() {
         When("^I get (.+)$", (String url) -> {
             MockHttpServletRequestBuilder request = get(url);
             request = setupSharedHeaders(request);
@@ -99,17 +114,7 @@ public final class CucumberSteps implements En {
         });
     }
 
-    private MockHttpServletRequestBuilder setupSharedHeaders(MockHttpServletRequestBuilder request) {
-        if (etag != null) {
-            request = request.header("If-Match", etag);
-        }
-        if (xAuthToken != null) {
-            request = request.header("x-Auth-Token", xAuthToken);
-        }
-        return request;
-    }
-
-    private void CreateSharedThen() {
+    private void createSharedThen() {
         Then("^the result is ok", () -> {
             lastAction = lastAction.andExpect(status().isOk());
         });
@@ -176,7 +181,7 @@ public final class CucumberSteps implements En {
         });
     }
 
-    private void CreateClientGiven() {
+    private void createClientGiven() {
         Given("^there is a test client named (\\w+) (\\w+) (\\w+)$",
                 (String firstName, String middleName, String lastName) -> {
                     Client testClient = new Client(firstName,
@@ -201,13 +206,13 @@ public final class CucumberSteps implements En {
         });
     }
 
-    private void CreateClientWhen() {
+    private void createClientWhen() {
     }
 
-    private void CreateClientThen() {
+    private void createClientThen() {
     }
 
-    private void CreateAdministratorGiven() {
+    private void createAdministratorGiven() {
         Given("^there is a test administrator with the username (\\w+) and password (\\w+)$",
                 (String username, String password) -> {
                     Administrator administrator = new Administrator(username, password);
@@ -219,10 +224,34 @@ public final class CucumberSteps implements En {
         });
     }
 
-    private void CreateAdministratorWhen() {
+    private void createAdministratorWhen() {
     }
 
-    private void CreateAdministratorThen() {
+    private void createAdministratorThen() {
+    }
+
+    private void createClinicianGiven() {
+        Given("^there is a test clinician with the staff-id (\\d+) and password (\\w+)$",
+                (Integer staffId, String password) -> {
+            Clinician clinician = new Clinician("test",
+                    "test",
+                    "test",
+                    "test",
+                    Region.UNSPECIFIED,
+                    staffId,
+                    password);
+            State.getClinicianManager().addClinician(clinician);
+        });
+
+        Given("^the authentication token is from clinician (\\d+)", (Integer staffId) -> {
+            xAuthToken = State.getAuthenticationManager().generateClinicianToken(staffId);
+        });
+    }
+
+    private void createClinicianWhen() {
+    }
+
+    private void createClinicianThen() {
     }
 
     private void stepSetup() {
