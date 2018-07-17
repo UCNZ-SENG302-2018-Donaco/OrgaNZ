@@ -399,10 +399,13 @@ public class MenuBarController extends SubController {
                             .showInformation();
                     PageNavigator.loadPage(Page.LANDING, mainController);
                 }
-            } catch (URISyntaxException | IOException | IllegalArgumentException e) {
+            } catch (URISyntaxException | IOException e) {
                 PageNavigator.showAlert(AlertType.WARNING, "Load Failed",
-                        "Warning: unrecognisable or invalid file. please make\n"
-                                + "sure that you have selected the correct file type.");
+                        "Warning: unrecognisable or invalid file. Please make "
+                                + "sure that you have selected the correct file.");
+                LOGGER.log(Level.SEVERE, ERROR_LOADING_MESSAGE, e);
+            } catch (IllegalArgumentException e) {
+                PageNavigator.showAlert(AlertType.WARNING, "Load Failed", e.getMessage());
                 LOGGER.log(Level.SEVERE, ERROR_LOADING_MESSAGE, e);
             }
         }
