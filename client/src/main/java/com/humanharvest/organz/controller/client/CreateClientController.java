@@ -10,6 +10,7 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 
+import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.controller.MainController;
@@ -101,27 +102,28 @@ public class CreateClientController extends SubController {
                 }
             }
 
-            int uid = manager.nextUid();
             CreateClientView newClient = new CreateClientView(firstNameFld.getText(), middleNamefld.getText(),
                     lastNamefld.getText(),
                     dobFld.getValue());
 
             CreateClientResolver resolver = new CreateClientResolver(newClient);
+            Client client;
             try {
-                resolver.execute();
+                client = resolver.execute();
             } catch (ServerRestException e) {
                 LOGGER.severe(e.getMessage());
-                        PageNavigator.showAlert(AlertType.ERROR,
+                PageNavigator.showAlert(AlertType.ERROR,
                         "Server Error",
                         "An error occurred while trying to fetch from the server.\nPlease try again later.");
+                return;
             }
 
-            invoker.execute(action);
             HistoryItem save = new HistoryItem("CREATE CLIENT",
-                    String.format("Client %s was created with ID %d", client.getFullName(), uid));
+                    String.format("Client %s was created with ID %d", client.getFullName(), client.getUid()));
             JSONConverter.updateHistory(save, "action_history.json");
 
             if (State.getSession() == null) { // Someone creating a client
+                //TODO: Auth login
                 State.login(client);
                 PageNavigator.loadPage(Page.VIEW_CLIENT, mainController);
 
