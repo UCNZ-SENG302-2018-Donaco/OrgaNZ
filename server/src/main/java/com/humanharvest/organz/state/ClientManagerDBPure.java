@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 import javax.persistence.RollbackException;
 
 import com.humanharvest.organz.Client;
@@ -106,7 +107,7 @@ public class ClientManagerDBPure implements ClientManager {
     }
 
     @Override
-    public Client getClientByID(int id) {
+    public Optional<Client> getClientByID(int id) {
         Transaction trns = null;
         Client client = null;
 
@@ -122,7 +123,7 @@ public class ClientManagerDBPure implements ClientManager {
             }
         }
 
-        return client;
+        return Optional.ofNullable(client);
     }
 
     @Override

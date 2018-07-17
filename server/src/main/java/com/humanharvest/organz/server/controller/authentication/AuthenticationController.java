@@ -4,12 +4,16 @@ import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Administrator;
+import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.state.AdministratorManager;
+import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.ClinicianManager;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.views.administrator.AdministratorLoginRequest;
 import com.humanharvest.organz.views.administrator.AdministratorLoginResponse;
+import com.humanharvest.organz.views.client.ClientLoginRequest;
+import com.humanharvest.organz.views.client.ClientLoginResponse;
 import com.humanharvest.organz.views.client.Views;
 import com.humanharvest.organz.views.clinician.ClinicianLoginRequest;
 import com.humanharvest.organz.views.clinician.ClinicianLoginResponse;
@@ -22,6 +26,33 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class AuthenticationController {
+    /**
+     * Logs in a client.
+     */
+    @PostMapping("/login/client")
+    @JsonView(Views.Overview.class)
+    public ResponseEntity<ClientLoginResponse> loginClient(
+            @RequestBody ClientLoginRequest loginRequest,
+            @RequestParam(required = false) String view) {
+
+        int id = loginRequest.getId();
+        ClientManager clientManager = State.getClientManager();
+        Optional<Client> client = clientManager.getClientByID(id);
+
+        if (!client.isPresent()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+
+        String token = State.getAuthenticationManager().generateClientToken(client.get().getUid());
+
+        ClientLoginResponse loginResponse =
+                ("full".equals(view) || view == null) ?
+                        new ClientLoginResponse(token, client.get()) :
+                        new ClientLoginResponse(token);
+
+        return new ResponseEntity<>(loginResponse, HttpStatus.OK);
+    }
+
     /**
      * Logs in a clinician.
      */

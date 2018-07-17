@@ -72,7 +72,7 @@ public class ClientManagerMemoryTest extends BaseTest {
         client1.setFirstName("New");
 
         assertTrue(manager.getClients().contains(client1));
-        assertEquals(manager.getClientByID(1).getFirstName(), "New");
+        assertEquals("New", manager.getClientByID(1).orElseThrow(RuntimeException::new).getFirstName());
     }
 
 
@@ -118,7 +118,7 @@ public class ClientManagerMemoryTest extends BaseTest {
         clients.add(client1);
         manager = new ClientManagerMemory(clients);
 
-        assertNull(manager.getClientByID(2));
+        assertFalse(manager.getClientByID(2).isPresent());
     }
 
     @Test

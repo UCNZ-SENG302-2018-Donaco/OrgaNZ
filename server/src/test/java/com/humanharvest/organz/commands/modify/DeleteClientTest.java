@@ -3,7 +3,9 @@ package com.humanharvest.organz.commands.modify;
 import static org.mockito.Mockito.*;
 
 import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
+import java.util.Optional;
 
 import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.Client;
@@ -47,7 +49,7 @@ public class DeleteClientTest extends BaseTest {
 
     @Test
     public void deleteuser_non_existent_id() {
-        when(spyClientManager.getClientByID(anyInt())).thenReturn(null);
+        when(spyClientManager.getClientByID(anyInt())).thenReturn(Optional.empty());
         String[] inputs = {"-u", "2"};
 
         CommandLine.run(spyDeleteClient, System.out, inputs);
@@ -59,10 +61,10 @@ public class DeleteClientTest extends BaseTest {
     @Test
     public void deleteuser_valid_reject() {
         Client client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
-        when(spyClientManager.getClientByID(anyInt())).thenReturn(client);
+        when(spyClientManager.getClientByID(anyInt())).thenReturn(Optional.of(client));
         String[] inputs = {"-u", "1"};
 
-        ByteArrayInputStream in = new ByteArrayInputStream("n".getBytes());
+        ByteArrayInputStream in = new ByteArrayInputStream("n".getBytes(StandardCharsets.UTF_8));
         System.setIn(in);
 
         CommandLine.run(spyDeleteClient, System.out, inputs);
@@ -73,7 +75,7 @@ public class DeleteClientTest extends BaseTest {
     @Test
     public void DeleteUserValidWithYesFlag() {
         Client client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
-        when(spyClientManager.getClientByID(anyInt())).thenReturn(client);
+        when(spyClientManager.getClientByID(anyInt())).thenReturn(Optional.of(client));
         String[] inputs = {"-u", "1", "-y"};
 
         CommandLine.run(spyDeleteClient, System.out, inputs);
@@ -85,7 +87,7 @@ public class DeleteClientTest extends BaseTest {
     @Test
     public void DeleteUserValidNoYesFlag() {
         Client client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
-        when(spyClientManager.getClientByID(anyInt())).thenReturn(client);
+        when(spyClientManager.getClientByID(anyInt())).thenReturn(Optional.of(client));
         String[] inputs = {"-u", "1"};
 
         CommandLine.run(spyDeleteClient, System.out, inputs);

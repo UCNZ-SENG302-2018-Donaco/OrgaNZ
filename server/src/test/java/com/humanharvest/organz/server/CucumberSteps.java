@@ -202,7 +202,10 @@ public final class CucumberSteps implements En {
         });
 
         Given("^I have an etag from client (\\d+)$", (Integer clientId) -> {
-            etag = State.getClientManager().getClientByID(clientId).getEtag();
+            etag = State.getClientManager()
+                    .getClientByID(clientId)
+                    .orElseThrow(IllegalArgumentException::new)
+                    .getEtag();
         });
     }
 

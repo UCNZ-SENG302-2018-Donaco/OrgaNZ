@@ -2,6 +2,7 @@ package com.humanharvest.organz.server.controller.client;
 
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.actions.client.ModifyClientOrgansAction;
@@ -27,15 +28,15 @@ public class ClientDonationStatusController {
 
     @GetMapping("/clients/{id}/donationStatus")
     public ResponseEntity<Map<Organ, Boolean>> getClientDonationStatus(@PathVariable int id) {
-        Client client = State.getClientManager().getClientByID(id);
-        if (client == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } else {
+        Optional<Client> client = State.getClientManager().getClientByID(id);
+        if (client.isPresent()) {
             //Add the ETag to the headers
             HttpHeaders headers = new HttpHeaders();
-            headers.add("ETag", client.getEtag());
+            headers.add("ETag", client.get().getEtag());
 
-            return new ResponseEntity<>(client.getOrganDonationStatus(), headers, HttpStatus.OK);
+            return new ResponseEntity<>(client.get().getOrganDonationStatus(), headers, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
@@ -59,8 +60,8 @@ public class ClientDonationStatusController {
         //There would be an auth check here. Not yet implemented
 
         //Fetch the client given by ID
-        Client client = State.getClientManager().getClientByID(id);
-        if (client == null) {
+        Optional<Client> client = State.getClientManager().getClientByID(id);
+        if (!client.isPresent()) {
             //Return 404 if that client does not exist
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -69,13 +70,13 @@ public class ClientDonationStatusController {
         if (ETag == null) {
             throw new IfMatchRequiredException();
         }
-        if (!client.getEtag().equals(ETag)) {
+        if (!client.get().getEtag().equals(ETag)) {
             throw new
                     IfMatchFailedException();
         }
 
         //Create the action
-        ModifyClientOrgansAction action = new ModifyClientOrgansAction(client, State.getClientManager());
+        ModifyClientOrgansAction action = new ModifyClientOrgansAction(client.get(), State.getClientManager());
         //Add all the changes. This can throw an OrganAlreadyRegisteredException but we throw it and handle with the
         // above @ExceptionHandler
         for (Entry<Organ, Boolean> updatedValue : updatedValues.entrySet()) {
@@ -87,9 +88,9 @@ public class ClientDonationStatusController {
 
         //Add the new ETag to the headers
         HttpHeaders headers = new HttpHeaders();
-        headers.add("ETag", client.getEtag());
+        headers.add("ETag", client.get().getEtag());
 
         //Respond, apparently updates should be 200 not 201 unlike 365 and our spec
-        return new ResponseEntity<>(client.getOrganDonationStatus(), headers, HttpStatus.OK);
+        return new ResponseEntity<>(client.get().getOrganDonationStatus(), headers, HttpStatus.OK);
     }
 }

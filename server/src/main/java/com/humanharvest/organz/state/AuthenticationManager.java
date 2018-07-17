@@ -43,11 +43,11 @@ public class AuthenticationManager {
     }
 
     /**
-     * Generates an authentication token for an administrator.
+     * Generates an authentication token for a clinician.
      */
-    public String generateAdministratorToken(String username) {
+    public String generateClientToken(int id) {
         return Jwts.builder()
-                .setSubject(username)
+                .setId(String.valueOf(id))
                 .setIssuedAt(Date.from(Instant.now()))
                 .setExpiration(Date.from(Instant.now().plusSeconds(86400))) // 24 hours
                 .signWith(SignatureAlgorithm.HS512, getSecret())
@@ -60,6 +60,18 @@ public class AuthenticationManager {
     public String generateClinicianToken(int staffId) {
         return Jwts.builder()
                 .setSubject(String.valueOf(staffId))
+                .setIssuedAt(Date.from(Instant.now()))
+                .setExpiration(Date.from(Instant.now().plusSeconds(86400))) // 24 hours
+                .signWith(SignatureAlgorithm.HS512, getSecret())
+                .compact();
+    }
+
+    /**
+     * Generates an authentication token for an administrator.
+     */
+    public String generateAdministratorToken(String username) {
+        return Jwts.builder()
+                .setSubject(username)
                 .setIssuedAt(Date.from(Instant.now()))
                 .setExpiration(Date.from(Instant.now().plusSeconds(86400))) // 24 hours
                 .signWith(SignatureAlgorithm.HS512, getSecret())

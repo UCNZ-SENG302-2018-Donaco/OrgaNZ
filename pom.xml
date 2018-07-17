@@ -71,7 +71,7 @@
     <outputDirectory>${project.basedir}/../target</outputDirectory>
     <sonar.jacoco.reportPaths>${outputDirectory}/coverage-reports/jacoco-unit.exec</sonar.jacoco.reportPaths>
     <sonar.host.url>
-      http://csse-s302g0.canterbury.ac.nz:9000/
+      http://localhost:9000/
     </sonar.host.url>
   </properties>
 

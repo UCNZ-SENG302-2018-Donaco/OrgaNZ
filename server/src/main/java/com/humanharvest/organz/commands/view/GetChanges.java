@@ -1,6 +1,8 @@
 package com.humanharvest.organz.commands.view;
 
 
+import java.util.Optional;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.state.ClientManager;
@@ -35,14 +37,14 @@ public class GetChanges implements Runnable {
 
     @Override
     public void run() {
-        Client client = manager.getClientByID(uid);
-        if (client == null) {
+        Optional<Client> client = manager.getClientByID(uid);
+        if (client.isPresent()) {
+            System.out.println(client.get().getUpdatesString());
+            HistoryItem printAllHistory = new HistoryItem("PRINT UPDATE HISTORY", "All client's history printed.");
+            JSONConverter.updateHistory(printAllHistory, "action_history.json");
+        } else {
             System.out.println("No client exists with that user ID");
-            return;
         }
-        System.out.println(client.getUpdatesString());
-        HistoryItem printAllHistory = new HistoryItem("PRINT UPDATE HISTORY", "All client's history printed.");
-        JSONConverter.updateHistory(printAllHistory, "action_history.json");
     }
 }
 
