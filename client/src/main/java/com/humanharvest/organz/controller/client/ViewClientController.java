@@ -6,6 +6,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.OptionalInt;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javafx.collections.FXCollections;
@@ -22,14 +23,9 @@ import javafx.scene.paint.Color;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
-import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
-import com.humanharvest.organz.utilities.exceptions.NotFoundException;
-import com.humanharvest.organz.utilities.exceptions.ServerRestException;
-import com.humanharvest.organz.views.client.ModifyClientObject;
 import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.actions.client.MarkClientAsDeadAction;
-import com.humanharvest.organz.actions.client.ModifyClientAction;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.resolvers.client.ModifyClientDetailsResolver;
@@ -42,8 +38,12 @@ import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.enums.BloodType;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Region;
+import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
+import com.humanharvest.organz.utilities.exceptions.NotFoundException;
+import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.validators.IntValidator;
 import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.views.client.ModifyClientObject;
 import org.controlsfx.control.Notifications;
 
 /**
@@ -178,8 +178,8 @@ public class ViewClientController extends SubController {
                     "An error occurred while trying to fetch from the server.\nPlease try again later.");
         } catch (NotFoundException e) {
             PageNavigator.showAlert(AlertType.WARNING,
-                        "Client Not Found",
-                            "The specified client could not be located. Please enter a different ID");
+                    "Client Not Found",
+                    "The specified client could not be located. Please enter a different ID");
             noClientLabel.setVisible(true);
             setFieldsDisabled(true);
         }
@@ -210,8 +210,8 @@ public class ViewClientController extends SubController {
             lastModified.setText(viewedClient.getModifiedTimestamp().format(dateTimeFormat));
         }
 
-            displayBMI();
-            displayAge();
+        displayBMI();
+        displayAge();
 
     }
 
@@ -276,7 +276,6 @@ public class ViewClientController extends SubController {
         return update;
     }
 
-
     /**
      * Checks that non mandatory fields have either valid input, or no input. Otherwise red text is shown.
      * @return true if all non mandatory fields have valid/no input.
@@ -334,17 +333,7 @@ public class ViewClientController extends SubController {
                 modifyClientObject.registerChange(fieldString);
             }
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-    }
-    
-    private void addChangeIfDifferent(ModifyClientAction action, String field, Object oldValue, Object newValue) {
-        try {
-            if (!Objects.equals(oldValue, newValue)) {
-                action.addChange(field, oldValue, newValue);
-            }
-        } catch (NoSuchFieldException | NoSuchMethodException exc) {
-            exc.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
     }
 
@@ -353,7 +342,6 @@ public class ViewClientController extends SubController {
      * @return If there were any changes made
      */
     private boolean updateChanges() {
-        ModifyClientAction action = new ModifyClientAction(viewedClient, manager);
         ModifyClientObject modifyClientObject = new ModifyClientObject();
 
         ModifyClientDetailsResolver resolver = new ModifyClientDetailsResolver(viewedClient, modifyClientObject);
@@ -366,6 +354,7 @@ public class ViewClientController extends SubController {
                     "This will cancel all waiting transplant requests for this client.");
 
             if (buttonOpt.isPresent() && buttonOpt.get() == ButtonType.OK) {
+
                 Action markDeadAction = new MarkClientAsDeadAction(viewedClient, dod.getValue(), manager);
                 String actionText = invoker.execute(markDeadAction);
 
@@ -380,14 +369,13 @@ public class ViewClientController extends SubController {
             addChangeIfDifferent(modifyClientObject, "dateOfDeath", dod.getValue());
         }
 
-
         addChangeIfDifferent(modifyClientObject, "firstName", fname.getText());
         addChangeIfDifferent(modifyClientObject, "lastName", lname.getText());
         addChangeIfDifferent(modifyClientObject, "middleName", mname.getText());
         addChangeIfDifferent(modifyClientObject, "preferredName", pname.getText());
         addChangeIfDifferent(modifyClientObject, "dateOfBirth", dob.getValue());
         addChangeIfDifferent(modifyClientObject, "gender", gender.getValue());
-        addChangeIfDifferent(modifyClientObject, "genderIdentity",genderIdentity.getValue());
+        addChangeIfDifferent(modifyClientObject, "genderIdentity", genderIdentity.getValue());
         addChangeIfDifferent(modifyClientObject, "height", Double.parseDouble(height.getText()));
         addChangeIfDifferent(modifyClientObject, "weight", Double.parseDouble(weight.getText()));
         addChangeIfDifferent(modifyClientObject, "bloodType", btype.getValue());
@@ -415,8 +403,28 @@ public class ViewClientController extends SubController {
                         .showWarning();
                 return false;
             }
-        } catch (NotFoundException | IfMatchRequiredException e) {
-            LOGGER.severe(e.getMessage());
+        } catch (NotFoundException e) {
+            LOGGER.log(Level.WARNING, "Client not found");
+            Notifications.create()
+                    .title("Client not found")
+                    .text("The client could not be found on the server, it may have been deleted")
+                    .showWarning();
+            return false;
+        } catch (ServerRestException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
+            Notifications.create()
+                    .title("Server error")
+                    .text("Could not apply changes on the server, please try again later")
+                    .showError();
+            return false;
+        } catch (IfMatchFailedException e) {
+            LOGGER.log(Level.INFO, "If-Match did not match");
+            Notifications.create()
+                    .title("Outdated Data")
+                    .text("The client has been modified since you retrieved the data. If you would still like to "
+                            + "apply these changes please submit again, otherwise refresh the page to update the data.")
+                    .showWarning();
+            return false;
         }
 
         PageNavigator.refreshAllWindows();

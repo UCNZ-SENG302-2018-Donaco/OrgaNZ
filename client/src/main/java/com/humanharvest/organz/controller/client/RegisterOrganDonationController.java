@@ -4,6 +4,8 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import javafx.fxml.FXML;
@@ -16,7 +18,6 @@ import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.actions.ActionInvoker;
-import com.humanharvest.organz.actions.client.ModifyClientOrgansAction;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.resolvers.ClientResolver;
@@ -27,6 +28,9 @@ import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
+import com.humanharvest.organz.utilities.exceptions.NotFoundException;
+import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import org.controlsfx.control.Notifications;
 
@@ -34,6 +38,8 @@ import org.controlsfx.control.Notifications;
  * Controller for the register organs page.
  */
 public class RegisterOrganDonationController extends SubController {
+
+    private static final Logger LOGGER = Logger.getLogger(RegisterOrganDonationController.class.getName());
 
     private Session session;
     private ClientManager manager;
@@ -106,8 +112,26 @@ public class RegisterOrganDonationController extends SubController {
         if (client != null) {
             setCheckBoxesEnabled();
 
-            List<TransplantRequest> transplantRequests = ClientResolver.getTransplantRequests(client.getUid());
-            donationStatus = ClientResolver.getOrganDonationStatus(client.getUid());
+            List<TransplantRequest> transplantRequests;
+
+            try {
+                transplantRequests = ClientResolver.getTransplantRequests(client.getUid());
+                donationStatus = ClientResolver.getOrganDonationStatus(client.getUid());
+            } catch (NotFoundException e) {
+                LOGGER.log(Level.WARNING, "Client not found");
+                Notifications.create()
+                        .title("Client not found")
+                        .text("The client could not be found on the server, it may have been deleted")
+                        .showWarning();
+                return;
+            } catch (ServerRestException e) {
+                LOGGER.log(Level.WARNING, e.getMessage(), e);
+                Notifications.create()
+                        .title("Server error")
+                        .text("Could not apply changes on the server, please try again later")
+                        .showError();
+                return;
+            }
 
             EnumSet<Organ> allPreviouslyRequestedOrgans = transplantRequests
                     .stream()
@@ -153,7 +177,6 @@ public class RegisterOrganDonationController extends SubController {
     @FXML
     private void apply() {
         ModifyClientOrganDonationResolver resolver = new ModifyClientOrganDonationResolver(client);
-        ModifyClientOrgansAction action = new ModifyClientOrgansAction(client, State.getClientManager());
         boolean hasChanged = false;
 
         for (Organ organ : organCheckBoxes.keySet()) {
@@ -166,8 +189,31 @@ public class RegisterOrganDonationController extends SubController {
             }
         }
         if (hasChanged) {
-            resolver.execute();
-            String actionText = "test";
+            try {
+                resolver.execute();
+            } catch (NotFoundException e) {
+                LOGGER.log(Level.WARNING, "Client not found");
+                Notifications.create()
+                        .title("Client not found")
+                        .text("The client could not be found on the server, it may have been deleted")
+                        .showWarning();
+                return;
+            } catch (ServerRestException e) {
+                LOGGER.log(Level.WARNING, e.getMessage(), e);
+                Notifications.create()
+                        .title("Server error")
+                        .text("Could not apply changes on the server, please try again later")
+                        .showError();
+                return;
+            } catch (IfMatchFailedException e) {
+                LOGGER.log(Level.INFO, "If-Match did not match");
+                Notifications.create()
+                        .title("Outdated Data")
+                        .text("The client has been modified since you retrieved the data. If you would still like to "
+                                + "apply these changes please submit again, otherwise refresh the page to update the data.")
+                        .showWarning();
+                return;
+            }
             HistoryItem save = new HistoryItem("UPDATE ORGANS",
                     "The Client's organs were updated: " + client.getOrganStatusString("donations"));
             JSONConverter.updateHistory(save, "action_history.json");
@@ -175,7 +221,7 @@ public class RegisterOrganDonationController extends SubController {
             PageNavigator.refreshAllWindows();
             Notifications.create()
                     .title("Updated Donating Organs")
-                    .text(actionText)
+                    .text(resolver.toString())
                     .showInformation();
         } else {
             Notifications.create()

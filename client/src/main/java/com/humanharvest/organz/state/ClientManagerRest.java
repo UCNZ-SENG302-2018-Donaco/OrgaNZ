@@ -43,7 +43,7 @@ public class ClientManagerRest implements ClientManager {
 
     @Override
     public void removeClient(Client client)
-            throws AuthenticationException, IfMatchFailedException, IfMatchRequiredException {
+            throws IfMatchFailedException {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setIfMatch(State.getClientEtag());
         HttpEntity entity = new HttpEntity<>(null, httpHeaders);
