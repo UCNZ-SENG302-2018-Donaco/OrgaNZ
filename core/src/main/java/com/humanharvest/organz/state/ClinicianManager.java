@@ -2,6 +2,7 @@ package com.humanharvest.organz.state;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import com.humanharvest.organz.Clinician;
 
@@ -44,9 +45,9 @@ public interface ClinicianManager {
     /**
      * Return a clinician matching that UID
      * @param staffId To be matched
-     * @return Clinician object or null if none exists
+     * @return Clinician object or empty if none exists
      */
-    Clinician getClinicianByStaffId(int staffId);
+    Optional<Clinician> getClinicianByStaffId(int staffId);
 
     /**
      * Return the default clinician

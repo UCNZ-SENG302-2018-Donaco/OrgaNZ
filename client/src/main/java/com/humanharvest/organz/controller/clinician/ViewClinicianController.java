@@ -2,6 +2,7 @@ package com.humanharvest.organz.controller.clinician;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
+import java.util.Optional;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -109,14 +110,14 @@ public class ViewClinicianController extends SubController {
                     "The Staff ID must be an integer.");
             return;
         }
-        Clinician newClin = State.getClinicianManager().getClinicianByStaffId(id_value);
+        Optional<Clinician> newClin = State.getClinicianManager().getClinicianByStaffId(id_value);
 
-        if (newClin == null) {
+        if (newClin.isPresent()) {
+            currentClinician = newClin.get();
+        } else {
             PageNavigator.showAlert(Alert.AlertType.ERROR, "Invalid Staff ID",
                     "This staff ID does not exist in the system.");
             return;
-        } else {
-            currentClinician = newClin;
         }
 
         loadClinicianData();
@@ -170,13 +171,13 @@ public class ViewClinicianController extends SubController {
      */
     private boolean checkMandatoryFields() {
         boolean update = true;
-        if (fname.getText().equals("")) {
+        if (fname.getText().isEmpty()) {
             fnameLabel.setTextFill(Color.RED);
             update = false;
         } else {
             fnameLabel.setTextFill(Color.BLACK);
         }
-        if (lname.getText().equals("")) {
+        if (lname.getText().isEmpty()) {
             lnameLabel.setTextFill(Color.RED);
             update = false;
         } else {
@@ -192,7 +193,7 @@ public class ViewClinicianController extends SubController {
      * @return the users password.
      */
     private String checkPassword() {
-        if (password.getText().equals("")) {
+        if (password.getText().isEmpty()) {
             return currentClinician.getPassword();
         } else {
             return password.getText();

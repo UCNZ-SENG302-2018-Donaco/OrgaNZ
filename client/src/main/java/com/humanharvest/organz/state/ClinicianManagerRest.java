@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import com.humanharvest.organz.Clinician;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
@@ -14,7 +16,7 @@ public class ClinicianManagerRest implements ClinicianManager {
 
     @Override
     public void addClinician(Clinician clinician) {
-        throw new UnsupportedOperationException();
+        State.getRestTemplate().postForObject(State.BASE_URI + "clinicians", new HttpEntity<>(clinician), Clinician.class);
     }
 
     @Override
@@ -62,12 +64,12 @@ public class ClinicianManagerRest implements ClinicianManager {
      * @return the details of the clinician found from the supplied staffId.
      */
     @Override
-    public Clinician getClinicianByStaffId(int staffId) {
+    public Optional<Clinician> getClinicianByStaffId(int staffId) {
         ResponseEntity<Clinician> clinician = State.getRestTemplate().exchange(State.BASE_URI + "clinicians/{staffId}",
                 HttpMethod.GET, null, new ParameterizedTypeReference<Clinician>() {
                 }, staffId);
         State.setClinicianEtag(clinician.getHeaders().getETag());
-        return clinician.getBody();
+        return Optional.ofNullable(clinician.getBody());
     }
 
     @Override
