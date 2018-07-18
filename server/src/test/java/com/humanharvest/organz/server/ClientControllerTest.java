@@ -195,7 +195,7 @@ public class ClientControllerTest {
 
         //Check that the fields updated correctly
 
-        Client c = State.getClientManager().getClientByID(1);
+        Client c = State.getClientManager().getClientByID(1).orElse(null);
         //assertEquals("");
         System.out.println(c);
     }

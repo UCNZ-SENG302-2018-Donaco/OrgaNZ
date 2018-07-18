@@ -23,11 +23,10 @@ import javafx.scene.paint.Color;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
-import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.actions.ActionInvoker;
-import com.humanharvest.organz.actions.client.MarkClientAsDeadAction;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.resolvers.client.MarkClientAsDeadResolver;
 import com.humanharvest.organz.resolvers.client.ModifyClientDetailsResolver;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
@@ -355,14 +354,30 @@ public class ViewClientController extends SubController {
 
             if (buttonOpt.isPresent() && buttonOpt.get() == ButtonType.OK) {
 
-                Action markDeadAction = new MarkClientAsDeadAction(viewedClient, dod.getValue(), manager);
-                String actionText = invoker.execute(markDeadAction);
-
+                MarkClientAsDeadResolver deadResolver = new MarkClientAsDeadResolver(viewedClient, dod.getValue());
+                try {
+                    deadResolver.execute();
+                } catch (NotFoundException e) {
+                    LOGGER.log(Level.WARNING, "Client not found");
+                    PageNavigator.showAlert(AlertType.WARNING, "Client not found", "The client could not be found on the "
+                            + "server, it may have been deleted");
+                    return false;
+                } catch (ServerRestException e) {
+                    LOGGER.log(Level.WARNING, e.getMessage(), e);
+                    PageNavigator.showAlert(AlertType.WARNING, "Server error", "Could not apply changes on the server, "
+                            + "please try again later");
+                    return false;
+                } catch (IfMatchFailedException e) {
+                    LOGGER.log(Level.INFO, "If-Match did not match");
+                    PageNavigator.showAlert(AlertType.WARNING, "Outdated Data", "The client has been modified since you retrieved the data.\nIf you would still like to "
+                            + "apply these changes please submit again, otherwise refresh the page to update the data.");
+                    return false;
+                }
                 clientDied = true;
 
                 Notifications.create()
                         .title("Marked Client as Dead")
-                        .text(actionText)
+                        .text("All organ transplant requests have been removed")
                         .showConfirm();
             }
         } else {
@@ -382,9 +397,19 @@ public class ViewClientController extends SubController {
         addChangeIfDifferent(modifyClientObject, "region", region.getValue());
         addChangeIfDifferent(modifyClientObject, "currentAddress", address.getText());
 
+        if (modifyClientObject.getModifiedFields().size() == 0) {
+            if (!clientDied) {
+                Notifications.create()
+                        .title("No changes were made.")
+                        .text("No changes were made to the client.")
+                        .showWarning();
+                return false;
+            }
+        }
+
         try {
             resolver.execute();
-            String actionText = "test";
+            String actionText = modifyClientObject.toString();
 
             Notifications.create()
                     .title("Updated Client")
@@ -395,35 +420,20 @@ public class ViewClientController extends SubController {
                     String.format("Updated client %s with values: %s", viewedClient.getFullName(), actionText));
             JSONConverter.updateHistory(save, "action_history.json");
 
-        } catch (IllegalStateException exc) {
-            if (!clientDied) {
-                Notifications.create()
-                        .title("No changes were made.")
-                        .text("No changes were made to the client.")
-                        .showWarning();
-                return false;
-            }
         } catch (NotFoundException e) {
             LOGGER.log(Level.WARNING, "Client not found");
-            Notifications.create()
-                    .title("Client not found")
-                    .text("The client could not be found on the server, it may have been deleted")
-                    .showWarning();
+            PageNavigator.showAlert(AlertType.WARNING, "Client not found", "The client could not be found on the "
+                    + "server, it may have been deleted");
             return false;
         } catch (ServerRestException e) {
             LOGGER.log(Level.WARNING, e.getMessage(), e);
-            Notifications.create()
-                    .title("Server error")
-                    .text("Could not apply changes on the server, please try again later")
-                    .showError();
+            PageNavigator.showAlert(AlertType.WARNING, "Server error", "Could not apply changes on the server, "
+                    + "please try again later");
             return false;
         } catch (IfMatchFailedException e) {
             LOGGER.log(Level.INFO, "If-Match did not match");
-            Notifications.create()
-                    .title("Outdated Data")
-                    .text("The client has been modified since you retrieved the data. If you would still like to "
-                            + "apply these changes please submit again, otherwise refresh the page to update the data.")
-                    .showWarning();
+            PageNavigator.showAlert(AlertType.WARNING, "Outdated Data", "The client has been modified since you retrieved the data.\nIf you would still like to "
+                    + "apply these changes please submit again, otherwise refresh the page to update the data.");
             return false;
         }
 
