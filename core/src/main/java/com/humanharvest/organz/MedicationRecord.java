@@ -67,6 +67,10 @@ public class MedicationRecord implements Comparable<MedicationRecord> {
         return stopped;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     /**
      * This method should be called only when this record is added to/removed from a client's collection.
      * Therefore it is package-private so it may only be called from Client.

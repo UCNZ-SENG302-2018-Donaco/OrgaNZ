@@ -30,6 +30,7 @@ import com.humanharvest.organz.Client;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.MedicationRecord;
+import com.humanharvest.organz.resolvers.client.AddMedicationRecordResolver;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
@@ -261,9 +262,11 @@ public class ViewMedicationsController extends SubController {
     private void addMedication(String newMedName) {
         if (!newMedName.equals("")) {
             MedicationRecord record = new MedicationRecord(newMedName, LocalDate.now(), null);
+            AddMedicationRecordResolver resolver = new AddMedicationRecordResolver(client, record);
             AddMedicationRecordAction action = new AddMedicationRecordAction(client, record, manager);
 
-            invoker.execute(action);
+            //invoker.execute(action);
+            resolver.execute();
             newMedField.setText("");
             PageNavigator.refreshAllWindows();
             refreshMedicationLists();

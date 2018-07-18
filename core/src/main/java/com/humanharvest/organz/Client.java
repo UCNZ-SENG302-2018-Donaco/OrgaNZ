@@ -498,6 +498,20 @@ public class Client {
     }
 
     /**
+     * Returns the MedicationRecord for the client with the given id
+     * @param id id of the MedicationRecord
+     * @return the MedicationRecord with the given id
+     */
+    public MedicationRecord getMedicationRecordById(int id) {
+        for (MedicationRecord record : medicationHistory) {
+            if (record.getId() == id) {
+                return record;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Calculates the BMI of the Client based off their height and weight - BMI = weight/height^2.
      * If either field is 0, the result returned is 0.
      * @return the users calculated BMI.
