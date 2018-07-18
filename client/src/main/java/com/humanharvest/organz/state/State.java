@@ -42,6 +42,7 @@ public final class State {
     private static RestTemplate restTemplate = new RestTemplate();
     private static String clientEtag = "";
     private static String clinicianEtag = "";
+    private static String token = "";
 
     public static String getClientEtag() {
         return clientEtag;
@@ -139,6 +140,14 @@ public final class State {
     public static void logout() {
         // Do something with the old session
         session = null;
+    }
+
+    public static void setToken(String t) {
+        token = t;
+    }
+
+    public static String getToken() {
+        return token;
     }
 
     public static void reset() {

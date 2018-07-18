@@ -17,6 +17,7 @@ public class AuthenticationManagerMemory implements AuthenticationManager {
             throw new AuthenticationException("Client ID does not exist.");
         }
 
+        State.login(client.get());
         return client.get();
     }
 
@@ -31,7 +32,7 @@ public class AuthenticationManagerMemory implements AuthenticationManager {
         if (!clinician.get().getPassword().equals(password)) {
             throw new AuthenticationException("Password is incorrect.");
         }
-
+        State.login(clinician.get());
         return clinician.get();
     }
 
@@ -44,7 +45,7 @@ public class AuthenticationManagerMemory implements AuthenticationManager {
         if (!administrator.getPassword().equals(password)) {
             throw new AuthenticationException("Password is incorrect.");
         }
-
+        State.login(administrator);
         return administrator;
     }
 }

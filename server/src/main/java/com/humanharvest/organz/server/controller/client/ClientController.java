@@ -10,9 +10,10 @@ import com.humanharvest.organz.actions.client.DeleteClientAction;
 import com.humanharvest.organz.actions.client.MarkClientAsDeadAction;
 import com.humanharvest.organz.actions.client.ModifyClientByObjectAction;
 import com.humanharvest.organz.server.exceptions.GlobalControllerExceptionHandler.InvalidRequestException;
+import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
-import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.validators.client.ClientBornAndDiedDatesValidator;
 import com.humanharvest.organz.utilities.validators.client.CreateClientValidator;
 import com.humanharvest.organz.utilities.validators.client.ModifyClientValidator;
@@ -38,11 +39,16 @@ public class ClientController {
     /**
      * Returns all clients or some optional subset by filtering
      * @return A list of Client overviews
+     * @throws AuthenticationException Thrown if the token supplied is invalid, or does not match a clinician or admin
      */
     @GetMapping("/clients")
     @JsonView(Views.Overview.class)
-    public ResponseEntity<List<Client>> getClients() {
-        //TODO: Auth
+    public ResponseEntity<List<Client>> getClients(
+            @RequestHeader(value = "X-Auth-Token", required = false) String authentication) throws AuthenticationException {
+
+        //TODO: Add the auth check, but need to remake the login page to not get the list of clients
+        //State.getAuthenticationManager().verifyClinicianOrAdmin(authentication);
+
         //TODO: Filters
         return new ResponseEntity<>(State.getClientManager().getClients(), HttpStatus.OK);
     }
@@ -85,12 +91,15 @@ public class ClientController {
      */
     @GetMapping("/clients/{uid}")
     @JsonView(Views.Details.class)
-    public ResponseEntity<Client> getClient(@PathVariable int uid) {
+    public ResponseEntity<Client> getClient(
+            @PathVariable int uid,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authentication) {
 
-        //TODO: Auth
 
         Optional<Client> client = State.getClientManager().getClientByID(uid);
         if (client.isPresent()) {
+            //Authenticate
+            State.getAuthenticationManager().verifyClientAccess(authentication, client.get());
             //Add the new ETag to the headers
             HttpHeaders headers = new HttpHeaders();
             headers.setETag(client.get().getEtag());
@@ -116,32 +125,35 @@ public class ClientController {
     public ResponseEntity<Client> updateClient(
             @PathVariable int uid,
             @RequestBody ModifyClientObject modifyClientObject,
-            @RequestHeader(value = "If-Match", required = false) String ETag)
-            throws IfMatchRequiredException, IfMatchFailedException, InvalidRequestException {
+            @RequestHeader(value = "If-Match", required = false) String ETag,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authentication)
+            throws IfMatchRequiredException, IfMatchFailedException, InvalidRequestException, AuthenticationException {
 
         //Logical steps for a PATCH
         //We set If-Match to false so we can return a better error code than 400 which happens if a required
         // @RequestHeader is missing, I think this can be improved with an @ExceptionHandler or similar so we don't
         // duplicate code in tons of places but need to work it out
 
-        //TODO: Auth
+        //Fetch the client given by ID
+        Optional<Client> optionalClient = State.getClientManager().getClientByID(uid);
+        if (!optionalClient.isPresent()) {
+            //Return 404 if that client does not exist
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        Client client = optionalClient.get();
 
+        //Check authentication
+        State.getAuthenticationManager().verifyClientAccess(authentication, client);
 
         //Validate the request, if there are any errors an exception will be thrown.
         if (!ModifyClientValidator.isValid(modifyClientObject)) {
             throw new InvalidRequestException();
         }
 
-        //Fetch the client given by ID
-        Optional<Client> client = State.getClientManager().getClientByID(uid);
-        if (!client.isPresent()) {
-            //Return 404 if that client does not exist
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
 
         //Do some extra validation now that we have the client object. Need to check if a date has been changed, it
         // will not become inconsistent
-        if (!ClientBornAndDiedDatesValidator.isValid(modifyClientObject, client.get())) {
+        if (!ClientBornAndDiedDatesValidator.isValid(modifyClientObject, client)) {
             throw new InvalidRequestException();
         }
 
@@ -149,7 +161,7 @@ public class ClientController {
         if (ETag == null) {
             throw new IfMatchRequiredException();
         }
-        if (!client.get().getEtag().equals(ETag)) {
+        if (!client.getEtag().equals(ETag)) {
             throw new IfMatchFailedException();
         }
 
@@ -159,7 +171,7 @@ public class ClientController {
         //Copy the values from the current client to our oldClient
         BeanUtils.copyProperties(client, oldClient, modifyClientObject.getUnmodifiedFields());
         //Make the action (this is a new action)
-        ModifyClientByObjectAction action = new ModifyClientByObjectAction(client.get(),
+        ModifyClientByObjectAction action = new ModifyClientByObjectAction(client,
                 State.getClientManager(),
                 oldClient,
                 modifyClientObject);
@@ -168,10 +180,10 @@ public class ClientController {
 
         //Add the new ETag to the headers
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client.get().getEtag());
+        headers.setETag(client.getEtag());
 
         //Respond, apparently updates should be 200 not 201 unlike 365 and our spec
-        return new ResponseEntity<>(client.get(), headers, HttpStatus.OK);
+        return new ResponseEntity<>(client, headers, HttpStatus.OK);
     }
 
     /**
@@ -186,27 +198,30 @@ public class ClientController {
     @DeleteMapping("/clients/{uid}")
     public ResponseEntity deleteClient(
             @PathVariable int uid,
-            @RequestHeader(value = "If-Match", required = false) String ETag)
+            @RequestHeader(value = "If-Match", required = false) String ETag,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authentication)
             throws IfMatchRequiredException, IfMatchFailedException, InvalidRequestException {
 
-        //TODO: Auth
-
         //Fetch the client given by ID
-        Optional<Client> client = State.getClientManager().getClientByID(uid);
-        if (!client.isPresent()) {
+        Optional<Client> optionalClient = State.getClientManager().getClientByID(uid);
+        if (!optionalClient.isPresent()) {
             //Return 404 if that client does not exist
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+
+        Client client = optionalClient.get();
+
+        State.getAuthenticationManager().verifyClientAccess(authentication, client);
 
         //Check the ETag. These are handled in the exceptions class.
         if (ETag == null) {
             throw new IfMatchRequiredException();
         }
-        if (!client.get().getEtag().equals(ETag)) {
+        if (!client.getEtag().equals(ETag)) {
             throw new IfMatchFailedException();
         }
 
-        DeleteClientAction action = new DeleteClientAction(client.get(), State.getClientManager());
+        DeleteClientAction action = new DeleteClientAction(client, State.getClientManager());
         State.getInvoker().execute(action);
 
         //Respond, apparently updates should be 200 not 201 unlike 365 and our spec
@@ -218,34 +233,37 @@ public class ClientController {
     public ResponseEntity markClientAsDead(
             @PathVariable int uid,
             @RequestHeader(value = "If-Match", required = false) String ETag,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authentication,
             @RequestBody LocalDate dateOfDeath)
             throws IfMatchRequiredException, IfMatchFailedException, InvalidRequestException {
 
-        //TODO: Auth
-
         //Fetch the client given by ID
-        Optional<Client> client = State.getClientManager().getClientByID(uid);
-        if (!client.isPresent()) {
+        Optional<Client> optionalClient = State.getClientManager().getClientByID(uid);
+        if (!optionalClient.isPresent()) {
             //Return 404 if that client does not exist
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+
+        Client client = optionalClient.get();
+
+        State.getAuthenticationManager().verifyClientAccess(authentication, client);
 
         //Check the ETag. These are handled in the exceptions class.
         if (ETag == null) {
             throw new IfMatchRequiredException();
         }
-        if (!client.get().getEtag().equals(ETag)) {
+        if (!client.getEtag().equals(ETag)) {
             throw new IfMatchFailedException();
         }
 
-        MarkClientAsDeadAction action = new MarkClientAsDeadAction(client.get(), dateOfDeath, State.getClientManager
+        MarkClientAsDeadAction action = new MarkClientAsDeadAction(client, dateOfDeath, State.getClientManager
                 ());
         State.getInvoker().execute(action);
 
 
         //Add the new ETag to the headers
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client.get().getEtag());
+        headers.setETag(client.getEtag());
 
         //Respond
         return new ResponseEntity<>(client, headers, HttpStatus.OK);

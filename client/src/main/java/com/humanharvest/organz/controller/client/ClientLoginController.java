@@ -18,8 +18,8 @@ import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.JSONConverter;
-import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
+import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 
@@ -104,7 +104,6 @@ public class ClientLoginController extends SubController {
                     selectedClient.getFirstName(), selectedClient.getLastName(), selectedClient.getUid()));
             JSONConverter.updateHistory(loginHistory, "action_history.json");
 
-            State.login(selectedClient);
             PageNavigator.loadPage(Page.VIEW_CLIENT, mainController);
         }
     }

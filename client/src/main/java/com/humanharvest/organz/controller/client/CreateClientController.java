@@ -123,8 +123,15 @@ public class CreateClientController extends SubController {
             JSONConverter.updateHistory(save, "action_history.json");
 
             if (State.getSession() == null) { // Someone creating a client
-                //TODO: Auth login
-                State.login(client);
+                try {
+                    State.getAuthenticationManager().loginClient(client.getUid());
+                } catch (ServerRestException e) {
+                    LOGGER.severe(e.getMessage());
+                    PageNavigator.showAlert(AlertType.ERROR,
+                            "Server Error",
+                            "An error occurred while trying to fetch from the server.\nPlease try again later.");
+                    return;
+                }
                 PageNavigator.loadPage(Page.VIEW_CLIENT, mainController);
 
             } else { // Clinician or admin are creating a user.
