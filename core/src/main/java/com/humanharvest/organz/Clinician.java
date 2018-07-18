@@ -33,6 +33,7 @@ public class Clinician {
     private String middleName;
     @JsonView(Views.Overview.class)
     private String workAddress;
+    @JsonView(Views.Details.class)
     private String password;
 
     @Enumerated(EnumType.STRING)
@@ -190,5 +191,13 @@ public class Clinician {
     @Override
     public int hashCode() {
         return staffId;
+    }
+
+    public String getEtag() {
+        if (modifiedOn == null) {
+            return "\"" + String.valueOf(createdOn.hashCode()) + "\"";
+        } else {
+            return "\"" + String.valueOf(modifiedOn.hashCode()) + "\"";
+        }
     }
 }
