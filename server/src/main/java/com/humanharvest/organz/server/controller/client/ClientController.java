@@ -1,22 +1,24 @@
 package com.humanharvest.organz.server.controller.client;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Client;
-import com.humanharvest.organz.views.client.CreateClientView;
-import com.humanharvest.organz.views.client.ModifyClientObject;
-import com.humanharvest.organz.views.client.Views;
 import com.humanharvest.organz.actions.client.DeleteClientAction;
+import com.humanharvest.organz.actions.client.MarkClientAsDeadAction;
 import com.humanharvest.organz.actions.client.ModifyClientByObjectAction;
 import com.humanharvest.organz.server.exceptions.GlobalControllerExceptionHandler.InvalidRequestException;
-import com.humanharvest.organz.server.exceptions.IfMatchFailedException;
-import com.humanharvest.organz.server.exceptions.IfMatchRequiredException;
+import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
+import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.validators.client.ClientBornAndDiedDatesValidator;
 import com.humanharvest.organz.utilities.validators.client.CreateClientValidator;
 import com.humanharvest.organz.utilities.validators.client.ModifyClientValidator;
+import com.humanharvest.organz.views.client.CreateClientView;
+import com.humanharvest.organz.views.client.ModifyClientObject;
+import com.humanharvest.organz.views.client.Views;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -151,6 +153,7 @@ public class ClientController {
             throw new IfMatchFailedException();
         }
 
+
         //Create the old details to allow undoable action
         ModifyClientObject oldClient = new ModifyClientObject();
         //Copy the values from the current client to our oldClient
@@ -208,6 +211,44 @@ public class ClientController {
 
         //Respond, apparently updates should be 200 not 201 unlike 365 and our spec
         return new ResponseEntity<>(client, HttpStatus.OK);
+    }
+
+    @PostMapping("/clients/{uid}/dead")
+    @JsonView(Views.Details.class)
+    public ResponseEntity markClientAsDead(
+            @PathVariable int uid,
+            @RequestHeader(value = "If-Match", required = false) String ETag,
+            @RequestBody LocalDate dateOfDeath)
+            throws IfMatchRequiredException, IfMatchFailedException, InvalidRequestException {
+
+        //TODO: Auth
+
+        //Fetch the client given by ID
+        Optional<Client> client = State.getClientManager().getClientByID(uid);
+        if (!client.isPresent()) {
+            //Return 404 if that client does not exist
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        //Check the ETag. These are handled in the exceptions class.
+        if (ETag == null) {
+            throw new IfMatchRequiredException();
+        }
+        if (!client.get().getEtag().equals(ETag)) {
+            throw new IfMatchFailedException();
+        }
+
+        MarkClientAsDeadAction action = new MarkClientAsDeadAction(client.get(), dateOfDeath, State.getClientManager
+                ());
+        State.getInvoker().execute(action);
+
+
+        //Add the new ETag to the headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.setETag(client.get().getEtag());
+
+        //Respond
+        return new ResponseEntity<>(client, headers, HttpStatus.OK);
     }
 
 }

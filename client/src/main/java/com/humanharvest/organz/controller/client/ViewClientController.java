@@ -6,6 +6,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.OptionalInt;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
@@ -21,13 +23,10 @@ import javafx.scene.paint.Color;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
-import com.humanharvest.organz.views.client.ModifyClientObject;
-import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.actions.ActionInvoker;
-import com.humanharvest.organz.actions.client.MarkClientAsDeadAction;
-import com.humanharvest.organz.actions.client.ModifyClientAction;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.resolvers.client.MarkClientAsDeadResolver;
 import com.humanharvest.organz.resolvers.client.ModifyClientDetailsResolver;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
@@ -38,8 +37,12 @@ import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.enums.BloodType;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Region;
+import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
+import com.humanharvest.organz.utilities.exceptions.NotFoundException;
+import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.validators.IntValidator;
 import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.views.client.ModifyClientObject;
 import org.controlsfx.control.Notifications;
 
 /**
@@ -48,6 +51,7 @@ import org.controlsfx.control.Notifications;
 public class ViewClientController extends SubController {
 
     private final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy\nh:mm:ss a");
+    private static final Logger LOGGER = Logger.getLogger(ViewClientController.class.getName());
 
     private Session session;
     private ClientManager manager;
@@ -133,8 +137,14 @@ public class ViewClientController extends SubController {
 
     @Override
     public void refresh() {
-        viewedClient = manager.getClientByID(viewedClient.getUid())
-                .orElseThrow(IllegalStateException::new);
+        try {
+            viewedClient = manager.getClientByID(viewedClient.getUid()).orElseThrow(ServerRestException::new);
+        } catch (ServerRestException e) {
+            e.printStackTrace();
+            PageNavigator.showAlert(AlertType.ERROR,
+                    "Server Error",
+                    "An error occurred while trying to fetch from the server.\nPlease try again later.");
+        }
         updateClientFields();
         if (session.getLoggedInUserType() == UserType.CLIENT) {
             mainController.setTitle("View Client: " + viewedClient.getPreferredName());
@@ -157,13 +167,20 @@ public class ViewClientController extends SubController {
             setFieldsDisabled(true);
             return;
         }
-
-        viewedClient = manager.getClientByID(idValue).orElse(null);
-        if (viewedClient == null) {
+        try {
+            viewedClient = manager.getClientByID(idValue).orElse(null);
+            updateClientFields();
+        } catch (ServerRestException e) {
+            e.printStackTrace();
+            PageNavigator.showAlert(AlertType.ERROR,
+                    "Server Error",
+                    "An error occurred while trying to fetch from the server.\nPlease try again later.");
+        } catch (NotFoundException e) {
+            PageNavigator.showAlert(AlertType.WARNING,
+                    "Client Not Found",
+                    "The specified client could not be located. Please enter a different ID");
             noClientLabel.setVisible(true);
             setFieldsDisabled(true);
-        } else {
-            updateClientFields();
         }
     }
 
@@ -192,8 +209,8 @@ public class ViewClientController extends SubController {
             lastModified.setText(viewedClient.getModifiedTimestamp().format(dateTimeFormat));
         }
 
-            displayBMI();
-            displayAge();
+        displayBMI();
+        displayAge();
 
     }
 
@@ -258,7 +275,6 @@ public class ViewClientController extends SubController {
         return update;
     }
 
-
     /**
      * Checks that non mandatory fields have either valid input, or no input. Otherwise red text is shown.
      * @return true if all non mandatory fields have valid/no input.
@@ -316,17 +332,7 @@ public class ViewClientController extends SubController {
                 modifyClientObject.registerChange(fieldString);
             }
         } catch (NoSuchFieldException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-    }
-    
-    private void addChangeIfDifferent(ModifyClientAction action, String field, Object oldValue, Object newValue) {
-        try {
-            if (!Objects.equals(oldValue, newValue)) {
-                action.addChange(field, oldValue, newValue);
-            }
-        } catch (NoSuchFieldException | NoSuchMethodException exc) {
-            exc.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
     }
 
@@ -335,7 +341,6 @@ public class ViewClientController extends SubController {
      * @return If there were any changes made
      */
     private boolean updateChanges() {
-        ModifyClientAction action = new ModifyClientAction(viewedClient, manager);
         ModifyClientObject modifyClientObject = new ModifyClientObject();
 
         ModifyClientDetailsResolver resolver = new ModifyClientDetailsResolver(viewedClient, modifyClientObject);
@@ -348,20 +353,36 @@ public class ViewClientController extends SubController {
                     "This will cancel all waiting transplant requests for this client.");
 
             if (buttonOpt.isPresent() && buttonOpt.get() == ButtonType.OK) {
-                Action markDeadAction = new MarkClientAsDeadAction(viewedClient, dod.getValue(), manager);
-                String actionText = invoker.execute(markDeadAction);
 
+                MarkClientAsDeadResolver deadResolver = new MarkClientAsDeadResolver(viewedClient, dod.getValue());
+                try {
+                    deadResolver.execute();
+                } catch (NotFoundException e) {
+                    LOGGER.log(Level.WARNING, "Client not found");
+                    PageNavigator.showAlert(AlertType.WARNING, "Client not found", "The client could not be found on the "
+                            + "server, it may have been deleted");
+                    return false;
+                } catch (ServerRestException e) {
+                    LOGGER.log(Level.WARNING, e.getMessage(), e);
+                    PageNavigator.showAlert(AlertType.WARNING, "Server error", "Could not apply changes on the server, "
+                            + "please try again later");
+                    return false;
+                } catch (IfMatchFailedException e) {
+                    LOGGER.log(Level.INFO, "If-Match did not match");
+                    PageNavigator.showAlert(AlertType.WARNING, "Outdated Data", "The client has been modified since you retrieved the data.\nIf you would still like to "
+                            + "apply these changes please submit again, otherwise refresh the page to update the data.");
+                    return false;
+                }
                 clientDied = true;
 
                 Notifications.create()
                         .title("Marked Client as Dead")
-                        .text(actionText)
+                        .text("All organ transplant requests have been removed")
                         .showConfirm();
             }
         } else {
             addChangeIfDifferent(modifyClientObject, "dateOfDeath", dod.getValue());
         }
-
 
         addChangeIfDifferent(modifyClientObject, "firstName", fname.getText());
         addChangeIfDifferent(modifyClientObject, "lastName", lname.getText());
@@ -369,16 +390,26 @@ public class ViewClientController extends SubController {
         addChangeIfDifferent(modifyClientObject, "preferredName", pname.getText());
         addChangeIfDifferent(modifyClientObject, "dateOfBirth", dob.getValue());
         addChangeIfDifferent(modifyClientObject, "gender", gender.getValue());
-        addChangeIfDifferent(modifyClientObject, "genderIdentity",genderIdentity.getValue());
+        addChangeIfDifferent(modifyClientObject, "genderIdentity", genderIdentity.getValue());
         addChangeIfDifferent(modifyClientObject, "height", Double.parseDouble(height.getText()));
         addChangeIfDifferent(modifyClientObject, "weight", Double.parseDouble(weight.getText()));
         addChangeIfDifferent(modifyClientObject, "bloodType", btype.getValue());
         addChangeIfDifferent(modifyClientObject, "region", region.getValue());
         addChangeIfDifferent(modifyClientObject, "currentAddress", address.getText());
 
+        if (modifyClientObject.getModifiedFields().size() == 0) {
+            if (!clientDied) {
+                Notifications.create()
+                        .title("No changes were made.")
+                        .text("No changes were made to the client.")
+                        .showWarning();
+                return false;
+            }
+        }
+
         try {
             resolver.execute();
-            String actionText = "test";
+            String actionText = modifyClientObject.toString();
 
             Notifications.create()
                     .title("Updated Client")
@@ -389,14 +420,21 @@ public class ViewClientController extends SubController {
                     String.format("Updated client %s with values: %s", viewedClient.getFullName(), actionText));
             JSONConverter.updateHistory(save, "action_history.json");
 
-        } catch (IllegalStateException exc) {
-            if (!clientDied) {
-                Notifications.create()
-                        .title("No changes were made.")
-                        .text("No changes were made to the client.")
-                        .showWarning();
-                return false;
-            }
+        } catch (NotFoundException e) {
+            LOGGER.log(Level.WARNING, "Client not found");
+            PageNavigator.showAlert(AlertType.WARNING, "Client not found", "The client could not be found on the "
+                    + "server, it may have been deleted");
+            return false;
+        } catch (ServerRestException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
+            PageNavigator.showAlert(AlertType.WARNING, "Server error", "Could not apply changes on the server, "
+                    + "please try again later");
+            return false;
+        } catch (IfMatchFailedException e) {
+            LOGGER.log(Level.INFO, "If-Match did not match");
+            PageNavigator.showAlert(AlertType.WARNING, "Outdated Data", "The client has been modified since you retrieved the data.\nIf you would still like to "
+                    + "apply these changes please submit again, otherwise refresh the page to update the data.");
+            return false;
         }
 
         PageNavigator.refreshAllWindows();
