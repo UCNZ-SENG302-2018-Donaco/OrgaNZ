@@ -81,6 +81,7 @@ public class ClientController {
         HttpHeaders headers = new HttpHeaders();
         headers.setETag(client.getEtag());
 
+        System.out.println(client);
         return new ResponseEntity<>(client, headers, HttpStatus.CREATED);
     }
 
