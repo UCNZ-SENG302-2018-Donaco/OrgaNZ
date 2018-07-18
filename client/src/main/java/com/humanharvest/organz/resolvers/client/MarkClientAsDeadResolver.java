@@ -4,6 +4,7 @@ import java.time.LocalDate;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.views.client.SingleDateView;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -25,7 +26,7 @@ public class MarkClientAsDeadResolver {
         httpHeaders.setIfMatch(State.getClientEtag());
         httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
         httpHeaders.set("X-Auth-Token", State.getToken());
-        HttpEntity entity = new HttpEntity<>(dateOfDeath, httpHeaders);
+        HttpEntity entity = new HttpEntity<>(new SingleDateView(dateOfDeath), httpHeaders);
 
         ResponseEntity<Client> responseEntity = State.getRestTemplate()
                 .postForEntity(State.BASE_URI + "clients/{uid}/dead", entity, Client.class, client.getUid());
