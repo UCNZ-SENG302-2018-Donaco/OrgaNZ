@@ -1,4 +1,4 @@
-package com.humanharvest.organz.server;
+package com.humanharvest.organz.server.client;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertNull;
@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.server.Application;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.BloodType;
 import com.humanharvest.organz.utilities.enums.Gender;

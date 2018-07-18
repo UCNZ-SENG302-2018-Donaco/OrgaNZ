@@ -16,6 +16,7 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 public class ClientManagerRest implements ClientManager {
@@ -47,6 +48,8 @@ public class ClientManagerRest implements ClientManager {
             throws IfMatchFailedException {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setIfMatch(State.getClientEtag());
+        httpHeaders.set("X-Auth-Token", State.getToken());
+
         HttpEntity entity = new HttpEntity<>(null, httpHeaders);
 
         State.getRestTemplate().exchange(State.BASE_URI + "clients/{uid}", HttpMethod.DELETE,
@@ -62,8 +65,15 @@ public class ClientManagerRest implements ClientManager {
     @Override
     public Optional<Client> getClientByID(int id)
             throws AuthenticationException, IfMatchFailedException, IfMatchRequiredException {
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        httpHeaders.set("X-Auth-Token", State.getToken());
+
+        HttpEntity entity = new HttpEntity<>(null, httpHeaders);
+
         ResponseEntity<Client> responseEntity = State.getRestTemplate()
-                .exchange(State.BASE_URI + "clients/{id}", HttpMethod.GET, null, Client.class, id);
+                .exchange(State.BASE_URI + "clients/{id}", HttpMethod.GET, entity, Client.class, id);
         State.setClientEtag(responseEntity.getHeaders().getETag());
         return Optional.ofNullable(responseEntity.getBody());
     }

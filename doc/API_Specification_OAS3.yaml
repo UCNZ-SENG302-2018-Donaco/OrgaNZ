@@ -2023,7 +2023,7 @@ components:
           type: number
         requestedOrgan:
           $ref: '#/components/schemas/organEnum'
-        requestedDate:
+        requestDate:
           $ref: '#/components/schemas/date'
         resolvedDate:
           $ref: '#/components/schemas/date'
@@ -2037,9 +2037,7 @@ components:
       properties:
         requestedOrgan:
           $ref: '#/components/schemas/organEnum'
-        description:
-          type: string
-        requestedDate:
+        requestDate:
           $ref: '#/components/schemas/date'
         resolvedDate:
           $ref: '#/components/schemas/date'

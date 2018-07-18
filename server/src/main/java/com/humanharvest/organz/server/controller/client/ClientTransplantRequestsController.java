@@ -5,13 +5,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
-import com.humanharvest.organz.views.client.Views;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -75,7 +73,6 @@ public class ClientTransplantRequestsController {
      * @return list of all transplant requests for that client
      */
     @PostMapping("/clients/{id}/transplantRequests")
-    @JsonView(Views.Overview.class)
     public ResponseEntity<Collection<TransplantRequest>> postTransplantRequest(
             @RequestBody TransplantRequest transplantRequest,
             @PathVariable int id) {
@@ -85,7 +82,7 @@ public class ClientTransplantRequestsController {
             client.get().addTransplantRequest(transplantRequest);
 
             Collection<TransplantRequest> transplantRequests = client.get().getTransplantRequests();
-            return new ResponseEntity<>(transplantRequests, HttpStatus.OK);
+            return new ResponseEntity<>(transplantRequests, HttpStatus.CREATED);
 
         } else {
             // no client exists with that ID

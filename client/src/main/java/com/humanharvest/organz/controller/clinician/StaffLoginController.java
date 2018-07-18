@@ -81,7 +81,6 @@ public class StaffLoginController extends SubController {
             return;
         }
 
-        State.login(clinician);
         PageNavigator.loadPage(Page.VIEW_CLINICIAN, mainController);
 
         HistoryItem save = new HistoryItem("LOGIN_STAFF", String.format("Clinician %s %s logged in.",
@@ -102,7 +101,6 @@ public class StaffLoginController extends SubController {
             return;
         }
 
-        State.login(administrator);
         PageNavigator.loadPage(Page.SEARCH, mainController);
         HistoryItem save = new HistoryItem("LOGIN_STAFF", String.format("Administrator %s logged in.",
                 administrator.getUsername()));
