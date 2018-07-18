@@ -3,6 +3,7 @@ package com.humanharvest.organz.controller.clinician;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
@@ -93,6 +94,14 @@ public class CreateClinicianController extends SubController {
             staffIdLabel.setTextFill(Color.RED);
             update = false;
         }
+        System.out.println(staffId.getText());
+        System.out.println(clinicianManager.doesStaffIdExist(Integer.parseInt(staffId.getText())));
+        if (clinicianManager.doesStaffIdExist(Integer.parseInt(staffId.getText()))) { // If the staffId is in use
+            PageNavigator.showAlert(AlertType.ERROR, "Staff Id in Use", "This staff Id is already in use.");
+
+            staffIdLabel.setTextFill(Color.RED);
+            update = false;
+        }
 
         if (password.getText().equals("")) { // Password
             passwordLabel.setTextFill(Color.RED);
@@ -126,7 +135,7 @@ public class CreateClinicianController extends SubController {
                                 + " Created.");
                 JSONConverter.updateHistory(save, "action_history.json");
 
-                PageNavigator.loadPage(Page.VIEW_CLINICIAN, mainController);
+                PageNavigator.loadPage(Page.SEARCH, mainController);
             }
         }
     }
