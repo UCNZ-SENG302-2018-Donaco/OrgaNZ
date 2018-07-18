@@ -1,7 +1,9 @@
 package com.humanharvest.organz;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -14,22 +16,21 @@ import com.humanharvest.organz.views.client.Views;
 @Entity
 @Table
 public class Administrator {
-
     @Id
     @JsonView(Views.Overview.class)
     private String username;
     private String password;
 
     @JsonView(Views.Overview.class)
-    private final LocalDateTime createdOn;
+    private final Instant createdTimestamp;
     @JsonView(Views.Overview.class)
-    private LocalDateTime modifiedOn;
+    private Instant modifiedTimestamp;
 
     @ElementCollection
     private List<String> updateLog = new ArrayList<>();
 
     protected Administrator() {
-        createdOn = LocalDateTime.now();
+        createdTimestamp = Instant.now();
     }
 
     /**
@@ -38,7 +39,7 @@ public class Administrator {
      * @param password The administrators password for logins. Stored in plaintext
      */
     public Administrator(String username, String password) {
-        createdOn = LocalDateTime.now();
+        createdTimestamp = Instant.now();
 
         this.username = username;
         this.password = password;
@@ -47,15 +48,15 @@ public class Administrator {
     private void addUpdate(String function) {
         LocalDateTime timestamp = LocalDateTime.now();
         updateLog.add(String.format("%s; updated %s", timestamp, function));
-        modifiedOn = LocalDateTime.now();
+        modifiedTimestamp = Instant.now();
     }
 
-    public LocalDateTime getCreatedOn() {
-        return createdOn;
+    public Instant getCreatedTimestamp() {
+        return createdTimestamp;
     }
 
     public List<String> getUpdateLog() {
-        return updateLog;
+        return Collections.unmodifiableList(updateLog);
     }
 
     public String getUsername() {
@@ -80,8 +81,16 @@ public class Administrator {
         return password.equals(testPassword);
     }
 
-    public LocalDateTime getModifiedOn() {
-        return modifiedOn;
+    public Instant getModifiedTimestamp() {
+        return modifiedTimestamp;
+    }
+
+    public String getEtag() {
+        if (modifiedTimestamp == null) {
+            return String.format("\"%d\"", createdTimestamp.hashCode());
+        } else {
+            return String.format("\"%d\"", modifiedTimestamp.hashCode());
+        }
     }
 
     /**

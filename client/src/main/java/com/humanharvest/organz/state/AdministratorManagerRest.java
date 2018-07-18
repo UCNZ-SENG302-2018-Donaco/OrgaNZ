@@ -6,7 +6,10 @@ import java.util.Optional;
 
 import com.humanharvest.organz.Administrator;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -70,7 +73,22 @@ public class AdministratorManagerRest implements AdministratorManager {
 
     @Override
     public Optional<Administrator> getAdministratorByUsername(String username) {
-        throw new UnsupportedOperationException();
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        httpHeaders.set("X-Auth-Token", State.getToken());
+
+        HttpEntity entity = new HttpEntity<>(null, httpHeaders);
+
+        ResponseEntity<Administrator> responseEntity = State.getRestTemplate().exchange(
+                State.BASE_URI + "administrators/{username}",
+                HttpMethod.GET,
+                entity,
+                Administrator.class,
+                username);
+
+        State.setAdministratorEtag(responseEntity.getHeaders().getETag());
+        return Optional.ofNullable(responseEntity.getBody());
     }
 
     @Override

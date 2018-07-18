@@ -95,7 +95,6 @@ public class ClientController {
             @PathVariable int uid,
             @RequestHeader(value = "X-Auth-Token", required = false) String authentication) {
 
-
         Optional<Client> client = State.getClientManager().getClientByID(uid);
         if (client.isPresent()) {
             //Authenticate
