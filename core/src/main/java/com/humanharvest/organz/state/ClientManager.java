@@ -3,6 +3,7 @@ package com.humanharvest.organz.state;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.TransplantRequest;
@@ -25,9 +26,9 @@ public interface ClientManager {
     /**
      * Returns the client that has the given id.
      * @param id The ID to match.
-     * @return The client with that id, or null if no such client exists.
+     * @return The client with that id, or empty if no such client exists.
      */
-    Client getClientByID(int id);
+    Optional<Client> getClientByID(int id);
 
     /**
      * Checks if a client already exists with the same first name, last name, and date of birth.

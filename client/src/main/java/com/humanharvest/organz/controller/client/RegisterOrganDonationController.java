@@ -164,7 +164,7 @@ public class RegisterOrganDonationController extends SubController {
     @FXML
     private void updateUserID() {
         try {
-            client = manager.getClientByID(Integer.parseInt(fieldUserID.getText()));
+            client = manager.getClientByID(Integer.parseInt(fieldUserID.getText())).orElse(null);
         } catch (NumberFormatException exc) {
             client = null;
         }

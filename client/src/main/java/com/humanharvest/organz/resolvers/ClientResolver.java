@@ -20,7 +20,10 @@ public class ClientResolver {
                         ParameterizedTypeReference<Map<Organ, Boolean>>() {
                         }, uid);
         State.setClientEtag(responseEntity.getHeaders().getETag());
-        State.getClientManager().getClientByID(uid).setOrganDonationStatus(responseEntity.getBody());
+        State.getClientManager()
+                .getClientByID(uid)
+                .orElseThrow(IllegalArgumentException::new)
+                .setOrganDonationStatus(responseEntity.getBody());
         return responseEntity.getBody();
     }
 
@@ -30,7 +33,10 @@ public class ClientResolver {
                         ParameterizedTypeReference<List<TransplantRequest>>() {
                         }, uid);
         State.setClientEtag(responseEntity.getHeaders().getETag());
-        State.getClientManager().getClientByID(uid).setTransplantRequests(responseEntity.getBody());
+        State.getClientManager()
+                .getClientByID(uid)
+                .orElseThrow(IllegalArgumentException::new)
+                .setTransplantRequests(responseEntity.getBody());
         return responseEntity.getBody();
     }
 }

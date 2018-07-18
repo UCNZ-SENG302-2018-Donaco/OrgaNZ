@@ -1,29 +1,28 @@
-package com.humanharvest.organz.views.clinician;
+package com.humanharvest.organz.views.client;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.humanharvest.organz.Clinician;
-import com.humanharvest.organz.views.client.Views;
+import com.humanharvest.organz.Client;
 
-public class ClinicianLoginResponse {
+public class ClientLoginResponse {
     @JsonView(Views.Overview.class)
     private final String token;
 
     @JsonInclude(Include.NON_NULL)
     @JsonView(Views.Overview.class)
-    private Clinician userData;
+    private Client userData;
 
-    public ClinicianLoginResponse(String token) {
+    public ClientLoginResponse(String token) {
         this.token = token;
     }
 
     @JsonCreator
-    public ClinicianLoginResponse(
+    public ClientLoginResponse(
             @JsonProperty("token") String token,
-            @JsonProperty("userData") Clinician userData) {
+            @JsonProperty("userData") Client userData) {
         this.token = token;
         this.userData = userData;
     }
@@ -32,7 +31,7 @@ public class ClinicianLoginResponse {
         return token;
     }
 
-    public Clinician getUserData() {
+    public Client getUserData() {
         return userData;
     }
 }

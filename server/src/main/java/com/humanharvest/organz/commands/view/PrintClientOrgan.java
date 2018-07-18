@@ -1,6 +1,8 @@
 package com.humanharvest.organz.commands.view;
 
 
+import java.util.Optional;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.state.ClientManager;
@@ -37,13 +39,13 @@ public class PrintClientOrgan implements Runnable {
     @Override
     public void run() {
         // printuserorgan -u=1 -t=requests
-        Client client = manager.getClientByID(uid);
-        if (client == null) {
+        Optional<Client> client = manager.getClientByID(uid);
+        if (!client.isPresent()) {
             System.out.println("No client exists with that user ID");
             return;
         }
         if (type.equals("requests") || type.equals("donations")) {
-            System.out.println(client.getClientOrganStatusString(type));
+            System.out.println(client.get().getClientOrganStatusString(type));
             HistoryItem printUserOrgan = new HistoryItem("PRINT USER ORGAN",
                     "The organ information was printed for client " + uid);
             JSONConverter.updateHistory(printUserOrgan, "action_history.json");
@@ -51,6 +53,5 @@ public class PrintClientOrgan implements Runnable {
             System.out.println("Define if organs to print are donations or requests e.g. 'printuserorgan "
                     + "-uid=1 -t=requests'");
         }
-
     }
 }

@@ -139,7 +139,7 @@ public class ViewClientController extends SubController {
     @Override
     public void refresh() {
         try {
-            viewedClient = manager.getClientByID(viewedClient.getUid());
+            viewedClient = manager.getClientByID(viewedClient.getUid()).orElseThrow(ServerRestException::new);
         } catch (ServerRestException e) {
             e.printStackTrace();
             PageNavigator.showAlert(AlertType.ERROR,
@@ -169,7 +169,7 @@ public class ViewClientController extends SubController {
             return;
         }
         try {
-            viewedClient = manager.getClientByID(idValue);
+            viewedClient = manager.getClientByID(idValue).orElse(null);
             updateClientFields();
         } catch (ServerRestException e) {
             e.printStackTrace();

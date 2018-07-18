@@ -8,6 +8,7 @@ import static org.mockito.Mockito.*;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.time.LocalDate;
+import java.util.Optional;
 
 import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.Client;
@@ -57,7 +58,7 @@ public class PrintClientOrganTest extends BaseTest {
 
     @Test
     public void printuserorgan_non_existent_id() {
-        when(spyClientManager.getClientByID(anyInt())).thenReturn(null);
+        when(spyClientManager.getClientByID(anyInt())).thenReturn(Optional.empty());
         String[] inputs = {"-u", "2", "-t", "donations"};
 
         CommandLine.run(spyPrintClientOrgan, System.out, inputs);
@@ -70,7 +71,7 @@ public class PrintClientOrganTest extends BaseTest {
     public void printuserorgan_valid_no_organs() {
         Client client = new Client("First", "mid", "Last", LocalDate.of(1970, 1, 1), 1);
 
-        when(spyClientManager.getClientByID(anyInt())).thenReturn(client);
+        when(spyClientManager.getClientByID(anyInt())).thenReturn(Optional.of(client));
 
         String[] inputs = {"-u", "1", "-t", "donations"};
 
@@ -85,7 +86,7 @@ public class PrintClientOrganTest extends BaseTest {
         Client client = new Client("First", "mid", "Last", LocalDate.of(1970, 1, 1), 1);
         client.setOrganDonationStatus(Organ.KIDNEY, true);
 
-        when(spyClientManager.getClientByID(anyInt())).thenReturn(client);
+        when(spyClientManager.getClientByID(anyInt())).thenReturn(Optional.of(client));
 
         String[] inputs = {"-u", "1", "-t", "donations"};
 
@@ -100,7 +101,7 @@ public class PrintClientOrganTest extends BaseTest {
         client.setOrganDonationStatus(Organ.LIVER, true);
         client.setOrganDonationStatus(Organ.KIDNEY, true);
 
-        when(spyClientManager.getClientByID(anyInt())).thenReturn(client);
+        when(spyClientManager.getClientByID(anyInt())).thenReturn(Optional.of(client));
 
         String[] inputs = {"-u", "1", "-t", "donations"};
 
@@ -116,7 +117,7 @@ public class PrintClientOrganTest extends BaseTest {
         TransplantRequest tr = new TransplantRequest(client, Organ.KIDNEY);
         client.addTransplantRequest(tr);
 
-        when(spyClientManager.getClientByID(anyInt())).thenReturn(client);
+        when(spyClientManager.getClientByID(anyInt())).thenReturn(Optional.of(client));
 
         String[] inputs = {"-u", "1", "-t", "requests"};
 

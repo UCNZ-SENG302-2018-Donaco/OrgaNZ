@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.TransplantRequest;
@@ -59,12 +60,12 @@ public class ClientManagerRest implements ClientManager {
     }
 
     @Override
-    public Client getClientByID(int id)
+    public Optional<Client> getClientByID(int id)
             throws AuthenticationException, IfMatchFailedException, IfMatchRequiredException {
         ResponseEntity<Client> responseEntity = State.getRestTemplate()
                 .exchange(State.BASE_URI + "clients/{id}", HttpMethod.GET, null, Client.class, id);
         State.setClientEtag(responseEntity.getHeaders().getETag());
-        return responseEntity.getBody();
+        return Optional.ofNullable(responseEntity.getBody());
     }
 
     @Override

@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.actions.client.ModifyClientAction;
@@ -89,11 +90,13 @@ public class SetAttribute implements Runnable {
 
     @Override
     public void run() {
-        Client client = manager.getClientByID(uid);
-        if (client == null) {
+        Optional<Client> possibleClient = manager.getClientByID(uid);
+        if (!possibleClient.isPresent()) {
             System.out.println("No client exists with that user ID");
             return;
         }
+
+        Client client = possibleClient.get();
 
         ModifyClientAction action = new ModifyClientAction(client, manager);
 
@@ -123,7 +126,7 @@ public class SetAttribute implements Runnable {
 
         System.out.println(invoker.execute(action));
 
-        HistoryItem Attribute = new HistoryItem("ATTRIBUTE UPDATE", "DETAILS were updated for client " + uid);
-        JSONConverter.updateHistory(Attribute, "action_history.json");
+        HistoryItem attribute = new HistoryItem("ATTRIBUTE UPDATE", "DETAILS were updated for client " + uid);
+        JSONConverter.updateHistory(attribute, "action_history.json");
     }
 }

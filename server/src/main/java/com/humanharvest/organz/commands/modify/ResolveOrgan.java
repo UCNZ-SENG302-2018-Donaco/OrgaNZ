@@ -1,5 +1,7 @@
 package com.humanharvest.organz.commands.modify;
 
+import java.util.Optional;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.actions.Action;
@@ -24,7 +26,6 @@ public class ResolveOrgan implements Runnable {
 
     private ClientManager manager;
     private ActionInvoker invoker;
-    private Client client;
 
     public ResolveOrgan() {
         manager = State.getClientManager();
@@ -56,16 +57,16 @@ public class ResolveOrgan implements Runnable {
      */
     public void run() {
         //resolveorgan -u 1 -o liver -r "input error"
-        client = manager.getClientByID(uid);
-        if (client == null) {
+        Optional<Client> client = manager.getClientByID(uid);
+        if (!client.isPresent()) {
             System.out.println("No client exists with that user ID");
             return;
         }
 
         boolean organCurrentlyRequested = false;
-        TransplantRequest selectedTransplantRequest = new TransplantRequest(client, Organ.LIVER);
+        TransplantRequest selectedTransplantRequest = new TransplantRequest(client.get(), Organ.LIVER);
 
-        for (TransplantRequest tr : client.getTransplantRequests()) {
+        for (TransplantRequest tr : client.get().getTransplantRequests()) {
             if (tr.getRequestedOrgan() == organType && tr.getStatus() == TransplantRequestStatus.WAITING) {
                 organCurrentlyRequested = true;
                 selectedTransplantRequest = tr;
@@ -75,7 +76,7 @@ public class ResolveOrgan implements Runnable {
         if (organCurrentlyRequested) {
             resolveRequest(selectedTransplantRequest);
         } else {
-            System.out.println(client.getFullName() + " is not currently requesting this organ.");
+            System.out.println(client.get().getFullName() + " is not currently requesting this organ.");
         }
     }
 
