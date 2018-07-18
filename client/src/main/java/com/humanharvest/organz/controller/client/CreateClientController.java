@@ -1,5 +1,7 @@
 package com.humanharvest.organz.controller.client;
 
+import java.util.logging.Logger;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -8,29 +10,31 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 
-import com.humanharvest.organz.actions.Action;
-import com.humanharvest.organz.actions.ActionInvoker;
-import com.humanharvest.organz.actions.client.CreateClientAction;
-import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.controller.SubController;
-
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
+import com.humanharvest.organz.actions.ActionInvoker;
+import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.resolvers.client.CreateClientResolver;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.validators.NotNullValidator;
-import com.humanharvest.organz.utilities.validators.StringValidator;
 import com.humanharvest.organz.ui.validation.UIValidation;
 import com.humanharvest.organz.utilities.JSONConverter;
+import com.humanharvest.organz.utilities.exceptions.ServerRestException;
+import com.humanharvest.organz.utilities.validators.NotNullValidator;
+import com.humanharvest.organz.utilities.validators.StringValidator;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.utilities.view.WindowContext;
+import com.humanharvest.organz.views.client.CreateClientView;
 
 /**
  * Controller for the create client page.
  */
 public class CreateClientController extends SubController {
+
+    private static final Logger LOGGER = Logger.getLogger(CreateClientController.class.getName());
 
     @FXML
     private DatePicker dobFld;
@@ -98,16 +102,28 @@ public class CreateClientController extends SubController {
                 }
             }
 
-            int uid = manager.nextUid();
-            Client client = new Client(firstNameFld.getText(), middleNamefld.getText(), lastNamefld.getText(),
-                    dobFld.getValue(), uid);
-            Action action = new CreateClientAction(client, manager);
-            invoker.execute(action);
+            CreateClientView newClient = new CreateClientView(firstNameFld.getText(), middleNamefld.getText(),
+                    lastNamefld.getText(),
+                    dobFld.getValue());
+
+            CreateClientResolver resolver = new CreateClientResolver(newClient);
+            Client client;
+            try {
+                client = resolver.execute();
+            } catch (ServerRestException e) {
+                LOGGER.severe(e.getMessage());
+                PageNavigator.showAlert(AlertType.ERROR,
+                        "Server Error",
+                        "An error occurred while trying to fetch from the server.\nPlease try again later.");
+                return;
+            }
+
             HistoryItem save = new HistoryItem("CREATE CLIENT",
-                    String.format("Client %s was created with ID %d", client.getFullName(), uid));
+                    String.format("Client %s was created with ID %d", client.getFullName(), client.getUid()));
             JSONConverter.updateHistory(save, "action_history.json");
 
             if (State.getSession() == null) { // Someone creating a client
+                //TODO: Auth login
                 State.login(client);
                 PageNavigator.loadPage(Page.VIEW_CLIENT, mainController);
 

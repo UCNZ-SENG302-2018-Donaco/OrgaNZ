@@ -1,5 +1,9 @@
 package com.humanharvest.organz.controller.client;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.logging.Logger;
+
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
@@ -14,16 +18,17 @@ import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.JSONConverter;
+import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
-
-import java.util.Objects;
 
 /**
  * Controller for the login page.
  */
 public class ClientLoginController extends SubController {
+
+    private static final Logger LOGGER = Logger.getLogger(ClientLoginController.class.getName());
 
     @FXML
     private ListView<Client> clientList;
@@ -66,7 +71,17 @@ public class ClientLoginController extends SubController {
                 }
             }
         });
-        clientList.setItems(FXCollections.observableArrayList(clientManager.getClients()));
+
+        try {
+            List<Client> clients = clientManager.getClients();
+            clientList.setItems(FXCollections.observableArrayList(clients));
+        } catch (ServerRestException e) {
+            LOGGER.severe(e.getMessage());
+            PageNavigator.showAlert(AlertType.ERROR,
+                    "Server Error",
+                    "An error occurred while trying to fetch from the server.\nPlease try again later.");
+            PageNavigator.loadPage(Page.LANDING, mainController);
+        }
     }
 
     /**

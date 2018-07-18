@@ -1,6 +1,6 @@
 package com.humanharvest.organz.utilities.exceptions;
 
-public class AuthenticationException extends Exception {
+public class AuthenticationException extends RuntimeException {
 
     public AuthenticationException() {
     }

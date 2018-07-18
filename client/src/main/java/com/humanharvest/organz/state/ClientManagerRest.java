@@ -9,6 +9,9 @@ import java.util.Optional;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.TransplantRequest;
+import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
+import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
+import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -18,7 +21,7 @@ import org.springframework.http.ResponseEntity;
 public class ClientManagerRest implements ClientManager {
 
     @Override
-    public List<Client> getClients() {
+    public List<Client> getClients() throws AuthenticationException {
         ResponseEntity<List<Client>> clientResponse = State.getRestTemplate().exchange
                 (State.BASE_URI + "clients", HttpMethod.GET, null, new ParameterizedTypeReference<List<Client>>() {
                 });
@@ -35,26 +38,20 @@ public class ClientManagerRest implements ClientManager {
     }
 
     @Override
-    public void addClient(Client client) {
+    public void addClient(Client client) throws AuthenticationException {
         State.getRestTemplate().postForObject(State.BASE_URI + "clients", new HttpEntity<>(client), Client.class);
     }
 
     @Override
-    public void removeClient(Client client) {
+    public void removeClient(Client client)
+            throws IfMatchFailedException {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setIfMatch(State.getClientEtag());
         HttpEntity entity = new HttpEntity<>(null, httpHeaders);
 
-
-        ResponseEntity response = State.getRestTemplate().exchange(State.BASE_URI + "clients/{uid}", HttpMethod.DELETE,
+        State.getRestTemplate().exchange(State.BASE_URI + "clients/{uid}", HttpMethod.DELETE,
                 entity,
                 String.class, client.getUid());
-
-        if (response.getStatusCode().is2xxSuccessful()) {
-            System.out.println("worked");
-        } else if (response.getStatusCode().is5xxServerError()) {
-            System.out.println("Server error");
-        }
     }
 
     @Override
@@ -63,7 +60,8 @@ public class ClientManagerRest implements ClientManager {
     }
 
     @Override
-    public Optional<Client> getClientByID(int id) {
+    public Optional<Client> getClientByID(int id)
+            throws AuthenticationException, IfMatchFailedException, IfMatchRequiredException {
         ResponseEntity<Client> responseEntity = State.getRestTemplate()
                 .exchange(State.BASE_URI + "clients/{id}", HttpMethod.GET, null, Client.class, id);
         State.setClientEtag(responseEntity.getHeaders().getETag());

@@ -3,13 +3,18 @@ package com.humanharvest.organz.state;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.utilities.RestErrorHandler;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -63,6 +68,11 @@ public final class State {
         if (storageType == DataStorageType.REST) {
             ClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
             restTemplate.setRequestFactory(requestFactory);
+            restTemplate.setErrorHandler(new RestErrorHandler());
+            restTemplate.getMessageConverters().removeIf(m -> m.getClass().getName().equals
+                    (MappingJackson2HttpMessageConverter.class.getName()));
+            restTemplate.getMessageConverters().add(customConverter());
+
 
             clientManager = new ClientManagerRest();
             clinicianManager = new ClinicianManagerRest();
@@ -145,5 +155,19 @@ public final class State {
 
     public static List<MainController> getMainControllers() {
         return mainControllers;
+    }
+
+    private static MappingJackson2HttpMessageConverter customConverter() {
+        MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+        converter.setObjectMapper(customObjectMapper());
+        return converter;
+    }
+
+    public static ObjectMapper customObjectMapper() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        mapper.configure(SerializationFeature.WRITE_DATES_WITH_ZONE_ID, false);
+        return mapper;
     }
 }

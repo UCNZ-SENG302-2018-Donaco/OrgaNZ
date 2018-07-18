@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.core.JsonGenerator;
@@ -186,6 +187,20 @@ public class ModifyClientObject {
     public void setDateOfDeath(LocalDate dateOfDeath) {
         registerChange("dateOfDeath");
         this.dateOfDeath = dateOfDeath;
+    }
+
+    public String toString() {
+        String changesText = modifiedFields.stream()
+                .map(this::fieldString)
+                .collect(Collectors.joining("\n"));
+
+        return String.format("Updated details for client.\n"
+                        + "These changes were made: \n\n%s",
+                changesText);
+    }
+
+    private String fieldString (Field field) {
+        return String.format("Updated %s", field.getName());
     }
 }
 
