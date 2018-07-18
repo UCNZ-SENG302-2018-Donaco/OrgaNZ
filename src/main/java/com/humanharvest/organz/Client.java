@@ -204,12 +204,14 @@ public class Client {
         }
     }
 
-
     /**
      * Returns a preformatted string of the users change history
      * @return Formatted string with newlines
      */
     public String getUpdatesString() {
+        if (changesHistory == null) {
+            changesHistory = new ArrayList<>();
+        }
         StringBuilder out = new StringBuilder(String.format("User: %s. Name: %s, updates:\n", uid, getFullName()));
         for (HistoryItem item : changesHistory) {
             out.append(String.format("%s: %s\n", item.getTimestamp(), item.getDetails()));
@@ -370,7 +372,11 @@ public class Client {
     }
 
     public int getUid() {
-        return uid;
+        if (uid == null) {
+            return 0;
+        } else {
+            return uid;
+        }
     }
 
     public LocalDateTime getCreatedTimestamp() {
@@ -436,6 +442,14 @@ public class Client {
     }
 
     /**
+     * Returns a new list containing all medications used by the Client, past and current.
+     * @return The list of all medications used by the Client.
+     */
+    public List<MedicationRecord> getMedications() {
+        return new ArrayList<>(medicationHistory);
+    }
+
+    /**
      * Adds a new MedicationRecord to the client's history.
      * @param record The given MedicationRecord.
      */
@@ -485,6 +499,13 @@ public class Client {
         return age;
     }
 
+    /**
+     * Returns a list of illnesses that Client currently has or previously had
+     * @return List of illnesses held by Client
+     */
+    public List<IllnessRecord> getIllnesses() {
+        return new ArrayList<>(illnessHistory);
+    }
 
     /**
      * Returns a list of illnesses that Client previously had
@@ -525,6 +546,14 @@ public class Client {
         illnessHistory.remove(record);
         record.setClient(null);
         updateModifiedTimestamp();
+    }
+
+    /**
+     * Returns a list of procedures that the client has undergone or is going to undergo.
+     * @return A list of procedures for the client.
+     */
+    public List<ProcedureRecord> getProcedures() {
+        return new ArrayList<>(procedures);
     }
 
     /**
@@ -598,7 +627,6 @@ public class Client {
         return isMatch;
     }
 
-
     /**
      * Returns a HashSet of all names of the Client. If they do not have a middle/preferred name, this is set as "".
      * @return the Hashset of all the Clients names.
@@ -627,7 +655,6 @@ public class Client {
         names.addAll(Arrays.asList(pname));
         return names;
     }
-
 
     /**
      * Takes a string and checks if each space separated string section begins with the same values as the search
