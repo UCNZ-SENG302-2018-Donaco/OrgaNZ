@@ -44,3 +44,14 @@ Feature: Does GET /administrators/ work?
     Given the authentication token is from administrator Test
     When I get /administrators/
     Then the result is ok
+
+  Scenario: Getting the first administrator
+    Given there is a test administrator with the username Test and password Test
+    When I get /administrators/Test
+    Then the result is ok
+    Then the content type is json
+    Then the field username is Test
+
+  Scenario: Getting an invalid administrator
+    When I get /administrators/bad
+    Then the result is not found

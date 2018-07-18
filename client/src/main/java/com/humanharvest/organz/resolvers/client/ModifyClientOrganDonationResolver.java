@@ -2,19 +2,18 @@ package com.humanharvest.organz.resolvers.client;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 public class ModifyClientOrganDonationResolver {
-
-    private static final String baseUrl = "http://localhost:8080/";
 
     private Client client;
     private Map<Organ, Boolean> changes;
@@ -39,29 +38,45 @@ public class ModifyClientOrganDonationResolver {
         changes.put(organ, newValue);
     }
 
-    public void execute() {
+    public Map<Organ, Boolean> execute() {
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setIfMatch(State.getClientEtag());
-        //httpHeaders.add("If-Match", State.getClientEtag());
+        httpHeaders.set("X-Auth-Token", State.getToken());
 
         HttpEntity<Map<Organ, Boolean>> entity = new HttpEntity<>(changes, httpHeaders);
 
-        ResponseEntity<Client> responseEntity = State.getRestTemplate()
+        ParameterizedTypeReference<Map<Organ, Boolean>> mapRef = new ParameterizedTypeReference<Map<Organ, Boolean>>
+                () {};
+
+        ResponseEntity<Map<Organ, Boolean>> responseEntity = State.getRestTemplate()
                 .exchange(
-                        baseUrl + "clients/{uid}/donationStatus",
+                        State.BASE_URI + "clients/{uid}/donationStatus",
                         HttpMethod.PATCH,
                         entity,
-                        Client.class,
+                        mapRef,
                         client.getUid());
 
 
-
         State.setClientEtag(responseEntity.getHeaders().getETag());
+        return responseEntity.getBody();
+    }
 
-        if (responseEntity.getStatusCode() != HttpStatus.OK) {
-            System.err.println(responseEntity.toString());
+    private String formatChange(Organ organ, boolean newValue) {
+        if (newValue) {
+            return String.format("Registered %s for donation.", organ.toString());
+        } else {
+            return String.format("Deregistered %s for donation.", organ.toString());
         }
+    }
+
+    public String toString() {
+        String changesText = changes.entrySet().stream()
+                .map(entry -> formatChange(entry.getKey(), entry.getValue()))
+                .collect(Collectors.joining("\n"));
+
+        return String.format("Changed organ donation registration for client %d: %s:\n\n%s",
+                client.getUid(), client.getFullName(), changesText);
     }
 
 }

@@ -1,6 +1,6 @@
-package com.humanharvest.organz.server.exceptions;
+package com.humanharvest.organz.utilities.exceptions;
 
-public class IfMatchFailedException extends Exception {
+public class IfMatchFailedException extends RuntimeException {
 
     public IfMatchFailedException() {
     }

@@ -1,20 +1,16 @@
 package com.humanharvest.organz.resolvers.client;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.humanharvest.organz.Client;
-import com.humanharvest.organz.views.client.ModifyClientObject;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.views.client.ModifyClientObject;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 public class ModifyClientDetailsResolver {
-
-    private static final String baseUrl = "http://localhost:8080/";
 
     private Client client;
     private ModifyClientObject modifyClientObject;
@@ -24,17 +20,18 @@ public class ModifyClientDetailsResolver {
         this.modifyClientObject = modifyClientObject;
     }
 
-    public void execute() {
+    public Client execute() {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setIfMatch(State.getClientEtag());
         httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        httpHeaders.set("X-Auth-Token", State.getToken());
         System.out.println(State.getClientEtag());
         String serialized;
         try {
-            serialized = new ObjectMapper().writeValueAsString(modifyClientObject);
+            serialized = State.customObjectMapper().writeValueAsString(modifyClientObject);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
-            return;
+            return null;
         }
 
         HttpEntity<String> entity = new HttpEntity<>(serialized, httpHeaders);
@@ -43,16 +40,13 @@ public class ModifyClientDetailsResolver {
 
         ResponseEntity<Client> responseEntity = State.getRestTemplate()
                 .exchange(
-                        baseUrl + "clients/{uid}",
+                        State.BASE_URI + "clients/{uid}",
                         HttpMethod.PATCH,
                         entity,
                         Client.class,
                         client.getUid());
 
         State.setClientEtag(responseEntity.getHeaders().getETag());
-
-        if (responseEntity.getStatusCode() != HttpStatus.OK) {
-            System.err.println(responseEntity.toString());
-        }
+        return responseEntity.getBody();
     }
 }

@@ -785,9 +785,9 @@ public class Client {
 
     public String getEtag() {
         if (modifiedTimestamp == null) {
-            return "\"" + String.valueOf(createdTimestamp.hashCode()) + "\"";
+            return String.format("\"%d\"", createdTimestamp.hashCode());
         } else {
-            return "\"" + String.valueOf(modifiedTimestamp.hashCode()) + "\"";
+            return String.format("\"%d\"", modifiedTimestamp.hashCode());
         }
     }
 }

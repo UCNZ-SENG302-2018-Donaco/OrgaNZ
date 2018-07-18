@@ -54,8 +54,7 @@ public class ClinicianManagerRest implements ClinicianManager {
 
     @Override
     public boolean doesStaffIdExist(int staffId) {
-        // TODO?
-        return false;
+        return getClinicians().stream().anyMatch(clinician -> clinician.getStaffId() == staffId);
     }
 
     /**

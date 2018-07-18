@@ -5,8 +5,8 @@ import com.humanharvest.organz.Client;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.actions.client.ModifyIllnessRecordByObjectAction;
 import com.humanharvest.organz.server.exceptions.GlobalControllerExceptionHandler.InvalidRequestException;
-import com.humanharvest.organz.server.exceptions.IfMatchFailedException;
-import com.humanharvest.organz.server.exceptions.IfMatchRequiredException;
+import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
+import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.validators.client.ModifyIllnessValidator;
 import java.util.ArrayList;
@@ -87,6 +87,8 @@ public class ClientIllnessessController {
             throw new IfMatchFailedException();
         }
 
+
+
         //Create the old details to allow undoable action
         ModifyIllnessObject oldIllnessRecord = new ModifyIllnessObject();
         //Copy the values from the current record to our oldrecord
@@ -100,14 +102,13 @@ public class ClientIllnessessController {
         //Add the new ETag to the headers
         HttpHeaders headers = new HttpHeaders();
         headers.setETag(client.get().getEtag());
-
         return new ResponseEntity<>(record, headers, HttpStatus.OK);
 
     }
 
     @PostMapping("/clients/{uid}/illnesses")
     @JsonView(Views.Overview.class)
-    public ResponseEntity<IllnessRecord> postIllness(@RequestBody CreateIllnessView illnessView,
+    public ResponseEntity <IllnessRecord>postIllness(@RequestBody CreateIllnessView illnessView,
             @PathVariable int uid)
             throws InvalidRequestException {
 
@@ -121,7 +122,6 @@ public class ClientIllnessessController {
                 illnessView.getDiagnosisDate(),illnessView.getCuredDate(),illnessView.isChronic());
 
         client.get().addIllnessRecord(record);
-
         HttpHeaders headers = new HttpHeaders();
         headers.setETag(client.get().getEtag());
 
