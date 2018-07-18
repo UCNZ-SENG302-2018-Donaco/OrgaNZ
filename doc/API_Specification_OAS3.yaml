@@ -2037,8 +2037,6 @@ components:
       properties:
         requestedOrgan:
           $ref: '#/components/schemas/organEnum'
-        description:
-          type: string
         requestDate:
           $ref: '#/components/schemas/date'
         resolvedDate:
