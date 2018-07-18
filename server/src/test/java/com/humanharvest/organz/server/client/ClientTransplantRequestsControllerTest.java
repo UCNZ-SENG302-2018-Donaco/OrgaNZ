@@ -1,6 +1,7 @@
 package com.humanharvest.organz.server.client;
 
 import static org.hamcrest.Matchers.is;
+import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -56,8 +57,8 @@ public class ClientTransplantRequestsControllerTest {
     public void createValidTransplantRequestTest() throws Exception {
         String json = "{\n"
                 + "  \"requestedOrgan\": \"LIVER\",\n"
-                + "  \"requestDate\": \"2018-07-18T14:11:20.202\",\n"
-                + "  \"resolvedDate\": \"2018-07-19T14:11:20.202\",\n"
+                + "  \"requestDate\": \"2017-07-18T14:11:20.202\",\n"
+                + "  \"resolvedDate\": \"2017-07-19T14:11:20.202\",\n"
                 + "  \"status\": \"WAITING\",\n"
                 + "  \"resolvedReason\": \"reason\"\n"
                 + "}";
@@ -67,9 +68,94 @@ public class ClientTransplantRequestsControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(contentType))
                 .andExpect(jsonPath("$[0].requestedOrgan", is("LIVER")))
-                .andExpect(jsonPath("$[0].requestDate", is("2018-07-18T14:11:20.202")))
-                .andExpect(jsonPath("$[0].resolvedDate", is("2018-07-19T14:11:20.202")))
+                .andExpect(jsonPath("$[0].requestDate", is("2017-07-18T14:11:20.202")))
+                .andExpect(jsonPath("$[0].resolvedDate", is("2017-07-19T14:11:20.202")))
                 .andExpect(jsonPath("$[0].status", is("WAITING")))
                 .andExpect(jsonPath("$[0].resolvedReason", is("reason")));
+    }
+
+    @Test
+    public void createValidTransplantRequestNullResolvedReasonTest() throws Exception {
+        String json = "{\n"
+                + "  \"requestedOrgan\": \"LIVER\",\n"
+                + "  \"requestDate\": \"2017-07-18T14:11:20.202\",\n"
+                + "  \"resolvedDate\": \"2017-07-19T14:11:20.202\",\n"
+                + "  \"status\": \"WAITING\""
+                + "}";
+        mockMvc.perform(post("/clients/" + testClient.getUid() + "/transplantRequests")
+                .contentType(contentType)
+                .content(json))
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(contentType))
+                .andExpect(jsonPath("$[0].requestedOrgan", is("LIVER")))
+                .andExpect(jsonPath("$[0].requestDate", is("2017-07-18T14:11:20.202")))
+                .andExpect(jsonPath("$[0].resolvedDate", is("2017-07-19T14:11:20.202")))
+                .andExpect(jsonPath("$[0].status", is("WAITING")))
+                .andExpect(jsonPath("$[0].resolvedReason", isEmptyOrNullString()));
+    }
+
+    @Test
+    public void createValidTransplantRequestNullResolvedDateTest() throws Exception {
+        String json = "{\n"
+                + "  \"requestedOrgan\": \"LIVER\",\n"
+                + "  \"requestDate\": \"2017-07-18T14:11:20.202\",\n"
+                + "  \"status\": \"WAITING\",\n"
+                + "  \"resolvedReason\": \"reason\"\n"
+                + "}";
+        mockMvc.perform(post("/clients/" + testClient.getUid() + "/transplantRequests")
+                .contentType(contentType)
+                .content(json))
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(contentType))
+                .andExpect(jsonPath("$[0].requestedOrgan", is("LIVER")))
+                .andExpect(jsonPath("$[0].requestDate", is("2017-07-18T14:11:20.202")))
+                .andExpect(jsonPath("$[0].resolvedDate", isEmptyOrNullString()))
+                .andExpect(jsonPath("$[0].status", is("WAITING")))
+                .andExpect(jsonPath("$[0].resolvedReason", is("reason")));
+    }
+
+    @Test
+    public void createTransplantRequestInvalidOrganTest() throws Exception {
+        String json = "{\n"
+                + "  \"requestedOrgan\": \"invalid organ\",\n"
+                + "  \"requestDate\": \"2017-07-18T14:11:20.202\",\n"
+                + "  \"resolvedDate\": \"2017-07-19T14:11:20.202\",\n"
+                + "  \"status\": \"WAITING\",\n"
+                + "  \"resolvedReason\": \"reason\"\n"
+                + "}";
+        mockMvc.perform(post("/clients/" + testClient.getUid() + "/transplantRequests")
+                .contentType(contentType)
+                .content(json))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void createTransplantRequestInvalidDateTest() throws Exception {
+        String json = "{\n"
+                + "  \"requestedOrgan\": \"LIVER\",\n"
+                + "  \"requestDate\": \"invalid date\",\n"
+                + "  \"resolvedDate\": \"2017-07-19T14:11:20.202\",\n"
+                + "  \"status\": \"WAITING\",\n"
+                + "  \"resolvedReason\": \"reason\"\n"
+                + "}";
+        mockMvc.perform(post("/clients/" + testClient.getUid() + "/transplantRequests")
+                .contentType(contentType)
+                .content(json))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void createTransplantRequestInvalidStatusTest() throws Exception {
+        String json = "{\n"
+                + "  \"requestedOrgan\": \"LIVER\",\n"
+                + "  \"requestDate\": \"2017-07-18T14:11:20.202\",\n"
+                + "  \"resolvedDate\": \"2017-07-19T14:11:20.202\",\n"
+                + "  \"status\": \"invalid status\",\n"
+                + "  \"resolvedReason\": \"reason\"\n"
+                + "}";
+        mockMvc.perform(post("/clients/" + testClient.getUid() + "/transplantRequests")
+                .contentType(contentType)
+                .content(json))
+                .andExpect(status().isBadRequest());
     }
 }

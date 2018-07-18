@@ -10,6 +10,7 @@ import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
+import com.humanharvest.organz.utilities.validators.client.TransplantRequestValidator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -79,8 +80,14 @@ public class ClientTransplantRequestsController {
         Optional<Client> client = State.getClientManager().getClientByID(id);
 
         if (client.isPresent()) {
-            client.get().addTransplantRequest(transplantRequest);
+            try {
+                transplantRequest.setClient(client.get());
+                TransplantRequestValidator.validateTransplantRequest(transplantRequest);
+            } catch (IllegalArgumentException e) {
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
 
+            client.get().addTransplantRequest(transplantRequest);
             Collection<TransplantRequest> transplantRequests = client.get().getTransplantRequests();
             return new ResponseEntity<>(transplantRequests, HttpStatus.CREATED);
 
