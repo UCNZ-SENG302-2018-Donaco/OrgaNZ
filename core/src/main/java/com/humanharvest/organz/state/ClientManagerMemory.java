@@ -1,23 +1,24 @@
 package com.humanharvest.organz.state;
 
-import static com.humanharvest.organz.utilities.enums.TransplantRequestStatus.WAITING;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.stream.Collectors;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.TransplantRequest;
+import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 
 /**
  * An in-memory implementation of {@link ClientManager} that uses a simple list to hold all clients.
  */
 public class ClientManagerMemory implements ClientManager {
 
-    private List<Client> clients = new ArrayList<>();
+    private final List<Client> clients = new ArrayList<>();
 
     public ClientManagerMemory() {
     }
@@ -47,7 +48,7 @@ public class ClientManagerMemory implements ClientManager {
      */
     @Override
     public List<Client> getClients() {
-        return clients;
+        return Collections.unmodifiableList(clients);
     }
 
     /**
@@ -86,12 +87,13 @@ public class ClientManagerMemory implements ClientManager {
     /**
      * Return a client matching that UID
      * @param id To be matched
-     * @return Client object or null if none exists
+     * @return Client object or empty if none exists
      */
     @Override
-    public Client getClientByID(int id) {
+    public Optional<Client> getClientByID(int id) {
         return clients.stream()
-                .filter(d -> d.getUid() == id).findFirst().orElse(null);
+                .filter(client -> client.getUid() == id)
+                .findFirst();
     }
 
     /**
@@ -132,7 +134,7 @@ public class ClientManagerMemory implements ClientManager {
         return clients.stream()
                 .map(Client::getTransplantRequests)
                 .flatMap(Collection::stream)
-                .filter(request -> request.getStatus() == WAITING)
+                .filter(request -> request.getStatus() == TransplantRequestStatus.WAITING)
                 .collect(Collectors.toList());
     }
 }

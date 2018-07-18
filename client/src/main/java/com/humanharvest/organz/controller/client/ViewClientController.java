@@ -133,7 +133,8 @@ public class ViewClientController extends SubController {
 
     @Override
     public void refresh() {
-        viewedClient = manager.getClientByID(viewedClient.getUid());
+        viewedClient = manager.getClientByID(viewedClient.getUid())
+                .orElseThrow(IllegalStateException::new);
         updateClientFields();
         if (session.getLoggedInUserType() == UserType.CLIENT) {
             mainController.setTitle("View Client: " + viewedClient.getPreferredName());
@@ -157,7 +158,7 @@ public class ViewClientController extends SubController {
             return;
         }
 
-        viewedClient = manager.getClientByID(idValue);
+        viewedClient = manager.getClientByID(idValue).orElse(null);
         if (viewedClient == null) {
             noClientLabel.setVisible(true);
             setFieldsDisabled(true);
