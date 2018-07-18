@@ -42,6 +42,7 @@ public final class State {
     private static RestTemplate restTemplate = new RestTemplate();
     private static String clientEtag = "";
     private static String clinicianEtag = "";
+    private static String administratorEtag = "";
     private static String token = "";
 
     public static String getClientEtag() {
@@ -54,6 +55,10 @@ public final class State {
 
     public static void setClinicianEtag(String etag) {
         clinicianEtag = etag;
+    }
+
+    public static void setAdministratorEtag(String etag) {
+        administratorEtag = etag;
     }
 
     private State() {

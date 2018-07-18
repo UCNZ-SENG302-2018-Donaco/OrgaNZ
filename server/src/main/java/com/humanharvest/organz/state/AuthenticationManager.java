@@ -48,7 +48,7 @@ public class AuthenticationManager {
                 checkAdmin(identifier)) {
             return;
         }
-            throw new AuthenticationException("X-Auth-Token does not match any allowed user type");
+        throw new AuthenticationException("X-Auth-Token does not match any allowed user type");
     }
 
     /**
@@ -58,10 +58,6 @@ public class AuthenticationManager {
      * @throws AuthenticationException Thrown if the authentication is invalid for any reason
      */
     public void verifyClientAccess(String authenticationToken, Client viewedClient) throws AuthenticationException {
-        if (authenticationToken == null) {
-            throw new AuthenticationException("X-Auth-Token does not exist");
-        }
-
         String identifier = getIdentifierFromToken(authenticationToken);
 
         //Check the three user types, if any match then they will return true and we can return due to success.
@@ -74,7 +70,7 @@ public class AuthenticationManager {
         throw new AuthenticationException("X-Auth-Token does not match any allowed user type");
     }
 
-    private boolean checkClient(String identifier, Client viewedClient) throws AuthenticationException {
+    protected boolean checkClient(String identifier, Client viewedClient) throws AuthenticationException {
         if (identifier.startsWith("client:")) {
             int id = Integer.parseInt(identifier.substring(7));
             Optional<Client> client = State.getClientManager().getClientByID(id);
@@ -88,7 +84,7 @@ public class AuthenticationManager {
         return false;
     }
 
-    private boolean checkClinician(String identifier) throws AuthenticationException {
+    protected boolean checkClinician(String identifier) throws AuthenticationException {
         if (identifier.startsWith("clinician:")) {
             int staffId = Integer.parseInt(identifier.substring(10));
             Optional<Clinician> clinican = State.getClinicianManager().getClinicianByStaffId(staffId);
@@ -100,7 +96,7 @@ public class AuthenticationManager {
         return false;
     }
 
-    private boolean checkAdmin(String identifier) throws AuthenticationException {
+    protected boolean checkAdmin(String identifier) throws AuthenticationException {
         if (identifier.startsWith("admin:")) {
             String username = identifier.substring(6);
             Optional<Administrator> administrator = State.getAdministratorManager()
@@ -113,8 +109,9 @@ public class AuthenticationManager {
         return false;
     }
 
-    private String getIdentifierFromToken(String token) throws AuthenticationException {
+    protected String getIdentifierFromToken(String token) throws AuthenticationException {
         if (token == null) {
+            // TODO: Throw 401 instead?
             throw new AuthenticationException("X-Auth-Token does not exist");
         }
 
@@ -133,14 +130,14 @@ public class AuthenticationManager {
      * Generates an authentication token for a clinician.
      */
     public String generateClientToken(int id) {
-        return generateToken("client:" + String.valueOf(id));
+        return generateToken("client:" + id);
     }
 
     /**
      * Generates an authentication token for a clinician.
      */
     public String generateClinicianToken(int staffId) {
-        return generateToken("clinician:" + String.valueOf(staffId));
+        return generateToken("clinician:" + staffId);
     }
 
     /**
