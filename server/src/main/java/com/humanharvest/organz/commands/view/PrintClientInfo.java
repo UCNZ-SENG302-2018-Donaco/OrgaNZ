@@ -1,6 +1,8 @@
 package com.humanharvest.organz.commands.view;
 
 
+import java.util.Optional;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.state.ClientManager;
@@ -23,6 +25,9 @@ public class PrintClientInfo implements Runnable {
 
     private ClientManager manager;
 
+    @Option(names = {"--id", "-u"}, description = "User ID", required = true)
+    private int uid;
+
     public PrintClientInfo() {
         manager = State.getClientManager();
     }
@@ -31,17 +36,14 @@ public class PrintClientInfo implements Runnable {
         this.manager = manager;
     }
 
-    @Option(names = {"--id", "-u"}, description = "User ID", required = true)
-    private int uid;
-
     @Override
     public void run() {
-        Client client = manager.getClientByID(uid);
-        if (client == null) {
+        Optional<Client> client = manager.getClientByID(uid);
+        if (!client.isPresent()) {
             System.out.println("No client exists with that user ID");
             return;
         }
-        System.out.println(client.getClientInfoString());
+        System.out.println(client.get().getClientInfoString());
         HistoryItem printUserInfo = new HistoryItem("PRINT CLIENT INFO", "Information was printed about client " + uid);
         JSONConverter.updateHistory(printUserInfo, "action_history.json");
     }

@@ -8,6 +8,7 @@ import static org.mockito.Mockito.*;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.time.LocalDate;
+import java.util.Optional;
 
 import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.Client;
@@ -59,7 +60,7 @@ public class SetOrganStatusTest extends BaseTest {
 
     @Test
     public void setorganstatus_non_existent_id() {
-        when(spyClientManager.getClientByID(anyInt())).thenReturn(null);
+        when(spyClientManager.getClientByID(anyInt())).thenReturn(Optional.empty());
         String[] inputs = {"-u", "2"};
 
         CommandLine.run(spySetOrganStatus, System.out, inputs);
@@ -70,7 +71,7 @@ public class SetOrganStatusTest extends BaseTest {
     @Test
     public void setorganstatus_valid_set_to_true() {
         Client client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
-        when(spyClientManager.getClientByID(anyInt())).thenReturn(client);
+        when(spyClientManager.getClientByID(anyInt())).thenReturn(Optional.of(client));
         String[] inputs = {"-u", "1", "--liver"};
 
         CommandLine.run(spySetOrganStatus, System.out, inputs);
@@ -84,7 +85,7 @@ public class SetOrganStatusTest extends BaseTest {
 
         client.setOrganDonationStatus(Organ.LIVER, true);
 
-        when(spyClientManager.getClientByID(anyInt())).thenReturn(client);
+        when(spyClientManager.getClientByID(anyInt())).thenReturn(Optional.of(client));
         String[] inputs = {"-u", "1", "--liver=false"};
 
         CommandLine.run(spySetOrganStatus, System.out, inputs);
@@ -98,7 +99,7 @@ public class SetOrganStatusTest extends BaseTest {
 
         client.setOrganDonationStatus(Organ.LIVER, true);
 
-        when(spyClientManager.getClientByID(anyInt())).thenReturn(client);
+        when(spyClientManager.getClientByID(anyInt())).thenReturn(Optional.of(client));
         String[] inputs = {"-u", "1", "--liver"};
 
         ArgumentCaptor<Client> captor = ArgumentCaptor.forClass(Client.class);
@@ -112,7 +113,7 @@ public class SetOrganStatusTest extends BaseTest {
     public void setorganstatus_valid_multiple_updates() {
         Client client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
 
-        when(spyClientManager.getClientByID(anyInt())).thenReturn(client);
+        when(spyClientManager.getClientByID(anyInt())).thenReturn(Optional.of(client));
         String[] inputs = {"-u", "1", "--liver", "--kidney"};
 
         CommandLine.run(spySetOrganStatus, System.out, inputs);
@@ -128,7 +129,7 @@ public class SetOrganStatusTest extends BaseTest {
         client.setOrganDonationStatus(Organ.LIVER, true);
         client.setOrganDonationStatus(Organ.BONE, true);
 
-        when(spyClientManager.getClientByID(anyInt())).thenReturn(client);
+        when(spyClientManager.getClientByID(anyInt())).thenReturn(Optional.of(client));
         String[] inputs = {"-u", "1", "--liver", "--kidney", "--bone=false"};
 
         CommandLine.run(spySetOrganStatus, System.out, inputs);

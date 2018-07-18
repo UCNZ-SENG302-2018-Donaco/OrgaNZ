@@ -113,7 +113,8 @@ public class StaffListController extends SubController {
         String actionHistoryFilename = "action_history.json";
 
         if (id.matches("[0-9]+")) {
-            Clinician clinician = clinicianManager.getClinicianByStaffId(Integer.parseInt(id));
+            Clinician clinician = clinicianManager.getClinicianByStaffId(Integer.parseInt(id))
+                    .orElseThrow(IllegalArgumentException::new);
 
             Action action = new DeleteClinicianAction(clinician, clinicianManager);
             invoker.execute(action);

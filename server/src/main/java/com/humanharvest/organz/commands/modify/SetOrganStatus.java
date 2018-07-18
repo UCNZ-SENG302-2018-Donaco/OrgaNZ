@@ -2,6 +2,7 @@ package com.humanharvest.organz.commands.modify;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.actions.client.ModifyClientOrgansAction;
@@ -82,13 +83,13 @@ public class SetOrganStatus implements Runnable {
 
     @Override
     public void run() {
-        Client client = manager.getClientByID(uid);
-        if (client == null) {
+        Optional<Client> client = manager.getClientByID(uid);
+        if (!client.isPresent()) {
             System.out.println("No client exists with that user ID");
             return;
         }
 
-        ModifyClientOrgansAction action = new ModifyClientOrgansAction(client, manager);
+        ModifyClientOrgansAction action = new ModifyClientOrgansAction(client.get(), manager);
 
         Map<Organ, Boolean> states = new HashMap<>();
         states.put(Organ.LIVER, liver);
@@ -107,13 +108,13 @@ public class SetOrganStatus implements Runnable {
         for (Map.Entry<Organ, Boolean> entry : states.entrySet()) {
             Organ organ = entry.getKey();
             Boolean newState = entry.getValue();
-            Boolean currState = client.getOrganDonationStatus().get(organ);
+            Boolean currState = client.get().getOrganDonationStatus().get(organ);
             if (newState == null) {
                 continue;
             } else if (newState && currState) {
-                System.out.println(organ.toString() + " is already registered for donation");
+                System.out.println(organ + " is already registered for donation");
             } else if (!newState && !currState) {
-                System.out.println(organ.toString() + " is already not registered for donation");
+                System.out.println(organ + " is already not registered for donation");
             } else {
                 try {
                     action.addChange(organ, newState);

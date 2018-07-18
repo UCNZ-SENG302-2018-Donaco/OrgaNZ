@@ -43,6 +43,30 @@ public class AuthenticationManager {
     }
 
     /**
+     * Generates an authentication token for a clinician.
+     */
+    public String generateClientToken(int id) {
+        return Jwts.builder()
+                .setId(String.valueOf(id))
+                .setIssuedAt(Date.from(Instant.now()))
+                .setExpiration(Date.from(Instant.now().plusSeconds(86400))) // 24 hours
+                .signWith(SignatureAlgorithm.HS512, getSecret())
+                .compact();
+    }
+
+    /**
+     * Generates an authentication token for a clinician.
+     */
+    public String generateClinicianToken(int staffId) {
+        return Jwts.builder()
+                .setSubject(String.valueOf(staffId))
+                .setIssuedAt(Date.from(Instant.now()))
+                .setExpiration(Date.from(Instant.now().plusSeconds(86400))) // 24 hours
+                .signWith(SignatureAlgorithm.HS512, getSecret())
+                .compact();
+    }
+
+    /**
      * Generates an authentication token for an administrator.
      */
     public String generateAdministratorToken(String username) {

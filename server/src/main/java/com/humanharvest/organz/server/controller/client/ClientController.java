@@ -1,6 +1,7 @@
 package com.humanharvest.organz.server.controller.client;
 
 import java.util.List;
+import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Client;
@@ -86,15 +87,15 @@ public class ClientController {
 
         //TODO: Auth
 
-        Client client = State.getClientManager().getClientByID(uid);
-        if (client == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } else {
+        Optional<Client> client = State.getClientManager().getClientByID(uid);
+        if (client.isPresent()) {
             //Add the new ETag to the headers
             HttpHeaders headers = new HttpHeaders();
-            headers.setETag(client.getEtag());
+            headers.setETag(client.get().getEtag());
 
-            return new ResponseEntity<>(client, headers, HttpStatus.OK);
+            return new ResponseEntity<>(client.get(), headers, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
@@ -130,15 +131,15 @@ public class ClientController {
         }
 
         //Fetch the client given by ID
-        Client client = State.getClientManager().getClientByID(uid);
-        if (client == null) {
+        Optional<Client> client = State.getClientManager().getClientByID(uid);
+        if (!client.isPresent()) {
             //Return 404 if that client does not exist
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         //Do some extra validation now that we have the client object. Need to check if a date has been changed, it
         // will not become inconsistent
-        if (!ClientBornAndDiedDatesValidator.isValid(modifyClientObject, client)) {
+        if (!ClientBornAndDiedDatesValidator.isValid(modifyClientObject, client.get())) {
             throw new InvalidRequestException();
         }
 
@@ -146,7 +147,7 @@ public class ClientController {
         if (ETag == null) {
             throw new IfMatchRequiredException();
         }
-        if (!client.getEtag().equals(ETag)) {
+        if (!client.get().getEtag().equals(ETag)) {
             throw new IfMatchFailedException();
         }
 
@@ -155,17 +156,19 @@ public class ClientController {
         //Copy the values from the current client to our oldClient
         BeanUtils.copyProperties(client, oldClient, modifyClientObject.getUnmodifiedFields());
         //Make the action (this is a new action)
-        ModifyClientByObjectAction action = new ModifyClientByObjectAction(client, State.getClientManager(),
-                oldClient, modifyClientObject);
+        ModifyClientByObjectAction action = new ModifyClientByObjectAction(client.get(),
+                State.getClientManager(),
+                oldClient,
+                modifyClientObject);
         //Execute action, this would correspond to a specific users invoker in full version
         State.getInvoker().execute(action);
 
         //Add the new ETag to the headers
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client.getEtag());
+        headers.setETag(client.get().getEtag());
 
         //Respond, apparently updates should be 200 not 201 unlike 365 and our spec
-        return new ResponseEntity<>(client, headers, HttpStatus.OK);
+        return new ResponseEntity<>(client.get(), headers, HttpStatus.OK);
     }
 
     /**
@@ -186,8 +189,8 @@ public class ClientController {
         //TODO: Auth
 
         //Fetch the client given by ID
-        Client client = State.getClientManager().getClientByID(uid);
-        if (client == null) {
+        Optional<Client> client = State.getClientManager().getClientByID(uid);
+        if (!client.isPresent()) {
             //Return 404 if that client does not exist
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -196,11 +199,11 @@ public class ClientController {
         if (ETag == null) {
             throw new IfMatchRequiredException();
         }
-        if (!client.getEtag().equals(ETag)) {
+        if (!client.get().getEtag().equals(ETag)) {
             throw new IfMatchFailedException();
         }
 
-        DeleteClientAction action = new DeleteClientAction(client, State.getClientManager());
+        DeleteClientAction action = new DeleteClientAction(client.get(), State.getClientManager());
         State.getInvoker().execute(action);
 
         //Respond, apparently updates should be 200 not 201 unlike 365 and our spec

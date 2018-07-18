@@ -94,7 +94,6 @@ public class MainController {
         }
     }
 
-
     /**
      * Method that can be called from other controllers to load the sidebar into that page.
      * Will set the sidebar as the child of the pane given.

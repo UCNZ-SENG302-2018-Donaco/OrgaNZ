@@ -7,6 +7,7 @@ import static org.mockito.Mockito.*;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.time.LocalDate;
+import java.util.Optional;
 
 import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.Client;
@@ -53,7 +54,7 @@ public class PrintClientInfoTest extends BaseTest {
 
     @Test
     public void printuserinfo_non_existent_id() {
-        when(spyClientManager.getClientByID(anyInt())).thenReturn(null);
+        when(spyClientManager.getClientByID(anyInt())).thenReturn(Optional.empty());
         String[] inputs = {"-u", "2"};
 
         CommandLine.run(spyPrintClientInfo, System.out, inputs);
@@ -66,7 +67,7 @@ public class PrintClientInfoTest extends BaseTest {
     public void printuserinfo_valid() {
         Client client = new Client("First", "mid", "Last", LocalDate.of(1970, 1, 1), 1);
 
-        when(spyClientManager.getClientByID(anyInt())).thenReturn(client);
+        when(spyClientManager.getClientByID(anyInt())).thenReturn(Optional.of(client));
         String[] inputs = {"-u", "1"};
 
         CommandLine.run(spyPrintClientInfo, System.out, inputs);

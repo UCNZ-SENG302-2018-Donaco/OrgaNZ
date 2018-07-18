@@ -80,7 +80,8 @@ public class ModifyClinicianTest extends BaseTest {
     public void testModifyClinicianFirstName() {
         String newName = "catface";
         String[] inputs = {"-s", Integer.toString(staffId), "-f", newName};
-        when(spyClinicianManager.getClinicianByStaffId(anyInt())).thenReturn(testClinician);
+        when(spyClinicianManager.getClinicianByStaffId(anyInt())).thenReturn(
+                java.util.Optional.ofNullable(testClinician));
         CommandLine.run(spyModifyClinician, System.out, inputs);
 
         verify(spyModifyClinician, times(1)).run();

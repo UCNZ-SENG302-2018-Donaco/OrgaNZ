@@ -44,8 +44,8 @@ public class ClinicianManagerDBPureTest extends BaseTest {
     public void getAddedClinician(){
         ClinicianManagerDBPure test = new ClinicianManagerDBPure();
         test.addClinician(c);
-        Clinician result = test.getClinicianByStaffId(3);
-        Assert.assertEquals(c,result);
+        Clinician result = test.getClinicianByStaffId(3).orElseThrow(IllegalStateException::new);
+        Assert.assertEquals(c, result);
 
     }
 
@@ -67,11 +67,7 @@ public class ClinicianManagerDBPureTest extends BaseTest {
         c.setFirstName("New Name");
         dbManager.saveEntity(c);
 
-        Clinician result = test.getClinicianByStaffId(3);
+        Clinician result = test.getClinicianByStaffId(3).orElseThrow(IllegalStateException::new);
         Assert.assertEquals("New Name",result.getFirstName());
-
     }
-
-
-
 }

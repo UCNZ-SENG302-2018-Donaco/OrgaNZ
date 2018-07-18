@@ -2,6 +2,7 @@ package com.humanharvest.organz.controller.client;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -13,6 +14,7 @@ import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.JSONConverter;
+import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 
@@ -76,6 +78,13 @@ public class ClientLoginController extends SubController {
         Client selectedClient = clientList.getSelectionModel().getSelectedItem();
 
         if (selectedClient != null) {
+            try {
+                selectedClient = State.getAuthenticationManager().loginClient(selectedClient.getUid());
+            } catch (AuthenticationException e) {
+                PageNavigator.showAlert(AlertType.ERROR, "Invalid login", e.getLocalizedMessage());
+                return;
+            }
+
             HistoryItem loginHistory = new HistoryItem("LOGIN_CLIENT", String.format("Client %s %s (%d) logged in.",
                     selectedClient.getFirstName(), selectedClient.getLastName(), selectedClient.getUid()));
             JSONConverter.updateHistory(loginHistory, "action_history.json");
