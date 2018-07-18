@@ -42,6 +42,7 @@ public class ModifyClientOrganDonationResolver {
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setIfMatch(State.getClientEtag());
+        httpHeaders.set("X-Auth-Token", State.getToken());
 
         HttpEntity<Map<Organ, Boolean>> entity = new HttpEntity<>(changes, httpHeaders);
 

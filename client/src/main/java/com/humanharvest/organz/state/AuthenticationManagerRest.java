@@ -16,8 +16,6 @@ import org.springframework.web.client.HttpClientErrorException;
 
 public class AuthenticationManagerRest implements AuthenticationManager {
 
-    private String token;
-
     @Override
     public Client loginClient(int id) throws AuthenticationException {
         ClientLoginRequest loginRequest = new ClientLoginRequest(id);
@@ -26,7 +24,8 @@ public class AuthenticationManagerRest implements AuthenticationManager {
             ClientLoginResponse response = State.getRestTemplate().postForObject(
                     State.BASE_URI + "login/client/", new HttpEntity<>(loginRequest),
                     ClientLoginResponse.class);
-            token = response.getToken();
+            State.login(response.getUserData());
+            State.setToken(response.getToken());
             return response.getUserData();
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
@@ -45,7 +44,8 @@ public class AuthenticationManagerRest implements AuthenticationManager {
             ClinicianLoginResponse response = State.getRestTemplate().postForObject(
                     State.BASE_URI + "login/clinician/", new HttpEntity<>(loginRequest),
                     ClinicianLoginResponse.class);
-            token = response.getToken();
+            State.login(response.getUserData());
+            State.setToken(response.getToken());
             return response.getUserData();
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
@@ -64,7 +64,8 @@ public class AuthenticationManagerRest implements AuthenticationManager {
             AdministratorLoginResponse response = State.getRestTemplate().postForObject(
                     State.BASE_URI + "login/administrator/", new HttpEntity<>(loginRequest),
                     AdministratorLoginResponse.class);
-            token = response.getToken();
+            State.login(response.getUserData());
+            State.setToken(response.getToken());
             return response.getUserData();
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {

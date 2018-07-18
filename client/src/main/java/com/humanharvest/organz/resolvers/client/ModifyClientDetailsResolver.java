@@ -24,6 +24,7 @@ public class ModifyClientDetailsResolver {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setIfMatch(State.getClientEtag());
         httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        httpHeaders.set("X-Auth-Token", State.getToken());
         System.out.println(State.getClientEtag());
         String serialized;
         try {

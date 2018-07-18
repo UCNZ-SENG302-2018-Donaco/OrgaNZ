@@ -19,6 +19,7 @@ public class CreateClientResolver {
     public Client execute() {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        httpHeaders.set("X-Auth-Token", State.getToken());
         HttpEntity entity = new HttpEntity<>(createClientView, httpHeaders);
 
         ResponseEntity<Client> responseEntity = State.getRestTemplate()
