@@ -10,6 +10,7 @@ import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
 
@@ -121,7 +122,7 @@ public class AuthenticationManager {
                     .parseClaimsJws(token)
                     .getBody();
             return c.getId();
-        } catch (SignatureException e) {
+        } catch (SignatureException | MalformedJwtException e) {
             throw new AuthenticationException("X-Auth-Token is invalid or expired", e);
         }
     }
