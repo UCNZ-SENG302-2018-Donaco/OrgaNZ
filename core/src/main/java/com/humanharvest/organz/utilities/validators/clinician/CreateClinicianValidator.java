@@ -17,11 +17,11 @@ public class CreateClinicianValidator {
             return false;
         }
 
-        if (NotEmptyStringValidator.isInvalidString(clinician.getMiddleName())) {
+        if (NotEmptyStringValidator.isInvalidString(clinician.getWorkAddress())) {
             return false;
         }
 
-        if (NotEmptyStringValidator.isInvalidString(clinician.getWorkAddress())) {
+        if (NotEmptyStringValidator.isInvalidString(clinician.getPassword())) {
             return false;
         }
 

@@ -40,9 +40,12 @@ public class ClinicianController {
             throw new GlobalControllerExceptionHandler.InvalidRequestException();
         }
 
+        if (State.getClinicianManager().doesStaffIdExist(clinician.getStaffId())) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
         State.getClinicianManager().addClinician(clinician);
         HttpHeaders headers = new HttpHeaders();
-        //headers.setETag(clinician.getEtag());
+        headers.setETag(clinician.getEtag());
         return new ResponseEntity<>(clinician, headers, HttpStatus.CREATED);
     }
 

@@ -1,6 +1,5 @@
 package com.humanharvest.organz.server.controller.client;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -19,6 +18,7 @@ import com.humanharvest.organz.utilities.validators.client.CreateClientValidator
 import com.humanharvest.organz.utilities.validators.client.ModifyClientValidator;
 import com.humanharvest.organz.views.client.CreateClientView;
 import com.humanharvest.organz.views.client.ModifyClientObject;
+import com.humanharvest.organz.views.client.SingleDateView;
 import com.humanharvest.organz.views.client.Views;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpHeaders;
@@ -234,7 +234,7 @@ public class ClientController {
             @PathVariable int uid,
             @RequestHeader(value = "If-Match", required = false) String ETag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authentication,
-            @RequestBody LocalDate dateOfDeath)
+            @RequestBody SingleDateView dateOfDeath)
             throws IfMatchRequiredException, IfMatchFailedException, InvalidRequestException {
 
         //Fetch the client given by ID
@@ -256,7 +256,8 @@ public class ClientController {
             throw new IfMatchFailedException();
         }
 
-        MarkClientAsDeadAction action = new MarkClientAsDeadAction(client, dateOfDeath, State.getClientManager
+        MarkClientAsDeadAction action = new MarkClientAsDeadAction(client, dateOfDeath.getDate(), State
+                .getClientManager
                 ());
         State.getInvoker().execute(action);
 

@@ -124,7 +124,6 @@ public class AuthenticationManager {
                     .parseClaimsJws(token)
                     .getBody();
             return c.getId();
-            //return c.getSubject();
         } catch (SignatureException e) {
             throw new AuthenticationException("X-Auth-Token is invalid or expired", e);
         }
