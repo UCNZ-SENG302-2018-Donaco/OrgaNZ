@@ -81,6 +81,7 @@ public class ClientController {
         HttpHeaders headers = new HttpHeaders();
         headers.setETag(client.getEtag());
 
+        System.out.println(client);
         return new ResponseEntity<>(client, headers, HttpStatus.CREATED);
     }
 
@@ -94,7 +95,6 @@ public class ClientController {
     public ResponseEntity<Client> getClient(
             @PathVariable int uid,
             @RequestHeader(value = "X-Auth-Token", required = false) String authentication) {
-
 
         Optional<Client> client = State.getClientManager().getClientByID(uid);
         if (client.isPresent()) {

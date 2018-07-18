@@ -87,6 +87,8 @@ public class ClientIllnessessController {
             throw new IfMatchFailedException();
         }
 
+
+
         //Create the old details to allow undoable action
         ModifyIllnessObject oldIllnessRecord = new ModifyIllnessObject();
         //Copy the values from the current record to our oldrecord
@@ -100,14 +102,13 @@ public class ClientIllnessessController {
         //Add the new ETag to the headers
         HttpHeaders headers = new HttpHeaders();
         headers.setETag(client.get().getEtag());
-
         return new ResponseEntity<>(record, headers, HttpStatus.OK);
 
     }
 
     @PostMapping("/clients/{uid}/illnesses")
     @JsonView(Views.Overview.class)
-    public ResponseEntity<IllnessRecord> postIllness(@RequestBody CreateIllnessView illnessView,
+    public ResponseEntity <IllnessRecord>postIllness(@RequestBody CreateIllnessView illnessView,
             @PathVariable int uid)
             throws InvalidRequestException {
 
@@ -121,7 +122,6 @@ public class ClientIllnessessController {
                 illnessView.getDiagnosisDate(),illnessView.getCuredDate(),illnessView.isChronic());
 
         client.get().addIllnessRecord(record);
-
         HttpHeaders headers = new HttpHeaders();
         headers.setETag(client.get().getEtag());
 
