@@ -79,7 +79,16 @@ public class AdministratorManagerRest implements AdministratorManager {
 
     @Override
     public void removeAdministrator(Administrator administrator) {
-        throw new UnsupportedOperationException();
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setIfMatch(State.getAdministratorEtag());
+        httpHeaders.set("X-Auth-Token", State.getToken());
+
+        HttpEntity<Administrator> entity = new HttpEntity<>(null, httpHeaders);
+
+        State.getRestTemplate().exchange(State.BASE_URI + "administrators/{username}",
+                HttpMethod.DELETE,
+                entity,
+                String.class, administrator.getUsername());
     }
 
     @Override

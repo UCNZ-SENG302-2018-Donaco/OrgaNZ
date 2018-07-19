@@ -123,7 +123,7 @@ public class ViewClientController extends SubController {
                             return false;
                         }
 
-                        return State.getClientManager().getClientByID(clientId.getAsInt()) != null;
+                        return State.getClientManager().getClientByID(clientId.getAsInt()).isPresent();
                     }
 
                     @Override
@@ -397,7 +397,7 @@ public class ViewClientController extends SubController {
         addChangeIfDifferent(modifyClientObject, "region", region.getValue());
         addChangeIfDifferent(modifyClientObject, "currentAddress", address.getText());
 
-        if (modifyClientObject.getModifiedFields().size() == 0) {
+        if (modifyClientObject.getModifiedFields().isEmpty()) {
             if (!clientDied) {
                 Notifications.create()
                         .title("No changes were made.")

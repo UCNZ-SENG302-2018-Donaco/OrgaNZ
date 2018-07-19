@@ -215,36 +215,18 @@ public final class CucumberSteps implements En {
     private void createClientThen() {
     }
 
-    private void createAdministratorGiven() {
-        Given("^there is a test administrator with the username (\\w+) and password (\\w+)$",
-                (String username, String password) -> {
-                    Administrator administrator = new Administrator(username, password);
-                    State.getAdministratorManager().addAdministrator(administrator);
-                });
-
-        Given("^the authentication token is from administrator (\\w+)", (String username) -> {
-            xAuthToken = State.getAuthenticationManager().generateAdministratorToken(username);
-        });
-    }
-
-    private void createAdministratorWhen() {
-    }
-
-    private void createAdministratorThen() {
-    }
-
     private void createClinicianGiven() {
         Given("^there is a test clinician with the staff-id (\\d+) and password (\\w+)$",
                 (Integer staffId, String password) -> {
-            Clinician clinician = new Clinician("test",
-                    "test",
-                    "test",
-                    "test",
-                    Region.UNSPECIFIED,
-                    staffId,
-                    password);
-            State.getClinicianManager().addClinician(clinician);
-        });
+                    Clinician clinician = new Clinician("test",
+                            "test",
+                            "test",
+                            "test",
+                            Region.UNSPECIFIED,
+                            staffId,
+                            password);
+                    State.getClinicianManager().addClinician(clinician);
+                });
 
         Given("^the authentication token is from clinician (\\d+)", (Integer staffId) -> {
             xAuthToken = State.getAuthenticationManager().generateClinicianToken(staffId);
@@ -255,6 +237,35 @@ public final class CucumberSteps implements En {
     }
 
     private void createClinicianThen() {
+    }
+
+    private void createAdministratorGiven() {
+        Given("^there is a test administrator with the username (\\w+) and password (\\w+)$",
+                (String username, String password) -> {
+                    Administrator administrator = new Administrator(username, password);
+                    State.getAdministratorManager().addAdministrator(administrator);
+                });
+
+        Given("^the authentication token is from administrator (\\w+)", (String username) -> {
+            xAuthToken = State.getAuthenticationManager().generateAdministratorToken(username);
+        });
+
+        Given("^there is a test administrator$", () -> {
+            Administrator administrator = new Administrator("test", "test");
+            State.getAdministratorManager().addAdministrator(administrator);
+        });
+        Given("^I have an etag from administrator (\\w+)$", (String username) -> {
+            etag = State.getAdministratorManager()
+                    .getAdministratorByUsername(username)
+                    .orElseThrow(IllegalArgumentException::new)
+                    .getEtag();
+        });
+    }
+
+    private void createAdministratorWhen() {
+    }
+
+    private void createAdministratorThen() {
     }
 
     private void stepSetup() {

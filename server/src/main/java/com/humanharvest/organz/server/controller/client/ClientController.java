@@ -116,7 +116,7 @@ public class ClientController {
      * The PATCH endpoint for updating a single client
      * @param uid The client UID to update
      * @param modifyClientObject The POJO object of the modifications
-     * @param ETag The corresponding If-Match header to check for concurrent update handling
+     * @param etag The corresponding If-Match header to check for concurrent update handling
      * @return Returns a Client overview. Also contains an ETag header for updates
      * @throws IfMatchRequiredException Thrown if there is no If-Match header, will result in a 428 error
      * @throws IfMatchFailedException Thrown if the If-Match header does not match the Clients ETag. 412 error
@@ -127,7 +127,7 @@ public class ClientController {
     public ResponseEntity<Client> updateClient(
             @PathVariable int uid,
             @RequestBody ModifyClientObject modifyClientObject,
-            @RequestHeader(value = "If-Match", required = false) String ETag,
+            @RequestHeader(value = "If-Match", required = false) String etag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authentication)
             throws IfMatchRequiredException, IfMatchFailedException, InvalidRequestException, AuthenticationException {
 
@@ -160,10 +160,10 @@ public class ClientController {
         }
 
         //Check the ETag. These are handled in the exceptions class.
-        if (ETag == null) {
+        if (etag == null) {
             throw new IfMatchRequiredException();
         }
-        if (!client.getEtag().equals(ETag)) {
+        if (!client.getEtag().equals(etag)) {
             throw new IfMatchFailedException();
         }
 
@@ -190,8 +190,8 @@ public class ClientController {
 
     /**
      * The DELETE endpoint for removing a single client
-     * @param uid The client UID to update
-     * @param ETag The corresponding If-Match header to check for concurrent update handling
+     * @param uid The client UID to delete
+     * @param etag The corresponding If-Match header to check for concurrent update handling
      * @return Returns an empty body with a simple response code
      * @throws IfMatchRequiredException Thrown if there is no If-Match header, will result in a 428 error
      * @throws IfMatchFailedException Thrown if the If-Match header does not match the Clients ETag. 412 error
@@ -200,7 +200,7 @@ public class ClientController {
     @DeleteMapping("/clients/{uid}")
     public ResponseEntity deleteClient(
             @PathVariable int uid,
-            @RequestHeader(value = "If-Match", required = false) String ETag,
+            @RequestHeader(value = "If-Match", required = false) String etag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authentication)
             throws IfMatchRequiredException, IfMatchFailedException, InvalidRequestException {
 
@@ -216,10 +216,10 @@ public class ClientController {
         State.getAuthenticationManager().verifyClientAccess(authentication, client);
 
         //Check the ETag. These are handled in the exceptions class.
-        if (ETag == null) {
+        if (etag == null) {
             throw new IfMatchRequiredException();
         }
-        if (!client.getEtag().equals(ETag)) {
+        if (!client.getEtag().equals(etag)) {
             throw new IfMatchFailedException();
         }
 
@@ -234,7 +234,7 @@ public class ClientController {
     @JsonView(Views.Details.class)
     public ResponseEntity markClientAsDead(
             @PathVariable int uid,
-            @RequestHeader(value = "If-Match", required = false) String ETag,
+            @RequestHeader(value = "If-Match", required = false) String etag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authentication,
             @RequestBody SingleDateView dateOfDeath)
             throws IfMatchRequiredException, IfMatchFailedException, InvalidRequestException {
@@ -251,10 +251,10 @@ public class ClientController {
         State.getAuthenticationManager().verifyClientAccess(authentication, client);
 
         //Check the ETag. These are handled in the exceptions class.
-        if (ETag == null) {
+        if (etag == null) {
             throw new IfMatchRequiredException();
         }
-        if (!client.getEtag().equals(ETag)) {
+        if (!client.getEtag().equals(etag)) {
             throw new IfMatchFailedException();
         }
 

@@ -38,6 +38,7 @@ import com.humanharvest.organz.utilities.view.WindowContext;
 import com.humanharvest.organz.utilities.web.DrugInteractionsHandler;
 import com.humanharvest.organz.utilities.web.MedActiveIngredientsHandler;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.testfx.api.FxRobot;
 
@@ -306,6 +307,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
     }
 
     @Test
+    @Ignore
     public void viewActiveIngredientsIOExceptionTest() throws IOException {
         ViewMedicationsController pageController = (ViewMedicationsController) super.pageController;
         pageController.setActiveIngredientsHandler(createMockActiveIngredientsHandler(

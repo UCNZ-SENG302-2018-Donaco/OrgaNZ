@@ -1,6 +1,7 @@
 package com.humanharvest.organz.state;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -37,7 +38,7 @@ public final class State {
 
     private static ActionInvoker actionInvoker;
     private static Session session;
-    private static boolean unsavedChanges = false;
+    private static boolean unsavedChanges;
     private static List<MainController> mainControllers = new ArrayList<>();
     private static RestTemplate restTemplate = new RestTemplate();
     private static String clientEtag = "";
@@ -53,8 +54,16 @@ public final class State {
         clientEtag = etag;
     }
 
+    public static String getClinicianEtag() {
+        return clinicianEtag;
+    }
+
     public static void setClinicianEtag(String etag) {
         clinicianEtag = etag;
+    }
+
+    public static String getAdministratorEtag() {
+        return administratorEtag;
     }
 
     public static void setAdministratorEtag(String etag) {
@@ -75,8 +84,8 @@ public final class State {
             ClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
             restTemplate.setRequestFactory(requestFactory);
             restTemplate.setErrorHandler(new RestErrorHandler());
-            restTemplate.getMessageConverters().removeIf(m -> m.getClass().getName().equals
-                    (MappingJackson2HttpMessageConverter.class.getName()));
+            restTemplate.getMessageConverters().removeIf(o ->
+                    o instanceof MappingJackson2HttpMessageConverter);
             restTemplate.getMessageConverters().add(customConverter());
 
 
@@ -172,7 +181,7 @@ public final class State {
     }
 
     public static List<MainController> getMainControllers() {
-        return mainControllers;
+        return Collections.unmodifiableList(mainControllers);
     }
 
     private static MappingJackson2HttpMessageConverter customConverter() {
