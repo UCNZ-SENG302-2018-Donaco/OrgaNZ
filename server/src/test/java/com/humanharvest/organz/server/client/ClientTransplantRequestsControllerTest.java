@@ -172,4 +172,21 @@ public class ClientTransplantRequestsControllerTest {
                 .content(validTransplantRequestJson))
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    public void createTransplantRequestInvalidNoEtag() throws Exception {
+        mockMvc.perform(post("/clients/" + testClient.getUid() + "/transplantRequests")
+                .contentType(contentType)
+                .content(validTransplantRequestJson))
+                .andExpect(status().is(428));
+    }
+
+    @Test
+    public void createTransplantRequestInvalidEtag() throws Exception {
+        mockMvc.perform(post("/clients/" + testClient.getUid() + "/transplantRequests")
+                .header("If-Match", testClient.getEtag() + "X")
+                .contentType(contentType)
+                .content(validTransplantRequestJson))
+                .andExpect(status().is(412));
+    }
 }

@@ -11,6 +11,7 @@ import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
+import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
 import com.humanharvest.organz.utilities.validators.client.TransplantRequestValidator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -88,7 +89,10 @@ public class ClientTransplantRequestsController {
         if (client.isPresent()) {
 
             // Check etag
-            if (ETag == null || !client.get().getEtag().equals(ETag)) {
+            if (ETag == null) {
+                throw new IfMatchRequiredException();
+            }
+            if (!client.get().getEtag().equals(ETag)) {
                 throw new IfMatchFailedException();
             }
 
