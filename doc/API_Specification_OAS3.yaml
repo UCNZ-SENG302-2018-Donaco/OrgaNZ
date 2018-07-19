@@ -158,7 +158,7 @@ paths:
           $ref: '#/components/responses/404NotFound'
         412:
           $ref: '#/components/responses/412PreconditionFailed'
-        429:
+        428:
           $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
@@ -186,7 +186,7 @@ paths:
           $ref: '#/components/responses/404NotFound'
         412:
           $ref: '#/components/responses/412PreconditionFailed'
-        429:
+        428:
           $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
@@ -319,7 +319,7 @@ paths:
           $ref: '#/components/responses/404NotFound'
         412:
           $ref: '#/components/responses/412PreconditionFailed'
-        429:
+        428:
           $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
@@ -395,7 +395,7 @@ paths:
           $ref: '#/components/responses/404NotFound'
         412:
           $ref: '#/components/responses/412PreconditionFailed'
-        429:
+        428:
           $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
@@ -438,7 +438,7 @@ paths:
           $ref: '#/components/responses/404NotFound'
         412:
           $ref: '#/components/responses/412PreconditionFailed'
-        429:
+        428:
           $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
@@ -486,7 +486,7 @@ paths:
           $ref: '#/components/responses/404NotFound'
         412:
           $ref: '#/components/responses/412PreconditionFailed'
-        429:
+        428:
           $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
@@ -534,7 +534,7 @@ paths:
           $ref: '#/components/responses/404NotFound'
         412:
           $ref: '#/components/responses/412PreconditionFailed'
-        429:
+        428:
           $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
@@ -610,7 +610,7 @@ paths:
           $ref: '#/components/responses/404NotFound'
         412:
           $ref: '#/components/responses/412PreconditionFailed'
-        429:
+        428:
           $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
@@ -663,7 +663,7 @@ paths:
           $ref: '#/components/responses/404NotFound'
         412:
           $ref: '#/components/responses/412PreconditionFailed'
-        429:
+        428:
           $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
@@ -696,7 +696,7 @@ paths:
           $ref: '#/components/responses/404NotFound'
         412:
           $ref: '#/components/responses/412PreconditionFailed'
-        429:
+        428:
           $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
@@ -773,7 +773,7 @@ paths:
           $ref: '#/components/responses/404NotFound'
         412:
           $ref: '#/components/responses/412PreconditionFailed'
-        429:
+        428:
           $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
@@ -826,7 +826,7 @@ paths:
           $ref: '#/components/responses/404NotFound'
         412:
           $ref: '#/components/responses/412PreconditionFailed'
-        429:
+        428:
           $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
@@ -853,7 +853,7 @@ paths:
           $ref: '#/components/responses/404NotFound'
         412:
           $ref: '#/components/responses/412PreconditionFailed'
-        429:
+        428:
           $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
@@ -969,7 +969,7 @@ paths:
           $ref: '#/components/responses/404NotFound'
         412:
           $ref: '#/components/responses/412PreconditionFailed'
-        429:
+        428:
           $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
@@ -1022,7 +1022,7 @@ paths:
           $ref: '#/components/responses/404NotFound'
         412:
           $ref: '#/components/responses/412PreconditionFailed'
-        429:
+        428:
           $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
@@ -1049,7 +1049,7 @@ paths:
           $ref: '#/components/responses/404NotFound'
         412:
           $ref: '#/components/responses/412PreconditionFailed'
-        429:
+        428:
           $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
@@ -1187,7 +1187,7 @@ paths:
           $ref: '#/components/responses/404NotFound'
         412:
           $ref: '#/components/responses/412PreconditionFailed'
-        429:
+        428:
           $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
@@ -1214,7 +1214,7 @@ paths:
           $ref: '#/components/responses/404NotFound'
         412:
           $ref: '#/components/responses/412PreconditionFailed'
-        429:
+        428:
           $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
@@ -1345,7 +1345,7 @@ paths:
           $ref: '#/components/responses/404NotFound'
         412:
           $ref: '#/components/responses/412PreconditionFailed'
-        429:
+        428:
           $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
@@ -1371,7 +1371,7 @@ paths:
           $ref: '#/components/responses/404NotFound'
         412:
           $ref: '#/components/responses/412PreconditionFailed'
-        429:
+        428:
           $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
@@ -1536,7 +1536,7 @@ paths:
           $ref: '#/components/responses/403Forbidden'
         412:
           $ref: '#/components/responses/412PreconditionFailed'
-        429:
+        428:
           $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
@@ -1592,7 +1592,7 @@ paths:
           $ref: '#/components/responses/403Forbidden'
         412:
           $ref: '#/components/responses/412PreconditionFailed'
-        429:
+        428:
           $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'

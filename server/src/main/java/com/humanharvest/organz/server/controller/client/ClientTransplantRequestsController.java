@@ -7,10 +7,14 @@ import java.util.stream.Collectors;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.TransplantRequest;
+import com.humanharvest.organz.state.AuthenticationManager;
+import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
+import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
+import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
 import com.humanharvest.organz.utilities.validators.client.TransplantRequestValidator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,26 +29,33 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ClientTransplantRequestsController {
 
+    private AuthenticationManager authManager = State.getAuthenticationManager();
+    private ClientManager clientManager = State.getClientManager();
+
     @GetMapping("/clients/transplantRequests")
     public ResponseEntity<Collection<TransplantRequest>> getAllTransplantRequests(
             @RequestParam(value="offset", required = false) Integer offset,
             @RequestParam(value="count", required = false) Integer count,
             @RequestParam(value="region", required = false) List<Region> regions,
-            @RequestParam(value="organs", required = false) List<Organ> organs) {
+            @RequestParam(value="organs", required = false) List<Organ> organs,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
+            throws AuthenticationException {
 
-        List<TransplantRequest> matchingRequests = State.getClientManager().getAllTransplantRequests().stream()
+        // Verify that request has clinician/admin authorization
+        authManager.verifyClinicianOrAdmin(authToken);
+
+        // Get all requests that match region/organ filters
+        List<TransplantRequest> matchingRequests = clientManager.getAllTransplantRequests().stream()
                 .filter(transplantRequest ->
                         regions == null || regions.contains(transplantRequest.getClient().getRegion()))
                 .filter(transplantRequest ->
                         organs == null || organs.contains(transplantRequest.getRequestedOrgan()))
                 .collect(Collectors.toList());
 
-        System.out.println(matchingRequests.toString());
-
+        // Return subset for given offset/count parameters (used for pagination)
         if (offset == null) {
             offset = 0;
         }
-
         if (count == null) {
             return new ResponseEntity<>(
                     matchingRequests.subList(
@@ -61,11 +72,21 @@ public class ClientTransplantRequestsController {
     }
 
     @GetMapping("/clients/{id}/transplantRequests")
-    public ResponseEntity<Collection<TransplantRequest>> getClientTransplantRequests(@PathVariable int id) {
-        Optional<Client> client = State.getClientManager().getClientByID(id);
+    public ResponseEntity<Collection<TransplantRequest>> getClientTransplantRequests(
+            @PathVariable int id,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
+            throws AuthenticationException {
+
+        // Find the client
+        Optional<Client> client = clientManager.getClientByID(id);
+
         if (client.isPresent()) {
+            // Verify that request has access to view the client
+            authManager.verifyClientAccess(authToken, client.get());
+            // Return client's transplant requests
             return new ResponseEntity<>(client.get().getTransplantRequests(), HttpStatus.OK);
         } else {
+            // No client exists with that id, return 404
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -84,11 +105,14 @@ public class ClientTransplantRequestsController {
             @RequestHeader(value = "If-Match",required = false) String ETag) {
 
         // Get the client given by the ID
-        Optional<Client> client = State.getClientManager().getClientByID(id);
+        Optional<Client> client = clientManager.getClientByID(id);
         if (client.isPresent()) {
 
             // Check etag
-            if (ETag == null || !client.get().getEtag().equals(ETag)) {
+            if (ETag == null) {
+                throw new IfMatchRequiredException();
+            }
+            if (!client.get().getEtag().equals(ETag)) {
                 throw new IfMatchFailedException();
             }
 
