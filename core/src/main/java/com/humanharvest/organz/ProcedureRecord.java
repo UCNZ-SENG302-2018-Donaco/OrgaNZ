@@ -47,6 +47,10 @@ public class ProcedureRecord {
         this.date = date;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public Client getClient() {
         return client;
     }
