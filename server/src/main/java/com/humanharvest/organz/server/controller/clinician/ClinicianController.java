@@ -19,9 +19,6 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 public class ClinicianController {
 
-    ClinicianManager clinicianManager = State.getClinicianManager();
-    AuthenticationManager authManager = State.getAuthenticationManager();
-
     /**
      * The GET /clinicians endpoint which returns all clinicians in the system.
      * @return all clinicians
@@ -29,7 +26,7 @@ public class ClinicianController {
     @GetMapping("/clinicians")
     @JsonView(Views.Overview.class)
     public ResponseEntity<List<Clinician>> getClinicians(@RequestHeader(value="X-Auth-Token", required=false) String authToken) {
-        authManager.verifyAdminAccess(authToken);
+        State.getAuthenticationManager().verifyAdminAccess(authToken);
         return new ResponseEntity<>(State.getClinicianManager().getClinicians(), HttpStatus.OK);
     }
 
@@ -51,8 +48,8 @@ public class ClinicianController {
         if (State.getClinicianManager().doesStaffIdExist(clinician.getStaffId())) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        authManager.verifyAdminAccess(authToken);
-        clinicianManager.addClinician(clinician);
+        State.getAuthenticationManager().verifyAdminAccess(authToken);
+        State.getClinicianManager().addClinician(clinician);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setETag(clinician.getEtag());
@@ -69,8 +66,8 @@ public class ClinicianController {
     public ResponseEntity<Clinician> getCliniciansById(@PathVariable int staffId, @RequestHeader
             (value="X-Auth-Token", required=false) String authToken) {
 
-        authManager.verifyAdminAccess(authToken);
-        Optional<Clinician> clinician = clinicianManager.getClinicianByStaffId(staffId);
+        State.getAuthenticationManager().verifyAdminAccess(authToken);
+        Optional<Clinician> clinician = State.getClinicianManager().getClinicianByStaffId(staffId);
         if (clinician.isPresent()) {
             HttpHeaders headers = new HttpHeaders();
             headers.setETag(clinician.get().getEtag());
@@ -92,8 +89,8 @@ public class ClinicianController {
             editedClinician ,
             @RequestHeader(value="X-Auth-Token", required=false) String authToken) {
 
-        Optional<Clinician> clinician = clinicianManager.getClinicianByStaffId(staffId);
-        authManager.vefifyClinicianAccess(authToken, clinician.get());
+        Optional<Clinician> clinician = State.getClinicianManager().getClinicianByStaffId(staffId);
+        State.getAuthenticationManager().vefifyClinicianAccess(authToken, clinician.get());
 
         if (clinician.isPresent()) {
 
@@ -102,7 +99,7 @@ public class ClinicianController {
 
             } else {
                 //Need to create patch logic
-                clinicianManager.applyChangesTo(editedClinician.get());
+                State.getClinicianManager().applyChangesTo(editedClinician.get());
                 HttpHeaders headers = new HttpHeaders();
                 return new ResponseEntity<>(clinician.get(), headers, HttpStatus.OK);
             }
@@ -116,10 +113,10 @@ public class ClinicianController {
     @DeleteMapping("/clinicians/{staffId}")
     public ResponseEntity deleteClient(@PathVariable int staffId, @RequestHeader(value="X-Auth-Token", required=false) String authToken) {
         Optional<Clinician> clinician = State.getClinicianManager().getClinicianByStaffId(staffId);
-        authManager.verifyAdminAccess(authToken);
+        State.getAuthenticationManager().verifyAdminAccess(authToken);
 
         if (clinician.isPresent()) {
-            clinicianManager.removeClinician(clinician.get());
+            State.getClinicianManager().removeClinician(clinician.get());
             return new ResponseEntity<>(HttpStatus.OK);
             // else 403
         } else {
