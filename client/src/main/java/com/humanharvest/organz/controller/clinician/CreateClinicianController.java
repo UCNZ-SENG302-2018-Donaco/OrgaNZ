@@ -131,20 +131,7 @@ public class CreateClinicianController extends SubController {
                         workAddress.getText(), region.getValue(), Integer.parseInt(staffId.getText()),
                         password.getText());
 
-                CreateClinicianAction action = new CreateClinicianAction(clinician, clinicianManager);
-                State.getInvoker().execute(action);
-
-//                CreateClinicianResolver resolver = new CreateClinicianResolver();
-//                try {
-//                    clinician = resolver.execute();
-//                } catch (ServerRestException ex) {
-//                    LOGGER.severe(ex.getMessage());
-//                    PageNavigator.showAlert(AlertType.ERROR, "Server Error",
-//                            "An error occurred while trying to fetch from the server.\nPlease try again later.");
-//                    return;
-//                }
-
-
+                State.getClinicianManager().addClinician(clinician);
 
                 HistoryItem save = new HistoryItem("CREATE CLINICIAN",
                         "Clinician " + fname.getText() + " " + lname.getText() + " with staff ID " + staffId.getText()
