@@ -47,7 +47,7 @@ public class ClientTransplantRequestsController {
      * @param organs The list of organs to filter by. Only requests for one of these organs will be retrieved.
      * @param authToken The authentication token for the request.
      * @return An HTTP response with a JSON body representing all the requests matching these criteria.
-     * @throws AuthenticationException
+     * @throws AuthenticationException If the auth token does not belong to a clinician/admin.
      */
     @GetMapping("/clients/transplantRequests")
     public ResponseEntity<Collection<TransplantRequest>> getAllTransplantRequests(
