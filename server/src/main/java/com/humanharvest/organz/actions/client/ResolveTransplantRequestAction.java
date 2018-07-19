@@ -26,6 +26,7 @@ public class ResolveTransplantRequestAction extends Action {
     private ClientManager manager;
     private TransplantRequest request;
     private TransplantRequestStatus newStatus;
+    private LocalDateTime resolvedDate;
     private String reason;
 
     /**
@@ -34,12 +35,36 @@ public class ResolveTransplantRequestAction extends Action {
      * @param newStatus The new status to give the request. Must be one of the valid {@link
      * ResolveTransplantRequestAction#RESOLVED_STATUSES}.
      * @param reason The reason for this request being resolved.
+     * @param manager The client manager
      */
     public ResolveTransplantRequestAction(TransplantRequest request, TransplantRequestStatus newStatus, String
             reason, ClientManager manager) {
         this.request = request;
         this.newStatus = newStatus;
         this.reason = reason;
+        this.resolvedDate = LocalDateTime.now();
+        this.manager = manager;
+
+        if (!RESOLVED_STATUSES.contains(newStatus)) {
+            throw new IllegalArgumentException("New status must be a valid resolved status.");
+        }
+    }
+
+    /**
+     * Creates a new resolve transplant request action for the given request and given new status/reason.
+     * @param request The transplant request to resolve.
+     * @param newStatus The new status to give the request. Must be one of the valid {@link
+     * ResolveTransplantRequestAction#RESOLVED_STATUSES}.
+     * @param reason The reason for this request being resolved.
+     * @param resolvedDate The timestamp the request was resolved.
+     * @param manager The client manager
+     */
+    public ResolveTransplantRequestAction(TransplantRequest request, TransplantRequestStatus newStatus, String
+            reason, LocalDateTime resolvedDate, ClientManager manager) {
+        this.request = request;
+        this.newStatus = newStatus;
+        this.reason = reason;
+        this.resolvedDate = resolvedDate;
         this.manager = manager;
 
         if (!RESOLVED_STATUSES.contains(newStatus)) {
@@ -54,7 +79,7 @@ public class ResolveTransplantRequestAction extends Action {
     @Override
     public void execute() {
         request.setStatus(newStatus);
-        request.setResolvedDate(LocalDateTime.now());
+        request.setResolvedDate(resolvedDate);
         request.setResolvedReason(reason);
         manager.applyChangesTo(request.getClient());
     }
