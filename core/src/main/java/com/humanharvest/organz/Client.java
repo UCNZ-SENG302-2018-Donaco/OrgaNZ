@@ -497,7 +497,7 @@ public class Client {
      */
     public double getBMI() {
         double BMI;
-        if (weight == 0 || height == 0) {
+        if ( weight == 0 || height == 0) {
             BMI = 0;
         } else {
             BMI = weight / (height * 0.01 * height * 0.01);

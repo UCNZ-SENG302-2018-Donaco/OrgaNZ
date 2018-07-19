@@ -1,4 +1,4 @@
-Feature: Does POST /client/ work?
+Feature: Does POST /clients/ work?
   Scenario: Creating a valid client
     When I post to /clients/ using { "firstName": "New", "lastName": "Test", "dateOfBirth": "1987-01-01" }
     Then the result is created
