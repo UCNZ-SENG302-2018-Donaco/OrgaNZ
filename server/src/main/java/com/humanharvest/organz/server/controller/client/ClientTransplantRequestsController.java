@@ -26,12 +26,29 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Provides handlers for requests to these endpoints:
+ * - GET /clients/transplantRequests
+ * - GET /clients/{id}/transplantRequests
+ * - POST /clients/{id}/transplantRequests
+ */
 @RestController
 public class ClientTransplantRequestsController {
 
     private AuthenticationManager authManager = State.getAuthenticationManager();
     private ClientManager clientManager = State.getClientManager();
 
+    /**
+     * Retrieves all transplant requests stored in the system matching the given criteria.
+     * @param offset The number of requests to skip.
+     * @param count The number of requests to retrieve.
+     * @param regions The list of regions to filter by. Only requests by a client that lives in one of these regions
+     * will be retrieved.
+     * @param organs The list of organs to filter by. Only requests for one of these organs will be retrieved.
+     * @param authToken The authentication token for the request.
+     * @return An HTTP response with a JSON body representing all the requests matching these criteria.
+     * @throws AuthenticationException
+     */
     @GetMapping("/clients/transplantRequests")
     public ResponseEntity<Collection<TransplantRequest>> getAllTransplantRequests(
             @RequestParam(value="offset", required = false) Integer offset,
@@ -71,6 +88,14 @@ public class ClientTransplantRequestsController {
         }
     }
 
+    /**
+     * Retrieves all transplant requests belonging to a client with a given id.
+     * @param id The id of the client whose requests to retrieve.
+     * @param authToken The authentication token for the request.
+     * @return An HTTP response with a JSON body representing all transplant requests belonging to the client.
+     * @throws AuthenticationException If the auth token is not valid or does not belong to a user with view access
+     * to this client.
+     */
     @GetMapping("/clients/{id}/transplantRequests")
     public ResponseEntity<Collection<TransplantRequest>> getClientTransplantRequests(
             @PathVariable int id,
