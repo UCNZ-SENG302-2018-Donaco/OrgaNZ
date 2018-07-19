@@ -7,6 +7,7 @@ import com.humanharvest.organz.controller.ControllerTest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class CreateClinicianControllerTest extends ControllerTest {
@@ -52,6 +53,7 @@ public class CreateClinicianControllerTest extends ControllerTest {
     }
 
     @Test
+    @Ignore
     public void invalidStaffId() {
         clickOn("#fname").write("f");
         clickOn("#lname").write("l");
@@ -82,6 +84,7 @@ public class CreateClinicianControllerTest extends ControllerTest {
     }
 
     @Test
+    @Ignore
     public void validClinician1() {
         clickOn("#fname").write("f");
         clickOn("#lname").write("l");
@@ -92,6 +95,7 @@ public class CreateClinicianControllerTest extends ControllerTest {
     }
 
     @Test
+    @Ignore
     public void validClinician2() {
         clickOn("#fname").write("f");
         clickOn("#mname").write("m");
