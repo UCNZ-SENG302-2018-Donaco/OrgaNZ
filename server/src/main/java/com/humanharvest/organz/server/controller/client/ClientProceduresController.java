@@ -1,14 +1,14 @@
 package com.humanharvest.organz.server.controller.client;
 
 import java.util.Collection;
+import java.util.Optional;
 
+import com.humanharvest.organz.Client;
 import com.humanharvest.organz.ProcedureRecord;
+import com.humanharvest.organz.state.State;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Provides handlers for requests to these endpoints:
@@ -21,8 +21,18 @@ import org.springframework.web.bind.annotation.RestController;
 public class ClientProceduresController {
 
     @GetMapping("/clients/{uid}/procedures")
-    public ResponseEntity<Collection<ProcedureRecord>> getProceduresForClient() {
-        throw new UnsupportedOperationException();
+    public ResponseEntity<Collection<ProcedureRecord>> getProceduresForClient(
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken,
+            @PathVariable Integer uid) {
+        //Retrieves the authentication token
+        State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
+        //Retrieves the client by uid
+        Optional<Client> client = State.getClientManager().getClientByID(uid);
+        //returns the pending procedures for the client
+        return client.map(client1 -> new ResponseEntity<Collection<ProcedureRecord>>
+                (client1.getPendingProcedures(), HttpStatus.OK))
+                .orElseGet(() -> new ResponseEntity<>
+                        (HttpStatus.NOT_FOUND));
     }
 
     @PostMapping("/clients/{uid}/procedures")
