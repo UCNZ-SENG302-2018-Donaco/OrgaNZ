@@ -57,13 +57,12 @@ public class ClientMedicationsController {
 
         Optional<Client> client = State.getClientManager().getClientByID(uid);
 
+        // todo auth
+
         if (client.isPresent()) {
 
             HttpHeaders headers = new HttpHeaders();
             headers.setETag(client.get().getEtag());
-
-            // todo remove this ! just for testing
-            client.get().getAllMedications().add(new MedicationRecord("name", LocalDate.now(), null));
 
             return new ResponseEntity<>(client.get().getAllMedications(), headers, HttpStatus.OK);
 
@@ -90,13 +89,15 @@ public class ClientMedicationsController {
             @RequestHeader(value = "If-Match", required = false) String ETag)
             throws IfMatchRequiredException, IfMatchFailedException {
 
+        // todo auth
+
         Optional<Client> client = State.getClientManager().getClientByID(uid);
 
         if (!client.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        //checkClientEtag(client.get(), ETag);
+        checkClientEtag(client.get(), ETag);
 
         MedicationRecord record = new MedicationRecord(medicationRecordView.getName(), LocalDate.now(), null);
         AddMedicationRecordAction action = new AddMedicationRecordAction(client.get(), record, State.getClientManager());
@@ -126,11 +127,13 @@ public class ClientMedicationsController {
 
         Optional<Client> client = State.getClientManager().getClientByID(uid);
 
+        // todo auth
+
         if (!client.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        //checkClientEtag(client.get(), ETag);
+        checkClientEtag(client.get(), ETag);
 
         MedicationRecord record = client.get().getMedicationRecord(id);
 
@@ -161,13 +164,16 @@ public class ClientMedicationsController {
             @PathVariable int id,
             @RequestHeader(value = "If-Match", required = false) String ETag)
             throws IfMatchFailedException, IfMatchRequiredException {
+
         Optional<Client> client = State.getClientManager().getClientByID(uid);
+
+        // todo auth
 
         if (!client.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        //checkClientEtag(client.get(), ETag);
+        checkClientEtag(client.get(), ETag);
 
         MedicationRecord record = client.get().getMedicationRecord(id);
 
@@ -202,13 +208,15 @@ public class ClientMedicationsController {
             @RequestHeader(value = "If-Match", required = false) String ETag)
             throws IfMatchFailedException, IfMatchRequiredException {
 
+        // todo auth
+
         Optional<Client> client = State.getClientManager().getClientByID(uid);
 
         if (!client.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        //checkClientEtag(client.get(), ETag);
+        checkClientEtag(client.get(), ETag);
 
         MedicationRecord record = client.get().getMedicationRecord(id);
 

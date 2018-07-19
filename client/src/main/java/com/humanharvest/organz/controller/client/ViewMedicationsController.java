@@ -1,6 +1,5 @@
 package com.humanharvest.organz.controller.client;
 
-import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -8,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import javafx.collections.FXCollections;
@@ -26,11 +26,11 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 
 import com.humanharvest.organz.actions.ActionInvoker;
-import com.humanharvest.organz.actions.client.AddMedicationRecordAction;
 import com.humanharvest.organz.actions.client.DeleteMedicationRecordAction;
 import com.humanharvest.organz.actions.client.ModifyMedicationRecordAction;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.SidebarController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.resolvers.ClientResolver;
@@ -65,6 +65,8 @@ public class ViewMedicationsController extends SubController {
     private MedAutoCompleteHandler autoCompleteHandler;
     private MedActiveIngredientsHandler activeIngredientsHandler;
     private DrugInteractionsHandler drugInteractionsHandler;
+
+    private static final Logger LOGGER = Logger.getLogger(SidebarController.class.getName());
 
     @FXML
     private Pane sidebarPane, menuBarPane;
