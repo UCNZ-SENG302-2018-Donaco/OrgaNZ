@@ -10,6 +10,7 @@ import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
+import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.validators.client.TransplantRequestValidator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -70,16 +72,27 @@ public class ClientTransplantRequestsController {
 
     /**
      * Creates a transplant request.
+     * @param transplantRequest the transplant request to add
      * @param id the client's ID
+     * @param ETag A hashed value of the object used for optimistic concurrency control
      * @return list of all transplant requests for that client
      */
     @PostMapping("/clients/{id}/transplantRequests")
     public ResponseEntity<Collection<TransplantRequest>> postTransplantRequest(
             @RequestBody TransplantRequest transplantRequest,
-            @PathVariable int id) {
-        Optional<Client> client = State.getClientManager().getClientByID(id);
+            @PathVariable int id,
+            @RequestHeader(value = "If-Match",required = false) String ETag) {
 
+        // Get the client given by the ID
+        Optional<Client> client = State.getClientManager().getClientByID(id);
         if (client.isPresent()) {
+
+            // Check etag
+            if (ETag == null || !client.get().getEtag().equals(ETag)) {
+                throw new IfMatchFailedException();
+            }
+
+            // Validate the transplant request
             try {
                 transplantRequest.setClient(client.get());
                 TransplantRequestValidator.validateTransplantRequest(transplantRequest);
@@ -87,15 +100,14 @@ public class ClientTransplantRequestsController {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
 
+            // Add transplant request to client and send 201
             client.get().addTransplantRequest(transplantRequest);
             Collection<TransplantRequest> transplantRequests = client.get().getTransplantRequests();
             return new ResponseEntity<>(transplantRequests, HttpStatus.CREATED);
 
         } else {
-            // no client exists with that ID
+            // no client exists with that ID - send a 404
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
-
     }
 }
