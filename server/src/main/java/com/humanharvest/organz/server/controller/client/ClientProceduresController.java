@@ -7,6 +7,7 @@ import com.humanharvest.organz.Client;
 import com.humanharvest.organz.ProcedureRecord;
 import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.actions.client.AddProcedureRecordAction;
+import com.humanharvest.organz.actions.client.DeleteProcedureRecordAction;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import org.springframework.http.HttpStatus;
@@ -77,7 +78,32 @@ public class ClientProceduresController {
     }
 
     @DeleteMapping("/clients/{uid}/procedures/{id}")
-    public ResponseEntity deleteProcedureRecord() {
-        throw new UnsupportedOperationException();
+    public ResponseEntity deleteProcedureRecord(
+            @PathVariable int uid,
+            @PathVariable int id,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
+            throws AuthenticationException {
+
+        // Check request has authorization to delete a procedure
+        State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
+
+        // Try to find a client with matching uid
+        Optional<Client> client = State.getClientManager().getClientByID(uid);
+        if (client.isPresent()) {
+            // Try to find a procedure record with matching id
+            Optional<ProcedureRecord> toDelete = client.get().getProcedures().stream()
+                    .filter(procedure -> procedure.getId() == id)
+                    .findFirst();
+            if (toDelete.isPresent()) {
+                // Execute delete procedure action
+                Action action = new DeleteProcedureRecordAction(client.get(), toDelete.get(), State.getClientManager());
+                State.getInvoker().execute(action);
+                // Return OK response
+                return new ResponseEntity<>(client.get().getProcedures(), HttpStatus.CREATED);
+            }
+        }
+
+        // No client/procedure exists with those ids, return 404
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }
