@@ -9,6 +9,7 @@ import com.humanharvest.organz.Client;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.actions.client.AddTransplantRequestAction;
+import com.humanharvest.organz.actions.client.ResolveTransplantRequestAction;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
@@ -165,7 +166,7 @@ public class ClientTransplantRequestsController {
     }
 
     /**
-     * Modifies a transplant request.
+     * Modifies a transplant request. Currently only allows resolution of requests.
      * @param transplantRequest the transplant request to add
      * @param uid the client's ID
      * @param id the transplant request's ID
@@ -173,7 +174,7 @@ public class ClientTransplantRequestsController {
      * @return list of all transplant requests for that client
      */
     @PatchMapping("/clients/{uid}/transplantRequests/{id}")
-    public ResponseEntity<Collection<TransplantRequest>> postTransplantRequest(
+    public ResponseEntity<TransplantRequest> postTransplantRequest(
             @RequestBody TransplantRequest transplantRequest,
             @PathVariable int uid,
             @PathVariable int id,
@@ -184,10 +185,14 @@ public class ClientTransplantRequestsController {
         Optional<Client> optionalClient = State.getClientManager().getClientByID(uid);
         if (optionalClient.isPresent()) {
             Client client = optionalClient.get();
+            TransplantRequest originalTransplantRequest;
 
-            // Get the transplant request given by the ID
-            TransplantRequest originalTransplantRequest = new TransplantRequest(client, Organ.LIVER); //todo placeholder
-            //todo get (a copy of!) the transplant request by ID
+            // Get the original transplant request given by the ID
+            try {
+                originalTransplantRequest = client.getTransplantRequests().get(id);
+            } catch (IndexOutOfBoundsException e) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
 
             // Check authentication
             State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
@@ -200,8 +205,6 @@ public class ClientTransplantRequestsController {
                 throw new IfMatchFailedException();
             }
 
-            //todo: do the actual patching of originalTransplantRequest
-
             // Validate the transplant request
             try {
                 transplantRequest.setClient(client); //required for validation
@@ -210,8 +213,28 @@ public class ClientTransplantRequestsController {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
 
-            //todo set the original to the modified copy
-            return new ResponseEntity<>(HttpStatus.CREATED);
+            // Patch currently only allows resolution of requests, so throw an error if other things have changed.
+            // Only the status, resolved reason, and resolved date (and time) are allowed to change.
+            // The client, organ, and request date (and time) must stay the same.
+            // If anything has illegally changed, it will return a 400.
+            if (originalTransplantRequest.getClient().getUid() == transplantRequest.getClient().getUid()
+                    && originalTransplantRequest.getRequestedOrgan().equals(transplantRequest.getRequestedOrgan())
+                    && originalTransplantRequest.getRequestDate().equals(transplantRequest.getRequestDate())) {
+
+                // Resolve transplant request and send 201
+                Action action = new ResolveTransplantRequestAction(originalTransplantRequest,
+                        transplantRequest.getStatus(),
+                        transplantRequest.getResolvedReason(),
+                        transplantRequest.getResolvedDate(),
+                        State.getClientManager());
+                State.getInvoker().execute(action);
+                return new ResponseEntity<>(originalTransplantRequest, HttpStatus.CREATED);
+
+            } else {
+                // illegal changes
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
+
         } else {
             // no client exists with that ID - send a 404
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

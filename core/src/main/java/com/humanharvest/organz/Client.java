@@ -101,7 +101,7 @@ public class Client {
             cascade = CascadeType.ALL
     )
     @JsonManagedReference
-    private Collection<TransplantRequest> transplantRequests = new ArrayList<>();
+    private List<TransplantRequest> transplantRequests = new ArrayList<>();
 
     @OneToMany(
             mappedBy = "client",
@@ -189,7 +189,7 @@ public class Client {
         }
     }
 
-    public void setTransplantRequests(Collection<TransplantRequest> requests) {
+    public void setTransplantRequests(List<TransplantRequest> requests) {
         transplantRequests = requests;
     }
 
@@ -497,7 +497,7 @@ public class Client {
      */
     public double getBMI() {
         double BMI;
-        if (weight == 0 || height == 0) {
+        if ( weight == 0 || height == 0) {
             BMI = 0;
         } else {
             BMI = weight / (height * 0.01 * height * 0.01);
@@ -723,7 +723,7 @@ public class Client {
         return Objects.hash(uid);
     }
 
-    public Collection<TransplantRequest> getTransplantRequests() {
+    public List<TransplantRequest> getTransplantRequests() {
         return transplantRequests;
     }
 
