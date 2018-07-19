@@ -9,6 +9,7 @@ import java.time.Period;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -100,7 +101,7 @@ public class Client {
             cascade = CascadeType.ALL
     )
     @JsonManagedReference
-    private Collection<TransplantRequest> transplantRequests = new ArrayList<>();
+    private List<TransplantRequest> transplantRequests = new ArrayList<>();
 
     @OneToMany(
             mappedBy = "client",
@@ -188,7 +189,7 @@ public class Client {
         }
     }
 
-    public void setTransplantRequests(Collection<TransplantRequest> requests) {
+    public void setTransplantRequests(List<TransplantRequest> requests) {
         transplantRequests = requests;
     }
 
@@ -523,7 +524,7 @@ public class Client {
      */
     public double getBMI() {
         double BMI;
-        if (weight == 0 || height == 0) {
+        if ( weight == 0 || height == 0) {
             BMI = 0;
         } else {
             BMI = weight / (height * 0.01 * height * 0.01);
@@ -589,6 +590,14 @@ public class Client {
     }
 
     /**
+     * Returns a list of procedures that the client has undergone or is going to undergo.
+     * @return A list of procedures for the client.
+     */
+    public List<ProcedureRecord> getProcedures() {
+        return Collections.unmodifiableList(procedures);
+    }
+
+    /**
      * Returns a list of procedures that the client has previously undergone.
      * @return A list of past procedures for the client.
      */
@@ -607,6 +616,7 @@ public class Client {
                 .filter(record -> !record.getDate().isBefore(LocalDate.now()))
                 .collect(Collectors.toList());
     }
+
 
     /**
      * Adds the given procedure record to the list of procedures for this client.
@@ -740,7 +750,7 @@ public class Client {
         return Objects.hash(uid);
     }
 
-    public Collection<TransplantRequest> getTransplantRequests() {
+    public List<TransplantRequest> getTransplantRequests() {
         return transplantRequests;
     }
 

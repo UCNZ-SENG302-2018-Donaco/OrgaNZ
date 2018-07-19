@@ -30,6 +30,10 @@ public class AdministratorManagerMemory implements AdministratorManager{
      * @param administrator Administrator to be added
      */
     public void addAdministrator(Administrator administrator) {
+        if (doesUsernameExist(administrator.getUsername())) {
+            throw new IllegalArgumentException("Username already exists or is invalid");
+        }
+
         administrators.add(administrator);
     }
 

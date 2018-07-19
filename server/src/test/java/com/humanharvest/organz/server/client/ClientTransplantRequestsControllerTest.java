@@ -2,6 +2,9 @@ package com.humanharvest.organz.server.client;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -12,10 +15,10 @@ import java.nio.charset.Charset;
 import java.time.LocalDate;
 
 import com.humanharvest.organz.Client;
-import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.server.Application;
+import com.humanharvest.organz.state.AuthenticationManager;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,7 +40,7 @@ public class ClientTransplantRequestsControllerTest {
 
     private MockMvc mockMvc;
     private Client testClient;
-    private TransplantRequest transplantRequest;
+    private String validTransplantRequestJson;
 
     @Autowired
     WebApplicationContext webApplicationContext;
@@ -48,23 +51,34 @@ public class ClientTransplantRequestsControllerTest {
         this.mockMvc = webAppContextSetup(webApplicationContext).build();
         testClient = new Client("Jan", "Michael", "Vincent", LocalDate.now(), 1);
         State.getClientManager().addClient(testClient);
-        transplantRequest = new TransplantRequest(testClient, Organ.LIVER);
-    }
 
-    //------------POST---------------
+        // Create mock authentication manager that verifies all clinicianOrAdmins
+        AuthenticationManager mockAuthenticationManager = mock(AuthenticationManager.class);
+        State.setAuthenticationManager(mockAuthenticationManager);
+        doThrow(new AuthenticationException("X-Auth-Token does not match any allowed user type"))
+                .when(mockAuthenticationManager).verifyClinicianOrAdmin("invalid auth");
+        doThrow(new AuthenticationException("X-Auth-Token does not match any allowed user type"))
+                .when(mockAuthenticationManager).verifyClinicianOrAdmin(null);
+        doNothing().when(mockAuthenticationManager).verifyClinicianOrAdmin("valid auth");
 
-    @Test
-    public void createValidTransplantRequestTest() throws Exception {
-        String json = "{\n"
+        validTransplantRequestJson = "{\n"
                 + "  \"requestedOrgan\": \"LIVER\",\n"
                 + "  \"requestDate\": \"2017-07-18T14:11:20.202\",\n"
                 + "  \"resolvedDate\": \"2017-07-19T14:11:20.202\",\n"
                 + "  \"status\": \"WAITING\",\n"
                 + "  \"resolvedReason\": \"reason\"\n"
                 + "}";
+    }
+
+    //------------POST---------------
+
+    @Test
+    public void createValidTransplantRequestTest() throws Exception {
         mockMvc.perform(post("/clients/" + testClient.getUid() + "/transplantRequests")
+                .header("If-Match", testClient.getEtag())
+                .header("X-Auth-Token", "valid auth")
                 .contentType(contentType)
-                .content(json))
+                .content(validTransplantRequestJson))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(contentType))
                 .andExpect(jsonPath("$[0].requestedOrgan", is("LIVER")))
@@ -83,6 +97,8 @@ public class ClientTransplantRequestsControllerTest {
                 + "  \"status\": \"WAITING\""
                 + "}";
         mockMvc.perform(post("/clients/" + testClient.getUid() + "/transplantRequests")
+                .header("If-Match", testClient.getEtag())
+                .header("X-Auth-Token", "valid auth")
                 .contentType(contentType)
                 .content(json))
                 .andExpect(status().isCreated())
@@ -103,6 +119,8 @@ public class ClientTransplantRequestsControllerTest {
                 + "  \"resolvedReason\": \"reason\"\n"
                 + "}";
         mockMvc.perform(post("/clients/" + testClient.getUid() + "/transplantRequests")
+                .header("If-Match", testClient.getEtag())
+                .header("X-Auth-Token", "valid auth")
                 .contentType(contentType)
                 .content(json))
                 .andExpect(status().isCreated())
@@ -124,6 +142,8 @@ public class ClientTransplantRequestsControllerTest {
                 + "  \"resolvedReason\": \"reason\"\n"
                 + "}";
         mockMvc.perform(post("/clients/" + testClient.getUid() + "/transplantRequests")
+                .header("If-Match", testClient.getEtag())
+                .header("X-Auth-Token", "valid auth")
                 .contentType(contentType)
                 .content(json))
                 .andExpect(status().isBadRequest());
@@ -139,6 +159,8 @@ public class ClientTransplantRequestsControllerTest {
                 + "  \"resolvedReason\": \"reason\"\n"
                 + "}";
         mockMvc.perform(post("/clients/" + testClient.getUid() + "/transplantRequests")
+                .header("If-Match", testClient.getEtag())
+                .header("X-Auth-Token", "valid auth")
                 .contentType(contentType)
                 .content(json))
                 .andExpect(status().isBadRequest());
@@ -154,8 +176,59 @@ public class ClientTransplantRequestsControllerTest {
                 + "  \"resolvedReason\": \"reason\"\n"
                 + "}";
         mockMvc.perform(post("/clients/" + testClient.getUid() + "/transplantRequests")
+                .header("If-Match", testClient.getEtag())
+                .header("X-Auth-Token", "valid auth")
                 .contentType(contentType)
                 .content(json))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void createTransplantRequestInvalidClientId() throws Exception {
+        int invalidId = testClient.getUid() + 1;
+        mockMvc.perform(post("/clients/" + invalidId + "/transplantRequests")
+                .header("If-Match", testClient.getEtag())
+                .header("X-Auth-Token", "valid auth")
+                .contentType(contentType)
+                .content(validTransplantRequestJson))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void createTransplantRequestInvalidNoEtag() throws Exception {
+        mockMvc.perform(post("/clients/" + testClient.getUid() + "/transplantRequests")
+                .header("X-Auth-Token", "valid auth")
+                .contentType(contentType)
+                .content(validTransplantRequestJson))
+                .andExpect(status().is(428));
+    }
+
+    @Test
+    public void createTransplantRequestInvalidEtag() throws Exception {
+        mockMvc.perform(post("/clients/" + testClient.getUid() + "/transplantRequests")
+                .header("If-Match", testClient.getEtag() + "X")
+                .header("X-Auth-Token", "valid auth")
+                .contentType(contentType)
+                .content(validTransplantRequestJson))
+                .andExpect(status().is(412));
+    }
+
+    @Test
+    public void createTransplantRequestInvalidNoAuth() throws Exception {
+        mockMvc.perform(post("/clients/" + testClient.getUid() + "/transplantRequests")
+                .header("If-Match", testClient.getEtag())
+                .contentType(contentType)
+                .content(validTransplantRequestJson))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    public void createTransplantRequestInvalidAuth() throws Exception {
+        mockMvc.perform(post("/clients/" + testClient.getUid() + "/transplantRequests")
+                .header("If-Match", testClient.getEtag())
+                .header("X-Auth-Token", "invalid auth")
+                .contentType(contentType)
+                .content(validTransplantRequestJson))
+                .andExpect(status().isUnauthorized());
     }
 }

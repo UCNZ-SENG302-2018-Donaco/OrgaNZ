@@ -166,13 +166,14 @@ public abstract class CacheManager {
 
                 for (Key key : keys) {
                     Object[] rawKey = key.getValue();
-
-                    try {
-                        removeCachedData(categoryName, rawKey);
-                        handler.getData(rawKey);
-                    } catch (BadDrugNameException | BadGatewayException | IOException e) {
-                        LOGGER.log(Level.WARNING, "Couldn't refresh " + rawKey[0] + " in cache.", e);
-                        //Todo: should the old data be kept if new data can't be retrieved? it currently is not.
+                    if (rawKey != null) {
+                        try {
+                            removeCachedData(categoryName, rawKey);
+                            handler.getData(rawKey);
+                        } catch (BadDrugNameException | BadGatewayException | IOException e) {
+                            LOGGER.log(Level.WARNING, "Couldn't refresh " + rawKey[0] + " in cache.", e);
+                            //Todo: should the old data be kept if new data can't be retrieved? it currently is not.
+                        }
                     }
                 }
             }

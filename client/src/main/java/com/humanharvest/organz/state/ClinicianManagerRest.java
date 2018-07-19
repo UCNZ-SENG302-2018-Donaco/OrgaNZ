@@ -9,14 +9,28 @@ import java.util.Optional;
 import com.humanharvest.organz.Clinician;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 
 public class ClinicianManagerRest implements ClinicianManager {
 
+    private RestTemplate restTemplate = State.getRestTemplate();
+
+    private HttpHeaders newHttpHeaders() {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        httpHeaders.set("X-Auth-Token", State.getToken());
+        return httpHeaders;
+    }
+
     @Override
     public void addClinician(Clinician clinician) {
-        State.getRestTemplate().postForObject(State.BASE_URI + "clinicians", new HttpEntity<>(clinician), Clinician.class);
+        HttpHeaders httpHeaders = newHttpHeaders();
+        HttpEntity entity = new HttpEntity<>(clinician, httpHeaders);
+        restTemplate.exchange(State.BASE_URI + "clinicians", HttpMethod.POST, entity, Clinician.class);
     }
 
     @Override
@@ -30,8 +44,11 @@ public class ClinicianManagerRest implements ClinicianManager {
      */
     @Override
     public List<Clinician> getClinicians() {
-        ResponseEntity<List<Clinician>> clinicianResponse = State.getRestTemplate().exchange(
-                State.BASE_URI + "clinicians", HttpMethod.GET, null,
+        HttpHeaders httpHeaders = newHttpHeaders();
+        HttpEntity entity = new HttpEntity<>(null, httpHeaders);
+
+        ResponseEntity<List<Clinician>> clinicianResponse = restTemplate.exchange(
+                State.BASE_URI + "clinicians", HttpMethod.GET, entity,
                 new ParameterizedTypeReference<List<Clinician>>() {
         });
         List<Clinician> restClinicians = clinicianResponse.getBody();
@@ -44,12 +61,20 @@ public class ClinicianManagerRest implements ClinicianManager {
 
     @Override
     public void removeClinician(Clinician clinician) {
-        throw new UnsupportedOperationException();
+        HttpHeaders httpHeaders = newHttpHeaders();
+        HttpEntity entity = new HttpEntity<>(clinician, httpHeaders);
+        restTemplate.exchange(State.BASE_URI + "clinicians/{staffId}", HttpMethod.DELETE, entity, Clinician.class,
+                clinician.getStaffId());
     }
 
     @Override
-    public void applyChangesTo(Clinician clinician) {
+    public void applyChangesTo(Clinician editedClinician) {
         throw new UnsupportedOperationException();
+//        Optional<Clinician> clinician = new Optional<Clinician>(editedClinician);
+//        editedClinician.getStaffId();
+//
+//        State.getClinicianManager().getClinicianByStaffId(editedClinician.getStaffId()) = editedClinician;
+//        editedClinician = editedClinician;
     }
 
     @Override
@@ -64,15 +89,19 @@ public class ClinicianManagerRest implements ClinicianManager {
      */
     @Override
     public Optional<Clinician> getClinicianByStaffId(int staffId) {
-        ResponseEntity<Clinician> clinician = State.getRestTemplate().exchange(State.BASE_URI + "clinicians/{staffId}",
-                HttpMethod.GET, null, new ParameterizedTypeReference<Clinician>() {
-                }, staffId);
+
+        HttpHeaders httpHeaders = newHttpHeaders();
+        HttpEntity entity = new HttpEntity<>(null, httpHeaders);
+
+        ResponseEntity<Clinician> clinician = restTemplate.exchange(State.BASE_URI + "clinicians/{staffId}",
+                HttpMethod.GET, entity, Clinician.class, staffId);
         State.setClinicianEtag(clinician.getHeaders().getETag());
         return Optional.ofNullable(clinician.getBody());
     }
 
+
     @Override
     public Clinician getDefaultClinician() {
-        throw new UnsupportedOperationException();
+        return getClinicianByStaffId(0).get();
     }
 }

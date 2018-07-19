@@ -14,6 +14,7 @@ public class CreateClientView {
 
     public CreateClientView(String firstName, String middleName, String lastName, LocalDate dateOfBirth) {
         this.firstName = firstName;
+        this.middleName = middleName;
         this.lastName = lastName;
         this.dateOfBirth = dateOfBirth;
     }

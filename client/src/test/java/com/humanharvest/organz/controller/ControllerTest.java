@@ -1,9 +1,12 @@
 package com.humanharvest.organz.controller;
 
+import static org.mockito.Mockito.mock;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -19,6 +22,7 @@ import com.humanharvest.organz.utilities.view.Page;
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.experimental.categories.Category;
+import org.springframework.web.client.RestTemplate;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit.ApplicationTest;
 
@@ -27,6 +31,7 @@ public abstract class ControllerTest extends ApplicationTest {
 
     protected MainController mainController;
     protected SubController pageController;
+    protected RestTemplate mockRestTemplate;
     protected Node pageNode;
 
     @BeforeClass
@@ -48,8 +53,10 @@ public abstract class ControllerTest extends ApplicationTest {
         Pane mainPane = mainLoader.load();
         mainController = mainLoader.getController();
 
-        initState();
         State.addMainController(mainController);
+        mockRestTemplate = mock(RestTemplate.class);
+        State.setRestTemplate(mockRestTemplate);
+        initState();
 
         // Load page's node and controller
         FXMLLoader pageLoader = new FXMLLoader(getClass().getResource(getPage().getPath()));
@@ -94,7 +101,7 @@ public abstract class ControllerTest extends ApplicationTest {
         try {
             Parent parent = stage.getScene().getRoot();
             if (parent instanceof DialogPane) {
-                stage.close();
+                Platform.runLater(stage::close);
             }
         } catch (NullPointerException e) {
 

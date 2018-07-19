@@ -1,12 +1,15 @@
 package com.humanharvest.organz.views.client;
 
 public class Views {
+    private Views() {
+    }
 
-    public static class Overview {}
+    public interface Overview {}
 
-    public static class Details extends Overview {}
+    public interface Details extends Overview {}
 
-    public static class None extends Details {}
+    public interface None extends Details {}
 
-    public static class None2 {}
+    public interface None2 {
+    }
 }
