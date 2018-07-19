@@ -6,7 +6,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.humanharvest.organz.Clinician;
+import com.humanharvest.organz.resolvers.ModifyClinicianObject;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -78,41 +80,24 @@ public class ClinicianManagerRest implements ClinicianManager {
     @Override
     public void applyChangesTo(Clinician editedClinician) {
         HttpHeaders httpHeaders = newHttpHeaders();
-        HttpEntity<Clinician> entity = new HttpEntity<>(editedClinician, httpHeaders);
 
-        restTemplate.exchange(State.BASE_URI + "clinicians/{staffId}", HttpMethod.PATCH, entity, Clinician.class,
+        //serialize
+        String serialized;
+        ModifyClinicianObject mco = new ModifyClinicianObject();
+        try {
+            serialized = State.customObjectMapper().writeValueAsString(mco);
+        } catch (JsonProcessingException ex) {
+            ex.printStackTrace();
+            return;
+        }
+
+        HttpEntity<String> entity = new HttpEntity<>(serialized, httpHeaders);
+
+        ResponseEntity<Clinician> response = restTemplate
+                .exchange(State.BASE_URI + "clinicians/{staffId}", HttpMethod.PATCH, entity, Clinician.class,
                 editedClinician.getStaffId());
+        State.setClinicianEtag(response.getHeaders().getETag());
 
-
-//        String serialized;
-//        try {
-//            serialized = State.customObjectMapper().writeValueAsString(modifyClientObject);
-//        } catch (JsonProcessingException e) {
-//            e.printStackTrace();
-//            return null;
-//        }
-//
-//        HttpEntity<String> entity = new HttpEntity<>(serialized, httpHeaders);
-//
-//        System.out.println(serialized);
-//
-//        ResponseEntity<Client> responseEntity = State.getRestTemplate()
-//                .exchange(
-//                        State.BASE_URI + "clients/{uid}",
-//                        HttpMethod.PATCH,
-//                        entity,
-//                        Client.class,
-//                        client.getUid());
-//
-//        State.setClientEtag(responseEntity.getHeaders().getETag());
-//        return responseEntity.getBody();
-
-
-//        Optional<Clinician> clinician = new Optional<Clinician>(editedClinician);
-//        editedClinician.getStaffId();
-//
-//        State.getClinicianManager().getClinicianByStaffId(editedClinician.getStaffId()) = editedClinician;
-//        editedClinician = editedClinician;
     }
 
 
