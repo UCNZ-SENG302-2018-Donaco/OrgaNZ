@@ -92,7 +92,7 @@ public class ClientProceduresController {
         if (client.isPresent()) {
             // Try to find a procedure record with matching id
             Optional<ProcedureRecord> toDelete = client.get().getProcedures().stream()
-                    .filter(procedure -> procedure.getId() == id)
+                    .filter(procedure -> procedure.getId() != null && procedure.getId() == id)
                     .findFirst();
             if (toDelete.isPresent()) {
                 // Execute delete procedure action
