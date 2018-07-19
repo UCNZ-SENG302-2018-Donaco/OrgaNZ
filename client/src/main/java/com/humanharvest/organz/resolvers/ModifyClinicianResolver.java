@@ -1,4 +1,4 @@
-package com.humanharvest.organz.resolvers.client;
+package com.humanharvest.organz.resolvers;
 
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.state.State;
@@ -7,12 +7,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
-public class CreateClinicianResolver {
+public class ModifyClinicianResolver {
 
-//    private CreateClientView createClientView;
-
-    public CreateClinicianResolver() {
-    }
 
     public Clinician execute() {
         HttpHeaders httpHeaders = new HttpHeaders();

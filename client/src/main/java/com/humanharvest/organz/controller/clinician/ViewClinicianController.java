@@ -218,6 +218,7 @@ public class ViewClinicianController extends SubController {
      */
     private boolean updateChanges() {
         ClinicianManager manager = State.getClinicianManager();
+        State.getClinicianManager().applyChangesTo(viewedClinician);
         ModifyClinicianAction action = new ModifyClinicianAction(viewedClinician,manager);
 
         addChangeIfDifferent(action, "setFirstName", viewedClinician.getFirstName(), fname.getText());

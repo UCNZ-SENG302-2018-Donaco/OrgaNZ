@@ -49,6 +49,10 @@ public final class State {
         return clientEtag;
     }
 
+    public static String getClinicianEtag() {
+        return clinicianEtag;
+    }
+
     public static void setClientEtag(String etag) {
         clientEtag = etag;
     }
