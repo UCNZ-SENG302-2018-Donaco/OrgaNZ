@@ -69,6 +69,7 @@ public class ClinicianManagerRest implements ClinicianManager {
 
     @Override
     public void applyChangesTo(Clinician editedClinician) {
+        throw new UnsupportedOperationException();
 //        Optional<Clinician> clinician = new Optional<Clinician>(editedClinician);
 //        editedClinician.getStaffId();
 //

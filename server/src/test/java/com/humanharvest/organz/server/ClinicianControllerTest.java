@@ -36,7 +36,7 @@ import org.springframework.web.context.WebApplicationContext;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
 @WebAppConfiguration
-public class ClinicianTest {
+public class ClinicianControllerTest {
 
     private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON
             .getSubtype(), Charset.forName("utf8"));
@@ -152,5 +152,29 @@ public class ClinicianTest {
     @Test
     public void nonAdminCreatingClinician403() throws Exception {
         //TODO auth
+    }
+
+    //------------PATCH---------------
+
+
+    //------------DELETE---------------
+    @Test
+    public void validDelete() throws Exception {
+        State.getClinicianManager().addClinician(testClinician);
+        mockMvc.perform(delete("/clinicians/1"))
+                .andExpect(status().isOk());
+    }
+
+    // The default admin cannot be deleted (this is prevented on the client side anyway).
+    @Test
+    public void tryDeleteDefaultAdmin() throws Exception {
+        mockMvc.perform(delete("/clinicians/0"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void deleteNonExistingAdmin() throws Exception {
+        mockMvc.perform(delete("/clinicians/1"))
+                .andExpect(status().isNotFound());
     }
 }
