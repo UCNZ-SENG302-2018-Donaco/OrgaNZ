@@ -9,7 +9,9 @@ import java.util.Optional;
 import com.humanharvest.organz.Clinician;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 public class ClinicianManagerRest implements ClinicianManager {
@@ -30,8 +32,14 @@ public class ClinicianManagerRest implements ClinicianManager {
      */
     @Override
     public List<Clinician> getClinicians() {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        httpHeaders.set("X-Auth-Token", State.getToken());
+
+        HttpEntity entity = new HttpEntity<>(null, httpHeaders);
+
         ResponseEntity<List<Clinician>> clinicianResponse = State.getRestTemplate().exchange(
-                State.BASE_URI + "clinicians", HttpMethod.GET, null,
+                State.BASE_URI + "clinicians", HttpMethod.GET, entity,
                 new ParameterizedTypeReference<List<Clinician>>() {
         });
         List<Clinician> restClinicians = clinicianResponse.getBody();
@@ -68,15 +76,23 @@ public class ClinicianManagerRest implements ClinicianManager {
      */
     @Override
     public Optional<Clinician> getClinicianByStaffId(int staffId) {
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        httpHeaders.set("X-Auth-Token", State.getToken());
+
+        HttpEntity entity = new HttpEntity<>(null, httpHeaders);
+
+
         ResponseEntity<Clinician> clinician = State.getRestTemplate().exchange(State.BASE_URI + "clinicians/{staffId}",
-                HttpMethod.GET, null, new ParameterizedTypeReference<Clinician>() {
-                }, staffId);
+                HttpMethod.GET, entity, Clinician.class, staffId);
         State.setClinicianEtag(clinician.getHeaders().getETag());
         return Optional.ofNullable(clinician.getBody());
     }
 
+
     @Override
     public Clinician getDefaultClinician() {
-        throw new UnsupportedOperationException();
+        return getClinicianByStaffId(0).get();
     }
 }

@@ -22,9 +22,15 @@ public class AdministratorManagerRest implements AdministratorManager {
 
     @Override
     public List<Administrator> getAdministrators() {
+
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        httpHeaders.set("X-Auth-Token", State.getToken());
+        HttpEntity entity = new HttpEntity<>(null, httpHeaders);
+
         ResponseEntity<List<Administrator>> response = State.getRestTemplate().exchange(
                 State.BASE_URI + "administrators",
-                HttpMethod.GET, null, new ParameterizedTypeReference<List<Administrator>>() {
+                HttpMethod.GET, entity, new ParameterizedTypeReference<List<Administrator>>() {
                 });
 
         List<Administrator> administrators = response.getBody();
@@ -93,6 +99,6 @@ public class AdministratorManagerRest implements AdministratorManager {
 
     @Override
     public Administrator getDefaultAdministrator() {
-        throw new UnsupportedOperationException();
+        return getAdministratorByUsername("admin").get();
     }
 }
