@@ -17,6 +17,7 @@ import java.time.LocalDate;
 
 
 import com.humanharvest.organz.Clinician;
+import com.humanharvest.organz.state.AuthenticationManagerFake;
 import com.humanharvest.organz.state.State;
 
 import com.humanharvest.organz.utilities.enums.Region;
@@ -51,6 +52,7 @@ public class ClinicianTest {
         State.reset();
         this.mockMvc = webAppContextSetup(webApplicationContext).build();
         testClinician = new Clinician("Shawn", "", "Michaels", "1", Region.UNSPECIFIED, 1, "hi");
+        State.setAuthenticationManager(new AuthenticationManagerFake());
 
     }
 

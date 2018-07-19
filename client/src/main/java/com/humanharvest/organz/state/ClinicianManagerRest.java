@@ -48,8 +48,12 @@ public class ClinicianManagerRest implements ClinicianManager {
     }
 
     @Override
-    public void applyChangesTo(Clinician clinician) {
-        throw new UnsupportedOperationException();
+    public void applyChangesTo(Clinician editedClinician) {
+//        Optional<Clinician> clinician = new Optional<Clinician>(editedClinician);
+//        editedClinician.getStaffId();
+//
+//        State.getClinicianManager().getClinicianByStaffId(editedClinician.getStaffId()) = editedClinician;
+//        editedClinician = editedClinician;
     }
 
     @Override

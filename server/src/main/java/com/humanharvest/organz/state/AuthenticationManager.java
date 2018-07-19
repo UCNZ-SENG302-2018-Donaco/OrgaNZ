@@ -71,6 +71,24 @@ public class AuthenticationManager {
         throw new AuthenticationException("X-Auth-Token does not match any allowed user type");
     }
 
+    /**
+     * Given an authentication token and clinician, check if the token matches any administrator or the
+     * given clinician
+     * @param authenticationToken The authentication token to check
+     * @throws AuthenticationException Thrown if the authentication is invalid for any reason
+     */
+    public void vefifyClinicianAccess(String authenticationToken, Clinician viewedClinician) throws
+            AuthenticationException {
+        String identifier = getIdentifierFromToken(authenticationToken);
+
+        if (checkClinician(identifier, viewedClinician) ||
+                checkAdmin(identifier)) {
+            return;
+        }
+        //Otherwise throw an exception
+        throw new AuthenticationException("X-Auth-Token does not match any allowed user type");
+    }
+
     protected boolean checkClient(String identifier, Client viewedClient) throws AuthenticationException {
         if (identifier.startsWith("client:")) {
             int id = Integer.parseInt(identifier.substring(7));
@@ -91,6 +109,20 @@ public class AuthenticationManager {
             Optional<Clinician> clinican = State.getClinicianManager().getClinicianByStaffId(staffId);
             if (!clinican.isPresent()) {
                 throw new AuthenticationException("X-Auth-Token refers to an invalid clinician");
+            }
+            return true;
+        }
+        return false;
+    }
+
+    protected boolean checkClinician(String identifier, Clinician viewedClinician) throws AuthenticationException {
+        if (identifier.startsWith("clinician:")) {
+            int staffId = Integer.parseInt(identifier.substring(10));
+            Optional<Clinician> clinician = State.getClinicianManager().getClinicianByStaffId(staffId);
+            if (!clinician.isPresent()) {
+                throw new AuthenticationException("X-Auth-Token refers to an invalid clinician");
+            } else if (clinician.get() != viewedClinician) {
+                throw new AuthenticationException("X-Auth-Token refers to a different clinician");
             }
             return true;
         }

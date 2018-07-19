@@ -33,7 +33,11 @@ public interface ClinicianManager {
      */
     void removeClinician(Clinician clinician);
 
-    void applyChangesTo(Clinician clinician);
+    /**
+     * Update an existing clinician
+     * @param editedClinician the new details for the clinician
+     */
+    void applyChangesTo(Clinician editedClinician);
 
     /**
      * Checks if a user already exists with that staff id
