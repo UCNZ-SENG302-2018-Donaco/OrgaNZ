@@ -16,9 +16,11 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.server.Application;
+import com.humanharvest.organz.state.AuthenticationManagerFake;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.BloodType;
 import com.humanharvest.organz.utilities.enums.Gender;
@@ -51,6 +53,7 @@ public class ClientControllerTest {
     @Before
     public void init() {
         State.reset();
+        State.setAuthenticationManager(new AuthenticationManagerFake());
         this.mockMvc = webAppContextSetup(webApplicationContext).build();
         testClient = new Client("Jan", "Michael", "Vincent", LocalDate.now(), 1);
         State.getClientManager().addClient(testClient);
@@ -345,7 +348,7 @@ public class ClientControllerTest {
                 .header("If-Match", testClient.getEtag()))
                 .andExpect(status().isOk());
 
-        assertNull(State.getClientManager().getClientByID(1));
+        assertEquals(Optional.empty(), State.getClientManager().getClientByID(1));
     }
 
 }
