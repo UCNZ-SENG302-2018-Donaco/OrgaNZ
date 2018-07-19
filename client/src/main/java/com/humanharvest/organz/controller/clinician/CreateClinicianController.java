@@ -1,5 +1,7 @@
 package com.humanharvest.organz.controller.clinician;
 
+import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
+
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -12,10 +14,12 @@ import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.HistoryItem;
+import com.humanharvest.organz.resolvers.client.CreateClinicianResolver;
 import com.humanharvest.organz.state.ClinicianManager;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.JSONConverter;
+import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 
@@ -129,6 +133,18 @@ public class CreateClinicianController extends SubController {
 
                 CreateClinicianAction action = new CreateClinicianAction(clinician, clinicianManager);
                 State.getInvoker().execute(action);
+
+//                CreateClinicianResolver resolver = new CreateClinicianResolver();
+//                try {
+//                    clinician = resolver.execute();
+//                } catch (ServerRestException ex) {
+//                    LOGGER.severe(ex.getMessage());
+//                    PageNavigator.showAlert(AlertType.ERROR, "Server Error",
+//                            "An error occurred while trying to fetch from the server.\nPlease try again later.");
+//                    return;
+//                }
+
+
 
                 HistoryItem save = new HistoryItem("CREATE CLINICIAN",
                         "Clinician " + fname.getText() + " " + lname.getText() + " with staff ID " + staffId.getText()
