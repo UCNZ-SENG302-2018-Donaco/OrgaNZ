@@ -7,8 +7,8 @@ import java.util.stream.Collectors;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.TransplantRequest;
-import com.humanharvest.organz.state.AuthenticationManager;
-import com.humanharvest.organz.state.ClientManager;
+import com.humanharvest.organz.actions.Action;
+import com.humanharvest.organz.actions.client.AddTransplantRequestAction;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
@@ -35,9 +35,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ClientTransplantRequestsController {
 
-    private AuthenticationManager authManager = State.getAuthenticationManager();
-    private ClientManager clientManager = State.getClientManager();
-
     /**
      * Retrieves all transplant requests stored in the system matching the given criteria.
      * @param offset The number of requests to skip.
@@ -59,10 +56,10 @@ public class ClientTransplantRequestsController {
             throws AuthenticationException {
 
         // Verify that request has clinician/admin authorization
-        authManager.verifyClinicianOrAdmin(authToken);
+        State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
 
         // Get all requests that match region/organ filters
-        List<TransplantRequest> matchingRequests = clientManager.getAllTransplantRequests().stream()
+        List<TransplantRequest> matchingRequests = State.getClientManager().getAllTransplantRequests().stream()
                 .filter(transplantRequest ->
                         regions == null || regions.contains(transplantRequest.getClient().getRegion()))
                 .filter(transplantRequest ->
@@ -103,11 +100,11 @@ public class ClientTransplantRequestsController {
             throws AuthenticationException {
 
         // Find the client
-        Optional<Client> client = clientManager.getClientByID(id);
+        Optional<Client> client = State.getClientManager().getClientByID(id);
 
         if (client.isPresent()) {
             // Verify that request has access to view the client
-            authManager.verifyClientAccess(authToken, client.get());
+            State.getAuthenticationManager().verifyClientAccess(authToken, client.get());
             // Return client's transplant requests
             return new ResponseEntity<>(client.get().getTransplantRequests(), HttpStatus.OK);
         } else {
@@ -127,31 +124,35 @@ public class ClientTransplantRequestsController {
     public ResponseEntity<Collection<TransplantRequest>> postTransplantRequest(
             @RequestBody TransplantRequest transplantRequest,
             @PathVariable int id,
-            @RequestHeader(value = "If-Match",required = false) String ETag) {
+            @RequestHeader(value = "If-Match",required = false) String ETag
+            //todo
+            ) {
 
         // Get the client given by the ID
-        Optional<Client> client = clientManager.getClientByID(id);
-        if (client.isPresent()) {
+        Optional<Client> optionalClient = State.getClientManager().getClientByID(id);
+        if (optionalClient.isPresent()) {
+            Client client = optionalClient.get();
 
             // Check etag
             if (ETag == null) {
                 throw new IfMatchRequiredException();
             }
-            if (!client.get().getEtag().equals(ETag)) {
+            if (!client.getEtag().equals(ETag)) {
                 throw new IfMatchFailedException();
             }
 
             // Validate the transplant request
             try {
-                transplantRequest.setClient(client.get());
+                transplantRequest.setClient(client); //required for validation
                 TransplantRequestValidator.validateTransplantRequest(transplantRequest);
             } catch (IllegalArgumentException e) {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
 
             // Add transplant request to client and send 201
-            client.get().addTransplantRequest(transplantRequest);
-            Collection<TransplantRequest> transplantRequests = client.get().getTransplantRequests();
+            Action action = new AddTransplantRequestAction(client, transplantRequest, State.getClientManager());
+            State.getInvoker().execute(action);
+            Collection<TransplantRequest> transplantRequests = client.getTransplantRequests();
             return new ResponseEntity<>(transplantRequests, HttpStatus.CREATED);
 
         } else {
