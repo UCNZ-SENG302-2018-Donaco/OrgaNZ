@@ -498,17 +498,18 @@ public class Client {
     }
 
     /**
-     * Returns the MedicationRecord for the client with the given id
-     * @param id id of the MedicationRecord
+     * todo: to be updated to use id once this is implemented
+     *
+     * Returns the MedicationRecord for the client with the given index
+     * @param index index of the MedicationRecord
      * @return the MedicationRecord with the given id
      */
-    public MedicationRecord getMedicationRecordById(int id) {
-        for (MedicationRecord record : medicationHistory) {
-            if (record.getId() == id) {
-                return record;
-            }
+    public MedicationRecord getMedicationRecord(int index) {
+        if (medicationHistory.size() > index) {
+            return medicationHistory.get(index);
+        } else {
+            return null;
         }
-        return null;
     }
 
     /**
