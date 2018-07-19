@@ -2,14 +2,10 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.humanharvest.organz</groupId>
   <artifactId>organz</artifactId>
-  <packaging>pom</packaging>
   <version>0.5</version>
+  <packaging>pom</packaging>
   <name>organz</name>
   <url>https://eng-git.canterbury.ac.nz/seng302-2018/team-700</url>
-
-  <prerequisites>
-    <maven>3.5.2</maven>
-  </prerequisites>
 
   <developers>
     <developer>
@@ -62,6 +58,16 @@
     </developer>
   </developers>
 
+  <prerequisites>
+    <maven>3.5.2</maven>
+  </prerequisites>
+
+  <modules>
+    <module>./core</module>
+    <module>./client</module>
+    <module>./server</module>
+  </modules>
+
   <properties>
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
@@ -70,16 +76,7 @@
     <resource.delimiter>@</resource.delimiter>
     <outputDirectory>${project.basedir}/../target</outputDirectory>
     <sonar.jacoco.reportPaths>${outputDirectory}/coverage-reports/jacoco-unit.exec</sonar.jacoco.reportPaths>
-    <sonar.host.url>
-      http://csse-s302g0.canterbury.ac.nz:9000/
-    </sonar.host.url>
   </properties>
-
-  <modules>
-    <module>./core</module>
-    <module>./client</module>
-    <module>./server</module>
-  </modules>
 
   <build>
     <plugins>

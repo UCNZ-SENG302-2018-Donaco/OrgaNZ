@@ -1,6 +1,7 @@
 package com.humanharvest.organz;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
 import javax.persistence.Access;
@@ -68,7 +69,7 @@ public class ProcedureRecord {
     }
 
     public Set<Organ> getAffectedOrgans() {
-        return affectedOrgans;
+        return Collections.unmodifiableSet(affectedOrgans);
     }
 
     /**

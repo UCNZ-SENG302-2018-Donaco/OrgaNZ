@@ -6,15 +6,20 @@ import java.util.Optional;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.server.exceptions.GlobalControllerExceptionHandler;
-import com.humanharvest.organz.state.AuthenticationManager;
-import com.humanharvest.organz.state.ClinicianManager;
+import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.validators.clinician.CreateClinicianValidator;
 import com.humanharvest.organz.views.client.Views;
-import com.humanharvest.organz.state.State;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class ClinicianController {
@@ -25,7 +30,8 @@ public class ClinicianController {
      */
     @GetMapping("/clinicians")
     @JsonView(Views.Overview.class)
-    public ResponseEntity<List<Clinician>> getClinicians(@RequestHeader(value="X-Auth-Token", required=false) String authToken) {
+    public ResponseEntity<List<Clinician>> getClinicians(
+            @RequestHeader(value="X-Auth-Token", required=false) String authToken) {
         State.getAuthenticationManager().verifyAdminAccess(authToken);
         return new ResponseEntity<>(State.getClinicianManager().getClinicians(), HttpStatus.OK);
     }
@@ -38,9 +44,11 @@ public class ClinicianController {
      */
     @PostMapping("/clinicians")
     @JsonView(Views.Details.class)
-    public ResponseEntity<Clinician> createClinician(@RequestBody Clinician clinician, @RequestHeader
-            (value="X-Auth-Token", required=false) String authToken)
+    public ResponseEntity<Clinician> createClinician(
+            @RequestBody Clinician clinician,
+            @RequestHeader(value="X-Auth-Token", required=false) String authToken)
             throws GlobalControllerExceptionHandler.InvalidRequestException {
+
         if (!CreateClinicianValidator.isValid(clinician)) {
             throw new GlobalControllerExceptionHandler.InvalidRequestException();
         }
@@ -85,46 +93,47 @@ public class ClinicianController {
      */
     @PatchMapping("/clinicians/{staffId}")
     @JsonView(Views.Details.class)
-    public ResponseEntity<Clinician> editClinician(@PathVariable int staffId, @RequestBody Optional<Clinician>
-            editedClinician ,
+    public ResponseEntity<Clinician> editClinician(
+            @PathVariable int staffId,
+            @RequestBody Clinician editedClinician,
             @RequestHeader(value="X-Auth-Token", required=false) String authToken) {
 
         Optional<Clinician> clinician = State.getClinicianManager().getClinicianByStaffId(staffId);
-        State.getAuthenticationManager().vefifyClinicianAccess(authToken, clinician.get());
 
         if (clinician.isPresent()) {
+            State.getAuthenticationManager().vefifyClinicianAccess(authToken, clinician.get());
 
-            if (!CreateClinicianValidator.isValid(editedClinician.get())) {
-                throw new GlobalControllerExceptionHandler.InvalidRequestException();
-
-            } else {
+            if (CreateClinicianValidator.isValid(editedClinician)) {
                 //Need to create patch logic
-                State.getClinicianManager().applyChangesTo(editedClinician.get());
+                State.getClinicianManager().applyChangesTo(editedClinician);
                 HttpHeaders headers = new HttpHeaders();
                 return new ResponseEntity<>(clinician.get(), headers, HttpStatus.OK);
+            } else {
+                throw new GlobalControllerExceptionHandler.InvalidRequestException();
             }
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
     }
 
-
     @DeleteMapping("/clinicians/{staffId}")
-    public ResponseEntity deleteClient(@PathVariable int staffId, @RequestHeader(value="X-Auth-Token", required=false) String authToken) {
+    public ResponseEntity<Clinician> deleteClient(
+            @PathVariable int staffId,
+            @RequestHeader(value="X-Auth-Token", required=false) String authToken) {
+
         Optional<Clinician> clinician = State.getClinicianManager().getClinicianByStaffId(staffId);
         State.getAuthenticationManager().verifyAdminAccess(authToken);
 
         if (staffId == 0) {
-            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
         if (clinician.isPresent()) {
             State.getClinicianManager().removeClinician(clinician.get());
-            return new ResponseEntity(HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.OK);
             // else 403
         } else {
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 }

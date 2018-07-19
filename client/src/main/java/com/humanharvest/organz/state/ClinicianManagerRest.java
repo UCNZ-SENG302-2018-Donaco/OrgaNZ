@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.humanharvest.organz.Clinician;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -18,9 +17,9 @@ import org.springframework.web.client.RestTemplate;
 
 public class ClinicianManagerRest implements ClinicianManager {
 
-    private RestTemplate restTemplate = State.getRestTemplate();
+    private final RestTemplate restTemplate = State.getRestTemplate();
 
-    private HttpHeaders newHttpHeaders() {
+    private static HttpHeaders newHttpHeaders() {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
         httpHeaders.setIfMatch(State.getClinicianEtag());
@@ -35,7 +34,7 @@ public class ClinicianManagerRest implements ClinicianManager {
     @Override
     public List<Clinician> getClinicians() {
         HttpHeaders httpHeaders = newHttpHeaders();
-        HttpEntity entity = new HttpEntity<>(null, httpHeaders);
+        HttpEntity<Clinician> entity = new HttpEntity<>(null, httpHeaders);
 
         ResponseEntity<List<Clinician>> clinicianResponse = restTemplate.exchange(
                 State.BASE_URI + "clinicians", HttpMethod.GET, entity,
@@ -59,7 +58,7 @@ public class ClinicianManagerRest implements ClinicianManager {
     public Optional<Clinician> getClinicianByStaffId(int staffId) {
 
         HttpHeaders httpHeaders = newHttpHeaders();
-        HttpEntity entity = new HttpEntity<>(null, httpHeaders);
+        HttpEntity<Clinician> entity = new HttpEntity<>(null, httpHeaders);
 
         ResponseEntity<Clinician> clinician = restTemplate.exchange(State.BASE_URI + "clinicians/{staffId}",
                 HttpMethod.GET, entity, Clinician.class, staffId);
@@ -71,7 +70,7 @@ public class ClinicianManagerRest implements ClinicianManager {
     @Override
     public void addClinician(Clinician clinician) {
         HttpHeaders httpHeaders = newHttpHeaders();
-        HttpEntity entity = new HttpEntity<>(clinician, httpHeaders);
+        HttpEntity<Clinician> entity = new HttpEntity<>(clinician, httpHeaders);
         restTemplate.exchange(State.BASE_URI + "clinicians", HttpMethod.POST, entity, Clinician.class);
     }
 
@@ -79,7 +78,7 @@ public class ClinicianManagerRest implements ClinicianManager {
     @Override
     public void applyChangesTo(Clinician editedClinician) {
         HttpHeaders httpHeaders = newHttpHeaders();
-        HttpEntity entity = new HttpEntity<>(editedClinician, httpHeaders);
+        HttpEntity<Clinician> entity = new HttpEntity<>(editedClinician, httpHeaders);
 
         restTemplate.exchange(State.BASE_URI + "clinicians/{staffId}", HttpMethod.PATCH, entity, Clinician.class,
                 editedClinician.getStaffId());
@@ -120,23 +119,19 @@ public class ClinicianManagerRest implements ClinicianManager {
     @Override
     public void removeClinician(Clinician clinician) {
         HttpHeaders httpHeaders = newHttpHeaders();
-        HttpEntity entity = new HttpEntity<>(clinician, httpHeaders);
+        HttpEntity<Clinician> entity = new HttpEntity<>(clinician, httpHeaders);
         restTemplate.exchange(State.BASE_URI + "clinicians/{staffId}", HttpMethod.DELETE, entity, Clinician.class,
                 clinician.getStaffId());
     }
-
 
     @Override
     public boolean doesStaffIdExist(int staffId) {
         return getClinicians().stream().anyMatch(clinician -> clinician.getStaffId() == staffId);
     }
 
-
-
-
     @Override
     public Clinician getDefaultClinician() {
-        return getClinicianByStaffId(0).get();
+        return getClinicianByStaffId(0).orElseThrow(IllegalStateException::new);
     }
 
     @Override
