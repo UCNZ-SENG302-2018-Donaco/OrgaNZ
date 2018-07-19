@@ -74,6 +74,7 @@ public class ViewClinicianController extends SubController {
         inputsPane.setVisible(true);
 
         loadClinicianData();
+        loadClinicianButton.setDisable(true); //TODO discuss whether we even need this?
     }
 
     /**

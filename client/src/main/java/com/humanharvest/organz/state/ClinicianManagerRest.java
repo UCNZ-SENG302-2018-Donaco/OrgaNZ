@@ -13,12 +13,24 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 
 public class ClinicianManagerRest implements ClinicianManager {
 
+    private RestTemplate restTemplate = State.getRestTemplate();
+
+    private HttpHeaders newHttpHeaders() {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        httpHeaders.set("X-Auth-Token", State.getToken());
+        return httpHeaders;
+    }
+
     @Override
     public void addClinician(Clinician clinician) {
-        State.getRestTemplate().postForObject(State.BASE_URI + "clinicians", new HttpEntity<>(clinician), Clinician.class);
+        HttpHeaders httpHeaders = newHttpHeaders();
+        HttpEntity entity = new HttpEntity<>(clinician, httpHeaders);
+        restTemplate.exchange(State.BASE_URI + "clinicians", HttpMethod.POST, entity, Clinician.class);
     }
 
     @Override
@@ -32,13 +44,10 @@ public class ClinicianManagerRest implements ClinicianManager {
      */
     @Override
     public List<Clinician> getClinicians() {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
-        httpHeaders.set("X-Auth-Token", State.getToken());
-
+        HttpHeaders httpHeaders = newHttpHeaders();
         HttpEntity entity = new HttpEntity<>(null, httpHeaders);
 
-        ResponseEntity<List<Clinician>> clinicianResponse = State.getRestTemplate().exchange(
+        ResponseEntity<List<Clinician>> clinicianResponse = restTemplate.exchange(
                 State.BASE_URI + "clinicians", HttpMethod.GET, entity,
                 new ParameterizedTypeReference<List<Clinician>>() {
         });
@@ -52,7 +61,10 @@ public class ClinicianManagerRest implements ClinicianManager {
 
     @Override
     public void removeClinician(Clinician clinician) {
-        throw new UnsupportedOperationException();
+        HttpHeaders httpHeaders = newHttpHeaders();
+        HttpEntity entity = new HttpEntity<>(clinician, httpHeaders);
+        restTemplate.exchange(State.BASE_URI + "clinicians/{staffId}", HttpMethod.DELETE, entity, Clinician.class,
+                clinician.getStaffId());
     }
 
     @Override
@@ -77,14 +89,10 @@ public class ClinicianManagerRest implements ClinicianManager {
     @Override
     public Optional<Clinician> getClinicianByStaffId(int staffId) {
 
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
-        httpHeaders.set("X-Auth-Token", State.getToken());
-
+        HttpHeaders httpHeaders = newHttpHeaders();
         HttpEntity entity = new HttpEntity<>(null, httpHeaders);
 
-
-        ResponseEntity<Clinician> clinician = State.getRestTemplate().exchange(State.BASE_URI + "clinicians/{staffId}",
+        ResponseEntity<Clinician> clinician = restTemplate.exchange(State.BASE_URI + "clinicians/{staffId}",
                 HttpMethod.GET, entity, Clinician.class, staffId);
         State.setClinicianEtag(clinician.getHeaders().getETag());
         return Optional.ofNullable(clinician.getBody());
