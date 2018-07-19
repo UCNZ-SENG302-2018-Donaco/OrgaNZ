@@ -49,8 +49,10 @@ public class ClientController {
         //TODO: Add the auth check, but need to remake the login page to not get the list of clients
         //State.getAuthenticationManager().verifyClinicianOrAdmin(authentication);
 
+        List<Client> clients = State.getClientManager().getClients();
+
         //TODO: Filters
-        return new ResponseEntity<>(State.getClientManager().getClients(), HttpStatus.OK);
+        return new ResponseEntity<>(clients, HttpStatus.OK);
     }
 
     /**
