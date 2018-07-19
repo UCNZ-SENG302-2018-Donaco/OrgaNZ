@@ -98,6 +98,10 @@ public final class State {
         return restTemplate;
     }
 
+    public static void setRestTemplate(RestTemplate template ) {
+        restTemplate = template;
+    }
+
     public static ClientManager getClientManager() {
         return clientManager;
     }
