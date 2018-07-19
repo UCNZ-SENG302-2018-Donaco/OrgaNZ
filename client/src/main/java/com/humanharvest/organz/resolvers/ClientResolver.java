@@ -3,6 +3,7 @@ package com.humanharvest.organz.resolvers;
 import java.util.List;
 import java.util.Map;
 
+import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
@@ -52,6 +53,25 @@ public class ClientResolver {
                 .getClientByID(uid)
                 .orElseThrow(IllegalArgumentException::new)
                 .setTransplantRequests(responseEntity.getBody());
+        return responseEntity.getBody();
+    }
+
+    public static List<MedicationRecord> getMedicationRecords(int uid) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        httpHeaders.set("X-Auth-Token", State.getToken());
+
+        HttpEntity entity = new HttpEntity<>(null, httpHeaders);
+
+        ResponseEntity<List<MedicationRecord>> responseEntity = State.getRestTemplate().exchange
+                (baseUrl + "clients/{id}/medications", HttpMethod.GET, entity,
+                        new ParameterizedTypeReference<List<MedicationRecord>>() {
+                        }, uid);
+        State.setClientEtag(responseEntity.getHeaders().getETag());
+        State.getClientManager()
+                .getClientByID(uid)
+                .orElseThrow(IllegalArgumentException::new)
+                .setMedicationHistory(responseEntity.getBody());
         return responseEntity.getBody();
     }
 }

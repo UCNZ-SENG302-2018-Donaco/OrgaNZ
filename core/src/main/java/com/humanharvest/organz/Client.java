@@ -192,6 +192,10 @@ public class Client {
         transplantRequests = requests;
     }
 
+    public void setMedicationHistory(List<MedicationRecord> medicationHistory) {
+        this.medicationHistory = medicationHistory;
+    }
+
     /**
      * Returns a string listing the organs that the client is currently donating, or a message that the client currently
      * has no organs registered for donation if that is the case.

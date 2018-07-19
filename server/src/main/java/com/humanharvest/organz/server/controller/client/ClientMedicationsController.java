@@ -62,6 +62,7 @@ public class ClientMedicationsController {
             HttpHeaders headers = new HttpHeaders();
             headers.setETag(client.get().getEtag());
 
+            // todo remove this ! just for testing
             client.get().getAllMedications().add(new MedicationRecord("name", LocalDate.now(), null));
 
             return new ResponseEntity<>(client.get().getAllMedications(), headers, HttpStatus.OK);

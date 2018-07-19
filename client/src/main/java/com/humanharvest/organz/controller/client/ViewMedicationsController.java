@@ -1,10 +1,13 @@
 package com.humanharvest.organz.controller.client;
 
+import static com.sun.xml.internal.ws.spi.db.BindingContextFactory.LOGGER;
+
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 import javafx.collections.FXCollections;
@@ -30,6 +33,7 @@ import com.humanharvest.organz.Client;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.MedicationRecord;
+import com.humanharvest.organz.resolvers.ClientResolver;
 import com.humanharvest.organz.resolvers.client.AddMedicationRecordResolver;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
@@ -37,12 +41,16 @@ import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.exceptions.BadDrugNameException;
 import com.humanharvest.organz.utilities.exceptions.BadGatewayException;
+import com.humanharvest.organz.utilities.exceptions.NotFoundException;
+import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.utilities.web.DrugInteractionsHandler;
 import com.humanharvest.organz.utilities.web.MedActiveIngredientsHandler;
 import com.humanharvest.organz.utilities.web.MedAutoCompleteHandler;
 
+import com.humanharvest.organz.views.client.CreateMedicationRecordView;
 import impl.org.controlsfx.autocompletion.AutoCompletionTextFieldBinding;
+import org.controlsfx.control.Notifications;
 
 /**
  * Controller for the view/edit medications page.
@@ -174,6 +182,29 @@ public class ViewMedicationsController extends SubController {
      * Refreshes the past/current medication list views from the client's properties.
      */
     private void refreshMedicationLists() {
+
+        List<MedicationRecord> medicationRecords;
+
+        try {
+            medicationRecords = ClientResolver.getMedicationRecords(client.getUid());
+            client.setMedicationHistory(medicationRecords);
+            //ClientResolver.getMedicationRecords(client.getUid());
+
+        } catch (NotFoundException e) {
+            LOGGER.log(Level.WARNING, "Client or medication not found");
+            Notifications.create()
+                    .title("Client not found")
+                    .text("The client or medication could not be found on the server, it may have been deleted")
+                    .showWarning();
+            return;
+        } catch (ServerRestException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
+            Notifications.create()
+                    .title("Server error")
+                    .text("Could not apply changes on the server, please try again later")
+                    .showError();
+            return;
+        }
         pastMedicationsView.setItems(FXCollections.observableArrayList(client.getPastMedications()));
         currentMedicationsView.setItems(FXCollections.observableArrayList(client.getCurrentMedications()));
     }
@@ -261,9 +292,11 @@ public class ViewMedicationsController extends SubController {
      */
     private void addMedication(String newMedName) {
         if (!newMedName.equals("")) {
-            MedicationRecord record = new MedicationRecord(newMedName, LocalDate.now(), null);
+            //MedicationRecord record = new MedicationRecord(newMedName, LocalDate.now(), null);
+            CreateMedicationRecordView record = new CreateMedicationRecordView();
+            record.setName(newMedName);
             AddMedicationRecordResolver resolver = new AddMedicationRecordResolver(client, record);
-            AddMedicationRecordAction action = new AddMedicationRecordAction(client, record, manager);
+            //AddMedicationRecordAction action = new AddMedicationRecordAction(client, record, manager);
 
             //invoker.execute(action);
             resolver.execute();
