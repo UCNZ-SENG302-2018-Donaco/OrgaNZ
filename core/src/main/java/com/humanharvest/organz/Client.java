@@ -9,6 +9,7 @@ import java.time.Period;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -562,6 +563,14 @@ public class Client {
     }
 
     /**
+     * Returns a list of procedures that the client has undergone or is going to undergo.
+     * @return A list of procedures for the client.
+     */
+    public List<ProcedureRecord> getProcedures() {
+        return Collections.unmodifiableList(procedures);
+    }
+
+    /**
      * Returns a list of procedures that the client has previously undergone.
      * @return A list of past procedures for the client.
      */
@@ -580,6 +589,7 @@ public class Client {
                 .filter(record -> !record.getDate().isBefore(LocalDate.now()))
                 .collect(Collectors.toList());
     }
+
 
     /**
      * Adds the given procedure record to the list of procedures for this client.
