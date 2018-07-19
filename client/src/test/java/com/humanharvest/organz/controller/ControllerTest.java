@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -100,7 +101,7 @@ public abstract class ControllerTest extends ApplicationTest {
         try {
             Parent parent = stage.getScene().getRoot();
             if (parent instanceof DialogPane) {
-                stage.close();
+                Platform.runLater(stage::close);
             }
         } catch (NullPointerException e) {
 
