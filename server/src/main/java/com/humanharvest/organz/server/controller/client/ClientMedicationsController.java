@@ -7,6 +7,7 @@ import java.util.Optional;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.actions.client.AddMedicationRecordAction;
+import com.humanharvest.organz.actions.client.DeleteMedicationRecordAction;
 import com.humanharvest.organz.actions.client.ModifyMedicationRecordAction;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
@@ -136,7 +137,9 @@ public class ClientMedicationsController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
         } else {
-            client.get().deleteMedicationRecord(record);
+            DeleteMedicationRecordAction action = new DeleteMedicationRecordAction(client.get(), record, State
+                    .getClientManager());
+            State.getInvoker().execute(action);
 
             return new ResponseEntity<>(HttpStatus.CREATED);
         }
