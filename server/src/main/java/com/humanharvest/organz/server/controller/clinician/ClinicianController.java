@@ -115,12 +115,16 @@ public class ClinicianController {
         Optional<Clinician> clinician = State.getClinicianManager().getClinicianByStaffId(staffId);
         State.getAuthenticationManager().verifyAdminAccess(authToken);
 
+        if (staffId == 0) {
+            return new ResponseEntity(HttpStatus.BAD_REQUEST);
+        }
+
         if (clinician.isPresent()) {
             State.getClinicianManager().removeClinician(clinician.get());
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity(HttpStatus.OK);
             // else 403
         } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
     }
 }
