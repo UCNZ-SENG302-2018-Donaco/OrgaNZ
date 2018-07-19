@@ -124,14 +124,16 @@ public class ClientTransplantRequestsController {
     public ResponseEntity<Collection<TransplantRequest>> postTransplantRequest(
             @RequestBody TransplantRequest transplantRequest,
             @PathVariable int id,
-            @RequestHeader(value = "If-Match",required = false) String ETag
-            //todo
-            ) {
+            @RequestHeader(value = "If-Match",required = false) String ETag,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {
 
         // Get the client given by the ID
         Optional<Client> optionalClient = State.getClientManager().getClientByID(id);
         if (optionalClient.isPresent()) {
             Client client = optionalClient.get();
+
+            // Check authentication
+            State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
 
             // Check etag
             if (ETag == null) {

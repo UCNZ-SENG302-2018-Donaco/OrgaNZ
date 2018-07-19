@@ -2,6 +2,9 @@ package com.humanharvest.organz.server.client;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -13,6 +16,7 @@ import java.time.LocalDate;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.server.Application;
+import com.humanharvest.organz.state.AuthenticationManager;
 import com.humanharvest.organz.state.State;
 import org.junit.Before;
 import org.junit.Test;
@@ -46,6 +50,11 @@ public class ClientTransplantRequestsControllerTest {
         this.mockMvc = webAppContextSetup(webApplicationContext).build();
         testClient = new Client("Jan", "Michael", "Vincent", LocalDate.now(), 1);
         State.getClientManager().addClient(testClient);
+
+        // Create mock authentication manager that verifies all clinicianOrAdmins
+        AuthenticationManager mockAuthenticationManager = mock(AuthenticationManager.class);
+        State.setAuthenticationManager(mockAuthenticationManager);
+        doNothing().when(mockAuthenticationManager).verifyClinicianOrAdmin(anyString());
 
         validTransplantRequestJson = "{\n"
                 + "  \"requestedOrgan\": \"LIVER\",\n"
