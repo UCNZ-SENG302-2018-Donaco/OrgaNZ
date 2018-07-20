@@ -12,7 +12,7 @@
 *.ear
 
 # Exception for library JARs #
-!/lib/*.jar
+!*/lib/*.jar
 
 # JSON Files (used for storing data from the system)
 *.json
