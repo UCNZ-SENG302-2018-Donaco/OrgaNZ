@@ -92,16 +92,6 @@
             <Font size="16.0"/>
           </font>
         </Button>
-        <Button fx:id="saveToFileButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#save" style="-fx-base: rgba(255, 220, 188, 0.8);" text="Save to file" VBox.vgrow="ALWAYS">
-          <font>
-            <Font size="16.0"/>
-          </font>
-        </Button>
-        <Button fx:id="loadFromFileButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#load" style="-fx-base: rgba(255, 220, 188, 0.8);" text="Load from file" VBox.vgrow="ALWAYS">
-          <font>
-            <Font size="16.0"/>
-          </font>
-        </Button>
         <Button fx:id="logoutButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#logout" style="-fx-base: rgba(255, 220, 188, 0.8);" text="Logout" VBox.vgrow="ALWAYS">
           <font>
             <Font size="16.0"/>

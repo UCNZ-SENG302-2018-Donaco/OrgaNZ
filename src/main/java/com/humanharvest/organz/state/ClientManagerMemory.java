@@ -23,12 +23,15 @@ public class ClientManagerMemory implements ClientManager {
     }
 
     public ClientManagerMemory(Collection<Client> clients) {
-        this.clients.addAll(clients);
+        setClients(clients);
     }
 
     @Override
     public void setClients(Collection<Client> clients) {
-        this.clients.addAll(clients);
+        this.clients.clear();
+        for (Client client : clients) {
+            addClient(client);
+        }
     }
 
     /**
@@ -37,6 +40,9 @@ public class ClientManagerMemory implements ClientManager {
      */
     @Override
     public void addClient(Client client) {
+        if (client.getUid() == null) {
+            client.setUid(nextUid());
+        }
         clients.add(client);
     }
 
