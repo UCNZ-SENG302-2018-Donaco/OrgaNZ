@@ -4,23 +4,21 @@ import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 import com.humanharvest.organz.Administrator;
-import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.actions.ModifyObjectByMethodAction;
 
 /**
  * A reversible administrator modification Action
  */
-public class ModifyAdministratorAction extends Action {
+public class ModifyAdministratorAction extends AdministratorAction {
 
     private ArrayList<ModifyObjectByMethodAction> actions = new ArrayList<>();
-    private Administrator administrator;
 
     /**
      * Create a new Action
      * @param administrator The administrator to be modified
      */
     public ModifyAdministratorAction(Administrator administrator) {
-        this.administrator = administrator;
+        super(administrator);
     }
 
     /**
@@ -43,6 +41,7 @@ public class ModifyAdministratorAction extends Action {
 
     @Override
     protected void execute() {
+        super.execute();
         for (ModifyObjectByMethodAction action : actions) {
             action.execute();
         }
@@ -50,6 +49,7 @@ public class ModifyAdministratorAction extends Action {
 
     @Override
     protected void unExecute() {
+        super.unExecute();
         for (ModifyObjectByMethodAction action : actions) {
             action.unExecute();
         }

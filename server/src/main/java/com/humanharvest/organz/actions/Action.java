@@ -8,7 +8,6 @@ import com.humanharvest.organz.HistoryItem;
  */
 public abstract class Action {
     private HistoryItem executeHistoryItem;
-    private HistoryItem unExecuteHistoryItem;
 
     /**
      * Executes the action, causing some change(s) within the system.
@@ -31,7 +30,6 @@ public abstract class Action {
      * @return A descriptive message describing the effects of undoing this action.
      */
     public abstract String getUnexecuteText();
-
 
     /**
      * Returns the lazily-initialised {@link HistoryItem} corresponding to this action being executed.

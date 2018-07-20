@@ -116,7 +116,7 @@ public final class State {
 
     public static void reset() {
         init(currentStorageType);
-        logout();
+        session = null;
         unsavedUpdates = 0;
     }
 
@@ -163,7 +163,6 @@ public final class State {
                 }
             }
         };
-        //todo I commented out the below line MERGECONFLICT
-        //invoker.registerActionOccuredListener(listener);
+        invoker.registerActionOccuredListener(listener);
     }
 }

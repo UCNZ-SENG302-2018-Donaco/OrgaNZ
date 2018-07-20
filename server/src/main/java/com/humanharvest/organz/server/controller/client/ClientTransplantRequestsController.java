@@ -224,7 +224,6 @@ public class ClientTransplantRequestsController {
                 Action action = new ResolveTransplantRequestAction(originalTransplantRequest,
                         transplantRequest.getStatus(),
                         transplantRequest.getResolvedReason(),
-                        transplantRequest.getResolvedDate(),
                         State.getClientManager());
                 State.getInvoker().execute(action);
                 return new ResponseEntity<>(originalTransplantRequest, HttpStatus.CREATED);

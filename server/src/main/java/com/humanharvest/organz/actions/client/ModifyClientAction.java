@@ -1,32 +1,26 @@
 package com.humanharvest.organz.actions.client;
 
 import java.util.ArrayList;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 import com.humanharvest.organz.Client;
-import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.actions.ModifyObjectByFieldAction;
-import com.humanharvest.organz.actions.ModifyObjectByMethodAction;
 import com.humanharvest.organz.state.ClientManager;
 
 /**
  * A reversible client modification Action
  */
-public class ModifyClientAction extends Action {
+public class ModifyClientAction extends ClientAction {
 
     private ArrayList<ModifyObjectByFieldAction> actions = new ArrayList<>();
-    private Client client;
-    private ClientManager manager;
 
     /**
      * Create a new Action
      * @param client The client to be modified
-     * @param manager // TODO
+     * @param manager The ClientManager to apply the changes to
      */
     public ModifyClientAction(Client client, ClientManager manager) {
-        this.client = client;
-        this.manager = manager;
+        super(client, manager);
     }
 
     /**
@@ -34,6 +28,7 @@ public class ModifyClientAction extends Action {
      * @param field The setter field of the client. Must match a valid setter in the Client object
      * @param oldValue The object the field initially had. Should be taken from the Clients equivalent getter
      * @param newValue The object the field should be update to. Must match the setters Object type
+     * @throws NoSuchMethodException Thrown if the Client does not have the specified setter
      * @throws NoSuchFieldException Thrown if the Clients specified setter does not take the same type as given in one
      * of the values
      */
@@ -54,11 +49,9 @@ public class ModifyClientAction extends Action {
         actions.add(new ModifyObjectByFieldAction(client, field, newValue));
     }
 
-
-
-
     @Override
     protected void execute() {
+        super.execute();
         if (actions.size() == 0) {
             throw new IllegalStateException("No changes were made to the client.");
         } else {
@@ -71,6 +64,7 @@ public class ModifyClientAction extends Action {
 
     @Override
     protected void unExecute() {
+        super.unExecute();
         for (ModifyObjectByFieldAction action : actions) {
             action.unExecute();
         }
