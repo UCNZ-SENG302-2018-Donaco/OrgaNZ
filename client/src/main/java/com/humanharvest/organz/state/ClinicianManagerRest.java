@@ -8,7 +8,7 @@ import java.util.Optional;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.humanharvest.organz.Clinician;
-import com.humanharvest.organz.resolvers.ModifyClinicianObject;
+import com.humanharvest.organz.views.clinician.ModifyClinicianObject;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -16,6 +16,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class ClinicianManagerRest implements ClinicianManager {
 
@@ -79,25 +80,7 @@ public class ClinicianManagerRest implements ClinicianManager {
 
     @Override
     public void applyChangesTo(Clinician editedClinician) {
-        HttpHeaders httpHeaders = newHttpHeaders();
-
-        //serialize
-        String serialized;
-        ModifyClinicianObject mco = new ModifyClinicianObject();
-        try {
-            serialized = State.customObjectMapper().writeValueAsString(mco);
-        } catch (JsonProcessingException ex) {
-            ex.printStackTrace();
-            return;
-        }
-
-        HttpEntity<String> entity = new HttpEntity<>(serialized, httpHeaders);
-
-        ResponseEntity<Clinician> response = restTemplate
-                .exchange(State.BASE_URI + "clinicians/{staffId}", HttpMethod.PATCH, entity, Clinician.class,
-                editedClinician.getStaffId());
-        State.setClinicianEtag(response.getHeaders().getETag());
-
+        throw new NotImplementedException();
     }
 
 

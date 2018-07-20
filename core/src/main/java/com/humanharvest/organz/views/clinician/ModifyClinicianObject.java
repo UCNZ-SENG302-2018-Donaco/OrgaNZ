@@ -1,8 +1,7 @@
-package com.humanharvest.organz.resolvers;
+package com.humanharvest.organz.views.clinician;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -62,6 +61,7 @@ public class ModifyClinicianObject { //TODO discuss how we can create a general 
     }
 
     public void setFirstName(String firstName) {
+        registerChange("firstName");
         this.firstName = firstName;
     }
 
@@ -70,6 +70,7 @@ public class ModifyClinicianObject { //TODO discuss how we can create a general 
     }
 
     public void setLastName(String lastName) {
+        registerChange("lastName");
         this.lastName = lastName;
     }
 
@@ -78,6 +79,7 @@ public class ModifyClinicianObject { //TODO discuss how we can create a general 
     }
 
     public void setMiddleName(String middleName) {
+        registerChange("middleName");
         this.middleName = middleName;
     }
 
@@ -86,6 +88,7 @@ public class ModifyClinicianObject { //TODO discuss how we can create a general 
     }
 
     public void setWorkAddress(String workAddress) {
+        registerChange("workAddress");
         this.workAddress = workAddress;
     }
 
@@ -94,6 +97,7 @@ public class ModifyClinicianObject { //TODO discuss how we can create a general 
     }
 
     public void setPassword(String password) {
+        registerChange("password");
         this.password = password;
     }
 
@@ -102,6 +106,7 @@ public class ModifyClinicianObject { //TODO discuss how we can create a general 
     }
 
     public void setStaffId(int staffId) {
+        registerChange("staffId");
         this.staffId = staffId;
     }
 
@@ -110,6 +115,7 @@ public class ModifyClinicianObject { //TODO discuss how we can create a general 
     }
 
     public void setRegion(Region region) {
+        registerChange("region");
         this.region = region;
     }
 
