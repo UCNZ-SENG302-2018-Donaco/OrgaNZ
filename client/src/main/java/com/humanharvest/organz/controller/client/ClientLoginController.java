@@ -1,7 +1,5 @@
 package com.humanharvest.organz.controller.client;
 
-import java.util.Objects;
-
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
@@ -14,6 +12,7 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.state.ClientManager;

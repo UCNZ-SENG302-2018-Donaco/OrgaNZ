@@ -78,12 +78,6 @@ public class Clinician {
         this.password = password;
     }
 
-    private void addUpdate(String function) {
-        LocalDateTime timestamp = LocalDateTime.now();
-        updateLog.add(String.format("%s; updated %s", timestamp, function));
-        modifiedOn = LocalDateTime.now();
-    }
-
     public boolean isPasswordValid(String password) {
         return this.password.equals(password);
     }

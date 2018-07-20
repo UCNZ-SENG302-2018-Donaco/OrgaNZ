@@ -2,8 +2,6 @@ package com.humanharvest.organz.actions;
 
 import java.util.Stack;
 
-import com.humanharvest.organz.state.State;
-
 /**
  * The main invoker class for all model modifying actions. All actions should be using the Action implementation and
  * invoked by the invoker instance to allow undo/redo
@@ -25,7 +23,8 @@ public class ActionInvoker {
             action.unExecute();
             redoStack.push(action);
             unsavedUpdates--;
-            State.setUnsavedChanges(unsavedUpdates != 0);
+            //todo I commented out the below line MERGECONFLICT
+            //State.setUnsavedChanges(unsavedUpdates != 0);
             return action.getUnexecuteText();
         }
         return "No more actions to undo";
@@ -42,7 +41,8 @@ public class ActionInvoker {
             action.execute();
             undoStack.push(action);
             unsavedUpdates++;
-            State.setUnsavedChanges(unsavedUpdates != 0);
+            //todo I commented out the below line MERGECONFLICT
+            //State.setUnsavedChanges(unsavedUpdates != 0);
             return action.getExecuteText();
         }
         return "No more actions to redo";
@@ -58,7 +58,8 @@ public class ActionInvoker {
         undoStack.push(action);
         redoStack.clear();
         unsavedUpdates++;
-        State.setUnsavedChanges(true);
+        //todo I commented out the below line MERGECONFLICT
+        //State.setUnsavedChanges(true);
         return action.getExecuteText();
     }
 
@@ -83,6 +84,7 @@ public class ActionInvoker {
      */
     public void resetUnsavedUpdates() {
         unsavedUpdates = 0;
-        State.setUnsavedChanges(false);
+        //todo I commented out the below line MERGECONFLICT
+        //State.setUnsavedChanges(false);
     }
 }

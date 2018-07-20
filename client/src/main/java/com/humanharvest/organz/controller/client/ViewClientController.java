@@ -24,11 +24,6 @@ import javafx.scene.paint.Color;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.actions.ActionInvoker;
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.actions.Action;
-import com.humanharvest.organz.actions.ActionInvoker;
-import com.humanharvest.organz.actions.client.MarkClientAsDeadAction;
-import com.humanharvest.organz.actions.client.ModifyClientAction;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.resolvers.client.MarkClientAsDeadResolver;
@@ -365,8 +360,7 @@ public class ViewClientController extends SubController {
                 } catch (NotFoundException e) {
                     LOGGER.log(Level.WARNING, "Client not found");
                     PageNavigator.showAlert(AlertType.WARNING, "Client not found", "The client could not be found on the "
-                            + "server
-        State.logout();, it may have been deleted");
+                            + "server, it may have been deleted");
                     return false;
                 } catch (ServerRestException e) {
                     LOGGER.log(Level.WARNING, e.getMessage(), e);

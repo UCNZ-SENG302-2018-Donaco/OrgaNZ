@@ -48,18 +48,8 @@ public class Administrator {
         this.password = password;
     }
 
-    private void addUpdate(String function) {
-        LocalDateTime timestamp = LocalDateTime.now();
-        updateLog.add(String.format("%s; updated %s", timestamp, function));
-        modifiedTimestamp = Instant.now();
-    }
-
     public Instant getCreatedTimestamp() {
         return createdTimestamp;
-    }
-
-    public List<String> getUpdateLog() {
-        return Collections.unmodifiableList(updateLog);
     }
 
     public String getUsername() {
@@ -94,13 +84,10 @@ public class Administrator {
         } else {
             return String.format("\"%d\"", modifiedTimestamp.hashCode());
         }
-
-    public LocalDateTime getModifiedOn() {
-        return modifiedOn;
     }
 
     private void updateModifiedTimestamp() {
-        modifiedOn = LocalDateTime.now();
+        modifiedTimestamp = Instant.now();
     }
 
     public List<HistoryItem> getChangesHistory() {

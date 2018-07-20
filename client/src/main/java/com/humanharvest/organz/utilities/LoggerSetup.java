@@ -85,9 +85,9 @@ public class LoggerSetup {
         };
     }
 
-    public static void enableConsole() {
-
+    public static void enableConsole(Level logLevel) {
         Logger logger = Logger.getLogger("");
+        logger.setLevel(logLevel);
 
         ConsoleHandler handler = new ConsoleHandler();
         Formatter formatter = new Formatter() {

@@ -7,22 +7,19 @@ import java.util.Map.Entry;
 import java.util.Optional;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.actions.client.ModifyClientAction;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.enums.BloodType;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Region;
-import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.pico_type_converters.PicoBloodTypeConverter;
 import com.humanharvest.organz.utilities.pico_type_converters.PicoGenderConverter;
 import com.humanharvest.organz.utilities.pico_type_converters.PicoLocalDateConverter;
 import com.humanharvest.organz.utilities.pico_type_converters.PicoRegionConverter;
-import com.humanharvest.organz.utilities.type_converters.BloodTypeConverter;
-import com.humanharvest.organz.utilities.type_converters.GenderConverter;
-import com.humanharvest.organz.utilities.type_converters.LocalDateConverter;
-import com.humanharvest.organz.utilities.type_converters.RegionConverter;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 

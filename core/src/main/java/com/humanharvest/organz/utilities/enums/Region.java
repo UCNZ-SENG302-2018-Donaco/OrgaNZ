@@ -9,7 +9,7 @@ public enum Region {
     WAIKATO("Waikato"),
     BAY_OF_PLENTY("Bay of Plenty"),
     GISBORNE("Gisborne"),
-    HAWKES_BAY("Hawkes Bay"),
+    HAWKES_BAY("Hawke's Bay"),
     TARANAKI("Taranaki"),
     MANAWATU_WANGANUI("Manawatu-Wanganui"),
     WELLINGTON("Wellington"),

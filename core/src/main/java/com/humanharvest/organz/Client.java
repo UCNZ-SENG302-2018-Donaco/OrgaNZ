@@ -252,10 +252,10 @@ public class Client {
      * @return Formatted string with newlines
      */
     public String getUpdatesString() {
-        if (changesHistory == null) {
+        StringBuilder out = new StringBuilder(String.format("User: %s. Name: %s, updates:\n", uid, getFullName()));
+        if (Objects.isNull(changesHistory)) {
             changesHistory = new ArrayList<>();
         }
-        StringBuilder out = new StringBuilder(String.format("User: %s. Name: %s, updates:\n", uid, getFullName()));
         for (HistoryItem item : changesHistory) {
             out.append(String.format("%s: %s\n", item.getTimestamp(), item.getDetails()));
         }
@@ -414,12 +414,12 @@ public class Client {
         this.region = region;
     }
 
-    public int getUid() {
-        if (uid == null) {
-            return 0;
-        } else {
-            return uid;
-        }
+    public Integer getUid() {
+        return uid;
+    }
+
+    public void setUid(Integer uid) {
+        this.uid = uid;
     }
 
     public LocalDateTime getCreatedTimestamp() {
@@ -489,7 +489,7 @@ public class Client {
      * @return The list of all medications used by the Client.
      */
     public List<MedicationRecord> getMedications() {
-        return new ArrayList<>(medicationHistory);
+        return Collections.unmodifiableList(medicationHistory);
     }
 
     /**
@@ -577,7 +577,7 @@ public class Client {
      * @return List of illnesses held by Client
      */
     public List<IllnessRecord> getIllnesses() {
-        return new ArrayList<>(illnessHistory);
+        return Collections.unmodifiableList(illnessHistory);
     }
 
     /**
@@ -620,15 +620,7 @@ public class Client {
         record.setClient(null);
         updateModifiedTimestamp();
     }
-
-    /**
-     * Returns a list of procedures that the client has undergone or is going to undergo.
-     * @return A list of procedures for the client.
-     */
-    public List<ProcedureRecord> getProcedures() {
-        return new ArrayList<>(procedures);
-    }
-
+    
     /**
      * Returns a list of procedures that the client has undergone or is going to undergo.
      * @return A list of procedures for the client.
