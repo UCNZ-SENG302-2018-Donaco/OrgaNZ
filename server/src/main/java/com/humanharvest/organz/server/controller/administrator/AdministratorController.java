@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import picocli.CommandLine;
 
 @RestController
 public class AdministratorController {
@@ -144,9 +145,16 @@ public class AdministratorController {
         DeleteAdministratorAction action = new DeleteAdministratorAction(
                 administrator.get(),
                 administratorManager);
-        State.getInvoker().execute(action);
+        State.getActionInvoker(authentication).execute(action);
 
         //Respond, apparently updates should be 200 not 201 unlike 365 and our spec
         return new ResponseEntity<>(administrator.get(), HttpStatus.OK);
+    }
+
+    @PostMapping("/sql")
+    public ResponseEntity<String> executeSql(@RequestHeader(value = "If-Match", required = false) String etag,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authentication) {
+        //CommandLine.run();
+        return null;
     }
 }

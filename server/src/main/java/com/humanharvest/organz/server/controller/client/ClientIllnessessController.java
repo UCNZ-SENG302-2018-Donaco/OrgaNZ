@@ -57,7 +57,8 @@ public class ClientIllnessessController {
     public ResponseEntity<IllnessRecord> patchIllness(@PathVariable int uid,
             @PathVariable int id,
             @RequestBody ModifyIllnessObject modifyIllnessObject,
-            @RequestHeader(value = "If-Match",required = false)String ETag)
+            @RequestHeader(value = "If-Match",required = false)String ETag,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws IfMatchRequiredException, IfMatchFailedException, InvalidRequestException {
         if (!ModifyIllnessValidator.isValid(modifyIllnessObject)) {
             throw new InvalidRequestException();
@@ -97,7 +98,7 @@ public class ClientIllnessessController {
         ModifyIllnessRecordByObjectAction action = new ModifyIllnessRecordByObjectAction(client.get(),
                 State.getClientManager(),oldIllnessRecord,modifyIllnessObject);
         //Execute action, this would correspond to a specific users invoker in full version
-        State.getInvoker().execute(action);
+        State.getActionInvoker(authToken).execute(action);
 
         //Add the new ETag to the headers
         HttpHeaders headers = new HttpHeaders();

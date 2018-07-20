@@ -86,7 +86,8 @@ public class ClientMedicationsController {
     public ResponseEntity<List<MedicationRecord>> postMedication(
             @PathVariable int uid,
             @RequestBody CreateMedicationRecordView medicationRecordView,
-            @RequestHeader(value = "If-Match", required = false) String ETag)
+            @RequestHeader(value = "If-Match", required = false) String ETag,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws IfMatchRequiredException, IfMatchFailedException {
 
         // todo auth
@@ -101,7 +102,7 @@ public class ClientMedicationsController {
 
         MedicationRecord record = new MedicationRecord(medicationRecordView.getName(), LocalDate.now(), null);
         AddMedicationRecordAction action = new AddMedicationRecordAction(client.get(), record, State.getClientManager());
-        State.getInvoker().execute(action);
+        State.getActionInvoker(authToken).execute(action);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setETag(client.get().getEtag());
@@ -122,7 +123,8 @@ public class ClientMedicationsController {
     public ResponseEntity deleteMedication(
             @PathVariable int uid,
             @PathVariable int id,
-            @RequestHeader(value = "If-Match", required = false) String ETag)
+            @RequestHeader(value = "If-Match", required = false) String ETag,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws IfMatchRequiredException, IfMatchFailedException {
 
         Optional<Client> client = State.getClientManager().getClientByID(uid);
@@ -143,7 +145,7 @@ public class ClientMedicationsController {
         } else {
             DeleteMedicationRecordAction action = new DeleteMedicationRecordAction(client.get(), record, State
                     .getClientManager());
-            State.getInvoker().execute(action);
+            State.getActionInvoker(authToken).execute(action);
 
             return new ResponseEntity<>(HttpStatus.CREATED);
         }
@@ -162,7 +164,8 @@ public class ClientMedicationsController {
     public ResponseEntity<MedicationRecord> postMedicationStart(
             @PathVariable int uid,
             @PathVariable int id,
-            @RequestHeader(value = "If-Match", required = false) String ETag)
+            @RequestHeader(value = "If-Match", required = false) String ETag,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws IfMatchFailedException, IfMatchRequiredException {
 
         Optional<Client> client = State.getClientManager().getClientByID(uid);
@@ -184,7 +187,7 @@ public class ClientMedicationsController {
         ModifyMedicationRecordAction action = new ModifyMedicationRecordAction(record, State.getClientManager());
         action.changeStarted(LocalDate.now());
         action.changeStopped(null);
-        State.getInvoker().execute(action);
+        State.getActionInvoker(authToken).execute(action);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setETag(client.get().getEtag());
@@ -205,7 +208,8 @@ public class ClientMedicationsController {
     public ResponseEntity<MedicationRecord> postMedicationStop(
             @PathVariable int uid,
             @PathVariable int id,
-            @RequestHeader(value = "If-Match", required = false) String ETag)
+            @RequestHeader(value = "If-Match", required = false) String ETag,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws IfMatchFailedException, IfMatchRequiredException {
 
         // todo auth
@@ -226,7 +230,7 @@ public class ClientMedicationsController {
 
         ModifyMedicationRecordAction action = new ModifyMedicationRecordAction(record, State.getClientManager());
         action.changeStopped(LocalDate.now());
-        State.getInvoker().execute(action);
+        State.getActionInvoker(authToken).execute(action);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setETag(client.get().getEtag());
