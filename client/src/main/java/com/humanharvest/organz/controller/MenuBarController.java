@@ -1,7 +1,6 @@
 package com.humanharvest.organz.controller;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
@@ -34,11 +33,6 @@ import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.CacheManager;
-import com.humanharvest.organz.utilities.serialization.CSVReadClientStrategy;
-import com.humanharvest.organz.utilities.serialization.ClientImporter;
-import com.humanharvest.organz.utilities.serialization.JSONFileWriter;
-import com.humanharvest.organz.utilities.serialization.JSONReadClientStrategy;
-import com.humanharvest.organz.utilities.serialization.ReadClientStrategy;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import org.controlsfx.control.Notifications;
@@ -354,9 +348,11 @@ public class MenuBarController extends SubController {
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json"));
             File file = fileChooser.showSaveDialog(AppUI.getWindow());
             if (file != null) {
+                /* TODO replace with GET request to /clients/file
                 try (JSONFileWriter<Client> clientWriter = new JSONFileWriter<>(file, Client.class)) {
                     clientWriter.overwriteWith(clientManager.getClients());
                 }
+                */
 
                 Notifications.create()
                         .title("Saved Data")
@@ -371,7 +367,7 @@ public class MenuBarController extends SubController {
                 State.setUnsavedChanges(false);
                 PageNavigator.refreshAllWindows();
             }
-        } catch (URISyntaxException | IOException e) {
+        } catch (URISyntaxException e) {
             PageNavigator.showAlert(AlertType.WARNING, "Save Failed", ERROR_SAVING_MESSAGE);
             LOGGER.log(Level.SEVERE, ERROR_SAVING_MESSAGE, e);
         }
@@ -406,6 +402,7 @@ public class MenuBarController extends SubController {
             if (file != null) {
                 String format = getFileExtension(file.getName());
 
+                /* TODO replace with POST request to /clients/file endpoint
                 try {
                     ReadClientStrategy strategy;
                     switch (format) {
@@ -453,6 +450,7 @@ public class MenuBarController extends SubController {
                             String.format("An IO error occurred when loading from file: '%s'\n%s",
                                     file.getName(), exc.getMessage()));
                 }
+                */
             }
         }
     }
