@@ -18,13 +18,13 @@ public class DeleteClientAction extends ClientAction {
     }
 
     @Override
-    public void execute() {
+    protected void execute() {
         super.execute();
         manager.removeClient(client);
     }
 
     @Override
-    public void unExecute() {
+    protected void unExecute() {
         super.unExecute();
         manager.addClient(client);
     }

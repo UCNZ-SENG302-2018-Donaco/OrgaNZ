@@ -24,6 +24,11 @@ public abstract class ClientAction extends Action {
         eraseFromClientHistory();
     }
 
+    @Override
+    public Object getModifiedObject() {
+        return client;
+    }
+
     private void recordInClientHistory() {
         client.addToChangesHistory(getExecuteHistoryItem());
     }

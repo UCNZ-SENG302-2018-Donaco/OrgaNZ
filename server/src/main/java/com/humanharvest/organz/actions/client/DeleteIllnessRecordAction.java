@@ -23,14 +23,14 @@ public class DeleteIllnessRecordAction extends ClientAction {
     }
 
     @Override
-    public void execute() {
+    protected void execute() {
         super.execute();
         client.deleteIllnessRecord(record);
         manager.applyChangesTo(client);
     }
 
     @Override
-    public void unExecute() {
+    protected void unExecute() {
         super.unExecute();
         client.addIllnessRecord(record);
         manager.applyChangesTo(client);

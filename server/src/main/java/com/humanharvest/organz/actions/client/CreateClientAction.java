@@ -22,7 +22,7 @@ public class CreateClientAction extends ClientAction {
      * Simply add the client to the ClientManager
      */
     @Override
-    public void execute() {
+    protected void execute() {
         super.execute();
         manager.addClient(client);
     }
@@ -31,7 +31,7 @@ public class CreateClientAction extends ClientAction {
      * Simply remove the client from the ClientManager
      */
     @Override
-    public void unExecute() {
+    protected void unExecute() {
         super.unExecute();
         manager.removeClient(client);
     }

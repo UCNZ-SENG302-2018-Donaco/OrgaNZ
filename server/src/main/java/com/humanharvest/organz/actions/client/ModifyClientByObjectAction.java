@@ -6,10 +6,8 @@ import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.state.ClientManager;
 import org.springframework.beans.BeanUtils;
 
-public class ModifyClientByObjectAction extends Action {
+public class ModifyClientByObjectAction extends ClientAction {
 
-    private Client client;
-    private ClientManager manager;
     private ModifyClientObject oldClientDetails;
     private ModifyClientObject newClientDetails;
 
@@ -20,8 +18,7 @@ public class ModifyClientByObjectAction extends Action {
      */
     public ModifyClientByObjectAction(Client client, ClientManager manager, ModifyClientObject oldClientDetails,
             ModifyClientObject newClientDetails) {
-        this.client = client;
-        this.manager = manager;
+        super(client, manager);
         this.oldClientDetails = oldClientDetails;
         this.newClientDetails = newClientDetails;
     }

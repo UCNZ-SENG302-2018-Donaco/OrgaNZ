@@ -23,14 +23,14 @@ public class AddProcedureRecordAction extends ClientAction {
     }
 
     @Override
-    public void execute() {
+    protected void execute() {
         super.execute();
         client.addProcedureRecord(record);
         manager.applyChangesTo(client);
     }
 
     @Override
-    public void unExecute() {
+    protected void unExecute() {
         super.unExecute();
         client.deleteProcedureRecord(record);
         manager.applyChangesTo(client);

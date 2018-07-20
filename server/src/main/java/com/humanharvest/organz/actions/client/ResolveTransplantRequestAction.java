@@ -51,7 +51,7 @@ public class ResolveTransplantRequestAction extends ClientAction {
      * @throws IllegalStateException If no changes were made.
      */
     @Override
-    public void execute() {
+    protected void execute() {
         super.execute();
         request.setStatus(newStatus);
         request.setResolvedDate(LocalDateTime.now());
@@ -60,7 +60,7 @@ public class ResolveTransplantRequestAction extends ClientAction {
     }
 
     @Override
-    public void unExecute() {
+    protected void unExecute() {
         super.unExecute();
         request.setStatus(WAITING);
         request.setResolvedDate(null);
