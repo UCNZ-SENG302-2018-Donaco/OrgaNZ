@@ -3,23 +3,25 @@ package com.humanharvest.organz.server.controller.client;
 import java.util.Collection;
 import java.util.Optional;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.ProcedureRecord;
 import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.actions.client.AddProcedureRecordAction;
 import com.humanharvest.organz.actions.client.DeleteProcedureRecordAction;
+import com.humanharvest.organz.actions.client.ModifyProcedureRecordAction;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
+import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
+import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
+import com.humanharvest.organz.views.client.ModifyProceduresObject;
+import com.humanharvest.organz.views.client.Views;
+import org.hibernate.boot.jaxb.SourceType;
+import org.springframework.beans.BeanUtils;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * Provides handlers for requests to these endpoints:
@@ -56,9 +58,11 @@ public class ClientProceduresController {
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws AuthenticationException {
 
+
         // Check request has authorization to create a procedure
         State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
 
+        System.out.println(authToken);
         Optional<Client> client = State.getClientManager().getClientByID(uid);
         if (client.isPresent()) {
             // Execute add procedure action
@@ -72,9 +76,47 @@ public class ClientProceduresController {
         }
     }
 
-    @PatchMapping("/clients/{uid}/procedures/{id)")
-    public ResponseEntity<ProcedureRecord> modifyProcedureRecord() {
-        throw new UnsupportedOperationException();
+    @PatchMapping("/clients/{uid}/procedures/{id}")
+    @JsonView(Views.Overview.class)
+    public ResponseEntity<ProcedureRecord> modifyProcedureRecord(
+            @RequestBody ModifyProceduresObject modifyProceduresObject,
+            @RequestHeader(value = "If-Match", required = false) String etag,
+            @PathVariable int uid,
+            @PathVariable int id) throws AuthenticationException {
+        Optional<Client> client = State.getClientManager().getClientByID(uid);
+        if (client.isPresent()) {
+            // Try to find a procedure record with matching id
+            Optional<ProcedureRecord> toDelete = client.get().getProcedures().stream()
+                    .filter(procedure -> procedure.getId() != null && procedure.getId() == id)
+                    .findFirst();
+        }
+        ProcedureRecord record;
+        try {
+            record = client.get().getProcedures().get(id - 1);
+        } catch (IndexOutOfBoundsException e) {
+            //procedure record does not exist
+            System.out.println("Procedure record does not exist");
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        if (etag == null) {
+            throw new IfMatchRequiredException();
+        }
+        if (!client.get().getEtag().equals(etag)) {
+            throw new IfMatchFailedException();
+        }
+
+        ModifyProceduresObject oldModifyProceduresObject = new ModifyProceduresObject();
+        BeanUtils.copyProperties(record, oldModifyProceduresObject, modifyProceduresObject.getUnmodifiedFields());
+        ModifyProcedureRecordAction action = new ModifyProcedureRecordAction(record, State.getClientManager());
+
+        State.getInvoker().execute(action);
+
+        //Add the new ETag to the headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.setETag(client.get().getEtag());
+
+        //Respond, apparently updates should be 200 not 201 unlike 365 and our spec
+        return new ResponseEntity<>(record, headers, HttpStatus.OK);
     }
 
     @DeleteMapping("/clients/{uid}/procedures/{id}")

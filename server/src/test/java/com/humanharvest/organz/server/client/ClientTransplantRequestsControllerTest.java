@@ -272,4 +272,67 @@ public class ClientTransplantRequestsControllerTest {
                 .andExpect(jsonPath("$.status", is("CANCELLED")))
                 .andExpect(jsonPath("$.resolvedReason", is("it was a mistake")));
     }
+
+    @Test
+    public void patchInvalidTransplantRequestChangedOrganTest() throws Exception {
+        // First create the request date string of the transplant request (including removing trailing 0s)
+        String requestDateString = testTransplantRequest.getRequestDate().toString();
+        requestDateString = requestDateString.replaceAll("0+$", "");
+
+        // Perform patch
+        mockMvc.perform(patch("/clients/" + testClient.getUid() + "/transplantRequests/" + transplantRequestIndex)
+                .header("If-Match", testClient.getEtag())
+                .header("X-Auth-Token", VALID_AUTH)
+                .contentType(contentType)
+                .content("{\n"
+                        + "  \"requestedOrgan\": \"KIDNEY\",\n"
+                        + "  \"requestDate\": \"" + requestDateString + "\",\n"
+                        + "  \"resolvedDate\": \"2019-07-19T14:11:20.202\",\n"
+                        + "  \"status\": \"CANCELLED\",\n"
+                        + "  \"resolvedReason\": \"it was a mistake\"\n"
+                        + "}"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void patchInvalidTransplantRequestUnauthorisedTest() throws Exception {
+        // First create the request date string of the transplant request (including removing trailing 0s)
+        String requestDateString = testTransplantRequest.getRequestDate().toString();
+        requestDateString = requestDateString.replaceAll("0+$", "");
+
+        // Perform patch
+        mockMvc.perform(patch("/clients/" + testClient.getUid() + "/transplantRequests/" + transplantRequestIndex)
+                .header("If-Match", testClient.getEtag())
+                .header("X-Auth-Token", INVALID_AUTH)
+                .contentType(contentType)
+                .content("{\n"
+                        + "  \"requestedOrgan\": \"LIVER\",\n"
+                        + "  \"requestDate\": \"" + requestDateString + "\",\n"
+                        + "  \"resolvedDate\": \"2019-07-19T14:11:20.202\",\n"
+                        + "  \"status\": \"CANCELLED\",\n"
+                        + "  \"resolvedReason\": \"it was a mistake\"\n"
+                        + "}"))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    public void patchInvalidTransplantRequestBadEtagTest() throws Exception {
+        // First create the request date string of the transplant request (including removing trailing 0s)
+        String requestDateString = testTransplantRequest.getRequestDate().toString();
+        requestDateString = requestDateString.replaceAll("0+$", "");
+
+        // Perform patch
+        mockMvc.perform(patch("/clients/" + testClient.getUid() + "/transplantRequests/" + transplantRequestIndex)
+                .header("If-Match", testClient.getEtag() + "X")
+                .header("X-Auth-Token", VALID_AUTH)
+                .contentType(contentType)
+                .content("{\n"
+                        + "  \"requestedOrgan\": \"LIVER\",\n"
+                        + "  \"requestDate\": \"" + requestDateString + "\",\n"
+                        + "  \"resolvedDate\": \"2019-07-19T14:11:20.202\",\n"
+                        + "  \"status\": \"CANCELLED\",\n"
+                        + "  \"resolvedReason\": \"it was a mistake\"\n"
+                        + "}"))
+                .andExpect(status().is(412));
+    }
 }

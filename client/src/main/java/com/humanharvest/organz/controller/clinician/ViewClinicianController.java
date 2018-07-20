@@ -1,17 +1,15 @@
 package com.humanharvest.organz.controller.clinician;
 
+import java.lang.reflect.Field;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
@@ -20,12 +18,15 @@ import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.actions.clinician.ModifyClinicianAction;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.state.ClinicianManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Region;
+import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.view.PageNavigator;
+
 import org.controlsfx.control.Notifications;
 
 /**
@@ -40,6 +41,7 @@ public class ViewClinicianController extends SubController {
     private ActionInvoker invoker;
     private Clinician viewedClinician;
     private String updatedPassword;
+    private static final Logger LOGGER = Logger.getLogger(ViewClinicianController.class.getName());
 
     @FXML
     private Pane menuBarPane, loadClinicianPane, inputsPane;
@@ -131,6 +133,7 @@ public class ViewClinicianController extends SubController {
      * Loads all of the currently logged in Clinician's details, except for their password.
      */
     private void loadClinicianData() {
+        viewedClinician = State.getClinicianManager().getClinicianByStaffId(viewedClinician.getStaffId()).get();
         loadStaffIdTextField.setText(String.valueOf(viewedClinician.getStaffId()));
         fname.setText(viewedClinician.getFirstName());
         mname.setText(viewedClinician.getMiddleName());
@@ -155,7 +158,10 @@ public class ViewClinicianController extends SubController {
         if (checkMandatoryFields()) {
             updatedPassword = checkPassword();
              if (updateChanges()) {
+                 if (viewedClinician.getModifiedOn() == null) {}
+                 else {
                  lastModified.setText(viewedClinician.getModifiedOn().format(dateTimeFormat));
+                }
              }
         }
     }
@@ -204,13 +210,21 @@ public class ViewClinicianController extends SubController {
         }
     }
 
-    private void addChangeIfDifferent(ModifyClinicianAction action, String field, Object oldValue, Object newValue) {
+
+    private void addChangeIfDifferent(ModifyClinicianObject modifyClinicianObject, String fieldString, Object
+            newValue) {
         try {
-            if (!Objects.equals(oldValue, newValue)) {
-                action.addChange(field, oldValue, newValue);
+            Field field = modifyClinicianObject.getClass().getDeclaredField(fieldString);
+            Field clinicianField = viewedClinician.getClass().getDeclaredField(fieldString);
+            field.setAccessible(true);
+            clinicianField.setAccessible(true);
+            if (!Objects.equals(clinicianField.get(viewedClinician), newValue)) {
+                field.set(modifyClinicianObject, newValue);
+                int a = 1;
+                modifyClinicianObject.registerChange(fieldString);
             }
-        } catch (NoSuchFieldException | NoSuchMethodException exc) {
-            exc.printStackTrace();
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
     }
 
@@ -219,35 +233,48 @@ public class ViewClinicianController extends SubController {
      * @return If there were any changes made
      */
     private boolean updateChanges() {
-        ClinicianManager manager = State.getClinicianManager();
-        State.getClinicianManager().applyChangesTo(viewedClinician);
-        ModifyClinicianAction action = new ModifyClinicianAction(viewedClinician,manager);
+        ModifyClinicianObject modifyClinicianObject = new ModifyClinicianObject();
 
-        addChangeIfDifferent(action, "setFirstName", viewedClinician.getFirstName(), fname.getText());
-        addChangeIfDifferent(action, "setLastName", viewedClinician.getLastName(), lname.getText());
-        addChangeIfDifferent(action, "setMiddleName", viewedClinician.getMiddleName(), mname.getText());
-        addChangeIfDifferent(action, "setWorkAddress", viewedClinician.getWorkAddress(), workAddress.getText());
-        addChangeIfDifferent(action, "setPassword", viewedClinician.getPassword(), updatedPassword);
-        addChangeIfDifferent(action, "setRegion", viewedClinician.getRegion(), region.getValue());
+        addChangeIfDifferent(modifyClinicianObject, "firstName", fname.getText());
+        addChangeIfDifferent(modifyClinicianObject, "lastName", lname.getText());
+        addChangeIfDifferent(modifyClinicianObject, "middleName", mname.getText());
+        addChangeIfDifferent(modifyClinicianObject, "workAddress", workAddress.getText());
+        addChangeIfDifferent(modifyClinicianObject, "password", updatedPassword);
+        addChangeIfDifferent(modifyClinicianObject, "region", region.getValue());
 
         try {
-            String actionText = invoker.execute(action);
+            ModifyClinicianResolver resolver = new ModifyClinicianResolver(viewedClinician, modifyClinicianObject);
+            viewedClinician = resolver.execute();
+            String actionText = modifyClinicianObject.toString();
 
             Notifications.create()
                     .title("Updated Clinician")
                     .text(actionText)
                     .showInformation();
 
+            HistoryItem save = new HistoryItem("UPDATE CLINICIAN",
+                    "The Clinician's information was updated. New details are: " + actionText);
+            JSONConverter.updateHistory(save, "action_history.json");
+
             PageNavigator.refreshAllWindows();
             return true;
 
-        } catch (IllegalStateException exc) {
-                Notifications.create()
-                        .title("No changes were made.")
-                        .text("No changes were made to the clinician.")
-                        .showWarning();
-                return false;
+        } catch (NotFoundException e) {
+            LOGGER.log(Level.WARNING, "Client not found");
+            PageNavigator.showAlert(AlertType.WARNING, "Clinician not found", "The clinician could not be found on "
+                    + "the server, it may have been deleted");
+            return false;
+        } catch (ServerRestException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
+            PageNavigator.showAlert(AlertType.WARNING, "Server error", "Could not apply changes on the server, "
+                    + "please try again later");
+            return false;
+        } catch (IfMatchFailedException e) {
+            LOGGER.log(Level.INFO, "If-Match did not match");
+            PageNavigator.showAlert(AlertType.WARNING, "Outdated Data",
+                    "The clinician has been modified since you retrieved the data.\nIf you would still like to "
+                            + "apply these changes please submit again, otherwise refresh the page to update the data.");
+            return false;
         }
-
     }
 }
