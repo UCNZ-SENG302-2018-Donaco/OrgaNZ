@@ -613,15 +613,7 @@ public class Client {
         record.setClient(null);
         updateModifiedTimestamp();
     }
-
-    /**
-     * Returns a list of procedures that the client has undergone or is going to undergo.
-     * @return A list of procedures for the client.
-     */
-    public List<ProcedureRecord> getProcedures() {
-        return new ArrayList<>(procedures);
-    }
-
+    
     /**
      * Returns a list of procedures that the client has undergone or is going to undergo.
      * @return A list of procedures for the client.
