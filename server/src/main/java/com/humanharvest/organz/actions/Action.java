@@ -1,10 +1,14 @@
 package com.humanharvest.organz.actions;
 
+import com.humanharvest.organz.HistoryItem;
+
 /**
  * Abstract class used to represent reversible actions within the system. An Action should hold references to
  * all objects necessary for its execution. Actions should always be executed by an {@link ActionInvoker}.
  */
 public abstract class Action {
+    private HistoryItem executeHistoryItem;
+    private HistoryItem unExecuteHistoryItem;
 
     /**
      * Executes the action, causing some change(s) within the system.
@@ -27,4 +31,17 @@ public abstract class Action {
      * @return A descriptive message describing the effects of undoing this action.
      */
     public abstract String getUnexecuteText();
+
+
+    /**
+     * Returns the lazily-initialised {@link HistoryItem} corresponding to this action being executed.
+     * @return The {@link HistoryItem} corresponding to this action's execution.
+     */
+    public HistoryItem getExecuteHistoryItem() {
+        // Initialise the history item if it hasn't been used already (lazy initialisation)
+        if (executeHistoryItem == null) {
+            executeHistoryItem = new HistoryItem("ACTION", this.getExecuteText());
+        }
+        return executeHistoryItem;
+    }
 }

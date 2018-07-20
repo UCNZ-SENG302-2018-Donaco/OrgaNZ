@@ -1,4 +1,4 @@
-package com.humanharvest.organz.utilities.update_listener;
+package com.humanharvest.organz.utilities;
 
 import com.humanharvest.organz.actions.Action;
 

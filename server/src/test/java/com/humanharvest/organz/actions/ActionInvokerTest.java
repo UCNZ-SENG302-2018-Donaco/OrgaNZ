@@ -69,7 +69,7 @@ public class ActionInvokerTest extends BaseTest {
     public void TrackSaveStateTest() {
         ModifySettableItemAction action = new ModifySettableItemAction(item, "New");
 
-        State.reset(false);
+        State.reset();
         invoker = State.getInvoker();
 
         assertFalse(State.isUnsavedChanges());

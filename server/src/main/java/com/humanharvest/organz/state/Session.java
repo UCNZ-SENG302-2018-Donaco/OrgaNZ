@@ -1,12 +1,14 @@
 package com.humanharvest.organz.state;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.HistoryItem;
+import com.humanharvest.organz.utilities.JSONConverter;
 
 public class Session {
 
@@ -52,5 +54,14 @@ public class Session {
 
     public UserType getLoggedInUserType() {
         return loggedInUserType;
+    }
+
+    public void addToSessionHistory(HistoryItem historyItem) {
+        sessionHistory.add(historyItem);
+        JSONConverter.updateHistory(historyItem, "action_history.json");
+    }
+
+    public List<HistoryItem> getSessionHistory() {
+        return Collections.unmodifiableList(sessionHistory);
     }
 }

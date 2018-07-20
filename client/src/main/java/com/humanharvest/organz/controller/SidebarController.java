@@ -272,7 +272,7 @@ public class SidebarController extends SubController {
                         String.format("The system's current state was saved to file '%s'.", file.getName()));
                 State.getSession().addToSessionHistory(historyItem);
 
-                State.resetUnsavedUpdates();
+                State.setUnsavedChanges(false);
                 PageNavigator.refreshAllWindows();
             }
         } catch (URISyntaxException | IOException e) {
@@ -310,7 +310,7 @@ public class SidebarController extends SubController {
                     HistoryItem historyItem = new HistoryItem("LOAD", "The systems state was loaded from " + file.getName());
                     State.getSession().addToSessionHistory(historyItem);
 
-                    State.resetUnsavedUpdates();
+                    State.setUnsavedChanges(false);
                     mainController.resetWindowContext();
                     Notifications.create().title("Loaded data").text(
                             String.format("Successfully loaded %d clients from file",

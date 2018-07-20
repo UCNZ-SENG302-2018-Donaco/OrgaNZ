@@ -1,11 +1,12 @@
 package com.humanharvest.organz.commands.view;
 
-
 import java.util.Optional;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.JSONConverter;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
