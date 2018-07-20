@@ -6,18 +6,12 @@ import java.util.Map.Entry;
 import java.util.Optional;
 
 import com.humanharvest.organz.Clinician;
-import com.humanharvest.organz.HistoryItem;
-import com.humanharvest.organz.actions.ActionInvoker;
-import com.humanharvest.organz.actions.clinician.ModifyClinicianAction;
-import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.actions.clinician.ModifyClinicianAction;
 import com.humanharvest.organz.state.ClinicianManager;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.pico_type_converters.PicoRegionConverter;
-import com.humanharvest.organz.utilities.type_converters.RegionConverter;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 

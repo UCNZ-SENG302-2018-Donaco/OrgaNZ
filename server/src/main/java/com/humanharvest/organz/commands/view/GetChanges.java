@@ -3,10 +3,8 @@ package com.humanharvest.organz.commands.view;
 import java.util.Optional;
 
 import com.humanharvest.organz.Client;
-import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.JSONConverter;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
@@ -38,11 +36,8 @@ public class GetChanges implements Runnable {
         Optional<Client> client = manager.getClientByID(uid);
         if (client.isPresent()) {
             System.out.println(client.get().getUpdatesString());
-            HistoryItem printAllHistory = new HistoryItem("PRINT UPDATE HISTORY", "All client's history printed.");
-            JSONConverter.updateHistory(printAllHistory, "action_history.json");
         } else {
             System.out.println("No client exists with that user ID");
         }
     }
 }
-

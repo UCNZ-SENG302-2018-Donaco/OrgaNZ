@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-//import com.humanharvest.organz.database.DBManager;
 import com.humanharvest.organz.database.DBManager;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Parameters;

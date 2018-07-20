@@ -7,12 +7,10 @@ import java.util.Map.Entry;
 import java.util.Optional;
 
 import com.humanharvest.organz.Client;
-import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.actions.client.ModifyClientAction;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.enums.BloodType;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Region;
@@ -24,7 +22,7 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
 /**
- * Command line to  attributes of a Client, by using their ID as a reference key.
+ * Command line to set attributes of a Client, by using their ID as a reference key.
  * @author Dylan Carlyle, Jack Steel
  * @version sprint 1.
  * date 05/03/2018
@@ -120,8 +118,5 @@ public class SetAttribute implements Runnable {
         }
 
         System.out.println(invoker.execute(action));
-
-        HistoryItem attribute = new HistoryItem("ATTRIBUTE UPDATE", "DETAILS were updated for client " + uid);
-        JSONConverter.updateHistory(attribute, "action_history.json");
     }
 }
