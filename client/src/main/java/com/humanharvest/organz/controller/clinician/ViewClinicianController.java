@@ -9,24 +9,32 @@ import java.util.logging.Logger;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
 import com.humanharvest.organz.Clinician;
+import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.actions.ActionInvoker;
-import com.humanharvest.organz.actions.clinician.ModifyClinicianAction;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.HistoryItem;
-import com.humanharvest.organz.state.ClinicianManager;
+import com.humanharvest.organz.resolvers.clinician.ModifyClinicianResolver;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.JSONConverter;
+import com.humanharvest.organz.utilities.enums.Region;
+import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
+import com.humanharvest.organz.utilities.exceptions.NotFoundException;
+import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.PageNavigator;
-
+import com.humanharvest.organz.views.clinician.ModifyClinicianObject;
 import org.controlsfx.control.Notifications;
 
 /**
