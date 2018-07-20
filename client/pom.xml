@@ -25,6 +25,13 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.testfx</groupId>
+      <artifactId>openjfx-monocle</artifactId>
+      <version>8u76-b04</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/openjfx-monocle-8u76-b04.jar</systemPath>
+    </dependency>
+    <dependency>
       <groupId>info.picocli</groupId>
       <artifactId>picocli</artifactId>
       <version>3.3.0</version>
