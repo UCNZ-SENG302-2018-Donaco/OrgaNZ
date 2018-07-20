@@ -1,5 +1,8 @@
 package com.humanharvest.organz.state;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
@@ -23,7 +26,7 @@ public final class State {
     private static ClinicianManager clinicianManager;
     private static AdministratorManager administratorManager;
     private static AuthenticationManager authenticationManager;
-    private static ActionInvoker actionInvoker;
+    private static Map<String, ActionInvoker> actionInvokers = new HashMap<>();
     private static Session session;
     private static int unsavedUpdates = 0;
 
@@ -35,8 +38,6 @@ public final class State {
      * Also binds an ActionOccurredListener to the new ActionInvoker
      */
     public static void init(DataStorageType storageType) {
-        actionInvoker = new ActionInvoker();
-        registerActionOccurredListener(actionInvoker);
 
         currentStorageType = storageType;
 
@@ -75,7 +76,7 @@ public final class State {
     }
 
     public static ActionInvoker getInvoker() {
-        return actionInvoker;
+        return null;
     }
 
     public static Session getSession() {
@@ -164,5 +165,16 @@ public final class State {
             }
         };
         invoker.registerActionOccuredListener(listener);
+    }
+
+    public static ActionInvoker getActionInvoker(String token) {
+        ActionInvoker invoker = actionInvokers.get(token);
+        if (invoker == null) {
+            ActionInvoker newInvoker = new ActionInvoker();
+            actionInvokers.put(token, newInvoker);
+            return newInvoker;
+        } else {
+            return invoker;
+        }
     }
 }

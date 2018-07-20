@@ -67,7 +67,7 @@ public class ClientProceduresController {
         if (client.isPresent()) {
             // Execute add procedure action
             Action action = new AddProcedureRecordAction(client.get(), procedureRecord, State.getClientManager());
-            State.getInvoker().execute(action);
+            State.getActionInvoker(authToken).execute(action);
             // Return response containing list of client's procedures
             return new ResponseEntity<>(client.get().getProcedures(), HttpStatus.OK);
         } else {
@@ -139,7 +139,7 @@ public class ClientProceduresController {
             if (toDelete.isPresent()) {
                 // Execute delete procedure action
                 Action action = new DeleteProcedureRecordAction(client.get(), toDelete.get(), State.getClientManager());
-                State.getInvoker().execute(action);
+                State.getActionInvoker(authToken).execute(action);
                 // Return OK response
                 return new ResponseEntity<>(client.get().getProcedures(), HttpStatus.CREATED);
             }

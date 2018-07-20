@@ -155,7 +155,7 @@ public class ClientTransplantRequestsController {
 
             // Add transplant request to client and send 201
             Action action = new AddTransplantRequestAction(client, transplantRequest, State.getClientManager());
-            State.getInvoker().execute(action);
+            State.getActionInvoker(authToken).execute(action);
             Collection<TransplantRequest> transplantRequests = client.getTransplantRequests();
             return new ResponseEntity<>(transplantRequests, HttpStatus.CREATED);
 
@@ -225,7 +225,7 @@ public class ClientTransplantRequestsController {
                         transplantRequest.getStatus(),
                         transplantRequest.getResolvedReason(),
                         State.getClientManager());
-                State.getInvoker().execute(action);
+                State.getActionInvoker(authToken).execute(action);
                 return new ResponseEntity<>(originalTransplantRequest, HttpStatus.CREATED);
 
             } else {

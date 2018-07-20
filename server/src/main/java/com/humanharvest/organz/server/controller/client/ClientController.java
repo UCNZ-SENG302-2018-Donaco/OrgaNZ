@@ -178,7 +178,7 @@ public class ClientController {
                 oldClient,
                 modifyClientObject);
         //Execute action, this would correspond to a specific users invoker in full version
-        State.getInvoker().execute(action);
+        State.getActionInvoker(authentication).execute(action);
 
         //Add the new ETag to the headers
         HttpHeaders headers = new HttpHeaders();
@@ -224,7 +224,7 @@ public class ClientController {
         }
 
         DeleteClientAction action = new DeleteClientAction(client, State.getClientManager());
-        State.getInvoker().execute(action);
+        State.getActionInvoker(authentication).execute(action);
 
         //Respond, apparently updates should be 200 not 201 unlike 365 and our spec
         return new ResponseEntity<>(client, HttpStatus.OK);
@@ -261,7 +261,7 @@ public class ClientController {
         MarkClientAsDeadAction action = new MarkClientAsDeadAction(client, dateOfDeath.getDate(), State
                 .getClientManager
                 ());
-        State.getInvoker().execute(action);
+        State.getActionInvoker(authentication).execute(action);
 
 
         //Add the new ETag to the headers
