@@ -34,12 +34,12 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.humanharvest.organz.views.client.Views;
 import com.humanharvest.organz.utilities.enums.BloodType;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
+import com.humanharvest.organz.views.client.Views;
 
 /**
  * The main Client class.
@@ -47,7 +47,7 @@ import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredExcept
 @Entity
 @Table
 @Access(AccessType.FIELD)
-public class Client {
+public class Client implements ConcurrencyControlledEntity {
 
     @Id
     @GeneratedValue
@@ -836,7 +836,7 @@ public class Client {
         }
     }
 
-    public String getEtag() {
+    public String getETag() {
         if (modifiedTimestamp == null) {
             return String.format("\"%d\"", createdTimestamp.hashCode());
         } else {

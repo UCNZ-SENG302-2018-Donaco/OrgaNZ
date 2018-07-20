@@ -5,6 +5,9 @@ import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Clinician;
+import com.humanharvest.organz.actions.ActionInvoker;
+import com.humanharvest.organz.actions.clinician.CreateClinicianAction;
+import com.humanharvest.organz.actions.clinician.DeleteClinicianAction;
 import com.humanharvest.organz.actions.clinician.ModifyClinicianByObjectAction;
 import com.humanharvest.organz.server.exceptions.GlobalControllerExceptionHandler;
 import com.humanharvest.organz.state.State;
@@ -60,10 +63,13 @@ public class ClinicianController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         State.getAuthenticationManager().verifyAdminAccess(authToken);
-        State.getClinicianManager().addClinician(clinician);
+
+        CreateClinicianAction action = new CreateClinicianAction(clinician, State.getClinicianManager());
+        ActionInvoker invoker = State.getActionInvoker(authToken);
+        invoker.execute(action);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(clinician.getEtag());
+        headers.setETag(clinician.getETag());
         return new ResponseEntity<>(clinician, headers, HttpStatus.CREATED);
     }
 
@@ -81,7 +87,7 @@ public class ClinicianController {
         Optional<Clinician> clinician = State.getClinicianManager().getClinicianByStaffId(staffId);
         if (clinician.isPresent()) {
             HttpHeaders headers = new HttpHeaders();
-            headers.setETag(clinician.get().getEtag());
+            headers.setETag(clinician.get().getETag());
             return new ResponseEntity<>(clinician.get(), headers, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -145,7 +151,9 @@ public class ClinicianController {
         }
 
         if (clinician.isPresent()) {
-            State.getClinicianManager().removeClinician(clinician.get());
+            DeleteClinicianAction action = new DeleteClinicianAction(clinician.get(), State.getClinicianManager());
+            ActionInvoker invoker = State.getActionInvoker(authToken);
+            invoker.execute(action);
             return new ResponseEntity<>(HttpStatus.OK);
             // else 403
         } else {

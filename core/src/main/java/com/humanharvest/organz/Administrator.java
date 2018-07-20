@@ -1,7 +1,6 @@
 package com.humanharvest.organz;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -16,7 +15,7 @@ import com.humanharvest.organz.views.client.Views;
 
 @Entity
 @Table
-public class Administrator {
+public class Administrator implements ConcurrencyControlledEntity {
     @Id
     @JsonView(Views.Overview.class)
     private String username;
@@ -78,7 +77,7 @@ public class Administrator {
         return modifiedTimestamp;
     }
 
-    public String getEtag() {
+    public String getETag() {
         if (modifiedTimestamp == null) {
             return String.format("\"%d\"", createdTimestamp.hashCode());
         } else {

@@ -1,4 +1,4 @@
-openapi: "3.0.2"
+openapi: "3.0.3"
 info:
   version: 1.0.0
   title: "Organz API"
@@ -1512,7 +1512,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/textResponse'
+                $ref: '#/components/schemas/actionResponse'
         400:
           $ref: '#/components/responses/400BadRequest'
         401:
@@ -1568,7 +1568,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/textResponse'
+                $ref: '#/components/schemas/actionResponse'
         400:
           $ref: '#/components/responses/400BadRequest'
         401:
@@ -2142,6 +2142,14 @@ components:
       properties:
         response:
           type: string
+
+    actionResponse:
+      type: object
+      properties:
+        resultText:
+          type: string
+        moreActions:
+          type: boolean
         
         
         

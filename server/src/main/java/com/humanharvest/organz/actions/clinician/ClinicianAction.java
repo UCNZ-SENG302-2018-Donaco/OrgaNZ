@@ -24,6 +24,11 @@ public abstract class ClinicianAction extends Action {
         eraseFromClientHistory();
     }
 
+    @Override
+    public Object getModifiedObject() {
+        return clinician;
+    }
+
     private void recordInClientHistory() {
         clinician.addToChangesHistory(getExecuteHistoryItem());
     }

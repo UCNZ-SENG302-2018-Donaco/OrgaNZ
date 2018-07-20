@@ -21,6 +21,11 @@ public abstract class AdministratorAction extends Action {
         eraseFromClientHistory();
     }
 
+    @Override
+    public Object getModifiedObject() {
+        return administrator;
+    }
+
     private void recordInClientHistory() {
         administrator.addToChangesHistory(getExecuteHistoryItem());
     }

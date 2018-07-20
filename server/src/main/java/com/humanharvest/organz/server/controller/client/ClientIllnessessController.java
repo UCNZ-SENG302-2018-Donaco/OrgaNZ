@@ -1,18 +1,18 @@
 package com.humanharvest.organz.server.controller.client;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.actions.client.ModifyIllnessRecordByObjectAction;
 import com.humanharvest.organz.server.exceptions.GlobalControllerExceptionHandler.InvalidRequestException;
+import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
-import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.validators.client.ModifyIllnessValidator;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 import com.humanharvest.organz.views.client.CreateIllnessView;
 import com.humanharvest.organz.views.client.ModifyIllnessObject;
 import com.humanharvest.organz.views.client.Views;
@@ -42,7 +42,7 @@ public class ClientIllnessessController {
         // Client does not exist
         if (client.isPresent()) {
             HttpHeaders headers = new HttpHeaders();
-            headers.add("ETag", client.get().getEtag());
+            headers.add("ETag", client.get().getETag());
             List<IllnessRecord> illnesses = new ArrayList<>(client.get().getCurrentIllnesses());
             illnesses.addAll(client.get().getPastIllnesses());
 
@@ -83,8 +83,8 @@ public class ClientIllnessessController {
         if (ETag == null) {
             throw new IfMatchRequiredException();
         }
-        System.out.println(client.get().getEtag());
-        if (!client.get().getEtag().equals(ETag)) {
+        System.out.println(client.get().getETag());
+        if (!client.get().getETag().equals(ETag)) {
             throw new IfMatchFailedException();
         }
 
@@ -102,7 +102,7 @@ public class ClientIllnessessController {
 
         //Add the new ETag to the headers
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client.get().getEtag());
+        headers.setETag(client.get().getETag());
         return new ResponseEntity<>(record, headers, HttpStatus.OK);
 
     }
@@ -124,7 +124,7 @@ public class ClientIllnessessController {
 
         client.get().addIllnessRecord(record);
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client.get().getEtag());
+        headers.setETag(client.get().getETag());
 
         return new ResponseEntity<>(record,headers,HttpStatus.CREATED);
     }

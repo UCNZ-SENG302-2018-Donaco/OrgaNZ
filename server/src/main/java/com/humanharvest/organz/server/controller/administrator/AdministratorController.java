@@ -1,15 +1,12 @@
 package com.humanharvest.organz.server.controller.administrator;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.actions.ActionInvoker;
+import com.humanharvest.organz.actions.administrator.CreateAdministratorAction;
 import com.humanharvest.organz.actions.administrator.DeleteAdministratorAction;
-import com.humanharvest.organz.commands.BaseCommand;
-import com.humanharvest.organz.commands.CommandFactory;
 import com.humanharvest.organz.commands.CommandsHelper;
 import com.humanharvest.organz.server.exceptions.GlobalControllerExceptionHandler.InvalidRequestException;
 import com.humanharvest.organz.state.AdministratorManager;
@@ -32,8 +29,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import picocli.CommandLine;
-import picocli.CommandLine.Help.Ansi;
 
 @RestController
 public class AdministratorController {
@@ -80,12 +75,13 @@ public class AdministratorController {
                 createAdministratorView.getPassword());
 
         AdministratorManager administratorManager = State.getAdministratorManager();
-
-        administratorManager.addAdministrator(administrator);
+        CreateAdministratorAction action = new CreateAdministratorAction(administrator, administratorManager);
+        ActionInvoker invoker = State.getActionInvoker(authentication);
+        invoker.execute(action);
 
         //Add the new ETag to the headers
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(administrator.getEtag());
+        headers.setETag(administrator.getETag());
 
         return new ResponseEntity<>(administrator, headers, HttpStatus.CREATED);
     }
@@ -107,7 +103,7 @@ public class AdministratorController {
         if (administrator.isPresent()) {
             //Add the new ETag to the headers
             HttpHeaders headers = new HttpHeaders();
-            headers.setETag(administrator.get().getEtag());
+            headers.setETag(administrator.get().getETag());
 
             return new ResponseEntity<>(administrator.get(), headers, HttpStatus.OK);
         } else {
@@ -146,7 +142,7 @@ public class AdministratorController {
         if (etag == null) {
             throw new IfMatchRequiredException("Etag does not exist");
         }
-        if (!administrator.get().getEtag().equals(etag)) {
+        if (!administrator.get().getETag().equals(etag)) {
             throw new IfMatchFailedException("Etag is not valid for this administrator");
         }
 

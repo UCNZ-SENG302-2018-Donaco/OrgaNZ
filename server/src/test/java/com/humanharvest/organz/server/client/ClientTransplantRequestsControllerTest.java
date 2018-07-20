@@ -87,7 +87,7 @@ public class ClientTransplantRequestsControllerTest {
     @Test
     public void createValidTransplantRequestTest() throws Exception {
         mockMvc.perform(post("/clients/" + testClient.getUid() + "/transplantRequests")
-                .header("If-Match", testClient.getEtag())
+                .header("If-Match", testClient.getETag())
                 .header("X-Auth-Token", VALID_AUTH)
                 .contentType(contentType)
                 .content(validTransplantRequestJson))
@@ -109,7 +109,7 @@ public class ClientTransplantRequestsControllerTest {
                 + "  \"status\": \"WAITING\""
                 + "}";
         mockMvc.perform(post("/clients/" + testClient.getUid() + "/transplantRequests")
-                .header("If-Match", testClient.getEtag())
+                .header("If-Match", testClient.getETag())
                 .header("X-Auth-Token", VALID_AUTH)
                 .contentType(contentType)
                 .content(json))
@@ -131,7 +131,7 @@ public class ClientTransplantRequestsControllerTest {
                 + "  \"resolvedReason\": \"reason\"\n"
                 + "}";
         mockMvc.perform(post("/clients/" + testClient.getUid() + "/transplantRequests")
-                .header("If-Match", testClient.getEtag())
+                .header("If-Match", testClient.getETag())
                 .header("X-Auth-Token", VALID_AUTH)
                 .contentType(contentType)
                 .content(json))
@@ -154,7 +154,7 @@ public class ClientTransplantRequestsControllerTest {
                 + "  \"resolvedReason\": \"reason\"\n"
                 + "}";
         mockMvc.perform(post("/clients/" + testClient.getUid() + "/transplantRequests")
-                .header("If-Match", testClient.getEtag())
+                .header("If-Match", testClient.getETag())
                 .header("X-Auth-Token", VALID_AUTH)
                 .contentType(contentType)
                 .content(json))
@@ -171,7 +171,7 @@ public class ClientTransplantRequestsControllerTest {
                 + "  \"resolvedReason\": \"reason\"\n"
                 + "}";
         mockMvc.perform(post("/clients/" + testClient.getUid() + "/transplantRequests")
-                .header("If-Match", testClient.getEtag())
+                .header("If-Match", testClient.getETag())
                 .header("X-Auth-Token", VALID_AUTH)
                 .contentType(contentType)
                 .content(json))
@@ -188,7 +188,7 @@ public class ClientTransplantRequestsControllerTest {
                 + "  \"resolvedReason\": \"reason\"\n"
                 + "}";
         mockMvc.perform(post("/clients/" + testClient.getUid() + "/transplantRequests")
-                .header("If-Match", testClient.getEtag())
+                .header("If-Match", testClient.getETag())
                 .header("X-Auth-Token", VALID_AUTH)
                 .contentType(contentType)
                 .content(json))
@@ -199,7 +199,7 @@ public class ClientTransplantRequestsControllerTest {
     public void createTransplantRequestInvalidClientId() throws Exception {
         int invalidId = testClient.getUid() + 1;
         mockMvc.perform(post("/clients/" + invalidId + "/transplantRequests")
-                .header("If-Match", testClient.getEtag())
+                .header("If-Match", testClient.getETag())
                 .header("X-Auth-Token", VALID_AUTH)
                 .contentType(contentType)
                 .content(validTransplantRequestJson))
@@ -218,7 +218,7 @@ public class ClientTransplantRequestsControllerTest {
     @Test
     public void createTransplantRequestInvalidEtag() throws Exception {
         mockMvc.perform(post("/clients/" + testClient.getUid() + "/transplantRequests")
-                .header("If-Match", testClient.getEtag() + "X")
+                .header("If-Match", testClient.getETag() + "X")
                 .header("X-Auth-Token", VALID_AUTH)
                 .contentType(contentType)
                 .content(validTransplantRequestJson))
@@ -228,7 +228,7 @@ public class ClientTransplantRequestsControllerTest {
     @Test
     public void createTransplantRequestInvalidNoAuth() throws Exception {
         mockMvc.perform(post("/clients/" + testClient.getUid() + "/transplantRequests")
-                .header("If-Match", testClient.getEtag())
+                .header("If-Match", testClient.getETag())
                 .contentType(contentType)
                 .content(validTransplantRequestJson))
                 .andExpect(status().isUnauthorized());
@@ -237,7 +237,7 @@ public class ClientTransplantRequestsControllerTest {
     @Test
     public void createTransplantRequestInvalidAuth() throws Exception {
         mockMvc.perform(post("/clients/" + testClient.getUid() + "/transplantRequests")
-                .header("If-Match", testClient.getEtag())
+                .header("If-Match", testClient.getETag())
                 .header("X-Auth-Token", INVALID_AUTH)
                 .contentType(contentType)
                 .content(validTransplantRequestJson))
@@ -254,7 +254,7 @@ public class ClientTransplantRequestsControllerTest {
 
         // Perform patch
         mockMvc.perform(patch("/clients/" + testClient.getUid() + "/transplantRequests/" + transplantRequestIndex)
-                .header("If-Match", testClient.getEtag())
+                .header("If-Match", testClient.getETag())
                 .header("X-Auth-Token", VALID_AUTH)
                 .contentType(contentType)
                 .content("{\n"
@@ -281,7 +281,7 @@ public class ClientTransplantRequestsControllerTest {
 
         // Perform patch
         mockMvc.perform(patch("/clients/" + testClient.getUid() + "/transplantRequests/" + transplantRequestIndex)
-                .header("If-Match", testClient.getEtag())
+                .header("If-Match", testClient.getETag())
                 .header("X-Auth-Token", VALID_AUTH)
                 .contentType(contentType)
                 .content("{\n"
@@ -302,7 +302,7 @@ public class ClientTransplantRequestsControllerTest {
 
         // Perform patch
         mockMvc.perform(patch("/clients/" + testClient.getUid() + "/transplantRequests/" + transplantRequestIndex)
-                .header("If-Match", testClient.getEtag())
+                .header("If-Match", testClient.getETag())
                 .header("X-Auth-Token", INVALID_AUTH)
                 .contentType(contentType)
                 .content("{\n"
@@ -323,7 +323,7 @@ public class ClientTransplantRequestsControllerTest {
 
         // Perform patch
         mockMvc.perform(patch("/clients/" + testClient.getUid() + "/transplantRequests/" + transplantRequestIndex)
-                .header("If-Match", testClient.getEtag() + "X")
+                .header("If-Match", testClient.getETag() + "X")
                 .header("X-Auth-Token", VALID_AUTH)
                 .contentType(contentType)
                 .content("{\n"

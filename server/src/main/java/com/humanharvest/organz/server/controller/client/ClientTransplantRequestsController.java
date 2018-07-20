@@ -141,7 +141,7 @@ public class ClientTransplantRequestsController {
             if (ETag == null) {
                 throw new IfMatchRequiredException();
             }
-            if (!client.getEtag().equals(ETag)) {
+            if (!client.getETag().equals(ETag)) {
                 throw new IfMatchFailedException();
             }
 
@@ -201,7 +201,7 @@ public class ClientTransplantRequestsController {
             if (ETag == null) {
                 throw new IfMatchRequiredException();
             }
-            if (!client.getEtag().equals(ETag)) {
+            if (!client.getETag().equals(ETag)) {
                 throw new IfMatchFailedException();
             }
 

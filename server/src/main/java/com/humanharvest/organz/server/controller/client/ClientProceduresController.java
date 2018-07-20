@@ -107,7 +107,7 @@ public class ClientProceduresController {
         if (etag == null) {
             throw new IfMatchRequiredException();
         }
-        if (!client.get().getEtag().equals(etag)) {
+        if (!client.get().getETag().equals(etag)) {
             throw new IfMatchFailedException();
         }
 
@@ -119,7 +119,7 @@ public class ClientProceduresController {
 
         //Add the new ETag to the headers
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client.get().getEtag());
+        headers.setETag(client.get().getETag());
 
         //Respond, apparently updates should be 200 not 201 unlike 365 and our spec
         return new ResponseEntity<>(record, headers, HttpStatus.OK);

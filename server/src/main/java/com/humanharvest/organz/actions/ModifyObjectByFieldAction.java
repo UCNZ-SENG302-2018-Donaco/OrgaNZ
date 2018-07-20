@@ -139,6 +139,11 @@ public class ModifyObjectByFieldAction extends Action {
         }
     }
 
+    @Override
+    public Object getModifiedObject() {
+        return toModify;
+    }
+
     /**
      * Execute a statement update on the object. Should not throw the errors from Statement as we check them in the
      * constructor

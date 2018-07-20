@@ -13,15 +13,15 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import com.humanharvest.organz.views.client.Views;
 import com.humanharvest.organz.utilities.enums.Region;
+import com.humanharvest.organz.views.client.Views;
 
 /**
  * The main Clinician class.
  */
 @Entity
 @Table
-public class Clinician {
+public class Clinician implements ConcurrencyControlledEntity {
 
     @Id
     @JsonView(Views.Overview.class)
@@ -202,7 +202,7 @@ public class Clinician {
         return staffId;
     }
 
-    public String getEtag() {
+    public String getETag() {
         if (modifiedOn == null) {
             return "\"" + String.valueOf(createdOn.hashCode()) + "\"";
         } else {

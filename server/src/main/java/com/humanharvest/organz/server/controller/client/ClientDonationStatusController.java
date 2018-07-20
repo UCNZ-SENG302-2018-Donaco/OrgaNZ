@@ -42,7 +42,7 @@ public class ClientDonationStatusController {
             
             //Add the ETag to the headers
             HttpHeaders headers = new HttpHeaders();
-            headers.add("ETag", client.getEtag());
+            headers.add("ETag", client.getETag());
 
             return new ResponseEntity<>(client.getOrganDonationStatus(), headers, HttpStatus.OK);
         } else {
@@ -83,7 +83,7 @@ public class ClientDonationStatusController {
         if (ETag == null) {
             throw new IfMatchRequiredException();
         }
-        if (!client.getEtag().equals(ETag)) {
+        if (!client.getETag().equals(ETag)) {
             throw new
                     IfMatchFailedException();
         }
@@ -101,7 +101,7 @@ public class ClientDonationStatusController {
 
         //Add the new ETag to the headers
         HttpHeaders headers = new HttpHeaders();
-        headers.add("ETag", client.getEtag());
+        headers.add("ETag", client.getETag());
 
         //Respond, apparently updates should be 200 not 201 unlike 365 and our spec
         return new ResponseEntity<>(client.getOrganDonationStatus(), headers, HttpStatus.OK);

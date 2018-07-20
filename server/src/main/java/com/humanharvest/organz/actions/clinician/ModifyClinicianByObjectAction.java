@@ -1,15 +1,12 @@
 package com.humanharvest.organz.actions.clinician;
 
 import com.humanharvest.organz.Clinician;
-import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.state.ClinicianManager;
 import com.humanharvest.organz.views.clinician.ModifyClinicianObject;
 import org.springframework.beans.BeanUtils;
 
-public class ModifyClinicianByObjectAction extends Action {
+public class ModifyClinicianByObjectAction extends ClinicianAction {
 
-    private Clinician clinician;
-    private ClinicianManager manager;
     private ModifyClinicianObject oldClinicianDetails;
     private ModifyClinicianObject newClinicianDetails;
 
@@ -22,8 +19,7 @@ public class ModifyClinicianByObjectAction extends Action {
      */
     public ModifyClinicianByObjectAction(Clinician clinician, ClinicianManager manager, ModifyClinicianObject
             oldClinicianDetails, ModifyClinicianObject newClinicianDetails) {
-        this.clinician = clinician;
-        this.manager = manager;
+        super(clinician, manager);
         this.oldClinicianDetails = oldClinicianDetails;
         this.newClinicianDetails = newClinicianDetails;
     }

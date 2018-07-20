@@ -5,6 +5,8 @@ import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.actions.ActionInvoker;
+import com.humanharvest.organz.actions.client.CreateClientAction;
 import com.humanharvest.organz.actions.client.DeleteClientAction;
 import com.humanharvest.organz.actions.client.MarkClientAsDeadAction;
 import com.humanharvest.organz.actions.client.ModifyClientByObjectAction;
@@ -44,10 +46,10 @@ public class ClientController {
     @GetMapping("/clients")
     @JsonView(Views.Overview.class)
     public ResponseEntity<List<Client>> getClients(
-            @RequestHeader(value = "X-Auth-Token", required = false) String authentication) throws AuthenticationException {
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken) throws AuthenticationException {
 
         //TODO: Add the auth check, but need to remake the login page to not get the list of clients
-        //State.getAuthenticationManager().verifyClinicianOrAdmin(authentication);
+        //State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
 
         List<Client> clients = State.getClientManager().getClients();
 
@@ -63,7 +65,9 @@ public class ClientController {
      */
     @PostMapping("/clients")
     @JsonView(Views.Overview.class)
-    public ResponseEntity<Client> createClient(@RequestBody CreateClientView createClientView)
+    public ResponseEntity<Client> createClient(
+            @RequestBody CreateClientView createClientView,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws InvalidRequestException {
 
         //Validate the request, if there are any errors an exception will be thrown.
@@ -77,11 +81,13 @@ public class ClientController {
         BeanUtils.copyProperties(createClientView, client);
 
         //Add the new Client to the manager
-        State.getClientManager().addClient(client);
+        CreateClientAction action = new CreateClientAction(client, State.getClientManager());
+        ActionInvoker invoker = State.getActionInvoker(authToken);
+        invoker.execute(action);
 
         //Add the new ETag to the headers
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client.getEtag());
+        headers.setETag(client.getETag());
 
         System.out.println(client);
         return new ResponseEntity<>(client, headers, HttpStatus.CREATED);
@@ -96,15 +102,15 @@ public class ClientController {
     @JsonView(Views.Details.class)
     public ResponseEntity<Client> getClient(
             @PathVariable int uid,
-            @RequestHeader(value = "X-Auth-Token", required = false) String authentication) {
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {
 
         Optional<Client> client = State.getClientManager().getClientByID(uid);
         if (client.isPresent()) {
             //Authenticate
-            State.getAuthenticationManager().verifyClientAccess(authentication, client.get());
+            State.getAuthenticationManager().verifyClientAccess(authToken, client.get());
             //Add the new ETag to the headers
             HttpHeaders headers = new HttpHeaders();
-            headers.setETag(client.get().getEtag());
+            headers.setETag(client.get().getETag());
 
             return new ResponseEntity<>(client.get(), headers, HttpStatus.OK);
         } else {
@@ -128,7 +134,7 @@ public class ClientController {
             @PathVariable int uid,
             @RequestBody ModifyClientObject modifyClientObject,
             @RequestHeader(value = "If-Match", required = false) String etag,
-            @RequestHeader(value = "X-Auth-Token", required = false) String authentication)
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws IfMatchRequiredException, IfMatchFailedException, InvalidRequestException, AuthenticationException {
 
         //Logical steps for a PATCH
@@ -145,7 +151,7 @@ public class ClientController {
         Client client = optionalClient.get();
 
         //Check authentication
-        State.getAuthenticationManager().verifyClientAccess(authentication, client);
+        State.getAuthenticationManager().verifyClientAccess(authToken, client);
 
         //Validate the request, if there are any errors an exception will be thrown.
         if (!ModifyClientValidator.isValid(modifyClientObject)) {
@@ -163,7 +169,7 @@ public class ClientController {
         if (etag == null) {
             throw new IfMatchRequiredException();
         }
-        if (!client.getEtag().equals(etag)) {
+        if (!client.getETag().equals(etag)) {
             throw new IfMatchFailedException();
         }
 
@@ -178,11 +184,11 @@ public class ClientController {
                 oldClient,
                 modifyClientObject);
         //Execute action, this would correspond to a specific users invoker in full version
-        State.getActionInvoker(authentication).execute(action);
+        State.getActionInvoker(authToken).execute(action);
 
         //Add the new ETag to the headers
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client.getEtag());
+        headers.setETag(client.getETag());
 
         //Respond, apparently updates should be 200 not 201 unlike 365 and our spec
         return new ResponseEntity<>(client, headers, HttpStatus.OK);
@@ -201,7 +207,7 @@ public class ClientController {
     public ResponseEntity deleteClient(
             @PathVariable int uid,
             @RequestHeader(value = "If-Match", required = false) String etag,
-            @RequestHeader(value = "X-Auth-Token", required = false) String authentication)
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws IfMatchRequiredException, IfMatchFailedException, InvalidRequestException {
 
         //Fetch the client given by ID
@@ -213,18 +219,18 @@ public class ClientController {
 
         Client client = optionalClient.get();
 
-        State.getAuthenticationManager().verifyClientAccess(authentication, client);
+        State.getAuthenticationManager().verifyClientAccess(authToken, client);
 
         //Check the ETag. These are handled in the exceptions class.
         if (etag == null) {
             throw new IfMatchRequiredException();
         }
-        if (!client.getEtag().equals(etag)) {
+        if (!client.getETag().equals(etag)) {
             throw new IfMatchFailedException();
         }
 
         DeleteClientAction action = new DeleteClientAction(client, State.getClientManager());
-        State.getActionInvoker(authentication).execute(action);
+        State.getActionInvoker(authToken).execute(action);
 
         //Respond, apparently updates should be 200 not 201 unlike 365 and our spec
         return new ResponseEntity<>(client, HttpStatus.OK);
@@ -235,7 +241,7 @@ public class ClientController {
     public ResponseEntity markClientAsDead(
             @PathVariable int uid,
             @RequestHeader(value = "If-Match", required = false) String etag,
-            @RequestHeader(value = "X-Auth-Token", required = false) String authentication,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken,
             @RequestBody SingleDateView dateOfDeath)
             throws IfMatchRequiredException, IfMatchFailedException, InvalidRequestException {
 
@@ -248,25 +254,25 @@ public class ClientController {
 
         Client client = optionalClient.get();
 
-        State.getAuthenticationManager().verifyClientAccess(authentication, client);
+        State.getAuthenticationManager().verifyClientAccess(authToken, client);
 
         //Check the ETag. These are handled in the exceptions class.
         if (etag == null) {
             throw new IfMatchRequiredException();
         }
-        if (!client.getEtag().equals(etag)) {
+        if (!client.getETag().equals(etag)) {
             throw new IfMatchFailedException();
         }
 
         MarkClientAsDeadAction action = new MarkClientAsDeadAction(client, dateOfDeath.getDate(), State
                 .getClientManager
                 ());
-        State.getActionInvoker(authentication).execute(action);
+        State.getActionInvoker(authToken).execute(action);
 
 
         //Add the new ETag to the headers
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client.getEtag());
+        headers.setETag(client.getETag());
 
         //Respond
         return new ResponseEntity<>(client, headers, HttpStatus.OK);

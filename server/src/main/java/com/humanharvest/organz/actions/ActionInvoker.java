@@ -86,6 +86,23 @@ public class ActionInvoker {
     }
 
     /**
+     * Returns the next Action to be undone
+     * @return The next Action that will be undone
+     */
+    public Action nextUndo() {
+        return undoStack.peek();
+    }
+
+    /**
+     * Returns the next Action to be redone
+     * @return The next Action that will be redone
+     */
+    public Action nextRedo() {
+        return redoStack.peek();
+    }
+
+
+    /**
      * Register a listener to be notified on any Action event
      * @param listener The listener to register
      */

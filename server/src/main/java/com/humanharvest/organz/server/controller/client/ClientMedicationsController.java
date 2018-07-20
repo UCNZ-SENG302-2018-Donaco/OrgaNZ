@@ -9,9 +9,9 @@ import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.actions.client.AddMedicationRecordAction;
 import com.humanharvest.organz.actions.client.DeleteMedicationRecordAction;
 import com.humanharvest.organz.actions.client.ModifyMedicationRecordAction;
+import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
-import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.views.client.CreateMedicationRecordView;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -41,7 +41,7 @@ public class ClientMedicationsController {
         if (ETag == null) {
             throw new IfMatchRequiredException();
 
-        } else if (!client.getEtag().equals(ETag)) {
+        } else if (!client.getETag().equals(ETag)) {
             throw new IfMatchFailedException();
         }
     }
@@ -62,7 +62,7 @@ public class ClientMedicationsController {
         if (client.isPresent()) {
 
             HttpHeaders headers = new HttpHeaders();
-            headers.setETag(client.get().getEtag());
+            headers.setETag(client.get().getETag());
 
             return new ResponseEntity<>(client.get().getAllMedications(), headers, HttpStatus.OK);
 
@@ -105,7 +105,7 @@ public class ClientMedicationsController {
         State.getActionInvoker(authToken).execute(action);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client.get().getEtag());
+        headers.setETag(client.get().getETag());
 
         return new ResponseEntity<>(client.get().getAllMedications(), headers, HttpStatus.OK);
     }
@@ -190,7 +190,7 @@ public class ClientMedicationsController {
         State.getActionInvoker(authToken).execute(action);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client.get().getEtag());
+        headers.setETag(client.get().getETag());
 
         return new ResponseEntity<>(record, headers, HttpStatus.OK);
     }
@@ -233,7 +233,7 @@ public class ClientMedicationsController {
         State.getActionInvoker(authToken).execute(action);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client.get().getEtag());
+        headers.setETag(client.get().getETag());
 
         return new ResponseEntity<>(record, headers, HttpStatus.OK);
     }
