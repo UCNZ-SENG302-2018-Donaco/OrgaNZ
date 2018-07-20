@@ -5,9 +5,10 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import javax.persistence.ElementCollection;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonView;
@@ -26,8 +27,10 @@ public class Administrator {
     @JsonView(Views.Overview.class)
     private Instant modifiedTimestamp;
 
-    @ElementCollection
-    private List<String> updateLog = new ArrayList<>();
+    @OneToMany(
+            cascade = CascadeType.ALL
+    )
+    private List<HistoryItem> changesHistory = new ArrayList<>();
 
     protected Administrator() {
         createdTimestamp = Instant.now();
@@ -69,7 +72,7 @@ public class Administrator {
 
     public void setPassword(String newPassword) {
         password = newPassword;
-        addUpdate("password");
+        updateModifiedTimestamp();
     }
 
     /**
@@ -91,6 +94,25 @@ public class Administrator {
         } else {
             return String.format("\"%d\"", modifiedTimestamp.hashCode());
         }
+
+    public LocalDateTime getModifiedOn() {
+        return modifiedOn;
+    }
+
+    private void updateModifiedTimestamp() {
+        modifiedOn = LocalDateTime.now();
+    }
+
+    public List<HistoryItem> getChangesHistory() {
+        return Collections.unmodifiableList(changesHistory);
+    }
+
+    public void addToChangesHistory(HistoryItem historyItem) {
+        changesHistory.add(historyItem);
+    }
+
+    public void removeFromChangesHistory(HistoryItem historyItem) {
+        changesHistory.remove(historyItem);
     }
 
     /**

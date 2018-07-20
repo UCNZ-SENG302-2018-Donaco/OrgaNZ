@@ -6,24 +6,26 @@ import java.util.Optional;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
+import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.actions.clinician.ModifyClinicianAction;
-import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.state.ClinicianManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Region;
-import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.view.PageNavigator;
-
 import org.controlsfx.control.Notifications;
 
 /**
@@ -235,10 +237,6 @@ public class ViewClinicianController extends SubController {
                     .title("Updated Clinician")
                     .text(actionText)
                     .showInformation();
-
-            HistoryItem save = new HistoryItem("UPDATE CLINICIAN",
-                    "The Clinician's information was updated. New details are: " + actionText);
-            JSONConverter.updateHistory(save, "action_history.json");
 
             PageNavigator.refreshAllWindows();
             return true;

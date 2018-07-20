@@ -13,9 +13,8 @@ import com.humanharvest.organz.utilities.enums.Organ;
 /**
  * A reversible action to modify a given procedure record.
  */
-public class ModifyProcedureRecordAction extends Action {
+public class ModifyProcedureRecordAction extends ClientAction {
 
-    private ClientManager manager;
     private ProcedureRecord record;
     private String oldSummary, newSummary;
     private String oldDescription, newDescription;
@@ -28,8 +27,8 @@ public class ModifyProcedureRecordAction extends Action {
      * @param record The procedure record to modify.
      */
     public ModifyProcedureRecordAction(ProcedureRecord record, ClientManager manager) {
+        super(record.getClient(), manager);
         this.record = record;
-        this.manager = manager;
 
         oldSummary = record.getSummary();
         oldDescription = record.getDescription();
@@ -74,6 +73,7 @@ public class ModifyProcedureRecordAction extends Action {
                 Objects.equals(newAffectedOrgans, oldAffectedOrgans)) {
             throw new IllegalStateException("No changes were made to the ProcedureRecord.");
         }
+        super.execute();
         if (!Objects.equals(newSummary, oldSummary)) {
             record.setSummary(newSummary);
         }
@@ -91,6 +91,7 @@ public class ModifyProcedureRecordAction extends Action {
 
     @Override
     protected void unExecute() {
+        super.unExecute();
         if (!Objects.equals(newSummary, oldSummary)) {
             record.setSummary(oldSummary);
         }

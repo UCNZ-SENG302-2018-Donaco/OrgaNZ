@@ -11,19 +11,20 @@ import java.util.Collection;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.state.ClientManager;
+import com.humanharvest.organz.TransplantRequest;
+import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 
 /**
  * A reversible action that will resolve the given transplant request with a given status. This status must be one of
  * the valid {@link ResolveTransplantRequestAction#RESOLVED_STATUSES}.
  */
-public class ResolveTransplantRequestAction extends Action {
+public class ResolveTransplantRequestAction extends ClientAction {
 
     private static final Collection<TransplantRequestStatus> RESOLVED_STATUSES = Arrays.asList(
             CANCELLED, COMPLETED
     );
 
-    private ClientManager manager;
     private TransplantRequest request;
     private TransplantRequestStatus newStatus;
     private String reason;
@@ -37,10 +38,10 @@ public class ResolveTransplantRequestAction extends Action {
      */
     public ResolveTransplantRequestAction(TransplantRequest request, TransplantRequestStatus newStatus, String
             reason, ClientManager manager) {
+        super(request.getClient(), manager);
         this.request = request;
         this.newStatus = newStatus;
         this.reason = reason;
-        this.manager = manager;
 
         if (!RESOLVED_STATUSES.contains(newStatus)) {
             throw new IllegalArgumentException("New status must be a valid resolved status.");
@@ -53,6 +54,7 @@ public class ResolveTransplantRequestAction extends Action {
      */
     @Override
     public void execute() {
+        super.execute();
         request.setStatus(newStatus);
         request.setResolvedDate(LocalDateTime.now());
         request.setResolvedReason(reason);
@@ -61,6 +63,7 @@ public class ResolveTransplantRequestAction extends Action {
 
     @Override
     public void unExecute() {
+        super.unExecute();
         request.setStatus(WAITING);
         request.setResolvedDate(null);
         request.setResolvedReason(null);

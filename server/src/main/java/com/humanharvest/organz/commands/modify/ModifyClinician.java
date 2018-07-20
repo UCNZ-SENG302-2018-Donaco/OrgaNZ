@@ -1,4 +1,5 @@
 package com.humanharvest.organz.commands.modify;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -8,13 +9,19 @@ import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.actions.clinician.ModifyClinicianAction;
+import com.humanharvest.organz.Clinician;
+import com.humanharvest.organz.actions.ActionInvoker;
+import com.humanharvest.organz.actions.clinician.ModifyClinicianAction;
 import com.humanharvest.organz.state.ClinicianManager;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.pico_type_converters.PicoRegionConverter;
+import com.humanharvest.organz.utilities.type_converters.RegionConverter;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
+
+;
 
 /**
  * Command line for modifying attribute of a clinician
@@ -87,9 +94,6 @@ public class ModifyClinician implements Runnable {
         }
 
         System.out.println(invoker.execute(action));
-
-        HistoryItem setAttribute = new HistoryItem("ATTRIBUTE UPDATE", "DETAILS were updated for clinician " + id);
-        JSONConverter.updateHistory(setAttribute, "action_history.json");
 
     }
 }

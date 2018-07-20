@@ -3,17 +3,17 @@ package com.humanharvest.organz.commands.modify;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.actions.clinician.CreateClinicianAction;
-import com.humanharvest.organz.Clinician;
-import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.state.ClinicianManager;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.pico_type_converters.PicoRegionConverter;
 
+import com.humanharvest.organz.utilities.type_converters.RegionConverter;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
@@ -73,7 +73,5 @@ public class CreateClinician implements Runnable {
         System.out.println(invoker.execute(action));
 
         LOGGER.log(Level.INFO, action.getExecuteText());
-        HistoryItem create = new HistoryItem("CREATE_CLINICIAN", "Clinician staff ID: " + staffId + " created.");
-        JSONConverter.updateHistory(create, "action_history.json");
     }
 }

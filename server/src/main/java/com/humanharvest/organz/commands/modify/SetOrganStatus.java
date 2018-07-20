@@ -4,16 +4,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import com.humanharvest.organz.Client;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.actions.client.ModifyClientOrgansAction;
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
-import com.humanharvest.organz.utilities.JSONConverter;
-
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
@@ -125,8 +122,5 @@ public class SetOrganStatus implements Runnable {
         }
 
         System.out.println(invoker.execute(action));
-
-        HistoryItem setOrganStatus = new HistoryItem("SET ORGAN STATUS", "The organ status was updated for " + uid);
-        JSONConverter.updateHistory(setOrganStatus, "action_history.json");
     }
 }

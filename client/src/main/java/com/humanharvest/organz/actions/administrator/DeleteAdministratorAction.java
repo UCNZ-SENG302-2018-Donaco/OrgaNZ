@@ -7,9 +7,8 @@ import com.humanharvest.organz.state.AdministratorManager;
 /**
  * A reversible administrator deletion action
  */
-public class DeleteAdministratorAction extends Action {
+public class DeleteAdministratorAction extends AdministratorAction {
 
-    private final Administrator administrator;
     private final AdministratorManager manager;
 
     /**
@@ -18,17 +17,19 @@ public class DeleteAdministratorAction extends Action {
      * @param manager The AdministratorManager to apply changes to
      */
     public DeleteAdministratorAction(Administrator administrator, AdministratorManager manager) {
-        this.administrator = administrator;
+        super(administrator);
         this.manager = manager;
     }
 
     @Override
     protected void execute() {
+        super.execute();
         manager.removeAdministrator(administrator);
     }
 
     @Override
     protected void unExecute() {
+        super.unExecute();
         manager.addAdministrator(administrator);
     }
 
