@@ -138,7 +138,7 @@
       <artifactId>openjfx-monocle</artifactId>
       <version>8u76-b04</version>
       <scope>system</scope>
-      <systemPath>core/lib/openjfx-monocle-8u76-b04.jar</systemPath>
+      <systemPath>${project.basedir}/core/lib/openjfx-monocle-8u76-b04.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>net.java.dev.jna</groupId>
