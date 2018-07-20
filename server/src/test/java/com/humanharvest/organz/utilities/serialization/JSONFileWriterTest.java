@@ -1,4 +1,4 @@
-package com.humanharvest.organz.serialization;
+package com.humanharvest.organz.utilities.serialization;
 
 import static org.junit.Assert.assertEquals;
 
@@ -14,7 +14,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.humanharvest.organz.Client;
-import com.humanharvest.organz.utilities.serialization.JSONFileWriter;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
