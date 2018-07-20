@@ -96,4 +96,8 @@ public class ProcedureRecord {
     public void setAffectedOrgans(Set<Organ> affectedOrgans) {
         this.affectedOrgans = affectedOrgans;
     }
+
+    public void addAffectedOrgan(Organ organ) {
+        affectedOrgans.add(organ);
+    }
 }
