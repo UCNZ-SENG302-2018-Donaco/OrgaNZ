@@ -500,6 +500,13 @@ public class Client {
         return medicationHistory;
     }
 
+
+    /**
+     * Returns all illness history past and present
+     * @return All illness Records for a specific client
+     */
+    public List<IllnessRecord> getAllIllnessHistory() {return illnessHistory;}
+
     /**
      * Adds a new MedicationRecord to the client's history.
      * @param record The given MedicationRecord.

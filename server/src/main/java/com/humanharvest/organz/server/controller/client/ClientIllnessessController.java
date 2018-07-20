@@ -72,7 +72,7 @@ public class ClientIllnessessController {
 
         IllnessRecord record;
         try {
-            record = client.get().getCurrentIllnesses().get(id - 1); // starting index 1.
+            record = client.get().getAllIllnessHistory().get(id - 1); // starting index 1.
         } catch (IndexOutOfBoundsException e) {
             //Record does not exist
             System.out.println("Record does not exist");
