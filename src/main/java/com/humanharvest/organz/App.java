@@ -27,6 +27,7 @@ public class App {
 
     public static void main(String[] args) {
         LoggerSetup.setup(Level.INFO);
+        LoggerSetup.enableConsole(Level.WARNING);
 
         Map<String, String> namedArgs = new HashMap<>();
         for (String arg : args) {

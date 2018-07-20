@@ -3,22 +3,25 @@ package com.humanharvest.organz.commands.modify;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.JSONConverter;
+import com.humanharvest.organz.utilities.serialization.JSONFileWriter;
 import picocli.CommandLine.Command;
 
 /**
  * Command line to save the current information of the Clients onto a JSON file using the GSON API.
- * @author Dylan Carlyle, Jack Steel
- * @version sprint 1.
- * date 06/03/2018
  */
-
 @Command(name = "save", description = "Save clients to file", sortOptions = false)
 public class Save implements Runnable {
+
+    private static final Logger LOGGER = Logger.getLogger(Save.class.getName());
+    private static final File FILE = new File("savefile.json");
 
     private ClientManager manager;
 
@@ -33,15 +36,19 @@ public class Save implements Runnable {
     @Override
     public void run() {
         List<Client> clients = manager.getClients();
-        if (clients.size() == 0) {
+        if (clients.isEmpty()) {
             System.out.println("No clients exist, nothing to save");
-            return;
-        }
-        try {
-            JSONConverter.saveToFile(new File("savefile.json"));
-            System.out.println(String.format("Saved %s clients to file", manager.getClients().size()));
-        } catch (IOException e) {
-            System.out.println("Could not save to file");
+        } else {
+            try (JSONFileWriter<Client> clientWriter = new JSONFileWriter<>(FILE, Client.class)) {
+                clientWriter.overwriteWith(clients);
+
+                LOGGER.log(Level.INFO, String.format("Saved %s clients to file", clients.size()));
+                HistoryItem historyItem = new HistoryItem("SAVE",
+                        String.format("The system's current state was saved to '%s'.", FILE.getName()));
+                State.getSession().addToSessionHistory(historyItem);
+            } catch (IOException e) {
+                LOGGER.log(Level.SEVERE, "Could not save to file: " + FILE.getName(), e);
+            }
         }
     }
 }
