@@ -6,21 +6,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.humanharvest.organz.Clinician;
-import com.humanharvest.organz.views.clinician.ModifyClinicianObject;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.RestTemplate;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class ClinicianManagerRest implements ClinicianManager {
-
-    private final RestTemplate restTemplate = State.getRestTemplate();
 
     private static HttpHeaders newHttpHeaders() {
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -39,7 +34,7 @@ public class ClinicianManagerRest implements ClinicianManager {
         HttpHeaders httpHeaders = newHttpHeaders();
         HttpEntity<Clinician> entity = new HttpEntity<>(null, httpHeaders);
 
-        ResponseEntity<List<Clinician>> clinicianResponse = restTemplate.exchange(
+        ResponseEntity<List<Clinician>> clinicianResponse = State.getRestTemplate().exchange(
                 State.BASE_URI + "clinicians", HttpMethod.GET, entity,
                 new ParameterizedTypeReference<List<Clinician>>() {
                 });
@@ -50,7 +45,6 @@ public class ClinicianManagerRest implements ClinicianManager {
             return new ArrayList<>(restClinicians);
         }
     }
-
 
     /**
      * Uses GET to retrieve details of the staff member who's staffId is supplied.
@@ -63,33 +57,34 @@ public class ClinicianManagerRest implements ClinicianManager {
         HttpHeaders httpHeaders = newHttpHeaders();
         HttpEntity<Clinician> entity = new HttpEntity<>(null, httpHeaders);
 
-        ResponseEntity<Clinician> clinician = restTemplate.exchange(State.BASE_URI + "clinicians/{staffId}",
+        ResponseEntity<Clinician> clinician = State.getRestTemplate().exchange(State.BASE_URI + "clinicians/{staffId}",
                 HttpMethod.GET, entity, Clinician.class, staffId);
         State.setClinicianEtag(clinician.getHeaders().getETag());
         return Optional.ofNullable(clinician.getBody());
     }
 
-
     @Override
     public void addClinician(Clinician clinician) {
         HttpHeaders httpHeaders = newHttpHeaders();
         HttpEntity<Clinician> entity = new HttpEntity<>(clinician, httpHeaders);
-        restTemplate.exchange(State.BASE_URI + "clinicians", HttpMethod.POST, entity, Clinician.class);
+        State.getRestTemplate().exchange(State.BASE_URI + "clinicians", HttpMethod.POST, entity, Clinician.class);
     }
-
 
     @Override
     public void applyChangesTo(Clinician editedClinician) {
         throw new NotImplementedException();
     }
 
-
     @Override
     public void removeClinician(Clinician clinician) {
         HttpHeaders httpHeaders = newHttpHeaders();
         HttpEntity<Clinician> entity = new HttpEntity<>(clinician, httpHeaders);
-        restTemplate.exchange(State.BASE_URI + "clinicians/{staffId}", HttpMethod.DELETE, entity, Clinician.class,
-                clinician.getStaffId());
+        State.getRestTemplate().exchange(
+                        State.BASE_URI + "clinicians/{staffId}",
+                        HttpMethod.DELETE,
+                        entity,
+                        Clinician.class,
+                        clinician.getStaffId());
     }
 
     @Override

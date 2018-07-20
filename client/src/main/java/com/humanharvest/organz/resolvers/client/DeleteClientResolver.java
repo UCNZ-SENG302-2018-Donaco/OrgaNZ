@@ -10,12 +10,9 @@ import org.springframework.http.ResponseEntity;
 
 public class DeleteClientResolver {
 
-
-
     private Client client;
 
-    public DeleteClientResolver(Client client)
-    {
+    public DeleteClientResolver(Client client) {
         this.client = client;
     }
 

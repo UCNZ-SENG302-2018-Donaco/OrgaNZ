@@ -2148,7 +2148,9 @@ components:
       properties:
         resultText:
           type: string
-        moreActions:
+        canUndo:
+          type: boolean
+        canRedo:
           type: boolean
         
         

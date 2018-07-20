@@ -10,7 +10,7 @@ import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.views.TextResponseView;
-import com.humanharvest.organz.views.administrator.ActionResponseView;
+import com.humanharvest.organz.views.ActionResponseView;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -56,8 +56,9 @@ public class ActionsController {
 
         //Execute the action
         String resultText = actionInvoker.undo();
-        boolean moreActions = actionInvoker.canUndo();
-        ActionResponseView responseView = new ActionResponseView(resultText, moreActions);
+        boolean canUndo = actionInvoker.canUndo();
+        boolean canRedo = actionInvoker.canRedo();
+        ActionResponseView responseView = new ActionResponseView(resultText, canUndo, canRedo);
 
         return new ResponseEntity<>(responseView, HttpStatus.OK);
     }
@@ -96,8 +97,9 @@ public class ActionsController {
 
         //Execute the action
         String resultText = actionInvoker.redo();
-        boolean moreActions = actionInvoker.canRedo();
-        ActionResponseView responseView = new ActionResponseView(resultText, moreActions);
+        boolean canUndo = actionInvoker.canUndo();
+        boolean canRedo = actionInvoker.canRedo();
+        ActionResponseView responseView = new ActionResponseView(resultText, canUndo, canRedo);
 
         return new ResponseEntity<>(responseView, HttpStatus.OK);
     }

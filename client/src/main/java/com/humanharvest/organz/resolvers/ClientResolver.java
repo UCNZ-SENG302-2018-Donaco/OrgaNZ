@@ -16,8 +16,6 @@ import org.springframework.http.ResponseEntity;
 
 public class ClientResolver {
 
-    private static final String baseUrl = "http://localhost:8080/";
-
     public static Map<Organ, Boolean> getOrganDonationStatus(int uid) {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
@@ -26,7 +24,7 @@ public class ClientResolver {
         HttpEntity entity = new HttpEntity<>(null, httpHeaders);
 
         ResponseEntity<Map<Organ, Boolean>> responseEntity = State.getRestTemplate().exchange
-                (baseUrl + "clients/{id}/donationStatus", HttpMethod.GET, entity, new
+                (State.BASE_URI + "clients/{id}/donationStatus", HttpMethod.GET, entity, new
                         ParameterizedTypeReference<Map<Organ, Boolean>>() {
                         }, uid);
         State.setClientEtag(responseEntity.getHeaders().getETag());
@@ -45,7 +43,7 @@ public class ClientResolver {
         HttpEntity entity = new HttpEntity<>(null, httpHeaders);
 
         ResponseEntity<List<TransplantRequest>> responseEntity = State.getRestTemplate().exchange
-                (baseUrl + "clients/{id}/transplantRequests", HttpMethod.GET, entity, new
+                (State.BASE_URI + "clients/{id}/transplantRequests", HttpMethod.GET, entity, new
                         ParameterizedTypeReference<List<TransplantRequest>>() {
                         }, uid);
         State.setClientEtag(responseEntity.getHeaders().getETag());
@@ -64,7 +62,7 @@ public class ClientResolver {
         HttpEntity entity = new HttpEntity<>(null, httpHeaders);
 
         ResponseEntity<List<MedicationRecord>> responseEntity = State.getRestTemplate().exchange
-                (baseUrl + "clients/{id}/medications", HttpMethod.GET, entity,
+                (State.BASE_URI + "clients/{id}/medications", HttpMethod.GET, entity,
                         new ParameterizedTypeReference<List<MedicationRecord>>() {
                         }, uid);
         State.setClientEtag(responseEntity.getHeaders().getETag());

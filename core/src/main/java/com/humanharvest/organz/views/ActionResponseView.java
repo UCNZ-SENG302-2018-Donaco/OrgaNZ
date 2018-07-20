@@ -1,4 +1,4 @@
-package com.humanharvest.organz.views.administrator;
+package com.humanharvest.organz.views;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -6,22 +6,29 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class ActionResponseView {
 
     private final String resultText;
-    private final boolean moreActions;
+    private final boolean canUndo;
+    private final boolean canRedo;
 
     @JsonCreator
     public ActionResponseView(
             @JsonProperty("resultText") String resultText,
-            @JsonProperty("moreActions") boolean moreActions) {
+            @JsonProperty("canUndo") boolean canUndo,
+            @JsonProperty("canRedo") boolean canRedo) {
         this.resultText = resultText;
-        this.moreActions = moreActions;
+        this.canUndo = canUndo;
+        this.canRedo = canRedo;
     }
 
     public String getResultText() {
         return resultText;
     }
 
-    public boolean isMoreActions() {
-        return moreActions;
+    public boolean isCanUndo() {
+        return canUndo;
+    }
+
+    public boolean isCanRedo() {
+        return canRedo;
     }
 
 }
