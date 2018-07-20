@@ -207,7 +207,6 @@ public class ClientTransplantRequestsController {
 
             // Validate the transplant request
             try {
-                transplantRequest.setClient(client); //required for validation
                 TransplantRequestValidator.validateTransplantRequest(originalTransplantRequest);
             } catch (IllegalArgumentException e) {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -217,7 +216,7 @@ public class ClientTransplantRequestsController {
             // Only the status, resolved reason, and resolved date (and time) are allowed to change.
             // The client, organ, and request date (and time) must stay the same.
             // If anything has illegally changed, it will return a 400.
-            if (originalTransplantRequest.getClient().getUid() == transplantRequest.getClient().getUid()
+            if (originalTransplantRequest.getClient().getUid() == client.getUid()
                     && originalTransplantRequest.getRequestedOrgan().equals(transplantRequest.getRequestedOrgan())
                     && originalTransplantRequest.getRequestDate().equals(transplantRequest.getRequestDate())) {
 
