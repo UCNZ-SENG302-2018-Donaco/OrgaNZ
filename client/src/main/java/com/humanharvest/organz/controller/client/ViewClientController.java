@@ -446,7 +446,6 @@ public class ViewClientController extends SubController {
      * Displays the currently viewed clients BMI.
      */
     private void displayBMI() {
-        State.logout();
         BMILabel.setText(String.format("%.01f", viewedClient.getBMI()));
     }
 
