@@ -4,10 +4,8 @@ import java.io.PrintStream;
 import java.util.Optional;
 
 import com.humanharvest.organz.Client;
-import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.JSONConverter;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
@@ -51,8 +49,6 @@ public class PrintClientInfo implements Runnable {
             return;
         }
         outputStream.println(client.get().getClientInfoString());
-        HistoryItem printUserInfo = new HistoryItem("PRINT CLIENT INFO", "Information was printed about client " + uid);
-        JSONConverter.updateHistory(printUserInfo, "action_history.json");
     }
 }
 

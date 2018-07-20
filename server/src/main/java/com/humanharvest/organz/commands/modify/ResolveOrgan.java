@@ -48,9 +48,8 @@ public class ResolveOrgan implements Runnable {
             PicoOrganConverter.class)
     private Organ organType;
 
-    @Option(names = {"-r",
-            "-reason"}, description = "Reason for resolving request", required = true, converter = PicoResolveReasonConverter
-            .class)
+    @Option(names = {"-r", "-reason"}, description = "Reason for resolving request", required = true,
+            converter = PicoResolveReasonConverter.class)
     private ResolveReason resolveReason;
 
     @Option(names = {"-m", "-message"}, description = "Message for why the request was resolved")
