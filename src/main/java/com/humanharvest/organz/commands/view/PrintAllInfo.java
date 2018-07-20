@@ -9,9 +9,6 @@ import picocli.CommandLine.Command;
 
 /**
  * Command line to print all of the information of all the clients, including their ID. Not Sorted.
- * @author Dylan Carlyle, Jack Steel
- * @version sprint 1.
- * date 05/03/2018
  */
 
 @Command(name = "printallinfo", description = "Print all clients with their personal information.", sortOptions = false)

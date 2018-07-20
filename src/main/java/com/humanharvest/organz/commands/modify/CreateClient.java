@@ -14,9 +14,6 @@ import picocli.CommandLine.Option;
 
 /**
  * Command line to create a Client with basic information, including their DOB and full name.
- * @author Dylan Carlyle, Jack Steel
- * @version sprint 1.
- * date 05/03/2018
  */
 
 @Command(name = "createclient", description = "Creates a client.")

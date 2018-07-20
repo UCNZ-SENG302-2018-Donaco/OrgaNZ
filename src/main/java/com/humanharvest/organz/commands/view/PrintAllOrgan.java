@@ -10,9 +10,6 @@ import picocli.CommandLine.Option;
 
 /**
  * Command line to print all of the information of all the client, including their ID. Not Sorted.
- * @author Dylan Carlyle, Jack Steel
- * @version sprint 1.
- * date 08/03/2018
  */
 
 @Command(name = "printallorgan", description = "Print all clients with their organ donation status.", sortOptions =

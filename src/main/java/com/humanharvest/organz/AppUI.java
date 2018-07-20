@@ -22,9 +22,6 @@ import com.humanharvest.organz.utilities.view.WindowContext;
 
 /**
  * The main class that runs the JavaFX GUI.
- * @author Dylan Carlyle, Jack Steel, Alex Tompkins, James Toohey
- * @version sprint 2.
- * date: 2018-03-22
  */
 public class AppUI extends Application {
 
