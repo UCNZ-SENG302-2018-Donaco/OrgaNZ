@@ -1,4 +1,4 @@
-package com.humanharvest.organz.utilities.validators;
+package com.humanharvest.organz.validators;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -7,6 +7,7 @@ import java.lang.reflect.Field;
 import java.time.LocalDate;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.utilities.validators.ClientValidator;
 import org.junit.Test;
 
 public class ClientValidatorTest {
