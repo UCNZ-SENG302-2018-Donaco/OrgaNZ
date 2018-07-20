@@ -1,5 +1,6 @@
 package com.humanharvest.organz.commands.modify;
 
+import java.io.PrintStream;
 import java.util.Optional;
 
 import com.humanharvest.organz.Clinician;
@@ -17,8 +18,9 @@ import picocli.CommandLine.Option;
 @Command(name = "deleteclinician", description = "Deletes a clinician.")
 public class DeleteClinician implements Runnable {
 
-    private ClinicianManager manager;
-    private ActionInvoker invoker;
+    private final ClinicianManager manager;
+    private final ActionInvoker invoker;
+    private final PrintStream outputStream;
 
     @Option(names = {"-s", "--staffId"}, description = "Staff id", required = true)
     private int id; // staffId of the clinician
@@ -26,14 +28,16 @@ public class DeleteClinician implements Runnable {
     @Option(names = "-y", description = "Confirms you would like to execute the removal")
     private boolean yes;
 
-    public DeleteClinician() {
+    public DeleteClinician(PrintStream outputStream, ActionInvoker invoker) {
+        this.invoker = invoker;
+        this.outputStream = outputStream;
         manager = State.getClinicianManager();
-        invoker = State.getInvoker();
     }
 
     public DeleteClinician(ClinicianManager manager, ActionInvoker invoker) {
         this.manager = manager;
         this.invoker = invoker;
+        outputStream = System.out;
     }
 
     @Override
@@ -41,11 +45,11 @@ public class DeleteClinician implements Runnable {
         Optional<Clinician> clinician = manager.getClinicianByStaffId(id);
 
         if (!clinician.isPresent()) {
-            System.out.println("No clinician exists with that user ID");
+            outputStream.println("No clinician exists with that user ID");
         } else if (clinician.get().getStaffId() == manager.getDefaultClinician().getStaffId()) {
-            System.out.println("Default clinician cannot be deleted");
+            outputStream.println("Default clinician cannot be deleted");
         } else if (!yes) {
-            System.out.println(
+            outputStream.println(
                     String.format("Removing clinician: %s, with staff id: %s,\nto proceed please rerun the command "
                                     + "with the -y flag",
                             clinician.get().getFullName(),
@@ -53,8 +57,8 @@ public class DeleteClinician implements Runnable {
         } else {
             Action action = new DeleteClinicianAction(clinician.get(), manager);
 
-            System.out.println(invoker.execute(action));
-            System.out.println("This removal will only be permanent once the 'save' command is used");
+            outputStream.println(invoker.execute(action));
+            outputStream.println("This removal will only be permanent once the 'save' command is used");
         }
     }
 }

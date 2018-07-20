@@ -30,11 +30,11 @@ public class PrintClientOrganTest extends BaseTest {
 
     @Before
     public void init() {
-        spyClientManager = spy(new ClientManagerMemory());
-
-        spyPrintClientOrgan = spy(new PrintClientOrgan(spyClientManager));
         System.setOut(new PrintStream(outContent));
         System.setErr(new PrintStream(errContent));
+
+        spyClientManager = spy(new ClientManagerMemory());
+        spyPrintClientOrgan = spy(new PrintClientOrgan(spyClientManager));
     }
 
     @Test

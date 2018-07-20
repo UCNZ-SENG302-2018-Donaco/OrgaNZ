@@ -2,6 +2,7 @@ package com.humanharvest.organz.commands.modify;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -10,7 +11,6 @@ import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.serialization.JSONFileWriter;
 import picocli.CommandLine.Command;
 
@@ -23,21 +23,24 @@ public class Save implements Runnable {
     private static final Logger LOGGER = Logger.getLogger(Save.class.getName());
     private static final File FILE = new File("savefile.json");
 
-    private ClientManager manager;
+    private final ClientManager manager;
+    private final PrintStream outputStream;
 
     public Save() {
         manager = State.getClientManager();
+        outputStream = System.out;
     }
 
     public Save(ClientManager manager) {
         this.manager = manager;
+        outputStream = System.out;
     }
 
     @Override
     public void run() {
         List<Client> clients = manager.getClients();
         if (clients.isEmpty()) {
-            System.out.println("No clients exist, nothing to save");
+            outputStream.println("No clients exist, nothing to save");
         } else {
             try (JSONFileWriter<Client> clientWriter = new JSONFileWriter<>(FILE, Client.class)) {
                 clientWriter.overwriteWith(clients);

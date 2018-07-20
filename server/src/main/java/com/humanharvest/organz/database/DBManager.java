@@ -5,6 +5,8 @@ import java.sql.SQLException;
 import javax.persistence.PersistenceException;
 import javax.persistence.RollbackException;
 
+import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.state.State.DataStorageType;
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;

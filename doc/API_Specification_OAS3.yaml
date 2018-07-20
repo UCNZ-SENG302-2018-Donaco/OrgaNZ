@@ -1369,21 +1369,21 @@ paths:
         500:
           $ref: '#/components/responses/500InternalServerError'
 
-  '/sql':
+  '/commands':
     post:
       tags:
         - Administrator
       security:
         - AdministratorAccess: []
-      summary: Execute abritrary SQL on the backend database. Currently only supports read actions
+      summary: Execute command line commands on the backend database. Try executing "help" for information
       requestBody:
         content:
           application/json:
             schema:
-                $ref: '#/components/schemas/sql'
+                $ref: '#/components/schemas/command'
       responses:
         200:
-          description: The response from the SQL query
+          description: The response from the command
         400:
           $ref: '#/components/responses/400BadRequest'
         401:
@@ -2172,12 +2172,12 @@ components:
       enum: [WAITING, CANCELLED, COMPLETED]
 
 
-    sql:
+    command:
       type: object
       properties:
-        query:
+        command:
           type: string
-          example: SELECT * FROM Client
+          example: help
           
     
     etag:

@@ -16,12 +16,18 @@ import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
 import com.humanharvest.organz.views.client.ModifyProceduresObject;
 import com.humanharvest.organz.views.client.Views;
-import org.hibernate.boot.jaxb.SourceType;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Provides handlers for requests to these endpoints:
@@ -58,7 +64,6 @@ public class ClientProceduresController {
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws AuthenticationException {
 
-
         // Check request has authorization to create a procedure
         State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
 
@@ -82,7 +87,8 @@ public class ClientProceduresController {
             @RequestBody ModifyProceduresObject modifyProceduresObject,
             @RequestHeader(value = "If-Match", required = false) String etag,
             @PathVariable int uid,
-            @PathVariable int id) throws AuthenticationException {
+            @PathVariable int id,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken) throws AuthenticationException {
         Optional<Client> client = State.getClientManager().getClientByID(uid);
         if (client.isPresent()) {
             // Try to find a procedure record with matching id
@@ -109,7 +115,7 @@ public class ClientProceduresController {
         BeanUtils.copyProperties(record, oldModifyProceduresObject, modifyProceduresObject.getUnmodifiedFields());
         ModifyProcedureRecordAction action = new ModifyProcedureRecordAction(record, State.getClientManager());
 
-        State.getInvoker().execute(action);
+        State.getActionInvoker(authToken).execute(action);
 
         //Add the new ETag to the headers
         HttpHeaders headers = new HttpHeaders();

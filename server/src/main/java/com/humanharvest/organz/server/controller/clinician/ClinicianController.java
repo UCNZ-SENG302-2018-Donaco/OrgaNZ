@@ -34,7 +34,7 @@ public class ClinicianController {
     @GetMapping("/clinicians")
     @JsonView(Views.Overview.class)
     public ResponseEntity<List<Clinician>> getClinicians(
-            @RequestHeader(value="X-Auth-Token", required=false) String authToken) {
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {
         State.getAuthenticationManager().verifyAdminAccess(authToken);
         return new ResponseEntity<>(State.getClinicianManager().getClinicians(), HttpStatus.OK);
     }
@@ -49,7 +49,7 @@ public class ClinicianController {
     @JsonView(Views.Details.class)
     public ResponseEntity<Clinician> createClinician(
             @RequestBody Clinician clinician,
-            @RequestHeader(value="X-Auth-Token", required=false) String authToken)
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws GlobalControllerExceptionHandler.InvalidRequestException {
 
         if (!CreateClinicianValidator.isValid(clinician)) {
@@ -75,7 +75,7 @@ public class ClinicianController {
     @GetMapping("/clinicians/{staffId}")
     @JsonView(Views.Details.class)
     public ResponseEntity<Clinician> getCliniciansById(@PathVariable int staffId, @RequestHeader
-            (value="X-Auth-Token", required=false) String authToken) {
+            (value = "X-Auth-Token", required = false) String authToken) {
 
         State.getAuthenticationManager().verifyAdminAccess(authToken);
         Optional<Clinician> clinician = State.getClinicianManager().getClinicianByStaffId(staffId);
@@ -99,20 +99,22 @@ public class ClinicianController {
     public ResponseEntity<Clinician> editClinician(
             @PathVariable int staffId,
             @RequestBody ModifyClinicianObject editedClinician,
-            @RequestHeader(value="X-Auth-Token", required=false) String authToken) {
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {
 
         Optional<Clinician> clinician = State.getClinicianManager().getClinicianByStaffId(staffId);
 
         if (clinician.isPresent()) {
             State.getAuthenticationManager().vefifyClinicianAccess(authToken, clinician.get());
 
-            if (true){ //CreateClinicianValidator.isValid(editedClinician)) {
+            //TODO: Replace this with the actual validator
+            if (true) { //CreateClinicianValidator.isValid(editedClinician)) {
 
                 ModifyClinicianObject oldClinician = new ModifyClinicianObject();
                 BeanUtils.copyProperties(editedClinician, oldClinician, editedClinician.getUnmodifiedFields());
-                ModifyClinicianByObjectAction action = new ModifyClinicianByObjectAction(clinician.get(), State.getClinicianManager(),
+                ModifyClinicianByObjectAction action = new ModifyClinicianByObjectAction(clinician.get(),
+                        State.getClinicianManager(),
                         oldClinician, editedClinician);
-                State.getInvoker().execute(action);
+                State.getActionInvoker(authToken).execute(action);
 
                 State.getClinicianManager().applyChangesTo(clinician.get());
                 HttpHeaders headers = new HttpHeaders();
@@ -120,8 +122,7 @@ public class ClinicianController {
             } else {
                 throw new GlobalControllerExceptionHandler.InvalidRequestException();
             }
-        }
-        else {
+        } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
@@ -130,12 +131,11 @@ public class ClinicianController {
      * Deletes the specified clinician
      * @param staffId identifier of the clinician
      * @param authToken id token
-     * @return
      */
     @DeleteMapping("/clinicians/{staffId}")
     public ResponseEntity<Clinician> deleteClinician(
             @PathVariable int staffId,
-            @RequestHeader(value="X-Auth-Token", required=false) String authToken) {
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {
 
         Optional<Clinician> clinician = State.getClinicianManager().getClinicianByStaffId(staffId);
         State.getAuthenticationManager().verifyAdminAccess(authToken);

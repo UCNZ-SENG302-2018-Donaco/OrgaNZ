@@ -1,5 +1,6 @@
 package com.humanharvest.organz.commands.modify;
 
+import java.io.PrintStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -10,10 +11,7 @@ import com.humanharvest.organz.actions.clinician.CreateClinicianAction;
 import com.humanharvest.organz.state.ClinicianManager;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Region;
-import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.pico_type_converters.PicoRegionConverter;
-
-import com.humanharvest.organz.utilities.type_converters.RegionConverter;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
@@ -22,18 +20,23 @@ import picocli.CommandLine.Option;
  */
 @Command(name = "createclinician", description = "Creates a clinician.")
 public class CreateClinician implements Runnable {
+
     private static final Logger LOGGER = Logger.getLogger(CreateClinician.class.getName());
 
     private final ClinicianManager manager;
     private final ActionInvoker invoker;
+    private final PrintStream outputStream;
 
-    public CreateClinician() {
-        this(State.getClinicianManager(), State.getInvoker());
+    public CreateClinician(PrintStream outputStream, ActionInvoker invoker) {
+        this.invoker = invoker;
+        this.outputStream = outputStream;
+        manager = State.getClinicianManager();
     }
 
     public CreateClinician(ClinicianManager manager, ActionInvoker invoker) {
         this.manager = manager;
         this.invoker = invoker;
+        outputStream = System.out;
     }
 
     @Option(names = {"-s", "--staffId"}, description = "Staff id", required = true)
@@ -61,7 +64,7 @@ public class CreateClinician implements Runnable {
 
         if (manager.doesStaffIdExist(staffId)) {
             // staff ID is taken
-            System.out.println("Staff ID " + staffId + " is already taken");
+            outputStream.println("Staff ID " + staffId + " is already taken");
             return;
         }
 
@@ -70,7 +73,7 @@ public class CreateClinician implements Runnable {
 
         Action action = new CreateClinicianAction(clinician, manager);
 
-        System.out.println(invoker.execute(action));
+        outputStream.println(invoker.execute(action));
 
         LOGGER.log(Level.INFO, action.getExecuteText());
     }

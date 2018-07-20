@@ -75,10 +75,6 @@ public final class State {
         State.authenticationManager = authenticationManager;
     }
 
-    public static ActionInvoker getInvoker() {
-        return null;
-    }
-
     public static Session getSession() {
         return session;
     }
@@ -119,6 +115,10 @@ public final class State {
         init(currentStorageType);
         session = null;
         unsavedUpdates = 0;
+    }
+
+    public static DataStorageType getCurrentStorageType() {
+        return currentStorageType;
     }
 
     public static void resetUnsavedUpdates() {

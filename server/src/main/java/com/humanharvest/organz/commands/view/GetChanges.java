@@ -1,5 +1,6 @@
 package com.humanharvest.organz.commands.view;
 
+import java.io.PrintStream;
 import java.util.Optional;
 
 import com.humanharvest.organz.Client;
@@ -20,14 +21,22 @@ import picocli.CommandLine.Option;
 @Command(name = "getchanges", description = "Print a single clients update history.", sortOptions = false)
 public class GetChanges implements Runnable {
 
-    private ClientManager manager;
+    private final ClientManager manager;
+    private final PrintStream outputStream;
 
     public GetChanges() {
         manager = State.getClientManager();
+        outputStream = System.out;
+    }
+
+    public GetChanges(PrintStream outputStream) {
+        manager = State.getClientManager();
+        this.outputStream = outputStream;
     }
 
     GetChanges(ClientManager manager) {
         this.manager = manager;
+        outputStream = System.out;
     }
 
     @Option(names = {"--id", "-u"}, description = "User ID", required = true)
@@ -37,11 +46,11 @@ public class GetChanges implements Runnable {
     public void run() {
         Optional<Client> client = manager.getClientByID(uid);
         if (client.isPresent()) {
-            System.out.println(client.get().getUpdatesString());
+            outputStream.println(client.get().getUpdatesString());
             HistoryItem printAllHistory = new HistoryItem("PRINT UPDATE HISTORY", "All client's history printed.");
             JSONConverter.updateHistory(printAllHistory, "action_history.json");
         } else {
-            System.out.println("No client exists with that user ID");
+            outputStream.println("No client exists with that user ID");
         }
     }
 }

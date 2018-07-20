@@ -3,6 +3,7 @@ package com.humanharvest.organz.commands.modify;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.logging.Logger;
 
 import com.humanharvest.organz.HistoryItem;
@@ -24,7 +25,8 @@ public class Load implements Runnable {
 
     private static final Logger LOGGER = Logger.getLogger(Load.class.getName());
 
-    private ClientManager manager;
+    private final ClientManager manager;
+    private final PrintStream outputStream;
 
     @Option(names = {"-f", "-format"}, description = "File format")
     private String format;
@@ -34,10 +36,12 @@ public class Load implements Runnable {
 
     public Load() {
         manager = State.getClientManager();
+        outputStream = System.out;
     }
 
     public Load(ClientManager manager) {
         this.manager = manager;
+        outputStream = System.out;
     }
 
     @Override
@@ -74,13 +78,13 @@ public class Load implements Runnable {
                             + "\n\n%s",
                     file.getName(), importer.getValidCount(), importer.getInvalidCount(), errorSummary);
 
-            System.out.println(message);
+            outputStream.println(message);
             State.getSession().addToSessionHistory(new HistoryItem("LOAD", message));
 
         } catch (FileNotFoundException exc) {
-            System.out.println(String.format("Could not find file: '%s'.", file.getAbsolutePath()));
+            outputStream.println(String.format("Could not find file: '%s'.", file.getAbsolutePath()));
         } catch (IOException exc) {
-            System.out.println(String.format("An IO error occurred when loading from file: '%s'\n%s",
+            outputStream.println(String.format("An IO error occurred when loading from file: '%s'\n%s",
                     file.getName(), exc.getMessage()));
         }
     }

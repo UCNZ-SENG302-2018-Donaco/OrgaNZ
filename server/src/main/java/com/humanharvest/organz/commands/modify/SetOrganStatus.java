@@ -1,5 +1,6 @@
 package com.humanharvest.organz.commands.modify;
 
+import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -25,17 +26,20 @@ import picocli.CommandLine.Option;
         false)
 public class SetOrganStatus implements Runnable {
 
-    private ClientManager manager;
-    private ActionInvoker invoker;
+    private final ClientManager manager;
+    private final ActionInvoker invoker;
+    private final PrintStream outputStream;
 
-    public SetOrganStatus() {
+    public SetOrganStatus(PrintStream outputStream, ActionInvoker invoker) {
+        this.invoker = invoker;
+        this.outputStream = outputStream;
         manager = State.getClientManager();
-        invoker = State.getInvoker();
     }
 
     public SetOrganStatus(ClientManager manager, ActionInvoker invoker) {
         this.manager = manager;
         this.invoker = invoker;
+        outputStream = System.out;
     }
 
     @Option(names = {"--id", "-u"}, description = "User ID", required = true)
@@ -82,7 +86,7 @@ public class SetOrganStatus implements Runnable {
     public void run() {
         Optional<Client> client = manager.getClientByID(uid);
         if (!client.isPresent()) {
-            System.out.println("No client exists with that user ID");
+            outputStream.println("No client exists with that user ID");
             return;
         }
 
@@ -109,9 +113,9 @@ public class SetOrganStatus implements Runnable {
             if (newState == null) {
                 continue;
             } else if (newState && currState) {
-                System.out.println(organ + " is already registered for donation");
+                outputStream.println(organ + " is already registered for donation");
             } else if (!newState && !currState) {
-                System.out.println(organ + " is already not registered for donation");
+                outputStream.println(organ + " is already not registered for donation");
             } else {
                 try {
                     action.addChange(organ, newState);
@@ -121,6 +125,10 @@ public class SetOrganStatus implements Runnable {
             }
         }
 
-        System.out.println(invoker.execute(action));
+        outputStream.print("test");
+        PrintStream newStream = System.out;
+        System.out.println("test");
+
+        outputStream.println(invoker.execute(action));
     }
 }

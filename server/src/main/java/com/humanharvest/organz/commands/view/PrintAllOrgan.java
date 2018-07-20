@@ -1,5 +1,6 @@
 package com.humanharvest.organz.commands.view;
 
+import java.io.PrintStream;
 import java.util.List;
 
 import com.humanharvest.organz.Client;
@@ -19,14 +20,22 @@ import picocli.CommandLine.Option;
         false)
 public class PrintAllOrgan implements Runnable {
 
-    private ClientManager manager;
+    private final ClientManager manager;
+    private final PrintStream outputStream;
 
     public PrintAllOrgan() {
         manager = State.getClientManager();
+        outputStream = System.out;
+    }
+
+    public PrintAllOrgan(PrintStream outputStream) {
+        manager = State.getClientManager();
+        this.outputStream = outputStream;
     }
 
     public PrintAllOrgan(ClientManager manager) {
         this.manager = manager;
+        outputStream = System.out;
     }
 
     @Option(names = {"-t", "-type"}, description = "Organ donations or requests", required = true)
@@ -37,14 +46,14 @@ public class PrintAllOrgan implements Runnable {
         List<Client> clients = manager.getClients();
 
         if (clients.size() == 0) {
-            System.out.println("No clients exist");
+            outputStream.println("No clients exist");
         } else if(type.equals("donations") || type.equals("requests")) {
             for (Client client : clients) {
-                System.out.println(client.getClientOrganStatusString(type));
+                outputStream.println(client.getClientOrganStatusString(type));
 
             }
         } else {
-            System.out.println("Define if organs to print are donations or requests e.g. 'printuserorgan "
+            outputStream.println("Define if organs to print are donations or requests e.g. 'printuserorgan "
                     + "-uid=1 -t=requests'");
         }
     }

@@ -1,10 +1,16 @@
 package com.humanharvest.organz.server.controller.administrator;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Administrator;
+import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.actions.administrator.DeleteAdministratorAction;
+import com.humanharvest.organz.commands.BaseCommand;
+import com.humanharvest.organz.commands.CommandFactory;
+import com.humanharvest.organz.commands.CommandsHelper;
 import com.humanharvest.organz.server.exceptions.GlobalControllerExceptionHandler.InvalidRequestException;
 import com.humanharvest.organz.state.AdministratorManager;
 import com.humanharvest.organz.state.State;
@@ -12,6 +18,7 @@ import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
 import com.humanharvest.organz.utilities.validators.administrator.CreateAdministratorValidator;
+import com.humanharvest.organz.views.administrator.CommandView;
 import com.humanharvest.organz.views.administrator.CreateAdministratorView;
 import com.humanharvest.organz.views.client.Views;
 import org.springframework.http.HttpHeaders;
@@ -26,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import picocli.CommandLine;
+import picocli.CommandLine.Help.Ansi;
 
 @RestController
 public class AdministratorController {
@@ -151,10 +159,21 @@ public class AdministratorController {
         return new ResponseEntity<>(administrator.get(), HttpStatus.OK);
     }
 
-    @PostMapping("/sql")
-    public ResponseEntity<String> executeSql(@RequestHeader(value = "If-Match", required = false) String etag,
-            @RequestHeader(value = "X-Auth-Token", required = false) String authentication) {
-        //CommandLine.run();
-        return null;
+    @PostMapping("/commands")
+    public ResponseEntity<String> executeSql(
+            @RequestBody CommandView commandText,
+            @RequestHeader(value = "If-Match", required = false) String etag,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {
+        //Check valid admin
+        State.getAuthenticationManager().verifyAdminAccess(authToken);
+        //Get the action invoker for the admin
+        ActionInvoker invoker = State.getActionInvoker(authToken);
+
+        String[] commands = CommandsHelper.parseCommands(commandText.getCommand());
+
+        String result = CommandsHelper.executeCommandAndReturnOutput(commands, invoker);
+
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

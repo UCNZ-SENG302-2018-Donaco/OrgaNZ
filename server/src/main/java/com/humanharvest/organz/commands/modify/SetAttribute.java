@@ -1,5 +1,6 @@
 package com.humanharvest.organz.commands.modify;
 
+import java.io.PrintStream;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
@@ -33,17 +34,20 @@ import picocli.CommandLine.Option;
 @Command(name = "attribute", description = "Set the attributes of an existing client.", sortOptions = false)
 public class SetAttribute implements Runnable {
 
-    private ClientManager manager;
-    private ActionInvoker invoker;
+    private final ClientManager manager;
+    private final ActionInvoker invoker;
+    private final PrintStream outputStream;
 
-    public SetAttribute() {
+    public SetAttribute(PrintStream outputStream, ActionInvoker invoker) {
+        this.invoker = invoker;
+        this.outputStream = outputStream;
         manager = State.getClientManager();
-        invoker = State.getInvoker();
     }
 
     public SetAttribute(ClientManager manager, ActionInvoker invoker) {
         this.manager = manager;
         this.invoker = invoker;
+        outputStream = System.out;
     }
 
     @Option(names = {"--id", "-u"}, description = "User ID", required = true)
@@ -87,7 +91,7 @@ public class SetAttribute implements Runnable {
     public void run() {
         Optional<Client> possibleClient = manager.getClientByID(uid);
         if (!possibleClient.isPresent()) {
-            System.out.println("No client exists with that user ID");
+            outputStream.println("No client exists with that user ID");
             return;
         }
 
@@ -119,7 +123,7 @@ public class SetAttribute implements Runnable {
             }
         }
 
-        System.out.println(invoker.execute(action));
+        outputStream.println(invoker.execute(action));
 
         HistoryItem attribute = new HistoryItem("ATTRIBUTE UPDATE", "DETAILS were updated for client " + uid);
         JSONConverter.updateHistory(attribute, "action_history.json");
