@@ -44,7 +44,7 @@ public abstract class CacheManager {
      */
     public static final CacheManager INSTANCE = new Impl();
 
-    static final Logger LOGGER = Logger.getLogger(CacheManager.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(CacheManager.class.getName());
 
     /**
      * A map of category names to categories.

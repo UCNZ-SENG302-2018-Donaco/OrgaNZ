@@ -90,4 +90,9 @@ public class AdministratorManagerMemory implements AdministratorManager{
     public Administrator getDefaultAdministrator() {
         return getAdministratorByUsername(defaultAdministratorUsername).orElseThrow(RuntimeException::new);
     }
+
+    @Override
+    public void applyChangesTo(Administrator administrator) {
+        // Doesn't need to do anything
+    }
 }

@@ -22,7 +22,6 @@ public final class State {
     private static AuthenticationManager authenticationManager;
     private static ActionInvoker actionInvoker;
     private static Session session;
-    private static boolean unsavedChanges = false;
 
     private State() {
     }
@@ -89,22 +88,7 @@ public final class State {
         session = new Session(administrator);
     }
 
-    public static void setUnsavedChanges(boolean changes) {
-        unsavedChanges = changes;
-    }
-
-    public static boolean isUnsavedChanges() {
-        return unsavedChanges;
-    }
-
-    public static void logout() {
-        // Do something with the old session
-        session = null;
-    }
-
     public static void reset() {
         init(currentStorageType);
-        logout();
-        unsavedChanges = false;
     }
 }
