@@ -30,15 +30,6 @@ public class AddMedicationRecordResolver {
         httpHeaders.setIfMatch(State.getClientEtag());
         httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
 
-        String serialized;
-
-//        try {
-//            serialized = new ObjectMapper().writeValueAsString(recordView);
-//        } catch (JsonProcessingException e) {
-//            e.printStackTrace();
-//            return;
-//        }
-
         HttpEntity entity = new HttpEntity<>(recordView, httpHeaders);
 
         ResponseEntity<MedicationRecord> responseEntity = State.getRestTemplate()
@@ -47,17 +38,6 @@ public class AddMedicationRecordResolver {
 
         State.setClientEtag(responseEntity.getHeaders().getETag());
         return responseEntity.getBody();
-
-
-//        ResponseEntity<MedicationRecord> responseEntity = State.getRestTemplate()
-//                .exchange(baseUrl + "clients/{uid}/medications", HttpMethod.POST, entity,
-//                        MedicationRecord.class, client.getUid());
-//
-//        State.setClientEtag(responseEntity.getHeaders().getETag());
-//
-//        if (responseEntity.getStatusCode() != HttpStatus.OK) {
-//            System.err.println(responseEntity.toString());
-//        }
     }
 
 }

@@ -355,7 +355,7 @@ public class ViewProceduresController extends SubController {
         } else {
             ProcedureRecord record = new ProcedureRecord(summary, descriptionField.getText(), date);
             for (Organ organ : affectedOrgansField.getCheckModel().getCheckedItems()) {
-                record.getAffectedOrgans().add(organ);
+                record.addAffectedOrgan(organ);
             }
             AddProcedureRecordAction action = new AddProcedureRecordAction(client, record, manager);
             invoker.execute(action);
