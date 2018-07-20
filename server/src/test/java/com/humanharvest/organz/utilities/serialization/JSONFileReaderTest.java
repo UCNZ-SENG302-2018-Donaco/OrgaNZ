@@ -1,4 +1,4 @@
-package com.humanharvest.organz.serialization;
+package com.humanharvest.organz.utilities.serialization;
 
 import static org.junit.Assert.*;
 
@@ -15,7 +15,6 @@ import com.humanharvest.organz.utilities.enums.BloodType;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
-import com.humanharvest.organz.utilities.serialization.JSONFileReader;
 import org.junit.Test;
 
 public class JSONFileReaderTest {
