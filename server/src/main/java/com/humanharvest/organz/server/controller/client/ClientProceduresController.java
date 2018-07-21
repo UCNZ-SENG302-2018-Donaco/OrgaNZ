@@ -41,21 +41,23 @@ public class ClientProceduresController {
 
     @GetMapping("/clients/{uid}/procedures")
     public ResponseEntity<Collection<ProcedureRecord>> getProceduresForClient(
-            @PathVariable Integer uid,
+            @PathVariable int uid,
             @RequestHeader(value = "If-Match", required = false) String eTag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
-            throws AuthenticationException {
+            throws AuthenticationException, IfMatchFailedException, IfMatchRequiredException {
 
         Optional<Client> client = State.getClientManager().getClientByID(uid);
-        if (eTag == null) {
-            throw new IfMatchRequiredException();
-        }
-        if (!client.get().getETag().equals(eTag)) {
-            throw new IfMatchFailedException();
-        }
         if (client.isPresent()) {
             // Check request has authorization to view client's procedures
             State.getAuthenticationManager().verifyClientAccess(authToken, client.get());
+
+            // Check that eTag is still valid
+            if (eTag == null) {
+                throw new IfMatchRequiredException();
+            } else if (!client.get().getETag().equals(eTag)) {
+                throw new IfMatchFailedException();
+            }
+
             // Returns the pending procedures for the client
             return new ResponseEntity<>(client.get().getProcedures(), HttpStatus.OK);
         } else {
@@ -70,23 +72,24 @@ public class ClientProceduresController {
             @PathVariable int uid,
             @RequestHeader(value = "If-Match", required = false) String eTag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
-            throws AuthenticationException {
+            throws AuthenticationException, IfMatchFailedException, IfMatchRequiredException {
 
         // Check request has authorization to create a procedure
         State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
 
-        System.out.println(authToken);
         Optional<Client> client = State.getClientManager().getClientByID(uid);
-        if (eTag == null) {
-            throw new IfMatchRequiredException();
-        }
-        if (!client.get().getETag().equals(eTag)) {
-            throw new IfMatchFailedException();
-        }
         if (client.isPresent()) {
+            // Check that eTag is still valid
+            if (eTag == null) {
+                throw new IfMatchRequiredException();
+            } else if (!client.get().getETag().equals(eTag)) {
+                throw new IfMatchFailedException();
+            }
+
             // Execute add procedure action
             Action action = new AddProcedureRecordAction(client.get(), procedureRecord, State.getClientManager());
             State.getActionInvoker(authToken).execute(action);
+
             // Return response containing list of client's procedures
             return new ResponseEntity<>(client.get().getProcedures(), HttpStatus.OK);
         } else {
@@ -145,7 +148,7 @@ public class ClientProceduresController {
             @PathVariable int id,
             @RequestHeader(value = "If-Match", required = false) String eTag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
-            throws AuthenticationException {
+            throws AuthenticationException, IfMatchFailedException, IfMatchRequiredException {
 
         // Check request has authorization to delete a procedure
         State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
@@ -157,19 +160,22 @@ public class ClientProceduresController {
             Optional<ProcedureRecord> toDelete = client.get().getProcedures().stream()
                     .filter(procedure -> procedure.getId() != null && procedure.getId() == id)
                     .findFirst();
+
             if (toDelete.isPresent()) {
+                // Check that eTag is still valid
+                if (eTag == null) {
+                    throw new IfMatchRequiredException();
+                } else if (!client.get().getETag().equals(eTag)) {
+                    throw new IfMatchFailedException();
+                }
+
                 // Execute delete procedure action
                 Action action = new DeleteProcedureRecordAction(client.get(), toDelete.get(), State.getClientManager());
                 State.getActionInvoker(authToken).execute(action);
+
                 // Return OK response
                 return new ResponseEntity<>(client.get().getProcedures(), HttpStatus.CREATED);
             }
-        }
-        if (eTag == null) {
-            throw new IfMatchRequiredException();
-        }
-        if (!client.get().getETag().equals(eTag)) {
-            throw new IfMatchFailedException();
         }
 
         // No client/procedure exists with those ids, return 404
