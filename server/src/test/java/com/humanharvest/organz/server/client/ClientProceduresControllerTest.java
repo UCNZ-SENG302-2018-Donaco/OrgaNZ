@@ -1,24 +1,36 @@
 package com.humanharvest.organz.server.client;
 
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
+
+import java.nio.charset.Charset;
+import java.time.LocalDate;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.ProcedureRecord;
 import com.humanharvest.organz.server.Application;
+import com.humanharvest.organz.state.AuthenticationManager;
 import com.humanharvest.organz.state.AuthenticationManagerFake;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
-
-import java.nio.charset.Charset;
-import java.time.LocalDate;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
@@ -30,6 +42,7 @@ public class ClientProceduresControllerTest {
 
     private MockMvc mockMvc;
     private Client testClient;
+    private String validProcedureJson;
     private String VALID_AUTH = "valid auth";
     private String INVALID_AUTH = "invalid auth";
 
@@ -56,15 +69,46 @@ public class ClientProceduresControllerTest {
         testClient.addProcedureRecord(procedureRecord1);
         testClient.addProcedureRecord(procedureRecord2);
 
+        AuthenticationManager mockAuthenticationManager = mock(AuthenticationManager.class);
+        State.setAuthenticationManager(mockAuthenticationManager);
+        doThrow(new AuthenticationException("X-Auth-Token does not match any allowed user type"))
+                .when(mockAuthenticationManager).verifyClinicianOrAdmin(INVALID_AUTH);
+        doThrow(new AuthenticationException("X-Auth-Token does not match any allowed user type"))
+                .when(mockAuthenticationManager).verifyClinicianOrAdmin(null);
+        doNothing().when(mockAuthenticationManager).verifyClinicianOrAdmin(VALID_AUTH);
+
+        validProcedureJson = "{ \n" +
+                "\"summary\": \"Heart Transplant\", \n" +
+                "\"description\": \"To fix my achy-breaky heart.\", \n" +
+                "\"date\": \"2017-06-01\", \n" +
+                "\"affectedOrgans\": \"HEART\" \n"+
+                " }";
     }
 
-
-
-    //------------GET---------------
-    //------------POST---------------
+    //------------GET----------------
 
     @Test
-    public void createValidProcedure() throws Exception {    }
+    public void getValidClient() throws Exception {
+    }
+
+    @Test
+    public void getInvalidClient() throws Exception {    }
+
+    //------------POST---------------
+
+
+    @Test
+    public void createValidProcedure() throws Exception {/*
+        mockMvc.perform(post("/clients/1/procedures")
+                .contentType(contentType)
+                .content(validProcedureJson))
+                .andExpect(status().isCreated())
+                .andExpect(content().contentType(contentType))
+                .andExpect(jsonPath("$[2].summary", is("Heart Transplant")))
+                .andExpect(jsonPath("$[2].description", is("To fix my achy-breaky heart.")))
+                .andExpect(jsonPath("$[2].date", is("2017-06-01")))
+                .andExpect(jsonPath("$[2].affectedOrgans", is(" HEART ")));*/
+    }
 
     @Test
     public void createInvalidProcedureIncorrectDateFormat() throws Exception{    }
@@ -77,6 +121,38 @@ public class ClientProceduresControllerTest {
 
     @Test
     public void createInvalidProcedureDescription() throws Exception{    }
+
     //------------PATCH---------------
+
+
+    @Test
+    public void validPatch() throws Exception {/*
+        String json = "{ \"description\": \"new\" }";
+
+        mockMvc.perform(patch("/clients/1/procedures/2")
+                .content(json)
+                .contentType(contentType)
+                .header("If-Match", testClient.getETag()))
+                .andExpect(status().isOk());*/
+    }
+
+    @Test
+    public void invalidAuthPatch() throws Exception {   }
+
+    @Test
+    public void invalidDatePatch() throws Exception {   }
+
+    @Test
+    public void invalidETagPatch() throws Exception {   }
+
     //------------DELETE---------------
+
+    @Test
+    public void validDelete() throws Exception {   }
+
+    @Test
+    public void invalidDeleteWrongProcedure() throws Exception {   }
+
+    @Test
+    public void invalidETagDelete() throws Exception {   }
 }
