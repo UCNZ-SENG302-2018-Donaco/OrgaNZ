@@ -48,7 +48,7 @@ public class Save implements Runnable {
                 LOGGER.log(Level.INFO, String.format("Saved %s clients to file", clients.size()));
                 HistoryItem historyItem = new HistoryItem("SAVE",
                         String.format("The system's current state was saved to '%s'.", FILE.getName()));
-                State.getSession().addToSessionHistory(historyItem);
+                //TODO: State.getSession().addToSessionHistory(historyItem);
             } catch (IOException e) {
                 LOGGER.log(Level.SEVERE, "Could not save to file: " + FILE.getName(), e);
             }

@@ -79,7 +79,7 @@ public class Load implements Runnable {
                     file.getName(), importer.getValidCount(), importer.getInvalidCount(), errorSummary);
 
             outputStream.println(message);
-            State.getSession().addToSessionHistory(new HistoryItem("LOAD", message));
+            //TODO: State.getSession().addToSessionHistory(new HistoryItem("LOAD", message));
 
         } catch (FileNotFoundException exc) {
             outputStream.println(String.format("Could not find file: '%s'.", file.getAbsolutePath()));

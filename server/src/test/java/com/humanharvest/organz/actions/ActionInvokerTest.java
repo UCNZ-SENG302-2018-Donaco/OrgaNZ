@@ -1,21 +1,19 @@
 package com.humanharvest.organz.actions;
 
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.humanharvest.organz.BaseTest;
-import com.humanharvest.organz.state.State;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class ActionInvokerTest extends BaseTest {
 
     private ActionInvoker invoker;
     private SettableItem item;
 
-    @Before
+    @BeforeEach
     public void init() {
         invoker = new ActionInvoker();
         item = new SettableItem();
@@ -64,33 +62,5 @@ public class ActionInvokerTest extends BaseTest {
         invoker.execute(action);
 
         assertFalse(invoker.canRedo());
-    }
-
-    @Test
-    @Ignore
-    public void TrackSaveStateTest() {
-        ModifySettableItemAction action = new ModifySettableItemAction(item, "New");
-
-        State.reset();
-        //invoker = State.getInvoker();
-        //TODO: Fix this test to not rely on State
-
-        assertFalse(State.isUnsavedChanges());
-
-        invoker.execute(action);
-
-        assertTrue(State.isUnsavedChanges());
-
-        invoker.undo();
-
-        assertFalse(State.isUnsavedChanges());
-
-        invoker.redo();
-
-        assertTrue(State.isUnsavedChanges());
-
-        State.resetUnsavedUpdates();
-
-        assertFalse(State.isUnsavedChanges());
     }
 }

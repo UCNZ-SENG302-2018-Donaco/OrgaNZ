@@ -8,10 +8,10 @@ import org.springframework.beans.BeanUtils;
 
 public class ModifyAdministratorByObjectAction extends Action {
 
-    private Administrator administrator;
-    private AdministratorManager manager;
-    private ModifyAdministratorObject oldDetails;
-    private ModifyAdministratorObject newDetails;
+    private final Administrator administrator;
+    private final AdministratorManager manager;
+    private final ModifyAdministratorObject oldDetails;
+    private final ModifyAdministratorObject newDetails;
 
     public ModifyAdministratorByObjectAction(Administrator administrator,
             AdministratorManager manager,
@@ -43,5 +43,10 @@ public class ModifyAdministratorByObjectAction extends Action {
     @Override
     public String getUnexecuteText() {
         return "Todo";
+    }
+
+    @Override
+    public Object getModifiedObject() {
+        return administrator;
     }
 }

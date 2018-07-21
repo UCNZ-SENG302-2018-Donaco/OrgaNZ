@@ -7,6 +7,7 @@ import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.actions.administrator.CreateAdministratorAction;
 import com.humanharvest.organz.actions.administrator.DeleteAdministratorAction;
+import com.humanharvest.organz.actions.administrator.ModifyAdministratorByObjectAction;
 import com.humanharvest.organz.commands.CommandsHelper;
 import com.humanharvest.organz.server.exceptions.GlobalControllerExceptionHandler.InvalidRequestException;
 import com.humanharvest.organz.state.AdministratorManager;
@@ -15,14 +16,18 @@ import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
 import com.humanharvest.organz.utilities.validators.administrator.CreateAdministratorValidator;
+import com.humanharvest.organz.utilities.validators.administrator.ModifyAdministratorValidator;
 import com.humanharvest.organz.views.administrator.CommandView;
 import com.humanharvest.organz.views.administrator.CreateAdministratorView;
+import com.humanharvest.organz.views.administrator.ModifyAdministratorObject;
 import com.humanharvest.organz.views.client.Views;
+import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -127,7 +132,7 @@ public class AdministratorController {
             @PathVariable String username,
             @RequestBody ModifyAdministratorObject modifyAdministratorObject,
             @RequestHeader(value = "If-Match", required = false) String etag,
-            @RequestHeader(value = "X-Auth-Token", required = false) String authentication)
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws IfMatchRequiredException, IfMatchFailedException, InvalidRequestException, AuthenticationException {
 
         //Logical steps for a PATCH
@@ -143,7 +148,7 @@ public class AdministratorController {
         }
 
         //Check authentication
-        State.getAuthenticationManager().verifyAdminAccess(authentication);
+        State.getAuthenticationManager().verifyAdminAccess(authToken);
 
         //Validate the request, if there are any errors an exception will be thrown.
         if (!ModifyAdministratorValidator.isValid(modifyAdministratorObject)) {
@@ -154,7 +159,7 @@ public class AdministratorController {
         if (etag == null) {
             throw new IfMatchRequiredException();
         }
-        if (!administrator.get().getEtag().equals(etag)) {
+        if (!administrator.get().getETag().equals(etag)) {
             throw new IfMatchFailedException();
         }
 
@@ -169,11 +174,11 @@ public class AdministratorController {
                 oldClient,
                 modifyAdministratorObject);
         //Execute action, this would correspond to a specific users invoker in full version
-        State.getInvoker().execute(action);
+        State.getActionInvoker(authToken).execute(action);
 
         //Add the new ETag to the headers
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(administrator.get().getEtag());
+        headers.setETag(administrator.get().getETag());
 
         //Respond, apparently updates should be 200 not 201 unlike 365 and our spec
         return new ResponseEntity<>(administrator.get(), headers, HttpStatus.OK);
