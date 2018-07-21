@@ -6,6 +6,201 @@
 	},
 	"item": [
 		{
+			"name": "transplant requests",
+			"description": "",
+			"item": [
+				{
+					"name": "GET clients/transplantRequests",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Auth-Token",
+								"value": "eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJhZG1pbjphZG1pbiIsImlhdCI6MTUzMTk2MDMwOCwiZXhwIjoxNTMyMDQ2NzA4fQ.q8AVW8UU1AG643TZalPcY2VK3aW102oDh9QA0-PgfIwy_Eu3FX-vI5KJiLBYYMt4QY1_tc2mjW08yq8OwMG0aQ"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "localhost:8080/clients/transplantRequests?organs=LIVER,HEART",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"clients",
+								"transplantRequests"
+							],
+							"query": [
+								{
+									"key": "organs",
+									"value": "LIVER,HEART",
+									"equals": true
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "GET clients/{id}/transplantRequests",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Auth-Token",
+								"value": "eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJhZG1pbjphZG1pbiIsImlhdCI6MTUzMTk2MDMwOCwiZXhwIjoxNTMyMDQ2NzA4fQ.q8AVW8UU1AG643TZalPcY2VK3aW102oDh9QA0-PgfIwy_Eu3FX-vI5KJiLBYYMt4QY1_tc2mjW08yq8OwMG0aQ"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "localhost:8080/clients/3/transplantRequests",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"clients",
+								"3",
+								"transplantRequests"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "POST clients/{id}/transplantRequests",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Auth-Token",
+								"value": "eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJhZG1pbjphZG1pbiIsImlhdCI6MTUzMTk2OTAzMiwiZXhwIjoxNTMyMDU1NDMyfQ.fhOhto4KJcbBP80DT9a86NnFkmI9qaqlB115_80tKscs1in7mIhlQHNtOnpPONiny8El3PooCqVHQSIw3v9Pbw"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"requestedOrgan\": \"HEART\",\n\t\"requestDate\": \"2017-03-21T20:55:51.383\",\n\t\"status\": \"WAITING\"\n}"
+						},
+						"url": {
+							"raw": "localhost:8080/clients/3/transplantRequests",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"clients",
+								"3",
+								"transplantRequests"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "procedures",
+			"description": "",
+			"item": [
+				{
+					"name": "GET clients/{id}/procedures",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Auth-Token",
+								"value": "eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJhZG1pbjphZG1pbiIsImlhdCI6MTUzMTk2MDMwOCwiZXhwIjoxNTMyMDQ2NzA4fQ.q8AVW8UU1AG643TZalPcY2VK3aW102oDh9QA0-PgfIwy_Eu3FX-vI5KJiLBYYMt4QY1_tc2mjW08yq8OwMG0aQ"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "localhost:8080/clients/3/procedures",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"clients",
+								"3",
+								"procedures"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "POST clients/{id}/procedures",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Auth-Token",
+								"value": "eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJhZG1pbjphZG1pbiIsImlhdCI6MTUzMTk2MDMwOCwiZXhwIjoxNTMyMDQ2NzA4fQ.q8AVW8UU1AG643TZalPcY2VK3aW102oDh9QA0-PgfIwy_Eu3FX-vI5KJiLBYYMt4QY1_tc2mjW08yq8OwMG0aQ"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"summary\": \"Heart Transplant\",\n\t\"description\": \"To fix my achy-breaky heart.\",\n\t\"date\": \"2017-06-01\",\n\t\"affectedOrgans\": [\n\t\t\"HEART\"\n\t]\n}"
+						},
+						"url": {
+							"raw": "localhost:8080/clients/3/procedures",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"clients",
+								"3",
+								"procedures"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE clients/{id}/procedures",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-Auth-Token",
+								"value": "eyJhbGciOiJIUzUxMiJ9.eyJqdGkiOiJhZG1pbjphZG1pbiIsImlhdCI6MTUzMTk2MDMwOCwiZXhwIjoxNTMyMDQ2NzA4fQ.q8AVW8UU1AG643TZalPcY2VK3aW102oDh9QA0-PgfIwy_Eu3FX-vI5KJiLBYYMt4QY1_tc2mjW08yq8OwMG0aQ"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "localhost:8080/clients/3/procedures/5",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"clients",
+								"3",
+								"procedures",
+								"5"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "clients",
 			"request": {
 				"method": "GET",
@@ -120,6 +315,64 @@
 						"clients"
 					]
 				}
+			},
+			"response": []
+		},
+		{
+			"name": "POST clients",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \n\t\"firstName\": \"New\", \n\t\"lastName\": \"Test\",\n\t\"dateOfBirth\": \"1987-01-01\" \n}"
+				},
+				"url": {
+					"raw": "localhost:8080/clients/",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"clients",
+						""
+					]
+				},
+				"description": ""
+			},
+			"response": []
+		},
+		{
+			"name": "POST /login/administrator",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"admin\",\n\t\"password\": \"\"\n}"
+				},
+				"url": {
+					"raw": "localhost:8080/login/administrator",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"login",
+						"administrator"
+					]
+				},
+				"description": ""
 			},
 			"response": []
 		}
