@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 import javafx.collections.FXCollections;
@@ -35,6 +36,7 @@ import com.humanharvest.organz.actions.client.ResolveTransplantRequestAction;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.resolvers.client.CreateTransplantRequestResolver;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
@@ -45,6 +47,7 @@ import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 import com.humanharvest.organz.utilities.enums.ResolveReason;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.views.client.CreateTransplantRequestView;
 
 /**
  * Controller for the Request Organs page. Handles the viewing of current and past organ transplant requests. If the
@@ -240,9 +243,9 @@ public class RequestOrgansController extends SubController {
         pastRequestsTable.setItems(pastRequests);
 
         if (session.getLoggedInUserType() == UserType.CLIENT) {
-            mainController.setTitle("Request Organs:  " + client.getPreferredName());
+            mainController.setTitle("Request Organs: " + client.getPreferredName());
         } else if (windowContext.isClinViewClientWindow()) {
-            mainController.setTitle("Request Organs:  " + client.getFullName());
+            mainController.setTitle("Request Organs: " + client.getFullName());
 
         }
     }
@@ -259,24 +262,37 @@ public class RequestOrgansController extends SubController {
 
     /**
      * Creates a new transplant request for this client based on the contents of the organ choice box.
+     * If there is an error (bad organ selection), then it will show an alert.
+     * Otherwise, it will:
+     * - Create a request
+     * - Send it to the server
+     * - Update the client's list of transplant requests based on the server's response
+     * - Refresh the page
      */
     @FXML
     private void submitNewRequest() {
         Organ selectedOrgan = newOrganChoiceBox.getValue();
-        if (selectedOrgan == null) {
+        if (selectedOrgan == null) { // Haven't selected an organ
             PageNavigator.showAlert(
                     AlertType.ERROR,
                     "Select an organ",
                     "You must select an organ to make a transplant request for.");
-        } else if (client.getCurrentlyRequestedOrgans().contains(selectedOrgan)) {
+        } else if (client.getCurrentlyRequestedOrgans().contains(selectedOrgan)) { // Already requested organ
             PageNavigator.showAlert(
                     AlertType.ERROR,
                     "Request already exists",
                     "Client already has a waiting request for this organ.");
-        } else {
-            TransplantRequest newRequest = new TransplantRequest(client, selectedOrgan);
-            Action action = new AddTransplantRequestAction(client, newRequest, manager);
-            invoker.execute(action);
+        } else { // Bluesky scenario
+            // Create a request
+            CreateTransplantRequestView newRequest =
+                    new CreateTransplantRequestView(client, selectedOrgan, LocalDateTime.now());
+
+            // Resolve the request
+            CreateTransplantRequestResolver resolver = new CreateTransplantRequestResolver(client, newRequest);
+            List<TransplantRequest> updatedTransplantRequests = resolver.execute();
+            client.setTransplantRequests(updatedTransplantRequests);
+
+            // Refresh the page
             PageNavigator.refreshAllWindows();
         }
     }
