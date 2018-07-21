@@ -1,7 +1,7 @@
 package com.humanharvest.organz.server.controller.client;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Client;
@@ -12,6 +12,11 @@ import com.humanharvest.organz.actions.client.MarkClientAsDeadAction;
 import com.humanharvest.organz.actions.client.ModifyClientByObjectAction;
 import com.humanharvest.organz.server.exceptions.GlobalControllerExceptionHandler.InvalidRequestException;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
+import com.humanharvest.organz.utilities.enums.ClientType;
+import com.humanharvest.organz.utilities.enums.Gender;
+import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
@@ -33,6 +38,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -45,15 +51,40 @@ public class ClientController {
      */
     @GetMapping("/clients")
     @JsonView(Views.Overview.class)
-    public ResponseEntity<List<Client>> getClients(
-            @RequestHeader(value = "X-Auth-Token", required = false) String authToken) throws AuthenticationException {
+    public ResponseEntity<Iterable<Client>> getClients(
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken,
+
+            @RequestParam(required = false) String q,
+            @RequestParam(required = false) Integer offset,
+            @RequestParam(required = false) Integer count,
+            @RequestParam(required = false) Integer minimumAge,
+            @RequestParam(required = false) Integer maximumAge,
+            @RequestParam(required = false) Set<Region> regions,
+            @RequestParam(required = false) Set<Gender> birthGenders,
+            @RequestParam(required = false) ClientType clientType,
+            @RequestParam(required = false) Set<Organ> donating,
+            @RequestParam(required = false) Set<Organ> requesting,
+            @RequestParam(required = false) ClientSortOptionsEnum sortOrder,
+            @RequestParam(required = false) Boolean isReversed
+    ) throws AuthenticationException {
 
         //TODO: Add the auth check, but need to remake the login page to not get the list of clients
         //State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
 
-        List<Client> clients = State.getClientManager().getClients();
+        Iterable<Client> clients = State.getClientManager().getClients(
+                q,
+                offset,
+                count,
+                minimumAge,
+                maximumAge,
+                regions,
+                birthGenders,
+                clientType,
+                donating,
+                requesting,
+                sortOrder,
+                isReversed);
 
-        //TODO: Filters
         return new ResponseEntity<>(clients, HttpStatus.OK);
     }
 
@@ -158,7 +189,6 @@ public class ClientController {
             throw new InvalidRequestException();
         }
 
-
         //Do some extra validation now that we have the client object. Need to check if a date has been changed, it
         // will not become inconsistent
         if (!ClientBornAndDiedDatesValidator.isValid(modifyClientObject, client)) {
@@ -172,7 +202,6 @@ public class ClientController {
         if (!client.getETag().equals(etag)) {
             throw new IfMatchFailedException();
         }
-
 
         //Create the old details to allow undoable action
         ModifyClientObject oldClient = new ModifyClientObject();
@@ -266,9 +295,8 @@ public class ClientController {
 
         MarkClientAsDeadAction action = new MarkClientAsDeadAction(client, dateOfDeath.getDate(), State
                 .getClientManager
-                ());
+                        ());
         State.getActionInvoker(authToken).execute(action);
-
 
         //Add the new ETag to the headers
         HttpHeaders headers = new HttpHeaders();

@@ -35,6 +35,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.utilities.enums.BloodType;
+import com.humanharvest.organz.utilities.enums.ClientType;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
@@ -500,12 +501,13 @@ public class Client implements ConcurrencyControlledEntity {
         return medicationHistory;
     }
 
-
     /**
      * Returns all illness history past and present
      * @return All illness Records for a specific client
      */
-    public List<IllnessRecord> getAllIllnessHistory() {return illnessHistory;}
+    public List<IllnessRecord> getAllIllnessHistory() {
+        return illnessHistory;
+    }
 
     /**
      * Adds a new MedicationRecord to the client's history.
@@ -549,7 +551,7 @@ public class Client implements ConcurrencyControlledEntity {
      */
     public double getBMI() {
         double BMI;
-        if ( weight == 0 || height == 0) {
+        if (weight == 0 || height == 0) {
             BMI = 0;
         } else {
             BMI = weight / (height * 0.01 * height * 0.01);
@@ -620,7 +622,7 @@ public class Client implements ConcurrencyControlledEntity {
         record.setClient(null);
         updateModifiedTimestamp();
     }
-    
+
     /**
      * Returns a list of procedures that the client has undergone or is going to undergo.
      * @return A list of procedures for the client.
@@ -648,7 +650,6 @@ public class Client implements ConcurrencyControlledEntity {
                 .filter(record -> !record.getDate().isBefore(LocalDate.now()))
                 .collect(Collectors.toList());
     }
-
 
     /**
      * Adds the given procedure record to the list of procedures for this client.
@@ -836,11 +837,38 @@ public class Client implements ConcurrencyControlledEntity {
         }
     }
 
+    /**
+     * Returns a hashed version of the latest timestamp for use in concurrency control
+     * The hash is surrounded by double quotes as required for a valid ETag
+     * @return The ETag string with double quotes
+     */
     public String getETag() {
         if (modifiedTimestamp == null) {
             return String.format("\"%d\"", createdTimestamp.hashCode());
         } else {
             return String.format("\"%d\"", modifiedTimestamp.hashCode());
+        }
+    }
+
+    /**
+     * Does the specified Client match the ClientType
+     * @param type The ClientType to match
+     * @return If the Client matches that type
+     */
+    public boolean isOfType(ClientType type) {
+        switch (type) {
+            case ANY:
+                return true;
+            case BOTH:
+                return isDonor() && isReceiver();
+            case NEITHER:
+                return !isDonor() && !isReceiver();
+            case ONLY_DONOR:
+                return isDonor() && !isReceiver();
+            case ONLY_RECEIVER:
+                return !isDonor() && isReceiver();
+            default:
+                return true;
         }
     }
 }

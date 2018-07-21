@@ -45,6 +45,7 @@ paths:
         - $ref: '#/components/parameters/clientType'
         - $ref: '#/components/parameters/donating'
         - $ref: '#/components/parameters/requesting'
+        - $ref: '#/components/parameters/sortOrder'
       responses:
         200:
           description: A list of clients
@@ -132,7 +133,7 @@ paths:
       summary: Change some information about a client
       description: Only those properties included in the request body will be changed.
       parameters:
-        - $ref: '#/components/parameters/etag'
+        - $ref: '#/components/parameters/ETag'
 
       requestBody:
         content:
@@ -169,7 +170,7 @@ paths:
         - AdministratorAccess: []
       summary: Delete a client
       parameters:
-        - $ref: '#/components/parameters/etag'
+        - $ref: '#/components/parameters/ETag'
 
       responses:
         201:
@@ -293,7 +294,7 @@ paths:
       summary: Change a clients organ donation status
       description: Only those organs included in the request body will be changed.
       parameters:
-        - $ref: '#/components/parameters/etag'
+        - $ref: '#/components/parameters/ETag'
 
       requestBody:
         content:
@@ -367,7 +368,7 @@ paths:
       summary: Create a new medication record
       description: Returns the full list of medication records in response upon success.
       parameters:
-        - $ref: '#/components/parameters/etag'
+        - $ref: '#/components/parameters/ETag'
 
       requestBody:
         content:
@@ -421,7 +422,7 @@ paths:
         - AdministratorAccess: []
       summary: Delete a medication record
       parameters:
-        - $ref: '#/components/parameters/etag'
+        - $ref: '#/components/parameters/ETag'
       responses:
         201:
           description: Deleted
@@ -464,7 +465,7 @@ paths:
       summary: Move a medication to current medications
       description: Returns the medication record in response upon success.
       parameters:
-        - $ref: '#/components/parameters/etag'
+        - $ref: '#/components/parameters/ETag'
 
       responses:
         200:
@@ -512,7 +513,7 @@ paths:
       summary: Move a medication to past medications
       description: Returns the medication record in response upon success.
       parameters:
-        - $ref: '#/components/parameters/etag'
+        - $ref: '#/components/parameters/ETag'
 
       responses:
         200:
@@ -581,7 +582,7 @@ paths:
       summary: Create a new illness record
       description: Returns the full list of illness records in response upon success. The chronic flag cannot be set to true and have the cured date set. Cured date is nullable
       parameters:
-        - $ref: '#/components/parameters/etag'
+        - $ref: '#/components/parameters/ETag'
 
       requestBody:
         content:
@@ -636,7 +637,7 @@ paths:
       summary: Update an illness record
       description: Only those properties included in the request body will be changed. An illness cannot have it's curedDate set if the chronic flag is currently true.
       parameters:
-        - $ref: '#/components/parameters/etag'
+        - $ref: '#/components/parameters/ETag'
 
       requestBody:
         content:
@@ -674,7 +675,7 @@ paths:
       summary: Delete an illness
       description: Returns the illness record after success
       parameters:
-        - $ref: '#/components/parameters/etag'
+        - $ref: '#/components/parameters/ETag'
 
       responses:
         201:
@@ -744,7 +745,7 @@ paths:
       summary: Create a new procedure record
       description: Returns the full list of procedure records in response upon success.
       parameters:
-        - $ref: '#/components/parameters/etag'
+        - $ref: '#/components/parameters/ETag'
 
       requestBody:
         content:
@@ -799,7 +800,7 @@ paths:
       summary: Update a procedure record
       description: Only those properties included in the request body will be changed.
       parameters:
-        - $ref: '#/components/parameters/etag'
+        - $ref: '#/components/parameters/ETag'
 
       requestBody:
         content:
@@ -835,7 +836,7 @@ paths:
         - AdministratorAccess: []
       summary: Delete a procedure record
       parameters:
-        - $ref: '#/components/parameters/etag'
+        - $ref: '#/components/parameters/ETag'
 
       responses:
         201:
@@ -871,7 +872,7 @@ paths:
         - $ref: '#/components/parameters/region'
         - name: organs
           in: query
-          description: "Only return transplants involving the given organs, may be comma seperated for multiple"
+          description: "Only return transplants involving the given organs, may be comma separated for multiple"
           schema:
             $ref: '#/components/schemas/organEnum'
       responses:
@@ -940,7 +941,7 @@ paths:
       summary: Create a new transplant request
       description: Returns the full list of transplant requests in response upon success.
       parameters:
-        - $ref: '#/components/parameters/etag'
+        - $ref: '#/components/parameters/ETag'
 
       requestBody:
         content:
@@ -995,7 +996,7 @@ paths:
       summary: Update a transpant request
       description: Only those properties included in the request body will be changed.
       parameters:
-        - $ref: '#/components/parameters/etag'
+        - $ref: '#/components/parameters/ETag'
 
       requestBody:
         content:
@@ -1129,7 +1130,7 @@ paths:
       summary: Change some information about a clinician
       description: Only those properties included in the request body will be changed.
       parameters:
-        - $ref: '#/components/parameters/etag'
+        - $ref: '#/components/parameters/ETag'
 
       requestBody:
         content:
@@ -1165,7 +1166,7 @@ paths:
         - AdministratorAccess: []
       summary: Delete a clinician
       parameters:
-        - $ref: '#/components/parameters/etag'
+        - $ref: '#/components/parameters/ETag'
 
       responses:
         201:
@@ -1285,7 +1286,7 @@ paths:
       summary: Change some information about an administrator
       description: Only those properties included in the request body will be changed.
       parameters:
-        - $ref: '#/components/parameters/etag'
+        - $ref: '#/components/parameters/ETag'
 
       requestBody:
         content:
@@ -1320,7 +1321,7 @@ paths:
         - AdministratorAccess: []
       summary: Delete an administrator
       parameters:
-        - $ref: '#/components/parameters/etag'
+        - $ref: '#/components/parameters/ETag'
 
       responses:
         201:
@@ -1474,9 +1475,9 @@ paths:
         - ClinicianAccess: []
         - AdministratorAccess: []
       summary: Undo the last executed action
-      description: Returns the string text of the undo action. Requires an etag of the object being modified
+      description: Returns the string text of the undo action. Requires an ETag of the object being modified
       parameters:
-        - $ref: '#/components/parameters/etag'
+        - $ref: '#/components/parameters/ETag'
       responses:
         201:
           description: Undone
@@ -1530,9 +1531,9 @@ paths:
         - ClinicianAccess: []
         - AdministratorAccess: []
       summary: Redo the last undone action
-      description: Returns the string text of the redo action. Requires an etag of the object being modified
+      description: Returns the string text of the redo action. Requires an ETag of the object being modified
       parameters:
-        - $ref: '#/components/parameters/etag'
+        - $ref: '#/components/parameters/ETag'
       responses:
         201:
           description: Redone
@@ -1593,14 +1594,14 @@ components:
     region:
       name: region
       in: query
-      description: "The region to filter, may be comma seperated for multiple"
+      description: "The region to filter, may be comma separated for multiple"
       schema:
         $ref: '#/components/schemas/regionEnum'
 
     birthGender:
       name: birthGender
       in: query
-      description: "The birth gender to filter, may be comma seperated for multiple"
+      description: "The birth gender to filter, may be comma separated for multiple"
       schema:
         $ref: '#/components/schemas/genderEnum'
 
@@ -1625,13 +1626,13 @@ components:
       schema:
         $ref: '#/components/schemas/organEnum'
 
-    etag:
-      name: etag
+    ETag:
+      name: ETag
       in: header
       description: A hashed value of the object used for optimistic concurrency control
       required: true
       schema:
-        $ref: '#/components/schemas/etag'
+        $ref: '#/components/schemas/ETag'
 
 
   examples:
@@ -2138,7 +2139,7 @@ components:
       
     clientTypeEnum:
       type: string
-      enum: [any, onlyDonor, onlyReceiver, both, neither]
+      enum: [ANY, ONLY_DONOR, ONLY_RECEIVER, BOTH, NEITHER]
       
     organEnum:
       type: string
@@ -2152,6 +2153,10 @@ components:
       type: string
       enum: [WAITING, CANCELLED, COMPLETED]
 
+    clientSortOptionsEnum:
+      type: string
+      enum: [ID, NAME, AGE, BIRTH_GENDER, REGION, DONOR, RECEIVER]
+
 
     command:
       type: object
@@ -2161,7 +2166,7 @@ components:
           example: help
           
     
-    etag:
+    ETag:
       type: string
       description: A hashed value of the object used for optimistic concurrency control
       
