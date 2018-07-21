@@ -1,6 +1,8 @@
 package com.humanharvest.organz.controller.clinician;
 
 import java.util.Collection;
+import java.util.EnumSet;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -32,13 +34,14 @@ import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 
 import com.humanharvest.organz.Client;
-import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.resolvers.client.DeleteClientResolver;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
+import com.humanharvest.organz.utilities.enums.ClientType;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
@@ -72,10 +75,9 @@ public class SearchClientsController extends SubController {
     private CheckComboBox<Region> regionFilter;
 
     @FXML
-    private ChoiceBox<String> clientTypeFilter;
+    private ChoiceBox<ClientType> clientTypeFilter;
 
     private ClientManager clientManager;
-    private ActionInvoker invoker;
 
     @FXML
     private CheckComboBox<Organ> organsDonatingFilter, organsRequestingFilter;
@@ -117,7 +119,6 @@ public class SearchClientsController extends SubController {
 
     public SearchClientsController() {
         this.clientManager = State.getClientManager();
-        this.invoker = State.getInvoker();
     }
 
     @Override
@@ -161,17 +162,23 @@ public class SearchClientsController extends SubController {
         // Set options for choice boxes and check combo boxes
         birthGenderFilter.getItems().setAll(Gender.values());
         regionFilter.getItems().setAll(Region.values());
-        clientTypeFilter.getItems().setAll("Any", "Only Donor", "Only Receiver", "Both", "Neither");
+        clientTypeFilter.getItems().setAll(ClientType.values());
         clientTypeFilter.getSelectionModel().select(0);
         organsDonatingFilter.getItems().setAll(Organ.values());
         organsRequestingFilter.getItems().setAll(Organ.values());
 
         // Refresh table when any filter controls change
         ageSlider.lowValueProperty().addListener((observable, oldValue, newValue) -> {
+            if (oldValue.intValue() == newValue.intValue()) {
+                return;
+            }
             ageMinField.setText(Integer.toString(newValue.intValue()));
             repaginate();
         });
         ageSlider.highValueProperty().addListener((observable, oldValue, newValue) -> {
+            if (oldValue.intValue() == newValue.intValue()) {
+                return;
+            }
             ageMaxField.setText(Integer.toString(newValue.intValue()));
             repaginate();
         });
@@ -206,7 +213,7 @@ public class SearchClientsController extends SubController {
         pagination.setPageFactory(this::createPage);
 
         //Initialize the observable list to all clients
-        observableClientList.setAll(sortedClients);
+        observableClientList.setAll(allClients);
         //Bind the tableView to the observable list
         tableView.setItems(observableClientList);
 
@@ -248,6 +255,10 @@ public class SearchClientsController extends SubController {
                 return row;
             });
         }
+    }
+
+    private void createFilter() {
+
     }
 
     private void deleteClient(Client client) {
@@ -442,23 +453,23 @@ public class SearchClientsController extends SubController {
         });
     }
 
-    private void changeClientType(String newClientType) {
+    private void changeClientType(ClientType newClientType) {
         switch (newClientType) {
-            case "Only Donor":
+            case ONLY_DONOR:
                 organsRequestingFilter.getCheckModel().clearChecks();
                 donatingFilterBox.setManaged(true);
                 donatingFilterBox.setVisible(true);
                 requestingFilterBox.setManaged(false);
                 requestingFilterBox.setVisible(false);
                 break;
-            case "Only Receiver":
+            case ONLY_RECEIVER:
                 organsDonatingFilter.getCheckModel().clearChecks();
                 requestingFilterBox.setManaged(true);
                 requestingFilterBox.setVisible(true);
                 donatingFilterBox.setManaged(false);
                 donatingFilterBox.setVisible(false);
                 break;
-            case "Neither":
+            case NEITHER:
                 organsRequestingFilter.getCheckModel().clearChecks();
                 organsDonatingFilter.getCheckModel().clearChecks();
                 requestingFilterBox.setManaged(false);
@@ -531,15 +542,15 @@ public class SearchClientsController extends SubController {
     private boolean filter(Client client) {
         if (nameFilter(client) && regionFilter(client) && birthGenderFilter(client) && ageFilter(client)) {
             switch (clientTypeFilter.getValue()) {
-                case "Any":
+                case ANY:
                     return donatingFilter(client) && requestingFilter(client);
-                case "Only Donor":
+                case ONLY_DONOR:
                     return client.isDonor() && donatingFilter(client);
-                case "Only Receiver":
+                case ONLY_RECEIVER:
                     return client.isReceiver() && requestingFilter(client);
-                case "Neither":
+                case NEITHER:
                     return !client.isReceiver() && !client.isDonor();
-                case "Both":
+                case BOTH:
                     return client.isReceiver() && client.isDonor() &&
                             donatingFilter(client) && requestingFilter(client);
             }
@@ -551,7 +562,39 @@ public class SearchClientsController extends SubController {
      * Re-paginates the clients table.
      */
     private void repaginate() {
-        filteredClients.setPredicate(this::filter);
+
+        /*
+            String q,
+            Integer offset,
+            Integer count,
+            Integer minimumAge,
+            Integer maximumAge,
+            Set<Region> regions,
+            Set<Gender> birthGenders,
+            ClientType clientType,
+            Set<Organ> donating,
+            Set<Organ> requesting,
+            ClientSortOptionsEnum sortOption,
+            Boolean isReversed
+         */
+
+        List<Client> newClients = State.getClientManager().getClients(
+                searchBox.getText(),
+                pagination.getCurrentPageIndex() * ROWS_PER_PAGE,
+                ROWS_PER_PAGE,
+                (int) ageSlider.getLowValue(),
+                (int) ageSlider.getHighValue(),
+                filterToSet(regionFilter, Region.class),
+                filterToSet(birthGenderFilter, Gender.class),
+                clientTypeFilter.getValue(),
+                filterToSet(organsDonatingFilter, Organ.class),
+                filterToSet(organsRequestingFilter, Organ.class),
+                ClientSortOptionsEnum.NAME,
+                false);
+
+        observableClientList.setAll(newClients);
+
+        //filteredClients.setPredicate(this::filter);
 
         // If the pagination count wont change, force a refresh of the page, if it will, change it and that will
         // trigger the update.
@@ -566,6 +609,12 @@ public class SearchClientsController extends SubController {
         tableView.getSortOrder().remove(0);
     }
 
+    private <T extends Enum<T>> EnumSet<T> filterToSet(CheckComboBox<T> filter, Class<T> enumType) {
+        EnumSet<T> enumSet = EnumSet.noneOf(enumType);
+        enumSet.addAll(filter.getCheckModel().getCheckedItems());
+        return enumSet;
+    }
+
     /**
      * Upon pagination, update the table to show the correct items
      * @param pageIndex The page we're now on (starts at 0)
@@ -574,7 +623,7 @@ public class SearchClientsController extends SubController {
     private Node createPage(int pageIndex) {
         int fromIndex = pageIndex * ROWS_PER_PAGE;
         int toIndex = Math.min(fromIndex + ROWS_PER_PAGE, filteredClients.size());
-        observableClientList.setAll(sortedClients.subList(fromIndex, toIndex));
+        //observableClientList.setAll(sortedClients.subList(fromIndex, toIndex));
         if (sortedClients.size() < 2 || fromIndex + 1 == toIndex) {
             // 0 or 1 items OR the last item, on its own page
             displayingXToYOfZText.setText(String.format("Displaying %d of %d",

@@ -1,7 +1,7 @@
 package com.humanharvest.organz.server.controller.client;
 
+import java.util.EnumSet;
 import java.util.Optional;
-import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Client;
@@ -59,11 +59,11 @@ public class ClientController {
             @RequestParam(required = false) Integer count,
             @RequestParam(required = false) Integer minimumAge,
             @RequestParam(required = false) Integer maximumAge,
-            @RequestParam(required = false) Set<Region> regions,
-            @RequestParam(required = false) Set<Gender> birthGenders,
+            @RequestParam(required = false) EnumSet<Region> regions,
+            @RequestParam(required = false) EnumSet<Gender> birthGenders,
             @RequestParam(required = false) ClientType clientType,
-            @RequestParam(required = false) Set<Organ> donating,
-            @RequestParam(required = false) Set<Organ> requesting,
+            @RequestParam(required = false) EnumSet<Organ> donating,
+            @RequestParam(required = false) EnumSet<Organ> requesting,
             @RequestParam(required = false) ClientSortOptionsEnum sortOrder,
             @RequestParam(required = false) Boolean isReversed
     ) throws AuthenticationException {

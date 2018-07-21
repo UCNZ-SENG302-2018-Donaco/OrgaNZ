@@ -1,7 +1,6 @@
 package com.humanharvest.organz.state;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -181,7 +180,7 @@ public final class State {
     }
 
     public static List<MainController> getMainControllers() {
-        return Collections.unmodifiableList(mainControllers);
+        return mainControllers;
     }
 
     private static MappingJackson2HttpMessageConverter customConverter() {

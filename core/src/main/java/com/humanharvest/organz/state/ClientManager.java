@@ -5,9 +5,9 @@ import static com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum.NAME
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -27,17 +27,17 @@ public interface ClientManager {
 
     List<Client> getClients();
 
-    default Iterable<Client> getClients(
+    default List<Client> getClients(
             String q,
             Integer offset,
             Integer count,
             Integer minimumAge,
             Integer maximumAge,
-            Set<Region> regions,
-            Set<Gender> birthGenders,
+            EnumSet<Region> regions,
+            EnumSet<Gender> birthGenders,
             ClientType clientType,
-            Set<Organ> donating,
-            Set<Organ> requesting,
+            EnumSet<Organ> donating,
+            EnumSet<Organ> requesting,
             ClientSortOptionsEnum sortOption,
             Boolean isReversed) {
 
