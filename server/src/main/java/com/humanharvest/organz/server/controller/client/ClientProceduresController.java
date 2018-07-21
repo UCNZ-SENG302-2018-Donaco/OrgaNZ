@@ -185,8 +185,12 @@ public class ClientProceduresController {
                 Action action = new DeleteProcedureRecordAction(client.get(), toDelete.get(), State.getClientManager());
                 State.getActionInvoker(authToken).execute(action);
 
+                // Add the new ETag to the headers
+                HttpHeaders headers = new HttpHeaders();
+                headers.setETag(client.get().getETag());
+
                 // Return OK response
-                return new ResponseEntity<>(client.get().getProcedures(), HttpStatus.CREATED);
+                return new ResponseEntity<>(client.get().getProcedures(), headers, HttpStatus.CREATED);
             }
         }
 
