@@ -35,12 +35,14 @@ import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.resolvers.ClientResolver;
 import com.humanharvest.organz.resolvers.client.AddMedicationRecordResolver;
+import com.humanharvest.organz.resolvers.client.ModifyMedicationRecordResolver;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.exceptions.BadDrugNameException;
 import com.humanharvest.organz.utilities.exceptions.BadGatewayException;
+import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.PageNavigator;
@@ -221,10 +223,13 @@ public class ViewMedicationsController extends SubController {
     private void moveMedicationToHistory() {
         MedicationRecord record = currentMedicationsView.getSelectionModel().getSelectedItem();
         if (record != null) {
-            ModifyMedicationRecordAction action = new ModifyMedicationRecordAction(record, manager);
-            action.changeStopped(LocalDate.now());
+//            ModifyMedicationRecordAction action = new ModifyMedicationRecordAction(record, manager);
+//            action.changeStopped(LocalDate.now());
+            ModifyMedicationRecordResolver resolver = new ModifyMedicationRecordResolver(client, record, LocalDate
+                    .now());
 
-            invoker.execute(action);
+            //invoker.execute(action);
+            resolver.execute();
             PageNavigator.refreshAllWindows();
             refreshMedicationLists();
         }
@@ -232,9 +237,7 @@ public class ViewMedicationsController extends SubController {
 
     /**
      * Moves the MedicationRecord selected in the past medications list to the current medications list. Also:
-     * - Sets the date the client started taking the medication to the current date.
      * - Sets the date the client stopped taking the medication to null (hasn't stopped yet).
-     * - Removes the MedicationRecord from the past medications list.
      * - Refreshes both list views.
      */
     @FXML
@@ -294,14 +297,35 @@ public class ViewMedicationsController extends SubController {
      */
     private void addMedication(String newMedName) {
         if (!newMedName.equals("")) {
-            //MedicationRecord record = new MedicationRecord(newMedName, LocalDate.now(), null);
             CreateMedicationRecordView record = new CreateMedicationRecordView();
             record.setName(newMedName);
             AddMedicationRecordResolver resolver = new AddMedicationRecordResolver(client, record);
-            //AddMedicationRecordAction action = new AddMedicationRecordAction(client, record, manager);
 
-            //invoker.execute(action);
-            resolver.execute();
+            try {
+                resolver.execute();
+            } catch (NotFoundException e) {
+                LOGGER.log(Level.WARNING, "Client not found");
+                Notifications.create()
+                        .title("Client not found")
+                        .text("The client could not be found on the server, it may have been deleted")
+                        .showWarning();
+            } catch (ServerRestException e) {
+                LOGGER.log(Level.WARNING, e.getMessage(), e);
+                Notifications.create()
+                        .title("Server error")
+                        .text("Could not apply changes on the server, please try again later")
+                        .showError();
+                return;
+            } catch (IfMatchFailedException e) {
+                LOGGER.log(Level.INFO, "If-Match did not match");
+                Notifications.create()
+                        .title("Outdated Data")
+                        .text("The client has been modified since you retrieved the data. If you would still like to "
+                                + "apply these changes please submit again, otherwise refresh the page to update the data.")
+                        .showWarning();
+                return;
+            }
+
             newMedField.setText("");
             PageNavigator.refreshAllWindows();
             refreshMedicationLists();
