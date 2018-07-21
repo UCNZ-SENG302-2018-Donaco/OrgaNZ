@@ -13,7 +13,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class ClinicianManagerRest implements ClinicianManager {
 
@@ -72,7 +71,7 @@ public class ClinicianManagerRest implements ClinicianManager {
 
     @Override
     public void applyChangesTo(Clinician editedClinician) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override
