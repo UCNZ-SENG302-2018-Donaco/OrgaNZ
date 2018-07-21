@@ -35,6 +35,7 @@ import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.resolvers.ClientResolver;
 import com.humanharvest.organz.resolvers.client.AddMedicationRecordResolver;
+import com.humanharvest.organz.resolvers.client.ModifyMedicationRecordResolver;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
@@ -222,10 +223,13 @@ public class ViewMedicationsController extends SubController {
     private void moveMedicationToHistory() {
         MedicationRecord record = currentMedicationsView.getSelectionModel().getSelectedItem();
         if (record != null) {
-            ModifyMedicationRecordAction action = new ModifyMedicationRecordAction(record, manager);
-            action.changeStopped(LocalDate.now());
+//            ModifyMedicationRecordAction action = new ModifyMedicationRecordAction(record, manager);
+//            action.changeStopped(LocalDate.now());
+            ModifyMedicationRecordResolver resolver = new ModifyMedicationRecordResolver(client, record, LocalDate
+                    .now());
 
-            invoker.execute(action);
+            //invoker.execute(action);
+            resolver.execute();
             PageNavigator.refreshAllWindows();
             refreshMedicationLists();
         }
@@ -233,9 +237,7 @@ public class ViewMedicationsController extends SubController {
 
     /**
      * Moves the MedicationRecord selected in the past medications list to the current medications list. Also:
-     * - Sets the date the client started taking the medication to the current date.
      * - Sets the date the client stopped taking the medication to null (hasn't stopped yet).
-     * - Removes the MedicationRecord from the past medications list.
      * - Refreshes both list views.
      */
     @FXML
