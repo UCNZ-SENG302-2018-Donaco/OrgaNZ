@@ -7,8 +7,10 @@ import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.views.client.CreateTransplantRequestView;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
@@ -29,9 +31,10 @@ public class CreateTransplantRequestResolver {
 
         HttpEntity entity = new HttpEntity<>(transplantRequestView, httpHeaders);
 
-        ResponseEntity<List> responseEntity = State.getRestTemplate()
-                .postForEntity(State.BASE_URI + "clients/" + client.getUid() + "/transplantRequests", entity,
-                        List.class);
+        ResponseEntity<List<TransplantRequest>> responseEntity = State.getRestTemplate()
+                .exchange(State.BASE_URI + "clients/" + client.getUid() + "/transplantRequests", HttpMethod.POST,
+                        entity, new ParameterizedTypeReference<List<TransplantRequest>>() {
+                        });
 
         State.setClientEtag(responseEntity.getHeaders().getETag());
         return responseEntity.getBody();
