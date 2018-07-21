@@ -34,12 +34,12 @@ import javax.persistence.Table;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.humanharvest.organz.views.client.Views;
 import com.humanharvest.organz.utilities.enums.BloodType;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
+import com.humanharvest.organz.views.client.Views;
 
 /**
  * The main Client class.
@@ -47,7 +47,7 @@ import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredExcept
 @Entity
 @Table
 @Access(AccessType.FIELD)
-public class Client {
+public class Client implements ConcurrencyControlledEntity {
 
     @Id
     @GeneratedValue
@@ -124,8 +124,10 @@ public class Client {
     @JsonManagedReference
     private List<ProcedureRecord> procedures = new ArrayList<>();
 
-    @ElementCollection
-    private List<String> updateLog = new ArrayList<>();
+    @OneToMany(
+            cascade = CascadeType.ALL
+    )
+    private List<HistoryItem> changesHistory = new ArrayList<>();
 
     public Client() {
         this.createdTimestamp = LocalDateTime.now();
@@ -154,9 +156,7 @@ public class Client {
         this.createdTimestamp = LocalDateTime.now();
     }
 
-    private void addUpdate(String function) {
-        LocalDateTime timestamp = LocalDateTime.now();
-        updateLog.add(String.format("%s; updated %s", timestamp, function));
+    private void updateModifiedTimestamp() {
         modifiedTimestamp = LocalDateTime.now();
     }
 
@@ -176,7 +176,7 @@ public class Client {
         } else {
             organsDonating.remove(organ);
         }
-        addUpdate(organ.toString());
+        updateModifiedTimestamp();
     }
 
     public void setOrganDonationStatus(Map<Organ, Boolean> map) {
@@ -247,15 +247,17 @@ public class Client {
         }
     }
 
-
     /**
      * Returns a preformatted string of the users change history
      * @return Formatted string with newlines
      */
     public String getUpdatesString() {
         StringBuilder out = new StringBuilder(String.format("User: %s. Name: %s, updates:\n", uid, getFullName()));
-        for (String update : updateLog) {
-            out.append(update).append('\n');
+        if (Objects.isNull(changesHistory)) {
+            changesHistory = new ArrayList<>();
+        }
+        for (HistoryItem item : changesHistory) {
+            out.append(String.format("%s: %s\n", item.getTimestamp(), item.getDetails()));
         }
         return out.toString();
     }
@@ -293,7 +295,7 @@ public class Client {
     }
 
     public void setFirstName(String firstName) {
-        addUpdate("firstName");
+        updateModifiedTimestamp();
         this.firstName = firstName;
     }
 
@@ -302,7 +304,7 @@ public class Client {
     }
 
     public void setLastName(String lastName) {
-        addUpdate("lastName");
+        updateModifiedTimestamp();
         this.lastName = lastName;
     }
 
@@ -311,7 +313,7 @@ public class Client {
     }
 
     public void setMiddleName(String middleName) {
-        addUpdate("middleNames");
+        updateModifiedTimestamp();
         this.middleName = middleName;
     }
 
@@ -327,7 +329,7 @@ public class Client {
     }
 
     public void setPreferredName(String preferredName) {
-        addUpdate("preferredName");
+        updateModifiedTimestamp();
         this.preferredName = preferredName;
     }
 
@@ -336,7 +338,7 @@ public class Client {
     }
 
     public void setDateOfBirth(LocalDate dateOfBirth) {
-        addUpdate("dateOfBirth");
+        updateModifiedTimestamp();
         this.dateOfBirth = dateOfBirth;
     }
 
@@ -345,7 +347,7 @@ public class Client {
     }
 
     public void setDateOfDeath(LocalDate dateOfDeath) {
-        addUpdate("dateOfDeath");
+        updateModifiedTimestamp();
         this.dateOfDeath = dateOfDeath;
     }
 
@@ -354,7 +356,7 @@ public class Client {
     }
 
     public void setGender(Gender gender) {
-        addUpdate("gender");
+        updateModifiedTimestamp();
         this.gender = gender;
     }
 
@@ -363,7 +365,7 @@ public class Client {
     }
 
     public void setGenderIdentity(Gender genderIdentity) {
-        addUpdate("genderIdentity");
+        updateModifiedTimestamp();
         this.genderIdentity = genderIdentity;
     }
 
@@ -372,7 +374,7 @@ public class Client {
     }
 
     public void setHeight(double height) {
-        addUpdate("height");
+        updateModifiedTimestamp();
         this.height = height;
     }
 
@@ -381,7 +383,7 @@ public class Client {
     }
 
     public void setWeight(double weight) {
-        addUpdate("weight");
+        updateModifiedTimestamp();
         this.weight = weight;
     }
 
@@ -390,7 +392,7 @@ public class Client {
     }
 
     public void setBloodType(BloodType bloodType) {
-        addUpdate("bloodType");
+        updateModifiedTimestamp();
         this.bloodType = bloodType;
     }
 
@@ -399,7 +401,7 @@ public class Client {
     }
 
     public void setCurrentAddress(String currentAddress) {
-        addUpdate("currentAddress");
+        updateModifiedTimestamp();
         this.currentAddress = currentAddress;
     }
 
@@ -408,12 +410,16 @@ public class Client {
     }
 
     public void setRegion(Region region) {
-        addUpdate("region");
+        updateModifiedTimestamp();
         this.region = region;
     }
 
-    public int getUid() {
+    public Integer getUid() {
         return uid;
+    }
+
+    public void setUid(Integer uid) {
+        this.uid = uid;
     }
 
     public LocalDateTime getCreatedTimestamp() {
@@ -474,6 +480,18 @@ public class Client {
         ).collect(Collectors.toList());
     }
 
+    public List<HistoryItem> getChangesHistory() {
+        return Collections.unmodifiableList(changesHistory);
+    }
+
+    /**
+     * Returns a new list containing all medications used by the Client, past and current.
+     * @return The list of all medications used by the Client.
+     */
+    public List<MedicationRecord> getMedications() {
+        return Collections.unmodifiableList(medicationHistory);
+    }
+
     /**
      * Returns the list of all past and current medications of the client
      * @return medicationHistory of the client
@@ -482,6 +500,13 @@ public class Client {
         return medicationHistory;
     }
 
+
+    /**
+     * Returns all illness history past and present
+     * @return All illness Records for a specific client
+     */
+    public List<IllnessRecord> getAllIllnessHistory() {return illnessHistory;}
+
     /**
      * Adds a new MedicationRecord to the client's history.
      * @param record The given MedicationRecord.
@@ -489,7 +514,7 @@ public class Client {
     public void addMedicationRecord(MedicationRecord record) {
         medicationHistory.add(record);
         record.setClient(this);
-        addUpdate("medicationHistory");
+        updateModifiedTimestamp();
     }
 
     /**
@@ -499,7 +524,7 @@ public class Client {
     public void deleteMedicationRecord(MedicationRecord record) {
         medicationHistory.remove(record);
         record.setClient(null);
-        addUpdate("medicationHistory");
+        updateModifiedTimestamp();
     }
 
     /**
@@ -547,6 +572,13 @@ public class Client {
         return age;
     }
 
+    /**
+     * Returns a list of illnesses that Client currently has or previously had
+     * @return List of illnesses held by Client
+     */
+    public List<IllnessRecord> getIllnesses() {
+        return Collections.unmodifiableList(illnessHistory);
+    }
 
     /**
      * Returns a list of illnesses that Client previously had
@@ -576,7 +608,7 @@ public class Client {
     public void addIllnessRecord(IllnessRecord record) {
         illnessHistory.add(record);
         record.setClient(this);
-        addUpdate("illnessHistory");
+        updateModifiedTimestamp();
     }
 
     /**
@@ -586,9 +618,9 @@ public class Client {
     public void deleteIllnessRecord(IllnessRecord record) {
         illnessHistory.remove(record);
         record.setClient(null);
-        addUpdate("illnessHistory");
+        updateModifiedTimestamp();
     }
-
+    
     /**
      * Returns a list of procedures that the client has undergone or is going to undergo.
      * @return A list of procedures for the client.
@@ -625,7 +657,7 @@ public class Client {
     public void addProcedureRecord(ProcedureRecord record) {
         procedures.add(record);
         record.setClient(this);
-        addUpdate("procedures");
+        updateModifiedTimestamp();
     }
 
     /**
@@ -635,7 +667,15 @@ public class Client {
     public void deleteProcedureRecord(ProcedureRecord record) {
         procedures.remove(record);
         record.setClient(null);
-        addUpdate("procedures");
+        updateModifiedTimestamp();
+    }
+
+    public void addToChangesHistory(HistoryItem historyItem) {
+        changesHistory.add(historyItem);
+    }
+
+    public void removeFromChangesHistory(HistoryItem historyItem) {
+        changesHistory.remove(historyItem);
     }
 
     /**
@@ -660,7 +700,6 @@ public class Client {
 
         return isMatch;
     }
-
 
     /**
      * Returns a HashSet of all names of the Client. If they do not have a middle/preferred name, this is set as "".
@@ -690,7 +729,6 @@ public class Client {
         names.addAll(Arrays.asList(pname));
         return names;
     }
-
 
     /**
      * Takes a string and checks if each space separated string section begins with the same values as the search
@@ -798,7 +836,7 @@ public class Client {
         }
     }
 
-    public String getEtag() {
+    public String getETag() {
         if (modifiedTimestamp == null) {
             return String.format("\"%d\"", createdTimestamp.hashCode());
         } else {

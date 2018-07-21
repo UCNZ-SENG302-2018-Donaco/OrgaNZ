@@ -1,6 +1,8 @@
 package com.humanharvest.organz.controller.clinician;
 
 import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableValueBase;
@@ -11,6 +13,7 @@ import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
@@ -28,26 +31,29 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 
-import com.humanharvest.organz.actions.Action;
-import com.humanharvest.organz.actions.ActionInvoker;
-import com.humanharvest.organz.actions.client.DeleteClientAction;
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.resolvers.client.DeleteClientResolver;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
+import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
+import com.humanharvest.organz.utilities.exceptions.NotFoundException;
+import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.utilities.view.WindowContext;
-
 import org.controlsfx.control.CheckComboBox;
 import org.controlsfx.control.RangeSlider;
 
 public class SearchClientsController extends SubController {
+
+    private static final Logger LOGGER = Logger.getLogger(SearchClientsController.class.getName());
 
     private static final int ROWS_PER_PAGE = 30;
     private static final int AGE_LOWER_BOUND = 0;
@@ -229,8 +235,7 @@ public class SearchClientsController extends SubController {
                 //Enable right click to delete
                 MenuItem removeItem = new MenuItem("Delete");
                 removeItem.setOnAction(event -> {
-                    Action deleteAction = new DeleteClientAction(row.getItem(), clientManager);
-                    invoker.execute(deleteAction);
+                    deleteClient(row.getItem());
                     PageNavigator.refreshAllWindows();
                 });
                 ContextMenu rowMenu = new ContextMenu(removeItem);
@@ -242,6 +247,25 @@ public class SearchClientsController extends SubController {
                                 .otherwise((ContextMenu) null));
                 return row;
             });
+        }
+    }
+
+    private void deleteClient(Client client) {
+        try {
+            DeleteClientResolver resolver = new DeleteClientResolver(client);
+            resolver.execute();
+        } catch (NotFoundException e) {
+            LOGGER.log(Level.WARNING, "Client not found");
+            PageNavigator.showAlert(AlertType.WARNING, "Client not found", "The client could not be found on the "
+                    + "server, it may have been deleted");
+        } catch (ServerRestException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
+            PageNavigator.showAlert(AlertType.WARNING, "Server error", "Could not apply changes on the server, "
+                    + "please try again later");
+        } catch (IfMatchFailedException e) {
+            LOGGER.log(Level.INFO, "If-Match did not match");
+            PageNavigator.showAlert(AlertType.WARNING, "Outdated Data", "The client has been modified since you retrieved the data.\nIf you would still like to "
+                    + "apply these changes please submit again, otherwise refresh the page to update the data.");
         }
     }
 

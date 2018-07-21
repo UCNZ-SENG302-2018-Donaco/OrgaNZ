@@ -6,17 +6,14 @@ import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.state.ClientManager;
 import org.springframework.beans.BeanUtils;
 
-public class ModifyIllnessRecordByObjectAction extends Action {
+public class ModifyIllnessRecordByObjectAction extends ClientAction {
 
-  private Client client;
-  private ClientManager manager;
   private ModifyIllnessObject oldIllnessDetails;
   private ModifyIllnessObject newIllnessDetails;
 
   public ModifyIllnessRecordByObjectAction(Client client, ClientManager manager, ModifyIllnessObject oldIllnessDetails,
       ModifyIllnessObject newIllnessDetails) {
-    this.client = client;
-    this.manager = manager;
+    super(client, manager);
     this.oldIllnessDetails = oldIllnessDetails;
     this.newIllnessDetails = newIllnessDetails;
   }

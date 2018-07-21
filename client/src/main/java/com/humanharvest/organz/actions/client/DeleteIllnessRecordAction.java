@@ -8,31 +8,31 @@ import com.humanharvest.organz.state.ClientManager;
 /**
  * A reversible action that will delete the given illness record from the given client's medication history.
  */
-public class DeleteIllnessRecordAction extends Action {
+public class DeleteIllnessRecordAction extends ClientAction {
 
-    private Client client;
     private IllnessRecord record;
-    private ClientManager manager;
 
     /**
      * Creates a new action to delete an illness record.
      * @param client The client whose medical history to delete it from.
      * @param record The illness record to delete.
+     * @param manager The ClientManager to apply the changes to
      */
     public DeleteIllnessRecordAction(Client client, IllnessRecord record, ClientManager manager) {
-        this.client = client;
+        super(client, manager);
         this.record = record;
-        this.manager = manager;
     }
 
     @Override
     public void execute() {
+        super.execute();
         client.deleteIllnessRecord(record);
         manager.applyChangesTo(client);
     }
 
     @Override
     public void unExecute() {
+        super.unExecute();
         client.addIllnessRecord(record);
         manager.applyChangesTo(client);
     }

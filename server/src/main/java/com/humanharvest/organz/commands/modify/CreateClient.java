@@ -1,17 +1,15 @@
 package com.humanharvest.organz.commands.modify;
 
+import java.io.PrintStream;
 import java.time.LocalDate;
 
+import com.humanharvest.organz.Client;
 import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.actions.client.CreateClientAction;
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.pico_type_converters.PicoLocalDateConverter;
-
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
@@ -25,17 +23,20 @@ import picocli.CommandLine.Option;
 @Command(name = "createclient", description = "Creates a client.")
 public class CreateClient implements Runnable {
 
-    private ClientManager manager;
-    private ActionInvoker invoker;
+    private final ClientManager manager;
+    private final ActionInvoker invoker;
+    private final PrintStream outputStream;
 
-    public CreateClient() {
+    public CreateClient(PrintStream outputStream, ActionInvoker invoker) {
+        this.outputStream = outputStream;
+        this.invoker = invoker;
         manager = State.getClientManager();
-        invoker = State.getInvoker();
     }
 
     public CreateClient(ClientManager manager, ActionInvoker invoker) {
         this.manager = manager;
         this.invoker = invoker;
+        outputStream = System.out;
     }
 
     @Option(names = {"-f", "--firstname"}, description = "First name.", required = true)
@@ -57,7 +58,7 @@ public class CreateClient implements Runnable {
     public void run() {
 
         if (!force && manager.doesClientExist(firstName, lastName, dateOfBirth)) {
-            System.out.println("Duplicate client found, use --force to create anyway");
+            outputStream.println("Duplicate client found, use --force to create anyway");
             return;
         }
         int uid = manager.nextUid();
@@ -66,9 +67,6 @@ public class CreateClient implements Runnable {
 
         Action action = new CreateClientAction(client, manager);
 
-        System.out.println(invoker.execute(action));
-
-        HistoryItem create = new HistoryItem("CREATE", "Client profile ID: " + uid + " created.");
-        JSONConverter.updateHistory(create, "action_history.json");
+        outputStream.println(invoker.execute(action));
     }
 }

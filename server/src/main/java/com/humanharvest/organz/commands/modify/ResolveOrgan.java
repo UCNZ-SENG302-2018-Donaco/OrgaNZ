@@ -1,5 +1,6 @@
 package com.humanharvest.organz.commands.modify;
 
+import java.io.PrintStream;
 import java.util.Optional;
 
 import com.humanharvest.organz.Client;
@@ -24,17 +25,20 @@ import picocli.CommandLine.Option;
 @Command(name = "resolveorgan", description = "Resolves a users organ request.")
 public class ResolveOrgan implements Runnable {
 
-    private ClientManager manager;
-    private ActionInvoker invoker;
+    private final ClientManager manager;
+    private final ActionInvoker invoker;
+    private final PrintStream outputStream;
 
-    public ResolveOrgan() {
+    public ResolveOrgan(PrintStream outputStream, ActionInvoker invoker) {
+        this.invoker = invoker;
+        this.outputStream = outputStream;
         manager = State.getClientManager();
-        invoker = State.getInvoker();
     }
 
     public ResolveOrgan(ClientManager manager, ActionInvoker invoker) {
         this.manager = manager;
         this.invoker = invoker;
+        outputStream = System.out;
     }
 
     @Option(names = {"-u", "--uid"}, description = "User ID of user organ being requested", required = true)
@@ -44,9 +48,8 @@ public class ResolveOrgan implements Runnable {
             PicoOrganConverter.class)
     private Organ organType;
 
-    @Option(names = {"-r",
-            "-reason"}, description = "Reason for resolving request", required = true, converter = PicoResolveReasonConverter
-            .class)
+    @Option(names = {"-r", "-reason"}, description = "Reason for resolving request", required = true,
+            converter = PicoResolveReasonConverter.class)
     private ResolveReason resolveReason;
 
     @Option(names = {"-m", "-message"}, description = "Message for why the request was resolved")
@@ -59,7 +62,7 @@ public class ResolveOrgan implements Runnable {
         //resolveorgan -u 1 -o liver -r "input error"
         Optional<Client> client = manager.getClientByID(uid);
         if (!client.isPresent()) {
-            System.out.println("No client exists with that user ID");
+            outputStream.println("No client exists with that user ID");
             return;
         }
 
@@ -76,7 +79,7 @@ public class ResolveOrgan implements Runnable {
         if (organCurrentlyRequested) {
             resolveRequest(selectedTransplantRequest);
         } else {
-            System.out.println(client.get().getFullName() + " is not currently requesting this organ.");
+            outputStream.println(client.get().getFullName() + " is not currently requesting this organ.");
         }
     }
 
@@ -117,12 +120,12 @@ public class ResolveOrgan implements Runnable {
                         message,
                         manager);
             } else {
-                System.out.println("Custom resolve reason must have a message specified for why the organ has been "
+                outputStream.println("Custom resolve reason must have a message specified for why the organ has been "
                         + "resolved. The request is still active.");
             }
         }
         if (action != null) {
-            System.out.println(invoker.execute(action));
+            outputStream.println(invoker.execute(action));
         }
     }
 }

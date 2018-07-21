@@ -27,11 +27,11 @@ public class PrintAllInfoTest extends BaseTest {
 
     @Before
     public void init() {
-        spyClientManager = spy(new ClientManagerMemory());
-
-        spyPrintAllInfo = spy(new PrintAllInfo(spyClientManager));
         System.setOut(new PrintStream(outContent));
         System.setErr(new PrintStream(errContent));
+
+        spyClientManager = spy(new ClientManagerMemory());
+        spyPrintAllInfo = spy(new PrintAllInfo(spyClientManager));
     }
 
     @Test

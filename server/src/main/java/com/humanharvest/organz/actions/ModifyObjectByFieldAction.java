@@ -4,6 +4,11 @@ import java.lang.reflect.Field;
 
 import com.humanharvest.organz.utilities.type_converters.PrimitiveConverter;
 
+/**
+ * Create a new modification on any object using it's field name and the old and new values
+ * Exceptions are thrown if the object does not contain that field, or if the values are the wrong type
+ * If you have a field such as a password, use the isPrivate boolean to ensure the values are not leaked
+ */
 public class ModifyObjectByFieldAction extends Action {
 
     private Object toModify;
@@ -134,6 +139,11 @@ public class ModifyObjectByFieldAction extends Action {
         }
     }
 
+    @Override
+    public Object getModifiedObject() {
+        return toModify;
+    }
+
     /**
      * Execute a statement update on the object. Should not throw the errors from Statement as we check them in the
      * constructor
@@ -146,5 +156,4 @@ public class ModifyObjectByFieldAction extends Action {
             e.printStackTrace();
         }
     }
-
 }

@@ -1,27 +1,25 @@
 package com.humanharvest.organz.actions.client;
 
 import com.humanharvest.organz.Client;
-import com.humanharvest.organz.views.client.ModifyClientObject;
-import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.state.ClientManager;
+import com.humanharvest.organz.views.client.ModifyClientObject;
 import org.springframework.beans.BeanUtils;
 
-public class ModifyClientByObjectAction extends Action {
+public class ModifyClientByObjectAction extends ClientAction {
 
-    private Client client;
-    private ClientManager manager;
     private ModifyClientObject oldClientDetails;
     private ModifyClientObject newClientDetails;
 
     /**
      * Create a new Action
      * @param client The client to be modified
-     * @param manager // TODO
+     * @param manager The client manager to use when applying the changes.
+     * @param oldClientDetails The object containing all the old details of the client record.
+     * @param newClientDetails The object containing all the new details of the client record.
      */
     public ModifyClientByObjectAction(Client client, ClientManager manager, ModifyClientObject oldClientDetails,
             ModifyClientObject newClientDetails) {
-        this.client = client;
-        this.manager = manager;
+        super(client, manager);
         this.oldClientDetails = oldClientDetails;
         this.newClientDetails = newClientDetails;
     }

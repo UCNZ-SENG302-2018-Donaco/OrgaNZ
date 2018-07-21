@@ -7,10 +7,7 @@ import com.humanharvest.organz.state.ClinicianManager;
 /**
  * A reversible clinician creation action
  */
-public class CreateClinicianAction extends Action {
-
-    private final Clinician clinician;
-    private final ClinicianManager manager;
+public class CreateClinicianAction extends ClinicianAction {
 
     /**
      * Create a new Action
@@ -18,8 +15,7 @@ public class CreateClinicianAction extends Action {
      * @param manager The ClinicianManager to apply changes to
      */
     public CreateClinicianAction(Clinician clinician, ClinicianManager manager) {
-        this.clinician = clinician;
-        this.manager = manager;
+        super(clinician, manager);
     }
 
     /**
@@ -27,6 +23,7 @@ public class CreateClinicianAction extends Action {
      */
     @Override
     protected void execute() {
+        super.execute();
         manager.addClinician(clinician);
     }
 
@@ -35,6 +32,7 @@ public class CreateClinicianAction extends Action {
      */
     @Override
     protected void unExecute() {
+        super.unExecute();
         manager.removeClinician(clinician);
     }
 

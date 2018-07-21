@@ -205,7 +205,7 @@ public final class CucumberSteps implements En {
             etag = State.getClientManager()
                     .getClientByID(clientId)
                     .orElseThrow(IllegalArgumentException::new)
-                    .getEtag();
+                    .getETag();
         });
     }
 
@@ -258,7 +258,7 @@ public final class CucumberSteps implements En {
             etag = State.getAdministratorManager()
                     .getAdministratorByUsername(username)
                     .orElseThrow(IllegalArgumentException::new)
-                    .getEtag();
+                    .getETag();
         });
     }
 

@@ -31,13 +31,12 @@ public class SetOrganStatusTest extends BaseTest {
 
     @Before
     public void init() {
-        spyClientManager = spy(new ClientManagerMemory());
-
-        spySetOrganStatus = spy(new SetOrganStatus(spyClientManager, new ActionInvoker()));
-
         System.setOut(new PrintStream(outContent));
         System.setErr(new PrintStream(errContent));
 
+        spyClientManager = spy(new ClientManagerMemory());
+
+        spySetOrganStatus = spy(new SetOrganStatus(spyClientManager, new ActionInvoker()));
     }
 
     @Test

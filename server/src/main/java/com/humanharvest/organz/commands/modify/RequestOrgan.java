@@ -1,19 +1,18 @@
 package com.humanharvest.organz.commands.modify;
 
+import java.io.PrintStream;
 import java.util.Optional;
 
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.actions.client.AddTransplantRequestAction;
-import com.humanharvest.organz.Client;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.TransplantRequest;
-
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 import com.humanharvest.organz.utilities.pico_type_converters.PicoOrganConverter;
-
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
@@ -23,17 +22,20 @@ import picocli.CommandLine.Option;
 @Command(name = "requestorgan", description = "Creates an organ request for a user.")
 public class RequestOrgan implements Runnable {
 
-    private ClientManager manager;
-    private ActionInvoker invoker;
+    private final ClientManager manager;
+    private final ActionInvoker invoker;
+    private final PrintStream outputStream;
 
-    public RequestOrgan() {
+    public RequestOrgan(PrintStream outputStream, ActionInvoker invoker) {
+        this.invoker = invoker;
+        this.outputStream = outputStream;
         manager = State.getClientManager();
-        invoker = State.getInvoker();
     }
 
     public RequestOrgan(ClientManager manager, ActionInvoker invoker) {
         this.manager = manager;
         this.invoker = invoker;
+        outputStream = System.out;
     }
 
     @Option(names = {"-o", "-organ", "-organType"}, description = "Organ type", converter = PicoOrganConverter.class)
@@ -49,10 +51,10 @@ public class RequestOrgan implements Runnable {
         // requestorgan -u 1 -o liver
         Optional<Client> client = manager.getClientByID(uid);
         if (!client.isPresent()) {
-            System.out.println("No client exists with that user ID");
+            outputStream.println("No client exists with that user ID");
 
         } else if (organType == null) {
-            System.out.println("The type of organ to be donated has not been defined.");
+            outputStream.println("The type of organ to be donated has not been defined.");
 
         } else {
             boolean organCurrentlyRequested = false;
@@ -64,12 +66,12 @@ public class RequestOrgan implements Runnable {
                 }
             }
             if (organCurrentlyRequested) {
-                System.out.println("This organ is already requested.");
+                outputStream.println("This organ is already requested.");
             } else {
                 TransplantRequest newRequest = new TransplantRequest(client.get(), organType);
                 Action action = new AddTransplantRequestAction(client.get(), newRequest, manager);
 
-                System.out.println(invoker.execute(action));
+                outputStream.println(invoker.execute(action));
             }
         }
     }

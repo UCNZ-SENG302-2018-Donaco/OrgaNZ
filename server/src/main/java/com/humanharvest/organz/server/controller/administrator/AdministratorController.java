@@ -4,7 +4,10 @@ import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Administrator;
+import com.humanharvest.organz.actions.ActionInvoker;
+import com.humanharvest.organz.actions.administrator.CreateAdministratorAction;
 import com.humanharvest.organz.actions.administrator.DeleteAdministratorAction;
+import com.humanharvest.organz.commands.CommandsHelper;
 import com.humanharvest.organz.server.exceptions.GlobalControllerExceptionHandler.InvalidRequestException;
 import com.humanharvest.organz.state.AdministratorManager;
 import com.humanharvest.organz.state.State;
@@ -12,6 +15,7 @@ import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
 import com.humanharvest.organz.utilities.validators.administrator.CreateAdministratorValidator;
+import com.humanharvest.organz.views.administrator.CommandView;
 import com.humanharvest.organz.views.administrator.CreateAdministratorView;
 import com.humanharvest.organz.views.client.Views;
 import org.springframework.http.HttpHeaders;
@@ -71,12 +75,13 @@ public class AdministratorController {
                 createAdministratorView.getPassword());
 
         AdministratorManager administratorManager = State.getAdministratorManager();
-
-        administratorManager.addAdministrator(administrator);
+        CreateAdministratorAction action = new CreateAdministratorAction(administrator, administratorManager);
+        ActionInvoker invoker = State.getActionInvoker(authentication);
+        invoker.execute(action);
 
         //Add the new ETag to the headers
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(administrator.getEtag());
+        headers.setETag(administrator.getETag());
 
         return new ResponseEntity<>(administrator, headers, HttpStatus.CREATED);
     }
@@ -98,7 +103,7 @@ public class AdministratorController {
         if (administrator.isPresent()) {
             //Add the new ETag to the headers
             HttpHeaders headers = new HttpHeaders();
-            headers.setETag(administrator.get().getEtag());
+            headers.setETag(administrator.get().getETag());
 
             return new ResponseEntity<>(administrator.get(), headers, HttpStatus.OK);
         } else {
@@ -137,16 +142,34 @@ public class AdministratorController {
         if (etag == null) {
             throw new IfMatchRequiredException("Etag does not exist");
         }
-        if (!administrator.get().getEtag().equals(etag)) {
+        if (!administrator.get().getETag().equals(etag)) {
             throw new IfMatchFailedException("Etag is not valid for this administrator");
         }
 
         DeleteAdministratorAction action = new DeleteAdministratorAction(
                 administrator.get(),
                 administratorManager);
-        State.getInvoker().execute(action);
+        State.getActionInvoker(authentication).execute(action);
 
         //Respond, apparently updates should be 200 not 201 unlike 365 and our spec
         return new ResponseEntity<>(administrator.get(), HttpStatus.OK);
+    }
+
+    @PostMapping("/commands")
+    public ResponseEntity<String> executeSql(
+            @RequestBody CommandView commandText,
+            @RequestHeader(value = "If-Match", required = false) String etag,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {
+        //Check valid admin
+        State.getAuthenticationManager().verifyAdminAccess(authToken);
+        //Get the action invoker for the admin
+        ActionInvoker invoker = State.getActionInvoker(authToken);
+
+        String[] commands = CommandsHelper.parseCommands(commandText.getCommand());
+
+        String result = CommandsHelper.executeCommandAndReturnOutput(commands, invoker);
+
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

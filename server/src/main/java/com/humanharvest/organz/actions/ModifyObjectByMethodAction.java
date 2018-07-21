@@ -1,7 +1,6 @@
 package com.humanharvest.organz.actions;
 
 import java.beans.Statement;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 import com.humanharvest.organz.utilities.type_converters.PrimitiveConverter;
@@ -108,6 +107,11 @@ public class ModifyObjectByMethodAction extends Action {
         } else {
             return String.format("%s from %s to %s.", unCamelCase(field), formatValue(newValue), formatValue(oldValue));
         }
+    }
+
+    @Override
+    public Object getModifiedObject() {
+        return toModify;
     }
 
     /**

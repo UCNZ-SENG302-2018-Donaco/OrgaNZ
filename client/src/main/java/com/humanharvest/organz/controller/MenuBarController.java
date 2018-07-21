@@ -24,18 +24,17 @@ import javafx.scene.control.SeparatorMenuItem;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.AppUI;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
+import com.humanharvest.organz.actions.ActionInvoker;
+import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.CacheManager;
-import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
-
 import org.controlsfx.control.Notifications;
 
 /**
@@ -85,6 +84,7 @@ public class MenuBarController extends SubController {
     public Menu administrationPrimaryItem;
 
     private ActionInvoker invoker;
+    private ClientManager clientManager;
     private Session session;
 
     /**
@@ -92,6 +92,7 @@ public class MenuBarController extends SubController {
      */
     public MenuBarController() {
         invoker = State.getInvoker();
+        clientManager = State.getClientManager();
         session = State.getSession();
     }
 
@@ -347,18 +348,26 @@ public class MenuBarController extends SubController {
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json"));
             File file = fileChooser.showSaveDialog(AppUI.getWindow());
             if (file != null) {
-                JSONConverter.saveToFile(file);
+                /* TODO replace with GET request to /clients/file
+                try (JSONFileWriter<Client> clientWriter = new JSONFileWriter<>(file, Client.class)) {
+                    clientWriter.overwriteWith(clientManager.getClients());
+                }
+                */
 
-                Notifications.create().title("Saved").text(String.format("Successfully saved %s clients to file %s",
-                        State.getClientManager().getClients().size(), file.getName())).showInformation();
+                Notifications.create()
+                        .title("Saved Data")
+                        .text(String.format("Successfully saved %s clients to file '%s'.",
+                                clientManager.getClients().size(), file.getName()))
+                        .showInformation();
 
-                HistoryItem save = new HistoryItem("SAVE", "The systems current state was saved.");
-                JSONConverter.updateHistory(save, "action_history.json");
+                HistoryItem historyItem = new HistoryItem("SAVE",
+                        String.format("The system's current state was saved to file '%s'.", file.getName()));
+                State.getSession().addToSessionHistory(historyItem);
 
-                invoker.resetUnsavedUpdates();
+                State.setUnsavedChanges(false);
                 PageNavigator.refreshAllWindows();
             }
-        } catch (URISyntaxException | IOException e) {
+        } catch (URISyntaxException e) {
             PageNavigator.showAlert(AlertType.WARNING, "Save Failed", ERROR_SAVING_MESSAGE);
             LOGGER.log(Level.SEVERE, ERROR_SAVING_MESSAGE, e);
         }
@@ -376,35 +385,88 @@ public class MenuBarController extends SubController {
                 "Loading from a file will overwrite all current data. Would you like to proceed?");
 
         if (response.isPresent() && response.get() == ButtonType.OK) {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Load Clients File");
             try {
-                FileChooser fileChooser = new FileChooser();
-                fileChooser.setTitle("Load Clients File");
                 fileChooser.setInitialDirectory(
                         new File(Paths.get(AppUI.class.getProtectionDomain().getCodeSource().getLocation().toURI())
-                                .getParent().toString())
-                );
-                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json"));
-                File file = fileChooser.showOpenDialog(AppUI.getWindow());
+                                .getParent().toString()));
+            } catch (URISyntaxException exc) {
+                exc.printStackTrace();
+            }
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(
+                    "JSON/CSV files (*.json, *.csv)",
+                    "*.json", "*.csv"));
+            File file = fileChooser.showOpenDialog(AppUI.getWindow());
 
-                if (file != null) {
-                    JSONConverter.loadFromFile(file);
+            if (file != null) {
+                String format = getFileExtension(file.getName());
 
-                    HistoryItem load = new HistoryItem("LOAD", "The systems state was loaded from " + file.getName());
-                    JSONConverter.updateHistory(load, "action_history.json");
+                /* TODO replace with POST request to /clients/file endpoint
+                try {
+                    ReadClientStrategy strategy;
+                    switch (format) {
+                        case "csv":
+                            strategy = new CSVReadClientStrategy();
+                            break;
+                        case "json":
+                            strategy = new JSONReadClientStrategy();
+                            break;
+                        default:
+                            throw new IOException(String.format("Unknown file format or extension: '%s'", format));
+                    }
+
+                    ClientImporter importer = new ClientImporter(file, strategy);
+                    importer.importAll();
+                    clientManager.setClients(importer.getValidClients());
+
+                    String errorSummary = importer.getErrorSummary();
+                    if (errorSummary.length() > 500) {
+                        errorSummary = errorSummary.substring(0, 500).concat("...");
+                    }
+
+                    String message = String.format("Loaded clients from file '%s'."
+                                    + "\n%d were valid, "
+                                    + "\n%d were invalid."
+                                    + "\n\n%s",
+                            file.getName(), importer.getValidCount(), importer.getInvalidCount(), errorSummary);
+
+                    LOGGER.log(Level.INFO, message);
+                    State.getSession().addToSessionHistory(new HistoryItem("LOAD", message));
+
+                    Notifications.create()
+                            .title("Loaded Clients")
+                            .text(message)
+                            .showInformation();
 
                     mainController.resetWindowContext();
-                    Notifications.create().title("Loaded data").text(
-                            String.format("Successfully loaded %d clients from file",
-                                    State.getClientManager().getClients().size()))
-                            .showInformation();
                     PageNavigator.loadPage(Page.LANDING, mainController);
+
+                } catch (FileNotFoundException exc) {
+                    PageNavigator.showAlert(AlertType.ERROR, "Load Failed",
+                            String.format("Could not find file: '%s'.", file.getAbsolutePath()));
+                } catch (IOException exc) {
+                    PageNavigator.showAlert(AlertType.ERROR, "Load Failed",
+                            String.format("An IO error occurred when loading from file: '%s'\n%s",
+                                    file.getName(), exc.getMessage()));
                 }
-            } catch (URISyntaxException | IOException | IllegalArgumentException e) {
-                PageNavigator.showAlert(AlertType.WARNING, "Load Failed",
-                        "Warning: unrecognisable or invalid file. please make\n"
-                                + "sure that you have selected the correct file type.");
-                LOGGER.log(Level.SEVERE, ERROR_LOADING_MESSAGE, e);
+                */
             }
+        }
+    }
+
+    /**
+     * Returns the file extension of the given file name string (in lowercase). The file extension is defined as the
+     * characters after the last "." in the file name.
+     * @param fileName The file name string.
+     * @return The file extension of the given file name.
+     */
+    private static String getFileExtension(String fileName) {
+        int lastIndex = fileName.lastIndexOf('.');
+        if (lastIndex >= 0) {
+            return fileName.substring(lastIndex + 1).toLowerCase();
+        } else {
+            return "";
         }
     }
 
@@ -423,8 +485,6 @@ public class MenuBarController extends SubController {
         State.addMainController(mainController);
         mainController.resetWindowContext();
         PageNavigator.loadPage(Page.LANDING, mainController);
-        HistoryItem save = new HistoryItem("LOGOUT", "The user logged out");
-        JSONConverter.updateHistory(save, "action_history.json");
     }
 
     @FXML
@@ -476,9 +536,10 @@ public class MenuBarController extends SubController {
     @FXML
     private void undo() {
         String undoneText = invoker.undo();
-        Notifications.create().title("Undo").text(undoneText).showInformation();
-        HistoryItem save = new HistoryItem("UNDO", undoneText);
-        JSONConverter.updateHistory(save, "action_history.json");
+        Notifications.create()
+                .title("Undo")
+                .text(undoneText)
+                .showInformation();
         PageNavigator.refreshAllWindows();
     }
 
@@ -488,9 +549,10 @@ public class MenuBarController extends SubController {
     @FXML
     private void redo() {
         String redoneText = invoker.redo();
-        Notifications.create().title("Redo").text(redoneText).showInformation();
-        HistoryItem save = new HistoryItem("REDO", redoneText);
-        JSONConverter.updateHistory(save, "action_history.json");
+        Notifications.create()
+                .title("Redo")
+                .text(redoneText)
+                .showInformation();
         PageNavigator.refreshAllWindows();
     }
 

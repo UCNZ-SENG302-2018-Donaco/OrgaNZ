@@ -31,4 +31,9 @@ public class ModifySettableItemAction extends Action {
     public String getUnexecuteText() {
         return "Set String back to " + oldStringValue;
     }
+
+    @Override
+    public Object getModifiedObject() {
+        return item;
+    }
 }

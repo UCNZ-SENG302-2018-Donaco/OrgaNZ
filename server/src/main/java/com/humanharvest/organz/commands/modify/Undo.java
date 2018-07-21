@@ -1,25 +1,27 @@
 package com.humanharvest.organz.commands.modify;
 
-import com.humanharvest.organz.actions.ActionInvoker;
-import com.humanharvest.organz.state.State;
+import java.io.PrintStream;
 
+import com.humanharvest.organz.actions.ActionInvoker;
 import picocli.CommandLine.Command;
 
 @Command(name = "undo", description = "Undo a change.")
 public class Undo implements Runnable {
 
-    private ActionInvoker invoker;
-
-
-    public Undo() {
-        invoker = State.getInvoker();
-    }
+    private final ActionInvoker invoker;
+    private final PrintStream outputStream;
 
     public Undo(ActionInvoker invoker) {
         this.invoker = invoker;
+        outputStream = System.out;
+    }
+
+    public Undo(PrintStream outputStream, ActionInvoker invoker) {
+        this.invoker = invoker;
+        this.outputStream = outputStream;
     }
 
     public void run() {
-        System.out.println(invoker.undo());
+        outputStream.println(invoker.undo());
     }
 }

@@ -18,7 +18,6 @@ public class ModifyClientOrganDonationResolver {
     private Client client;
     private Map<Organ, Boolean> changes;
 
-
     public ModifyClientOrganDonationResolver(Client client, Map<Organ, Boolean> changes) {
         this.client = client;
         this.changes = changes;
@@ -46,8 +45,8 @@ public class ModifyClientOrganDonationResolver {
 
         HttpEntity<Map<Organ, Boolean>> entity = new HttpEntity<>(changes, httpHeaders);
 
-        ParameterizedTypeReference<Map<Organ, Boolean>> mapRef = new ParameterizedTypeReference<Map<Organ, Boolean>>
-                () {};
+        ParameterizedTypeReference<Map<Organ, Boolean>> mapRef =
+                new ParameterizedTypeReference<Map<Organ, Boolean>>(){};
 
         ResponseEntity<Map<Organ, Boolean>> responseEntity = State.getRestTemplate()
                 .exchange(
@@ -56,7 +55,6 @@ public class ModifyClientOrganDonationResolver {
                         entity,
                         mapRef,
                         client.getUid());
-
 
         State.setClientEtag(responseEntity.getHeaders().getETag());
         return responseEntity.getBody();

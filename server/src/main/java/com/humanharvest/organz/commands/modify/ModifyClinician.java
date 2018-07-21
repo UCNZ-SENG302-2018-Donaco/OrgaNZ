@@ -1,20 +1,22 @@
 package com.humanharvest.organz.commands.modify;
+
+import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 
 import com.humanharvest.organz.Clinician;
-import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.actions.clinician.ModifyClinicianAction;
 import com.humanharvest.organz.state.ClinicianManager;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.pico_type_converters.PicoRegionConverter;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
+
+;
 
 /**
  * Command line for modifying attribute of a clinician
@@ -22,17 +24,20 @@ import picocli.CommandLine.Option;
 @Command(name = "modifyclinician", description = "Modify the attribute of an existing clinician", sortOptions = false)
 public class ModifyClinician implements Runnable {
 
-    private ClinicianManager manager;
-    private ActionInvoker invoker;
+    private final ClinicianManager manager;
+    private final ActionInvoker invoker;
+    private final PrintStream outputStream;
 
-    public ModifyClinician() {
+    public ModifyClinician(PrintStream outputStream, ActionInvoker invoker) {
+        this.invoker = invoker;
+        this.outputStream = outputStream;
         manager = State.getClinicianManager();
-        invoker = State.getInvoker();
     }
 
     public ModifyClinician(ClinicianManager manager, ActionInvoker invoker) {
         this.manager = manager;
         this.invoker = invoker;
+        outputStream = System.out;
     }
 
     @Option(names = {"-s", "--staffId"}, description = "Staff id", required = true)
@@ -61,7 +66,7 @@ public class ModifyClinician implements Runnable {
         Optional<Clinician> clinician = manager.getClinicianByStaffId(id);
 
         if (!clinician.isPresent()) {
-            System.out.println("No clinician exists with that staff ID");
+            outputStream.println("No clinician exists with that staff ID");
             return;
         }
 
@@ -86,10 +91,7 @@ public class ModifyClinician implements Runnable {
             }
         }
 
-        System.out.println(invoker.execute(action));
-
-        HistoryItem setAttribute = new HistoryItem("ATTRIBUTE UPDATE", "DETAILS were updated for clinician " + id);
-        JSONConverter.updateHistory(setAttribute, "action_history.json");
+        outputStream.println(invoker.execute(action));
 
     }
 }

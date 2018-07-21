@@ -1,4 +1,4 @@
-openapi: "3.0.2"
+openapi: "3.0.3"
 info:
   version: 1.0.0
   title: "Organz API"
@@ -1023,35 +1023,6 @@ paths:
           $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
-    delete:
-      tags:
-        - Client Transplant Requests
-      security:
-        - ClinicianAccess: []
-        - AdministratorAccess: []
-      summary: Delete a transpant request
-      parameters:
-        - $ref: '#/components/parameters/etag'
-
-      responses:
-        201:
-          description: Deleted
-        400:
-          $ref: '#/components/responses/400BadRequest'
-        401:
-          $ref: '#/components/responses/401Unauthorized'
-        403:
-          $ref: '#/components/responses/403Forbidden'
-        404:
-          $ref: '#/components/responses/404NotFound'
-        412:
-          $ref: '#/components/responses/412PreconditionFailed'
-        428:
-          $ref: '#/components/responses/428PreconditionRequired'
-        500:
-          $ref: '#/components/responses/500InternalServerError'
-
-
 
 
 
@@ -1369,21 +1340,21 @@ paths:
         500:
           $ref: '#/components/responses/500InternalServerError'
 
-  '/sql':
+  '/commands':
     post:
       tags:
         - Administrator
       security:
         - AdministratorAccess: []
-      summary: Execute abritrary SQL on the backend database. Currently only supports read actions
+      summary: Execute command line commands on the backend database. Try executing "help" for information
       requestBody:
         content:
           application/json:
             schema:
-                $ref: '#/components/schemas/sql'
+                $ref: '#/components/schemas/command'
       responses:
         200:
-          description: The response from the SQL query
+          description: The response from the command
         400:
           $ref: '#/components/responses/400BadRequest'
         401:
@@ -1512,7 +1483,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/textResponse'
+                $ref: '#/components/schemas/actionResponse'
         400:
           $ref: '#/components/responses/400BadRequest'
         401:
@@ -1568,7 +1539,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/textResponse'
+                $ref: '#/components/schemas/actionResponse'
         400:
           $ref: '#/components/responses/400BadRequest'
         401:
@@ -2142,6 +2113,16 @@ components:
       properties:
         response:
           type: string
+
+    actionResponse:
+      type: object
+      properties:
+        resultText:
+          type: string
+        canUndo:
+          type: boolean
+        canRedo:
+          type: boolean
         
         
         
@@ -2172,12 +2153,12 @@ components:
       enum: [WAITING, CANCELLED, COMPLETED]
 
 
-    sql:
+    command:
       type: object
       properties:
-        query:
+        command:
           type: string
-          example: SELECT * FROM Client
+          example: help
           
     
     etag:

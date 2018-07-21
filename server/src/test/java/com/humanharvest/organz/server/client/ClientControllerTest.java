@@ -1,7 +1,6 @@
 package com.humanharvest.organz.server.client;
 
 import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertNull;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.nullValue;
@@ -133,7 +132,7 @@ public class ClientControllerTest {
         mockMvc.perform(patch("/clients/1")
                 .content(json)
                 .contentType(contentType)
-                .header("If-Match", testClient.getEtag()))
+                .header("If-Match", testClient.getETag()))
                 .andExpect(status().isBadRequest());
     }
 
@@ -165,7 +164,7 @@ public class ClientControllerTest {
         mockMvc.perform(patch("/clients/1")
                 .content(json)
                 .contentType(contentType)
-                .header("If-Match", testClient.getEtag()))
+                .header("If-Match", testClient.getETag()))
                 .andExpect(status().isOk());
     }
 
@@ -194,7 +193,7 @@ public class ClientControllerTest {
         mockMvc.perform(patch("/clients/1")
                 .content(json.toString())
                 .contentType(contentType)
-                .header("If-Match", testClient.getEtag()))
+                .header("If-Match", testClient.getETag()))
                 .andExpect(status().isOk());
 
         //Check that the fields updated correctly
@@ -210,7 +209,7 @@ public class ClientControllerTest {
         mockMvc.perform(patch("/clients/1")
                 .content(json)
                 .contentType(contentType)
-                .header("If-Match", testClient.getEtag()))
+                .header("If-Match", testClient.getETag()))
                 .andExpect(status().isBadRequest());
     }
 
@@ -220,7 +219,7 @@ public class ClientControllerTest {
         mockMvc.perform(patch("/clients/1")
                 .content(json)
                 .contentType(contentType)
-                .header("If-Match", testClient.getEtag()))
+                .header("If-Match", testClient.getETag()))
                 //Should just ignore the uid field, so a 200 is expected
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.uid", is(1)));
@@ -240,7 +239,7 @@ public class ClientControllerTest {
         mockMvc.perform(patch("/clients/1")
                 .content(json)
                 .contentType(contentType)
-                .header("If-Match", testClient.getEtag()))
+                .header("If-Match", testClient.getETag()))
                 .andExpect(status().isBadRequest());
     }
 
@@ -291,7 +290,7 @@ public class ClientControllerTest {
         mockMvc.perform(patch("/clients/1")
                 .content(json)
                 .contentType(contentType)
-                .header("If-Match", testClient.getEtag()))
+                .header("If-Match", testClient.getETag()))
                 .andExpect(status().isBadRequest());
     }
 
@@ -299,7 +298,7 @@ public class ClientControllerTest {
         mockMvc.perform(patch("/clients/" + client.getUid())
                 .content(json)
                 .contentType(contentType)
-                .header("If-Match", client.getEtag()))
+                .header("If-Match", client.getETag()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(contentType));
     }
@@ -316,7 +315,7 @@ public class ClientControllerTest {
     @Test
     public void invalidClientDeleteTest() throws Exception {
         mockMvc.perform(delete("/clients/5")
-                .header("If-Match", testClient.getEtag()))
+                .header("If-Match", testClient.getETag()))
                 .andExpect(status().isNotFound());
     }
 
@@ -345,7 +344,7 @@ public class ClientControllerTest {
     @Test
     public void deleteValidClientTest() throws Exception {
         mockMvc.perform(delete("/clients/1")
-                .header("If-Match", testClient.getEtag()))
+                .header("If-Match", testClient.getETag()))
                 .andExpect(status().isOk());
 
         assertEquals(Optional.empty(), State.getClientManager().getClientByID(1));

@@ -33,11 +33,11 @@ public class PrintAllOrganTest extends BaseTest {
 
     @Before
     public void init() {
-        spyClientManager = spy(new ClientManagerMemory());
-
-        spyPrintAllOrgan = Mockito.spy(new PrintAllOrgan(spyClientManager));
         System.setOut(new PrintStream(outContent));
         System.setErr(new PrintStream(errContent));
+
+        spyClientManager = spy(new ClientManagerMemory());
+        spyPrintAllOrgan = Mockito.spy(new PrintAllOrgan(spyClientManager));
     }
 
     @Test

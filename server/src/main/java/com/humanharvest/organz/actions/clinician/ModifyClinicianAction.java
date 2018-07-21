@@ -4,25 +4,21 @@ import java.util.ArrayList;
 import java.util.stream.Collectors;
 
 import com.humanharvest.organz.Clinician;
-import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.actions.ModifyObjectByMethodAction;
 import com.humanharvest.organz.state.ClinicianManager;
 
 /**
  * A reversible clinician modification Action
  */
-public class ModifyClinicianAction extends Action {
+public class ModifyClinicianAction extends ClinicianAction {
 
     private ArrayList<ModifyObjectByMethodAction> actions = new ArrayList<>();
-    private Clinician clinician;
-    private ClinicianManager clinicianManager;
     /**
      * Create a new Action
      * @param clinician The clinician to be modified
      */
-    public ModifyClinicianAction(Clinician clinician,ClinicianManager clinicianManager) {
-        this.clinician = clinician;
-        this.clinicianManager = clinicianManager;
+    public ModifyClinicianAction(Clinician clinician,ClinicianManager manager) {
+        super(clinician, manager);
     }
 
     /**
@@ -48,19 +44,21 @@ public class ModifyClinicianAction extends Action {
         if (actions.size() == 0) {
             throw new IllegalStateException("No changes were made to the clinician.");
         } else {
+            super.execute();
             for (ModifyObjectByMethodAction action : actions) {
                 action.execute();
             }
-            clinicianManager.applyChangesTo(clinician);
+            manager.applyChangesTo(clinician);
         }
     }
 
     @Override
     protected void unExecute() {
+        super.unExecute();
         for (ModifyObjectByMethodAction action : actions) {
             action.unExecute();
         }
-        clinicianManager.applyChangesTo(clinician);
+        manager.applyChangesTo(clinician);
     }
 
     @Override

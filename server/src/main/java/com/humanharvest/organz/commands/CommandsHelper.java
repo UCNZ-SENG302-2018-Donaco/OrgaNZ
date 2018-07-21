@@ -1,11 +1,15 @@
 package com.humanharvest.organz.commands;
 
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-public class CommandParser {
+import com.humanharvest.organz.actions.ActionInvoker;
+import picocli.CommandLine;
+import picocli.CommandLine.Help.Ansi;
+
+public class CommandsHelper {
 
     /**
      * Takes a string line in the form of a command, and returns the space separated items. Double
@@ -31,7 +35,7 @@ public class CommandParser {
                 //If the previous character was a backslash, the backslash is removed and the quote included in the
                 // actual string rather than counting as a quote for a multi word string
                 if (lastCharWasBackSlash) {
-                    currentItem = currentItem.substring(0, currentItem.length() -1);
+                    currentItem = currentItem.substring(0, currentItem.length() - 1);
                     currentItem += ch;
                     continue;
                 }
@@ -53,4 +57,25 @@ public class CommandParser {
         return inputs.toArray(new String[0]);
     }
 
+    /**
+     * Takes a string of command text and
+     * @param commands The string separated list of commands to execute
+     * @param invoker The ActionInvoker to apply changes to if applicable
+     * @return The output of the command. This includes help and error text if applicable
+     */
+    public static String executeCommandAndReturnOutput(String[] commands, ActionInvoker invoker) {
+
+        ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
+        PrintStream printStream = new PrintStream(byteStream);
+
+        CommandLine.run(
+                BaseCommand.class,
+                new CommandFactory(printStream, invoker),
+                printStream,
+                printStream,
+                Ansi.AUTO,
+                commands);
+
+        return byteStream.toString();
+    }
 }

@@ -7,12 +7,7 @@ import com.humanharvest.organz.state.ClientManager;
 /**
  * A reversible client creation action
  */
-public class CreateClientAction extends Action {
-
-
-    private Client client;
-    private ClientManager manager;
-
+public class CreateClientAction extends ClientAction {
 
     /**
      * Create a new Action
@@ -20,8 +15,7 @@ public class CreateClientAction extends Action {
      * @param manager The ClientManager to apply changes to
      */
     public CreateClientAction(Client client, ClientManager manager) {
-        this.client = client;
-        this.manager = manager;
+        super(client, manager);
     }
 
 
@@ -30,6 +24,7 @@ public class CreateClientAction extends Action {
      */
     @Override
     public void execute() {
+        super.execute();
         manager.addClient(client);
     }
 
@@ -38,6 +33,7 @@ public class CreateClientAction extends Action {
      */
     @Override
     public void unExecute() {
+        super.unExecute();
         manager.removeClient(client);
     }
 
@@ -52,5 +48,4 @@ public class CreateClientAction extends Action {
         return String.format("Removed client %s with user id: %s", client.getFullName(),
                 client.getUid());
     }
-
 }

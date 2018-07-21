@@ -1,31 +1,15 @@
 package com.humanharvest.organz.controller;
 
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Paths;
-import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.stage.FileChooser;
 
-import com.humanharvest.organz.actions.ActionInvoker;
-import com.humanharvest.organz.AppUI;
 import com.humanharvest.organz.Client;
-import com.humanharvest.organz.HistoryItem;
+import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
-
 import org.controlsfx.control.Notifications;
 
 /**
@@ -33,16 +17,11 @@ import org.controlsfx.control.Notifications;
  */
 public class SidebarController extends SubController {
 
-    private static final Logger LOGGER = Logger.getLogger(SidebarController.class.getName());
-
-    private static final String ERROR_SAVING_MESSAGE = "There was an error saving to the file specified.";
-    private static final String ERROR_LOADING_MESSAGE = "There was an error loading the file specified.";
-
     @FXML
     private Button viewClientButton, registerOrganDonationButton, viewMedicationsButton, viewClinicianButton,
             searchButton, transplantsButton, logoutButton, requestOrganDonationButton, illnessHistoryButton,
-            viewProceduresButton, createAdminButton, createClinicianButton, undoButton, redoButton, saveToFileButton,
-            loadFromFileButton, staffListButton, commandLineButton;
+            viewProceduresButton, createAdminButton, createClinicianButton, undoButton, redoButton, staffListButton,
+            commandLineButton;
 
     private ActionInvoker invoker;
     private Session session;
@@ -61,8 +40,7 @@ public class SidebarController extends SubController {
         UserType userType = session.getLoggedInUserType();
 
         Button staffButtons[] = {viewClinicianButton, searchButton, transplantsButton};
-        Button adminButtons[] = {createAdminButton, createClinicianButton, staffListButton, saveToFileButton,
-                loadFromFileButton, commandLineButton};
+        Button adminButtons[] = {createAdminButton, createClinicianButton, staffListButton, commandLineButton};
         Button clinicianButtons[] = {};
         Button clientButtons[] = {viewClientButton, registerOrganDonationButton, viewMedicationsButton,
                 illnessHistoryButton, viewProceduresButton};
@@ -249,84 +227,8 @@ public class SidebarController extends SubController {
     }
 
     /**
-     * Opens a save file dialog to choose where to save all clients in the system to a file.
-     */
-    @FXML
-    private void save() {
-        try {
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Save Clients File");
-            fileChooser.setInitialDirectory(
-                    new File(Paths.get(AppUI.class.getProtectionDomain().getCodeSource().getLocation().toURI())
-                            .getParent().toString())
-            );
-            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json"));
-            File file = fileChooser.showSaveDialog(AppUI.getWindow());
-            if (file != null) {
-                JSONConverter.saveToFile(file);
-
-                Notifications.create().title("Saved").text(String.format("Successfully saved %s clients to file %s",
-                        State.getClientManager().getClients().size(), file.getName())).showInformation();
-
-                HistoryItem save = new HistoryItem("SAVE", "The systems current state was saved.");
-                JSONConverter.updateHistory(save, "action_history.json");
-
-                invoker.resetUnsavedUpdates();
-                PageNavigator.refreshAllWindows();
-            }
-        } catch (URISyntaxException | IOException e) {
-            PageNavigator.showAlert(Alert.AlertType.WARNING, "Save Failed", ERROR_SAVING_MESSAGE);
-            LOGGER.log(Level.SEVERE, ERROR_SAVING_MESSAGE, e);
-        }
-    }
-
-    /**
-     * Opens a load file dialog to choose a file to load all clients from.
-     */
-    @FXML
-    private void load() {
-
-        // Confirm that the user wants to overwrite current data with data from a file
-        Optional<ButtonType> response = PageNavigator.showAlert(AlertType.CONFIRMATION,
-                "Confirm load from file",
-                "Loading from a file will overwrite all current data. Would you like to proceed?");
-
-        if (response.isPresent() && response.get() == ButtonType.OK) {
-            try {
-                FileChooser fileChooser = new FileChooser();
-                fileChooser.setTitle("Load Clients File");
-                fileChooser.setInitialDirectory(
-                        new File(Paths.get(AppUI.class.getProtectionDomain().getCodeSource().getLocation().toURI())
-                                .getParent().toString())
-                );
-                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json"));
-                File file = fileChooser.showOpenDialog(AppUI.getWindow());
-
-                if (file != null) {
-                    JSONConverter.loadFromFile(file);
-
-                    HistoryItem load = new HistoryItem("LOAD", "The systems state was loaded from " + file.getName());
-                    JSONConverter.updateHistory(load, "action_history.json");
-
-                    invoker.resetUnsavedUpdates();
-                    mainController.resetWindowContext();
-                    Notifications.create().title("Loaded data").text(
-                            String.format("Successfully loaded %d clients from file",
-                                    State.getClientManager().getClients().size()))
-                            .showInformation();
-                    PageNavigator.loadPage(Page.LANDING, mainController);
-                }
-            } catch (URISyntaxException | IOException | IllegalArgumentException e) {
-                PageNavigator.showAlert(Alert.AlertType.WARNING, "Load Failed",
-                        "Warning: unrecognisable or invalid file. please make\n"
-                                + "sure that you have selected the correct file type.");
-                LOGGER.log(Level.SEVERE, ERROR_LOADING_MESSAGE, e);
-            }
-        }
-    }
-
-    /**
      * Logs out the current user and sends them to the Landing page.
+     * TODO duplicated in menubarcontroller - code smell
      */
     @FXML
     private void logout() {
@@ -340,31 +242,27 @@ public class SidebarController extends SubController {
         State.addMainController(mainController);
         mainController.resetWindowContext();
         PageNavigator.loadPage(Page.LANDING, mainController);
-        HistoryItem save = new HistoryItem("LOGOUT", "The user logged out");
-        JSONConverter.updateHistory(save, "action_history.json");
     }
 
     /**
      * Undoes the most recent action performed in the system, and refreshes the current page to reflect the change.
+     * TODO duplicated in menubarcontroller - code smell
      */
     @FXML
     private void undo() {
         String undoneText = invoker.undo();
         Notifications.create().title("Undo").text(undoneText).showInformation();
-        HistoryItem save = new HistoryItem("UNDO", undoneText);
-        JSONConverter.updateHistory(save, "action_history.json");
         PageNavigator.refreshAllWindows();
     }
 
     /**
      * Redoes the most recent action performed in the system, and refreshes the current page to reflect the change.
+     * TODO duplicated in menubarcontroller - code smell
      */
     @FXML
     private void redo() {
         String redoneText = invoker.redo();
         Notifications.create().title("Redo").text(redoneText).showInformation();
-        HistoryItem save = new HistoryItem("REDO", redoneText);
-        JSONConverter.updateHistory(save, "action_history.json");
         PageNavigator.refreshAllWindows();
     }
 }

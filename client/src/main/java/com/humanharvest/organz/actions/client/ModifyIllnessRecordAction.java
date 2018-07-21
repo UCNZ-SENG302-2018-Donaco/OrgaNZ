@@ -11,9 +11,8 @@ import com.humanharvest.organz.state.ClientManager;
  * A reversible action to modify a given illness record. Only the diagnosis date, cured date and chronic status
  * attributes of the record can be changed.
  */
-public class ModifyIllnessRecordAction extends Action {
+public class ModifyIllnessRecordAction extends ClientAction {
 
-    private ClientManager manager;
     private IllnessRecord record;
     private LocalDate oldDiagnosisDate;
     private LocalDate oldCuredDate;
@@ -28,8 +27,8 @@ public class ModifyIllnessRecordAction extends Action {
      * @param record The illness record to modify.
      */
     public ModifyIllnessRecordAction(IllnessRecord record, ClientManager manager) {
+        super(record.getClient(), manager);
         this.record = record;
-        this.manager = manager;
         oldDiagnosisDate = record.getDiagnosisDate();
         oldCuredDate = record.getCuredDate();
         oldChronic = record.isChronic();
@@ -73,6 +72,7 @@ public class ModifyIllnessRecordAction extends Action {
                 Objects.equals(newChronic, oldChronic)) {
             throw new IllegalStateException("No changes were made to the IllnessRecord.");
         }
+        super.execute();
         if (!Objects.equals(newDiagnosisDate, oldDiagnosisDate)) {
             record.setDiagnosisDate(newDiagnosisDate);
         }
@@ -89,6 +89,7 @@ public class ModifyIllnessRecordAction extends Action {
 
     @Override
     protected void unExecute() {
+        super.unExecute();
         if (!Objects.equals(newDiagnosisDate, oldDiagnosisDate)) {
             record.setDiagnosisDate(oldDiagnosisDate);
         }

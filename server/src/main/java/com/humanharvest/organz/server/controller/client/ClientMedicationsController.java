@@ -9,9 +9,9 @@ import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.actions.client.AddMedicationRecordAction;
 import com.humanharvest.organz.actions.client.DeleteMedicationRecordAction;
 import com.humanharvest.organz.actions.client.ModifyMedicationRecordAction;
+import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
-import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.views.client.CreateMedicationRecordView;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -41,7 +41,7 @@ public class ClientMedicationsController {
         if (ETag == null) {
             throw new IfMatchRequiredException();
 
-        } else if (!client.getEtag().equals(ETag)) {
+        } else if (!client.getETag().equals(ETag)) {
             throw new IfMatchFailedException();
         }
     }
@@ -62,7 +62,7 @@ public class ClientMedicationsController {
         if (client.isPresent()) {
 
             HttpHeaders headers = new HttpHeaders();
-            headers.setETag(client.get().getEtag());
+            headers.setETag(client.get().getETag());
 
             return new ResponseEntity<>(client.get().getAllMedications(), headers, HttpStatus.OK);
 
@@ -86,7 +86,8 @@ public class ClientMedicationsController {
     public ResponseEntity<List<MedicationRecord>> postMedication(
             @PathVariable int uid,
             @RequestBody CreateMedicationRecordView medicationRecordView,
-            @RequestHeader(value = "If-Match", required = false) String ETag)
+            @RequestHeader(value = "If-Match", required = false) String ETag,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws IfMatchRequiredException, IfMatchFailedException {
 
         // todo auth
@@ -101,10 +102,10 @@ public class ClientMedicationsController {
 
         MedicationRecord record = new MedicationRecord(medicationRecordView.getName(), LocalDate.now(), null);
         AddMedicationRecordAction action = new AddMedicationRecordAction(client.get(), record, State.getClientManager());
-        State.getInvoker().execute(action);
+        State.getActionInvoker(authToken).execute(action);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client.get().getEtag());
+        headers.setETag(client.get().getETag());
 
         return new ResponseEntity<>(client.get().getAllMedications(), headers, HttpStatus.OK);
     }
@@ -122,7 +123,8 @@ public class ClientMedicationsController {
     public ResponseEntity deleteMedication(
             @PathVariable int uid,
             @PathVariable int id,
-            @RequestHeader(value = "If-Match", required = false) String ETag)
+            @RequestHeader(value = "If-Match", required = false) String ETag,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws IfMatchRequiredException, IfMatchFailedException {
 
         Optional<Client> client = State.getClientManager().getClientByID(uid);
@@ -143,7 +145,7 @@ public class ClientMedicationsController {
         } else {
             DeleteMedicationRecordAction action = new DeleteMedicationRecordAction(client.get(), record, State
                     .getClientManager());
-            State.getInvoker().execute(action);
+            State.getActionInvoker(authToken).execute(action);
 
             return new ResponseEntity<>(HttpStatus.CREATED);
         }
@@ -162,7 +164,8 @@ public class ClientMedicationsController {
     public ResponseEntity<MedicationRecord> postMedicationStart(
             @PathVariable int uid,
             @PathVariable int id,
-            @RequestHeader(value = "If-Match", required = false) String ETag)
+            @RequestHeader(value = "If-Match", required = false) String ETag,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws IfMatchFailedException, IfMatchRequiredException {
 
         Optional<Client> client = State.getClientManager().getClientByID(uid);
@@ -184,10 +187,10 @@ public class ClientMedicationsController {
         ModifyMedicationRecordAction action = new ModifyMedicationRecordAction(record, State.getClientManager());
         action.changeStarted(LocalDate.now());
         action.changeStopped(null);
-        State.getInvoker().execute(action);
+        State.getActionInvoker(authToken).execute(action);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client.get().getEtag());
+        headers.setETag(client.get().getETag());
 
         return new ResponseEntity<>(record, headers, HttpStatus.OK);
     }
@@ -205,7 +208,8 @@ public class ClientMedicationsController {
     public ResponseEntity<MedicationRecord> postMedicationStop(
             @PathVariable int uid,
             @PathVariable int id,
-            @RequestHeader(value = "If-Match", required = false) String ETag)
+            @RequestHeader(value = "If-Match", required = false) String ETag,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws IfMatchFailedException, IfMatchRequiredException {
 
         // todo auth
@@ -226,10 +230,10 @@ public class ClientMedicationsController {
 
         ModifyMedicationRecordAction action = new ModifyMedicationRecordAction(record, State.getClientManager());
         action.changeStopped(LocalDate.now());
-        State.getInvoker().execute(action);
+        State.getActionInvoker(authToken).execute(action);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client.get().getEtag());
+        headers.setETag(client.get().getETag());
 
         return new ResponseEntity<>(record, headers, HttpStatus.OK);
     }
