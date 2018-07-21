@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.utilities.enums.BloodType;
 import com.humanharvest.organz.utilities.enums.Gender;
@@ -21,7 +22,7 @@ import org.junit.jupiter.api.Test;
 
 public class JSONFileReaderTest {
 
-    private void checkDeserializedClientsFromValidFile(List<Client> outputClients) {
+    private static void checkDeserializedClientsFromValidFile(List<Client> outputClients) {
         // Check that all 95 Clients were deserialized.
         assertEquals(95, outputClients.size());
 
@@ -57,9 +58,8 @@ public class JSONFileReaderTest {
     @Test
     public void readAllFromValidFileTest() throws IOException {
         File inputFile = new File("src/test/resources/many_clients.json");
-        try (JSONReadClientStrategy clientStrategy = new JSONReadClientStrategy()) {
-            clientStrategy.setup(inputFile);
-            List<Client> outputClients = clientStrategy.readAll();
+        try (JSONFileReader<Client> jsonFileReader = new JSONFileReader<>(inputFile, Client.class)) {
+            List<Client> outputClients = jsonFileReader.getAll();
             checkDeserializedClientsFromValidFile(outputClients);
         }
     }
@@ -67,12 +67,12 @@ public class JSONFileReaderTest {
     @Test
     public void readAsStreamFromValidFileTest() throws IOException {
         File inputFile = new File("src/test/resources/many_clients.json");
-        try (JSONReadClientStrategy clientStrategy = new JSONReadClientStrategy()) {
-            clientStrategy.setup(inputFile);
+        try (JSONFileReader<Client> jsonFileReader = new JSONFileReader<>(inputFile, Client.class)) {
+            jsonFileReader.startStream();
 
             List<Client> outputClients = new ArrayList<>();
             while (true) {
-                Client current = clientStrategy.readNext();
+                Client current = jsonFileReader.getNext();
                 if (current == null) {
                     break;
                 }
@@ -80,6 +80,43 @@ public class JSONFileReaderTest {
             }
 
             checkDeserializedClientsFromValidFile(outputClients);
+        }
+    }
+
+    @Test
+    public void readAsStreamWithoutStartingStreamTest() {
+        File inputFile = new File("src/test/resources/many_clients.json");
+        assertThrows(IllegalStateException.class, () -> {
+            try (JSONFileReader<Client> clientFileReader = new JSONFileReader<>(inputFile, Client.class)) {
+                clientFileReader.getNext();
+            }
+        });
+    }
+
+    @Test
+    public void readAllAfterStartingStreamTest() {
+        File inputFile = new File("src/test/resources/many_clients.json");
+        assertThrows(IllegalStateException.class, () -> {
+            try (JSONFileReader<Client> clientFileReader = new JSONFileReader<>(inputFile, Client.class)) {
+                clientFileReader.startStream();
+                clientFileReader.getAll();
+            }
+        });
+    }
+
+    @Test
+    public void readPartialBadDataTest() throws IOException {
+        File inputFile = new File("src/test/resources/bad_client.json");
+        try (JSONFileReader<Client> jsonFileReader = new JSONFileReader<>(inputFile, Client.class)) {
+            jsonFileReader.startStream();
+
+            Client firstClient = jsonFileReader.getNext();
+            assertNotNull(firstClient);
+
+            assertThrows(InvalidFormatException.class, jsonFileReader::getNext);
+
+            Client thirdClient = jsonFileReader.getNext();
+            assertNotNull(thirdClient);
         }
     }
 }
