@@ -1,0 +1,127 @@
+{
+	"info": {
+		"_postman_id": "00cf48c1-3890-4be9-b94d-1850199cbc20",
+		"name": "OrgaNZ",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "clients",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8080/clients",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8080",
+					"path": [
+						"clients"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "clients/1/transplantRequests",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8080/clients/1/transplantRequests",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8080",
+					"path": [
+						"clients",
+						"1",
+						"transplantRequests"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "clients/1/transplantRequests",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"requestedOrgan\": \"LIVER\",\n  \"requestDate\": \"2018-07-18T14:11:20.202\",\n  \"resolvedDate\": \"2018-07-19T14:11:20.202\",\n  \"status\": \"WAITING\",\n  \"resolvedReason\": \"reason\"\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8080/clients/1/transplantRequests",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8080",
+					"path": [
+						"clients",
+						"1",
+						"transplantRequests"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "clients",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"uid\": 0,\n  \"firstName\": \"string\",\n  \"lastName\": \"string\",\n  \"middleName\": \"string\",\n  \"dateOfBirth\": \"1997-01-01\"\n}"
+				},
+				"url": {
+					"raw": "http://127.0.0.1:8080/clients",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "8080",
+					"path": [
+						"clients"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
