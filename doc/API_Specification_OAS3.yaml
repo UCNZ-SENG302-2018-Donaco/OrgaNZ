@@ -1023,35 +1023,6 @@ paths:
           $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
-    delete:
-      tags:
-        - Client Transplant Requests
-      security:
-        - ClinicianAccess: []
-        - AdministratorAccess: []
-      summary: Delete a transpant request
-      parameters:
-        - $ref: '#/components/parameters/etag'
-
-      responses:
-        201:
-          description: Deleted
-        400:
-          $ref: '#/components/responses/400BadRequest'
-        401:
-          $ref: '#/components/responses/401Unauthorized'
-        403:
-          $ref: '#/components/responses/403Forbidden'
-        404:
-          $ref: '#/components/responses/404NotFound'
-        412:
-          $ref: '#/components/responses/412PreconditionFailed'
-        428:
-          $ref: '#/components/responses/428PreconditionRequired'
-        500:
-          $ref: '#/components/responses/500InternalServerError'
-
-
 
 
 
