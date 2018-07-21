@@ -1,11 +1,14 @@
 package com.humanharvest.organz.resolvers.client;
 
+import java.util.List;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.views.client.CreateMedicationRecordView;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -25,39 +28,22 @@ public class AddMedicationRecordResolver {
         this.recordView = recordView;
     }
 
-    public MedicationRecord execute() {
+    public List<MedicationRecord> execute() {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setIfMatch(State.getClientEtag());
         httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
 
-        String serialized;
-
-//        try {
-//            serialized = new ObjectMapper().writeValueAsString(recordView);
-//        } catch (JsonProcessingException e) {
-//            e.printStackTrace();
-//            return;
-//        }
-
         HttpEntity entity = new HttpEntity<>(recordView, httpHeaders);
 
-        ResponseEntity<MedicationRecord> responseEntity = State.getRestTemplate()
-                .postForEntity(State.BASE_URI + "clients/" + client.getUid() + "/medications", entity,
-                        MedicationRecord.class);
+        // The full list of the clients medications is returned
+        ResponseEntity<List<MedicationRecord>> responseEntity = State.getRestTemplate()
+                .exchange(State.BASE_URI + "clients/" + client.getUid() + "/medications", HttpMethod.POST, entity,
+                        new ParameterizedTypeReference<List<MedicationRecord>>() {});
 
         State.setClientEtag(responseEntity.getHeaders().getETag());
+        client.setMedicationHistory(responseEntity.getBody());
+
         return responseEntity.getBody();
-
-
-//        ResponseEntity<MedicationRecord> responseEntity = State.getRestTemplate()
-//                .exchange(baseUrl + "clients/{uid}/medications", HttpMethod.POST, entity,
-//                        MedicationRecord.class, client.getUid());
-//
-//        State.setClientEtag(responseEntity.getHeaders().getETag());
-//
-//        if (responseEntity.getStatusCode() != HttpStatus.OK) {
-//            System.err.println(responseEntity.toString());
-//        }
     }
 
 }
