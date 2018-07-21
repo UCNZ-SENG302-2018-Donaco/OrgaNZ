@@ -112,6 +112,74 @@ public class AdministratorController {
     }
 
     /**
+     * The PATCH endpoint for updating a single administrator
+     * @param username The administrator username to update
+     * @param modifyAdministratorObject The POJO object of the modifications
+     * @param etag The corresponding If-Match header to check for concurrent update handling
+     * @return Returns an Administrator overview. Also contains an ETag header for updates
+     * @throws IfMatchRequiredException Thrown if there is no If-Match header, will result in a 428 error
+     * @throws IfMatchFailedException Thrown if the If-Match header does not match the ETag. 412 error
+     * @throws InvalidRequestException Generic 400 exception if fields are malformed or inconsistent
+     */
+    @PatchMapping("/administrators/{username}")
+    @JsonView(Views.Overview.class)
+    public ResponseEntity<Administrator> updateAdministrator(
+            @PathVariable String username,
+            @RequestBody ModifyAdministratorObject modifyAdministratorObject,
+            @RequestHeader(value = "If-Match", required = false) String etag,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authentication)
+            throws IfMatchRequiredException, IfMatchFailedException, InvalidRequestException, AuthenticationException {
+
+        //Logical steps for a PATCH
+        //We set If-Match to false so we can return a better error code than 400 which happens if a required
+        // @RequestHeader is missing, I think this can be improved with an @ExceptionHandler or similar so we don't
+        // duplicate code in tons of places but need to work it out
+
+        //Fetch the administrator given by username
+        Optional<Administrator> administrator = State.getAdministratorManager().getAdministratorByUsername(username);
+        if (!administrator.isPresent()) {
+            //Return 404 if that administrator does not exist
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        //Check authentication
+        State.getAuthenticationManager().verifyAdminAccess(authentication);
+
+        //Validate the request, if there are any errors an exception will be thrown.
+        if (!ModifyAdministratorValidator.isValid(modifyAdministratorObject)) {
+            throw new InvalidRequestException();
+        }
+
+        //Check the ETag. These are handled in the exceptions class.
+        if (etag == null) {
+            throw new IfMatchRequiredException();
+        }
+        if (!administrator.get().getEtag().equals(etag)) {
+            throw new IfMatchFailedException();
+        }
+
+
+        //Create the old details to allow undoable action
+        ModifyAdministratorObject oldClient = new ModifyAdministratorObject();
+        //Copy the values from the current client to our oldClient
+        BeanUtils.copyProperties(administrator.get(), oldClient, modifyAdministratorObject.getUnmodifiedFields());
+        //Make the action (this is a new action)
+        ModifyAdministratorByObjectAction action = new ModifyAdministratorByObjectAction(administrator.get(),
+                State.getAdministratorManager(),
+                oldClient,
+                modifyAdministratorObject);
+        //Execute action, this would correspond to a specific users invoker in full version
+        State.getInvoker().execute(action);
+
+        //Add the new ETag to the headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.setETag(administrator.get().getEtag());
+
+        //Respond, apparently updates should be 200 not 201 unlike 365 and our spec
+        return new ResponseEntity<>(administrator.get(), headers, HttpStatus.OK);
+    }
+
+    /**
      * The DELETE endpoint for removing a single administrator
      * @param username The administrator username to delete
      * @param etag The corresponding If-Match header to check for concurrent update handling

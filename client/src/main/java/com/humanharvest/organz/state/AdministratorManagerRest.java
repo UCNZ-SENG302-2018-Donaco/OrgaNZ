@@ -121,4 +121,9 @@ public class AdministratorManagerRest implements AdministratorManager {
     public Administrator getDefaultAdministrator() {
         return getAdministratorByUsername("admin").orElseThrow(IllegalStateException::new);
     }
+
+    @Override
+    public void applyChangesTo(Administrator administrator) {
+        throw new UnsupportedOperationException();
+    }
 }

@@ -64,4 +64,6 @@ public interface AdministratorManager {
      * @return the default administrator
      */
     Administrator getDefaultAdministrator();
+
+    void applyChangesTo(Administrator administrator);
 }

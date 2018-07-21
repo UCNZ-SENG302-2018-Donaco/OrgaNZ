@@ -53,7 +53,6 @@ public class ResolveTransplantRequestActionTest extends BaseTest {
         new ResolveTransplantRequestAction(testRequest, WAITING, "Waiting.", manager);
     }
 
-    @Ignore
     @Test
     public void correctResolvedDateTest() {
         Action action = new ResolveTransplantRequestAction(testRequest, CANCELLED, "Cancelled.", manager);
