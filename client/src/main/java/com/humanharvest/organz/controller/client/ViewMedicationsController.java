@@ -214,6 +214,34 @@ public class ViewMedicationsController extends SubController {
     }
 
     /**
+     * Creates and executes the resolver to update the given medication record, either setting it as a current
+     * medication or a past one
+     * @param date date to set the stop date of the medication record to, either null or the current date
+     * @param record the record to modify
+     */
+    private void updateMedicationHistory(LocalDate date, MedicationRecord record) {
+        ModifyMedicationRecordResolver resolver = new ModifyMedicationRecordResolver(client, record, date);
+
+        try {
+            resolver.execute();
+            record.setStopped(date);
+        } catch (NotFoundException e) {
+            LOGGER.log(Level.WARNING, "Client not found");
+            PageNavigator.showAlert(AlertType.WARNING, "Client or medication not found", "The client could not "
+                    + "be found on the "
+                    + "server, it may have been deleted");
+        } catch (ServerRestException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
+            PageNavigator.showAlert(AlertType.WARNING, "Server error", "Could not apply changes on the server, "
+                    + "please try again later");
+        } catch (IfMatchFailedException e) {
+            LOGGER.log(Level.INFO, "If-Match did not match");
+            PageNavigator.showAlert(AlertType.WARNING, "Outdated Data", "The client has been modified since you retrieved the data.\nIf you would still like to "
+                    + "apply these changes please submit again, otherwise refresh the page to update the data.");
+        }
+    }
+
+    /**
      * Moves the MedicationRecord selected in the current medications list to the past medications list. Also:
      * - Sets the date the client stopped taking the medication to the current date.
      * - Removes the MedicationRecord from the current medications list.
@@ -223,13 +251,7 @@ public class ViewMedicationsController extends SubController {
     private void moveMedicationToHistory() {
         MedicationRecord record = currentMedicationsView.getSelectionModel().getSelectedItem();
         if (record != null) {
-//            ModifyMedicationRecordAction action = new ModifyMedicationRecordAction(record, manager);
-//            action.changeStopped(LocalDate.now());
-            ModifyMedicationRecordResolver resolver = new ModifyMedicationRecordResolver(client, record, LocalDate
-                    .now());
-
-            //invoker.execute(action);
-            resolver.execute();
+            updateMedicationHistory(LocalDate.now(), record);
             PageNavigator.refreshAllWindows();
             refreshMedicationLists();
         }
@@ -244,10 +266,7 @@ public class ViewMedicationsController extends SubController {
     private void moveMedicationToCurrent() {
         MedicationRecord record = pastMedicationsView.getSelectionModel().getSelectedItem();
         if (record != null) {
-            ModifyMedicationRecordAction action = new ModifyMedicationRecordAction(record, manager);
-            action.changeStopped(null);
-
-            invoker.execute(action);
+            updateMedicationHistory(null, record);
             PageNavigator.refreshAllWindows();
             refreshMedicationLists();
         }

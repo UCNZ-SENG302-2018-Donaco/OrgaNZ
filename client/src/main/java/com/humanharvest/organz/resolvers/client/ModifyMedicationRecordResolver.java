@@ -29,9 +29,8 @@ public class ModifyMedicationRecordResolver {
 
         HttpEntity entity = new HttpEntity(httpHeaders);
 
-        // todo needs to be changed to use the id rather than the index once index is working
+        // todo needs to be changed to use the id rather than the index once it is working
         int id = client.getAllMedications().indexOf(record);
-
 
         String modification;
         if (stopDate == null) {
@@ -41,11 +40,10 @@ public class ModifyMedicationRecordResolver {
         }
 
         ResponseEntity<MedicationRecord> responseEntity = State.getRestTemplate().postForEntity(State.BASE_URI +
-                "clients" + client.getUid() + "/medications" + "/" + id + modification, entity, MedicationRecord.class);
+                "clients/" + client.getUid() + "/medications" + "/" + id + modification, entity, MedicationRecord
+                .class);
 
         State.setClientEtag(responseEntity.getHeaders().getETag());
         return responseEntity.getBody();
     }
-
-
 }
