@@ -1,6 +1,7 @@
 package com.humanharvest.organz.controller;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
@@ -28,11 +29,16 @@ import com.humanharvest.organz.AppUI;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.actions.ActionInvoker;
+import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.CacheManager;
-import com.humanharvest.organz.utilities.JSONConverter;
+import com.humanharvest.organz.utilities.serialization.CSVReadClientStrategy;
+import com.humanharvest.organz.utilities.serialization.ClientImporter;
+import com.humanharvest.organz.utilities.serialization.JSONFileWriter;
+import com.humanharvest.organz.utilities.serialization.JSONReadClientStrategy;
+import com.humanharvest.organz.utilities.serialization.ReadClientStrategy;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import org.controlsfx.control.Notifications;
@@ -84,6 +90,7 @@ public class MenuBarController extends SubController {
     public Menu administrationPrimaryItem;
 
     private ActionInvoker invoker;
+    private ClientManager clientManager;
     private Session session;
 
     /**
@@ -91,6 +98,7 @@ public class MenuBarController extends SubController {
      */
     public MenuBarController() {
         invoker = State.getInvoker();
+        clientManager = State.getClientManager();
         session = State.getSession();
     }
 
@@ -346,10 +354,15 @@ public class MenuBarController extends SubController {
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json"));
             File file = fileChooser.showSaveDialog(AppUI.getWindow());
             if (file != null) {
-                JSONConverter.saveToFile(file);
+                try (JSONFileWriter<Client> clientWriter = new JSONFileWriter<>(file, Client.class)) {
+                    clientWriter.overwriteWith(clientManager.getClients());
+                }
 
-                Notifications.create().title("Saved").text(String.format("Successfully saved %s clients to file '%s'.",
-                        State.getClientManager().getClients().size(), file.getName())).showInformation();
+                Notifications.create()
+                        .title("Saved Data")
+                        .text(String.format("Successfully saved %s clients to file '%s'.",
+                                clientManager.getClients().size(), file.getName()))
+                        .showInformation();
 
                 HistoryItem historyItem = new HistoryItem("SAVE",
                         String.format("The system's current state was saved to file '%s'.", file.getName()));
@@ -376,35 +389,86 @@ public class MenuBarController extends SubController {
                 "Loading from a file will overwrite all current data. Would you like to proceed?");
 
         if (response.isPresent() && response.get() == ButtonType.OK) {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Load Clients File");
             try {
-                FileChooser fileChooser = new FileChooser();
-                fileChooser.setTitle("Load Clients File");
                 fileChooser.setInitialDirectory(
                         new File(Paths.get(AppUI.class.getProtectionDomain().getCodeSource().getLocation().toURI())
-                                .getParent().toString())
-                );
-                fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json"));
-                File file = fileChooser.showOpenDialog(AppUI.getWindow());
+                                .getParent().toString()));
+            } catch (URISyntaxException exc) {
+                exc.printStackTrace();
+            }
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(
+                    "JSON/CSV files (*.json, *.csv)",
+                    "*.json", "*.csv"));
+            File file = fileChooser.showOpenDialog(AppUI.getWindow());
 
-                if (file != null) {
-                    JSONConverter.loadFromFile(file);
+            if (file != null) {
+                String format = getFileExtension(file.getName());
 
-                    HistoryItem historyItem = new HistoryItem("LOAD", "The systems state was loaded from " + file.getName());
-                    State.getSession().addToSessionHistory(historyItem);
+                try {
+                    ReadClientStrategy strategy;
+                    switch (format) {
+                        case "csv":
+                            strategy = new CSVReadClientStrategy();
+                            break;
+                        case "json":
+                            strategy = new JSONReadClientStrategy();
+                            break;
+                        default:
+                            throw new IOException(String.format("Unknown file format or extension: '%s'", format));
+                    }
+
+                    ClientImporter importer = new ClientImporter(file, strategy);
+                    importer.importAll();
+                    clientManager.setClients(importer.getValidClients());
+
+                    String errorSummary = importer.getErrorSummary();
+                    if (errorSummary.length() > 500) {
+                        errorSummary = errorSummary.substring(0, 500).concat("...");
+                    }
+
+                    String message = String.format("Loaded clients from file '%s'."
+                                    + "\n%d were valid, "
+                                    + "\n%d were invalid."
+                                    + "\n\n%s",
+                            file.getName(), importer.getValidCount(), importer.getInvalidCount(), errorSummary);
+
+                    LOGGER.log(Level.INFO, message);
+                    State.getSession().addToSessionHistory(new HistoryItem("LOAD", message));
+
+                    Notifications.create()
+                            .title("Loaded Clients")
+                            .text(message)
+                            .showInformation();
 
                     mainController.resetWindowContext();
-                    Notifications.create().title("Loaded data").text(
-                            String.format("Successfully loaded %d clients from file",
-                                    State.getClientManager().getClients().size()))
-                            .showInformation();
                     PageNavigator.loadPage(Page.LANDING, mainController);
+
+                } catch (FileNotFoundException exc) {
+                    PageNavigator.showAlert(AlertType.ERROR, "Load Failed",
+                            String.format("Could not find file: '%s'.", file.getAbsolutePath()));
+                } catch (IOException exc) {
+                    PageNavigator.showAlert(AlertType.ERROR, "Load Failed",
+                            String.format("An IO error occurred when loading from file: '%s'\n%s",
+                                    file.getName(), exc.getMessage()));
                 }
-            } catch (URISyntaxException | IOException | IllegalArgumentException e) {
-                PageNavigator.showAlert(AlertType.WARNING, "Load Failed",
-                        "Warning: unrecognisable or invalid file. please make\n"
-                                + "sure that you have selected the correct file type.");
-                LOGGER.log(Level.SEVERE, ERROR_LOADING_MESSAGE, e);
             }
+        }
+    }
+
+    /**
+     * Returns the file extension of the given file name string (in lowercase). The file extension is defined as the
+     * characters after the last "." in the file name.
+     * @param fileName The file name string.
+     * @return The file extension of the given file name.
+     */
+    private static String getFileExtension(String fileName) {
+        int lastIndex = fileName.lastIndexOf('.');
+        if (lastIndex >= 0) {
+            return fileName.substring(lastIndex + 1).toLowerCase();
+        } else {
+            return "";
         }
     }
 
@@ -474,7 +538,10 @@ public class MenuBarController extends SubController {
     @FXML
     private void undo() {
         String undoneText = invoker.undo();
-        Notifications.create().title("Undo").text(undoneText).showInformation();
+        Notifications.create()
+                .title("Undo")
+                .text(undoneText)
+                .showInformation();
         PageNavigator.refreshAllWindows();
     }
 
@@ -484,7 +551,10 @@ public class MenuBarController extends SubController {
     @FXML
     private void redo() {
         String redoneText = invoker.redo();
-        Notifications.create().title("Redo").text(redoneText).showInformation();
+        Notifications.create()
+                .title("Redo")
+                .text(redoneText)
+                .showInformation();
         PageNavigator.refreshAllWindows();
     }
 

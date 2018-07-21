@@ -661,7 +661,7 @@ public class SearchClientsControllerTest extends ControllerTest {
         clickOn("#idCol");
         TableView<Client> tableView = lookup("#tableView").query();
         Client result = tableView.getItems().get(0);
-        assertEquals(result.getUid(), 1);
+        assertEquals(result.getUid(), new Integer(1));
     }
 
     @Test

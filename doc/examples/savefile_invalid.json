@@ -857,17 +857,17 @@
   {
     "uid": 22,
     "firstName": "Lura",
-    "lastName": "Gay",
+    "lastName": "",
     "middleName": "Atticus",
     "preferredName": "",
     "currentAddress": "40 Millhouse Lane",
     "region": "GISBORNE",
-    "gender": "FEMALE",
+    "gender": "ABC",
     "bloodType": "B_NEG",
     "height": 195.0,
     "weight": 146.0,
     "dateOfBirth": {
-      "year": 1959,
+      "year": 20000,
       "month": 4,
       "day": 14
     },
@@ -3556,9 +3556,7 @@
     "changesHistory": []
   },
   {
-    "uid": 95,
-    "firstName": "Garrett",
-    "lastName": "Guerrero",
+    "uid": -5,
     "middleName": "",
     "preferredName": "",
     "currentAddress": "2 Meadow Close",
@@ -3571,6 +3569,9 @@
       "year": 2008,
       "month": 4,
       "day": 16
+    },
+    "dateOfDeath": {
+      "abc": null
     },
     "createdTimestamp": {
       "date": {
