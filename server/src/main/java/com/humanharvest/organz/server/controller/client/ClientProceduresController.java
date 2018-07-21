@@ -42,7 +42,6 @@ public class ClientProceduresController {
     @GetMapping("/clients/{uid}/procedures")
     public ResponseEntity<Collection<ProcedureRecord>> getProceduresForClient(
             @PathVariable int uid,
-            @RequestHeader(value = "If-Match", required = false) String eTag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws AuthenticationException, IfMatchFailedException, IfMatchRequiredException {
 
@@ -51,15 +50,12 @@ public class ClientProceduresController {
             // Check request has authorization to view client's procedures
             State.getAuthenticationManager().verifyClientAccess(authToken, client.get());
 
-            // Check that eTag is still valid
-            if (eTag == null) {
-                throw new IfMatchRequiredException();
-            } else if (!client.get().getETag().equals(eTag)) {
-                throw new IfMatchFailedException();
-            }
+            // Add the ETag to the headers
+            HttpHeaders headers = new HttpHeaders();
+            headers.setETag(client.get().getETag());
 
             // Returns the pending procedures for the client
-            return new ResponseEntity<>(client.get().getProcedures(), HttpStatus.OK);
+            return new ResponseEntity<>(client.get().getProcedures(), headers, HttpStatus.OK);
         } else {
             // Client does not exist, return 404
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -189,8 +185,12 @@ public class ClientProceduresController {
                 Action action = new DeleteProcedureRecordAction(client.get(), toDelete.get(), State.getClientManager());
                 State.getActionInvoker(authToken).execute(action);
 
+                // Add the new ETag to the headers
+                HttpHeaders headers = new HttpHeaders();
+                headers.setETag(client.get().getETag());
+
                 // Return OK response
-                return new ResponseEntity<>(client.get().getProcedures(), HttpStatus.CREATED);
+                return new ResponseEntity<>(client.get().getProcedures(), headers, HttpStatus.CREATED);
             }
         }
 
