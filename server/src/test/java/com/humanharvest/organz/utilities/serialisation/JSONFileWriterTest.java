@@ -1,18 +1,19 @@
 package com.humanharvest.organz.utilities.serialisation;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import static org.junit.Assert.assertEquals;
+
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.humanharvest.organz.Client;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Test;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 public class JSONFileWriterTest {
 
@@ -22,26 +23,55 @@ public class JSONFileWriterTest {
             new Client("Third", "Bobby", "Man", LocalDate.of(1996, 3, 4), 3)
     );
 
-//    @Rule
-//    public TemporaryFolder tempFolder = new TemporaryFolder();
+    @Rule
+    public TemporaryFolder tempFolder = new TemporaryFolder();
 
-    private static List<Client> readClientsFromFile(InputStream inputStream) throws IOException {
-        TypeReference<ArrayList<Client>> type = new TypeReference<ArrayList<Client>>() {
-        };
-        return JSONMapper.Mapper.readValue(inputStream, type);
+    private static List<Client> readClientsFromFile(File file) throws IOException {
+        return JSONMapper.Mapper.readValue(file, new TypeReference<List<Client>>(){
+        });
     }
 
     @Test
     public void writeToNewFileTest() throws IOException {
-        try (ByteArrayOutputStream output = new ByteArrayOutputStream()) {
-            try (JSONFileWriter<Client> fileWriter = new JSONFileWriter<>(output)) {
-                fileWriter.overrideWith(testClients);
-            }
+        File file = new File(tempFolder.getRoot(), "new_file.json");
+        try (JSONFileWriter<Client> clientJSONFileWriter = new JSONFileWriter<>(file, Client.class)) {
+            clientJSONFileWriter.overrideWith(testClients);
+            clientJSONFileWriter.close();
 
-            try (InputStream input = new ByteArrayInputStream(output.toByteArray())) {
-                List<Client> readClients = readClientsFromFile(input);
-                Assertions.assertEquals(testClients, readClients);
-            }
+            List<Client> readClients = readClientsFromFile(file);
+            assertEquals(testClients, readClients);
+        }
+    }
+
+    @Test
+    public void appendOneToExistingFileTest() throws IOException {
+        File file = new File(tempFolder.getRoot(), "existing_file.json");
+        FileWriter fw = new FileWriter(file);
+        JSONMapper.Mapper.writeValue(fw, testClients.subList(0, 2));
+        fw.close();
+
+        try (JSONFileWriter<Client> clientJSONFileWriter = new JSONFileWriter<>(file, Client.class)) {
+            clientJSONFileWriter.appendOne(testClients.get(2));
+            clientJSONFileWriter.close();
+
+            List<Client> readClients = readClientsFromFile(file);
+            assertEquals(testClients, readClients);
+        }
+    }
+
+    @Test
+    public void appendManyToExistingFileTest() throws IOException {
+        File file = new File(tempFolder.getRoot(), "existing_file.json");
+        FileWriter fw = new FileWriter(file);
+        JSONMapper.Mapper.writeValue(fw, testClients.subList(0, 1));
+        fw.close();
+
+        try (JSONFileWriter<Client> clientJSONFileWriter = new JSONFileWriter<>(file, Client.class)) {
+            clientJSONFileWriter.appendMany(testClients.subList(1, 3));
+            clientJSONFileWriter.close();
+
+            List<Client> readClients = readClientsFromFile(file);
+            assertEquals(testClients, readClients);
         }
     }
 }

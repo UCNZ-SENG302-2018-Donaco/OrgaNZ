@@ -42,7 +42,7 @@ public class Save implements Runnable {
         if (clients.isEmpty()) {
             outputStream.println("No clients exist, nothing to save");
         } else {
-            try (JSONFileWriter<Client> clientWriter = new JSONFileWriter<>(FILE)) {
+            try (JSONFileWriter<Client> clientWriter = new JSONFileWriter<>(FILE, Client.class)) {
                 clientWriter.overrideWith(clients);
 
                 LOGGER.log(Level.INFO, String.format("Saved %s clients to file", clients.size()));

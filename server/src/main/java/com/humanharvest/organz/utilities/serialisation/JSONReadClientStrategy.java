@@ -2,11 +2,9 @@ package com.humanharvest.organz.utilities.serialisation;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.io.InvalidObjectException;
 
-import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.humanharvest.organz.Client;
 
 /**
@@ -14,37 +12,30 @@ import com.humanharvest.organz.Client;
  */
 public class JSONReadClientStrategy implements ReadClientStrategy {
 
-    private Iterator<Client> clients;
+    private JSONFileReader<Client> jsonFileReader;
 
     @Override
     public void setup(File inputFile) throws IOException {
-        TypeReference<ArrayList<Client>> type = new TypeReference<ArrayList<Client>>() {
-        };
-        clients = JSONMapper.Mapper.<ArrayList<Client>>readValue(inputFile, type).iterator();
+        jsonFileReader = new JSONFileReader<>(inputFile, Client.class);
+        try {
+            jsonFileReader.startStream();
+        } catch (IllegalStateException exc) {
+            // Error if JSON file doesn't start with '{'
+            throw new IOException(exc);
+        }
     }
 
     @Override
-    public Client readNext() {
-        if (clients.hasNext()) {
-            return clients.next();
+    public Client readNext() throws IOException {
+        try {
+            return jsonFileReader.getNext();
+        } catch (InvalidFormatException e) {
+            throw new InvalidObjectException(e.getMessage());
         }
-        return null;
     }
 
     @Override
-    public void close() {
-    }
-
-    public List<Client> readAll() {
-        List<Client> result = new ArrayList<>();
-        while (true) {
-            Client client = readNext();
-            if (client == null) {
-                break;
-            }
-
-            result.add(client);
-        }
-        return result;
+    public void close() throws IOException {
+        jsonFileReader.close();
     }
 }
