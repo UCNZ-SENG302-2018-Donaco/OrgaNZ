@@ -1,8 +1,5 @@
 package com.humanharvest.organz;
 
-import static com.humanharvest.organz.utilities.enums.TransplantRequestStatus.CANCELLED;
-import static com.humanharvest.organz.utilities.enums.TransplantRequestStatus.WAITING;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
@@ -38,6 +35,7 @@ import com.humanharvest.organz.utilities.enums.BloodType;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
+import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
 import com.humanharvest.organz.views.client.Views;
 
@@ -445,7 +443,7 @@ public class Client implements ConcurrencyControlledEntity {
     public Set<Organ> getCurrentlyRequestedOrgans() {
         return transplantRequests
                 .stream()
-                .filter(request -> request.getStatus() == WAITING)
+                .filter(request -> request.getStatus() == TransplantRequestStatus.WAITING)
                 .map(TransplantRequest::getRequestedOrgan)
                 .collect(Collectors.toCollection(() -> EnumSet.noneOf(Organ.class)));
     }
@@ -828,8 +826,8 @@ public class Client implements ConcurrencyControlledEntity {
         this.dateOfDeath = dateOfDeath;
 
         for (TransplantRequest request : transplantRequests) {
-            if (request.getStatus() == WAITING) {
-                request.setStatus(CANCELLED);
+            if (request.getStatus() == TransplantRequestStatus.WAITING) {
+                request.setStatus(TransplantRequestStatus.CANCELLED);
                 request.setResolvedDate(LocalDateTime.now());
                 request.setResolvedReason("death");
             }

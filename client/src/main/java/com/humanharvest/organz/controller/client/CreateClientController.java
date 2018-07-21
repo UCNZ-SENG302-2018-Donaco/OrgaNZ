@@ -12,8 +12,6 @@ import javafx.scene.layout.Pane;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
@@ -141,7 +139,7 @@ public class CreateClientController extends SubController {
                 MainController newMain = PageNavigator.openNewWindow();
                 if (newMain != null) {
                     newMain.setWindowContext(new WindowContext.WindowContextBuilder()
-                            .setAsClinViewClientWindow()
+                            .setAsClinicianViewClientWindow()
                             .viewClient(client)
                             .build());
                     PageNavigator.loadPage(Page.VIEW_CLIENT, newMain);

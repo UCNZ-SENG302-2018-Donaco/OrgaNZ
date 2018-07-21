@@ -11,15 +11,12 @@ import java.util.logging.Logger;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
-import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
 
 /**
@@ -57,46 +54,12 @@ public final class JSONConverter {
                     writer.flush();
                 }
             }
-        } catch (IOException exc) {
-            throw new IOException(String.format("An error occurred when creating this file: %s\n%s",
-                    file.getName(), exc.getMessage()));
+        } catch (IOException e) {
+            throw new IOException(
+                    String.format("An error occurred when creating this file: %s\n%s",
+                            file.getName(), e.getMessage()),
+                    e);
         }
-    }
-
-    /**
-     * Saves the current clients list to a specified file
-     * @param file The file to be saved to
-     * @throws IOException Throws IOExceptions
-     */
-    //TODO: Fix this to use a list of clients not clientManager or something
-    public static void saveToFile(File file) throws IOException {
-//        ClientManager clientManager = State.getClientManager();
-//        try {
-//            mapper.writeValue(file, clientManager.getClients());
-//        } catch (IOException e) {
-//            LOGGER.severe(e.getMessage());
-//            throw e;
-//        }
-    }
-
-    /**
-     * Loads the clients from a specified file. Overwrites any current clients
-     * @param file The file to be loaded from
-     * @throws IOException Throws IOExceptions
-     */
-    //TODO: Fix this to use a list of clients not clientManager or something
-    public static void loadFromFile(File file) throws IOException {
-//        TypeReference type = new TypeReference<ArrayList<Client>>() {
-//        };
-//        try {
-//            ArrayList<Client> clients = mapper.readValue(file, type);
-//            ClientManager clientManager = State.getClientManager();
-//            clientManager.setClients(clients);
-//        } catch (JsonParseException | JsonMappingException e) {
-//            //Only a warning as an invalid file could have been selected by the user
-//            LOGGER.warning(e.getMessage());
-//            throw new IllegalArgumentException("Not a valid json file", e);
-//        }
     }
 
     /**
@@ -115,7 +78,7 @@ public final class JSONConverter {
 
         try {
             HistoryItem[] historyItems = mapper.readValue(historyFile, HistoryItem[].class);
-            ArrayList<HistoryItem> historyList = new ArrayList<>(Arrays.asList(historyItems));
+            List<HistoryItem> historyList = new ArrayList<>(Arrays.asList(historyItems));
             historyList.add(historyItem);
 
             writeHistoryToJSON(historyList, filename);
@@ -130,7 +93,7 @@ public final class JSONConverter {
      * @param filename The file to save the history to
      * @param historyItemList An ArrayList of all history the system has recorded.
      */
-    private static void writeHistoryToJSON(ArrayList<HistoryItem> historyItemList, String filename) {
+    private static void writeHistoryToJSON(List<HistoryItem> historyItemList, String filename) {
         File historyFile = new File(filename);
         try {
             mapper.writeValue(historyFile, historyItemList);
@@ -140,7 +103,7 @@ public final class JSONConverter {
     }
 
     public static List<HistoryItem> loadJSONtoHistory(File filename) throws IOException {
-        TypeReference type = new TypeReference<ArrayList<HistoryItem>>() {
+        TypeReference<ArrayList<HistoryItem>> type = new TypeReference<ArrayList<HistoryItem>>() {
         };
         return mapper.<ArrayList<HistoryItem>>readValue(filename, type);
     }

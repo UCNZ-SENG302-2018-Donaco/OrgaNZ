@@ -27,7 +27,7 @@ public class MenuBarClinicianViewClientTest extends ControllerTest {
         State.reset();
         State.login(testClinician);
         mainController.setWindowContext(new WindowContext.WindowContextBuilder()
-                .setAsClinViewClientWindow()
+                .setAsClinicianViewClientWindow()
                 .viewClient(testClient1)
                 .build());
     }

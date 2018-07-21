@@ -23,7 +23,6 @@ import javafx.scene.paint.Color;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
-import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.resolvers.client.MarkClientAsDeadResolver;
@@ -53,24 +52,68 @@ public class ViewClientController extends SubController {
     private final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy\nh:mm:ss a");
     private static final Logger LOGGER = Logger.getLogger(ViewClientController.class.getName());
 
-    private Session session;
-    private ClientManager manager;
-    private ActionInvoker invoker;
+    private final Session session;
+    private final ClientManager manager;
     private Client viewedClient;
 
     @FXML
-    private Pane sidebarPane, idPane, inputsPane, menuBarPane;
+    private Pane sidebarPane;
     @FXML
-    public Button searchClientButton;
+    private Pane idPane;
     @FXML
-    private Label creationDate, lastModified, noClientLabel, fnameLabel, lnameLabel, dobLabel,
-            dodLabel, heightLabel, weightLabel, ageDisplayLabel, ageLabel, BMILabel;
+    private Pane inputsPane;
     @FXML
-    private TextField id, fname, lname, mname, pname, height, weight, address;
+    private Pane menuBarPane;
     @FXML
-    private DatePicker dob, dod;
+    private Button searchClientButton;
     @FXML
-    private ChoiceBox<Gender> gender, genderIdentity;
+    private Label creationDate;
+    @FXML
+    private Label lastModified;
+    @FXML
+    private Label noClientLabel;
+    @FXML
+    private Label fnameLabel;
+    @FXML
+    private Label lnameLabel;
+    @FXML
+    private Label dobLabel;
+    @FXML
+    private Label dodLabel;
+    @FXML
+    private Label heightLabel;
+    @FXML
+    private Label weightLabel;
+    @FXML
+    private Label ageDisplayLabel;
+    @FXML
+    private Label ageLabel;
+    @FXML
+    private Label bmiLabel;
+    @FXML
+    private TextField id;
+    @FXML
+    private TextField fname;
+    @FXML
+    private TextField lname;
+    @FXML
+    private TextField mname;
+    @FXML
+    private TextField pname;
+    @FXML
+    private TextField height;
+    @FXML
+    private TextField weight;
+    @FXML
+    private TextField address;
+    @FXML
+    private DatePicker dob;
+    @FXML
+    private DatePicker dod;
+    @FXML
+    private ChoiceBox<Gender> gender;
+    @FXML
+    private ChoiceBox<Gender> genderIdentity;
     @FXML
     private ChoiceBox<BloodType> btype;
     @FXML
@@ -78,7 +121,6 @@ public class ViewClientController extends SubController {
 
     public ViewClientController() {
         manager = State.getClientManager();
-        invoker = State.getInvoker();
         session = State.getSession();
     }
 
@@ -253,14 +295,14 @@ public class ViewClientController extends SubController {
      */
     private boolean checkMandatoryFields() {
         boolean update = true;
-        if (fname.getText().equals("")) {
+        if (fname.getText().isEmpty()) {
             fnameLabel.setTextFill(Color.RED);
             update = false;
         } else {
             fnameLabel.setTextFill(Color.BLACK);
         }
 
-        if (lname.getText().equals("")) {
+        if (lname.getText().isEmpty()) {
             lnameLabel.setTextFill(Color.RED);
             update = false;
         } else {
@@ -359,18 +401,26 @@ public class ViewClientController extends SubController {
                     deadResolver.execute();
                 } catch (NotFoundException e) {
                     LOGGER.log(Level.WARNING, "Client not found");
-                    PageNavigator.showAlert(AlertType.WARNING, "Client not found", "The client could not be found on the "
-                            + "server, it may have been deleted");
+                    PageNavigator.showAlert(
+                            AlertType.WARNING,
+                            "Client not found",
+                            "The client could not be found on the server, it may have been deleted");
                     return false;
                 } catch (ServerRestException e) {
                     LOGGER.log(Level.WARNING, e.getMessage(), e);
-                    PageNavigator.showAlert(AlertType.WARNING, "Server error", "Could not apply changes on the server, "
-                            + "please try again later");
+                    PageNavigator.showAlert(
+                            AlertType.WARNING,
+                            "Server error",
+                            "Could not apply changes on the server, please try again later");
                     return false;
                 } catch (IfMatchFailedException e) {
                     LOGGER.log(Level.INFO, "If-Match did not match");
-                    PageNavigator.showAlert(AlertType.WARNING, "Outdated Data", "The client has been modified since you retrieved the data.\nIf you would still like to "
-                            + "apply these changes please submit again, otherwise refresh the page to update the data.");
+                    PageNavigator.showAlert(
+                            AlertType.WARNING,
+                            "Outdated Data",
+                            "The client has been modified since you retrieved the data.\n"
+                                    + "If you would still like to apply these changes please submit again, "
+                                    + "otherwise refresh the page to update the data.");
                     return false;
                 }
                 clientDied = true;
@@ -432,7 +482,10 @@ public class ViewClientController extends SubController {
             return false;
         } catch (IfMatchFailedException e) {
             LOGGER.log(Level.INFO, "If-Match did not match");
-            PageNavigator.showAlert(AlertType.WARNING, "Outdated Data", "The client has been modified since you retrieved the data.\nIf you would still like to "
+            PageNavigator.showAlert(
+                    AlertType.WARNING,
+                    "Outdated Data",
+                    "The client has been modified since you retrieved the data.\nIf you would still like to "
                     + "apply these changes please submit again, otherwise refresh the page to update the data.");
             return false;
         }
@@ -446,7 +499,7 @@ public class ViewClientController extends SubController {
      * Displays the currently viewed clients BMI.
      */
     private void displayBMI() {
-        BMILabel.setText(String.format("%.01f", viewedClient.getBMI()));
+        bmiLabel.setText(String.format("%.01f", viewedClient.getBMI()));
     }
 
     /**

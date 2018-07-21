@@ -35,7 +35,7 @@ public class SidebarControllerClinViewClientTest extends ControllerTest {
         State.login(testClinician);
         State.getClientManager().addClient(client);
         State.getClinicianManager().addClinician(testClinician);
-        mainController.setWindowContext(new WindowContextBuilder().setAsClinViewClientWindow().viewClient(client).build());
+        mainController.setWindowContext(new WindowContextBuilder().setAsClinicianViewClientWindow().viewClient(client).build());
     }
 
     // Test clicking on action buttons

@@ -2,6 +2,7 @@ package com.humanharvest.organz.controller;
 
 import static org.mockito.Mockito.mock;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -47,7 +48,7 @@ public abstract class ControllerTest extends ApplicationTest {
     }
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) throws IOException {
         // Load main pane and controller
         FXMLLoader mainLoader = new FXMLLoader(getClass().getResource(Page.MAIN.getPath()));
         Pane mainPane = mainLoader.load();
@@ -74,8 +75,6 @@ public abstract class ControllerTest extends ApplicationTest {
         mainController.setSubController(pageController);
     }
 
-
-
     /**
      * Get the top modal window.
      * @return the top modal window
@@ -93,20 +92,14 @@ public abstract class ControllerTest extends ApplicationTest {
                 .orElse(null);
     }
 
-
     @After
     public void killAllWindows() {
         Stage stage = getTopModalStage();
         State.reset();
-        try {
-            Parent parent = stage.getScene().getRoot();
-            if (parent instanceof DialogPane) {
-                Platform.runLater(stage::close);
-            }
-        } catch (NullPointerException e) {
-
+        Parent parent = stage.getScene().getRoot();
+        if (parent instanceof DialogPane) {
+            Platform.runLater(stage::close);
         }
-
     }
 
     protected abstract Page getPage();

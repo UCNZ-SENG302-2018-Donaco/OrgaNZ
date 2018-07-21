@@ -218,7 +218,7 @@ public class TransplantsController extends SubController {
                     MainController newMain = PageNavigator.openNewWindow();
                     if (newMain != null) {
                         newMain.setWindowContext(new WindowContextBuilder()
-                                .setAsClinViewClientWindow()
+                                .setAsClinicianViewClientWindow()
                                 .viewClient(client)
                                 .build());
                         PageNavigator.loadPage(Page.VIEW_CLIENT, newMain);

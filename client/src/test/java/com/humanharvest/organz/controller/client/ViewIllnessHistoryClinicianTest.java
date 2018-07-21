@@ -86,7 +86,7 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
         State.reset();
         State.login(testClinician);
         mainController.setWindowContext(new WindowContext.WindowContextBuilder()
-                .setAsClinViewClientWindow()
+                .setAsClinicianViewClientWindow()
                 .viewClient(testClient)
                 .build());
         resetTestClientIllnessHistory();

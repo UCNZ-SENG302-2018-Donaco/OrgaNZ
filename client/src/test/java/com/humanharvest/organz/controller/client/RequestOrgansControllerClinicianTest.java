@@ -49,7 +49,7 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
         State.reset();
         State.login(testClinician);
         mainController.setWindowContext(new WindowContextBuilder()
-                .setAsClinViewClientWindow()
+                .setAsClinicianViewClientWindow()
                 .viewClient(testClient)
                 .build());
     }
