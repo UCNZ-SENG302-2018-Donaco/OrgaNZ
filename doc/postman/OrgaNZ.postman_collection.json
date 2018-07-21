@@ -81,11 +81,11 @@
 							},
 							{
 								"key": "X-Auth-Token",
-								"value": "{{auth_header_value}} "
+								"value": "{{auth_header_value}}"
 							},
 							{
 								"key": "If-Match",
-								"value": "\"-190481923\""
+								"value": "{{e_tag}}"
 							}
 						],
 						"body": {
@@ -156,12 +156,12 @@
 							},
 							{
 								"key": "If-Match",
-								"value": "\"-190481923\""
+								"value": "{{e_tag}}"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"summary\": \"Heart Transplant\",\n\t\"description\": \"To fix my achy-breaky heart.\",\n\t\"date\": \"2017-06-01\",\n\t\"affectedOrgans\": [\n\t\t\"HEART\"\n\t]\n}"
+							"raw": "{\n\t\"id\": 1,\n\t\"summary\": \"Heart Transplant\",\n\t\"description\": \"To fix my achy-breaky heart.\",\n\t\"date\": \"2017-06-01\",\n\t\"affectedOrgans\": [\n\t\t\"HEART\"\n\t]\n}"
 						},
 						"url": {
 							"raw": "localhost:8080/clients/2/procedures",
@@ -187,20 +187,24 @@
 							{
 								"key": "X-Auth-Token",
 								"value": "{{auth_header_value}}"
+							},
+							{
+								"key": "If-Match",
+								"value": "{{e_tag}}"
 							}
 						],
 						"body": {},
 						"url": {
-							"raw": "localhost:8080/clients/3/procedures/5",
+							"raw": "localhost:8080/clients/2/procedures/1",
 							"host": [
 								"localhost"
 							],
 							"port": "8080",
 							"path": [
 								"clients",
-								"3",
+								"2",
 								"procedures",
-								"5"
+								"1"
 							]
 						},
 						"description": ""
@@ -350,7 +354,12 @@
 				"id": "d125e162-dbde-44c5-804d-3df959191384",
 				"type": "text/javascript",
 				"exec": [
-					""
+					"pm.test(\"Set ETag header for next request\", function() {",
+					"    let etag = responseHeaders.ETag;",
+					"    if (typeof etag !== \"undefined\") {",
+					"        postman.setGlobalVariable(\"e_tag\", etag);",
+					"    }",
+					"});"
 				]
 			}
 		}
