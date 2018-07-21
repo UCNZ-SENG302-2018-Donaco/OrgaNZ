@@ -18,8 +18,6 @@ import org.springframework.http.ResponseEntity;
 
 public class AddMedicationRecordResolver {
 
-    private static final String baseUrl = "http://localhost:8080/";
-
     private Client client;
     private CreateMedicationRecordView recordView;
 
