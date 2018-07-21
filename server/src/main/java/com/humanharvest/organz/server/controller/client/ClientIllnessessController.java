@@ -20,13 +20,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 public class ClientIllnessessController {
@@ -109,7 +103,7 @@ public class ClientIllnessessController {
 
     @PostMapping("/clients/{uid}/illnesses")
     @JsonView(Views.Overview.class)
-    public ResponseEntity <IllnessRecord>postIllness(@RequestBody CreateIllnessView illnessView,
+    public ResponseEntity <IllnessRecord> postIllness(@RequestBody CreateIllnessView illnessView,
             @PathVariable int uid)
             throws InvalidRequestException {
 
@@ -127,5 +121,24 @@ public class ClientIllnessessController {
         headers.setETag(client.get().getETag());
 
         return new ResponseEntity<>(record,headers,HttpStatus.CREATED);
+    }
+
+    @DeleteMapping("/clients/{uid}/illnesses/{id}")
+    @JsonView(Views.Overview.class)
+    public ResponseEntity<IllnessRecord> deleteIllness(@PathVariable int uid, @PathVariable int d) throws InvalidRequestException {
+        Optional<Client> client = State.getClientManager().getClientByID(uid);
+        if (!client.isPresent()) {
+            //Return 404 if that client does not exist
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        IllnessRecord removeRecord = client.get().getAllIllnessHistory().get(uid);
+        client.get().deleteIllnessRecord(removeRecord);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setETag(client.get().getETag());
+
+        return new ResponseEntity<>(removeRecord,headers,HttpStatus.OK);
+
+
     }
 }
