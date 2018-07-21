@@ -16,13 +16,10 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import com.humanharvest.organz.Client;
-import com.humanharvest.organz.utilities.enums.BloodType;
-import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.enums.Region;
 
 @JsonSerialize(using = ModifyProceduresObjectSerializer.class)
-public class ModifyProceduresObject {
+public class ModifyProcedureObject {
 
 
     private Long id;
@@ -36,7 +33,7 @@ public class ModifyProceduresObject {
     @JsonIgnore
     private Set<Field> modifiedFields = new HashSet<>();
 
-    public ModifyProceduresObject() {}
+    public ModifyProcedureObject() {}
 
     @JsonIgnore
     public Set<Field> getModifiedFields() {
@@ -46,7 +43,7 @@ public class ModifyProceduresObject {
     @JsonIgnore
     public String[] getUnmodifiedFields() {
         //Get all fields
-        List<Field> allFields = new ArrayList<>(Arrays.asList(ModifyProceduresObject.class.getDeclaredFields()));
+        List<Field> allFields = new ArrayList<>(Arrays.asList(ModifyProcedureObject.class.getDeclaredFields()));
         //Remove the ones that have been modified
         allFields.removeAll(modifiedFields);
         //Convert to a list of strings
@@ -128,18 +125,18 @@ public class ModifyProceduresObject {
     }
 }
 
-class ModifyProceduresObjectSerializer extends StdSerializer<ModifyProceduresObject> {
+class ModifyProceduresObjectSerializer extends StdSerializer<ModifyProcedureObject> {
 
     public ModifyProceduresObjectSerializer() {
         this(null);
     }
 
-    public ModifyProceduresObjectSerializer(Class<ModifyProceduresObject> t) {
+    public ModifyProceduresObjectSerializer(Class<ModifyProcedureObject> t) {
         super(t);
     }
 
     @Override
-    public void serialize(ModifyProceduresObject o, JsonGenerator jgen,
+    public void serialize(ModifyProcedureObject o, JsonGenerator jgen,
                           SerializerProvider serializerProvider) throws IOException {
         jgen.writeStartObject();
         for (Field field : o.getModifiedFields()) {
