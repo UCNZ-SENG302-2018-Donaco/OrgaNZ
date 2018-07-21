@@ -42,10 +42,17 @@ public class ClientProceduresController {
     @GetMapping("/clients/{uid}/procedures")
     public ResponseEntity<Collection<ProcedureRecord>> getProceduresForClient(
             @PathVariable Integer uid,
+            @RequestHeader(value = "If-Match", required = false) String eTag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws AuthenticationException {
 
         Optional<Client> client = State.getClientManager().getClientByID(uid);
+        if (eTag == null) {
+            throw new IfMatchRequiredException();
+        }
+        if (!client.get().getETag().equals(eTag)) {
+            throw new IfMatchFailedException();
+        }
         if (client.isPresent()) {
             // Check request has authorization to view client's procedures
             State.getAuthenticationManager().verifyClientAccess(authToken, client.get());
@@ -61,6 +68,7 @@ public class ClientProceduresController {
     public ResponseEntity<Collection<ProcedureRecord>> createProcedureRecord(
             @RequestBody ProcedureRecord procedureRecord,
             @PathVariable int uid,
+            @RequestHeader(value = "If-Match", required = false) String eTag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws AuthenticationException {
 
@@ -69,6 +77,12 @@ public class ClientProceduresController {
 
         System.out.println(authToken);
         Optional<Client> client = State.getClientManager().getClientByID(uid);
+        if (eTag == null) {
+            throw new IfMatchRequiredException();
+        }
+        if (!client.get().getETag().equals(eTag)) {
+            throw new IfMatchFailedException();
+        }
         if (client.isPresent()) {
             // Execute add procedure action
             Action action = new AddProcedureRecordAction(client.get(), procedureRecord, State.getClientManager());
@@ -85,7 +99,7 @@ public class ClientProceduresController {
     @JsonView(Views.Overview.class)
     public ResponseEntity<ProcedureRecord> modifyProcedureRecord(
             @RequestBody ModifyProceduresObject modifyProceduresObject,
-            @RequestHeader(value = "If-Match", required = false) String etag,
+            @RequestHeader(value = "If-Match", required = false) String eTag,
             @PathVariable int uid,
             @PathVariable int id,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken) throws AuthenticationException {
@@ -104,10 +118,10 @@ public class ClientProceduresController {
             System.out.println("Procedure record does not exist");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        if (etag == null) {
+        if (eTag == null) {
             throw new IfMatchRequiredException();
         }
-        if (!client.get().getETag().equals(etag)) {
+        if (!client.get().getETag().equals(eTag)) {
             throw new IfMatchFailedException();
         }
 
@@ -129,6 +143,7 @@ public class ClientProceduresController {
     public ResponseEntity deleteProcedureRecord(
             @PathVariable int uid,
             @PathVariable int id,
+            @RequestHeader(value = "If-Match", required = false) String eTag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws AuthenticationException {
 
@@ -149,6 +164,12 @@ public class ClientProceduresController {
                 // Return OK response
                 return new ResponseEntity<>(client.get().getProcedures(), HttpStatus.CREATED);
             }
+        }
+        if (eTag == null) {
+            throw new IfMatchRequiredException();
+        }
+        if (!client.get().getETag().equals(eTag)) {
+            throw new IfMatchFailedException();
         }
 
         // No client/procedure exists with those ids, return 404

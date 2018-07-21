@@ -6,6 +6,7 @@ import com.humanharvest.organz.server.Application;
 import com.humanharvest.organz.state.AuthenticationManagerFake;
 import com.humanharvest.organz.state.State;
 import org.junit.Before;
+import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,7 +30,18 @@ public class ClientProceduresControllerTest {
 
     private MockMvc mockMvc;
     private Client testClient;
-    private ProcedureRecord procedureRecord;
+    private String VALID_AUTH = "valid auth";
+    private String INVALID_AUTH = "invalid auth";
+
+    LocalDate localDate;
+    ProcedureRecord procedureRecord1 = new ProcedureRecord(
+            "Liver transplant",
+            "Patient needs a liver transplant,",
+            localDate);
+    ProcedureRecord procedureRecord2 = new ProcedureRecord(
+            "Hip-bone reconstruction",
+            "Patient needs a hip-bone reconstruction",
+            localDate);
 
     @Autowired
     WebApplicationContext webApplicationContext;
@@ -41,12 +53,30 @@ public class ClientProceduresControllerTest {
         this.mockMvc = webAppContextSetup(webApplicationContext).build();
         testClient = new Client("John", "Freddy", "Doe", LocalDate.now(), 1);
         State.getClientManager().addClient(testClient);
+        testClient.addProcedureRecord(procedureRecord1);
+        testClient.addProcedureRecord(procedureRecord2);
+
     }
 
 
 
     //------------GET---------------
     //------------POST---------------
+
+    @Test
+    public void createValidProcedure() throws Exception {    }
+
+    @Test
+    public void createInvalidProcedureIncorrectDateFormat() throws Exception{    }
+
+    @Test
+    public void createInvalidProcedureInvalidAuth() throws Exception{    }
+
+    @Test
+    public void createInvalidProcedureSummary() throws Exception{    }
+
+    @Test
+    public void createInvalidProcedureDescription() throws Exception{    }
     //------------PATCH---------------
     //------------DELETE---------------
 }
