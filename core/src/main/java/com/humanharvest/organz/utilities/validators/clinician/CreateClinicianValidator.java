@@ -2,6 +2,7 @@ package com.humanharvest.organz.utilities.validators.clinician;
 
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.utilities.validators.NotEmptyStringValidator;
+import com.humanharvest.organz.views.clinician.ModifyClinicianObject;
 
 /**
  * Class to ensure that all clinician's fields are valid

@@ -16,12 +16,16 @@ import java.nio.charset.Charset;
 import java.time.LocalDate;
 
 
+import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.Clinician;
+import com.humanharvest.organz.state.AdministratorManager;
+import com.humanharvest.organz.state.AdministratorManagerMemory;
 import com.humanharvest.organz.state.AuthenticationManagerFake;
 import com.humanharvest.organz.state.State;
 
 import com.humanharvest.organz.utilities.enums.Region;
 import org.hamcrest.Matchers;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,12 +48,14 @@ public class ClinicianControllerTest {
     private MockMvc mockMvc;
     private Clinician testClinician;
 
+
     @Autowired
     WebApplicationContext webApplicationContext;
 
     @Before
     public void init() {
         State.reset();
+        State.setAuthenticationManager(new AuthenticationManagerFake());
         this.mockMvc = webAppContextSetup(webApplicationContext).build();
         testClinician = new Clinician("Shawn", "", "Michaels", "1", Region.UNSPECIFIED, 1, "hi");
         State.setAuthenticationManager(new AuthenticationManagerFake());
@@ -78,9 +84,6 @@ public class ClinicianControllerTest {
     public void getAuth() throws Exception {
         //TODO auth for 401's and 403's
     }
-
-
-
     // /clinician/{staffId} endpoints
 
     @Test
@@ -155,6 +158,65 @@ public class ClinicianControllerTest {
     }
 
     //------------PATCH---------------
+
+    // Patching with only 2 params
+    @Test
+    public void patchValidParams() throws Exception {
+        String json = "{\"password\": \"ok\", \"region\": \"AUCKLAND\"}";
+        mockMvc.perform(patch("/clinicians/0")
+                .contentType(contentType)
+                .content(json))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.staffId", is(0)))
+                .andExpect(jsonPath("$.firstName", is("admin")))
+                .andExpect(jsonPath("$.lastName", is("admin")))
+                .andExpect(jsonPath("$.middleName", is(Matchers.isEmptyOrNullString())))
+                .andExpect(jsonPath("$.workAddress", is("admin")))
+                .andExpect(jsonPath("$.password", is("ok")))
+                .andExpect(jsonPath("$.region", is("AUCKLAND")))
+                .andExpect(jsonPath("$.createdOn", Matchers.anything()))
+                .andExpect(jsonPath("$.modifiedOn", Matchers.anything()));
+    }
+
+    // Patching all params
+    @Test
+    public void validPatchAll() throws Exception {
+        String json = "{\"firstName\": \"jan\",  \"lastName\": \"vincent\",  "
+                + "\"middleName\": \"michael\", \"workAddress\": \"my home\",   \"password\": \"ok\", "
+                + "\"region\": \"UNSPECIFIED\"}";
+        mockMvc.perform(patch("/clinicians/0")
+                .contentType(contentType)
+                .content(json))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.staffId", is(0)))
+                .andExpect(jsonPath("$.firstName", is("jan")))
+                .andExpect(jsonPath("$.lastName", is("vincent")))
+                .andExpect(jsonPath("$.middleName", is("michael")))
+                .andExpect(jsonPath("$.workAddress", is("my home")))
+                .andExpect(jsonPath("$.password", is("ok")))
+                .andExpect(jsonPath("$.region", is("UNSPECIFIED")))
+                .andExpect(jsonPath("$.createdOn", Matchers.anything()))
+                .andExpect(jsonPath("$.modifiedOn", Matchers.anything()));
+    }
+
+    // Attempting to patch the Id (it is a unique identifier)
+    @Test
+    public void invalidPatchId() throws Exception {
+        String json = "{\"staffId\": \"5\"}";
+        mockMvc.perform(patch("/clinicians/0")
+                .contentType(contentType)
+                .content(json))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void patchNonExistingClinician() throws Exception {
+        String json = "{\"password\": \"ok\", \"region\": \"AUCKLAND\"}";
+        mockMvc.perform(patch("/clinicians/200")
+                .contentType(contentType)
+                .content(json))
+                .andExpect(status().isBadRequest());
+    }
 
 
     //------------DELETE---------------

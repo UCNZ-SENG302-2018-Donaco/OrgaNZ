@@ -12,6 +12,7 @@ import com.humanharvest.organz.actions.clinician.ModifyClinicianByObjectAction;
 import com.humanharvest.organz.server.exceptions.GlobalControllerExceptionHandler;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.validators.clinician.CreateClinicianValidator;
+import com.humanharvest.organz.utilities.validators.clinician.ModifyClinicianValidator;
 import com.humanharvest.organz.views.client.Views;
 import com.humanharvest.organz.views.clinician.ModifyClinicianObject;
 import org.springframework.beans.BeanUtils;
@@ -109,11 +110,16 @@ public class ClinicianController {
 
         Optional<Clinician> clinician = State.getClinicianManager().getClinicianByStaffId(staffId);
 
+
+        if (editedClinician.getStaffId() != staffId) { // Cannot patch the unique id
+            throw new GlobalControllerExceptionHandler.InvalidRequestException();
+        }
+
         if (clinician.isPresent()) {
+            System.out.println(State.getAuthenticationManager());
             State.getAuthenticationManager().vefifyClinicianAccess(authToken, clinician.get());
 
-            //TODO: Replace this with the actual validator
-            if (true) { //CreateClinicianValidator.isValid(editedClinician)) {
+            if (ModifyClinicianValidator.isValid((editedClinician))) { // {
 
                 ModifyClinicianObject oldClinician = new ModifyClinicianObject();
                 BeanUtils.copyProperties(editedClinician, oldClinician, editedClinician.getUnmodifiedFields());

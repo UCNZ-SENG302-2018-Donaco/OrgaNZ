@@ -87,6 +87,7 @@ public class ViewClinicianController extends SubController {
 
         loadClinicianData();
         loadClinicianButton.setDisable(true); //TODO discuss whether we even need this?
+        loadStaffIdTextField.setDisable(true);
     }
 
     /**
