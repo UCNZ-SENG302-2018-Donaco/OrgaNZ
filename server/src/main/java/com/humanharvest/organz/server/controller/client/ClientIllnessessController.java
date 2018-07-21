@@ -89,10 +89,11 @@ public class ClientIllnessessController {
         //Copy the values from the current record to our oldrecord
         BeanUtils.copyProperties(record, oldIllnessRecord, modifyIllnessObject.getUnmodifiedFields());
         //Make the action (this is a new action)
-        ModifyIllnessRecordByObjectAction action = new ModifyIllnessRecordByObjectAction(client.get(),
+        ModifyIllnessRecordByObjectAction action = new ModifyIllnessRecordByObjectAction(record,
                 State.getClientManager(),oldIllnessRecord,modifyIllnessObject);
         //Execute action, this would correspond to a specific users invoker in full version
         State.getActionInvoker(authToken).execute(action);
+
 
         //Add the new ETag to the headers
         HttpHeaders headers = new HttpHeaders();
@@ -125,14 +126,14 @@ public class ClientIllnessessController {
 
     @DeleteMapping("/clients/{uid}/illnesses/{id}")
     @JsonView(Views.Overview.class)
-    public ResponseEntity<IllnessRecord> deleteIllness(@PathVariable int uid, @PathVariable int d) throws InvalidRequestException {
+    public ResponseEntity<IllnessRecord> deleteIllness(@PathVariable int uid, @PathVariable int id) throws InvalidRequestException {
         Optional<Client> client = State.getClientManager().getClientByID(uid);
         if (!client.isPresent()) {
             //Return 404 if that client does not exist
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        IllnessRecord removeRecord = client.get().getAllIllnessHistory().get(uid);
+        IllnessRecord removeRecord = client.get().getAllIllnessHistory().get(id-1);
         client.get().deleteIllnessRecord(removeRecord);
         HttpHeaders headers = new HttpHeaders();
         headers.setETag(client.get().getETag());

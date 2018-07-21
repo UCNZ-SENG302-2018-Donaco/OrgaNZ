@@ -29,7 +29,6 @@
       <artifactId>openjfx-monocle</artifactId>
       <version>8u76-b04</version>
       <scope>system</scope>
-      <systemPath>../lib/openjfx-monocle-8u76-b04.jar</systemPath>
     </dependency>
     <dependency>
       <groupId>info.picocli</groupId>

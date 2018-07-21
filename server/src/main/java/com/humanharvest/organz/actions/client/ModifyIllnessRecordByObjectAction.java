@@ -1,33 +1,42 @@
 package com.humanharvest.organz.actions.client;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.views.client.ModifyIllnessObject;
 import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.state.ClientManager;
 import org.springframework.beans.BeanUtils;
 
 public class ModifyIllnessRecordByObjectAction extends ClientAction {
-
+  private IllnessRecord oldRecord;
+  private IllnessRecord record;
   private ModifyIllnessObject oldIllnessDetails;
   private ModifyIllnessObject newIllnessDetails;
 
-  public ModifyIllnessRecordByObjectAction(Client client, ClientManager manager, ModifyIllnessObject oldIllnessDetails,
+  public ModifyIllnessRecordByObjectAction(IllnessRecord oldRecord, ClientManager manager, ModifyIllnessObject oldIllnessDetails,
       ModifyIllnessObject newIllnessDetails) {
-    super(client, manager);
+    super(oldRecord.getClient(), manager);
     this.oldIllnessDetails = oldIllnessDetails;
     this.newIllnessDetails = newIllnessDetails;
+    this.oldRecord = oldRecord;
   }
 
   @Override
-  protected void execute() {
-    BeanUtils.copyProperties(newIllnessDetails, client, newIllnessDetails.getUnmodifiedFields());
-    manager.applyChangesTo(client);
+  public void execute() {
+    IllnessRecord record = new IllnessRecord(newIllnessDetails.getIllnessName(),
+        newIllnessDetails.getDiagnosisDate(),newIllnessDetails.getCuredDate(),newIllnessDetails.isChronic());
+    BeanUtils.copyProperties(oldIllnessDetails.getUnmodifiedFields(),record);
+    client.addIllnessRecord(record);
+    client.deleteIllnessRecord(oldRecord);
   }
 
   @Override
   protected void unExecute() {
-    BeanUtils.copyProperties(oldIllnessDetails, client, oldIllnessDetails.getUnmodifiedFields());
-    manager.applyChangesTo(client);
+    IllnessRecord record = new IllnessRecord(newIllnessDetails.getIllnessName(),
+        newIllnessDetails.getDiagnosisDate(),newIllnessDetails.getCuredDate(),newIllnessDetails.isChronic());
+    BeanUtils.copyProperties(oldIllnessDetails.getUnmodifiedFields(),record);
+    client.addIllnessRecord(oldRecord);
+    client.deleteIllnessRecord(record);
   }
 
   @Override
