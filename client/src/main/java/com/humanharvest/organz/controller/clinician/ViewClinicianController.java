@@ -62,6 +62,8 @@ public class ViewClinicianController extends SubController {
     @FXML
     private ChoiceBox<Region> region;
     @FXML
+    private ChoiceBox country;
+    @FXML
     private Button saveChangesButton, loadClinicianButton;
 
     public ViewClinicianController() {

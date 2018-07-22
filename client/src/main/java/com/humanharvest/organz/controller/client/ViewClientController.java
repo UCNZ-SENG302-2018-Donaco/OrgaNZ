@@ -75,6 +75,8 @@ public class ViewClientController extends SubController {
     private ChoiceBox<BloodType> btype;
     @FXML
     private ChoiceBox<Region> region;
+    @FXML
+    private ChoiceBox country;
 
     public ViewClientController() {
         manager = State.getClientManager();
