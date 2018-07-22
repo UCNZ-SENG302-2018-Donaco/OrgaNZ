@@ -42,6 +42,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.testfx.api.FxRobot;
 
+@Ignore
 public class ViewMedicationsControllerClinicianTest extends ControllerTest {
 
     private final MedicationRecord[] testPastMedicationRecords = {

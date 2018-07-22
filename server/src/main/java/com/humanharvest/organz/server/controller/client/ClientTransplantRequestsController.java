@@ -119,14 +119,14 @@ public class ClientTransplantRequestsController {
      * Creates a transplant request.
      * @param transplantRequest the transplant request to add
      * @param id the client's ID
-     * @param ETag A hashed value of the object used for optimistic concurrency control
+     * @param etag A hashed value of the object used for optimistic concurrency control
      * @return list of all transplant requests for that client
      */
     @PostMapping("/clients/{id}/transplantRequests")
     public ResponseEntity<Collection<TransplantRequest>> postTransplantRequest(
             @RequestBody TransplantRequest transplantRequest,
             @PathVariable int id,
-            @RequestHeader(value = "If-Match", required = false) String ETag,
+            @RequestHeader(value = "If-Match", required = false) String etag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {
 
         // Get the client given by the ID
@@ -138,10 +138,10 @@ public class ClientTransplantRequestsController {
             State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
 
             // Check etag
-            if (ETag == null) {
+            if (etag == null) {
                 throw new IfMatchRequiredException();
             }
-            if (!client.getETag().equals(ETag)) {
+            if (!client.getETag().equals(etag)) {
                 throw new IfMatchFailedException();
             }
 

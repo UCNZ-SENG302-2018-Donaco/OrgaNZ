@@ -3,11 +3,14 @@ package com.humanharvest.organz.resolvers.client;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.views.client.CreateTransplantRequestView;
+import com.humanharvest.organz.views.client.ModifyClientObject;
 import com.humanharvest.organz.views.client.ResolveTransplantRequestView;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -82,6 +85,50 @@ public class ClientResolverRest implements ClientResolver {
         ResponseEntity<TransplantRequest> responseEntity = State.getRestTemplate().exchange(
                         State.BASE_URI + "clients/" + client.getUid() + "/transplantRequests/" + transplantRequestIndex,
                         HttpMethod.PATCH, entity, TransplantRequest.class);
+
+        State.setClientEtag(responseEntity.getHeaders().getETag());
+        return responseEntity.getBody();
+    }
+
+    @Override
+    public List<TransplantRequest> createTransplantRequest(Client client, CreateTransplantRequestView request) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setIfMatch(State.getClientEtag());
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
+
+        HttpEntity<?> entity = new HttpEntity<>(request, httpHeaders);
+
+        ResponseEntity<List<TransplantRequest>> responseEntity = State.getRestTemplate().exchange(
+                State.BASE_URI + "clients/" + client.getUid() + "/transplantRequests", HttpMethod.POST,
+                entity, new ParameterizedTypeReference<List<TransplantRequest>>() {
+                });
+
+        State.setClientEtag(responseEntity.getHeaders().getETag());
+        return responseEntity.getBody();
+    }
+
+    @Override
+    public Client modifyClientDetails(Client client, ModifyClientObject modifyClientObject) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setIfMatch(State.getClientEtag());
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        httpHeaders.set("X-Auth-Token", State.getToken());
+        String serialized;
+        try {
+            serialized = State.customObjectMapper().writeValueAsString(modifyClientObject);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+
+        HttpEntity<String> entity = new HttpEntity<>(serialized, httpHeaders);
+
+        ResponseEntity<Client> responseEntity = State.getRestTemplate()
+                .exchange(
+                        State.BASE_URI + "clients/{uid}",
+                        HttpMethod.PATCH,
+                        entity,
+                        Client.class,
+                        client.getUid());
 
         State.setClientEtag(responseEntity.getHeaders().getETag());
         return responseEntity.getBody();

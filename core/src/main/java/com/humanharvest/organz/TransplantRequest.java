@@ -45,7 +45,13 @@ public class TransplantRequest {
     public TransplantRequest(Client client, Organ requestedOrgan) {
         this.client = client;
         this.requestedOrgan = requestedOrgan;
-        this.requestDate = LocalDateTime.now();
+        requestDate = LocalDateTime.now();
+    }
+
+    public TransplantRequest(Client client, Organ requestedOrgan, LocalDateTime requestDate) {
+        this.client = client;
+        this.requestedOrgan = requestedOrgan;
+        this.requestDate = requestDate;
     }
 
     public Client getClient() {

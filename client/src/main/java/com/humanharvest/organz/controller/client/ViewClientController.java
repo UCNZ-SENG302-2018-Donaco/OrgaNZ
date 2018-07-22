@@ -26,7 +26,6 @@ import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.clinician.ViewBaseController;
 import com.humanharvest.organz.resolvers.client.MarkClientAsDeadResolver;
-import com.humanharvest.organz.resolvers.client.ModifyClientDetailsResolver;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
@@ -370,8 +369,6 @@ public class ViewClientController extends ViewBaseController {
     private boolean updateChanges() {
         ModifyClientObject modifyClientObject = new ModifyClientObject();
 
-        ModifyClientDetailsResolver resolver = new ModifyClientDetailsResolver(viewedClient, modifyClientObject);
-
         boolean clientDied = false;
 
         if (viewedClient.getDateOfDeath() == null && dod.getValue() != null) {
@@ -443,7 +440,7 @@ public class ViewClientController extends ViewBaseController {
         }
 
         try {
-            resolver.execute();
+            State.getClientResolver().modifyClientDetails(viewedClient, modifyClientObject);
             String actionText = modifyClientObject.toString();
 
             Notifications.create()

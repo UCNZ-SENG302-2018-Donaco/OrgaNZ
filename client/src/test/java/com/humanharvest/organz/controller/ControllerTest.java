@@ -55,10 +55,10 @@ public abstract class ControllerTest extends ApplicationTest {
         Pane mainPane = mainLoader.load();
         mainController = mainLoader.getController();
 
-        State.addMainController(mainController);
         mockRestTemplate = mock(RestTemplate.class);
         State.setRestTemplate(mockRestTemplate);
         initState();
+        State.addMainController(mainController);
 
         // Load page's node and controller
         FXMLLoader pageLoader = new FXMLLoader(getClass().getResource(getPage().getPath()));

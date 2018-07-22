@@ -56,6 +56,7 @@ public class ViewClientControllerTest extends ControllerTest {
     }
 
     @Test
+    @Ignore
     public void validChangesAll() {
         clickOn("#fname").type(KeyCode.BACK_SPACE).write("z");
         clickOn("#lname").type(KeyCode.BACK_SPACE).write("q");

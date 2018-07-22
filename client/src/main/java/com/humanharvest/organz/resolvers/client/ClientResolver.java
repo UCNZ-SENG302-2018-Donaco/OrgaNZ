@@ -7,6 +7,8 @@ import com.humanharvest.organz.Client;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.views.client.CreateTransplantRequestView;
+import com.humanharvest.organz.views.client.ModifyClientObject;
 import com.humanharvest.organz.views.client.ResolveTransplantRequestView;
 
 public interface ClientResolver {
@@ -33,4 +35,8 @@ public interface ClientResolver {
             Client client,
             ResolveTransplantRequestView request,
             int transplantRequestIndex);
+
+    List<TransplantRequest> createTransplantRequest(Client client, CreateTransplantRequestView request);
+
+    Client modifyClientDetails(Client client, ModifyClientObject modifyClientObject);
 }

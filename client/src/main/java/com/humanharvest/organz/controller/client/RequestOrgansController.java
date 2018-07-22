@@ -33,7 +33,6 @@ import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.resolvers.client.CreateTransplantRequestResolver;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
@@ -290,10 +289,9 @@ public class RequestOrgansController extends SubController {
                     new CreateTransplantRequestView(client, selectedOrgan, LocalDateTime.now());
 
             // Resolve the request
-            CreateTransplantRequestResolver resolver = new CreateTransplantRequestResolver(client, newRequest);
             List<TransplantRequest> updatedTransplantRequests;
             try {
-                updatedTransplantRequests = resolver.execute();
+                updatedTransplantRequests = State.getClientResolver().createTransplantRequest(client, newRequest);
             } catch (ServerRestException e) { //500
                 LOGGER.severe(e.getMessage());
                 PageNavigator.showAlert(AlertType.ERROR,
@@ -400,7 +398,10 @@ public class RequestOrgansController extends SubController {
             int transplantRequestIndex = client.getTransplantRequests().indexOf(selectedRequest);
             TransplantRequest updatedTransplantRequest;
             try {
-                updatedTransplantRequest = State.getClientResolver().resolveTransplantRequest(client, request, transplantRequestIndex);
+                updatedTransplantRequest = State.getClientResolver().resolveTransplantRequest(
+                        client,
+                        request,
+                        transplantRequestIndex);
             } catch (ServerRestException e) { //500
                 LOGGER.severe(e.getMessage());
                 PageNavigator.showAlert(AlertType.ERROR,
