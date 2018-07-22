@@ -64,7 +64,7 @@ public class ViewClientController extends SubController {
 
     private final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy\nh:mm:ss a");
     private static final Logger LOGGER = Logger.getLogger(ViewClientController.class.getName());
-
+    private static final int maxFileSize = 2000000; // (2mb)
     private final Session session;
     private final ClientManager manager;
     private Client viewedClient;
@@ -131,6 +131,7 @@ public class ViewClientController extends SubController {
     private ImageView imageView;
     private Image image;
 
+
     public ViewClientController() {
         manager = State.getClientManager();
         session = State.getSession();
@@ -153,6 +154,9 @@ public class ViewClientController extends SubController {
         fullName.setWrapText(true);
     }
 
+    /**
+     * Loads the viewed profiles image
+     */
     private void loadImage() {
         if (image == null) {
             image = new Image("https://cdn4.iconfinder.com/data/icons/standard-free-icons/139/Profile01-512.png");
@@ -163,28 +167,42 @@ public class ViewClientController extends SubController {
         // if image exists
         // image = existing image
 
-
         imageView.setImage(image);
         imageView.setFitHeight(150);
         imageView.setFitWidth(150);
         imageView.setPreserveRatio(true);
     }
 
+    /**
+     * Prompts a user with a file chooser which is restricted to png's and jpg's. If a valid file of correct size is
+     * input, this photo is uploaded as the viewed clients new profile photo.
+     */
     @FXML
     public void uploadPhoto() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Upload Profile Image");
         fileChooser.getExtensionFilters().addAll(
-                new ExtensionFilter("Image Files", "*.png", "*.jpg")
+                new ExtensionFilter("Image Files", "*.png", "*.jpg") // Restricting only these file types.
         );
 
         File selectedFile = fileChooser.showOpenDialog(AppUI.getWindow());
         if (selectedFile != null) {
-            image = new Image(selectedFile.toURI().toString());
-            loadImage();
+            if (selectedFile.length() > maxFileSize) {
+                PageNavigator.showAlert(AlertType.WARNING, "Image Size Too Large",
+                        "The image size is too large. It must be under 2MB.");
+            } else if (!selectedFile.canRead()) {
+                PageNavigator.showAlert(AlertType.WARNING, "File Couldn't Be Read",
+                        "This file could not be read. Ensure you are uploading a valid .png or .jpg");
+            } else {
+                image = new Image(selectedFile.toURI().toString());
+                loadImage();
+            }
         }
     }
 
+    /**
+     * Sets the profile image to null and refreshes the image.
+     */
     @FXML
     public void deletePhoto() {
         //Make delete API call
@@ -225,6 +243,9 @@ public class ViewClientController extends SubController {
         }
     }
 
+    /**
+     * Updates all of the fields of the client.
+     */
     private void updateClientFields() {
         fname.setText(viewedClient.getFirstName());
         lname.setText(viewedClient.getLastName());
@@ -348,6 +369,7 @@ public class ViewClientController extends SubController {
         }
         return update;
     }
+
 
     private void addChangeIfDifferent(ModifyClientObject modifyClientObject, String fieldString, Object newValue) {
         try {
