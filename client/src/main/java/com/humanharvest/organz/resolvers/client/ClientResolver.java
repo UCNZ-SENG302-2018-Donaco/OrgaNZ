@@ -1,5 +1,6 @@
 package com.humanharvest.organz.resolvers.client;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -9,9 +10,11 @@ import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.views.client.CreateTransplantRequestView;
 import com.humanharvest.organz.views.client.ModifyClientObject;
-import com.humanharvest.organz.views.client.ResolveTransplantRequestView;
+import com.humanharvest.organz.views.client.ResolveTransplantRequestObject;
 
 public interface ClientResolver {
+
+    //------------GETs----------------
 
     /**
      * Queries the server for the clients organ donation status.
@@ -31,12 +34,18 @@ public interface ClientResolver {
      */
     List<MedicationRecord> getMedicationRecords(Client client);
 
-    TransplantRequest resolveTransplantRequest(
-            Client client,
-            ResolveTransplantRequestView request,
-            int transplantRequestIndex);
+    //------------POSTs----------------
 
     List<TransplantRequest> createTransplantRequest(Client client, CreateTransplantRequestView request);
+
+    Client markClientAsDead(Client client, LocalDate dateOfDeath);
+
+    //------------PATCHs----------------
+
+    TransplantRequest resolveTransplantRequest(
+            Client client,
+            ResolveTransplantRequestObject request,
+            int transplantRequestIndex);
 
     Client modifyClientDetails(Client client, ModifyClientObject modifyClientObject);
 }

@@ -25,7 +25,6 @@ import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.clinician.ViewBaseController;
-import com.humanharvest.organz.resolvers.client.MarkClientAsDeadResolver;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
@@ -378,9 +377,8 @@ public class ViewClientController extends ViewBaseController {
 
             if (buttonOpt.isPresent() && buttonOpt.get() == ButtonType.OK) {
 
-                MarkClientAsDeadResolver deadResolver = new MarkClientAsDeadResolver(viewedClient, dod.getValue());
                 try {
-                    deadResolver.execute();
+                    State.getClientResolver().markClientAsDead(viewedClient, dod.getValue());
                 } catch (NotFoundException e) {
                     LOGGER.log(Level.WARNING, "Client not found");
                     PageNavigator.showAlert(

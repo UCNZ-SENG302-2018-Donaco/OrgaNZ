@@ -1,5 +1,6 @@
 package com.humanharvest.organz.resolvers.client;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -11,7 +12,8 @@ import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.views.client.CreateTransplantRequestView;
 import com.humanharvest.organz.views.client.ModifyClientObject;
-import com.humanharvest.organz.views.client.ResolveTransplantRequestView;
+import com.humanharvest.organz.views.client.ResolveTransplantRequestObject;
+import com.humanharvest.organz.views.client.SingleDateView;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -20,6 +22,8 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 public class ClientResolverRest implements ClientResolver {
+
+    //------------GETs----------------
 
     @Override
     public Map<Organ, Boolean> getOrganDonationStatus(Client client) {
@@ -72,23 +76,7 @@ public class ClientResolverRest implements ClientResolver {
         return responseEntity.getBody();
     }
 
-    @Override
-    public TransplantRequest resolveTransplantRequest(Client client, ResolveTransplantRequestView request,
-            int transplantRequestIndex) {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setIfMatch(State.getClientEtag());
-        httpHeaders.set("X-Auth-Token", State.getToken());
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
-
-        HttpEntity<ResolveTransplantRequestView> entity = new HttpEntity<>(request, httpHeaders);
-
-        ResponseEntity<TransplantRequest> responseEntity = State.getRestTemplate().exchange(
-                        State.BASE_URI + "clients/" + client.getUid() + "/transplantRequests/" + transplantRequestIndex,
-                        HttpMethod.PATCH, entity, TransplantRequest.class);
-
-        State.setClientEtag(responseEntity.getHeaders().getETag());
-        return responseEntity.getBody();
-    }
+    //------------POSTs----------------
 
     @Override
     public List<TransplantRequest> createTransplantRequest(Client client, CreateTransplantRequestView request) {
@@ -103,6 +91,41 @@ public class ClientResolverRest implements ClientResolver {
                 State.BASE_URI + "clients/" + client.getUid() + "/transplantRequests", HttpMethod.POST,
                 entity, new ParameterizedTypeReference<List<TransplantRequest>>() {
                 });
+
+        State.setClientEtag(responseEntity.getHeaders().getETag());
+        return responseEntity.getBody();
+    }
+
+    @Override
+    public Client markClientAsDead(Client client, LocalDate dateOfDeath) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setIfMatch(State.getClientEtag());
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        httpHeaders.set("X-Auth-Token", State.getToken());
+        HttpEntity entity = new HttpEntity<>(new SingleDateView(dateOfDeath), httpHeaders);
+
+        ResponseEntity<Client> responseEntity = State.getRestTemplate()
+                .postForEntity(State.BASE_URI + "clients/{uid}/dead", entity, Client.class, client.getUid());
+
+        State.setClientEtag(responseEntity.getHeaders().getETag());
+        return responseEntity.getBody();
+    }
+
+    //------------PATCHs----------------
+
+    @Override
+    public TransplantRequest resolveTransplantRequest(Client client, ResolveTransplantRequestObject request,
+            int transplantRequestIndex) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setIfMatch(State.getClientEtag());
+        httpHeaders.set("X-Auth-Token", State.getToken());
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
+
+        HttpEntity<ResolveTransplantRequestObject> entity = new HttpEntity<>(request, httpHeaders);
+
+        ResponseEntity<TransplantRequest> responseEntity = State.getRestTemplate().exchange(
+                State.BASE_URI + "clients/" + client.getUid() + "/transplantRequests/" + transplantRequestIndex,
+                HttpMethod.PATCH, entity, TransplantRequest.class);
 
         State.setClientEtag(responseEntity.getHeaders().getETag());
         return responseEntity.getBody();

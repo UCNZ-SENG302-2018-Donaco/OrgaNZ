@@ -350,6 +350,10 @@ public class Client implements ConcurrencyControlledEntity {
         return dateOfDeath;
     }
 
+    public boolean isAlive() { return dateOfDeath == null; }
+
+    public boolean isDead() { return dateOfDeath != null; }
+
     public void setDateOfDeath(LocalDate dateOfDeath) {
         updateModifiedTimestamp();
         this.dateOfDeath = dateOfDeath;
@@ -843,7 +847,7 @@ public class Client implements ConcurrencyControlledEntity {
             if (request.getStatus() == TransplantRequestStatus.WAITING) {
                 request.setStatus(TransplantRequestStatus.CANCELLED);
                 request.setResolvedDate(LocalDateTime.now());
-                request.setResolvedReason("death");
+                request.setResolvedReason("The client died.");
             }
         }
     }

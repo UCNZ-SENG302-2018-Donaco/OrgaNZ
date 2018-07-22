@@ -6,7 +6,7 @@ import com.humanharvest.organz.Client;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 
-public class ResolveTransplantRequestView {
+public class ResolveTransplantRequestObject {
 
     private Client client;
     private Organ requestedOrgan;
@@ -15,10 +15,10 @@ public class ResolveTransplantRequestView {
     private TransplantRequestStatus status;
     private String resolvedReason;
 
-    public ResolveTransplantRequestView() {
+    public ResolveTransplantRequestObject() {
     }
 
-    public ResolveTransplantRequestView(Client client, Organ requestedOrgan, LocalDateTime requestDate,
+    public ResolveTransplantRequestObject(Client client, Organ requestedOrgan, LocalDateTime requestDate,
             LocalDateTime resolvedDate, TransplantRequestStatus status, String resolvedReason) {
         this.client = client;
         this.requestedOrgan = requestedOrgan;

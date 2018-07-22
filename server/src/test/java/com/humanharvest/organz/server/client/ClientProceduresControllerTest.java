@@ -4,9 +4,7 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -231,7 +229,7 @@ public class ClientProceduresControllerTest {
     }
 
     @Test
-    public void invalidDatePatch() throws Exception {/*
+    public void invalidDatePatch() throws Exception {
         String json = "{\n" +
                 "\"id\": 2, \n" +
                 "\"summary\": \"Heart Transplant\", \n" +
@@ -245,18 +243,11 @@ public class ClientProceduresControllerTest {
                 .header("X-Auth-Token", VALID_AUTH)
                 .contentType(contentType)
                 .content(json))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().contentType(contentType))
-                .andExpect(jsonPath("$[2].id", is(2)))
-                .andExpect(jsonPath("$[2].summary", is("Heart Transplant")))
-                .andExpect(jsonPath("$[2].description", is("New Description")))
-                .andExpect(jsonPath("$[2].date", is("2017-06-01")))
-                .andExpect(jsonPath("$[2].affectedOrgans[0]", is("HEART")));*/
+                .andExpect(status().isBadRequest());
     }
 
     @Test
     public void invalidETagPatch() throws Exception {
-        /*
         String json = "{\n" +
                 "\"id\": 2, \n" +
                 "\"summary\": \"Heart Transplant\", \n" +
@@ -270,23 +261,35 @@ public class ClientProceduresControllerTest {
                 .header("X-Auth-Token", VALID_AUTH)
                 .contentType(contentType)
                 .content(json))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().contentType(contentType))
-                .andExpect(jsonPath("$[2].id", is(2)))
-                .andExpect(jsonPath("$[2].summary", is("Heart Transplant")))
-                .andExpect(jsonPath("$[2].description", is("New Description")))
-                .andExpect(jsonPath("$[2].date", is("2017-06-01")))
-                .andExpect(jsonPath("$[2].affectedOrgans[0]", is("HEART")));*/
+                .andExpect(status().isBadRequest());
     }
 
     //------------DELETE---------------
 
     @Test
-    public void validDelete() throws Exception {   }
+    public void validDelete() throws Exception {/*
+
+        mockMvc.perform(delete("/clients/1/procedures/1")
+                .header("If-Match", testClient.getETag())
+                .header("X-Auth-Token", VALID_AUTH))
+                .andExpect(status().isOk());*/
+
+    }
 
     @Test
-    public void invalidDeleteWrongProcedure() throws Exception {   }
+    public void invalidDeleteWrongProcedure() throws Exception {
+        mockMvc.perform(delete("/clients/1/procedures/5")
+                .header("If-Match", testClient.getETag())
+                .header("X-Auth-Token", VALID_AUTH))
+                .andExpect(status().isNotFound());
+
+    }
 
     @Test
-    public void invalidETagDelete() throws Exception {   }
+    public void invalidETagDelete() throws Exception {/*
+        mockMvc.perform(delete("/clients/1/procedures/1")
+                .header("If-Match", "HELLO")
+                .header("X-Auth-Token", VALID_AUTH))
+                .andExpect(status().isUnauthorized());*/
+    }
 }
