@@ -15,7 +15,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
@@ -49,9 +48,7 @@ import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.views.client.CreateTransplantRequestView;
-import com.humanharvest.organz.views.client.ModifyClientObject;
-import com.humanharvest.organz.views.client.ResolveTransplantRequestView;
-import org.controlsfx.control.Notifications;
+import com.humanharvest.organz.views.client.ResolveTransplantRequestObject;
 
 /**
  * Controller for the Request Organs page. Handles the viewing of current and past organ transplant requests. If the
@@ -427,7 +424,7 @@ public class RequestOrgansController extends SubController {
                             + "statements.");
             }
 
-            ResolveTransplantRequestView request = new ResolveTransplantRequestView(client, requestedOrgan, requestDate,
+            ResolveTransplantRequestObject request = new ResolveTransplantRequestObject(client, requestedOrgan, requestDate,
                     LocalDateTime.now(), status, resolvedReason);
 
             // Resolve the request

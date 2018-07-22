@@ -1,5 +1,6 @@
 package com.humanharvest.organz.resolvers.client;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -10,10 +11,12 @@ import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.views.client.CreateTransplantRequestView;
 import com.humanharvest.organz.views.client.ModifyClientObject;
-import com.humanharvest.organz.views.client.ResolveTransplantRequestView;
+import com.humanharvest.organz.views.client.ResolveTransplantRequestObject;
 import org.springframework.beans.BeanUtils;
 
 public class ClientResolverMemory implements ClientResolver {
+
+    //------------GETs----------------
 
     @Override
     public Map<Organ, Boolean> getOrganDonationStatus(Client client) {
@@ -30,15 +33,7 @@ public class ClientResolverMemory implements ClientResolver {
         return client.getMedicationRecords();
     }
 
-    @Override
-    public TransplantRequest resolveTransplantRequest(Client client, ResolveTransplantRequestView request,
-            int transplantRequestIndex) {
-        TransplantRequest originalTransplantRequest = client.getTransplantRequests().get(transplantRequestIndex);
-        originalTransplantRequest.setStatus(request.getStatus());
-        originalTransplantRequest.setResolvedReason(request.getResolvedReason());
-        originalTransplantRequest.setResolvedDate(request.getResolvedDate());
-        return originalTransplantRequest;
-    }
+    //------------POSTs----------------
 
     @Override
     public List<TransplantRequest> createTransplantRequest(Client client, CreateTransplantRequestView request) {
@@ -46,6 +41,23 @@ public class ClientResolverMemory implements ClientResolver {
         client.addTransplantRequest(transplantRequest);
         State.getClientManager().applyChangesTo(client);
         return client.getTransplantRequests();
+    }
+
+    @Override
+    public Client markClientAsDead(Client client, LocalDate dateOfDeath){
+        return null; //todo implement
+    }
+
+    //------------PATCHs----------------
+
+    @Override
+    public TransplantRequest resolveTransplantRequest(Client client, ResolveTransplantRequestObject request,
+            int transplantRequestIndex) {
+        TransplantRequest originalTransplantRequest = client.getTransplantRequests().get(transplantRequestIndex);
+        originalTransplantRequest.setStatus(request.getStatus());
+        originalTransplantRequest.setResolvedReason(request.getResolvedReason());
+        originalTransplantRequest.setResolvedDate(request.getResolvedDate());
+        return originalTransplantRequest;
     }
 
     @Override
