@@ -28,13 +28,14 @@
             <BorderPane.margin>
               <Insets bottom="40.0" left="100.0" right="100.0" />
             </BorderPane.margin>
-                     <GridPane fx:id="imagePane" prefHeight="131.0" prefWidth="790.0">
+                     <GridPane fx:id="imagePane" prefHeight="173.0" prefWidth="791.0">
                        <columnConstraints>
                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="387.0" minWidth="10.0" prefWidth="299.0" />
                          <ColumnConstraints hgrow="SOMETIMES" maxWidth="547.0" minWidth="10.0" prefWidth="491.0" />
                        </columnConstraints>
                        <rowConstraints>
-                         <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                         <RowConstraints maxHeight="148.0" minHeight="10.0" prefHeight="145.0" vgrow="SOMETIMES" />
+                           <RowConstraints maxHeight="80.0" minHeight="10.0" prefHeight="28.0" vgrow="SOMETIMES" />
                        </rowConstraints>
                         <children>
                            <Label fx:id="fullName" text="NAME" GridPane.columnIndex="1">
@@ -43,6 +44,20 @@
                               </font>
                            </Label>
                            <ImageView fx:id="imageView" fitHeight="145.0" fitWidth="154.0" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" />
+                           <GridPane GridPane.rowIndex="1">
+                             <columnConstraints>
+                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                               <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                             </columnConstraints>
+                             <rowConstraints>
+                               <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                             </rowConstraints>
+                              <children>
+                                 <Button mnemonicParsing="false" onAction="#uploadPhoto" text="Upload" GridPane.halignment="CENTER" />
+                                 <Button mnemonicParsing="false" onAction="#deletePhoto" text="Delete" GridPane.columnIndex="1" GridPane.halignment="CENTER" />
+                              </children>
+                           </GridPane>
+
                         </children>
                      </GridPane>
             <GridPane fx:id="inputsPane" hgap="30.0" VBox.vgrow="ALWAYS">

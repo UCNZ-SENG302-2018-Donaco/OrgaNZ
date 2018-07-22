@@ -1,5 +1,6 @@
 package com.humanharvest.organz.controller.client;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -29,7 +30,10 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 
+import com.humanharvest.organz.AppUI;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.controller.MainController;
@@ -125,6 +129,7 @@ public class ViewClientController extends SubController {
     private ChoiceBox<Region> region;
     @FXML
     private ImageView imageView;
+    private Image image;
 
     public ViewClientController() {
         manager = State.getClientManager();
@@ -149,19 +154,44 @@ public class ViewClientController extends SubController {
     }
 
     private void loadImage() {
-        try {
-            Image image = new Image("https://img.rl0.ru/f3f70ad4661bcac56b285cb86efdea1e/c615x400/news.rambler.ru/img/2018/05/23142637.159422.8999.jpg");
-//            Image image = new Image("./../../../../../../resources/images/harold.jpg");
-            imageView.setImage(image);
-            imageView.setFitHeight(150);
-            imageView.setFitWidth(150);
-            imageView.setPreserveRatio(true);
+        if (image == null) {
+            image = new Image("https://cdn4.iconfinder.com/data/icons/standard-free-icons/139/Profile01-512.png");
+        }
+        // Make this a local image
 
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            throw ex;
+        // GET Image from DB
+        // if image exists
+        // image = existing image
+
+
+        imageView.setImage(image);
+        imageView.setFitHeight(150);
+        imageView.setFitWidth(150);
+        imageView.setPreserveRatio(true);
+    }
+
+    @FXML
+    public void uploadPhoto() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Upload Profile Image");
+        fileChooser.getExtensionFilters().addAll(
+                new ExtensionFilter("Image Files", "*.png", "*.jpg")
+        );
+
+        File selectedFile = fileChooser.showOpenDialog(AppUI.getWindow());
+        if (selectedFile != null) {
+            image = new Image(selectedFile.toURI().toString());
+            loadImage();
         }
     }
+
+    @FXML
+    public void deletePhoto() {
+        //Make delete API call
+        image = null;
+        loadImage();
+    }
+
 
     @Override
     public void setup(MainController mainController) {
