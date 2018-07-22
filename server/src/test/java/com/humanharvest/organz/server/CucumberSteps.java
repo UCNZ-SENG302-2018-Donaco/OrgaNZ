@@ -7,7 +7,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
-import java.nio.charset.Charset;
 import java.time.LocalDate;
 
 import com.humanharvest.organz.Administrator;
@@ -30,11 +29,6 @@ import org.springframework.web.context.WebApplicationContext;
 @SpringBootTest(classes = Application.class)
 @WebAppConfiguration
 public final class CucumberSteps implements En {
-
-    private static final MediaType jsonContentType = new MediaType(
-            MediaType.APPLICATION_JSON.getType(),
-            MediaType.APPLICATION_JSON.getSubtype(),
-            Charset.forName("utf8"));
 
     private ResultActions lastAction;
     private String etag;
@@ -93,7 +87,7 @@ public final class CucumberSteps implements En {
 
         When("^I post to (.+?) using (.+)$", (String url, String json) -> {
             MockHttpServletRequestBuilder request = post(url)
-                    .contentType(jsonContentType)
+                    .contentType(MediaType.APPLICATION_JSON_UTF8)
                     .content(json);
             request = setupSharedHeaders(request);
             lastAction = mockMvc.perform(request);
@@ -102,7 +96,7 @@ public final class CucumberSteps implements En {
         When("^I patch to (.+?) using (.+)$", (String url, String json) -> {
             MockHttpServletRequestBuilder request = patch(url)
                     .content(json)
-                    .contentType(jsonContentType);
+                    .contentType(MediaType.APPLICATION_JSON_UTF8);
             request = setupSharedHeaders(request);
             lastAction = mockMvc.perform(request);
         });
@@ -124,7 +118,7 @@ public final class CucumberSteps implements En {
         });
 
         Then("^the content type is json$", () -> {
-            lastAction = lastAction.andExpect(content().contentType(jsonContentType));
+            lastAction = lastAction.andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
         });
 
         Then("^the field (\\w+) exists$", (String fieldName) -> {

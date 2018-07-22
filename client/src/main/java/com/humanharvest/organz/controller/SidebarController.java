@@ -238,7 +238,7 @@ public class SidebarController extends SubController {
                 controller.closeWindow();
             }
         }
-        State.getMainControllers().clear();
+        State.clearMainControllers();
         State.addMainController(mainController);
         mainController.resetWindowContext();
         PageNavigator.loadPage(Page.LANDING, mainController);

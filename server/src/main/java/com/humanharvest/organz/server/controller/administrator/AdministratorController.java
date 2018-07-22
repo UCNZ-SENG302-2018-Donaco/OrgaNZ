@@ -159,10 +159,10 @@ public class AdministratorController {
         if (etag == null) {
             throw new IfMatchRequiredException();
         }
+
         if (!administrator.get().getETag().equals(etag)) {
             throw new IfMatchFailedException();
         }
-
 
         //Create the old details to allow undoable action
         ModifyAdministratorObject oldClient = new ModifyAdministratorObject();
@@ -194,7 +194,7 @@ public class AdministratorController {
      * @throws InvalidRequestException Generic 400 exception if fields are malformed or inconsistent
      */
     @DeleteMapping("/administrators/{username}")
-    public ResponseEntity<Administrator> deleteAdministrator(
+    public ResponseEntity<?> deleteAdministrator(
             @PathVariable String username,
             @RequestHeader(value = "If-Match", required = false) String etag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authentication)
@@ -209,6 +209,10 @@ public class AdministratorController {
         if (!administrator.isPresent()) {
             //Return 404 if that administrator does not exist
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        if (administrator.get().equals(State.getAdministratorManager().getDefaultAdministrator())) {
+            return new ResponseEntity<>("Unable to delete the default administrator.", HttpStatus.BAD_REQUEST);
         }
 
         //Check the ETag. These are handled in the exceptions class.

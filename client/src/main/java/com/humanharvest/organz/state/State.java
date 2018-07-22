@@ -140,6 +140,10 @@ public final class State {
         return Collections.unmodifiableList(mainControllers);
     }
 
+    public static void clearMainControllers() {
+        mainControllers.clear();
+    }
+
     private static MappingJackson2HttpMessageConverter customConverter() {
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
         converter.setObjectMapper(customObjectMapper());

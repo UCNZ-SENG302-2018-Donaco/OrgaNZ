@@ -65,15 +65,6 @@ public class CommandLineControllerTest extends ControllerTest {
         setPrivateField(State.class, "commandRunner", oldValue);
     }
 
-    private static <T, Y> Y setPrivateField(Class<T> clazz, String fieldName, Y newValue)
-            throws NoSuchFieldException, IllegalAccessException {
-        Field field = clazz.getDeclaredField(fieldName);
-        field.setAccessible(true);
-        Y result = (Y)field.get(null);
-        field.set(null, newValue);
-        return result;
-    }
-
     @Test
     public void checkInitialTextAreaTest() {
         TextArea area = lookup("#outputTextArea").query();

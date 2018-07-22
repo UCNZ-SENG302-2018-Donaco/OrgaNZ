@@ -3,6 +3,7 @@ package com.humanharvest.organz.controller;
 import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -107,4 +108,13 @@ public abstract class ControllerTest extends ApplicationTest {
     protected abstract Page getPage();
 
     protected abstract void initState();
+
+    protected static <T, Y> Y setPrivateField(Class<T> clazz, String fieldName, Y newValue)
+            throws NoSuchFieldException, IllegalAccessException {
+        Field field = clazz.getDeclaredField(fieldName);
+        field.setAccessible(true);
+        Y result = (Y)field.get(null);
+        field.set(null, newValue);
+        return result;
+    }
 }

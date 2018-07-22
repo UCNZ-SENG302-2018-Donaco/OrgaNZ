@@ -69,6 +69,7 @@ public class ModifyAdministratorObject {
     }
 
     public void setUsername(String username) {
+        registerChange("username");
         this.username = username;
     }
 
@@ -77,6 +78,7 @@ public class ModifyAdministratorObject {
     }
 
     public void setPassword(String password) {
+        registerChange("password");
         this.password = password;
     }
 }

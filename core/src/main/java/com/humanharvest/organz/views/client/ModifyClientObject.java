@@ -39,8 +39,6 @@ public class ModifyClientObject {
     private LocalDate dateOfBirth;
     private LocalDate dateOfDeath;
 
-
-
     @JsonIgnore
     private Set<Field> modifiedFields = new HashSet<>();
 
@@ -60,8 +58,6 @@ public class ModifyClientObject {
         //Convert to a list of strings
         return allFields.stream().map(Field::getName).toArray(String[]::new);
     }
-
-
 
     @JsonIgnore
     public void registerChange(String fieldName) {
