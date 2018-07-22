@@ -33,7 +33,6 @@ import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.resolvers.client.MarkClientAsDeadResolver;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
@@ -370,10 +369,8 @@ public class RequestOrgansController extends SubController {
                                 "Are you sure you want to mark this client as dead?",
                                 "This will cancel all waiting transplant requests for this client.");
                         if (buttonOpt.isPresent() && buttonOpt.get() == ButtonType.OK) {
-                            MarkClientAsDeadResolver deadResolver =
-                                    new MarkClientAsDeadResolver(client, deathDate);
                             try {
-                                deadResolver.execute();
+                                State.getClientResolver().markClientAsDead(client, deathDate);
                             } catch (NotFoundException e) {
                                 LOGGER.log(Level.WARNING, "Client not found");
                                 PageNavigator.showAlert(

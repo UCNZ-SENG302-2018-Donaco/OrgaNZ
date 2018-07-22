@@ -167,9 +167,7 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
     }
 
     @Test
-    @Ignore("Depends on unimplemented functionality")
     public void resolveRequestDeceasedTest() {
-        //todo when MarkClientAsDeadResolver has been merged in to ClientResolver, remove @Ignore
         setSampleRequests();
         testClient.setDateOfBirth(LocalDate.now());
 

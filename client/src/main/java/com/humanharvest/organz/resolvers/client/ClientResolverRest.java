@@ -13,6 +13,7 @@ import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.views.client.CreateTransplantRequestView;
 import com.humanharvest.organz.views.client.ModifyClientObject;
 import com.humanharvest.organz.views.client.ResolveTransplantRequestObject;
+import com.humanharvest.organz.views.client.SingleDateView;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -96,8 +97,18 @@ public class ClientResolverRest implements ClientResolver {
     }
 
     @Override
-    public Client markClientAsDead(Client client, LocalDate dateOfDeath){
-        return null; //todo implement
+    public Client markClientAsDead(Client client, LocalDate dateOfDeath) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setIfMatch(State.getClientEtag());
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        httpHeaders.set("X-Auth-Token", State.getToken());
+        HttpEntity entity = new HttpEntity<>(new SingleDateView(dateOfDeath), httpHeaders);
+
+        ResponseEntity<Client> responseEntity = State.getRestTemplate()
+                .postForEntity(State.BASE_URI + "clients/{uid}/dead", entity, Client.class, client.getUid());
+
+        State.setClientEtag(responseEntity.getHeaders().getETag());
+        return responseEntity.getBody();
     }
 
     //------------PATCHs----------------

@@ -45,7 +45,8 @@ public class ClientResolverMemory implements ClientResolver {
 
     @Override
     public Client markClientAsDead(Client client, LocalDate dateOfDeath){
-        return null; //todo implement
+        client.markDead(dateOfDeath);
+        return client;
     }
 
     //------------PATCHs----------------
