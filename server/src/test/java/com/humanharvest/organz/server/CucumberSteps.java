@@ -188,7 +188,7 @@ public final class CucumberSteps implements En {
                             middleName,
                             lastName,
                             LocalDate.now(),
-                            State.getClientManager().nextUid());
+                            null);
                     State.getClientManager().addClient(testClient);
                 });
 
@@ -197,7 +197,7 @@ public final class CucumberSteps implements En {
                     "Micheal",
                     "Vincent",
                     LocalDate.now(),
-                    State.getClientManager().nextUid());
+                    null);
             State.getClientManager().addClient(testClient);
         });
 

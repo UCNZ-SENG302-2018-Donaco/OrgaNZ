@@ -142,12 +142,6 @@ public interface ClientManager {
     boolean doesClientExist(String firstName, String lastName, LocalDate dateOfBirth);
 
     /**
-     * Returns the next unused id number for a new client.
-     * @return The next free UID.
-     */
-    int nextUid();  // TODO does this need to be here? perhaps refactor
-
-    /**
      * Gets all transplant requests for all clients stored by the manager, regardless of whether or not they are
      * current.
      * @return All transplant requests.

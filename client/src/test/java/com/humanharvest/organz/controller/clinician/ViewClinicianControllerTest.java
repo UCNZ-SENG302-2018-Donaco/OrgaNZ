@@ -16,7 +16,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.testfx.api.FxRobotException;
 
-@Ignore
 public class ViewClinicianControllerTest extends ControllerTest {
 
     private Clinician testClinician = new Clinician("x", "y", "z", "t", Region.UNSPECIFIED, 3, "p");

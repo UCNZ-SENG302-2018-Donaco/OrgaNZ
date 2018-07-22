@@ -16,7 +16,6 @@ import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder
 import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore
 public class SidebarControllerClinViewClientTest extends ControllerTest {
 
     private Clinician testClinician = new Clinician("Mr", null, "Tester",

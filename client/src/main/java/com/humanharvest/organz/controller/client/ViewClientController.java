@@ -2,7 +2,9 @@ package com.humanharvest.organz.controller.client;
 
 import java.lang.reflect.Field;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.OptionalInt;
@@ -49,7 +51,9 @@ import org.controlsfx.control.Notifications;
  */
 public class ViewClientController extends SubController {
 
-    private final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy\nh:mm:ss a");
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
+            .withZone(ZoneId.systemDefault());
+
     private static final Logger LOGGER = Logger.getLogger(ViewClientController.class.getName());
 
     private final Session session;
@@ -244,11 +248,11 @@ public class ViewClientController extends SubController {
         region.setValue(viewedClient.getRegion());
         address.setText(viewedClient.getCurrentAddress());
 
-        creationDate.setText(viewedClient.getCreatedTimestamp().format(dateTimeFormat));
+        creationDate.setText(formatter.format(viewedClient.getCreatedTimestamp()));
         if (viewedClient.getModifiedTimestamp() == null) {
             lastModified.setText("User has not been modified yet.");
         } else {
-            lastModified.setText(viewedClient.getModifiedTimestamp().format(dateTimeFormat));
+            lastModified.setText(formatter.format(viewedClient.getModifiedTimestamp()));
         }
 
         displayBMI();
@@ -275,7 +279,8 @@ public class ViewClientController extends SubController {
             if (updateChanges()) {
                 displayBMI();
                 displayAge();
-                lastModified.setText(viewedClient.getModifiedTimestamp().format(dateTimeFormat));
+
+                lastModified.setText(formatter.format(viewedClient.getModifiedTimestamp()));
             }
         }
     }

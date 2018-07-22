@@ -47,7 +47,6 @@ public class ViewClientControllerSetTitleTest extends ControllerTest {
     }
 
     @Test
-    @Ignore
     public void checkTitleSetTest() {
         testClient = new Client("a", "", "b", LocalDate.now().minusDays(10), 1);
         clickOn("#pname").type(KeyCode.BACK_SPACE).type(KeyCode.BACK_SPACE).type(KeyCode.BACK_SPACE).write("Dad");

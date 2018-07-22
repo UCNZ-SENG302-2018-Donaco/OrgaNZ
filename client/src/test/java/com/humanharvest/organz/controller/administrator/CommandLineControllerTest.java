@@ -21,7 +21,6 @@ import com.humanharvest.organz.utilities.view.WindowContext;
 import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore
 public class CommandLineControllerTest extends ControllerTest {
 
     private static final Client testClient = new Client("Client", "Number", "One", LocalDate.now(), 1);
@@ -55,7 +54,6 @@ public class CommandLineControllerTest extends ControllerTest {
         assertTrue(outText.contains("load"));
     }
 
-    @Ignore
     @Test
     public void anInvalidCommandTest() {
         clickOn("#inputTextField").write("notacmd").type(KeyCode.ENTER);

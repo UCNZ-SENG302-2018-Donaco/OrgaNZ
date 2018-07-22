@@ -132,7 +132,6 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
     }
 
     @Test
-    @Ignore
     public void submitNewRequestTest() {
         Node organChoiceBox = lookup("#newOrganChoiceBox").queryAs(ChoiceBox.class);
         clickOn(organChoiceBox);
@@ -155,7 +154,6 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
     }
 
     @Test
-    @Ignore
     public void resolveRequestDeceasedTest() {
         setSampleRequests();
         testClient.setDateOfBirth(LocalDate.now());

@@ -87,7 +87,6 @@ public final class State {
                     o instanceof MappingJackson2HttpMessageConverter);
             restTemplate.getMessageConverters().add(customConverter());
 
-
             clientManager = new ClientManagerRest();
             clinicianManager = new ClinicianManagerRest();
             administratorManager = new AdministratorManagerRest();

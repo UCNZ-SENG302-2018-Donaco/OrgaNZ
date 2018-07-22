@@ -1,5 +1,6 @@
 package com.humanharvest.organz;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
@@ -87,9 +88,9 @@ public class Client implements ConcurrencyControlledEntity {
     private LocalDate dateOfDeath;
 
     @JsonView(Views.Details.class)
-    private final LocalDateTime createdTimestamp;
+    private final Instant createdTimestamp;
     @JsonView(Views.Details.class)
-    private LocalDateTime modifiedTimestamp;
+    private Instant modifiedTimestamp;
 
     @ElementCollection(targetClass = Organ.class)
     @Enumerated(EnumType.STRING)
@@ -129,12 +130,12 @@ public class Client implements ConcurrencyControlledEntity {
     private List<HistoryItem> changesHistory = new ArrayList<>();
 
     public Client() {
-        this.createdTimestamp = LocalDateTime.now();
+        createdTimestamp = Instant.now();
     }
 
     public Client(int uid) {
         this.uid = uid;
-        this.createdTimestamp = LocalDateTime.now();
+        createdTimestamp = Instant.now();
     }
 
     /**
@@ -145,18 +146,18 @@ public class Client implements ConcurrencyControlledEntity {
      * @param dateOfBirth LocalDate formatted date of birth
      * @param uid A unique user ID. Should be queried to ensure uniqueness
      */
-    public Client(String firstName, String middleName, String lastName, LocalDate dateOfBirth, int uid) {
+    public Client(String firstName, String middleName, String lastName, LocalDate dateOfBirth, Integer uid) {
         this.uid = uid;
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
         this.dateOfBirth = dateOfBirth;
-        this.gender = Gender.UNSPECIFIED;
-        this.createdTimestamp = LocalDateTime.now();
+        gender = Gender.UNSPECIFIED;
+        createdTimestamp = Instant.now();
     }
 
     private void updateModifiedTimestamp() {
-        modifiedTimestamp = LocalDateTime.now();
+        modifiedTimestamp = Instant.now();
     }
 
     /**
@@ -421,11 +422,11 @@ public class Client implements ConcurrencyControlledEntity {
         this.uid = uid;
     }
 
-    public LocalDateTime getCreatedTimestamp() {
+    public Instant getCreatedTimestamp() {
         return createdTimestamp;
     }
 
-    public LocalDateTime getModifiedTimestamp() {
+    public Instant getModifiedTimestamp() {
         return modifiedTimestamp;
     }
 

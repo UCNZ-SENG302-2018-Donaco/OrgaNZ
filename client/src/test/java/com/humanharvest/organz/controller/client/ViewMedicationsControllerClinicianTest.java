@@ -307,7 +307,6 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
     }
 
     @Test
-    @Ignore
     public void viewActiveIngredientsIOExceptionTest() throws IOException {
         ViewMedicationsController pageController = (ViewMedicationsController) super.pageController;
         pageController.setActiveIngredientsHandler(createMockActiveIngredientsHandler(

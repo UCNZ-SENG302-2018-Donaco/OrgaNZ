@@ -563,7 +563,6 @@ public class SearchClientsControllerTest extends ControllerTest {
         pageController.refresh();
     }
 
-    @Ignore  // doesn't work because page can't get refreshed to display many clients (not in FX app thread)
     @Test
     public void paginationDescriptionTest() {
         createManyClients();
@@ -640,7 +639,6 @@ public class SearchClientsControllerTest extends ControllerTest {
         assertEquals(testClient2.getFullName(), result2.getFullName());
     }
 
-    @Ignore
     @Test
     public void testNameColReverseOrderLastPage() {
         clickOn("#nameCol");

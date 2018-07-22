@@ -31,7 +31,6 @@ public class MenuBarControllerAdminTest extends ControllerTest {
     }
 
     @Test
-    @Ignore
     public void testClickLogout() {
         clickOn("#filePrimaryItem");
         clickOn("#logOutItem");
@@ -88,7 +87,6 @@ public class MenuBarControllerAdminTest extends ControllerTest {
     }
 
     @Test
-    @Ignore
     public void testClickCLI() {
         clickOn("#profilePrimaryItem");
         clickOn("#cliItem");

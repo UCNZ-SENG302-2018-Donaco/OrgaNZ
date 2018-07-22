@@ -12,7 +12,6 @@ import com.humanharvest.organz.utilities.view.WindowContext;
 import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore
 public class MenuBarControllerClinicianTest extends  ControllerTest {
 
     private Clinician testClinician = new Clinician("Mr", null, "Tester",

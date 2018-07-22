@@ -17,7 +17,6 @@ import com.humanharvest.organz.utilities.view.WindowContext;
 import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore
 public class StaffListControllerTest extends ControllerTest {
 
     private Administrator admin1 = new Administrator("admin1", "password");
@@ -61,11 +60,6 @@ public class StaffListControllerTest extends ControllerTest {
         verifyThat("#staffList", hasItems(5));
     }
 
-    /**
-     * This test passes in headless mode but not in headful mode.
-     * See https://github.com/TestFX/Monocle/issues/12
-     */
-    @Ignore
     @Test
     public void testDeleteClinician() {
         String clinicianId = Integer.toString(clinician1.getStaffId());
@@ -84,11 +78,6 @@ public class StaffListControllerTest extends ControllerTest {
         }
     }
 
-    /**
-     * This test passes in headless mode but not in headful mode.
-     * See https://github.com/TestFX/Monocle/issues/12
-     */
-    @Ignore
     @Test
     public void testDeleteAdministrator() {
         String adminUsername = admin2.getUsername();
