@@ -461,6 +461,14 @@ public class Client implements ConcurrencyControlledEntity {
     }
 
     /**
+     * Returns a list containing all the medication records.
+     * @return The list of medication records of the Client.
+     */
+    public List<MedicationRecord> getMedicationRecords() {
+        return Collections.unmodifiableList(medicationHistory);
+    }
+
+    /**
      * Returns a new list containing the medications which are currently being used by the Client.
      * @return The list of medications currently being used by the Client.
      */
@@ -497,7 +505,7 @@ public class Client implements ConcurrencyControlledEntity {
      * @return medicationHistory of the client
      */
     public List<MedicationRecord> getAllMedications() {
-        return medicationHistory;
+        return Collections.unmodifiableList(medicationHistory);
     }
 
     /**
@@ -505,7 +513,7 @@ public class Client implements ConcurrencyControlledEntity {
      * @return All illness Records for a specific client
      */
     public List<IllnessRecord> getAllIllnessHistory() {
-        return illnessHistory;
+        return Collections.unmodifiableList(illnessHistory);
     }
 
     /**
@@ -549,13 +557,13 @@ public class Client implements ConcurrencyControlledEntity {
      * @return the users calculated BMI.
      */
     public double getBMI() {
-        double BMI;
+        double bmi;
         if (weight == 0 || height == 0) {
-            BMI = 0;
+            bmi = 0;
         } else {
-            BMI = weight / (height * 0.01 * height * 0.01);
+            bmi = weight / (height * 0.01 * height * 0.01);
         }
-        return BMI;
+        return bmi;
     }
 
     /**

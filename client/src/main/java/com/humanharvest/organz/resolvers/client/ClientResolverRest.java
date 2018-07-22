@@ -1,8 +1,9 @@
-package com.humanharvest.organz.resolvers;
+package com.humanharvest.organz.resolvers.client;
 
 import java.util.List;
 import java.util.Map;
 
+import com.humanharvest.organz.Client;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.state.State;
@@ -14,9 +15,10 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
-public class ClientResolver {
+public class ClientResolverRest implements ClientResolver {
 
-    public static Map<Organ, Boolean> getOrganDonationStatus(int uid) {
+    @Override
+    public Map<Organ, Boolean> getOrganDonationStatus(Client client) {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
         httpHeaders.set("X-Auth-Token", State.getToken());
@@ -26,16 +28,14 @@ public class ClientResolver {
         ResponseEntity<Map<Organ, Boolean>> responseEntity = State.getRestTemplate().exchange
                 (State.BASE_URI + "clients/{id}/donationStatus", HttpMethod.GET, entity, new
                         ParameterizedTypeReference<Map<Organ, Boolean>>() {
-                        }, uid);
+                        }, client.getUid());
         State.setClientEtag(responseEntity.getHeaders().getETag());
-        State.getClientManager()
-                .getClientByID(uid)
-                .orElseThrow(IllegalArgumentException::new)
-                .setOrganDonationStatus(responseEntity.getBody());
+        client.setOrganDonationStatus(responseEntity.getBody());
         return responseEntity.getBody();
     }
 
-    public static List<TransplantRequest> getTransplantRequests(int uid) {
+    @Override
+    public List<TransplantRequest> getTransplantRequests(Client client) {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
         httpHeaders.set("X-Auth-Token", State.getToken());
@@ -45,16 +45,14 @@ public class ClientResolver {
         ResponseEntity<List<TransplantRequest>> responseEntity = State.getRestTemplate().exchange
                 (State.BASE_URI + "clients/{id}/transplantRequests", HttpMethod.GET, entity, new
                         ParameterizedTypeReference<List<TransplantRequest>>() {
-                        }, uid);
+                        }, client.getUid());
         State.setClientEtag(responseEntity.getHeaders().getETag());
-        State.getClientManager()
-                .getClientByID(uid)
-                .orElseThrow(IllegalArgumentException::new)
-                .setTransplantRequests(responseEntity.getBody());
+        client.setTransplantRequests(responseEntity.getBody());
         return responseEntity.getBody();
     }
 
-    public static List<MedicationRecord> getMedicationRecords(int uid) {
+    @Override
+    public List<MedicationRecord> getMedicationRecords(Client client) {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
         httpHeaders.set("X-Auth-Token", State.getToken());
@@ -64,12 +62,10 @@ public class ClientResolver {
         ResponseEntity<List<MedicationRecord>> responseEntity = State.getRestTemplate().exchange
                 (State.BASE_URI + "clients/{id}/medications", HttpMethod.GET, entity,
                         new ParameterizedTypeReference<List<MedicationRecord>>() {
-                        }, uid);
+                        }, client.getUid());
         State.setClientEtag(responseEntity.getHeaders().getETag());
-        State.getClientManager()
-                .getClientByID(uid)
-                .orElseThrow(IllegalArgumentException::new)
-                .setMedicationHistory(responseEntity.getBody());
+        client.setMedicationHistory(responseEntity.getBody());
         return responseEntity.getBody();
     }
 }
+

@@ -18,13 +18,9 @@ import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.actions.ActionInvoker;
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.TransplantRequest;
-import com.humanharvest.organz.actions.ActionInvoker;
-import com.humanharvest.organz.actions.client.ModifyClientOrgansAction;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.resolvers.ClientResolver;
+import com.humanharvest.organz.resolvers.client.ClientResolver;
 import com.humanharvest.organz.resolvers.client.ModifyClientOrganDonationResolver;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
@@ -35,8 +31,6 @@ import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
-import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import org.controlsfx.control.Notifications;
 
@@ -121,8 +115,8 @@ public class RegisterOrganDonationController extends SubController {
             List<TransplantRequest> transplantRequests;
 
             try {
-                transplantRequests = ClientResolver.getTransplantRequests(client.getUid());
-                donationStatus = ClientResolver.getOrganDonationStatus(client.getUid());
+                transplantRequests = State.getClientResolver().getTransplantRequests(client);
+                donationStatus = State.getClientResolver().getOrganDonationStatus(client);
             } catch (NotFoundException e) {
                 LOGGER.log(Level.WARNING, "Client not found");
                 Notifications.create()

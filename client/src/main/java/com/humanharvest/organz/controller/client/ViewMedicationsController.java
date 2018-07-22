@@ -33,7 +33,7 @@ import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SidebarController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.MedicationRecord;
-import com.humanharvest.organz.resolvers.ClientResolver;
+import com.humanharvest.organz.resolvers.client.ClientResolver;
 import com.humanharvest.organz.resolvers.client.AddMedicationRecordResolver;
 import com.humanharvest.organz.resolvers.client.ModifyMedicationRecordResolver;
 import com.humanharvest.organz.state.ClientManager;
@@ -190,9 +190,8 @@ public class ViewMedicationsController extends SubController {
         List<MedicationRecord> medicationRecords;
 
         try {
-            medicationRecords = ClientResolver.getMedicationRecords(client.getUid());
+            medicationRecords = State.getClientResolver().getMedicationRecords(client);
             client.setMedicationHistory(medicationRecords);
-            //ClientResolver.getMedicationRecords(client.getUid());
 
         } catch (NotFoundException e) {
             LOGGER.log(Level.WARNING, "Client or medication not found");
