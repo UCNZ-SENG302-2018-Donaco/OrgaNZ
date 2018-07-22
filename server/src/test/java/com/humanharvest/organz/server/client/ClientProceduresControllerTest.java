@@ -69,6 +69,7 @@ public class ClientProceduresControllerTest {
         testClient.addProcedureRecord(procedureRecord1);
         testClient.addProcedureRecord(procedureRecord2);
 
+        // Create mock authentication manager that verifies all clinicianOrAdmins
         AuthenticationManager mockAuthenticationManager = mock(AuthenticationManager.class);
         State.setAuthenticationManager(mockAuthenticationManager);
         doThrow(new AuthenticationException("X-Auth-Token does not match any allowed user type"))
@@ -81,7 +82,7 @@ public class ClientProceduresControllerTest {
                 "\"summary\": \"Heart Transplant\", \n" +
                 "\"description\": \"To fix my achy-breaky heart.\", \n" +
                 "\"date\": \"2017-06-01\", \n" +
-                "\"affectedOrgans\": \"HEART\" \n"+
+                "\"affectedOrgans\": [\"HEART\"] \n"+
                 " }";
     }
 
@@ -98,8 +99,10 @@ public class ClientProceduresControllerTest {
 
 
     @Test
-    public void createValidProcedure() throws Exception {/*
+    public void createValidProcedure() throws Exception {
         mockMvc.perform(post("/clients/1/procedures")
+                .header("If-Match", testClient.getETag())
+                .header("X-Auth-Token", VALID_AUTH)
                 .contentType(contentType)
                 .content(validProcedureJson))
                 .andExpect(status().isCreated())
@@ -107,7 +110,7 @@ public class ClientProceduresControllerTest {
                 .andExpect(jsonPath("$[2].summary", is("Heart Transplant")))
                 .andExpect(jsonPath("$[2].description", is("To fix my achy-breaky heart.")))
                 .andExpect(jsonPath("$[2].date", is("2017-06-01")))
-                .andExpect(jsonPath("$[2].affectedOrgans", is(" HEART ")));*/
+                .andExpect(jsonPath("$[2].affectedOrgans[0]", is("HEART")));
     }
 
     @Test

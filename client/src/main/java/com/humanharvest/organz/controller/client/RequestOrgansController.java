@@ -1,6 +1,5 @@
 package com.humanharvest.organz.controller.client;
 
-
 import static com.humanharvest.organz.utilities.enums.TransplantRequestStatus.WAITING;
 
 import java.time.LocalDate;
@@ -9,6 +8,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javafx.collections.FXCollections;
 import javafx.collections.transformation.FilteredList;
@@ -45,6 +46,10 @@ import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 import com.humanharvest.organz.utilities.enums.ResolveReason;
+import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
+import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
+import com.humanharvest.organz.utilities.exceptions.NotFoundException;
+import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.views.client.CreateTransplantRequestView;
@@ -56,6 +61,7 @@ import com.humanharvest.organz.views.client.CreateTransplantRequestView;
 public class RequestOrgansController extends SubController {
 
     private static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("d MMM yyyy hh:mm a");
+    private static final Logger LOGGER = Logger.getLogger(CreateClientController.class.getName());
 
     private Session session;
     private ActionInvoker invoker;
@@ -265,7 +271,7 @@ public class RequestOrgansController extends SubController {
      * If there is an error (bad organ selection), then it will show an alert.
      * Otherwise, it will:
      * - Create a request
-     * - Send it to the server
+     * - Send it to the server (if the server returns an error, it will alert the user and return)
      * - Update the client's list of transplant requests based on the server's response
      * - Refresh the page
      */
@@ -289,7 +295,36 @@ public class RequestOrgansController extends SubController {
 
             // Resolve the request
             CreateTransplantRequestResolver resolver = new CreateTransplantRequestResolver(client, newRequest);
-            List<TransplantRequest> updatedTransplantRequests = resolver.execute();
+            List<TransplantRequest> updatedTransplantRequests;
+            try {
+                updatedTransplantRequests = resolver.execute();
+            } catch (ServerRestException e) { //500
+                LOGGER.severe(e.getMessage());
+                PageNavigator.showAlert(AlertType.ERROR,
+                        "Server Error",
+                        "An error occurred on the server while trying to create the transplant request.\n"
+                                + "Please try again later.");
+                return;
+            } catch (IfMatchFailedException e) { //412
+                PageNavigator.showAlert(
+                        AlertType.WARNING,
+                        "Outdated Data",
+                        "The client has been modified since you retrieved the data.\n"
+                                + "If you would still like to apply these changes please submit again, "
+                                + "otherwise refresh the page to update the data.");
+                return;
+            } catch (NotFoundException e) { //404
+                LOGGER.log(Level.WARNING, "Client not found");
+                PageNavigator.showAlert(AlertType.WARNING, "Client not found", "The client could not be found on the "
+                        + "server, it may have been deleted");
+                return;
+            }
+            // Not caught, as they should not happen:
+            // 401 - Access token is missing or invalid
+            // 403 - You do not have permission to perform that action
+            // 428 - ETag header was missing and is required to modify a resource
+
+            // Update the client's transplant requests based on the server's response
             client.setTransplantRequests(updatedTransplantRequests);
 
             // Refresh the page
