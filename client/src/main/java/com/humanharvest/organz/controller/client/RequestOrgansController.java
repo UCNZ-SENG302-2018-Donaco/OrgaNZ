@@ -15,6 +15,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
@@ -33,6 +34,7 @@ import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.resolvers.client.MarkClientAsDeadResolver;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
@@ -47,7 +49,9 @@ import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.views.client.CreateTransplantRequestView;
+import com.humanharvest.organz.views.client.ModifyClientObject;
 import com.humanharvest.organz.views.client.ResolveTransplantRequestView;
+import org.controlsfx.control.Notifications;
 
 /**
  * Controller for the Request Organs page. Handles the viewing of current and past organ transplant requests. If the
@@ -252,12 +256,12 @@ public class RequestOrgansController extends SubController {
     }
 
     private void enableAppropriateButtons() {
-        if (windowContext.isClinViewClientWindow()) {
-            if (currentRequestsTable.getSelectionModel().getSelectedItem() == null) {
-                resolveRequestBar.setDisable(true);
-            } else {
-                resolveRequestBar.setDisable(false);
-            }
+        // The "Resolve Request" button
+        if (windowContext.isClinViewClientWindow()
+                && currentRequestsTable.getSelectionModel().getSelectedItem() != null) {
+            resolveRequestBar.setDisable(false);
+        } else {
+            resolveRequestBar.setDisable(true);
         }
     }
 
@@ -283,6 +287,11 @@ public class RequestOrgansController extends SubController {
                     AlertType.ERROR,
                     "Request already exists",
                     "Client already has a waiting request for this organ.");
+        } else if (client.isDead()) { // Client is dead, they can't request an organ
+            PageNavigator.showAlert(
+                    AlertType.ERROR,
+                    "Client is dead",
+                    "Client is marked as dead, so can't request an organ transplant.");
         } else { // Bluesky scenario
             // Create a request
             CreateTransplantRequestView newRequest =
@@ -364,13 +373,41 @@ public class RequestOrgansController extends SubController {
                                 "Are you sure you want to mark this client as dead?",
                                 "This will cancel all waiting transplant requests for this client.");
                         if (buttonOpt.isPresent() && buttonOpt.get() == ButtonType.OK) {
-                            // todo send a request to the server to mark the client as dead
-                            // todo this should result in a `MarkClientAsDeadAction` using `client` and `deathDate`
+                            MarkClientAsDeadResolver deadResolver =
+                                    new MarkClientAsDeadResolver(client, deathDate);
+                            try {
+                                deadResolver.execute();
+                            } catch (NotFoundException e) {
+                                LOGGER.log(Level.WARNING, "Client not found");
+                                PageNavigator.showAlert(
+                                        AlertType.WARNING,
+                                        "Client not found",
+                                        "The client could not be found on the server, it may have been deleted");
+                                return;
+                            } catch (ServerRestException e) {
+                                LOGGER.log(Level.WARNING, e.getMessage(), e);
+                                PageNavigator.showAlert(
+                                        AlertType.WARNING,
+                                        "Server error",
+                                        "Could not apply changes on the server, please try again later");
+                                return;
+                            } catch (IfMatchFailedException e) {
+                                LOGGER.log(Level.INFO, "If-Match did not match");
+                                PageNavigator.showAlert(
+                                        AlertType.WARNING,
+                                        "Outdated Data",
+                                        "The client has been modified since you retrieved the data.\n"
+                                                + "If you would still like to apply these changes please submit again, "
+                                                + "otherwise refresh the page to update the data.");
+                                return;
+                            }
+                            client.markDead(deathDate); //todo check if this can still be undone?
                         }
                         if (buttonOpt.isPresent()) { // if they chose OK or Cancel
                             deathDatePicker.setValue(LocalDate.now()); //reset datepicker
                         }
                     }
+                    PageNavigator.refreshAllWindows();
                     return;
                 case CURED:  // "Disease was cured"
                     resolvedReason = "The disease was cured.";
