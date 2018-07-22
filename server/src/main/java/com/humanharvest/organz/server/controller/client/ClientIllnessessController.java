@@ -64,15 +64,17 @@ public class ClientIllnessessController {
         }
 
         //Fetch the client given by ID
-        Optional<Client> client = State.getClientManager().getClientByID(uid);
-        if (!client.isPresent()) {
+        Optional<Client> optionalClient = State.getClientManager().getClientByID(uid);
+        if (!optionalClient.isPresent()) {
             //Return 404 if that client does not exist
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         IllnessRecord record;
         try {
-            record = client.get().getAllIllnessHistory().get(id - 1); // starting index 1.
+            Client client = optionalClient.get();
+            record = client.getAllIllnessHistory().get(id - 1); // starting index 1.
+            State.getAuthenticationManager().verifyClientAccess(authToken, client);
         } catch (IndexOutOfBoundsException e) {
             //Record does not exist
             System.out.println("Record does not exist");
@@ -82,8 +84,8 @@ public class ClientIllnessessController {
         if (ETag == null) {
             throw new IfMatchRequiredException();
         }
-        System.out.println(client.get().getETag());
-        if (!client.get().getETag().equals(ETag)) {
+        System.out.println(optionalClient.get().getETag());
+        if (!optionalClient.get().getETag().equals(ETag)) {
             throw new IfMatchFailedException();
         }
 
@@ -102,7 +104,7 @@ public class ClientIllnessessController {
 
         //Add the new ETag to the headers
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client.get().getETag());
+        headers.setETag(optionalClient.get().getETag());
         return new ResponseEntity<>(record, headers, HttpStatus.OK);
 
     }
@@ -110,10 +112,12 @@ public class ClientIllnessessController {
     @PostMapping("/clients/{uid}/illnesses")
     @JsonView(Views.Overview.class)
     public ResponseEntity <IllnessRecord> postIllness(@RequestBody CreateIllnessView illnessView,
-            @PathVariable int uid)
+            @PathVariable int uid,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws InvalidRequestException {
 
         Optional<Client> client = State.getClientManager().getClientByID(uid);
+        State.getAuthenticationManager().verifyClientAccess(authToken, client.get());
         if (!client.isPresent()) {
             //Return 404 if that client does not exist
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -131,7 +135,9 @@ public class ClientIllnessessController {
 
     @DeleteMapping("/clients/{uid}/illnesses/{id}")
     @JsonView(Views.Overview.class)
-    public ResponseEntity<IllnessRecord> deleteIllness(@PathVariable int uid, @PathVariable int id) throws InvalidRequestException {
+    public ResponseEntity<IllnessRecord> deleteIllness(@PathVariable int uid,
+        @PathVariable int id,
+        @RequestHeader(value = "X-Auth-Token", required = false) String authToken) throws InvalidRequestException {
         Optional<Client> client = State.getClientManager().getClientByID(uid);
         if (!client.isPresent()) {
             //Return 404 if that client does not exist
@@ -139,6 +145,7 @@ public class ClientIllnessessController {
         }
 
         IllnessRecord removeRecord = client.get().getAllIllnessHistory().get(id-1);
+        State.getAuthenticationManager().verifyClientAccess(authToken, client.get());
         client.get().deleteIllnessRecord(removeRecord);
         HttpHeaders headers = new HttpHeaders();
         headers.setETag(client.get().getETag());
