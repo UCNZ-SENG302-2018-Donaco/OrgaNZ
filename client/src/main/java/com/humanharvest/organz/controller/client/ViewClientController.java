@@ -1,11 +1,9 @@
 package com.humanharvest.organz.controller.client;
 
-import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.logging.Level;
@@ -26,7 +24,7 @@ import javafx.scene.paint.Color;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.controller.clinician.ViewBaseController;
 import com.humanharvest.organz.resolvers.client.MarkClientAsDeadResolver;
 import com.humanharvest.organz.resolvers.client.ModifyClientDetailsResolver;
 import com.humanharvest.organz.state.ClientManager;
@@ -49,7 +47,7 @@ import org.controlsfx.control.Notifications;
 /**
  * Controller for the view/edit client page.
  */
-public class ViewClientController extends SubController {
+public class ViewClientController extends ViewBaseController {
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
             .withZone(ZoneId.systemDefault());
@@ -365,24 +363,6 @@ public class ViewClientController extends SubController {
         return update;
     }
 
-    private void addChangeIfDifferent(ModifyClientObject modifyClientObject, String fieldString, Object newValue) {
-        try {
-            //Get the field from the string
-            Field field = modifyClientObject.getClass().getDeclaredField(fieldString);
-            Field clientField = viewedClient.getClass().getDeclaredField(fieldString);
-            //Allow access to any fields including private
-            field.setAccessible(true);
-            clientField.setAccessible(true);
-            //Only add the field if it differs from the client
-            if (!Objects.equals(clientField.get(viewedClient), newValue)) {
-                field.set(modifyClientObject, newValue);
-                modifyClientObject.registerChange(fieldString);
-            }
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-        }
-    }
-
     /**
      * Records the changes updated as a ModifyClientAction to trace the change in record.
      * @return If there were any changes made
@@ -436,21 +416,21 @@ public class ViewClientController extends SubController {
                         .showConfirm();
             }
         } else {
-            addChangeIfDifferent(modifyClientObject, "dateOfDeath", dod.getValue());
+            addChangeIfDifferent(modifyClientObject, viewedClient, "dateOfDeath", dod.getValue());
         }
 
-        addChangeIfDifferent(modifyClientObject, "firstName", fname.getText());
-        addChangeIfDifferent(modifyClientObject, "lastName", lname.getText());
-        addChangeIfDifferent(modifyClientObject, "middleName", mname.getText());
-        addChangeIfDifferent(modifyClientObject, "preferredName", pname.getText());
-        addChangeIfDifferent(modifyClientObject, "dateOfBirth", dob.getValue());
-        addChangeIfDifferent(modifyClientObject, "gender", gender.getValue());
-        addChangeIfDifferent(modifyClientObject, "genderIdentity", genderIdentity.getValue());
-        addChangeIfDifferent(modifyClientObject, "height", Double.parseDouble(height.getText()));
-        addChangeIfDifferent(modifyClientObject, "weight", Double.parseDouble(weight.getText()));
-        addChangeIfDifferent(modifyClientObject, "bloodType", btype.getValue());
-        addChangeIfDifferent(modifyClientObject, "region", region.getValue());
-        addChangeIfDifferent(modifyClientObject, "currentAddress", address.getText());
+        addChangeIfDifferent(modifyClientObject, viewedClient, "firstName", fname.getText());
+        addChangeIfDifferent(modifyClientObject, viewedClient, "lastName", lname.getText());
+        addChangeIfDifferent(modifyClientObject, viewedClient, "middleName", mname.getText());
+        addChangeIfDifferent(modifyClientObject, viewedClient, "preferredName", pname.getText());
+        addChangeIfDifferent(modifyClientObject, viewedClient, "dateOfBirth", dob.getValue());
+        addChangeIfDifferent(modifyClientObject, viewedClient, "gender", gender.getValue());
+        addChangeIfDifferent(modifyClientObject, viewedClient, "genderIdentity", genderIdentity.getValue());
+        addChangeIfDifferent(modifyClientObject, viewedClient, "height", Double.parseDouble(height.getText()));
+        addChangeIfDifferent(modifyClientObject, viewedClient, "weight", Double.parseDouble(weight.getText()));
+        addChangeIfDifferent(modifyClientObject, viewedClient, "bloodType", btype.getValue());
+        addChangeIfDifferent(modifyClientObject, viewedClient, "region", region.getValue());
+        addChangeIfDifferent(modifyClientObject, viewedClient, "currentAddress", address.getText());
 
         if (modifyClientObject.getModifiedFields().isEmpty()) {
             if (!clientDied) {
