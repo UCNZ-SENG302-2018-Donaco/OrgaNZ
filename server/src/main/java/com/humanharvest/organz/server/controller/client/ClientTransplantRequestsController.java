@@ -17,6 +17,7 @@ import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
 import com.humanharvest.organz.utilities.validators.client.TransplantRequestValidator;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -138,6 +139,10 @@ public class ClientTransplantRequestsController {
             State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
 
             // Check etag
+
+            System.out.println("===SERVER===");
+            System.out.println(client.getETag());
+            System.out.println(etag);
             if (etag == null) {
                 throw new IfMatchRequiredException();
             }
@@ -153,11 +158,16 @@ public class ClientTransplantRequestsController {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
 
-            // Add transplant request to client and send 201
+            // Add transplant request to client
             Action action = new AddTransplantRequestAction(client, transplantRequest, State.getClientManager());
             State.getActionInvoker(authToken).execute(action);
             Collection<TransplantRequest> transplantRequests = client.getTransplantRequests();
-            return new ResponseEntity<>(transplantRequests, HttpStatus.CREATED);
+
+            //Add the new ETag to the headers
+            HttpHeaders headers = new HttpHeaders();
+            headers.setETag(client.getETag());
+
+            return new ResponseEntity<>(transplantRequests, headers, HttpStatus.CREATED);
 
         } else {
             // no client exists with that ID - send a 404
@@ -220,14 +230,19 @@ public class ClientTransplantRequestsController {
                     && originalTransplantRequest.getRequestedOrgan() == transplantRequest.getRequestedOrgan()
                     && originalTransplantRequest.getRequestDate().equals(transplantRequest.getRequestDate())) {
 
-                // Resolve transplant request and send 201
+                // Resolve transplant request
                 Action action = new ResolveTransplantRequestAction(originalTransplantRequest,
                         transplantRequest.getStatus(),
                         transplantRequest.getResolvedReason(),
                         transplantRequest.getResolvedDate(),
                         State.getClientManager());
                 State.getActionInvoker(authToken).execute(action);
-                return new ResponseEntity<>(originalTransplantRequest, HttpStatus.CREATED);
+
+                //Add the new ETag to the headers
+                HttpHeaders headers = new HttpHeaders();
+                headers.setETag(client.getETag());
+
+                return new ResponseEntity<>(originalTransplantRequest, headers, HttpStatus.CREATED);
             } else {
                 // illegal changes
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
