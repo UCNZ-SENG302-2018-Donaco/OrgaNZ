@@ -6,7 +6,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.views.clinician.ModifyBaseObject;
+import com.humanharvest.organz.views.ModifyBaseObject;
 
 public class ViewBaseController extends SubController {
 

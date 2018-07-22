@@ -1,19 +1,14 @@
 package com.humanharvest.organz.views.client;
 
-import java.io.IOException;
-import java.lang.reflect.Field;
 import java.lang.reflect.Member;
 import java.time.LocalDate;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import com.humanharvest.organz.utilities.enums.BloodType;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Region;
-import com.humanharvest.organz.views.clinician.ModifyBaseObject;
+import com.humanharvest.organz.views.ModifyBaseObject;
 
 @JsonSerialize(using = ModifyBaseObject.Serialiser.class)
 public class ModifyClientObject extends ModifyBaseObject {

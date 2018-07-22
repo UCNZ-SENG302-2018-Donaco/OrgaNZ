@@ -4,7 +4,7 @@ import java.lang.reflect.Member;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.humanharvest.organz.views.clinician.ModifyBaseObject;
+import com.humanharvest.organz.views.ModifyBaseObject;
 
 @JsonSerialize(using = ModifyBaseObject.Serialiser.class)
 public class ModifyAdministratorObject extends ModifyBaseObject {

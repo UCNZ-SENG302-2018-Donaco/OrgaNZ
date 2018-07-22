@@ -6,14 +6,8 @@ import java.util.Map;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.TransplantRequest;
-import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import com.humanharvest.organz.views.client.ResolveTransplantRequestView;
 
 public class ClientResolverMemory implements ClientResolver {
 
@@ -30,5 +24,15 @@ public class ClientResolverMemory implements ClientResolver {
     @Override
     public List<MedicationRecord> getMedicationRecords(Client client) {
         return client.getMedicationRecords();
+    }
+
+    @Override
+    public TransplantRequest resolveTransplantRequest(Client client, ResolveTransplantRequestView request,
+            int transplantRequestIndex) {
+        TransplantRequest originalTransplantRequest = client.getTransplantRequests().get(transplantRequestIndex);
+        originalTransplantRequest.setStatus(request.getStatus());
+        originalTransplantRequest.setResolvedReason(request.getResolvedReason());
+        originalTransplantRequest.setResolvedDate(request.getResolvedDate());
+        return originalTransplantRequest;
     }
 }

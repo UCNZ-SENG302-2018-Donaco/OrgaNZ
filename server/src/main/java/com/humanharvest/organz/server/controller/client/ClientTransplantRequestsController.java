@@ -170,7 +170,7 @@ public class ClientTransplantRequestsController {
      * @param transplantRequest the transplant request to add
      * @param uid the client's ID
      * @param id the transplant request's ID
-     * @param ETag A hashed value of the object used for optimistic concurrency control
+     * @param etag A hashed value of the object used for optimistic concurrency control
      * @return list of all transplant requests for that client
      */
     @PatchMapping("/clients/{uid}/transplantRequests/{id}")
@@ -178,7 +178,7 @@ public class ClientTransplantRequestsController {
             @RequestBody TransplantRequest transplantRequest,
             @PathVariable int uid,
             @PathVariable int id,
-            @RequestHeader(value = "If-Match", required = false) String ETag,
+            @RequestHeader(value = "If-Match", required = false) String etag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {
 
         // Get the client given by the ID
@@ -198,10 +198,10 @@ public class ClientTransplantRequestsController {
             State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
 
             // Check etag
-            if (ETag == null) {
+            if (etag == null) {
                 throw new IfMatchRequiredException();
             }
-            if (!client.getETag().equals(ETag)) {
+            if (!client.getETag().equals(etag)) {
                 throw new IfMatchFailedException();
             }
 
@@ -217,7 +217,7 @@ public class ClientTransplantRequestsController {
             // The client, organ, and request date (and time) must stay the same.
             // If anything has illegally changed, it will return a 400.
             if (originalTransplantRequest.getClient().getUid().equals(client.getUid())
-                    && originalTransplantRequest.getRequestedOrgan().equals(transplantRequest.getRequestedOrgan())
+                    && originalTransplantRequest.getRequestedOrgan() == transplantRequest.getRequestedOrgan()
                     && originalTransplantRequest.getRequestDate().equals(transplantRequest.getRequestDate())) {
 
                 // Resolve transplant request and send 201
@@ -228,16 +228,13 @@ public class ClientTransplantRequestsController {
                         State.getClientManager());
                 State.getActionInvoker(authToken).execute(action);
                 return new ResponseEntity<>(originalTransplantRequest, HttpStatus.CREATED);
-
             } else {
                 // illegal changes
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
-
         } else {
             // no client exists with that ID - send a 404
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
     }
 }

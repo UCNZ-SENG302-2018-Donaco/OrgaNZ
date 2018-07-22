@@ -1,4 +1,4 @@
-package com.humanharvest.organz.views.clinician;
+package com.humanharvest.organz.views;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -16,7 +16,7 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
 public class ModifyBaseObject {
 
-    public class Serialiser<T extends ModifyBaseObject> extends StdSerializer<T> {
+    public static class Serialiser<T extends ModifyBaseObject> extends StdSerializer<T> {
 
         public Serialiser() {
             this(null);
@@ -43,7 +43,7 @@ public class ModifyBaseObject {
     }
 
     @JsonIgnore
-    private Set<Field> modifiedFields = new HashSet<>();
+    private final Set<Field> modifiedFields = new HashSet<>();
 
     @JsonIgnore
     public Set<Field> getModifiedFields() {

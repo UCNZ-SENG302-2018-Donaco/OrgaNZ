@@ -8,6 +8,7 @@ import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.views.client.ResolveTransplantRequestView;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -23,7 +24,7 @@ public class ClientResolverRest implements ClientResolver {
         httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
         httpHeaders.set("X-Auth-Token", State.getToken());
 
-        HttpEntity entity = new HttpEntity<>(null, httpHeaders);
+        HttpEntity<?> entity = new HttpEntity<>(null, httpHeaders);
 
         ResponseEntity<Map<Organ, Boolean>> responseEntity = State.getRestTemplate().exchange
                 (State.BASE_URI + "clients/{id}/donationStatus", HttpMethod.GET, entity, new
@@ -40,7 +41,7 @@ public class ClientResolverRest implements ClientResolver {
         httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
         httpHeaders.set("X-Auth-Token", State.getToken());
 
-        HttpEntity entity = new HttpEntity<>(null, httpHeaders);
+        HttpEntity<?> entity = new HttpEntity<>(null, httpHeaders);
 
         ResponseEntity<List<TransplantRequest>> responseEntity = State.getRestTemplate().exchange
                 (State.BASE_URI + "clients/{id}/transplantRequests", HttpMethod.GET, entity, new
@@ -57,7 +58,7 @@ public class ClientResolverRest implements ClientResolver {
         httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
         httpHeaders.set("X-Auth-Token", State.getToken());
 
-        HttpEntity entity = new HttpEntity<>(null, httpHeaders);
+        HttpEntity<?> entity = new HttpEntity<>(null, httpHeaders);
 
         ResponseEntity<List<MedicationRecord>> responseEntity = State.getRestTemplate().exchange
                 (State.BASE_URI + "clients/{id}/medications", HttpMethod.GET, entity,
@@ -65,6 +66,24 @@ public class ClientResolverRest implements ClientResolver {
                         }, client.getUid());
         State.setClientEtag(responseEntity.getHeaders().getETag());
         client.setMedicationHistory(responseEntity.getBody());
+        return responseEntity.getBody();
+    }
+
+    @Override
+    public TransplantRequest resolveTransplantRequest(Client client, ResolveTransplantRequestView request,
+            int transplantRequestIndex) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setIfMatch(State.getClientEtag());
+        httpHeaders.set("X-Auth-Token", State.getToken());
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
+
+        HttpEntity<ResolveTransplantRequestView> entity = new HttpEntity<>(request, httpHeaders);
+
+        ResponseEntity<TransplantRequest> responseEntity = State.getRestTemplate().exchange(
+                        State.BASE_URI + "clients/" + client.getUid() + "/transplantRequests/" + transplantRequestIndex,
+                        HttpMethod.PATCH, entity, TransplantRequest.class);
+
+        State.setClientEtag(responseEntity.getHeaders().getETag());
         return responseEntity.getBody();
     }
 }

@@ -5,6 +5,7 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.humanharvest.organz.utilities.enums.Region;
+import com.humanharvest.organz.views.ModifyBaseObject;
 
 @JsonSerialize(using = ModifyBaseObject.Serialiser.class)
 public class ModifyClinicianObject extends ModifyBaseObject {

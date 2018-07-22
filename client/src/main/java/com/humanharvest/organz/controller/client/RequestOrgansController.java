@@ -29,16 +29,11 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 
-import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.actions.ActionInvoker;
-import com.humanharvest.organz.actions.client.AddTransplantRequestAction;
-import com.humanharvest.organz.actions.client.MarkClientAsDeadAction;
-import com.humanharvest.organz.actions.client.ResolveTransplantRequestAction;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.resolvers.client.CreateTransplantRequestResolver;
-import com.humanharvest.organz.resolvers.client.ResolveTransplantRequestResolver;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
@@ -47,7 +42,6 @@ import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 import com.humanharvest.organz.utilities.enums.ResolveReason;
-import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
@@ -355,54 +349,58 @@ public class RequestOrgansController extends SubController {
             String resolvedReason;
             TransplantRequestStatus status;
 
-            if (resolvedReasonDropdownChoice == ResolveReason.COMPLETED) { // "Transplant completed"
-                resolvedReason = "Transplant took place.";
-                status = TransplantRequestStatus.COMPLETED;
-            } else if (resolvedReasonDropdownChoice == ResolveReason.DECEASED) { // "Client is deceased"
-                // A datepicker appears, for choosing the date of death
-                LocalDate deathDate = deathDatePicker.getValue();
-                if (deathDate.isBefore(client.getDateOfBirth()) || deathDate.isAfter(LocalDate.now())) {
-                    PageNavigator.showAlert(AlertType.ERROR,
-                            "Date of Death Invalid",
-                            "Date of death must be between client's birth date and the current date.");
-                } else { // valid date of death
-                    Optional<ButtonType> buttonOpt = PageNavigator.showAlert(AlertType.CONFIRMATION,
-                            "Are you sure you want to mark this client as dead?",
-                            "This will cancel all waiting transplant requests for this client.");
-                    if (buttonOpt.isPresent() && buttonOpt.get() == ButtonType.OK) {
-                        // todo send a request to the server to mark the client as dead
-                        // todo this should result in a `MarkClientAsDeadAction` using `client` and `deathDate`
+            switch (resolvedReasonDropdownChoice) {
+                case COMPLETED:  // "Transplant completed"
+                    resolvedReason = "Transplant took place.";
+                    status = TransplantRequestStatus.COMPLETED;
+                    break;
+                case DECEASED:  // "Client is deceased"
+                    // A datepicker appears, for choosing the date of death
+                    LocalDate deathDate = deathDatePicker.getValue();
+                    if (deathDate.isBefore(client.getDateOfBirth()) || deathDate.isAfter(LocalDate.now())) {
+                        PageNavigator.showAlert(AlertType.ERROR,
+                                "Date of Death Invalid",
+                                "Date of death must be between client's birth date and the current date.");
+                    } else { // valid date of death
+                        Optional<ButtonType> buttonOpt = PageNavigator.showAlert(AlertType.CONFIRMATION,
+                                "Are you sure you want to mark this client as dead?",
+                                "This will cancel all waiting transplant requests for this client.");
+                        if (buttonOpt.isPresent() && buttonOpt.get() == ButtonType.OK) {
+                            // todo send a request to the server to mark the client as dead
+                            // todo this should result in a `MarkClientAsDeadAction` using `client` and `deathDate`
+                        }
+                        if (buttonOpt.isPresent()) { // if they chose OK or Cancel
+                            deathDatePicker.setValue(LocalDate.now()); //reset datepicker
+                        }
                     }
-                    if (buttonOpt.isPresent()) { // if they chose OK or Cancel
-                        deathDatePicker.setValue(LocalDate.now()); //reset datepicker
-                    }
-                }
-                return;
-            } else if (resolvedReasonDropdownChoice == ResolveReason.CURED) { // "Disease was cured"
-                resolvedReason = "The disease was cured.";
-                status = TransplantRequestStatus.CANCELLED;
-            } else if (resolvedReasonDropdownChoice == ResolveReason.ERROR) { // "Input error"
-                resolvedReason = "Request was a mistake.";
-                status = TransplantRequestStatus.CANCELLED;
-            } else if (resolvedReasonDropdownChoice == ResolveReason.CUSTOM) { // "Custom reason..."
-                resolvedReason = customReason.getText();
-                status = TransplantRequestStatus.CANCELLED;
-                customReason.clear();
-            } else {
-                throw new UnsupportedOperationException("Transplant request status that wasn't covered in if-else "
-                        + "statements.");
+                    return;
+                case CURED:  // "Disease was cured"
+                    resolvedReason = "The disease was cured.";
+                    status = TransplantRequestStatus.CANCELLED;
+                    break;
+                case ERROR:  // "Input error"
+                    resolvedReason = "Request was a mistake.";
+                    status = TransplantRequestStatus.CANCELLED;
+                    break;
+                case CUSTOM:  // "Custom reason..."
+                    resolvedReason = customReason.getText();
+                    status = TransplantRequestStatus.CANCELLED;
+                    customReason.clear();
+                    break;
+                default:
+                    throw new UnsupportedOperationException("Transplant request status that wasn't covered in if-else "
+                            + "statements.");
             }
 
             ResolveTransplantRequestView request = new ResolveTransplantRequestView(client, requestedOrgan, requestDate,
                     LocalDateTime.now(), status, resolvedReason);
 
             // Resolve the request
+            // TODO: Should we really use the index?
             int transplantRequestIndex = client.getTransplantRequests().indexOf(selectedRequest);
-            ResolveTransplantRequestResolver resolver =
-                    new ResolveTransplantRequestResolver(client, request, transplantRequestIndex);
             TransplantRequest updatedTransplantRequest;
             try {
-                updatedTransplantRequest = resolver.execute();
+                updatedTransplantRequest = State.getClientResolver().resolveTransplantRequest(client, request, transplantRequestIndex);
             } catch (ServerRestException e) { //500
                 LOGGER.severe(e.getMessage());
                 PageNavigator.showAlert(AlertType.ERROR,
