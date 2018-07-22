@@ -9,8 +9,13 @@ import java.util.OptionalInt;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
+import javafx.css.PseudoClass;
 import javafx.fxml.FXML;
+import javafx.scene.Group;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -18,6 +23,10 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
@@ -59,19 +68,15 @@ public class ViewClientController extends SubController {
     @FXML
     private Pane sidebarPane;
     @FXML
-    private Pane idPane;
+    private Pane imagePane;
     @FXML
     private Pane inputsPane;
     @FXML
     private Pane menuBarPane;
     @FXML
-    private Button searchClientButton;
-    @FXML
     private Label creationDate;
     @FXML
     private Label lastModified;
-    @FXML
-    private Label noClientLabel;
     @FXML
     private Label fnameLabel;
     @FXML
@@ -91,7 +96,7 @@ public class ViewClientController extends SubController {
     @FXML
     private Label bmiLabel;
     @FXML
-    private TextField id;
+    private Label fullName;
     @FXML
     private TextField fname;
     @FXML
@@ -118,6 +123,8 @@ public class ViewClientController extends SubController {
     private ChoiceBox<BloodType> btype;
     @FXML
     private ChoiceBox<Region> region;
+    @FXML
+    private ImageView imageView;
 
     public ViewClientController() {
         manager = State.getClientManager();
@@ -138,7 +145,22 @@ public class ViewClientController extends SubController {
         genderIdentity.setItems(FXCollections.observableArrayList(Gender.values()));
         btype.setItems(FXCollections.observableArrayList(BloodType.values()));
         region.setItems(FXCollections.observableArrayList(Region.values()));
-        setFieldsDisabled(true);
+        fullName.setWrapText(true);
+    }
+
+    private void loadImage() {
+        try {
+            Image image = new Image("https://img.rl0.ru/f3f70ad4661bcac56b285cb86efdea1e/c615x400/news.rambler.ru/img/2018/05/23142637.159422.8999.jpg");
+//            Image image = new Image("./../../../../../../resources/images/harold.jpg");
+            imageView.setImage(image);
+            imageView.setFitHeight(150);
+            imageView.setFitWidth(150);
+            imageView.setPreserveRatio(true);
+
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            throw ex;
+        }
     }
 
     @Override
@@ -146,35 +168,13 @@ public class ViewClientController extends SubController {
         super.setup(mainController);
         if (session.getLoggedInUserType() == Session.UserType.CLIENT) {
             viewedClient = session.getLoggedInClient();
-            idPane.setVisible(false);
-            idPane.setManaged(false);
             mainController.loadSidebar(sidebarPane);
         } else if (windowContext.isClinViewClientWindow()) {
             viewedClient = windowContext.getViewClient();
             mainController.loadMenuBar(menuBarPane);
         }
-        id.setText(Integer.toString(viewedClient.getUid()));
+        loadImage();
         refresh();
-
-        new UIValidation()
-                .add(id, new IntValidator() {
-                    @Override
-                    public boolean isValid(Object value) {
-                        OptionalInt clientId = getAsInt(value);
-                        if (!clientId.isPresent()) {
-                            return false;
-                        }
-
-                        return State.getClientManager().getClientByID(clientId.getAsInt()).isPresent();
-                    }
-
-                    @Override
-                    public String getErrorMessage() {
-                        return "Invalid client id";
-                    }
-                })
-                .addDisableButton(searchClientButton)
-                .validate();
     }
 
     @Override
@@ -195,41 +195,7 @@ public class ViewClientController extends SubController {
         }
     }
 
-    /**
-     * Searches for a client based off the id number supplied in the text field. The users fields will be displayed if
-     * this user exists, otherwise an error message will display.
-     */
-    @FXML
-    private void searchClient() {
-        int idValue;
-        try {
-            idValue = Integer.parseInt(id.getText());
-        } catch (NumberFormatException e) {
-            noClientLabel.setVisible(true);
-            setFieldsDisabled(true);
-            return;
-        }
-        try {
-            viewedClient = manager.getClientByID(idValue).orElse(null);
-            updateClientFields();
-        } catch (ServerRestException e) {
-            e.printStackTrace();
-            PageNavigator.showAlert(AlertType.ERROR,
-                    "Server Error",
-                    "An error occurred while trying to fetch from the server.\nPlease try again later.");
-        } catch (NotFoundException e) {
-            PageNavigator.showAlert(AlertType.WARNING,
-                    "Client Not Found",
-                    "The specified client could not be located. Please enter a different ID");
-            noClientLabel.setVisible(true);
-            setFieldsDisabled(true);
-        }
-    }
-
     private void updateClientFields() {
-        noClientLabel.setVisible(false);
-        setFieldsDisabled(false);
-
         fname.setText(viewedClient.getFirstName());
         lname.setText(viewedClient.getLastName());
         mname.setText(viewedClient.getMiddleName());
@@ -243,6 +209,7 @@ public class ViewClientController extends SubController {
         btype.setValue(viewedClient.getBloodType());
         region.setValue(viewedClient.getRegion());
         address.setText(viewedClient.getCurrentAddress());
+        fullName.setText(viewedClient.getFullName());
 
         creationDate.setText(viewedClient.getCreatedTimestamp().format(dateTimeFormat));
         if (viewedClient.getModifiedTimestamp() == null) {
@@ -256,14 +223,6 @@ public class ViewClientController extends SubController {
 
     }
 
-    /**
-     * Disables the view of user fields as these will all be irrelevant to the id number supplied if no such client
-     * exists with this id. Or sets it to visible so that the user can see all fields relevant to the client.
-     * @param disabled the state of the pane.
-     */
-    private void setFieldsDisabled(boolean disabled) {
-        inputsPane.setVisible(!disabled);
-    }
 
     /**
      * Saves the changes a user makes to the viewed client if all their inputs are valid.
