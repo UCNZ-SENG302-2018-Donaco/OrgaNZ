@@ -117,7 +117,7 @@ public class ClinicianController {
 
         if (clinician.isPresent()) {
             System.out.println(State.getAuthenticationManager());
-            State.getAuthenticationManager().vefifyClinicianAccess(authToken, clinician.get());
+            State.getAuthenticationManager().verifyClinicianAccess(authToken, clinician.get());
 
             if (ModifyClinicianValidator.isValid((editedClinician))) { // {
 

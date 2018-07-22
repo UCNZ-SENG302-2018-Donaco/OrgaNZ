@@ -77,7 +77,7 @@ public class AuthenticationManager {
      * @param authenticationToken The authentication token to check
      * @throws AuthenticationException Thrown if the authentication is invalid for any reason
      */
-    public void vefifyClinicianAccess(String authenticationToken, Clinician viewedClinician) throws
+    public void verifyClinicianAccess(String authenticationToken, Clinician viewedClinician) throws
             AuthenticationException {
         String identifier = getIdentifierFromToken(authenticationToken);
 
