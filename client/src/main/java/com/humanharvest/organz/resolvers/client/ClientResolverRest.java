@@ -94,6 +94,7 @@ public class ClientResolverRest implements ClientResolver {
     public List<TransplantRequest> createTransplantRequest(Client client, CreateTransplantRequestView request) {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setIfMatch(State.getClientEtag());
+        httpHeaders.set("X-Auth-Token", State.getToken());
         httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
 
         HttpEntity<?> entity = new HttpEntity<>(request, httpHeaders);

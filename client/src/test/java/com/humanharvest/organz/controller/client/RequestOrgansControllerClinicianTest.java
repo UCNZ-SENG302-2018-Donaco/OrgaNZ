@@ -34,7 +34,7 @@ import org.junit.Test;
 
 public class RequestOrgansControllerClinicianTest extends ControllerTest {
 
-    TransplantRequest heartRequest;
+    private TransplantRequest heartRequest;
     private Collection<TransplantRequest> sampleRequests = new ArrayList<>();
     private Clinician testClinician = new Clinician("Mr", null, "Tester", "9 Fake St", Region.AUCKLAND, 1000, "qwerty");
     private Client testClient = new Client(1);
@@ -184,7 +184,6 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
     }
 
     @Test
-    @Ignore
     public void resolveRequestCuredTest() {
         setSampleRequests();
 
@@ -205,8 +204,7 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
         type(KeyCode.ENTER);
 
         // Checks that the selected organ has been removed from the clients transplant request list
-        Organ organ = boneRow.getTableView().getItems().get(1).getRequestedOrgan();
-        assertFalse(testClient.getCurrentlyRequestedOrgans().contains(organ));
+        assertFalse(testClient.getCurrentlyRequestedOrgans().contains(Organ.BONE));
     }
 
     @Test
