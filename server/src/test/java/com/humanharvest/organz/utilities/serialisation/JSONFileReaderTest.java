@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -39,7 +40,7 @@ public class JSONFileReaderTest {
         assertEquals(BloodType.B_NEG, testClient.getBloodType());
         assertEquals("145 Old Lane", testClient.getCurrentAddress());
         assertEquals(Region.NELSON, testClient.getRegion());
-        assertEquals(LocalDateTime.of(2018, 3, 21, 20, 55, 46), testClient.getCreatedTimestamp());
+        assertEquals(Instant.parse("2018-03-21T20:55:46Z"), testClient.getCreatedTimestamp());
 
         // Test that the Client's organs set was also deserialized correctly.
         List<Organ> expectedOrgans = Arrays.asList(
