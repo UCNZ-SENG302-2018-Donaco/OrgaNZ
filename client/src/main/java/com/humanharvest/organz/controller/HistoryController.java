@@ -85,19 +85,10 @@ public class HistoryController extends SubController {
                     windowContext.getViewClient().getChangesHistory()
             ));
         } else {
-            try {
-                historyTable.setItems(FXCollections.observableArrayList(
-                        JSONConverter.loadJSONtoHistory(new File("action_history.json"))
-                ));
-            } catch (IOException exc) {
-                PageNavigator.showAlert(AlertType.ERROR,
-                        "System History Load Failed",
-                        "The full log of system history could not be loaded from file - displaying only this "
-                                + "session's history instead.");
-                historyTable.setItems(FXCollections.observableArrayList(
-                        session.getSessionHistory()
-                ));
-            }
+            // TODO: Get complete history from server
+            historyTable.setItems(FXCollections.observableArrayList(
+                    session.getSessionHistory()
+            ));
         }
 
         FXCollections.sort(historyTable.getItems(), (h1, h2) -> h2.getTimestamp().compareTo(h1.getTimestamp()));

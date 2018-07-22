@@ -12,6 +12,8 @@ import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.resolvers.CommandRunner;
+import com.humanharvest.organz.resolvers.CommandRunnerRest;
 import com.humanharvest.organz.resolvers.client.ClientResolver;
 import com.humanharvest.organz.resolvers.client.ClientResolverMemory;
 import com.humanharvest.organz.resolvers.client.ClientResolverRest;
@@ -39,6 +41,7 @@ public final class State {
     private static ClinicianManager clinicianManager;
     private static AdministratorManager administratorManager;
     private static AuthenticationManager authenticationManager;
+    private static CommandRunner commandRunner;
 
     private static ActionInvoker invoker;
     private static Session session;
@@ -73,12 +76,16 @@ public final class State {
             clinicianManager = new ClinicianManagerRest();
             administratorManager = new AdministratorManagerRest();
             authenticationManager = new AuthenticationManagerRest();
+            commandRunner = new CommandRunnerRest();
         } else if (storageType == DataStorageType.MEMORY) {
             clientManager = new ClientManagerMemory();
             clientResolver = new ClientResolverMemory();
             clinicianManager = new ClinicianManagerMemory();
             administratorManager = new AdministratorManagerMemory();
             authenticationManager = new AuthenticationManagerMemory();
+            commandRunner = commandText -> {
+                throw new UnsupportedOperationException("Memory storage type does not support running commands.");
+            };
         } else {
             throw new IllegalArgumentException("DataStorageType cannot be null.");
         }
@@ -205,5 +212,9 @@ public final class State {
 
     public static ClientResolver getClientResolver() {
         return clientResolver;
+    }
+
+    public static CommandRunner getCommandRunner() {
+        return commandRunner;
     }
 }

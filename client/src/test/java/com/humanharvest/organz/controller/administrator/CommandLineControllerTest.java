@@ -2,28 +2,37 @@ package com.humanharvest.organz.controller.administrator;
 
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertFalse;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.matcher.control.TextInputControlMatchers.hasText;
 
+import java.io.IOException;
+import java.lang.reflect.Field;
 import java.time.LocalDate;
 
+import javafx.application.Platform;
 import javafx.scene.control.TextArea;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
+import javafx.stage.Stage;
 
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.controller.ControllerTest;
+import com.humanharvest.organz.resolvers.CommandRunner;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class CommandLineControllerTest extends ControllerTest {
 
     private static final Client testClient = new Client("Client", "Number", "One", LocalDate.now(), 1);
+
+    private CommandRunner oldValue;
+    private CommandRunner commandRunnerMock;
 
     @Override
     protected Page getPage() {
@@ -33,16 +42,36 @@ public class CommandLineControllerTest extends ControllerTest {
     @Override
     protected void initState() {
         State.reset();
+
+        commandRunnerMock = mock(CommandRunner.class);
+        try {
+            oldValue = setPrivateField(State.class, "commandRunner", commandRunnerMock);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+
+        // TODO: Change this to actual output
+        when(commandRunnerMock.execute("help")).thenReturn("Usage: OrgaNZ\nCommands:\nload");
+
         State.login(new Administrator("username", "password"));
         mainController.setWindowContext(WindowContext.defaultContext());
 
         State.getClientManager().addClient(testClient);
+    }
 
-        //Used only for the clipboard test, but needs to be in the initState so it gets executed on the JavaFX thread
-        Clipboard clipboard = Clipboard.getSystemClipboard();
-        ClipboardContent content = new ClipboardContent();
-        content.putString("line1\nline2\nline3");
-        clipboard.setContent(content);
+    @Override
+    public void stop() throws Exception {
+        super.stop();
+        setPrivateField(State.class, "commandRunner", oldValue);
+    }
+
+    private static <T, Y> Y setPrivateField(Class<T> clazz, String fieldName, Y newValue)
+            throws NoSuchFieldException, IllegalAccessException {
+        Field field = clazz.getDeclaredField(fieldName);
+        field.setAccessible(true);
+        Y result = (Y)field.get(null);
+        field.set(null, newValue);
+        return result;
     }
 
     @Test
@@ -56,12 +85,13 @@ public class CommandLineControllerTest extends ControllerTest {
 
     @Test
     public void anInvalidCommandTest() {
+        when(commandRunnerMock.execute("notacmd")).thenReturn("Unmatched argument [notacmd]");
+
         clickOn("#inputTextField").write("notacmd").type(KeyCode.ENTER);
 
         TextArea area = lookup("#outputTextArea").query();
         assertTrue(area.getText().contains("Unmatched argument [notacmd]"));
     }
-
 
     @Test
     public void upDownArrowsTest() {
@@ -104,6 +134,16 @@ public class CommandLineControllerTest extends ControllerTest {
 
     @Test
     public void pasteMultipleLinesTest() {
+        Platform.runLater(() -> {
+            Clipboard clipboard = Clipboard.getSystemClipboard();
+            ClipboardContent content = new ClipboardContent();
+            content.putString("line1\nline2\nline3");
+            clipboard.setContent(content);
+        });
+
+        when(commandRunnerMock.execute("line1")).thenReturn("Unmatched argument [line1]");
+        when(commandRunnerMock.execute("line2")).thenReturn("Unmatched argument [line2]");
+
         clickOn("#inputTextField");
 
         //Paste text, text specified in the initState section "line1\nline2\nline3"
@@ -137,13 +177,14 @@ public class CommandLineControllerTest extends ControllerTest {
         type(KeyCode.V);
         release(KeyCode.CONTROL);
 
-
         verifyThat("#inputTextField", hasText("new text copy text"));
-
     }
 
     @Test
     public void validCreateClientCommandTest() {
+        when(commandRunnerMock.execute("createclient -f Jack -l Steel -d 21/04/1997")).thenReturn(
+                "Created client Jack Steel with user id: 2");
+
         clickOn("#inputTextField").write("createclient -f Jack -l Steel -d 21/04/1997").type(KeyCode.ENTER);
 
         //Need to give the command a little bit of time to execute and force a refresh (TestFX bug)
