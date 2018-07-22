@@ -139,10 +139,6 @@ public class ClientTransplantRequestsController {
             State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
 
             // Check etag
-
-            System.out.println("===SERVER===");
-            System.out.println(client.getETag());
-            System.out.println(etag);
             if (etag == null) {
                 throw new IfMatchRequiredException();
             }
