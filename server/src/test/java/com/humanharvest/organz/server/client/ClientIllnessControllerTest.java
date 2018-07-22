@@ -5,6 +5,7 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -113,6 +114,13 @@ public class ClientIllnessControllerTest {
         .content(validProcedureJson))
         .andExpect(status().isCreated());
 
+  }
+
+  @Test
+  public void deleteIllness() throws Exception {
+    testClient.addIllnessRecord(record1);
+    mockMvc.perform(delete("/clients/1/illnesses/2"))
+        .andExpect(status().isOk());
   }
 
 
