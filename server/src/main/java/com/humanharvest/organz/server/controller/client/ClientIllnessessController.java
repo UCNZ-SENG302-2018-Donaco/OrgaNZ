@@ -31,14 +31,19 @@ public class ClientIllnessessController {
      * @return Returns list of Illnesses
      */
     @GetMapping("/clients/{id}/illnesses")
-    public ResponseEntity<List<IllnessRecord>> getClientCurrentIllnesses(@PathVariable int id) {
-        Optional<Client> client = State.getClientManager().getClientByID(id);
+    public ResponseEntity<List<IllnessRecord>> getClientCurrentIllnesses(@PathVariable int id,
+        @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {
+
+
+        Optional<Client> Optionalclient = State.getClientManager().getClientByID(id);
         // Client does not exist
-        if (client.isPresent()) {
+        Client client = Optionalclient.get();
+        State.getAuthenticationManager().verifyClientAccess(authToken, client);
+        if (Optionalclient.isPresent()) {
             HttpHeaders headers = new HttpHeaders();
-            headers.add("ETag", client.get().getETag());
-            List<IllnessRecord> illnesses = new ArrayList<>(client.get().getCurrentIllnesses());
-            illnesses.addAll(client.get().getPastIllnesses());
+            headers.add("ETag",Optionalclient.get().getETag());
+            List<IllnessRecord> illnesses = new ArrayList<>(Optionalclient.get().getCurrentIllnesses());
+            illnesses.addAll(Optionalclient.get().getPastIllnesses());
 
             return new ResponseEntity<>(illnesses, headers, HttpStatus.OK);
         } else {
