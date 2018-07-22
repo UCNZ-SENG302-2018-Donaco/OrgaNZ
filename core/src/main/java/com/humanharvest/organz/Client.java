@@ -197,6 +197,10 @@ public class Client implements ConcurrencyControlledEntity {
         this.medicationHistory = medicationHistory;
     }
 
+    public void setIllnessHistory(List<IllnessRecord> illnessHistory) {
+        this.illnessHistory = illnessHistory;
+    }
+
     /**
      * Returns a string listing the organs that the client is currently donating, or a message that the client currently
      * has no organs registered for donation if that is the case.

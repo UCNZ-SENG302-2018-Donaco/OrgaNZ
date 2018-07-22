@@ -123,6 +123,12 @@ public class ClientIllnessControllerTest {
         .andExpect(status().isOk());
   }
 
+  @Test
+  public void deleteNonExistingIllness() throws Exception {
+    mockMvc.perform(delete("/clients/illnesses/10"))
+        .andExpect(status().isNotFound());
+  }
+
 
   @Test
   public void nonExistingClient() throws Exception {
