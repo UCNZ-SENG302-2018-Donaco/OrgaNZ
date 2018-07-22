@@ -81,7 +81,7 @@ public class ClientProceduresControllerTest {
                 "\"summary\": \"Heart Transplant\", \n" +
                 "\"description\": \"To fix my achy-breaky heart.\", \n" +
                 "\"date\": \"2017-06-01\", \n" +
-                "\"affectedOrgans\": \"HEART\" \n"+
+                "\"affectedOrgans\": [\"HEART\"] \n"+
                 " }";
     }
 
@@ -98,7 +98,7 @@ public class ClientProceduresControllerTest {
 
 
     @Test
-    public void createValidProcedure() throws Exception {/*
+    public void createValidProcedure() throws Exception {
         mockMvc.perform(post("/clients/1/procedures")
                 .contentType(contentType)
                 .content(validProcedureJson))
@@ -107,7 +107,7 @@ public class ClientProceduresControllerTest {
                 .andExpect(jsonPath("$[2].summary", is("Heart Transplant")))
                 .andExpect(jsonPath("$[2].description", is("To fix my achy-breaky heart.")))
                 .andExpect(jsonPath("$[2].date", is("2017-06-01")))
-                .andExpect(jsonPath("$[2].affectedOrgans", is(" HEART ")));*/
+                .andExpect(jsonPath("$[2].affectedOrgans", is(" HEART ")));
     }
 
     @Test
