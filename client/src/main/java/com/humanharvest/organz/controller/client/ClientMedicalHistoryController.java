@@ -1,18 +1,11 @@
 package com.humanharvest.organz.controller.client;
 
-import com.humanharvest.organz.controller.SidebarController;
-import com.humanharvest.organz.resolvers.client.AddIllnessRecordResolver;
-import com.humanharvest.organz.resolvers.client.DeleteIllnessRecordResolver;
-import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
-import com.humanharvest.organz.utilities.exceptions.NotFoundException;
-import com.humanharvest.organz.utilities.exceptions.ServerRestException;
-import com.humanharvest.organz.views.client.CreateIllnessView;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javafx.collections.FXCollections;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
@@ -29,19 +22,22 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 
-import com.humanharvest.organz.actions.ActionInvoker;
-import com.humanharvest.organz.actions.client.AddIllnessRecordAction;
-import com.humanharvest.organz.actions.client.DeleteIllnessRecordAction;
-import com.humanharvest.organz.actions.client.ModifyIllnessRecordAction;
 import com.humanharvest.organz.Client;
-import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.IllnessRecord;
+import com.humanharvest.organz.actions.ActionInvoker;
+import com.humanharvest.organz.actions.client.ModifyIllnessRecordAction;
+import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.SidebarController;
+import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
+import com.humanharvest.organz.utilities.exceptions.NotFoundException;
+import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.views.client.CreateIllnessView;
 import org.controlsfx.control.Notifications;
 
 /**
@@ -351,9 +347,8 @@ public class ClientMedicalHistoryController extends SubController {
         IllnessRecord record = getSelectedRecord();
         if (record != null) {
             //DeleteIllnessRecordAction action = new DeleteIllnessRecordAction(client, record, manager);
-            DeleteIllnessRecordResolver resolver = new DeleteIllnessRecordResolver(client,record);
             try {
-                resolver.execute();
+                State.getClientResolver().deleteIllnessRecord(client, record);
             } catch (NotFoundException e) {
                 LOGGER.log(Level.WARNING, "Client not found");
                 Notifications.create()
@@ -431,12 +426,10 @@ public class ClientMedicalHistoryController extends SubController {
         } else if (inFuture) {
             errorMessage.setText("Diagnosis date cannot be in the future.");
         } else {
-            IllnessRecord record = new IllnessRecord(illnessName, dateDiagnosed, null, isChronic);
-            CreateIllnessView view = new CreateIllnessView();
-            AddIllnessRecordResolver resolver = new AddIllnessRecordResolver(client,view);
+            CreateIllnessView view = new CreateIllnessView(illnessName, dateDiagnosed, isChronic);
 
             try{
-                resolver.execute();
+                State.getClientResolver().addIllnessRecord(client, view);
             } catch (NotFoundException e) {
                 LOGGER.log(Level.WARNING, "Client not found");
                 Notifications.create()
@@ -460,7 +453,6 @@ public class ClientMedicalHistoryController extends SubController {
                     .showWarning();
                 return;
             }
-
 
             //AddIllnessRecordAction action = new AddIllnessRecordAction(client, record, manager);
             //invoker.execute(action);

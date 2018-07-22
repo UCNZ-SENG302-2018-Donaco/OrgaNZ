@@ -5,10 +5,12 @@ import java.util.List;
 import java.util.Map;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.views.client.CreateIllnessView;
 import com.humanharvest.organz.views.client.CreateTransplantRequestView;
 import com.humanharvest.organz.views.client.ModifyClientObject;
 import com.humanharvest.organz.views.client.ResolveTransplantRequestObject;
@@ -49,6 +51,15 @@ public class ClientResolverMemory implements ClientResolver {
         return client;
     }
 
+    @Override
+    public List<IllnessRecord> addIllnessRecord(Client client, CreateIllnessView createIllnessView) {
+        IllnessRecord illnessRecord = new IllnessRecord(createIllnessView.getIllnessName(),
+                createIllnessView.getDiagnosisDate(),
+                createIllnessView.isChronic());
+        client.addIllnessRecord(illnessRecord);
+        return client.getIllnesses();
+    }
+
     //------------PATCHs----------------
 
     @Override
@@ -65,5 +76,12 @@ public class ClientResolverMemory implements ClientResolver {
     public Client modifyClientDetails(Client client, ModifyClientObject modifyClientObject) {
         BeanUtils.copyProperties(modifyClientObject, client, modifyClientObject.getUnmodifiedFields());
         return client;
+    }
+
+    //------------DELETEs----------------
+
+    @Override
+    public void deleteIllnessRecord(Client client, IllnessRecord record) {
+        client.deleteIllnessRecord(record);
     }
 }

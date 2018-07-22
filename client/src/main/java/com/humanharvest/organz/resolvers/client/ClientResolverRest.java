@@ -6,10 +6,12 @@ import java.util.Map;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.views.client.CreateIllnessView;
 import com.humanharvest.organz.views.client.CreateTransplantRequestView;
 import com.humanharvest.organz.views.client.ModifyClientObject;
 import com.humanharvest.organz.views.client.ResolveTransplantRequestObject;
@@ -111,6 +113,26 @@ public class ClientResolverRest implements ClientResolver {
         return responseEntity.getBody();
     }
 
+    @Override
+    public List<IllnessRecord> addIllnessRecord(Client client, CreateIllnessView createIllnessView) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setIfMatch(State.getClientEtag());
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
+
+        HttpEntity entity = new HttpEntity<>(createIllnessView, httpHeaders);
+
+        ResponseEntity<List<IllnessRecord>> responseEntity = State.getRestTemplate()
+                .exchange(State.BASE_URI + "clients/" + client.getUid() + "/illnesses", HttpMethod.POST, entity,
+                        new ParameterizedTypeReference<List<IllnessRecord>>() {});
+
+        State.setClientEtag(responseEntity.getHeaders().getETag());
+        client.setIllnessHistory(responseEntity.getBody());
+
+        return responseEntity.getBody();
+
+
+    }
+
     //------------PATCHs----------------
 
     @Override
@@ -156,6 +178,24 @@ public class ClientResolverRest implements ClientResolver {
 
         State.setClientEtag(responseEntity.getHeaders().getETag());
         return responseEntity.getBody();
+    }
+
+    //------------DELETEs----------------
+
+    @Override
+    public void deleteIllnessRecord(Client client, IllnessRecord record) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setIfMatch(State.getClientEtag());
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        httpHeaders.set("X-Auth-Token", State.getToken());
+        HttpEntity entity = new HttpEntity<>(httpHeaders);
+
+        int id = client.getAllIllnessHistory().indexOf(record);
+
+        ResponseEntity<String> responseEntity = State.getRestTemplate()
+                .exchange(State.BASE_URI + "clients/{uid}/illnesses/{id}", HttpMethod.DELETE, entity, String.class, client.getUid(),id);
+
+        State.setClientEtag(responseEntity.getHeaders().getETag());
     }
 }
 

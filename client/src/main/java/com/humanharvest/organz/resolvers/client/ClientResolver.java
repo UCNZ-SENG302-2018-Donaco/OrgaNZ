@@ -5,9 +5,11 @@ import java.util.List;
 import java.util.Map;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.views.client.CreateIllnessView;
 import com.humanharvest.organz.views.client.CreateTransplantRequestView;
 import com.humanharvest.organz.views.client.ModifyClientObject;
 import com.humanharvest.organz.views.client.ResolveTransplantRequestObject;
@@ -40,6 +42,8 @@ public interface ClientResolver {
 
     Client markClientAsDead(Client client, LocalDate dateOfDeath);
 
+    List<IllnessRecord> addIllnessRecord(Client client, CreateIllnessView createIllnessView);
+
     //------------PATCHs----------------
 
     TransplantRequest resolveTransplantRequest(
@@ -48,4 +52,9 @@ public interface ClientResolver {
             int transplantRequestIndex);
 
     Client modifyClientDetails(Client client, ModifyClientObject modifyClientObject);
+
+    //------------DELETEs----------------
+
+    void deleteIllnessRecord(Client client, IllnessRecord record);
+
 }
