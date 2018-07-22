@@ -38,6 +38,7 @@ import com.humanharvest.organz.Client;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.resolvers.client.CreateTransplantRequestResolver;
+import com.humanharvest.organz.resolvers.client.ResolveTransplantRequestResolver;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
@@ -53,6 +54,7 @@ import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.views.client.CreateTransplantRequestView;
+import com.humanharvest.organz.views.client.ResolveTransplantRequestView;
 
 /**
  * Controller for the Request Organs page. Handles the viewing of current and past organ transplant requests. If the
@@ -339,63 +341,109 @@ public class RequestOrgansController extends SubController {
     @FXML
     private void resolveRequest() {
         TransplantRequest selectedRequest = currentRequestsTable.getSelectionModel().getSelectedItem();
-        ResolveReason resolveReason = cancelTransplantOptions.getValue();
 
         if (selectedRequest != null) {
-            Action action = null;
 
-            if (resolveReason == ResolveReason.COMPLETED) {
-                action = new ResolveTransplantRequestAction(selectedRequest,
-                        TransplantRequestStatus.COMPLETED,
-                        "Transplant took place.",
-                        manager);
+            // Create a request
 
-            } else if (resolveReason == ResolveReason.DECEASED) {
+            // Get data from existing request
+            Organ requestedOrgan = selectedRequest.getRequestedOrgan();
+            LocalDateTime requestDate = selectedRequest.getRequestDate();
+
+            // Get resolved reason and the request's new status
+            ResolveReason resolvedReasonDropdownChoice = cancelTransplantOptions.getValue();
+            String resolvedReason;
+            TransplantRequestStatus status;
+
+            if (resolvedReasonDropdownChoice == ResolveReason.COMPLETED) { // "Transplant completed"
+                resolvedReason = "Transplant took place.";
+                status = TransplantRequestStatus.COMPLETED;
+            } else if (resolvedReasonDropdownChoice == ResolveReason.DECEASED) { // "Client is deceased"
+                // A datepicker appears, for choosing the date of death
                 LocalDate deathDate = deathDatePicker.getValue();
                 if (deathDate.isBefore(client.getDateOfBirth()) || deathDate.isAfter(LocalDate.now())) {
                     PageNavigator.showAlert(AlertType.ERROR,
                             "Date of Death Invalid",
                             "Date of death must be between client's birth date and the current date.");
-                } else {
+                } else { // valid date of death
                     Optional<ButtonType> buttonOpt = PageNavigator.showAlert(AlertType.CONFIRMATION,
                             "Are you sure you want to mark this client as dead?",
                             "This will cancel all waiting transplant requests for this client.");
-
                     if (buttonOpt.isPresent() && buttonOpt.get() == ButtonType.OK) {
-                        action = new MarkClientAsDeadAction(client, deathDate, manager);
-                        deathDatePicker.setValue(LocalDate.now());
+                        // todo send a request to the server to mark the client as dead
+                        // todo this should result in a `MarkClientAsDeadAction` using `client` and `deathDate`
+                    }
+                    if (buttonOpt.isPresent()) { // if they chose OK or Cancel
+                        deathDatePicker.setValue(LocalDate.now()); //reset datepicker
                     }
                 }
+                return;
+            } else if (resolvedReasonDropdownChoice == ResolveReason.CURED) { // "Disease was cured"
+                resolvedReason = "The disease was cured.";
+                status = TransplantRequestStatus.CANCELLED;
+            } else if (resolvedReasonDropdownChoice == ResolveReason.ERROR) { // "Input error"
+                resolvedReason = "Request was a mistake.";
+                status = TransplantRequestStatus.CANCELLED;
+            } else if (resolvedReasonDropdownChoice == ResolveReason.CUSTOM) { // "Custom reason..."
+                resolvedReason = customReason.getText();
+                status = TransplantRequestStatus.CANCELLED;
+                customReason.clear();
+            } else {
+                throw new UnsupportedOperationException("Transplant request status that wasn't covered in if-else "
+                        + "statements.");
+            }
 
-            } else if (resolveReason == ResolveReason.CURED) {
-                action = new ResolveTransplantRequestAction(selectedRequest,
-                        TransplantRequestStatus.CANCELLED,
-                        "The disease was cured.",
-                        manager);
+            ResolveTransplantRequestView request = new ResolveTransplantRequestView(client, requestedOrgan, requestDate,
+                    LocalDateTime.now(), status, resolvedReason);
+
+            // Resolve the request
+            int transplantRequestIndex = client.getTransplantRequests().indexOf(selectedRequest);
+            ResolveTransplantRequestResolver resolver =
+                    new ResolveTransplantRequestResolver(client, request, transplantRequestIndex);
+            TransplantRequest updatedTransplantRequest;
+            try {
+                updatedTransplantRequest = resolver.execute();
+            } catch (ServerRestException e) { //500
+                LOGGER.severe(e.getMessage());
+                PageNavigator.showAlert(AlertType.ERROR,
+                        "Server Error",
+                        "An error occurred on the server while trying to create the transplant request.\n"
+                                + "Please try again later.");
+                return;
+            } catch (IfMatchFailedException e) { //412
+                PageNavigator.showAlert(
+                        AlertType.WARNING,
+                        "Outdated Data",
+                        "The client has been modified since you retrieved the data.\n"
+                                + "If you would still like to apply these changes please submit again, "
+                                + "otherwise refresh the page to update the data.");
+                return;
+            } catch (NotFoundException e) { //404
+                LOGGER.log(Level.WARNING, "Client not found");
+                PageNavigator.showAlert(AlertType.WARNING, "Client not found", "The client could not be found on the "
+                        + "server, it may have been deleted");
+                return;
+            }
+            // Not caught, as they should not happen:
+            // 401 - Access token is missing or invalid
+            // 403 - You do not have permission to perform that action
+            // 428 - ETag header was missing and is required to modify a resource
+
+            // Update the client's transplant request based on the server's response
+            client.getTransplantRequests().remove(transplantRequestIndex);
+            client.getTransplantRequests().add(updatedTransplantRequest);
+
+            // Refresh the page
+            PageNavigator.refreshAllWindows();
+
+            // Offer to go to medical history page if they said a disease was cured
+            if (resolvedReasonDropdownChoice == ResolveReason.CURED) { // "Disease was cured"
                 Optional<ButtonType> buttonOpt = PageNavigator.showAlert(AlertType.CONFIRMATION,
                         "Go to Medical History Page",
                         "Do you want to go to the medical history page to mark the disease that was cured?");
                 if (buttonOpt.isPresent() && buttonOpt.get() == ButtonType.OK) {
                     PageNavigator.loadPage(Page.VIEW_MEDICAL_HISTORY, mainController);
                 }
-
-            } else if (resolveReason == ResolveReason.ERROR) {
-                action = new ResolveTransplantRequestAction(selectedRequest,
-                        TransplantRequestStatus.CANCELLED,
-                        "Request was a mistake.",
-                        manager);
-
-            } else if (resolveReason == ResolveReason.CUSTOM) {
-                action = new ResolveTransplantRequestAction(selectedRequest,
-                        TransplantRequestStatus.CANCELLED,
-                        customReason.getText(),
-                        manager);
-                customReason.clear();
-            }
-
-            if (action != null) {
-                invoker.execute(action);
-                PageNavigator.refreshAllWindows();
             }
         }
     }
