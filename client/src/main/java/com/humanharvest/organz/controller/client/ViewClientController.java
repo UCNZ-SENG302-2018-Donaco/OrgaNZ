@@ -24,6 +24,7 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.BorderPane;
@@ -63,6 +64,7 @@ import org.controlsfx.control.Notifications;
 public class ViewClientController extends SubController {
 
     private final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy\nh:mm:ss a");
+    private final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private static final Logger LOGGER = Logger.getLogger(ViewClientController.class.getName());
     private static final int maxFileSize = 2000000; // (2mb)
     private final Session session;
@@ -116,6 +118,10 @@ public class ViewClientController extends SubController {
     @FXML
     private TextField address;
     @FXML
+    private Button uploadPhotoButton;
+    @FXML
+    private Button deletePhotoButton;
+    @FXML
     private DatePicker dob;
     @FXML
     private DatePicker dod;
@@ -152,62 +158,6 @@ public class ViewClientController extends SubController {
         btype.setItems(FXCollections.observableArrayList(BloodType.values()));
         region.setItems(FXCollections.observableArrayList(Region.values()));
         fullName.setWrapText(true);
-    }
-
-    /**
-     * Loads the viewed profiles image
-     */
-    private void loadImage() {
-        if (image == null) {
-            image = new Image("https://cdn4.iconfinder.com/data/icons/standard-free-icons/139/Profile01-512.png");
-        }
-        // Make this a local image
-
-        // GET Image from DB
-        // if image exists
-        // image = existing image
-
-        imageView.setImage(image);
-        imageView.setFitHeight(150);
-        imageView.setFitWidth(150);
-        imageView.setPreserveRatio(true);
-    }
-
-    /**
-     * Prompts a user with a file chooser which is restricted to png's and jpg's. If a valid file of correct size is
-     * input, this photo is uploaded as the viewed clients new profile photo.
-     */
-    @FXML
-    public void uploadPhoto() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Upload Profile Image");
-        fileChooser.getExtensionFilters().addAll(
-                new ExtensionFilter("Image Files", "*.png", "*.jpg") // Restricting only these file types.
-        );
-
-        File selectedFile = fileChooser.showOpenDialog(AppUI.getWindow());
-        if (selectedFile != null) {
-            if (selectedFile.length() > maxFileSize) {
-                PageNavigator.showAlert(AlertType.WARNING, "Image Size Too Large",
-                        "The image size is too large. It must be under 2MB.");
-            } else if (!selectedFile.canRead()) {
-                PageNavigator.showAlert(AlertType.WARNING, "File Couldn't Be Read",
-                        "This file could not be read. Ensure you are uploading a valid .png or .jpg");
-            } else {
-                image = new Image(selectedFile.toURI().toString());
-                loadImage();
-            }
-        }
-    }
-
-    /**
-     * Sets the profile image to null and refreshes the image.
-     */
-    @FXML
-    public void deletePhoto() {
-        //Make delete API call
-        image = null;
-        loadImage();
     }
 
 
@@ -262,11 +212,13 @@ public class ViewClientController extends SubController {
         address.setText(viewedClient.getCurrentAddress());
         fullName.setText(viewedClient.getFullName());
 
-        creationDate.setText(viewedClient.getCreatedTimestamp().format(dateTimeFormat));
+        creationDate.setText(viewedClient.getCreatedTimestamp().format(dateFormat));
+        creationDate.setTooltip(new Tooltip(viewedClient.getCreatedTimestamp().format(dateTimeFormat)));
         if (viewedClient.getModifiedTimestamp() == null) {
-            lastModified.setText("User has not been modified yet.");
+            lastModified.setText("Not yet modified.");
         } else {
-            lastModified.setText(viewedClient.getModifiedTimestamp().format(dateTimeFormat));
+            lastModified.setText(viewedClient.getModifiedTimestamp().format(dateFormat));
+            lastModified.setTooltip(new Tooltip(viewedClient.getModifiedTimestamp().format(dateTimeFormat)));
         }
 
         displayBMI();
@@ -288,6 +240,63 @@ public class ViewClientController extends SubController {
                 lastModified.setText(viewedClient.getModifiedTimestamp().format(dateTimeFormat));
             }
         }
+    }
+
+    /**
+     * Loads the viewed profiles image
+     */
+    private void loadImage() {
+        if (image == null) {
+            image = new Image("https://cdn4.iconfinder.com/data/icons/standard-free-icons/139/Profile01-512.png"); // Make this a local image
+            deletePhotoButton.setDisable(true);
+        } else {
+            deletePhotoButton.setDisable(false);
+        }
+
+        // GET Image from DB
+        // if image exists
+        // image = existing image
+
+        imageView.setImage(image);
+        imageView.setFitHeight(130);
+        imageView.setFitWidth(130);
+        imageView.setPreserveRatio(true);
+    }
+
+    /**
+     * Prompts a user with a file chooser which is restricted to png's and jpg's. If a valid file of correct size is
+     * input, this photo is uploaded as the viewed clients new profile photo.
+     */
+    @FXML
+    public void uploadPhoto() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Upload Profile Image");
+        fileChooser.getExtensionFilters().addAll(
+                new ExtensionFilter("Image Files", "*.png", "*.jpg") // Restricting only these file types.
+        );
+
+        File selectedFile = fileChooser.showOpenDialog(AppUI.getWindow());
+        if (selectedFile != null) {
+            if (selectedFile.length() > maxFileSize) {
+                PageNavigator.showAlert(AlertType.WARNING, "Image Size Too Large",
+                        "The image size is too large. It must be under 2MB.");
+            } else if (!selectedFile.canRead()) {
+                PageNavigator.showAlert(AlertType.WARNING, "File Couldn't Be Read",
+                        "This file could not be read. Ensure you are uploading a valid .png or .jpg");
+            } else {
+                image = new Image(selectedFile.toURI().toString());
+                loadImage();
+            }
+        }
+    }
+
+    /**
+     * Sets the profile image to null and refreshes the image.
+     */
+    @FXML
+    public void deletePhoto() {
+        image = null;
+        loadImage(); //Make delete API call
     }
 
     /**
