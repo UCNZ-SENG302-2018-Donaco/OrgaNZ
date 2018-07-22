@@ -131,18 +131,20 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
         assertTrue(boneRow.getStyle().contains("-fx-background-color: lightcoral"));
     }
 
-    @Test
-    public void submitNewRequestTest() {
+    private void testOrganBeingAdded(Organ organ) {
+        // Select the organ and submit the request
         Node organChoiceBox = lookup("#newOrganChoiceBox").queryAs(ChoiceBox.class);
         clickOn(organChoiceBox);
-        clickOn((Node) lookup(Organ.LUNG.toString()).query());
+        clickOn((Node) lookup(organ.toString()).query());
         clickOn("Submit Request");
 
+        // Look up the request for that organ in the data
         Optional<TransplantRequest> findRequest = testClient.getTransplantRequests()
                 .stream()
-                .filter(req -> req.getRequestedOrgan() == Organ.LUNG)
+                .filter(req -> req.getRequestedOrgan() == organ)
                 .findFirst();
 
+        // Check that the request exists, and that it is in the current requests table
         if (findRequest.isPresent()) {
             TransplantRequest request = findRequest.get();
             verifyThat("#currentRequestsTable", containsRow(
@@ -151,6 +153,17 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
         } else {
             fail("The request was not added to the client.");
         }
+    }
+
+    @Test
+    public void submitNewRequestTest() {
+        testOrganBeingAdded(Organ.LUNG);
+    }
+
+    @Test
+    public void submitTwoRequestsTest() {
+        testOrganBeingAdded(Organ.LUNG);
+        testOrganBeingAdded(Organ.MIDDLE_EAR);
     }
 
     @Test
@@ -208,28 +221,6 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
     }
 
     @Test
-    public void resolveRequestErrorTest() {
-        setSampleRequests();
-
-        TableView<TransplantRequest> currRequestsTable = lookup("#currentRequestsTable").queryTableView();
-        clickOn(currRequestsTable);
-
-        TableRow<TransplantRequest> boneRow = lookup(".table-row-cell").nth(1).query();
-        Organ organ = boneRow.getTableView().getItems().get(1).getRequestedOrgan();
-
-        clickOn(boneRow);
-
-        // Selects "Error" from the options
-        clickOn("#cancelTransplantOptions")
-                .type(KeyCode.ENTER);
-
-        clickOn("Resolve Request");
-
-        // Checks that the selected organ has been removed from the clients transplant request list
-        assertFalse(testClient.getCurrentlyRequestedOrgans().contains(organ));
-    }
-
-    @Test
     public void resolveRequestCustomTest() {
         String reason = "panda";
         setSampleRequests();
@@ -273,5 +264,39 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
         } else {
             fail("Request not found");
         }
+
+
+    }
+
+    private void testOrganBeingResolvedBecauseOfInputError() {
+        TableView<TransplantRequest> currRequestsTable = lookup("#currentRequestsTable").queryTableView();
+        clickOn(currRequestsTable);
+
+        TableRow<TransplantRequest> firstRow = lookup(".table-row-cell").nth(0).query();
+        Organ organ = firstRow.getTableView().getItems().get(0).getRequestedOrgan();
+
+        clickOn(firstRow);
+
+        // Selects "Error" from the options
+        clickOn("#cancelTransplantOptions")
+                .type(KeyCode.ENTER);
+
+        clickOn("Resolve Request");
+
+        // Checks that the selected organ has been removed from the clients transplant request list
+        assertFalse(testClient.getCurrentlyRequestedOrgans().contains(organ));
+    }
+
+    @Test
+    public void resolveRequestErrorTest() {
+        setSampleRequests();
+        testOrganBeingResolvedBecauseOfInputError();
+    }
+
+    @Test
+    public void resolveTwoRequestsTest() {
+        setSampleRequests();
+        testOrganBeingResolvedBecauseOfInputError();
+        testOrganBeingResolvedBecauseOfInputError();
     }
 }
