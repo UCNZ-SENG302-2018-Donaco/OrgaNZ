@@ -9,7 +9,6 @@ public class CreateIllnessView {
   private static DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
   private Long id;
-  private Client client;
   private String illnessName;
   private LocalDate diagnosisDate;
   private LocalDate curedDate;
@@ -23,13 +22,7 @@ public class CreateIllnessView {
     this.id = id;
   }
 
-  public Client getClient() {
-    return client;
-  }
 
-  public void setClient(Client client) {
-    this.client = client;
-  }
 
   public String getIllnessName() {
     return illnessName;
