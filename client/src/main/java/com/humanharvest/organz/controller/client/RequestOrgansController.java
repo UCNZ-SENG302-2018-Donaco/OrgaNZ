@@ -369,8 +369,9 @@ public class RequestOrgansController extends SubController {
                                 "Are you sure you want to mark this client as dead?",
                                 "This will cancel all waiting transplant requests for this client.");
                         if (buttonOpt.isPresent() && buttonOpt.get() == ButtonType.OK) {
+                            Client updatedClient;
                             try {
-                                State.getClientResolver().markClientAsDead(client, deathDate);
+                                updatedClient = State.getClientResolver().markClientAsDead(client, deathDate);
                             } catch (NotFoundException e) {
                                 LOGGER.log(Level.WARNING, "Client not found");
                                 PageNavigator.showAlert(
@@ -395,7 +396,9 @@ public class RequestOrgansController extends SubController {
                                                 + "otherwise refresh the page to update the data.");
                                 return;
                             }
-                            client.markDead(deathDate); //todo check if this can still be undone?
+                            client.setTransplantRequests(updatedClient.getTransplantRequests());
+                            client.setDateOfDeath(updatedClient.getDateOfDeath());
+                            //todo check if this can still be undone?
                         }
                         if (buttonOpt.isPresent()) { // if they chose OK or Cancel
                             deathDatePicker.setValue(LocalDate.now()); //reset datepicker

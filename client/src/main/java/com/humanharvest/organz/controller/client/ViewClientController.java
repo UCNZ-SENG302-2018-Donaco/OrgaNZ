@@ -377,8 +377,10 @@ public class ViewClientController extends ViewBaseController {
 
             if (buttonOpt.isPresent() && buttonOpt.get() == ButtonType.OK) {
 
+
+                Client updatedClient;
                 try {
-                    State.getClientResolver().markClientAsDead(viewedClient, dod.getValue());
+                    updatedClient = State.getClientResolver().markClientAsDead(viewedClient, dod.getValue());
                 } catch (NotFoundException e) {
                     LOGGER.log(Level.WARNING, "Client not found");
                     PageNavigator.showAlert(
@@ -404,14 +406,14 @@ public class ViewClientController extends ViewBaseController {
                     return false;
                 }
                 clientDied = true;
+                viewedClient.setTransplantRequests(updatedClient.getTransplantRequests());
+
 
                 Notifications.create()
                         .title("Marked Client as Dead")
                         .text("All organ transplant requests have been removed")
                         .showConfirm();
             }
-        } else {
-            addChangeIfDifferent(modifyClientObject, viewedClient, "dateOfDeath", dod.getValue());
         }
 
         addChangeIfDifferent(modifyClientObject, viewedClient, "firstName", fname.getText());
@@ -419,6 +421,7 @@ public class ViewClientController extends ViewBaseController {
         addChangeIfDifferent(modifyClientObject, viewedClient, "middleName", mname.getText());
         addChangeIfDifferent(modifyClientObject, viewedClient, "preferredName", pname.getText());
         addChangeIfDifferent(modifyClientObject, viewedClient, "dateOfBirth", dob.getValue());
+        addChangeIfDifferent(modifyClientObject, viewedClient, "dateOfDeath", dod.getValue());
         addChangeIfDifferent(modifyClientObject, viewedClient, "gender", gender.getValue());
         addChangeIfDifferent(modifyClientObject, viewedClient, "genderIdentity", genderIdentity.getValue());
         addChangeIfDifferent(modifyClientObject, viewedClient, "height", Double.parseDouble(height.getText()));
@@ -466,10 +469,11 @@ public class ViewClientController extends ViewBaseController {
                     AlertType.WARNING,
                     "Outdated Data",
                     "The client has been modified since you retrieved the data.\nIf you would still like to "
-                    + "apply these changes please submit again, otherwise refresh the page to update the data.");
+                            + "apply these changes please submit again, otherwise refresh the page to update the data.");
             return false;
         }
 
+        System.out.println("refreshing");
         PageNavigator.refreshAllWindows();
         return true;
 
