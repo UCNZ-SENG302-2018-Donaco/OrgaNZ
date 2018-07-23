@@ -55,9 +55,9 @@ public interface ClientResolver {
 
     Client modifyClientDetails(Client client, ModifyClientObject modifyClientObject);
 
-    IllnessRecord markCured(IllnessRecord record,ModifyIllnessObject modifyIllnessObject);
+    //IllnessRecord markCured(IllnessRecord record,ModifyIllnessObject modifyIllnessObject);
 
-    IllnessRecord markChronic(IllnessRecord record,ModifyIllnessObject modifyIllnessObject);
+    //IllnessRecord markChronic(IllnessRecord record,ModifyIllnessObject modifyIllnessObject);
 
     //------------DELETEs----------------
 
