@@ -1,6 +1,5 @@
 package com.humanharvest.organz.resolvers.client;
 
-import com.humanharvest.organz.views.client.ModifyIllnessObject;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -8,11 +7,15 @@ import java.util.Map;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.MedicationRecord;
+import com.humanharvest.organz.ProcedureRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.views.client.CreateIllnessView;
+import com.humanharvest.organz.views.client.CreateMedicationRecordView;
+import com.humanharvest.organz.views.client.CreateProcedureView;
 import com.humanharvest.organz.views.client.CreateTransplantRequestView;
 import com.humanharvest.organz.views.client.ModifyClientObject;
+import com.humanharvest.organz.views.client.ModifyProcedureObject;
 import com.humanharvest.organz.views.client.ResolveTransplantRequestObject;
 
 public interface ClientResolver {
@@ -37,6 +40,8 @@ public interface ClientResolver {
      */
     List<MedicationRecord> getMedicationRecords(Client client);
 
+    List<ProcedureRecord> getProcedureRecords(Client client);
+
     //------------POSTs----------------
 
     List<TransplantRequest> createTransplantRequest(Client client, CreateTransplantRequestView request);
@@ -45,6 +50,10 @@ public interface ClientResolver {
 
     List<IllnessRecord> addIllnessRecord(Client client, CreateIllnessView createIllnessView);
 
+    List<MedicationRecord> addMedicationRecord(Client client, CreateMedicationRecordView medicationRecordView);
+
+
+    List<ProcedureRecord> addProcedureRecord(Client client, CreateProcedureView procedureView);
 
     //------------PATCHs----------------
 
@@ -58,6 +67,9 @@ public interface ClientResolver {
     //IllnessRecord markCured(IllnessRecord record,ModifyIllnessObject modifyIllnessObject);
 
     //IllnessRecord markChronic(IllnessRecord record,ModifyIllnessObject modifyIllnessObject);
+
+    ProcedureRecord modifyProcedureRecord(Client client, ModifyProcedureObject modifyProcedureObject, int
+            procedureRecordIndex);
 
     //------------DELETEs----------------
 

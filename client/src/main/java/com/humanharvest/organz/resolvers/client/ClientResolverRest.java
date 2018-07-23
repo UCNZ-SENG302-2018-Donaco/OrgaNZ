@@ -8,12 +8,16 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.MedicationRecord;
+import com.humanharvest.organz.ProcedureRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.views.client.CreateIllnessView;
+import com.humanharvest.organz.views.client.CreateMedicationRecordView;
+import com.humanharvest.organz.views.client.CreateProcedureView;
 import com.humanharvest.organz.views.client.CreateTransplantRequestView;
 import com.humanharvest.organz.views.client.ModifyClientObject;
+import com.humanharvest.organz.views.client.ModifyProcedureObject;
 import com.humanharvest.organz.views.client.ResolveTransplantRequestObject;
 import com.humanharvest.organz.views.client.SingleDateView;
 import org.springframework.core.ParameterizedTypeReference;
@@ -78,6 +82,24 @@ public class ClientResolverRest implements ClientResolver {
         return responseEntity.getBody();
     }
 
+    @Override
+    public List<ProcedureRecord> getProcedureRecords(Client client) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        httpHeaders.setETag(State.getClientEtag());
+        httpHeaders.set("X-Auth-Token", State.getToken());
+
+        HttpEntity<?> entity = new HttpEntity<>(null, httpHeaders);
+
+        ResponseEntity<List<ProcedureRecord>> responseEntity = State.getRestTemplate().exchange
+                (State.BASE_URI + "clients/{id}/procedures", HttpMethod.GET, entity,
+                        new ParameterizedTypeReference<List<ProcedureRecord>>() {
+                        }, client.getUid());
+
+        State.setClientEtag(responseEntity.getHeaders().getETag());
+        return responseEntity.getBody();
+    }
+
     //------------POSTs----------------
 
     @Override
@@ -136,6 +158,44 @@ public class ClientResolverRest implements ClientResolver {
 
     }
 
+    @Override
+    public List<MedicationRecord> addMedicationRecord(Client client, CreateMedicationRecordView recordView) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setIfMatch(State.getClientEtag());
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
+
+        HttpEntity entity = new HttpEntity<>(recordView, httpHeaders);
+
+        // The full list of the client's medications is returned
+        ResponseEntity<List<MedicationRecord>> responseEntity = State.getRestTemplate()
+                .exchange(State.BASE_URI + "clients/" + client.getUid() + "/medications", HttpMethod.POST, entity,
+                        new ParameterizedTypeReference<List<MedicationRecord>>() {});
+
+        State.setClientEtag(responseEntity.getHeaders().getETag());
+        client.setMedicationHistory(responseEntity.getBody());
+
+        return responseEntity.getBody();
+
+    }
+
+    @Override
+    public List<ProcedureRecord> addProcedureRecord(Client client, CreateProcedureView procedureView) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setIfMatch(State.getClientEtag());
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
+
+        HttpEntity entity = new HttpEntity<>(procedureView, httpHeaders);
+
+        ResponseEntity<List<ProcedureRecord>> responseEntity = State.getRestTemplate()
+                .exchange(State.BASE_URI + "clients/" + client.getUid() + "/procedures", HttpMethod.POST, entity,
+                        new ParameterizedTypeReference<List<ProcedureRecord>>() {});
+
+        State.setClientEtag(responseEntity.getHeaders().getETag());
+
+        return responseEntity.getBody();
+
+    }
+
     //------------PATCHs----------------
 
     @Override
@@ -178,6 +238,28 @@ public class ClientResolverRest implements ClientResolver {
                         entity,
                         Client.class,
                         client.getUid());
+
+        State.setClientEtag(responseEntity.getHeaders().getETag());
+        return responseEntity.getBody();
+    }
+
+    @Override
+    public ProcedureRecord modifyProcedureRecord(Client client, ModifyProcedureObject modifyProcedureObject, int
+            procedureRecordIndex) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setIfMatch(State.getClientEtag());
+        httpHeaders.set("X-Auth-Token", State.getToken());
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
+
+        HttpEntity<ModifyProcedureObject> entity = new HttpEntity<>(modifyProcedureObject, httpHeaders);
+
+        ResponseEntity<ProcedureRecord> responseEntity = State.getRestTemplate().exchange(
+                State.BASE_URI
+                        + "clients/"
+                        + client.getUid()
+                        + "/procedures/"
+                        + procedureRecordIndex,
+                HttpMethod.PATCH, entity, ProcedureRecord.class);
 
         State.setClientEtag(responseEntity.getHeaders().getETag());
         return responseEntity.getBody();

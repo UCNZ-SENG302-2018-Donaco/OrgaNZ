@@ -169,7 +169,7 @@ public class Client implements ConcurrencyControlledEntity {
     public void setOrganDonationStatus(Organ organ, boolean value) throws OrganAlreadyRegisteredException {
         if (value) {
             if (organsDonating.contains(organ)) {
-                throw new OrganAlreadyRegisteredException(organ.toString() + " is already registered for donation");
+                throw new OrganAlreadyRegisteredException(organ + " is already registered for donation");
             } else {
                 organsDonating.add(organ);
             }

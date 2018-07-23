@@ -16,6 +16,7 @@ public class MenuBarControllerAdminTest extends ControllerTest {
 
     private Administrator testAdmin = new Administrator("username", "password");
 
+    @Override
     @Test
     public void initState() {
         State.reset();

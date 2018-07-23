@@ -20,6 +20,7 @@ import javafx.stage.Window;
 
 import com.humanharvest.organz.GUICategory;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
 import com.humanharvest.organz.utilities.view.Page;
 import org.junit.After;
 import org.junit.BeforeClass;

@@ -17,7 +17,7 @@ import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
 import com.humanharvest.organz.utilities.type_converters.EnumSetToString;
-import org.springframework.core.ParameterizedTypeReference;
+import com.humanharvest.organz.views.client.PaginatedClientList;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -29,21 +29,18 @@ public class ClientManagerRest implements ClientManager {
 
     @Override
     public List<Client> getClients() throws AuthenticationException {
-        ParameterizedTypeReference<List<Client>> typeReference =
-                new ParameterizedTypeReference<List<Client>>() {
-                };
 
-        ResponseEntity<List<Client>> clientResponse = State.getRestTemplate().exchange(
+        ResponseEntity<PaginatedClientList> clientResponse = State.getRestTemplate().exchange(
                 State.BASE_URI + "clients",
                 HttpMethod.GET,
                 null,
-                typeReference);
+                PaginatedClientList.class);
 
-        return clientResponse.getBody();
+        return clientResponse.getBody().getClients();
     }
 
     @Override
-    public List<Client> getClients(
+    public PaginatedClientList getClients(
             String q,
             Integer offset,
             Integer count,
@@ -80,15 +77,11 @@ public class ClientManagerRest implements ClientManager {
 
         System.out.println(outString);
 
-        ParameterizedTypeReference<List<Client>> typeReference =
-                new ParameterizedTypeReference<List<Client>>() {
-                };
-
-        HttpEntity<List<Client>> response = State.getRestTemplate().exchange(
+        HttpEntity<PaginatedClientList> response = State.getRestTemplate().exchange(
                 builder.toUriString(),
                 HttpMethod.GET,
                 entity,
-                typeReference
+                PaginatedClientList.class
         );
 
         return response.getBody();

@@ -19,6 +19,7 @@ import com.humanharvest.organz.utilities.enums.ClientType;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
+import com.humanharvest.organz.views.client.PaginatedClientList;
 
 /**
  * Handles the manipulation of the clients currently stored in the system.
@@ -27,7 +28,7 @@ public interface ClientManager {
 
     List<Client> getClients();
 
-    default List<Client> getClients(
+    default PaginatedClientList getClients(
             String q,
             Integer offset,
             Integer count,
@@ -87,7 +88,7 @@ public interface ClientManager {
             dualSorter = dualSorter.reversed();
         }
 
-        return stream
+        List<Client> filteredClients = stream
                 .filter(q == null ? c -> true : client -> client.nameContains(q))
 
                 .filter(minimumAge == null ? c -> true : client -> client.getAge() >= minimumAge)
@@ -108,6 +109,12 @@ public interface ClientManager {
                 .filter(requesting == null ? c -> true : client -> requesting.size() == 0 ||
                         requesting.stream().anyMatch(organ -> client.getCurrentlyRequestedOrgans().contains(organ)))
 
+                .collect(Collectors.toList());
+
+        int totalResults = filteredClients.size();
+
+        List<Client> paginatedClients = filteredClients.stream()
+
                 .skip(offset)
 
                 .limit(count)
@@ -115,6 +122,8 @@ public interface ClientManager {
                 .sorted(dualSorter)
 
                 .collect(Collectors.toList());
+
+        return new PaginatedClientList(paginatedClients, totalResults);
     }
 
     void setClients(Collection<Client> clients);
