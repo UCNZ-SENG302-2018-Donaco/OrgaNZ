@@ -10,6 +10,7 @@ import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.views.client.CreateIllnessView;
+import com.humanharvest.organz.views.client.CreateMedicationRecordView;
 import com.humanharvest.organz.views.client.CreateTransplantRequestView;
 import com.humanharvest.organz.views.client.ModifyClientObject;
 import com.humanharvest.organz.views.client.ResolveTransplantRequestObject;
@@ -43,6 +44,8 @@ public interface ClientResolver {
     Client markClientAsDead(Client client, LocalDate dateOfDeath);
 
     List<IllnessRecord> addIllnessRecord(Client client, CreateIllnessView createIllnessView);
+
+    List<MedicationRecord> addMedicationRecord(Client client, CreateMedicationRecordView recordView);
 
     //------------PATCHs----------------
 

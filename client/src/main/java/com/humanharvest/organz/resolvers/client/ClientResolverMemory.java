@@ -11,6 +11,7 @@ import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.views.client.CreateIllnessView;
+import com.humanharvest.organz.views.client.CreateMedicationRecordView;
 import com.humanharvest.organz.views.client.CreateTransplantRequestView;
 import com.humanharvest.organz.views.client.ModifyClientObject;
 import com.humanharvest.organz.views.client.ResolveTransplantRequestObject;
@@ -58,6 +59,14 @@ public class ClientResolverMemory implements ClientResolver {
                 createIllnessView.isChronic());
         client.addIllnessRecord(illnessRecord);
         return client.getIllnesses();
+    }
+
+    @Override
+    public List<MedicationRecord> addMedicationRecord(Client client, CreateMedicationRecordView recordView) {
+        MedicationRecord medicationRecord = new MedicationRecord(recordView.getName(),
+                LocalDate.now(), null);
+        client.addMedicationRecord(medicationRecord);
+        return client.getMedications();
     }
 
     //------------PATCHs----------------

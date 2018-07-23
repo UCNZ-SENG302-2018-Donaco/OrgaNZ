@@ -12,6 +12,7 @@ import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.views.client.CreateIllnessView;
+import com.humanharvest.organz.views.client.CreateMedicationRecordView;
 import com.humanharvest.organz.views.client.CreateTransplantRequestView;
 import com.humanharvest.organz.views.client.ModifyClientObject;
 import com.humanharvest.organz.views.client.ResolveTransplantRequestObject;
@@ -130,6 +131,26 @@ public class ClientResolverRest implements ClientResolver {
 
         return responseEntity.getBody();
 
+
+    }
+
+    @Override
+    public List<MedicationRecord> addMedicationRecord(Client client, CreateMedicationRecordView recordView) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setIfMatch(State.getClientEtag());
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
+
+        HttpEntity entity = new HttpEntity<>(recordView, httpHeaders);
+
+        // The full list of the client's medications is returned
+        ResponseEntity<List<MedicationRecord>> responseEntity = State.getRestTemplate()
+                .exchange(State.BASE_URI + "clients/" + client.getUid() + "/medications", HttpMethod.POST, entity,
+                        new ParameterizedTypeReference<List<MedicationRecord>>() {});
+
+        State.setClientEtag(responseEntity.getHeaders().getETag());
+        client.setMedicationHistory(responseEntity.getBody());
+
+        return responseEntity.getBody();
 
     }
 
