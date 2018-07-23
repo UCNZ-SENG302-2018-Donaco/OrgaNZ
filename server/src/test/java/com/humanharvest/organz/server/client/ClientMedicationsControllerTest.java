@@ -114,7 +114,6 @@ public class ClientMedicationsControllerTest {
 
     /**
 
-    @Test
     public void testCreateMedicationInvalid() throws Exception {
         CreateMedicationRecordView recordView = new CreateMedicationRecordView();
         recordView.setName("MedicationName");
