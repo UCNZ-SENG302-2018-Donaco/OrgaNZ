@@ -17,6 +17,7 @@ import com.humanharvest.organz.views.client.CreateMedicationRecordView;
 import com.humanharvest.organz.views.client.CreateProcedureView;
 import com.humanharvest.organz.views.client.CreateTransplantRequestView;
 import com.humanharvest.organz.views.client.ModifyClientObject;
+import com.humanharvest.organz.views.client.ModifyProcedureObject;
 import com.humanharvest.organz.views.client.ResolveTransplantRequestObject;
 import com.humanharvest.organz.views.client.SingleDateView;
 import org.springframework.core.ParameterizedTypeReference;
@@ -234,6 +235,28 @@ public class ClientResolverRest implements ClientResolver {
                         entity,
                         Client.class,
                         client.getUid());
+
+        State.setClientEtag(responseEntity.getHeaders().getETag());
+        return responseEntity.getBody();
+    }
+
+    @Override
+    public ProcedureRecord modifyProcedureRecord(Client client, ModifyProcedureObject modifyProcedureObject, int
+            procedureRecordIndex) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setIfMatch(State.getClientEtag());
+        httpHeaders.set("X-Auth-Token", State.getToken());
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
+
+        HttpEntity<ModifyProcedureObject> entity = new HttpEntity<>(modifyProcedureObject, httpHeaders);
+
+        ResponseEntity<ProcedureRecord> responseEntity = State.getRestTemplate().exchange(
+                State.BASE_URI
+                        + "clients/"
+                        + client.getUid()
+                        + "/procedures/"
+                        + procedureRecordIndex,
+                HttpMethod.PATCH, entity, ProcedureRecord.class);
 
         State.setClientEtag(responseEntity.getHeaders().getETag());
         return responseEntity.getBody();

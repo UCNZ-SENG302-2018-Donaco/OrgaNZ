@@ -16,6 +16,7 @@ import com.humanharvest.organz.views.client.CreateMedicationRecordView;
 import com.humanharvest.organz.views.client.CreateProcedureView;
 import com.humanharvest.organz.views.client.CreateTransplantRequestView;
 import com.humanharvest.organz.views.client.ModifyClientObject;
+import com.humanharvest.organz.views.client.ModifyProcedureObject;
 import com.humanharvest.organz.views.client.ResolveTransplantRequestObject;
 import org.springframework.beans.BeanUtils;
 
@@ -100,6 +101,16 @@ public class ClientResolverMemory implements ClientResolver {
     public Client modifyClientDetails(Client client, ModifyClientObject modifyClientObject) {
         BeanUtils.copyProperties(modifyClientObject, client, modifyClientObject.getUnmodifiedFields());
         return client;
+    }
+
+    @Override
+    public ProcedureRecord modifyProcedureRecord(Client client, ModifyProcedureObject modifyProcedureObject,
+            int procedureRecordIndex) {
+        ProcedureRecord newProcedureRecord = client.getProcedures().get(procedureRecordIndex);
+        newProcedureRecord.setSummary(modifyProcedureObject.getSummary());
+        newProcedureRecord.setDescription(modifyProcedureObject.getDescription());
+        newProcedureRecord.setDate(modifyProcedureObject.getDate());
+        return newProcedureRecord;
     }
 
     //------------DELETEs----------------
