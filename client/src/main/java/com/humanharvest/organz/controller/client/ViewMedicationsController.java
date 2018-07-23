@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -256,7 +257,7 @@ public class ViewMedicationsController extends SubController {
      */
     @FXML
     public void newMedKeyPressed(KeyEvent keyEvent) {
-        if (keyEvent.getCode().equals(KeyCode.ENTER)) {
+        if (keyEvent.getCode() == KeyCode.ENTER) {
             addMedication(newMedField.getText());
         }
     }
@@ -292,7 +293,7 @@ public class ViewMedicationsController extends SubController {
      * @param newMedName The name of the medication to add a new instance of.
      */
     private void addMedication(String newMedName) {
-        if (!newMedName.equals("")) {
+        if (!Objects.equals(newMedName, "")) {
             CreateMedicationRecordView record = new CreateMedicationRecordView(newMedName, LocalDate.now());
 
             try {

@@ -45,7 +45,8 @@ public interface ClientResolver {
 
     List<IllnessRecord> addIllnessRecord(Client client, CreateIllnessView createIllnessView);
 
-    List<MedicationRecord> addMedicationRecord(Client client, CreateMedicationRecordView recordView);
+    List<MedicationRecord> addMedicationRecord(Client client, CreateMedicationRecordView medicationRecordView);
+
 
     //------------PATCHs----------------
 

@@ -135,7 +135,6 @@ public class ViewProceduresControllerClinicianTest extends ControllerTest {
     }
 
     @Test
-    @Ignore
     public void setDateFromPastToFutureTest() {
         clickOn((Node) lookup(NodeQueryUtils.hasText("12/10/2000")).query());
         clickOn((Node) lookup(NodeQueryUtils.hasText("12/10/2000")).query());
