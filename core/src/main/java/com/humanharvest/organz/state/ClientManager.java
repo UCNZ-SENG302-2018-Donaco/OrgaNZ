@@ -115,11 +115,11 @@ public interface ClientManager {
 
         List<Client> paginatedClients = filteredClients.stream()
 
+                .sorted(dualSorter)
+
                 .skip(offset)
 
                 .limit(count)
-
-                .sorted(dualSorter)
 
                 .collect(Collectors.toList());
 

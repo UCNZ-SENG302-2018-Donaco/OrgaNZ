@@ -65,7 +65,7 @@ public class ClientController {
             @RequestParam(required = false) ClientType clientType,
             @RequestParam(required = false) EnumSet<Organ> donating,
             @RequestParam(required = false) EnumSet<Organ> requesting,
-            @RequestParam(required = false) ClientSortOptionsEnum sortOrder,
+            @RequestParam(required = false) ClientSortOptionsEnum sortOption,
             @RequestParam(required = false) Boolean isReversed
     ) throws AuthenticationException {
 
@@ -83,7 +83,7 @@ public class ClientController {
                 clientType,
                 donating,
                 requesting,
-                sortOrder,
+                sortOption,
                 isReversed);
 
         return new ResponseEntity<>(clients, HttpStatus.OK);
