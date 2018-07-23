@@ -107,13 +107,14 @@
                                 <Label fx:id="ageLabel" prefHeight="15.0" prefWidth="105.0" GridPane.columnIndex="3" />
                                 <Label fx:id="dodLabel2" text="BMI:" GridPane.columnIndex="2" GridPane.rowIndex="3" />
                                 <Label fx:id="BMILabel" prefHeight="15.0" prefWidth="105.0" GridPane.columnIndex="3" GridPane.rowIndex="3" />
-                                <ChoiceBox fx:id="region" layoutX="488.0" layoutY="167.0" maxWidth="1.7976931348623157E308" prefHeight="30.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
+                                <ChoiceBox fx:id="regionCB" layoutX="488.0" layoutY="167.0" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="107.0" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                                 <Label fx:id="genderIdentityLabel" text="Gender identity:" GridPane.columnIndex="2" GridPane.rowIndex="6" />
                                 <Label fx:id="pnameLabel" text="Preferred name:" GridPane.rowIndex="3" />
                                 <TextField fx:id="pname" prefHeight="30.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                                 <ChoiceBox fx:id="genderIdentity" maxWidth="1.7976931348623157E308" prefHeight="30.0" GridPane.columnIndex="3" GridPane.rowIndex="6" />
                                           <Label text="Country" GridPane.rowIndex="8" />
                                           <ChoiceBox fx:id="country" prefHeight="25.0" prefWidth="191.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                                          <TextField fx:id="regionTF" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                               </children>
                            </GridPane>
                          </children>

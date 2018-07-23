@@ -35,6 +35,7 @@ import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.ui.validation.UIValidation;
 import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.enums.BloodType;
+import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
@@ -74,7 +75,9 @@ public class ViewClientController extends SubController {
     @FXML
     private ChoiceBox<BloodType> btype;
     @FXML
-    private ChoiceBox<Region> region;
+    private ChoiceBox<Region> regionCB;
+    @FXML
+    private TextField regionTF;
     @FXML
     private ChoiceBox country;
 
@@ -97,8 +100,19 @@ public class ViewClientController extends SubController {
         gender.setItems(FXCollections.observableArrayList(Gender.values()));
         genderIdentity.setItems(FXCollections.observableArrayList(Gender.values()));
         btype.setItems(FXCollections.observableArrayList(BloodType.values()));
-        region.setItems(FXCollections.observableArrayList(Region.values()));
+        regionCB.setItems(FXCollections.observableArrayList(Region.values()));
+        checkCountry();
         setFieldsDisabled(true);
+    }
+
+    private void checkCountry() {
+        if (viewedClient.getCountry() == Country.NZ) {
+            regionCB.setVisible(true);
+            regionTF.setVisible(false);
+        } else {
+            regionCB.setVisible(false);
+            regionTF.setVisible(true);
+        }
     }
 
     @Override
@@ -201,7 +215,13 @@ public class ViewClientController extends SubController {
         height.setText(String.valueOf(viewedClient.getHeight()));
         weight.setText(String.valueOf(viewedClient.getWeight()));
         btype.setValue(viewedClient.getBloodType());
-        region.setValue(viewedClient.getRegion());
+
+        checkCountry();
+        if (viewedClient.getCountry() == Country.NZ) {
+            regionCB.setValue(Region.fromString(viewedClient.getRegion()));
+        } else {
+            regionTF.setText(viewedClient.getRegion());
+        }
         address.setText(viewedClient.getCurrentAddress());
 
         creationDate.setText(viewedClient.getCreatedTimestamp().format(dateTimeFormat));
@@ -396,8 +416,14 @@ public class ViewClientController extends SubController {
         addChangeIfDifferent(modifyClientObject, "height", Double.parseDouble(height.getText()));
         addChangeIfDifferent(modifyClientObject, "weight", Double.parseDouble(weight.getText()));
         addChangeIfDifferent(modifyClientObject, "bloodType", btype.getValue());
-        addChangeIfDifferent(modifyClientObject, "region", region.getValue());
         addChangeIfDifferent(modifyClientObject, "currentAddress", address.getText());
+
+        if (viewedClient.getCountry() == Country.NZ) {
+            addChangeIfDifferent(modifyClientObject, "region", regionCB.getValue());
+        } else {
+            addChangeIfDifferent(modifyClientObject, "region", regionTF.getText());
+        }
+
 
         if (modifyClientObject.getModifiedFields().isEmpty()) {
             if (!clientDied) {

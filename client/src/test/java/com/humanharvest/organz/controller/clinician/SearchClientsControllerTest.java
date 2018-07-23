@@ -68,8 +68,8 @@ public class SearchClientsControllerTest extends ControllerTest {
             State.getClientManager().addClient(client);
         }
 
-        testClient1.setRegion(Region.CANTERBURY);
-        testClient2.setRegion(Region.AUCKLAND);
+        testClient1.setRegion(Region.CANTERBURY.toString());
+        testClient2.setRegion(Region.AUCKLAND.toString());
         // client3's region is left as null
 
         mainController.setWindowContext(WindowContext.defaultContext());
@@ -79,10 +79,10 @@ public class SearchClientsControllerTest extends ControllerTest {
      * Method to set up the test details for the test client
      */
     private void setupClientDetails() {
-        testClient1.setRegion(Region.AUCKLAND);
-        testClient2.setRegion(Region.AUCKLAND);
-        testClient3.setRegion(Region.NORTHLAND);
-        testClient4.setRegion(Region.WEST_COAST);
+        testClient1.setRegion(Region.AUCKLAND.toString());
+        testClient2.setRegion(Region.AUCKLAND.toString());
+        testClient3.setRegion(Region.NORTHLAND.toString());
+        testClient4.setRegion(Region.WEST_COAST.toString());
 
         //Set Genders
         testClient1.setGender(Gender.MALE);
@@ -557,7 +557,7 @@ public class SearchClientsControllerTest extends ControllerTest {
             Client client = new Client("Client", "Number", "num" + Integer.toString(i), LocalDate.now(), i);
             TransplantRequest request = new TransplantRequest(client, Organ.MIDDLE_EAR);
             client.addTransplantRequest(request);
-            client.setRegion(Region.NELSON);
+            client.setRegion(Region.NELSON.toString());
             State.getClientManager().addClient(client);
         }
         pageController.refresh();

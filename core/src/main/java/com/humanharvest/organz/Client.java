@@ -35,6 +35,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.utilities.enums.BloodType;
+import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
@@ -64,9 +65,11 @@ public class Client implements ConcurrencyControlledEntity {
     @JsonView(Views.Details.class)
     private String currentAddress;
 
-    @Enumerated(EnumType.STRING)
     @JsonView(Views.Details.class)
-    private Region region;
+    private String region;
+    @Enumerated(EnumType.STRING)
+    @JsonView(Views.Overview.class)
+    private Country country;
     @Enumerated(EnumType.STRING)
     @JsonView(Views.Details.class)
     private Gender gender;
@@ -154,6 +157,9 @@ public class Client implements ConcurrencyControlledEntity {
         this.dateOfBirth = dateOfBirth;
         this.gender = Gender.UNSPECIFIED;
         this.createdTimestamp = LocalDateTime.now();
+
+        //todo remove this - just for testing
+        this.country = Country.NZ;
     }
 
     private void updateModifiedTimestamp() {
@@ -405,11 +411,11 @@ public class Client implements ConcurrencyControlledEntity {
         this.currentAddress = currentAddress;
     }
 
-    public Region getRegion() {
+    public String getRegion() {
         return region;
     }
 
-    public void setRegion(Region region) {
+    public void setRegion(String region) {
         updateModifiedTimestamp();
         this.region = region;
     }
@@ -842,5 +848,13 @@ public class Client implements ConcurrencyControlledEntity {
         } else {
             return String.format("\"%d\"", modifiedTimestamp.hashCode());
         }
+    }
+
+    public Country getCountry() {
+        return country;
+    }
+
+    public void setCountry(Country country) {
+        this.country = country;
     }
 }

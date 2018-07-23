@@ -50,8 +50,8 @@ public class SearchClientsControllerAdministratorTest extends ControllerTest {
             State.getClientManager().addClient(client);
         }
 
-        client1.setRegion(Region.CANTERBURY);
-        client2.setRegion(Region.AUCKLAND);
+        client1.setRegion(Region.CANTERBURY.toString());
+        client2.setRegion(Region.AUCKLAND.toString());
         // client3's region is left as null
 /*
         for (int i = 100; i < 218; i++) {

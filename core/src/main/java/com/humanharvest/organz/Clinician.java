@@ -13,6 +13,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.views.client.Views;
 
@@ -40,6 +41,9 @@ public class Clinician implements ConcurrencyControlledEntity {
     @Enumerated(EnumType.STRING)
     @JsonView(Views.Overview.class)
     private Region region;
+    @Enumerated(EnumType.STRING)
+    @JsonView(Views.Overview.class)
+    private Country country;
 
     @JsonView(Views.Details.class)
     private final LocalDateTime createdOn;

@@ -2,6 +2,7 @@ package com.humanharvest.organz.state;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,6 +14,7 @@ import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.utilities.RestErrorHandler;
+import com.humanharvest.organz.utilities.enums.Country;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -45,6 +47,8 @@ public final class State {
     private static String clinicianEtag = "";
     private static String administratorEtag = "";
     private static String token = "";
+
+    private static EnumSet<Country> allowedCountries = EnumSet.noneOf(Country.class);
 
     public static String getClientEtag() {
         return clientEtag;
@@ -153,6 +157,14 @@ public final class State {
 
     public static boolean isUnsavedChanges() {
         return unsavedChanges;
+    }
+
+    public static EnumSet<Country> getAllowedCountries() {
+        return allowedCountries;
+    }
+
+    public static void setAllowedCountries(EnumSet<Country> countries) {
+        allowedCountries = countries;
     }
 
     public static void logout() {

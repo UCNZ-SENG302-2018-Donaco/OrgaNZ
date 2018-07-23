@@ -94,15 +94,15 @@ public class TransplantsControllerTest extends ControllerTest {
         client3.addTransplantRequest(request3);
         requests.add(request3);
 
-        client1.setRegion(Region.CANTERBURY);
-        client2.setRegion(Region.AUCKLAND); // Changed to Auckland so that the checkbox is visible.
+        client1.setRegion(Region.CANTERBURY.toString());
+        client2.setRegion(Region.AUCKLAND.toString()); // Changed to Auckland so that the checkbox is visible.
         // client3's region is left as null
 
         for (int i = 100; i < 215; i++) {
             Client client = new Client("Client", "Number", createClientName(i), LocalDate.now(), i);
             TransplantRequest request = new TransplantRequest(client, Organ.MIDDLE_EAR);
             client.addTransplantRequest(request);
-            client.setRegion(Region.NELSON);
+            client.setRegion(Region.NELSON.toString());
             requests.add(request);
             State.getClientManager().addClient(client);
         }

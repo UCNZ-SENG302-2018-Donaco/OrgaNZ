@@ -64,7 +64,7 @@ public class SetAttribute implements Runnable {
     private String address;
 
     @Option(names = "--region", description = "Region", converter = PicoRegionConverter.class)
-    private Region region;
+    private String region;
 
     @Option(names = "--gender", description = "Gender", converter = PicoGenderConverter.class)
     private Gender gender;
@@ -102,7 +102,7 @@ public class SetAttribute implements Runnable {
         states.put("middleName", new String[]{client.getMiddleName(), middleName});
         states.put("lastName", new String[]{client.getLastName(), lastName});
         states.put("currentAddress", new String[]{client.getCurrentAddress(), address});
-        states.put("region", new Region[]{client.getRegion(), region});
+        states.put("region", new String[]{client.getRegion(), region});
         states.put("gender", new Gender[]{client.getGender(), gender});
         states.put("bloodType", new BloodType[]{client.getBloodType(), bloodType});
         states.put("height", new Double[]{client.getHeight(), height});
