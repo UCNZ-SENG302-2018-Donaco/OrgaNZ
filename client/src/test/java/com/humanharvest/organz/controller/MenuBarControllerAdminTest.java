@@ -1,8 +1,11 @@
 package com.humanharvest.organz.controller;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import com.humanharvest.organz.Administrator;
+import com.humanharvest.organz.resolvers.CommandRunner;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
@@ -13,6 +16,7 @@ public class MenuBarControllerAdminTest extends ControllerTest {
 
     private Administrator testAdmin = new Administrator("username", "password");
 
+    @Override
     @Test
     public void initState() {
         State.reset();
@@ -31,7 +35,6 @@ public class MenuBarControllerAdminTest extends ControllerTest {
     }
 
     @Test
-    @Ignore
     public void testClickLogout() {
         clickOn("#filePrimaryItem");
         clickOn("#logOutItem");
@@ -88,8 +91,17 @@ public class MenuBarControllerAdminTest extends ControllerTest {
     }
 
     @Test
-    @Ignore
     public void testClickCLI() {
+        CommandRunner commandRunnerMock = mock(CommandRunner.class);
+        try {
+            setPrivateField(State.class, "commandRunner", commandRunnerMock);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+
+        // TODO: Change this to actual output
+        when(commandRunnerMock.execute("help")).thenReturn("Usage: OrgaNZ\nCommands:\nload");
+
         clickOn("#profilePrimaryItem");
         clickOn("#cliItem");
         assertEquals(Page.COMMAND_LINE, mainController.getCurrentPage());

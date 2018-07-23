@@ -11,7 +11,7 @@ import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.serialization.JSONFileWriter;
+import com.humanharvest.organz.utilities.serialisation.JSONFileWriter;
 import picocli.CommandLine.Command;
 
 /**
@@ -43,12 +43,12 @@ public class Save implements Runnable {
             outputStream.println("No clients exist, nothing to save");
         } else {
             try (JSONFileWriter<Client> clientWriter = new JSONFileWriter<>(FILE, Client.class)) {
-                clientWriter.overwriteWith(clients);
+                clientWriter.overrideWith(clients);
 
                 LOGGER.log(Level.INFO, String.format("Saved %s clients to file", clients.size()));
                 HistoryItem historyItem = new HistoryItem("SAVE",
                         String.format("The system's current state was saved to '%s'.", FILE.getName()));
-                State.getSession().addToSessionHistory(historyItem);
+                //TODO: State.getSession().addToSessionHistory(historyItem);
             } catch (IOException e) {
                 LOGGER.log(Level.SEVERE, "Could not save to file: " + FILE.getName(), e);
             }

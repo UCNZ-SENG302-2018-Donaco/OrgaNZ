@@ -123,4 +123,21 @@ public class AdministratorManagerDBPure implements AdministratorManager {
     public Administrator getDefaultAdministrator() {
         return getAdministratorByUsername("admin").orElseThrow(RuntimeException::new);
     }
+
+    @Override
+    public void applyChangesTo(Administrator administrator) {
+        Transaction trns = null;
+
+        try (org.hibernate.Session session = dbManager.getDBSession()) {
+            trns = session.beginTransaction();
+
+            dbManager.getDBSession().update(administrator);
+
+            trns.commit();
+        } catch (RollbackException exc) {
+            if (trns != null) {
+                trns.rollback();
+            }
+        }
+    }
 }

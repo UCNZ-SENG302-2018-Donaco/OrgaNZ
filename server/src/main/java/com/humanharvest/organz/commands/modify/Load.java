@@ -6,13 +6,12 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.logging.Logger;
 
-import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.serialization.CSVReadClientStrategy;
-import com.humanharvest.organz.utilities.serialization.ClientImporter;
-import com.humanharvest.organz.utilities.serialization.JSONReadClientStrategy;
-import com.humanharvest.organz.utilities.serialization.ReadClientStrategy;
+import com.humanharvest.organz.utilities.serialisation.CSVReadClientStrategy;
+import com.humanharvest.organz.utilities.serialisation.ClientImporter;
+import com.humanharvest.organz.utilities.serialisation.JSONReadClientStrategy;
+import com.humanharvest.organz.utilities.serialisation.ReadClientStrategy;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
@@ -79,7 +78,7 @@ public class Load implements Runnable {
                     file.getName(), importer.getValidCount(), importer.getInvalidCount(), errorSummary);
 
             outputStream.println(message);
-            State.getSession().addToSessionHistory(new HistoryItem("LOAD", message));
+            //TODO: State.getSession().addToSessionHistory(new HistoryItem("LOAD", message));
 
         } catch (FileNotFoundException exc) {
             outputStream.println(String.format("Could not find file: '%s'.", file.getAbsolutePath()));

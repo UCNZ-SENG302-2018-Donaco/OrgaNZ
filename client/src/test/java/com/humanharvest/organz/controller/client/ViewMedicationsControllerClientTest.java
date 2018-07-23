@@ -1,11 +1,19 @@
 package com.humanharvest.organz.controller.client;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.matcher.base.NodeMatchers.isDisabled;
 import static org.testfx.matcher.control.ListViewMatchers.hasListCell;
 import static org.testfx.util.NodeQueryUtils.isVisible;
 
+import static org.mockito.Mockito.when;
+
 import java.time.LocalDate;
+import java.util.List;
+
+import javax.imageio.stream.MemoryCacheImageInputStream;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.MedicationRecord;
@@ -13,8 +21,11 @@ import com.humanharvest.organz.controller.ControllerTest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
-import org.junit.Before;
 import org.junit.Test;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 public class ViewMedicationsControllerClientTest extends ControllerTest {
 
@@ -38,8 +49,6 @@ public class ViewMedicationsControllerClientTest extends ControllerTest {
             )
     };
 
-    private Client testClient = new Client(1);
-
     @Override
     protected Page getPage() {
         return Page.VIEW_MEDICATIONS;
@@ -48,19 +57,12 @@ public class ViewMedicationsControllerClientTest extends ControllerTest {
     @Override
     protected void initState() {
         State.reset();
-        State.login(testClient);
-        mainController.setWindowContext(WindowContext.defaultContext());
-        resetTestClientMedicationHistory();
-    }
 
-    @Before
-    public void resetTestClientMedicationHistory() {
-        for (MedicationRecord record : testClient.getPastMedications()) {
-            testClient.deleteMedicationRecord(record);
-        }
-        for (MedicationRecord record : testClient.getCurrentMedications()) {
-            testClient.deleteMedicationRecord(record);
-        }
+        Client testClient = new Client(1);
+        State.login(testClient);
+        State.getClientManager().addClient(testClient);
+        mainController.setWindowContext(WindowContext.defaultContext());
+
         for (MedicationRecord record : testPastMedicationRecords) {
             testClient.addMedicationRecord(record);
         }

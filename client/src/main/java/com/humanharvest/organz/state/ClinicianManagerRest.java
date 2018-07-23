@@ -13,7 +13,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class ClinicianManagerRest implements ClinicianManager {
 
@@ -55,6 +54,7 @@ public class ClinicianManagerRest implements ClinicianManager {
     public Optional<Clinician> getClinicianByStaffId(int staffId) {
 
         HttpHeaders httpHeaders = newHttpHeaders();
+        httpHeaders.set("X-Auth-Token", State.getToken());
         HttpEntity<Clinician> entity = new HttpEntity<>(null, httpHeaders);
 
         ResponseEntity<Clinician> clinician = State.getRestTemplate().exchange(State.BASE_URI + "clinicians/{staffId}",
@@ -72,7 +72,7 @@ public class ClinicianManagerRest implements ClinicianManager {
 
     @Override
     public void applyChangesTo(Clinician editedClinician) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 
     @Override

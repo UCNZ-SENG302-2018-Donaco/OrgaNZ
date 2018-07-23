@@ -1,4 +1,4 @@
-package com.humanharvest.organz.utilities.serialization;
+package com.humanharvest.organz.utilities.serialisation;
 
 import java.io.File;
 import java.io.IOException;

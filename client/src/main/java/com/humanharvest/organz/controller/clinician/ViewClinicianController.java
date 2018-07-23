@@ -1,8 +1,6 @@
 package com.humanharvest.organz.controller.clinician;
 
-import java.lang.reflect.Field;
 import java.time.format.DateTimeFormatter;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,12 +19,9 @@ import javafx.scene.paint.Color;
 
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.HistoryItem;
-import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.resolvers.clinician.ModifyClinicianResolver;
 import com.humanharvest.organz.state.Session;
-import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.enums.Region;
@@ -41,22 +36,40 @@ import org.controlsfx.control.Notifications;
  * Presents an interface displaying all information of the currently logged in Clinician. Clinicians are able to edit
  * their details directly on this page.
  */
-public class ViewClinicianController extends SubController {
+public class ViewClinicianController extends ViewBaseController {
+
+    private static final Logger LOGGER = Logger.getLogger(ViewClinicianController.class.getName());
 
     private final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy\nh:mm:ss a");
 
-    private Session session;
-    private ActionInvoker invoker;
+    private final Session session;
     private Clinician viewedClinician;
     private String updatedPassword;
-    private static final Logger LOGGER = Logger.getLogger(ViewClinicianController.class.getName());
 
     @FXML
-    private Pane menuBarPane, loadClinicianPane, inputsPane;
+    private Pane menuBarPane;
     @FXML
-    private Label creationDate, lastModified, fnameLabel, lnameLabel, passwordLabel;
+    private Pane loadClinicianPane;
     @FXML
-    private TextField fname, lname, mname, workAddress, loadStaffIdTextField;
+    private Pane inputsPane;
+    @FXML
+    private Label creationDate;
+    @FXML
+    private Label lastModified;
+    @FXML
+    private Label fnameLabel;
+    @FXML
+    private Label lnameLabel;
+    @FXML
+    private TextField fname;
+    @FXML
+    private TextField lname;
+    @FXML
+    private TextField mname;
+    @FXML
+    private TextField workAddress;
+    @FXML
+    private TextField loadStaffIdTextField;
     @FXML
     private PasswordField password;
     @FXML
@@ -64,18 +77,20 @@ public class ViewClinicianController extends SubController {
     @FXML
     private ChoiceBox country;
     @FXML
-    private Button saveChangesButton, loadClinicianButton;
+    private Button loadClinicianButton;
 
     public ViewClinicianController() {
-        invoker = State.getInvoker();
         session = State.getSession();
 
-        if (session.getLoggedInUserType() == UserType.ADMINISTRATOR) {
-
-            viewedClinician = State.getClinicianManager().getDefaultClinician();
-        } else {
-            //should be logged in as clinician
-            viewedClinician = session.getLoggedInClinician();
+        switch (session.getLoggedInUserType()) {
+            case ADMINISTRATOR:
+                viewedClinician = State.getClinicianManager().getDefaultClinician();
+                break;
+            case CLINICIAN:
+                viewedClinician = session.getLoggedInClinician();
+                break;
+            default:
+                throw new IllegalStateException("Should not get to this page without being logged in.");
         }
     }
 
@@ -89,6 +104,7 @@ public class ViewClinicianController extends SubController {
 
         loadClinicianData();
         loadClinicianButton.setDisable(true); //TODO discuss whether we even need this?
+        loadStaffIdTextField.setDisable(true);
     }
 
     /**
@@ -117,16 +133,16 @@ public class ViewClinicianController extends SubController {
      */
     @FXML
     void loadClinician() {
-        int id_value;
+        int idValue;
         try {
-            id_value = Integer.parseInt(loadStaffIdTextField.getText());
-        } catch (Exception e) {
-            e.printStackTrace();
+            idValue = Integer.parseInt(loadStaffIdTextField.getText());
+        } catch (NumberFormatException e) {
+            LOGGER.log(Level.WARNING, "Invalid staff ID", e);
             PageNavigator.showAlert(Alert.AlertType.ERROR, "Invalid Staff ID",
                     "The Staff ID must be an integer.");
             return;
         }
-        Optional<Clinician> newClin = State.getClinicianManager().getClinicianByStaffId(id_value);
+        Optional<Clinician> newClin = State.getClinicianManager().getClinicianByStaffId(idValue);
 
         if (newClin.isPresent()) {
             viewedClinician = newClin.get();
@@ -143,7 +159,8 @@ public class ViewClinicianController extends SubController {
      * Loads all of the currently logged in Clinician's details, except for their password.
      */
     private void loadClinicianData() {
-        viewedClinician = State.getClinicianManager().getClinicianByStaffId(viewedClinician.getStaffId()).get();
+        viewedClinician = State.getClinicianManager().getClinicianByStaffId(viewedClinician.getStaffId())
+                .orElseThrow(IllegalStateException::new);
         loadStaffIdTextField.setText(String.valueOf(viewedClinician.getStaffId()));
         fname.setText(viewedClinician.getFirstName());
         mname.setText(viewedClinician.getMiddleName());
@@ -167,12 +184,9 @@ public class ViewClinicianController extends SubController {
     private void apply() {
         if (checkMandatoryFields()) {
             updatedPassword = checkPassword();
-             if (updateChanges()) {
-                 if (viewedClinician.getModifiedOn() == null) {}
-                 else {
-                 lastModified.setText(viewedClinician.getModifiedOn().format(dateTimeFormat));
-                }
-             }
+            if (updateChanges() && viewedClinician.getModifiedOn() != null) {
+                lastModified.setText(viewedClinician.getModifiedOn().format(dateTimeFormat));
+            }
         }
     }
 
@@ -220,24 +234,6 @@ public class ViewClinicianController extends SubController {
         }
     }
 
-
-    private void addChangeIfDifferent(ModifyClinicianObject modifyClinicianObject, String fieldString, Object
-            newValue) {
-        try {
-            Field field = modifyClinicianObject.getClass().getDeclaredField(fieldString);
-            Field clinicianField = viewedClinician.getClass().getDeclaredField(fieldString);
-            field.setAccessible(true);
-            clinicianField.setAccessible(true);
-            if (!Objects.equals(clinicianField.get(viewedClinician), newValue)) {
-                field.set(modifyClinicianObject, newValue);
-                int a = 1;
-                modifyClinicianObject.registerChange(fieldString);
-            }
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-        }
-    }
-
     /**
      * Records the changes updated as a ModifyClinicianAction to trace the change in record.
      * @return If there were any changes made
@@ -245,12 +241,12 @@ public class ViewClinicianController extends SubController {
     private boolean updateChanges() {
         ModifyClinicianObject modifyClinicianObject = new ModifyClinicianObject();
 
-        addChangeIfDifferent(modifyClinicianObject, "firstName", fname.getText());
-        addChangeIfDifferent(modifyClinicianObject, "lastName", lname.getText());
-        addChangeIfDifferent(modifyClinicianObject, "middleName", mname.getText());
-        addChangeIfDifferent(modifyClinicianObject, "workAddress", workAddress.getText());
-        addChangeIfDifferent(modifyClinicianObject, "password", updatedPassword);
-        addChangeIfDifferent(modifyClinicianObject, "region", region.getValue());
+        addChangeIfDifferent(modifyClinicianObject, viewedClinician, "firstName", fname.getText());
+        addChangeIfDifferent(modifyClinicianObject, viewedClinician, "lastName", lname.getText());
+        addChangeIfDifferent(modifyClinicianObject, viewedClinician, "middleName", mname.getText());
+        addChangeIfDifferent(modifyClinicianObject, viewedClinician, "workAddress", workAddress.getText());
+        addChangeIfDifferent(modifyClinicianObject, viewedClinician, "password", updatedPassword);
+        addChangeIfDifferent(modifyClinicianObject, viewedClinician, "region", region.getValue());
 
         try {
             ModifyClinicianResolver resolver = new ModifyClinicianResolver(viewedClinician, modifyClinicianObject);

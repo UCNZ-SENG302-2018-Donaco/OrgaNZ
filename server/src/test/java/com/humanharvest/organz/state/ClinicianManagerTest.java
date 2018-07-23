@@ -18,9 +18,6 @@ public class ClinicianManagerTest extends BaseTest {
 
     private ClinicianManager manager;
 
-    @Rule
-    public TemporaryFolder folder = new TemporaryFolder();
-
     @Before
     public void init() {
         manager = new ClinicianManagerMemory();

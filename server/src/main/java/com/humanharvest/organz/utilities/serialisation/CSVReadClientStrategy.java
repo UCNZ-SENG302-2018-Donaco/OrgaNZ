@@ -1,6 +1,6 @@
-package com.humanharvest.organz.utilities.serialization;
+package com.humanharvest.organz.utilities.serialisation;
 
-import static com.humanharvest.organz.utilities.serialization.CSVReadClientStrategy.Header.*;
+import static com.humanharvest.organz.utilities.serialisation.CSVReadClientStrategy.Header.*;
 
 import java.io.File;
 import java.io.FileReader;
@@ -48,7 +48,7 @@ public class CSVReadClientStrategy implements ReadClientStrategy {
     public Client readNext() throws InvalidObjectException {
         try {
             try {
-                return deserialize(parser.iterator().next());
+                return deserialise(parser.iterator().next());
             } catch (IllegalArgumentException exc) {
                 throw new InvalidObjectException(exc.getMessage());
             }
@@ -69,7 +69,7 @@ public class CSVReadClientStrategy implements ReadClientStrategy {
      * @return The deserialized client.
      * @throws IllegalArgumentException If any data value specified in the record is not valid for its data type.
      */
-    private Client deserialize(CSVRecord record) throws IllegalArgumentException {
+    private Client deserialise(CSVRecord record) throws IllegalArgumentException {
         Client client = new Client();
         client.setFirstName(record.get(first_names));
         client.setLastName(record.get(last_names));
@@ -97,7 +97,7 @@ public class CSVReadClientStrategy implements ReadClientStrategy {
      * @throws IllegalArgumentException If the string does not match the M/dd/yyyy format.
      */
     private LocalDate parseDate(String string) throws IllegalArgumentException {
-        if (string.equals("")) {
+        if ("".equals(string)) {
             return null;
         }
 

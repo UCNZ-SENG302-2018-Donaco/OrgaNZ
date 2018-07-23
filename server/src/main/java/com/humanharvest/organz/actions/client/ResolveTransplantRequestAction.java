@@ -1,9 +1,5 @@
 package com.humanharvest.organz.actions.client;
 
-import static com.humanharvest.organz.utilities.enums.TransplantRequestStatus.CANCELLED;
-import static com.humanharvest.organz.utilities.enums.TransplantRequestStatus.COMPLETED;
-import static com.humanharvest.organz.utilities.enums.TransplantRequestStatus.WAITING;
-
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
@@ -19,27 +15,33 @@ import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 public class ResolveTransplantRequestAction extends ClientAction {
 
     private static final Collection<TransplantRequestStatus> RESOLVED_STATUSES = Arrays.asList(
-            CANCELLED, COMPLETED
+            TransplantRequestStatus.CANCELLED, TransplantRequestStatus.COMPLETED
     );
 
-    private TransplantRequest request;
-    private TransplantRequestStatus newStatus;
-    private String reason;
+    private final TransplantRequest request;
+    private final TransplantRequestStatus newStatus;
+    private final LocalDateTime newResolvedTime;
+    private final String newReason;
 
     /**
-     * Creates a new resolve transplant request action for the given request and given new status/reason.
+     * Creates a new resolve transplant request action for the given request and given new status/newReason.
      * @param request The transplant request to resolve.
      * @param newStatus The new status to give the request. Must be one of the valid {@link
      * ResolveTransplantRequestAction#RESOLVED_STATUSES}.
-     * @param reason The reason for this request being resolved.
+     * @param newReason The newReason for this request being resolved.
+     * @param newResolvedTime The resolved time for this request.
      * @param manager The client manager
      */
-    public ResolveTransplantRequestAction(TransplantRequest request, TransplantRequestStatus newStatus, String
-            reason, ClientManager manager) {
+    public ResolveTransplantRequestAction(TransplantRequest request,
+            TransplantRequestStatus newStatus,
+            String newReason,
+            LocalDateTime newResolvedTime,
+            ClientManager manager) {
         super(request.getClient(), manager);
         this.request = request;
         this.newStatus = newStatus;
-        this.reason = reason;
+        this.newReason = newReason;
+        this.newResolvedTime = newResolvedTime;
 
         if (!RESOLVED_STATUSES.contains(newStatus)) {
             throw new IllegalArgumentException("New status must be a valid resolved status.");
@@ -54,15 +56,15 @@ public class ResolveTransplantRequestAction extends ClientAction {
     protected void execute() {
         super.execute();
         request.setStatus(newStatus);
-        request.setResolvedDate(LocalDateTime.now());
-        request.setResolvedReason(reason);
+        request.setResolvedDate(newResolvedTime);
+        request.setResolvedReason(newReason);
         manager.applyChangesTo(request.getClient());
     }
 
     @Override
     protected void unExecute() {
         super.unExecute();
-        request.setStatus(WAITING);
+        request.setStatus(TransplantRequestStatus.WAITING);
         request.setResolvedDate(null);
         request.setResolvedReason(null);
         manager.applyChangesTo(request.getClient());

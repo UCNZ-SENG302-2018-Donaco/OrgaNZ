@@ -98,16 +98,21 @@ public class ClientMedicationsController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
+        if (medicationRecordView.getName() == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
         checkClientEtag(client.get(), ETag);
 
-        MedicationRecord record = new MedicationRecord(medicationRecordView.getName(), LocalDate.now(), null);
+        MedicationRecord record = new MedicationRecord(medicationRecordView.getName(), medicationRecordView.getStarted(), null);
         AddMedicationRecordAction action = new AddMedicationRecordAction(client.get(), record, State.getClientManager());
         State.getActionInvoker(authToken).execute(action);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setETag(client.get().getETag());
+        System.out.println(client.get().getAllMedications());
 
-        return new ResponseEntity<>(client.get().getAllMedications(), headers, HttpStatus.OK);
+        return new ResponseEntity<>(client.get().getAllMedications(), headers, HttpStatus.CREATED);
     }
 
     /**

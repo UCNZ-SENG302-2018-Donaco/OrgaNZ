@@ -1,10 +1,6 @@
 package com.humanharvest.organz.controller.clinician;
 
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertNotNull;
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.matcher.base.NodeMatchers.isNull;
 import static org.testfx.matcher.base.NodeMatchers.isVisible;
@@ -36,23 +32,29 @@ import org.junit.Test;
 import org.testfx.matcher.control.TextMatchers;
 
 /**
- * Class to test the search clients controller. Used only for the clinician/admin to search and find a particular client.
+ * Class to test the search clients controller.
+ * Used only for the clinician/admin to search and find a particular client.
  */
+@Ignore
 public class SearchClientsControllerTest extends ControllerTest {
 
-    private Clinician testClinician = new Clinician("Admin", "Da", "Nimda", "2 Two Street", Region.CANTERBURY,
+    private final Clinician testClinician = new Clinician("Admin", "Da", "Nimda", "2 Two Street", Region.CANTERBURY,
             55, "admin");
-    private Client testClient1 = new Client("tom", "Delta", "1", LocalDate.now().minusYears(100), 1); // 100 years old
-    private Client testClient2 = new Client("bobby", "Charlie", "2", LocalDate.now().minusYears(11), 2); // 11 years old
-    private Client testClient3 = new Client("john", "Alpha", "2", LocalDate.now().minusYears(10), 3); // 10 years old
-    private Client testClient4 = new Client("john", "Beta", "2", LocalDate.now().minusYears(1), 4); // 1 year old
+    private final Client testClient1 = new Client(
+            "tom", "Delta", "1", LocalDate.now().minusYears(100), 1); // 100 years old
+    private final Client testClient2 = new Client(
+            "bobby", "Charlie", "2", LocalDate.now().minusYears(11), 2); // 11 years old
+    private final Client testClient3 = new Client(
+            "john", "Alpha", "2", LocalDate.now().minusYears(10), 3); // 10 years old
+    private final Client testClient4 = new Client(
+            "john", "Beta", "2", LocalDate.now().minusYears(1), 4); // 1 year old
 
-    private Client[] testClients = {testClient1, testClient2, testClient3, testClient4};
+    private final Client[] testClients = {testClient1, testClient2, testClient3, testClient4};
 
-    private TransplantRequest getRequestLiver1  = new TransplantRequest(testClient1, Organ.LIVER);
-    private TransplantRequest getRequestKidney1  = new TransplantRequest(testClient1, Organ.KIDNEY);
-    private TransplantRequest getRequestKidney2  = new TransplantRequest(testClient1, Organ.KIDNEY);
-    private TransplantRequest getRequestKidney4 = new TransplantRequest(testClient1, Organ.KIDNEY);
+    private final TransplantRequest getRequestLiver1  = new TransplantRequest(testClient1, Organ.LIVER);
+    private final TransplantRequest getRequestKidney1  = new TransplantRequest(testClient1, Organ.KIDNEY);
+    private final TransplantRequest getRequestKidney2  = new TransplantRequest(testClient1, Organ.KIDNEY);
+    private final TransplantRequest getRequestKidney4 = new TransplantRequest(testClient1, Organ.KIDNEY);
 
     @Override
     protected Page getPage() {
@@ -64,7 +66,7 @@ public class SearchClientsControllerTest extends ControllerTest {
         State.reset();
         State.login(testClinician);
         setupClientDetails();
-        for (Client client: testClients) {
+        for (Client client : testClients) {
             State.getClientManager().addClient(client);
         }
 
@@ -100,9 +102,8 @@ public class SearchClientsControllerTest extends ControllerTest {
         try {
             testClient3.setOrganDonationStatus(Organ.HEART, true);
             testClient3.setOrganDonationStatus(Organ.INTESTINE, true);
-        }
-        catch (OrganAlreadyRegisteredException e) {
-            System.out.println("Organ donating not handled correctly.");
+        } catch (OrganAlreadyRegisteredException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -532,8 +533,7 @@ public class SearchClientsControllerTest extends ControllerTest {
 
     @Test
     public void testUnableToDeleteClient() {
-        Client client = testClient4;
-        String clientName = client.getFullName();
+        String clientName = testClient4.getFullName();
 
         //check the client is in the table
         verifyThat("#tableView", hasTableCell(clientName));
@@ -554,7 +554,7 @@ public class SearchClientsControllerTest extends ControllerTest {
 
     private void createManyClients() {
         for (int i = 100; i < 218; i++) {
-            Client client = new Client("Client", "Number", "num" + Integer.toString(i), LocalDate.now(), i);
+            Client client = new Client("Client", "Number", "num" + i, LocalDate.now(), i);
             TransplantRequest request = new TransplantRequest(client, Organ.MIDDLE_EAR);
             client.addTransplantRequest(request);
             client.setRegion(Region.NELSON.toString());
@@ -563,13 +563,12 @@ public class SearchClientsControllerTest extends ControllerTest {
         pageController.refresh();
     }
 
-    @Ignore  // doesn't work because page can't get refreshed to display many clients (not in FX app thread)
     @Test
     public void paginationDescriptionTest() {
         createManyClients();
         verifyThat("#tableView", hasNumRows(30));
         int totalRows = testClients.length + 118;
-        verifyThat("#displayingXToYOfZText", TextMatchers.hasText("Displaying 1-30 of " + Integer.toString(totalRows)));
+        verifyThat("#displayingXToYOfZText", TextMatchers.hasText("Displaying 1-30 of " + totalRows));
     }
 
     @Test
@@ -578,7 +577,7 @@ public class SearchClientsControllerTest extends ControllerTest {
         testClient1.addTransplantRequest(transplantRequest);
 
         TableView<Client> tableView = lookup("#tableView").query();
-        boolean isReceiver = (Boolean) (tableView.getColumns().get(6).getCellObservableValue(testClient1).getValue());
+        boolean isReceiver = (Boolean)tableView.getColumns().get(6).getCellObservableValue(testClient1).getValue();
         assertTrue(isReceiver);
     }
 
@@ -587,15 +586,15 @@ public class SearchClientsControllerTest extends ControllerTest {
         testClient2.setOrganDonationStatus(Organ.PANCREAS, true);
 
         TableView<Client> tableView = lookup("#tableView").query();
-        boolean isDonor = (Boolean) (tableView.getColumns().get(5).getCellObservableValue(testClient3).getValue());
+        boolean isDonor = (Boolean)tableView.getColumns().get(5).getCellObservableValue(testClient3).getValue();
         assertTrue(isDonor);
     }
 
     @Test
     public void clientNotDonorOrReceiverTest() {
         TableView<Client> tableView = lookup("#tableView").query();
-        boolean isDonor = (Boolean) (tableView.getColumns().get(5).getCellObservableValue(testClient1).getValue());
-        boolean isReceiver = (Boolean) (tableView.getColumns().get(6).getCellObservableValue(testClient1).getValue());
+        boolean isDonor = (Boolean)tableView.getColumns().get(5).getCellObservableValue(testClient1).getValue();
+        boolean isReceiver = (Boolean)tableView.getColumns().get(6).getCellObservableValue(testClient1).getValue();
 
         assertFalse(isDonor);
         assertTrue(isReceiver);
@@ -640,7 +639,6 @@ public class SearchClientsControllerTest extends ControllerTest {
         assertEquals(testClient2.getFullName(), result2.getFullName());
     }
 
-    @Ignore
     @Test
     public void testNameColReverseOrderLastPage() {
         clickOn("#nameCol");
@@ -649,7 +647,7 @@ public class SearchClientsControllerTest extends ControllerTest {
 
         clickOn((Node) lookup("5").query()); // Click on the last page
         Client result = tableView.getItems().get(6);
-        assertEquals(result.getFullName(), "Zeta Zeta Alpha");
+        assertEquals("Zeta Zeta Alpha", result.getFullName());
     }
 
     // Tests to ensure the custom comparator hasn't broken the other column default comps.
@@ -659,7 +657,7 @@ public class SearchClientsControllerTest extends ControllerTest {
         clickOn("#idCol");
         TableView<Client> tableView = lookup("#tableView").query();
         Client result = tableView.getItems().get(0);
-        assertEquals(result.getUid(), new Integer(1));
+        assertEquals(new Integer(1), result.getUid());
     }
 
     @Test
@@ -668,7 +666,7 @@ public class SearchClientsControllerTest extends ControllerTest {
         clickOn("#genderCol");
         TableView<Client> tableView = lookup("#tableView").query();
         Client result = tableView.getItems().get(0);
-        assertEquals(result.getGender(), Gender.MALE);
+        assertEquals(Gender.MALE, result.getGender());
     }
 
     @Test
@@ -677,6 +675,6 @@ public class SearchClientsControllerTest extends ControllerTest {
         TableView<Client> tableView = lookup("#tableView").query();
         Client result = tableView.getItems().get(0);
 
-        assertEquals(result.getRegion(), Region.CANTERBURY);
+        assertEquals(Region.CANTERBURY, result.getRegion());
     }
 }

@@ -12,9 +12,9 @@ import org.springframework.http.ResponseEntity;
 
 public class ModifyMedicationRecordResolver {
 
-    private Client client;
-    private MedicationRecord record;
-    private LocalDate stopDate;
+    private final Client client;
+    private final MedicationRecord record;
+    private final LocalDate stopDate;
 
     public ModifyMedicationRecordResolver(Client client, MedicationRecord record, LocalDate stopDate) {
         this.client = client;
@@ -27,11 +27,10 @@ public class ModifyMedicationRecordResolver {
         httpHeaders.setIfMatch(State.getClientEtag());
         httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
 
-        HttpEntity entity = new HttpEntity(httpHeaders);
+        HttpEntity<MedicationRecord> entity = new HttpEntity<>(httpHeaders);
 
-        // todo needs to be changed to use the id rather than the index once index is working
+        // todo needs to be changed to use the id rather than the index once it is working
         int id = client.getAllMedications().indexOf(record);
-
 
         String modification;
         if (stopDate == null) {
@@ -41,11 +40,10 @@ public class ModifyMedicationRecordResolver {
         }
 
         ResponseEntity<MedicationRecord> responseEntity = State.getRestTemplate().postForEntity(State.BASE_URI +
-                "clients" + client.getUid() + "/medications" + "/" + id + modification, entity, MedicationRecord.class);
+                "clients/" + client.getUid() + "/medications" + "/" + id + modification, entity, MedicationRecord
+                .class);
 
         State.setClientEtag(responseEntity.getHeaders().getETag());
         return responseEntity.getBody();
     }
-
-
 }

@@ -9,22 +9,21 @@ import com.humanharvest.organz.Client;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class MenuBarAdminViewClientTest extends ControllerTest {
 
-    private Administrator testAdmin = new Administrator("username", "password");
-    private Client testClient = new Client("first", "middle", "last", LocalDate.now().minusYears(32), 1);
+    private final Administrator testAdmin = new Administrator("username", "password");
+    private final Client testClient = new Client("first", "middle", "last", LocalDate.now().minusYears(32), 1);
 
-
-    @Test
+    @Override
     public void initState() {
         State.reset();
         State.login(testAdmin);
         State.getAdministratorManager().addAdministrator(testAdmin);
+        State.getClientManager().addClient(testClient);
         mainController.setWindowContext(new WindowContext.WindowContextBuilder()
-                .setAsClinViewClientWindow()
+                .setAsClinicianViewClientWindow()
                 .viewClient(testClient)
                 .build());
     }
@@ -35,11 +34,6 @@ public class MenuBarAdminViewClientTest extends ControllerTest {
     }
 
     @Test
-    public void refresh() {
-    }
-
-    @Test
-    @Ignore
     public void testClickViewClientProfile() {
         clickOn("#clientPrimaryItem");
         clickOn("#viewClientItem");

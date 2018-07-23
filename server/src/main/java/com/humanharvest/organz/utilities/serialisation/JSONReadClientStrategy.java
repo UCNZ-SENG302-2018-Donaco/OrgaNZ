@@ -1,11 +1,10 @@
-package com.humanharvest.organz.utilities.serialization;
+package com.humanharvest.organz.utilities.serialisation;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.humanharvest.organz.Client;
 
 /**
@@ -27,13 +26,11 @@ public class JSONReadClientStrategy implements ReadClientStrategy {
     }
 
     @Override
-    public Client readNext() throws InvalidObjectException, IOException {
+    public Client readNext() throws IOException {
         try {
             return jsonFileReader.getNext();
-        } catch (JsonSyntaxException exc) {
-            throw new InvalidObjectException(exc.getMessage());
-        } catch (JsonIOException exc) {
-            throw new IOException(exc);
+        } catch (InvalidFormatException e) {
+            throw new InvalidObjectException(e.getMessage());
         }
     }
 

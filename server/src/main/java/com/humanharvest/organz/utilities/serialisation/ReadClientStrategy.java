@@ -1,4 +1,4 @@
-package com.humanharvest.organz.utilities.serialization;
+package com.humanharvest.organz.utilities.serialisation;
 
 import java.io.Closeable;
 import java.io.File;
@@ -26,5 +26,5 @@ public interface ReadClientStrategy extends Closeable {
      * @throws IOException If a critical error occurrs which ends reading of the file (invalid syntax or input stream
      * broken)
      */
-    Client readNext() throws InvalidObjectException, IOException;
+    Client readNext() throws IOException;
 }
