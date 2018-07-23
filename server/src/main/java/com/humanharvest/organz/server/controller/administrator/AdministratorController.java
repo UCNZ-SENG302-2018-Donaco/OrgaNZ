@@ -246,7 +246,6 @@ public class AdministratorController {
 
         String result = CommandsHelper.executeCommandAndReturnOutput(commands, invoker);
 
-
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 }

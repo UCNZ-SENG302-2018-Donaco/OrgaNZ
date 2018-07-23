@@ -25,6 +25,7 @@ import com.humanharvest.organz.utilities.validators.client.CreateClientValidator
 import com.humanharvest.organz.utilities.validators.client.ModifyClientValidator;
 import com.humanharvest.organz.views.client.CreateClientView;
 import com.humanharvest.organz.views.client.ModifyClientObject;
+import com.humanharvest.organz.views.client.PaginatedClientList;
 import com.humanharvest.organz.views.client.SingleDateView;
 import com.humanharvest.organz.views.client.Views;
 import org.springframework.beans.BeanUtils;
@@ -51,7 +52,7 @@ public class ClientController {
      */
     @GetMapping("/clients")
     @JsonView(Views.Overview.class)
-    public ResponseEntity<Iterable<Client>> getClients(
+    public ResponseEntity<PaginatedClientList> getClients(
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken,
 
             @RequestParam(required = false) String q,
@@ -71,7 +72,7 @@ public class ClientController {
         //TODO: Add the auth check, but need to remake the login page to not get the list of clients
         //State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
 
-        Iterable<Client> clients = State.getClientManager().getClients(
+        PaginatedClientList clients = State.getClientManager().getClients(
                 q,
                 offset,
                 count,
