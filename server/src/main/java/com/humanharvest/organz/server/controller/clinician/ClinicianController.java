@@ -84,9 +84,9 @@ public class ClinicianController {
     public ResponseEntity<Clinician> getCliniciansById(@PathVariable int staffId, @RequestHeader
             (value = "X-Auth-Token", required = false) String authToken) {
 
-        State.getAuthenticationManager().verifyAdminAccess(authToken);
         Optional<Clinician> clinician = State.getClinicianManager().getClinicianByStaffId(staffId);
         if (clinician.isPresent()) {
+            State.getAuthenticationManager().verifyClinicianAccess(authToken, clinician.get());
             HttpHeaders headers = new HttpHeaders();
             headers.setETag(clinician.get().getETag());
             return new ResponseEntity<>(clinician.get(), headers, HttpStatus.OK);
