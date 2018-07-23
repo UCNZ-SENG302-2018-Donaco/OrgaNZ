@@ -1,5 +1,6 @@
 package com.humanharvest.organz.controller.client;
 
+import com.humanharvest.organz.actions.client.DeleteIllnessRecordAction;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;

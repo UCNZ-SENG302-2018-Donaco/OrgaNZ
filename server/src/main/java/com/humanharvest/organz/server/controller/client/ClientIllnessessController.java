@@ -1,6 +1,7 @@
 package com.humanharvest.organz.server.controller.client;
 
 import com.humanharvest.organz.actions.client.AddIllnessRecordAction;
+import com.humanharvest.organz.actions.client.DeleteIllnessRecordAction;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -115,7 +116,6 @@ public class ClientIllnessessController {
     }
 
     @PostMapping("/clients/{uid}/illnesses")
-    @JsonView(Views.Overview.class)
     public ResponseEntity <List<IllnessRecord>> postIllness(@RequestBody CreateIllnessView illnessView,
             @PathVariable int uid,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
@@ -123,7 +123,7 @@ public class ClientIllnessessController {
 
         Optional<Client> client = State.getClientManager().getClientByID(uid);
         if (client.isPresent()) {
-            //State.getAuthenticationManager().verifyClientAccess(authToken, client.get());
+            State.getAuthenticationManager().verifyClientAccess(authToken, client.get());
         } else {
             //Return 404 if that client does not exist
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -138,12 +138,10 @@ public class ClientIllnessessController {
         State.getActionInvoker(authToken).execute(addIllnessRecordAction);
         HttpHeaders headers = new HttpHeaders();
         headers.setETag(client.get().getETag());
-        System.out.println(client.get().getAllIllnessHistory());
         return new ResponseEntity<>(client.get().getAllIllnessHistory(), headers, HttpStatus.OK);
     }
 
     @DeleteMapping("/clients/{uid}/illnesses/{id}")
-    @JsonView(Views.Overview.class)
     public ResponseEntity<IllnessRecord> deleteIllness(@PathVariable int uid,
             @PathVariable int id,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken) throws InvalidRequestException {
@@ -153,9 +151,11 @@ public class ClientIllnessessController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        IllnessRecord removeRecord = client.get().getAllIllnessHistory().get(id - 1);
+        IllnessRecord removeRecord = client.get().getAllIllnessHistory().get(id);
         State.getAuthenticationManager().verifyClientAccess(authToken, client.get());
-        client.get().deleteIllnessRecord(removeRecord);
+        DeleteIllnessRecordAction action = new DeleteIllnessRecordAction(client.get(),removeRecord,
+            State.getClientManager());
+        State.getActionInvoker(authToken).execute(action);
         HttpHeaders headers = new HttpHeaders();
         headers.setETag(client.get().getETag());
 

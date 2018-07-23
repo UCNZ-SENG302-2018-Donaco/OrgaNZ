@@ -144,7 +144,6 @@ public class ClientResolverRest implements ClientResolver {
         httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
 
         HttpEntity entity = new HttpEntity<>(createIllnessView, httpHeaders);
-        System.out.println(entity);
 
         ResponseEntity<List<IllnessRecord>> responseEntity = State.getRestTemplate()
                 .exchange(State.BASE_URI + "clients/" + client.getUid() + "/illnesses", HttpMethod.POST, entity,
@@ -277,8 +276,10 @@ public class ClientResolverRest implements ClientResolver {
 
         int id = client.getAllIllnessHistory().indexOf(record);
 
-        ResponseEntity<String> responseEntity = State.getRestTemplate()
-                .exchange(State.BASE_URI + "clients/{uid}/illnesses/{id}", HttpMethod.DELETE, entity, String.class, client.getUid(),id);
+        ResponseEntity<IllnessRecord> responseEntity = State.getRestTemplate()
+                .exchange(State.BASE_URI + "clients/{uid}/illnesses/{id}", HttpMethod.DELETE, entity, IllnessRecord.class, client.getUid(),id);
+
+        client.deleteIllnessRecord(responseEntity.getBody());
 
         State.setClientEtag(responseEntity.getHeaders().getETag());
     }
