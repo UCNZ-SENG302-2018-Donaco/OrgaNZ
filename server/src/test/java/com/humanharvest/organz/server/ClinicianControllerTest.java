@@ -1,11 +1,7 @@
 package com.humanharvest.organz.server;
 
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertNull;
-import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -13,19 +9,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 import java.nio.charset.Charset;
-import java.time.LocalDate;
 
-
-import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.Clinician;
-import com.humanharvest.organz.state.AdministratorManager;
-import com.humanharvest.organz.state.AdministratorManagerMemory;
 import com.humanharvest.organz.state.AuthenticationManagerFake;
 import com.humanharvest.organz.state.State;
-
 import com.humanharvest.organz.utilities.enums.Region;
 import org.hamcrest.Matchers;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,12 +31,8 @@ import org.springframework.web.context.WebApplicationContext;
 @WebAppConfiguration
 public class ClinicianControllerTest {
 
-    private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON
-            .getSubtype(), Charset.forName("utf8"));
-
     private MockMvc mockMvc;
     private Clinician testClinician;
-
 
     @Autowired
     WebApplicationContext webApplicationContext;
@@ -68,7 +53,7 @@ public class ClinicianControllerTest {
     public void getDefault() throws Exception {
         mockMvc.perform(get("/clinicians"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(contentType))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$", hasSize(1)));
     }
 
@@ -112,7 +97,7 @@ public class ClinicianControllerTest {
         State.getClinicianManager().addClinician(testClinician);
         mockMvc.perform(get("/clinicians/1"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(contentType));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
     }
 
     @Test
@@ -130,7 +115,7 @@ public class ClinicianControllerTest {
                 + "\"region\": \"UNSPECIFIED\"}";
 
         mockMvc.perform(post("/clinicians")
-                .contentType(contentType)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(json))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.createdOn", Matchers.notNullValue()))
@@ -142,7 +127,7 @@ public class ClinicianControllerTest {
         String json = "{\"staffId\": 1, \"firstName\": \"jan\",  \"lastName\": \"vincent\",  "
                 + "\"middleName\": \"michael\", \"workAddress\": \"my home\",   \"password\": \"ok\", ";
         mockMvc.perform(post("/clinicians")
-                .contentType(contentType)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(json))
                 .andExpect(status().isBadRequest());
     }
@@ -164,7 +149,7 @@ public class ClinicianControllerTest {
     public void patchValidParams() throws Exception {
         String json = "{\"password\": \"ok\", \"region\": \"AUCKLAND\"}";
         mockMvc.perform(patch("/clinicians/0")
-                .contentType(contentType)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(json))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.staffId", is(0)))
@@ -185,7 +170,7 @@ public class ClinicianControllerTest {
                 + "\"middleName\": \"michael\", \"workAddress\": \"my home\",   \"password\": \"ok\", "
                 + "\"region\": \"UNSPECIFIED\"}";
         mockMvc.perform(patch("/clinicians/0")
-                .contentType(contentType)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(json))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.staffId", is(0)))
@@ -204,7 +189,7 @@ public class ClinicianControllerTest {
     public void invalidPatchId() throws Exception {
         String json = "{\"staffId\": \"5\"}";
         mockMvc.perform(patch("/clinicians/0")
-                .contentType(contentType)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(json))
                 .andExpect(status().isBadRequest());
     }
@@ -213,7 +198,7 @@ public class ClinicianControllerTest {
     public void patchNonExistingClinician() throws Exception {
         String json = "{\"password\": \"ok\", \"region\": \"AUCKLAND\"}";
         mockMvc.perform(patch("/clinicians/200")
-                .contentType(contentType)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(json))
                 .andExpect(status().isBadRequest());
     }

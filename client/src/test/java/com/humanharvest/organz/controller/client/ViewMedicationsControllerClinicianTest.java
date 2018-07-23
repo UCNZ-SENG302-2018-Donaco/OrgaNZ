@@ -42,6 +42,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.testfx.api.FxRobot;
 
+@Ignore
 public class ViewMedicationsControllerClinicianTest extends ControllerTest {
 
     private final MedicationRecord[] testPastMedicationRecords = {
@@ -307,7 +308,6 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
     }
 
     @Test
-    @Ignore
     public void viewActiveIngredientsIOExceptionTest() throws IOException {
         ViewMedicationsController pageController = (ViewMedicationsController) super.pageController;
         pageController.setActiveIngredientsHandler(createMockActiveIngredientsHandler(

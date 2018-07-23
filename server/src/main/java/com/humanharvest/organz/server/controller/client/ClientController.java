@@ -106,8 +106,8 @@ public class ClientController {
             throw new InvalidRequestException();
         }
 
-        //Create a new client with the next available uid
-        Client client = new Client(State.getClientManager().nextUid());
+        //Create a new client with a default uid
+        Client client = new Client();
         //Copy the details from the CreateClientView to the new Client object
         BeanUtils.copyProperties(createClientView, client);
 
@@ -120,7 +120,6 @@ public class ClientController {
         HttpHeaders headers = new HttpHeaders();
         headers.setETag(client.getETag());
 
-        System.out.println(client);
         return new ResponseEntity<>(client, headers, HttpStatus.CREATED);
     }
 

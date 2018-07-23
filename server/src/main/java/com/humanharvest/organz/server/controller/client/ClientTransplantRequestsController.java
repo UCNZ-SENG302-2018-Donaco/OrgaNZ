@@ -17,6 +17,7 @@ import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
 import com.humanharvest.organz.utilities.validators.client.TransplantRequestValidator;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -119,14 +120,14 @@ public class ClientTransplantRequestsController {
      * Creates a transplant request.
      * @param transplantRequest the transplant request to add
      * @param id the client's ID
-     * @param ETag A hashed value of the object used for optimistic concurrency control
+     * @param etag A hashed value of the object used for optimistic concurrency control
      * @return list of all transplant requests for that client
      */
     @PostMapping("/clients/{id}/transplantRequests")
     public ResponseEntity<Collection<TransplantRequest>> postTransplantRequest(
             @RequestBody TransplantRequest transplantRequest,
             @PathVariable int id,
-            @RequestHeader(value = "If-Match", required = false) String ETag,
+            @RequestHeader(value = "If-Match", required = false) String etag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {
 
         // Get the client given by the ID
@@ -138,10 +139,10 @@ public class ClientTransplantRequestsController {
             State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
 
             // Check etag
-            if (ETag == null) {
+            if (etag == null) {
                 throw new IfMatchRequiredException();
             }
-            if (!client.getETag().equals(ETag)) {
+            if (!client.getETag().equals(etag)) {
                 throw new IfMatchFailedException();
             }
 
@@ -153,11 +154,16 @@ public class ClientTransplantRequestsController {
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
 
-            // Add transplant request to client and send 201
+            // Add transplant request to client
             Action action = new AddTransplantRequestAction(client, transplantRequest, State.getClientManager());
             State.getActionInvoker(authToken).execute(action);
             Collection<TransplantRequest> transplantRequests = client.getTransplantRequests();
-            return new ResponseEntity<>(transplantRequests, HttpStatus.CREATED);
+
+            //Add the new ETag to the headers
+            HttpHeaders headers = new HttpHeaders();
+            headers.setETag(client.getETag());
+
+            return new ResponseEntity<>(transplantRequests, headers, HttpStatus.CREATED);
 
         } else {
             // no client exists with that ID - send a 404
@@ -170,7 +176,7 @@ public class ClientTransplantRequestsController {
      * @param transplantRequest the transplant request to add
      * @param uid the client's ID
      * @param id the transplant request's ID
-     * @param ETag A hashed value of the object used for optimistic concurrency control
+     * @param etag A hashed value of the object used for optimistic concurrency control
      * @return list of all transplant requests for that client
      */
     @PatchMapping("/clients/{uid}/transplantRequests/{id}")
@@ -178,7 +184,7 @@ public class ClientTransplantRequestsController {
             @RequestBody TransplantRequest transplantRequest,
             @PathVariable int uid,
             @PathVariable int id,
-            @RequestHeader(value = "If-Match", required = false) String ETag,
+            @RequestHeader(value = "If-Match", required = false) String etag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {
 
         // Get the client given by the ID
@@ -198,10 +204,10 @@ public class ClientTransplantRequestsController {
             State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
 
             // Check etag
-            if (ETag == null) {
+            if (etag == null) {
                 throw new IfMatchRequiredException();
             }
-            if (!client.getETag().equals(ETag)) {
+            if (!client.getETag().equals(etag)) {
                 throw new IfMatchFailedException();
             }
 
@@ -216,28 +222,30 @@ public class ClientTransplantRequestsController {
             // Only the status, resolved reason, and resolved date (and time) are allowed to change.
             // The client, organ, and request date (and time) must stay the same.
             // If anything has illegally changed, it will return a 400.
-            if (originalTransplantRequest.getClient().getUid() == client.getUid()
-                    && originalTransplantRequest.getRequestedOrgan().equals(transplantRequest.getRequestedOrgan())
+            if (originalTransplantRequest.getClient().getUid().equals(client.getUid())
+                    && originalTransplantRequest.getRequestedOrgan() == transplantRequest.getRequestedOrgan()
                     && originalTransplantRequest.getRequestDate().equals(transplantRequest.getRequestDate())) {
 
-                // Resolve transplant request and send 201
+                // Resolve transplant request
                 Action action = new ResolveTransplantRequestAction(originalTransplantRequest,
                         transplantRequest.getStatus(),
                         transplantRequest.getResolvedReason(),
                         transplantRequest.getResolvedDate(),
                         State.getClientManager());
                 State.getActionInvoker(authToken).execute(action);
-                return new ResponseEntity<>(originalTransplantRequest, HttpStatus.CREATED);
 
+                //Add the new ETag to the headers
+                HttpHeaders headers = new HttpHeaders();
+                headers.setETag(client.getETag());
+
+                return new ResponseEntity<>(originalTransplantRequest, headers, HttpStatus.CREATED);
             } else {
                 // illegal changes
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
-
         } else {
             // no client exists with that ID - send a 404
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
     }
 }

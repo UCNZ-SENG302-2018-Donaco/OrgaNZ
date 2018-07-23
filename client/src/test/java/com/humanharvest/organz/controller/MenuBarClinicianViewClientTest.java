@@ -33,7 +33,6 @@ public class MenuBarClinicianViewClientTest extends ControllerTest {
     }
 
     @Test
-    @Ignore
     public void testViewClient() {
         clickOn("#clientPrimaryItem");
         clickOn("#viewClientItem");

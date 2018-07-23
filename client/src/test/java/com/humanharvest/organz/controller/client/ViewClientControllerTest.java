@@ -111,7 +111,6 @@ public class ViewClientControllerTest extends ControllerTest {
     }
 
     @Test
-    @Ignore
     public void invalidChangesDOB() {
         clickOn("#dob").type(KeyCode.BACK_SPACE)
                 .type(KeyCode.BACK_SPACE)

@@ -74,7 +74,7 @@ public class ClientManagerRest implements ClientManager {
                 .queryParam("sortOption", sortOption)
                 .queryParam("isReversed", isReversed);
 
-        HttpEntity entity = new HttpEntity(httpHeaders);
+        HttpEntity<String> entity = new HttpEntity<>(httpHeaders);
 
         String outString = builder.toUriString();
 
@@ -131,7 +131,7 @@ public class ClientManagerRest implements ClientManager {
         httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
         httpHeaders.set("X-Auth-Token", State.getToken());
 
-        HttpEntity entity = new HttpEntity<>(null, httpHeaders);
+        HttpEntity<Client> entity = new HttpEntity<>(null, httpHeaders);
 
         ResponseEntity<Client> responseEntity = State.getRestTemplate()
                 .exchange(State.BASE_URI + "clients/{id}", HttpMethod.GET, entity, Client.class, id);
@@ -143,11 +143,6 @@ public class ClientManagerRest implements ClientManager {
     public boolean doesClientExist(String firstName, String lastName, LocalDate dateOfBirth) {
         // TODO?
         return false;
-    }
-
-    @Override
-    public int nextUid() {
-        return 0;
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.humanharvest.organz.controller.client;
 
-
 import static com.humanharvest.organz.utilities.enums.TransplantRequestStatus.WAITING;
 
 import java.time.LocalDate;
@@ -9,6 +8,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javafx.collections.FXCollections;
 import javafx.collections.transformation.FilteredList;
@@ -28,15 +29,10 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 
-import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.actions.ActionInvoker;
-import com.humanharvest.organz.actions.client.AddTransplantRequestAction;
-import com.humanharvest.organz.actions.client.MarkClientAsDeadAction;
-import com.humanharvest.organz.actions.client.ResolveTransplantRequestAction;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.resolvers.client.CreateTransplantRequestResolver;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
@@ -45,9 +41,13 @@ import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 import com.humanharvest.organz.utilities.enums.ResolveReason;
+import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
+import com.humanharvest.organz.utilities.exceptions.NotFoundException;
+import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.views.client.CreateTransplantRequestView;
+import com.humanharvest.organz.views.client.ResolveTransplantRequestObject;
 
 /**
  * Controller for the Request Organs page. Handles the viewing of current and past organ transplant requests. If the
@@ -56,6 +56,7 @@ import com.humanharvest.organz.views.client.CreateTransplantRequestView;
 public class RequestOrgansController extends SubController {
 
     private static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("d MMM yyyy hh:mm a");
+    private static final Logger LOGGER = Logger.getLogger(CreateClientController.class.getName());
 
     private Session session;
     private ActionInvoker invoker;
@@ -251,12 +252,12 @@ public class RequestOrgansController extends SubController {
     }
 
     private void enableAppropriateButtons() {
-        if (windowContext.isClinViewClientWindow()) {
-            if (currentRequestsTable.getSelectionModel().getSelectedItem() == null) {
-                resolveRequestBar.setDisable(true);
-            } else {
-                resolveRequestBar.setDisable(false);
-            }
+        // The "Resolve Request" button
+        if (windowContext.isClinViewClientWindow()
+                && currentRequestsTable.getSelectionModel().getSelectedItem() != null) {
+            resolveRequestBar.setDisable(false);
+        } else {
+            resolveRequestBar.setDisable(true);
         }
     }
 
@@ -265,7 +266,7 @@ public class RequestOrgansController extends SubController {
      * If there is an error (bad organ selection), then it will show an alert.
      * Otherwise, it will:
      * - Create a request
-     * - Send it to the server
+     * - Send it to the server (if the server returns an error, it will alert the user and return)
      * - Update the client's list of transplant requests based on the server's response
      * - Refresh the page
      */
@@ -282,14 +283,47 @@ public class RequestOrgansController extends SubController {
                     AlertType.ERROR,
                     "Request already exists",
                     "Client already has a waiting request for this organ.");
+        } else if (client.isDead()) { // Client is dead, they can't request an organ
+            PageNavigator.showAlert(
+                    AlertType.ERROR,
+                    "Client is dead",
+                    "Client is marked as dead, so can't request an organ transplant.");
         } else { // Bluesky scenario
             // Create a request
             CreateTransplantRequestView newRequest =
                     new CreateTransplantRequestView(client, selectedOrgan, LocalDateTime.now());
 
             // Resolve the request
-            CreateTransplantRequestResolver resolver = new CreateTransplantRequestResolver(client, newRequest);
-            List<TransplantRequest> updatedTransplantRequests = resolver.execute();
+            List<TransplantRequest> updatedTransplantRequests;
+            try {
+                updatedTransplantRequests = State.getClientResolver().createTransplantRequest(client, newRequest);
+            } catch (ServerRestException e) { //500
+                LOGGER.severe(e.getMessage());
+                PageNavigator.showAlert(AlertType.ERROR,
+                        "Server Error",
+                        "An error occurred on the server while trying to create the transplant request.\n"
+                                + "Please try again later.");
+                return;
+            } catch (IfMatchFailedException e) { //412
+                PageNavigator.showAlert(
+                        AlertType.WARNING,
+                        "Outdated Data",
+                        "The client has been modified since you retrieved the data.\n"
+                                + "If you would still like to apply these changes please submit again, "
+                                + "otherwise refresh the page to update the data.");
+                return;
+            } catch (NotFoundException e) { //404
+                LOGGER.log(Level.WARNING, "Client not found");
+                PageNavigator.showAlert(AlertType.WARNING, "Client not found", "The client could not be found on the "
+                        + "server, it may have been deleted");
+                return;
+            }
+            // Not caught, as they should not happen:
+            // 401 - Access token is missing or invalid
+            // 403 - You do not have permission to perform that action
+            // 428 - ETag header was missing and is required to modify a resource
+
+            // Update the client's transplant requests based on the server's response
             client.setTransplantRequests(updatedTransplantRequests);
 
             // Refresh the page
@@ -304,63 +338,145 @@ public class RequestOrgansController extends SubController {
     @FXML
     private void resolveRequest() {
         TransplantRequest selectedRequest = currentRequestsTable.getSelectionModel().getSelectedItem();
-        ResolveReason resolveReason = cancelTransplantOptions.getValue();
 
         if (selectedRequest != null) {
-            Action action = null;
 
-            if (resolveReason == ResolveReason.COMPLETED) {
-                action = new ResolveTransplantRequestAction(selectedRequest,
-                        TransplantRequestStatus.COMPLETED,
-                        "Transplant took place.",
-                        manager);
+            // Create a request
 
-            } else if (resolveReason == ResolveReason.DECEASED) {
-                LocalDate deathDate = deathDatePicker.getValue();
-                if (deathDate.isBefore(client.getDateOfBirth()) || deathDate.isAfter(LocalDate.now())) {
-                    PageNavigator.showAlert(AlertType.ERROR,
-                            "Date of Death Invalid",
-                            "Date of death must be between client's birth date and the current date.");
-                } else {
-                    Optional<ButtonType> buttonOpt = PageNavigator.showAlert(AlertType.CONFIRMATION,
-                            "Are you sure you want to mark this client as dead?",
-                            "This will cancel all waiting transplant requests for this client.");
+            // Get data from existing request
+            Organ requestedOrgan = selectedRequest.getRequestedOrgan();
+            LocalDateTime requestDate = selectedRequest.getRequestDate();
 
-                    if (buttonOpt.isPresent() && buttonOpt.get() == ButtonType.OK) {
-                        action = new MarkClientAsDeadAction(client, deathDate, manager);
-                        deathDatePicker.setValue(LocalDate.now());
+            // Get resolved reason and the request's new status
+            ResolveReason resolvedReasonDropdownChoice = cancelTransplantOptions.getValue();
+            String resolvedReason;
+            TransplantRequestStatus status;
+
+            switch (resolvedReasonDropdownChoice) {
+                case COMPLETED:  // "Transplant completed"
+                    resolvedReason = "Transplant took place.";
+                    status = TransplantRequestStatus.COMPLETED;
+                    break;
+                case DECEASED:  // "Client is deceased"
+                    // A datepicker appears, for choosing the date of death
+                    LocalDate deathDate = deathDatePicker.getValue();
+                    if (deathDate.isBefore(client.getDateOfBirth()) || deathDate.isAfter(LocalDate.now())) {
+                        PageNavigator.showAlert(AlertType.ERROR,
+                                "Date of Death Invalid",
+                                "Date of death must be between client's birth date and the current date.");
+                    } else { // valid date of death
+                        Optional<ButtonType> buttonOpt = PageNavigator.showAlert(AlertType.CONFIRMATION,
+                                "Are you sure you want to mark this client as dead?",
+                                "This will cancel all waiting transplant requests for this client.");
+                        if (buttonOpt.isPresent() && buttonOpt.get() == ButtonType.OK) {
+                            Client updatedClient;
+                            try {
+                                updatedClient = State.getClientResolver().markClientAsDead(client, deathDate);
+                            } catch (NotFoundException e) {
+                                LOGGER.log(Level.WARNING, "Client not found");
+                                PageNavigator.showAlert(
+                                        AlertType.WARNING,
+                                        "Client not found",
+                                        "The client could not be found on the server, it may have been deleted");
+                                return;
+                            } catch (ServerRestException e) {
+                                LOGGER.log(Level.WARNING, e.getMessage(), e);
+                                PageNavigator.showAlert(
+                                        AlertType.WARNING,
+                                        "Server error",
+                                        "Could not apply changes on the server, please try again later");
+                                return;
+                            } catch (IfMatchFailedException e) {
+                                LOGGER.log(Level.INFO, "If-Match did not match");
+                                PageNavigator.showAlert(
+                                        AlertType.WARNING,
+                                        "Outdated Data",
+                                        "The client has been modified since you retrieved the data.\n"
+                                                + "If you would still like to apply these changes please submit again, "
+                                                + "otherwise refresh the page to update the data.");
+                                return;
+                            }
+                            client.setTransplantRequests(updatedClient.getTransplantRequests());
+                            client.setDateOfDeath(updatedClient.getDateOfDeath());
+                            //todo check if this can still be undone?
+                        }
+                        if (buttonOpt.isPresent()) { // if they chose OK or Cancel
+                            deathDatePicker.setValue(LocalDate.now()); //reset datepicker
+                        }
                     }
-                }
+                    PageNavigator.refreshAllWindows();
+                    return;
+                case CURED:  // "Disease was cured"
+                    resolvedReason = "The disease was cured.";
+                    status = TransplantRequestStatus.CANCELLED;
+                    break;
+                case ERROR:  // "Input error"
+                    resolvedReason = "Request was a mistake.";
+                    status = TransplantRequestStatus.CANCELLED;
+                    break;
+                case CUSTOM:  // "Custom reason..."
+                    resolvedReason = customReason.getText();
+                    status = TransplantRequestStatus.CANCELLED;
+                    customReason.clear();
+                    break;
+                default:
+                    throw new UnsupportedOperationException("Transplant request status that wasn't covered in if-else "
+                            + "statements.");
+            }
 
-            } else if (resolveReason == ResolveReason.CURED) {
-                action = new ResolveTransplantRequestAction(selectedRequest,
-                        TransplantRequestStatus.CANCELLED,
-                        "The disease was cured.",
-                        manager);
+            ResolveTransplantRequestObject request = new ResolveTransplantRequestObject(client, requestedOrgan, requestDate,
+                    LocalDateTime.now(), status, resolvedReason);
+
+            // Resolve the request
+            // TODO: Should we really use the index?
+            int transplantRequestIndex = client.getTransplantRequests().indexOf(selectedRequest);
+            TransplantRequest updatedTransplantRequest;
+            try {
+                updatedTransplantRequest = State.getClientResolver().resolveTransplantRequest(
+                        client,
+                        request,
+                        transplantRequestIndex);
+            } catch (ServerRestException e) { //500
+                LOGGER.severe(e.getMessage());
+                PageNavigator.showAlert(AlertType.ERROR,
+                        "Server Error",
+                        "An error occurred on the server while trying to create the transplant request.\n"
+                                + "Please try again later.");
+                return;
+            } catch (IfMatchFailedException e) { //412
+                PageNavigator.showAlert(
+                        AlertType.WARNING,
+                        "Outdated Data",
+                        "The client has been modified since you retrieved the data.\n"
+                                + "If you would still like to apply these changes please submit again, "
+                                + "otherwise refresh the page to update the data.");
+                return;
+            } catch (NotFoundException e) { //404
+                LOGGER.log(Level.WARNING, "Client not found");
+                PageNavigator.showAlert(AlertType.WARNING, "Client not found", "The client could not be found on the "
+                        + "server, it may have been deleted");
+                return;
+            }
+            // Not caught, as they should not happen:
+            // 401 - Access token is missing or invalid
+            // 403 - You do not have permission to perform that action
+            // 428 - ETag header was missing and is required to modify a resource
+
+            // Update the client's transplant request based on the server's response
+            client.getTransplantRequests().remove(transplantRequestIndex);
+            client.getTransplantRequests().add(updatedTransplantRequest);
+
+            // Refresh the page
+            PageNavigator.refreshAllWindows();
+
+            // Offer to go to medical history page if they said a disease was cured
+            if (resolvedReasonDropdownChoice == ResolveReason.CURED) { // "Disease was cured"
                 Optional<ButtonType> buttonOpt = PageNavigator.showAlert(AlertType.CONFIRMATION,
                         "Go to Medical History Page",
                         "Do you want to go to the medical history page to mark the disease that was cured?");
                 if (buttonOpt.isPresent() && buttonOpt.get() == ButtonType.OK) {
                     PageNavigator.loadPage(Page.VIEW_MEDICAL_HISTORY, mainController);
                 }
-
-            } else if (resolveReason == ResolveReason.ERROR) {
-                action = new ResolveTransplantRequestAction(selectedRequest,
-                        TransplantRequestStatus.CANCELLED,
-                        "Request was a mistake.",
-                        manager);
-
-            } else if (resolveReason == ResolveReason.CUSTOM) {
-                action = new ResolveTransplantRequestAction(selectedRequest,
-                        TransplantRequestStatus.CANCELLED,
-                        customReason.getText(),
-                        manager);
-                customReason.clear();
-            }
-
-            if (action != null) {
-                invoker.execute(action);
-                PageNavigator.refreshAllWindows();
             }
         }
     }

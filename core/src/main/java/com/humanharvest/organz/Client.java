@@ -1,5 +1,6 @@
 package com.humanharvest.organz;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
@@ -87,9 +88,9 @@ public class Client implements ConcurrencyControlledEntity {
     private LocalDate dateOfDeath;
 
     @JsonView(Views.Details.class)
-    private final LocalDateTime createdTimestamp;
+    private final Instant createdTimestamp;
     @JsonView(Views.Details.class)
-    private LocalDateTime modifiedTimestamp;
+    private Instant modifiedTimestamp;
 
     @ElementCollection(targetClass = Organ.class)
     @Enumerated(EnumType.STRING)
@@ -129,12 +130,12 @@ public class Client implements ConcurrencyControlledEntity {
     private List<HistoryItem> changesHistory = new ArrayList<>();
 
     public Client() {
-        this.createdTimestamp = LocalDateTime.now();
+        createdTimestamp = Instant.now();
     }
 
     public Client(int uid) {
         this.uid = uid;
-        this.createdTimestamp = LocalDateTime.now();
+        createdTimestamp = Instant.now();
     }
 
     /**
@@ -145,18 +146,18 @@ public class Client implements ConcurrencyControlledEntity {
      * @param dateOfBirth LocalDate formatted date of birth
      * @param uid A unique user ID. Should be queried to ensure uniqueness
      */
-    public Client(String firstName, String middleName, String lastName, LocalDate dateOfBirth, int uid) {
+    public Client(String firstName, String middleName, String lastName, LocalDate dateOfBirth, Integer uid) {
         this.uid = uid;
         this.firstName = firstName;
         this.middleName = middleName;
         this.lastName = lastName;
         this.dateOfBirth = dateOfBirth;
-        this.gender = Gender.UNSPECIFIED;
-        this.createdTimestamp = LocalDateTime.now();
+        gender = Gender.UNSPECIFIED;
+        createdTimestamp = Instant.now();
     }
 
     private void updateModifiedTimestamp() {
-        modifiedTimestamp = LocalDateTime.now();
+        modifiedTimestamp = Instant.now();
     }
 
     /**
@@ -194,6 +195,10 @@ public class Client implements ConcurrencyControlledEntity {
 
     public void setMedicationHistory(List<MedicationRecord> medicationHistory) {
         this.medicationHistory = medicationHistory;
+    }
+
+    public void setIllnessHistory(List<IllnessRecord> illnessHistory) {
+        this.illnessHistory = illnessHistory;
     }
 
     /**
@@ -345,6 +350,10 @@ public class Client implements ConcurrencyControlledEntity {
         return dateOfDeath;
     }
 
+    public boolean isAlive() { return dateOfDeath == null; }
+
+    public boolean isDead() { return dateOfDeath != null; }
+
     public void setDateOfDeath(LocalDate dateOfDeath) {
         updateModifiedTimestamp();
         this.dateOfDeath = dateOfDeath;
@@ -421,11 +430,11 @@ public class Client implements ConcurrencyControlledEntity {
         this.uid = uid;
     }
 
-    public LocalDateTime getCreatedTimestamp() {
+    public Instant getCreatedTimestamp() {
         return createdTimestamp;
     }
 
-    public LocalDateTime getModifiedTimestamp() {
+    public Instant getModifiedTimestamp() {
         return modifiedTimestamp;
     }
 
@@ -457,6 +466,14 @@ public class Client implements ConcurrencyControlledEntity {
             organStatus.put(organ, requestedOrgans.contains(organ));
         }
         return organStatus;
+    }
+
+    /**
+     * Returns a list containing all the medication records.
+     * @return The list of medication records of the Client.
+     */
+    public List<MedicationRecord> getMedicationRecords() {
+        return Collections.unmodifiableList(medicationHistory);
     }
 
     /**
@@ -496,7 +513,7 @@ public class Client implements ConcurrencyControlledEntity {
      * @return medicationHistory of the client
      */
     public List<MedicationRecord> getAllMedications() {
-        return medicationHistory;
+        return Collections.unmodifiableList(medicationHistory);
     }
 
     /**
@@ -504,7 +521,7 @@ public class Client implements ConcurrencyControlledEntity {
      * @return All illness Records for a specific client
      */
     public List<IllnessRecord> getAllIllnessHistory() {
-        return illnessHistory;
+        return Collections.unmodifiableList(illnessHistory);
     }
 
     /**
@@ -548,13 +565,13 @@ public class Client implements ConcurrencyControlledEntity {
      * @return the users calculated BMI.
      */
     public double getBMI() {
-        double BMI;
+        double bmi;
         if (weight == 0 || height == 0) {
-            BMI = 0;
+            bmi = 0;
         } else {
-            BMI = weight / (height * 0.01 * height * 0.01);
+            bmi = weight / (height * 0.01 * height * 0.01);
         }
-        return BMI;
+        return bmi;
     }
 
     /**
@@ -830,7 +847,7 @@ public class Client implements ConcurrencyControlledEntity {
             if (request.getStatus() == TransplantRequestStatus.WAITING) {
                 request.setStatus(TransplantRequestStatus.CANCELLED);
                 request.setResolvedDate(LocalDateTime.now());
-                request.setResolvedReason("death");
+                request.setResolvedReason("The client died.");
             }
         }
     }

@@ -53,6 +53,19 @@ public class IllnessRecord {
         this.isChronic = isChronic;
     }
 
+    /**
+     * Creates a new IllnessRecord for a given illness.
+     * @param illnessName The name of the illness.
+     * @param diagnosisDate The date the illness was diagnosed for the client.
+     * @param isChronic Whether the illness is chronic or not.
+     */
+    public IllnessRecord(String illnessName, LocalDate diagnosisDate, boolean isChronic) {
+        this.illnessName = illnessName;
+        this.diagnosisDate = diagnosisDate;
+        this.curedDate = null;
+        this.isChronic = isChronic;
+    }
+
     public Client getClient() {
         return client;
     }

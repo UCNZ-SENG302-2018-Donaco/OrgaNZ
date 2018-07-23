@@ -6,7 +6,7 @@ import com.humanharvest.organz.Client;
 
 /**
  * Compare and sort Clients based on the names in order:
- * Last name -> Pref name -> First name -> Middle name -> Client ID
+ * Last name - Pref name - First name - Middle name - Client ID
  * Also takes a searchTerm, where the name must contain the search term to be higher ranked than the other
  */
 public class ClientNameSorter implements Comparator<Client> {
@@ -23,7 +23,7 @@ public class ClientNameSorter implements Comparator<Client> {
 
     /**
      * Compare two clients based on their names in order:
-     * Last name -> Pref name -> First name -> Middle name -> Client ID
+     * Last name - Pref name - First name - Middle name - Client ID
      * @param client1 The first Client to compare
      * @param client2 The second Client to compare
      * @return An integer comparison value
@@ -61,7 +61,7 @@ public class ClientNameSorter implements Comparator<Client> {
     }
 
     /**
-     * Compares the names based off the priority Last name -> Pref name -> First name -> Middle name -> Client ID
+     * Compares the names based off the priority Last name - Pref name - First name - Middle name - Client ID
      * Falls back to comparing the user id's if the names are identical to ensure a consistent order
      * @param client1 The first client object being compared
      * @param client2 The second client object being compared

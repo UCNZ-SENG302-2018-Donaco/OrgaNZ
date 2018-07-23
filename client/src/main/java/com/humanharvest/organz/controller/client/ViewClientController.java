@@ -3,7 +3,9 @@ package com.humanharvest.organz.controller.client;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.OptionalInt;
@@ -38,9 +40,7 @@ import com.humanharvest.organz.AppUI;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.resolvers.client.MarkClientAsDeadResolver;
-import com.humanharvest.organz.resolvers.client.ModifyClientDetailsResolver;
+import com.humanharvest.organz.controller.clinician.ViewBaseController;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
@@ -61,10 +61,13 @@ import org.controlsfx.control.Notifications;
 /**
  * Controller for the view/edit client page.
  */
-public class ViewClientController extends SubController {
+public class ViewClientController extends ViewBaseController {
 
     private final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy\nh:mm:ss a");
     private final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
+            .withZone(ZoneId.systemDefault());
+
     private static final Logger LOGGER = Logger.getLogger(ViewClientController.class.getName());
     private static final int maxFileSize = 2000000; // (2mb)
     private final Session session;
@@ -212,13 +215,17 @@ public class ViewClientController extends SubController {
         address.setText(viewedClient.getCurrentAddress());
         fullName.setText(viewedClient.getFullName());
 
-        creationDate.setText(viewedClient.getCreatedTimestamp().format(dateFormat));
-        creationDate.setTooltip(new Tooltip(viewedClient.getCreatedTimestamp().format(dateTimeFormat)));
+
+        creationDate.setText(formatter.format(viewedClient.getCreatedTimestamp()));
+
+//        creationDate.setText(viewedClient.getCreatedTimestamp().format(dateFormat));
+//        creationDate.setTooltip(new Tooltip(viewedClient.getCreatedTimestamp().format(dateTimeFormat)));
         if (viewedClient.getModifiedTimestamp() == null) {
             lastModified.setText("Not yet modified.");
         } else {
-            lastModified.setText(viewedClient.getModifiedTimestamp().format(dateFormat));
-            lastModified.setTooltip(new Tooltip(viewedClient.getModifiedTimestamp().format(dateTimeFormat)));
+//            lastModified.setText(viewedClient.getModifiedTimestamp().format(dateFormat));
+//            lastModified.setTooltip(new Tooltip(viewedClient.getModifiedTimestamp().format(dateTimeFormat)));
+            lastModified.setText(formatter.format(viewedClient.getModifiedTimestamp()));
         }
 
         displayBMI();
@@ -237,7 +244,8 @@ public class ViewClientController extends SubController {
             if (updateChanges()) {
                 displayBMI();
                 displayAge();
-                lastModified.setText(viewedClient.getModifiedTimestamp().format(dateTimeFormat));
+
+                lastModified.setText(formatter.format(viewedClient.getModifiedTimestamp()));
             }
         }
     }
@@ -405,8 +413,6 @@ public class ViewClientController extends SubController {
     private boolean updateChanges() {
         ModifyClientObject modifyClientObject = new ModifyClientObject();
 
-        ModifyClientDetailsResolver resolver = new ModifyClientDetailsResolver(viewedClient, modifyClientObject);
-
         boolean clientDied = false;
 
         if (viewedClient.getDateOfDeath() == null && dod.getValue() != null) {
@@ -416,9 +422,10 @@ public class ViewClientController extends SubController {
 
             if (buttonOpt.isPresent() && buttonOpt.get() == ButtonType.OK) {
 
-                MarkClientAsDeadResolver deadResolver = new MarkClientAsDeadResolver(viewedClient, dod.getValue());
+
+                Client updatedClient;
                 try {
-                    deadResolver.execute();
+                    updatedClient = State.getClientResolver().markClientAsDead(viewedClient, dod.getValue());
                 } catch (NotFoundException e) {
                     LOGGER.log(Level.WARNING, "Client not found");
                     PageNavigator.showAlert(
@@ -444,28 +451,29 @@ public class ViewClientController extends SubController {
                     return false;
                 }
                 clientDied = true;
+                viewedClient.setTransplantRequests(updatedClient.getTransplantRequests());
+
 
                 Notifications.create()
                         .title("Marked Client as Dead")
                         .text("All organ transplant requests have been removed")
                         .showConfirm();
             }
-        } else {
-            addChangeIfDifferent(modifyClientObject, "dateOfDeath", dod.getValue());
         }
 
-        addChangeIfDifferent(modifyClientObject, "firstName", fname.getText());
-        addChangeIfDifferent(modifyClientObject, "lastName", lname.getText());
-        addChangeIfDifferent(modifyClientObject, "middleName", mname.getText());
-        addChangeIfDifferent(modifyClientObject, "preferredName", pname.getText());
-        addChangeIfDifferent(modifyClientObject, "dateOfBirth", dob.getValue());
-        addChangeIfDifferent(modifyClientObject, "gender", gender.getValue());
-        addChangeIfDifferent(modifyClientObject, "genderIdentity", genderIdentity.getValue());
-        addChangeIfDifferent(modifyClientObject, "height", Double.parseDouble(height.getText()));
-        addChangeIfDifferent(modifyClientObject, "weight", Double.parseDouble(weight.getText()));
-        addChangeIfDifferent(modifyClientObject, "bloodType", btype.getValue());
-        addChangeIfDifferent(modifyClientObject, "region", region.getValue());
-        addChangeIfDifferent(modifyClientObject, "currentAddress", address.getText());
+        addChangeIfDifferent(modifyClientObject, viewedClient, "firstName", fname.getText());
+        addChangeIfDifferent(modifyClientObject, viewedClient, "lastName", lname.getText());
+        addChangeIfDifferent(modifyClientObject, viewedClient, "middleName", mname.getText());
+        addChangeIfDifferent(modifyClientObject, viewedClient, "preferredName", pname.getText());
+        addChangeIfDifferent(modifyClientObject, viewedClient, "dateOfBirth", dob.getValue());
+        addChangeIfDifferent(modifyClientObject, viewedClient, "dateOfDeath", dod.getValue());
+        addChangeIfDifferent(modifyClientObject, viewedClient, "gender", gender.getValue());
+        addChangeIfDifferent(modifyClientObject, viewedClient, "genderIdentity", genderIdentity.getValue());
+        addChangeIfDifferent(modifyClientObject, viewedClient, "height", Double.parseDouble(height.getText()));
+        addChangeIfDifferent(modifyClientObject, viewedClient, "weight", Double.parseDouble(weight.getText()));
+        addChangeIfDifferent(modifyClientObject, viewedClient, "bloodType", btype.getValue());
+        addChangeIfDifferent(modifyClientObject, viewedClient, "region", region.getValue());
+        addChangeIfDifferent(modifyClientObject, viewedClient, "currentAddress", address.getText());
 
         if (modifyClientObject.getModifiedFields().isEmpty()) {
             if (!clientDied) {
@@ -478,7 +486,7 @@ public class ViewClientController extends SubController {
         }
 
         try {
-            resolver.execute();
+            State.getClientResolver().modifyClientDetails(viewedClient, modifyClientObject);
             String actionText = modifyClientObject.toString();
 
             Notifications.create()
@@ -506,10 +514,11 @@ public class ViewClientController extends SubController {
                     AlertType.WARNING,
                     "Outdated Data",
                     "The client has been modified since you retrieved the data.\nIf you would still like to "
-                    + "apply these changes please submit again, otherwise refresh the page to update the data.");
+                            + "apply these changes please submit again, otherwise refresh the page to update the data.");
             return false;
         }
 
+        System.out.println("refreshing");
         PageNavigator.refreshAllWindows();
         return true;
 

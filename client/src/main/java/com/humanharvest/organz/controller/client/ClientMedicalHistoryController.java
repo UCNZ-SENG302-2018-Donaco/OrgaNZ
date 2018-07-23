@@ -3,6 +3,8 @@ package com.humanharvest.organz.controller.client;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javafx.collections.FXCollections;
 import javafx.collections.transformation.SortedList;
@@ -20,19 +22,23 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 
-import com.humanharvest.organz.actions.ActionInvoker;
-import com.humanharvest.organz.actions.client.AddIllnessRecordAction;
-import com.humanharvest.organz.actions.client.DeleteIllnessRecordAction;
-import com.humanharvest.organz.actions.client.ModifyIllnessRecordAction;
 import com.humanharvest.organz.Client;
-import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.IllnessRecord;
+import com.humanharvest.organz.actions.ActionInvoker;
+import com.humanharvest.organz.actions.client.ModifyIllnessRecordAction;
+import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.SidebarController;
+import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
+import com.humanharvest.organz.utilities.exceptions.NotFoundException;
+import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.views.client.CreateIllnessView;
+import org.controlsfx.control.Notifications;
 
 /**
  * Controller for the medical history page, which shows a list of all current and past illnesses for the client.
@@ -72,6 +78,8 @@ public class ClientMedicalHistoryController extends SubController {
     private Button toggleCuredButton, deleteButton, toggleChronicButton;
 
     private TableView<IllnessRecord> selectedTableView = null;
+
+    private static final Logger LOGGER = Logger.getLogger(SidebarController.class.getName());
 
     /**
      * Formats a table cell that holds a {@link LocalDate} value to display that value in the date time format.
@@ -303,6 +311,7 @@ public class ClientMedicalHistoryController extends SubController {
      */
     @FXML
     private void toggleCured() {
+        // TODO: Add Client-Server Implementation
         IllnessRecord record = getSelectedRecord();
         if (record != null) {
             if (record.isChronic()) {
@@ -337,9 +346,33 @@ public class ClientMedicalHistoryController extends SubController {
     private void deleteIllness() {
         IllnessRecord record = getSelectedRecord();
         if (record != null) {
-            DeleteIllnessRecordAction action = new DeleteIllnessRecordAction(client, record, manager);
-
-            invoker.execute(action);
+            //DeleteIllnessRecordAction action = new DeleteIllnessRecordAction(client, record, manager);
+            try {
+                State.getClientResolver().deleteIllnessRecord(client, record);
+            } catch (NotFoundException e) {
+                LOGGER.log(Level.WARNING, "Client not found");
+                Notifications.create()
+                    .title("Client not found")
+                    .text("The client could not be found on the server, it may have been deleted")
+                    .showWarning();
+            } catch (ServerRestException e) {
+                LOGGER.log(Level.WARNING, e.getMessage(), e);
+                Notifications.create()
+                    .title("Server error")
+                    .text("Could not apply changes on the server, please try again later")
+                    .showError();
+                return;
+            } catch (IfMatchFailedException e) {
+                LOGGER.log(Level.INFO, "If-Match did not match");
+                Notifications.create()
+                    .title("Outdated Data")
+                    .text(
+                        "The client has been modified since you retrieved the data. If you would still like to "
+                            + "apply these changes please submit again, otherwise refresh the page to update the data.")
+                    .showWarning();
+                return;
+            }
+            //invoker.execute(action);
             PageNavigator.refreshAllWindows();
         }
     }
@@ -351,6 +384,7 @@ public class ClientMedicalHistoryController extends SubController {
      */
     @FXML
     private void toggleChronic() {
+        // TODO: Add Client-Server Implementation
         IllnessRecord record = getSelectedRecord();
         if (record != null) {
             ModifyIllnessRecordAction action = new ModifyIllnessRecordAction(record, manager);
@@ -392,9 +426,36 @@ public class ClientMedicalHistoryController extends SubController {
         } else if (inFuture) {
             errorMessage.setText("Diagnosis date cannot be in the future.");
         } else {
-            IllnessRecord record = new IllnessRecord(illnessName, dateDiagnosed, null, isChronic);
-            AddIllnessRecordAction action = new AddIllnessRecordAction(client, record, manager);
-            invoker.execute(action);
+            CreateIllnessView view = new CreateIllnessView(illnessName, dateDiagnosed, isChronic);
+
+            try{
+                State.getClientResolver().addIllnessRecord(client, view);
+            } catch (NotFoundException e) {
+                LOGGER.log(Level.WARNING, "Client not found");
+                Notifications.create()
+                    .title("Client not found")
+                    .text("The client could not be found on the server, it may have been deleted")
+                    .showWarning();
+            } catch (ServerRestException e) {
+                LOGGER.log(Level.WARNING, e.getMessage(), e);
+                Notifications.create()
+                    .title("Server error")
+                    .text("Could not apply changes on the server, please try again later")
+                    .showError();
+                return;
+            } catch (IfMatchFailedException e) {
+                LOGGER.log(Level.INFO, "If-Match did not match");
+                Notifications.create()
+                    .title("Outdated Data")
+                    .text(
+                        "The client has been modified since you retrieved the data. If you would still like to "
+                            + "apply these changes please submit again, otherwise refresh the page to update the data.")
+                    .showWarning();
+                return;
+            }
+
+            //AddIllnessRecordAction action = new AddIllnessRecordAction(client, record, manager);
+            //invoker.execute(action);
 
             illnessNameField.setText(null);
             errorMessage.setText(null);

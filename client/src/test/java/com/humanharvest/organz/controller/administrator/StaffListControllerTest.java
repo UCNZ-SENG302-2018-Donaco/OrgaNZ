@@ -1,9 +1,6 @@
 package com.humanharvest.organz.controller.administrator;
 
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
 import static org.testfx.api.FxAssert.verifyThat;
-import static org.testfx.matcher.base.NodeMatchers.isNull;
 import static org.testfx.matcher.control.ListViewMatchers.hasItems;
 import static org.testfx.matcher.control.ListViewMatchers.hasListCell;
 
@@ -14,10 +11,8 @@ import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
-import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore
 public class StaffListControllerTest extends ControllerTest {
 
     private Administrator admin1 = new Administrator("admin1", "password");
@@ -59,90 +54,5 @@ public class StaffListControllerTest extends ControllerTest {
         verifyThat("#staffList", hasListCell(Integer.toString(clinician1.getStaffId())));
 
         verifyThat("#staffList", hasItems(5));
-    }
-
-    /**
-     * This test passes in headless mode but not in headful mode.
-     * See https://github.com/TestFX/Monocle/issues/12
-     */
-    @Ignore
-    @Test
-    public void testDeleteClinician() {
-        String clinicianId = Integer.toString(clinician1.getStaffId());
-
-        //check the clinician is in the list
-        verifyThat("#staffList", hasListCell(clinicianId));
-
-        rightClickOn(clinicianId);
-        clickOn("Delete");
-
-        try {
-            verifyThat("#staffList", hasListCell(clinicianId));
-            fail("Still in staff list");
-        } catch (AssertionError e) {
-            assertNull(State.getClinicianManager().getClinicianByStaffId(Integer.parseInt(clinicianId)));
-        }
-    }
-
-    /**
-     * This test passes in headless mode but not in headful mode.
-     * See https://github.com/TestFX/Monocle/issues/12
-     */
-    @Ignore
-    @Test
-    public void testDeleteAdministrator() {
-        String adminUsername = admin2.getUsername();
-
-        //check the clinician is in the list
-        verifyThat("#staffList", hasListCell(adminUsername));
-
-        rightClickOn(adminUsername);
-        clickOn("Delete");
-
-        try {
-            verifyThat("#staffList", hasListCell(adminUsername));
-            fail("Still in staff list");
-        } catch (AssertionError e) {
-            assertNull(State.getAdministratorManager().getAdministratorByUsername(adminUsername));
-        }
-    }
-
-    @Test
-    public void testUnableToDeleteDefaultClinician() {
-        String defaultClinicianId = Integer.toString(State.getClinicianManager().getDefaultClinician().getStaffId());
-
-        //check the clinician is in the list
-        verifyThat("#staffList", hasListCell(defaultClinicianId));
-
-        rightClickOn(defaultClinicianId);
-
-        // check that Delete is not an option
-        verifyThat("Delete", isNull());
-    }
-
-    @Test
-    public void testUnableToDeleteDefaultAdministrator() {
-        String defaultAdministratorUsername = State.getAdministratorManager().getDefaultAdministrator().getUsername();
-
-        //check the administrator is in the list
-        verifyThat("#staffList", hasListCell(defaultAdministratorUsername));
-
-        rightClickOn(defaultAdministratorUsername);
-
-        // check that Delete is not an option
-        verifyThat("Delete", isNull());
-    }
-
-    @Test
-    public void testUnableToDeleteSelf() {
-        String adminUsername = admin1.getUsername();
-
-        //check the administrator is in the list
-        verifyThat("#staffList", hasListCell(adminUsername));
-
-        rightClickOn(adminUsername);
-
-        // check that Delete is not an option
-        verifyThat("Delete", isNull());
     }
 }

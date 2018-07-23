@@ -1,6 +1,7 @@
 package com.humanharvest.organz.state;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,6 +12,11 @@ import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.resolvers.CommandRunner;
+import com.humanharvest.organz.resolvers.CommandRunnerRest;
+import com.humanharvest.organz.resolvers.client.ClientResolver;
+import com.humanharvest.organz.resolvers.client.ClientResolverMemory;
+import com.humanharvest.organz.resolvers.client.ClientResolverRest;
 import com.humanharvest.organz.utilities.RestErrorHandler;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -31,11 +37,13 @@ public final class State {
     private static DataStorageType currentStorageType = DataStorageType.MEMORY;
 
     private static ClientManager clientManager;
+    private static ClientResolver clientResolver;
     private static ClinicianManager clinicianManager;
     private static AdministratorManager administratorManager;
     private static AuthenticationManager authenticationManager;
+    private static CommandRunner commandRunner;
 
-    private static ActionInvoker actionInvoker;
+    private static ActionInvoker invoker;
     private static Session session;
     private static boolean unsavedChanges;
     private static List<MainController> mainControllers = new ArrayList<>();
@@ -45,30 +53,6 @@ public final class State {
     private static String administratorEtag = "";
     private static String token = "";
 
-    public static String getClientEtag() {
-        return clientEtag;
-    }
-
-    public static void setClientEtag(String etag) {
-        clientEtag = etag;
-    }
-
-    public static String getClinicianEtag() {
-        return clinicianEtag;
-    }
-
-    public static void setClinicianEtag(String etag) {
-        clinicianEtag = etag;
-    }
-
-    public static String getAdministratorEtag() {
-        return administratorEtag;
-    }
-
-    public static void setAdministratorEtag(String etag) {
-        administratorEtag = etag;
-    }
-
     private State() {
     }
 
@@ -76,7 +60,7 @@ public final class State {
      * Initialises a new action invoker, client manager and clinician manager.
      */
     public static void init(DataStorageType storageType) {
-        actionInvoker = new ActionInvoker();
+        invoker = new ActionInvoker();
         currentStorageType = storageType;
 
         if (storageType == DataStorageType.REST) {
@@ -87,51 +71,24 @@ public final class State {
                     o instanceof MappingJackson2HttpMessageConverter);
             restTemplate.getMessageConverters().add(customConverter());
 
-
             clientManager = new ClientManagerRest();
+            clientResolver = new ClientResolverRest();
             clinicianManager = new ClinicianManagerRest();
             administratorManager = new AdministratorManagerRest();
             authenticationManager = new AuthenticationManagerRest();
+            commandRunner = new CommandRunnerRest();
         } else if (storageType == DataStorageType.MEMORY) {
             clientManager = new ClientManagerMemory();
+            clientResolver = new ClientResolverMemory();
             clinicianManager = new ClinicianManagerMemory();
             administratorManager = new AdministratorManagerMemory();
             authenticationManager = new AuthenticationManagerMemory();
+            commandRunner = commandText -> {
+                throw new UnsupportedOperationException("Memory storage type does not support running commands.");
+            };
         } else {
             throw new IllegalArgumentException("DataStorageType cannot be null.");
         }
-    }
-
-    public static RestTemplate getRestTemplate() {
-        return restTemplate;
-    }
-
-    public static void setRestTemplate(RestTemplate template ) {
-        restTemplate = template;
-    }
-
-    public static ClientManager getClientManager() {
-        return clientManager;
-    }
-
-    public static ClinicianManager getClinicianManager() {
-        return clinicianManager;
-    }
-
-    public static AdministratorManager getAdministratorManager() {
-        return administratorManager;
-    }
-
-    public static AuthenticationManager getAuthenticationManager() {
-        return authenticationManager;
-    }
-
-    public static ActionInvoker getInvoker() {
-        return actionInvoker;
-    }
-
-    public static Session getSession() {
-        return session;
     }
 
     public static void login(Client client) {
@@ -180,7 +137,11 @@ public final class State {
     }
 
     public static List<MainController> getMainControllers() {
-        return mainControllers;
+        return Collections.unmodifiableList(mainControllers);
+    }
+
+    public static void clearMainControllers() {
+        mainControllers.clear();
     }
 
     private static MappingJackson2HttpMessageConverter customConverter() {
@@ -195,5 +156,69 @@ public final class State {
         mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         mapper.configure(SerializationFeature.WRITE_DATES_WITH_ZONE_ID, false);
         return mapper;
+    }
+
+    public static String getClientEtag() {
+        return clientEtag;
+    }
+
+    public static void setClientEtag(String etag) {
+        clientEtag = etag;
+    }
+
+    public static String getClinicianEtag() {
+        return clinicianEtag;
+    }
+
+    public static void setClinicianEtag(String etag) {
+        clinicianEtag = etag;
+    }
+
+    public static String getAdministratorEtag() {
+        return administratorEtag;
+    }
+
+    public static void setAdministratorEtag(String etag) {
+        administratorEtag = etag;
+    }
+
+    public static RestTemplate getRestTemplate() {
+        return restTemplate;
+    }
+
+    public static void setRestTemplate(RestTemplate template ) {
+        restTemplate = template;
+    }
+
+    public static ClientManager getClientManager() {
+        return clientManager;
+    }
+
+    public static ClinicianManager getClinicianManager() {
+        return clinicianManager;
+    }
+
+    public static AdministratorManager getAdministratorManager() {
+        return administratorManager;
+    }
+
+    public static AuthenticationManager getAuthenticationManager() {
+        return authenticationManager;
+    }
+
+    public static ActionInvoker getInvoker() {
+        return invoker;
+    }
+
+    public static Session getSession() {
+        return session;
+    }
+
+    public static ClientResolver getClientResolver() {
+        return clientResolver;
+    }
+
+    public static CommandRunner getCommandRunner() {
+        return commandRunner;
     }
 }

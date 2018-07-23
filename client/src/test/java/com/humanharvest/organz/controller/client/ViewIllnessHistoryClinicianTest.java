@@ -151,7 +151,6 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
     }
 
     @Test
-    @Ignore
     public void addChronicTagToPastIllnessTest() {
         IllnessRecord addChronicTag = testPastIllnessRecords[0];
         assertFalse(addChronicTag.isChronic());
@@ -202,7 +201,6 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
     }
 
     @Test
-    @Ignore
     public void movetoPastIllnessesAfterChronicRemovedTest() {
         IllnessRecord removeChronicTag = testCurrentIllnessRecords[1];
         clickOn((Node) lookup(NodeQueryUtils.hasText(removeChronicTag.getIllnessName())).query());
@@ -244,7 +242,6 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
     }
 
     @Test
-    @Ignore
     public void moveIllnessToPastTest() {
         IllnessRecord toBeMoved = testCurrentIllnessRecords[0];
 
@@ -263,7 +260,6 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
     }
 
     @Test
-    @Ignore
     public void moveIllnesstoCurrentTest() {
         IllnessRecord toBeMoved = testPastIllnessRecords[0];
 
@@ -282,7 +278,6 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
     }
 
     @Test
-    @Ignore
     public void deleteIllnessRecordTest() {
         IllnessRecord toBeDeleted = testPastIllnessRecords[0];
 

@@ -16,10 +16,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.testfx.api.FxRobotException;
 
-@Ignore
 public class ViewClinicianControllerTest extends ControllerTest {
 
-    private Clinician testClinician = new Clinician("x", "y", "z", "t", Region.UNSPECIFIED, 3, "p");
+    private final Clinician testClinician = new Clinician("x", "y", "z", "t", Region.UNSPECIFIED, 3, "p");
 
     @Override
     protected Page getPage() {
@@ -46,27 +45,20 @@ public class ViewClinicianControllerTest extends ControllerTest {
     }
 
     @Test
+    @Ignore
     public void validChanges() {
         clickOn("#fname").write("a");
         clickOn("#lname").write("b");
-        clickOn("#saveChangesButton");
+        clickOn("#applyButton");
         assertEquals("xa", testClinician.getFirstName());
         assertEquals("zb", testClinician.getLastName());
     }
 
-    // TODO Notifications get in the way of the save changes button! Way around this needs to be found.
-//    @Test
-//    public void updatePassword() {
-//        clickOn("#password").write("hi");
-//
-//        clickOn("#saveChangesButton");
-//        assertEquals("hi", testClinician.getPassword());
-//    }
-
     @Test(expected = FxRobotException.class)
+    @Ignore
     public void updateDisplayed() {
         clickOn("#fname").write("a");
-        clickOn("#saveChangesButton");
+        clickOn("#applyButton");
         clickOn("Not yet modified."); // This text should be updated to the time of updates.
     }
 
@@ -74,7 +66,7 @@ public class ViewClinicianControllerTest extends ControllerTest {
     public void invalidNames() {
         clickOn("#fname").type(KeyCode.BACK_SPACE);
         clickOn("#lname").type(KeyCode.BACK_SPACE);
-        clickOn("#saveChangesButton");
+        clickOn("#applyButton");
         assertEquals("x", testClinician.getFirstName());
         assertEquals("z", testClinician.getLastName());
     }
@@ -83,14 +75,4 @@ public class ViewClinicianControllerTest extends ControllerTest {
     public void testLoadClinicianPaneIsHidden() {
         verifyThat("#loadClinicianPane", isInvisible());
     }
-
-//    private void alterFieldsValid() {
-//        clickOn("#fname").write("a");
-//        clickOn("#mname").type(KeyCode.BACK_SPACE);
-//        clickOn("#lname").write("b");
-//        clickOn("#workAddress").write("s");
-//        clickOn("#region").clickOn("West Coast");
-//        clickOn("#password").write("q");
-//    }
-
 }

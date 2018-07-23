@@ -93,11 +93,11 @@ public class DBManager {
             trns = session.beginTransaction();
             session.save(entity);
             trns.commit();
-        } catch (RollbackException exc) {
+        } catch (RollbackException e) {
             if (trns != null) {
                 trns.rollback();
             }
-            throw new PersistenceException("An error occurred while saving an entity: \n" + exc.getMessage());
+            throw new PersistenceException("An error occurred while saving an entity: \n" + e.getMessage(), e);
         }
     }
 }

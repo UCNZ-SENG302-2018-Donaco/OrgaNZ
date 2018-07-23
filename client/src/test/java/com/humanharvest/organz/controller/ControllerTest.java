@@ -3,6 +3,7 @@ package com.humanharvest.organz.controller;
 import static org.mockito.Mockito.mock;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -54,10 +55,10 @@ public abstract class ControllerTest extends ApplicationTest {
         Pane mainPane = mainLoader.load();
         mainController = mainLoader.getController();
 
-        State.addMainController(mainController);
         mockRestTemplate = mock(RestTemplate.class);
         State.setRestTemplate(mockRestTemplate);
         initState();
+        State.addMainController(mainController);
 
         // Load page's node and controller
         FXMLLoader pageLoader = new FXMLLoader(getClass().getResource(getPage().getPath()));
@@ -96,13 +97,24 @@ public abstract class ControllerTest extends ApplicationTest {
     public void killAllWindows() {
         Stage stage = getTopModalStage();
         State.reset();
-        Parent parent = stage.getScene().getRoot();
-        if (parent instanceof DialogPane) {
-            Platform.runLater(stage::close);
+        if (stage != null) {
+            Parent parent = stage.getScene().getRoot();
+            if (parent instanceof DialogPane) {
+                Platform.runLater(stage::close);
+            }
         }
     }
 
     protected abstract Page getPage();
 
     protected abstract void initState();
+
+    protected static <T, Y> Y setPrivateField(Class<T> clazz, String fieldName, Y newValue)
+            throws NoSuchFieldException, IllegalAccessException {
+        Field field = clazz.getDeclaredField(fieldName);
+        field.setAccessible(true);
+        Y result = (Y)field.get(null);
+        field.set(null, newValue);
+        return result;
+    }
 }
