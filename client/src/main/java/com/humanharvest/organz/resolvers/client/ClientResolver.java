@@ -1,5 +1,6 @@
 package com.humanharvest.organz.resolvers.client;
 
+import com.humanharvest.organz.views.client.ModifyIllnessObject;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -44,6 +45,7 @@ public interface ClientResolver {
 
     List<IllnessRecord> addIllnessRecord(Client client, CreateIllnessView createIllnessView);
 
+
     //------------PATCHs----------------
 
     TransplantRequest resolveTransplantRequest(
@@ -52,6 +54,10 @@ public interface ClientResolver {
             int transplantRequestIndex);
 
     Client modifyClientDetails(Client client, ModifyClientObject modifyClientObject);
+
+    IllnessRecord markCured(IllnessRecord record,ModifyIllnessObject modifyIllnessObject);
+
+    IllnessRecord markChronic(IllnessRecord record,ModifyIllnessObject modifyIllnessObject);
 
     //------------DELETEs----------------
 
