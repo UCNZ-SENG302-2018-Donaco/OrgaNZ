@@ -2,6 +2,7 @@ package com.humanharvest.organz.state;
 
 import static com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum.NAME;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Comparator;
@@ -154,4 +155,6 @@ public interface ClientManager {
      * @return All current transplant requests.
      */
     Collection<TransplantRequest> getAllCurrentTransplantRequests();
+
+    File getClientImage(int uid);
 }

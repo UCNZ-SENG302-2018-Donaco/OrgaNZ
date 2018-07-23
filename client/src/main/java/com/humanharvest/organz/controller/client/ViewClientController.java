@@ -1,5 +1,7 @@
 package com.humanharvest.organz.controller.client;
 
+import static com.humanharvest.organz.state.State.getClientManager;
+
 import java.io.File;
 import java.lang.reflect.Field;
 import java.time.LocalDate;
@@ -63,8 +65,6 @@ import org.controlsfx.control.Notifications;
  */
 public class ViewClientController extends ViewBaseController {
 
-    private final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy\nh:mm:ss a");
-    private final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
             .withZone(ZoneId.systemDefault());
 
@@ -142,7 +142,7 @@ public class ViewClientController extends ViewBaseController {
 
 
     public ViewClientController() {
-        manager = State.getClientManager();
+        manager = getClientManager();
         session = State.getSession();
     }
 
@@ -218,13 +218,9 @@ public class ViewClientController extends ViewBaseController {
 
         creationDate.setText(formatter.format(viewedClient.getCreatedTimestamp()));
 
-//        creationDate.setText(viewedClient.getCreatedTimestamp().format(dateFormat));
-//        creationDate.setTooltip(new Tooltip(viewedClient.getCreatedTimestamp().format(dateTimeFormat)));
         if (viewedClient.getModifiedTimestamp() == null) {
             lastModified.setText("Not yet modified.");
         } else {
-//            lastModified.setText(viewedClient.getModifiedTimestamp().format(dateFormat));
-//            lastModified.setTooltip(new Tooltip(viewedClient.getModifiedTimestamp().format(dateTimeFormat)));
             lastModified.setText(formatter.format(viewedClient.getModifiedTimestamp()));
         }
 
@@ -254,8 +250,13 @@ public class ViewClientController extends ViewBaseController {
      * Loads the viewed profiles image
      */
     private void loadImage() {
-        if (image == null) {
-            image = new Image("https://cdn4.iconfinder.com/data/icons/standard-free-icons/139/Profile01-512.png"); // Make this a local image
+
+
+        File file = State.getClientManager().getClientImage(viewedClient.getUid());
+        image = new Image(file.toURI().toString());
+
+        if (file.toURI().toString().contains("default.png")) {
+//            image = new Image("https://cdn4.iconfinder.com/data/icons/standard-free-icons/139/Profile01-512.png"); // Make this a local image
             deletePhotoButton.setDisable(true);
         } else {
             deletePhotoButton.setDisable(false);

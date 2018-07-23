@@ -366,7 +366,6 @@ public class TransplantsControllerTest extends ControllerTest {
         // Check all 30 requests are correct
         for (int i = 0; i < 30; i++) {
             TransplantRequest request = requests.get(i);
-            System.out.println(request);
             verifyThat("#tableView", containsRowAtIndex(i, request.getClient().getFullName(), request.getRequestedOrgan(),
                     request.getClient().getRegion(), request.getRequestDate()));
         }

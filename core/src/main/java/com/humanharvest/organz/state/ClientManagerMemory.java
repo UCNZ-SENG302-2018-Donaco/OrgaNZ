@@ -1,5 +1,6 @@
 package com.humanharvest.organz.state;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -139,4 +140,9 @@ public class ClientManagerMemory implements ClientManager {
                 .filter(request -> request.getStatus() == TransplantRequestStatus.WAITING)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public File getClientImage(int uid) {//do nothing
+        return new File("/images/default.png");
+        }
 }

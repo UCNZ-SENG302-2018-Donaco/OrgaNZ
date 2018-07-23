@@ -1,5 +1,8 @@
 package com.humanharvest.organz.server.controller.client;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.EnumSet;
 import java.util.Optional;
 
@@ -303,6 +306,36 @@ public class ClientController {
 
         //Respond
         return new ResponseEntity<>(client, headers, HttpStatus.OK);
+    }
+
+    @GetMapping("clients/{uid}/image")
+    public ResponseEntity getClientImage(
+            @PathVariable int uid
+//            @RequestHeader(value = "If-Match", required = false) String etag,
+//            @RequestHeader(value = "X-Auth-Token", required = false) String authToken
+    )
+            throws InvalidRequestException, IfMatchFailedException, IfMatchRequiredException {
+
+        Optional<Client> optionalClient = State.getClientManager().getClientByID(uid);
+        if (!optionalClient.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND); //Return 404 if that client does not exist
+        }
+
+        Client client = optionalClient.get();
+//        State.getAuthenticationManager().verifyClientAccess(authToken, client);
+
+//        if (etag == null) {
+//            throw new IfMatchRequiredException();
+//        }
+//        if (!client.getETag().equals(etag)) {
+//            throw new IfMatchFailedException();
+//        }
+
+
+        File file = new File("./server/src/resources/images/" + uid + ".png");
+
+
+        return new ResponseEntity<>(file, HttpStatus.OK);
     }
 
 }

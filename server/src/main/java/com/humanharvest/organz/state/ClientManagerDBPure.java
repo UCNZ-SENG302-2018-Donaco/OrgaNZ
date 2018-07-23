@@ -1,5 +1,6 @@
 package com.humanharvest.organz.state;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -192,5 +193,10 @@ public class ClientManagerDBPure implements ClientManager {
         }
 
         return requests == null ? new ArrayList<>() : requests;
+    }
+
+    @Override
+    public File getClientImage(int uid) {
+        return new File("/images/default.png");
     }
 }

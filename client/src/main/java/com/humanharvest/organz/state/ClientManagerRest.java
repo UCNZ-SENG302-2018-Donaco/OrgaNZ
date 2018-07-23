@@ -1,5 +1,6 @@
 package com.humanharvest.organz.state;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.EnumSet;
@@ -153,5 +154,18 @@ public class ClientManagerRest implements ClientManager {
     @Override
     public Collection<TransplantRequest> getAllCurrentTransplantRequests() {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public File getClientImage(int uid) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+//        httpHeaders.setContentType(MediaType.);
+        httpHeaders.set("X-Auth-Token", State.getToken());
+        HttpEntity<Client> entity = new HttpEntity<>(null, httpHeaders);
+
+        ResponseEntity<File> responseEntity = State.getRestTemplate().exchange(State.BASE_URI +
+                "clients/{uid}/image", HttpMethod.GET, entity, File.class, uid);
+
+        return responseEntity.getBody();
     }
 }
