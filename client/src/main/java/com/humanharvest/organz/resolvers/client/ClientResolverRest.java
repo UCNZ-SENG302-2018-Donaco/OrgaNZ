@@ -278,8 +278,7 @@ public class ClientResolverRest implements ClientResolver {
 
         ResponseEntity<IllnessRecord> responseEntity = State.getRestTemplate()
                 .exchange(State.BASE_URI + "clients/{uid}/illnesses/{id}", HttpMethod.DELETE, entity, IllnessRecord.class, client.getUid(),id);
-
-        client.deleteIllnessRecord(responseEntity.getBody());
+        client.deleteIllnessRecord(record);
 
         State.setClientEtag(responseEntity.getHeaders().getETag());
     }

@@ -633,7 +633,8 @@ public class Client implements ConcurrencyControlledEntity {
      * @param record The illness history that is wanted to be deleted
      */
     public void deleteIllnessRecord(IllnessRecord record) {
-        illnessHistory.remove(record);
+        int index = illnessHistory.indexOf(record);
+        illnessHistory.remove(index);
         record.setClient(null);
         updateModifiedTimestamp();
     }
