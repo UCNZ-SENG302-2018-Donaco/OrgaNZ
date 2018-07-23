@@ -1,7 +1,8 @@
 package com.humanharvest.organz.controller.client;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -17,7 +18,6 @@ import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.testfx.api.FxRobotException;
 
@@ -56,7 +56,6 @@ public class ViewClientControllerTest extends ControllerTest {
     }
 
     @Test
-    @Ignore
     public void validChangesAll() {
         clickOn("#fname").type(KeyCode.BACK_SPACE).write("z");
         clickOn("#lname").type(KeyCode.BACK_SPACE).write("q");
@@ -76,7 +75,7 @@ public class ViewClientControllerTest extends ControllerTest {
         assertEquals("q", testClient.getLastName());
         assertEquals("m", testClient.getMiddleName());
         assertEquals("p", testClient.getPreferredName());
-        assertTrue(testClient.getDateOfDeath() != null);
+        assertNotNull(testClient.getDateOfDeath());
         assertEquals(Region.WEST_COAST, testClient.getRegion());
         assertEquals(Gender.MALE, testClient.getGender());
         assertEquals(Gender.FEMALE, testClient.getGenderIdentity());
@@ -94,8 +93,22 @@ public class ViewClientControllerTest extends ControllerTest {
 
     @Test
     public void invalidChangesWeightAndHeight2() {
-        clickOn("#weight").type(KeyCode.BACK_SPACE).type(KeyCode.BACK_SPACE).type(KeyCode.BACK_SPACE).type(KeyCode.BACK_SPACE).type(KeyCode.BACK_SPACE).write("-50");
-        clickOn("#height").type(KeyCode.BACK_SPACE).type(KeyCode.BACK_SPACE).type(KeyCode.BACK_SPACE).type(KeyCode.BACK_SPACE).type(KeyCode.BACK_SPACE).write("-2");
+        clickOn("#weight").
+                type(KeyCode.BACK_SPACE)
+                .type(KeyCode.BACK_SPACE)
+                .type(KeyCode.BACK_SPACE)
+                .type(KeyCode.BACK_SPACE)
+                .type(KeyCode.BACK_SPACE)
+                .write("-50");
+
+        clickOn("#height")
+                .type(KeyCode.BACK_SPACE)
+                .type(KeyCode.BACK_SPACE)
+                .type(KeyCode.BACK_SPACE)
+                .type(KeyCode.BACK_SPACE)
+                .type(KeyCode.BACK_SPACE)
+                .write("-2");
+
         clickOn("#applyButton");
         assertEquals(180, testClient.getHeight(), 0.1);
         assertEquals(80, testClient.getWeight(), 0.1);
@@ -132,6 +145,6 @@ public class ViewClientControllerTest extends ControllerTest {
         clickOn("#dod").write(LocalDate.now().plusDays(1).format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         clickOn("#applyButton");
         press(KeyCode.ENTER);
-        assertEquals(null, testClient.getDateOfDeath());
+        assertNull(testClient.getDateOfDeath());
     }
 }

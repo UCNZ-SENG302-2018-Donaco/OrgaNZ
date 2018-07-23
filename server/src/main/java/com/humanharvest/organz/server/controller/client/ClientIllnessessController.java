@@ -80,6 +80,10 @@ public class ClientIllnessessController {
             Client client = optionalClient.get();
             record = client.getAllIllnessHistory().get(id - 1); // starting index 1.
             State.getAuthenticationManager().verifyClientAccess(authToken, client);
+            if(record.isChronic() && modifyIllnessObject.getCuredDate() != null){
+                //Cured date is trying to be set while disease is chronic.
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            }
         } catch (IndexOutOfBoundsException e) {
             //Record does not exist
             System.out.println("Record does not exist");

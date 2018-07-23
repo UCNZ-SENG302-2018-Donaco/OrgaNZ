@@ -194,15 +194,30 @@ public class ClientProceduresControllerTest {
 
     @Test
     public void validPatch() throws Exception {/*
+
+
+        String validProcedureJson = "{ \n" +
+                "\"summary\": \"Heart Transplant\", \n" +
+                "\"description\": \"To fix my achy-breaky heart.\", \n" +
+                "\"date\": \"2017-06-01\", \n" +
+                "\"affectedOrgans\": [\"HEART\"] \n"+
+                " }";
+
+        mockMvc.perform(post("/clients/1/procedures")
+                .header("If-Match", testClient.getETag())
+                .header("X-Auth-Token", VALID_AUTH)
+                .contentType(contentType)
+                .content(validProcedureJson));
+
         String json = "{\n" +
-                "\"id\": 2, \n" +
+                "\"id\": 1, \n" +
                 "\"summary\": \"Heart Transplant\", \n" +
                 "\"description\": \"New Description\", \n" +
                 "\"date\": \"2017-06-01\", \n" +
                 "\"affectedOrgans\": [\"HEART\"] \n"+
                 " }";
 
-        mockMvc.perform(patch("/clients/" + testClient.getUid() + "/procedures/2")
+        mockMvc.perform(patch("/clients/1/procedures/1")
                 .header("If-Match", testClient.getETag())
                 .header("X-Auth-Token", VALID_AUTH)
                 .contentType(contentType)

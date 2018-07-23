@@ -100,7 +100,7 @@ public class ClientMedicationsController {
 
         checkClientEtag(client.get(), ETag);
 
-        MedicationRecord record = new MedicationRecord(medicationRecordView.getName(), LocalDate.now(), null);
+        MedicationRecord record = new MedicationRecord(medicationRecordView.getName(), medicationRecordView.getStarted(), null);
         AddMedicationRecordAction action = new AddMedicationRecordAction(client.get(), record, State.getClientManager());
         State.getActionInvoker(authToken).execute(action);
 

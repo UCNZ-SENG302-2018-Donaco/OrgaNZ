@@ -157,7 +157,8 @@ public class ViewClinicianController extends ViewBaseController {
      * Loads all of the currently logged in Clinician's details, except for their password.
      */
     private void loadClinicianData() {
-        viewedClinician = State.getClinicianManager().getClinicianByStaffId(viewedClinician.getStaffId()).get();
+        viewedClinician = State.getClinicianManager().getClinicianByStaffId(viewedClinician.getStaffId())
+                .orElseThrow(IllegalStateException::new);
         loadStaffIdTextField.setText(String.valueOf(viewedClinician.getStaffId()));
         fname.setText(viewedClinician.getFirstName());
         mname.setText(viewedClinician.getMiddleName());
