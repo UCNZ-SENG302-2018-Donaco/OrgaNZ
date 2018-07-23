@@ -142,7 +142,7 @@ public class ClientManagerMemory implements ClientManager {
     }
 
     @Override
-    public File getClientImage(int uid) {//do nothing
-        return new File("/images/default.png");
+    public byte[] getClientImage(int uid) {//do nothing
+        return new byte[0];
         }
 }

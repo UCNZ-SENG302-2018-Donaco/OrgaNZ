@@ -2,7 +2,10 @@ package com.humanharvest.organz.controller.client;
 
 import static com.humanharvest.organz.state.State.getClientManager;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -13,6 +16,8 @@ import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javax.imageio.ImageIO;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -252,15 +257,18 @@ public class ViewClientController extends ViewBaseController {
     private void loadImage() {
 
 
-        File file = State.getClientManager().getClientImage(viewedClient.getUid());
-        image = new Image(file.toURI().toString());
+        byte[] bytes = State.getClientManager().getClientImage(viewedClient.getUid());
 
-        if (file.toURI().toString().contains("default.png")) {
-//            image = new Image("https://cdn4.iconfinder.com/data/icons/standard-free-icons/139/Profile01-512.png"); // Make this a local image
-            deletePhotoButton.setDisable(true);
-        } else {
-            deletePhotoButton.setDisable(false);
-        }
+
+        image = new Image(new ByteArrayInputStream(bytes));
+
+
+//        if (file.toURI().toString().contains("default.png")) {
+////            image = new Image("https://cdn4.iconfinder.com/data/icons/standard-free-icons/139/Profile01-512.png"); // Make this a local image
+//            deletePhotoButton.setDisable(true);
+//        } else {
+//            deletePhotoButton.setDisable(false);
+//        }
 
         // GET Image from DB
         // if image exists

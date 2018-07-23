@@ -8,7 +8,6 @@ import java.io.OutputStream;
 import java.util.EnumSet;
 import java.util.Optional;
 
-import javax.imageio.ImageIO;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Client;
@@ -37,6 +36,7 @@ import com.humanharvest.organz.views.client.Views;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,7 +46,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.apache.commons.io.IOUtils;
 
 @RestController
 public class ClientController {
@@ -312,40 +314,22 @@ public class ClientController {
         return new ResponseEntity<>(client, headers, HttpStatus.OK);
     }
 
-    @GetMapping(value = "clients/{uid}/image", produces = "image/png")
-    public ResponseEntity getClientImage(
+    @GetMapping(value = "clients/{uid}/image", produces = MediaType.IMAGE_PNG_VALUE)
+    public @ResponseBody byte[] getClientImage(
             @PathVariable int uid
 //            @RequestHeader(value = "If-Match", required = false) String etag,
 //            @RequestHeader(value = "X-Auth-Token", required = false) String authToken
     )
-            throws InvalidRequestException, IfMatchFailedException, IfMatchRequiredException {
+            throws InvalidRequestException, IfMatchFailedException, IfMatchRequiredException, IOException {
 
-        Optional<Client> optionalClient = State.getClientManager().getClientByID(uid);
-        if (!optionalClient.isPresent()) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND); //Return 404 if that client does not exist
-        }
+//        InputStream in = getClass().getResourceAsStream("resources/images" + uid + ".png");
+//        InputStream in = getClass().getResourceAsStream("/src/main/resources/images/" + uid + ".png");
+//        InputStream in = getClass().getResourceAsStream("./../../../../../../resources/images/" + uid + ".png");
+//        InputStream in = getClass().getResourceAsStream("./server/src/resources/images/" + uid + ".png");
+        InputStream in = getClass().getResourceAsStream("/server/src/resources/images/" + uid + ".png");
 
-//        try {
-//            InputStream inputStream = this.getClass().getResourceAsStream("./server/src/resources/images/" + uid + ""
-//                    + ".png");
-//            BufferedImage img = ImageIO.read(inputStream);
-//        }
+        return IOUtils.toByteArray(in);
 
-//        Client client = optionalClient.get();
-//        State.getAuthenticationManager().verifyClientAccess(authToken, client);
-
-//        if (etag == null) {
-//            throw new IfMatchRequiredException();
-//        }
-//        if (!client.getETag().equals(etag)) {
-//            throw new IfMatchFailedException();
-//        }
-
-
-        File file = new File("./server/src/resources/images/" + uid + ".png");
-
-
-        return new ResponseEntity<>(file, HttpStatus.OK);
     }
 
 }

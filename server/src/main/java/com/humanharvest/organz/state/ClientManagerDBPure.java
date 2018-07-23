@@ -196,7 +196,7 @@ public class ClientManagerDBPure implements ClientManager {
     }
 
     @Override
-    public File getClientImage(int uid) {
-        return new File("/images/default.png");
+    public byte[] getClientImage(int uid) {
+        return new byte[0];
     }
 }

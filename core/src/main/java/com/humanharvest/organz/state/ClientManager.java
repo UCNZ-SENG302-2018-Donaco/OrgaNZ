@@ -156,5 +156,5 @@ public interface ClientManager {
      */
     Collection<TransplantRequest> getAllCurrentTransplantRequests();
 
-    File getClientImage(int uid);
+    byte[] getClientImage(int uid);
 }
