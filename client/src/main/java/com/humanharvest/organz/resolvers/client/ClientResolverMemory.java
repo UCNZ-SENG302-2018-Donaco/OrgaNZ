@@ -7,11 +7,13 @@ import java.util.Map;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.MedicationRecord;
+import com.humanharvest.organz.ProcedureRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.views.client.CreateIllnessView;
 import com.humanharvest.organz.views.client.CreateMedicationRecordView;
+import com.humanharvest.organz.views.client.CreateProcedureView;
 import com.humanharvest.organz.views.client.CreateTransplantRequestView;
 import com.humanharvest.organz.views.client.ModifyClientObject;
 import com.humanharvest.organz.views.client.ResolveTransplantRequestObject;
@@ -35,6 +37,9 @@ public class ClientResolverMemory implements ClientResolver {
     public List<MedicationRecord> getMedicationRecords(Client client) {
         return client.getMedicationRecords();
     }
+
+    @Override
+    public List<ProcedureRecord> getProcedureRecords(Client client) {return client.getProcedures(); }
 
     //------------POSTs----------------
 
@@ -67,6 +72,16 @@ public class ClientResolverMemory implements ClientResolver {
                 LocalDate.now(), null);
         client.addMedicationRecord(medicationRecord);
         return client.getMedications();
+    }
+
+    @Override
+    public  List<ProcedureRecord> addProcedureRecord(Client client, CreateProcedureView procedureView) {
+        ProcedureRecord procedureRecord = new ProcedureRecord(
+                procedureView.getSummary(),
+                procedureView.getDescription(),
+                procedureView.getDate());
+        client.addProcedureRecord(procedureRecord);
+        return client.getProcedures();
     }
 
     //------------PATCHs----------------

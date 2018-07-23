@@ -7,10 +7,12 @@ import java.util.Map;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.MedicationRecord;
+import com.humanharvest.organz.ProcedureRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.views.client.CreateIllnessView;
 import com.humanharvest.organz.views.client.CreateMedicationRecordView;
+import com.humanharvest.organz.views.client.CreateProcedureView;
 import com.humanharvest.organz.views.client.CreateTransplantRequestView;
 import com.humanharvest.organz.views.client.ModifyClientObject;
 import com.humanharvest.organz.views.client.ResolveTransplantRequestObject;
@@ -37,6 +39,8 @@ public interface ClientResolver {
      */
     List<MedicationRecord> getMedicationRecords(Client client);
 
+    List<ProcedureRecord> getProcedureRecords(Client client);
+
     //------------POSTs----------------
 
     List<TransplantRequest> createTransplantRequest(Client client, CreateTransplantRequestView request);
@@ -47,6 +51,8 @@ public interface ClientResolver {
 
     List<MedicationRecord> addMedicationRecord(Client client, CreateMedicationRecordView medicationRecordView);
 
+
+    List<ProcedureRecord> addProcedureRecord(Client client, CreateProcedureView procedureView);
 
     //------------PATCHs----------------
 
