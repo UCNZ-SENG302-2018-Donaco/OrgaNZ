@@ -30,11 +30,9 @@ import com.humanharvest.organz.Client;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.actions.client.DeleteMedicationRecordAction;
-import com.humanharvest.organz.actions.client.ModifyMedicationRecordAction;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SidebarController;
 import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.resolvers.client.ModifyMedicationRecordResolver;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
@@ -217,10 +215,9 @@ public class ViewMedicationsController extends SubController {
      * @param record the record to modify
      */
     private void updateMedicationHistory(LocalDate date, MedicationRecord record) {
-        ModifyMedicationRecordResolver resolver = new ModifyMedicationRecordResolver(client, record, date);
 
         try {
-            resolver.execute();
+            State.getClientResolver().modifyMedicationRecord(client, record, date);
             record.setStopped(date);
         } catch (NotFoundException e) {
             LOGGER.log(Level.WARNING, "Client not found");
@@ -233,7 +230,8 @@ public class ViewMedicationsController extends SubController {
                     + "please try again later");
         } catch (IfMatchFailedException e) {
             LOGGER.log(Level.INFO, "If-Match did not match");
-            PageNavigator.showAlert(AlertType.WARNING, "Outdated Data", "The client has been modified since you retrieved the data.\nIf you would still like to "
+            PageNavigator.showAlert(AlertType.WARNING, "Outdated Data",
+                    "The client has been modified since you retrieved the data.\nIf you would still like to "
                     + "apply these changes please submit again, otherwise refresh the page to update the data.");
         }
     }

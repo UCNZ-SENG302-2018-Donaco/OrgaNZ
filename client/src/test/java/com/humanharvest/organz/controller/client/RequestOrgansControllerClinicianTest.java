@@ -29,15 +29,14 @@ import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredExcept
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class RequestOrgansControllerClinicianTest extends ControllerTest {
 
-    private TransplantRequest heartRequest;
-    private Collection<TransplantRequest> sampleRequests = new ArrayList<>();
-    private Clinician testClinician = new Clinician("Mr", null, "Tester", "9 Fake St", Region.AUCKLAND, 1000, "qwerty");
-    private Client testClient = new Client(1);
+    private final Collection<TransplantRequest> sampleRequests = new ArrayList<>();
+    private final Clinician testClinician = new Clinician(
+            "Mr", null, "Tester", "9 Fake St", Region.AUCKLAND, 1000, "qwerty");
+    private final Client testClient = new Client(1);
 
     @Override
     protected Page getPage() {
@@ -55,7 +54,7 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
     }
 
     private void setSampleRequests() {
-        heartRequest = new TransplantRequest(testClient, Organ.HEART);
+        TransplantRequest heartRequest = new TransplantRequest(testClient, Organ.HEART);
         sampleRequests.add(heartRequest);
         sampleRequests.add(new TransplantRequest(testClient, Organ.BONE));
 
@@ -109,11 +108,9 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
     }
 
     @Test
-    public void conflictingRequestsAreColouredTest() throws InterruptedException {
+    public void conflictingRequestsAreColouredTest() {
         TableView<TransplantRequest> currRequestsTable = lookup("#currentRequestsTable").queryTableView();
         clickOn(currRequestsTable); // click on the table so lookups know where abouts to look
-
-        Thread.sleep(10000);
 
         // Get conflicting request
         TransplantRequest conflictingRequest = currRequestsTable.getItems().get(1);

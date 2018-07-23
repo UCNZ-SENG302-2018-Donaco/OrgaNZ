@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 import javafx.collections.FXCollections;
@@ -23,16 +22,16 @@ import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.ProcedureRecord;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.actions.client.AddProcedureRecordAction;
 import com.humanharvest.organz.actions.client.DeleteProcedureRecordAction;
 import com.humanharvest.organz.actions.client.ModifyProcedureRecordAction;
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.controller.components.DatePickerCell;
-import com.humanharvest.organz.controller.components.OrganCheckComboBoxCell;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.ProcedureRecord;
+import com.humanharvest.organz.controller.components.DatePickerCell;
+import com.humanharvest.organz.controller.components.OrganCheckComboBoxCell;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
@@ -41,7 +40,6 @@ import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.PageNavigator;
-
 import org.controlsfx.control.CheckComboBox;
 import org.controlsfx.control.Notifications;
 
@@ -300,12 +298,12 @@ public class ViewProceduresController extends SubController {
         }
 
 
-        SortedList<ProcedureRecord> sortedPendingProcedures = new SortedList<>(FXCollections.observableArrayList(
+        SortedList<ProcedureRecord> sortedPastProcedures = new SortedList<>(FXCollections.observableArrayList(
                 allProcedures.stream()
                         .filter(record -> record.getDate().isBefore(LocalDate.now()))
                         .collect(Collectors.toList())));
 
-        SortedList<ProcedureRecord> sortedPastProcedures = new SortedList<>(FXCollections.observableArrayList(
+        SortedList<ProcedureRecord> sortedPendingProcedures = new SortedList<>(FXCollections.observableArrayList(
                 allProcedures.stream()
                         .filter(record -> !record.getDate().isBefore(LocalDate.now()))
                         .collect(Collectors.toList())));

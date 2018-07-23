@@ -190,15 +190,15 @@ public class Client implements ConcurrencyControlledEntity {
     }
 
     public void setTransplantRequests(List<TransplantRequest> requests) {
-        transplantRequests = requests;
+        transplantRequests = new ArrayList<>(requests);
     }
 
     public void setMedicationHistory(List<MedicationRecord> medicationHistory) {
-        this.medicationHistory = medicationHistory;
+        this.medicationHistory = new ArrayList<>(medicationHistory);
     }
 
     public void setIllnessHistory(List<IllnessRecord> illnessHistory) {
-        this.illnessHistory = illnessHistory;
+        this.illnessHistory = new ArrayList<>(illnessHistory);
     }
 
     /**
@@ -224,12 +224,12 @@ public class Client implements ConcurrencyControlledEntity {
             if (builder.length() != 0) {
                 builder.append(", ");
             }
-            builder.append(organ.toString());
+            builder.append(organ);
         }
-        if (builder.length() != 0) {
-            return builder.toString();
-        } else {
+        if (builder.length() == 0) {
             return "None";
+        } else {
+            return builder.toString();
         }
     }
 
@@ -284,10 +284,10 @@ public class Client implements ConcurrencyControlledEntity {
      */
     public String getFullName() {
         String fullName = firstName + " ";
-        if (middleName != null && !middleName.equals("")) {
+        if (middleName != null && !middleName.isEmpty()) {
             fullName += middleName + " ";
         }
-        if (preferredName != null && !preferredName.equals("")) {
+        if (preferredName != null && !preferredName.isEmpty()) {
             fullName += "\"" + preferredName + "\" ";
         }
         fullName += lastName;
@@ -322,7 +322,7 @@ public class Client implements ConcurrencyControlledEntity {
     }
 
     public String getPreferredName() {
-        if (preferredName == null || preferredName.equals("")) {
+        if (preferredName == null || preferredName.isEmpty()) {
             return getFullName();
         }
         return preferredName;

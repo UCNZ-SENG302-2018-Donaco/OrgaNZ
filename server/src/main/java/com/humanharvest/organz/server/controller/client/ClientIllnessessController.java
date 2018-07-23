@@ -138,7 +138,7 @@ public class ClientIllnessessController {
         State.getActionInvoker(authToken).execute(addIllnessRecordAction);
         HttpHeaders headers = new HttpHeaders();
         headers.setETag(client.get().getETag());
-        return new ResponseEntity<>(client.get().getAllIllnessHistory(), headers, HttpStatus.OK);
+        return new ResponseEntity<>(client.get().getAllIllnessHistory(), headers, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/clients/{uid}/illnesses/{id}")

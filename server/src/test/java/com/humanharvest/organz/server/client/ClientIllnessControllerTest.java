@@ -1,17 +1,15 @@
 package com.humanharvest.organz.server.client;
 
 import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
+
+import java.time.LocalDate;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.IllnessRecord;
@@ -20,9 +18,6 @@ import com.humanharvest.organz.state.AuthenticationManager;
 import com.humanharvest.organz.state.AuthenticationManagerFake;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
-import java.nio.charset.Charset;
-import java.time.LocalDate;
-import org.hamcrest.Matchers;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,21 +34,17 @@ import org.springframework.web.context.WebApplicationContext;
 @WebAppConfiguration
 public class ClientIllnessControllerTest {
 
-  private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON
-      .getSubtype(), Charset.forName("utf8"));
-
   private MockMvc mockMvc;
   private Client testClient;
   private String validProcedureJson;
-  private String otherJson;
   private String VALID_AUTH = "valid auth";
   private String INVALID_AUTH = "invalid auth";
 
 
-  IllnessRecord record1 = new IllnessRecord("Tuberculosis", LocalDate.of(2018,04,02),
+  IllnessRecord record1 = new IllnessRecord("Tuberculosis", LocalDate.of(2018, 4, 2),
       null,false);
-  IllnessRecord record2 = new IllnessRecord("Influenza", LocalDate.of(2015,02,02),
-      LocalDate.of(2015,06,06),false);
+  IllnessRecord record2 = new IllnessRecord("Influenza", LocalDate.of(2015, 2, 2),
+      LocalDate.of(2015, 6, 6),false);
 
 
   @Autowired
@@ -63,7 +54,7 @@ public class ClientIllnessControllerTest {
   public void init(){
     State.reset();
     State.setAuthenticationManager(new AuthenticationManagerFake());
-    this.mockMvc = webAppContextSetup(webApplicationContext).build();
+    mockMvc = webAppContextSetup(webApplicationContext).build();
     testClient = new Client("Tom", "Middle", "Last", LocalDate.now(), 1);
     State.getClientManager().addClient(testClient);
     testClient.addIllnessRecord(record1);
@@ -102,7 +93,7 @@ public class ClientIllnessControllerTest {
         + "\t\"diagnosisDate\":\"2018-01-01\"\n"
         + "}";
     mockMvc.perform(patch("/clinicians/0")
-        .contentType(contentType)
+        .contentType(MediaType.APPLICATION_JSON_UTF8)
         .content(patch))
         .andExpect(status().isOk());
   }
@@ -110,7 +101,7 @@ public class ClientIllnessControllerTest {
   public void addValidIllness() throws Exception{
 
     mockMvc.perform(post("/clients/1/illnesses")
-        .contentType(contentType)
+        .contentType(MediaType.APPLICATION_JSON_UTF8)
         .content(validProcedureJson))
         .andExpect(status().isCreated());
 
@@ -118,8 +109,8 @@ public class ClientIllnessControllerTest {
 
   @Test
   public void deleteIllness() throws Exception {
-    testClient.addIllnessRecord(record1);
-    mockMvc.perform(delete("/clients/1/illnesses/2"))
+    testClient.addIllnessRecord(record2);
+    mockMvc.perform(delete("/clients/1/illnesses/1"))
         .andExpect(status().isOk());
   }
 

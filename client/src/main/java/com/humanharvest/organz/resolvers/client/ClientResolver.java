@@ -68,6 +68,8 @@ public interface ClientResolver {
 
     //IllnessRecord markChronic(IllnessRecord record,ModifyIllnessObject modifyIllnessObject);
 
+    MedicationRecord modifyMedicationRecord(Client client, MedicationRecord record, LocalDate stopDate);
+
     ProcedureRecord modifyProcedureRecord(Client client, ModifyProcedureObject modifyProcedureObject, int
             procedureRecordIndex);
 

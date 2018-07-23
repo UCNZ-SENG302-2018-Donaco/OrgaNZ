@@ -37,7 +37,6 @@ import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
 import com.humanharvest.organz.utilities.web.DrugInteractionsHandler;
 import com.humanharvest.organz.utilities.web.MedActiveIngredientsHandler;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.testfx.api.FxRobot;
 
@@ -119,9 +118,9 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
 
     @Test
     public void modifyButtonsEnabledTest() {
-        verifyThat("#moveToHistoryButton", (Button b) -> !b.isDisabled());
-        verifyThat("#moveToCurrentButton", (Button b) -> !b.isDisabled());
-        verifyThat("#deleteButton", (Button b) -> !b.isDisabled());
+        verifyThat("#moveToHistoryButton", (Button button) -> !button.isDisabled());
+        verifyThat("#moveToCurrentButton", (Button button) -> !button.isDisabled());
+        verifyThat("#deleteButton", (Button button) -> !button.isDisabled());
     }
 
     @Test
@@ -139,7 +138,6 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
     }
 
     @Test
-    @Ignore
     public void addNewMedicationWithButtonTest() {
         MedicationRecord toBeAdded = new MedicationRecord("Med D", LocalDate.now(), null);
 
@@ -152,7 +150,6 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
     }
 
     @Test
-    @Ignore
     public void addNewMedicationWithEnterTest() {
         MedicationRecord toBeAdded = new MedicationRecord("Med D", LocalDate.now(), null);
 
@@ -165,7 +162,6 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
     }
 
     @Test
-    @Ignore
     public void moveMedicationToPastTest() {
         MedicationRecord toBeMoved = testCurrentMedicationRecords[0];
 
@@ -190,7 +186,6 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
     }
 
     @Test
-    @Ignore
     public void deleteMedicationRecordTest() {
         MedicationRecord toBeDeleted = testPastMedicationRecords[0];
 
@@ -260,7 +255,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
 
     @Test
     public void viewActiveIngredientsTest() throws IOException {
-        ViewMedicationsController pageController = (ViewMedicationsController) super.pageController;
+        ViewMedicationsController pageController = (ViewMedicationsController)super.pageController;
         pageController.setActiveIngredientsHandler(createMockActiveIngredientsHandler(
                 "Ibuprofen",
                 Arrays.asList("Diphenhydramine citrate; ibuprofen",

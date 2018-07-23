@@ -68,8 +68,8 @@ public class ClientResolverMemory implements ClientResolver {
     }
 
     @Override
-    public List<MedicationRecord> addMedicationRecord(Client client, CreateMedicationRecordView recordView) {
-        MedicationRecord medicationRecord = new MedicationRecord(recordView.getName(),
+    public List<MedicationRecord> addMedicationRecord(Client client, CreateMedicationRecordView medicationRecordView) {
+        MedicationRecord medicationRecord = new MedicationRecord(medicationRecordView.getName(),
                 LocalDate.now(), null);
         client.addMedicationRecord(medicationRecord);
         return client.getMedications();
@@ -101,6 +101,17 @@ public class ClientResolverMemory implements ClientResolver {
     public Client modifyClientDetails(Client client, ModifyClientObject modifyClientObject) {
         BeanUtils.copyProperties(modifyClientObject, client, modifyClientObject.getUnmodifiedFields());
         return client;
+    }
+
+    @Override
+    public MedicationRecord modifyMedicationRecord(Client client, MedicationRecord record, LocalDate stopDate) {
+        if (stopDate == null) {
+            record.setStarted(LocalDate.now());
+            record.setStopped(null);
+        } else {
+            record.setStopped(LocalDate.now());
+        }
+        return record;
     }
 
     @Override
