@@ -97,7 +97,7 @@ public class ClientMedicationsController {
         if (!client.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
+        System.out.println(client.get().getETag());
         checkClientEtag(client.get(), ETag);
 
         MedicationRecord record = new MedicationRecord(medicationRecordView.getName(), LocalDate.now(), null);
@@ -106,6 +106,7 @@ public class ClientMedicationsController {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setETag(client.get().getETag());
+        System.out.println(client.get().getAllMedications());
 
         return new ResponseEntity<>(client.get().getAllMedications(), headers, HttpStatus.OK);
     }

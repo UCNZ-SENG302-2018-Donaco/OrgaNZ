@@ -88,6 +88,7 @@ public class ClientResolverRest implements ClientResolver {
         httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
 
         HttpEntity<?> entity = new HttpEntity<>(request, httpHeaders);
+        System.out.println(entity);
 
         ResponseEntity<List<TransplantRequest>> responseEntity = State.getRestTemplate().exchange(
                 State.BASE_URI + "clients/" + client.getUid() + "/transplantRequests", HttpMethod.POST,
@@ -117,9 +118,11 @@ public class ClientResolverRest implements ClientResolver {
     public List<IllnessRecord> addIllnessRecord(Client client, CreateIllnessView createIllnessView) {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setIfMatch(State.getClientEtag());
+        httpHeaders.set("X-Auth-Token", State.getToken());
         httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
 
         HttpEntity entity = new HttpEntity<>(createIllnessView, httpHeaders);
+        System.out.println(entity);
 
         ResponseEntity<List<IllnessRecord>> responseEntity = State.getRestTemplate()
                 .exchange(State.BASE_URI + "clients/" + client.getUid() + "/illnesses", HttpMethod.POST, entity,

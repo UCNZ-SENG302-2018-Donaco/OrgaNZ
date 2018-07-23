@@ -291,7 +291,7 @@ public class RequestOrgansController extends SubController {
         } else { // Bluesky scenario
             // Create a request
             CreateTransplantRequestView newRequest =
-                    new CreateTransplantRequestView(client, selectedOrgan, LocalDateTime.now());
+                    new CreateTransplantRequestView(selectedOrgan, LocalDateTime.now());
 
             // Resolve the request
             List<TransplantRequest> updatedTransplantRequests;
