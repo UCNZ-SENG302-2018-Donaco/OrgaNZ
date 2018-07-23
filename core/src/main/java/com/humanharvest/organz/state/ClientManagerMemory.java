@@ -103,7 +103,6 @@ public class ClientManagerMemory implements ClientManager {
      * Returns the next unused id number for a new client.
      * @return The next free UID.
      */
-    @Override
     public int nextUid() {
         OptionalInt max = clients.stream()
                 .mapToInt(Client::getUid)

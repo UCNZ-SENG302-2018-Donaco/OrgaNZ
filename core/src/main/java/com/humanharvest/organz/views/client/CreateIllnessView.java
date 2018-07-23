@@ -6,60 +6,42 @@ import java.time.format.DateTimeFormatter;
 
 public class CreateIllnessView {
 
-  private static DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+    private static DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-  private Long id;
-  private Client client;
-  private String illnessName;
-  private LocalDate diagnosisDate;
-  private LocalDate curedDate;
-  private boolean isChronic;
+    private String illnessName;
+    private LocalDate diagnosisDate;
+    private boolean isChronic;
 
-  public Long getId() {
-    return id;
-  }
+    public CreateIllnessView() {
+    }
 
-  public void setId(Long id) {
-    this.id = id;
-  }
+    public CreateIllnessView(String illnessName, LocalDate diagnosisDate,boolean isChronic) {
+        this.illnessName = illnessName;
+        this.diagnosisDate = diagnosisDate;
+        this.isChronic = isChronic;
+    }
 
-  public Client getClient() {
-    return client;
-  }
+    public String getIllnessName() {
+        return illnessName;
+    }
 
-  public void setClient(Client client) {
-    this.client = client;
-  }
+    public void setIllnessName(String illnessName) {
+        this.illnessName = illnessName;
+    }
 
-  public String getIllnessName() {
-    return illnessName;
-  }
+    public LocalDate getDiagnosisDate() {
+        return diagnosisDate;
+    }
 
-  public void setIllnessName(String illnessName) {
-    this.illnessName = illnessName;
-  }
+    public void setDiagnosisDate(LocalDate diagnosisDate) {
+        this.diagnosisDate = diagnosisDate;
+    }
 
-  public LocalDate getDiagnosisDate() {
-    return diagnosisDate;
-  }
+    public boolean isChronic() {
+        return isChronic;
+    }
 
-  public void setDiagnosisDate(LocalDate diagnosisDate) {
-    this.diagnosisDate = diagnosisDate;
-  }
-
-  public LocalDate getCuredDate() {
-    return curedDate;
-  }
-
-  public void setCuredDate(LocalDate curedDate) {
-    this.curedDate = curedDate;
-  }
-
-  public boolean isChronic() {
-    return isChronic;
-  }
-
-  public void setChronic(boolean chronic) {
-    isChronic = chronic;
-  }
+    public void setChronic(boolean chronic) {
+        isChronic = chronic;
+    }
 }

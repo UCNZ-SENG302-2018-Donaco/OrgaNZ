@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -25,16 +26,14 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.actions.client.DeleteMedicationRecordAction;
 import com.humanharvest.organz.actions.client.ModifyMedicationRecordAction;
-import com.humanharvest.organz.Client;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SidebarController;
 import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.MedicationRecord;
-import com.humanharvest.organz.resolvers.ClientResolver;
-import com.humanharvest.organz.resolvers.client.AddMedicationRecordResolver;
 import com.humanharvest.organz.resolvers.client.ModifyMedicationRecordResolver;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
@@ -49,7 +48,6 @@ import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.utilities.web.DrugInteractionsHandler;
 import com.humanharvest.organz.utilities.web.MedActiveIngredientsHandler;
 import com.humanharvest.organz.utilities.web.MedAutoCompleteHandler;
-
 import com.humanharvest.organz.views.client.CreateMedicationRecordView;
 import impl.org.controlsfx.autocompletion.AutoCompletionTextFieldBinding;
 import org.controlsfx.control.Notifications;
@@ -190,9 +188,8 @@ public class ViewMedicationsController extends SubController {
         List<MedicationRecord> medicationRecords;
 
         try {
-            medicationRecords = ClientResolver.getMedicationRecords(client.getUid());
+            medicationRecords = State.getClientResolver().getMedicationRecords(client);
             client.setMedicationHistory(medicationRecords);
-            //ClientResolver.getMedicationRecords(client.getUid());
 
         } catch (NotFoundException e) {
             LOGGER.log(Level.WARNING, "Client or medication not found");
@@ -279,7 +276,7 @@ public class ViewMedicationsController extends SubController {
      */
     @FXML
     public void newMedKeyPressed(KeyEvent keyEvent) {
-        if (keyEvent.getCode().equals(KeyCode.ENTER)) {
+        if (keyEvent.getCode() == KeyCode.ENTER) {
             addMedication(newMedField.getText());
         }
     }
@@ -315,13 +312,11 @@ public class ViewMedicationsController extends SubController {
      * @param newMedName The name of the medication to add a new instance of.
      */
     private void addMedication(String newMedName) {
-        if (!newMedName.equals("")) {
-            CreateMedicationRecordView record = new CreateMedicationRecordView();
-            record.setName(newMedName);
-            AddMedicationRecordResolver resolver = new AddMedicationRecordResolver(client, record);
+        if (!Objects.equals(newMedName, "")) {
+            CreateMedicationRecordView record = new CreateMedicationRecordView(newMedName, LocalDate.now());
 
             try {
-                resolver.execute();
+                State.getClientResolver().addMedicationRecord(client, record);
             } catch (NotFoundException e) {
                 LOGGER.log(Level.WARNING, "Client not found");
                 Notifications.create()

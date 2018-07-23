@@ -1,9 +1,9 @@
 package com.humanharvest.organz.controller.client;
 
-import java.lang.reflect.Field;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.Objects;
+import java.time.format.FormatStyle;
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.logging.Level;
@@ -23,11 +23,8 @@ import javafx.scene.paint.Color;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
-import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.resolvers.client.MarkClientAsDeadResolver;
-import com.humanharvest.organz.resolvers.client.ModifyClientDetailsResolver;
+import com.humanharvest.organz.controller.clinician.ViewBaseController;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
@@ -48,29 +45,75 @@ import org.controlsfx.control.Notifications;
 /**
  * Controller for the view/edit client page.
  */
-public class ViewClientController extends SubController {
+public class ViewClientController extends ViewBaseController {
 
-    private final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy\nh:mm:ss a");
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
+            .withZone(ZoneId.systemDefault());
+
     private static final Logger LOGGER = Logger.getLogger(ViewClientController.class.getName());
 
-    private Session session;
-    private ClientManager manager;
-    private ActionInvoker invoker;
+    private final Session session;
+    private final ClientManager manager;
     private Client viewedClient;
 
     @FXML
-    private Pane sidebarPane, idPane, inputsPane, menuBarPane;
+    private Pane sidebarPane;
     @FXML
-    public Button searchClientButton;
+    private Pane idPane;
     @FXML
-    private Label creationDate, lastModified, noClientLabel, fnameLabel, lnameLabel, dobLabel,
-            dodLabel, heightLabel, weightLabel, ageDisplayLabel, ageLabel, BMILabel;
+    private Pane inputsPane;
     @FXML
-    private TextField id, fname, lname, mname, pname, height, weight, address;
+    private Pane menuBarPane;
     @FXML
-    private DatePicker dob, dod;
+    private Button searchClientButton;
     @FXML
-    private ChoiceBox<Gender> gender, genderIdentity;
+    private Label creationDate;
+    @FXML
+    private Label lastModified;
+    @FXML
+    private Label noClientLabel;
+    @FXML
+    private Label fnameLabel;
+    @FXML
+    private Label lnameLabel;
+    @FXML
+    private Label dobLabel;
+    @FXML
+    private Label dodLabel;
+    @FXML
+    private Label heightLabel;
+    @FXML
+    private Label weightLabel;
+    @FXML
+    private Label ageDisplayLabel;
+    @FXML
+    private Label ageLabel;
+    @FXML
+    private Label bmiLabel;
+    @FXML
+    private TextField id;
+    @FXML
+    private TextField fname;
+    @FXML
+    private TextField lname;
+    @FXML
+    private TextField mname;
+    @FXML
+    private TextField pname;
+    @FXML
+    private TextField height;
+    @FXML
+    private TextField weight;
+    @FXML
+    private TextField address;
+    @FXML
+    private DatePicker dob;
+    @FXML
+    private DatePicker dod;
+    @FXML
+    private ChoiceBox<Gender> gender;
+    @FXML
+    private ChoiceBox<Gender> genderIdentity;
     @FXML
     private ChoiceBox<BloodType> btype;
     @FXML
@@ -78,7 +121,6 @@ public class ViewClientController extends SubController {
 
     public ViewClientController() {
         manager = State.getClientManager();
-        invoker = State.getInvoker();
         session = State.getSession();
     }
 
@@ -202,11 +244,11 @@ public class ViewClientController extends SubController {
         region.setValue(viewedClient.getRegion());
         address.setText(viewedClient.getCurrentAddress());
 
-        creationDate.setText(viewedClient.getCreatedTimestamp().format(dateTimeFormat));
+        creationDate.setText(formatter.format(viewedClient.getCreatedTimestamp()));
         if (viewedClient.getModifiedTimestamp() == null) {
             lastModified.setText("User has not been modified yet.");
         } else {
-            lastModified.setText(viewedClient.getModifiedTimestamp().format(dateTimeFormat));
+            lastModified.setText(formatter.format(viewedClient.getModifiedTimestamp()));
         }
 
         displayBMI();
@@ -233,7 +275,8 @@ public class ViewClientController extends SubController {
             if (updateChanges()) {
                 displayBMI();
                 displayAge();
-                lastModified.setText(viewedClient.getModifiedTimestamp().format(dateTimeFormat));
+
+                lastModified.setText(formatter.format(viewedClient.getModifiedTimestamp()));
             }
         }
     }
@@ -253,14 +296,14 @@ public class ViewClientController extends SubController {
      */
     private boolean checkMandatoryFields() {
         boolean update = true;
-        if (fname.getText().equals("")) {
+        if (fname.getText().isEmpty()) {
             fnameLabel.setTextFill(Color.RED);
             update = false;
         } else {
             fnameLabel.setTextFill(Color.BLACK);
         }
 
-        if (lname.getText().equals("")) {
+        if (lname.getText().isEmpty()) {
             lnameLabel.setTextFill(Color.RED);
             update = false;
         } else {
@@ -318,32 +361,12 @@ public class ViewClientController extends SubController {
         return update;
     }
 
-    private void addChangeIfDifferent(ModifyClientObject modifyClientObject, String fieldString, Object newValue) {
-        try {
-            //Get the field from the string
-            Field field = modifyClientObject.getClass().getDeclaredField(fieldString);
-            Field clientField = viewedClient.getClass().getDeclaredField(fieldString);
-            //Allow access to any fields including private
-            field.setAccessible(true);
-            clientField.setAccessible(true);
-            //Only add the field if it differs from the client
-            if (!Objects.equals(clientField.get(viewedClient), newValue)) {
-                field.set(modifyClientObject, newValue);
-                modifyClientObject.registerChange(fieldString);
-            }
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
-        }
-    }
-
     /**
      * Records the changes updated as a ModifyClientAction to trace the change in record.
      * @return If there were any changes made
      */
     private boolean updateChanges() {
         ModifyClientObject modifyClientObject = new ModifyClientObject();
-
-        ModifyClientDetailsResolver resolver = new ModifyClientDetailsResolver(viewedClient, modifyClientObject);
 
         boolean clientDied = false;
 
@@ -354,48 +377,58 @@ public class ViewClientController extends SubController {
 
             if (buttonOpt.isPresent() && buttonOpt.get() == ButtonType.OK) {
 
-                MarkClientAsDeadResolver deadResolver = new MarkClientAsDeadResolver(viewedClient, dod.getValue());
+
+                Client updatedClient;
                 try {
-                    deadResolver.execute();
+                    updatedClient = State.getClientResolver().markClientAsDead(viewedClient, dod.getValue());
                 } catch (NotFoundException e) {
                     LOGGER.log(Level.WARNING, "Client not found");
-                    PageNavigator.showAlert(AlertType.WARNING, "Client not found", "The client could not be found on the "
-                            + "server, it may have been deleted");
+                    PageNavigator.showAlert(
+                            AlertType.WARNING,
+                            "Client not found",
+                            "The client could not be found on the server, it may have been deleted");
                     return false;
                 } catch (ServerRestException e) {
                     LOGGER.log(Level.WARNING, e.getMessage(), e);
-                    PageNavigator.showAlert(AlertType.WARNING, "Server error", "Could not apply changes on the server, "
-                            + "please try again later");
+                    PageNavigator.showAlert(
+                            AlertType.WARNING,
+                            "Server error",
+                            "Could not apply changes on the server, please try again later");
                     return false;
                 } catch (IfMatchFailedException e) {
                     LOGGER.log(Level.INFO, "If-Match did not match");
-                    PageNavigator.showAlert(AlertType.WARNING, "Outdated Data", "The client has been modified since you retrieved the data.\nIf you would still like to "
-                            + "apply these changes please submit again, otherwise refresh the page to update the data.");
+                    PageNavigator.showAlert(
+                            AlertType.WARNING,
+                            "Outdated Data",
+                            "The client has been modified since you retrieved the data.\n"
+                                    + "If you would still like to apply these changes please submit again, "
+                                    + "otherwise refresh the page to update the data.");
                     return false;
                 }
                 clientDied = true;
+                viewedClient.setTransplantRequests(updatedClient.getTransplantRequests());
+
 
                 Notifications.create()
                         .title("Marked Client as Dead")
                         .text("All organ transplant requests have been removed")
                         .showConfirm();
             }
-        } else {
-            addChangeIfDifferent(modifyClientObject, "dateOfDeath", dod.getValue());
         }
 
-        addChangeIfDifferent(modifyClientObject, "firstName", fname.getText());
-        addChangeIfDifferent(modifyClientObject, "lastName", lname.getText());
-        addChangeIfDifferent(modifyClientObject, "middleName", mname.getText());
-        addChangeIfDifferent(modifyClientObject, "preferredName", pname.getText());
-        addChangeIfDifferent(modifyClientObject, "dateOfBirth", dob.getValue());
-        addChangeIfDifferent(modifyClientObject, "gender", gender.getValue());
-        addChangeIfDifferent(modifyClientObject, "genderIdentity", genderIdentity.getValue());
-        addChangeIfDifferent(modifyClientObject, "height", Double.parseDouble(height.getText()));
-        addChangeIfDifferent(modifyClientObject, "weight", Double.parseDouble(weight.getText()));
-        addChangeIfDifferent(modifyClientObject, "bloodType", btype.getValue());
-        addChangeIfDifferent(modifyClientObject, "region", region.getValue());
-        addChangeIfDifferent(modifyClientObject, "currentAddress", address.getText());
+        addChangeIfDifferent(modifyClientObject, viewedClient, "firstName", fname.getText());
+        addChangeIfDifferent(modifyClientObject, viewedClient, "lastName", lname.getText());
+        addChangeIfDifferent(modifyClientObject, viewedClient, "middleName", mname.getText());
+        addChangeIfDifferent(modifyClientObject, viewedClient, "preferredName", pname.getText());
+        addChangeIfDifferent(modifyClientObject, viewedClient, "dateOfBirth", dob.getValue());
+        addChangeIfDifferent(modifyClientObject, viewedClient, "dateOfDeath", dod.getValue());
+        addChangeIfDifferent(modifyClientObject, viewedClient, "gender", gender.getValue());
+        addChangeIfDifferent(modifyClientObject, viewedClient, "genderIdentity", genderIdentity.getValue());
+        addChangeIfDifferent(modifyClientObject, viewedClient, "height", Double.parseDouble(height.getText()));
+        addChangeIfDifferent(modifyClientObject, viewedClient, "weight", Double.parseDouble(weight.getText()));
+        addChangeIfDifferent(modifyClientObject, viewedClient, "bloodType", btype.getValue());
+        addChangeIfDifferent(modifyClientObject, viewedClient, "region", region.getValue());
+        addChangeIfDifferent(modifyClientObject, viewedClient, "currentAddress", address.getText());
 
         if (modifyClientObject.getModifiedFields().isEmpty()) {
             if (!clientDied) {
@@ -408,7 +441,7 @@ public class ViewClientController extends SubController {
         }
 
         try {
-            resolver.execute();
+            State.getClientResolver().modifyClientDetails(viewedClient, modifyClientObject);
             String actionText = modifyClientObject.toString();
 
             Notifications.create()
@@ -432,11 +465,15 @@ public class ViewClientController extends SubController {
             return false;
         } catch (IfMatchFailedException e) {
             LOGGER.log(Level.INFO, "If-Match did not match");
-            PageNavigator.showAlert(AlertType.WARNING, "Outdated Data", "The client has been modified since you retrieved the data.\nIf you would still like to "
-                    + "apply these changes please submit again, otherwise refresh the page to update the data.");
+            PageNavigator.showAlert(
+                    AlertType.WARNING,
+                    "Outdated Data",
+                    "The client has been modified since you retrieved the data.\nIf you would still like to "
+                            + "apply these changes please submit again, otherwise refresh the page to update the data.");
             return false;
         }
 
+        System.out.println("refreshing");
         PageNavigator.refreshAllWindows();
         return true;
 
@@ -446,7 +483,7 @@ public class ViewClientController extends SubController {
      * Displays the currently viewed clients BMI.
      */
     private void displayBMI() {
-        BMILabel.setText(String.format("%.01f", viewedClient.getBMI()));
+        bmiLabel.setText(String.format("%.01f", viewedClient.getBMI()));
     }
 
     /**

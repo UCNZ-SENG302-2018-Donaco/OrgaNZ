@@ -1,4 +1,4 @@
-Feature: Does PATCH /client/ work?
+Feature: Does PATCH /clients/ work?
   Scenario: Update a non-existant client
     When I patch to /clients/5 using { "middleName": "New" }
     Then the result is not found

@@ -2,7 +2,10 @@ package com.humanharvest.organz.controller.client;
 
 import java.time.LocalDate;
 import java.util.Comparator;
+import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.stream.Collectors;
 
 import javafx.collections.FXCollections;
 import javafx.collections.transformation.SortedList;
@@ -35,9 +38,12 @@ import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.exceptions.NotFoundException;
+import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 
 import org.controlsfx.control.CheckComboBox;
+import org.controlsfx.control.Notifications;
 
 /**
  * Controller for the medical history page, which shows a list of all pending and past procedures for the client.
@@ -276,10 +282,33 @@ public class ViewProceduresController extends SubController {
      */
     @Override
     public void refresh() {
+        List<ProcedureRecord> allProcedures;
+        try {
+            allProcedures = State.getClientResolver().getProcedureRecords(client);
+        } catch (NotFoundException e) {
+            Notifications.create()
+                    .title("Client not found")
+                    .text("The client could not be found on the server, it may have been deleted")
+                    .showWarning();
+            return;
+        } catch (ServerRestException e) {
+            Notifications.create()
+                    .title("Server error")
+                    .text("Could not apply changes on the server, please try again later")
+                    .showError();
+            return;
+        }
+
+
         SortedList<ProcedureRecord> sortedPendingProcedures = new SortedList<>(FXCollections.observableArrayList(
-                client.getPendingProcedures()));
+                allProcedures.stream()
+                        .filter(record -> record.getDate().isBefore(LocalDate.now()))
+                        .collect(Collectors.toList())));
+
         SortedList<ProcedureRecord> sortedPastProcedures = new SortedList<>(FXCollections.observableArrayList(
-                client.getPastProcedures()));
+                allProcedures.stream()
+                        .filter(record -> !record.getDate().isBefore(LocalDate.now()))
+                        .collect(Collectors.toList())));
 
         sortedPendingProcedures.comparatorProperty().bind(pendingProcedureView.comparatorProperty());
         sortedPastProcedures.comparatorProperty().bind(pastProcedureView.comparatorProperty());

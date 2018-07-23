@@ -84,7 +84,6 @@ public class CreateClinicianControllerTest extends ControllerTest {
     }
 
     @Test
-    @Ignore
     public void validClinician1() {
         clickOn("#fname").write("f");
         clickOn("#lname").write("l");
@@ -95,7 +94,6 @@ public class CreateClinicianControllerTest extends ControllerTest {
     }
 
     @Test
-    @Ignore
     public void validClinician2() {
         clickOn("#fname").write("f");
         clickOn("#mname").write("m");

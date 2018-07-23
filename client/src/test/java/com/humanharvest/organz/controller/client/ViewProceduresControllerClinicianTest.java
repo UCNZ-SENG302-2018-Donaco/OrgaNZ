@@ -53,7 +53,7 @@ public class ViewProceduresControllerClinicianTest extends ControllerTest {
         State.reset();
         State.login(testClinician);
         mainController.setWindowContext(new WindowContext.WindowContextBuilder()
-                .setAsClinViewClientWindow()
+                .setAsClinicianViewClientWindow()
                 .viewClient(testClient)
                 .build());
         resetRecords();
@@ -135,7 +135,6 @@ public class ViewProceduresControllerClinicianTest extends ControllerTest {
     }
 
     @Test
-    @Ignore
     public void setDateFromPastToFutureTest() {
         clickOn((Node) lookup(NodeQueryUtils.hasText("12/10/2000")).query());
         clickOn((Node) lookup(NodeQueryUtils.hasText("12/10/2000")).query());

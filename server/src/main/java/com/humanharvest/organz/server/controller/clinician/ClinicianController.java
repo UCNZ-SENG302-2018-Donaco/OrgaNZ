@@ -12,6 +12,7 @@ import com.humanharvest.organz.actions.clinician.ModifyClinicianByObjectAction;
 import com.humanharvest.organz.server.exceptions.GlobalControllerExceptionHandler;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.validators.clinician.CreateClinicianValidator;
+import com.humanharvest.organz.utilities.validators.clinician.ModifyClinicianValidator;
 import com.humanharvest.organz.views.client.Views;
 import com.humanharvest.organz.views.clinician.ModifyClinicianObject;
 import org.springframework.beans.BeanUtils;
@@ -83,9 +84,9 @@ public class ClinicianController {
     public ResponseEntity<Clinician> getCliniciansById(@PathVariable int staffId, @RequestHeader
             (value = "X-Auth-Token", required = false) String authToken) {
 
-        State.getAuthenticationManager().verifyAdminAccess(authToken);
         Optional<Clinician> clinician = State.getClinicianManager().getClinicianByStaffId(staffId);
         if (clinician.isPresent()) {
+            State.getAuthenticationManager().verifyClinicianAccess(authToken, clinician.get());
             HttpHeaders headers = new HttpHeaders();
             headers.setETag(clinician.get().getETag());
             return new ResponseEntity<>(clinician.get(), headers, HttpStatus.OK);
@@ -109,11 +110,16 @@ public class ClinicianController {
 
         Optional<Clinician> clinician = State.getClinicianManager().getClinicianByStaffId(staffId);
 
-        if (clinician.isPresent()) {
-            State.getAuthenticationManager().vefifyClinicianAccess(authToken, clinician.get());
 
-            //TODO: Replace this with the actual validator
-            if (true) { //CreateClinicianValidator.isValid(editedClinician)) {
+        if (editedClinician.getStaffId() != staffId) { // Cannot patch the unique id
+            throw new GlobalControllerExceptionHandler.InvalidRequestException();
+        }
+
+        if (clinician.isPresent()) {
+            System.out.println(State.getAuthenticationManager());
+            State.getAuthenticationManager().verifyClinicianAccess(authToken, clinician.get());
+
+            if (ModifyClinicianValidator.isValid((editedClinician))) { // {
 
                 ModifyClinicianObject oldClinician = new ModifyClinicianObject();
                 BeanUtils.copyProperties(editedClinician, oldClinician, editedClinician.getUnmodifiedFields());

@@ -104,12 +104,13 @@ public class ClientMedicationsController {
 
         checkClientEtag(client.get(), ETag);
 
-        MedicationRecord record = new MedicationRecord(medicationRecordView.getName(), LocalDate.now(), null);
+        MedicationRecord record = new MedicationRecord(medicationRecordView.getName(), medicationRecordView.getStarted(), null);
         AddMedicationRecordAction action = new AddMedicationRecordAction(client.get(), record, State.getClientManager());
         State.getActionInvoker(authToken).execute(action);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setETag(client.get().getETag());
+        System.out.println(client.get().getAllMedications());
 
         return new ResponseEntity<>(client.get().getAllMedications(), headers, HttpStatus.CREATED);
     }

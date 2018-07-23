@@ -7,6 +7,7 @@ import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.actions.administrator.CreateAdministratorAction;
 import com.humanharvest.organz.actions.administrator.DeleteAdministratorAction;
+import com.humanharvest.organz.actions.administrator.ModifyAdministratorByObjectAction;
 import com.humanharvest.organz.commands.CommandsHelper;
 import com.humanharvest.organz.server.exceptions.GlobalControllerExceptionHandler.InvalidRequestException;
 import com.humanharvest.organz.state.AdministratorManager;
@@ -15,14 +16,18 @@ import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
 import com.humanharvest.organz.utilities.validators.administrator.CreateAdministratorValidator;
+import com.humanharvest.organz.utilities.validators.administrator.ModifyAdministratorValidator;
 import com.humanharvest.organz.views.administrator.CommandView;
 import com.humanharvest.organz.views.administrator.CreateAdministratorView;
+import com.humanharvest.organz.views.administrator.ModifyAdministratorObject;
 import com.humanharvest.organz.views.client.Views;
+import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -112,6 +117,74 @@ public class AdministratorController {
     }
 
     /**
+     * The PATCH endpoint for updating a single administrator
+     * @param username The administrator username to update
+     * @param modifyAdministratorObject The POJO object of the modifications
+     * @param etag The corresponding If-Match header to check for concurrent update handling
+     * @return Returns an Administrator overview. Also contains an ETag header for updates
+     * @throws IfMatchRequiredException Thrown if there is no If-Match header, will result in a 428 error
+     * @throws IfMatchFailedException Thrown if the If-Match header does not match the ETag. 412 error
+     * @throws InvalidRequestException Generic 400 exception if fields are malformed or inconsistent
+     */
+    @PatchMapping("/administrators/{username}")
+    @JsonView(Views.Overview.class)
+    public ResponseEntity<Administrator> updateAdministrator(
+            @PathVariable String username,
+            @RequestBody ModifyAdministratorObject modifyAdministratorObject,
+            @RequestHeader(value = "If-Match", required = false) String etag,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
+            throws IfMatchRequiredException, IfMatchFailedException, InvalidRequestException, AuthenticationException {
+
+        //Logical steps for a PATCH
+        //We set If-Match to false so we can return a better error code than 400 which happens if a required
+        // @RequestHeader is missing, I think this can be improved with an @ExceptionHandler or similar so we don't
+        // duplicate code in tons of places but need to work it out
+
+        //Fetch the administrator given by username
+        Optional<Administrator> administrator = State.getAdministratorManager().getAdministratorByUsername(username);
+        if (!administrator.isPresent()) {
+            //Return 404 if that administrator does not exist
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        //Check authentication
+        State.getAuthenticationManager().verifyAdminAccess(authToken);
+
+        //Validate the request, if there are any errors an exception will be thrown.
+        if (!ModifyAdministratorValidator.isValid(modifyAdministratorObject)) {
+            throw new InvalidRequestException();
+        }
+
+        //Check the ETag. These are handled in the exceptions class.
+        if (etag == null) {
+            throw new IfMatchRequiredException();
+        }
+
+        if (!administrator.get().getETag().equals(etag)) {
+            throw new IfMatchFailedException();
+        }
+
+        //Create the old details to allow undoable action
+        ModifyAdministratorObject oldClient = new ModifyAdministratorObject();
+        //Copy the values from the current client to our oldClient
+        BeanUtils.copyProperties(administrator.get(), oldClient, modifyAdministratorObject.getUnmodifiedFields());
+        //Make the action (this is a new action)
+        ModifyAdministratorByObjectAction action = new ModifyAdministratorByObjectAction(administrator.get(),
+                State.getAdministratorManager(),
+                oldClient,
+                modifyAdministratorObject);
+        //Execute action, this would correspond to a specific users invoker in full version
+        State.getActionInvoker(authToken).execute(action);
+
+        //Add the new ETag to the headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.setETag(administrator.get().getETag());
+
+        //Respond, apparently updates should be 200 not 201 unlike 365 and our spec
+        return new ResponseEntity<>(administrator.get(), headers, HttpStatus.OK);
+    }
+
+    /**
      * The DELETE endpoint for removing a single administrator
      * @param username The administrator username to delete
      * @param etag The corresponding If-Match header to check for concurrent update handling
@@ -121,7 +194,7 @@ public class AdministratorController {
      * @throws InvalidRequestException Generic 400 exception if fields are malformed or inconsistent
      */
     @DeleteMapping("/administrators/{username}")
-    public ResponseEntity<Administrator> deleteAdministrator(
+    public ResponseEntity<?> deleteAdministrator(
             @PathVariable String username,
             @RequestHeader(value = "If-Match", required = false) String etag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authentication)
@@ -136,6 +209,10 @@ public class AdministratorController {
         if (!administrator.isPresent()) {
             //Return 404 if that administrator does not exist
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        if (administrator.get().equals(State.getAdministratorManager().getDefaultAdministrator())) {
+            return new ResponseEntity<>("Unable to delete the default administrator.", HttpStatus.BAD_REQUEST);
         }
 
         //Check the ETag. These are handled in the exceptions class.
@@ -168,7 +245,6 @@ public class AdministratorController {
         String[] commands = CommandsHelper.parseCommands(commandText.getCommand());
 
         String result = CommandsHelper.executeCommandAndReturnOutput(commands, invoker);
-
 
         return new ResponseEntity<>(result, HttpStatus.OK);
     }

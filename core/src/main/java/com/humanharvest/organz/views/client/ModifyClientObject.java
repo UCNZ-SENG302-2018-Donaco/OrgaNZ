@@ -1,26 +1,17 @@
 package com.humanharvest.organz.views.client;
 
-import java.io.IOException;
-import java.lang.reflect.Field;
+import java.lang.reflect.Member;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 import com.humanharvest.organz.utilities.enums.BloodType;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Region;
+import com.humanharvest.organz.views.ModifyBaseObject;
 
-@JsonSerialize(using = ModifyClientObjectSerializer.class)
-public class ModifyClientObject {
+@JsonSerialize(using = ModifyBaseObject.Serialiser.class)
+public class ModifyClientObject extends ModifyBaseObject {
 
     private String firstName;
     private String lastName;
@@ -38,39 +29,6 @@ public class ModifyClientObject {
 
     private LocalDate dateOfBirth;
     private LocalDate dateOfDeath;
-
-
-
-    @JsonIgnore
-    private Set<Field> modifiedFields = new HashSet<>();
-
-    public ModifyClientObject() {}
-
-    @JsonIgnore
-    public Set<Field> getModifiedFields() {
-        return modifiedFields;
-    }
-
-    @JsonIgnore
-    public String[] getUnmodifiedFields() {
-        //Get all fields
-        List<Field> allFields = new ArrayList<>(Arrays.asList(ModifyClientObject.class.getDeclaredFields()));
-        //Remove the ones that have been modified
-        allFields.removeAll(modifiedFields);
-        //Convert to a list of strings
-        return allFields.stream().map(Field::getName).toArray(String[]::new);
-    }
-
-
-
-    @JsonIgnore
-    public void registerChange(String fieldName) {
-        try {
-            modifiedFields.add(ModifyClientObject.class.getDeclaredField(fieldName));
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        }
-    }
 
     public String getFirstName() {
         return firstName;
@@ -190,8 +148,8 @@ public class ModifyClientObject {
     }
 
     public String toString() {
-        String changesText = modifiedFields.stream()
-                .map(this::fieldString)
+        String changesText = getModifiedFields().stream()
+                .map(ModifyClientObject::fieldString)
                 .collect(Collectors.joining("\n"));
 
         return String.format("Updated details for client.\n"
@@ -199,33 +157,7 @@ public class ModifyClientObject {
                 changesText);
     }
 
-    private String fieldString (Field field) {
+    private static String fieldString(Member field) {
         return String.format("Updated %s", field.getName());
-    }
-}
-
-class ModifyClientObjectSerializer extends StdSerializer<ModifyClientObject> {
-
-    public ModifyClientObjectSerializer() {
-        this(null);
-    }
-
-    public ModifyClientObjectSerializer(Class<ModifyClientObject> t) {
-        super(t);
-    }
-
-    @Override
-    public void serialize(ModifyClientObject o, JsonGenerator jgen,
-            SerializerProvider serializerProvider) throws IOException {
-        jgen.writeStartObject();
-        for (Field field : o.getModifiedFields()) {
-            try {
-                field.setAccessible(true);
-                jgen.writeObjectField(field.getName(), field.get(o));
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
-        jgen.writeEndObject();
     }
 }

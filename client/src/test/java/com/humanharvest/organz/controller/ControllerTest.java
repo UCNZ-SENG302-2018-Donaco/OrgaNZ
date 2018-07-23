@@ -2,6 +2,8 @@ package com.humanharvest.organz.controller;
 
 import static org.mockito.Mockito.mock;
 
+import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -18,6 +20,7 @@ import javafx.stage.Window;
 
 import com.humanharvest.organz.GUICategory;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
 import com.humanharvest.organz.utilities.view.Page;
 import org.junit.After;
 import org.junit.BeforeClass;
@@ -47,16 +50,16 @@ public abstract class ControllerTest extends ApplicationTest {
     }
 
     @Override
-    public void start(Stage stage) throws Exception {
+    public void start(Stage stage) throws IOException {
         // Load main pane and controller
         FXMLLoader mainLoader = new FXMLLoader(getClass().getResource(Page.MAIN.getPath()));
         Pane mainPane = mainLoader.load();
         mainController = mainLoader.getController();
 
-        State.addMainController(mainController);
         mockRestTemplate = mock(RestTemplate.class);
         State.setRestTemplate(mockRestTemplate);
         initState();
+        State.addMainController(mainController);
 
         // Load page's node and controller
         FXMLLoader pageLoader = new FXMLLoader(getClass().getResource(getPage().getPath()));
@@ -73,8 +76,6 @@ public abstract class ControllerTest extends ApplicationTest {
         mainController.setPage(getPage(), pageNode);
         mainController.setSubController(pageController);
     }
-
-
 
     /**
      * Get the top modal window.
@@ -93,23 +94,28 @@ public abstract class ControllerTest extends ApplicationTest {
                 .orElse(null);
     }
 
-
     @After
     public void killAllWindows() {
         Stage stage = getTopModalStage();
         State.reset();
-        try {
+        if (stage != null) {
             Parent parent = stage.getScene().getRoot();
             if (parent instanceof DialogPane) {
                 Platform.runLater(stage::close);
             }
-        } catch (NullPointerException e) {
-
         }
-
     }
 
     protected abstract Page getPage();
 
     protected abstract void initState();
+
+    protected static <T, Y> Y setPrivateField(Class<T> clazz, String fieldName, Y newValue)
+            throws NoSuchFieldException, IllegalAccessException {
+        Field field = clazz.getDeclaredField(fieldName);
+        field.setAccessible(true);
+        Y result = (Y)field.get(null);
+        field.set(null, newValue);
+        return result;
+    }
 }

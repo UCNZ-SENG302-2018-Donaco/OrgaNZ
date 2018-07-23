@@ -3,6 +3,7 @@ package com.humanharvest.organz;
 /**
  * Any object that can be validated using an ETag
  */
+@FunctionalInterface
 public interface ConcurrencyControlledEntity {
 
     /**
@@ -10,5 +11,4 @@ public interface ConcurrencyControlledEntity {
      * @return The hashed ETag value
      */
     String getETag();
-
 }

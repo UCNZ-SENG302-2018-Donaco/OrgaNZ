@@ -1,5 +1,6 @@
 package com.humanharvest.organz.utilities.validators;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
@@ -129,7 +130,7 @@ public class ClientValidator {
     private boolean createdTimestampValid(Client client) {
         return client.getCreatedTimestamp() != null &&
                 datetimeIsValid(client.getCreatedTimestamp()) &&
-                !client.getCreatedTimestamp().isAfter(LocalDateTime.now());  // Catch future created timestamp
+                !client.getCreatedTimestamp().isAfter(Instant.now());  // Catch future created timestamp
     }
 
     private boolean modifiedTimestampValid(Client client) {
@@ -143,6 +144,7 @@ public class ClientValidator {
 
     // HELPERS
 
+    // TODO: Should this really be here? It should already be invalid by this stage
     private boolean dateIsValid(LocalDate date) {
         // Catch any invalid dates (eg date >31), or dates with null months, etc
         try {
@@ -153,9 +155,10 @@ public class ClientValidator {
         }
     }
 
-    private boolean datetimeIsValid(LocalDateTime datetime) {
+    // TODO: Should this really be here? It should already be invalid by this stage
+    private boolean datetimeIsValid(Instant datetime) {
         try {
-            LocalDateTime.parse(datetime.toString());
+            Instant.parse(datetime.toString());
             return true;
         } catch (DateTimeParseException exc) {
             return false;

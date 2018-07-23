@@ -152,11 +152,6 @@ public class ClientManagerDBPure implements ClientManager {
     }
 
     @Override
-    public int nextUid() {
-        return 0;  // TODO change this, probably doesn't need to exist in interface
-    }
-
-    @Override
     public Collection<TransplantRequest> getAllTransplantRequests() {
         List<TransplantRequest> requests = null;
         Transaction trns = null;

@@ -1,14 +1,13 @@
 package com.humanharvest.organz.actions.client;
 
-import static com.humanharvest.organz.utilities.enums.TransplantRequestStatus.CANCELLED;
-import static com.humanharvest.organz.utilities.enums.TransplantRequestStatus.WAITING;
-
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.state.ClientManager;
+import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 
 /**
  * A reversible action that will change the client's date of death to the date given, and cancel all their currently
@@ -16,8 +15,8 @@ import com.humanharvest.organz.state.ClientManager;
  */
 public class MarkClientAsDeadAction extends ClientAction {
 
-    private LocalDate deathDate;
-    private List<ResolveTransplantRequestAction> resolveTransplantActions;
+    private final LocalDate deathDate;
+    private final List<ResolveTransplantRequestAction> resolveTransplantActions;
 
     /**
      * Creates a new action to mark the given client as dead, with the given date of death.
@@ -28,10 +27,15 @@ public class MarkClientAsDeadAction extends ClientAction {
     public MarkClientAsDeadAction(Client client, LocalDate deathDate, ClientManager manager) {
         super(client, manager);
         this.deathDate = deathDate;
-        this.resolveTransplantActions = client.getTransplantRequests()
+        resolveTransplantActions = client.getTransplantRequests()
                 .stream()
-                .filter(request -> request.getStatus() == WAITING)
-                .map(request -> new ResolveTransplantRequestAction(request, CANCELLED, "The client died.", manager))
+                .filter(request -> request.getStatus() == TransplantRequestStatus.WAITING)
+                .map(request -> new ResolveTransplantRequestAction(
+                        request,
+                        TransplantRequestStatus.CANCELLED,
+                        "The client died.",
+                        LocalDateTime.now(),
+                        manager))
                 .collect(Collectors.toList());
     }
 
@@ -61,7 +65,7 @@ public class MarkClientAsDeadAction extends ClientAction {
 
     @Override
     public String getExecuteText() {
-        if (resolveTransplantActions.size() == 0) {
+        if (resolveTransplantActions.isEmpty()) {
             return String.format("Marked client %d: %s as dead. \n"
                             + "They did not have any pending transplant requests",
                     client.getUid(), client.getFullName());
@@ -77,7 +81,7 @@ public class MarkClientAsDeadAction extends ClientAction {
 
     @Override
     public String getUnexecuteText() {
-        if (resolveTransplantActions.size() == 0) {
+        if (resolveTransplantActions.isEmpty()) {
             return String.format("Reversed marking client %d: %s as dead. \n"
                             + "They did not have any pending transplant requests",
                     client.getUid(), client.getFullName());

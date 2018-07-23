@@ -1,21 +1,12 @@
-package com.humanharvest.organz.utilities.serialization;
+package com.humanharvest.organz.utilities.serialisation;
 
 import java.io.Closeable;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.lang.reflect.Type;
 import java.util.Collection;
 import java.util.List;
 
-import com.google.gson.ExclusionStrategy;
-import com.google.gson.FieldAttributes;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.annotations.Expose;
-import com.google.gson.reflect.TypeToken;
-import com.google.gson.stream.JsonReader;
+import com.fasterxml.jackson.databind.JavaType;
 
 /**
  * Provides functionality to serialize objects of a given datatype to a JSON file, by either overwriting it or
@@ -25,24 +16,8 @@ import com.google.gson.stream.JsonReader;
  */
 public class JSONFileWriter<T> implements Closeable {
 
-    private final Gson gson = new GsonBuilder()
-            .setPrettyPrinting()
-            .enableComplexMapKeySerialization()
-            .addSerializationExclusionStrategy(new ExclusionStrategy() {
-                @Override
-                public boolean shouldSkipField(FieldAttributes f) {
-                    return f.getAnnotation(Expose.class) != null && !f.getAnnotation(Expose.class).serialize();
-                }
-
-                @Override
-                public boolean shouldSkipClass(Class<?> clazz) {
-                    return false;
-                }
-            })
-            .create();
-    private final Type listType;
+    private final JavaType listType;
     private final File file;
-    private FileWriter writer;
 
     /**
      * Creates a new JSONFileWriter to write/append to to the given file. The class of the datatype must also be
@@ -51,21 +26,8 @@ public class JSONFileWriter<T> implements Closeable {
      * @param dataClass The class of the datatype to serialize to the JSON file.
      */
     public JSONFileWriter(File file, Class<T> dataClass) {
-        Type dataType = TypeToken.get(dataClass).getType();
-        this.listType = TypeToken.getParameterized(List.class, dataType).getType();
+        listType = JSONMapper.Mapper.getTypeFactory().constructCollectionType(List.class, dataClass);
         this.file = file;
-    }
-
-    /**
-     * Clears the file's current contents and creates a new {@link FileWriter} to write to it. Will close (and flush)
-     * the old FileWriter if one existed.
-     * @throws IOException If some IO error occurs when beginning writing on the file.
-     */
-    private void beginWriting() throws IOException {
-        if (writer != null) {
-            writer.close();
-        }
-        writer = new FileWriter(file);
     }
 
     /**
@@ -74,22 +36,16 @@ public class JSONFileWriter<T> implements Closeable {
      * @throws IOException If some IO error occurs when reading from the file.
      */
     private List<T> getCurrentObjectsInFile() throws IOException {
-        JsonReader reader = new JsonReader(new FileReader(file));
-        List<T> objects = gson.fromJson(reader, listType);
-        reader.close();
-
-        return objects;
+        return JSONMapper.Mapper.readValue(file, listType);
     }
 
     /**
-     * Overwrites the current contents of the file with the list of objects provided.
+     * Overrides the current contents of the file with the list of objects provided.
      * @param objects The objects of the given datatype to write to the JSON file.
      * @throws IOException If some IO error occurs when writing to the file.
      */
-    public void overwriteWith(List<T> objects) throws IOException {
-        beginWriting();
-        gson.toJson(objects, listType, writer);
-        writer.flush();
+    public void overrideWith(List<T> objects) throws IOException {
+        JSONMapper.Mapper.writeValue(file, objects);
     }
 
     /**
@@ -102,9 +58,7 @@ public class JSONFileWriter<T> implements Closeable {
         List<T> objects = getCurrentObjectsInFile();
         objects.add(newObject);
 
-        beginWriting();
-        gson.toJson(objects, listType, writer);
-        writer.flush();
+        JSONMapper.Mapper.writeValue(file, objects);
     }
 
     /**
@@ -117,9 +71,7 @@ public class JSONFileWriter<T> implements Closeable {
         List<T> objects = getCurrentObjectsInFile();
         objects.addAll(newObjects);
 
-        beginWriting();
-        gson.toJson(objects, listType, writer);
-        writer.flush();
+        JSONMapper.Mapper.writeValue(file, objects);
     }
 
     /**
@@ -128,8 +80,6 @@ public class JSONFileWriter<T> implements Closeable {
      */
     @Override
     public void close() throws IOException {
-        if (writer != null) {
-            writer.close();
-        }
+        // Nothing to do
     }
 }

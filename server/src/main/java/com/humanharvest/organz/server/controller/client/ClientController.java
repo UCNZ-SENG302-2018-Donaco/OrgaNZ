@@ -1,6 +1,6 @@
 package com.humanharvest.organz.server.controller.client;
 
-import java.util.List;
+import java.util.EnumSet;
 import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonView;
@@ -12,6 +12,11 @@ import com.humanharvest.organz.actions.client.MarkClientAsDeadAction;
 import com.humanharvest.organz.actions.client.ModifyClientByObjectAction;
 import com.humanharvest.organz.server.exceptions.GlobalControllerExceptionHandler.InvalidRequestException;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
+import com.humanharvest.organz.utilities.enums.ClientType;
+import com.humanharvest.organz.utilities.enums.Gender;
+import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
@@ -20,6 +25,7 @@ import com.humanharvest.organz.utilities.validators.client.CreateClientValidator
 import com.humanharvest.organz.utilities.validators.client.ModifyClientValidator;
 import com.humanharvest.organz.views.client.CreateClientView;
 import com.humanharvest.organz.views.client.ModifyClientObject;
+import com.humanharvest.organz.views.client.PaginatedClientList;
 import com.humanharvest.organz.views.client.SingleDateView;
 import com.humanharvest.organz.views.client.Views;
 import org.springframework.beans.BeanUtils;
@@ -33,6 +39,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -45,15 +52,40 @@ public class ClientController {
      */
     @GetMapping("/clients")
     @JsonView(Views.Overview.class)
-    public ResponseEntity<List<Client>> getClients(
-            @RequestHeader(value = "X-Auth-Token", required = false) String authToken) throws AuthenticationException {
+    public ResponseEntity<PaginatedClientList> getClients(
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken,
+
+            @RequestParam(required = false) String q,
+            @RequestParam(required = false) Integer offset,
+            @RequestParam(required = false) Integer count,
+            @RequestParam(required = false) Integer minimumAge,
+            @RequestParam(required = false) Integer maximumAge,
+            @RequestParam(required = false) EnumSet<Region> regions,
+            @RequestParam(required = false) EnumSet<Gender> birthGenders,
+            @RequestParam(required = false) ClientType clientType,
+            @RequestParam(required = false) EnumSet<Organ> donating,
+            @RequestParam(required = false) EnumSet<Organ> requesting,
+            @RequestParam(required = false) ClientSortOptionsEnum sortOrder,
+            @RequestParam(required = false) Boolean isReversed
+    ) throws AuthenticationException {
 
         //TODO: Add the auth check, but need to remake the login page to not get the list of clients
         //State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
 
-        List<Client> clients = State.getClientManager().getClients();
+        PaginatedClientList clients = State.getClientManager().getClients(
+                q,
+                offset,
+                count,
+                minimumAge,
+                maximumAge,
+                regions,
+                birthGenders,
+                clientType,
+                donating,
+                requesting,
+                sortOrder,
+                isReversed);
 
-        //TODO: Filters
         return new ResponseEntity<>(clients, HttpStatus.OK);
     }
 
@@ -75,8 +107,8 @@ public class ClientController {
             throw new InvalidRequestException();
         }
 
-        //Create a new client with the next available uid
-        Client client = new Client(State.getClientManager().nextUid());
+        //Create a new client with a default uid
+        Client client = new Client();
         //Copy the details from the CreateClientView to the new Client object
         BeanUtils.copyProperties(createClientView, client);
 
@@ -89,7 +121,6 @@ public class ClientController {
         HttpHeaders headers = new HttpHeaders();
         headers.setETag(client.getETag());
 
-        System.out.println(client);
         return new ResponseEntity<>(client, headers, HttpStatus.CREATED);
     }
 
@@ -158,7 +189,6 @@ public class ClientController {
             throw new InvalidRequestException();
         }
 
-
         //Do some extra validation now that we have the client object. Need to check if a date has been changed, it
         // will not become inconsistent
         if (!ClientBornAndDiedDatesValidator.isValid(modifyClientObject, client)) {
@@ -172,7 +202,6 @@ public class ClientController {
         if (!client.getETag().equals(etag)) {
             throw new IfMatchFailedException();
         }
-
 
         //Create the old details to allow undoable action
         ModifyClientObject oldClient = new ModifyClientObject();
@@ -266,9 +295,8 @@ public class ClientController {
 
         MarkClientAsDeadAction action = new MarkClientAsDeadAction(client, dateOfDeath.getDate(), State
                 .getClientManager
-                ());
+                        ());
         State.getActionInvoker(authToken).execute(action);
-
 
         //Add the new ETag to the headers
         HttpHeaders headers = new HttpHeaders();

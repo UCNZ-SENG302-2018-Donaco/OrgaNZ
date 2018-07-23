@@ -2,6 +2,9 @@ package com.humanharvest.organz.state;
 
 import com.humanharvest.organz.Client;
 
+/**
+ * Fake stub for authentication. DO NOT USE IN PRODUCTION.
+ */
 public class AuthenticationManagerFake extends AuthenticationManager {
 
     @Override

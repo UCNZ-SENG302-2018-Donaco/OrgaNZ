@@ -16,7 +16,6 @@ import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder
 import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore
 public class SidebarControllerClinViewClientTest extends ControllerTest {
 
     private Clinician testClinician = new Clinician("Mr", null, "Tester",
@@ -35,7 +34,7 @@ public class SidebarControllerClinViewClientTest extends ControllerTest {
         State.login(testClinician);
         State.getClientManager().addClient(client);
         State.getClinicianManager().addClinician(testClinician);
-        mainController.setWindowContext(new WindowContextBuilder().setAsClinViewClientWindow().viewClient(client).build());
+        mainController.setWindowContext(new WindowContextBuilder().setAsClinicianViewClientWindow().viewClient(client).build());
     }
 
     // Test clicking on action buttons

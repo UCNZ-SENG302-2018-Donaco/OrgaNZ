@@ -14,7 +14,7 @@ public class CreateTransplantRequestView {
     public CreateTransplantRequestView() {
     }
 
-    public CreateTransplantRequestView(Client client, Organ requestedOrgan, LocalDateTime requestDate) {
+    public CreateTransplantRequestView( Organ requestedOrgan, LocalDateTime requestDate) {
         this.client = client;
         this.requestedOrgan = requestedOrgan;
         this.requestDate = requestDate;

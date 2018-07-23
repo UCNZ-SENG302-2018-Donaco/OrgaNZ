@@ -1,11 +1,7 @@
 package com.humanharvest.organz.server;
 
-import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertNull;
-import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -13,13 +9,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 import java.nio.charset.Charset;
-import java.time.LocalDate;
-
 
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.state.AuthenticationManagerFake;
 import com.humanharvest.organz.state.State;
-
 import com.humanharvest.organz.utilities.enums.Region;
 import org.hamcrest.Matchers;
 import org.junit.Before;
@@ -38,9 +31,6 @@ import org.springframework.web.context.WebApplicationContext;
 @WebAppConfiguration
 public class ClinicianControllerTest {
 
-    private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON
-            .getSubtype(), Charset.forName("utf8"));
-
     private MockMvc mockMvc;
     private Clinician testClinician;
 
@@ -50,6 +40,7 @@ public class ClinicianControllerTest {
     @Before
     public void init() {
         State.reset();
+        State.setAuthenticationManager(new AuthenticationManagerFake());
         this.mockMvc = webAppContextSetup(webApplicationContext).build();
         testClinician = new Clinician("Shawn", "", "Michaels", "1", Region.UNSPECIFIED, 1, "hi");
         State.setAuthenticationManager(new AuthenticationManagerFake());
@@ -62,7 +53,7 @@ public class ClinicianControllerTest {
     public void getDefault() throws Exception {
         mockMvc.perform(get("/clinicians"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(contentType))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$", hasSize(1)));
     }
 
@@ -78,9 +69,6 @@ public class ClinicianControllerTest {
     public void getAuth() throws Exception {
         //TODO auth for 401's and 403's
     }
-
-
-
     // /clinician/{staffId} endpoints
 
     @Test
@@ -109,7 +97,7 @@ public class ClinicianControllerTest {
         State.getClinicianManager().addClinician(testClinician);
         mockMvc.perform(get("/clinicians/1"))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(contentType));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8));
     }
 
     @Test
@@ -127,7 +115,7 @@ public class ClinicianControllerTest {
                 + "\"region\": \"UNSPECIFIED\"}";
 
         mockMvc.perform(post("/clinicians")
-                .contentType(contentType)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(json))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.createdOn", Matchers.notNullValue()))
@@ -139,7 +127,7 @@ public class ClinicianControllerTest {
         String json = "{\"staffId\": 1, \"firstName\": \"jan\",  \"lastName\": \"vincent\",  "
                 + "\"middleName\": \"michael\", \"workAddress\": \"my home\",   \"password\": \"ok\", ";
         mockMvc.perform(post("/clinicians")
-                .contentType(contentType)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(json))
                 .andExpect(status().isBadRequest());
     }
@@ -155,6 +143,65 @@ public class ClinicianControllerTest {
     }
 
     //------------PATCH---------------
+
+    // Patching with only 2 params
+    @Test
+    public void patchValidParams() throws Exception {
+        String json = "{\"password\": \"ok\", \"region\": \"AUCKLAND\"}";
+        mockMvc.perform(patch("/clinicians/0")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(json))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.staffId", is(0)))
+                .andExpect(jsonPath("$.firstName", is("admin")))
+                .andExpect(jsonPath("$.lastName", is("admin")))
+                .andExpect(jsonPath("$.middleName", is(Matchers.isEmptyOrNullString())))
+                .andExpect(jsonPath("$.workAddress", is("admin")))
+                .andExpect(jsonPath("$.password", is("ok")))
+                .andExpect(jsonPath("$.region", is("AUCKLAND")))
+                .andExpect(jsonPath("$.createdOn", Matchers.anything()))
+                .andExpect(jsonPath("$.modifiedOn", Matchers.anything()));
+    }
+
+    // Patching all params
+    @Test
+    public void validPatchAll() throws Exception {
+        String json = "{\"firstName\": \"jan\",  \"lastName\": \"vincent\",  "
+                + "\"middleName\": \"michael\", \"workAddress\": \"my home\",   \"password\": \"ok\", "
+                + "\"region\": \"UNSPECIFIED\"}";
+        mockMvc.perform(patch("/clinicians/0")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(json))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.staffId", is(0)))
+                .andExpect(jsonPath("$.firstName", is("jan")))
+                .andExpect(jsonPath("$.lastName", is("vincent")))
+                .andExpect(jsonPath("$.middleName", is("michael")))
+                .andExpect(jsonPath("$.workAddress", is("my home")))
+                .andExpect(jsonPath("$.password", is("ok")))
+                .andExpect(jsonPath("$.region", is("UNSPECIFIED")))
+                .andExpect(jsonPath("$.createdOn", Matchers.anything()))
+                .andExpect(jsonPath("$.modifiedOn", Matchers.anything()));
+    }
+
+    // Attempting to patch the Id (it is a unique identifier)
+    @Test
+    public void invalidPatchId() throws Exception {
+        String json = "{\"staffId\": \"5\"}";
+        mockMvc.perform(patch("/clinicians/0")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(json))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void patchNonExistingClinician() throws Exception {
+        String json = "{\"password\": \"ok\", \"region\": \"AUCKLAND\"}";
+        mockMvc.perform(patch("/clinicians/200")
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(json))
+                .andExpect(status().isBadRequest());
+    }
 
 
     //------------DELETE---------------

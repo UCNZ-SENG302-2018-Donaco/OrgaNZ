@@ -12,7 +12,6 @@ import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder
 import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore
 public class SidebarControllerAdministratorTest extends ControllerTest {
 
     private Administrator testAdmin = new Administrator("username", "password");

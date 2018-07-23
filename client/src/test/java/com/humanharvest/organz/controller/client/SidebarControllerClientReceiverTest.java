@@ -16,7 +16,6 @@ import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder
 import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore
 public class SidebarControllerClientReceiverTest extends ControllerTest {
 
     private Client client = new Client("Client", "Number", "One", LocalDate.now(), 1);
