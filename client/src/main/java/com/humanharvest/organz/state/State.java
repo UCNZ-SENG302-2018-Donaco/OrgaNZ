@@ -54,6 +54,7 @@ public final class State {
     private static String clinicianEtag = "";
     private static String administratorEtag = "";
     private static String token = "";
+    private static EnumSet<Country> allowedCountries;
 
     private State() {
     }
