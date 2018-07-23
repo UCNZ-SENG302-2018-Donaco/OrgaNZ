@@ -1,10 +1,14 @@
 package com.humanharvest.organz.server.controller.client;
 
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.EnumSet;
 import java.util.Optional;
+
+import javax.imageio.ImageIO;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Client;
@@ -308,7 +312,7 @@ public class ClientController {
         return new ResponseEntity<>(client, headers, HttpStatus.OK);
     }
 
-    @GetMapping("clients/{uid}/image")
+    @GetMapping(value = "clients/{uid}/image", produces = "image/png")
     public ResponseEntity getClientImage(
             @PathVariable int uid
 //            @RequestHeader(value = "If-Match", required = false) String etag,
@@ -321,7 +325,13 @@ public class ClientController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND); //Return 404 if that client does not exist
         }
 
-        Client client = optionalClient.get();
+//        try {
+//            InputStream inputStream = this.getClass().getResourceAsStream("./server/src/resources/images/" + uid + ""
+//                    + ".png");
+//            BufferedImage img = ImageIO.read(inputStream);
+//        }
+
+//        Client client = optionalClient.get();
 //        State.getAuthenticationManager().verifyClientAccess(authToken, client);
 
 //        if (etag == null) {
