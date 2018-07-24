@@ -35,7 +35,6 @@ import javafx.scene.text.Text;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.resolvers.client.DeleteClientResolver;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
@@ -237,8 +236,7 @@ public class SearchClientsController extends SubController {
 
     private void deleteClient(Client client) {
         try {
-            DeleteClientResolver resolver = new DeleteClientResolver(client);
-            resolver.execute();
+            State.getClientResolver().deleteClient(client);
         } catch (NotFoundException e) {
             LOGGER.log(Level.WARNING, "Client not found");
             PageNavigator.showAlert(AlertType.WARNING, "Client not found", "The client could not be found on the "

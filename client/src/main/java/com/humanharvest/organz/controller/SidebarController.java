@@ -4,7 +4,6 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
 import com.humanharvest.organz.Client;
-import com.humanharvest.organz.resolvers.ActionResolver;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
@@ -108,7 +107,7 @@ public class SidebarController extends SubController {
      * Refreshes the undo/redo buttons based on if there are changes to be made
      */
     public void refresh() {
-        ActionResponseView responseView = ActionResolver.getUndo();
+        ActionResponseView responseView = State.getActionResolver().getUndo();
         undoButton.setDisable(!responseView.isCanUndo());
         redoButton.setDisable(!responseView.isCanRedo());
     }
@@ -249,7 +248,7 @@ public class SidebarController extends SubController {
      */
     @FXML
     private void undo() {
-        ActionResponseView responseView = ActionResolver.executeUndo(State.getClientEtag());
+        ActionResponseView responseView = State.getActionResolver().executeUndo(State.getClientEtag());
         Notifications.create().title("Undo").text(responseView.getResultText()).showInformation();
         PageNavigator.refreshAllWindows();
     }
@@ -260,7 +259,7 @@ public class SidebarController extends SubController {
      */
     @FXML
     private void redo() {
-        ActionResponseView responseView = ActionResolver.executeRedo(State.getClientEtag());
+        ActionResponseView responseView = State.getActionResolver().executeRedo(State.getClientEtag());
         Notifications.create().title("Redo").text(responseView.getResultText()).showInformation();
         PageNavigator.refreshAllWindows();
     }

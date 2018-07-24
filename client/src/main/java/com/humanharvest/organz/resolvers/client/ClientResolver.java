@@ -1,6 +1,5 @@
 package com.humanharvest.organz.resolvers.client;
 
-import com.humanharvest.organz.views.client.ModifyIllnessObject;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -11,6 +10,7 @@ import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.ProcedureRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.views.client.CreateClientView;
 import com.humanharvest.organz.views.client.CreateIllnessView;
 import com.humanharvest.organz.views.client.CreateMedicationRecordView;
 import com.humanharvest.organz.views.client.CreateProcedureView;
@@ -45,6 +45,8 @@ public interface ClientResolver {
 
     //------------POSTs----------------
 
+    Client createClient(CreateClientView createClientView);
+
     List<TransplantRequest> createTransplantRequest(Client client, CreateTransplantRequestView request);
 
     Client markClientAsDead(Client client, LocalDate dateOfDeath);
@@ -56,6 +58,8 @@ public interface ClientResolver {
     List<ProcedureRecord> addProcedureRecord(Client client, CreateProcedureView procedureView);
 
     //------------PATCHs----------------
+
+    Map<Organ, Boolean> modifyOrganDonation(Client client, Map<Organ, Boolean> changes);
 
     TransplantRequest resolveTransplantRequest(
             Client client,
@@ -80,5 +84,7 @@ public interface ClientResolver {
     void deleteIllnessRecord(Client client, IllnessRecord record);
 
     void deleteProcedureRecord(Client client, ProcedureRecord record);
+
+    void deleteClient(Client client);
 
 }

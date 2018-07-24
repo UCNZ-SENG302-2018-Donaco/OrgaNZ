@@ -17,11 +17,8 @@ import javafx.scene.layout.Pane;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.TransplantRequest;
-import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.resolvers.client.ClientResolver;
-import com.humanharvest.organz.resolvers.client.ModifyClientOrganDonationResolver;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
@@ -43,7 +40,6 @@ public class RegisterOrganDonationController extends SubController {
 
     private Session session;
     private ClientManager manager;
-    private ActionInvoker invoker;
     private Client client;
     private Map<Organ, Boolean> donationStatus;
 
@@ -58,7 +54,6 @@ public class RegisterOrganDonationController extends SubController {
 
     public RegisterOrganDonationController() {
         manager = State.getClientManager();
-        invoker = State.getInvoker();
         session = State.getSession();
     }
 
@@ -176,7 +171,7 @@ public class RegisterOrganDonationController extends SubController {
      */
     @FXML
     private void apply() {
-        ModifyClientOrganDonationResolver resolver = new ModifyClientOrganDonationResolver(client);
+        Map<Organ, Boolean> changes = new HashMap<>();
         boolean hasChanged = false;
 
         for (Organ organ : organCheckBoxes.keySet()) {
@@ -184,13 +179,13 @@ public class RegisterOrganDonationController extends SubController {
             boolean newStatus = organCheckBoxes.get(organ).isSelected();
 
             if (oldStatus != newStatus) {
-                resolver.addChange(organ, newStatus);
+                changes.put(organ, newStatus);
                 hasChanged = true;
             }
         }
         if (hasChanged) {
             try {
-                resolver.execute();
+                State.getClientResolver().modifyOrganDonation(client, changes);
             } catch (NotFoundException e) {
                 LOGGER.log(Level.WARNING, "Client not found");
                 Notifications.create()
@@ -221,13 +216,30 @@ public class RegisterOrganDonationController extends SubController {
             PageNavigator.refreshAllWindows();
             Notifications.create()
                     .title("Updated Donating Organs")
-                    .text(resolver.toString())
+                    .text(getChangesText(changes))
                     .showInformation();
         } else {
             Notifications.create()
                     .title("No changes were made.")
                     .text("No changes were made to the client's organ status.")
                     .showWarning();
+        }
+    }
+
+    private String getChangesText(Map<Organ, Boolean> changes) {
+        String changesText = changes.entrySet().stream()
+                .map(entry -> formatChange(entry.getKey(), entry.getValue()))
+                .collect(Collectors.joining("\n"));
+
+        return String.format("Changed organ donation registration for client %d: %s:\n\n%s",
+                client.getUid(), client.getFullName(), changesText);
+    }
+
+    private String formatChange(Organ organ, boolean newValue) {
+        if (newValue) {
+            return String.format("Registered %s for donation.", organ.toString());
+        } else {
+            return String.format("Deregistered %s for donation.", organ.toString());
         }
     }
 
