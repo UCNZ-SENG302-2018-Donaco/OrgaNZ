@@ -1,9 +1,13 @@
 package com.humanharvest.organz.state;
 
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.humanharvest.organz.Client;
 import com.humanharvest.organz.actions.ActionInvoker;
+import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
 
 /**
  * A static class to store the current state of the system.
@@ -42,6 +46,16 @@ public final class State {
             clientManager = new ClientManagerMemory();
             clinicianManager = new ClinicianManagerMemory();
             administratorManager = new AdministratorManagerMemory();
+
+            // DEBUG DATA TODO REMOVE FOR PRODUCTION
+            Client jack = new Client("Jack", "EOD", "Steel", LocalDate.of(1997,04,21), 1);
+            clientManager.addClient(jack);
+            try {
+                jack.setOrganDonationStatus(Organ.HEART, true);
+                jack.setOrganDonationStatus(Organ.KIDNEY, true);
+            } catch (OrganAlreadyRegisteredException ignored) {}
+            clientManager.addClient(new Client("Second", "Test", "Client", LocalDate.of(1987,12,21), 2));
+            // END DEBUG DATA
         } else {
             throw new IllegalArgumentException("DataStorageType cannot be null.");
         }
