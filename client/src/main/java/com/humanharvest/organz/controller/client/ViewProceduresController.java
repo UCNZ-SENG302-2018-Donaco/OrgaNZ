@@ -37,6 +37,7 @@ import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.exceptions.BadRequestException;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.PageNavigator;
@@ -164,6 +165,8 @@ public class ViewProceduresController extends SubController {
             PageNavigator.showAlert(AlertType.ERROR,
                     "Server Error",
                     "An error occurred when trying to send data to the server.\nPlease try again later.");
+        } catch (BadRequestException exc) {
+            LOGGER.info("No changes were made to the procedure.");
         }
     }
 
