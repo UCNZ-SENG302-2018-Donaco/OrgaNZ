@@ -321,21 +321,13 @@ public class ClientMedicalHistoryController extends SubController {
                         "An illness can't be cured if it is chronic. If the illness has been cured, first mark it as"
                                 + " not chronic.");
             } else if (selectedTableView == currentIllnessView) {
-                // Moving from current to past (marking as cured)
-                //ModifyIllnessRecordAction action = new ModifyIllnessRecordAction(record, manager);
-                //action.changeCuredDate(LocalDate.now());
                 record.setCuredDate(LocalDate.now());
                 State.getClientResolver().modifyIllnessRecord(client,record);
 
-                //invoker.execute(action);
                 PageNavigator.refreshAllWindows();
             } else if (selectedTableView == pastIllnessView) {
-                // Moving from past to current (marking as not cured)
-                //ModifyIllnessRecordAction action = new ModifyIllnessRecordAction(record, manager);
                 record.setCuredDate(null);
                 State.getClientResolver().modifyIllnessRecord(client,record);
-                //action.changeCuredDate(null);
-                //invoker.execute(action);
                 PageNavigator.refreshAllWindows();
 
             }
@@ -351,7 +343,6 @@ public class ClientMedicalHistoryController extends SubController {
     private void deleteIllness() {
         IllnessRecord record = getSelectedRecord();
         if (record != null) {
-            //DeleteIllnessRecordAction action = new DeleteIllnessRecordAction(client, record, manager);
             try {
                 State.getClientResolver().deleteIllnessRecord(client, record);
             } catch (NotFoundException e) {
@@ -377,7 +368,6 @@ public class ClientMedicalHistoryController extends SubController {
                     .showWarning();
                 return;
             }
-            //invoker.execute(action);
             PageNavigator.refreshAllWindows();
         }
     }
@@ -392,7 +382,6 @@ public class ClientMedicalHistoryController extends SubController {
         IllnessRecord record = getSelectedRecord();
         if (record != null) {
 
-            //ModifyIllnessRecordAction action = new ModifyIllnessRecordAction(record, manager);
             if (record.isChronic()) {
                 // Current, chronic illness -> Current illness
                 record.setChronic(false);
@@ -430,7 +419,6 @@ public class ClientMedicalHistoryController extends SubController {
                     .showWarning();
                 return;
             }
-            //invoker.execute(action);
             PageNavigator.refreshAllWindows();
         }
 
@@ -484,9 +472,6 @@ public class ClientMedicalHistoryController extends SubController {
                     .showWarning();
                 return;
             }
-
-            //AddIllnessRecordAction action = new AddIllnessRecordAction(client, record, manager);
-            //invoker.execute(action);
 
             illnessNameField.setText(null);
             errorMessage.setText(null);

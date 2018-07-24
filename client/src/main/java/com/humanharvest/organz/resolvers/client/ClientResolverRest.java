@@ -260,6 +260,7 @@ public class ClientResolverRest implements ClientResolver {
                 ProcedureRecord.class,
                 client.getUid(),
                 record.getId());
+        client.deleteProcedureRecord(record);
     }
 
     //------------Templates----------------
