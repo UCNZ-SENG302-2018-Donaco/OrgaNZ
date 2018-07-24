@@ -157,19 +157,4 @@ public class ClientManagerRest implements ClientManager {
         throw new UnsupportedOperationException();
     }
 
-    @Override
-    public byte[] getClientImage(int uid) {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.set("X-Auth-Token", State.getToken());
-        HttpEntity<Client> entity = new HttpEntity<>(null, httpHeaders);
-
-        ResponseEntity responseEntity = State.getRestTemplate().exchange(State.BASE_URI + "/clients/{uid}/image", HttpMethod.GET,
-                entity, byte[].class, uid);
-
-//        byte[] res = State.getRestTemplate().exchange(State.BASE_URI + "/clients/{uid}/image", HttpMethod.GET,
-//                entity, byte[].class, uid).getBody();
-
-
-        return (byte[]) responseEntity.getBody();
-    }
 }

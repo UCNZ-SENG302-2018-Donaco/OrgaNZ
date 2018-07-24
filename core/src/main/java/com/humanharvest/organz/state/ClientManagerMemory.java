@@ -140,9 +140,4 @@ public class ClientManagerMemory implements ClientManager {
                 .filter(request -> request.getStatus() == TransplantRequestStatus.WAITING)
                 .collect(Collectors.toList());
     }
-
-    @Override
-    public byte[] getClientImage(int uid) {//do nothing
-        return new byte[0];
-        }
 }

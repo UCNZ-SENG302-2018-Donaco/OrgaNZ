@@ -41,6 +41,7 @@ public final class State {
     private static ClinicianManager clinicianManager;
     private static AdministratorManager administratorManager;
     private static AuthenticationManager authenticationManager;
+    private static ImageManager imageManager;
     private static CommandRunner commandRunner;
 
     private static ActionInvoker invoker;
@@ -76,6 +77,7 @@ public final class State {
             clinicianManager = new ClinicianManagerRest();
             administratorManager = new AdministratorManagerRest();
             authenticationManager = new AuthenticationManagerRest();
+            imageManager = new ImageManager();
             commandRunner = new CommandRunnerRest();
         } else if (storageType == DataStorageType.MEMORY) {
             clientManager = new ClientManagerMemory();
@@ -83,6 +85,7 @@ public final class State {
             clinicianManager = new ClinicianManagerMemory();
             administratorManager = new AdministratorManagerMemory();
             authenticationManager = new AuthenticationManagerMemory();
+            imageManager = new ImageManager();
             commandRunner = commandText -> {
                 throw new UnsupportedOperationException("Memory storage type does not support running commands.");
             };
@@ -221,4 +224,6 @@ public final class State {
     public static CommandRunner getCommandRunner() {
         return commandRunner;
     }
+
+    public static ImageManager getImageManager() {return imageManager;}
 }

@@ -194,9 +194,4 @@ public class ClientManagerDBPure implements ClientManager {
 
         return requests == null ? new ArrayList<>() : requests;
     }
-
-    @Override
-    public byte[] getClientImage(int uid) {
-        return new byte[0];
-    }
 }

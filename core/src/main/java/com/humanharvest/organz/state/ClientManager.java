@@ -155,6 +155,4 @@ public interface ClientManager {
      * @return All current transplant requests.
      */
     Collection<TransplantRequest> getAllCurrentTransplantRequests();
-
-    byte[] getClientImage(int uid);
 }

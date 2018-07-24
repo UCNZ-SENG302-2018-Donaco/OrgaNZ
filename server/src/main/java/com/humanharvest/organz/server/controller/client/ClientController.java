@@ -1,8 +1,6 @@
 package com.humanharvest.organz.server.controller.client;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.EnumSet;
 import java.util.Optional;
 
@@ -314,10 +312,6 @@ public class ClientController {
 
     @GetMapping("clients/{uid}/image")
     public @ResponseBody byte[] getClientImage(@PathVariable int uid) throws InvalidRequestException, IfMatchFailedException, IfMatchRequiredException, IOException {
-//        InputStream in = getClass().getResourceAsStream("resources/images" + uid + ".png");
-//        InputStream in = getClass().getResourceAsStream("/src/main/resources/images/" + uid + ".png");
-//        InputStream in = getClass().getResourceAsStream("./../../../../../../resources/images/" + uid + ".png");
-//        InputStream in = getClass().getResourceAsStream("./server/src/resources/images/" + uid + ".png");
         InputStream in;
         try {
             in = new FileInputStream("./images/" + uid +  ".png");
@@ -326,7 +320,21 @@ public class ClientController {
         }
         System.out.println(in.toString());
         return IOUtils.toByteArray(in);
+    }
 
+    @PostMapping("clients/{uid}/image")
+    public ResponseEntity postClientImage(@PathVariable int uid, byte[] image) throws IOException {
+        OutputStream out;
+        try {
+            out = new FileOutputStream("./images/" + uid + ".png");
+            out.write(image);
+            out.close();
+            return new ResponseEntity(HttpStatus.OK);
+
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
     }
 
 }

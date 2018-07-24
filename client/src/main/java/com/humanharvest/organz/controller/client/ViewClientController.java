@@ -3,9 +3,7 @@ package com.humanharvest.organz.controller.client;
 import static com.humanharvest.organz.state.State.getClientManager;
 
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -18,7 +16,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
-
+import org.apache.commons.io.IOUtils;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
@@ -218,7 +216,7 @@ public class ViewClientController extends ViewBaseController {
         btype.setValue(viewedClient.getBloodType());
         region.setValue(viewedClient.getRegion());
         address.setText(viewedClient.getCurrentAddress());
-        fullName.setText(viewedClient.getFullName());
+        fullName.setText(viewedClient.getPreferredNameOnly());
 
 
         creationDate.setText(formatter.format(viewedClient.getCreatedTimestamp()));
@@ -256,23 +254,10 @@ public class ViewClientController extends ViewBaseController {
      */
     private void loadImage() {
 
-
-        byte[] bytes = State.getClientManager().getClientImage(viewedClient.getUid());
-
-
-        image = new Image(new ByteArrayInputStream(bytes));
-
-
-//        if (file.toURI().toString().contains("default.png")) {
-////            image = new Image("https://cdn4.iconfinder.com/data/icons/standard-free-icons/139/Profile01-512.png"); // Make this a local image
-//            deletePhotoButton.setDisable(true);
-//        } else {
-//            deletePhotoButton.setDisable(false);
-//        }
-
-        // GET Image from DB
-        // if image exists
-        // image = existing image
+        byte[] bytes = State.getImageManager().getClientImage(viewedClient.getUid());
+        if (bytes != null) {
+            image = new Image(new ByteArrayInputStream(bytes));
+        }
 
         imageView.setImage(image);
         imageView.setFitHeight(130);
@@ -286,10 +271,11 @@ public class ViewClientController extends ViewBaseController {
      */
     @FXML
     public void uploadPhoto() {
+        boolean uploadSuccess = false;
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Upload Profile Image");
         fileChooser.getExtensionFilters().addAll(
-                new ExtensionFilter("Image Files", "*.png", "*.jpg") // Restricting only these file types.
+                new ExtensionFilter("Image Files", "*.png") // Restricting only this file type.
         );
 
         File selectedFile = fileChooser.showOpenDialog(AppUI.getWindow());
@@ -302,8 +288,22 @@ public class ViewClientController extends ViewBaseController {
                         "This file could not be read. Ensure you are uploading a valid .png or .jpg");
             } else {
                 image = new Image(selectedFile.toURI().toString());
-                loadImage();
+                try {
+                    InputStream in = new FileInputStream(selectedFile);
+                    uploadSuccess = State.getImageManager().postClientImage(viewedClient.getUid(), IOUtils.toByteArray(in));
+                    loadImage();
+                } catch (FileNotFoundException ex) {
+                    PageNavigator.showAlert(AlertType.WARNING, "File Couldn't Be Found",
+                            "This file was not found.");
+                } catch (IOException ex) {
+                    PageNavigator.showAlert(AlertType.WARNING, "File Couldn't Be Read",
+                            "This file could not be read. Ensure you are uploading a valid .png or .jpg");
+                }
             }
+        }
+        if (uploadSuccess) {
+            PageNavigator.showAlert(AlertType.CONFIRMATION, "Success",
+                    "The image has been posted.");
         }
     }
 
