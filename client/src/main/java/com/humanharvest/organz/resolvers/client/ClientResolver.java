@@ -52,7 +52,6 @@ public interface ClientResolver {
 
     List<MedicationRecord> addMedicationRecord(Client client, CreateMedicationRecordView medicationRecordView);
 
-
     List<ProcedureRecord> addProcedureRecord(Client client, CreateProcedureView procedureView);
 
     //------------PATCHs----------------
@@ -70,11 +69,13 @@ public interface ClientResolver {
 
     MedicationRecord modifyMedicationRecord(Client client, MedicationRecord record, LocalDate stopDate);
 
-    ProcedureRecord modifyProcedureRecord(Client client, ModifyProcedureObject modifyProcedureObject, int
-            procedureRecordIndex);
+    ProcedureRecord modifyProcedureRecord(Client client, ModifyProcedureObject modifyProcedureObject, long
+            procedureRecordId);
 
     //------------DELETEs----------------
 
     void deleteIllnessRecord(Client client, IllnessRecord record);
+
+    void deleteProcedureRecord(Client client, ProcedureRecord record);
 
 }

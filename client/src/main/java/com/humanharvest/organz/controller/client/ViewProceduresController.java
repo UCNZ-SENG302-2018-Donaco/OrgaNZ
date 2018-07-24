@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import javafx.collections.FXCollections;
@@ -25,7 +26,6 @@ import javafx.scene.text.Text;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.ProcedureRecord;
 import com.humanharvest.organz.actions.ActionInvoker;
-import com.humanharvest.organz.actions.client.AddProcedureRecordAction;
 import com.humanharvest.organz.actions.client.DeleteProcedureRecordAction;
 import com.humanharvest.organz.actions.client.ModifyProcedureRecordAction;
 import com.humanharvest.organz.controller.MainController;
@@ -40,6 +40,8 @@ import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.views.client.CreateProcedureView;
+import com.humanharvest.organz.views.client.ModifyProcedureObject;
 import org.controlsfx.control.CheckComboBox;
 import org.controlsfx.control.Notifications;
 
@@ -47,6 +49,8 @@ import org.controlsfx.control.Notifications;
  * Controller for the medical history page, which shows a list of all pending and past procedures for the client.
  */
 public class ViewProceduresController extends SubController {
+
+    private static final Logger LOGGER = Logger.getLogger(ViewProceduresController.class.getName());
 
     private Session session;
     private ActionInvoker invoker;
@@ -108,14 +112,9 @@ public class ViewProceduresController extends SubController {
      * @param event The cell edit event.
      */
     private void editSummaryCell(CellEditEvent<ProcedureRecord,String> event) {
-        ModifyProcedureRecordAction action = new ModifyProcedureRecordAction(event.getRowValue(), manager);
-        action.changeSummary(event.getNewValue());
-
-        try {
-            invoker.execute(action);
-            PageNavigator.refreshAllWindows();
-        } catch (IllegalStateException ignored) {
-        }
+        ModifyProcedureObject modification = new ModifyProcedureObject();
+        modification.setSummary(event.getNewValue());
+        sendModification(modification, event.getRowValue().getId());
     }
 
     /**
@@ -123,14 +122,9 @@ public class ViewProceduresController extends SubController {
      * @param event The cell edit event.
      */
     private void editDescriptionCell(CellEditEvent<ProcedureRecord,String> event) {
-        ModifyProcedureRecordAction action = new ModifyProcedureRecordAction(event.getRowValue(), manager);
-        action.changeDescription(event.getNewValue());
-
-        try {
-            invoker.execute(action);
-            PageNavigator.refreshAllWindows();
-        } catch (IllegalStateException ignored) {
-        }
+        ModifyProcedureObject modification = new ModifyProcedureObject();
+        modification.setDescription(event.getNewValue());
+        sendModification(modification, event.getRowValue().getId());
     }
 
     /**
@@ -144,13 +138,9 @@ public class ViewProceduresController extends SubController {
                     "Invalid Date",
                     "New procedure date must be after the client's date of birth.");
         } else {
-            ModifyProcedureRecordAction action = new ModifyProcedureRecordAction(event.getRowValue(), manager);
-            action.changeDate(newDate);
-
-            try {
-                invoker.execute(action);
-            } catch (IllegalStateException ignored) {
-            }
+            ModifyProcedureObject modification = new ModifyProcedureObject();
+            modification.setDate(event.getNewValue());
+            sendModification(modification, event.getRowValue().getId());
         }
         PageNavigator.refreshAllWindows();
     }
@@ -160,13 +150,20 @@ public class ViewProceduresController extends SubController {
      * @param event The cell edit event.
      */
     private void editAffectedOrgansCell(CellEditEvent<ProcedureRecord, Set<Organ>> event) {
-        ModifyProcedureRecordAction action = new ModifyProcedureRecordAction(event.getRowValue(), manager);
-        action.changeAffectedOrgans(event.getNewValue());
+        ModifyProcedureObject modification = new ModifyProcedureObject();
+        modification.setAffectedOrgans(event.getNewValue());
+        sendModification(modification, event.getRowValue().getId());
+    }
 
+    private void sendModification(ModifyProcedureObject modification, long procedureRecordId) {
         try {
-            invoker.execute(action);
+            State.getClientResolver().modifyProcedureRecord(client, modification, procedureRecordId);
             PageNavigator.refreshAllWindows();
-        } catch (IllegalStateException ignored) {
+        } catch (ServerRestException exc) {
+            LOGGER.severe(exc.getMessage());
+            PageNavigator.showAlert(AlertType.ERROR,
+                    "Server Error",
+                    "An error occurred when trying to send data to the server.\nPlease try again later.");
         }
     }
 
@@ -360,9 +357,16 @@ public class ViewProceduresController extends SubController {
     private void deleteProcedure() {
         ProcedureRecord record = getSelectedRecord();
         if (record != null) {
-            DeleteProcedureRecordAction action = new DeleteProcedureRecordAction(client, record, manager);
+            try {
+                State.getClientResolver().deleteProcedureRecord(client, record);
+            } catch (ServerRestException exc) {
+                LOGGER.severe(exc.getMessage());
+                PageNavigator.showAlert(AlertType.ERROR,
+                        "Server Error",
+                        "An error occurred when trying to send data to the server.\nPlease try again later.");
+                return;
+            }
 
-            invoker.execute(action);
             PageNavigator.refreshAllWindows();
         }
     }
@@ -384,15 +388,22 @@ public class ViewProceduresController extends SubController {
             for (Organ organ : affectedOrgansField.getCheckModel().getCheckedItems()) {
                 record.addAffectedOrgan(organ);
             }
-            AddProcedureRecordAction action = new AddProcedureRecordAction(client, record, manager);
-            invoker.execute(action);
 
-            summaryField.setText(null);
-            descriptionField.setText(null);
-            dateField.setValue(null);
-            errorMessage.setText(null);
+            try {
+                State.getClientResolver().addProcedureRecord(client, new CreateProcedureView(record));
 
-            PageNavigator.refreshAllWindows();
+                summaryField.setText(null);
+                descriptionField.setText(null);
+                dateField.setValue(null);
+                errorMessage.setText(null);
+                PageNavigator.refreshAllWindows();
+
+            } catch (ServerRestException exc) {
+                LOGGER.severe(exc.getMessage());
+                PageNavigator.showAlert(AlertType.ERROR,
+                        "Server Error",
+                        "An error occurred when trying to send data to the server.\nPlease try again later.");
+            }
         }
     }
 }

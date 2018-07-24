@@ -116,12 +116,16 @@ public class ClientResolverMemory implements ClientResolver {
 
     @Override
     public ProcedureRecord modifyProcedureRecord(Client client, ModifyProcedureObject modifyProcedureObject,
-            int procedureRecordIndex) {
-        ProcedureRecord newProcedureRecord = client.getProcedures().get(procedureRecordIndex);
-        newProcedureRecord.setSummary(modifyProcedureObject.getSummary());
-        newProcedureRecord.setDescription(modifyProcedureObject.getDescription());
-        newProcedureRecord.setDate(modifyProcedureObject.getDate());
-        return newProcedureRecord;
+            long procedureRecordId) {
+        ProcedureRecord toModify = client.getProcedures().stream().filter(record -> record.getId() == procedureRecordId)
+                .findFirst().orElse(null);
+
+        if (toModify != null) {
+            toModify.setSummary(modifyProcedureObject.getSummary());
+            toModify.setDescription(modifyProcedureObject.getDescription());
+            toModify.setDate(modifyProcedureObject.getDate());
+        }
+        return toModify;
     }
 
     //------------DELETEs----------------
@@ -129,5 +133,10 @@ public class ClientResolverMemory implements ClientResolver {
     @Override
     public void deleteIllnessRecord(Client client, IllnessRecord record) {
         client.deleteIllnessRecord(record);
+    }
+
+    @Override
+    public void deleteProcedureRecord(Client client, ProcedureRecord record) {
+        client.deleteProcedureRecord(record);
     }
 }

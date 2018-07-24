@@ -204,18 +204,14 @@ public class ClientResolverRest implements ClientResolver {
     }
 
     @Override
-    public ProcedureRecord modifyProcedureRecord(Client client, ModifyProcedureObject modifyProcedureObject, int
-            procedureRecordIndex) {
+    public ProcedureRecord modifyProcedureRecord(Client client, ModifyProcedureObject modifyProcedureObject,
+            long procedureRecordId) {
         HttpHeaders httpHeaders = createHeaders(true);
 
         HttpEntity<ModifyProcedureObject> entity = new HttpEntity<>(modifyProcedureObject, httpHeaders);
 
         ResponseEntity<ProcedureRecord> responseEntity = State.getRestTemplate().exchange(
-                State.BASE_URI
-                        + "clients/"
-                        + client.getUid()
-                        + "/procedures/"
-                        + procedureRecordIndex,
+                String.format("%sclients/%d/procedures/%d", State.BASE_URI, client.getUid(), procedureRecordId),
                 HttpMethod.PATCH, entity, ProcedureRecord.class);
 
         State.setClientEtag(responseEntity.getHeaders().getETag());
@@ -238,6 +234,17 @@ public class ClientResolverRest implements ClientResolver {
                 id);
 
         client.deleteIllnessRecord(record);
+    }
+
+    @Override
+    public void deleteProcedureRecord(Client client, ProcedureRecord record) {
+        HttpHeaders httpHeaders = createHeaders(true);
+        sendQuery(httpHeaders,
+                State.BASE_URI + "clients/{id}/procedures/{procedureId}",
+                HttpMethod.DELETE,
+                ProcedureRecord.class,
+                client.getUid(),
+                record.getId());
     }
 
     //------------Templates----------------
