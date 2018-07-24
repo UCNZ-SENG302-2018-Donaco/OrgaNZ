@@ -23,6 +23,7 @@ import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
+import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.validators.client.ClientBornAndDiedDatesValidator;
 import com.humanharvest.organz.utilities.validators.client.CreateClientValidator;
 import com.humanharvest.organz.utilities.validators.client.ModifyClientValidator;
@@ -312,25 +313,44 @@ public class ClientController {
     }
 
     @GetMapping("clients/{uid}/image")
-    public @ResponseBody ResponseEntity getClientImage(@PathVariable int uid) throws InvalidRequestException,
+    public @ResponseBody ResponseEntity getClientImage(@PathVariable int uid, @RequestHeader(value = "If-Match", required = false) String etag,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken) throws InvalidRequestException,
             IfMatchFailedException, IfMatchRequiredException, IOException {
+
+        Optional<Client> optionalClient = State.getClientManager().getClientByID(uid);
+        if (!optionalClient.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        Client client = optionalClient.get();
+        State.getAuthenticationManager().verifyClientAccess(authToken, client);
+
         InputStream in;
         try {
-            in = new FileInputStream("./images/" + uid +  ".png");
+            in = new FileInputStream("./images/" + uid +  ".png"); // for tests to pass pathname must be - ./../images/
         }
         catch (Exception ex) {
-            throw new InvalidRequestException();
-//            in = new FileInputStream("./images/default.png"); // This has been implemented in the client side.
+            throw new NotFoundException();
+//            in = new FileInputStream("./images/default.png"); // Now implemented in the client side.
         }
         return new ResponseEntity<>(IOUtils.toByteArray(in), HttpStatus.OK);
     }
 
     @PostMapping("clients/{uid}/image")
-    public ResponseEntity postClientImage(@PathVariable int uid, @RequestBody byte[] image) throws IOException {
+    public ResponseEntity postClientImage(@PathVariable int uid, @RequestBody byte[] image, @RequestHeader(value = "If-Match", required = false) String etag,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken) throws IOException {
+        Optional<Client> optionalClient = State.getClientManager().getClientByID(uid);
+        if (!optionalClient.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        Client client = optionalClient.get();
+        State.getAuthenticationManager().verifyClientAccess(authToken, client);
+
         OutputStream out;
         System.out.println(image.length);
         try {
-            out = new FileOutputStream("./images/" + uid + ".png");
+            out = new FileOutputStream("./images/" + uid + ".png"); // for tests to pass pathname must be - ./../images/
             out.write(image);
             out.close();
             return new ResponseEntity(HttpStatus.OK);
@@ -338,33 +358,36 @@ public class ClientController {
         } catch (IOException ex) {
             ex.printStackTrace();
             throw ex;
-//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
     }
 
     @DeleteMapping("clients/{uid}/image")
-    private ResponseEntity deleteClientImage(@PathVariable int uid) throws InvalidRequestException{
-        Optional<Client> client = State.getClientManager().getClientByID(uid);
-        if (!client.isPresent()) {
-            throw new InvalidRequestException();
-        } else {
-            try {
-                File file = new File("./images/" + uid + ".png");
-
-                if (file.delete()) {
-                    System.out.println("successfully deleted");
-                    return new ResponseEntity(HttpStatus.OK);
-
-                } else {
-                    System.out.println("file not found");
-                    return new ResponseEntity(HttpStatus.NOT_FOUND);
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                throw ex;
-            }
+    private ResponseEntity deleteClientImage(@PathVariable int uid, @RequestHeader(value = "If-Match", required = false) String etag,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken) throws InvalidRequestException{
+        Optional<Client> optionalClient = State.getClientManager().getClientByID(uid);
+        if (!optionalClient.isPresent()) {
+            throw new NotFoundException();
         }
 
-    }
+        Client client = optionalClient.get();
+        State.getAuthenticationManager().verifyClientAccess(authToken, client);
+
+        try {
+            File file = new File("./images/" + uid + ".png"); // for tests to pass pathname must be - ./../images/
+
+            if (file.delete()) {
+                System.out.println("successfully deleted");
+                return new ResponseEntity(HttpStatus.OK);
+
+            } else {
+                System.out.println("file not found");
+                return new ResponseEntity(HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            throw ex;
+        }
+        }
+
 
 }

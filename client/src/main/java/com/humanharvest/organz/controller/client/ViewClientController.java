@@ -226,7 +226,6 @@ public class ViewClientController extends ViewBaseController {
         } else {
             lastModified.setText(formatter.format(viewedClient.getModifiedTimestamp()));
         }
-
         displayBMI();
         displayAge();
 

@@ -18,6 +18,7 @@ public class ImageManager {
     private HttpHeaders getHeaders() {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set("X-Auth-Token", State.getToken());
+        httpHeaders.setIfMatch(State.getClientEtag());
         return httpHeaders;
     }
 
@@ -31,14 +32,19 @@ public class ImageManager {
         HttpEntity<Object> entity = new HttpEntity<>(null, httpHeaders);
         ResponseEntity responseEntity;
         try {
-
+            System.out.println("resources");
             responseEntity = State.getRestTemplate()
                     .exchange(State.BASE_URI + "/clients/{uid}/image", HttpMethod.GET,
                             entity, byte[].class, uid);
         } catch (ResourceAccessException ex) {
 //            ex.printStackTrace();
             throw ex;
+        } catch (Exception ex) {
+            System.out.println("resources");
+            ex.printStackTrace();
+            throw ex;
         }
+
         return (byte[]) responseEntity.getBody();
     }
 
