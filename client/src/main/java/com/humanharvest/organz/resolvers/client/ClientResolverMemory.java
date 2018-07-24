@@ -36,7 +36,7 @@ public class ClientResolverMemory implements ClientResolver {
 
     @Override
     public List<MedicationRecord> getMedicationRecords(Client client) {
-        return client.getMedicationRecords();
+        return client.getMedications();
     }
 
     @Override

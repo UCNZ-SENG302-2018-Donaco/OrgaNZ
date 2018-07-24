@@ -66,7 +66,7 @@ public class ClientMedicationsController {
             HttpHeaders headers = new HttpHeaders();
             headers.setETag(client.get().getETag());
 
-            return new ResponseEntity<>(client.get().getAllMedications(), headers, HttpStatus.OK);
+            return new ResponseEntity<>(client.get().getMedications(), headers, HttpStatus.OK);
 
         } else {
 
@@ -113,9 +113,9 @@ public class ClientMedicationsController {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setETag(client.get().getETag());
-        System.out.println(client.get().getAllMedications());
+        System.out.println(client.get().getMedications());
 
-        return new ResponseEntity<>(client.get().getAllMedications(), headers, HttpStatus.CREATED);
+        return new ResponseEntity<>(client.get().getMedications(), headers, HttpStatus.CREATED);
     }
 
     /**

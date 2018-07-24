@@ -1,14 +1,13 @@
 package com.humanharvest.organz.server.controller.client;
 
-import com.humanharvest.organz.actions.client.AddIllnessRecordAction;
-import com.humanharvest.organz.actions.client.DeleteIllnessRecordAction;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.IllnessRecord;
+import com.humanharvest.organz.actions.client.AddIllnessRecordAction;
+import com.humanharvest.organz.actions.client.DeleteIllnessRecordAction;
 import com.humanharvest.organz.actions.client.ModifyIllnessRecordByObjectAction;
 import com.humanharvest.organz.server.exceptions.GlobalControllerExceptionHandler.InvalidRequestException;
 import com.humanharvest.organz.state.State;
@@ -50,7 +49,7 @@ public class ClientIllnessessController {
             HttpHeaders headers = new HttpHeaders();
             headers.setETag(client.getETag());
 
-            return new ResponseEntity<>(Optionalclient.get().getAllIllnessHistory(), headers, HttpStatus.OK);
+            return new ResponseEntity<>(Optionalclient.get().getIllnesses(), headers, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -78,7 +77,7 @@ public class ClientIllnessessController {
         IllnessRecord record;
         try {
             Client client = optionalClient.get();
-            record = client.getAllIllnessHistory().get(id - 1); // starting index 1.
+            record = client.getIllnesses().get(id - 1); // starting index 1.
             //State.getAuthenticationManager().verifyClientAccess(authToken, client);
             if(record.isChronic() && modifyIllnessObject.getCuredDate() != null){
                 //Cured date is trying to be set while disease is chronic.
@@ -138,7 +137,7 @@ public class ClientIllnessessController {
         State.getActionInvoker(authToken).execute(addIllnessRecordAction);
         HttpHeaders headers = new HttpHeaders();
         headers.setETag(client.get().getETag());
-        return new ResponseEntity<>(client.get().getAllIllnessHistory(), headers, HttpStatus.CREATED);
+        return new ResponseEntity<>(client.get().getIllnesses(), headers, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/clients/{uid}/illnesses/{id}")
@@ -151,7 +150,7 @@ public class ClientIllnessessController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        IllnessRecord removeRecord = client.get().getAllIllnessHistory().get(id);
+        IllnessRecord removeRecord = client.get().getIllnesses().get(id);
         State.getAuthenticationManager().verifyClientAccess(authToken, client.get());
         DeleteIllnessRecordAction action = new DeleteIllnessRecordAction(client.get(),removeRecord,
             State.getClientManager());

@@ -469,14 +469,6 @@ public class Client implements ConcurrencyControlledEntity {
     }
 
     /**
-     * Returns a list containing all the medication records.
-     * @return The list of medication records of the Client.
-     */
-    public List<MedicationRecord> getMedicationRecords() {
-        return Collections.unmodifiableList(medicationHistory);
-    }
-
-    /**
      * Returns a new list containing the medications which are currently being used by the Client.
      * @return The list of medications currently being used by the Client.
      */
@@ -506,22 +498,6 @@ public class Client implements ConcurrencyControlledEntity {
      */
     public List<MedicationRecord> getMedications() {
         return Collections.unmodifiableList(medicationHistory);
-    }
-
-    /**
-     * Returns the list of all past and current medications of the client
-     * @return medicationHistory of the client
-     */
-    public List<MedicationRecord> getAllMedications() {
-        return Collections.unmodifiableList(medicationHistory);
-    }
-
-    /**
-     * Returns all illness history past and present
-     * @return All illness Records for a specific client
-     */
-    public List<IllnessRecord> getAllIllnessHistory() {
-        return Collections.unmodifiableList(illnessHistory);
     }
 
     /**

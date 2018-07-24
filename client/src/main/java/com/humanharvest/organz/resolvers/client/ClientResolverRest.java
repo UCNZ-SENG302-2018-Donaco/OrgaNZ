@@ -190,7 +190,7 @@ public class ClientResolverRest implements ClientResolver {
         }
 
         // todo needs to be changed to use the id rather than the index once it is working
-        int id = client.getAllMedications().indexOf(record);
+        int id = client.getMedications().indexOf(record);
 
         HttpHeaders httpHeaders = createHeaders(true);
         ResponseEntity<MedicationRecord> responseEntity = sendQuery(httpHeaders,
@@ -227,7 +227,7 @@ public class ClientResolverRest implements ClientResolver {
     @Override
     public void deleteIllnessRecord(Client client, IllnessRecord record) {
 
-        int id = client.getAllIllnessHistory().indexOf(record);
+        int id = client.getIllnesses().indexOf(record);
 
         HttpHeaders httpHeaders = createHeaders(true);
         sendQuery(httpHeaders,

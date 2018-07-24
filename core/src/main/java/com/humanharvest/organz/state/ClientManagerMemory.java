@@ -10,6 +10,9 @@ import java.util.OptionalInt;
 import java.util.stream.Collectors;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.IllnessRecord;
+import com.humanharvest.organz.MedicationRecord;
+import com.humanharvest.organz.ProcedureRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 
@@ -65,7 +68,45 @@ public class ClientManagerMemory implements ClientManager {
 
     @Override
     public void applyChangesTo(Client client) {
-        // Doesn't need to do anything
+        // Ensure that all records associated with the client have an id
+        long nextId;
+
+        nextId = client.getTransplantRequests().stream()
+                .mapToLong(request -> request.getId() == null ? 0 : request.getId())
+                .max().orElse(0) + 1;
+        for (TransplantRequest request : client.getTransplantRequests()) {
+            if (request.getId() == null) {
+                request.setId(nextId);
+                nextId++;
+            }
+        }
+        nextId = client.getMedications().stream()
+                .mapToLong(record -> record.getId() == null ? 0 : record.getId())
+                .max().orElse(0) + 1;
+        for (MedicationRecord record : client.getMedications()) {
+            if (record.getId() == null) {
+                record.setId(nextId);
+                nextId++;
+            }
+        }
+        nextId = client.getIllnesses().stream()
+                .mapToLong(record -> record.getId() == null ? 0 : record.getId())
+                .max().orElse(0) + 1;
+        for (IllnessRecord record : client.getIllnesses()) {
+            if (record.getId() == null) {
+                record.setId(nextId);
+                nextId++;
+            }
+        }
+        nextId = client.getProcedures().stream()
+                .mapToLong(record -> record.getId() == null ? 0 : record.getId())
+                .max().orElse(0) + 1;
+        for (ProcedureRecord record : client.getProcedures()) {
+            if (record.getId() == null) {
+                record.setId(nextId);
+                nextId++;
+            }
+        }
     }
 
     /**
