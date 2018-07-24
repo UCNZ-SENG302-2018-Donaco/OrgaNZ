@@ -129,7 +129,7 @@ public class ClientController {
      * @param uid The client UID to return
      * @return Returns a Client details object. Also contains an ETag header for updates
      */
-    @GetMapping("/clients/{uid}")
+    @GetMapping("/clients/{uid:\\d+}")
     @JsonView(Views.Details.class)
     public ResponseEntity<Client> getClient(
             @PathVariable int uid,
