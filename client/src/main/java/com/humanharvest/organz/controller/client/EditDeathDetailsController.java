@@ -13,6 +13,7 @@ import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.view.PageNavigator;
 
 public class EditDeathDetailsController extends SubController{
 
@@ -64,9 +65,6 @@ public class EditDeathDetailsController extends SubController{
 
     }
 
-    public void cancelChanges(){
-
-    }
 
 
 

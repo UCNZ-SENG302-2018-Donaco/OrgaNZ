@@ -504,6 +504,8 @@ public class ViewClientController extends ViewBaseController {
     @FXML
     private void editDeathDetails() {
 
-        PageNavigator.loadPage(Page.EDIT_DEATH_DETAILS, mainController);
+        MainController newMain  = PageNavigator.openNewWindow();
+
+        PageNavigator.loadPage(Page.EDIT_DEATH_DETAILS, newMain);
     }
 }

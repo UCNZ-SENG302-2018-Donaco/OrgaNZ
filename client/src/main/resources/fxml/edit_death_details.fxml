@@ -21,8 +21,7 @@
     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
   </rowConstraints>
   <children>
-    <Button fx:id="cancelButton" mnemonicParsing="false" onAction="#cancelChanges" text="Button" GridPane.halignment="CENTER" GridPane.rowIndex="6" />
-    <Button fx:id="applyButton" mnemonicParsing="false" onAction="#applyChanges" text="Button" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="6" />
+    <Button fx:id="applyButton" mnemonicParsing="false" onAction="#applyChanges" text="Apply" GridPane.columnIndex="3" GridPane.halignment="CENTER" GridPane.rowIndex="6" />
     <Label text="Date" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
     <Label text="Region" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
     <Label text="Country" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="3" />
