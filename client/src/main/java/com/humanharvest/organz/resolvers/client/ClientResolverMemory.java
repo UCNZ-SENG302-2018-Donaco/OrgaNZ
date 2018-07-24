@@ -1,8 +1,10 @@
 package com.humanharvest.organz.resolvers.client;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.IllnessRecord;
@@ -11,6 +13,8 @@ import com.humanharvest.organz.ProcedureRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
+import com.humanharvest.organz.views.client.CreateClientView;
 import com.humanharvest.organz.views.client.CreateIllnessView;
 import com.humanharvest.organz.views.client.CreateMedicationRecordView;
 import com.humanharvest.organz.views.client.CreateProcedureView;
@@ -24,27 +28,39 @@ public class ClientResolverMemory implements ClientResolver {
 
     //------------GETs----------------
 
-    @Override
+
     public Map<Organ, Boolean> getOrganDonationStatus(Client client) {
         return client.getOrganDonationStatus();
     }
 
-    @Override
+
     public List<TransplantRequest> getTransplantRequests(Client client) {
         return client.getTransplantRequests();
     }
 
-    @Override
+
     public List<MedicationRecord> getMedicationRecords(Client client) {
         return client.getMedications();
     }
 
-    @Override
     public List<ProcedureRecord> getProcedureRecords(Client client) {return client.getProcedures(); }
 
     //------------POSTs----------------
 
-    @Override
+    public Client createClient(CreateClientView createClientView) {
+        Client client = new Client(
+                createClientView.getFirstName(),
+                createClientView.getMiddleName(),
+                createClientView.getLastName(),
+                createClientView.getDateOfBirth(),
+                //Get the next empty UID
+                State.getClientManager().getClients().stream().max(Comparator.comparing(Client::getUid))
+                        .get().getUid() + 1);
+        State.getClientManager().addClient(client);
+        return client;
+    }
+
+
     public List<TransplantRequest> createTransplantRequest(Client client, CreateTransplantRequestView request) {
         TransplantRequest transplantRequest = new TransplantRequest(client, request.getRequestedOrgan());
         client.addTransplantRequest(transplantRequest);
@@ -52,13 +68,11 @@ public class ClientResolverMemory implements ClientResolver {
         return client.getTransplantRequests();
     }
 
-    @Override
     public Client markClientAsDead(Client client, LocalDate dateOfDeath){
         client.markDead(dateOfDeath);
         return client;
     }
 
-    @Override
     public List<IllnessRecord> addIllnessRecord(Client client, CreateIllnessView createIllnessView) {
         IllnessRecord illnessRecord = new IllnessRecord(createIllnessView.getIllnessName(),
                 createIllnessView.getDiagnosisDate(),
@@ -67,7 +81,6 @@ public class ClientResolverMemory implements ClientResolver {
         return client.getIllnesses();
     }
 
-    @Override
     public List<MedicationRecord> addMedicationRecord(Client client, CreateMedicationRecordView medicationRecordView) {
         MedicationRecord medicationRecord = new MedicationRecord(medicationRecordView.getName(),
                 LocalDate.now(), null);
@@ -75,7 +88,6 @@ public class ClientResolverMemory implements ClientResolver {
         return client.getMedications();
     }
 
-    @Override
     public  List<ProcedureRecord> addProcedureRecord(Client client, CreateProcedureView procedureView) {
         ProcedureRecord procedureRecord = new ProcedureRecord(
                 procedureView.getSummary(),
@@ -88,6 +100,17 @@ public class ClientResolverMemory implements ClientResolver {
     //------------PATCHs----------------
 
     @Override
+    public Map<Organ, Boolean> modifyOrganDonation(Client client, Map<Organ, Boolean> changes) {
+        for (Entry<Organ, Boolean> entry : changes.entrySet()) {
+            try {
+                client.setOrganDonationStatus(entry.getKey(), entry.getValue());
+            } catch (OrganAlreadyRegisteredException e) {
+                e.printStackTrace();
+            }
+        }
+        return client.getOrganDonationStatus();
+    }
+
     public TransplantRequest resolveTransplantRequest(Client client, ResolveTransplantRequestObject request,
             int transplantRequestIndex) {
         TransplantRequest originalTransplantRequest = client.getTransplantRequests().get(transplantRequestIndex);
@@ -97,13 +120,11 @@ public class ClientResolverMemory implements ClientResolver {
         return originalTransplantRequest;
     }
 
-    @Override
     public Client modifyClientDetails(Client client, ModifyClientObject modifyClientObject) {
         BeanUtils.copyProperties(modifyClientObject, client, modifyClientObject.getUnmodifiedFields());
         return client;
     }
 
-    @Override
     public MedicationRecord modifyMedicationRecord(Client client, MedicationRecord record, LocalDate stopDate) {
         if (stopDate == null) {
             record.setStarted(LocalDate.now());
@@ -114,12 +135,10 @@ public class ClientResolverMemory implements ClientResolver {
         return record;
     }
 
-    @Override
     public IllnessRecord modifyIllnessRecord(Client client,IllnessRecord record){
         return record;
     }
 
-    @Override
     public ProcedureRecord modifyProcedureRecord(Client client, ModifyProcedureObject modifyProcedureObject,
             long procedureRecordId) {
         ProcedureRecord toModify = client.getProcedures().stream().filter(record -> record.getId() == procedureRecordId)
@@ -135,13 +154,15 @@ public class ClientResolverMemory implements ClientResolver {
 
     //------------DELETEs----------------
 
-    @Override
     public void deleteIllnessRecord(Client client, IllnessRecord record) {
         client.deleteIllnessRecord(record);
     }
 
-    @Override
     public void deleteProcedureRecord(Client client, ProcedureRecord record) {
         client.deleteProcedureRecord(record);
+    }
+
+    public void deleteClient(Client client) {
+        State.getClientManager().removeClient(client);
     }
 }

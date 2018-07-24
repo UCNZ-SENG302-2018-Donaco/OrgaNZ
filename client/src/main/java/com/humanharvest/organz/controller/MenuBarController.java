@@ -27,7 +27,6 @@ import javafx.stage.Stage;
 import com.humanharvest.organz.AppUI;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
-import com.humanharvest.organz.resolvers.ActionResolver;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
@@ -524,7 +523,7 @@ public class MenuBarController extends SubController {
      * Refreshes the undo/redo buttons based on if there are changes to be made
      */
     public void refresh() {
-        ActionResponseView responseView = ActionResolver.getUndo();
+        ActionResponseView responseView = State.getActionResolver().getUndo();
         undoItem.setDisable(!responseView.isCanUndo());
         redoItem.setDisable(!responseView.isCanRedo());
     }
@@ -534,7 +533,7 @@ public class MenuBarController extends SubController {
      */
     @FXML
     private void undo() {
-        ActionResponseView responseView = ActionResolver.executeUndo(State.getClientEtag());
+        ActionResponseView responseView = State.getActionResolver().executeUndo(State.getClientEtag());
         Notifications.create().title("Undo").text(responseView.getResultText()).showInformation();
         PageNavigator.refreshAllWindows();
     }
@@ -544,7 +543,7 @@ public class MenuBarController extends SubController {
      */
     @FXML
     private void redo() {
-        ActionResponseView responseView = ActionResolver.executeRedo(State.getClientEtag());
+        ActionResponseView responseView = State.getActionResolver().executeRedo(State.getClientEtag());
         Notifications.create().title("Redo").text(responseView.getResultText()).showInformation();
         PageNavigator.refreshAllWindows();
     }

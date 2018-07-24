@@ -14,6 +14,9 @@ import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.resolvers.CommandRunner;
 import com.humanharvest.organz.resolvers.CommandRunnerRest;
+import com.humanharvest.organz.resolvers.actions.ActionResolver;
+import com.humanharvest.organz.resolvers.actions.ActionResolverMemory;
+import com.humanharvest.organz.resolvers.actions.ActionResolverRest;
 import com.humanharvest.organz.resolvers.client.ClientResolver;
 import com.humanharvest.organz.resolvers.client.ClientResolverMemory;
 import com.humanharvest.organz.resolvers.client.ClientResolverRest;
@@ -42,6 +45,7 @@ public final class State {
     private static AdministratorManager administratorManager;
     private static AuthenticationManager authenticationManager;
     private static CommandRunner commandRunner;
+    private static ActionResolver actionResolver;
 
     private static ActionInvoker invoker;
     private static Session session;
@@ -77,6 +81,7 @@ public final class State {
             administratorManager = new AdministratorManagerRest();
             authenticationManager = new AuthenticationManagerRest();
             commandRunner = new CommandRunnerRest();
+            actionResolver = new ActionResolverRest();
         } else if (storageType == DataStorageType.MEMORY) {
             clientManager = new ClientManagerMemory();
             clientResolver = new ClientResolverMemory();
@@ -86,6 +91,7 @@ public final class State {
             commandRunner = commandText -> {
                 throw new UnsupportedOperationException("Memory storage type does not support running commands.");
             };
+            actionResolver = new ActionResolverMemory();
         } else {
             throw new IllegalArgumentException("DataStorageType cannot be null.");
         }
@@ -224,5 +230,9 @@ public final class State {
 
     public static CommandRunner getCommandRunner() {
         return commandRunner;
+    }
+
+    public static ActionResolver getActionResolver() {
+        return actionResolver;
     }
 }
