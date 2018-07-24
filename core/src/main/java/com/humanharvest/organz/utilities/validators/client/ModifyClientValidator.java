@@ -22,15 +22,18 @@ public class ModifyClientValidator {
                 NotEmptyStringValidator.isInvalidString(clientView.getLastName())) {
             return false;
         }
+
         //Check that the dates are not in the future
+        //Also check that DOB is not null, and if DOD is null, not to check it (to avoid NPEs)
         if (!unmodifiedFields.contains("dateOfBirth") &&
-                clientView.getDateOfBirth().isAfter(LocalDate.now())) {
+                (clientView.getDateOfBirth() == null || clientView.getDateOfBirth().isAfter(LocalDate.now()))) {
             return false;
         }
         if (!unmodifiedFields.contains("dateOfDeath") &&
-                clientView.getDateOfDeath().isAfter(LocalDate.now())) {
+                clientView.getDateOfDeath() != null && clientView.getDateOfDeath().isAfter(LocalDate.now())) {
             return false;
         }
+
         //If both dates have been modified, check they are not inconsistent. If only one or the other then it will
         // need to be checked against the client object later
         if (!unmodifiedFields.contains("dateOfDeath") && !unmodifiedFields.contains("dateOfBirth")) {
@@ -39,6 +42,7 @@ public class ModifyClientValidator {
                 return false;
             }
         }
+
         return true;
     }
 
