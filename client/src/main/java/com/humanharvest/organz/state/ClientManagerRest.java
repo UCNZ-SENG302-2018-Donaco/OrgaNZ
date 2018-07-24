@@ -140,11 +140,13 @@ public class ClientManagerRest implements ClientManager {
 
     @Override
     public Collection<TransplantRequest> getAllTransplantRequests() {
+        //todo
         throw new UnsupportedOperationException();
     }
 
     @Override
     public Collection<TransplantRequest> getAllCurrentTransplantRequests() {
+        //todo
         throw new UnsupportedOperationException();
     }
 }

@@ -1626,6 +1626,13 @@ components:
       schema:
         $ref: '#/components/schemas/organEnum'
 
+    sortOrder:
+      name: sortOrder
+      in: query
+      description: "Returns clients in the order specified"
+      schema:
+        $ref: '#/components/schemas/clientSortOptionsEnum'
+
     ETag:
       name: ETag
       in: header

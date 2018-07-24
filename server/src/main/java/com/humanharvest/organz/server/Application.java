@@ -1,12 +1,17 @@
 package com.humanharvest.organz.server;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.state.State.DataStorageType;
+import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -31,6 +36,21 @@ public class Application {
 
         // Initialize storage with storage argument
         initStorage(namedArgs.get("storage"));
+
+
+        // DEBUG DATA TODO REMOVE FOR PRODUCTION
+        if (State.getCurrentStorageType() == DataStorageType.MEMORY) {
+            ClientManager clientManager = State.getClientManager();
+            Client jack = new Client("Jack", "EOD", "Steel", LocalDate.of(1997,04,21), 1);
+            clientManager.addClient(jack);
+            try {
+                jack.setOrganDonationStatus(Organ.HEART, true);
+                jack.setOrganDonationStatus(Organ.KIDNEY, true);
+            } catch (OrganAlreadyRegisteredException ignored) {}
+            clientManager.addClient(new Client("Second", "Test", "Client", LocalDate.of(1987,12,21), 2));
+        }
+        // END DEBUG DATA
+
 
         // Run Spring Boot Application (server)
         SpringApplication.run(Application.class, args);
