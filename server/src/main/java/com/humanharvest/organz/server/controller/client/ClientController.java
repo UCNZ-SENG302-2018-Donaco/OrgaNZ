@@ -1,6 +1,7 @@
 package com.humanharvest.organz.server.controller.client;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.util.EnumSet;
 import java.util.Optional;
 
@@ -311,15 +312,17 @@ public class ClientController {
     }
 
     @GetMapping("clients/{uid}/image")
-    public @ResponseBody byte[] getClientImage(@PathVariable int uid) throws InvalidRequestException, IfMatchFailedException, IfMatchRequiredException, IOException {
+    public @ResponseBody ResponseEntity getClientImage(@PathVariable int uid) throws InvalidRequestException,
+            IfMatchFailedException, IfMatchRequiredException, IOException {
         InputStream in;
         try {
             in = new FileInputStream("./images/" + uid +  ".png");
-        } catch (Exception ex) {
-            in = new FileInputStream("./images/default.png");
         }
-        System.out.println(in.toString());
-        return IOUtils.toByteArray(in);
+        catch (Exception ex) {
+            throw new InvalidRequestException();
+//            in = new FileInputStream("./images/default.png"); // This has been implemented in the client side.
+        }
+        return new ResponseEntity<>(IOUtils.toByteArray(in), HttpStatus.OK);
     }
 
     @PostMapping("clients/{uid}/image")
@@ -347,8 +350,15 @@ public class ClientController {
         } else {
             try {
                 File file = new File("./images/" + uid + ".png");
-                file.delete();
-                return new ResponseEntity(HttpStatus.OK);
+
+                if (file.delete()) {
+                    System.out.println("successfully deleted");
+                    return new ResponseEntity(HttpStatus.OK);
+
+                } else {
+                    System.out.println("file not found");
+                    return new ResponseEntity(HttpStatus.NOT_FOUND);
+                }
             } catch (Exception ex) {
                 ex.printStackTrace();
                 throw ex;

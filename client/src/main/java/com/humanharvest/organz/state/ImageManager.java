@@ -1,6 +1,13 @@
 package com.humanharvest.organz.state;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
+import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils.IO;
+import org.apache.commons.io.IOUtils;
 import org.springframework.http.*;
+import org.springframework.web.client.ResourceAccessException;
 
 /**
  * Deals with all image handling in with the server for the client.
@@ -23,10 +30,27 @@ public class ImageManager {
     public byte[] getClientImage(int uid) {
         HttpHeaders httpHeaders = getHeaders();
         HttpEntity<Object> entity = new HttpEntity<>(null, httpHeaders);
+        ResponseEntity responseEntity;
+        try {
 
-        ResponseEntity responseEntity = State.getRestTemplate().exchange(State.BASE_URI + "/clients/{uid}/image", HttpMethod.GET,
-                entity, byte[].class, uid);
+            responseEntity = State.getRestTemplate()
+                    .exchange(State.BASE_URI + "/clients/{uid}/image", HttpMethod.GET,
+                            entity, byte[].class, uid);
+        } catch (ResourceAccessException ex) {
+//            ex.printStackTrace();
+            throw ex;
+        }
         return (byte[]) responseEntity.getBody();
+    }
+
+    public byte[] getDefaultImage() throws IOException {
+        try {
+            InputStream in = new FileInputStream("./images/default.png");
+            return IOUtils.toByteArray(in);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            throw ex;
+        }
     }
 
     /**
@@ -45,6 +69,11 @@ public class ImageManager {
 
     }
 
+    /**
+     * Deletes the image of a client so that it is set back to the default image.
+     * @param uid id of the client
+     * @return true if the image is successfully deleted.
+     */
     public boolean deleteClientImage(int uid) {
         HttpHeaders httpHeaders = getHeaders();
         HttpEntity<Object> entity = new HttpEntity<>(null, httpHeaders);

@@ -253,16 +253,25 @@ public class ViewClientController extends ViewBaseController {
      * Loads the viewed profiles image
      */
     private void loadImage() {
+        byte[] bytes;
+        try {
+            bytes = State.getImageManager().getClientImage(viewedClient.getUid());
+        } catch (Exception ex) {
+            try {
+                bytes = State.getImageManager().getDefaultImage();
 
-        byte[] bytes = State.getImageManager().getClientImage(viewedClient.getUid());
-        if (bytes != null) {
-            image = new Image(new ByteArrayInputStream(bytes));
+            } catch (IOException e) {
+                ex.printStackTrace();
+                return;
+            }
         }
+        image = new Image(new ByteArrayInputStream(bytes));
 
         imageView.setImage(image);
         imageView.setFitHeight(130);
         imageView.setFitWidth(130);
         imageView.setPreserveRatio(true);
+
     }
 
     /**
@@ -306,6 +315,7 @@ public class ViewClientController extends ViewBaseController {
             }
         }
         if (uploadSuccess) {
+            deletePhotoButton.setDisable(false);
             loadImage();
             PageNavigator.showAlert(AlertType.CONFIRMATION, "Success", "The image has been posted.");
         }
@@ -316,8 +326,15 @@ public class ViewClientController extends ViewBaseController {
      */
     @FXML
     public void deletePhoto() {
-        image = null;
-        loadImage(); //Make delete API call
+//        image = null;
+        boolean deleteSuccessful = State.getImageManager().deleteClientImage(viewedClient.getUid());
+        if (deleteSuccessful) {
+            loadImage();
+//            deletePhotoButton.setDisable(true);
+        } else {
+            PageNavigator.showAlert(AlertType.ERROR,"Server Error", "Something went wrong with the server. "
+                    + "Please try again later.");
+        }
     }
 
     /**
