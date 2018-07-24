@@ -164,7 +164,7 @@ public class ClientProceduresController {
     }
 
     @DeleteMapping("/clients/{uid}/procedures/{id}")
-    public ResponseEntity<ProcedureRecord> deleteProcedureRecord(
+    public ResponseEntity deleteProcedureRecord(
             @PathVariable int uid,
             @PathVariable int id,
             @RequestHeader(value = "If-Match", required = false) String eTag,
@@ -199,7 +199,7 @@ public class ClientProceduresController {
                 headers.setETag(client.get().getETag());
 
                 // Return OK response
-                return new ResponseEntity<>(toDelete.get(), headers, HttpStatus.CREATED);
+                return new ResponseEntity<>(headers, HttpStatus.CREATED);
             }
         }
 
