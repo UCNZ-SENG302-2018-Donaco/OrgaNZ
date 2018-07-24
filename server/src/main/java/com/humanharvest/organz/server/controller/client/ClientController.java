@@ -323,8 +323,9 @@ public class ClientController {
     }
 
     @PostMapping("clients/{uid}/image")
-    public ResponseEntity postClientImage(@PathVariable int uid, byte[] image) throws IOException {
+    public ResponseEntity postClientImage(@PathVariable int uid, @RequestBody byte[] image) throws IOException {
         OutputStream out;
+        System.out.println(image.length);
         try {
             out = new FileOutputStream("./images/" + uid + ".png");
             out.write(image);
@@ -333,8 +334,27 @@ public class ClientController {
 
         } catch (IOException ex) {
             ex.printStackTrace();
-            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+            throw ex;
+//            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @DeleteMapping("clients/{uid}/image")
+    private ResponseEntity deleteClientImage(@PathVariable int uid) throws InvalidRequestException{
+        Optional<Client> client = State.getClientManager().getClientByID(uid);
+        if (!client.isPresent()) {
+            throw new InvalidRequestException();
+        } else {
+            try {
+                File file = new File("./images/" + uid + ".png");
+                file.delete();
+                return new ResponseEntity(HttpStatus.OK);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                throw ex;
+            }
+        }
+
     }
 
 }

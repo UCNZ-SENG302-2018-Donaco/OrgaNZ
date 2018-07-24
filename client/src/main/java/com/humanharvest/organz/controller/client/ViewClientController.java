@@ -287,23 +287,27 @@ public class ViewClientController extends ViewBaseController {
                 PageNavigator.showAlert(AlertType.WARNING, "File Couldn't Be Read",
                         "This file could not be read. Ensure you are uploading a valid .png or .jpg");
             } else {
-                image = new Image(selectedFile.toURI().toString());
+//                image = new Image(selectedFile.toURI().toString());
                 try {
                     InputStream in = new FileInputStream(selectedFile);
                     uploadSuccess = State.getImageManager().postClientImage(viewedClient.getUid(), IOUtils.toByteArray(in));
-                    loadImage();
+
                 } catch (FileNotFoundException ex) {
                     PageNavigator.showAlert(AlertType.WARNING, "File Couldn't Be Found",
                             "This file was not found.");
                 } catch (IOException ex) {
                     PageNavigator.showAlert(AlertType.WARNING, "File Couldn't Be Read",
                             "This file could not be read. Ensure you are uploading a valid .png or .jpg");
+                } catch (ServerRestException ex) {
+                    ex.printStackTrace();
+                    PageNavigator.showAlert(AlertType.ERROR,"Server Error", "Something went wrong with the server. "
+                            + "Please try again later.");
                 }
             }
         }
         if (uploadSuccess) {
-            PageNavigator.showAlert(AlertType.CONFIRMATION, "Success",
-                    "The image has been posted.");
+            loadImage();
+            PageNavigator.showAlert(AlertType.CONFIRMATION, "Success", "The image has been posted.");
         }
     }
 
