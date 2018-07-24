@@ -104,19 +104,19 @@ public class EditDeathDetailsController extends SubController{
             client = windowContext.getViewClient();
             if (client.isDead()) {
                 if (client.getTimeOfDeath() != null) {
-                    deathTimeField.setText(client.getTimeOfDeath().toString());
+                    deathTimeField.setText(client.getTimeOfDeath());
                 }
-                if (client.getCurrentAddress() != null) {
-                    deathCountry.setText(client.getCurrentAddress());
+                if (client.getCountryOfDeath() != null) {
+                    deathCountry.setText(client.getCountryOfDeath());
                 }
                 if (client.getRegionOfDeath() != null) {
-                    deathRegion.setText(client.getRegion().toString());
+                    deathRegion.setText(client.getRegionOfDeath());
                 }
                 if (client.getDateOfDeath() != null) {
                     deathDatePicker.setValue(client.getDateOfDeath());
                 }
                 if (client.getCityOfDeath() != null) {
-                    deathCity.setText(client.getCurrentAddress());
+                    deathCity.setText(client.getCityOfDeath());
                 }
             }
 
