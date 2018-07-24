@@ -30,7 +30,7 @@ public class AuthenticationController {
      * Logs in a client.
      */
     @PostMapping("/login/client")
-    @JsonView(Views.Overview.class)
+    @JsonView(Views.Details.class)
     public ResponseEntity<ClientLoginResponse> loginClient(
             @RequestBody ClientLoginRequest loginRequest,
             @RequestParam(required = false) String view) {
@@ -57,7 +57,7 @@ public class AuthenticationController {
      * Logs in a clinician.
      */
     @PostMapping("/login/clinician")
-    @JsonView(Views.Overview.class)
+    @JsonView(Views.Details.class)
     public ResponseEntity<ClinicianLoginResponse> loginClinician(
             @RequestBody ClinicianLoginRequest loginRequest,
             @RequestParam(required = false) String view) {
@@ -88,7 +88,7 @@ public class AuthenticationController {
      * Logs in an administrator.
      */
     @PostMapping("/login/administrator")
-    @JsonView(Views.Overview.class)
+    @JsonView(Views.Details.class)
     public ResponseEntity<AdministratorLoginResponse> loginAdministrator(
             @RequestBody AdministratorLoginRequest loginRequest,
             @RequestParam(required = false) String view) {
