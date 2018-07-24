@@ -1,6 +1,10 @@
 package com.humanharvest.organz.controller.client;
 
+import static com.humanharvest.organz.controller.clinician.ViewBaseController.addChangeIfDifferent;
+
 import java.time.format.DateTimeFormatter;
+
+import javax.management.Notification;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -11,6 +15,8 @@ import javafx.scene.control.TextField;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.actions.ActionInvoker;
+import com.humanharvest.organz.actions.client.ModifyClientAction;
+import com.humanharvest.organz.actions.client.ModifyClientOrgansAction;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.state.ClientManager;
@@ -18,6 +24,8 @@ import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.views.client.ModifyClientObject;
+import org.controlsfx.control.Notifications;
 
 public class EditDeathDetailsController extends SubController{
 
@@ -62,59 +70,84 @@ public class EditDeathDetailsController extends SubController{
     }
 
     @Override
-    public void setup(MainController mainController){
+    public void setup(MainController mainController) {
         super.setup(mainController);
 
-        if(session.getLoggedInUserType() == UserType.CLIENT){
+        if (session.getLoggedInUserType() == UserType.CLIENT) {
             client = session.getLoggedInClient();
             deathTimeField.setDisable(true);
             deathDatePicker.setDisable(true);
             deathCountry.setEditable(false);
             deathRegion.setEditable(false);
             deathCity.setEditable(false);
-            System.out.println(client.isDead());
-            if(client.isDead()){
-                if (client.getTimeOfDeath() != null){
+            if (client.isDead()) {
+                if (client.getTimeOfDeath() != null) {
                     deathTimeField.setText(client.getTimeOfDeath().toString());
                 }
-                deathDatePicker.setValue(client.getDateOfDeath());
-                deathCountry.setText(client.getCurrentAddress());
-                deathRegion.setText(client.getRegion().toString());
-                deathCity.setText(client.getCurrentAddress().toString());
+                if (client.getCurrentAddress() != null) {
+                    deathCountry.setText(client.getCurrentAddress());
+                }
+                if (client.getRegion() != null) {
+                    deathRegion.setText(client.getRegion().toString());
+                }
+                if (client.getDateOfDeath() != null) {
+                    deathDatePicker.setValue(client.getDateOfDeath());
+                }
+                if (client.getCityOfDeath() != null) {
+                    deathCity.setText(client.getCurrentAddress());
+                }
 
             }
-
-
-
 
         }
         if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
-            if (client.getTimeOfDeath() != null){
-                deathTimeField.setText(client.getTimeOfDeath().toString());
+            if (client.isDead()) {
+                if (client.getTimeOfDeath() != null) {
+                    deathTimeField.setText(client.getTimeOfDeath().toString());
+                }
+                if (client.getCurrentAddress() != null) {
+                    deathCountry.setText(client.getCurrentAddress());
+                }
+                if (client.getRegionOfDeath() != null) {
+                    deathRegion.setText(client.getRegion().toString());
+                }
+                if (client.getDateOfDeath() != null) {
+                    deathDatePicker.setValue(client.getDateOfDeath());
+                }
+                if (client.getCityOfDeath() != null) {
+                    deathCity.setText(client.getCurrentAddress());
+                }
             }
-            deathDatePicker.setValue(client.getDateOfDeath());
-            deathCountry.setText(client.getCurrentAddress());
-            deathRegion.setText(client.getRegion().toString());
-            deathCity.setText(client.getCurrentAddress());
+
+        }
+    }
+
+        public void applyChanges () {
+            if (session.getLoggedInUserType() == UserType.CLIENT) {
+                PageNavigator.showAlert(AlertType.ERROR, "Invalid Access", "Clients cannot edit death details");
+            } else {
+                ModifyClientObject modifyClientObject = new ModifyClientObject();
+                addChangeIfDifferent(modifyClientObject, client, "dateOfDeath", deathDatePicker.getValue());
+                addChangeIfDifferent(modifyClientObject, client, "timeOfDeath", deathTimeField.getText());
+                addChangeIfDifferent(modifyClientObject, client, "regionOfDeath", deathRegion.getText());
+                addChangeIfDifferent(modifyClientObject, client, "cityOfDeath", deathCity.getText());
+                addChangeIfDifferent(modifyClientObject, client, "countryOfDeath", deathCountry.getText());
+
+                if (modifyClientObject.getModifiedFields().isEmpty()) {
+                    Notifications.create()
+                            .title("No changes were made.")
+                            .text("No changes were made to the client.")
+                            .showWarning();
+                } else {
+
+                    State.getClientResolver().modifyClientDetails(client, modifyClientObject);
+                    String actionText = modifyClientObject.toString();
+                    Notifications.create().title("Updated Death Details").text(actionText).showInformation();
+                }
+
+            }
+
         }
 
     }
-
-    public void applyChanges(){
-        if(session.getLoggedInUserType() == UserType.CLIENT){
-            PageNavigator.showAlert(AlertType.ERROR, "Invalid Access","Clients cannot edit death details");
-        } else {
-            client.setDateOfDeath(deathDatePicker.getValue());
-            //client.setTimeOfDeath(timeFormat.format(deathTimeField.getText()));
-            //client.setRegion(deathRegion.getText());
-
-        }
-
-    }
-
-
-
-
-
-}

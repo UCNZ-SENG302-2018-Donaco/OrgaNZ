@@ -2,6 +2,7 @@ package com.humanharvest.organz.views.client;
 
 import java.lang.reflect.Member;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -29,6 +30,11 @@ public class ModifyClientObject extends ModifyBaseObject {
 
     private LocalDate dateOfBirth;
     private LocalDate dateOfDeath;
+
+    private String timeOfDeath;
+    private String regionOfDeath;
+    private String cityOfDeath;
+    private String countryOfDeath;
 
     public String getFirstName() {
         return firstName;
