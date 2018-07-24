@@ -63,7 +63,7 @@
           <Menu fx:id="profilePrimaryItem" mnemonicParsing="false" text="Profile">
              <items>
                <MenuItem fx:id="viewAdministratorItem" mnemonicParsing="false" text="View Admin" />
-               <MenuItem fx:id="viewClinicianItem" mnemonicParsing="false" onAction="#goToViewClinician" text="View Clinician" />
+               <MenuItem fx:id="viewClinicianItem" mnemonicParsing="false" onAction="#goToViewClinician" text="View Clinicians" />
                <MenuItem fx:id="historyItem" mnemonicParsing="false" onAction="#goToHistory" text="History" />
                <MenuItem fx:id="cliItem" mnemonicParsing="false" onAction="#goToCommandLine" text="CLI" />
              </items>

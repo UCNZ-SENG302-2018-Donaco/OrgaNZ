@@ -1,6 +1,8 @@
 package com.humanharvest.organz.controller.clinician;
 
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -41,6 +43,8 @@ public class ViewClinicianController extends ViewBaseController {
     private static final Logger LOGGER = Logger.getLogger(ViewClinicianController.class.getName());
 
     private final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy\nh:mm:ss a");
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
+            .withZone(ZoneId.systemDefault());
 
     private final Session session;
     private Clinician viewedClinician;
@@ -60,6 +64,8 @@ public class ViewClinicianController extends ViewBaseController {
     private Label fnameLabel;
     @FXML
     private Label lnameLabel;
+    @FXML
+    private Label title;
     @FXML
     private TextField fname;
     @FXML
@@ -99,10 +105,6 @@ public class ViewClinicianController extends ViewBaseController {
     private void initialize() {
         region.setItems(FXCollections.observableArrayList(Region.values()));
         inputsPane.setVisible(true);
-
-        loadClinicianData();
-        loadClinicianButton.setDisable(true); //TODO discuss whether we even need this?
-        loadStaffIdTextField.setDisable(true);
     }
 
     /**
@@ -118,6 +120,7 @@ public class ViewClinicianController extends ViewBaseController {
             loadClinicianPane.setVisible(false);
             loadClinicianPane.setManaged(false);
         }
+        loadClinicianData();
     }
 
     @Override
@@ -140,11 +143,10 @@ public class ViewClinicianController extends ViewBaseController {
                     "The Staff ID must be an integer.");
             return;
         }
-        Optional<Clinician> newClin = State.getClinicianManager().getClinicianByStaffId(idValue);
-
-        if (newClin.isPresent()) {
+        try {
+            Optional<Clinician> newClin = State.getClinicianManager().getClinicianByStaffId(idValue);
             viewedClinician = newClin.get();
-        } else {
+        } catch (NotFoundException ex) {
             PageNavigator.showAlert(Alert.AlertType.ERROR, "Invalid Staff ID",
                     "This staff ID does not exist in the system.");
             return;
@@ -157,6 +159,10 @@ public class ViewClinicianController extends ViewBaseController {
      * Loads all of the currently logged in Clinician's details, except for their password.
      */
     private void loadClinicianData() {
+        mainController.setTitle("Clinician profile: " + viewedClinician.getFullName());
+        System.out.println(mainController);
+        System.out.println(viewedClinician);
+        title.setText(viewedClinician.getFirstName());
         viewedClinician = State.getClinicianManager().getClinicianByStaffId(viewedClinician.getStaffId())
                 .orElseThrow(IllegalStateException::new);
         loadStaffIdTextField.setText(String.valueOf(viewedClinician.getStaffId()));
@@ -166,11 +172,12 @@ public class ViewClinicianController extends ViewBaseController {
         workAddress.setText(viewedClinician.getWorkAddress());
         region.setValue(viewedClinician.getRegion());
 
-        creationDate.setText(viewedClinician.getCreatedOn().format(dateTimeFormat));
+
+        creationDate.setText(formatter.format(viewedClinician.getCreatedOn()));
         if (viewedClinician.getModifiedOn() == null) {
             lastModified.setText("Not yet modified.");
         } else {
-            lastModified.setText(viewedClinician.getModifiedOn().format(dateTimeFormat));
+            lastModified.setText(formatter.format(viewedClinician.getCreatedOn()));
         }
     }
 
@@ -183,7 +190,7 @@ public class ViewClinicianController extends ViewBaseController {
         if (checkMandatoryFields()) {
             updatedPassword = checkPassword();
             if (updateChanges() && viewedClinician.getModifiedOn() != null) {
-                lastModified.setText(viewedClinician.getModifiedOn().format(dateTimeFormat));
+                lastModified.setText(formatter.format(viewedClinician.getCreatedOn()));
             }
         }
     }
