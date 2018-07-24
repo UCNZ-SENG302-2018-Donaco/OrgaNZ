@@ -40,11 +40,11 @@ public class JSONFileWriter<T> implements Closeable {
     }
 
     /**
-     * Overrides the current contents of the file with the list of objects provided.
+     * Overwrites the current contents of the file with the list of objects provided.
      * @param objects The objects of the given datatype to write to the JSON file.
      * @throws IOException If some IO error occurs when writing to the file.
      */
-    public void overrideWith(List<T> objects) throws IOException {
+    public void overwriteWith(List<T> objects) throws IOException {
         JSONMapper.Mapper.writeValue(file, objects);
     }
 
