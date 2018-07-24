@@ -22,10 +22,6 @@ public class ModifyIllnessValidator {
         illnessObject.getDiagnosisDate().isAfter(LocalDate.now())) {
       return false;
     }
-    if (!unmodifiedFields.contains("curedDate") &&
-        illnessObject.getCuredDate().isBefore(LocalDate.now())) {
-      return false;
-    }
     //If both dates have been modified, check they are not inconsistent. If only one or the other then it will
     // need to be checked against the client object later
     if (!unmodifiedFields.contains("diagnosisDate") && !unmodifiedFields.contains("curedDate")) {

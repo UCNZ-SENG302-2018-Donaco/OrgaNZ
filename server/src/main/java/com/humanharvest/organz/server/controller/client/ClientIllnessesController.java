@@ -56,16 +56,15 @@ public class ClientIllnessesController {
     }
 
     @PatchMapping("/clients/{uid}/illnesses/{id}")
-    @JsonView(Views.Overview.class)
     public ResponseEntity<IllnessRecord> patchIllness(@PathVariable int uid,
             @PathVariable int id,
             @RequestBody ModifyIllnessObject modifyIllnessObject,
             @RequestHeader(value = "If-Match", required = false) String ETag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws IfMatchRequiredException, IfMatchFailedException, InvalidRequestException {
-        if (!ModifyIllnessValidator.isValid(modifyIllnessObject)) {
-            throw new InvalidRequestException();
-        }
+
+
+
 
         //Fetch the client given by ID
         Optional<Client> optionalClient = State.getClientManager().getClientByID(uid);
@@ -74,15 +73,30 @@ public class ClientIllnessesController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
+
         IllnessRecord record;
         try {
             Client client = optionalClient.get();
             record = client.getIllnesses().get(id - 1); // starting index 1.
             //State.getAuthenticationManager().verifyClientAccess(authToken, client);
+            if(modifyIllnessObject.getCuredDate() == null){
+                modifyIllnessObject.setCuredDate(record.getCuredDate());
+            }
+            if (!ModifyIllnessValidator.isValid(modifyIllnessObject)) {
+                throw new InvalidRequestException();
+            }
+
             if(record.isChronic() && modifyIllnessObject.getCuredDate() != null){
                 //Cured date is trying to be set while disease is chronic.
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
+            if(modifyIllnessObject.getIllnessName() == null){
+                modifyIllnessObject.setIllnessName(record.getIllnessName());
+            }
+            if(modifyIllnessObject.getDiagnosisDate() == null){
+                modifyIllnessObject.setDiagnosisDate(record.getDiagnosisDate());
+            }
+
         } catch (IndexOutOfBoundsException e) {
             //Record does not exist
             System.out.println("Record does not exist");

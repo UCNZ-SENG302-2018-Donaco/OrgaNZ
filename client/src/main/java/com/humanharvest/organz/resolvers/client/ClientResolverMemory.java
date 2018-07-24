@@ -115,6 +115,11 @@ public class ClientResolverMemory implements ClientResolver {
     }
 
     @Override
+    public IllnessRecord modifyIllnessRecord(Client client,IllnessRecord record){
+        return record;
+    }
+
+    @Override
     public ProcedureRecord modifyProcedureRecord(Client client, ModifyProcedureObject modifyProcedureObject,
             long procedureRecordId) {
         ProcedureRecord toModify = client.getProcedures().stream().filter(record -> record.getId() == procedureRecordId)

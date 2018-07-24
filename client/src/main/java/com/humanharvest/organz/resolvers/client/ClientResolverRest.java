@@ -1,5 +1,6 @@
 package com.humanharvest.organz.resolvers.client;
 
+import com.humanharvest.organz.views.client.ModifyIllnessObject;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,7 @@ import com.humanharvest.organz.views.client.ModifyClientObject;
 import com.humanharvest.organz.views.client.ModifyProcedureObject;
 import com.humanharvest.organz.views.client.ResolveTransplantRequestObject;
 import com.humanharvest.organz.views.client.SingleDateView;
+import org.apache.http.protocol.HTTP;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -203,6 +205,19 @@ public class ClientResolverRest implements ClientResolver {
         return responseEntity.getBody();
     }
 
+
+    @Override
+    public IllnessRecord modifyIllnessRecord(Client client,IllnessRecord record){
+        int id = client.getIllnesses().indexOf(record) + 1;
+
+        HttpHeaders httpHeaders = createHeaders(true);
+        HttpEntity<IllnessRecord> entity = new HttpEntity<>(record,httpHeaders);
+        ResponseEntity<IllnessRecord> responseEntity = State.getRestTemplate().exchange(
+            String.format("%sclients/%d/illnesses/%d",State.BASE_URI,client.getUid(),id),
+                HttpMethod.PATCH,entity,IllnessRecord.class);
+        State.setClientEtag(responseEntity.getHeaders().getETag());
+        return responseEntity.getBody();
+    }
     @Override
     public ProcedureRecord modifyProcedureRecord(Client client, ModifyProcedureObject modifyProcedureObject,
             long procedureRecordId) {

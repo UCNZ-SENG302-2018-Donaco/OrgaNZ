@@ -385,22 +385,48 @@ public class ClientMedicalHistoryController extends SubController {
      */
     @FXML
     private void toggleChronic() {
-        // TODO: Add Client-Server Implementation
         IllnessRecord record = getSelectedRecord();
         if (record != null) {
-            ModifyIllnessRecordAction action = new ModifyIllnessRecordAction(record, manager);
+
+            //ModifyIllnessRecordAction action = new ModifyIllnessRecordAction(record, manager);
             if (record.isChronic()) {
                 // Current, chronic illness -> Current illness
-                action.changeChronicStatus(false);
+                record.setChronic(false);
             } else {
                 if (record.getCuredDate() != null) {
                     // Past illness -> Current, chronic illness
-                    action.changeCuredDate(null);
+                    record.setCuredDate(null);
                 }
                 // Illness -> chronic illness
-                action.changeChronicStatus(true);
+                record.setChronic(true);
             }
-            invoker.execute(action);
+            try {
+                State.getClientResolver().modifyIllnessRecord(client,record);
+
+            } catch (NotFoundException e) {
+                LOGGER.log(Level.WARNING, "Client not found");
+                Notifications.create()
+                    .title("Client not found")
+                    .text("The client could not be found on the server, it may have been deleted")
+                    .showWarning();
+            } catch (ServerRestException e) {
+                LOGGER.log(Level.WARNING, e.getMessage(), e);
+                Notifications.create()
+                    .title("Server error")
+                    .text("Could not apply changes on the server, please try again later")
+                    .showError();
+                return;
+            } catch (IfMatchFailedException e) {
+                LOGGER.log(Level.INFO, "If-Match did not match");
+                Notifications.create()
+                    .title("Outdated Data")
+                    .text(
+                        "The client has been modified since you retrieved the data. If you would still like to "
+                            + "apply these changes please submit again, otherwise refresh the page to update the data.")
+                    .showWarning();
+                return;
+            }
+            //invoker.execute(action);
             PageNavigator.refreshAllWindows();
         }
 

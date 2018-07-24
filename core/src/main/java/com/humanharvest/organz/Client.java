@@ -500,6 +500,7 @@ public class Client implements ConcurrencyControlledEntity {
         return Collections.unmodifiableList(medicationHistory);
     }
 
+
     /**
      * Adds a new MedicationRecord to the client's history.
      * @param record The given MedicationRecord.
