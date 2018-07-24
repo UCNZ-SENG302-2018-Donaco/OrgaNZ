@@ -3,6 +3,7 @@ package com.humanharvest.organz;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -84,8 +85,19 @@ public class Client implements ConcurrencyControlledEntity {
 
     @JsonView(Views.Overview.class)
     private LocalDate dateOfBirth;
+
     @JsonView(Views.Details.class)
     private LocalDate dateOfDeath;
+    @JsonView(Views.Details.class)
+    private LocalTime timeOfDeath;
+    @JsonView(Views.Details.class)
+    private Region regionOfDeath;
+    @JsonView(Views.Details.class)
+    private String cityOfDeath;
+    @JsonView(Views.Details.class)
+    private String countryOfDeath;
+
+
 
     @JsonView(Views.Details.class)
     private final Instant createdTimestamp;
@@ -348,6 +360,38 @@ public class Client implements ConcurrencyControlledEntity {
 
     public LocalDate getDateOfDeath() {
         return dateOfDeath;
+    }
+
+    public LocalTime getTimeOfDeath() {
+        return timeOfDeath;
+    }
+
+    public void setTimeOfDeath(LocalTime timeOfDeath) {
+        this.timeOfDeath = timeOfDeath;
+    }
+
+    public Region getRegionOfDeath() {
+        return regionOfDeath;
+    }
+
+    public void setRegionOfDeath(Region regionOfDeath) {
+        this.regionOfDeath = regionOfDeath;
+    }
+
+    public String getCityOfDeath() {
+        return cityOfDeath;
+    }
+
+    public void setCityOfDeath(String cityOfDeath) {
+        this.cityOfDeath = cityOfDeath;
+    }
+
+    public String getCountryOfDeath() {
+        return countryOfDeath;
+    }
+
+    public void setCountryOfDeath(String countryOfDeath) {
+        this.countryOfDeath = countryOfDeath;
     }
 
     public boolean isAlive() { return dateOfDeath == null; }
