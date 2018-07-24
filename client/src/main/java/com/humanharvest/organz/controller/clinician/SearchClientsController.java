@@ -190,9 +190,15 @@ public class SearchClientsController extends SubController {
         //On pagination update call createPage
         pagination.setPageFactory(this::createPage);
 
+        //Make the nameCol comparator always return zero as the list is already ordered by the server using custom sort
+        nameCol.setComparator((c1, c2) -> 0);
+
         //Bind the tableView to the observable list
         //We must make an intermediate SortedList to prevent the table sort policy applying
-        tableView.setItems(new SortedList<>(observableClientList));
+        SortedList<Client> sortedList = new SortedList<>(observableClientList);
+        //Bind the sortedList to the tableView to allow sorting
+        sortedList.comparatorProperty().bind(tableView.comparatorProperty());
+        tableView.setItems(sortedList);
 
         if (State.getSession().getLoggedInUserType() == UserType.ADMINISTRATOR) {
 

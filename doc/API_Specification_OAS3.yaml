@@ -52,7 +52,8 @@ paths:
           description: A list of clients
           content:
             application/json:
-              $ref: '#/components/schemas/paginatedClientList'
+              schema:
+                $ref: '#/components/schemas/paginatedClientList'
 
         400:
           $ref: '#/components/responses/400BadRequest'
@@ -1867,8 +1868,14 @@ components:
           type: string
         preferredName:
           type: string
+        region:
+          $ref: '#/components/schemas/regionEnum'
+        birthGender:
+          $ref: '#/components/schemas/genderEnum'
+        bloodType:
+          $ref: '#/components/schemas/bloodTypeEnum'
         dateOfBirth:
-            $ref: '#/components/schemas/date'
+          $ref: '#/components/schemas/date'
 
     clientDetails:
       type: object
