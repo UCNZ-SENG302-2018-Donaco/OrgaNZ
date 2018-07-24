@@ -65,13 +65,13 @@ public class Client implements ConcurrencyControlledEntity {
     private String currentAddress;
 
     @Enumerated(EnumType.STRING)
-    @JsonView(Views.Details.class)
+    @JsonView(Views.Overview.class)
     private Region region;
     @Enumerated(EnumType.STRING)
-    @JsonView(Views.Details.class)
+    @JsonView(Views.Overview.class)
     private Gender gender;
     @Enumerated(EnumType.STRING)
-    @JsonView(Views.Details.class)
+    @JsonView(Views.Overview.class)
     private BloodType bloodType;
     @Enumerated(EnumType.STRING)
     @JsonView(Views.Details.class)
