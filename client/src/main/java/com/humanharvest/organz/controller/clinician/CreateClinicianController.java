@@ -135,7 +135,7 @@ public class CreateClinicianController extends SubController {
                 staffIdLabel.setTextFill(Color.RED);
             } else {
                 Clinician clinician = new Clinician(fname.getText(), mname.getText(), lname.getText(),
-                        workAddress.getText(), region.getValue(), Integer.parseInt(staffId.getText()),
+                        workAddress.getText(), region.getValue().toString(), Integer.parseInt(staffId.getText()),
                         password.getText());
 
                 State.getClinicianManager().addClinician(clinician);

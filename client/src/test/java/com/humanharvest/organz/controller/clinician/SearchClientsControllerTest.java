@@ -38,7 +38,8 @@ import org.testfx.matcher.control.TextMatchers;
 @Ignore
 public class SearchClientsControllerTest extends ControllerTest {
 
-    private final Clinician testClinician = new Clinician("Admin", "Da", "Nimda", "2 Two Street", Region.CANTERBURY,
+    private final Clinician testClinician = new Clinician("Admin", "Da", "Nimda", "2 Two Street", Region
+            .CANTERBURY.toString(),
             55, "admin");
     private final Client testClient1 = new Client(
             "tom", "Delta", "1", LocalDate.now().minusYears(100), 1); // 100 years old

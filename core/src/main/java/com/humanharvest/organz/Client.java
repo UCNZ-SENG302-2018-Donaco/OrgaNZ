@@ -68,7 +68,7 @@ public class Client implements ConcurrencyControlledEntity {
     @JsonView(Views.Details.class)
     private String region;
     @Enumerated(EnumType.STRING)
-    @JsonView(Views.Overview.class)
+    @JsonView(Views.Details.class)
     private Country country;
     @Enumerated(EnumType.STRING)
     @JsonView(Views.Details.class)
@@ -895,5 +895,6 @@ public class Client implements ConcurrencyControlledEntity {
 
     public void setCountry(Country country) {
         this.country = country;
+        updateModifiedTimestamp();
     }
 }

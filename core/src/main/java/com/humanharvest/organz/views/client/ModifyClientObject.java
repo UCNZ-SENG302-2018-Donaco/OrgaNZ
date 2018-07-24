@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.humanharvest.organz.utilities.enums.BloodType;
+import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.views.ModifyBaseObject;
@@ -18,6 +19,7 @@ public class ModifyClientObject extends ModifyBaseObject {
     private String middleName;
     private String preferredName;
     private String currentAddress;
+    private Country country;
 
     private Region region;
     private Gender gender;
@@ -159,5 +161,14 @@ public class ModifyClientObject extends ModifyBaseObject {
 
     private static String fieldString(Member field) {
         return String.format("Updated %s", field.getName());
+    }
+
+    public Country getCountry() {
+        return country;
+    }
+
+    public void setCountry(Country country) {
+        registerChange("country");
+        this.country = country;
     }
 }

@@ -22,6 +22,9 @@ public class ViewBaseController extends SubController {
             Field clinicianField = viewedObject.getClass().getDeclaredField(fieldString);
             field.setAccessible(true);
             clinicianField.setAccessible(true);
+            System.out.println(field);
+            System.out.println(newValue);
+            System.out.println("Old: " + clinicianField.get(viewedObject) + "   New: " + newValue);
             if (!Objects.equals(clinicianField.get(viewedObject), newValue)) {
                 field.set(modifyObject, newValue);
                 modifyObject.registerChange(fieldString);

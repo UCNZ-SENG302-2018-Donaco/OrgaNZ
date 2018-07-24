@@ -89,7 +89,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
     protected void initState() {
         State.reset();
 
-        Clinician testClinician = new Clinician("A", "B", "C", "D", Region.UNSPECIFIED, 0, "E");
+        Clinician testClinician = new Clinician("A", "B", "C", "D", Region.UNSPECIFIED.toString(), 0, "E");
         testClient = new Client(1);
 
         State.login(testClinician);

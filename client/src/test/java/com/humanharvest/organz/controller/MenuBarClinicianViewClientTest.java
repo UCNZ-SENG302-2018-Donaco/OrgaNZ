@@ -15,7 +15,7 @@ import org.junit.Test;
 public class MenuBarClinicianViewClientTest extends ControllerTest {
 
     private Clinician testClinician = new Clinician("Mr", null, "Tester",
-            "9 Fake St", Region.AUCKLAND, 3, "k");
+            "9 Fake St", Region.AUCKLAND.toString(), 3, "k");
     private Client testClient1 = new Client("tom", "Delta", "1", LocalDate.now().minusYears(32), 1); // 100 years old
 
     @Override

@@ -77,7 +77,7 @@ public class ModifyClinician implements Runnable {
         updates.put("setMiddleName", new String[]{clinician.get().getMiddleName(), middleNames});
         updates.put("setLastName", new String[]{clinician.get().getLastName(), lastName});
         updates.put("setWorkAddress", new String[]{clinician.get().getWorkAddress(), workAddress});
-        updates.put("setRegion", new Region[]{clinician.get().getRegion(), region});
+        updates.put("setRegion", new String[]{clinician.get().getRegion(), region.toString()});
         updates.put("setPassword", new String[]{clinician.get().getPassword(), password});
 
         for (Entry<String, Object[]> entry : updates.entrySet()) {

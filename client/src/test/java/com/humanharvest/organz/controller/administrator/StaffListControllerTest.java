@@ -17,7 +17,7 @@ public class StaffListControllerTest extends ControllerTest {
 
     private Administrator admin1 = new Administrator("admin1", "password");
     private Administrator admin2 = new Administrator("admin2", "password");
-    private Clinician clinician1 = new Clinician("First", "Middle", "Last", "UC", Region.CANTERBURY, 50,
+    private Clinician clinician1 = new Clinician("First", "Middle", "Last", "UC", Region.CANTERBURY.toString(), 50,
             "password");
 
     @Override

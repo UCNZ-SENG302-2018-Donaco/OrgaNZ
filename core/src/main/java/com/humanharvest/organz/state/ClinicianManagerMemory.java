@@ -18,7 +18,7 @@ public class ClinicianManagerMemory implements ClinicianManager{
 
     private final List<Clinician> clinicians;
     private int defaultClinicianId = 0;
-    private Clinician defaultClinician = new Clinician("admin", null, "admin", "admin", Region.UNSPECIFIED,
+    private Clinician defaultClinician = new Clinician("admin", null, "admin", "admin", Region.UNSPECIFIED.name(),
             defaultClinicianId, "admin");
 
     public ClinicianManagerMemory() {

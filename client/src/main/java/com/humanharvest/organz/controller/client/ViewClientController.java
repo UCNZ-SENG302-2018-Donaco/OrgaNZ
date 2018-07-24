@@ -143,12 +143,12 @@ public class ViewClientController extends ViewBaseController {
         genderIdentity.setItems(FXCollections.observableArrayList(Gender.values()));
         btype.setItems(FXCollections.observableArrayList(BloodType.values()));
         regionCB.setItems(FXCollections.observableArrayList(Region.values()));
-        checkCountry();
+        country.setItems(FXCollections.observableArrayList(Country.values()));
         setFieldsDisabled(true);
     }
 
     private void checkCountry() {
-        if (viewedClient.getCountry() == Country.NZ) {
+        if (viewedClient.getCountry() != null ) {
             regionCB.setVisible(true);
             regionTF.setVisible(false);
         } else {
@@ -263,6 +263,7 @@ public class ViewClientController extends ViewBaseController {
             regionCB.setValue(Region.fromString(viewedClient.getRegion()));
         } else {
             regionTF.setText(viewedClient.getRegion());
+
         }
         address.setText(viewedClient.getCurrentAddress());
 
@@ -297,6 +298,7 @@ public class ViewClientController extends ViewBaseController {
             if (updateChanges()) {
                 displayBMI();
                 displayAge();
+                checkCountry();
 
                 lastModified.setText(formatter.format(viewedClient.getModifiedTimestamp()));
             }
@@ -450,11 +452,15 @@ public class ViewClientController extends ViewBaseController {
         addChangeIfDifferent(modifyClientObject, viewedClient, "weight", Double.parseDouble(weight.getText()));
         addChangeIfDifferent(modifyClientObject, viewedClient, "bloodType", btype.getValue());
         addChangeIfDifferent(modifyClientObject, viewedClient, "currentAddress", address.getText());
+        addChangeIfDifferent(modifyClientObject, viewedClient, "country", country.getValue());
+
+        System.out.println("Changed value: " + country.getValue() + "     Previous value: " + viewedClient.getCountry());
 
         if (viewedClient.getCountry() == Country.NZ) {
             addChangeIfDifferent(modifyClientObject, viewedClient, "region", regionCB.getValue());
         } else {
             addChangeIfDifferent(modifyClientObject, viewedClient,"region", regionTF.getText());
+
         }
 
 

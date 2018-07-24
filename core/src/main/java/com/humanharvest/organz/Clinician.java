@@ -38,9 +38,8 @@ public class Clinician implements ConcurrencyControlledEntity {
     @JsonView(Views.Details.class)
     private String password;
 
-    @Enumerated(EnumType.STRING)
     @JsonView(Views.Overview.class)
-    private Region region;
+    private String region;
     @Enumerated(EnumType.STRING)
     @JsonView(Views.Overview.class)
     private Country country;
@@ -69,7 +68,7 @@ public class Clinician implements ConcurrencyControlledEntity {
      * @param staffId The unique staffId. Should be checked using the ClinicianManager to ensure uniqueness
      * @param password The clinicians password for logins. Stored in plaintext
      */
-    public Clinician(String firstName, String middleName, String lastName, String workAddress, Region region,
+    public Clinician(String firstName, String middleName, String lastName, String workAddress, String region,
             int staffId, String password) {
         createdOn = LocalDateTime.now();
 
@@ -126,11 +125,11 @@ public class Clinician implements ConcurrencyControlledEntity {
         updateModifiedTimestamp();
     }
 
-    public Region getRegion() {
+    public String getRegion() {
         return region;
     }
 
-    public void setRegion(Region region) {
+    public void setRegion(String region) {
         this.region = region;
         updateModifiedTimestamp();
     }
@@ -212,5 +211,13 @@ public class Clinician implements ConcurrencyControlledEntity {
         } else {
             return "\"" + String.valueOf(modifiedOn.hashCode()) + "\"";
         }
+    }
+
+    public Country getCountry() {
+        return country;
+    }
+
+    public void setCountry(Country country) {
+        this.country = country;
     }
 }

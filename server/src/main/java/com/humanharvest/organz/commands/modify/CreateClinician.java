@@ -68,7 +68,7 @@ public class CreateClinician implements Runnable {
             return;
         }
 
-        Clinician clinician = new Clinician(firstName, middleNames, lastName, workAddress, region, staffId,
+        Clinician clinician = new Clinician(firstName, middleNames, lastName, workAddress, region.toString(), staffId,
                 password);
 
         Action action = new CreateClinicianAction(clinician, manager);
