@@ -1,5 +1,6 @@
 package com.humanharvest.organz.controller.client;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -139,26 +140,20 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
 
     @Test
     public void addNewMedicationWithButtonTest() {
-        MedicationRecord toBeAdded = new MedicationRecord("Med D", LocalDate.now(), null);
-
-        clickOn("#newMedField").write(toBeAdded.getMedicationName());
+        clickOn("#newMedField").write("Med D");
         clickOn("Add Medication");
 
         //Assert that the currentMedications list contains an entry with name "Med D"
-        assertTrue(testClient.getCurrentMedications().stream().anyMatch(medicationRecord -> "Med D".equals
-                (medicationRecord.getMedicationName())));
+        assertThat(testClient.getCurrentMedications()).extracting(("medicationName")).contains("Med D");
     }
 
     @Test
     public void addNewMedicationWithEnterTest() {
-        MedicationRecord toBeAdded = new MedicationRecord("Med D", LocalDate.now(), null);
-
-        clickOn("#newMedField").write(toBeAdded.getMedicationName());
+        clickOn("#newMedField").write("Med D");
         type(KeyCode.ENTER);
 
         //Assert that the currentMedications list contains an entry with name "Med D"
-        assertTrue(testClient.getCurrentMedications().stream().anyMatch(medicationRecord -> "Med D".equals
-                (medicationRecord.getMedicationName())));
+        assertThat(testClient.getCurrentMedications()).extracting(("medicationName")).contains("Med D");
     }
 
     @Test
