@@ -38,6 +38,7 @@ import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.validators.IntValidator;
+import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.views.client.ModifyClientObject;
 import org.controlsfx.control.Notifications;
@@ -54,6 +55,7 @@ public class ViewClientController extends ViewBaseController {
 
     private final Session session;
     private final ClientManager manager;
+    public Button editDeathDetailsButton;
     private Client viewedClient;
 
     @FXML
@@ -497,5 +499,11 @@ public class ViewClientController extends ViewBaseController {
             ageDisplayLabel.setText("Age at death:");
         }
         ageLabel.setText(String.valueOf(viewedClient.getAge()));
+    }
+
+    @FXML
+    private void editDeathDetails() {
+
+        PageNavigator.loadPage(Page.EDIT_DEATH_DETAILS, mainController);
     }
 }
