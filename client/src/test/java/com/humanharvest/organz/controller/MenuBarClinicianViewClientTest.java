@@ -24,6 +24,7 @@ public class MenuBarClinicianViewClientTest extends ControllerTest {
     @Override
     protected void initState() {
         State.reset();
+        State.getClientManager().addClient(testClient1);
         State.login(testClinician);
         mainController.setWindowContext(new WindowContext.WindowContextBuilder()
                 .setAsClinicianViewClientWindow()
