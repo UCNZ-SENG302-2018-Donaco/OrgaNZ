@@ -85,7 +85,7 @@ public class EditDeathDetailsController extends SubController{
 
         }
         //System.out.println(windowContext.isClinViewClientWindow());
-        if (windowContext.isClinViewClientWindow()) {
+        if (session.getLoggedInUserType() == UserType.CLINICIAN) {
             client = windowContext.getViewClient();
         }
 

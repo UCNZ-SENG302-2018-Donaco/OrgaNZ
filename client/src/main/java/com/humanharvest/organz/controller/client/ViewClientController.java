@@ -40,6 +40,7 @@ import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.validators.IntValidator;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.utilities.view.WindowContext;
 import com.humanharvest.organz.views.client.ModifyClientObject;
 import org.controlsfx.control.Notifications;
 
@@ -505,6 +506,10 @@ public class ViewClientController extends ViewBaseController {
     private void editDeathDetails() {
 
         MainController newMain  = PageNavigator.openNewWindow();
+        newMain.setWindowContext(new WindowContext.WindowContextBuilder()
+                .setAsClinicianViewClientWindow()
+                .viewClient(viewedClient)
+                .build());
 
         PageNavigator.loadPage(Page.EDIT_DEATH_DETAILS, newMain);
     }
