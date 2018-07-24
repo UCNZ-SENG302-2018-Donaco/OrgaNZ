@@ -162,7 +162,8 @@ public class ClientResolverMemory implements ClientResolver {
         client.deleteProcedureRecord(record);
     }
 
-    public void deleteClient(Client client) {
-        State.getClientManager().removeClient(client);
+    @Override
+    public void deleteMedicationRecord(Client client, MedicationRecord record) {
+        client.deleteMedicationRecord(record);
     }
 }

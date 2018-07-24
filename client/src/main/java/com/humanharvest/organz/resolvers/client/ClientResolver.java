@@ -85,6 +85,6 @@ public interface ClientResolver {
 
     void deleteProcedureRecord(Client client, ProcedureRecord record);
 
-    void deleteClient(Client client);
+    void deleteMedicationRecord(Client client, MedicationRecord record);
 
 }

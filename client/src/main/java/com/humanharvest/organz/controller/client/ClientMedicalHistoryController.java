@@ -1,6 +1,5 @@
 package com.humanharvest.organz.controller.client;
 
-import com.humanharvest.organz.actions.client.DeleteIllnessRecordAction;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
@@ -25,12 +24,9 @@ import javafx.scene.text.Text;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.IllnessRecord;
-import com.humanharvest.organz.actions.ActionInvoker;
-import com.humanharvest.organz.actions.client.ModifyIllnessRecordAction;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SidebarController;
 import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
@@ -49,8 +45,6 @@ public class ClientMedicalHistoryController extends SubController {
     private static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("d MMM yyyy");
 
     private Session session;
-    private ActionInvoker invoker;
-    private ClientManager manager;
     private Client client;
 
     @FXML
@@ -155,8 +149,6 @@ public class ClientMedicalHistoryController extends SubController {
      */
     public ClientMedicalHistoryController() {
         session = State.getSession();
-        invoker = State.getInvoker();
-        manager = State.getClientManager();
     }
 
     /**

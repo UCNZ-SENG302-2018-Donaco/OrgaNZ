@@ -25,14 +25,10 @@ import javafx.scene.text.Text;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.ProcedureRecord;
-import com.humanharvest.organz.actions.ActionInvoker;
-import com.humanharvest.organz.actions.client.DeleteProcedureRecordAction;
-import com.humanharvest.organz.actions.client.ModifyProcedureRecordAction;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.controller.components.DatePickerCell;
 import com.humanharvest.organz.controller.components.OrganCheckComboBoxCell;
-import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
@@ -54,8 +50,6 @@ public class ViewProceduresController extends SubController {
     private static final Logger LOGGER = Logger.getLogger(ViewProceduresController.class.getName());
 
     private Session session;
-    private ActionInvoker invoker;
-    private ClientManager manager;
     private Client client;
 
     @FXML
@@ -171,12 +165,10 @@ public class ViewProceduresController extends SubController {
     }
 
     /**
-     * Gets the current session and action invoker from the global state.
+     * Gets the current session from the global state.
      */
     public ViewProceduresController() {
         session = State.getSession();
-        invoker = State.getInvoker();
-        manager = State.getClientManager();
     }
 
     /**

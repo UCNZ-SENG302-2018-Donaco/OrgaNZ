@@ -286,20 +286,21 @@ public class ClientResolverRest implements ClientResolver {
                 ProcedureRecord.class,
                 client.getUid(),
                 record.getId());
+
         client.deleteProcedureRecord(record);
     }
 
-    public void deleteClient(Client client) {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setIfMatch(State.getClientEtag());
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
-        httpHeaders.set("X-Auth-Token", State.getToken());
-        HttpEntity entity = new HttpEntity<>(httpHeaders);
+    @Override
+    public void deleteMedicationRecord(Client client, MedicationRecord record) {
+        HttpHeaders httpHeaders = createHeaders(true);
+        sendQuery(httpHeaders,
+                State.BASE_URI + "clients/{id}/medications/{procedureId}",
+                HttpMethod.DELETE,
+                MedicationRecord.class,
+                client.getUid(),
+                record.getId());
 
-        ResponseEntity<String> responseEntity = State.getRestTemplate()
-                .exchange(State.BASE_URI + "clients/{uid}", HttpMethod.DELETE, entity, String.class, client.getUid());
-
-        State.setClientEtag(responseEntity.getHeaders().getETag());
+        client.deleteMedicationRecord(record);
     }
 
     //------------Templates----------------

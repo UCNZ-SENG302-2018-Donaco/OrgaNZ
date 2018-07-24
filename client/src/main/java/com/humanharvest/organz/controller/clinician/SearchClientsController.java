@@ -242,7 +242,7 @@ public class SearchClientsController extends SubController {
 
     private void deleteClient(Client client) {
         try {
-            State.getClientResolver().deleteClient(client);
+            State.getClientManager().removeClient(client);
         } catch (NotFoundException e) {
             LOGGER.log(Level.WARNING, "Client not found");
             PageNavigator.showAlert(AlertType.WARNING, "Client not found", "The client could not be found on the "

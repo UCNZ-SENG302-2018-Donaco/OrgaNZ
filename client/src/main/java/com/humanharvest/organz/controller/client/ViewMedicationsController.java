@@ -1,6 +1,5 @@
 package com.humanharvest.organz.controller.client;
 
-
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -28,8 +27,6 @@ import javafx.scene.layout.Pane;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.MedicationRecord;
-import com.humanharvest.organz.actions.ActionInvoker;
-import com.humanharvest.organz.actions.client.DeleteMedicationRecordAction;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SidebarController;
 import com.humanharvest.organz.controller.SubController;
@@ -56,7 +53,6 @@ import org.controlsfx.control.Notifications;
 public class ViewMedicationsController extends SubController {
 
     private Session session;
-    private ActionInvoker invoker;
     private ClientManager manager;
     private Client client;
     private List<String> lastResponse;
@@ -86,7 +82,6 @@ public class ViewMedicationsController extends SubController {
 
     public ViewMedicationsController() {
         session = State.getSession();
-        invoker = State.getInvoker();
         manager = State.getClientManager();
     }
 
@@ -365,9 +360,10 @@ public class ViewMedicationsController extends SubController {
     private void deleteMedication() {
         MedicationRecord record = getSelectedRecord();
         if (record != null) {
-            DeleteMedicationRecordAction action = new DeleteMedicationRecordAction(client, record, manager);
 
-            invoker.execute(action);
+            //TODO: Handle errors
+            State.getClientResolver().deleteMedicationRecord(client, record);
+
             PageNavigator.refreshAllWindows();
             refreshMedicationLists();
         }
