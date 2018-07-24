@@ -140,9 +140,13 @@ public class ClientTransplantRequestsController {
 
             // Check etag
             if (etag == null) {
+                System.out.println("Client etag is null");
                 throw new IfMatchRequiredException();
             }
             if (!client.getETag().equals(etag)) {
+                System.out.println("Server modified timestamp: " + client.getModifiedTimestamp());
+                System.out.println("Server etag: " + client.getETag());
+                System.out.println("Client etag: " + etag);
                 throw new IfMatchFailedException();
             }
 

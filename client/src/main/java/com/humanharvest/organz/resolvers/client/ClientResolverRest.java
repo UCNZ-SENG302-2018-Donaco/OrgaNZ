@@ -282,7 +282,10 @@ public class ClientResolverRest implements ClientResolver {
 
         ResponseEntity<T> responseEntity = State.getRestTemplate().exchange
                 (url, method, entity, typeReference, uriVariables);
-        State.setClientEtag(responseEntity.getHeaders().getETag());
+
+        if (!method.equals(HttpMethod.GET) && !method.equals(HttpMethod.HEAD)) { // if the method isn't safe
+            State.setClientEtag(responseEntity.getHeaders().getETag());
+        }
         return responseEntity;
     }
 
@@ -293,7 +296,10 @@ public class ClientResolverRest implements ClientResolver {
 
         ResponseEntity<T> responseEntity = State.getRestTemplate().exchange
                 (url, method, entity, typeReference, uriVariables);
-        State.setClientEtag(responseEntity.getHeaders().getETag());
+
+        if (!method.equals(HttpMethod.GET) && !method.equals(HttpMethod.HEAD)) { // if the method isn't safe
+            State.setClientEtag(responseEntity.getHeaders().getETag());
+        }
         return responseEntity;
     }
 
@@ -304,7 +310,10 @@ public class ClientResolverRest implements ClientResolver {
 
         ResponseEntity<T> responseEntity = State.getRestTemplate().exchange
                 (url, method, entity, typeReference, uriVariables);
-        State.setClientEtag(responseEntity.getHeaders().getETag());
+
+        if (!method.equals(HttpMethod.GET) && !method.equals(HttpMethod.HEAD)) { // if the method isn't safe
+            State.setClientEtag(responseEntity.getHeaders().getETag());
+        }
         return responseEntity;
     }
 
@@ -315,7 +324,10 @@ public class ClientResolverRest implements ClientResolver {
 
         ResponseEntity<T> responseEntity = State.getRestTemplate().exchange
                 (url, method, entity, typeReference, uriVariables);
-        State.setClientEtag(responseEntity.getHeaders().getETag());
+
+        if (!method.equals(HttpMethod.GET) && !method.equals(HttpMethod.HEAD)) { // if the method isn't safe
+            State.setClientEtag(responseEntity.getHeaders().getETag());
+        }
         return responseEntity;
     }
 }
