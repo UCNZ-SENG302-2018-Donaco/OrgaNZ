@@ -240,6 +240,8 @@ public class ClientResolverRest implements ClientResolver {
         client.deleteIllnessRecord(record);
     }
 
+    //------------Templates----------------
+
     private static HttpHeaders createHeaders(boolean addIfMatch) {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set("X-Auth-Token", State.getToken());
