@@ -58,7 +58,7 @@ public class SearchClientsController extends SubController {
 
     private static final Logger LOGGER = Logger.getLogger(SearchClientsController.class.getName());
 
-    private static final int ROWS_PER_PAGE = 2;
+    private static final int ROWS_PER_PAGE = 30;
     private static final int AGE_LOWER_BOUND = 0;
     private static final int AGE_UPPER_BOUND = 120;
 

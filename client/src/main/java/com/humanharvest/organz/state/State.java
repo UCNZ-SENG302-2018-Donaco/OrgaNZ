@@ -144,6 +144,10 @@ public final class State {
         mainControllers.clear();
     }
 
+    public static void deleteMainController(MainController controller) {
+        mainControllers.remove(controller);
+    }
+
     private static MappingJackson2HttpMessageConverter customConverter() {
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
         converter.setObjectMapper(customObjectMapper());

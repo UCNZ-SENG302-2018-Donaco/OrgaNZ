@@ -4,12 +4,13 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 
 import com.humanharvest.organz.Client;
-import com.humanharvest.organz.actions.ActionInvoker;
+import com.humanharvest.organz.resolvers.ActionResolver;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.views.ActionResponseView;
 import org.controlsfx.control.Notifications;
 
 /**
@@ -23,14 +24,12 @@ public class SidebarController extends SubController {
             viewProceduresButton, createAdminButton, createClinicianButton, undoButton, redoButton, staffListButton,
             commandLineButton;
 
-    private ActionInvoker invoker;
     private Session session;
 
     /**
      * Gets the ActionInvoker from the current state.
      */
     public SidebarController() {
-        invoker = State.getInvoker();
         session = State.getSession();
     }
 
@@ -69,8 +68,7 @@ public class SidebarController extends SubController {
         }
 
         // Set undo and redo button depending on if they're able to be pressed
-        undoButton.setDisable(!invoker.canUndo());
-        redoButton.setDisable(!invoker.canRedo());
+        refresh();
     }
 
     /**
@@ -110,8 +108,9 @@ public class SidebarController extends SubController {
      * Refreshes the undo/redo buttons based on if there are changes to be made
      */
     public void refresh() {
-        undoButton.setDisable(!invoker.canUndo());
-        redoButton.setDisable(!invoker.canRedo());
+        ActionResponseView responseView = ActionResolver.getUndo();
+        undoButton.setDisable(!responseView.isCanUndo());
+        redoButton.setDisable(!responseView.isCanRedo());
     }
 
     /**
@@ -250,8 +249,8 @@ public class SidebarController extends SubController {
      */
     @FXML
     private void undo() {
-        String undoneText = invoker.undo();
-        Notifications.create().title("Undo").text(undoneText).showInformation();
+        ActionResponseView responseView = ActionResolver.executeUndo(State.getClientEtag());
+        Notifications.create().title("Undo").text(responseView.getResultText()).showInformation();
         PageNavigator.refreshAllWindows();
     }
 
@@ -261,8 +260,8 @@ public class SidebarController extends SubController {
      */
     @FXML
     private void redo() {
-        String redoneText = invoker.redo();
-        Notifications.create().title("Redo").text(redoneText).showInformation();
+        ActionResponseView responseView = ActionResolver.executeRedo(State.getClientEtag());
+        Notifications.create().title("Redo").text(responseView.getResultText()).showInformation();
         PageNavigator.refreshAllWindows();
     }
 }

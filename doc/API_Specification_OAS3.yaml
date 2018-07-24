@@ -45,16 +45,14 @@ paths:
         - $ref: '#/components/parameters/clientType'
         - $ref: '#/components/parameters/donating'
         - $ref: '#/components/parameters/requesting'
-        - $ref: '#/components/parameters/sortOrder'
+        - $ref: '#/components/parameters/sortOption'
+        - $ref: '#/components/parameters/isReversed'
       responses:
         200:
           description: A list of clients
           content:
             application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/clientOverview'
+              $ref: '#/components/schemas/paginatedClientList'
 
         400:
           $ref: '#/components/responses/400BadRequest'
@@ -1626,12 +1624,20 @@ components:
       schema:
         $ref: '#/components/schemas/organEnum'
 
-    sortOrder:
-      name: sortOrder
+    sortOption:
+      name: sortOption
       in: query
       description: "Returns clients in the order specified"
       schema:
         $ref: '#/components/schemas/clientSortOptionsEnum'
+
+    isReversed:
+      name: isReversed
+      in: query
+      description: "If the sort order should be reversed"
+      schema:
+        type: boolean
+
 
     ETag:
       name: ETag
@@ -1946,6 +1952,18 @@ components:
           $ref: '#/components/schemas/date'
         bloodType:
           $ref: '#/components/schemas/bloodTypeEnum'
+
+    paginatedClientList:
+      type: object
+      properties:
+        clients:
+          type: array
+          items:
+            $ref: '#/components/schemas/clientOverview'
+        totalResults:
+          type: integer
+          example: 308
+
 
     date:
       type: string

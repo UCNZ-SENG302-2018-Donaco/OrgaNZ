@@ -27,7 +27,7 @@ import javafx.stage.Stage;
 import com.humanharvest.organz.AppUI;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
-import com.humanharvest.organz.actions.ActionInvoker;
+import com.humanharvest.organz.resolvers.ActionResolver;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
@@ -35,6 +35,7 @@ import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.CacheManager;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.views.ActionResponseView;
 import org.controlsfx.control.Notifications;
 
 /**
@@ -83,7 +84,6 @@ public class MenuBarController extends SubController {
     public Menu filePrimaryItem;
     public Menu administrationPrimaryItem;
 
-    private ActionInvoker invoker;
     private ClientManager clientManager;
     private Session session;
 
@@ -91,7 +91,6 @@ public class MenuBarController extends SubController {
      * Gets the ActionInvoker from the current state.
      */
     public MenuBarController() {
-        invoker = State.getInvoker();
         clientManager = State.getClientManager();
         session = State.getSession();
     }
@@ -145,8 +144,7 @@ public class MenuBarController extends SubController {
             hideMenus(viewAllMenus);
         }
         closeItem.setDisable(!windowContext.isClinViewClientWindow());
-        undoItem.setDisable(!invoker.canUndo());
-        redoItem.setDisable(!invoker.canRedo());
+        refresh();
     }
 
 
@@ -526,8 +524,9 @@ public class MenuBarController extends SubController {
      * Refreshes the undo/redo buttons based on if there are changes to be made
      */
     public void refresh() {
-        undoItem.setDisable(!invoker.canUndo());
-        redoItem.setDisable(!invoker.canRedo());
+        ActionResponseView responseView = ActionResolver.getUndo();
+        undoItem.setDisable(!responseView.isCanUndo());
+        redoItem.setDisable(!responseView.isCanRedo());
     }
 
     /**
@@ -535,11 +534,8 @@ public class MenuBarController extends SubController {
      */
     @FXML
     private void undo() {
-        String undoneText = invoker.undo();
-        Notifications.create()
-                .title("Undo")
-                .text(undoneText)
-                .showInformation();
+        ActionResponseView responseView = ActionResolver.executeUndo(State.getClientEtag());
+        Notifications.create().title("Undo").text(responseView.getResultText()).showInformation();
         PageNavigator.refreshAllWindows();
     }
 
@@ -548,11 +544,8 @@ public class MenuBarController extends SubController {
      */
     @FXML
     private void redo() {
-        String redoneText = invoker.redo();
-        Notifications.create()
-                .title("Redo")
-                .text(redoneText)
-                .showInformation();
+        ActionResponseView responseView = ActionResolver.executeRedo(State.getClientEtag());
+        Notifications.create().title("Redo").text(responseView.getResultText()).showInformation();
         PageNavigator.refreshAllWindows();
     }
 

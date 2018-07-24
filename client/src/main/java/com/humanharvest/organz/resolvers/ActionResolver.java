@@ -26,6 +26,18 @@ public class ActionResolver {
         return responseEntity.getBody();
     }
 
+    public static ActionResponseView getUndo() {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        httpHeaders.set("X-Auth-Token", State.getToken());
+
+        HttpEntity entity = new HttpEntity<>(null, httpHeaders);
+
+        ResponseEntity<ActionResponseView> responseEntity = State.getRestTemplate().exchange
+                (State.BASE_URI + "undo", HttpMethod.GET, entity, ActionResponseView.class);
+        return responseEntity.getBody();
+    }
+
     private static HttpEntity setupEntity(String ETag) {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
