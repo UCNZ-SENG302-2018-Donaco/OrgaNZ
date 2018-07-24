@@ -67,7 +67,11 @@ public class EditDeathDetailsController extends SubController{
 
         if(session.getLoggedInUserType() == UserType.CLIENT){
             client = session.getLoggedInClient();
-            deathTimeField.setEditable(false);
+            deathTimeField.setDisable(true);
+            deathDatePicker.setDisable(true);
+            deathCountry.setEditable(false);
+            deathRegion.setEditable(false);
+            deathCity.setEditable(false);
             System.out.println(client.isDead());
             if(client.isDead()){
                 if (client.getTimeOfDeath() != null){
@@ -76,7 +80,7 @@ public class EditDeathDetailsController extends SubController{
                 deathDatePicker.setValue(client.getDateOfDeath());
                 deathCountry.setText(client.getCurrentAddress());
                 deathRegion.setText(client.getRegion().toString());
-                deathCity.setText(client.getCurrentAddress());
+                deathCity.setText(client.getCurrentAddress().toString());
 
             }
 
@@ -84,9 +88,15 @@ public class EditDeathDetailsController extends SubController{
 
 
         }
-        //System.out.println(windowContext.isClinViewClientWindow());
-        if (session.getLoggedInUserType() == UserType.CLINICIAN) {
+        if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
+            if (client.getTimeOfDeath() != null){
+                deathTimeField.setText(client.getTimeOfDeath().toString());
+            }
+            deathDatePicker.setValue(client.getDateOfDeath());
+            deathCountry.setText(client.getCurrentAddress());
+            deathRegion.setText(client.getRegion().toString());
+            deathCity.setText(client.getCurrentAddress());
         }
 
     }
