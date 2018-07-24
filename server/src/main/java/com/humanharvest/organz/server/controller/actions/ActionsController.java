@@ -9,7 +9,6 @@ import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
-import com.humanharvest.organz.views.TextResponseView;
 import com.humanharvest.organz.views.ActionResponseView;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ActionsController {
 
     @GetMapping("/undo")
-    public ResponseEntity<TextResponseView> getUndoActionText(
+    public ResponseEntity<ActionResponseView> getUndoActionText(
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {
 
         //Check is valid Admin
@@ -30,7 +29,12 @@ public class ActionsController {
 
         //Get the next Action to undo
         ActionInvoker actionInvoker = State.getActionInvoker(authToken);
-        TextResponseView responseView = new TextResponseView(actionInvoker.nextUndo().getUnexecuteText());
+
+        String actionText = actionInvoker.nextUndo().getUnexecuteText();
+        boolean canUndo = actionInvoker.canUndo();
+        boolean canRedo = actionInvoker.canRedo();
+
+        ActionResponseView responseView = new ActionResponseView(actionText, canUndo, canRedo);
         return new ResponseEntity<>(responseView, HttpStatus.OK);
     }
 
@@ -64,7 +68,7 @@ public class ActionsController {
     }
 
     @GetMapping("/redo")
-    public ResponseEntity<TextResponseView> getRedoActionText(
+    public ResponseEntity<ActionResponseView> getRedoActionText(
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {
 
         //Check is valid Admin
@@ -72,7 +76,12 @@ public class ActionsController {
 
         //Get the next Action to redo
         ActionInvoker actionInvoker = State.getActionInvoker(authToken);
-        TextResponseView responseView = new TextResponseView(actionInvoker.nextRedo().getExecuteText());
+
+        String actionText = actionInvoker.nextRedo().getExecuteText();
+        boolean canUndo = actionInvoker.canUndo();
+        boolean canRedo = actionInvoker.canRedo();
+
+        ActionResponseView responseView = new ActionResponseView(actionText, canUndo, canRedo);
         return new ResponseEntity<>(responseView, HttpStatus.OK);
     }
 
