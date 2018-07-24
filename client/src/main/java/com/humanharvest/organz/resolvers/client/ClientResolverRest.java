@@ -208,7 +208,7 @@ public class ClientResolverRest implements ClientResolver {
 
     @Override
     public IllnessRecord modifyIllnessRecord(Client client,IllnessRecord record){
-        int id = client.getIllnesses().indexOf(record) + 1;
+        int id = client.getIllnesses().indexOf(record);
 
         HttpHeaders httpHeaders = createHeaders(true);
         HttpEntity<IllnessRecord> entity = new HttpEntity<>(record,httpHeaders);
