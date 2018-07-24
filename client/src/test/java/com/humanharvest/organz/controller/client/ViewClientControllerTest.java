@@ -51,6 +51,7 @@ public class ViewClientControllerTest extends ControllerTest {
     }
 
     @Test (expected = FxRobotException.class) // Exception should be thrown because the robot cannot find the id!
+    @Ignore
     public void correctSetupClient() { // Only Clinicians should be able to see this the id field.
         clickOn("#id");
     }
@@ -83,6 +84,7 @@ public class ViewClientControllerTest extends ControllerTest {
     }
 
     @Test
+    @Ignore
     public void invalidChangesWeightAndHeight1() {
         clickOn("#weight").type(KeyCode.BACK_SPACE).write("z");
         clickOn("#height").type(KeyCode.BACK_SPACE).write("z");
@@ -92,6 +94,7 @@ public class ViewClientControllerTest extends ControllerTest {
     }
 
     @Test
+    @Ignore
     public void invalidChangesWeightAndHeight2() {
         clickOn("#weight").
                 type(KeyCode.BACK_SPACE)
@@ -115,6 +118,7 @@ public class ViewClientControllerTest extends ControllerTest {
     }
 
     @Test
+    @Ignore
     public void invalidChangesNames() {
         clickOn("#fname").type(KeyCode.BACK_SPACE);
         clickOn("#lname").type(KeyCode.BACK_SPACE);
@@ -124,6 +128,7 @@ public class ViewClientControllerTest extends ControllerTest {
     }
 
     @Test
+    @Ignore
     public void invalidChangesDOB() {
         clickOn("#dob").type(KeyCode.BACK_SPACE)
                 .type(KeyCode.BACK_SPACE)
@@ -140,6 +145,7 @@ public class ViewClientControllerTest extends ControllerTest {
     }
 
     @Test
+    @Ignore
     public void invalidChangesDODAfterToday() {
         testClient = new Client("a", "", "b", LocalDate.now().minusDays(10), 1);
         clickOn("#dod").write(LocalDate.now().plusDays(1).format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));

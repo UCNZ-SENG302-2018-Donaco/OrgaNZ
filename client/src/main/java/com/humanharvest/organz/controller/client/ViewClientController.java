@@ -1,16 +1,29 @@
 package com.humanharvest.organz.controller.client;
 
+import static com.humanharvest.organz.state.State.getClientManager;
+
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.imageio.ImageIO;
+import org.apache.commons.io.IOUtils;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
+import javafx.css.PseudoClass;
 import javafx.fxml.FXML;
+import javafx.scene.Group;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -18,9 +31,17 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 
+import com.humanharvest.organz.AppUI;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.controller.MainController;
@@ -51,7 +72,7 @@ public class ViewClientController extends ViewBaseController {
             .withZone(ZoneId.systemDefault());
 
     private static final Logger LOGGER = Logger.getLogger(ViewClientController.class.getName());
-
+    private static final int maxFileSize = 2000000; // (2mb)
     private final Session session;
     private final ClientManager manager;
     private Client viewedClient;
@@ -59,19 +80,15 @@ public class ViewClientController extends ViewBaseController {
     @FXML
     private Pane sidebarPane;
     @FXML
-    private Pane idPane;
+    private Pane imagePane;
     @FXML
     private Pane inputsPane;
     @FXML
     private Pane menuBarPane;
     @FXML
-    private Button searchClientButton;
-    @FXML
     private Label creationDate;
     @FXML
     private Label lastModified;
-    @FXML
-    private Label noClientLabel;
     @FXML
     private Label fnameLabel;
     @FXML
@@ -91,7 +108,7 @@ public class ViewClientController extends ViewBaseController {
     @FXML
     private Label bmiLabel;
     @FXML
-    private TextField id;
+    private Label fullName;
     @FXML
     private TextField fname;
     @FXML
@@ -107,6 +124,10 @@ public class ViewClientController extends ViewBaseController {
     @FXML
     private TextField address;
     @FXML
+    private Button uploadPhotoButton;
+    @FXML
+    private Button deletePhotoButton;
+    @FXML
     private DatePicker dob;
     @FXML
     private DatePicker dod;
@@ -118,9 +139,13 @@ public class ViewClientController extends ViewBaseController {
     private ChoiceBox<BloodType> btype;
     @FXML
     private ChoiceBox<Region> region;
+    @FXML
+    private ImageView imageView;
+    private Image image;
+
 
     public ViewClientController() {
-        manager = State.getClientManager();
+        manager = getClientManager();
         session = State.getSession();
     }
 
@@ -138,43 +163,24 @@ public class ViewClientController extends ViewBaseController {
         genderIdentity.setItems(FXCollections.observableArrayList(Gender.values()));
         btype.setItems(FXCollections.observableArrayList(BloodType.values()));
         region.setItems(FXCollections.observableArrayList(Region.values()));
-        setFieldsDisabled(true);
+        fullName.setWrapText(true);
+
+
     }
+
 
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
         if (session.getLoggedInUserType() == Session.UserType.CLIENT) {
             viewedClient = session.getLoggedInClient();
-            idPane.setVisible(false);
-            idPane.setManaged(false);
             mainController.loadSidebar(sidebarPane);
         } else if (windowContext.isClinViewClientWindow()) {
             viewedClient = windowContext.getViewClient();
             mainController.loadMenuBar(menuBarPane);
         }
-        id.setText(Integer.toString(viewedClient.getUid()));
+        loadImage();
         refresh();
-
-        new UIValidation()
-                .add(id, new IntValidator() {
-                    @Override
-                    public boolean isValid(Object value) {
-                        OptionalInt clientId = getAsInt(value);
-                        if (!clientId.isPresent()) {
-                            return false;
-                        }
-
-                        return State.getClientManager().getClientByID(clientId.getAsInt()).isPresent();
-                    }
-
-                    @Override
-                    public String getErrorMessage() {
-                        return "Invalid client id";
-                    }
-                })
-                .addDisableButton(searchClientButton)
-                .validate();
     }
 
     @Override
@@ -196,40 +202,9 @@ public class ViewClientController extends ViewBaseController {
     }
 
     /**
-     * Searches for a client based off the id number supplied in the text field. The users fields will be displayed if
-     * this user exists, otherwise an error message will display.
+     * Updates all of the fields of the client.
      */
-    @FXML
-    private void searchClient() {
-        int idValue;
-        try {
-            idValue = Integer.parseInt(id.getText());
-        } catch (NumberFormatException e) {
-            noClientLabel.setVisible(true);
-            setFieldsDisabled(true);
-            return;
-        }
-        try {
-            viewedClient = manager.getClientByID(idValue).orElse(null);
-            updateClientFields();
-        } catch (ServerRestException e) {
-            e.printStackTrace();
-            PageNavigator.showAlert(AlertType.ERROR,
-                    "Server Error",
-                    "An error occurred while trying to fetch from the server.\nPlease try again later.");
-        } catch (NotFoundException e) {
-            PageNavigator.showAlert(AlertType.WARNING,
-                    "Client Not Found",
-                    "The specified client could not be located. Please enter a different ID");
-            noClientLabel.setVisible(true);
-            setFieldsDisabled(true);
-        }
-    }
-
     private void updateClientFields() {
-        noClientLabel.setVisible(false);
-        setFieldsDisabled(false);
-
         fname.setText(viewedClient.getFirstName());
         lname.setText(viewedClient.getLastName());
         mname.setText(viewedClient.getMiddleName());
@@ -243,27 +218,21 @@ public class ViewClientController extends ViewBaseController {
         btype.setValue(viewedClient.getBloodType());
         region.setValue(viewedClient.getRegion());
         address.setText(viewedClient.getCurrentAddress());
+        fullName.setText(viewedClient.getPreferredNameOnly());
+
 
         creationDate.setText(formatter.format(viewedClient.getCreatedTimestamp()));
+
         if (viewedClient.getModifiedTimestamp() == null) {
-            lastModified.setText("User has not been modified yet.");
+            lastModified.setText("Not yet modified.");
         } else {
             lastModified.setText(formatter.format(viewedClient.getModifiedTimestamp()));
         }
-
         displayBMI();
         displayAge();
 
     }
 
-    /**
-     * Disables the view of user fields as these will all be irrelevant to the id number supplied if no such client
-     * exists with this id. Or sets it to visible so that the user can see all fields relevant to the client.
-     * @param disabled the state of the pane.
-     */
-    private void setFieldsDisabled(boolean disabled) {
-        inputsPane.setVisible(!disabled);
-    }
 
     /**
      * Saves the changes a user makes to the viewed client if all their inputs are valid.
@@ -278,6 +247,94 @@ public class ViewClientController extends ViewBaseController {
 
                 lastModified.setText(formatter.format(viewedClient.getModifiedTimestamp()));
             }
+        }
+    }
+
+    /**
+     * Loads the viewed profiles image
+     */
+    private void loadImage() {
+        byte[] bytes;
+        try {
+            bytes = State.getImageManager().getClientImage(viewedClient.getUid());
+        } catch (Exception ex) {
+            try {
+                bytes = State.getImageManager().getDefaultImage();
+
+            } catch (IOException e) {
+                ex.printStackTrace();
+                return;
+            }
+        }
+        image = new Image(new ByteArrayInputStream(bytes));
+
+        imageView.setImage(image);
+        imageView.setFitHeight(130);
+        imageView.setFitWidth(130);
+        imageView.setPreserveRatio(true);
+
+    }
+
+    /**
+     * Prompts a user with a file chooser which is restricted to png's and jpg's. If a valid file of correct size is
+     * input, this photo is uploaded as the viewed clients new profile photo.
+     */
+    @FXML
+    public void uploadPhoto() {
+        boolean uploadSuccess = false;
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Upload Profile Image");
+        fileChooser.getExtensionFilters().addAll(
+                new ExtensionFilter("Image Files", "*.png") // Restricting only this file type.
+        );
+
+        File selectedFile = fileChooser.showOpenDialog(AppUI.getWindow());
+        if (selectedFile != null) {
+            if (selectedFile.length() > maxFileSize) {
+                PageNavigator.showAlert(AlertType.WARNING, "Image Size Too Large",
+                        "The image size is too large. It must be under 2MB.");
+            } else if (!selectedFile.canRead()) {
+                PageNavigator.showAlert(AlertType.WARNING, "File Couldn't Be Read",
+                        "This file could not be read. Ensure you are uploading a valid .png or .jpg");
+            } else {
+//                image = new Image(selectedFile.toURI().toString());
+                try {
+                    InputStream in = new FileInputStream(selectedFile);
+                    uploadSuccess = State.getImageManager().postClientImage(viewedClient.getUid(), IOUtils.toByteArray(in));
+
+                } catch (FileNotFoundException ex) {
+                    PageNavigator.showAlert(AlertType.WARNING, "File Couldn't Be Found",
+                            "This file was not found.");
+                } catch (IOException ex) {
+                    PageNavigator.showAlert(AlertType.WARNING, "File Couldn't Be Read",
+                            "This file could not be read. Ensure you are uploading a valid .png or .jpg");
+                } catch (ServerRestException ex) {
+                    ex.printStackTrace();
+                    PageNavigator.showAlert(AlertType.ERROR,"Server Error", "Something went wrong with the server. "
+                            + "Please try again later.");
+                }
+            }
+        }
+        if (uploadSuccess) {
+            deletePhotoButton.setDisable(false);
+            loadImage();
+            PageNavigator.showAlert(AlertType.CONFIRMATION, "Success", "The image has been posted.");
+        }
+    }
+
+    /**
+     * Sets the profile image to null and refreshes the image.
+     */
+    @FXML
+    public void deletePhoto() {
+//        image = null;
+        boolean deleteSuccessful = State.getImageManager().deleteClientImage(viewedClient.getUid());
+        if (deleteSuccessful) {
+            loadImage();
+//            deletePhotoButton.setDisable(true);
+        } else {
+            PageNavigator.showAlert(AlertType.ERROR,"Server Error", "Something went wrong with the server. "
+                    + "Please try again later.");
         }
     }
 
@@ -359,6 +416,25 @@ public class ViewClientController extends ViewBaseController {
             update = false;
         }
         return update;
+    }
+
+
+    private void addChangeIfDifferent(ModifyClientObject modifyClientObject, String fieldString, Object newValue) {
+        try {
+            //Get the field from the string
+            Field field = modifyClientObject.getClass().getDeclaredField(fieldString);
+            Field clientField = viewedClient.getClass().getDeclaredField(fieldString);
+            //Allow access to any fields including private
+            field.setAccessible(true);
+            clientField.setAccessible(true);
+            //Only add the field if it differs from the client
+            if (!Objects.equals(clientField.get(viewedClient), newValue)) {
+                field.set(modifyClientObject, newValue);
+                modifyClientObject.registerChange(fieldString);
+            }
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+        }
     }
 
     /**
