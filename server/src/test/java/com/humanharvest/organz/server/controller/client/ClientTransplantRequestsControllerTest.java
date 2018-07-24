@@ -1,4 +1,4 @@
-package com.humanharvest.organz.server.client;
+package com.humanharvest.organz.server.controller.client;
 
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isEmptyOrNullString;

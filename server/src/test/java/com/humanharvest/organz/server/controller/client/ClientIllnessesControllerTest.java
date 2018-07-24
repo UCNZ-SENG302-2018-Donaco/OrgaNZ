@@ -1,4 +1,4 @@
-package com.humanharvest.organz.server.client;
+package com.humanharvest.organz.server.controller.client;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.doNothing;
@@ -32,7 +32,7 @@ import org.springframework.web.context.WebApplicationContext;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
 @WebAppConfiguration
-public class ClientIllnessControllerTest {
+public class ClientIllnessesControllerTest {
 
   private MockMvc mockMvc;
   private Client testClient;
