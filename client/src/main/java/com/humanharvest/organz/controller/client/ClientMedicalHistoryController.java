@@ -312,7 +312,7 @@ public class ClientMedicalHistoryController extends SubController {
      */
     @FXML
     private void toggleCured() {
-        // TODO: Add Client-Server Implementation
+
         IllnessRecord record = getSelectedRecord();
         if (record != null) {
             if (record.isChronic()) {
@@ -322,16 +322,20 @@ public class ClientMedicalHistoryController extends SubController {
                                 + " not chronic.");
             } else if (selectedTableView == currentIllnessView) {
                 // Moving from current to past (marking as cured)
-                ModifyIllnessRecordAction action = new ModifyIllnessRecordAction(record, manager);
-                action.changeCuredDate(LocalDate.now());
+                //ModifyIllnessRecordAction action = new ModifyIllnessRecordAction(record, manager);
+                //action.changeCuredDate(LocalDate.now());
+                record.setCuredDate(LocalDate.now());
+                State.getClientResolver().modifyIllnessRecord(client,record);
 
-                invoker.execute(action);
+                //invoker.execute(action);
                 PageNavigator.refreshAllWindows();
             } else if (selectedTableView == pastIllnessView) {
                 // Moving from past to current (marking as not cured)
-                ModifyIllnessRecordAction action = new ModifyIllnessRecordAction(record, manager);
-                action.changeCuredDate(null);
-                invoker.execute(action);
+                //ModifyIllnessRecordAction action = new ModifyIllnessRecordAction(record, manager);
+                record.setCuredDate(null);
+                State.getClientResolver().modifyIllnessRecord(client,record);
+                //action.changeCuredDate(null);
+                //invoker.execute(action);
                 PageNavigator.refreshAllWindows();
 
             }
