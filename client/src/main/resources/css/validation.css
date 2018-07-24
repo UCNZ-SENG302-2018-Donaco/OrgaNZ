@@ -31,3 +31,15 @@
   -fx-background-radius: 3, 2, 4, 0;
   -fx-prompt-text-fill: transparent;
 }
+
+.root {
+  -fx-base: #d6e5ff;
+}
+
+.hbox {
+
+  -fx-border-color: red;
+  -fx-border-width: 10px;
+
+}
+

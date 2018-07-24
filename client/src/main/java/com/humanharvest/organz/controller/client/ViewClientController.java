@@ -164,6 +164,8 @@ public class ViewClientController extends ViewBaseController {
         btype.setItems(FXCollections.observableArrayList(BloodType.values()));
         region.setItems(FXCollections.observableArrayList(Region.values()));
         fullName.setWrapText(true);
+
+
     }
 
 

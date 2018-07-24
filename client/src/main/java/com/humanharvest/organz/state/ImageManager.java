@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import org.apache.commons.io.IOUtils;
 import org.springframework.http.*;
 import org.springframework.web.client.ResourceAccessException;
@@ -32,15 +33,12 @@ public class ImageManager {
         HttpEntity<Object> entity = new HttpEntity<>(null, httpHeaders);
         ResponseEntity responseEntity;
         try {
-            System.out.println("resources");
             responseEntity = State.getRestTemplate()
                     .exchange(State.BASE_URI + "/clients/{uid}/image", HttpMethod.GET,
                             entity, byte[].class, uid);
-        } catch (ResourceAccessException ex) {
-//            ex.printStackTrace();
+        } catch (NotFoundException ex) { // User doesn't have an image uploaded
             throw ex;
         } catch (Exception ex) {
-            System.out.println("resources");
             ex.printStackTrace();
             throw ex;
         }

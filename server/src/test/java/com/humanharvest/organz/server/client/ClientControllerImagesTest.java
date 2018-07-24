@@ -64,11 +64,6 @@ public class ClientControllerImagesTest {
     }
 
 
-
-    private void deleteImage() throws Exception {
-        mockMvc.perform(delete("clients/9999/image"));
-    }
-
     @Test
     @Ignore // TODO Figure out why pathnames need extra ./"../"images999.png !!!
     public void getNonExistingImage() throws Exception {
@@ -103,9 +98,6 @@ public class ClientControllerImagesTest {
                 .contentType(MediaType.IMAGE_PNG)
                 .content(bytes))
                 .andExpect(status().isOk());
-
-
-//        deleteImage();
     }
 
     @Test
