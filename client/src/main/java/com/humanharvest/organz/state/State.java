@@ -17,6 +17,9 @@ import com.humanharvest.organz.resolvers.CommandRunnerRest;
 import com.humanharvest.organz.resolvers.actions.ActionResolver;
 import com.humanharvest.organz.resolvers.actions.ActionResolverMemory;
 import com.humanharvest.organz.resolvers.actions.ActionResolverRest;
+import com.humanharvest.organz.resolvers.administrator.ClientFileResolver;
+import com.humanharvest.organz.resolvers.administrator.ClientFileResolverMemory;
+import com.humanharvest.organz.resolvers.administrator.ClientFileResolverRest;
 import com.humanharvest.organz.resolvers.client.ClientResolver;
 import com.humanharvest.organz.resolvers.client.ClientResolverMemory;
 import com.humanharvest.organz.resolvers.client.ClientResolverRest;
@@ -46,6 +49,7 @@ public final class State {
     private static AuthenticationManager authenticationManager;
     private static CommandRunner commandRunner;
     private static ActionResolver actionResolver;
+    private static ClientFileResolver clientFileResolver;
 
     private static ActionInvoker invoker;
     private static Session session;
@@ -82,6 +86,7 @@ public final class State {
             authenticationManager = new AuthenticationManagerRest();
             commandRunner = new CommandRunnerRest();
             actionResolver = new ActionResolverRest();
+            clientFileResolver = new ClientFileResolverRest();
         } else if (storageType == DataStorageType.MEMORY) {
             clientManager = new ClientManagerMemory();
             clientResolver = new ClientResolverMemory();
@@ -92,6 +97,7 @@ public final class State {
                 throw new UnsupportedOperationException("Memory storage type does not support running commands.");
             };
             actionResolver = new ActionResolverMemory();
+            clientFileResolver = new ClientFileResolverMemory();
         } else {
             throw new IllegalArgumentException("DataStorageType cannot be null.");
         }
@@ -235,5 +241,9 @@ public final class State {
 
     public static ActionResolver getActionResolver() {
         return actionResolver;
+    }
+
+    public static ClientFileResolver getClientFileResolver() {
+        return clientFileResolver;
     }
 }

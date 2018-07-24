@@ -97,7 +97,7 @@ public class ClientFileController {
                 strategy = new JSONReadClientStrategy();
                 break;
             default:
-                throw new IOException(String.format("Unknown file format: '%s'", mimeType));
+                throw new IOException(String.format("Unsupported file format: '%s'", mimeType));
         }
 
         ClientImporter importer = new ClientImporter(file, strategy);

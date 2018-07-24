@@ -1,6 +1,10 @@
 package com.humanharvest.organz.utilities;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.net.URI;
 
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
@@ -25,7 +29,8 @@ public class RestErrorHandler extends DefaultResponseErrorHandler {
         //Throw specific exceptions for different 400 level codes
         switch (response.getStatusCode()) {
             case BAD_REQUEST:
-                throw new BadRequestException(response.getStatusText());
+                String body = new String(getResponseBody(response));
+                throw new BadRequestException(body.isEmpty() ? response.getStatusText() : body);
             case NOT_FOUND:
                 throw new NotFoundException(response.getStatusText());
             case PRECONDITION_FAILED:
