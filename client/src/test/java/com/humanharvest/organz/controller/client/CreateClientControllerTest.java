@@ -45,7 +45,6 @@ public class CreateClientControllerTest extends ControllerTest {
     }
 
     @Test
-    @Ignore // TODO unignore once the login is working with images.
     public void createValidClient() {
         clickOn("#firstNameFld").write("a");
         clickOn("#lastNamefld").write("b");

@@ -1,10 +1,8 @@
 package com.humanharvest.organz.server.controller.client;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.EnumSet;
 import java.util.Optional;
 
@@ -314,20 +312,19 @@ public class ClientController {
         return new ResponseEntity<>(client, headers, HttpStatus.OK);
     }
 
-    @GetMapping(value = "clients/{uid}/image", produces = MediaType.IMAGE_PNG_VALUE)
-    public @ResponseBody byte[] getClientImage(
-            @PathVariable int uid
-//            @RequestHeader(value = "If-Match", required = false) String etag,
-//            @RequestHeader(value = "X-Auth-Token", required = false) String authToken
-    )
-            throws InvalidRequestException, IfMatchFailedException, IfMatchRequiredException, IOException {
-
+    @GetMapping("clients/{uid}/image")
+    public @ResponseBody byte[] getClientImage(@PathVariable int uid) throws InvalidRequestException, IfMatchFailedException, IfMatchRequiredException, IOException {
 //        InputStream in = getClass().getResourceAsStream("resources/images" + uid + ".png");
 //        InputStream in = getClass().getResourceAsStream("/src/main/resources/images/" + uid + ".png");
 //        InputStream in = getClass().getResourceAsStream("./../../../../../../resources/images/" + uid + ".png");
 //        InputStream in = getClass().getResourceAsStream("./server/src/resources/images/" + uid + ".png");
-        InputStream in = getClass().getResourceAsStream("/server/src/resources/images/" + uid + ".png");
-
+        InputStream in;
+        try {
+            in = new FileInputStream("./images/" + uid +  ".png");
+        } catch (Exception ex) {
+            in = new FileInputStream("./images/default.png");
+        }
+        System.out.println(in.toString());
         return IOUtils.toByteArray(in);
 
     }

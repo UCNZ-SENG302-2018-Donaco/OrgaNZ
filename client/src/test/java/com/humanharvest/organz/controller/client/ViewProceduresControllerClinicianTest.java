@@ -118,7 +118,6 @@ public class ViewProceduresControllerClinicianTest extends ControllerTest {
     }
 
     @Test
-    @Ignore
     public void addNewProcedureTest() {
         testClient.setDateOfBirth(LocalDate.now().minusDays(10000));
         ProcedureRecord toBeAdded = new ProcedureRecord("SummaryNew", "Desc New", LocalDate.of(2017, 12, 20));

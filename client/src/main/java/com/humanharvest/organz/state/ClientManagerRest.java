@@ -163,10 +163,13 @@ public class ClientManagerRest implements ClientManager {
         httpHeaders.set("X-Auth-Token", State.getToken());
         HttpEntity<Client> entity = new HttpEntity<>(null, httpHeaders);
 
-        byte[] res = State.getRestTemplate().exchange(State.BASE_URI + "/clients/{uid}/image", HttpMethod.GET,
-                entity, byte[].class, uid).getBody();
+        ResponseEntity responseEntity = State.getRestTemplate().exchange(State.BASE_URI + "/clients/{uid}/image", HttpMethod.GET,
+                entity, byte[].class, uid);
+
+//        byte[] res = State.getRestTemplate().exchange(State.BASE_URI + "/clients/{uid}/image", HttpMethod.GET,
+//                entity, byte[].class, uid).getBody();
 
 
-        return res;
+        return (byte[]) responseEntity.getBody();
     }
 }
