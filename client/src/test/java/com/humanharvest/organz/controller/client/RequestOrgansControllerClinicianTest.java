@@ -6,7 +6,7 @@ import static org.testfx.matcher.control.TableViewMatchers.containsRow;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,12 +37,12 @@ import org.junit.Test;
 
 public class RequestOrgansControllerClinicianTest extends ControllerTest {
 
-    private TransplantRequest heartRequest;
-    private Collection<TransplantRequest> sampleRequests = new ArrayList<>();
-    private Clinician testClinician = new Clinician("Mr", null, "Tester", "9 Fake St", Region.AUCKLAND.toString(), Country.NZ,
+    private List<TransplantRequest> sampleRequests = new ArrayList<>();
+    private final Clinician testClinician = new Clinician("Mr", null, "Tester", "9 Fake St", Region.AUCKLAND.toString(),
+            Country.NZ,
             1000,
             "qwerty");
-    private Client testClient = new Client(1);
+    private final Client testClient = new Client(1);
 
     @Override
     protected Page getPage() {
@@ -193,7 +193,7 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
                 .type(KeyCode.ENTER);
 
         // Check that death date picker is now visible
-        assertTrue((lookup("#deathDatePicker").query()).isVisible());
+        assertTrue(lookup("#deathDatePicker").query().isVisible());
 
         clickOn("Resolve Request");
         // Press enter to confirm marking the client as deceased
@@ -232,7 +232,6 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
 
     @Test
     public void resolveRequestCustomTest() {
-        String reason = "panda";
 
         TableView<TransplantRequest> currRequestsTable = lookup("#currentRequestsTable").queryTableView();
         clickOn(currRequestsTable);
@@ -250,9 +249,10 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
                 .type(KeyCode.ENTER);
 
         // Check that death date picker is now visible
-        assertTrue((lookup("#customReason").query()).isVisible());
+        assertTrue(lookup("#customReason").query().isVisible());
 
         // Enter custom reason into the reason textField
+        String reason = "panda";
         clickOn("#customReason")
                 .write(reason);
 
