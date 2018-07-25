@@ -1,10 +1,15 @@
 package com.humanharvest.organz.server.controller.client;
 
-import java.io.*;
-import java.nio.file.Files;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.EnumSet;
+import java.util.Objects;
 import java.util.Optional;
-
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Client;
@@ -31,10 +36,10 @@ import com.humanharvest.organz.views.client.CreateClientView;
 import com.humanharvest.organz.views.client.ModifyClientObject;
 import com.humanharvest.organz.views.client.SingleDateView;
 import com.humanharvest.organz.views.client.Views;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -46,7 +51,6 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.apache.commons.io.IOUtils;
 
 @RestController
 public class ClientController {
@@ -205,7 +209,7 @@ public class ClientController {
         if (etag == null) {
             throw new IfMatchRequiredException();
         }
-        if (!client.getETag().equals(etag)) {
+        if (!Objects.equals(client.getETag(), etag)) {
             throw new IfMatchFailedException();
         }
 
@@ -260,7 +264,7 @@ public class ClientController {
         if (etag == null) {
             throw new IfMatchRequiredException();
         }
-        if (!client.getETag().equals(etag)) {
+        if (!Objects.equals(client.getETag(), etag)) {
             throw new IfMatchFailedException();
         }
 
@@ -273,7 +277,7 @@ public class ClientController {
 
     @PostMapping("/clients/{uid}/dead")
     @JsonView(Views.Details.class)
-    public ResponseEntity markClientAsDead(
+    public ResponseEntity<Client> markClientAsDead(
             @PathVariable int uid,
             @RequestHeader(value = "If-Match", required = false) String etag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken,
@@ -295,7 +299,7 @@ public class ClientController {
         if (etag == null) {
             throw new IfMatchRequiredException();
         }
-        if (!client.getETag().equals(etag)) {
+        if (!Objects.equals(client.getETag(), etag)) {
             throw new IfMatchFailedException();
         }
 
@@ -312,10 +316,13 @@ public class ClientController {
         return new ResponseEntity<>(client, headers, HttpStatus.OK);
     }
 
+    @ResponseBody
     @GetMapping("clients/{uid}/image")
-    public @ResponseBody ResponseEntity getClientImage(@PathVariable int uid, @RequestHeader(value = "If-Match", required = false) String etag,
-            @RequestHeader(value = "X-Auth-Token", required = false) String authToken) throws InvalidRequestException,
-            IfMatchFailedException, IfMatchRequiredException, IOException {
+    public ResponseEntity<byte[]> getClientImage(
+            @PathVariable int uid,
+            @RequestHeader(value = "If-Match", required = false) String etag,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
+            throws InvalidRequestException, IfMatchFailedException, IfMatchRequiredException, IOException {
 
         File directory = new File("./images");
         if (!directory.exists()) {
@@ -330,20 +337,20 @@ public class ClientController {
         Client client = optionalClient.get();
         State.getAuthenticationManager().verifyClientAccess(authToken, client);
 
-        InputStream in;
-        try {
-            in = new FileInputStream("./images/" + uid + ".png");
+        try (InputStream in = new FileInputStream("./images/" + uid + ".png")) {
             byte[] out = IOUtils.toByteArray(in);
-            in.close();
             return new ResponseEntity<>(out, HttpStatus.OK);
         }
-        catch (Exception ex) {
-            throw new NotFoundException();
+        catch (FileNotFoundException ex) {
+            throw new NotFoundException(ex);
         }
     }
 
     @PostMapping("clients/{uid}/image")
-    public ResponseEntity postClientImage(@PathVariable int uid, @RequestBody byte[] image, @RequestHeader(value = "If-Match", required = false) String etag,
+    public ResponseEntity<?> postClientImage(
+            @PathVariable int uid,
+            @RequestBody byte[] image,
+            @RequestHeader(value = "If-Match", required = false) String etag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken) throws IOException {
         Optional<Client> optionalClient = State.getClientManager().getClientByID(uid);
         if (!optionalClient.isPresent()) {
@@ -357,23 +364,18 @@ public class ClientController {
         Client client = optionalClient.get();
         State.getAuthenticationManager().verifyClientAccess(authToken, client);
 
-        OutputStream out;
-        System.out.println(image.length);
-        try {
-            out = new FileOutputStream("./images/" + uid + ".png");
+        try (OutputStream out = new FileOutputStream("./images/" + uid + ".png")) {
             out.write(image);
-            out.close();
             return new ResponseEntity(HttpStatus.OK);
-
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            throw ex;
         }
     }
 
     @DeleteMapping("clients/{uid}/image")
-    private ResponseEntity deleteClientImage(@PathVariable int uid, @RequestHeader(value = "If-Match", required = false) String etag,
-            @RequestHeader(value = "X-Auth-Token", required = false) String authToken) throws InvalidRequestException{
+    private ResponseEntity<?> deleteClientImage(
+            @PathVariable int uid,
+            @RequestHeader(value = "If-Match", required = false) String etag,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken) throws InvalidRequestException {
+
         Optional<Client> optionalClient = State.getClientManager().getClientByID(uid);
         if (!optionalClient.isPresent()) {
             throw new NotFoundException();
@@ -386,21 +388,12 @@ public class ClientController {
         Client client = optionalClient.get();
         State.getAuthenticationManager().verifyClientAccess(authToken, client);
 
-        try {
-            File file = new File("images/" + uid + ".png");
-            if (file.delete()) {
-                System.out.println("successfully deleted");
-                return new ResponseEntity(HttpStatus.OK);
+        File file = new File("images/" + uid + ".png");
+        if (file.delete()) {
+            return new ResponseEntity(HttpStatus.OK);
 
-            } else {
-                System.out.println("file not found");
-                return new ResponseEntity(HttpStatus.NOT_FOUND);
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            throw ex;
+        } else {
+            return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
-        }
-
-
+    }
 }
