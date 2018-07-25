@@ -193,22 +193,39 @@ public class Client implements ConcurrencyControlledEntity {
                 organsDonating.remove(entry.getKey());
             }
         }
+        updateModifiedTimestamp();
     }
 
     public void setTransplantRequests(List<TransplantRequest> requests) {
         transplantRequests = new ArrayList<>(requests);
+        for (TransplantRequest request : requests) {
+            request.setClient(this);
+        }
+        updateModifiedTimestamp();
     }
 
     public void setMedicationHistory(List<MedicationRecord> medicationHistory) {
         this.medicationHistory = new ArrayList<>(medicationHistory);
+        for (MedicationRecord record : medicationHistory) {
+            record.setClient(this);
+        }
+        updateModifiedTimestamp();
     }
 
     public void setIllnessHistory(List<IllnessRecord> illnessHistory) {
         this.illnessHistory = new ArrayList<>(illnessHistory);
+        for (IllnessRecord illnessRecord : illnessHistory) {
+            illnessRecord.setClient(this);
+        }
+        updateModifiedTimestamp();
     }
 
     public void setProcedures(List<ProcedureRecord> procedures) {
         this.procedures = new ArrayList<>(procedures);
+        for (ProcedureRecord record : procedures) {
+            record.setClient(this);
+        }
+        updateModifiedTimestamp();
     }
 
     /**

@@ -1,6 +1,8 @@
 package com.humanharvest.organz;
 
 import java.time.LocalDateTime;
+import javax.persistence.Access;
+import javax.persistence.AccessType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -14,6 +16,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
  */
 @Entity
 @Table
+@Access(AccessType.FIELD)
 public class HistoryItem {
 
     @Id
@@ -33,6 +36,10 @@ public class HistoryItem {
         timestamp = LocalDateTime.now();
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public String getType() {
         return type;
     }
@@ -43,5 +50,21 @@ public class HistoryItem {
 
     public LocalDateTime getTimestamp() {
         return timestamp;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setDetails(String details) {
+        this.details = details;
+    }
+
+    public void setTimestamp(LocalDateTime timestamp) {
+        this.timestamp = timestamp;
     }
 }
