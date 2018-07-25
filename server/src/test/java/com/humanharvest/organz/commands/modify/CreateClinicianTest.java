@@ -70,6 +70,15 @@ public class CreateClinicianTest extends BaseTest {
     }
 
     @Test
+    public void badCountry() {
+        String[] inputs = {"-f", "Jack", "-l", "Steel", "-c", "non-existant"};
+
+        CommandLine.run(spyCreateClient, System.out, inputs);
+
+        verify(spyClientManager, times(0)).addClinician(any());
+    }
+
+    @Test
     public void duplicateStaffId() {
         String[] inputs = {"-f", "Jack", "-l", "Steel", "-s", "0"};
 

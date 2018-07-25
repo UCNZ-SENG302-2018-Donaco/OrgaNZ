@@ -57,6 +57,14 @@ public class ModifyClinicianTest extends BaseTest {
     }
 
     @Test
+    public void testModifyClinicianCountryInvalid() {
+        String[] inputs = {"-s", Integer.toString(staffId), "-c", "Not a region"};
+        CommandLine.run(spyModifyClinician, System.out, inputs);
+
+        verify(spyModifyClinician, times(0)).run();
+    }
+
+    @Test
     public void testModifyClinicianRegionValid() {
         String[] inputs = {"-s", Integer.toString(staffId), "-r", "Canterbury"};
         CommandLine.run(spyModifyClinician, System.out, inputs);
