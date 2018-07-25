@@ -53,7 +53,6 @@ public class CreateClinicianControllerTest extends ControllerTest {
     }
 
     @Test
-    @Ignore
     public void invalidStaffId() {
         clickOn("#fname").write("f");
         clickOn("#lname").write("l");

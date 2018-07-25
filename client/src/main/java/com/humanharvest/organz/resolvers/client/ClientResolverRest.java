@@ -18,6 +18,7 @@ import com.humanharvest.organz.views.client.CreateMedicationRecordView;
 import com.humanharvest.organz.views.client.CreateProcedureView;
 import com.humanharvest.organz.views.client.CreateTransplantRequestView;
 import com.humanharvest.organz.views.client.ModifyClientObject;
+import com.humanharvest.organz.views.client.ModifyIllnessObject;
 import com.humanharvest.organz.views.client.ModifyProcedureObject;
 import com.humanharvest.organz.views.client.ResolveTransplantRequestObject;
 import com.humanharvest.organz.views.client.SingleDateView;
@@ -77,6 +78,18 @@ public class ClientResolverRest implements ClientResolver {
                 State.BASE_URI + "clients/{id}/procedures",
                 HttpMethod.GET,
                 new ParameterizedTypeReference<List<ProcedureRecord>>() {
+                }, client.getUid());
+        return responseEntity.getBody();
+    }
+
+    public List<IllnessRecord> getIllnessRecords(Client client) {
+        HttpHeaders httpHeaders = createHeaders(false);
+        httpHeaders.setETag(State.getClientEtag());
+
+        ResponseEntity<List<IllnessRecord>> responseEntity = sendQuery(httpHeaders,
+                State.BASE_URI + "clients/{id}/illnesses",
+                HttpMethod.GET,
+                new ParameterizedTypeReference<List<IllnessRecord>>() {
                 }, client.getUid());
         return responseEntity.getBody();
     }
@@ -176,35 +189,30 @@ public class ClientResolverRest implements ClientResolver {
 
     @Override
     public Map<Organ, Boolean> modifyOrganDonation(Client client, Map<Organ, Boolean> changes) {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setIfMatch(State.getClientEtag());
-        httpHeaders.set("X-Auth-Token", State.getToken());
-
-        HttpEntity<Map<Organ, Boolean>> entity = new HttpEntity<>(changes, httpHeaders);
 
         ParameterizedTypeReference<Map<Organ, Boolean>> mapRef =
                 new ParameterizedTypeReference<Map<Organ, Boolean>>() {
                 };
 
-        ResponseEntity<Map<Organ, Boolean>> responseEntity = State.getRestTemplate()
-                .exchange(
-                        State.BASE_URI + "clients/{uid}/donationStatus",
-                        HttpMethod.PATCH,
-                        entity,
-                        mapRef,
-                        client.getUid());
+        HttpHeaders httpHeaders = createHeaders(true);
+        ResponseEntity<Map<Organ, Boolean>> responseEntity = sendQuery(httpHeaders,
+                State.BASE_URI + "clients/{uid}/donationStatus",
+                HttpMethod.PATCH,
+                changes,
+                mapRef,
+                client.getUid());
 
-        State.setClientEtag(responseEntity.getHeaders().getETag());
         return responseEntity.getBody();
     }
 
-    public TransplantRequest resolveTransplantRequest(Client client, ResolveTransplantRequestObject request) {
+    public TransplantRequest resolveTransplantRequest(Client client, TransplantRequest request,
+            ResolveTransplantRequestObject resolveTransplantRequestObject) {
         HttpHeaders httpHeaders = createHeaders(true);
-        long id = request.getTransplantRequest().getId();
+        long id = request.getId();
         ResponseEntity<TransplantRequest> responseEntity = sendQuery(httpHeaders,
                 State.BASE_URI + "clients/{id}/transplantRequests/{requestIndex}",
                 HttpMethod.PATCH,
-                request,
+                resolveTransplantRequestObject,
                 TransplantRequest.class,
                 client.getUid(),
                 id);
@@ -233,43 +241,43 @@ public class ClientResolverRest implements ClientResolver {
             modification = "stop";
         }
 
-        // todo needs to be changed to use the id rather than the index once it is working
-        int id = client.getMedications().indexOf(record);
-
         HttpHeaders httpHeaders = createHeaders(true);
         ResponseEntity<MedicationRecord> responseEntity = sendQuery(httpHeaders,
                 State.BASE_URI + "clients/{id}/medications/{medicationId}/" + modification,
-                HttpMethod.PATCH,
+                HttpMethod.POST,
                 MedicationRecord.class,
                 client.getUid(),
-                id);
+                record.getId());
 
         return responseEntity.getBody();
     }
 
-    public IllnessRecord modifyIllnessRecord(Client client,IllnessRecord record){
-        int id = client.getIllnesses().indexOf(record);
-
+    public IllnessRecord modifyIllnessRecord(Client client, IllnessRecord toModify,
+            ModifyIllnessObject modifyIllnessObject) {
+        System.out.println(modifyIllnessObject.isChronic());
         HttpHeaders httpHeaders = createHeaders(true);
-        HttpEntity<IllnessRecord> entity = new HttpEntity<>(record,httpHeaders);
-        ResponseEntity<IllnessRecord> responseEntity = State.getRestTemplate().exchange(
-            String.format("%sclients/%d/illnesses/%d",State.BASE_URI,client.getUid(),id),
-                HttpMethod.PATCH,entity,IllnessRecord.class);
-        State.setClientEtag(responseEntity.getHeaders().getETag());
+        ResponseEntity<IllnessRecord> responseEntity = sendQuery(httpHeaders,
+                State.BASE_URI + "clients/{id}/illnesses/{illnessId}",
+                HttpMethod.PATCH,
+                modifyIllnessObject,
+                IllnessRecord.class,
+                client.getUid(),
+                toModify.getId());
+
         return responseEntity.getBody();
     }
 
-    public ProcedureRecord modifyProcedureRecord(Client client, ModifyProcedureObject modifyProcedureObject,
-            long procedureRecordId) {
+    public ProcedureRecord modifyProcedureRecord(Client client, ProcedureRecord toModify, ModifyProcedureObject
+            modifyProcedureObject) {
         HttpHeaders httpHeaders = createHeaders(true);
+        ResponseEntity<ProcedureRecord> responseEntity = sendQuery(httpHeaders,
+                State.BASE_URI + "clients/{id}/procedures/{procedureId}",
+                HttpMethod.PATCH,
+                modifyProcedureObject,
+                ProcedureRecord.class,
+                client.getUid(),
+                toModify.getId());
 
-        HttpEntity<ModifyProcedureObject> entity = new HttpEntity<>(modifyProcedureObject, httpHeaders);
-
-        ResponseEntity<ProcedureRecord> responseEntity = State.getRestTemplate().exchange(
-                String.format("%sclients/%d/procedures/%d", State.BASE_URI, client.getUid(), procedureRecordId),
-                HttpMethod.PATCH, entity, ProcedureRecord.class);
-
-        State.setClientEtag(responseEntity.getHeaders().getETag());
         return responseEntity.getBody();
     }
 
@@ -277,15 +285,13 @@ public class ClientResolverRest implements ClientResolver {
 
     public void deleteIllnessRecord(Client client, IllnessRecord record) {
 
-        int id = client.getIllnesses().indexOf(record);
-
         HttpHeaders httpHeaders = createHeaders(true);
         sendQuery(httpHeaders,
                 State.BASE_URI + "clients/{id}/illnesses/{illnessId}",
                 HttpMethod.DELETE,
                 IllnessRecord.class,
                 client.getUid(),
-                id);
+                record.getId());
 
         client.deleteIllnessRecord(record);
     }

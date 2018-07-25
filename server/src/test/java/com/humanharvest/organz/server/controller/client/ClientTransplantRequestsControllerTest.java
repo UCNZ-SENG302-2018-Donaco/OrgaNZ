@@ -15,6 +15,7 @@ import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppC
 
 import java.nio.charset.Charset;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.TransplantRequest;
@@ -44,11 +45,11 @@ public class ClientTransplantRequestsControllerTest {
 
     private MockMvc mockMvc;
     private Client testClient;
-    private TransplantRequest testTransplantRequest;
     private long id;
     private String validTransplantRequestJson;
     private String VALID_AUTH = "valid auth";
     private String INVALID_AUTH = "invalid auth";
+    private LocalDateTime justAfterCreatedTime;
 
     @Autowired
     WebApplicationContext webApplicationContext;
@@ -58,10 +59,12 @@ public class ClientTransplantRequestsControllerTest {
         State.reset();
         this.mockMvc = webAppContextSetup(webApplicationContext).build();
         testClient = new Client("Jan", "Michael", "Vincent", LocalDate.now(), 1);
-        testTransplantRequest = new TransplantRequest(testClient, Organ.LIVER);
+        TransplantRequest testTransplantRequest = new TransplantRequest(testClient, Organ.LIVER);
+        justAfterCreatedTime = LocalDateTime.now();
         testClient.addTransplantRequest(testTransplantRequest);
 
         State.getClientManager().applyChangesTo(testClient);
+
         id = testTransplantRequest.getId();
 
         assertEquals(testTransplantRequest, testClient.getTransplantRequestById(id).orElseThrow
@@ -84,6 +87,7 @@ public class ClientTransplantRequestsControllerTest {
                 + "  \"status\": \"WAITING\",\n"
                 + "  \"resolvedReason\": \"reason\"\n"
                 + "}";
+
     }
 
     //------------POST---------------
@@ -252,9 +256,10 @@ public class ClientTransplantRequestsControllerTest {
 
     @Test
     public void patchValidTransplantRequestTest() throws Exception {
-        // First create the request date string of the transplant request (including removing trailing 0s)
-        String requestDateString = testTransplantRequest.getRequestDate().toString();
-        requestDateString = requestDateString.replaceAll("0+$", "");
+
+        //Get the time after created and trim trailing zero as server doesn't return it
+        String localDateTimeString = justAfterCreatedTime.toString();
+        localDateTimeString = localDateTimeString.replaceAll("0+$", "");
 
         // Perform patch
         mockMvc.perform(patch("/clients/" + testClient.getUid() + "/transplantRequests/" + id)
@@ -262,26 +267,40 @@ public class ClientTransplantRequestsControllerTest {
                 .header("X-Auth-Token", VALID_AUTH)
                 .contentType(contentType)
                 .content("{\n"
-                        + "  \"requestedOrgan\": \"LIVER\",\n"
-                        + "  \"requestDate\": \"" + requestDateString + "\",\n"
-                        + "  \"resolvedDate\": \"2019-07-19T14:11:20.202\",\n"
+                        + "  \"resolvedDate\": \"" + localDateTimeString + "\",\n"
                         + "  \"status\": \"CANCELLED\",\n"
                         + "  \"resolvedReason\": \"it was a mistake\"\n"
                         + "}"))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(contentType))
                 .andExpect(jsonPath("$.requestedOrgan", is("LIVER")))
-                .andExpect(jsonPath("$.requestDate", is(requestDateString)))
-                .andExpect(jsonPath("$.resolvedDate", is("2019-07-19T14:11:20.202")))
+                .andExpect(jsonPath("$.resolvedDate", is(localDateTimeString)))
                 .andExpect(jsonPath("$.status", is("CANCELLED")))
                 .andExpect(jsonPath("$.resolvedReason", is("it was a mistake")));
     }
 
     @Test
-    public void patchInvalidTransplantRequestChangedOrganTest() throws Exception {
-        // First create the request date string of the transplant request (including removing trailing 0s)
-        String requestDateString = testTransplantRequest.getRequestDate().toString();
-        requestDateString = requestDateString.replaceAll("0+$", "");
+    public void patchInvalidTransplantRequestBadIdTest() throws Exception {
+
+        // Perform patch
+        mockMvc.perform(patch("/clients/" + testClient.getUid() + "/transplantRequests/123")
+                .header("If-Match", testClient.getETag())
+                .header("X-Auth-Token", VALID_AUTH)
+                .contentType(contentType)
+                .content("{\n"
+                        + "  \"resolvedDate\": \"2019-07-19T14:11:20.202\",\n"
+                        + "  \"status\": \"CANCELLED\",\n"
+                        + "  \"resolvedReason\": \"it was a mistake\"\n"
+                        + "}"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void patchInvalidTransplantRequestResolveDateBeforeRequestedTest() throws Exception {
+
+        //Get the time after created and trim trailing zero as server doesn't return it
+        String localDateTimeString = justAfterCreatedTime.minusMinutes(1).toString();
+        localDateTimeString = localDateTimeString.replaceAll("0+$", "");
 
         // Perform patch
         mockMvc.perform(patch("/clients/" + testClient.getUid() + "/transplantRequests/" + id)
@@ -289,9 +308,7 @@ public class ClientTransplantRequestsControllerTest {
                 .header("X-Auth-Token", VALID_AUTH)
                 .contentType(contentType)
                 .content("{\n"
-                        + "  \"requestedOrgan\": \"KIDNEY\",\n"
-                        + "  \"requestDate\": \"" + requestDateString + "\",\n"
-                        + "  \"resolvedDate\": \"2019-07-19T14:11:20.202\",\n"
+                        + "  \"resolvedDate\": \"" + localDateTimeString + "\",\n"
                         + "  \"status\": \"CANCELLED\",\n"
                         + "  \"resolvedReason\": \"it was a mistake\"\n"
                         + "}"))
@@ -300,18 +317,12 @@ public class ClientTransplantRequestsControllerTest {
 
     @Test
     public void patchInvalidTransplantRequestUnauthorisedTest() throws Exception {
-        // First create the request date string of the transplant request (including removing trailing 0s)
-        String requestDateString = testTransplantRequest.getRequestDate().toString();
-        requestDateString = requestDateString.replaceAll("0+$", "");
-
         // Perform patch
         mockMvc.perform(patch("/clients/" + testClient.getUid() + "/transplantRequests/" + id)
                 .header("If-Match", testClient.getETag())
                 .header("X-Auth-Token", INVALID_AUTH)
                 .contentType(contentType)
                 .content("{\n"
-                        + "  \"requestedOrgan\": \"LIVER\",\n"
-                        + "  \"requestDate\": \"" + requestDateString + "\",\n"
                         + "  \"resolvedDate\": \"2019-07-19T14:11:20.202\",\n"
                         + "  \"status\": \"CANCELLED\",\n"
                         + "  \"resolvedReason\": \"it was a mistake\"\n"
@@ -321,9 +332,6 @@ public class ClientTransplantRequestsControllerTest {
 
     @Test
     public void patchInvalidTransplantRequestBadEtagTest() throws Exception {
-        // First create the request date string of the transplant request (including removing trailing 0s)
-        String requestDateString = testTransplantRequest.getRequestDate().toString();
-        requestDateString = requestDateString.replaceAll("0+$", "");
 
         // Perform patch
         mockMvc.perform(patch("/clients/" + testClient.getUid() + "/transplantRequests/" + id)
@@ -331,8 +339,6 @@ public class ClientTransplantRequestsControllerTest {
                 .header("X-Auth-Token", VALID_AUTH)
                 .contentType(contentType)
                 .content("{\n"
-                        + "  \"requestedOrgan\": \"LIVER\",\n"
-                        + "  \"requestDate\": \"" + requestDateString + "\",\n"
                         + "  \"resolvedDate\": \"2019-07-19T14:11:20.202\",\n"
                         + "  \"status\": \"CANCELLED\",\n"
                         + "  \"resolvedReason\": \"it was a mistake\"\n"

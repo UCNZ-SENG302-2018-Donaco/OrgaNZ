@@ -99,34 +99,39 @@ public class Client implements ConcurrencyControlledEntity {
 
     @OneToMany(
             mappedBy = "client",
-            cascade = CascadeType.ALL
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
     )
     @JsonManagedReference
     private List<TransplantRequest> transplantRequests = new ArrayList<>();
 
     @OneToMany(
             mappedBy = "client",
-            cascade = CascadeType.ALL
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
     )
     @JsonManagedReference
     private List<MedicationRecord> medicationHistory = new ArrayList<>();
 
     @OneToMany(
             mappedBy = "client",
-            cascade = CascadeType.ALL
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
     )
     @JsonManagedReference
     private List<IllnessRecord> illnessHistory = new ArrayList<>();
 
     @OneToMany(
             mappedBy = "client",
-            cascade = CascadeType.ALL
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
     )
     @JsonManagedReference
     private List<ProcedureRecord> procedures = new ArrayList<>();
 
     @OneToMany(
-            cascade = CascadeType.ALL
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
     )
     private List<HistoryItem> changesHistory = new ArrayList<>();
 
@@ -326,14 +331,14 @@ public class Client implements ConcurrencyControlledEntity {
         this.middleName = middleName;
     }
 
-    public String getPreferredName() {
+    public String getPreferredNameFormatted() {
         if (preferredName == null || preferredName.isEmpty()) {
             return getFullName();
         }
         return preferredName;
     }
 
-    public String getPreferredNameOnly() {
+    public String getPreferredName() {
         return preferredName;
     }
 
@@ -527,18 +532,12 @@ public class Client implements ConcurrencyControlledEntity {
     }
 
     /**
-     * todo: to be updated to use id once this is implemented
-     *
      * Returns the MedicationRecord for the client with the given index
      * @param index index of the MedicationRecord
      * @return the MedicationRecord with the given id
      */
     public MedicationRecord getMedicationRecord(int index) {
-        if (medicationHistory.size() > index) {
-            return medicationHistory.get(index);
-        } else {
-            return null;
-        }
+        return medicationHistory.stream().filter(record -> record.getId() == index).findFirst().orElse(null);
     }
 
     /**
@@ -577,6 +576,11 @@ public class Client implements ConcurrencyControlledEntity {
      */
     public List<IllnessRecord> getIllnesses() {
         return Collections.unmodifiableList(illnessHistory);
+    }
+
+    public IllnessRecord getIllnessById(long index) {
+        System.out.println(illnessHistory);
+        return illnessHistory.stream().filter(record -> record.getId() == index).findFirst().orElse(null);
     }
 
     /**

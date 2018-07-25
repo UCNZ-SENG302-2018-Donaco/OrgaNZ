@@ -3,7 +3,6 @@ package com.humanharvest.organz.server.controller.client;
 import java.util.List;
 import java.util.Optional;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.actions.client.AddIllnessRecordAction;
@@ -16,7 +15,6 @@ import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
 import com.humanharvest.organz.utilities.validators.client.ModifyIllnessValidator;
 import com.humanharvest.organz.views.client.CreateIllnessView;
 import com.humanharvest.organz.views.client.ModifyIllnessObject;
-import com.humanharvest.organz.views.client.Views;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -56,15 +54,14 @@ public class ClientIllnessesController {
     }
 
     @PatchMapping("/clients/{uid}/illnesses/{id}")
-    public ResponseEntity<IllnessRecord> patchIllness(@PathVariable int uid,
+    public ResponseEntity<IllnessRecord> patchIllness(
+            @PathVariable int uid,
             @PathVariable int id,
             @RequestBody ModifyIllnessObject modifyIllnessObject,
             @RequestHeader(value = "If-Match", required = false) String ETag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws IfMatchRequiredException, IfMatchFailedException, InvalidRequestException {
-
-
-
+        System.out.println(modifyIllnessObject.isChronic());
 
         //Fetch the client given by ID
         Optional<Client> optionalClient = State.getClientManager().getClientByID(uid);
@@ -73,15 +70,20 @@ public class ClientIllnessesController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
+        if (ETag == null) {
+            throw new IfMatchRequiredException();
+        }
+
+        if (!optionalClient.get().getETag().equals(ETag)) {
+            throw new IfMatchFailedException();
+        }
 
         IllnessRecord record;
         try {
             Client client = optionalClient.get();
-            record = client.getIllnesses().get(id);
-            //State.getAuthenticationManager().verifyClientAccess(authToken, client);
-            /**if(modifyIllnessObject.getCuredDate() == null){
-                modifyIllnessObject.setCuredDate(record.getCuredDate());
-            }**/
+            record = client.getIllnessById(id);
+            State.getAuthenticationManager().verifyClientAccess(authToken, client);
+
             if (!ModifyIllnessValidator.isValid(modifyIllnessObject)) {
                 throw new InvalidRequestException();
             }
@@ -97,19 +99,11 @@ public class ClientIllnessesController {
                 modifyIllnessObject.setDiagnosisDate(record.getDiagnosisDate());
             }
 
-        } catch (IndexOutOfBoundsException e) {
+        } catch (NullPointerException e) {
             //Record does not exist
-            System.out.println("Record does not exist");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        if (ETag == null) {
-            throw new IfMatchRequiredException();
-        }
-        System.out.println(optionalClient.get().getETag());
-        if (!optionalClient.get().getETag().equals(ETag)) {
-            throw new IfMatchFailedException();
-        }
 
         //Create the old details to allow undoable action
         ModifyIllnessObject oldIllnessRecord = new ModifyIllnessObject();
@@ -164,7 +158,7 @@ public class ClientIllnessesController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        IllnessRecord removeRecord = client.get().getIllnesses().get(id);
+        IllnessRecord removeRecord = client.get().getIllnessById(id);
         State.getAuthenticationManager().verifyClientAccess(authToken, client.get());
         DeleteIllnessRecordAction action = new DeleteIllnessRecordAction(client.get(),removeRecord,
             State.getClientManager());

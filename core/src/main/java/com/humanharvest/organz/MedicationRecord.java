@@ -5,7 +5,6 @@ import java.time.format.DateTimeFormatter;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -27,7 +26,7 @@ public class MedicationRecord implements Comparable<MedicationRecord> {
     @Id
     @GeneratedValue
     private Long id;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "Client_uid")
     @JsonBackReference
     private Client client;

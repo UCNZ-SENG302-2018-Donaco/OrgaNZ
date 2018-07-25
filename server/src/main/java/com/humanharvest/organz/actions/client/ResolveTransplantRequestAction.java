@@ -19,31 +19,31 @@ public class ResolveTransplantRequestAction extends ClientAction {
     );
 
     private final TransplantRequest request;
-    private final TransplantRequestStatus newStatus;
-    private final LocalDateTime newResolvedTime;
-    private final String newReason;
+    private final TransplantRequestStatus status;
+    private final LocalDateTime resolvedTime;
+    private final String reason;
 
     /**
-     * Creates a new resolve transplant request action for the given request and given new status/newReason.
+     * Creates a new resolve transplant request action for the given request and given new status/reason.
      * @param request The transplant request to resolve.
-     * @param newStatus The new status to give the request. Must be one of the valid {@link
+     * @param status The new status to give the request. Must be one of the valid {@link
      * ResolveTransplantRequestAction#RESOLVED_STATUSES}.
-     * @param newReason The newReason for this request being resolved.
-     * @param newResolvedTime The resolved time for this request.
+     * @param reason The reason for this request being resolved.
+     * @param resolvedTime The resolved time for this request.
      * @param manager The client manager
      */
     public ResolveTransplantRequestAction(TransplantRequest request,
-            TransplantRequestStatus newStatus,
-            String newReason,
-            LocalDateTime newResolvedTime,
+            TransplantRequestStatus status,
+            String reason,
+            LocalDateTime resolvedTime,
             ClientManager manager) {
         super(request.getClient(), manager);
         this.request = request;
-        this.newStatus = newStatus;
-        this.newReason = newReason;
-        this.newResolvedTime = newResolvedTime;
+        this.status = status;
+        this.reason = reason;
+        this.resolvedTime = resolvedTime;
 
-        if (!RESOLVED_STATUSES.contains(newStatus)) {
+        if (!RESOLVED_STATUSES.contains(status)) {
             throw new IllegalArgumentException("New status must be a valid resolved status.");
         }
     }
@@ -55,9 +55,9 @@ public class ResolveTransplantRequestAction extends ClientAction {
     @Override
     protected void execute() {
         super.execute();
-        request.setStatus(newStatus);
-        request.setResolvedDate(newResolvedTime);
-        request.setResolvedReason(newReason);
+        request.setStatus(status);
+        request.setResolvedDate(resolvedTime);
+        request.setResolvedReason(reason);
         manager.applyChangesTo(request.getClient());
     }
 
@@ -73,12 +73,12 @@ public class ResolveTransplantRequestAction extends ClientAction {
     @Override
     public String getExecuteText() {
         return String.format("Resolved transplant request for '%s' with status '%s'",
-                request.getRequestedOrgan(), newStatus);
+                request.getRequestedOrgan(), status);
     }
 
     @Override
     public String getUnexecuteText() {
         return String.format("Reversed resolution of transplant request for '%s' with status '%s'",
-                request.getRequestedOrgan(), newStatus);
+                request.getRequestedOrgan(), status);
     }
 }
