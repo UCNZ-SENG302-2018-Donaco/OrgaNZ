@@ -177,12 +177,8 @@ public class ViewMedicationsController extends SubController {
      * Refreshes the past/current medication list views from the client's properties.
      */
     private void refreshMedicationLists() {
-
-        List<MedicationRecord> medicationRecords;
-
         try {
-            medicationRecords = State.getClientResolver().getMedicationRecords(client);
-            client.setMedicationHistory(medicationRecords);
+            client.setMedicationHistory(State.getClientResolver().getMedicationRecords(client));
 
         } catch (NotFoundException e) {
             LOGGER.log(Level.WARNING, "Client or medication not found");
@@ -199,6 +195,7 @@ public class ViewMedicationsController extends SubController {
                     .showError();
             return;
         }
+
         pastMedicationsView.setItems(FXCollections.observableArrayList(client.getPastMedications()));
         currentMedicationsView.setItems(FXCollections.observableArrayList(client.getCurrentMedications()));
     }

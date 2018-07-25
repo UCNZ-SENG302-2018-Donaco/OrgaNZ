@@ -228,17 +228,6 @@ public class RequestOrgansController extends SubController {
      */
     @Override
     public void refresh() {
-        // Reload the client's overview
-        try {
-            client = manager.getClientByID(client.getUid()).orElseThrow(ServerRestException::new);
-        } catch (ServerRestException e) {
-            e.printStackTrace();
-            PageNavigator.showAlert(AlertType.ERROR,
-                    "Server Error",
-                    "An error occurred while trying to fetch from the server.\nPlease try again later.");
-        }
-
-        System.out.println("reload trs");
         // Reload the client's transplant requests
         try {
             client.setTransplantRequests(resolver.getTransplantRequests(client));
@@ -257,7 +246,6 @@ public class RequestOrgansController extends SubController {
         }
 
         allRequests = client.getTransplantRequests();
-        System.out.println("Reloaded");
 
         currentRequests = new FilteredList<>(
                 FXCollections.observableArrayList(allRequests),
