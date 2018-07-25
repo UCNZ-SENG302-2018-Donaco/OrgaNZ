@@ -257,7 +257,9 @@ public class ClientTransplantRequestsControllerTest {
     @Test
     public void patchValidTransplantRequestTest() throws Exception {
 
+        //Get the time after created and trim trailing zero as server doesn't return it
         String localDateTimeString = justAfterCreatedTime.toString();
+        localDateTimeString = localDateTimeString.replaceAll("0+$", "");
 
         // Perform patch
         mockMvc.perform(patch("/clients/" + testClient.getUid() + "/transplantRequests/" + id)
@@ -296,7 +298,9 @@ public class ClientTransplantRequestsControllerTest {
     @Test
     public void patchInvalidTransplantRequestResolveDateBeforeRequestedTest() throws Exception {
 
+        //Get the time after created and trim trailing zero as server doesn't return it
         String localDateTimeString = justAfterCreatedTime.minusMinutes(1).toString();
+        localDateTimeString = localDateTimeString.replaceAll("0+$", "");
 
         // Perform patch
         mockMvc.perform(patch("/clients/" + testClient.getUid() + "/transplantRequests/" + id)
