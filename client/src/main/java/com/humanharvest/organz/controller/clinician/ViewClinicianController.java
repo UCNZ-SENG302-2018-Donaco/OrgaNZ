@@ -14,6 +14,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
@@ -81,6 +82,8 @@ public class ViewClinicianController extends ViewBaseController {
     private ChoiceBox<Region> region;
     @FXML
     private Button loadClinicianButton;
+    @FXML
+    private MenuItem viewClinicianItem;
 
     public ViewClinicianController() {
         session = State.getSession();
@@ -118,7 +121,9 @@ public class ViewClinicianController extends ViewBaseController {
         if (session.getLoggedInUserType() == Session.UserType.CLINICIAN) {
             loadClinicianPane.setVisible(false);
             loadClinicianPane.setManaged(false);
+            viewClinicianItem.setText("View Clinician");
         }
+
         loadClinicianData();
     }
 
