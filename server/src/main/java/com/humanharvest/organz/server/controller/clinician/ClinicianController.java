@@ -112,15 +112,15 @@ public class ClinicianController {
         Optional<Clinician> clinician = State.getClinicianManager().getClinicianByStaffId(staffId);
 
 
-        if (editedClinician.getStaffId() != staffId) { // Cannot patch the unique id
+        if (editedClinician.getStaffId() != staffId) {
+            // Cannot patch the unique id
             throw new GlobalControllerExceptionHandler.InvalidRequestException();
         }
 
         if (clinician.isPresent()) {
-            System.out.println(State.getAuthenticationManager());
             State.getAuthenticationManager().verifyClinicianAccess(authToken, clinician.get());
 
-            if (ModifyClinicianValidator.isValid((editedClinician))) {
+            if (ModifyClinicianValidator.isValid(editedClinician)) {
 
                 ModifyClinicianObject oldClinician = new ModifyClinicianObject();
                 BeanUtils.copyProperties(editedClinician, oldClinician, editedClinician.getUnmodifiedFields());

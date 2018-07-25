@@ -81,7 +81,7 @@ public class ClinicianControllerTest {
                 .andExpect(jsonPath("$.middleName", is(Matchers.isEmptyOrNullString())))
                 .andExpect(jsonPath("$.workAddress", is("admin")))
                 .andExpect(jsonPath("$.password", is("admin")))
-                .andExpect(jsonPath("$.region", is("UNSPECIFIED")))
+                .andExpect(jsonPath("$.region", is(Matchers.equalToIgnoringCase("UNSPECIFIED"))))
                 .andExpect(jsonPath("$.createdOn", Matchers.anything()))
                 .andExpect(jsonPath("$.modifiedOn", Matchers.anything()));
     }
@@ -158,7 +158,7 @@ public class ClinicianControllerTest {
                 .andExpect(jsonPath("$.middleName", is(Matchers.isEmptyOrNullString())))
                 .andExpect(jsonPath("$.workAddress", is("admin")))
                 .andExpect(jsonPath("$.password", is("ok")))
-                .andExpect(jsonPath("$.region", is("AUCKLAND")))
+                .andExpect(jsonPath("$.region", is(Matchers.equalToIgnoringCase("AUCKLAND"))))
                 .andExpect(jsonPath("$.createdOn", Matchers.anything()))
                 .andExpect(jsonPath("$.modifiedOn", Matchers.anything()));
     }
@@ -179,7 +179,7 @@ public class ClinicianControllerTest {
                 .andExpect(jsonPath("$.middleName", is("michael")))
                 .andExpect(jsonPath("$.workAddress", is("my home")))
                 .andExpect(jsonPath("$.password", is("ok")))
-                .andExpect(jsonPath("$.region", is("UNSPECIFIED")))
+                .andExpect(jsonPath("$.region", is(Matchers.equalToIgnoringCase("UNSPECIFIED"))))
                 .andExpect(jsonPath("$.createdOn", Matchers.anything()))
                 .andExpect(jsonPath("$.modifiedOn", Matchers.anything()));
     }

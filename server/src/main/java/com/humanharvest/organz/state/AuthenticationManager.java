@@ -149,11 +149,11 @@ public class AuthenticationManager {
         }
 
         try {
-            Claims c = Jwts.parser()
+            Claims body = Jwts.parser()
                     .setSigningKey(getSecret())
                     .parseClaimsJws(token)
                     .getBody();
-            return c.getId();
+            return body.getId();
         } catch (SignatureException | MalformedJwtException e) {
             throw new AuthenticationException("X-Auth-Token is invalid or expired", e);
         }
