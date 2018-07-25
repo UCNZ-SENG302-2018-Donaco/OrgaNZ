@@ -51,7 +51,6 @@ public class DeleteClient implements Runnable {
             Action action = new DeleteClientAction(client.get(), manager);
 
             outputStream.println(invoker.execute(action));
-            outputStream.println("This removal will only be permanent once the 'save' command is used");
         }
     }
 }

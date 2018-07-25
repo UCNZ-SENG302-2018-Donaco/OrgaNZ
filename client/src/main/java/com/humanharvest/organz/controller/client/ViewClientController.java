@@ -16,6 +16,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
+
+import javafx.scene.layout.GridPane;
 import org.apache.commons.io.IOUtils;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -141,6 +143,8 @@ public class ViewClientController extends ViewBaseController {
     private ChoiceBox<Region> region;
     @FXML
     private ImageView imageView;
+    @FXML
+    private GridPane gridPane;
     private Image image;
 
 
@@ -256,9 +260,11 @@ public class ViewClientController extends ViewBaseController {
     private void loadImage() {
         byte[] bytes;
         try {
+            deletePhotoButton.setDisable(false);
             bytes = State.getImageManager().getClientImage(viewedClient.getUid());
         } catch (Exception ex) {
             try {
+                deletePhotoButton.setDisable(true);
                 bytes = State.getImageManager().getDefaultImage();
 
             } catch (IOException e) {
@@ -269,8 +275,8 @@ public class ViewClientController extends ViewBaseController {
         image = new Image(new ByteArrayInputStream(bytes));
 
         imageView.setImage(image);
-        imageView.setFitHeight(130);
-        imageView.setFitWidth(130);
+        imageView.setFitHeight(128);
+        imageView.setFitWidth(128);
         imageView.setPreserveRatio(true);
 
     }
@@ -316,7 +322,6 @@ public class ViewClientController extends ViewBaseController {
             }
         }
         if (uploadSuccess) {
-            deletePhotoButton.setDisable(false);
             loadImage();
             PageNavigator.showAlert(AlertType.CONFIRMATION, "Success", "The image has been posted.");
         }
@@ -327,14 +332,13 @@ public class ViewClientController extends ViewBaseController {
      */
     @FXML
     public void deletePhoto() {
-//        image = null;
-        boolean deleteSuccessful = State.getImageManager().deleteClientImage(viewedClient.getUid());
-        if (deleteSuccessful) {
+        try {
+            State.getImageManager().deleteClientImage(viewedClient.getUid());
             loadImage();
-//            deletePhotoButton.setDisable(true);
-        } else {
+        } catch (Exception e) {
             PageNavigator.showAlert(AlertType.ERROR,"Server Error", "Something went wrong with the server. "
                     + "Please try again later.");
+            e.printStackTrace();
         }
     }
 

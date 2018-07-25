@@ -107,11 +107,10 @@ public class RegisterOrganDonationController extends SubController {
         if (client != null) {
             setCheckBoxesEnabled();
 
-            List<TransplantRequest> transplantRequests;
 
             try {
-                transplantRequests = State.getClientResolver().getTransplantRequests(client);
-                donationStatus = State.getClientResolver().getOrganDonationStatus(client);
+                client.setTransplantRequests(State.getClientResolver().getTransplantRequests(client));
+                client.setOrganDonationStatus(State.getClientResolver().getOrganDonationStatus(client));
             } catch (NotFoundException e) {
                 LOGGER.log(Level.WARNING, "Client not found");
                 Notifications.create()
@@ -127,6 +126,9 @@ public class RegisterOrganDonationController extends SubController {
                         .showError();
                 return;
             }
+
+            List<TransplantRequest> transplantRequests = client.getTransplantRequests();
+            donationStatus = client.getOrganDonationStatus();
 
             EnumSet<Organ> allPreviouslyRequestedOrgans = transplantRequests
                     .stream()

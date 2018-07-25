@@ -12,7 +12,6 @@ import javafx.scene.layout.Pane;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
-import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.state.ClientManager;
@@ -45,7 +44,6 @@ public class CreateClientController extends SubController {
     private Pane menuBarPane;
 
     private final ClientManager manager;
-    private final ActionInvoker invoker;
     private UIValidation validation;
 
     /**
@@ -54,7 +52,6 @@ public class CreateClientController extends SubController {
      */
     public CreateClientController() {
         manager = State.getClientManager();
-        invoker = State.getInvoker();
     }
 
     /**

@@ -96,7 +96,7 @@ public class ClientManagerRest implements ClientManager {
 
     @Override
     public void addClient(Client client) throws AuthenticationException {
-        State.getRestTemplate().postForObject(State.BASE_URI + "clients", new HttpEntity<>(client), Client.class);
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -104,9 +104,9 @@ public class ClientManagerRest implements ClientManager {
             throws IfMatchFailedException {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setIfMatch(State.getClientEtag());
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
         httpHeaders.set("X-Auth-Token", State.getToken());
-
-        HttpEntity entity = new HttpEntity<>(null, httpHeaders);
+        HttpEntity entity = new HttpEntity<>(httpHeaders);
 
         State.getRestTemplate().exchange(State.BASE_URI + "clients/{uid}", HttpMethod.DELETE,
                 entity,

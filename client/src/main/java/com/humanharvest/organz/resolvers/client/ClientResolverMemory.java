@@ -5,14 +5,17 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.ProcedureRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
 import com.humanharvest.organz.views.client.CreateClientView;
 import com.humanharvest.organz.views.client.CreateIllnessView;
@@ -28,38 +31,53 @@ public class ClientResolverMemory implements ClientResolver {
 
     //------------GETs----------------
 
-
     public Map<Organ, Boolean> getOrganDonationStatus(Client client) {
         return client.getOrganDonationStatus();
     }
 
-
     public List<TransplantRequest> getTransplantRequests(Client client) {
+        System.out.println("getting trs");
+        for (TransplantRequest transplantRequest : client.getTransplantRequests()) {
+            System.out.println(transplantRequest.getStatus());
+        }
         return client.getTransplantRequests();
     }
-
 
     public List<MedicationRecord> getMedicationRecords(Client client) {
         return client.getMedications();
     }
 
-    public List<ProcedureRecord> getProcedureRecords(Client client) {return client.getProcedures(); }
+    public List<ProcedureRecord> getProcedureRecords(Client client) {
+        return client.getProcedures();
+    }
+
+    @Override
+    public List<HistoryItem> getHistory(Client client) {
+        return client.getChangesHistory();
+    }
 
     //------------POSTs----------------
 
     public Client createClient(CreateClientView createClientView) {
+
+        //Get the next empty UID
+        Optional<Client> nextEmpty = State.getClientManager().getClients()
+                .stream()
+                .max(Comparator.comparing(Client::getUid));
+        int nextId = 0;
+        if (nextEmpty.isPresent()) {
+            nextId = nextEmpty.get().getUid() + 1;
+        }
+
         Client client = new Client(
                 createClientView.getFirstName(),
                 createClientView.getMiddleName(),
                 createClientView.getLastName(),
                 createClientView.getDateOfBirth(),
-                //Get the next empty UID
-                State.getClientManager().getClients().stream().max(Comparator.comparing(Client::getUid))
-                        .get().getUid() + 1);
+                nextId);
         State.getClientManager().addClient(client);
         return client;
     }
-
 
     public List<TransplantRequest> createTransplantRequest(Client client, CreateTransplantRequestView request) {
         TransplantRequest transplantRequest = new TransplantRequest(client, request.getRequestedOrgan());
@@ -68,7 +86,7 @@ public class ClientResolverMemory implements ClientResolver {
         return client.getTransplantRequests();
     }
 
-    public Client markClientAsDead(Client client, LocalDate dateOfDeath){
+    public Client markClientAsDead(Client client, LocalDate dateOfDeath) {
         client.markDead(dateOfDeath);
         return client;
     }
@@ -78,6 +96,7 @@ public class ClientResolverMemory implements ClientResolver {
                 createIllnessView.getDiagnosisDate(),
                 createIllnessView.isChronic());
         client.addIllnessRecord(illnessRecord);
+        State.getClientManager().applyChangesTo(client);
         return client.getIllnesses();
     }
 
@@ -85,15 +104,17 @@ public class ClientResolverMemory implements ClientResolver {
         MedicationRecord medicationRecord = new MedicationRecord(medicationRecordView.getName(),
                 LocalDate.now(), null);
         client.addMedicationRecord(medicationRecord);
+        State.getClientManager().applyChangesTo(client);
         return client.getMedications();
     }
 
-    public  List<ProcedureRecord> addProcedureRecord(Client client, CreateProcedureView procedureView) {
+    public List<ProcedureRecord> addProcedureRecord(Client client, CreateProcedureView procedureView) {
         ProcedureRecord procedureRecord = new ProcedureRecord(
                 procedureView.getSummary(),
                 procedureView.getDescription(),
                 procedureView.getDate());
         client.addProcedureRecord(procedureRecord);
+        State.getClientManager().applyChangesTo(client);
         return client.getProcedures();
     }
 
@@ -112,11 +133,13 @@ public class ClientResolverMemory implements ClientResolver {
     }
 
     public TransplantRequest resolveTransplantRequest(Client client, ResolveTransplantRequestObject request,
-            int transplantRequestIndex) {
-        TransplantRequest originalTransplantRequest = client.getTransplantRequests().get(transplantRequestIndex);
+            int id) {
+        TransplantRequest originalTransplantRequest =
+                client.getTransplantRequestById(id).orElseThrow(NotFoundException::new);
         originalTransplantRequest.setStatus(request.getStatus());
         originalTransplantRequest.setResolvedReason(request.getResolvedReason());
         originalTransplantRequest.setResolvedDate(request.getResolvedDate());
+        System.out.println(originalTransplantRequest.getStatus());
         return originalTransplantRequest;
     }
 
@@ -135,7 +158,7 @@ public class ClientResolverMemory implements ClientResolver {
         return record;
     }
 
-    public IllnessRecord modifyIllnessRecord(Client client,IllnessRecord record){
+    public IllnessRecord modifyIllnessRecord(Client client, IllnessRecord record) {
         return record;
     }
 
@@ -143,12 +166,11 @@ public class ClientResolverMemory implements ClientResolver {
             long procedureRecordId) {
         ProcedureRecord toModify = client.getProcedures().stream().filter(record -> record.getId() == procedureRecordId)
                 .findFirst().orElse(null);
-
-        if (toModify != null) {
-            toModify.setSummary(modifyProcedureObject.getSummary());
-            toModify.setDescription(modifyProcedureObject.getDescription());
-            toModify.setDate(modifyProcedureObject.getDate());
+        if (toModify == null) {
+            return null;
         }
+
+        BeanUtils.copyProperties(modifyProcedureObject, toModify, modifyProcedureObject.getUnmodifiedFields());
         return toModify;
     }
 
@@ -162,7 +184,8 @@ public class ClientResolverMemory implements ClientResolver {
         client.deleteProcedureRecord(record);
     }
 
-    public void deleteClient(Client client) {
-        State.getClientManager().removeClient(client);
+    @Override
+    public void deleteMedicationRecord(Client client, MedicationRecord record) {
+        client.deleteMedicationRecord(record);
     }
 }

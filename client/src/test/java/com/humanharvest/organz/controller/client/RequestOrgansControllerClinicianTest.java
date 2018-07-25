@@ -87,6 +87,7 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
         for (TransplantRequest request : sampleRequests) {
             testClient.addTransplantRequest(request);
         }
+        State.getClientManager().applyChangesTo(testClient);
         pageController.refresh();
     }
 
@@ -201,19 +202,29 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
         clickOn(currRequestsTable);
 
         TableRow<TransplantRequest> boneRow = lookup(".table-row-cell").nth(1).query();
-        clickOn(boneRow);
 
         // Selects "cured" from the options
         clickOn("#cancelTransplantOptions")
                 .type(KeyCode.DOWN)
                 .type(KeyCode.DOWN)
                 .type(KeyCode.ENTER);
+        clickOn(boneRow);
 
         clickOn("Resolve Request");
-        // Press enter to go to medical history page
-        type(KeyCode.ENTER);
+        // Press esc to not go to medical history page
+        type(KeyCode.ESCAPE);
 
         // Checks that the selected organ has been removed from the clients transplant request list
+        for (Organ organ : testClient.getCurrentlyRequestedOrgans()) {
+            System.out.println(organ);
+        }
+        boolean resolvedOrgansContainsResolvedOrgan = false;
+        for (TransplantRequest transplantRequest : testClient.getTransplantRequests()) {
+            if (transplantRequest.getRequestedOrgan() == Organ.BONE) {
+                resolvedOrgansContainsResolvedOrgan = true;
+            }
+        }
+        assertTrue(resolvedOrgansContainsResolvedOrgan);
         assertFalse(testClient.getCurrentlyRequestedOrgans().contains(Organ.BONE));
     }
 
