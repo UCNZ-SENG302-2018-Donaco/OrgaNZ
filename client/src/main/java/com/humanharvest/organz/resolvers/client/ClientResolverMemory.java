@@ -152,12 +152,11 @@ public class ClientResolverMemory implements ClientResolver {
             long procedureRecordId) {
         ProcedureRecord toModify = client.getProcedures().stream().filter(record -> record.getId() == procedureRecordId)
                 .findFirst().orElse(null);
-
-        if (toModify != null) {
-            toModify.setSummary(modifyProcedureObject.getSummary());
-            toModify.setDescription(modifyProcedureObject.getDescription());
-            toModify.setDate(modifyProcedureObject.getDate());
+        if (toModify == null) {
+            return null;
         }
+
+        BeanUtils.copyProperties(modifyProcedureObject, toModify, modifyProcedureObject.getUnmodifiedFields());
         return toModify;
     }
 

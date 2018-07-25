@@ -147,7 +147,8 @@ public class ViewProceduresController extends SubController {
     private void editAffectedOrgansCell(CellEditEvent<ProcedureRecord, Set<Organ>> event) {
         ModifyProcedureObject modification = new ModifyProcedureObject();
         modification.setAffectedOrgans(event.getNewValue());
-        sendModification(modification, event.getRowValue().getId());
+        ProcedureRecord record = event.getRowValue();
+        sendModification(modification, record.getId());
     }
 
     private void sendModification(ModifyProcedureObject modification, long procedureRecordId) {
