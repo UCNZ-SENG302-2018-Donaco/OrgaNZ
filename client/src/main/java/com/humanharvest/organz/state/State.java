@@ -2,6 +2,7 @@ package com.humanharvest.organz.state;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,14 +11,26 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
-import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.resolvers.CommandRunner;
 import com.humanharvest.organz.resolvers.CommandRunnerRest;
+import com.humanharvest.organz.resolvers.actions.ActionResolver;
+import com.humanharvest.organz.resolvers.actions.ActionResolverMemory;
+import com.humanharvest.organz.resolvers.actions.ActionResolverRest;
+import com.humanharvest.organz.resolvers.administrator.AdministratorResolver;
+import com.humanharvest.organz.resolvers.administrator.AdministratorResolverMemory;
+import com.humanharvest.organz.resolvers.administrator.AdministratorResolverRest;
+import com.humanharvest.organz.resolvers.administrator.ClientFileResolver;
+import com.humanharvest.organz.resolvers.administrator.ClientFileResolverMemory;
+import com.humanharvest.organz.resolvers.administrator.ClientFileResolverRest;
 import com.humanharvest.organz.resolvers.client.ClientResolver;
 import com.humanharvest.organz.resolvers.client.ClientResolverMemory;
 import com.humanharvest.organz.resolvers.client.ClientResolverRest;
+import com.humanharvest.organz.resolvers.clinician.ClincianResolverMemory;
+import com.humanharvest.organz.resolvers.clinician.ClinicianResolver;
+import com.humanharvest.organz.resolvers.clinician.ClinicianResolverRest;
 import com.humanharvest.organz.utilities.RestErrorHandler;
+import com.humanharvest.organz.utilities.enums.Country;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -42,8 +55,11 @@ public final class State {
     private static AdministratorManager administratorManager;
     private static AuthenticationManager authenticationManager;
     private static CommandRunner commandRunner;
+    private static ActionResolver actionResolver;
+    private static ClinicianResolver clinicianResolver;
+    private static AdministratorResolver administratorResolver;
+    private static ClientFileResolver clientFileResolver;
 
-    private static ActionInvoker invoker;
     private static Session session;
     private static boolean unsavedChanges;
     private static List<MainController> mainControllers = new ArrayList<>();
@@ -52,6 +68,7 @@ public final class State {
     private static String clinicianEtag = "";
     private static String administratorEtag = "";
     private static String token = "";
+    private static EnumSet<Country> allowedCountries;
 
     private State() {
     }
@@ -60,7 +77,6 @@ public final class State {
      * Initialises a new action invoker, client manager and clinician manager.
      */
     public static void init(DataStorageType storageType) {
-        invoker = new ActionInvoker();
         currentStorageType = storageType;
 
         if (storageType == DataStorageType.REST) {
@@ -77,6 +93,10 @@ public final class State {
             administratorManager = new AdministratorManagerRest();
             authenticationManager = new AuthenticationManagerRest();
             commandRunner = new CommandRunnerRest();
+            actionResolver = new ActionResolverRest();
+            clinicianResolver = new ClinicianResolverRest();
+            administratorResolver = new AdministratorResolverRest();
+            clientFileResolver = new ClientFileResolverRest();
         } else if (storageType == DataStorageType.MEMORY) {
             clientManager = new ClientManagerMemory();
             clientResolver = new ClientResolverMemory();
@@ -86,6 +106,10 @@ public final class State {
             commandRunner = commandText -> {
                 throw new UnsupportedOperationException("Memory storage type does not support running commands.");
             };
+            actionResolver = new ActionResolverMemory();
+            clinicianResolver = new ClincianResolverMemory();
+            administratorResolver = new AdministratorResolverMemory();
+            clientFileResolver = new ClientFileResolverMemory();
         } else {
             throw new IllegalArgumentException("DataStorageType cannot be null.");
         }
@@ -109,6 +133,14 @@ public final class State {
 
     public static boolean isUnsavedChanges() {
         return unsavedChanges;
+    }
+
+    public static EnumSet<Country> getAllowedCountries() {
+        return allowedCountries;
+    }
+
+    public static void setAllowedCountries(EnumSet<Country> countries) {
+        allowedCountries = countries;
     }
 
     public static void logout() {
@@ -144,6 +176,10 @@ public final class State {
         mainControllers.clear();
     }
 
+    public static void deleteMainController(MainController controller) {
+        mainControllers.remove(controller);
+    }
+
     private static MappingJackson2HttpMessageConverter customConverter() {
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
         converter.setObjectMapper(customObjectMapper());
@@ -163,6 +199,7 @@ public final class State {
     }
 
     public static void setClientEtag(String etag) {
+        System.out.println("Setting client etag to: " + etag);
         clientEtag = etag;
     }
 
@@ -206,10 +243,6 @@ public final class State {
         return authenticationManager;
     }
 
-    public static ActionInvoker getInvoker() {
-        return invoker;
-    }
-
     public static Session getSession() {
         return session;
     }
@@ -220,5 +253,21 @@ public final class State {
 
     public static CommandRunner getCommandRunner() {
         return commandRunner;
+    }
+
+    public static ActionResolver getActionResolver() {
+        return actionResolver;
+    }
+
+    public static ClinicianResolver getClinicianResolver() {
+        return clinicianResolver;
+    }
+
+    public static AdministratorResolver getAdministratorResolver() {
+        return administratorResolver;
+    }
+
+    public static ClientFileResolver getClientFileResolver() {
+        return clientFileResolver;
     }
 }

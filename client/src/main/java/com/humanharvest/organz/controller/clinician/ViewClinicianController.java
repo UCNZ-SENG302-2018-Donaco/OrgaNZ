@@ -20,10 +20,10 @@ import javafx.scene.paint.Color;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.resolvers.clinician.ModifyClinicianResolver;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.JSONConverter;
+import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
@@ -73,7 +73,11 @@ public class ViewClinicianController extends ViewBaseController {
     @FXML
     private PasswordField password;
     @FXML
-    private ChoiceBox<Region> region;
+    private ChoiceBox<Region> regionCB;
+    @FXML
+    private TextField regionTF;
+    @FXML
+    private ChoiceBox country;
     @FXML
     private Button loadClinicianButton;
 
@@ -92,12 +96,25 @@ public class ViewClinicianController extends ViewBaseController {
         }
     }
 
+    private void checkCountry() {
+        if (viewedClinician.getCountry() != null && viewedClinician.getCountry() == Country.NZ) {
+            regionCB.setVisible(true);
+            regionTF.setVisible(false);
+        } else {
+            regionCB.setVisible(false);
+            regionTF.setVisible(true);
+        }
+    }
+
     /**
      * Initialize the page.
      */
     @FXML
     private void initialize() {
-        region.setItems(FXCollections.observableArrayList(Region.values()));
+        checkCountry();
+        if (viewedClinician.getCountry() != null && viewedClinician.getCountry() == Country.NZ) {
+            regionCB.setItems(FXCollections.observableArrayList(Region.values()));
+        }
         inputsPane.setVisible(true);
 
         loadClinicianData();
@@ -122,6 +139,7 @@ public class ViewClinicianController extends ViewBaseController {
 
     @Override
     public void refresh() {
+        checkCountry();
         loadClinicianData();
     }
 
@@ -164,7 +182,11 @@ public class ViewClinicianController extends ViewBaseController {
         mname.setText(viewedClinician.getMiddleName());
         lname.setText(viewedClinician.getLastName());
         workAddress.setText(viewedClinician.getWorkAddress());
-        region.setValue(viewedClinician.getRegion());
+        if (viewedClinician.getCountry() != null && viewedClinician.getCountry() == Country.NZ) {
+            regionCB.setValue(Region.fromString(viewedClinician.getRegion()));
+        } else {
+            regionTF.setText(viewedClinician.getRegion());
+        }
 
         creationDate.setText(viewedClinician.getCreatedOn().format(dateTimeFormat));
         if (viewedClinician.getModifiedOn() == null) {
@@ -244,11 +266,16 @@ public class ViewClinicianController extends ViewBaseController {
         addChangeIfDifferent(modifyClinicianObject, viewedClinician, "middleName", mname.getText());
         addChangeIfDifferent(modifyClinicianObject, viewedClinician, "workAddress", workAddress.getText());
         addChangeIfDifferent(modifyClinicianObject, viewedClinician, "password", updatedPassword);
-        addChangeIfDifferent(modifyClinicianObject, viewedClinician, "region", region.getValue());
+        addChangeIfDifferent(modifyClinicianObject, viewedClinician, "country", country.getValue());
+
+        if (viewedClinician.getCountry() != null && viewedClinician.getCountry() == Country.NZ) {
+            addChangeIfDifferent(modifyClinicianObject, viewedClinician, "region", regionCB.getValue());
+        } else {
+            addChangeIfDifferent(modifyClinicianObject, viewedClinician, "region", regionTF.getText());
+        }
 
         try {
-            ModifyClinicianResolver resolver = new ModifyClinicianResolver(viewedClinician, modifyClinicianObject);
-            viewedClinician = resolver.execute();
+            viewedClinician = State.getClinicianResolver().modifyClinician(viewedClinician, modifyClinicianObject);
             String actionText = modifyClinicianObject.toString();
 
             Notifications.create()

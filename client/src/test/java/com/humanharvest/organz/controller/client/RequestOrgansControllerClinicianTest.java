@@ -22,6 +22,7 @@ import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.controller.ControllerTest;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
@@ -33,10 +34,12 @@ import org.junit.Test;
 
 public class RequestOrgansControllerClinicianTest extends ControllerTest {
 
-    private final Collection<TransplantRequest> sampleRequests = new ArrayList<>();
-    private final Clinician testClinician = new Clinician(
-            "Mr", null, "Tester", "9 Fake St", Region.AUCKLAND, 1000, "qwerty");
-    private final Client testClient = new Client(1);
+    private TransplantRequest heartRequest;
+    private Collection<TransplantRequest> sampleRequests = new ArrayList<>();
+    private Clinician testClinician = new Clinician("Mr", null, "Tester", "9 Fake St", Region.AUCKLAND.toString(), Country.NZ,
+            1000,
+            "qwerty");
+    private Client testClient = new Client(1);
 
     @Override
     protected Page getPage() {
@@ -46,6 +49,7 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
     @Override
     protected void initState() {
         State.reset();
+        State.getClientManager().addClient(testClient);
         State.login(testClinician);
         mainController.setWindowContext(new WindowContextBuilder()
                 .setAsClinicianViewClientWindow()
@@ -86,6 +90,7 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
         for (TransplantRequest request : sampleRequests) {
             testClient.addTransplantRequest(request);
         }
+        State.getClientManager().applyChangesTo(testClient);
         pageController.refresh();
     }
 
@@ -200,19 +205,29 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
         clickOn(currRequestsTable);
 
         TableRow<TransplantRequest> boneRow = lookup(".table-row-cell").nth(1).query();
-        clickOn(boneRow);
 
         // Selects "cured" from the options
         clickOn("#cancelTransplantOptions")
                 .type(KeyCode.DOWN)
                 .type(KeyCode.DOWN)
                 .type(KeyCode.ENTER);
+        clickOn(boneRow);
 
         clickOn("Resolve Request");
-        // Press enter to go to medical history page
-        type(KeyCode.ENTER);
+        // Press esc to not go to medical history page
+        type(KeyCode.ESCAPE);
 
         // Checks that the selected organ has been removed from the clients transplant request list
+        for (Organ organ : testClient.getCurrentlyRequestedOrgans()) {
+            System.out.println(organ);
+        }
+        boolean resolvedOrgansContainsResolvedOrgan = false;
+        for (TransplantRequest transplantRequest : testClient.getTransplantRequests()) {
+            if (transplantRequest.getRequestedOrgan() == Organ.BONE) {
+                resolvedOrgansContainsResolvedOrgan = true;
+            }
+        }
+        assertTrue(resolvedOrgansContainsResolvedOrgan);
         assertFalse(testClient.getCurrentlyRequestedOrgans().contains(Organ.BONE));
     }
 

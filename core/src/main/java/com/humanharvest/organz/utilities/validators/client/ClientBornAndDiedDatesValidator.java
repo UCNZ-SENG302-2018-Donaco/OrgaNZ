@@ -18,7 +18,8 @@ public class ClientBornAndDiedDatesValidator {
         }
         //Both have been modified, need to compare them to each other
         else if (!unmodifiedFields.contains("dateOfBirth") && !unmodifiedFields.contains("dateOfDeath")) {
-            return !clientView.getDateOfBirth().isAfter(clientView.getDateOfDeath());
+            return clientView.getDateOfDeath() == null ||
+                    !clientView.getDateOfBirth().isAfter(clientView.getDateOfDeath());
         }
         //Date of birth has been modified only
         else if (!unmodifiedFields.contains("dateOfBirth")) {
@@ -26,7 +27,8 @@ public class ClientBornAndDiedDatesValidator {
         }
         //Date of death has been modified only
         else {
-            return !client.getDateOfBirth().isAfter(clientView.getDateOfDeath());
+            return clientView.getDateOfDeath() == null ||
+                    !client.getDateOfBirth().isAfter(clientView.getDateOfDeath());
         }
     }
 }

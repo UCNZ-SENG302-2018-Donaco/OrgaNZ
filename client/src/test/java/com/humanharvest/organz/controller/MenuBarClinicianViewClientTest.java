@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
@@ -15,7 +16,7 @@ import org.junit.Test;
 public class MenuBarClinicianViewClientTest extends ControllerTest {
 
     private Clinician testClinician = new Clinician("Mr", null, "Tester",
-            "9 Fake St", Region.AUCKLAND, 3, "k");
+            "9 Fake St", Region.AUCKLAND.toString(), Country.NZ, 3, "k");
     private Client testClient1 = new Client("tom", "Delta", "1", LocalDate.now().minusYears(32), 1); // 100 years old
 
     @Override
@@ -24,6 +25,7 @@ public class MenuBarClinicianViewClientTest extends ControllerTest {
     @Override
     protected void initState() {
         State.reset();
+        State.getClientManager().addClient(testClient1);
         State.login(testClinician);
         mainController.setWindowContext(new WindowContext.WindowContextBuilder()
                 .setAsClinicianViewClientWindow()

@@ -20,6 +20,7 @@ public enum Region {
     CANTERBURY("Canterbury"),
     OTAGO("Otago"),
     SOUTHLAND("Southland"),
+    CHATHAM_ISLANDS("Chatham Islands"),
     UNSPECIFIED("Unspecified");
 
     private final String text;

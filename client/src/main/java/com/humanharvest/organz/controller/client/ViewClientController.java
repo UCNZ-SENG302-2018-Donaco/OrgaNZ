@@ -32,6 +32,7 @@ import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.ui.validation.UIValidation;
 import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.enums.BloodType;
+import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
@@ -120,7 +121,11 @@ public class ViewClientController extends ViewBaseController {
     @FXML
     private ChoiceBox<BloodType> btype;
     @FXML
-    private ChoiceBox<Region> region;
+    private ChoiceBox<Region> regionCB;
+    @FXML
+    private TextField regionTF;
+    @FXML
+    private ChoiceBox country;
 
     public ViewClientController() {
         manager = State.getClientManager();
@@ -140,9 +145,11 @@ public class ViewClientController extends ViewBaseController {
         gender.setItems(FXCollections.observableArrayList(Gender.values()));
         genderIdentity.setItems(FXCollections.observableArrayList(Gender.values()));
         btype.setItems(FXCollections.observableArrayList(BloodType.values()));
-        region.setItems(FXCollections.observableArrayList(Region.values()));
+        regionCB.setItems(FXCollections.observableArrayList(Region.values()));
+        country.setItems(FXCollections.observableArrayList(Country.values()));
         setFieldsDisabled(true);
     }
+
 
     @Override
     public void setup(MainController mainController) {
@@ -244,7 +251,14 @@ public class ViewClientController extends ViewBaseController {
         height.setText(String.valueOf(viewedClient.getHeight()));
         weight.setText(String.valueOf(viewedClient.getWeight()));
         btype.setValue(viewedClient.getBloodType());
-        region.setValue(viewedClient.getRegion());
+
+        checkCountry();
+        if (viewedClient.getCountry() == Country.NZ && viewedClient.getRegion() != null) {
+            regionCB.setValue(Region.fromString(viewedClient.getRegion()));
+        } else {
+            regionTF.setText(viewedClient.getRegion());
+
+        }
         address.setText(viewedClient.getCurrentAddress());
 
         creationDate.setText(formatter.format(viewedClient.getCreatedTimestamp()));
@@ -257,6 +271,28 @@ public class ViewClientController extends ViewBaseController {
         displayBMI();
         displayAge();
 
+    }
+
+    /**
+     * Triggered when the value of the country choicebox is changed
+     */
+    @FXML
+    private void countryChanged() {
+        checkCountry();
+    }
+
+    /**
+     * Checks the clients country, changes region input to a choicebox of NZ regions if the country is New Zealand,
+     * and changes to a textfield input for any other country
+     */
+    private void checkCountry() {
+        if (viewedClient.getCountry() == Country.NZ ) {
+            regionCB.setVisible(true);
+            regionTF.setVisible(false);
+        } else {
+            regionCB.setVisible(false);
+            regionTF.setVisible(true);
+        }
     }
 
     /**
@@ -278,6 +314,7 @@ public class ViewClientController extends ViewBaseController {
             if (updateChanges()) {
                 displayBMI();
                 displayAge();
+                checkCountry();
 
                 lastModified.setText(formatter.format(viewedClient.getModifiedTimestamp()));
             }
@@ -380,10 +417,8 @@ public class ViewClientController extends ViewBaseController {
 
             if (buttonOpt.isPresent() && buttonOpt.get() == ButtonType.OK) {
 
-
-                Client updatedClient;
                 try {
-                    updatedClient = State.getClientResolver().markClientAsDead(viewedClient, dod.getValue());
+                    State.getClientResolver().markClientAsDead(viewedClient, dod.getValue());
                 } catch (NotFoundException e) {
                     LOGGER.log(Level.WARNING, "Client not found");
                     PageNavigator.showAlert(
@@ -409,14 +444,15 @@ public class ViewClientController extends ViewBaseController {
                     return false;
                 }
                 clientDied = true;
-                viewedClient.setTransplantRequests(updatedClient.getTransplantRequests());
-
 
                 Notifications.create()
                         .title("Marked Client as Dead")
-                        .text("All organ transplant requests have been removed")
+                        .text("All organ transplant requests have been cancelled, "
+                                + "and the date of death has been stored.")
                         .showConfirm();
             }
+        } else { // the client has not died for this update (ie they are either still alive, or were already dead)
+            addChangeIfDifferent(modifyClientObject, viewedClient, "dateOfDeath", dod.getValue());
         }
 
         addChangeIfDifferent(modifyClientObject, viewedClient, "firstName", fname.getText());
@@ -424,17 +460,30 @@ public class ViewClientController extends ViewBaseController {
         addChangeIfDifferent(modifyClientObject, viewedClient, "middleName", mname.getText());
         addChangeIfDifferent(modifyClientObject, viewedClient, "preferredName", pname.getText());
         addChangeIfDifferent(modifyClientObject, viewedClient, "dateOfBirth", dob.getValue());
-        addChangeIfDifferent(modifyClientObject, viewedClient, "dateOfDeath", dod.getValue());
         addChangeIfDifferent(modifyClientObject, viewedClient, "gender", gender.getValue());
         addChangeIfDifferent(modifyClientObject, viewedClient, "genderIdentity", genderIdentity.getValue());
         addChangeIfDifferent(modifyClientObject, viewedClient, "height", Double.parseDouble(height.getText()));
         addChangeIfDifferent(modifyClientObject, viewedClient, "weight", Double.parseDouble(weight.getText()));
         addChangeIfDifferent(modifyClientObject, viewedClient, "bloodType", btype.getValue());
-        addChangeIfDifferent(modifyClientObject, viewedClient, "region", region.getValue());
         addChangeIfDifferent(modifyClientObject, viewedClient, "currentAddress", address.getText());
+        addChangeIfDifferent(modifyClientObject, viewedClient, "country", country.getValue());
+
+        if (viewedClient.getCountry() == Country.NZ) {
+            addChangeIfDifferent(modifyClientObject, viewedClient, "region", regionCB.getValue());
+        } else {
+            addChangeIfDifferent(modifyClientObject, viewedClient,"region", regionTF.getText());
+
+        }
+
+        //checkCountry();
+
+
+        PageNavigator.refreshAllWindows();
 
         if (modifyClientObject.getModifiedFields().isEmpty()) {
-            if (!clientDied) {
+            if (clientDied) { //only the client's date of death was changed
+                return true;
+            } else { //literally nothing was changed
                 Notifications.create()
                         .title("No changes were made.")
                         .text("No changes were made to the client.")
@@ -476,7 +525,6 @@ public class ViewClientController extends ViewBaseController {
             return false;
         }
 
-        System.out.println("refreshing");
         PageNavigator.refreshAllWindows();
         return true;
 

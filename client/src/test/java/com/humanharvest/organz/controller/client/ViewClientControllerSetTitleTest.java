@@ -39,7 +39,7 @@ public class ViewClientControllerSetTitleTest extends ControllerTest {
         testClient.setLastName("b");
         testClient.setDateOfBirth(LocalDate.now().minusDays(10));
         testClient.setBloodType(BloodType.A_POS);
-        testClient.setRegion(Region.AUCKLAND);
+        testClient.setRegion(Region.AUCKLAND.toString());
         testClient.setHeight(180);
         testClient.setWeight(80);
         testClient.setCurrentAddress("1 Test Road");

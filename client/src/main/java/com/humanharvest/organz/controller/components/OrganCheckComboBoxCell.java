@@ -13,7 +13,6 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.Tooltip;
 
 import com.humanharvest.organz.utilities.enums.Organ;
-
 import org.controlsfx.control.CheckComboBox;
 
 /**

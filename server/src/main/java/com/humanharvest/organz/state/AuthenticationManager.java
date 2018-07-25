@@ -95,7 +95,7 @@ public class AuthenticationManager {
             Optional<Client> client = State.getClientManager().getClientByID(id);
             if (!client.isPresent()) {
                 throw new AuthenticationException("X-Auth-Token refers to an invalid client");
-            } else if (client.get() != viewedClient) {
+            } else if (!client.get().equals(viewedClient)) {
                 throw new AuthenticationException("X-Auth-Token refers to a different client");
             }
             return true;
@@ -121,7 +121,7 @@ public class AuthenticationManager {
             Optional<Clinician> clinician = State.getClinicianManager().getClinicianByStaffId(staffId);
             if (!clinician.isPresent()) {
                 throw new AuthenticationException("X-Auth-Token refers to an invalid clinician");
-            } else if (clinician.get() != viewedClinician) {
+            } else if (!clinician.get().equals(viewedClinician)) {
                 throw new AuthenticationException("X-Auth-Token refers to a different clinician");
             }
             return true;
@@ -149,11 +149,11 @@ public class AuthenticationManager {
         }
 
         try {
-            Claims c = Jwts.parser()
+            Claims body = Jwts.parser()
                     .setSigningKey(getSecret())
                     .parseClaimsJws(token)
                     .getBody();
-            return c.getId();
+            return body.getId();
         } catch (SignatureException | MalformedJwtException e) {
             throw new AuthenticationException("X-Auth-Token is invalid or expired", e);
         }

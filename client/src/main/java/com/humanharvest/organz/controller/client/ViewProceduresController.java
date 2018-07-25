@@ -25,18 +25,15 @@ import javafx.scene.text.Text;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.ProcedureRecord;
-import com.humanharvest.organz.actions.ActionInvoker;
-import com.humanharvest.organz.actions.client.DeleteProcedureRecordAction;
-import com.humanharvest.organz.actions.client.ModifyProcedureRecordAction;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.controller.components.DatePickerCell;
 import com.humanharvest.organz.controller.components.OrganCheckComboBoxCell;
-import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.exceptions.BadRequestException;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.PageNavigator;
@@ -53,8 +50,6 @@ public class ViewProceduresController extends SubController {
     private static final Logger LOGGER = Logger.getLogger(ViewProceduresController.class.getName());
 
     private Session session;
-    private ActionInvoker invoker;
-    private ClientManager manager;
     private Client client;
 
     @FXML
@@ -152,7 +147,8 @@ public class ViewProceduresController extends SubController {
     private void editAffectedOrgansCell(CellEditEvent<ProcedureRecord, Set<Organ>> event) {
         ModifyProcedureObject modification = new ModifyProcedureObject();
         modification.setAffectedOrgans(event.getNewValue());
-        sendModification(modification, event.getRowValue().getId());
+        ProcedureRecord record = event.getRowValue();
+        sendModification(modification, record.getId());
     }
 
     private void sendModification(ModifyProcedureObject modification, long procedureRecordId) {
@@ -164,16 +160,16 @@ public class ViewProceduresController extends SubController {
             PageNavigator.showAlert(AlertType.ERROR,
                     "Server Error",
                     "An error occurred when trying to send data to the server.\nPlease try again later.");
+        } catch (BadRequestException exc) {
+            LOGGER.info("No changes were made to the procedure.");
         }
     }
 
     /**
-     * Gets the current session and action invoker from the global state.
+     * Gets the current session from the global state.
      */
     public ViewProceduresController() {
         session = State.getSession();
-        invoker = State.getInvoker();
-        manager = State.getClientManager();
     }
 
     /**
@@ -277,9 +273,8 @@ public class ViewProceduresController extends SubController {
      */
     @Override
     public void refresh() {
-        List<ProcedureRecord> allProcedures;
         try {
-            allProcedures = State.getClientResolver().getProcedureRecords(client);
+            client.setProcedures(State.getClientResolver().getProcedureRecords(client));
         } catch (NotFoundException e) {
             Notifications.create()
                     .title("Client not found")
@@ -294,6 +289,7 @@ public class ViewProceduresController extends SubController {
             return;
         }
 
+        List<ProcedureRecord> allProcedures = client.getProcedures();
 
         SortedList<ProcedureRecord> sortedPastProcedures = new SortedList<>(FXCollections.observableArrayList(
                 allProcedures.stream()

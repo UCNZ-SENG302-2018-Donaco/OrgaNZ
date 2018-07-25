@@ -34,7 +34,6 @@ import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.view.Page;
-import com.humanharvest.organz.utilities.view.WindowContext;
 import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
 import org.junit.Test;
 import org.testfx.api.FxRobot;
@@ -46,7 +45,7 @@ public class TransplantsControllerTest extends ControllerTest {
     // Test data
 
     private Clinician testClinician = new Clinician("A", "B", "C", "D",
-            Region.UNSPECIFIED, 0, "E");
+            Region.UNSPECIFIED.toString(), null, 0, "E");
 
     private Client client1 = new Client("Client", "Number", "One", LocalDate.now(), 1);
     private TransplantRequest request1a = new TransplantRequest(client1, Organ.LIVER);
@@ -94,15 +93,15 @@ public class TransplantsControllerTest extends ControllerTest {
         client3.addTransplantRequest(request3);
         requests.add(request3);
 
-        client1.setRegion(Region.CANTERBURY);
-        client2.setRegion(Region.AUCKLAND); // Changed to Auckland so that the checkbox is visible.
+        client1.setRegion(Region.CANTERBURY.toString());
+        client2.setRegion(Region.AUCKLAND.toString()); // Changed to Auckland so that the checkbox is visible.
         // client3's region is left as null
 
         for (int i = 100; i < 215; i++) {
             Client client = new Client("Client", "Number", createClientName(i), LocalDate.now(), i);
             TransplantRequest request = new TransplantRequest(client, Organ.MIDDLE_EAR);
             client.addTransplantRequest(request);
-            client.setRegion(Region.NELSON);
+            client.setRegion(Region.NELSON.toString());
             requests.add(request);
             State.getClientManager().addClient(client);
         }

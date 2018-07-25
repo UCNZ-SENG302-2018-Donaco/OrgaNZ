@@ -1,12 +1,9 @@
 package com.humanharvest.organz;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;

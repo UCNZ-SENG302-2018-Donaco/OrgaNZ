@@ -1,5 +1,6 @@
 package com.humanharvest.organz.controller.client;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -88,7 +89,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
     protected void initState() {
         State.reset();
 
-        Clinician testClinician = new Clinician("A", "B", "C", "D", Region.UNSPECIFIED, 0, "E");
+        Clinician testClinician = new Clinician("A", "B", "C", "D", Region.UNSPECIFIED.toString(), null, 0, "E");
         testClient = new Client(1);
 
         State.login(testClinician);
@@ -139,26 +140,20 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
 
     @Test
     public void addNewMedicationWithButtonTest() {
-        MedicationRecord toBeAdded = new MedicationRecord("Med D", LocalDate.now(), null);
-
-        clickOn("#newMedField").write(toBeAdded.getMedicationName());
+        clickOn("#newMedField").write("Med D");
         clickOn("Add Medication");
 
         //Assert that the currentMedications list contains an entry with name "Med D"
-        assertTrue(testClient.getCurrentMedications().stream().anyMatch(medicationRecord -> "Med D".equals
-                (medicationRecord.getMedicationName())));
+        assertThat(testClient.getCurrentMedications()).extracting(("medicationName")).contains("Med D");
     }
 
     @Test
     public void addNewMedicationWithEnterTest() {
-        MedicationRecord toBeAdded = new MedicationRecord("Med D", LocalDate.now(), null);
-
-        clickOn("#newMedField").write(toBeAdded.getMedicationName());
-        type(KeyCode.ENTER);
+        clickOn("#newMedField").write("Med D");
+        press(KeyCode.ENTER);
 
         //Assert that the currentMedications list contains an entry with name "Med D"
-        assertTrue(testClient.getCurrentMedications().stream().anyMatch(medicationRecord -> "Med D".equals
-                (medicationRecord.getMedicationName())));
+        assertThat(testClient.getCurrentMedications()).extracting(("medicationName")).contains("Med D");
     }
 
     @Test

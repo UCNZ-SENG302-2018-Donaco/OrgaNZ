@@ -77,11 +77,11 @@ public class ClientIllnessesController {
         IllnessRecord record;
         try {
             Client client = optionalClient.get();
-            record = client.getIllnesses().get(id - 1); // starting index 1.
+            record = client.getIllnesses().get(id);
             //State.getAuthenticationManager().verifyClientAccess(authToken, client);
-            if(modifyIllnessObject.getCuredDate() == null){
+            /**if(modifyIllnessObject.getCuredDate() == null){
                 modifyIllnessObject.setCuredDate(record.getCuredDate());
-            }
+            }**/
             if (!ModifyIllnessValidator.isValid(modifyIllnessObject)) {
                 throw new InvalidRequestException();
             }

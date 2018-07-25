@@ -6,7 +6,6 @@ import java.io.File;
 import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -39,7 +38,7 @@ public class JSONFileReaderTest {
         assertEquals(143.0, testClient.getWeight(), 0.0001);
         assertEquals(BloodType.B_NEG, testClient.getBloodType());
         assertEquals("145 Old Lane", testClient.getCurrentAddress());
-        assertEquals(Region.NELSON, testClient.getRegion());
+        assertTrue(Region.NELSON.toString().equalsIgnoreCase(testClient.getRegion()));
         assertEquals(Instant.parse("2018-03-21T20:55:46Z"), testClient.getCreatedTimestamp());
 
         // Test that the Client's organs set was also deserialized correctly.

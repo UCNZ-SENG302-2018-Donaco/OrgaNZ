@@ -35,7 +35,6 @@ import javafx.scene.text.Text;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.resolvers.client.DeleteClientResolver;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
@@ -58,7 +57,7 @@ public class SearchClientsController extends SubController {
 
     private static final Logger LOGGER = Logger.getLogger(SearchClientsController.class.getName());
 
-    private static final int ROWS_PER_PAGE = 2;
+    private static final int ROWS_PER_PAGE = 30;
     private static final int AGE_LOWER_BOUND = 0;
     private static final int AGE_UPPER_BOUND = 120;
 
@@ -191,9 +190,15 @@ public class SearchClientsController extends SubController {
         //On pagination update call createPage
         pagination.setPageFactory(this::createPage);
 
+        //Make the nameCol comparator always return zero as the list is already ordered by the server using custom sort
+        nameCol.setComparator((c1, c2) -> 0);
+
         //Bind the tableView to the observable list
         //We must make an intermediate SortedList to prevent the table sort policy applying
-        tableView.setItems(new SortedList<>(observableClientList));
+        SortedList<Client> sortedList = new SortedList<>(observableClientList);
+        //Bind the sortedList to the tableView to allow sorting
+        sortedList.comparatorProperty().bind(tableView.comparatorProperty());
+        tableView.setItems(sortedList);
 
         if (State.getSession().getLoggedInUserType() == UserType.ADMINISTRATOR) {
 
@@ -237,8 +242,7 @@ public class SearchClientsController extends SubController {
 
     private void deleteClient(Client client) {
         try {
-            DeleteClientResolver resolver = new DeleteClientResolver(client);
-            resolver.execute();
+            State.getClientManager().removeClient(client);
         } catch (NotFoundException e) {
             LOGGER.log(Level.WARNING, "Client not found");
             PageNavigator.showAlert(AlertType.WARNING, "Client not found", "The client could not be found on the "

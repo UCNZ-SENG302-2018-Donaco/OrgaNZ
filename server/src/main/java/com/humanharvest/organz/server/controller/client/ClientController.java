@@ -1,10 +1,12 @@
 package com.humanharvest.organz.server.controller.client;
 
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.actions.client.CreateClientAction;
 import com.humanharvest.organz.actions.client.DeleteClientAction;
@@ -129,7 +131,7 @@ public class ClientController {
      * @param uid The client UID to return
      * @return Returns a Client details object. Also contains an ETag header for updates
      */
-    @GetMapping("/clients/{uid}")
+    @GetMapping("/clients/{uid:\\d+}")
     @JsonView(Views.Details.class)
     public ResponseEntity<Client> getClient(
             @PathVariable int uid,
@@ -304,6 +306,33 @@ public class ClientController {
 
         //Respond
         return new ResponseEntity<>(client, headers, HttpStatus.OK);
+    }
+
+    /**
+     * Returns the specified clients history
+     * @param uid identifier of the client
+     * @param authToken id token
+     * @return The list of HistoryItems
+     */
+    @GetMapping("/clients/{uid}/history")
+    public ResponseEntity<List<HistoryItem>> getHistory(
+            @PathVariable int uid,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
+            throws IfMatchRequiredException, IfMatchFailedException, InvalidRequestException {
+
+        Optional<Client> client = State.getClientManager().getClientByID(uid);
+        if (client.isPresent()) {
+            //Authenticate
+            State.getAuthenticationManager().verifyClientAccess(authToken, client.get());
+            //Add the new ETag to the headers
+            HttpHeaders headers = new HttpHeaders();
+            headers.setETag(client.get().getETag());
+
+            return new ResponseEntity<>(client.get().getChangesHistory(), headers, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
     }
 
 }

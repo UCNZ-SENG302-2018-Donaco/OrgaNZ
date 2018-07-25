@@ -21,7 +21,7 @@ public class DeleteClinicianActionTest extends BaseTest {
     public void init() {
         invoker = new ActionInvoker();
         manager = new ClinicianManagerMemory();
-        baseClinician = new Clinician("First", null, "Last", "Address", Region.UNSPECIFIED, 1, "pass");
+        baseClinician = new Clinician("First", null, "Last", "Address", Region.UNSPECIFIED.name(), null, 1, "pass");
         manager.addClinician(baseClinician);
     }
 
@@ -42,7 +42,7 @@ public class DeleteClinicianActionTest extends BaseTest {
 
     @Test
     public void CheckClinicianMultipleDeletesOneUndoTest() {
-        Clinician second = new Clinician("First2", null, "Last2", "Address", Region.UNSPECIFIED, 2, "pass");
+        Clinician second = new Clinician("First2", null, "Last2", "Address", Region.UNSPECIFIED.name(), null, 2, "pass");
         manager.addClinician(second);
 
         DeleteClinicianAction action = new DeleteClinicianAction(baseClinician, manager);
@@ -58,7 +58,7 @@ public class DeleteClinicianActionTest extends BaseTest {
 
     @Test
     public void CheckClinicianMultipleDeletesOneUndoRedoTest() {
-        Clinician second = new Clinician("First2", null, "Last2", "Address", Region.UNSPECIFIED, 2, "pass");
+        Clinician second = new Clinician("First2", null, "Last2", "Address", Region.UNSPECIFIED.name(), null, 2, "pass");
         manager.addClinician(second);
 
         DeleteClinicianAction action = new DeleteClinicianAction(baseClinician, manager);

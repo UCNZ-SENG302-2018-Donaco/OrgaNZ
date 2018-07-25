@@ -53,7 +53,7 @@ public class ClientTransplantRequestsController {
     public ResponseEntity<Collection<TransplantRequest>> getAllTransplantRequests(
             @RequestParam(value = "offset", required = false) Integer offset,
             @RequestParam(value = "count", required = false) Integer count,
-            @RequestParam(value = "region", required = false) List<Region> regions,
+            @RequestParam(value = "region", required = false) List<String> regions,
             @RequestParam(value = "organs", required = false) List<Organ> organs,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws AuthenticationException {
@@ -140,9 +140,13 @@ public class ClientTransplantRequestsController {
 
             // Check etag
             if (etag == null) {
+                System.out.println("Client etag is null");
                 throw new IfMatchRequiredException();
             }
             if (!client.getETag().equals(etag)) {
+                System.out.println("Server modified timestamp: " + client.getModifiedTimestamp());
+                System.out.println("Server etag: " + client.getETag());
+                System.out.println("Client etag: " + etag);
                 throw new IfMatchFailedException();
             }
 
@@ -195,7 +199,8 @@ public class ClientTransplantRequestsController {
 
             // Get the original transplant request given by the ID
             try {
-                originalTransplantRequest = client.getTransplantRequests().get(id);
+                originalTransplantRequest =
+                        client.getTransplantRequestById(id).orElseThrow(IndexOutOfBoundsException::new);
             } catch (IndexOutOfBoundsException e) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }

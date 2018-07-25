@@ -72,7 +72,8 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
             )
     };
 
-    private final Clinician testClinician = new Clinician("A", "B", "C", "D", Region.UNSPECIFIED, 0, "E");
+    private final Clinician testClinician = new Clinician("A", "B", "C", "D", Region.UNSPECIFIED.toString(), null, 0,
+            "E");
     private final Client testClient = new Client(1);
 
     @Override

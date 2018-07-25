@@ -24,8 +24,8 @@ public class AuthenticationManagerRest implements AuthenticationManager {
             ClientLoginResponse response = State.getRestTemplate().postForObject(
                     State.BASE_URI + "login/client/", new HttpEntity<>(loginRequest),
                     ClientLoginResponse.class);
-            State.login(response.getUserData());
             State.setToken(response.getToken());
+            State.login(response.getUserData());
             return response.getUserData();
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
@@ -44,8 +44,8 @@ public class AuthenticationManagerRest implements AuthenticationManager {
             ClinicianLoginResponse response = State.getRestTemplate().postForObject(
                     State.BASE_URI + "login/clinician/", new HttpEntity<>(loginRequest),
                     ClinicianLoginResponse.class);
-            State.login(response.getUserData());
             State.setToken(response.getToken());
+            State.login(response.getUserData());
             return response.getUserData();
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
@@ -64,8 +64,8 @@ public class AuthenticationManagerRest implements AuthenticationManager {
             AdministratorLoginResponse response = State.getRestTemplate().postForObject(
                     State.BASE_URI + "login/administrator/", new HttpEntity<>(loginRequest),
                     AdministratorLoginResponse.class);
-            State.login(response.getUserData());
             State.setToken(response.getToken());
+            State.login(response.getUserData());
             return response.getUserData();
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {

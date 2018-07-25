@@ -64,7 +64,7 @@ public class ActionInvoker {
         undoStack.push(action);
         redoStack.clear();
 
-        listeners.forEach((listener -> listener.onActionExecuted(action)));
+        listeners.forEach(listener -> listener.onActionExecuted(action));
 
         return action.getExecuteText();
     }

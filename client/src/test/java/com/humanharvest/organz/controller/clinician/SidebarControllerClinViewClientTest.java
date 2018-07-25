@@ -10,16 +10,16 @@ import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.controller.ControllerTest;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class SidebarControllerClinViewClientTest extends ControllerTest {
 
     private Clinician testClinician = new Clinician("Mr", null, "Tester",
-            "9 Fake St", Region.AUCKLAND, 3, "k");
+            "9 Fake St", Region.AUCKLAND.toString(), Country.NZ, 3, "k");
     private Client client = new Client("Client", "Number","One", LocalDate.now(), 1);
 
 

@@ -27,17 +27,16 @@ import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
-
 import org.controlsfx.control.CheckComboBox;
 
 /**
@@ -63,7 +62,7 @@ public class TransplantsController extends SubController {
     private TableColumn<TransplantRequest, Organ> organCol;
 
     @FXML
-    private TableColumn<TransplantRequest, Region> regionCol;
+    private TableColumn<TransplantRequest, String> regionCol;
 
     @FXML
     private TableColumn<TransplantRequest, LocalDateTime> dateCol;
@@ -239,12 +238,12 @@ public class TransplantsController extends SubController {
         });
 
         // Sets the comparator for sorting by region column.
-        regionCol.setComparator(new Comparator<Region>() {
+        regionCol.setComparator(new Comparator<String>() {
             /**
              * Nulls are ordered first, then alphabetical order of the region name.
              */
             @Override
-            public int compare(Region o1, Region o2) {
+            public int compare(String o1, String o2) {
                 if (o1 == null) {
                     if (o2 == null) {
                         return 0;
@@ -254,7 +253,7 @@ public class TransplantsController extends SubController {
                 } else if (o2 == null) {
                     return 1;
                 }
-                return o1.toString().compareTo(o2.toString());
+                return o1.compareTo(o2);
             }
         });
     }

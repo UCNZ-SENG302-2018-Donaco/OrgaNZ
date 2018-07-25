@@ -1,7 +1,5 @@
 package com.humanharvest.organz.state;
 
-import static com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum.NAME;
-
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Comparator;
@@ -28,6 +26,7 @@ public interface ClientManager {
 
     List<Client> getClients();
 
+    // TODO: Change so regions isn't an enum
     default PaginatedClientList getClients(
             String q,
             Integer offset,
@@ -54,26 +53,29 @@ public interface ClientManager {
         //Setup the primarySorter for the given sort option. Default to NAME if none is given
         Comparator<Client> primarySorter;
         if (sortOption == null) {
-            sortOption = NAME;
+            sortOption = ClientSortOptionsEnum.NAME;
         }
         switch (sortOption) {
             case ID:
-                primarySorter = Comparator.comparing(Client::getUid);
+                primarySorter = Comparator.comparing(Client::getUid, Comparator.nullsLast(Comparator.naturalOrder()));
                 break;
             case AGE:
-                primarySorter = Comparator.comparing(Client::getAge);
+                primarySorter = Comparator.comparing(Client::getAge, Comparator.nullsLast(Comparator.naturalOrder()));
                 break;
             case DONOR:
-                primarySorter = Comparator.comparing(Client::isDonor);
+                primarySorter = Comparator.comparing(Client::isDonor, Comparator.nullsLast(Comparator.naturalOrder()));
                 break;
             case RECEIVER:
-                primarySorter = Comparator.comparing(Client::isReceiver);
+                primarySorter = Comparator
+                        .comparing(Client::isReceiver, Comparator.nullsLast(Comparator.naturalOrder()));
                 break;
             case REGION:
-                primarySorter = Comparator.comparing(Client::getRegion);
+                primarySorter = Comparator
+                        .comparing(Client::getRegion, Comparator.nullsLast(Comparator.naturalOrder()));
                 break;
             case BIRTH_GENDER:
-                primarySorter = Comparator.comparing(Client::getGender);
+                primarySorter = Comparator
+                        .comparing(Client::getGender, Comparator.nullsLast(Comparator.naturalOrder()));
                 break;
             case NAME:
             default:

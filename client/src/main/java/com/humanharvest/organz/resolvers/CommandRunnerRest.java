@@ -16,7 +16,7 @@ public class CommandRunnerRest implements CommandRunner {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
         httpHeaders.set("X-Auth-Token", State.getToken());
-        HttpEntity entity = new HttpEntity<>(commandView, httpHeaders);
+        HttpEntity<CommandView> entity = new HttpEntity<>(commandView, httpHeaders);
 
         ResponseEntity<String> responseEntity = State.getRestTemplate()
                 .postForEntity(State.BASE_URI + "commands", entity, String.class);

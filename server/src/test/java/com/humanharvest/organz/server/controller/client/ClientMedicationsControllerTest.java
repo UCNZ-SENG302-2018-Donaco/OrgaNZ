@@ -79,8 +79,6 @@ public class ClientMedicationsControllerTest {
 
     /**
     public void createMedication() throws Exception {
-        CreateMedicationRecordView recordView = new CreateMedicationRecordView();
-        recordView.setName("MedicationName");
         String json = "{ \"name\": \"testmed\" }";
 
         mockMvc.perform(post("/clients/1/medications")
@@ -115,8 +113,6 @@ public class ClientMedicationsControllerTest {
     /**
 
     public void testCreateMedicationInvalid() throws Exception {
-        CreateMedicationRecordView recordView = new CreateMedicationRecordView();
-        recordView.setName("MedicationName");
         String json = "{ \"invalid\": \"testmed\" }";
 
         mockMvc.perform(post("/clients/1/medications")

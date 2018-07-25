@@ -1,17 +1,18 @@
 package com.humanharvest.organz.resolvers.client;
 
-import com.humanharvest.organz.views.client.ModifyIllnessObject;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.ProcedureRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.views.client.CreateClientView;
 import com.humanharvest.organz.views.client.CreateIllnessView;
 import com.humanharvest.organz.views.client.CreateMedicationRecordView;
 import com.humanharvest.organz.views.client.CreateProcedureView;
@@ -20,7 +21,6 @@ import com.humanharvest.organz.views.client.ModifyClientObject;
 import com.humanharvest.organz.views.client.ModifyProcedureObject;
 import com.humanharvest.organz.views.client.ResolveTransplantRequestObject;
 import com.humanharvest.organz.views.client.SingleDateView;
-import org.apache.http.protocol.HTTP;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -32,7 +32,7 @@ public class ClientResolverRest implements ClientResolver {
 
     //------------GETs----------------
 
-    @Override
+
     public Map<Organ, Boolean> getOrganDonationStatus(Client client) {
         HttpHeaders httpHeaders = createHeaders(false);
         ResponseEntity<Map<Organ, Boolean>> responseEntity = sendQuery(httpHeaders,
@@ -45,7 +45,6 @@ public class ClientResolverRest implements ClientResolver {
         return responseEntity.getBody();
     }
 
-    @Override
     public List<TransplantRequest> getTransplantRequests(Client client) {
         HttpHeaders httpHeaders = createHeaders(false);
         ResponseEntity<List<TransplantRequest>> responseEntity = sendQuery(httpHeaders,
@@ -58,7 +57,6 @@ public class ClientResolverRest implements ClientResolver {
         return responseEntity.getBody();
     }
 
-    @Override
     public List<MedicationRecord> getMedicationRecords(Client client) {
         HttpHeaders httpHeaders = createHeaders(false);
         ResponseEntity<List<MedicationRecord>> responseEntity = sendQuery(httpHeaders,
@@ -71,7 +69,6 @@ public class ClientResolverRest implements ClientResolver {
         return responseEntity.getBody();
     }
 
-    @Override
     public List<ProcedureRecord> getProcedureRecords(Client client) {
         HttpHeaders httpHeaders = createHeaders(false);
         httpHeaders.setETag(State.getClientEtag());
@@ -84,11 +81,39 @@ public class ClientResolverRest implements ClientResolver {
         return responseEntity.getBody();
     }
 
+    @Override
+    public List<HistoryItem> getHistory(Client client) {
+        HttpHeaders httpHeaders = createHeaders(false);
+        httpHeaders.setETag(State.getClientEtag());
+
+        ResponseEntity<List<HistoryItem>> responseEntity = sendQuery(httpHeaders,
+                State.BASE_URI + "clients/{id}/history",
+                HttpMethod.GET,
+                new ParameterizedTypeReference<List<HistoryItem>>() {
+                }, client.getUid());
+        return responseEntity.getBody();
+    }
+
     //------------POSTs----------------
 
     @Override
+    public Client createClient(CreateClientView createClientView) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        httpHeaders.set("X-Auth-Token", State.getToken());
+        HttpEntity entity = new HttpEntity<>(createClientView, httpHeaders);
+
+        ResponseEntity<Client> responseEntity = State.getRestTemplate()
+                .postForEntity(State.BASE_URI + "clients", entity, Client.class);
+
+        State.setClientEtag(responseEntity.getHeaders().getETag());
+        return responseEntity.getBody();
+    }
+
     public List<TransplantRequest> createTransplantRequest(Client client, CreateTransplantRequestView request) {
         HttpHeaders httpHeaders = createHeaders(true);
+        System.out.println("State get clients etag: " + State.getClientEtag());
+        System.out.println("Client's IfMatch: " + httpHeaders.getIfMatch());
         ResponseEntity<List<TransplantRequest>> responseEntity = sendQuery(httpHeaders,
                 State.BASE_URI + "clients/{id}/transplantRequests",
                 HttpMethod.POST,
@@ -98,7 +123,6 @@ public class ClientResolverRest implements ClientResolver {
         return responseEntity.getBody();
     }
 
-    @Override
     public Client markClientAsDead(Client client, LocalDate dateOfDeath) {
         HttpHeaders httpHeaders = createHeaders(true);
         ResponseEntity<Client> responseEntity = sendQuery(httpHeaders,
@@ -110,7 +134,6 @@ public class ClientResolverRest implements ClientResolver {
         return responseEntity.getBody();
     }
 
-    @Override
     public List<IllnessRecord> addIllnessRecord(Client client, CreateIllnessView createIllnessView) {
         HttpHeaders httpHeaders = createHeaders(true);
         ResponseEntity<List<IllnessRecord>> responseEntity = sendQuery(httpHeaders,
@@ -124,7 +147,6 @@ public class ClientResolverRest implements ClientResolver {
         return responseEntity.getBody();
     }
 
-    @Override
     public List<MedicationRecord> addMedicationRecord(Client client, CreateMedicationRecordView medicationRecordView) {
         HttpHeaders httpHeaders = createHeaders(true);
         ResponseEntity<List<MedicationRecord>> responseEntity = sendQuery(httpHeaders,
@@ -138,7 +160,6 @@ public class ClientResolverRest implements ClientResolver {
         return responseEntity.getBody();
     }
 
-    @Override
     public List<ProcedureRecord> addProcedureRecord(Client client, CreateProcedureView procedureView) {
         HttpHeaders httpHeaders = createHeaders(true);
         ResponseEntity<List<ProcedureRecord>> responseEntity = sendQuery(httpHeaders,
@@ -154,6 +175,29 @@ public class ClientResolverRest implements ClientResolver {
     //------------PATCHs----------------
 
     @Override
+    public Map<Organ, Boolean> modifyOrganDonation(Client client, Map<Organ, Boolean> changes) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setIfMatch(State.getClientEtag());
+        httpHeaders.set("X-Auth-Token", State.getToken());
+
+        HttpEntity<Map<Organ, Boolean>> entity = new HttpEntity<>(changes, httpHeaders);
+
+        ParameterizedTypeReference<Map<Organ, Boolean>> mapRef =
+                new ParameterizedTypeReference<Map<Organ, Boolean>>() {
+                };
+
+        ResponseEntity<Map<Organ, Boolean>> responseEntity = State.getRestTemplate()
+                .exchange(
+                        State.BASE_URI + "clients/{uid}/donationStatus",
+                        HttpMethod.PATCH,
+                        entity,
+                        mapRef,
+                        client.getUid());
+
+        State.setClientEtag(responseEntity.getHeaders().getETag());
+        return responseEntity.getBody();
+    }
+
     public TransplantRequest resolveTransplantRequest(Client client, ResolveTransplantRequestObject request,
             int transplantRequestIndex) {
         HttpHeaders httpHeaders = createHeaders(true);
@@ -168,7 +212,6 @@ public class ClientResolverRest implements ClientResolver {
         return responseEntity.getBody();
     }
 
-    @Override
     public Client modifyClientDetails(Client client, ModifyClientObject modifyClientObject) {
         HttpHeaders httpHeaders = createHeaders(true);
         ResponseEntity<Client> responseEntity = sendQuery(httpHeaders,
@@ -181,7 +224,6 @@ public class ClientResolverRest implements ClientResolver {
         return responseEntity.getBody();
     }
 
-    @Override
     public MedicationRecord modifyMedicationRecord(Client client, MedicationRecord record, LocalDate stopDate) {
 
         String modification;
@@ -205,10 +247,8 @@ public class ClientResolverRest implements ClientResolver {
         return responseEntity.getBody();
     }
 
-
-    @Override
     public IllnessRecord modifyIllnessRecord(Client client,IllnessRecord record){
-        int id = client.getIllnesses().indexOf(record) + 1;
+        int id = client.getIllnesses().indexOf(record);
 
         HttpHeaders httpHeaders = createHeaders(true);
         HttpEntity<IllnessRecord> entity = new HttpEntity<>(record,httpHeaders);
@@ -218,7 +258,7 @@ public class ClientResolverRest implements ClientResolver {
         State.setClientEtag(responseEntity.getHeaders().getETag());
         return responseEntity.getBody();
     }
-    @Override
+
     public ProcedureRecord modifyProcedureRecord(Client client, ModifyProcedureObject modifyProcedureObject,
             long procedureRecordId) {
         HttpHeaders httpHeaders = createHeaders(true);
@@ -235,7 +275,6 @@ public class ClientResolverRest implements ClientResolver {
 
     //------------DELETEs----------------
 
-    @Override
     public void deleteIllnessRecord(Client client, IllnessRecord record) {
 
         int id = client.getIllnesses().indexOf(record);
@@ -251,7 +290,6 @@ public class ClientResolverRest implements ClientResolver {
         client.deleteIllnessRecord(record);
     }
 
-    @Override
     public void deleteProcedureRecord(Client client, ProcedureRecord record) {
         HttpHeaders httpHeaders = createHeaders(true);
         sendQuery(httpHeaders,
@@ -260,7 +298,21 @@ public class ClientResolverRest implements ClientResolver {
                 ProcedureRecord.class,
                 client.getUid(),
                 record.getId());
+
         client.deleteProcedureRecord(record);
+    }
+
+    @Override
+    public void deleteMedicationRecord(Client client, MedicationRecord record) {
+        HttpHeaders httpHeaders = createHeaders(true);
+        sendQuery(httpHeaders,
+                State.BASE_URI + "clients/{id}/medications/{procedureId}",
+                HttpMethod.DELETE,
+                MedicationRecord.class,
+                client.getUid(),
+                record.getId());
+
+        client.deleteMedicationRecord(record);
     }
 
     //------------Templates----------------
@@ -282,7 +334,10 @@ public class ClientResolverRest implements ClientResolver {
 
         ResponseEntity<T> responseEntity = State.getRestTemplate().exchange
                 (url, method, entity, typeReference, uriVariables);
-        State.setClientEtag(responseEntity.getHeaders().getETag());
+
+        if (!method.equals(HttpMethod.GET) && !method.equals(HttpMethod.HEAD)) { // if the method isn't safe
+            State.setClientEtag(responseEntity.getHeaders().getETag());
+        }
         return responseEntity;
     }
 
@@ -293,7 +348,10 @@ public class ClientResolverRest implements ClientResolver {
 
         ResponseEntity<T> responseEntity = State.getRestTemplate().exchange
                 (url, method, entity, typeReference, uriVariables);
-        State.setClientEtag(responseEntity.getHeaders().getETag());
+
+        if (!method.equals(HttpMethod.GET) && !method.equals(HttpMethod.HEAD)) { // if the method isn't safe
+            State.setClientEtag(responseEntity.getHeaders().getETag());
+        }
         return responseEntity;
     }
 
@@ -304,7 +362,10 @@ public class ClientResolverRest implements ClientResolver {
 
         ResponseEntity<T> responseEntity = State.getRestTemplate().exchange
                 (url, method, entity, typeReference, uriVariables);
-        State.setClientEtag(responseEntity.getHeaders().getETag());
+
+        if (!method.equals(HttpMethod.GET) && !method.equals(HttpMethod.HEAD)) { // if the method isn't safe
+            State.setClientEtag(responseEntity.getHeaders().getETag());
+        }
         return responseEntity;
     }
 
@@ -315,7 +376,10 @@ public class ClientResolverRest implements ClientResolver {
 
         ResponseEntity<T> responseEntity = State.getRestTemplate().exchange
                 (url, method, entity, typeReference, uriVariables);
-        State.setClientEtag(responseEntity.getHeaders().getETag());
+
+        if (!method.equals(HttpMethod.GET) && !method.equals(HttpMethod.HEAD)) { // if the method isn't safe
+            State.setClientEtag(responseEntity.getHeaders().getETag());
+        }
         return responseEntity;
     }
 }

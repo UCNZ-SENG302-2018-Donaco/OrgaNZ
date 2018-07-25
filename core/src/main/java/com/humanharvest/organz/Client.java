@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.persistence.Access;
@@ -34,10 +35,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.utilities.enums.BloodType;
+import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.ClientType;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
 import com.humanharvest.organz.views.client.Views;
@@ -65,14 +66,16 @@ public class Client implements ConcurrencyControlledEntity {
     @JsonView(Views.Details.class)
     private String currentAddress;
 
+    @JsonView(Views.Overview.class)
+    private String region;
     @Enumerated(EnumType.STRING)
-    @JsonView(Views.Details.class)
-    private Region region;
+    @JsonView(Views.Overview.class)
+    private Country country;
     @Enumerated(EnumType.STRING)
-    @JsonView(Views.Details.class)
+    @JsonView(Views.Overview.class)
     private Gender gender;
     @Enumerated(EnumType.STRING)
-    @JsonView(Views.Details.class)
+    @JsonView(Views.Overview.class)
     private BloodType bloodType;
     @Enumerated(EnumType.STRING)
     @JsonView(Views.Details.class)
@@ -211,6 +214,10 @@ public class Client implements ConcurrencyControlledEntity {
 
     public void setIllnessHistory(List<IllnessRecord> illnessHistory) {
         this.illnessHistory = new ArrayList<>(illnessHistory);
+    }
+
+    public void setProcedures(List<ProcedureRecord> procedures) {
+        this.procedures = procedures;
     }
 
     /**
@@ -457,11 +464,11 @@ public class Client implements ConcurrencyControlledEntity {
         this.currentAddress = currentAddress;
     }
 
-    public Region getRegion() {
+    public String getRegion() {
         return region;
     }
 
-    public void setRegion(Region region) {
+    public void setRegion(String region) {
         updateModifiedTimestamp();
         this.region = region;
     }
@@ -830,6 +837,12 @@ public class Client implements ConcurrencyControlledEntity {
         return transplantRequests;
     }
 
+    public Optional<TransplantRequest> getTransplantRequestById(int id){
+        return transplantRequests.stream()
+                .filter(transplantRequest -> transplantRequest.getId() == id)
+                .findFirst();
+    }
+
     public void addTransplantRequest(TransplantRequest request) {
         transplantRequests.add(request);
         request.setClient(this);
@@ -907,5 +920,14 @@ public class Client implements ConcurrencyControlledEntity {
             default:
                 return true;
         }
+    }
+
+    public Country getCountry() {
+        return country;
+    }
+
+    public void setCountry(Country country) {
+        this.country = country;
+        updateModifiedTimestamp();
     }
 }

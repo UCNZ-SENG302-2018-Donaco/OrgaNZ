@@ -25,7 +25,6 @@ import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
-import org.junit.Before;
 import org.junit.Test;
 import org.testfx.util.NodeQueryUtils;
 
@@ -41,7 +40,7 @@ public class ViewProceduresControllerClinicianTest extends ControllerTest {
             new ProcedureRecord("Summary4", "Description4", LocalDate.of(2045, 10, 15))
     };
     private final Client testClient = new Client( "Alex", null, "Tester", LocalDate.of(1998, 5, 9), 1);
-    private final Clinician testClinician = new Clinician("A", "B", "C", "D", Region.UNSPECIFIED, 0, "E");
+    private final Clinician testClinician = new Clinician("A", "B", "C", "D", Region.UNSPECIFIED.toString(), null, 0, "E");
 
     @Override
     protected Page getPage() {
@@ -51,16 +50,15 @@ public class ViewProceduresControllerClinicianTest extends ControllerTest {
     @Override
     protected void initState() {
         State.reset();
+        resetRecords();
         State.login(testClinician);
         mainController.setWindowContext(new WindowContext.WindowContextBuilder()
                 .setAsClinicianViewClientWindow()
                 .viewClient(testClient)
                 .build());
-        resetRecords();
     }
 
-    @Before
-    public void resetRecords() {
+    private void resetRecords() {
 
         Set<Organ> organs = new HashSet<>();
         organs.add(Organ.KIDNEY);
@@ -83,6 +81,7 @@ public class ViewProceduresControllerClinicianTest extends ControllerTest {
         for (ProcedureRecord record : pendingRecords) {
             testClient.addProcedureRecord(record);
         }
+        State.getClientManager().applyChangesTo(testClient);
     }
 
 

@@ -86,7 +86,7 @@ public class CSVReadClientStrategy implements ReadClientStrategy {
                 record.get(neighborhood) + ", " +
                 record.get(city) + ", " +
                 record.get(zip_code));
-        client.setRegion(Region.fromString(record.get(region)));
+        client.setRegion(record.get(region));
         return client;
     }
 

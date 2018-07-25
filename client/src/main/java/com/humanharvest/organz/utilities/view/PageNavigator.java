@@ -73,6 +73,7 @@ public class PageNavigator {
             MainController mainController = loader.getController();
             mainController.setStage(newStage);
             State.addMainController(mainController);
+            newStage.setOnCloseRequest(e -> State.deleteMainController(mainController));
 
             Scene scene = new Scene(mainPane);
             AppUI.addCss(scene);

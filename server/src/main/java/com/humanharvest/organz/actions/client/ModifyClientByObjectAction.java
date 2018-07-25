@@ -1,5 +1,8 @@
 package com.humanharvest.organz.actions.client;
 
+import java.lang.reflect.Field;
+import java.util.stream.Collectors;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.views.client.ModifyClientObject;
@@ -38,11 +41,30 @@ public class ModifyClientByObjectAction extends ClientAction {
 
     @Override
     public String getExecuteText() {
-        return "Todo";
+        String changesText = newClientDetails.getModifiedFields().stream()
+                .map(Field::getName)
+                .map(this::unCamelCase)
+                .collect(Collectors.joining("\n"));
+
+        return String.format("Updated details for client %d: %s. \n"
+                        + "These changes were made: \n\n%s",
+                client.getUid(), client.getFullName(), changesText);
     }
 
     @Override
     public String getUnexecuteText() {
-        return "Todo";
+        String changesText = oldClientDetails.getModifiedFields().stream()
+                .map(Field::getName)
+                .map(this::unCamelCase)
+                .collect(Collectors.joining("\n"));
+
+        return String.format("Reversed update for client %d: %s. \n"
+                        + "These changes were reversed: \n\n%s",
+                client.getUid(), client.getFullName(), changesText);
+    }
+
+    private String unCamelCase(String inCamelCase) {
+        String unCamelCased = inCamelCase.replaceAll("([a-z])([A-Z]+)", "$1 $2");
+        return unCamelCased.substring(0, 1).toUpperCase() + unCamelCased.substring(1);
     }
 }
