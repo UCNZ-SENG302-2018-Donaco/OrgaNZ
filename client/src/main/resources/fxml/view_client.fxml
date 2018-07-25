@@ -113,7 +113,7 @@
                                 <TextField fx:id="pname" prefHeight="30.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                                 <ChoiceBox fx:id="genderIdentity" maxWidth="1.7976931348623157E308" prefHeight="30.0" GridPane.columnIndex="3" GridPane.rowIndex="6" />
                                           <Label text="Country" GridPane.rowIndex="8" />
-                                          <ChoiceBox fx:id="country" prefHeight="25.0" prefWidth="191.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                                          <ChoiceBox fx:id="country" onInputMethodTextChanged="#countryChanged" prefHeight="25.0" prefWidth="191.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
                                           <TextField fx:id="regionTF" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                               </children>
                            </GridPane>

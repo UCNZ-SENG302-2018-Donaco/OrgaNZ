@@ -16,14 +16,16 @@ public class ClinicianManagerDBPureTest extends BaseTest {
 
     private DBManager dbManager;
 
-    private Clinician c = new Clinician("Thomas","Test","Tety","21 Ok", Region.NORTHLAND,3,"password");
+    private Clinician c = new Clinician("Thomas","Test","Tety","21 Ok", Region.NORTHLAND.name(),3,"password");
 
     @Ignore
     @Test
     public void retrieveAllUsers(){
         ClinicianManagerDBPure test = new ClinicianManagerDBPure();
-        Clinician clinician = new Clinician("First", null, "Last", "Address", Region.UNSPECIFIED, 1, "pass");
-        Clinician clinician2 = new Clinician("First2", null, "Last2", "Address", Region.UNSPECIFIED, 2, "pass");
+        Clinician clinician = new Clinician("First", null, "Last", "Address", Region.UNSPECIFIED.name(), 1,
+                "pass");
+        Clinician clinician2 = new Clinician("First2", null, "Last2", "Address", Region.UNSPECIFIED.name(), 2,
+                "pass");
         ArrayList<Clinician> clinicians = new ArrayList<>();
         clinicians.add(clinician);
         clinicians.add(clinician2);

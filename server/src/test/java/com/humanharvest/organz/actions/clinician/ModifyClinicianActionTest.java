@@ -21,7 +21,7 @@ public class ModifyClinicianActionTest extends BaseTest {
     public void init() {
         invoker = new ActionInvoker();
         manager = new ClinicianManagerMemory();
-        baseClinician = new Clinician("First", null, "Last", "Address", Region.UNSPECIFIED, 1, "pass");
+        baseClinician = new Clinician("First", null, "Last", "Address", Region.UNSPECIFIED.name(), 1, "pass");
         manager.addClinician(baseClinician);
     }
 

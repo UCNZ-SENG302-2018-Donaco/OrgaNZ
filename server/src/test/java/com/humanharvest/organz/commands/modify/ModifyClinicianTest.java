@@ -28,11 +28,11 @@ public class ModifyClinicianTest extends BaseTest {
         spyModifyClinician = spy(new ModifyClinician(spyClinicianManager, new ActionInvoker()));
 
         Clinician clinician = new Clinician("first", "middle", "last",
-                "address", Region.CANTERBURY, staffId, "password");
+                "address", Region.CANTERBURY.name(), staffId, "password");
         spyClinicianManager.addClinician(clinician);
 
         testClinician = new Clinician("first", "middle", "last",
-                "address", Region.CANTERBURY, testStaffId, "password");
+                "address", Region.CANTERBURY.name(), testStaffId, "password");
     }
 
     @Test

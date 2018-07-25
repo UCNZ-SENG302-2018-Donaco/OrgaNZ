@@ -28,7 +28,7 @@ public class DeleteClinicianTest extends BaseTest {
         spyDeleteClinician = spy(new DeleteClinician(spyClinicianManager, new ActionInvoker()));
 
         Clinician clinician = new Clinician("first", "middle", "last",
-                "address", Region.CANTERBURY, staffId, "password");
+                "address", Region.CANTERBURY.name(), staffId, "password");
         spyClinicianManager.addClinician(clinician);
     }
 

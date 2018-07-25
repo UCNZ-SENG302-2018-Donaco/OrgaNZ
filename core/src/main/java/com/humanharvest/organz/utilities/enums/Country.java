@@ -255,8 +255,9 @@ public enum Country {
     ZW("Zimbabwe");
 
 
-
     private final String text;
+
+    private static String mismatchText;
 
     Country(String text) {
         this.text = text;
@@ -264,6 +265,32 @@ public enum Country {
 
     public String toString() {
         return text;
+    }
+
+    /**
+     * Returns Country enum from input matched to either the name or code of a country
+     * @param text name or code of country to return
+     * @return country that matches the text given
+     */
+    public static Country fromString(String text) {
+        for (Country c : Country.values()) {
+            if (c.toString().equalsIgnoreCase(text) || c.name().equalsIgnoreCase(text)) {
+                return c;
+            }
+        }
+
+        //No match
+        if (mismatchText != null) {
+            throw new IllegalArgumentException(mismatchText);
+        } else {
+            StringBuilder mismatchTextBuilder = new StringBuilder("Unsupported country, please use one of the "
+                    + "following:");
+            for (Country c : Country.values()) {
+                mismatchTextBuilder.append('\n').append(c.text);
+            }
+            mismatchText = mismatchTextBuilder.toString();
+            throw new IllegalArgumentException(mismatchText);
+        }
     }
 
 }

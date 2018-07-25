@@ -147,15 +147,6 @@ public class ViewClientController extends ViewBaseController {
         setFieldsDisabled(true);
     }
 
-    private void checkCountry() {
-        if (viewedClient.getCountry() != null ) {
-            regionCB.setVisible(true);
-            regionTF.setVisible(false);
-        } else {
-            regionCB.setVisible(false);
-            regionTF.setVisible(true);
-        }
-    }
 
     @Override
     public void setup(MainController mainController) {
@@ -259,7 +250,7 @@ public class ViewClientController extends ViewBaseController {
         btype.setValue(viewedClient.getBloodType());
 
         checkCountry();
-        if (viewedClient.getCountry() == Country.NZ) {
+        if (viewedClient.getCountry() == Country.NZ && viewedClient.getRegion() != null) {
             regionCB.setValue(Region.fromString(viewedClient.getRegion()));
         } else {
             regionTF.setText(viewedClient.getRegion());
@@ -277,6 +268,28 @@ public class ViewClientController extends ViewBaseController {
         displayBMI();
         displayAge();
 
+    }
+
+    /**
+     * Triggered when the value of the country choicebox is changed
+     */
+    @FXML
+    private void countryChanged() {
+        checkCountry();
+    }
+
+    /**
+     * Checks the clients country, changes region input to a choicebox of NZ regions if the country is New Zealand,
+     * and changes to a textfield input for any other country
+     */
+    private void checkCountry() {
+        if (viewedClient.getCountry() == Country.NZ ) {
+            regionCB.setVisible(true);
+            regionTF.setVisible(false);
+        } else {
+            regionCB.setVisible(false);
+            regionTF.setVisible(true);
+        }
     }
 
     /**
@@ -454,14 +467,14 @@ public class ViewClientController extends ViewBaseController {
         addChangeIfDifferent(modifyClientObject, viewedClient, "currentAddress", address.getText());
         addChangeIfDifferent(modifyClientObject, viewedClient, "country", country.getValue());
 
-        System.out.println("Changed value: " + country.getValue() + "     Previous value: " + viewedClient.getCountry());
-
         if (viewedClient.getCountry() == Country.NZ) {
             addChangeIfDifferent(modifyClientObject, viewedClient, "region", regionCB.getValue());
         } else {
             addChangeIfDifferent(modifyClientObject, viewedClient,"region", regionTF.getText());
 
         }
+
+        //checkCountry();
 
 
         if (modifyClientObject.getModifiedFields().isEmpty()) {
@@ -507,7 +520,6 @@ public class ViewClientController extends ViewBaseController {
             return false;
         }
 
-        System.out.println("refreshing");
         PageNavigator.refreshAllWindows();
         return true;
 
