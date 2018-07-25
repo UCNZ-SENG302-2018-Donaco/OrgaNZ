@@ -1,66 +1,314 @@
 {
 	"info": {
-		"_postman_id": "00cf48c1-3890-4be9-b94d-1850199cbc20",
 		"name": "OrgaNZ",
+		"_postman_id": "9ce04006-43db-6125-becd-f515417b36c0",
+		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
 	"item": [
 		{
+			"name": "transplant requests",
+			"description": "",
+			"item": [
+				{
+					"name": "GET clients/transplantRequests",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Auth-Token",
+								"value": "{{auth_header_value}} "
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "localhost:8080/clients/transplantRequests?organs=LIVER,HEART",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"clients",
+								"transplantRequests"
+							],
+							"query": [
+								{
+									"key": "organs",
+									"value": "LIVER,HEART",
+									"equals": true
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "GET clients/{id}/transplantRequests",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Auth-Token",
+								"value": "{{auth_header_value}} "
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "localhost:8080/clients/2/transplantRequests",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"clients",
+								"2",
+								"transplantRequests"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "POST clients/{id}/transplantRequests",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Auth-Token",
+								"value": "{{auth_header_value}}"
+							},
+							{
+								"key": "If-Match",
+								"value": "{{e_tag}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"requestedOrgan\": \"HEART\",\n\t\"requestDate\": \"2017-03-21T20:55:51.383\",\n\t\"status\": \"WAITING\"\n}"
+						},
+						"url": {
+							"raw": "localhost:8080/clients/2/transplantRequests",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"clients",
+								"2",
+								"transplantRequests"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "procedures",
+			"description": "",
+			"item": [
+				{
+					"name": "GET clients/{id}/procedures",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Auth-Token",
+								"value": "{{auth_header_value}}"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "localhost:8080/clients/2/procedures",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"clients",
+								"2",
+								"procedures"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "POST clients/{id}/procedures",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Auth-Token",
+								"value": "{{auth_header_value}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "If-Match",
+								"value": "{{e_tag}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"id\": 1,\n\t\"summary\": \"Heart Transplant\",\n\t\"description\": \"To fix my achy-breaky heart.\",\n\t\"date\": \"2017-06-01\",\n\t\"affectedOrgans\": [\n\t\t\"HEART\"\n\t]\n}"
+						},
+						"url": {
+							"raw": "localhost:8080/clients/2/procedures",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"clients",
+								"2",
+								"procedures"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "DELETE clients/{id}/procedures",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-Auth-Token",
+								"value": "{{auth_header_value}}"
+							},
+							{
+								"key": "If-Match",
+								"value": "{{e_tag}}"
+							}
+						],
+						"body": {},
+						"url": {
+							"raw": "localhost:8080/clients/2/procedures/1",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"clients",
+								"2",
+								"procedures",
+								"1"
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "clients",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
+			"description": "",
+			"item": [
+				{
+					"name": "GET clients",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Auth-Token",
+								"value": "{{auth_header_value}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "localhost:8080/clients",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"clients"
+							]
+						}
+					},
+					"response": []
 				},
-				"url": {
-					"raw": "http://127.0.0.1:8080/clients",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "8080",
-					"path": [
-						"clients"
-					]
+				{
+					"name": "GET clients/{uid}",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Auth-Token",
+								"value": "{{auth_header_value}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "localhost:8080/clients/2",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"clients",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "POST clients",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "X-Auth-Token",
+								"value": "{{auth_header_value}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{ \n\t\"firstName\": \"New\", \n\t\"lastName\": \"Test\",\n\t\"dateOfBirth\": \"1987-01-01\" \n}"
+						},
+						"url": {
+							"raw": "localhost:8080/clients/",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"clients",
+								""
+							]
+						},
+						"description": ""
+					},
+					"response": []
 				}
-			},
-			"response": []
+			]
 		},
 		{
-			"name": "clients/1/transplantRequests",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
-				"url": {
-					"raw": "http://127.0.0.1:8080/clients/1/transplantRequests",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "8080",
-					"path": [
-						"clients",
-						"1",
-						"transplantRequests"
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "clients/1/transplantRequests",
+			"name": "POST /login/administrator",
 			"request": {
 				"method": "POST",
 				"header": [
@@ -71,57 +319,49 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"requestedOrgan\": \"LIVER\",\n  \"requestDate\": \"2018-07-18T14:11:20.202\",\n  \"resolvedDate\": \"2018-07-19T14:11:20.202\",\n  \"status\": \"WAITING\",\n  \"resolvedReason\": \"reason\"\n}"
+					"raw": "{\n\t\"username\": \"admin\",\n\t\"password\": \"\"\n}"
 				},
 				"url": {
-					"raw": "http://127.0.0.1:8080/clients/1/transplantRequests",
-					"protocol": "http",
+					"raw": "localhost:8080/login/administrator",
 					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
+						"localhost"
 					],
 					"port": "8080",
 					"path": [
-						"clients",
-						"1",
-						"transplantRequests"
+						"login",
+						"administrator"
 					]
-				}
+				},
+				"description": ""
 			},
 			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "e66062a4-2e67-40cc-aae3-db4c8868eb5b",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
 		},
 		{
-			"name": "clients",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\n  \"uid\": 0,\n  \"firstName\": \"string\",\n  \"lastName\": \"string\",\n  \"middleName\": \"string\",\n  \"dateOfBirth\": \"1997-01-01\"\n}"
-				},
-				"url": {
-					"raw": "http://127.0.0.1:8080/clients",
-					"protocol": "http",
-					"host": [
-						"127",
-						"0",
-						"0",
-						"1"
-					],
-					"port": "8080",
-					"path": [
-						"clients"
-					]
-				}
-			},
-			"response": []
+			"listen": "test",
+			"script": {
+				"id": "d125e162-dbde-44c5-804d-3df959191384",
+				"type": "text/javascript",
+				"exec": [
+					"pm.test(\"Set ETag header for next request\", function() {",
+					"    let etag = responseHeaders.ETag;",
+					"    if (typeof etag !== \"undefined\") {",
+					"        postman.setGlobalVariable(\"e_tag\", etag);",
+					"    }",
+					"});"
+				]
+			}
 		}
 	]
 }
