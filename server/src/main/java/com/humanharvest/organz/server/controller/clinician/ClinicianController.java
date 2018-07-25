@@ -120,7 +120,7 @@ public class ClinicianController {
             System.out.println(State.getAuthenticationManager());
             State.getAuthenticationManager().verifyClinicianAccess(authToken, clinician.get());
 
-            if (ModifyClinicianValidator.isValid((editedClinician))) { // {
+            if (ModifyClinicianValidator.isValid((editedClinician))) {
 
                 ModifyClinicianObject oldClinician = new ModifyClinicianObject();
                 BeanUtils.copyProperties(editedClinician, oldClinician, editedClinician.getUnmodifiedFields());

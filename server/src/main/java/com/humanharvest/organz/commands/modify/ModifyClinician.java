@@ -13,6 +13,7 @@ import com.humanharvest.organz.state.ClinicianManager;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.pico_type_converters.PicoCountryConverter;
+import com.humanharvest.organz.utilities.validators.RegionValidator;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
@@ -68,6 +69,11 @@ public class ModifyClinician implements Runnable {
 
         if (!clinician.isPresent()) {
             outputStream.println("No clinician exists with that staff ID");
+            return;
+        }
+
+        if (!RegionValidator.isValid(country == null ? clinician.get().getCountry() : country, region)) {
+            outputStream.printf("%s is not a valid NZ region%n", region);
             return;
         }
 
