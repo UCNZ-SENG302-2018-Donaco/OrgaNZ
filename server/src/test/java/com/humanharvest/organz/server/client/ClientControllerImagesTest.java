@@ -58,24 +58,24 @@ public class ClientControllerImagesTest {
     }
 
     @After
-    public void tearDown() {
-        File file = new File("./../images/9999.png");
-        file.delete();
+    public void tearDown() throws Exception {
+//        File file = new File("./../images/9999.png");
+//        file.delete();
+        mockMvc.perform(delete("/clients/9999/image"));
     }
 
 
     @Test
-    @Ignore // TODO Figure out why pathnames need extra ./"../"images999.png !!!
     public void getNonExistingImage() throws Exception {
         mockMvc.perform(get("/clients/9999/image"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    @Ignore // TODO Figure out why pathnames need extra ./"../"images999.png !!!
     public void getExistingImage() throws Exception {
         InputStream in = new FileInputStream("./../images/default.png");
         byte[] bytes = IOUtils.toByteArray(in);
+        in.close();
 
         // Post an image
         mockMvc.perform(post("/clients/9999/image")
@@ -89,7 +89,6 @@ public class ClientControllerImagesTest {
 
 
     @Test
-    @Ignore // TODO Figure out why pathnames need extra ./"../"images999.png !!!
     public void validPost() throws Exception {
         InputStream in = new FileInputStream("./../images/default.png");
         byte[] bytes = IOUtils.toByteArray(in);
@@ -101,7 +100,23 @@ public class ClientControllerImagesTest {
     }
 
     @Test
-    @Ignore // TODO Figure out why pathnames need extra ./"../"images999.png !!!
+    public void validReplacingPost() throws Exception {
+        InputStream in = new FileInputStream("./../images/default.png");
+        byte[] bytes = IOUtils.toByteArray(in);
+
+        mockMvc.perform(post("/clients/9999/image")
+                .contentType(MediaType.IMAGE_PNG)
+                .content(bytes))
+                .andExpect(status().isOk());
+
+        // Make a post to replace the current image
+        mockMvc.perform(post("/clients/9999/image")
+                .contentType(MediaType.IMAGE_PNG)
+                .content(bytes))
+                .andExpect(status().isOk());
+    }
+
+    @Test
     public void invalidPost() throws Exception {
         InputStream in = new FileInputStream("./../images/default.png");
         byte[] bytes = IOUtils.toByteArray(in);
@@ -114,7 +129,6 @@ public class ClientControllerImagesTest {
     }
 
     @Test
-    @Ignore // TODO Figure out why pathnames need extra ./"../"images999.png !!!
     public void validDelete() throws Exception {
         InputStream in = new FileInputStream("./../images/default.png");
         byte[] bytes = IOUtils.toByteArray(in);
@@ -129,7 +143,6 @@ public class ClientControllerImagesTest {
     }
 
     @Test
-    @Ignore // TODO Figure out why pathnames need extra ./"../"images999.png !!!
     public void invalidDelete() throws Exception {
         mockMvc.perform(delete("/clients/9999/image"))
                 .andExpect(status().isNotFound());

@@ -318,6 +318,11 @@ public class ClientController {
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken) throws InvalidRequestException,
             IfMatchFailedException, IfMatchRequiredException, IOException {
 
+        File directory = new File("./images");
+        if (!directory.exists()) {
+            directory.mkdir();
+        }
+
         Optional<Client> optionalClient = State.getClientManager().getClientByID(uid);
         if (!optionalClient.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -328,13 +333,14 @@ public class ClientController {
 
         InputStream in;
         try {
-            in = new FileInputStream("./images/" + uid +  ".png"); // for tests to pass pathname must be - ./../images/
+            in = new FileInputStream("./images/" + uid + ".png");
+            byte[] out = IOUtils.toByteArray(in);
+            in.close();
+            return new ResponseEntity<>(out, HttpStatus.OK);
         }
         catch (Exception ex) {
             throw new NotFoundException();
-//            in = new FileInputStream("./images/default.png"); // Now implemented in the client side.
         }
-        return new ResponseEntity<>(IOUtils.toByteArray(in), HttpStatus.OK);
     }
 
     @PostMapping("clients/{uid}/image")
@@ -344,6 +350,10 @@ public class ClientController {
         if (!optionalClient.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        File directory = new File("./images");
+        if (!directory.exists()) {
+            directory.mkdir();
+        }
 
         Client client = optionalClient.get();
         State.getAuthenticationManager().verifyClientAccess(authToken, client);
@@ -351,7 +361,7 @@ public class ClientController {
         OutputStream out;
         System.out.println(image.length);
         try {
-            out = new FileOutputStream("./images/" + uid + ".png"); // for tests to pass pathname must be - ./../images/
+            out = new FileOutputStream("./images/" + uid + ".png");
             out.write(image);
             out.close();
             return new ResponseEntity(HttpStatus.OK);
@@ -369,13 +379,16 @@ public class ClientController {
         if (!optionalClient.isPresent()) {
             throw new NotFoundException();
         }
+        File directory = new File("./images");
+        if (!directory.exists()) {
+            directory.mkdir();
+        }
 
         Client client = optionalClient.get();
         State.getAuthenticationManager().verifyClientAccess(authToken, client);
 
         try {
-            File file = new File("./images/" + uid + ".png"); // for tests to pass pathname must be - ./../images/
-
+            File file = new File("images/" + uid + ".png");
             if (file.delete()) {
                 System.out.println("successfully deleted");
                 return new ResponseEntity(HttpStatus.OK);
