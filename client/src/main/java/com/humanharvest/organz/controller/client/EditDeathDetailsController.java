@@ -149,7 +149,8 @@ public class EditDeathDetailsController extends SubController{
         deathDatePicker.setValue(client.getDateOfDeath());
         checkCountry();
         if (client.getCountryOfDeath() == Country.NZ && client.getRegionOfDeath() != null) {
-            deathRegionCB.setValue(Region.fromString(client.getRegion()));
+            System.out.println(client.getRegionOfDeath());
+            deathRegionCB.setValue(Region.fromString(client.getRegionOfDeath()));
         } else {
             deathRegionTF.setText(client.getRegionOfDeath());
 
