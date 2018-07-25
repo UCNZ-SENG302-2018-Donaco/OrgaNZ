@@ -19,6 +19,7 @@ import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
 import com.humanharvest.organz.utilities.validators.client.TransplantRequestValidator;
 import com.humanharvest.organz.views.client.PaginatedTransplantList;
+import com.humanharvest.organz.views.client.ResolveTransplantRequestObject;
 import com.humanharvest.organz.views.client.TransplantRequestView;
 import com.humanharvest.organz.views.client.Views;
 import org.springframework.http.HttpHeaders;
@@ -185,15 +186,16 @@ public class ClientTransplantRequestsController {
 
     /**
      * Modifies a transplant request. Currently only allows resolution of requests.
-     * @param transplantRequest the transplant request to add
+     * @param resolveRequestObject the resolve request object
      * @param uid the client's ID
      * @param id the transplant request's ID
      * @param etag A hashed value of the object used for optimistic concurrency control
      * @return list of all transplant requests for that client
      */
     @PatchMapping("/clients/{uid}/transplantRequests/{id}")
-    public ResponseEntity<TransplantRequest> postTransplantRequest(
-            @RequestBody TransplantRequest transplantRequest,
+    @JsonView(Views.Overview.class)
+    public ResponseEntity<TransplantRequest> patchTransplantRequest(
+            @RequestBody ResolveTransplantRequestObject resolveRequestObject,
             @PathVariable int uid,
             @PathVariable int id,
             @RequestHeader(value = "If-Match", required = false) String etag,
@@ -236,14 +238,16 @@ public class ClientTransplantRequestsController {
             // The client, organ, and request date (and time) must stay the same.
             // If anything has illegally changed, it will return a 400.
             if (originalTransplantRequest.getClient().getUid().equals(client.getUid())
-                    && originalTransplantRequest.getRequestedOrgan() == transplantRequest.getRequestedOrgan()
-                    && originalTransplantRequest.getRequestDate().equals(transplantRequest.getRequestDate())) {
+                    && originalTransplantRequest.getRequestedOrgan() == resolveRequestObject.getTransplantRequest().getRequestedOrgan()
+                    && originalTransplantRequest.getRequestDate().equals(resolveRequestObject.getTransplantRequest().getRequestDate())) {
+
+                System.out.println(originalTransplantRequest.toString());
 
                 // Resolve transplant request
                 Action action = new ResolveTransplantRequestAction(originalTransplantRequest,
-                        transplantRequest.getStatus(),
-                        transplantRequest.getResolvedReason(),
-                        transplantRequest.getResolvedDate(),
+                        resolveRequestObject.getStatus(),
+                        resolveRequestObject.getResolvedReason(),
+                        resolveRequestObject.getResolvedDate(),
                         State.getClientManager());
                 State.getActionInvoker(authToken).execute(action);
 
