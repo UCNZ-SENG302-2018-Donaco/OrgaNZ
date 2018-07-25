@@ -8,8 +8,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.EnumSet;
-import java.util.Objects;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonView;
@@ -52,7 +52,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -353,8 +352,11 @@ public class ClientController {
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws InvalidRequestException, IfMatchFailedException, IfMatchRequiredException, IOException {
 
-        File directory = new File("./images");
+        String imagesDirectory = System.getProperty("user.home") + "/.organz/images/";
+
+        File directory = new File(imagesDirectory);
         if (!directory.exists()) {
+            new File(System.getProperty("user.home") + "/.organz/").mkdir();
             directory.mkdir();
         }
 
@@ -366,7 +368,7 @@ public class ClientController {
         Client client = optionalClient.get();
         State.getAuthenticationManager().verifyClientAccess(authToken, client);
 
-        try (InputStream in = new FileInputStream("./images/" + uid + ".png")) {
+        try (InputStream in = new FileInputStream(imagesDirectory + uid + ".png")) {
             byte[] out = IOUtils.toByteArray(in);
             return new ResponseEntity<>(out, HttpStatus.OK);
         }
@@ -381,11 +383,13 @@ public class ClientController {
             @RequestBody byte[] image,
             @RequestHeader(value = "If-Match", required = false) String etag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken) throws IOException {
+        String imagesDirectory = System.getProperty("user.home") + "/.organz/images/";
+
         Optional<Client> optionalClient = State.getClientManager().getClientByID(uid);
         if (!optionalClient.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        File directory = new File("./images");
+        File directory = new File(imagesDirectory);
         if (!directory.exists()) {
             directory.mkdir();
         }
@@ -393,7 +397,7 @@ public class ClientController {
         Client client = optionalClient.get();
         State.getAuthenticationManager().verifyClientAccess(authToken, client);
 
-        try (OutputStream out = new FileOutputStream("./images/" + uid + ".png")) {
+        try (OutputStream out = new FileOutputStream(imagesDirectory + uid + ".png")) {
             out.write(image);
             return new ResponseEntity(HttpStatus.OK);
         }
@@ -404,12 +408,13 @@ public class ClientController {
             @PathVariable int uid,
             @RequestHeader(value = "If-Match", required = false) String etag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken) throws InvalidRequestException {
+        String imagesDirectory = System.getProperty("user.home") + "/.organz/images/";
 
         Optional<Client> optionalClient = State.getClientManager().getClientByID(uid);
         if (!optionalClient.isPresent()) {
             throw new NotFoundException();
         }
-        File directory = new File("./images");
+        File directory = new File(imagesDirectory);
         if (!directory.exists()) {
             directory.mkdir();
         }
@@ -417,7 +422,7 @@ public class ClientController {
         Client client = optionalClient.get();
         State.getAuthenticationManager().verifyClientAccess(authToken, client);
 
-        File file = new File("images/" + uid + ".png");
+        File file = new File(imagesDirectory + uid + ".png");
         if (file.delete()) {
             return new ResponseEntity(HttpStatus.OK);
 

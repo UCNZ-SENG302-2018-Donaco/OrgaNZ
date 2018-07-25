@@ -4,19 +4,22 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import org.apache.commons.io.IOUtils;
-import org.springframework.http.*;
-import org.springframework.web.client.ResourceAccessException;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 /**
  * Deals with all image handling in with the server for the client.
  */
 public class ImageManager {
 
-    protected ImageManager() {}
+    protected ImageManager() {
+    }
 
-    private HttpHeaders getHeaders() {
+    private HttpHeaders generateHeaders() {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set("X-Auth-Token", State.getToken());
         httpHeaders.setIfMatch(State.getClientEtag());
@@ -29,31 +32,19 @@ public class ImageManager {
      * @return a byte array of the clients image
      */
     public byte[] getClientImage(int uid) {
-        HttpHeaders httpHeaders = getHeaders();
+        HttpHeaders httpHeaders = generateHeaders();
         HttpEntity<Object> entity = new HttpEntity<>(null, httpHeaders);
         ResponseEntity responseEntity;
-        try {
-            responseEntity = State.getRestTemplate()
-                    .exchange(State.BASE_URI + "/clients/{uid}/image", HttpMethod.GET,
-                            entity, byte[].class, uid);
-        } catch (NotFoundException ex) { // User doesn't have an image uploaded
-            throw ex;
-        } catch (Exception ex) {
-            ex.printStackTrace();
-            throw ex;
-        }
+        responseEntity = State.getRestTemplate()
+                .exchange(State.BASE_URI + "/clients/{uid}/image", HttpMethod.GET,
+                        entity, byte[].class, uid);
 
         return (byte[]) responseEntity.getBody();
     }
 
     public byte[] getDefaultImage() throws IOException {
-        try {
-            InputStream in = new FileInputStream("./images/default.png");
-            return IOUtils.toByteArray(in);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            throw ex;
-        }
+        InputStream in = new FileInputStream("./images/default.png");
+        return IOUtils.toByteArray(in);
     }
 
     /**
@@ -63,7 +54,7 @@ public class ImageManager {
      * @return true if the image is successfully posted. false otherwise.
      */
     public boolean postClientImage(int uid, byte[] image) {
-        HttpHeaders httpHeaders = getHeaders();
+        HttpHeaders httpHeaders = generateHeaders();
         HttpEntity<Object> entity = new HttpEntity<>(image, httpHeaders);
 
         ResponseEntity responseEntity = State.getRestTemplate().exchange(State.BASE_URI + "/clients/{uid}/image",
@@ -78,7 +69,7 @@ public class ImageManager {
      * @return true if the image is successfully deleted.
      */
     public boolean deleteClientImage(int uid) {
-        HttpHeaders httpHeaders = getHeaders();
+        HttpHeaders httpHeaders = generateHeaders();
         HttpEntity<Object> entity = new HttpEntity<>(null, httpHeaders);
 
         ResponseEntity responseEntity = State.getRestTemplate().exchange(State.BASE_URI + "clients/{uid}/image",
