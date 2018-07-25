@@ -73,8 +73,11 @@ public class HistoryController extends SubController {
     @Override
     public void refresh() {
         List<HistoryItem> historyItems;
-        if (session.getLoggedInUserType() == UserType.CLIENT || windowContext.isClinViewClientWindow()) {
+        if (session.getLoggedInUserType() == UserType.CLIENT) {
             historyItems = State.getClientResolver().getHistory(session.getLoggedInClient());
+        } else if (windowContext.isClinViewClientWindow()) {
+            //todo get client being viewed
+            historyItems = null; //placeholder
         } else if (session.getLoggedInUserType() == UserType.CLINICIAN) {
             historyItems = State.getClinicianResolver().getHistory(session.getLoggedInClinician());
         } else {
