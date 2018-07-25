@@ -159,8 +159,7 @@ public class ViewClinicianController extends ViewBaseController {
      */
     private void loadClinicianData() {
         mainController.setTitle("Clinician profile: " + viewedClinician.getFullName());
-        System.out.println(mainController);
-        System.out.println(viewedClinician);
+        password.setText(viewedClinician.getPassword());
         title.setText(viewedClinician.getFirstName());
         viewedClinician = State.getClinicianManager().getClinicianByStaffId(viewedClinician.getStaffId())
                 .orElseThrow(IllegalStateException::new);
@@ -170,7 +169,6 @@ public class ViewClinicianController extends ViewBaseController {
         lname.setText(viewedClinician.getLastName());
         workAddress.setText(viewedClinician.getWorkAddress());
         region.setValue(viewedClinician.getRegion());
-
 
         creationDate.setText(formatter.format(viewedClinician.getCreatedOn()));
         if (viewedClinician.getModifiedOn() == null) {
