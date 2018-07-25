@@ -150,7 +150,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
     @Test
     public void addNewMedicationWithEnterTest() {
         clickOn("#newMedField").write("Med D");
-        type(KeyCode.ENTER);
+        press(KeyCode.ENTER);
 
         //Assert that the currentMedications list contains an entry with name "Med D"
         assertThat(testClient.getCurrentMedications()).extracting(("medicationName")).contains("Med D");
