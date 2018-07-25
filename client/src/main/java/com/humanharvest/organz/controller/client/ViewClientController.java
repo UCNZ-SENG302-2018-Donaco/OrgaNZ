@@ -469,7 +469,7 @@ public class ViewClientController extends ViewBaseController {
         addChangeIfDifferent(modifyClientObject, viewedClient, "country", country.getValue());
 
         if (viewedClient.getCountry() == Country.NZ) {
-            addChangeIfDifferent(modifyClientObject, viewedClient, "region", regionCB.getValue());
+            addChangeIfDifferent(modifyClientObject, viewedClient, "region", regionCB.getValue().toString());
         } else {
             addChangeIfDifferent(modifyClientObject, viewedClient,"region", regionTF.getText());
 

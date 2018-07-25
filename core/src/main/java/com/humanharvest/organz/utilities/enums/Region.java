@@ -52,8 +52,8 @@ public enum Region {
         if (mismatchText != null) {
             throw new IllegalArgumentException(mismatchText);
         } else {
-            StringBuilder mismatchTextBuilder = new StringBuilder("Unsupported region, please use one of the "
-                    + "following:");
+            StringBuilder mismatchTextBuilder = new StringBuilder(
+                    String.format("Unsupported region '%s', please use one of the following:", text));
             for (Region r : Region.values()) {
                 mismatchTextBuilder.append('\n').append(r.text);
             }
