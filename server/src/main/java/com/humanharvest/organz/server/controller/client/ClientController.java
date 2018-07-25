@@ -1,16 +1,17 @@
 package com.humanharvest.organz.server.controller.client;
 
+import java.awt.image.ImagingOpException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Client;
@@ -20,6 +21,8 @@ import com.humanharvest.organz.actions.client.CreateClientAction;
 import com.humanharvest.organz.actions.client.DeleteClientAction;
 import com.humanharvest.organz.actions.client.MarkClientAsDeadAction;
 import com.humanharvest.organz.actions.client.ModifyClientByObjectAction;
+import com.humanharvest.organz.actions.images.AddImageAction;
+import com.humanharvest.organz.actions.images.DeleteImageAction;
 import com.humanharvest.organz.server.exceptions.GlobalControllerExceptionHandler.InvalidRequestException;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
@@ -56,6 +59,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class ClientController {
+
+    private static final Logger LOGGER = Logger.getLogger(ClientController.class.getName());
 
     /**
      * Returns all clients or some optional subset by filtering
@@ -349,7 +354,7 @@ public class ClientController {
     public ResponseEntity<byte[]> getClientImage(
             @PathVariable int uid,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
-            throws InvalidRequestException, IfMatchFailedException, IfMatchRequiredException, IOException {
+            throws InvalidRequestException, IfMatchFailedException, IfMatchRequiredException {
 
         String imagesDirectory = System.getProperty("user.home") + "/.organz/images/";
 
@@ -375,6 +380,9 @@ public class ClientController {
             return new ResponseEntity<>(out, HttpStatus.OK);
         } catch (FileNotFoundException ex) {
             throw new NotFoundException(ex);
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -412,11 +420,14 @@ public class ClientController {
             throw new IfMatchFailedException();
         }
 
+        AddImageAction action = new AddImageAction(client, image);
+
         // Write the file
-        try (OutputStream out = new FileOutputStream(imagesDirectory + uid + ".png")) {
-            out.write(image);
+        try {
+            State.getActionInvoker(authToken).execute(action);
             return new ResponseEntity(HttpStatus.OK);
-        } catch (IOException e) {
+        } catch (ImagingOpException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -452,12 +463,15 @@ public class ClientController {
             throw new IfMatchFailedException();
         }
 
-        // Delete the file
-        File file = new File(imagesDirectory + uid + ".png");
-        if (file.delete()) {
-            return new ResponseEntity(HttpStatus.OK);
-        } else {
-            return new ResponseEntity(HttpStatus.NOT_FOUND);
+        try {
+            DeleteImageAction action = new DeleteImageAction(client);
+            State.getActionInvoker(authToken).execute(action);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (NotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 }
