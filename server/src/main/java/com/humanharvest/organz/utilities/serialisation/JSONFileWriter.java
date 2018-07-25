@@ -2,7 +2,10 @@ package com.humanharvest.organz.utilities.serialisation;
 
 import java.io.Closeable;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Collection;
 import java.util.List;
 
@@ -17,7 +20,20 @@ import com.fasterxml.jackson.databind.JavaType;
 public class JSONFileWriter<T> implements Closeable {
 
     private final JavaType listType;
+    private final OutputStream output;
     private final File file;
+
+    /**
+     * Creates a new JSONFileWriter to write to to the given stream. The class of the datatype must also be
+     * provided because of Java's type erasure.
+     * @param output The JSON stream to write to.
+     * @param dataClass The class of the datatype to serialize to the JSON file.
+     */
+    public JSONFileWriter(OutputStream output, Class<T> dataClass) {
+        listType = JSONMapper.Mapper.getTypeFactory().constructCollectionType(List.class, dataClass);
+        this.output = output;
+        file = null;
+    }
 
     /**
      * Creates a new JSONFileWriter to write/append to to the given file. The class of the datatype must also be
@@ -25,8 +41,9 @@ public class JSONFileWriter<T> implements Closeable {
      * @param file The JSON file to write/append to.
      * @param dataClass The class of the datatype to serialize to the JSON file.
      */
-    public JSONFileWriter(File file, Class<T> dataClass) {
+    public JSONFileWriter(File file, Class<T> dataClass) throws FileNotFoundException {
         listType = JSONMapper.Mapper.getTypeFactory().constructCollectionType(List.class, dataClass);
+        output = new FileOutputStream(file);
         this.file = file;
     }
 
@@ -45,7 +62,7 @@ public class JSONFileWriter<T> implements Closeable {
      * @throws IOException If some IO error occurs when writing to the file.
      */
     public void overwriteWith(List<T> objects) throws IOException {
-        JSONMapper.Mapper.writeValue(file, objects);
+        JSONMapper.Mapper.writeValue(output, objects);
     }
 
     /**
@@ -80,6 +97,6 @@ public class JSONFileWriter<T> implements Closeable {
      */
     @Override
     public void close() throws IOException {
-        // Nothing to do
+        output.close();
     }
 }

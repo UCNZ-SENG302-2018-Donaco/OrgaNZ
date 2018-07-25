@@ -1,5 +1,6 @@
 package com.humanharvest.organz.server.controller.client;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -33,24 +34,17 @@ public class ClientFileController {
     @GetMapping("/clients/file")
     public ResponseEntity<byte[]> exportClients(
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
-            throws AuthenticationException {
+            throws AuthenticationException, IOException {
 
         // Check request has authorization to export all clients
         State.getAuthenticationManager().verifyAdminAccess(authToken);
 
-        try {
-            // Write all clients to a temporary file
-            File tmpDataFile = File.createTempFile("tmp", null);
-            try (JSONFileWriter<Client> clientWriter = new JSONFileWriter<>(tmpDataFile, Client.class)) {
-                clientWriter.overwriteWith(State.getClientManager().getClients());
-            }
-            // Return the file's data
-            byte[] fileData = Files.readAllBytes(tmpDataFile.toPath());
-            return new ResponseEntity<>(fileData, HttpStatus.OK);
-
-        } catch (IOException exc) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        try (JSONFileWriter<Client> clientWriter = new JSONFileWriter<>(output, Client.class)) {
+            clientWriter.overwriteWith(State.getClientManager().getClients());
         }
+
+        return new ResponseEntity<>(output.toByteArray(), HttpStatus.OK);
     }
 
     @PostMapping("/clients/file")

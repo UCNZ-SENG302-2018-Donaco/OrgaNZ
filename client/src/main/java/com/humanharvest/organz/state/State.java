@@ -19,9 +19,9 @@ import com.humanharvest.organz.resolvers.actions.ActionResolverRest;
 import com.humanharvest.organz.resolvers.administrator.AdministratorResolver;
 import com.humanharvest.organz.resolvers.administrator.AdministratorResolverMemory;
 import com.humanharvest.organz.resolvers.administrator.AdministratorResolverRest;
-import com.humanharvest.organz.resolvers.administrator.ClientFileResolver;
-import com.humanharvest.organz.resolvers.administrator.ClientFileResolverMemory;
-import com.humanharvest.organz.resolvers.administrator.ClientFileResolverRest;
+import com.humanharvest.organz.resolvers.administrator.FileResolver;
+import com.humanharvest.organz.resolvers.administrator.FileResolverMemory;
+import com.humanharvest.organz.resolvers.administrator.FileResolverRest;
 import com.humanharvest.organz.resolvers.client.ClientResolver;
 import com.humanharvest.organz.resolvers.client.ClientResolverMemory;
 import com.humanharvest.organz.resolvers.client.ClientResolverRest;
@@ -57,7 +57,7 @@ public final class State {
     private static ActionResolver actionResolver;
     private static ClinicianResolver clinicianResolver;
     private static AdministratorResolver administratorResolver;
-    private static ClientFileResolver clientFileResolver;
+    private static FileResolver fileResolver;
 
     private static Session session;
     private static boolean unsavedChanges;
@@ -77,6 +77,8 @@ public final class State {
     public static void init(DataStorageType storageType) {
         currentStorageType = storageType;
 
+        imageManager = new ImageManager();
+
         if (storageType == DataStorageType.REST) {
             ClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
             restTemplate.setRequestFactory(requestFactory);
@@ -90,26 +92,24 @@ public final class State {
             clinicianManager = new ClinicianManagerRest();
             administratorManager = new AdministratorManagerRest();
             authenticationManager = new AuthenticationManagerRest();
-            imageManager = new ImageManager();
             commandRunner = new CommandRunnerRest();
             actionResolver = new ActionResolverRest();
             clinicianResolver = new ClinicianResolverRest();
             administratorResolver = new AdministratorResolverRest();
-            clientFileResolver = new ClientFileResolverRest();
+            fileResolver = new FileResolverRest();
         } else if (storageType == DataStorageType.MEMORY) {
             clientManager = new ClientManagerMemory();
             clientResolver = new ClientResolverMemory();
             clinicianManager = new ClinicianManagerMemory();
             administratorManager = new AdministratorManagerMemory();
             authenticationManager = new AuthenticationManagerMemory();
-            imageManager = new ImageManager();
             commandRunner = commandText -> {
                 throw new UnsupportedOperationException("Memory storage type does not support running commands.");
             };
             actionResolver = new ActionResolverMemory();
             clinicianResolver = new ClincianResolverMemory();
             administratorResolver = new AdministratorResolverMemory();
-            clientFileResolver = new ClientFileResolverMemory();
+            fileResolver = new FileResolverMemory();
         } else {
             throw new IllegalArgumentException("DataStorageType cannot be null.");
         }
@@ -247,8 +247,6 @@ public final class State {
         return commandRunner;
     }
 
-    public static ImageManager getImageManager() {return imageManager;}
-
     public static ActionResolver getActionResolver() {
         return actionResolver;
     }
@@ -261,7 +259,11 @@ public final class State {
         return administratorResolver;
     }
 
-    public static ClientFileResolver getClientFileResolver() {
-        return clientFileResolver;
+    public static FileResolver getFileResolver() {
+        return fileResolver;
+    }
+
+    public static ImageManager getImageManager() {
+        return imageManager;
     }
 }
