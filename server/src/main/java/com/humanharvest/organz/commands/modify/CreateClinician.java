@@ -57,9 +57,10 @@ public class CreateClinician implements Runnable {
     @Option(names = {"-r", "--region"}, description = "Region", converter = PicoRegionConverter.class)
     private Region region;
 
-    @Option(names = {"-p", "--password"}, description = "Clinician Password.")
+    @Option(names = {"-p", "--password"}, description = "Clinician Password.", defaultValue = "")
     private String password;
 
+    @Override
     public void run() {
 
         if (manager.doesStaffIdExist(staffId)) {
