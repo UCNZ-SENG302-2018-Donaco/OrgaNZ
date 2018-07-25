@@ -15,7 +15,6 @@ import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.utilities.enums.Country;
-import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.views.client.Views;
 
 /**

@@ -6,8 +6,8 @@ import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.state.ClinicianManager;
 import com.humanharvest.organz.state.ClinicianManagerMemory;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import picocli.CommandLine;
 
 public class CreateClinicianTest extends BaseTest {
@@ -16,7 +16,7 @@ public class CreateClinicianTest extends BaseTest {
 
     private CreateClinician spyCreateClient;
 
-    @Before
+    @BeforeEach
     public void init() {
         spyClientManager = spy(new ClinicianManagerMemory());
         spyCreateClient = spy(new CreateClinician(spyClientManager, new ActionInvoker()));

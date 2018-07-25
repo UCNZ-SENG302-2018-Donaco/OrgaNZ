@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Optional;
 
 import com.humanharvest.organz.Clinician;
-import com.humanharvest.organz.utilities.enums.Region;
 
 /**
  * The class to handle the Client inputs, including adding,
