@@ -15,7 +15,6 @@ import com.humanharvest.organz.ProcedureRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
 import com.humanharvest.organz.views.client.CreateClientView;
 import com.humanharvest.organz.views.client.CreateIllnessView;
@@ -36,10 +35,6 @@ public class ClientResolverMemory implements ClientResolver {
     }
 
     public List<TransplantRequest> getTransplantRequests(Client client) {
-        System.out.println("getting trs");
-        for (TransplantRequest transplantRequest : client.getTransplantRequests()) {
-            System.out.println(transplantRequest.getStatus());
-        }
         return client.getTransplantRequests();
     }
 
@@ -132,14 +127,11 @@ public class ClientResolverMemory implements ClientResolver {
         return client.getOrganDonationStatus();
     }
 
-    public TransplantRequest resolveTransplantRequest(Client client, ResolveTransplantRequestObject request,
-            int id) {
-        TransplantRequest originalTransplantRequest =
-                client.getTransplantRequestById(id).orElseThrow(NotFoundException::new);
+    public TransplantRequest resolveTransplantRequest(Client client, ResolveTransplantRequestObject request) {
+        TransplantRequest originalTransplantRequest = request.getTransplantRequest();
         originalTransplantRequest.setStatus(request.getStatus());
         originalTransplantRequest.setResolvedReason(request.getResolvedReason());
         originalTransplantRequest.setResolvedDate(request.getResolvedDate());
-        System.out.println(originalTransplantRequest.getStatus());
         return originalTransplantRequest;
     }
 
