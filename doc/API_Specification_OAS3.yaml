@@ -1,6 +1,6 @@
 openapi: "3.0.3"
 info:
-  version: 1.0.0
+  version: 1.0.5
   title: "Organz API"
   description: |
     An API used to access the Human Harvest Inc server.
@@ -24,7 +24,7 @@ tags:
       description: All base clinician paths
     - name: Administrator
       description: All base administrator paths
-  
+
 paths:
   /clients:
     get:
@@ -186,6 +186,42 @@ paths:
           $ref: '#/components/responses/412PreconditionFailed'
         428:
           $ref: '#/components/responses/428PreconditionRequired'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+  '/clients/{uid}/history':
+    parameters:
+    - in: path
+      name: uid
+      description: Client User ID
+      required: true
+      schema:
+        type: integer
+        minimum: 0
+    get:
+      tags:
+        - Client
+      security:
+        - ClientAccess: []
+        - ClinicianAccess: []
+        - AdministratorAccess: []
+      summary: Get client history
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/historyItem'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
         500:
           $ref: '#/components/responses/500InternalServerError'
   '/clients/file':
@@ -1184,7 +1220,41 @@ paths:
           $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
-
+  '/clinicians/{staffId}/history':
+    parameters:
+    - in: path
+      name: staffId
+      description: Clinician Staff ID
+      required: true
+      schema:
+        type: integer
+        minimum: 0
+    get:
+      tags:
+        - Clinician
+      security:
+        - ClinicianAccess: []
+        - AdministratorAccess: []
+      summary: Get clinician history
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/historyItem'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
 
 
 
@@ -1339,6 +1409,32 @@ paths:
           $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
+
+  '/history':
+    get:
+      tags:
+        - Administrator
+      security:
+        - AdministratorAccess: []
+      summary: Returns all history
+      responses:
+        200:
+          description: All action history
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/historyItem'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+
 
   '/commands':
     post:
