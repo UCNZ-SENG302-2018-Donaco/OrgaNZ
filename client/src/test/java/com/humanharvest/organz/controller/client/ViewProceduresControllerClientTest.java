@@ -14,7 +14,6 @@ import com.humanharvest.organz.controller.ControllerTest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
-import org.junit.Before;
 import org.junit.Test;
 
 public class ViewProceduresControllerClientTest extends ControllerTest {
@@ -31,13 +30,12 @@ public class ViewProceduresControllerClientTest extends ControllerTest {
     @Override
     protected void initState() {
         State.reset();
+        resetRecords();
         State.login(testClient);
         mainController.setWindowContext(WindowContext.defaultContext());
-        resetRecords();
     }
 
-    @Before
-    public void resetRecords() {
+    private void resetRecords() {
         for (ProcedureRecord record : testClient.getPastProcedures()) {
             testClient.deleteProcedureRecord(record);
         }
@@ -57,7 +55,6 @@ public class ViewProceduresControllerClientTest extends ControllerTest {
             testClient.addProcedureRecord(record);
         }
     }
-
 
     @Test
     public void bothListViewsVisibleTest() {
