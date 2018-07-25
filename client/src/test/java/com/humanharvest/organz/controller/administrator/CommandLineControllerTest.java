@@ -7,8 +7,6 @@ import static org.mockito.Mockito.when;
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.matcher.control.TextInputControlMatchers.hasText;
 
-import java.io.IOException;
-import java.lang.reflect.Field;
 import java.time.LocalDate;
 
 import javafx.application.Platform;
@@ -16,7 +14,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.input.Clipboard;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.KeyCode;
-import javafx.stage.Stage;
 
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.Client;

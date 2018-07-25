@@ -3,11 +3,13 @@ package com.humanharvest.organz.server.controller.client;
 import java.io.*;
 import java.nio.file.Files;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Optional;
 
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.actions.client.CreateClientAction;
 import com.humanharvest.organz.actions.client.DeleteClientAction;
@@ -29,6 +31,7 @@ import com.humanharvest.organz.utilities.validators.client.CreateClientValidator
 import com.humanharvest.organz.utilities.validators.client.ModifyClientValidator;
 import com.humanharvest.organz.views.client.CreateClientView;
 import com.humanharvest.organz.views.client.ModifyClientObject;
+import com.humanharvest.organz.views.client.PaginatedClientList;
 import com.humanharvest.organz.views.client.SingleDateView;
 import com.humanharvest.organz.views.client.Views;
 import org.springframework.beans.BeanUtils;
@@ -58,7 +61,7 @@ public class ClientController {
      */
     @GetMapping("/clients")
     @JsonView(Views.Overview.class)
-    public ResponseEntity<Iterable<Client>> getClients(
+    public ResponseEntity<PaginatedClientList> getClients(
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken,
 
             @RequestParam(required = false) String q,
@@ -71,14 +74,14 @@ public class ClientController {
             @RequestParam(required = false) ClientType clientType,
             @RequestParam(required = false) EnumSet<Organ> donating,
             @RequestParam(required = false) EnumSet<Organ> requesting,
-            @RequestParam(required = false) ClientSortOptionsEnum sortOrder,
+            @RequestParam(required = false) ClientSortOptionsEnum sortOption,
             @RequestParam(required = false) Boolean isReversed
     ) throws AuthenticationException {
 
         //TODO: Add the auth check, but need to remake the login page to not get the list of clients
         //State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
 
-        Iterable<Client> clients = State.getClientManager().getClients(
+        PaginatedClientList clients = State.getClientManager().getClients(
                 q,
                 offset,
                 count,
@@ -89,7 +92,7 @@ public class ClientController {
                 clientType,
                 donating,
                 requesting,
-                sortOrder,
+                sortOption,
                 isReversed);
 
         return new ResponseEntity<>(clients, HttpStatus.OK);
@@ -135,7 +138,7 @@ public class ClientController {
      * @param uid The client UID to return
      * @return Returns a Client details object. Also contains an ETag header for updates
      */
-    @GetMapping("/clients/{uid}")
+    @GetMapping("/clients/{uid:\\d+}")
     @JsonView(Views.Details.class)
     public ResponseEntity<Client> getClient(
             @PathVariable int uid,
@@ -310,6 +313,33 @@ public class ClientController {
 
         //Respond
         return new ResponseEntity<>(client, headers, HttpStatus.OK);
+    }
+
+    /**
+     * Returns the specified clients history
+     * @param uid identifier of the client
+     * @param authToken id token
+     * @return The list of HistoryItems
+     */
+    @GetMapping("/clients/{uid}/history")
+    public ResponseEntity<List<HistoryItem>> getHistory(
+            @PathVariable int uid,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
+            throws IfMatchRequiredException, IfMatchFailedException, InvalidRequestException {
+
+        Optional<Client> client = State.getClientManager().getClientByID(uid);
+        if (client.isPresent()) {
+            //Authenticate
+            State.getAuthenticationManager().verifyClientAccess(authToken, client.get());
+            //Add the new ETag to the headers
+            HttpHeaders headers = new HttpHeaders();
+            headers.setETag(client.get().getETag());
+
+            return new ResponseEntity<>(client.get().getChangesHistory(), headers, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
     }
 
     @GetMapping("clients/{uid}/image")

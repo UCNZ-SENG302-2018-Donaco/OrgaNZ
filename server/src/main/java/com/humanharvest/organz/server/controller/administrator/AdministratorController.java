@@ -1,9 +1,12 @@
 package com.humanharvest.organz.server.controller.administrator;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Administrator;
+import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.actions.administrator.CreateAdministratorAction;
 import com.humanharvest.organz.actions.administrator.DeleteAdministratorAction;
@@ -246,7 +249,21 @@ public class AdministratorController {
 
         String result = CommandsHelper.executeCommandAndReturnOutput(commands, invoker);
 
-
         return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    /**
+     * Returns some history for all actions
+     * @param authToken id token
+     * @return The list of HistoryItems
+     */
+    @GetMapping("/history")
+    public ResponseEntity<List<HistoryItem>> getHistory(
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {
+
+        State.getAuthenticationManager().verifyAdminAccess(authToken);
+        HttpHeaders headers = new HttpHeaders();
+        //TODO: return the full history or whatever we decide
+        return new ResponseEntity<>(new ArrayList<>(), headers, HttpStatus.OK);
     }
 }

@@ -66,6 +66,10 @@ public class IllnessRecord {
         this.isChronic = isChronic;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public Client getClient() {
         return client;
     }
@@ -84,6 +88,10 @@ public class IllnessRecord {
 
     public boolean isChronic() {
         return isChronic;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     /**

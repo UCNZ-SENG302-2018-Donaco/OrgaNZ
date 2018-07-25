@@ -53,18 +53,20 @@ public class ClientMedicationsController {
      * returned
      */
     @GetMapping("/clients/{uid}/medications")
-    public ResponseEntity<List<MedicationRecord>> getMedications(@PathVariable int uid) {
+    public ResponseEntity<List<MedicationRecord>> getMedications(@PathVariable int uid,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {
 
         Optional<Client> client = State.getClientManager().getClientByID(uid);
 
-        // todo auth
-
         if (client.isPresent()) {
+
+            // Check authentication
+            State.getAuthenticationManager().verifyClientAccess(authToken, client.get());
 
             HttpHeaders headers = new HttpHeaders();
             headers.setETag(client.get().getETag());
 
-            return new ResponseEntity<>(client.get().getAllMedications(), headers, HttpStatus.OK);
+            return new ResponseEntity<>(client.get().getMedications(), headers, HttpStatus.OK);
 
         } else {
 
@@ -90,24 +92,30 @@ public class ClientMedicationsController {
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws IfMatchRequiredException, IfMatchFailedException {
 
-        // todo auth
-
         Optional<Client> client = State.getClientManager().getClientByID(uid);
 
         if (!client.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
+        // Check authentication
+        State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
+
+        if (medicationRecordView.getName() == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
         checkClientEtag(client.get(), ETag);
 
-        MedicationRecord record = new MedicationRecord(medicationRecordView.getName(), LocalDate.now(), null);
+        MedicationRecord record = new MedicationRecord(medicationRecordView.getName(), medicationRecordView.getStarted(), null);
         AddMedicationRecordAction action = new AddMedicationRecordAction(client.get(), record, State.getClientManager());
         State.getActionInvoker(authToken).execute(action);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setETag(client.get().getETag());
+        System.out.println(client.get().getMedications());
 
-        return new ResponseEntity<>(client.get().getAllMedications(), headers, HttpStatus.OK);
+        return new ResponseEntity<>(client.get().getMedications(), headers, HttpStatus.CREATED);
     }
 
     /**
@@ -129,11 +137,12 @@ public class ClientMedicationsController {
 
         Optional<Client> client = State.getClientManager().getClientByID(uid);
 
-        // todo auth
-
         if (!client.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+
+        // Check authentication
+        State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
 
         checkClientEtag(client.get(), ETag);
 
@@ -170,7 +179,8 @@ public class ClientMedicationsController {
 
         Optional<Client> client = State.getClientManager().getClientByID(uid);
 
-        // todo auth
+        // Check authentication
+        State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
 
         if (!client.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -212,7 +222,8 @@ public class ClientMedicationsController {
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws IfMatchFailedException, IfMatchRequiredException {
 
-        // todo auth
+        // Check authentication
+        State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
 
         Optional<Client> client = State.getClientManager().getClientByID(uid);
 

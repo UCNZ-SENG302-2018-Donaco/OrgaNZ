@@ -13,11 +13,8 @@ import com.humanharvest.organz.controller.ControllerTest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
-import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore
 public class ViewMedicationsControllerClientTest extends ControllerTest {
 
     private static final MedicationRecord[] testPastMedicationRecords = {
@@ -40,8 +37,6 @@ public class ViewMedicationsControllerClientTest extends ControllerTest {
             )
     };
 
-    private Client testClient = new Client(1);
-
     @Override
     protected Page getPage() {
         return Page.VIEW_MEDICATIONS;
@@ -50,19 +45,12 @@ public class ViewMedicationsControllerClientTest extends ControllerTest {
     @Override
     protected void initState() {
         State.reset();
-        State.login(testClient);
-        mainController.setWindowContext(WindowContext.defaultContext());
-        resetTestClientMedicationHistory();
-    }
 
-    @Before
-    public void resetTestClientMedicationHistory() {
-        for (MedicationRecord record : testClient.getPastMedications()) {
-            testClient.deleteMedicationRecord(record);
-        }
-        for (MedicationRecord record : testClient.getCurrentMedications()) {
-            testClient.deleteMedicationRecord(record);
-        }
+        Client testClient = new Client(1);
+        State.login(testClient);
+        State.getClientManager().addClient(testClient);
+        mainController.setWindowContext(WindowContext.defaultContext());
+
         for (MedicationRecord record : testPastMedicationRecords) {
             testClient.addMedicationRecord(record);
         }

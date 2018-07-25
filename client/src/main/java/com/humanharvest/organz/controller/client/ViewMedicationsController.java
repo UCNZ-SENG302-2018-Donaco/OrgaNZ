@@ -1,11 +1,11 @@
 package com.humanharvest.organz.controller.client;
 
-
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -25,17 +25,11 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 
-import com.humanharvest.organz.actions.ActionInvoker;
-import com.humanharvest.organz.actions.client.DeleteMedicationRecordAction;
-import com.humanharvest.organz.actions.client.ModifyMedicationRecordAction;
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SidebarController;
 import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.MedicationRecord;
-import com.humanharvest.organz.resolvers.client.ClientResolver;
-import com.humanharvest.organz.resolvers.client.AddMedicationRecordResolver;
-import com.humanharvest.organz.resolvers.client.ModifyMedicationRecordResolver;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
@@ -49,7 +43,6 @@ import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.utilities.web.DrugInteractionsHandler;
 import com.humanharvest.organz.utilities.web.MedActiveIngredientsHandler;
 import com.humanharvest.organz.utilities.web.MedAutoCompleteHandler;
-
 import com.humanharvest.organz.views.client.CreateMedicationRecordView;
 import impl.org.controlsfx.autocompletion.AutoCompletionTextFieldBinding;
 import org.controlsfx.control.Notifications;
@@ -60,7 +53,6 @@ import org.controlsfx.control.Notifications;
 public class ViewMedicationsController extends SubController {
 
     private Session session;
-    private ActionInvoker invoker;
     private ClientManager manager;
     private Client client;
     private List<String> lastResponse;
@@ -90,7 +82,6 @@ public class ViewMedicationsController extends SubController {
 
     public ViewMedicationsController() {
         session = State.getSession();
-        invoker = State.getInvoker();
         manager = State.getClientManager();
     }
 
@@ -186,12 +177,8 @@ public class ViewMedicationsController extends SubController {
      * Refreshes the past/current medication list views from the client's properties.
      */
     private void refreshMedicationLists() {
-
-        List<MedicationRecord> medicationRecords;
-
         try {
-            medicationRecords = State.getClientResolver().getMedicationRecords(client);
-            client.setMedicationHistory(medicationRecords);
+            client.setMedicationHistory(State.getClientResolver().getMedicationRecords(client));
 
         } catch (NotFoundException e) {
             LOGGER.log(Level.WARNING, "Client or medication not found");
@@ -208,8 +195,37 @@ public class ViewMedicationsController extends SubController {
                     .showError();
             return;
         }
+
         pastMedicationsView.setItems(FXCollections.observableArrayList(client.getPastMedications()));
         currentMedicationsView.setItems(FXCollections.observableArrayList(client.getCurrentMedications()));
+    }
+
+    /**
+     * Creates and executes the resolver to update the given medication record, either setting it as a current
+     * medication or a past one
+     * @param date date to set the stop date of the medication record to, either null or the current date
+     * @param record the record to modify
+     */
+    private void updateMedicationHistory(LocalDate date, MedicationRecord record) {
+
+        try {
+            State.getClientResolver().modifyMedicationRecord(client, record, date);
+            record.setStopped(date);
+        } catch (NotFoundException e) {
+            LOGGER.log(Level.WARNING, "Client not found");
+            PageNavigator.showAlert(AlertType.WARNING, "Client or medication not found", "The client could not "
+                    + "be found on the "
+                    + "server, it may have been deleted");
+        } catch (ServerRestException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
+            PageNavigator.showAlert(AlertType.WARNING, "Server error", "Could not apply changes on the server, "
+                    + "please try again later");
+        } catch (IfMatchFailedException e) {
+            LOGGER.log(Level.INFO, "If-Match did not match");
+            PageNavigator.showAlert(AlertType.WARNING, "Outdated Data",
+                    "The client has been modified since you retrieved the data.\nIf you would still like to "
+                    + "apply these changes please submit again, otherwise refresh the page to update the data.");
+        }
     }
 
     /**
@@ -222,13 +238,7 @@ public class ViewMedicationsController extends SubController {
     private void moveMedicationToHistory() {
         MedicationRecord record = currentMedicationsView.getSelectionModel().getSelectedItem();
         if (record != null) {
-//            ModifyMedicationRecordAction action = new ModifyMedicationRecordAction(record, manager);
-//            action.changeStopped(LocalDate.now());
-            ModifyMedicationRecordResolver resolver = new ModifyMedicationRecordResolver(client, record, LocalDate
-                    .now());
-
-            //invoker.execute(action);
-            resolver.execute();
+            updateMedicationHistory(LocalDate.now(), record);
             PageNavigator.refreshAllWindows();
             refreshMedicationLists();
         }
@@ -243,10 +253,7 @@ public class ViewMedicationsController extends SubController {
     private void moveMedicationToCurrent() {
         MedicationRecord record = pastMedicationsView.getSelectionModel().getSelectedItem();
         if (record != null) {
-            ModifyMedicationRecordAction action = new ModifyMedicationRecordAction(record, manager);
-            action.changeStopped(null);
-
-            invoker.execute(action);
+            updateMedicationHistory(null, record);
             PageNavigator.refreshAllWindows();
             refreshMedicationLists();
         }
@@ -259,7 +266,7 @@ public class ViewMedicationsController extends SubController {
      */
     @FXML
     public void newMedKeyPressed(KeyEvent keyEvent) {
-        if (keyEvent.getCode().equals(KeyCode.ENTER)) {
+        if (keyEvent.getCode() == KeyCode.ENTER) {
             addMedication(newMedField.getText());
         }
     }
@@ -295,13 +302,11 @@ public class ViewMedicationsController extends SubController {
      * @param newMedName The name of the medication to add a new instance of.
      */
     private void addMedication(String newMedName) {
-        if (!newMedName.equals("")) {
-            CreateMedicationRecordView record = new CreateMedicationRecordView();
-            record.setName(newMedName);
-            AddMedicationRecordResolver resolver = new AddMedicationRecordResolver(client, record);
+        if (!Objects.equals(newMedName, "")) {
+            CreateMedicationRecordView record = new CreateMedicationRecordView(newMedName, LocalDate.now());
 
             try {
-                resolver.execute();
+                State.getClientResolver().addMedicationRecord(client, record);
             } catch (NotFoundException e) {
                 LOGGER.log(Level.WARNING, "Client not found");
                 Notifications.create()
@@ -352,9 +357,10 @@ public class ViewMedicationsController extends SubController {
     private void deleteMedication() {
         MedicationRecord record = getSelectedRecord();
         if (record != null) {
-            DeleteMedicationRecordAction action = new DeleteMedicationRecordAction(client, record, manager);
 
-            invoker.execute(action);
+            //TODO: Handle errors
+            State.getClientResolver().deleteMedicationRecord(client, record);
+
             PageNavigator.refreshAllWindows();
             refreshMedicationLists();
         }

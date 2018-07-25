@@ -9,13 +9,13 @@ import com.humanharvest.organz.resolvers.CommandRunner;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class MenuBarControllerAdminTest extends ControllerTest {
 
     private Administrator testAdmin = new Administrator("username", "password");
 
+    @Override
     @Test
     public void initState() {
         State.reset();

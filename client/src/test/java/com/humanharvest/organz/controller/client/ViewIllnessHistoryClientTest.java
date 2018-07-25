@@ -38,7 +38,7 @@ public class ViewIllnessHistoryClientTest extends ControllerTest {
                     null,
                     false)
     };
-    private Client testClient = new Client(1);
+    private final Client testClient = new Client(1);
 
     @Override
     protected Page getPage() {

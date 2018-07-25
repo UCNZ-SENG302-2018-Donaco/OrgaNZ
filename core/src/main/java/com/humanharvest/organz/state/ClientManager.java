@@ -20,6 +20,7 @@ import com.humanharvest.organz.utilities.enums.ClientType;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
+import com.humanharvest.organz.views.client.PaginatedClientList;
 
 /**
  * Handles the manipulation of the clients currently stored in the system.
@@ -28,7 +29,7 @@ public interface ClientManager {
 
     List<Client> getClients();
 
-    default List<Client> getClients(
+    default PaginatedClientList getClients(
             String q,
             Integer offset,
             Integer count,
@@ -58,22 +59,25 @@ public interface ClientManager {
         }
         switch (sortOption) {
             case ID:
-                primarySorter = Comparator.comparing(Client::getUid);
+                primarySorter = Comparator.comparing(Client::getUid, Comparator.nullsLast(Comparator.naturalOrder()));
                 break;
             case AGE:
-                primarySorter = Comparator.comparing(Client::getAge);
+                primarySorter = Comparator.comparing(Client::getAge, Comparator.nullsLast(Comparator.naturalOrder()));
                 break;
             case DONOR:
-                primarySorter = Comparator.comparing(Client::isDonor);
+                primarySorter = Comparator.comparing(Client::isDonor, Comparator.nullsLast(Comparator.naturalOrder()));
                 break;
             case RECEIVER:
-                primarySorter = Comparator.comparing(Client::isReceiver);
+                primarySorter = Comparator
+                        .comparing(Client::isReceiver, Comparator.nullsLast(Comparator.naturalOrder()));
                 break;
             case REGION:
-                primarySorter = Comparator.comparing(Client::getRegion);
+                primarySorter = Comparator
+                        .comparing(Client::getRegion, Comparator.nullsLast(Comparator.naturalOrder()));
                 break;
             case BIRTH_GENDER:
-                primarySorter = Comparator.comparing(Client::getGender);
+                primarySorter = Comparator
+                        .comparing(Client::getGender, Comparator.nullsLast(Comparator.naturalOrder()));
                 break;
             case NAME:
             default:
@@ -88,7 +92,7 @@ public interface ClientManager {
             dualSorter = dualSorter.reversed();
         }
 
-        return stream
+        List<Client> filteredClients = stream
                 .filter(q == null ? c -> true : client -> client.nameContains(q))
 
                 .filter(minimumAge == null ? c -> true : client -> client.getAge() >= minimumAge)
@@ -109,13 +113,21 @@ public interface ClientManager {
                 .filter(requesting == null ? c -> true : client -> requesting.size() == 0 ||
                         requesting.stream().anyMatch(organ -> client.getCurrentlyRequestedOrgans().contains(organ)))
 
+                .collect(Collectors.toList());
+
+        int totalResults = filteredClients.size();
+
+        List<Client> paginatedClients = filteredClients.stream()
+
+                .sorted(dualSorter)
+
                 .skip(offset)
 
                 .limit(count)
 
-                .sorted(dualSorter)
-
                 .collect(Collectors.toList());
+
+        return new PaginatedClientList(paginatedClients, totalResults);
     }
 
     void setClients(Collection<Client> clients);

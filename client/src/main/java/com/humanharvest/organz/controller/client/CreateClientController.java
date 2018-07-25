@@ -12,10 +12,8 @@ import javafx.scene.layout.Pane;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
-import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.resolvers.client.CreateClientResolver;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
@@ -46,7 +44,6 @@ public class CreateClientController extends SubController {
     private Pane menuBarPane;
 
     private final ClientManager manager;
-    private final ActionInvoker invoker;
     private UIValidation validation;
 
     /**
@@ -55,7 +52,6 @@ public class CreateClientController extends SubController {
      */
     public CreateClientController() {
         manager = State.getClientManager();
-        invoker = State.getInvoker();
     }
 
     /**
@@ -106,10 +102,9 @@ public class CreateClientController extends SubController {
                     lastNamefld.getText(),
                     dobFld.getValue());
 
-            CreateClientResolver resolver = new CreateClientResolver(newClient);
             Client client;
             try {
-                client = resolver.execute();
+                client = State.getClientResolver().createClient(newClient);
             } catch (ServerRestException e) {
                 LOGGER.severe(e.getMessage());
                 PageNavigator.showAlert(AlertType.ERROR,
