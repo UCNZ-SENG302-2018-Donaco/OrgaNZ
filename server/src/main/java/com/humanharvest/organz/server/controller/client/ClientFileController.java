@@ -66,9 +66,9 @@ public class ClientFileController {
         try {
             // Write the data to a temporary file
             File tmpDataFile = File.createTempFile("tmp", null);
-            FileOutputStream outputStream = new FileOutputStream(tmpDataFile);
-            outputStream.write(data);
-            outputStream.close();
+            try (FileOutputStream outputStream = new FileOutputStream(tmpDataFile)) {
+                outputStream.write(data);
+            }
 
             // Attempt to load data from the file using the given file type
             String message = loadData(tmpDataFile, mimeType);

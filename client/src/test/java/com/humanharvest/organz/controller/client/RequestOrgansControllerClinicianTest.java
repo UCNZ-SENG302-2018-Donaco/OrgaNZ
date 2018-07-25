@@ -215,16 +215,9 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
                 .type(KeyCode.DOWN)
                 .type(KeyCode.ENTER);
 
-        List<TransplantRequest> request = testClient.getTransplantRequests();
-        System.out.println(request);
         clickOn("Resolve Request");
-        List<TransplantRequest> request1 = testClient.getTransplantRequests();
-        System.out.println(request1);
-        // Press enter to go to medical history page
-        type(KeyCode.ENTER);
-        List<TransplantRequest> request3 = testClient.getTransplantRequests();
-        System.out.println(request3);
-
+        // Press esc to not go to medical history page
+        type(KeyCode.ESCAPE);
 
         // Checks that the selected organ has been removed from the clients transplant request list
 
