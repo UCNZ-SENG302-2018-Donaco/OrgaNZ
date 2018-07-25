@@ -383,7 +383,7 @@ public class ClientController {
             @PathVariable int uid,
             @RequestBody byte[] image,
             @RequestHeader(value = "If-Match", required = false) String etag,
-            @RequestHeader(value = "X-Auth-Token", required = false) String authToken) throws IOException {
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {
 
         String imagesDirectory = System.getProperty("user.home") + "/.organz/images/";
 
@@ -415,7 +415,7 @@ public class ClientController {
         // Write the file
         try (OutputStream out = new FileOutputStream(imagesDirectory + uid + ".png")) {
             out.write(image);
-            return new ResponseEntity(HttpStatus.OK);
+            return new ResponseEntity(HttpStatus.CREATED);
         } catch (IOException e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -455,7 +455,7 @@ public class ClientController {
         // Delete the file
         File file = new File(imagesDirectory + uid + ".png");
         if (file.delete()) {
-            return new ResponseEntity(HttpStatus.OK);
+            return new ResponseEntity(HttpStatus.CREATED);
         } else {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         }

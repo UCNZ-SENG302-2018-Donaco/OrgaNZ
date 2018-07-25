@@ -59,7 +59,7 @@ public class ImageManager {
 
         ResponseEntity responseEntity = State.getRestTemplate().exchange(State.BASE_URI + "/clients/{uid}/image",
                 HttpMethod.POST, entity, boolean.class, uid);
-        return responseEntity.getStatusCode() == HttpStatus.OK;
+        return responseEntity.getStatusCode() == HttpStatus.CREATED;
 
     }
 
@@ -75,7 +75,7 @@ public class ImageManager {
         ResponseEntity responseEntity = State.getRestTemplate().exchange(State.BASE_URI + "clients/{uid}/image",
                 HttpMethod.DELETE, entity, Object.class, uid);
 
-        return responseEntity.getStatusCode() == HttpStatus.OK;
+        return responseEntity.getStatusCode() == HttpStatus.CREATED;
     }
 
 }
