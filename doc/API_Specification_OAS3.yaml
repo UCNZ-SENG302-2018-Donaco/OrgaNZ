@@ -26,6 +26,7 @@ tags:
       description: All base administrator paths
 
 paths:
+  ### Clients
   /clients:
     get:
       tags:
@@ -88,6 +89,7 @@ paths:
           $ref: '#/components/responses/403Forbidden'
         500:
           $ref: '#/components/responses/500InternalServerError'
+
   '/clients/{uid}':
     parameters:
     - in: path
@@ -188,6 +190,7 @@ paths:
           $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
+
   '/clients/{uid}/dead':
     parameters:
     - in: path
@@ -231,6 +234,7 @@ paths:
           $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
+
   '/clients/{uid}/history':
     parameters:
     - in: path
@@ -778,7 +782,6 @@ paths:
         500:
           $ref: '#/components/responses/500InternalServerError'
 
-
   '/clients/{uid}/procedures':
     parameters:
     - in: path
@@ -935,7 +938,6 @@ paths:
         500:
           $ref: '#/components/responses/500InternalServerError'
 
-
   '/clients/transplantRequests':
     get:
       tags:
@@ -973,7 +975,6 @@ paths:
           $ref: '#/components/responses/404NotFound'
         500:
           $ref: '#/components/responses/500InternalServerError'
-
 
   '/clients/{uid}/transplantRequests':
     parameters:
@@ -1104,10 +1105,6 @@ paths:
         500:
           $ref: '#/components/responses/500InternalServerError'
 
-
-
-
-
   ### Clinician
   /clinicians:
     get:
@@ -1167,6 +1164,32 @@ paths:
           $ref: '#/components/responses/403Forbidden'
         500:
           $ref: '#/components/responses/500InternalServerError'
+
+  '/clinicians/file':
+    get:
+      tags:
+      - Clinician
+      security:
+      - AdministratorAccess: []
+      summary: Get a file of all clinicians
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                format: binary
+                example: Raw content of JSON clinicians file
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+
   '/clinicians/{staffId}':
     parameters:
     - in: path
@@ -1264,6 +1287,7 @@ paths:
           $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
+
   '/clinicians/{staffId}/history':
     parameters:
     - in: path
@@ -1299,8 +1323,6 @@ paths:
           $ref: '#/components/responses/404NotFound'
         500:
           $ref: '#/components/responses/500InternalServerError'
-
-
 
   ### Administrator
   /administrators:
@@ -1359,6 +1381,7 @@ paths:
           $ref: '#/components/responses/403Forbidden'
         500:
           $ref: '#/components/responses/500InternalServerError'
+
   '/administrators/{username}':
     parameters:
     - in: path
@@ -1479,7 +1502,6 @@ paths:
         500:
           $ref: '#/components/responses/500InternalServerError'
 
-
   '/commands':
     post:
       tags:
@@ -1504,7 +1526,7 @@ paths:
         500:
           $ref: '#/components/responses/500InternalServerError'
 
-
+  ### Login
   '/login/client':
     post:
       tags:
@@ -1582,6 +1604,7 @@ paths:
           $ref: '#/components/responses/500InternalServerError'
 
 
+  ### Undo/Redo
   '/actions/undo':
     get:
       tags:
@@ -1636,7 +1659,6 @@ paths:
           $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
-
 
   '/actions/redo':
     get:
