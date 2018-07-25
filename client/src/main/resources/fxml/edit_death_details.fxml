@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
@@ -28,8 +29,6 @@
     <Label text="Country" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="4" />
     <Label text="City" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="6" />
     <Label text="Time" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="2" />
-    <TextField fx:id="deathCountry" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-    <TextField fx:id="deathRegion" GridPane.columnIndex="2" GridPane.rowIndex="5" />
     <TextField fx:id="deathCity" GridPane.columnIndex="2" GridPane.rowIndex="6" />
     <TextField fx:id="deathTimeField" promptText="HH:MM:SS" GridPane.columnIndex="2" GridPane.rowIndex="2" />
     <DatePicker fx:id="deathDatePicker" GridPane.columnIndex="2" GridPane.rowIndex="3" />
@@ -39,5 +38,8 @@
             <Font size="17.0" />
          </font>
       </Label>
+      <ChoiceBox fx:id="deathCountry" onInputMethodTextChanged="#countryChanged" prefHeight="25.0" prefWidth="191.0" GridPane.columnIndex="2" GridPane.rowIndex="4" />
+      <TextField fx:id="deathRegionTF" GridPane.columnIndex="2" GridPane.rowIndex="5" />
+      <ChoiceBox fx:id="deathRegionCB" maxWidth="1.7976931348623157E308" prefHeight="30.0" prefWidth="107.0" GridPane.columnIndex="2" GridPane.rowIndex="5" />
   </children>
 </GridPane>

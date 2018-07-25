@@ -6,20 +6,19 @@ import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.utilities.JSONConverter;
 import java.time.format.DateTimeFormatter;
 
-import javax.management.Notification;
 
-import com.humanharvest.organz.utilities.view.Page;
-import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
+import com.humanharvest.organz.utilities.enums.Country;
+import com.humanharvest.organz.utilities.enums.Region;
+
+import javafx.collections.FXCollections;
+import javafx.fxml.FXML;;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 
 import com.humanharvest.organz.Client;
-import com.humanharvest.organz.actions.ActionInvoker;
-import com.humanharvest.organz.actions.client.ModifyClientAction;
-import com.humanharvest.organz.actions.client.ModifyClientOrgansAction;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.state.ClientManager;
@@ -34,7 +33,6 @@ import org.controlsfx.control.Notifications;
 public class EditDeathDetailsController extends SubController{
 
     private Session session;
-    private ActionInvoker invoker;
     private ClientManager manager;
     private Client client;
 
@@ -46,11 +44,7 @@ public class EditDeathDetailsController extends SubController{
     @FXML
     private DatePicker deathDatePicker;
 
-    @FXML
-    private TextField deathCountry;
 
-    @FXML
-    private TextField deathRegion;
 
     @FXML
     private TextField deathCity;
@@ -59,11 +53,15 @@ public class EditDeathDetailsController extends SubController{
     private Button applyButton;
 
     @FXML
-    private Button cancelButton;
+    private ChoiceBox deathCountry;
+
+    @FXML
+    private ChoiceBox<Region> deathRegionCB;
+    @FXML
+    private TextField deathRegionTF;
 
     public EditDeathDetailsController(){
         session = State.getSession();
-        invoker = State.getInvoker();
         manager = State.getClientManager();
 
     }
@@ -71,6 +69,8 @@ public class EditDeathDetailsController extends SubController{
 
     @FXML
     public void initialize(){
+        deathCountry.setItems(FXCollections.observableArrayList(Country.values()));
+        deathRegionCB.setItems(FXCollections.observableArrayList(Region.values()));
     }
 
     @Override
@@ -82,18 +82,22 @@ public class EditDeathDetailsController extends SubController{
             client = session.getLoggedInClient();
             deathTimeField.setDisable(true);
             deathDatePicker.setDisable(true);
-            deathCountry.setEditable(false);
-            deathRegion.setEditable(false);
+            deathCountry.setDisable(true);
+            deathRegionTF.setEditable(false);
+            deathRegionCB.setDisable(true);
             deathCity.setEditable(false);
             if (client.isDead()) {
                 if (client.getTimeOfDeath() != null) {
                     deathTimeField.setText(client.getTimeOfDeath().toString());
                 }
                 if (client.getCurrentAddress() != null) {
-                    deathCountry.setText(client.getCurrentAddress());
+                    deathCountry.setValue(client.getCountryOfDeath());
                 }
-                if (client.getRegion() != null) {
-                    deathRegion.setText(client.getRegion().toString());
+                if (client.getRegion() != null && client.getCountry() == Country.NZ) {
+                    deathRegionCB.setValue(deathRegionCB.getValue());
+                }
+                else if (client.getRegion() != null && client.getCountry() != Country.NZ) {
+                    deathRegionTF.setText(client.getRegionOfDeath());
                 }
                 if (client.getDateOfDeath() != null) {
                     deathDatePicker.setValue(client.getDateOfDeath());
@@ -112,10 +116,13 @@ public class EditDeathDetailsController extends SubController{
                     deathTimeField.setText(client.getTimeOfDeath());
                 }
                 if (client.getCountryOfDeath() != null) {
-                    deathCountry.setText(client.getCountryOfDeath());
+                    deathCountry.setValue(client.getCountryOfDeath());
                 }
-                if (client.getRegionOfDeath() != null) {
-                    deathRegion.setText(client.getRegionOfDeath());
+                if (client.getRegionOfDeath() != null && client.getCountry() == Country.NZ) {
+                    deathRegionCB.setValue(deathRegionCB.getValue());
+                }
+                else if (client.getRegionOfDeath() != null && client.getCountry() != Country.NZ) {
+                    deathRegionTF.setText(client.getRegionOfDeath());
                 }
                 if (client.getDateOfDeath() != null) {
                     deathDatePicker.setValue(client.getDateOfDeath());
@@ -128,6 +135,28 @@ public class EditDeathDetailsController extends SubController{
         }
     }
 
+    /**
+     * Triggered when the value of the country choicebox is changed
+     */
+    @FXML
+    private void countryChanged() {
+        checkCountry();
+    }
+
+    /**
+     * Checks the clients country, changes region input to a choicebox of NZ regions if the country is New Zealand,
+     * and changes to a textfield input for any other country
+     */
+    private void checkCountry() {
+        if (client.getCountry() == Country.NZ ) {
+            deathRegionCB.setVisible(true);
+            deathRegionTF.setVisible(false);
+        } else {
+            deathRegionCB.setVisible(false);
+            deathRegionTF.setVisible(true);
+        }
+    }
+
         public void applyChanges () {
             ModifyClientObject modifyClientObject = new ModifyClientObject();
 
@@ -137,9 +166,18 @@ public class EditDeathDetailsController extends SubController{
 
                 addChangeIfDifferent(modifyClientObject, client, "dateOfDeath", deathDatePicker.getValue());
                 addChangeIfDifferent(modifyClientObject, client, "timeOfDeath", deathTimeField.getText());
-                addChangeIfDifferent(modifyClientObject, client, "regionOfDeath", deathRegion.getText());
+                addChangeIfDifferent(modifyClientObject, client, "regionOfDeath", deathRegionTF.getText());
+                addChangeIfDifferent(modifyClientObject, client, "regionOfDeath", deathRegionCB.getValue());
                 addChangeIfDifferent(modifyClientObject, client, "cityOfDeath", deathCity.getText());
-                addChangeIfDifferent(modifyClientObject, client, "countryOfDeath", deathCountry.getText());
+                addChangeIfDifferent(modifyClientObject, client, "countryOfDeath", deathCountry.getSelectionModel()
+                        .toString());
+
+                if (client.getCountry() == Country.NZ) {
+                    addChangeIfDifferent(modifyClientObject, client, "region", deathRegionCB.getValue());
+                } else {
+                    addChangeIfDifferent(modifyClientObject, client,"region", deathRegionTF.getText());
+
+                }
 
                 if (modifyClientObject.getModifiedFields().isEmpty()) {
                     Notifications.create()
