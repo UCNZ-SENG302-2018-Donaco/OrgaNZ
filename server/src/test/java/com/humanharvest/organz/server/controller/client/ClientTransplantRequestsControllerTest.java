@@ -45,7 +45,7 @@ public class ClientTransplantRequestsControllerTest {
     private MockMvc mockMvc;
     private Client testClient;
     private TransplantRequest testTransplantRequest;
-    private int id;
+    private long id;
     private String validTransplantRequestJson;
     private String VALID_AUTH = "valid auth";
     private String INVALID_AUTH = "invalid auth";
@@ -60,7 +60,10 @@ public class ClientTransplantRequestsControllerTest {
         testClient = new Client("Jan", "Michael", "Vincent", LocalDate.now(), 1);
         testTransplantRequest = new TransplantRequest(testClient, Organ.LIVER);
         testClient.addTransplantRequest(testTransplantRequest);
-        id = 0;
+
+        State.getClientManager().applyChangesTo(testClient);
+        id = testTransplantRequest.getId();
+
         assertEquals(testTransplantRequest, testClient.getTransplantRequestById(id).orElseThrow
                 (NullPointerException::new));
         State.getClientManager().addClient(testClient);
