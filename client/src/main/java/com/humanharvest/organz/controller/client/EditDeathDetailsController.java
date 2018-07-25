@@ -12,6 +12,7 @@ import com.humanharvest.organz.utilities.enums.Region;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
@@ -79,12 +80,12 @@ public class EditDeathDetailsController extends SubController{
 
         if (session.getLoggedInUserType() == UserType.CLIENT) {
             client = session.getLoggedInClient();
-            deathTimeField.setDisable(true);
-            deathDatePicker.setDisable(true);
+            deathTimeField.setEditable(false);
+            deathDatePicker.setEditable(false);
             deathCountry.setDisable(true);
+            checkCountry();
             deathRegionTF.setEditable(false);
             deathRegionCB.setDisable(true);
-            deathRegionCB.setVisible(false);
             deathCity.setEditable(false);
             if (client.isDead()) {
                 if (client.getTimeOfDeath() != null) {
@@ -131,6 +132,20 @@ public class EditDeathDetailsController extends SubController{
                 }
             }
 
+            else {
+                deathCountry.setValue(client.getCountry());
+                deathCity.setText(client.getRegion());
+                if (client.getCountry() == Country.NZ) {
+                    deathRegionCB.setVisible(true);
+                    deathRegionCB.setValue(Region.fromString(client.getRegion()));
+                    deathRegionTF.setVisible(false);
+                } else {
+                    deathRegionCB.setVisible(false);
+                    deathRegionTF.setVisible(true);
+                    deathRegionTF.setText(client.getRegion());
+                }
+            }
+
         }
 
         updateDeathFields();
@@ -149,7 +164,7 @@ public class EditDeathDetailsController extends SubController{
         deathDatePicker.setValue(client.getDateOfDeath());
         checkCountry();
         if (client.getCountryOfDeath() == Country.NZ && client.getRegionOfDeath() != null) {
-            deathRegionCB.setValue(Region.fromString(client.getRegion()));
+            deathRegionCB.setValue(Region.fromString(client.getRegionOfDeath()));
         } else {
             deathRegionTF.setText(client.getRegionOfDeath());
 
@@ -171,53 +186,49 @@ public class EditDeathDetailsController extends SubController{
         }
     }
 
-        public void applyChanges () {
-            ModifyClientObject modifyClientObject = new ModifyClientObject();
+    public void applyChanges () {
+        ModifyClientObject modifyClientObject = new ModifyClientObject();
 
-            if (session.getLoggedInUserType() == UserType.CLIENT) {
-                PageNavigator.showAlert(AlertType.ERROR, "Invalid Access", "Clients cannot edit death details");
-            } else {
+        if (session.getLoggedInUserType() == UserType.CLIENT) {
+            PageNavigator.showAlert(AlertType.ERROR, "Invalid Access", "Clients cannot edit death details");
+        } else {
+            addChangeIfDifferent(modifyClientObject, client, "dateOfDeath", deathDatePicker.getValue());
+            addChangeIfDifferent(modifyClientObject, client, "timeOfDeath", deathTimeField.getText());
+            addChangeIfDifferent(modifyClientObject, client, "cityOfDeath", deathCity.getText());
+            addChangeIfDifferent(modifyClientObject, client, "countryOfDeath", deathCountry.getValue());
 
-                addChangeIfDifferent(modifyClientObject, client, "dateOfDeath", deathDatePicker.getValue());
-                addChangeIfDifferent(modifyClientObject, client, "timeOfDeath", deathTimeField.getText());
-                addChangeIfDifferent(modifyClientObject, client, "cityOfDeath", deathCity.getText());
-                addChangeIfDifferent(modifyClientObject, client, "countryOfDeath", deathCountry.getValue());
+            if (client.getCountryOfDeath() == Country.NZ) {
+                addChangeIfDifferent(modifyClientObject, client, "regionOfDeath", deathRegionCB.getValue().toString());
+            }
+            else {
+                addChangeIfDifferent(modifyClientObject, client,"regionOfDeath", deathRegionTF.getText());
+            }
+            if (modifyClientObject.getModifiedFields().isEmpty()) {
+                Notifications.create()
+                        .title("No changes were made.")
+                        .text("No changes were made to the client.")
+                        .showWarning();
+            }
 
-                if (client.getCountry() == Country.NZ) {
-                    addChangeIfDifferent(modifyClientObject, client, "regionOfDeath", deathRegionCB.getValue());
-                } else {
-                    addChangeIfDifferent(modifyClientObject, client,"regionOfDeath", deathRegionTF.getText());
+            else {
+                client = State.getClientResolver().modifyClientDetails(client, modifyClientObject);
+                String actionText = modifyClientObject.toString();
+                updateDeathFields();
+                Notifications.create().title("Updated Death Details").text(actionText).showInformation();
+                checkCountry();
+                Stage stage = (Stage) applyButton.getScene().getWindow();
+                stage.close();
+                PageNavigator.refreshAllWindows();
 
-                }
-
-                if (modifyClientObject.getModifiedFields().isEmpty()) {
-                    Notifications.create()
-                            .title("No changes were made.")
-                            .text("No changes were made to the client.")
-                            .showWarning();
-                } else {
-
-                    client = State.getClientResolver().modifyClientDetails(client, modifyClientObject);
-                    String actionText = modifyClientObject.toString();
-                    System.out.println(modifyClientObject.getRegionOfDeath());
-                    System.out.println(modifyClientObject.getCountryOfDeath());
-                    System.out.println(client.getCountryOfDeath());
-                    updateDeathFields();
-                    Notifications.create().title("Updated Death Details").text(actionText).showInformation();
-
-                    checkCountry();
-
-                    Stage stage = (Stage) applyButton.getScene().getWindow();
-                    stage.close();
-
-                    PageNavigator.refreshAllWindows();
-
-
-
-                    HistoryItem save = new HistoryItem("UPDATE CLIENT INFO",
+                HistoryItem save = new HistoryItem("UPDATE CLIENT INFO",
                         String.format("Updated client %s with values: %s", client.getFullName(), actionText));
-                    JSONConverter.updateHistory(save, "action_history.json");
+                JSONConverter.updateHistory(save, "action_history.json");
                 }
+
+            if (client.getDateOfDeath() == null) {
+                PageNavigator.showAlert(AlertType.WARNING, "Date of death must be set", "You must set the date of "
+                        + "death to apply changes ");
+            }
 
             }
 
