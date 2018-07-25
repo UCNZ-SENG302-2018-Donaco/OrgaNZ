@@ -77,8 +77,6 @@ public final class State {
     public static void init(DataStorageType storageType) {
         currentStorageType = storageType;
 
-        imageManager = new ImageManager();
-
         if (storageType == DataStorageType.REST) {
             ClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
             restTemplate.setRequestFactory(requestFactory);
@@ -97,6 +95,7 @@ public final class State {
             clinicianResolver = new ClinicianResolverRest();
             administratorResolver = new AdministratorResolverRest();
             fileResolver = new FileResolverRest();
+            imageManager = new ImageManagerRest();
         } else if (storageType == DataStorageType.MEMORY) {
             clientManager = new ClientManagerMemory();
             clientResolver = new ClientResolverMemory();
@@ -110,6 +109,7 @@ public final class State {
             clinicianResolver = new ClincianResolverMemory();
             administratorResolver = new AdministratorResolverMemory();
             fileResolver = new FileResolverMemory();
+            imageManager = new ImageManagerMemory();
         } else {
             throw new IllegalArgumentException("DataStorageType cannot be null.");
         }

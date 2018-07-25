@@ -1,9 +1,11 @@
 package com.humanharvest.organz.controller.client;
 
-import static com.humanharvest.organz.state.State.getClientManager;
-
-import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -11,21 +13,11 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.OptionalInt;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.imageio.ImageIO;
-
-import javafx.scene.layout.GridPane;
-import org.apache.commons.io.IOUtils;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.SimpleBooleanProperty;
 import javafx.collections.FXCollections;
-import javafx.css.PseudoClass;
 import javafx.fxml.FXML;
-import javafx.scene.Group;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -33,11 +25,9 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
@@ -52,7 +42,6 @@ import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.ui.validation.UIValidation;
 import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.enums.BloodType;
 import com.humanharvest.organz.utilities.enums.Gender;
@@ -60,9 +49,9 @@ import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
-import com.humanharvest.organz.utilities.validators.IntValidator;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.views.client.ModifyClientObject;
+import org.apache.commons.io.IOUtils;
 import org.controlsfx.control.Notifications;
 
 /**
@@ -147,9 +136,8 @@ public class ViewClientController extends ViewBaseController {
     private GridPane gridPane;
     private Image image;
 
-
     public ViewClientController() {
-        manager = getClientManager();
+        manager = State.getClientManager();
         session = State.getSession();
     }
 
@@ -169,9 +157,7 @@ public class ViewClientController extends ViewBaseController {
         region.setItems(FXCollections.observableArrayList(Region.values()));
         fullName.setWrapText(true);
 
-
     }
-
 
     @Override
     public void setup(MainController mainController) {
@@ -224,7 +210,6 @@ public class ViewClientController extends ViewBaseController {
         address.setText(viewedClient.getCurrentAddress());
         fullName.setText(viewedClient.getPreferredNameFormatted());
 
-
         creationDate.setText(formatter.format(viewedClient.getCreatedTimestamp()));
 
         if (viewedClient.getModifiedTimestamp() == null) {
@@ -236,7 +221,6 @@ public class ViewClientController extends ViewBaseController {
         displayAge();
 
     }
-
 
     /**
      * Saves the changes a user makes to the viewed client if all their inputs are valid.
@@ -262,15 +246,20 @@ public class ViewClientController extends ViewBaseController {
         try {
             deletePhotoButton.setDisable(false);
             bytes = State.getImageManager().getClientImage(viewedClient.getUid());
-        } catch (Exception ex) {
+        } catch (NotFoundException ex) {
             try {
                 deletePhotoButton.setDisable(true);
                 bytes = State.getImageManager().getDefaultImage();
 
             } catch (IOException e) {
-                ex.printStackTrace();
+                LOGGER.log(Level.SEVERE, "IO Exception when loading image ", e);
                 return;
             }
+        } catch (ServerRestException e) {
+            PageNavigator.showAlert(AlertType.ERROR, "Server Error", "Something went wrong with the server. "
+                    + "Please try again later.");
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            return;
         }
         image = new Image(new ByteArrayInputStream(bytes));
 
@@ -291,7 +280,7 @@ public class ViewClientController extends ViewBaseController {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Upload Profile Image");
         fileChooser.getExtensionFilters().addAll(
-                new ExtensionFilter("Image Files", "*.png") // Restricting only this file type.
+                new ExtensionFilter("PNG files (*.png)", "*.png") // Restricting only this file type.
         );
 
         File selectedFile = fileChooser.showOpenDialog(AppUI.getWindow());
@@ -306,7 +295,8 @@ public class ViewClientController extends ViewBaseController {
 //                image = new Image(selectedFile.toURI().toString());
                 try {
                     InputStream in = new FileInputStream(selectedFile);
-                    uploadSuccess = State.getImageManager().postClientImage(viewedClient.getUid(), IOUtils.toByteArray(in));
+                    uploadSuccess = State.getImageManager()
+                            .postClientImage(viewedClient.getUid(), IOUtils.toByteArray(in));
 
                 } catch (FileNotFoundException ex) {
                     PageNavigator.showAlert(AlertType.WARNING, "File Couldn't Be Found",
@@ -314,9 +304,9 @@ public class ViewClientController extends ViewBaseController {
                 } catch (IOException ex) {
                     PageNavigator.showAlert(AlertType.WARNING, "File Couldn't Be Read",
                             "This file could not be read. Ensure you are uploading a valid .png or .jpg");
-                } catch (ServerRestException ex) {
-                    ex.printStackTrace();
-                    PageNavigator.showAlert(AlertType.ERROR,"Server Error", "Something went wrong with the server. "
+                } catch (ServerRestException e) {
+                    LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                    PageNavigator.showAlert(AlertType.ERROR, "Server Error", "Something went wrong with the server. "
                             + "Please try again later.");
                 }
             }
@@ -335,10 +325,10 @@ public class ViewClientController extends ViewBaseController {
         try {
             State.getImageManager().deleteClientImage(viewedClient.getUid());
             loadImage();
-        } catch (Exception e) {
-            PageNavigator.showAlert(AlertType.ERROR,"Server Error", "Something went wrong with the server. "
+        } catch (ServerRestException e) {
+            PageNavigator.showAlert(AlertType.ERROR, "Server Error", "Something went wrong with the server. "
                     + "Please try again later.");
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
     }
 
@@ -421,7 +411,6 @@ public class ViewClientController extends ViewBaseController {
         }
         return update;
     }
-
 
     private void addChangeIfDifferent(ModifyClientObject modifyClientObject, String fieldString, Object newValue) {
         try {

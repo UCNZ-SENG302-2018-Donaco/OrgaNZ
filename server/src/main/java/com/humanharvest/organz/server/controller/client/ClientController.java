@@ -8,8 +8,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.EnumSet;
-import java.util.Objects;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonView;
@@ -52,7 +52,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -346,32 +345,35 @@ public class ClientController {
 
     }
 
-    @ResponseBody
     @GetMapping("clients/{uid}/image")
     public ResponseEntity<byte[]> getClientImage(
             @PathVariable int uid,
-            @RequestHeader(value = "If-Match", required = false) String etag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws InvalidRequestException, IfMatchFailedException, IfMatchRequiredException, IOException {
 
-        File directory = new File("./images");
+        String imagesDirectory = System.getProperty("user.home") + "/.organz/images/";
+
+        // Check if the directory exists. If not, then clearly the image doesn't
+        File directory = new File(imagesDirectory);
         if (!directory.exists()) {
-            directory.mkdir();
+            throw new NotFoundException();
         }
 
+        // Get the relevant client
         Optional<Client> optionalClient = State.getClientManager().getClientByID(uid);
         if (!optionalClient.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
         Client client = optionalClient.get();
+
+        // Verify they are authenticated to access this client
         State.getAuthenticationManager().verifyClientAccess(authToken, client);
 
-        try (InputStream in = new FileInputStream("./images/" + uid + ".png")) {
+        // Get image
+        try (InputStream in = new FileInputStream(imagesDirectory + uid + ".png")) {
             byte[] out = IOUtils.toByteArray(in);
             return new ResponseEntity<>(out, HttpStatus.OK);
-        }
-        catch (FileNotFoundException ex) {
+        } catch (FileNotFoundException ex) {
             throw new NotFoundException(ex);
         }
     }
@@ -381,22 +383,41 @@ public class ClientController {
             @PathVariable int uid,
             @RequestBody byte[] image,
             @RequestHeader(value = "If-Match", required = false) String etag,
-            @RequestHeader(value = "X-Auth-Token", required = false) String authToken) throws IOException {
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {
+
+        String imagesDirectory = System.getProperty("user.home") + "/.organz/images/";
+
+        // Create the directory if it doesn't exist
+        File directory = new File(imagesDirectory);
+        if (!directory.exists()) {
+            new File(System.getProperty("user.home") + "/.organz/").mkdir();
+            directory.mkdir();
+        }
+
+        // Get the relevant client
         Optional<Client> optionalClient = State.getClientManager().getClientByID(uid);
         if (!optionalClient.isPresent()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        File directory = new File("./images");
-        if (!directory.exists()) {
-            directory.mkdir();
-        }
-
         Client client = optionalClient.get();
+
+        // Verify they are authenticated to access this client
         State.getAuthenticationManager().verifyClientAccess(authToken, client);
 
-        try (OutputStream out = new FileOutputStream("./images/" + uid + ".png")) {
+        // Check the etag
+        if (etag == null) {
+            throw new IfMatchRequiredException();
+        }
+        if (!Objects.equals(client.getETag(), etag)) {
+            throw new IfMatchFailedException();
+        }
+
+        // Write the file
+        try (OutputStream out = new FileOutputStream(imagesDirectory + uid + ".png")) {
             out.write(image);
-            return new ResponseEntity(HttpStatus.OK);
+            return new ResponseEntity(HttpStatus.CREATED);
+        } catch (IOException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -405,25 +426,38 @@ public class ClientController {
             @PathVariable int uid,
             @RequestHeader(value = "If-Match", required = false) String etag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken) throws InvalidRequestException {
+        String imagesDirectory = System.getProperty("user.home") + "/.organz/images/";
 
-        Optional<Client> optionalClient = State.getClientManager().getClientByID(uid);
-        if (!optionalClient.isPresent()) {
-            throw new NotFoundException();
-        }
-        File directory = new File("./images");
+        // Create the directory if it doesn't exist
+        File directory = new File(imagesDirectory);
         if (!directory.exists()) {
             directory.mkdir();
         }
 
+        // Get the relevant client
+        Optional<Client> optionalClient = State.getClientManager().getClientByID(uid);
+        if (!optionalClient.isPresent()) {
+            throw new NotFoundException();
+        }
         Client client = optionalClient.get();
+
+        // Verify they are authenticated to access this client
         State.getAuthenticationManager().verifyClientAccess(authToken, client);
 
-        File file = new File("images/" + uid + ".png");
-        if (file.delete()) {
-            return new ResponseEntity(HttpStatus.OK);
+        // Check the etag
+        if (etag == null) {
+            throw new IfMatchRequiredException();
+        }
+        if (!Objects.equals(client.getETag(), etag)) {
+            throw new IfMatchFailedException();
+        }
 
+        // Delete the file
+        File file = new File(imagesDirectory + uid + ".png");
+        if (file.delete()) {
+            return new ResponseEntity(HttpStatus.CREATED);
         } else {
             return new ResponseEntity(HttpStatus.NOT_FOUND);
         }
     }
- }
+}
