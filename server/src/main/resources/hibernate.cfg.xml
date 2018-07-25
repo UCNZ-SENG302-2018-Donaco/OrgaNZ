@@ -41,5 +41,6 @@
     <mapping class="com.humanharvest.organz.Clinician"/>
     <mapping class="com.humanharvest.organz.Administrator"/>
     <mapping class="com.humanharvest.organz.HistoryItem"/>
+    <mapping class="com.humanharvest.organz.Config"/>
   </session-factory>
 </hibernate-configuration>

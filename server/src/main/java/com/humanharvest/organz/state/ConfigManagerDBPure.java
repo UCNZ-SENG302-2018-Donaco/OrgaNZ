@@ -5,6 +5,7 @@ import java.util.List;
 
 import javax.persistence.RollbackException;
 
+import com.humanharvest.organz.Config;
 import com.humanharvest.organz.database.DBManager;
 import com.humanharvest.organz.utilities.enums.Country;
 import org.hibernate.Transaction;
@@ -12,6 +13,7 @@ import org.hibernate.Transaction;
 public class ConfigManagerDBPure implements ConfigManager {
 
     private final DBManager dbManager;
+    private Config config;
 
     public ConfigManagerDBPure() {
         this.dbManager = DBManager.getInstance();
@@ -20,12 +22,12 @@ public class ConfigManagerDBPure implements ConfigManager {
     @Override
     public EnumSet<Country> getAllowedCountries() {
         Transaction trns = null;
-        List<Country> countries = null;
+        List<Config> countries = null;
 
         try (org.hibernate.Session session = dbManager.getDBSession()) {
             trns = session.beginTransaction();
             countries = dbManager.getDBSession()
-                    .createQuery("FROM Country", Country.class)
+                    .createQuery("FROM Config", Config.class)
                     .getResultList();
             trns.commit();
         } catch (RollbackException exc) {
@@ -36,7 +38,7 @@ public class ConfigManagerDBPure implements ConfigManager {
 
         EnumSet<Country> countrySet = EnumSet.noneOf(Country.class);
         if (countries != null) {
-            countrySet.addAll(countries);
+            countrySet.addAll(countries.get(0).getCountries());
         }
 
         return countrySet;
@@ -48,7 +50,7 @@ public class ConfigManagerDBPure implements ConfigManager {
         try (org.hibernate.Session session = dbManager.getDBSession()) {
             trns = session.beginTransaction();
 
-            session.createQuery("DELETE FROM Country").executeUpdate();
+            session.createQuery("DELETE FROM Config").executeUpdate();
 
             for (Country country : countries) {
                 session.save(country);

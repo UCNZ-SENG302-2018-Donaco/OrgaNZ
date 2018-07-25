@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.EnumSet;
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.logging.Level;
@@ -25,6 +26,7 @@ import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.clinician.ViewBaseController;
+import com.humanharvest.organz.resolvers.config.SetAllowedCountriesResolver;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
@@ -143,8 +145,14 @@ public class ViewClientController extends ViewBaseController {
         genderIdentity.setItems(FXCollections.observableArrayList(Gender.values()));
         btype.setItems(FXCollections.observableArrayList(BloodType.values()));
         regionCB.setItems(FXCollections.observableArrayList(Region.values()));
-        country.setItems(FXCollections.observableArrayList(Country.values()));
+        updateCountries();
         setFieldsDisabled(true);
+    }
+
+
+    private void updateCountries() {
+        EnumSet<Country> countries = State.getConfigManager().getAllowedCountries();
+        country.setItems(FXCollections.observableArrayList(countries));
     }
 
 
@@ -200,6 +208,7 @@ public class ViewClientController extends ViewBaseController {
         } else if (windowContext.isClinViewClientWindow()) {
             mainController.setTitle("View Client: " + viewedClient.getFullName());
         }
+        updateCountries();
     }
 
     /**

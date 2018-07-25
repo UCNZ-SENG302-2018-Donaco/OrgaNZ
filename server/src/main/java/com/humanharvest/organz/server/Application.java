@@ -16,13 +16,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class Application {
     public static void main(String[] args) throws Exception {
-        State.init(DataStorageType.MEMORY);
-        ClientManager clientManager = State.getClientManager();
-        Client jack = new Client("Jack", "EOD", "Steel", LocalDate.of(1997,04,21), 1);
-        clientManager.addClient(jack);
-        jack.setOrganDonationStatus(Organ.HEART, true);
-        jack.setOrganDonationStatus(Organ.KIDNEY, true);
-        clientManager.addClient(new Client("Second", "Test", "Client", LocalDate.of(1987,12,21), 2));
+        State.init(DataStorageType.PUREDB);
+//        ClientManager clientManager = State.getClientManager();
+//        Client jack = new Client("Jack", "EOD", "Steel", LocalDate.of(1997,04,21), 1);
+//        clientManager.addClient(jack);
+//        jack.setOrganDonationStatus(Organ.HEART, true);
+//        jack.setOrganDonationStatus(Organ.KIDNEY, true);
+//        clientManager.addClient(new Client("Second", "Test", "Client", LocalDate.of(1987,12,21), 2));
 
         SpringApplication.run(Application.class, args);
     }
