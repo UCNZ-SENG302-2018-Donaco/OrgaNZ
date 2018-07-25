@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalInt;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.humanharvest.organz.Client;
@@ -15,7 +16,11 @@ import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.ProcedureRecord;
 import com.humanharvest.organz.TransplantRequest;
+import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
+import com.humanharvest.organz.views.client.PaginatedTransplantList;
+import com.humanharvest.organz.views.client.TransplantRequestView;
 
 /**
  * An in-memory implementation of {@link ClientManager} that uses a simple list to hold all clients.
@@ -182,5 +187,35 @@ public class ClientManagerMemory implements ClientManager {
                 .flatMap(Collection::stream)
                 .filter(request -> request.getStatus() == TransplantRequestStatus.WAITING)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public PaginatedTransplantList getAllCurrentTransplantRequests(Integer offset, Integer count,
+            Set<Region> regions, Set<Organ> organs) {
+        // Determine requests that match filters
+        List<TransplantRequestView> matchingRequests = getClients().stream()
+                .filter(client -> regions == null || regions.isEmpty() || regions.contains(client.getRegion()))
+                .flatMap(client -> client.getTransplantRequests().stream())
+                .filter(request -> organs == null || organs.isEmpty() || organs.contains(request.getRequestedOrgan()))
+                .map(TransplantRequestView::new)
+                .collect(Collectors.toList());
+
+        // Return subset for given offset/count parameters (used for pagination)
+        if (offset == null) {
+            offset = 0;
+        }
+        if (count == null) {
+            return new PaginatedTransplantList(
+                    matchingRequests.subList(
+                            Math.min(offset, matchingRequests.size()),
+                            matchingRequests.size()),
+                    matchingRequests.size());
+        } else {
+            return new PaginatedTransplantList(
+                    matchingRequests.subList(
+                            Math.min(offset, matchingRequests.size()),
+                            Math.min(offset + count, matchingRequests.size())),
+                    matchingRequests.size());
+        }
     }
 }

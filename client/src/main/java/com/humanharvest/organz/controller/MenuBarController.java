@@ -65,7 +65,8 @@ public class MenuBarController extends SubController {
     public MenuItem historyItem;
     public MenuItem cliItem;
     public MenuItem logOutItem;
-    public MenuItem saveItem;
+    public MenuItem saveClientsItem;
+    public MenuItem saveCliniciansItem;
     public MenuItem loadItem;
     public MenuItem undoItem;
     public MenuItem redoItem;
@@ -149,7 +150,6 @@ public class MenuBarController extends SubController {
         refresh();
     }
 
-
     /**
      * Removes all menu items and menus that only admins should have.
      */
@@ -157,11 +157,11 @@ public class MenuBarController extends SubController {
         // Remove administrator file rights.
         hideMenuItem(createAdministratorItem);
         topSeparator.setVisible(false);
-        hideMenuItem(saveItem);
+        hideMenuItem(saveClientsItem);
+        hideMenuItem(saveCliniciansItem);
         hideMenuItem(loadItem);
         hideMenuItem(viewAdministratorItem);
         hideMenuItem(cliItem);
-
     }
 
     /**
@@ -332,12 +332,11 @@ public class MenuBarController extends SubController {
         PageNavigator.loadPage(Page.COMMAND_LINE, mainController);
     }
 
-
     /**
-     * Opens a save file dialog to choose where to save all clients in the system to a file.
+     * Opens a saveClients file dialog to choose where to save all clients in the system to a file.
      */
     @FXML
-    private void save() {
+    private void saveClients() {
         try {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Save Clients File");
@@ -349,7 +348,7 @@ public class MenuBarController extends SubController {
             File file = fileChooser.showSaveDialog(AppUI.getWindow());
             if (file != null) {
                 try (FileOutputStream output = new FileOutputStream(file)) {
-                    output.write(State.getClientFileResolver().exportClients());
+                    output.write(State.getFileResolver().exportClients());
                 }
 
                 Notifications.create()
@@ -358,7 +357,44 @@ public class MenuBarController extends SubController {
                         .showInformation();
 
                 HistoryItem historyItem = new HistoryItem("SAVE",
-                        String.format("The system's current state was saved to file '%s'.", file.getName()));
+                        String.format("The system's current client state was saved to file '%s'.", file.getName()));
+                State.getSession().addToSessionHistory(historyItem);
+
+                State.setUnsavedChanges(false);
+                PageNavigator.refreshAllWindows();
+            }
+        } catch (URISyntaxException | IOException e) {
+            PageNavigator.showAlert(AlertType.WARNING, "Save Failed", ERROR_SAVING_MESSAGE);
+            LOGGER.log(Level.SEVERE, ERROR_SAVING_MESSAGE, e);
+        }
+    }
+
+    /**
+     * Opens a saveClinicians file dialog to choose where to save all clinicians in the system to a file.
+     */
+    @FXML
+    private void saveClinicians() {
+        try {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Save Clinicians File");
+            fileChooser.setInitialDirectory(
+                    new File(Paths.get(AppUI.class.getProtectionDomain().getCodeSource().getLocation().toURI())
+                            .getParent().toString())
+            );
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json"));
+            File file = fileChooser.showSaveDialog(AppUI.getWindow());
+            if (file != null) {
+                try (FileOutputStream output = new FileOutputStream(file)) {
+                    output.write(State.getFileResolver().exportClinicians());
+                }
+
+                Notifications.create()
+                        .title("Saved Data")
+                        .text(String.format("Successfully saved all clinicians to file '%s'.", file.getName()))
+                        .showInformation();
+
+                HistoryItem historyItem = new HistoryItem("SAVE",
+                        String.format("The system's current clinician state was saved to file '%s'.", file.getName()));
                 State.getSession().addToSessionHistory(historyItem);
 
                 State.setUnsavedChanges(false);
@@ -400,7 +436,7 @@ public class MenuBarController extends SubController {
                 String format = getFileExtension(file.getName());
 
                 try {
-                    String message = State.getClientFileResolver().importClients(
+                    String message = State.getFileResolver().importClients(
                             Files.readAllBytes(file.toPath()), format);
 
                     LOGGER.log(Level.INFO, message);
@@ -531,13 +567,13 @@ public class MenuBarController extends SubController {
     }
 
     /**
-     * Prompts the user to save their changes if there are changes unsaved, then exits the program.
+     * Prompts the user to saveClients their changes if there are changes unsaved, then exits the program.
      */
     @FXML
     private void quitProgram() {
         if (State.isUnsavedChanges()) {
-            Alert unsavedAlert = PageNavigator.generateAlert(AlertType.WARNING, "Do you want to save the changes you have made?",
-                    "Your changes will be lost if you do not save them.");
+            Alert unsavedAlert = PageNavigator.generateAlert(AlertType.WARNING, "Do you want to saveClients the changes you have made?",
+                    "Your changes will be lost if you do not saveClients them.");
             ButtonType dontSave = new ButtonType("Don't Save");
             ButtonType cancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
             ButtonType save = new ButtonType("Save");
@@ -547,7 +583,7 @@ public class MenuBarController extends SubController {
             if (result.isPresent() && result.get() == dontSave) {
                 exit();
             } else if (result.isPresent() && result.get() == save) {
-                save();
+                saveClients();
                 exit();
             } else {
                 unsavedAlert.hide();

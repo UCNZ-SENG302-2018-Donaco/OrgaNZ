@@ -16,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 
 public class ClinicianManagerRest implements ClinicianManager {
 
+
     private static HttpHeaders newHttpHeaders() {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);

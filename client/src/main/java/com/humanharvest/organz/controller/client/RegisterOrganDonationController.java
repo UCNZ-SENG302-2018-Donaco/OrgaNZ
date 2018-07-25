@@ -146,7 +146,7 @@ public class RegisterOrganDonationController extends SubController {
                 }
             }
             if (session.getLoggedInUserType() == UserType.CLIENT) {
-                mainController.setTitle("Register Organs:  " + client.getPreferredName());
+                mainController.setTitle("Register Organs:  " + client.getPreferredNameFormatted());
             } else if (windowContext.isClinViewClientWindow()) {
                 mainController.setTitle("Register Organs:  " + client.getFullName());
             }

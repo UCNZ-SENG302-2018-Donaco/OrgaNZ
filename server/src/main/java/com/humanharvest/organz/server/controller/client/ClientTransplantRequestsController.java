@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.actions.Action;
@@ -17,6 +18,10 @@ import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
 import com.humanharvest.organz.utilities.validators.client.TransplantRequestValidator;
+import com.humanharvest.organz.views.client.PaginatedTransplantList;
+import com.humanharvest.organz.views.client.ResolveTransplantRequestObject;
+import com.humanharvest.organz.views.client.TransplantRequestView;
+import com.humanharvest.organz.views.client.Views;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,7 +55,8 @@ public class ClientTransplantRequestsController {
      * @throws AuthenticationException If the auth token does not belong to a clinician/admin.
      */
     @GetMapping("/clients/transplantRequests")
-    public ResponseEntity<Collection<TransplantRequest>> getAllTransplantRequests(
+    @JsonView(Views.Overview.class)
+    public ResponseEntity<PaginatedTransplantList> getAllTransplantRequests(
             @RequestParam(value = "offset", required = false) Integer offset,
             @RequestParam(value = "count", required = false) Integer count,
             @RequestParam(value = "region", required = false) List<Region> regions,
@@ -62,11 +68,12 @@ public class ClientTransplantRequestsController {
         State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
 
         // Get all requests that match region/organ filters
-        List<TransplantRequest> matchingRequests = State.getClientManager().getAllTransplantRequests().stream()
+        List<TransplantRequestView> matchingRequests = State.getClientManager().getAllTransplantRequests().stream()
                 .filter(transplantRequest ->
                         regions == null || regions.contains(transplantRequest.getClient().getRegion()))
                 .filter(transplantRequest ->
                         organs == null || organs.contains(transplantRequest.getRequestedOrgan()))
+                .map(TransplantRequestView::new)
                 .collect(Collectors.toList());
 
         // Return subset for given offset/count parameters (used for pagination)
@@ -74,16 +81,18 @@ public class ClientTransplantRequestsController {
             offset = 0;
         }
         if (count == null) {
-            return new ResponseEntity<>(
+            return new ResponseEntity<>(new PaginatedTransplantList(
                     matchingRequests.subList(
                             Math.min(offset, matchingRequests.size()),
                             matchingRequests.size()),
+                    matchingRequests.size()),
                     HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(
+            return new ResponseEntity<>(new PaginatedTransplantList(
                     matchingRequests.subList(
                             Math.min(offset, matchingRequests.size()),
                             Math.min(offset + count, matchingRequests.size())),
+                    matchingRequests.size()),
                     HttpStatus.OK);
         }
     }
@@ -177,15 +186,16 @@ public class ClientTransplantRequestsController {
 
     /**
      * Modifies a transplant request. Currently only allows resolution of requests.
-     * @param transplantRequest the transplant request to add
+     * @param resolveRequestObject the resolve request object
      * @param uid the client's ID
      * @param id the transplant request's ID
      * @param etag A hashed value of the object used for optimistic concurrency control
      * @return list of all transplant requests for that client
      */
     @PatchMapping("/clients/{uid}/transplantRequests/{id}")
-    public ResponseEntity<TransplantRequest> postTransplantRequest(
-            @RequestBody TransplantRequest transplantRequest,
+    @JsonView(Views.Overview.class)
+    public ResponseEntity<TransplantRequest> patchTransplantRequest(
+            @RequestBody ResolveTransplantRequestObject resolveRequestObject,
             @PathVariable int uid,
             @PathVariable int id,
             @RequestHeader(value = "If-Match", required = false) String etag,
@@ -193,64 +203,58 @@ public class ClientTransplantRequestsController {
 
         // Get the client given by the ID
         Optional<Client> optionalClient = State.getClientManager().getClientByID(uid);
-        if (optionalClient.isPresent()) {
-            Client client = optionalClient.get();
-            TransplantRequest originalTransplantRequest;
-
-            // Get the original transplant request given by the ID
-            try {
-                originalTransplantRequest =
-                        client.getTransplantRequestById(id).orElseThrow(IndexOutOfBoundsException::new);
-            } catch (IndexOutOfBoundsException e) {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-
-            // Check authentication
-            State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
-
-            // Check etag
-            if (etag == null) {
-                throw new IfMatchRequiredException();
-            }
-            if (!client.getETag().equals(etag)) {
-                throw new IfMatchFailedException();
-            }
-
-            // Validate the transplant request
-            try {
-                TransplantRequestValidator.validateTransplantRequest(originalTransplantRequest);
-            } catch (IllegalArgumentException e) {
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            }
-
-            // Patch currently only allows resolution of requests, so throw an error if other things have changed.
-            // Only the status, resolved reason, and resolved date (and time) are allowed to change.
-            // The client, organ, and request date (and time) must stay the same.
-            // If anything has illegally changed, it will return a 400.
-            if (originalTransplantRequest.getClient().getUid().equals(client.getUid())
-                    && originalTransplantRequest.getRequestedOrgan() == transplantRequest.getRequestedOrgan()
-                    && originalTransplantRequest.getRequestDate().equals(transplantRequest.getRequestDate())) {
-
-                // Resolve transplant request
-                Action action = new ResolveTransplantRequestAction(originalTransplantRequest,
-                        transplantRequest.getStatus(),
-                        transplantRequest.getResolvedReason(),
-                        transplantRequest.getResolvedDate(),
-                        State.getClientManager());
-                State.getActionInvoker(authToken).execute(action);
-
-                //Add the new ETag to the headers
-                HttpHeaders headers = new HttpHeaders();
-                headers.setETag(client.getETag());
-
-                return new ResponseEntity<>(originalTransplantRequest, headers, HttpStatus.CREATED);
-            } else {
-                // illegal changes
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            }
-        } else {
+        if (!optionalClient.isPresent()) {
             // no client exists with that ID - send a 404
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+
+        Client client = optionalClient.get();
+        TransplantRequest originalTransplantRequest;
+
+        // Get the original transplant request given by the ID
+        try {
+            originalTransplantRequest =
+                    client.getTransplantRequestById(id).orElseThrow(IndexOutOfBoundsException::new);
+        } catch (IndexOutOfBoundsException | NullPointerException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        // Check authentication
+        State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
+
+        // Check etag
+        if (etag == null) {
+            throw new IfMatchRequiredException();
+        }
+        if (!client.getETag().equals(etag)) {
+            throw new IfMatchFailedException();
+        }
+
+        // Patch currently only allows resolution of requests, so throw an error if other things have changed.
+        // Only the status, resolved reason, and resolved date (and time) are allowed to change.
+        // The client, organ, and request date (and time) must stay the same.
+        // If anything has illegally changed, it will return a 400.
+        if (resolveRequestObject.getResolvedDate() == null ||
+                resolveRequestObject.getResolvedReason() == null ||
+                resolveRequestObject.getResolvedReason().equals("") ||
+                resolveRequestObject.getResolvedDate().isBefore(originalTransplantRequest.getRequestDate())) {
+            // illegal changes
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        // Resolve transplant request
+        Action action = new ResolveTransplantRequestAction(originalTransplantRequest,
+                resolveRequestObject.getStatus(),
+                resolveRequestObject.getResolvedReason(),
+                resolveRequestObject.getResolvedDate(),
+                State.getClientManager());
+        State.getActionInvoker(authToken).execute(action);
+
+        //Add the new ETag to the headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.setETag(client.getETag());
+
+        return new ResponseEntity<>(originalTransplantRequest, headers, HttpStatus.CREATED);
+
     }
 }

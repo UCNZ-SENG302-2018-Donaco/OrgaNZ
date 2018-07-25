@@ -73,6 +73,7 @@ public class ClientIllnessesControllerTest {
         + "        \"curedDate\": null,\n"
         + "        \"chronic\": false\n"
         + "    }";
+      State.getClientManager().applyChangesTo(testClient);
 
   }
 
