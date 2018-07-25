@@ -10,8 +10,8 @@ import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.actions.clinician.CreateClinicianAction;
 import com.humanharvest.organz.state.ClinicianManager;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Region;
-import com.humanharvest.organz.utilities.pico_type_converters.PicoRegionConverter;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
@@ -54,12 +54,16 @@ public class CreateClinician implements Runnable {
     @Option(names = {"-a", "--address"}, description = "Work Address.")
     private String workAddress;
 
-    @Option(names = {"-r", "--region"}, description = "Region", converter = PicoRegionConverter.class)
-    private Region region;
+    @Option(names = {"-r", "--region"}, description = "Region")
+    private String region;
+
+    @Option(names = {"-c", "--country"}, description = "Country")
+    private String country;
 
     @Option(names = {"-p", "--password"}, description = "Clinician Password.")
     private String password;
 
+    @Override
     public void run() {
 
         if (manager.doesStaffIdExist(staffId)) {
@@ -68,7 +72,20 @@ public class CreateClinician implements Runnable {
             return;
         }
 
-        Clinician clinician = new Clinician(firstName, middleNames, lastName, workAddress, region.toString(), staffId,
+        Country countryValue = country == null ? null : Country.fromString(country);
+        if (countryValue == Country.NZ && region != null) {
+            // Check region is valid
+            Region.fromString(region);
+        }
+
+        Clinician clinician = new Clinician(
+                firstName,
+                middleNames,
+                lastName,
+                workAddress,
+                region,
+                countryValue,
+                staffId,
                 password);
 
         Action action = new CreateClinicianAction(clinician, manager);

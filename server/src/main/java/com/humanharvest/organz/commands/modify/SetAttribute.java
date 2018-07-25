@@ -14,11 +14,9 @@ import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.BloodType;
 import com.humanharvest.organz.utilities.enums.Gender;
-import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.pico_type_converters.PicoBloodTypeConverter;
 import com.humanharvest.organz.utilities.pico_type_converters.PicoGenderConverter;
 import com.humanharvest.organz.utilities.pico_type_converters.PicoLocalDateConverter;
-import com.humanharvest.organz.utilities.pico_type_converters.PicoRegionConverter;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
@@ -63,8 +61,11 @@ public class SetAttribute implements Runnable {
     @Option(names = "--currentaddress", description = "Current address")
     private String address;
 
-    @Option(names = "--region", description = "Region", converter = PicoRegionConverter.class)
+    @Option(names = "--region", description = "Region")
     private String region;
+
+    @Option(names = "--country", description = "Country")
+    private String country;
 
     @Option(names = "--gender", description = "Gender", converter = PicoGenderConverter.class)
     private Gender gender;
@@ -101,8 +102,9 @@ public class SetAttribute implements Runnable {
         states.put("firstName", new String[]{client.getFirstName(), firstName});
         states.put("middleName", new String[]{client.getMiddleName(), middleName});
         states.put("lastName", new String[]{client.getLastName(), lastName});
-        states.put("currentAddress", new String[]{client.getCurrentAddress(), address});
+        states.put("currentAddressgender", new String[]{client.getCurrentAddress(), address});
         states.put("region", new String[]{client.getRegion(), region});
+        states.put("country", new String[]{client.getCountry().toString(), country});
         states.put("gender", new Gender[]{client.getGender(), gender});
         states.put("bloodType", new BloodType[]{client.getBloodType(), bloodType});
         states.put("height", new Double[]{client.getHeight(), height});

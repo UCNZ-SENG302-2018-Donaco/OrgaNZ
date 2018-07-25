@@ -42,7 +42,7 @@ public class ClinicianControllerTest {
         State.reset();
         State.setAuthenticationManager(new AuthenticationManagerFake());
         this.mockMvc = webAppContextSetup(webApplicationContext).build();
-        testClinician = new Clinician("Shawn", "", "Michaels", "1", Region.UNSPECIFIED.name(), 1, "hi");
+        testClinician = new Clinician("Shawn", "", "Michaels", "1", Region.UNSPECIFIED.name(), null,1, "hi");
         State.setAuthenticationManager(new AuthenticationManagerFake());
 
     }

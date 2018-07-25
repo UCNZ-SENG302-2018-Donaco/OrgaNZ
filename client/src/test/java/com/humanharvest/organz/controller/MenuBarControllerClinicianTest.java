@@ -6,6 +6,7 @@ import static org.testfx.matcher.base.NodeMatchers.isVisible;
 
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
@@ -14,7 +15,7 @@ import org.junit.Test;
 public class MenuBarControllerClinicianTest extends  ControllerTest {
 
     private Clinician testClinician = new Clinician("Mr", null, "Tester",
-            "9 Fake St", Region.AUCKLAND.toString(), 3, "k");
+            "9 Fake St", Region.AUCKLAND.toString(), Country.NZ, 3, "k");
 
     @Override
     protected Page getPage() { return Page.MENU_BAR;  }

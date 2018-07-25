@@ -17,9 +17,17 @@ import com.humanharvest.organz.utilities.enums.Region;
 public class ClinicianManagerMemory implements ClinicianManager{
 
     private final List<Clinician> clinicians;
-    private int defaultClinicianId = 0;
-    private Clinician defaultClinician = new Clinician("admin", null, "admin", "admin", Region.UNSPECIFIED.name(),
-            defaultClinicianId, "admin");
+    private static final int defaultClinicianId = 0;
+
+    private final Clinician defaultClinician = new Clinician(
+            "admin",
+            null,
+            "admin",
+            "admin",
+            "Unspecified",
+            null,
+            defaultClinicianId,
+            "admin");
 
     public ClinicianManagerMemory() {
         clinicians = new ArrayList<>();

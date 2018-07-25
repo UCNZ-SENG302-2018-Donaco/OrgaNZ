@@ -64,12 +64,20 @@ public class Clinician implements ConcurrencyControlledEntity {
      * @param middleName Middle name(s). May be null
      * @param lastName Last name string
      * @param workAddress Address string
-     * @param region Region from the Region ENUM
+     * @param region Region either from the Region ENUM in NZ or a string.
+     * @param country Country of the clinician.
      * @param staffId The unique staffId. Should be checked using the ClinicianManager to ensure uniqueness
      * @param password The clinicians password for logins. Stored in plaintext
      */
-    public Clinician(String firstName, String middleName, String lastName, String workAddress, String region,
-            int staffId, String password) {
+    public Clinician(
+            String firstName,
+            String middleName,
+            String lastName,
+            String workAddress,
+            String region,
+            Country country,
+            int staffId,
+            String password) {
         createdOn = LocalDateTime.now();
 
         this.firstName = firstName;
@@ -77,6 +85,7 @@ public class Clinician implements ConcurrencyControlledEntity {
         this.lastName = lastName;
         this.workAddress = workAddress;
         this.region = region;
+        this.country = country;
         this.staffId = staffId;
         this.password = password;
     }

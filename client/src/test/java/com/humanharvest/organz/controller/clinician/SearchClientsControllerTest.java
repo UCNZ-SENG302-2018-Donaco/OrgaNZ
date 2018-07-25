@@ -21,6 +21,7 @@ import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.controller.ControllerTest;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
@@ -38,8 +39,9 @@ import org.testfx.matcher.control.TextMatchers;
 @Ignore
 public class SearchClientsControllerTest extends ControllerTest {
 
-    private final Clinician testClinician = new Clinician("Admin", "Da", "Nimda", "2 Two Street", Region
-            .CANTERBURY.toString(),
+    private final Clinician testClinician = new Clinician("Admin", "Da", "Nimda", "2 Two Street",
+            Region.CANTERBURY.toString(),
+            Country.NZ,
             55, "admin");
     private final Client testClient1 = new Client(
             "tom", "Delta", "1", LocalDate.now().minusYears(100), 1); // 100 years old

@@ -9,6 +9,7 @@ import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.state.ClinicianManager;
 import com.humanharvest.organz.state.ClinicianManagerMemory;
+import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Region;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,11 +29,11 @@ public class ModifyClinicianTest extends BaseTest {
         spyModifyClinician = spy(new ModifyClinician(spyClinicianManager, new ActionInvoker()));
 
         Clinician clinician = new Clinician("first", "middle", "last",
-                "address", Region.CANTERBURY.name(), staffId, "password");
+                "address", Region.CANTERBURY.name(), Country.NZ, staffId, "password");
         spyClinicianManager.addClinician(clinician);
 
         testClinician = new Clinician("first", "middle", "last",
-                "address", Region.CANTERBURY.name(), testStaffId, "password");
+                "address", Region.CANTERBURY.name(), Country.NZ, testStaffId, "password");
     }
 
     @Test

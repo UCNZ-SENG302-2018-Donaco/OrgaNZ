@@ -22,6 +22,7 @@ import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.controller.ControllerTest;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
@@ -36,7 +37,8 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
 
     private TransplantRequest heartRequest;
     private Collection<TransplantRequest> sampleRequests = new ArrayList<>();
-    private Clinician testClinician = new Clinician("Mr", null, "Tester", "9 Fake St", Region.AUCKLAND.toString(), 1000,
+    private Clinician testClinician = new Clinician("Mr", null, "Tester", "9 Fake St", Region.AUCKLAND.toString(), Country.NZ,
+            1000,
             "qwerty");
     private Client testClient = new Client(1);
 

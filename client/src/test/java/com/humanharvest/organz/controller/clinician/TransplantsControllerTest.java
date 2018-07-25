@@ -46,7 +46,7 @@ public class TransplantsControllerTest extends ControllerTest {
     // Test data
 
     private Clinician testClinician = new Clinician("A", "B", "C", "D",
-            Region.UNSPECIFIED.toString(), 0, "E");
+            Region.UNSPECIFIED.toString(), null, 0, "E");
 
     private Client client1 = new Client("Client", "Number", "One", LocalDate.now(), 1);
     private TransplantRequest request1a = new TransplantRequest(client1, Organ.LIVER);
