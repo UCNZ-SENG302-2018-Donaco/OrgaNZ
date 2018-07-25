@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.ProcedureRecord;
@@ -45,6 +46,11 @@ public class ClientResolverMemory implements ClientResolver {
 
     public List<ProcedureRecord> getProcedureRecords(Client client) {return client.getProcedures(); }
 
+    @Override
+    public List<HistoryItem> getHistory(Client client) {
+        return client.getChangesHistory();
+    }
+
     //------------POSTs----------------
 
     public Client createClient(CreateClientView createClientView) {
@@ -78,6 +84,7 @@ public class ClientResolverMemory implements ClientResolver {
                 createIllnessView.getDiagnosisDate(),
                 createIllnessView.isChronic());
         client.addIllnessRecord(illnessRecord);
+        State.getClientManager().applyChangesTo(client);
         return client.getIllnesses();
     }
 
@@ -85,6 +92,7 @@ public class ClientResolverMemory implements ClientResolver {
         MedicationRecord medicationRecord = new MedicationRecord(medicationRecordView.getName(),
                 LocalDate.now(), null);
         client.addMedicationRecord(medicationRecord);
+        State.getClientManager().applyChangesTo(client);
         return client.getMedications();
     }
 
@@ -94,6 +102,7 @@ public class ClientResolverMemory implements ClientResolver {
                 procedureView.getDescription(),
                 procedureView.getDate());
         client.addProcedureRecord(procedureRecord);
+        State.getClientManager().applyChangesTo(client);
         return client.getProcedures();
     }
 

@@ -308,14 +308,31 @@ public class ClientController {
         return new ResponseEntity<>(client, headers, HttpStatus.OK);
     }
 
-    @GetMapping("/clients/{uid}/")
+    /**
+     * Returns the specified clients history
+     * @param uid identifier of the client
+     * @param authToken id token
+     * @return The list of HistoryItems
+     */
+    @GetMapping("/clients/{uid}/history")
     public ResponseEntity<List<HistoryItem>> getHistory(
             @PathVariable int uid,
-            @RequestHeader(value = "If-Match", required = false) String etag,
-            @RequestHeader(value = "X-Auth-Token", required = false) String authToken,
-            @RequestBody SingleDateView dateOfDeath)
-            throws IfMatchRequiredException, IfMatchFailedException, InvalidRequestException
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
+            throws IfMatchRequiredException, IfMatchFailedException, InvalidRequestException {
 
-    )
+        Optional<Client> client = State.getClientManager().getClientByID(uid);
+        if (client.isPresent()) {
+            //Authenticate
+            State.getAuthenticationManager().verifyClientAccess(authToken, client.get());
+            //Add the new ETag to the headers
+            HttpHeaders headers = new HttpHeaders();
+            headers.setETag(client.get().getETag());
+
+            return new ResponseEntity<>(client.get().getChangesHistory(), headers, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+    }
 
 }

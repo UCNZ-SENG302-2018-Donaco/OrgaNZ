@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.ProcedureRecord;
@@ -42,6 +43,8 @@ public interface ClientResolver {
     List<MedicationRecord> getMedicationRecords(Client client);
 
     List<ProcedureRecord> getProcedureRecords(Client client);
+
+    List<HistoryItem> getHistory(Client client);
 
     //------------POSTs----------------
 

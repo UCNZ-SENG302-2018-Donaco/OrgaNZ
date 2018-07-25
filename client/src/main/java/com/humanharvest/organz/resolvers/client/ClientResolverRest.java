@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.ProcedureRecord;
@@ -78,6 +79,19 @@ public class ClientResolverRest implements ClientResolver {
                 State.BASE_URI + "clients/{id}/procedures",
                 HttpMethod.GET,
                 new ParameterizedTypeReference<List<ProcedureRecord>>() {
+                }, client.getUid());
+        return responseEntity.getBody();
+    }
+
+    @Override
+    public List<HistoryItem> getHistory(Client client) {
+        HttpHeaders httpHeaders = createHeaders(false);
+        httpHeaders.setETag(State.getClientEtag());
+
+        ResponseEntity<List<HistoryItem>> responseEntity = sendQuery(httpHeaders,
+                State.BASE_URI + "clients/{id}/history",
+                HttpMethod.GET,
+                new ParameterizedTypeReference<List<HistoryItem>>() {
                 }, client.getUid());
         return responseEntity.getBody();
     }

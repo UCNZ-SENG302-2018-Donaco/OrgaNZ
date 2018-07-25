@@ -1,6 +1,9 @@
 package com.humanharvest.organz.resolvers.administrator;
 
+import java.util.List;
+
 import com.humanharvest.organz.Administrator;
+import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.views.administrator.CreateAdministratorView;
 import com.humanharvest.organz.views.administrator.ModifyAdministratorObject;
@@ -20,5 +23,10 @@ public class AdministratorResolverMemory implements AdministratorResolver {
         BeanUtils.copyProperties(modifyAdministratorObject, administrator,
                 modifyAdministratorObject.getUnmodifiedFields());
         return administrator;
+    }
+
+    @Override
+    public List<HistoryItem> getHistory() {
+        return State.getSession().getSessionHistory();
     }
 }
