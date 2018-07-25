@@ -9,14 +9,13 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
-import com.humanharvest.organz.Administrator;
-import com.humanharvest.organz.actions.administrator.CreateAdministratorAction;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.state.AdministratorManager;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.views.administrator.CreateAdministratorView;
 
 public class CreateAdministratorController extends SubController {
 
@@ -112,10 +111,19 @@ public class CreateAdministratorController extends SubController {
     @FXML
     void createUser() {
         if (fieldsAreValid()) {
-            Administrator administrator = new Administrator(usernameTextField.getText(), passwordField.getText());
 
-            CreateAdministratorAction action = new CreateAdministratorAction(administrator, administratorManager);
-            State.getInvoker().execute(action);
+            String username = usernameTextField.getText();
+            String password = passwordField.getText();
+
+            CreateAdministratorView administratorView =
+                    new CreateAdministratorView(
+                            username,
+                            password);
+
+            //TODO: Add error handling for rest errors
+            State.getAdministratorResolver().createAdministrator(administratorView);
+
+            State.getAuthenticationManager().loginAdministrator(username, password);
 
             PageNavigator.loadPage(Page.SEARCH, mainController);
         }

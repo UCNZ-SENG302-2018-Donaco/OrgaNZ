@@ -15,10 +15,6 @@ import javafx.scene.layout.HBox;
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.HistoryItem;
-import com.humanharvest.organz.actions.Action;
-import com.humanharvest.organz.actions.ActionInvoker;
-import com.humanharvest.organz.actions.administrator.DeleteAdministratorAction;
-import com.humanharvest.organz.actions.clinician.DeleteClinicianAction;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.state.AdministratorManager;
@@ -31,7 +27,6 @@ public class StaffListController extends SubController {
 
     private ClinicianManager clinicianManager;
     private AdministratorManager adminManager;
-    private ActionInvoker invoker;
 
     @FXML
     private HBox menuBarPane;
@@ -45,7 +40,6 @@ public class StaffListController extends SubController {
     public StaffListController() {
         this.adminManager = State.getAdministratorManager();
         this.clinicianManager = State.getClinicianManager();
-        this.invoker = State.getInvoker();
 
         this.defaultAdminUsername = adminManager.getDefaultAdministrator().getUsername();
         this.defaultClinicianId = Integer.toString(clinicianManager.getDefaultClinician().getStaffId());
@@ -116,8 +110,7 @@ public class StaffListController extends SubController {
             Clinician clinician = clinicianManager.getClinicianByStaffId(Integer.parseInt(id))
                     .orElseThrow(IllegalArgumentException::new);
 
-            Action action = new DeleteClinicianAction(clinician, clinicianManager);
-            invoker.execute(action);
+            State.getClinicianManager().removeClinician(clinician);
 
             HistoryItem deleteClinician = new HistoryItem("DELETE", "Clinician " + id + " deleted");
             JSONConverter.updateHistory(deleteClinician, actionHistoryFilename);
@@ -125,8 +118,7 @@ public class StaffListController extends SubController {
             Administrator administrator = adminManager.getAdministratorByUsername(id)
                     .orElseThrow(IllegalArgumentException::new);
 
-            Action action = new DeleteAdministratorAction(administrator, adminManager);
-            invoker.execute(action);
+            State.getAdministratorManager().removeAdministrator(administrator);
 
             HistoryItem deleteAdministrator = new HistoryItem("DELETE", "Administrator " + id + " deleted");
             JSONConverter.updateHistory(deleteAdministrator, actionHistoryFilename);

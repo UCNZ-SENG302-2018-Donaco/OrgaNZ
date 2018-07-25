@@ -1,14 +1,12 @@
 package com.humanharvest.organz.controller;
 
-import java.io.File;
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.logging.Logger;
 
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -19,8 +17,6 @@ import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.JSONConverter;
-import com.humanharvest.organz.utilities.view.PageNavigator;
 
 /**
  * Controller for the history page.
@@ -76,20 +72,17 @@ public class HistoryController extends SubController {
 
     @Override
     public void refresh() {
-        if (session.getLoggedInUserType() == UserType.CLIENT) {
-            historyTable.setItems(FXCollections.observableArrayList(
-                    session.getLoggedInClient().getChangesHistory()
-            ));
-        } else if (windowContext.isClinViewClientWindow()) {
-            historyTable.setItems(FXCollections.observableArrayList(
-                    windowContext.getViewClient().getChangesHistory()
-            ));
+        List<HistoryItem> historyItems;
+        if (session.getLoggedInUserType() == UserType.CLIENT || windowContext.isClinViewClientWindow()) {
+            historyItems = State.getClientResolver().getHistory(session.getLoggedInClient());
+        } else if (session.getLoggedInUserType() == UserType.CLINICIAN) {
+            historyItems = State.getClinicianResolver().getHistory(session.getLoggedInClinician());
         } else {
-            // TODO: Get complete history from server
-            historyTable.setItems(FXCollections.observableArrayList(
-                    session.getSessionHistory()
-            ));
+
+            historyItems = State.getAdministratorResolver().getHistory();
         }
+
+        historyTable.setItems(FXCollections.observableArrayList(historyItems));
 
         FXCollections.sort(historyTable.getItems(), (h1, h2) -> h2.getTimestamp().compareTo(h1.getTimestamp()));
     }

@@ -1,5 +1,6 @@
 package com.humanharvest.organz.controller.client;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -37,7 +38,6 @@ import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
 import com.humanharvest.organz.utilities.web.DrugInteractionsHandler;
 import com.humanharvest.organz.utilities.web.MedActiveIngredientsHandler;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.testfx.api.FxRobot;
 
@@ -119,9 +119,9 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
 
     @Test
     public void modifyButtonsEnabledTest() {
-        verifyThat("#moveToHistoryButton", (Button b) -> !b.isDisabled());
-        verifyThat("#moveToCurrentButton", (Button b) -> !b.isDisabled());
-        verifyThat("#deleteButton", (Button b) -> !b.isDisabled());
+        verifyThat("#moveToHistoryButton", (Button button) -> !button.isDisabled());
+        verifyThat("#moveToCurrentButton", (Button button) -> !button.isDisabled());
+        verifyThat("#deleteButton", (Button button) -> !button.isDisabled());
     }
 
     @Test
@@ -139,33 +139,24 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
     }
 
     @Test
-    @Ignore
     public void addNewMedicationWithButtonTest() {
-        MedicationRecord toBeAdded = new MedicationRecord("Med D", LocalDate.now(), null);
-
-        clickOn("#newMedField").write(toBeAdded.getMedicationName());
+        clickOn("#newMedField").write("Med D");
         clickOn("Add Medication");
 
         //Assert that the currentMedications list contains an entry with name "Med D"
-        assertTrue(testClient.getCurrentMedications().stream().anyMatch(medicationRecord -> "Med D".equals
-                (medicationRecord.getMedicationName())));
+        assertThat(testClient.getCurrentMedications()).extracting(("medicationName")).contains("Med D");
     }
 
     @Test
-    @Ignore
     public void addNewMedicationWithEnterTest() {
-        MedicationRecord toBeAdded = new MedicationRecord("Med D", LocalDate.now(), null);
-
-        clickOn("#newMedField").write(toBeAdded.getMedicationName());
-        type(KeyCode.ENTER);
+        clickOn("#newMedField").write("Med D");
+        press(KeyCode.ENTER);
 
         //Assert that the currentMedications list contains an entry with name "Med D"
-        assertTrue(testClient.getCurrentMedications().stream().anyMatch(medicationRecord -> "Med D".equals
-                (medicationRecord.getMedicationName())));
+        assertThat(testClient.getCurrentMedications()).extracting(("medicationName")).contains("Med D");
     }
 
     @Test
-    @Ignore
     public void moveMedicationToPastTest() {
         MedicationRecord toBeMoved = testCurrentMedicationRecords[0];
 
@@ -190,7 +181,6 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
     }
 
     @Test
-    @Ignore
     public void deleteMedicationRecordTest() {
         MedicationRecord toBeDeleted = testPastMedicationRecords[0];
 
@@ -260,7 +250,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
 
     @Test
     public void viewActiveIngredientsTest() throws IOException {
-        ViewMedicationsController pageController = (ViewMedicationsController) super.pageController;
+        ViewMedicationsController pageController = (ViewMedicationsController)super.pageController;
         pageController.setActiveIngredientsHandler(createMockActiveIngredientsHandler(
                 "Ibuprofen",
                 Arrays.asList("Diphenhydramine citrate; ibuprofen",

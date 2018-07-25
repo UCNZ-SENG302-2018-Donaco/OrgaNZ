@@ -72,6 +72,10 @@ public class ProcedureRecord {
         return Collections.unmodifiableSet(affectedOrgans);
     }
 
+    public void setId(long id) {
+        this.id = id;
+    }
+
     /**
      * This method should be called only when this record is added to/removed from a client's collection.
      * Therefore it is package-private so it may only be called from Client.

@@ -9,7 +9,6 @@ import com.humanharvest.organz.resolvers.CommandRunner;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class MenuBarControllerAdminTest extends ControllerTest {
