@@ -2,6 +2,8 @@ package com.humanharvest.organz.controller.client;
 
 import static com.humanharvest.organz.controller.clinician.ViewBaseController.addChangeIfDifferent;
 
+import com.humanharvest.organz.HistoryItem;
+import com.humanharvest.organz.utilities.JSONConverter;
 import java.time.format.DateTimeFormatter;
 
 import javax.management.Notification;
@@ -141,9 +143,17 @@ public class EditDeathDetailsController extends SubController{
                             .showWarning();
                 } else {
 
-                    State.getClientResolver().modifyClientDetails(client, modifyClientObject);
+
+                    client = State.getClientResolver().modifyClientDetails(client, modifyClientObject);
                     String actionText = modifyClientObject.toString();
+                    System.out.println(modifyClientObject.getRegionOfDeath());
+                    System.out.println(modifyClientObject.getCountryOfDeath());
+                    System.out.println(client.getCountryOfDeath());
                     Notifications.create().title("Updated Death Details").text(actionText).showInformation();
+
+                    HistoryItem save = new HistoryItem("UPDATE CLIENT INFO",
+                        String.format("Updated client %s with values: %s", client.getFullName(), actionText));
+                    JSONConverter.updateHistory(save, "action_history.json");
                 }
 
             }

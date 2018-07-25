@@ -153,6 +153,42 @@ public class ModifyClientObject extends ModifyBaseObject {
         this.dateOfDeath = dateOfDeath;
     }
 
+    public String getTimeOfDeath() {
+        return timeOfDeath;
+    }
+
+    public void setTimeOfDeath(String timeOfDeath) {
+        registerChange("timeOfDeath");
+        this.timeOfDeath = timeOfDeath;
+    }
+
+    public String getRegionOfDeath() {
+        return regionOfDeath;
+    }
+
+    public void setRegionOfDeath(String regionOfDeath) {
+        registerChange("regionOfDeath");
+        this.regionOfDeath = regionOfDeath;
+    }
+
+    public String getCityOfDeath() {
+        return cityOfDeath;
+    }
+
+    public void setCityOfDeath(String cityOfDeath) {
+        registerChange("cityOfDeath");
+        this.cityOfDeath = cityOfDeath;
+    }
+
+    public String getCountryOfDeath() {
+        return countryOfDeath;
+    }
+
+    public void setCountryOfDeath(String countryOfDeath) {
+        registerChange("countryOfDeath");
+        this.countryOfDeath = countryOfDeath;
+    }
+
     public String toString() {
         String changesText = getModifiedFields().stream()
                 .map(ModifyClientObject::fieldString)

@@ -160,7 +160,7 @@ public class ClientController {
      * @throws InvalidRequestException Generic 400 exception if fields are malformed or inconsistent
      */
     @PatchMapping("/clients/{uid}")
-    @JsonView(Views.Overview.class)
+    @JsonView(Views.Details.class)
     public ResponseEntity<Client> updateClient(
             @PathVariable int uid,
             @RequestBody ModifyClientObject modifyClientObject,
