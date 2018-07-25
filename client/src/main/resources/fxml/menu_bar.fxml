@@ -11,7 +11,8 @@
         <menus>
           <Menu fx:id="filePrimaryItem" mnemonicParsing="false" text="File">
              <items>
-               <MenuItem fx:id="saveItem" mnemonicParsing="false" onAction="#save" text="Save" />
+               <MenuItem fx:id="saveClientsItem" mnemonicParsing="false" onAction="#saveClients" text="Save Clients" />
+               <MenuItem fx:id="saveCliniciansItem" mnemonicParsing="false" onAction="#saveClinicians" text="Save Clinicians" />
                <MenuItem fx:id="loadItem" mnemonicParsing="false" onAction="#load" text="Load" />
               <MenuItem fx:id="refreshCacheItem" mnemonicParsing="false" onAction="#refreshCache" text="Refresh cache" />
                   <SeparatorMenuItem fx:id="topSeparator" mnemonicParsing="false" />
