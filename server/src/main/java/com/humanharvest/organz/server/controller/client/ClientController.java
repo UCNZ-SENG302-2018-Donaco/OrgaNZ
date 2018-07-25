@@ -355,18 +355,18 @@ public class ClientController {
             @PathVariable int uid,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws InvalidRequestException, IfMatchFailedException, IfMatchRequiredException {
-
         String imagesDirectory = System.getProperty("user.home") + "/.organz/images/";
 
         // Check if the directory exists. If not, then clearly the image doesn't
         File directory = new File(imagesDirectory);
-        if (!directory.exists()) {
+        if (!directory.exists()) {System.out.println("1");
             throw new NotFoundException();
+
         }
 
         // Get the relevant client
         Optional<Client> optionalClient = State.getClientManager().getClientByID(uid);
-        if (!optionalClient.isPresent()) {
+        if (!optionalClient.isPresent()) {System.out.println("2");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         Client client = optionalClient.get();
@@ -375,10 +375,10 @@ public class ClientController {
         State.getAuthenticationManager().verifyClientAccess(authToken, client);
 
         // Get image
-        try (InputStream in = new FileInputStream(imagesDirectory + uid + ".png")) {
+        try (InputStream in = new FileInputStream(imagesDirectory + uid + ".png")) {System.out.println("3");
             byte[] out = IOUtils.toByteArray(in);
             return new ResponseEntity<>(out, HttpStatus.OK);
-        } catch (FileNotFoundException ex) {
+        } catch (FileNotFoundException ex) {System.out.println("4");
             throw new NotFoundException(ex);
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);

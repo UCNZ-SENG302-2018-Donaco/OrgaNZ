@@ -5,9 +5,6 @@ import java.io.IOException;
 import org.springframework.http.HttpHeaders;
 
 public interface ImageManager {
-
-    HttpHeaders generateHeaders();
-
     /**
      * Retrieves the image of the clients profile
      * @param uid id of the client
@@ -15,6 +12,11 @@ public interface ImageManager {
      */
     byte[] getClientImage(int uid);
 
+    /**
+     * Retrive the default image for the clients profile
+     * @return a byte array of the default image
+     * @throws IOException
+     */
     byte[] getDefaultImage() throws IOException;
 
     /**
