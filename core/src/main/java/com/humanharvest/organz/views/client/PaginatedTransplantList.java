@@ -23,7 +23,6 @@ public class PaginatedTransplantList {
     public PaginatedTransplantList(
             @JsonProperty("transplantRequestViews") List<TransplantRequestView> transplantRequestViews,
             @JsonProperty("totalResults") int totalResults) {
-        System.out.println("We made a PaginatedTransplantList");
         this.transplantRequestViews = transplantRequestViews;
         this.totalResults = totalResults;
     }

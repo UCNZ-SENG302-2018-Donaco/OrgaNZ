@@ -6,6 +6,7 @@ import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.TransplantRequest;
@@ -20,7 +21,6 @@ import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
 import com.humanharvest.organz.utilities.type_converters.EnumSetToString;
 import com.humanharvest.organz.views.client.PaginatedClientList;
 import com.humanharvest.organz.views.client.PaginatedTransplantList;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -162,9 +162,22 @@ public class ClientManagerRest implements ClientManager {
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(State.BASE_URI + "/clients/transplantRequests")
                 .queryParam("offset", offset)
-                .queryParam("count", count)
-                .queryParam("regions", regions)
-                .queryParam("organ", organs);
+                .queryParam("count", count);
+
+        if (regions != null && !regions.isEmpty()) {
+            builder = builder.queryParam("region", regions.stream()
+                    .map(Region::name)
+                    .collect(Collectors.toList()).toString()
+                    .substring(1, regions.toString().length() - 1)
+                    .replaceAll(" ", ""));
+        }
+        if (organs != null && !organs.isEmpty()) {
+            builder = builder.queryParam("organs", organs.stream()
+                    .map(Organ::name)
+                    .collect(Collectors.toList()).toString()
+                    .substring(1, organs.toString().length() - 1)
+                    .replaceAll(" ", ""));
+        }
 
         ResponseEntity<PaginatedTransplantList> response = State.getRestTemplate().exchange(
                 builder.toUriString(),

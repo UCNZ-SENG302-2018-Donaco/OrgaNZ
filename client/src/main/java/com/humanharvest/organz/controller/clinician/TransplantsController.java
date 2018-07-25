@@ -282,7 +282,7 @@ public class TransplantsController extends SubController {
     }
 
     private void updateTransplantRequestList() {
-        PaginatedTransplantList newTransplantRequests = State.getClientManager().getAllCurrentTransplantRequests(
+        PaginatedTransplantList newTransplantRequests = manager.getAllCurrentTransplantRequests(
                 pagination.getCurrentPageIndex() * ROWS_PER_PAGE,
                 ROWS_PER_PAGE,
                 regionsToFilter,
