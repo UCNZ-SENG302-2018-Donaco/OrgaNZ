@@ -205,7 +205,7 @@ public class Client implements ConcurrencyControlledEntity {
     }
 
     public void setProcedures(List<ProcedureRecord> procedures) {
-        this.procedures = procedures;
+        this.procedures = new ArrayList<>(procedures);
     }
 
     /**
@@ -793,7 +793,7 @@ public class Client implements ConcurrencyControlledEntity {
         return transplantRequests;
     }
 
-    public Optional<TransplantRequest> getTransplantRequestById(int id){
+    public Optional<TransplantRequest> getTransplantRequestById(long id){
         return transplantRequests.stream()
                 .filter(transplantRequest -> transplantRequest.getId() == id)
                 .findFirst();

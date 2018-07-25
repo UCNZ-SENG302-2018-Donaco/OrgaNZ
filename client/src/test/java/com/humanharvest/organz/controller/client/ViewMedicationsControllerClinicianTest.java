@@ -93,6 +93,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
         testClient = new Client(1);
 
         State.login(testClinician);
+        State.getClientManager().addClient(testClient);
         mainController.setWindowContext(new WindowContext.WindowContextBuilder()
                 .setAsClinicianViewClientWindow()
                 .viewClient(testClient)
