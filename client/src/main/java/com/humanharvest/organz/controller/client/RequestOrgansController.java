@@ -427,12 +427,13 @@ public class RequestOrgansController extends SubController {
                             + "statements.");
             }
 
-            ResolveTransplantRequestObject request = new ResolveTransplantRequestObject(
-                    selectedRequest, LocalDateTime.now(), status, resolvedReason);
+            ResolveTransplantRequestObject request = new ResolveTransplantRequestObject(LocalDateTime.now(), status,
+                    resolvedReason);
 
             try {
                 resolver.resolveTransplantRequest(
                         client,
+                        selectedRequest,
                         request);
             } catch (ServerRestException e) { //500
                 LOGGER.severe(e.getMessage());

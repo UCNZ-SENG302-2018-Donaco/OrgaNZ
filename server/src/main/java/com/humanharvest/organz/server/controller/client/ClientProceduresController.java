@@ -199,7 +199,7 @@ public class ClientProceduresController {
                 headers.setETag(client.get().getETag());
 
                 // Return OK response
-                return new ResponseEntity<>(headers, HttpStatus.CREATED);
+                return new ResponseEntity<>(headers, HttpStatus.OK);
             }
         }
 

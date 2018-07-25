@@ -205,13 +205,14 @@ public class ClientResolverRest implements ClientResolver {
         return responseEntity.getBody();
     }
 
-    public TransplantRequest resolveTransplantRequest(Client client, ResolveTransplantRequestObject request) {
+    public TransplantRequest resolveTransplantRequest(Client client, TransplantRequest request,
+            ResolveTransplantRequestObject resolveTransplantRequestObject) {
         HttpHeaders httpHeaders = createHeaders(true);
-        long id = request.getTransplantRequest().getId();
+        long id = request.getId();
         ResponseEntity<TransplantRequest> responseEntity = sendQuery(httpHeaders,
                 State.BASE_URI + "clients/{id}/transplantRequests/{requestIndex}",
                 HttpMethod.PATCH,
-                request,
+                resolveTransplantRequestObject,
                 TransplantRequest.class,
                 client.getUid(),
                 id);

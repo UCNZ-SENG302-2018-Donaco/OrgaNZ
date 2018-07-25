@@ -160,7 +160,7 @@ public class ClientMedicationsController {
             HttpHeaders httpHeaders = new HttpHeaders();
             httpHeaders.setETag(client.get().getETag());
 
-            return new ResponseEntity<>(httpHeaders, HttpStatus.CREATED);
+            return new ResponseEntity<>(httpHeaders, HttpStatus.OK);
         }
     }
 

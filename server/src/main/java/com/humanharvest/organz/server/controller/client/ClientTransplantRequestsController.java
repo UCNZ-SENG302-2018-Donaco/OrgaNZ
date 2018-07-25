@@ -203,64 +203,58 @@ public class ClientTransplantRequestsController {
 
         // Get the client given by the ID
         Optional<Client> optionalClient = State.getClientManager().getClientByID(uid);
-        if (optionalClient.isPresent()) {
-            Client client = optionalClient.get();
-            TransplantRequest originalTransplantRequest;
-
-            // Get the original transplant request given by the ID
-            try {
-                originalTransplantRequest =
-                        client.getTransplantRequestById(id).orElseThrow(IndexOutOfBoundsException::new);
-            } catch (IndexOutOfBoundsException e) {
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-
-            // Check authentication
-            State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
-
-            // Check etag
-            if (etag == null) {
-                throw new IfMatchRequiredException();
-            }
-            if (!client.getETag().equals(etag)) {
-                throw new IfMatchFailedException();
-            }
-
-            // Validate the transplant request
-            try {
-                TransplantRequestValidator.validateTransplantRequest(originalTransplantRequest);
-            } catch (IllegalArgumentException e) {
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            }
-
-            // Patch currently only allows resolution of requests, so throw an error if other things have changed.
-            // Only the status, resolved reason, and resolved date (and time) are allowed to change.
-            // The client, organ, and request date (and time) must stay the same.
-            // If anything has illegally changed, it will return a 400.
-            if (originalTransplantRequest.getClient().getUid().equals(client.getUid())
-                    && originalTransplantRequest.getRequestedOrgan() == resolveRequestObject.getTransplantRequest().getRequestedOrgan()
-                    && originalTransplantRequest.getRequestDate().equals(resolveRequestObject.getTransplantRequest().getRequestDate())) {
-
-                // Resolve transplant request
-                Action action = new ResolveTransplantRequestAction(originalTransplantRequest,
-                        resolveRequestObject.getStatus(),
-                        resolveRequestObject.getResolvedReason(),
-                        resolveRequestObject.getResolvedDate(),
-                        State.getClientManager());
-                State.getActionInvoker(authToken).execute(action);
-
-                //Add the new ETag to the headers
-                HttpHeaders headers = new HttpHeaders();
-                headers.setETag(client.getETag());
-
-                return new ResponseEntity<>(originalTransplantRequest, headers, HttpStatus.CREATED);
-            } else {
-                // illegal changes
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            }
-        } else {
+        if (!optionalClient.isPresent()) {
             // no client exists with that ID - send a 404
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+
+        Client client = optionalClient.get();
+        TransplantRequest originalTransplantRequest;
+
+        // Get the original transplant request given by the ID
+        try {
+            originalTransplantRequest =
+                    client.getTransplantRequestById(id).orElseThrow(IndexOutOfBoundsException::new);
+        } catch (IndexOutOfBoundsException | NullPointerException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        // Check authentication
+        State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
+
+        // Check etag
+        if (etag == null) {
+            throw new IfMatchRequiredException();
+        }
+        if (!client.getETag().equals(etag)) {
+            throw new IfMatchFailedException();
+        }
+
+        // Patch currently only allows resolution of requests, so throw an error if other things have changed.
+        // Only the status, resolved reason, and resolved date (and time) are allowed to change.
+        // The client, organ, and request date (and time) must stay the same.
+        // If anything has illegally changed, it will return a 400.
+        if (resolveRequestObject.getResolvedDate() == null ||
+                resolveRequestObject.getResolvedReason() == null ||
+                resolveRequestObject.getResolvedReason().equals("") ||
+                resolveRequestObject.getResolvedDate().isBefore(originalTransplantRequest.getRequestDate())) {
+            // illegal changes
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        // Resolve transplant request
+        Action action = new ResolveTransplantRequestAction(originalTransplantRequest,
+                resolveRequestObject.getStatus(),
+                resolveRequestObject.getResolvedReason(),
+                resolveRequestObject.getResolvedDate(),
+                State.getClientManager());
+        State.getActionInvoker(authToken).execute(action);
+
+        //Add the new ETag to the headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.setETag(client.getETag());
+
+        return new ResponseEntity<>(originalTransplantRequest, headers, HttpStatus.CREATED);
+
     }
 }
