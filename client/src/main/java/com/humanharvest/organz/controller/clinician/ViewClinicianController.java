@@ -91,6 +91,7 @@ public class ViewClinicianController extends ViewBaseController {
         switch (session.getLoggedInUserType()) {
             case ADMINISTRATOR:
                 viewedClinician = State.getClinicianManager().getDefaultClinician();
+//                viewedClinician =
                 break;
             case CLINICIAN:
                 viewedClinician = session.getLoggedInClinician();
