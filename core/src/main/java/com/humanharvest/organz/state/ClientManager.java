@@ -58,22 +58,25 @@ public interface ClientManager {
         }
         switch (sortOption) {
             case ID:
-                primarySorter = Comparator.comparing(Client::getUid);
+                primarySorter = Comparator.comparing(Client::getUid, Comparator.nullsLast(Comparator.naturalOrder()));
                 break;
             case AGE:
-                primarySorter = Comparator.comparing(Client::getAge);
+                primarySorter = Comparator.comparing(Client::getAge, Comparator.nullsLast(Comparator.naturalOrder()));
                 break;
             case DONOR:
-                primarySorter = Comparator.comparing(Client::isDonor);
+                primarySorter = Comparator.comparing(Client::isDonor, Comparator.nullsLast(Comparator.naturalOrder()));
                 break;
             case RECEIVER:
-                primarySorter = Comparator.comparing(Client::isReceiver);
+                primarySorter = Comparator
+                        .comparing(Client::isReceiver, Comparator.nullsLast(Comparator.naturalOrder()));
                 break;
             case REGION:
-                primarySorter = Comparator.comparing(Client::getRegion);
+                primarySorter = Comparator
+                        .comparing(Client::getRegion, Comparator.nullsLast(Comparator.naturalOrder()));
                 break;
             case BIRTH_GENDER:
-                primarySorter = Comparator.comparing(Client::getGender);
+                primarySorter = Comparator
+                        .comparing(Client::getGender, Comparator.nullsLast(Comparator.naturalOrder()));
                 break;
             case NAME:
             default:
@@ -115,11 +118,11 @@ public interface ClientManager {
 
         List<Client> paginatedClients = filteredClients.stream()
 
+                .sorted(dualSorter)
+
                 .skip(offset)
 
                 .limit(count)
-
-                .sorted(dualSorter)
 
                 .collect(Collectors.toList());
 

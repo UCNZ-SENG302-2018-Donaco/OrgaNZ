@@ -20,7 +20,6 @@ import javafx.scene.paint.Color;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.resolvers.clinician.ModifyClinicianResolver;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.JSONConverter;
@@ -276,8 +275,7 @@ public class ViewClinicianController extends ViewBaseController {
         }
 
         try {
-            ModifyClinicianResolver resolver = new ModifyClinicianResolver(viewedClinician, modifyClinicianObject);
-            viewedClinician = resolver.execute();
+            viewedClinician = State.getClinicianResolver().modifyClinician(viewedClinician, modifyClinicianObject);
             String actionText = modifyClinicianObject.toString();
 
             Notifications.create()

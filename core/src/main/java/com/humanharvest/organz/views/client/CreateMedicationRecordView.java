@@ -7,6 +7,9 @@ public class CreateMedicationRecordView {
     private String name;
     private LocalDate started;
 
+    public CreateMedicationRecordView() {
+    }
+
     public CreateMedicationRecordView(String name, LocalDate started) {
         this.name = name;
         this.started = started;

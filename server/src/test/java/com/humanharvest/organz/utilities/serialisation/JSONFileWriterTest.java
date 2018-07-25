@@ -35,7 +35,7 @@ public class JSONFileWriterTest {
     public void writeToNewFileTest() throws IOException {
         File file = new File(tempFolder.getRoot(), "new_file.json");
         try (JSONFileWriter<Client> clientJSONFileWriter = new JSONFileWriter<>(file, Client.class)) {
-            clientJSONFileWriter.overrideWith(testClients);
+            clientJSONFileWriter.overwriteWith(testClients);
             clientJSONFileWriter.close();
 
             List<Client> readClients = readClientsFromFile(file);

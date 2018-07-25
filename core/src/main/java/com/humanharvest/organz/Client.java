@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.persistence.Access;
@@ -65,16 +66,16 @@ public class Client implements ConcurrencyControlledEntity {
     @JsonView(Views.Details.class)
     private String currentAddress;
 
-    @JsonView(Views.Details.class)
+    @JsonView(Views.Overview.class)
     private String region;
     @Enumerated(EnumType.STRING)
-    @JsonView(Views.Details.class)
+    @JsonView(Views.Overview.class)
     private Country country;
     @Enumerated(EnumType.STRING)
-    @JsonView(Views.Details.class)
+    @JsonView(Views.Overview.class)
     private Gender gender;
     @Enumerated(EnumType.STRING)
-    @JsonView(Views.Details.class)
+    @JsonView(Views.Overview.class)
     private BloodType bloodType;
     @Enumerated(EnumType.STRING)
     @JsonView(Views.Details.class)
@@ -193,15 +194,19 @@ public class Client implements ConcurrencyControlledEntity {
     }
 
     public void setTransplantRequests(List<TransplantRequest> requests) {
-        transplantRequests = requests;
+        transplantRequests = new ArrayList<>(requests);
     }
 
     public void setMedicationHistory(List<MedicationRecord> medicationHistory) {
-        this.medicationHistory = medicationHistory;
+        this.medicationHistory = new ArrayList<>(medicationHistory);
     }
 
     public void setIllnessHistory(List<IllnessRecord> illnessHistory) {
-        this.illnessHistory = illnessHistory;
+        this.illnessHistory = new ArrayList<>(illnessHistory);
+    }
+
+    public void setProcedures(List<ProcedureRecord> procedures) {
+        this.procedures = procedures;
     }
 
     /**
@@ -227,12 +232,12 @@ public class Client implements ConcurrencyControlledEntity {
             if (builder.length() != 0) {
                 builder.append(", ");
             }
-            builder.append(organ.toString());
+            builder.append(organ);
         }
-        if (builder.length() != 0) {
-            return builder.toString();
-        } else {
+        if (builder.length() == 0) {
             return "None";
+        } else {
+            return builder.toString();
         }
     }
 
@@ -287,10 +292,10 @@ public class Client implements ConcurrencyControlledEntity {
      */
     public String getFullName() {
         String fullName = firstName + " ";
-        if (middleName != null && !middleName.equals("")) {
+        if (middleName != null && !middleName.isEmpty()) {
             fullName += middleName + " ";
         }
-        if (preferredName != null && !preferredName.equals("")) {
+        if (preferredName != null && !preferredName.isEmpty()) {
             fullName += "\"" + preferredName + "\" ";
         }
         fullName += lastName;
@@ -325,7 +330,7 @@ public class Client implements ConcurrencyControlledEntity {
     }
 
     public String getPreferredName() {
-        if (preferredName == null || preferredName.equals("")) {
+        if (preferredName == null || preferredName.isEmpty()) {
             return getFullName();
         }
         return preferredName;
@@ -472,14 +477,6 @@ public class Client implements ConcurrencyControlledEntity {
     }
 
     /**
-     * Returns a list containing all the medication records.
-     * @return The list of medication records of the Client.
-     */
-    public List<MedicationRecord> getMedicationRecords() {
-        return Collections.unmodifiableList(medicationHistory);
-    }
-
-    /**
      * Returns a new list containing the medications which are currently being used by the Client.
      * @return The list of medications currently being used by the Client.
      */
@@ -511,21 +508,6 @@ public class Client implements ConcurrencyControlledEntity {
         return Collections.unmodifiableList(medicationHistory);
     }
 
-    /**
-     * Returns the list of all past and current medications of the client
-     * @return medicationHistory of the client
-     */
-    public List<MedicationRecord> getAllMedications() {
-        return Collections.unmodifiableList(medicationHistory);
-    }
-
-    /**
-     * Returns all illness history past and present
-     * @return All illness Records for a specific client
-     */
-    public List<IllnessRecord> getAllIllnessHistory() {
-        return Collections.unmodifiableList(illnessHistory);
-    }
 
     /**
      * Adds a new MedicationRecord to the client's history.
@@ -636,7 +618,8 @@ public class Client implements ConcurrencyControlledEntity {
      * @param record The illness history that is wanted to be deleted
      */
     public void deleteIllnessRecord(IllnessRecord record) {
-        illnessHistory.remove(record);
+        int index = illnessHistory.indexOf(record);
+        illnessHistory.remove(index);
         record.setClient(null);
         updateModifiedTimestamp();
     }
@@ -811,6 +794,12 @@ public class Client implements ConcurrencyControlledEntity {
         return transplantRequests;
     }
 
+    public Optional<TransplantRequest> getTransplantRequestById(int id){
+        return transplantRequests.stream()
+                .filter(transplantRequest -> transplantRequest.getId() == id)
+                .findFirst();
+    }
+
     public void addTransplantRequest(TransplantRequest request) {
         transplantRequests.add(request);
         request.setClient(this);
@@ -867,6 +856,7 @@ public class Client implements ConcurrencyControlledEntity {
             return String.format("\"%d\"", modifiedTimestamp.hashCode());
         }
     }
+
     /**
      * Does the specified Client match the ClientType
      * @param type The ClientType to match

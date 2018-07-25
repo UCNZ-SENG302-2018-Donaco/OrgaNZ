@@ -9,14 +9,13 @@ import com.humanharvest.organz.ProcedureRecord;
 import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.actions.client.AddProcedureRecordAction;
 import com.humanharvest.organz.actions.client.DeleteProcedureRecordAction;
-import com.humanharvest.organz.actions.client.ModifyProcedureRecordByObjectAction;
+import com.humanharvest.organz.actions.client.ModifyProcedureRecordAction;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
 import com.humanharvest.organz.views.client.ModifyProcedureObject;
 import com.humanharvest.organz.views.client.Views;
-import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -126,20 +125,30 @@ public class ClientProceduresController {
                     throw new IfMatchFailedException();
                 }
 
-                // Create the old details to allow undoable action
-                ModifyProcedureObject oldProcedure = new ModifyProcedureObject();
-                // Copy the values from the current procedure to our oldProcedure
-                BeanUtils.copyProperties(toModify, oldProcedure, modifyProcedureObject.getUnmodifiedFields());
+                // Create action
+                ModifyProcedureRecordAction action = new ModifyProcedureRecordAction(
+                        toModify.get(), State.getClientManager());
 
-                // Make the modify procedure action, which registers all the modified fields on the action
-                Action action = new ModifyProcedureRecordByObjectAction(
-                        toModify.get(),
-                        State.getClientManager(),
-                        oldProcedure,
-                        modifyProcedureObject);
+                // Register all changes
+                if (modifyProcedureObject.getSummary() != null) {
+                    action.changeSummary(modifyProcedureObject.getSummary());
+                }
+                if (modifyProcedureObject.getDescription() != null) {
+                    action.changeDescription(modifyProcedureObject.getDescription());
+                }
+                if (modifyProcedureObject.getDate() != null) {
+                    action.changeDate(modifyProcedureObject.getDate());
+                }
+                if (modifyProcedureObject.getAffectedOrgans() != null) {
+                    action.changeAffectedOrgans(modifyProcedureObject.getAffectedOrgans());
+                }
 
                 // Execute the action
-                State.getActionInvoker(authToken).execute(action);
+                try {
+                    State.getActionInvoker(authToken).execute(action);
+                } catch (IllegalStateException exc) {
+                    return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+                }
 
                 // Add the new ETag to the headers
                 HttpHeaders headers = new HttpHeaders();
@@ -190,7 +199,7 @@ public class ClientProceduresController {
                 headers.setETag(client.get().getETag());
 
                 // Return OK response
-                return new ResponseEntity<>(client.get().getProcedures(), headers, HttpStatus.CREATED);
+                return new ResponseEntity<>(headers, HttpStatus.CREATED);
             }
         }
 

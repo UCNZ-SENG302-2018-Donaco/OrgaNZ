@@ -13,13 +13,11 @@ import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class SidebarControllerClientReceiverTest extends ControllerTest {
 
-    private Client client = new Client("Client", "Number", "One", LocalDate.now(), 1);
-
+    private final Client client = new Client("Client", "Number", "One", LocalDate.now(), 1);
 
     @Override
     protected Page getPage() {
@@ -38,7 +36,8 @@ public class SidebarControllerClientReceiverTest extends ControllerTest {
     // Test clicking on action buttons
 
     @Test
-    public void testClickOnUndo() {
+    public void
+    testClickOnUndo() {
         clickOn("#undoButton");
     }
 

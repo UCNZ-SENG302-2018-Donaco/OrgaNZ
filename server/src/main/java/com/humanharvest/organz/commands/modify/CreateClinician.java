@@ -60,7 +60,7 @@ public class CreateClinician implements Runnable {
     @Option(names = {"-c", "--country"}, description = "Country")
     private String country;
 
-    @Option(names = {"-p", "--password"}, description = "Clinician Password.")
+    @Option(names = {"-p", "--password"}, description = "Clinician Password.", defaultValue = "")
     private String password;
 
     @Override

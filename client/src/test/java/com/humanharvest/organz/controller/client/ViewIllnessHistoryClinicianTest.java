@@ -20,7 +20,6 @@ import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.testfx.util.NodeQueryUtils;
 
@@ -73,8 +72,9 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
             )
     };
 
-    private Clinician testClinician = new Clinician("A", "B", "C", "D", Region.UNSPECIFIED.toString(), null, 0, "E");
-    private Client testClient = new Client(1);
+    private final Clinician testClinician = new Clinician("A", "B", "C", "D", Region.UNSPECIFIED.toString(), null, 0,
+            "E");
+    private final Client testClient = new Client(1);
 
     @Override
     protected Page getPage() {
@@ -134,9 +134,6 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
         clickOn("#illnessNameField").write(toBeAdded.getIllnessName());
         clickOn("Add Illness");
 
-        for (IllnessRecord illness : testClient.getCurrentIllnesses()) {
-            System.out.println(illness);
-        }
         assertTrue(testClient.getCurrentIllnesses().stream()
                 .anyMatch(illness -> illness.getIllnessName().equals(toBeAdded.getIllnessName())));
     }
@@ -167,7 +164,7 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
                 addChronicTag.getDiagnosisDate(),
                 addChronicTag.isChronic()));
 
-        assertEquals(null, addChronicTag.getCuredDate());
+        assertNull(addChronicTag.getCuredDate());
         assertTrue(addChronicTag.isChronic());
     }
 
@@ -196,7 +193,7 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
                 chronicIllness.getIllnessName(),
                 chronicIllness.getDiagnosisDate(),
                 chronicIllness.isChronic()));
-        assertEquals(chronicIllness.getCuredDate(), null);
+        assertNull(chronicIllness.getCuredDate());
         assertTrue(chronicIllness.isChronic());
     }
 
@@ -218,7 +215,7 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
                 removeChronicTag.getIllnessName(),
                 removeChronicTag.getDiagnosisDate(),
                 removeChronicTag.isChronic())));
-        assertEquals(removeChronicTag.getCuredDate(), LocalDate.now());
+        assertEquals(LocalDate.now(), removeChronicTag.getCuredDate());
     }
 
     @Test
@@ -256,7 +253,7 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
                 toBeMoved.getIllnessName(),
                 toBeMoved.getDiagnosisDate(),
                 toBeMoved.isChronic())));
-        assertEquals(toBeMoved.getCuredDate(), LocalDate.now());
+        assertEquals(LocalDate.now(), toBeMoved.getCuredDate());
     }
 
     @Test

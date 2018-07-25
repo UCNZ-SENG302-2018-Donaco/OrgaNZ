@@ -1,8 +1,10 @@
 package com.humanharvest.organz.controller;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,14 +29,15 @@ import javafx.stage.Stage;
 import com.humanharvest.organz.AppUI;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
-import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.CacheManager;
+import com.humanharvest.organz.utilities.exceptions.BadRequestException;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.views.ActionResponseView;
 import org.controlsfx.control.Notifications;
 
 /**
@@ -83,7 +86,6 @@ public class MenuBarController extends SubController {
     public Menu filePrimaryItem;
     public Menu administrationPrimaryItem;
 
-    private ActionInvoker invoker;
     private ClientManager clientManager;
     private Session session;
 
@@ -91,7 +93,6 @@ public class MenuBarController extends SubController {
      * Gets the ActionInvoker from the current state.
      */
     public MenuBarController() {
-        invoker = State.getInvoker();
         clientManager = State.getClientManager();
         session = State.getSession();
     }
@@ -145,8 +146,7 @@ public class MenuBarController extends SubController {
             hideMenus(viewAllMenus);
         }
         closeItem.setDisable(!windowContext.isClinViewClientWindow());
-        undoItem.setDisable(!invoker.canUndo());
-        redoItem.setDisable(!invoker.canRedo());
+        refresh();
     }
 
 
@@ -348,16 +348,13 @@ public class MenuBarController extends SubController {
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json"));
             File file = fileChooser.showSaveDialog(AppUI.getWindow());
             if (file != null) {
-                /* TODO replace with GET request to /clients/file
-                try (JSONFileWriter<Client> clientWriter = new JSONFileWriter<>(file, Client.class)) {
-                    clientWriter.overwriteWith(clientManager.getClients());
+                try (FileOutputStream output = new FileOutputStream(file)) {
+                    output.write(State.getClientFileResolver().exportClients());
                 }
-                */
 
                 Notifications.create()
                         .title("Saved Data")
-                        .text(String.format("Successfully saved %s clients to file '%s'.",
-                                clientManager.getClients().size(), file.getName()))
+                        .text(String.format("Successfully saved all clients to file '%s'.", file.getName()))
                         .showInformation();
 
                 HistoryItem historyItem = new HistoryItem("SAVE",
@@ -367,7 +364,7 @@ public class MenuBarController extends SubController {
                 State.setUnsavedChanges(false);
                 PageNavigator.refreshAllWindows();
             }
-        } catch (URISyntaxException e) {
+        } catch (URISyntaxException | IOException e) {
             PageNavigator.showAlert(AlertType.WARNING, "Save Failed", ERROR_SAVING_MESSAGE);
             LOGGER.log(Level.SEVERE, ERROR_SAVING_MESSAGE, e);
         }
@@ -402,34 +399,9 @@ public class MenuBarController extends SubController {
             if (file != null) {
                 String format = getFileExtension(file.getName());
 
-                /* TODO replace with POST request to /clients/file endpoint
                 try {
-                    ReadClientStrategy strategy;
-                    switch (format) {
-                        case "csv":
-                            strategy = new CSVReadClientStrategy();
-                            break;
-                        case "json":
-                            strategy = new JSONReadClientStrategy();
-                            break;
-                        default:
-                            throw new IOException(String.format("Unknown file format or extension: '%s'", format));
-                    }
-
-                    ClientImporter importer = new ClientImporter(file, strategy);
-                    importer.importAll();
-                    clientManager.setClients(importer.getValidClients());
-
-                    String errorSummary = importer.getErrorSummary();
-                    if (errorSummary.length() > 500) {
-                        errorSummary = errorSummary.substring(0, 500).concat("...");
-                    }
-
-                    String message = String.format("Loaded clients from file '%s'."
-                                    + "\n%d were valid, "
-                                    + "\n%d were invalid."
-                                    + "\n\n%s",
-                            file.getName(), importer.getValidCount(), importer.getInvalidCount(), errorSummary);
+                    String message = State.getClientFileResolver().importClients(
+                            Files.readAllBytes(file.toPath()), format);
 
                     LOGGER.log(Level.INFO, message);
                     State.getSession().addToSessionHistory(new HistoryItem("LOAD", message));
@@ -442,15 +414,13 @@ public class MenuBarController extends SubController {
                     mainController.resetWindowContext();
                     PageNavigator.loadPage(Page.LANDING, mainController);
 
-                } catch (FileNotFoundException exc) {
+                } catch (IllegalArgumentException exc) {
+                    PageNavigator.showAlert(AlertType.ERROR, "Load Failed", exc.getMessage());
+                } catch (IOException | BadRequestException exc) {
                     PageNavigator.showAlert(AlertType.ERROR, "Load Failed",
-                            String.format("Could not find file: '%s'.", file.getAbsolutePath()));
-                } catch (IOException exc) {
-                    PageNavigator.showAlert(AlertType.ERROR, "Load Failed",
-                            String.format("An IO error occurred when loading from file: '%s'\n%s",
+                            String.format("An error occurred when loading from file: '%s'\n%s",
                                     file.getName(), exc.getMessage()));
                 }
-                */
             }
         }
     }
@@ -526,8 +496,9 @@ public class MenuBarController extends SubController {
      * Refreshes the undo/redo buttons based on if there are changes to be made
      */
     public void refresh() {
-        undoItem.setDisable(!invoker.canUndo());
-        redoItem.setDisable(!invoker.canRedo());
+        ActionResponseView responseView = State.getActionResolver().getUndo();
+        undoItem.setDisable(!responseView.isCanUndo());
+        redoItem.setDisable(!responseView.isCanRedo());
     }
 
     /**
@@ -535,11 +506,8 @@ public class MenuBarController extends SubController {
      */
     @FXML
     private void undo() {
-        String undoneText = invoker.undo();
-        Notifications.create()
-                .title("Undo")
-                .text(undoneText)
-                .showInformation();
+        ActionResponseView responseView = State.getActionResolver().executeUndo(State.getClientEtag());
+        Notifications.create().title("Undo").text(responseView.getResultText()).showInformation();
         PageNavigator.refreshAllWindows();
     }
 
@@ -548,11 +516,8 @@ public class MenuBarController extends SubController {
      */
     @FXML
     private void redo() {
-        String redoneText = invoker.redo();
-        Notifications.create()
-                .title("Redo")
-                .text(redoneText)
-                .showInformation();
+        ActionResponseView responseView = State.getActionResolver().executeRedo(State.getClientEtag());
+        Notifications.create().title("Redo").text(responseView.getResultText()).showInformation();
         PageNavigator.refreshAllWindows();
     }
 

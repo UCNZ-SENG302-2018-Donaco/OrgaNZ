@@ -27,17 +27,16 @@ import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
-
 import org.controlsfx.control.CheckComboBox;
 
 /**

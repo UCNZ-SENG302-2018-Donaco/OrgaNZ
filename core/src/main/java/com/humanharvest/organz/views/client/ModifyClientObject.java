@@ -159,8 +159,13 @@ public class ModifyClientObject extends ModifyBaseObject {
                 changesText);
     }
 
+    private static String unCamelCase(String inCamelCase) {
+        String unCamelCased = inCamelCase.replaceAll("([a-z])([A-Z]+)", "$1 $2");
+        return unCamelCased.substring(0, 1).toUpperCase() + unCamelCased.substring(1);
+    }
+
     private static String fieldString(Member field) {
-        return String.format("Updated %s", field.getName());
+        return String.format("Updated %s", unCamelCase(field.getName()));
     }
 
     public Country getCountry() {

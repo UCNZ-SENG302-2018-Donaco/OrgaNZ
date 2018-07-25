@@ -51,6 +51,10 @@ public class MedicationRecord implements Comparable<MedicationRecord> {
         this.stopped = stopped;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public Client getClient() {
         return client;
     }
@@ -67,8 +71,8 @@ public class MedicationRecord implements Comparable<MedicationRecord> {
         return stopped;
     }
 
-    public Long getId() {
-        return id;
+    public void setId(long id) {
+        this.id = id;
     }
 
     /**

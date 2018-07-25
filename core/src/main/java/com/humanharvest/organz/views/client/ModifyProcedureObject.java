@@ -27,7 +27,7 @@ public class ModifyProcedureObject {
     private String summary;
     private String description;
     private LocalDate date;
-    private Organ affectedOrgans;
+    private Set<Organ> affectedOrgans;
 
 
     @JsonIgnore
@@ -43,7 +43,7 @@ public class ModifyProcedureObject {
     @JsonIgnore
     public String[] getUnmodifiedFields() {
         //Get all fields
-        List<Field> allFields = new ArrayList<>(Arrays.asList(ModifyProcedureObject.class.getDeclaredFields()));
+        List<Field> allFields = new ArrayList<>(Arrays.asList(getClass().getDeclaredFields()));
         //Remove the ones that have been modified
         allFields.removeAll(modifiedFields);
         //Convert to a list of strings
@@ -55,7 +55,7 @@ public class ModifyProcedureObject {
     @JsonIgnore
     public void registerChange(String fieldName) {
         try {
-            modifiedFields.add(ModifyClientObject.class.getDeclaredField(fieldName));
+            modifiedFields.add(getClass().getDeclaredField(fieldName));
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
@@ -103,9 +103,11 @@ public class ModifyProcedureObject {
         this.date = date;
     }
 
-    public Organ getAffectedOrgans() { return affectedOrgans;    }
+    public Set<Organ> getAffectedOrgans() {
+        return affectedOrgans;
+    }
 
-    public void setAffectedOrgans(Organ affectedOrgans) {
+    public void setAffectedOrgans(Set<Organ> affectedOrgans) {
         registerChange("affectedOrgans");
         this.affectedOrgans = affectedOrgans;
     }

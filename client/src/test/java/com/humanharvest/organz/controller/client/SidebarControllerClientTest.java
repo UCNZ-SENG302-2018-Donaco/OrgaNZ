@@ -11,13 +11,11 @@ import com.humanharvest.organz.controller.ControllerTest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class SidebarControllerClientTest extends ControllerTest {
 
-    private Client client = new Client("Client", "Number", "One", LocalDate.now(), 1);
-
+    private final Client client = new Client("Client", "Number", "One", LocalDate.now(), 1);
 
     @Override
     protected Page getPage() {

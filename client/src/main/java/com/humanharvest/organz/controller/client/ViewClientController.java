@@ -414,10 +414,8 @@ public class ViewClientController extends ViewBaseController {
 
             if (buttonOpt.isPresent() && buttonOpt.get() == ButtonType.OK) {
 
-
-                Client updatedClient;
                 try {
-                    updatedClient = State.getClientResolver().markClientAsDead(viewedClient, dod.getValue());
+                    State.getClientResolver().markClientAsDead(viewedClient, dod.getValue());
                 } catch (NotFoundException e) {
                     LOGGER.log(Level.WARNING, "Client not found");
                     PageNavigator.showAlert(
@@ -443,14 +441,15 @@ public class ViewClientController extends ViewBaseController {
                     return false;
                 }
                 clientDied = true;
-                viewedClient.setTransplantRequests(updatedClient.getTransplantRequests());
-
 
                 Notifications.create()
                         .title("Marked Client as Dead")
-                        .text("All organ transplant requests have been removed")
+                        .text("All organ transplant requests have been cancelled, "
+                                + "and the date of death has been stored.")
                         .showConfirm();
             }
+        } else { // the client has not died for this update (ie they are either still alive, or were already dead)
+            addChangeIfDifferent(modifyClientObject, viewedClient, "dateOfDeath", dod.getValue());
         }
 
         addChangeIfDifferent(modifyClientObject, viewedClient, "firstName", fname.getText());
@@ -458,7 +457,6 @@ public class ViewClientController extends ViewBaseController {
         addChangeIfDifferent(modifyClientObject, viewedClient, "middleName", mname.getText());
         addChangeIfDifferent(modifyClientObject, viewedClient, "preferredName", pname.getText());
         addChangeIfDifferent(modifyClientObject, viewedClient, "dateOfBirth", dob.getValue());
-        addChangeIfDifferent(modifyClientObject, viewedClient, "dateOfDeath", dod.getValue());
         addChangeIfDifferent(modifyClientObject, viewedClient, "gender", gender.getValue());
         addChangeIfDifferent(modifyClientObject, viewedClient, "genderIdentity", genderIdentity.getValue());
         addChangeIfDifferent(modifyClientObject, viewedClient, "height", Double.parseDouble(height.getText()));
@@ -477,8 +475,12 @@ public class ViewClientController extends ViewBaseController {
         //checkCountry();
 
 
+        PageNavigator.refreshAllWindows();
+
         if (modifyClientObject.getModifiedFields().isEmpty()) {
-            if (!clientDied) {
+            if (clientDied) { //only the client's date of death was changed
+                return true;
+            } else { //literally nothing was changed
                 Notifications.create()
                         .title("No changes were made.")
                         .text("No changes were made to the client.")

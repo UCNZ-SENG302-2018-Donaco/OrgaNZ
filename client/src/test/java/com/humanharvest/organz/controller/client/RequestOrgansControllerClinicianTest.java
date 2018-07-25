@@ -30,7 +30,6 @@ import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredExcept
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class RequestOrgansControllerClinicianTest extends ControllerTest {
@@ -50,6 +49,7 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
     @Override
     protected void initState() {
         State.reset();
+        State.getClientManager().addClient(testClient);
         State.login(testClinician);
         mainController.setWindowContext(new WindowContextBuilder()
                 .setAsClinicianViewClientWindow()
@@ -58,7 +58,7 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
     }
 
     private void setSampleRequests() {
-        heartRequest = new TransplantRequest(testClient, Organ.HEART);
+        TransplantRequest heartRequest = new TransplantRequest(testClient, Organ.HEART);
         sampleRequests.add(heartRequest);
         sampleRequests.add(new TransplantRequest(testClient, Organ.BONE));
 
@@ -90,6 +90,7 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
         for (TransplantRequest request : sampleRequests) {
             testClient.addTransplantRequest(request);
         }
+        State.getClientManager().applyChangesTo(testClient);
         pageController.refresh();
     }
 
@@ -112,11 +113,9 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
     }
 
     @Test
-    public void conflictingRequestsAreColouredTest() throws InterruptedException {
+    public void conflictingRequestsAreColouredTest() {
         TableView<TransplantRequest> currRequestsTable = lookup("#currentRequestsTable").queryTableView();
         clickOn(currRequestsTable); // click on the table so lookups know where abouts to look
-
-        Thread.sleep(10000);
 
         // Get conflicting request
         TransplantRequest conflictingRequest = currRequestsTable.getItems().get(1);
@@ -206,19 +205,29 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
         clickOn(currRequestsTable);
 
         TableRow<TransplantRequest> boneRow = lookup(".table-row-cell").nth(1).query();
-        clickOn(boneRow);
 
         // Selects "cured" from the options
         clickOn("#cancelTransplantOptions")
                 .type(KeyCode.DOWN)
                 .type(KeyCode.DOWN)
                 .type(KeyCode.ENTER);
+        clickOn(boneRow);
 
         clickOn("Resolve Request");
-        // Press enter to go to medical history page
-        type(KeyCode.ENTER);
+        // Press esc to not go to medical history page
+        type(KeyCode.ESCAPE);
 
         // Checks that the selected organ has been removed from the clients transplant request list
+        for (Organ organ : testClient.getCurrentlyRequestedOrgans()) {
+            System.out.println(organ);
+        }
+        boolean resolvedOrgansContainsResolvedOrgan = false;
+        for (TransplantRequest transplantRequest : testClient.getTransplantRequests()) {
+            if (transplantRequest.getRequestedOrgan() == Organ.BONE) {
+                resolvedOrgansContainsResolvedOrgan = true;
+            }
+        }
+        assertTrue(resolvedOrgansContainsResolvedOrgan);
         assertFalse(testClient.getCurrentlyRequestedOrgans().contains(Organ.BONE));
     }
 

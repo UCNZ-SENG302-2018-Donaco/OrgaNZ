@@ -16,4 +16,4 @@ Feature: Does GET /client/ work?
     When I get /clients/
     Then the result is ok
     Then the content type is json
-    Then the result has 2 elements
+    Then the paginated result has 2 elements
