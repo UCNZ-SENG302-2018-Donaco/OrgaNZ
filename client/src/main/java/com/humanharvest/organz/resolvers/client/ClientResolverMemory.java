@@ -15,6 +15,7 @@ import com.humanharvest.organz.ProcedureRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
 import com.humanharvest.organz.views.client.CreateClientView;
 import com.humanharvest.organz.views.client.CreateIllnessView;
@@ -30,22 +31,25 @@ public class ClientResolverMemory implements ClientResolver {
 
     //------------GETs----------------
 
-
     public Map<Organ, Boolean> getOrganDonationStatus(Client client) {
         return client.getOrganDonationStatus();
     }
 
-
     public List<TransplantRequest> getTransplantRequests(Client client) {
+        System.out.println("getting trs");
+        for (TransplantRequest transplantRequest : client.getTransplantRequests()) {
+            System.out.println(transplantRequest.getStatus());
+        }
         return client.getTransplantRequests();
     }
-
 
     public List<MedicationRecord> getMedicationRecords(Client client) {
         return client.getMedications();
     }
 
-    public List<ProcedureRecord> getProcedureRecords(Client client) {return client.getProcedures(); }
+    public List<ProcedureRecord> getProcedureRecords(Client client) {
+        return client.getProcedures();
+    }
 
     @Override
     public List<HistoryItem> getHistory(Client client) {
@@ -58,8 +62,8 @@ public class ClientResolverMemory implements ClientResolver {
 
         //Get the next empty UID
         Optional<Client> nextEmpty = State.getClientManager().getClients()
-                        .stream()
-                        .max(Comparator.comparing(Client::getUid));
+                .stream()
+                .max(Comparator.comparing(Client::getUid));
         int nextId = 0;
         if (nextEmpty.isPresent()) {
             nextId = nextEmpty.get().getUid() + 1;
@@ -75,7 +79,6 @@ public class ClientResolverMemory implements ClientResolver {
         return client;
     }
 
-
     public List<TransplantRequest> createTransplantRequest(Client client, CreateTransplantRequestView request) {
         TransplantRequest transplantRequest = new TransplantRequest(client, request.getRequestedOrgan());
         client.addTransplantRequest(transplantRequest);
@@ -83,7 +86,7 @@ public class ClientResolverMemory implements ClientResolver {
         return client.getTransplantRequests();
     }
 
-    public Client markClientAsDead(Client client, LocalDate dateOfDeath){
+    public Client markClientAsDead(Client client, LocalDate dateOfDeath) {
         client.markDead(dateOfDeath);
         return client;
     }
@@ -105,7 +108,7 @@ public class ClientResolverMemory implements ClientResolver {
         return client.getMedications();
     }
 
-    public  List<ProcedureRecord> addProcedureRecord(Client client, CreateProcedureView procedureView) {
+    public List<ProcedureRecord> addProcedureRecord(Client client, CreateProcedureView procedureView) {
         ProcedureRecord procedureRecord = new ProcedureRecord(
                 procedureView.getSummary(),
                 procedureView.getDescription(),
@@ -130,11 +133,13 @@ public class ClientResolverMemory implements ClientResolver {
     }
 
     public TransplantRequest resolveTransplantRequest(Client client, ResolveTransplantRequestObject request,
-            int transplantRequestIndex) {
-        TransplantRequest originalTransplantRequest = client.getTransplantRequests().get(transplantRequestIndex);
+            int id) {
+        TransplantRequest originalTransplantRequest =
+                client.getTransplantRequestById(id).orElseThrow(NotFoundException::new);
         originalTransplantRequest.setStatus(request.getStatus());
         originalTransplantRequest.setResolvedReason(request.getResolvedReason());
         originalTransplantRequest.setResolvedDate(request.getResolvedDate());
+        System.out.println(originalTransplantRequest.getStatus());
         return originalTransplantRequest;
     }
 
@@ -153,7 +158,7 @@ public class ClientResolverMemory implements ClientResolver {
         return record;
     }
 
-    public IllnessRecord modifyIllnessRecord(Client client,IllnessRecord record){
+    public IllnessRecord modifyIllnessRecord(Client client, IllnessRecord record) {
         return record;
     }
 
