@@ -56,6 +56,16 @@ public final class State {
     private static String token = "";
     private static EnumSet<Country> allowedCountries;
 
+    public static ConfigManager getConfigManager() {
+        return configManager;
+    }
+
+    public static void setConfigManager(ConfigManager configManager) {
+        State.configManager = configManager;
+    }
+
+    private static ConfigManager configManager;
+
     private State() {
     }
 
