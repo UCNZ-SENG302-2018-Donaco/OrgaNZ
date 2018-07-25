@@ -1,8 +1,6 @@
 package com.humanharvest.organz;
 
 import java.time.LocalDateTime;
-import javax.persistence.Access;
-import javax.persistence.AccessType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -16,7 +14,6 @@ import com.fasterxml.jackson.annotation.JsonCreator;
  */
 @Entity
 @Table
-@Access(AccessType.FIELD)
 public class HistoryItem {
 
     @Id
@@ -27,7 +24,7 @@ public class HistoryItem {
     private LocalDateTime timestamp;
 
     @JsonCreator
-    private HistoryItem() {
+    protected HistoryItem() {
     }
 
     public HistoryItem(String type, String details) {
@@ -36,8 +33,10 @@ public class HistoryItem {
         timestamp = LocalDateTime.now();
     }
 
-    public Long getId() {
-        return id;
+    private HistoryItem(String type, String details, LocalDateTime timestamp) {
+        this.type = type;
+        this.details = details;
+        this.timestamp = timestamp;
     }
 
     public String getType() {
@@ -52,19 +51,23 @@ public class HistoryItem {
         return timestamp;
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof HistoryItem)) {
+            return false;
+        }
+        HistoryItem other = (HistoryItem) obj;
+
+        return other.getDetails().equals(details) &&
+                other.getType().equals(type) &&
+                other.getTimestamp().equals(timestamp);
     }
 
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public void setDetails(String details) {
-        this.details = details;
-    }
-
-    public void setTimestamp(LocalDateTime timestamp) {
-        this.timestamp = timestamp;
+    @Override
+    public HistoryItem clone() {
+        return new HistoryItem(type, details, timestamp);
     }
 }
