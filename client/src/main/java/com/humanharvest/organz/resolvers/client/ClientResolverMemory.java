@@ -47,7 +47,10 @@ public class ClientResolverMemory implements ClientResolver {
         return client.getProcedures();
     }
 
-    @Override
+    public List<IllnessRecord> getIllnessRecords(Client client) {
+        return client.getIllnesses();
+    }
+
     public List<HistoryItem> getHistory(Client client) {
         return client.getChangesHistory();
     }

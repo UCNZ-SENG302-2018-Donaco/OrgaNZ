@@ -235,7 +235,7 @@ public class ClientMedicalHistoryController extends SubController {
 
         // Reload the client's medical history
         try {
-            client.setMedicationHistory(resolver.getMedicationRecords(client));
+            client.setIllnessHistory(resolver.getIllnessRecords(client));
         } catch (NotFoundException e) {
             LOGGER.log(Level.WARNING, "Client not found");
             PageNavigator.showAlert(AlertType.ERROR,

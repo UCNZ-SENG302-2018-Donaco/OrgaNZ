@@ -573,6 +573,11 @@ public class Client implements ConcurrencyControlledEntity {
         return Collections.unmodifiableList(illnessHistory);
     }
 
+    public IllnessRecord getIllnessById(long index) {
+        System.out.println(illnessHistory);
+        return illnessHistory.stream().filter(record -> record.getId() == index).findFirst().orElse(null);
+    }
+
     /**
      * Returns a list of illnesses that Client previously had
      * @return List of illnesses held by Client

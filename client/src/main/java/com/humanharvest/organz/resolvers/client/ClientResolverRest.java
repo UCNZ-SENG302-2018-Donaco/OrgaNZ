@@ -82,6 +82,18 @@ public class ClientResolverRest implements ClientResolver {
         return responseEntity.getBody();
     }
 
+    public List<IllnessRecord> getIllnessRecords(Client client) {
+        HttpHeaders httpHeaders = createHeaders(false);
+        httpHeaders.setETag(State.getClientEtag());
+
+        ResponseEntity<List<IllnessRecord>> responseEntity = sendQuery(httpHeaders,
+                State.BASE_URI + "clients/{id}/illnesses",
+                HttpMethod.GET,
+                new ParameterizedTypeReference<List<IllnessRecord>>() {
+                }, client.getUid());
+        return responseEntity.getBody();
+    }
+
     @Override
     public List<HistoryItem> getHistory(Client client) {
         HttpHeaders httpHeaders = createHeaders(false);

@@ -45,6 +45,8 @@ public interface ClientResolver {
 
     List<ProcedureRecord> getProcedureRecords(Client client);
 
+    List<IllnessRecord> getIllnessRecords(Client client);
+
     List<HistoryItem> getHistory(Client client);
 
     //------------POSTs----------------
