@@ -199,7 +199,8 @@ public class ClientTransplantRequestsController {
 
             // Get the original transplant request given by the ID
             try {
-                originalTransplantRequest = client.getTransplantRequests().get(id);
+                originalTransplantRequest =
+                        client.getTransplantRequestById(id).orElseThrow(IndexOutOfBoundsException::new);
             } catch (IndexOutOfBoundsException e) {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }

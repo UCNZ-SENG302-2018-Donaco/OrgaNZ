@@ -440,8 +440,7 @@ public class RequestOrgansController extends SubController {
                     LocalDateTime.now(), status, resolvedReason);
 
             // Resolve the request
-            // TODO: Should we really use the index?
-            int transplantRequestIndex = client.getTransplantRequests().indexOf(selectedRequest);
+            int transplantRequestIndex = Integer.parseInt(selectedRequest.getId().toString());
             try {
                 resolver.resolveTransplantRequest(
                         client,

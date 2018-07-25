@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.persistence.Access;
@@ -788,6 +789,12 @@ public class Client implements ConcurrencyControlledEntity {
 
     public List<TransplantRequest> getTransplantRequests() {
         return transplantRequests;
+    }
+
+    public Optional<TransplantRequest> getTransplantRequestById(int id){
+        return transplantRequests.stream()
+                .filter(transplantRequest -> transplantRequest.getId() == id)
+                .findFirst();
     }
 
     public void addTransplantRequest(TransplantRequest request) {
