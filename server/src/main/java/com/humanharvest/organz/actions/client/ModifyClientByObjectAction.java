@@ -29,12 +29,14 @@ public class ModifyClientByObjectAction extends ClientAction {
 
     @Override
     protected void execute() {
+        super.execute();
         BeanUtils.copyProperties(newClientDetails, client, newClientDetails.getUnmodifiedFields());
         manager.applyChangesTo(client);
     }
 
     @Override
     protected void unExecute() {
+        super.unExecute();
         BeanUtils.copyProperties(oldClientDetails, client, oldClientDetails.getUnmodifiedFields());
         manager.applyChangesTo(client);
     }

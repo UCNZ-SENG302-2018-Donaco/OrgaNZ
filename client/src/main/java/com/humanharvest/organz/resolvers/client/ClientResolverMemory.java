@@ -120,9 +120,8 @@ public class ClientResolverMemory implements ClientResolver {
         return client.getOrganDonationStatus();
     }
 
-    public TransplantRequest resolveTransplantRequest(Client client, ResolveTransplantRequestObject request,
-            int transplantRequestIndex) {
-        TransplantRequest originalTransplantRequest = client.getTransplantRequests().get(transplantRequestIndex);
+    public TransplantRequest resolveTransplantRequest(Client client, ResolveTransplantRequestObject request) {
+        TransplantRequest originalTransplantRequest = request.getTransplantRequest();
         originalTransplantRequest.setStatus(request.getStatus());
         originalTransplantRequest.setResolvedReason(request.getResolvedReason());
         originalTransplantRequest.setResolvedDate(request.getResolvedDate());
