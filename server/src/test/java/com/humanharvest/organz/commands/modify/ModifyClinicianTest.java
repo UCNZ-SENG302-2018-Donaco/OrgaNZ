@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
+import java.util.Optional;
+
 import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.actions.ActionInvoker;
@@ -82,7 +84,7 @@ public class ModifyClinicianTest extends BaseTest {
         String newName = "catface";
         String[] inputs = {"-s", Integer.toString(staffId), "-f", newName};
         when(spyClinicianManager.getClinicianByStaffId(anyInt())).thenReturn(
-                java.util.Optional.ofNullable(testClinician));
+                Optional.ofNullable(testClinician));
         CommandLine.run(spyModifyClinician, System.out, inputs);
 
         verify(spyModifyClinician, times(1)).run();

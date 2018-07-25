@@ -18,7 +18,8 @@ public class GenderConverter implements TypeConverter<Gender> {
         try {
             return Gender.fromString(value.toString());
         } catch (IllegalArgumentException e) {
-            throw new TypeConversionException(e.getMessage());
+            throw new TypeConversionException(e);
         }
     }
 }
+
