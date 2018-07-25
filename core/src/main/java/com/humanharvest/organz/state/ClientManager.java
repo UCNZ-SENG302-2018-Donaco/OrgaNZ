@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -20,6 +21,7 @@ import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.views.client.PaginatedClientList;
+import com.humanharvest.organz.views.client.PaginatedTransplantList;
 
 /**
  * Handles the manipulation of the clients currently stored in the system.
@@ -166,4 +168,7 @@ public interface ClientManager {
      * @return All current transplant requests.
      */
     Collection<TransplantRequest> getAllCurrentTransplantRequests();
+
+    PaginatedTransplantList getAllCurrentTransplantRequests(Integer offset, Integer count, Set<Region> regions,
+            Set<Organ> organs);
 }

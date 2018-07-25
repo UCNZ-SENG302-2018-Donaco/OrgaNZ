@@ -14,8 +14,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
+import com.humanharvest.organz.views.client.Views;
 
 /**
  * Represents a request for a client to receive a transplant for a given organ.
@@ -27,16 +29,22 @@ public class TransplantRequest {
 
     @Id
     @GeneratedValue
+    @JsonView(Views.Overview.class)
     private Long id;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "Client_uid")
     @JsonBackReference
     private Client client;
+    @JsonView(Views.Overview.class)
     private Organ requestedOrgan;
+    @JsonView(Views.Overview.class)
     private LocalDateTime requestDate;
+    @JsonView(Views.Overview.class)
     private LocalDateTime resolvedDate;
     @Enumerated(EnumType.STRING)
+    @JsonView(Views.Overview.class)
     private TransplantRequestStatus status = TransplantRequestStatus.WAITING;
+    @JsonView(Views.Overview.class)
     private String resolvedReason;
 
     protected TransplantRequest() {

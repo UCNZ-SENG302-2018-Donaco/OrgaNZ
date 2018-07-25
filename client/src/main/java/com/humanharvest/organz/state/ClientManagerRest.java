@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.TransplantRequest;
@@ -18,6 +19,8 @@ import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
 import com.humanharvest.organz.utilities.type_converters.EnumSetToString;
 import com.humanharvest.organz.views.client.PaginatedClientList;
+import com.humanharvest.organz.views.client.PaginatedTransplantList;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -146,7 +149,29 @@ public class ClientManagerRest implements ClientManager {
 
     @Override
     public Collection<TransplantRequest> getAllCurrentTransplantRequests() {
-        //todo
-        throw new UnsupportedOperationException();
+        return getAllCurrentTransplantRequests(0, Integer.MAX_VALUE, null, null).getTransplantRequests();
+    }
+
+    @Override
+    public PaginatedTransplantList getAllCurrentTransplantRequests(Integer offset, Integer count,
+            Set<Region> regions, Set<Organ> organs) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+        httpHeaders.set("X-Auth-Token", State.getToken());
+        HttpEntity<String> entity = new HttpEntity<>(httpHeaders);
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(State.BASE_URI + "/clients/transplantRequests")
+                .queryParam("offset", offset)
+                .queryParam("count", count)
+                .queryParam("regions", regions)
+                .queryParam("organ", organs);
+
+        ResponseEntity<PaginatedTransplantList> response = State.getRestTemplate().exchange(
+                builder.toUriString(),
+                HttpMethod.GET,
+                entity,
+                PaginatedTransplantList.class);
+
+        return response.getBody();
     }
 }

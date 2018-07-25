@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.actions.Action;
@@ -17,6 +18,9 @@ import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
 import com.humanharvest.organz.utilities.validators.client.TransplantRequestValidator;
+import com.humanharvest.organz.views.client.PaginatedTransplantList;
+import com.humanharvest.organz.views.client.TransplantRequestView;
+import com.humanharvest.organz.views.client.Views;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,7 +54,8 @@ public class ClientTransplantRequestsController {
      * @throws AuthenticationException If the auth token does not belong to a clinician/admin.
      */
     @GetMapping("/clients/transplantRequests")
-    public ResponseEntity<Collection<TransplantRequest>> getAllTransplantRequests(
+    @JsonView(Views.Overview.class)
+    public ResponseEntity<PaginatedTransplantList> getAllTransplantRequests(
             @RequestParam(value = "offset", required = false) Integer offset,
             @RequestParam(value = "count", required = false) Integer count,
             @RequestParam(value = "region", required = false) List<Region> regions,
@@ -62,11 +67,12 @@ public class ClientTransplantRequestsController {
         State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
 
         // Get all requests that match region/organ filters
-        List<TransplantRequest> matchingRequests = State.getClientManager().getAllTransplantRequests().stream()
+        List<TransplantRequestView> matchingRequests = State.getClientManager().getAllTransplantRequests().stream()
                 .filter(transplantRequest ->
                         regions == null || regions.contains(transplantRequest.getClient().getRegion()))
                 .filter(transplantRequest ->
                         organs == null || organs.contains(transplantRequest.getRequestedOrgan()))
+                .map(TransplantRequestView::new)
                 .collect(Collectors.toList());
 
         // Return subset for given offset/count parameters (used for pagination)
@@ -74,16 +80,18 @@ public class ClientTransplantRequestsController {
             offset = 0;
         }
         if (count == null) {
-            return new ResponseEntity<>(
+            return new ResponseEntity<>(new PaginatedTransplantList(
                     matchingRequests.subList(
                             Math.min(offset, matchingRequests.size()),
                             matchingRequests.size()),
+                    matchingRequests.size()),
                     HttpStatus.OK);
         } else {
-            return new ResponseEntity<>(
+            return new ResponseEntity<>(new PaginatedTransplantList(
                     matchingRequests.subList(
                             Math.min(offset, matchingRequests.size()),
                             Math.min(offset + count, matchingRequests.size())),
+                    matchingRequests.size()),
                     HttpStatus.OK);
         }
     }
