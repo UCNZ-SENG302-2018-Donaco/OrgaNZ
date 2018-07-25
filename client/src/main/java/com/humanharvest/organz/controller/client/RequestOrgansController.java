@@ -29,6 +29,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.resolvers.client.ClientResolver;
@@ -36,10 +37,9 @@ import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 import com.humanharvest.organz.utilities.enums.ResolveReason;
+import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
@@ -228,20 +228,9 @@ public class RequestOrgansController extends SubController {
      */
     @Override
     public void refresh() {
-        // Reload the client's overview
-        try {
-            client = manager.getClientByID(client.getUid()).orElseThrow(ServerRestException::new);
-        } catch (ServerRestException e) {
-            e.printStackTrace();
-            PageNavigator.showAlert(AlertType.ERROR,
-                    "Server Error",
-                    "An error occurred while trying to fetch from the server.\nPlease try again later.");
-        }
-
-        System.out.println("reload trs");
         // Reload the client's transplant requests
         try {
-            client.setTransplantRequests(resolver.getTransplantRequests(client));
+            allRequests = resolver.getTransplantRequests(client);
         } catch (NotFoundException e) {
             LOGGER.log(Level.WARNING, "Client not found");
             PageNavigator.showAlert(AlertType.ERROR,
@@ -255,9 +244,6 @@ public class RequestOrgansController extends SubController {
                     "Could not apply changes on the server, please try again later");
             return;
         }
-
-        allRequests = client.getTransplantRequests();
-        System.out.println("Reloaded");
 
         currentRequests = new FilteredList<>(
                 FXCollections.observableArrayList(allRequests),
@@ -366,12 +352,6 @@ public class RequestOrgansController extends SubController {
 
         if (selectedRequest != null) {
 
-            // Create a request
-
-            // Get data from existing request
-            Organ requestedOrgan = selectedRequest.getRequestedOrgan();
-            LocalDateTime requestDate = selectedRequest.getRequestDate();
-
             // Get resolved reason and the request's new status
             ResolveReason resolvedReasonDropdownChoice = cancelTransplantOptions.getValue();
             String resolvedReason;
@@ -447,18 +427,13 @@ public class RequestOrgansController extends SubController {
                             + "statements.");
             }
 
-            ResolveTransplantRequestObject request = new ResolveTransplantRequestObject(client, requestedOrgan,
-                    requestDate,
-                    LocalDateTime.now(), status, resolvedReason);
+            ResolveTransplantRequestObject request = new ResolveTransplantRequestObject(
+                    selectedRequest, LocalDateTime.now(), status, resolvedReason);
 
-            // Resolve the request
-            // TODO: Should we really use the index?
-            int transplantRequestIndex = client.getTransplantRequests().indexOf(selectedRequest);
             try {
                 resolver.resolveTransplantRequest(
                         client,
-                        request,
-                        transplantRequestIndex);
+                        request);
             } catch (ServerRestException e) { //500
                 LOGGER.severe(e.getMessage());
                 PageNavigator.showAlert(AlertType.ERROR,

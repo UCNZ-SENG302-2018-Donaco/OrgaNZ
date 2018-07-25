@@ -25,7 +25,6 @@ import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
-import org.junit.Before;
 import org.junit.Test;
 import org.testfx.util.NodeQueryUtils;
 
@@ -51,16 +50,16 @@ public class ViewProceduresControllerClinicianTest extends ControllerTest {
     @Override
     protected void initState() {
         State.reset();
+        resetRecords();
         State.login(testClinician);
+        State.getClientManager().addClient(testClient);
         mainController.setWindowContext(new WindowContext.WindowContextBuilder()
                 .setAsClinicianViewClientWindow()
                 .viewClient(testClient)
                 .build());
-        resetRecords();
     }
 
-    @Before
-    public void resetRecords() {
+    private void resetRecords() {
 
         Set<Organ> organs = new HashSet<>();
         organs.add(Organ.KIDNEY);
@@ -83,6 +82,7 @@ public class ViewProceduresControllerClinicianTest extends ControllerTest {
         for (ProcedureRecord record : pendingRecords) {
             testClient.addProcedureRecord(record);
         }
+        State.getClientManager().applyChangesTo(testClient);
     }
 
 

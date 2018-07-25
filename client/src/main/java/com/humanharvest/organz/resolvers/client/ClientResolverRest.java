@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.ProcedureRecord;
@@ -44,7 +45,6 @@ public class ClientResolverRest implements ClientResolver {
         return responseEntity.getBody();
     }
 
-
     public List<TransplantRequest> getTransplantRequests(Client client) {
         HttpHeaders httpHeaders = createHeaders(false);
         ResponseEntity<List<TransplantRequest>> responseEntity = sendQuery(httpHeaders,
@@ -56,7 +56,6 @@ public class ClientResolverRest implements ClientResolver {
         client.setTransplantRequests(responseEntity.getBody());
         return responseEntity.getBody();
     }
-
 
     public List<MedicationRecord> getMedicationRecords(Client client) {
         HttpHeaders httpHeaders = createHeaders(false);
@@ -78,6 +77,19 @@ public class ClientResolverRest implements ClientResolver {
                 State.BASE_URI + "clients/{id}/procedures",
                 HttpMethod.GET,
                 new ParameterizedTypeReference<List<ProcedureRecord>>() {
+                }, client.getUid());
+        return responseEntity.getBody();
+    }
+
+    @Override
+    public List<HistoryItem> getHistory(Client client) {
+        HttpHeaders httpHeaders = createHeaders(false);
+        httpHeaders.setETag(State.getClientEtag());
+
+        ResponseEntity<List<HistoryItem>> responseEntity = sendQuery(httpHeaders,
+                State.BASE_URI + "clients/{id}/history",
+                HttpMethod.GET,
+                new ParameterizedTypeReference<List<HistoryItem>>() {
                 }, client.getUid());
         return responseEntity.getBody();
     }
@@ -186,16 +198,16 @@ public class ClientResolverRest implements ClientResolver {
         return responseEntity.getBody();
     }
 
-    public TransplantRequest resolveTransplantRequest(Client client, ResolveTransplantRequestObject request,
-            int transplantRequestIndex) {
+    public TransplantRequest resolveTransplantRequest(Client client, ResolveTransplantRequestObject request) {
         HttpHeaders httpHeaders = createHeaders(true);
+        long id = request.getTransplantRequest().getId();
         ResponseEntity<TransplantRequest> responseEntity = sendQuery(httpHeaders,
                 State.BASE_URI + "clients/{id}/transplantRequests/{requestIndex}",
                 HttpMethod.PATCH,
                 request,
                 TransplantRequest.class,
                 client.getUid(),
-                transplantRequestIndex);
+                id);
 
         return responseEntity.getBody();
     }
@@ -286,20 +298,21 @@ public class ClientResolverRest implements ClientResolver {
                 ProcedureRecord.class,
                 client.getUid(),
                 record.getId());
+
         client.deleteProcedureRecord(record);
     }
 
-    public void deleteClient(Client client) {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setIfMatch(State.getClientEtag());
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
-        httpHeaders.set("X-Auth-Token", State.getToken());
-        HttpEntity entity = new HttpEntity<>(httpHeaders);
+    @Override
+    public void deleteMedicationRecord(Client client, MedicationRecord record) {
+        HttpHeaders httpHeaders = createHeaders(true);
+        sendQuery(httpHeaders,
+                State.BASE_URI + "clients/{id}/medications/{procedureId}",
+                HttpMethod.DELETE,
+                MedicationRecord.class,
+                client.getUid(),
+                record.getId());
 
-        ResponseEntity<String> responseEntity = State.getRestTemplate()
-                .exchange(State.BASE_URI + "clients/{uid}", HttpMethod.DELETE, entity, String.class, client.getUid());
-
-        State.setClientEtag(responseEntity.getHeaders().getETag());
+        client.deleteMedicationRecord(record);
     }
 
     //------------Templates----------------

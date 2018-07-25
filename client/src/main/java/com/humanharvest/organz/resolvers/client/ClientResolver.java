@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.ProcedureRecord;
@@ -43,6 +44,8 @@ public interface ClientResolver {
 
     List<ProcedureRecord> getProcedureRecords(Client client);
 
+    List<HistoryItem> getHistory(Client client);
+
     //------------POSTs----------------
 
     Client createClient(CreateClientView createClientView);
@@ -61,10 +64,7 @@ public interface ClientResolver {
 
     Map<Organ, Boolean> modifyOrganDonation(Client client, Map<Organ, Boolean> changes);
 
-    TransplantRequest resolveTransplantRequest(
-            Client client,
-            ResolveTransplantRequestObject request,
-            int transplantRequestIndex);
+    TransplantRequest resolveTransplantRequest(Client client, ResolveTransplantRequestObject request);
 
     Client modifyClientDetails(Client client, ModifyClientObject modifyClientObject);
 
@@ -85,6 +85,6 @@ public interface ClientResolver {
 
     void deleteProcedureRecord(Client client, ProcedureRecord record);
 
-    void deleteClient(Client client);
+    void deleteMedicationRecord(Client client, MedicationRecord record);
 
 }
