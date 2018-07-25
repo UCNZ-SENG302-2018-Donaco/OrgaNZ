@@ -1,6 +1,6 @@
 openapi: "3.0.3"
 info:
-  version: 1.0.5
+  version: 1.0.6
   title: "Organz API"
   description: |
     An API used to access the Human Harvest Inc server.
@@ -172,8 +172,51 @@ paths:
         - $ref: '#/components/parameters/ETag'
 
       responses:
-        201:
+        200:
           description: Deleted
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        412:
+          $ref: '#/components/responses/412PreconditionFailed'
+        428:
+          $ref: '#/components/responses/428PreconditionRequired'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+  '/clients/{uid}/dead':
+    parameters:
+    - in: path
+      name: uid
+      description: Client User ID
+      required: true
+      schema:
+        type: integer
+        minimum: 0
+    post:
+      tags:
+        - Client
+      summary: Mark a client as dead
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                date:
+                  $ref: '#/components/schemas/date'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/clientDetails'
         400:
           $ref: '#/components/responses/400BadRequest'
         401:
@@ -224,6 +267,7 @@ paths:
           $ref: '#/components/responses/404NotFound'
         500:
           $ref: '#/components/responses/500InternalServerError'
+
   '/clients/file':
     get:
       tags:

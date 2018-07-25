@@ -1,10 +1,12 @@
 package com.humanharvest.organz.server.controller.client;
 
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.actions.client.CreateClientAction;
 import com.humanharvest.organz.actions.client.DeleteClientAction;
@@ -305,5 +307,15 @@ public class ClientController {
         //Respond
         return new ResponseEntity<>(client, headers, HttpStatus.OK);
     }
+
+    @GetMapping("/clients/{uid}/")
+    public ResponseEntity<List<HistoryItem>> getHistory(
+            @PathVariable int uid,
+            @RequestHeader(value = "If-Match", required = false) String etag,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken,
+            @RequestBody SingleDateView dateOfDeath)
+            throws IfMatchRequiredException, IfMatchFailedException, InvalidRequestException
+
+    )
 
 }
