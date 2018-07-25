@@ -193,9 +193,9 @@ public class ClientManagerMemory implements ClientManager {
             Set<Region> regions, Set<Organ> organs) {
         // Determine requests that match filters
         List<TransplantRequestView> matchingRequests = getClients().stream()
-                .filter(client -> regions == null || regions.contains(client.getRegion()))
+                .filter(client -> regions == null || regions.isEmpty() || regions.contains(client.getRegion()))
                 .flatMap(client -> client.getTransplantRequests().stream())
-                .filter(request -> organs == null || organs.contains(request.getRequestedOrgan()))
+                .filter(request -> organs == null || organs.isEmpty() || organs.contains(request.getRequestedOrgan()))
                 .map(TransplantRequestView::new)
                 .collect(Collectors.toList());
 

@@ -241,8 +241,6 @@ public class ClientTransplantRequestsController {
                     && originalTransplantRequest.getRequestedOrgan() == resolveRequestObject.getTransplantRequest().getRequestedOrgan()
                     && originalTransplantRequest.getRequestDate().equals(resolveRequestObject.getTransplantRequest().getRequestDate())) {
 
-                System.out.println(originalTransplantRequest.toString());
-
                 // Resolve transplant request
                 Action action = new ResolveTransplantRequestAction(originalTransplantRequest,
                         resolveRequestObject.getStatus(),
