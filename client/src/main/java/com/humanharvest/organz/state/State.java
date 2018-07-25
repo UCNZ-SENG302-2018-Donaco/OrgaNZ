@@ -67,6 +67,7 @@ public final class State {
     private static String clinicianEtag = "";
     private static String administratorEtag = "";
     private static String token = "";
+    private static Clinician createdClinician;
 
     private State() {
     }
@@ -265,5 +266,13 @@ public final class State {
 
     public static ImageManager getImageManager() {
         return imageManager;
+    }
+
+    public static Clinician getCreatedClinician() {
+        return createdClinician;
+    }
+
+    public static void setCreatedClinician(Clinician createdClinician) {
+        State.createdClinician = createdClinician;
     }
 }
