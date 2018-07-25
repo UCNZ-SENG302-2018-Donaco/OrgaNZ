@@ -391,7 +391,7 @@ public class ClientController {
             @PathVariable int uid,
             @RequestBody byte[] image,
             @RequestHeader(value = "If-Match", required = false) String etag,
-            @RequestHeader(value = "X-Auth-Token", required = false) String authToken) throws IOException {
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {
 
         String imagesDirectory = System.getProperty("user.home") + "/.organz/images/";
 
@@ -425,7 +425,7 @@ public class ClientController {
         // Write the file
         try {
             State.getActionInvoker(authToken).execute(action);
-            return new ResponseEntity(HttpStatus.OK);
+            return new ResponseEntity(HttpStatus.CREATED);
         } catch (ImagingOpException e) {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
