@@ -17,6 +17,7 @@ import com.humanharvest.organz.views.client.CreateMedicationRecordView;
 import com.humanharvest.organz.views.client.CreateProcedureView;
 import com.humanharvest.organz.views.client.CreateTransplantRequestView;
 import com.humanharvest.organz.views.client.ModifyClientObject;
+import com.humanharvest.organz.views.client.ModifyIllnessObject;
 import com.humanharvest.organz.views.client.ModifyProcedureObject;
 import com.humanharvest.organz.views.client.ResolveTransplantRequestObject;
 
@@ -68,16 +69,12 @@ public interface ClientResolver {
 
     Client modifyClientDetails(Client client, ModifyClientObject modifyClientObject);
 
-    IllnessRecord modifyIllnessRecord(Client client,IllnessRecord record);
-
-    //IllnessRecord markCured(IllnessRecord record,ModifyIllnessObject modifyIllnessObject);
-
-    //IllnessRecord markChronic(IllnessRecord record,ModifyIllnessObject modifyIllnessObject);
+    IllnessRecord modifyIllnessRecord(Client client, IllnessRecord toModify, ModifyIllnessObject modifyIllnessObject);
 
     MedicationRecord modifyMedicationRecord(Client client, MedicationRecord record, LocalDate stopDate);
 
-    ProcedureRecord modifyProcedureRecord(Client client, ModifyProcedureObject modifyProcedureObject, long
-            procedureRecordId);
+    ProcedureRecord modifyProcedureRecord(Client client, ProcedureRecord toModify,
+            ModifyProcedureObject modifyProcedureObject);
 
     //------------DELETEs----------------
 

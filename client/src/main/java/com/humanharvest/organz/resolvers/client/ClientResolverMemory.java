@@ -22,6 +22,7 @@ import com.humanharvest.organz.views.client.CreateMedicationRecordView;
 import com.humanharvest.organz.views.client.CreateProcedureView;
 import com.humanharvest.organz.views.client.CreateTransplantRequestView;
 import com.humanharvest.organz.views.client.ModifyClientObject;
+import com.humanharvest.organz.views.client.ModifyIllnessObject;
 import com.humanharvest.organz.views.client.ModifyProcedureObject;
 import com.humanharvest.organz.views.client.ResolveTransplantRequestObject;
 import org.springframework.beans.BeanUtils;
@@ -150,17 +151,14 @@ public class ClientResolverMemory implements ClientResolver {
         return record;
     }
 
-    public IllnessRecord modifyIllnessRecord(Client client, IllnessRecord record) {
-        return record;
+    public IllnessRecord modifyIllnessRecord(Client client, IllnessRecord toModify,
+            ModifyIllnessObject modifyIllnessObject) {
+        BeanUtils.copyProperties(modifyIllnessObject, toModify, modifyIllnessObject.getUnmodifiedFields());
+        return toModify;
     }
 
-    public ProcedureRecord modifyProcedureRecord(Client client, ModifyProcedureObject modifyProcedureObject,
-            long procedureRecordId) {
-        ProcedureRecord toModify = client.getProcedures().stream().filter(record -> record.getId() == procedureRecordId)
-                .findFirst().orElse(null);
-        if (toModify == null) {
-            return null;
-        }
+    public ProcedureRecord modifyProcedureRecord(Client client, ProcedureRecord toModify, ModifyProcedureObject
+            modifyProcedureObject) {
 
         BeanUtils.copyProperties(modifyProcedureObject, toModify, modifyProcedureObject.getUnmodifiedFields());
         return toModify;

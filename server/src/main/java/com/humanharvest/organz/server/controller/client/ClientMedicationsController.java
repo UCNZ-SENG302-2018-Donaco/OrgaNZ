@@ -40,8 +40,8 @@ public class ClientMedicationsController {
 
         if (ETag == null) {
             throw new IfMatchRequiredException();
-
         } else if (!client.getETag().equals(ETag)) {
+            System.out.println(client.getETag());
             throw new IfMatchFailedException();
         }
     }
@@ -111,9 +111,10 @@ public class ClientMedicationsController {
         AddMedicationRecordAction action = new AddMedicationRecordAction(client.get(), record, State.getClientManager());
         State.getActionInvoker(authToken).execute(action);
 
+        Optional<Client> client1 = State.getClientManager().getClientByID(client.get().getUid());
+
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client.get().getETag());
-        System.out.println(client.get().getMedications());
+        headers.setETag(client1.get().getETag());
 
         return new ResponseEntity<>(client.get().getMedications(), headers, HttpStatus.CREATED);
     }

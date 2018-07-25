@@ -109,7 +109,8 @@ public class ViewProceduresController extends SubController {
     private void editSummaryCell(CellEditEvent<ProcedureRecord,String> event) {
         ModifyProcedureObject modification = new ModifyProcedureObject();
         modification.setSummary(event.getNewValue());
-        sendModification(modification, event.getRowValue().getId());
+        ProcedureRecord record = event.getRowValue();
+        sendModification(record, modification);
     }
 
     /**
@@ -119,7 +120,8 @@ public class ViewProceduresController extends SubController {
     private void editDescriptionCell(CellEditEvent<ProcedureRecord,String> event) {
         ModifyProcedureObject modification = new ModifyProcedureObject();
         modification.setDescription(event.getNewValue());
-        sendModification(modification, event.getRowValue().getId());
+        ProcedureRecord record = event.getRowValue();
+        sendModification(record, modification);
     }
 
     /**
@@ -135,7 +137,8 @@ public class ViewProceduresController extends SubController {
         } else {
             ModifyProcedureObject modification = new ModifyProcedureObject();
             modification.setDate(event.getNewValue());
-            sendModification(modification, event.getRowValue().getId());
+            ProcedureRecord record = event.getRowValue();
+            sendModification(record, modification);
         }
         PageNavigator.refreshAllWindows();
     }
@@ -148,12 +151,12 @@ public class ViewProceduresController extends SubController {
         ModifyProcedureObject modification = new ModifyProcedureObject();
         modification.setAffectedOrgans(event.getNewValue());
         ProcedureRecord record = event.getRowValue();
-        sendModification(modification, record.getId());
+        sendModification(record, modification);
     }
 
-    private void sendModification(ModifyProcedureObject modification, long procedureRecordId) {
+    private void sendModification(ProcedureRecord procedureRecord, ModifyProcedureObject modification) {
         try {
-            State.getClientResolver().modifyProcedureRecord(client, modification, procedureRecordId);
+            State.getClientResolver().modifyProcedureRecord(client, procedureRecord, modification);
             PageNavigator.refreshAllWindows();
         } catch (ServerRestException exc) {
             LOGGER.severe(exc.getMessage());

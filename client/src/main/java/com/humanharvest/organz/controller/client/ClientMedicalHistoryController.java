@@ -36,6 +36,7 @@ import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.views.client.CreateIllnessView;
+import com.humanharvest.organz.views.client.ModifyIllnessObject;
 import org.controlsfx.control.Notifications;
 
 /**
@@ -326,6 +327,7 @@ public class ClientMedicalHistoryController extends SubController {
     private void toggleCured() {
 
         IllnessRecord record = getSelectedRecord();
+        ModifyIllnessObject modifyIllnessObject = new ModifyIllnessObject();
         if (record != null) {
             if (record.isChronic()) {
                 PageNavigator.showAlert(AlertType.ERROR,
@@ -333,19 +335,16 @@ public class ClientMedicalHistoryController extends SubController {
                         "An illness can't be cured if it is chronic. If the illness has been cured, first mark it as"
                                 + " not chronic.");
             } else if (selectedTableView == currentIllnessView) {
-                record.setCuredDate(LocalDate.now());
-                State.getClientResolver().modifyIllnessRecord(client,record);
+                modifyIllnessObject.setCuredDate(LocalDate.now());
+                State.getClientResolver().modifyIllnessRecord(client, record, modifyIllnessObject);
 
                 PageNavigator.refreshAllWindows();
             } else if (selectedTableView == pastIllnessView) {
-                record.setCuredDate(null);
-                State.getClientResolver().modifyIllnessRecord(client,record);
+                modifyIllnessObject.setCuredDate(null);
+                State.getClientResolver().modifyIllnessRecord(client, record, modifyIllnessObject);
                 PageNavigator.refreshAllWindows();
-
             }
-
         }
-
     }
 
     /**
@@ -392,21 +391,22 @@ public class ClientMedicalHistoryController extends SubController {
     @FXML
     private void toggleChronic() {
         IllnessRecord record = getSelectedRecord();
+        ModifyIllnessObject modifyIllnessObject = new ModifyIllnessObject();
         if (record != null) {
 
             if (record.isChronic()) {
                 // Current, chronic illness -> Current illness
-                record.setChronic(false);
+                modifyIllnessObject.setChronic(false);
             } else {
                 if (record.getCuredDate() != null) {
                     // Past illness -> Current, chronic illness
-                    record.setCuredDate(null);
+                    modifyIllnessObject.setCuredDate(null);
                 }
                 // Illness -> chronic illness
-                record.setChronic(true);
+                modifyIllnessObject.setChronic(true);
             }
             try {
-                State.getClientResolver().modifyIllnessRecord(client,record);
+                State.getClientResolver().modifyIllnessRecord(client, record, modifyIllnessObject);
 
             } catch (NotFoundException e) {
                 LOGGER.log(Level.WARNING, "Client not found");

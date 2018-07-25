@@ -1,10 +1,5 @@
 package com.humanharvest.organz.views.client;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
-import com.humanharvest.organz.Client;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.time.LocalDate;
@@ -15,12 +10,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
+
 public class ModifyIllnessObject {
 
   private static DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-  private Long id;
-  private Client client;
   private String illnessName;
   private LocalDate diagnosisDate;
   private LocalDate curedDate;
@@ -52,25 +50,6 @@ public class ModifyIllnessObject {
     } catch (NoSuchFieldException e) {
       e.printStackTrace();
     }
-  }
-
-  public Long getId() {
-
-    return id;
-  }
-
-  public void setId(Long id) {
-    registerChange("id");
-    this.id = id;
-  }
-
-  public Client getClient() {
-    return client;
-  }
-
-  public void setClient(Client client) {
-    registerChange("client");
-    this.client = client;
   }
 
   public String getIllnessName() {
