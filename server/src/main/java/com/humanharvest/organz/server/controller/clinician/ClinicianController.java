@@ -174,7 +174,7 @@ public class ClinicianController {
      * @param authToken id token
      * @return The list of HistoryItems
      */
-    @GetMapping("/clinicians/{staffId}/")
+    @GetMapping("/clinicians/{staffId}/history")
     public ResponseEntity<List<HistoryItem>> getHistory(
             @PathVariable int staffId,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {

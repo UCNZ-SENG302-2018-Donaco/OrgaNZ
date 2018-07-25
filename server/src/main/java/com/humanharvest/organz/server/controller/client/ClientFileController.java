@@ -1,13 +1,9 @@
 package com.humanharvest.organz.server.controller.client;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.state.State;
@@ -34,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ClientFileController {
 
-    @GetMapping
+    @GetMapping("/clients/file")
     public ResponseEntity<byte[]> exportClients(
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws AuthenticationException {
@@ -57,7 +53,7 @@ public class ClientFileController {
         }
     }
 
-    @PostMapping
+    @PostMapping("/clients/file")
     public ResponseEntity<String> importClients(
             @RequestBody byte[] data,
             @RequestHeader(value = "Content-Type") String mimeType,
