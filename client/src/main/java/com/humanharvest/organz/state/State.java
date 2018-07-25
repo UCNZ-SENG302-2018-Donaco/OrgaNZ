@@ -44,6 +44,7 @@ public final class State {
     private static AdministratorManager administratorManager;
     private static AuthenticationManager authenticationManager;
     private static CommandRunner commandRunner;
+    private static ConfigManager configManager;
 
     private static ActionInvoker invoker;
     private static Session session;
@@ -55,16 +56,6 @@ public final class State {
     private static String administratorEtag = "";
     private static String token = "";
     private static EnumSet<Country> allowedCountries;
-
-    public static ConfigManager getConfigManager() {
-        return configManager;
-    }
-
-    public static void setConfigManager(ConfigManager configManager) {
-        State.configManager = configManager;
-    }
-
-    private static ConfigManager configManager;
 
     private State() {
     }
@@ -89,6 +80,7 @@ public final class State {
             clinicianManager = new ClinicianManagerRest();
             administratorManager = new AdministratorManagerRest();
             authenticationManager = new AuthenticationManagerRest();
+            configManager = new ConfigManagerRest();
             commandRunner = new CommandRunnerRest();
         } else if (storageType == DataStorageType.MEMORY) {
             clientManager = new ClientManagerMemory();
@@ -96,6 +88,7 @@ public final class State {
             clinicianManager = new ClinicianManagerMemory();
             administratorManager = new AdministratorManagerMemory();
             authenticationManager = new AuthenticationManagerMemory();
+            configManager = new ConfigManagerMemory();
             commandRunner = commandText -> {
                 throw new UnsupportedOperationException("Memory storage type does not support running commands.");
             };
@@ -225,6 +218,14 @@ public final class State {
 
     public static AuthenticationManager getAuthenticationManager() {
         return authenticationManager;
+    }
+
+    public static ConfigManager getConfigManager() {
+        return configManager;
+    }
+
+    public static void setConfigManager(ConfigManager configManager) {
+        State.configManager = configManager;
     }
 
     public static ActionInvoker getInvoker() {

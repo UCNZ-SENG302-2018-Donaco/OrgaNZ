@@ -20,6 +20,7 @@ public final class State {
     private static ClinicianManager clinicianManager;
     private static AdministratorManager administratorManager;
     private static AuthenticationManager authenticationManager;
+    private static ConfigManager configManager;
     private static final Map<String, ActionInvoker> actionInvokers = new HashMap<>();
 
     private State() {
@@ -38,10 +39,12 @@ public final class State {
             clientManager = new ClientManagerDBPure();
             clinicianManager = new ClinicianManagerDBPure();
             administratorManager = new AdministratorManagerDBPure();
+            configManager = new ConfigManagerDBPure();
         } else if (storageType == DataStorageType.MEMORY) {
             clientManager = new ClientManagerMemory();
             clinicianManager = new ClinicianManagerMemory();
             administratorManager = new AdministratorManagerMemory();
+            configManager = new ConfigManagerMemory();
         } else {
             throw new IllegalArgumentException("DataStorageType cannot be null.");
         }
@@ -61,6 +64,14 @@ public final class State {
 
     public static AuthenticationManager getAuthenticationManager() {
         return authenticationManager;
+    }
+
+    public static ConfigManager getConfigManager() {
+        return configManager;
+    }
+
+    public static void setConfigManager(ConfigManager configManager) {
+        State.configManager = configManager;
     }
 
     public static void setAuthenticationManager(AuthenticationManager authenticationManager) {
