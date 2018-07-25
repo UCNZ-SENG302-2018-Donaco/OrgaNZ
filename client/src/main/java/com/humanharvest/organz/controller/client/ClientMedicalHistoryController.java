@@ -265,7 +265,7 @@ public class ClientMedicalHistoryController extends SubController {
         pastIllnessView.sort();
 
         if (session.getLoggedInUserType() == UserType.CLIENT) {
-            mainController.setTitle("Medication History:  " + client.getPreferredName());
+            mainController.setTitle("Medication History:  " + client.getPreferredNameFormatted());
         } else if (windowContext.isClinViewClientWindow()) {
             mainController.setTitle("Medication History:  " + client.getFullName());
 

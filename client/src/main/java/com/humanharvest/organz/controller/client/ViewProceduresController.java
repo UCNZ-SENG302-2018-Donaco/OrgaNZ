@@ -266,7 +266,7 @@ public class ViewProceduresController extends SubController {
             mainController.loadMenuBar(menuBarPane);
         }
 
-        mainController.setTitle("Procedures: " + client.getPreferredName());
+        mainController.setTitle("Procedures: " + client.getPreferredNameFormatted());
         refresh();
         enableAppropriateButtons();
     }
@@ -314,7 +314,7 @@ public class ViewProceduresController extends SubController {
         pastProcedureView.sort();
 
         if (session.getLoggedInUserType() == UserType.CLIENT) {
-            mainController.setTitle("View Procedures:  " + client.getPreferredName());
+            mainController.setTitle("View Procedures:  " + client.getPreferredNameFormatted());
         } else if (windowContext.isClinViewClientWindow()) {
             mainController.setTitle("View Procedures:  " + client.getFullName());
 

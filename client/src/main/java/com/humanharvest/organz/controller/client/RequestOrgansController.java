@@ -258,7 +258,7 @@ public class RequestOrgansController extends SubController {
         pastRequestsTable.setItems(pastRequests);
 
         if (session.getLoggedInUserType() == UserType.CLIENT) {
-            mainController.setTitle("Request Organs: " + client.getPreferredName());
+            mainController.setTitle("Request Organs: " + client.getPreferredNameFormatted());
         } else if (windowContext.isClinViewClientWindow()) {
             mainController.setTitle("Request Organs: " + client.getFullName());
 

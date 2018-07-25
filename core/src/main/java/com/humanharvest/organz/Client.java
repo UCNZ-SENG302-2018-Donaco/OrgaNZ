@@ -326,14 +326,14 @@ public class Client implements ConcurrencyControlledEntity {
         this.middleName = middleName;
     }
 
-    public String getPreferredName() {
+    public String getPreferredNameFormatted() {
         if (preferredName == null || preferredName.isEmpty()) {
             return getFullName();
         }
         return preferredName;
     }
 
-    public String getPreferredNameOnly() {
+    public String getPreferredName() {
         return preferredName;
     }
 
