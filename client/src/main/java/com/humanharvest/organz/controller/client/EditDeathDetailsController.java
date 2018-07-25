@@ -76,6 +76,7 @@ public class EditDeathDetailsController extends SubController{
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
+        mainController.setTitle("Details of Death");
 
         if (session.getLoggedInUserType() == UserType.CLIENT) {
             client = session.getLoggedInClient();
@@ -128,10 +129,12 @@ public class EditDeathDetailsController extends SubController{
     }
 
         public void applyChanges () {
+            ModifyClientObject modifyClientObject = new ModifyClientObject();
+
             if (session.getLoggedInUserType() == UserType.CLIENT) {
                 PageNavigator.showAlert(AlertType.ERROR, "Invalid Access", "Clients cannot edit death details");
             } else {
-                ModifyClientObject modifyClientObject = new ModifyClientObject();
+
                 addChangeIfDifferent(modifyClientObject, client, "dateOfDeath", deathDatePicker.getValue());
                 addChangeIfDifferent(modifyClientObject, client, "timeOfDeath", deathTimeField.getText());
                 addChangeIfDifferent(modifyClientObject, client, "regionOfDeath", deathRegion.getText());
@@ -145,7 +148,6 @@ public class EditDeathDetailsController extends SubController{
                             .showWarning();
                 } else {
 
-
                     client = State.getClientResolver().modifyClientDetails(client, modifyClientObject);
                     String actionText = modifyClientObject.toString();
                     System.out.println(modifyClientObject.getRegionOfDeath());
@@ -156,7 +158,7 @@ public class EditDeathDetailsController extends SubController{
                     Stage stage = (Stage) applyButton.getScene().getWindow();
                     stage.close();
 
-
+                    PageNavigator.refreshAllWindows();
 
                     HistoryItem save = new HistoryItem("UPDATE CLIENT INFO",
                         String.format("Updated client %s with values: %s", client.getFullName(), actionText));

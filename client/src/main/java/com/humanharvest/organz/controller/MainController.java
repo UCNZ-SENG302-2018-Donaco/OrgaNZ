@@ -124,7 +124,7 @@ public class MainController {
         subController.refresh();
         if (MenuBarController != null) {
             MenuBarController.refresh();
-        } else {
+        } else if (sidebarController != null) {
             sidebarController.refresh();
         }
     }
