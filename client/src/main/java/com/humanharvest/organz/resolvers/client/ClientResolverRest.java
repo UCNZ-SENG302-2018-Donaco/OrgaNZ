@@ -253,6 +253,7 @@ public class ClientResolverRest implements ClientResolver {
 
     public IllnessRecord modifyIllnessRecord(Client client, IllnessRecord toModify,
             ModifyIllnessObject modifyIllnessObject) {
+        System.out.println(modifyIllnessObject.isChronic());
         HttpHeaders httpHeaders = createHeaders(true);
         ResponseEntity<IllnessRecord> responseEntity = sendQuery(httpHeaders,
                 State.BASE_URI + "clients/{id}/illnesses/{illnessId}",
