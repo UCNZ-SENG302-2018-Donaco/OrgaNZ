@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
@@ -54,14 +55,22 @@ public class ClientResolverMemory implements ClientResolver {
     //------------POSTs----------------
 
     public Client createClient(CreateClientView createClientView) {
+
+        //Get the next empty UID
+        Optional<Client> nextEmpty = State.getClientManager().getClients()
+                        .stream()
+                        .max(Comparator.comparing(Client::getUid));
+        int nextId = 0;
+        if (nextEmpty.isPresent()) {
+            nextId = nextEmpty.get().getUid() + 1;
+        }
+
         Client client = new Client(
                 createClientView.getFirstName(),
                 createClientView.getMiddleName(),
                 createClientView.getLastName(),
                 createClientView.getDateOfBirth(),
-                //Get the next empty UID
-                State.getClientManager().getClients().stream().max(Comparator.comparing(Client::getUid))
-                        .get().getUid() + 1);
+                nextId);
         State.getClientManager().addClient(client);
         return client;
     }
