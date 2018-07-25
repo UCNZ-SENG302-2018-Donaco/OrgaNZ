@@ -10,7 +10,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
-import java.nio.charset.Charset;
 import java.time.LocalDate;
 
 import com.humanharvest.organz.Client;
@@ -36,20 +35,18 @@ import org.springframework.web.context.WebApplicationContext;
 @WebAppConfiguration
 public class ClientProceduresControllerTest {
 
-    private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON
-            .getSubtype(), Charset.forName("utf8"));
+    private static final String VALID_AUTH = "valid auth";
+    private static final String INVALID_AUTH = "invalid auth";
 
     private MockMvc mockMvc;
     private Client testClient;
-    private String VALID_AUTH = "valid auth";
-    private String INVALID_AUTH = "invalid auth";
 
-    LocalDate localDate;
-    ProcedureRecord procedureRecord1 = new ProcedureRecord(
+    private LocalDate localDate;
+    private final ProcedureRecord procedureRecord1 = new ProcedureRecord(
             "Liver transplant",
             "Patient needs a liver transplant,",
             localDate);
-    ProcedureRecord procedureRecord2 = new ProcedureRecord(
+    private final ProcedureRecord procedureRecord2 = new ProcedureRecord(
             "Hip-bone reconstruction",
             "Patient needs a hip-bone reconstruction",
             localDate);
@@ -61,7 +58,7 @@ public class ClientProceduresControllerTest {
     public void init(){
         State.reset();
         State.setAuthenticationManager(new AuthenticationManagerFake());
-        this.mockMvc = webAppContextSetup(webApplicationContext).build();
+        mockMvc = webAppContextSetup(webApplicationContext).build();
         testClient = new Client("John", "Freddy", "Doe", LocalDate.now(), 1);
         State.getClientManager().addClient(testClient);
         testClient.addProcedureRecord(procedureRecord1);
@@ -75,8 +72,6 @@ public class ClientProceduresControllerTest {
         doThrow(new AuthenticationException("X-Auth-Token does not match any allowed user type"))
                 .when(mockAuthenticationManager).verifyClinicianOrAdmin(null);
         doNothing().when(mockAuthenticationManager).verifyClinicianOrAdmin(VALID_AUTH);
-
-
     }
 
     //------------GET----------------
@@ -86,7 +81,7 @@ public class ClientProceduresControllerTest {
         mockMvc.perform(get("/clients/1/procedures")
                 .header("If-Match", testClient.getETag())
                 .header("X-Auth-Token", VALID_AUTH)
-                .contentType(contentType))
+                .contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk());
     }
 
@@ -95,12 +90,11 @@ public class ClientProceduresControllerTest {
         mockMvc.perform(get("/clients/5/procedures")
                 .header("If-Match", testClient.getETag())
                 .header("X-Auth-Token", VALID_AUTH)
-                .contentType(contentType))
+                .contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isNotFound());
     }
 
     //------------POST---------------
-
 
     @Test
     public void createValidProcedure() throws Exception {
@@ -113,10 +107,10 @@ public class ClientProceduresControllerTest {
         mockMvc.perform(post("/clients/1/procedures")
                 .header("If-Match", testClient.getETag())
                 .header("X-Auth-Token", VALID_AUTH)
-                .contentType(contentType)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(validProcedureJson))
                 .andExpect(status().isCreated())
-                .andExpect(content().contentType(contentType))
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(jsonPath("$[2].summary", is("Heart Transplant")))
                 .andExpect(jsonPath("$[2].description", is("To fix my achy-breaky heart.")))
                 .andExpect(jsonPath("$[2].date", is("2017-06-01")))
@@ -134,7 +128,7 @@ public class ClientProceduresControllerTest {
         mockMvc.perform(post("/clients/1/procedures")
                 .header("If-Match", testClient.getETag())
                 .header("X-Auth-Token", VALID_AUTH)
-                .contentType(contentType)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(invalidDateProcedureJson))
                 .andExpect(status().isBadRequest());
     }
@@ -150,7 +144,7 @@ public class ClientProceduresControllerTest {
         mockMvc.perform(post("/clients/1/procedures")
                 .header("If-Match", testClient.getETag())
                 .header("X-Auth-Token", INVALID_AUTH)
-                .contentType(contentType)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(validProcedureJson))
                 .andExpect(status().isUnauthorized());
     }
@@ -166,10 +160,9 @@ public class ClientProceduresControllerTest {
         mockMvc.perform(post("/clients/1/procedures")
                 .header("If-Match", testClient.getETag())
                 .header("X-Auth-Token", VALID_AUTH)
-                .contentType(contentType)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(validProcedureJson))
                 .andExpect(status().isBadRequest());
-
     }
 
     @Test
@@ -183,47 +176,12 @@ public class ClientProceduresControllerTest {
         mockMvc.perform(post("/clients/1/procedures")
                 .header("If-Match", testClient.getETag())
                 .header("X-Auth-Token", VALID_AUTH)
-                .contentType(contentType)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(validProcedureJson))
                 .andExpect(status().isBadRequest());
-
     }
 
     //------------PATCH---------------
-
-
-    @Test
-    public void validPatch() throws Exception {/*
-
-
-        String validProcedureJson = "{ \n" +
-                "\"summary\": \"Heart Transplant\", \n" +
-                "\"description\": \"To fix my achy-breaky heart.\", \n" +
-                "\"date\": \"2017-06-01\", \n" +
-                "\"affectedOrgans\": [\"HEART\"] \n"+
-                " }";
-
-        mockMvc.perform(post("/clients/1/procedures")
-                .header("If-Match", testClient.getETag())
-                .header("X-Auth-Token", VALID_AUTH)
-                .contentType(contentType)
-                .content(validProcedureJson));
-
-        String json = "{\n" +
-                "\"id\": 1, \n" +
-                "\"summary\": \"Heart Transplant\", \n" +
-                "\"description\": \"New Description\", \n" +
-                "\"date\": \"2017-06-01\", \n" +
-                "\"affectedOrgans\": [\"HEART\"] \n"+
-                " }";
-
-        mockMvc.perform(patch("/clients/1/procedures/1")
-                .header("If-Match", testClient.getETag())
-                .header("X-Auth-Token", VALID_AUTH)
-                .contentType(contentType)
-                .content(json))
-                .andExpect(status().isCreated());*/
-    }
 
     @Test
     public void invalidAuthPatch() throws Exception {
@@ -238,9 +196,9 @@ public class ClientProceduresControllerTest {
         mockMvc.perform(patch("/clients/" + testClient.getUid() + "/procedures/2")
                 .header("If-Match", testClient.getETag())
                 .header("X-Auth-Token", INVALID_AUTH)
-                .contentType(contentType)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(json))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -256,25 +214,7 @@ public class ClientProceduresControllerTest {
         mockMvc.perform(patch("/clients/" + testClient.getUid() + "/procedures/2")
                 .header("If-Match", testClient.getETag())
                 .header("X-Auth-Token", VALID_AUTH)
-                .contentType(contentType)
-                .content(json))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    public void invalidETagPatch() throws Exception {
-        String json = "{\n" +
-                "\"id\": 2, \n" +
-                "\"summary\": \"Heart Transplant\", \n" +
-                "\"description\": \"New Description\", \n" +
-                "\"date\": \"2017-06-01\", \n" +
-                "\"affectedOrgans\": [\"HEART\"] \n"+
-                " }";
-
-        mockMvc.perform(patch("/clients/" + testClient.getUid() + "/procedures/2")
-                .header("If-Match", "123456")
-                .header("X-Auth-Token", VALID_AUTH)
-                .contentType(contentType)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(json))
                 .andExpect(status().isBadRequest());
     }
@@ -282,29 +222,10 @@ public class ClientProceduresControllerTest {
     //------------DELETE---------------
 
     @Test
-    public void validDelete() throws Exception {/*
-
-        mockMvc.perform(delete("/clients/1/procedures/1")
-                .header("If-Match", testClient.getETag())
-                .header("X-Auth-Token", VALID_AUTH))
-                .andExpect(status().isOk());*/
-
-    }
-
-    @Test
     public void invalidDeleteWrongProcedure() throws Exception {
         mockMvc.perform(delete("/clients/1/procedures/5")
                 .header("If-Match", testClient.getETag())
                 .header("X-Auth-Token", VALID_AUTH))
                 .andExpect(status().isNotFound());
-
-    }
-
-    @Test
-    public void invalidETagDelete() throws Exception {/*
-        mockMvc.perform(delete("/clients/1/procedures/1")
-                .header("If-Match", "HELLO")
-                .header("X-Auth-Token", VALID_AUTH))
-                .andExpect(status().isUnauthorized());*/
     }
 }

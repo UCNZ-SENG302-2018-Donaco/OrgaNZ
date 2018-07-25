@@ -77,6 +77,8 @@ public final class State {
     public static void init(DataStorageType storageType) {
         currentStorageType = storageType;
 
+        imageManager = new ImageManager();
+
         if (storageType == DataStorageType.REST) {
             ClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
             restTemplate.setRequestFactory(requestFactory);
@@ -90,7 +92,6 @@ public final class State {
             clinicianManager = new ClinicianManagerRest();
             administratorManager = new AdministratorManagerRest();
             authenticationManager = new AuthenticationManagerRest();
-            imageManager = new ImageManager();
             commandRunner = new CommandRunnerRest();
             actionResolver = new ActionResolverRest();
             clinicianResolver = new ClinicianResolverRest();
@@ -102,7 +103,6 @@ public final class State {
             clinicianManager = new ClinicianManagerMemory();
             administratorManager = new AdministratorManagerMemory();
             authenticationManager = new AuthenticationManagerMemory();
-            imageManager = new ImageManager();
             commandRunner = commandText -> {
                 throw new UnsupportedOperationException("Memory storage type does not support running commands.");
             };
@@ -246,7 +246,6 @@ public final class State {
     public static CommandRunner getCommandRunner() {
         return commandRunner;
     }
-
 
     public static ActionResolver getActionResolver() {
         return actionResolver;

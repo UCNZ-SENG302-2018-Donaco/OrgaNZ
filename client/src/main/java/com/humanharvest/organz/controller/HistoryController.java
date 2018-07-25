@@ -76,8 +76,7 @@ public class HistoryController extends SubController {
         if (session.getLoggedInUserType() == UserType.CLIENT) {
             historyItems = State.getClientResolver().getHistory(session.getLoggedInClient());
         } else if (windowContext.isClinViewClientWindow()) {
-            //todo get client being viewed
-            historyItems = null; //placeholder
+            historyItems = State.getClientResolver().getHistory(windowContext.getViewClient());
         } else if (session.getLoggedInUserType() == UserType.CLINICIAN) {
             historyItems = State.getClinicianResolver().getHistory(session.getLoggedInClinician());
         } else {
