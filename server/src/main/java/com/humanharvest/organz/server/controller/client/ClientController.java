@@ -328,12 +328,14 @@ public class ClientController {
         InputStream in;
         try {
             in = new FileInputStream("./images/" + uid +  ".png"); // for tests to pass pathname must be - ./../images/
+            byte[] out = IOUtils.toByteArray(in);
+            in.close();
+            return new ResponseEntity<>(out, HttpStatus.OK);
         }
         catch (Exception ex) {
             throw new NotFoundException();
 //            in = new FileInputStream("./images/default.png"); // Now implemented in the client side.
         }
-        return new ResponseEntity<>(IOUtils.toByteArray(in), HttpStatus.OK);
     }
 
     @PostMapping("clients/{uid}/image")
@@ -373,8 +375,9 @@ public class ClientController {
         State.getAuthenticationManager().verifyClientAccess(authToken, client);
 
         try {
-            File file = new File("./images/" + uid + ".png"); // for tests to pass pathname must be - ./../images/
-
+            File file = new File("images/" + uid + ".png"); // for tests to pass pathname must be - ./../images// /
+            System.out.println(file.getAbsolutePath());
+            System.out.println(file.getName());
             if (file.delete()) {
                 System.out.println("successfully deleted");
                 return new ResponseEntity(HttpStatus.OK);

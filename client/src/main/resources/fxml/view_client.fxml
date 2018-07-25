@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.client.ViewClientController">
+<VBox prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.client.ViewClientController">
   <SplitPane dividerPositions="0.5" orientation="VERTICAL" VBox.vgrow="ALWAYS">
   <HBox fx:id="menuBarPane" maxHeight="-Infinity" />
   <SplitPane dividerPositions="0.29797979797979796" VBox.vgrow="ALWAYS">
@@ -43,7 +43,20 @@
                                  <Font size="25.0" />
                               </font>
                            </Label>
-                           <ImageView fx:id="imageView" fitHeight="126.0" fitWidth="144.0" pickOnBounds="true" preserveRatio="true" GridPane.halignment="CENTER" />
+                           <GridPane fx:id="gridPane" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="130.0" prefWidth="130.0" style="-fx-border-color: black; -fx-border-width: 2px; -fx-background-color: black;" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+                              <columnConstraints>
+                                 <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                              </columnConstraints>
+                              <rowConstraints>
+                                 <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+                              </rowConstraints>
+                              <children>
+                                 <ImageView fx:id="imageView" fitHeight="130.0" fitWidth="130.0" pickOnBounds="true" GridPane.halignment="CENTER" GridPane.hgrow="ALWAYS" GridPane.valignment="CENTER" GridPane.vgrow="ALWAYS" />
+                              </children>
+                              <GridPane.margin>
+                                 <Insets />
+                              </GridPane.margin>
+                           </GridPane>
                            <GridPane GridPane.rowIndex="1">
                              <columnConstraints>
                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />

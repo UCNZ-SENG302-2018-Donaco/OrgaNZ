@@ -16,6 +16,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.imageio.ImageIO;
+
+import javafx.scene.layout.GridPane;
 import org.apache.commons.io.IOUtils;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -141,6 +143,8 @@ public class ViewClientController extends ViewBaseController {
     private ChoiceBox<Region> region;
     @FXML
     private ImageView imageView;
+    @FXML
+    private GridPane gridPane;
     private Image image;
 
 
@@ -271,8 +275,8 @@ public class ViewClientController extends ViewBaseController {
         image = new Image(new ByteArrayInputStream(bytes));
 
         imageView.setImage(image);
-        imageView.setFitHeight(130);
-        imageView.setFitWidth(130);
+        imageView.setFitHeight(128);
+        imageView.setFitWidth(128);
         imageView.setPreserveRatio(true);
 
     }
@@ -328,12 +332,13 @@ public class ViewClientController extends ViewBaseController {
      */
     @FXML
     public void deletePhoto() {
-        boolean deleteSuccessful = State.getImageManager().deleteClientImage(viewedClient.getUid());
-        if (deleteSuccessful) {
+        try {
+            State.getImageManager().deleteClientImage(viewedClient.getUid());
             loadImage();
-        } else {
+        } catch (Exception e) {
             PageNavigator.showAlert(AlertType.ERROR,"Server Error", "Something went wrong with the server. "
                     + "Please try again later.");
+            e.printStackTrace();
         }
     }
 
