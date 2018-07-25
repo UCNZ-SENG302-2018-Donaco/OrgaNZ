@@ -99,34 +99,39 @@ public class Client implements ConcurrencyControlledEntity {
 
     @OneToMany(
             mappedBy = "client",
-            cascade = CascadeType.ALL
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
     )
     @JsonManagedReference
     private List<TransplantRequest> transplantRequests = new ArrayList<>();
 
     @OneToMany(
             mappedBy = "client",
-            cascade = CascadeType.ALL
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
     )
     @JsonManagedReference
     private List<MedicationRecord> medicationHistory = new ArrayList<>();
 
     @OneToMany(
             mappedBy = "client",
-            cascade = CascadeType.ALL
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
     )
     @JsonManagedReference
     private List<IllnessRecord> illnessHistory = new ArrayList<>();
 
     @OneToMany(
             mappedBy = "client",
-            cascade = CascadeType.ALL
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
     )
     @JsonManagedReference
     private List<ProcedureRecord> procedures = new ArrayList<>();
 
     @OneToMany(
-            cascade = CascadeType.ALL
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
     )
     private List<HistoryItem> changesHistory = new ArrayList<>();
 

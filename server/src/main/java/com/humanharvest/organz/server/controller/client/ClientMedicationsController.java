@@ -157,7 +157,10 @@ public class ClientMedicationsController {
                     .getClientManager());
             State.getActionInvoker(authToken).execute(action);
 
-            return new ResponseEntity<>(HttpStatus.CREATED);
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.setETag(client.get().getETag());
+
+            return new ResponseEntity<>(httpHeaders, HttpStatus.CREATED);
         }
     }
 
