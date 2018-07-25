@@ -352,9 +352,6 @@ public class RequestOrgansController extends SubController {
 
         if (selectedRequest != null) {
 
-            // Create a request
-
-
             // Get resolved reason and the request's new status
             ResolveReason resolvedReasonDropdownChoice = cancelTransplantOptions.getValue();
             String resolvedReason;

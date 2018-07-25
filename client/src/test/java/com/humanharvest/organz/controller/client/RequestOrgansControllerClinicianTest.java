@@ -216,12 +216,12 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
                 .type(KeyCode.ENTER);
 
         clickOn("Resolve Request");
+
         // Press esc to not go to medical history page
         type(KeyCode.ESCAPE);
 
         // Checks that the selected organ has been removed from the clients transplant request list
 
-        System.out.println(testClient.getCurrentlyRequestedOrgans());
         assertFalse(testClient.getCurrentlyRequestedOrgans().contains(Organ.BONE));
 
     }

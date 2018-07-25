@@ -15,7 +15,6 @@ import com.humanharvest.organz.ProcedureRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
 import com.humanharvest.organz.views.client.CreateClientView;
 import com.humanharvest.organz.views.client.CreateIllnessView;
@@ -36,10 +35,6 @@ public class ClientResolverMemory implements ClientResolver {
     }
 
     public List<TransplantRequest> getTransplantRequests(Client client) {
-        System.out.println("getting trs");
-        for (TransplantRequest transplantRequest : client.getTransplantRequests()) {
-            System.out.println(transplantRequest.getStatus());
-        }
         return client.getTransplantRequests();
     }
 
