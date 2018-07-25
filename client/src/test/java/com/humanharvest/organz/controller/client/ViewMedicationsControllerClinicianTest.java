@@ -1,5 +1,6 @@
 package com.humanharvest.organz.controller.client;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.not;
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -37,12 +38,9 @@ import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
 import com.humanharvest.organz.utilities.web.DrugInteractionsHandler;
 import com.humanharvest.organz.utilities.web.MedActiveIngredientsHandler;
-import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.testfx.api.FxRobot;
 
-@Ignore
 public class ViewMedicationsControllerClinicianTest extends ControllerTest {
 
     private final MedicationRecord[] testPastMedicationRecords = {
@@ -80,8 +78,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
             )
     };
 
-    private Clinician testClinician = new Clinician("A", "B", "C", "D", Region.UNSPECIFIED, 0, "E");
-    private Client testClient = new Client(1);
+    private Client testClient;
 
     @Override
     protected Page getPage() {
@@ -91,22 +88,16 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
     @Override
     protected void initState() {
         State.reset();
+
+        Clinician testClinician = new Clinician("A", "B", "C", "D", Region.UNSPECIFIED, 0, "E");
+        testClient = new Client(1);
+
         State.login(testClinician);
         mainController.setWindowContext(new WindowContext.WindowContextBuilder()
                 .setAsClinicianViewClientWindow()
                 .viewClient(testClient)
                 .build());
-        resetTestClientMedicationHistory();
-    }
 
-    @Before
-    public void resetTestClientMedicationHistory() {
-        for (MedicationRecord record : testClient.getPastMedications()) {
-            testClient.deleteMedicationRecord(record);
-        }
-        for (MedicationRecord record : testClient.getCurrentMedications()) {
-            testClient.deleteMedicationRecord(record);
-        }
         for (MedicationRecord record : testPastMedicationRecords) {
             testClient.addMedicationRecord(record);
         }
@@ -128,9 +119,9 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
 
     @Test
     public void modifyButtonsEnabledTest() {
-        verifyThat("#moveToHistoryButton", (Button b) -> !b.isDisabled());
-        verifyThat("#moveToCurrentButton", (Button b) -> !b.isDisabled());
-        verifyThat("#deleteButton", (Button b) -> !b.isDisabled());
+        verifyThat("#moveToHistoryButton", (Button button) -> !button.isDisabled());
+        verifyThat("#moveToCurrentButton", (Button button) -> !button.isDisabled());
+        verifyThat("#deleteButton", (Button button) -> !button.isDisabled());
     }
 
     @Test
@@ -149,26 +140,20 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
 
     @Test
     public void addNewMedicationWithButtonTest() {
-        MedicationRecord toBeAdded = new MedicationRecord("Med D", LocalDate.now(), null);
-
-        clickOn("#newMedField").write(toBeAdded.getMedicationName());
+        clickOn("#newMedField").write("Med D");
         clickOn("Add Medication");
 
         //Assert that the currentMedications list contains an entry with name "Med D"
-        assertTrue(testClient.getCurrentMedications().stream().anyMatch(medicationRecord -> "Med D".equals
-                (medicationRecord.getMedicationName())));
+        assertThat(testClient.getCurrentMedications()).extracting(("medicationName")).contains("Med D");
     }
 
     @Test
     public void addNewMedicationWithEnterTest() {
-        MedicationRecord toBeAdded = new MedicationRecord("Med D", LocalDate.now(), null);
-
-        clickOn("#newMedField").write(toBeAdded.getMedicationName());
-        type(KeyCode.ENTER);
+        clickOn("#newMedField").write("Med D");
+        press(KeyCode.ENTER);
 
         //Assert that the currentMedications list contains an entry with name "Med D"
-        assertTrue(testClient.getCurrentMedications().stream().anyMatch(medicationRecord -> "Med D".equals
-                (medicationRecord.getMedicationName())));
+        assertThat(testClient.getCurrentMedications()).extracting(("medicationName")).contains("Med D");
     }
 
     @Test
@@ -180,7 +165,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
 
         verifyThat("#pastMedicationsView", hasListCell(toBeMoved));
         verifyThat("#currentMedicationsView", not(hasListCell(toBeMoved)));
-        assertEquals(toBeMoved.getStopped(), LocalDate.now());
+        assertEquals(LocalDate.now(), toBeMoved.getStopped());
     }
 
     @Test
@@ -233,10 +218,10 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
      * @param expectedContent Expected content of the dialog
      */
     private void checkAlertHasHeaderAndContent(String expectedHeader, String expectedContent) {
-        final Stage actualAlertDialog = getTopModalStage();
+        Stage actualAlertDialog = getTopModalStage();
         assertNotNull(actualAlertDialog);
 
-        final DialogPane dialogPane = (DialogPane) actualAlertDialog.getScene().getRoot();
+        DialogPane dialogPane = (DialogPane) actualAlertDialog.getScene().getRoot();
         assertEquals(expectedHeader, dialogPane.getHeaderText());
         assertEquals(expectedContent, dialogPane.getContentText());
     }
@@ -265,7 +250,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
 
     @Test
     public void viewActiveIngredientsTest() throws IOException {
-        ViewMedicationsController pageController = (ViewMedicationsController) super.pageController;
+        ViewMedicationsController pageController = (ViewMedicationsController)super.pageController;
         pageController.setActiveIngredientsHandler(createMockActiveIngredientsHandler(
                 "Ibuprofen",
                 Arrays.asList("Diphenhydramine citrate; ibuprofen",

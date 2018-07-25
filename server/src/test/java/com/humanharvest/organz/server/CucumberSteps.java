@@ -146,6 +146,10 @@ public final class CucumberSteps implements En {
             lastAction = lastAction.andExpect(jsonPath("$", hasSize(size)));
         });
 
+        Then("^the paginated result has (\\d+) elements$", (Integer size) -> {
+            lastAction = lastAction.andExpect(jsonPath("$.clients", hasSize(size)));
+        });
+
         Then("^result (\\d+)'s (\\w+) is (\\w+)$", (Integer index, String fieldName, String firstName) -> {
             lastAction = lastAction.andExpect(jsonPath(String.format("$[%d].%s", index, fieldName), is(firstName)));
         });

@@ -54,6 +54,10 @@ public class TransplantRequest {
         this.requestDate = requestDate;
     }
 
+    public Long getId() {
+        return id;
+    }
+
     public Client getClient() {
         return client;
     }
@@ -76,6 +80,10 @@ public class TransplantRequest {
 
     public String getResolvedReason() {
         return resolvedReason;
+    }
+
+    public void setId(long id) {
+        this.id = id;
     }
 
     /**

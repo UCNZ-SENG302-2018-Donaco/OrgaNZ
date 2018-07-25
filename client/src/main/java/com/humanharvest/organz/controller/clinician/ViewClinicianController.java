@@ -20,7 +20,6 @@ import javafx.scene.paint.Color;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.resolvers.clinician.ModifyClinicianResolver;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.JSONConverter;
@@ -157,7 +156,8 @@ public class ViewClinicianController extends ViewBaseController {
      * Loads all of the currently logged in Clinician's details, except for their password.
      */
     private void loadClinicianData() {
-        viewedClinician = State.getClinicianManager().getClinicianByStaffId(viewedClinician.getStaffId()).get();
+        viewedClinician = State.getClinicianManager().getClinicianByStaffId(viewedClinician.getStaffId())
+                .orElseThrow(IllegalStateException::new);
         loadStaffIdTextField.setText(String.valueOf(viewedClinician.getStaffId()));
         fname.setText(viewedClinician.getFirstName());
         mname.setText(viewedClinician.getMiddleName());
@@ -246,8 +246,7 @@ public class ViewClinicianController extends ViewBaseController {
         addChangeIfDifferent(modifyClinicianObject, viewedClinician, "region", region.getValue());
 
         try {
-            ModifyClinicianResolver resolver = new ModifyClinicianResolver(viewedClinician, modifyClinicianObject);
-            viewedClinician = resolver.execute();
+            viewedClinician = State.getClinicianResolver().modifyClinician(viewedClinician, modifyClinicianObject);
             String actionText = modifyClinicianObject.toString();
 
             Notifications.create()

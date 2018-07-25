@@ -1,7 +1,6 @@
 package com.humanharvest.organz.utilities.type_converters;
 
 import com.humanharvest.organz.utilities.enums.Gender;
-
 import picocli.CommandLine;
 
 /**
