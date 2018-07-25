@@ -169,7 +169,6 @@ public class ViewClientController extends ViewBaseController {
             viewedClient = windowContext.getViewClient();
             mainController.loadMenuBar(menuBarPane);
         }
-        loadImage();
         refresh();
     }
 
@@ -182,13 +181,16 @@ public class ViewClientController extends ViewBaseController {
             PageNavigator.showAlert(AlertType.ERROR,
                     "Server Error",
                     "An error occurred while trying to fetch from the server.\nPlease try again later.");
+            return;
         }
         updateClientFields();
+        mainController.refreshNavigation();
         if (session.getLoggedInUserType() == UserType.CLIENT) {
             mainController.setTitle("View Client: " + viewedClient.getPreferredNameFormatted());
         } else if (windowContext.isClinViewClientWindow()) {
             mainController.setTitle("View Client: " + viewedClient.getFullName());
         }
+        loadImage();
     }
 
     /**
@@ -312,7 +314,7 @@ public class ViewClientController extends ViewBaseController {
             }
         }
         if (uploadSuccess) {
-            loadImage();
+            refresh();
             PageNavigator.showAlert(AlertType.CONFIRMATION, "Success", "The image has been posted.");
         }
     }
@@ -324,7 +326,7 @@ public class ViewClientController extends ViewBaseController {
     public void deletePhoto() {
         try {
             State.getImageManager().deleteClientImage(viewedClient.getUid());
-            loadImage();
+            refresh();
         } catch (ServerRestException e) {
             PageNavigator.showAlert(AlertType.ERROR, "Server Error", "Something went wrong with the server. "
                     + "Please try again later.");

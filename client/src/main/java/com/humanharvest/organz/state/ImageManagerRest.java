@@ -19,6 +19,7 @@ public class ImageManagerRest  implements ImageManager{
     protected ImageManagerRest() {
     }
 
+
     private HttpHeaders generateHeaders() {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set("X-Auth-Token", State.getToken());
@@ -44,7 +45,9 @@ public class ImageManagerRest  implements ImageManager{
 
     public byte[] getDefaultImage() throws IOException {
         InputStream in = new FileInputStream("./images/default.png");
-        return IOUtils.toByteArray(in);
+        byte[] res = IOUtils.toByteArray(in);
+        in.close();
+        return res;
     }
 
     /**
@@ -60,7 +63,6 @@ public class ImageManagerRest  implements ImageManager{
         ResponseEntity responseEntity = State.getRestTemplate().exchange(State.BASE_URI + "/clients/{uid}/image",
                 HttpMethod.POST, entity, boolean.class, uid);
         return responseEntity.getStatusCode() == HttpStatus.CREATED;
-
     }
 
     /**
