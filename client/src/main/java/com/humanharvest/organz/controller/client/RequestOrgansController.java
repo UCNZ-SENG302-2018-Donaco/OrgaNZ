@@ -230,7 +230,7 @@ public class RequestOrgansController extends SubController {
     public void refresh() {
         // Reload the client's transplant requests
         try {
-            client.setTransplantRequests(resolver.getTransplantRequests(client));
+            allRequests = resolver.getTransplantRequests(client);
         } catch (NotFoundException e) {
             LOGGER.log(Level.WARNING, "Client not found");
             PageNavigator.showAlert(AlertType.ERROR,
@@ -244,8 +244,6 @@ public class RequestOrgansController extends SubController {
                     "Could not apply changes on the server, please try again later");
             return;
         }
-
-        allRequests = client.getTransplantRequests();
 
         currentRequests = new FilteredList<>(
                 FXCollections.observableArrayList(allRequests),
@@ -354,12 +352,6 @@ public class RequestOrgansController extends SubController {
 
         if (selectedRequest != null) {
 
-            // Create a request
-
-            // Get data from existing request
-            Organ requestedOrgan = selectedRequest.getRequestedOrgan();
-            LocalDateTime requestDate = selectedRequest.getRequestDate();
-
             // Get resolved reason and the request's new status
             ResolveReason resolvedReasonDropdownChoice = cancelTransplantOptions.getValue();
             String resolvedReason;
@@ -435,17 +427,13 @@ public class RequestOrgansController extends SubController {
                             + "statements.");
             }
 
-            ResolveTransplantRequestObject request = new ResolveTransplantRequestObject(client, requestedOrgan,
-                    requestDate,
-                    LocalDateTime.now(), status, resolvedReason);
+            ResolveTransplantRequestObject request = new ResolveTransplantRequestObject(
+                    selectedRequest, LocalDateTime.now(), status, resolvedReason);
 
-            // Resolve the request
-            int id = Integer.parseInt(selectedRequest.getId().toString());
             try {
                 resolver.resolveTransplantRequest(
                         client,
-                        request,
-                        id);
+                        request);
             } catch (ServerRestException e) { //500
                 LOGGER.severe(e.getMessage());
                 PageNavigator.showAlert(AlertType.ERROR,
