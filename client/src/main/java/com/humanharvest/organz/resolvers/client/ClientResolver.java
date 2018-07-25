@@ -67,7 +67,7 @@ public interface ClientResolver {
     TransplantRequest resolveTransplantRequest(
             Client client,
             ResolveTransplantRequestObject request,
-            int transplantRequestIndex);
+            int id);
 
     Client modifyClientDetails(Client client, ModifyClientObject modifyClientObject);
 

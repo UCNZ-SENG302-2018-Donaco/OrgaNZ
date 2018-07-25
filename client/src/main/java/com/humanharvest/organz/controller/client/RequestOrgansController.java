@@ -440,12 +440,12 @@ public class RequestOrgansController extends SubController {
                     LocalDateTime.now(), status, resolvedReason);
 
             // Resolve the request
-            int transplantRequestIndex = Integer.parseInt(selectedRequest.getId().toString());
+            int id = Integer.parseInt(selectedRequest.getId().toString());
             try {
                 resolver.resolveTransplantRequest(
                         client,
                         request,
-                        transplantRequestIndex);
+                        id);
             } catch (ServerRestException e) { //500
                 LOGGER.severe(e.getMessage());
                 PageNavigator.showAlert(AlertType.ERROR,
