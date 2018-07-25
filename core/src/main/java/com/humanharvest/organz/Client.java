@@ -203,7 +203,7 @@ public class Client implements ConcurrencyControlledEntity {
     }
 
     public void setProcedures(List<ProcedureRecord> procedures) {
-        this.procedures = procedures;
+        this.procedures = new ArrayList<>(procedures);
     }
 
     /**
