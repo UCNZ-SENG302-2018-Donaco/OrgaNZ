@@ -27,6 +27,7 @@ import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SidebarController;
 import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.resolvers.client.ClientResolver;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
@@ -46,6 +47,7 @@ public class ClientMedicalHistoryController extends SubController {
 
     private Session session;
     private Client client;
+    private ClientResolver resolver;
 
     @FXML
     private Pane sidebarPane, menuBarPane;
@@ -145,10 +147,11 @@ public class ClientMedicalHistoryController extends SubController {
     }
 
     /**
-     * Gets the current session and action invoker from the global state.
+     * Gets the current session and resolver from the global state.
      */
     public ClientMedicalHistoryController() {
         session = State.getSession();
+        resolver = State.getClientResolver();
     }
 
     /**
@@ -217,7 +220,6 @@ public class ClientMedicalHistoryController extends SubController {
         } else if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
             mainController.loadMenuBar(menuBarPane);
-
         }
 
         refresh();
@@ -229,6 +231,24 @@ public class ClientMedicalHistoryController extends SubController {
      */
     @Override
     public void refresh() {
+
+        // Reload the client's medical history
+        try {
+            client.setMedicationHistory(resolver.getMedicationRecords(client));
+        } catch (NotFoundException e) {
+            LOGGER.log(Level.WARNING, "Client not found");
+            PageNavigator.showAlert(AlertType.ERROR,
+                    "Client not found",
+                    "The client could not be found on the server, it may have been deleted");
+            return;
+        } catch (ServerRestException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
+            PageNavigator.showAlert(AlertType.ERROR,
+                    "Server error",
+                    "Could not apply changes on the server, please try again later");
+            return;
+        }
+
         SortedList<IllnessRecord> sortedCurrentIllnesses = new SortedList<>(FXCollections.observableArrayList(
                 client.getCurrentIllnesses()));
         SortedList<IllnessRecord> sortedPastIllnesses = new SortedList<>(FXCollections.observableArrayList(

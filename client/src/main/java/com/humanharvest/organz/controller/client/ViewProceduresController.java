@@ -272,9 +272,8 @@ public class ViewProceduresController extends SubController {
      */
     @Override
     public void refresh() {
-        List<ProcedureRecord> allProcedures;
         try {
-            allProcedures = State.getClientResolver().getProcedureRecords(client);
+            client.setProcedures(State.getClientResolver().getProcedureRecords(client));
         } catch (NotFoundException e) {
             Notifications.create()
                     .title("Client not found")
@@ -289,6 +288,7 @@ public class ViewProceduresController extends SubController {
             return;
         }
 
+        List<ProcedureRecord> allProcedures = client.getProcedures();
 
         SortedList<ProcedureRecord> sortedPastProcedures = new SortedList<>(FXCollections.observableArrayList(
                 allProcedures.stream()

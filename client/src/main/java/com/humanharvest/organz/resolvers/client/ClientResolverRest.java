@@ -45,7 +45,6 @@ public class ClientResolverRest implements ClientResolver {
         return responseEntity.getBody();
     }
 
-
     public List<TransplantRequest> getTransplantRequests(Client client) {
         HttpHeaders httpHeaders = createHeaders(false);
         ResponseEntity<List<TransplantRequest>> responseEntity = sendQuery(httpHeaders,
@@ -57,7 +56,6 @@ public class ClientResolverRest implements ClientResolver {
         client.setTransplantRequests(responseEntity.getBody());
         return responseEntity.getBody();
     }
-
 
     public List<MedicationRecord> getMedicationRecords(Client client) {
         HttpHeaders httpHeaders = createHeaders(false);
