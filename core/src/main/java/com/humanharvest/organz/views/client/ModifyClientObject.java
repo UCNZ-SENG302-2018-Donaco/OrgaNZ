@@ -35,7 +35,7 @@ public class ModifyClientObject extends ModifyBaseObject {
     private String timeOfDeath;
     private String regionOfDeath;
     private String cityOfDeath;
-    private String countryOfDeath;
+    private Country countryOfDeath;
 
     public String getFirstName() {
         return firstName;
@@ -181,11 +181,11 @@ public class ModifyClientObject extends ModifyBaseObject {
         this.cityOfDeath = cityOfDeath;
     }
 
-    public String getCountryOfDeath() {
+    public Country getCountryOfDeath() {
         return countryOfDeath;
     }
 
-    public void setCountryOfDeath(String countryOfDeath) {
+    public void setCountryOfDeath(Country countryOfDeath) {
         registerChange("countryOfDeath");
         this.countryOfDeath = countryOfDeath;
     }

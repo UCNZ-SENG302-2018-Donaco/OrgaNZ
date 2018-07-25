@@ -98,7 +98,8 @@ public class Client implements ConcurrencyControlledEntity {
     @JsonView(Views.Details.class)
     private String cityOfDeath;
     @JsonView(Views.Details.class)
-    private String countryOfDeath;
+    @Enumerated(EnumType.STRING)
+    private Country countryOfDeath;
 
 
 
@@ -393,11 +394,11 @@ public class Client implements ConcurrencyControlledEntity {
         this.cityOfDeath = cityOfDeath;
     }
 
-    public String getCountryOfDeath() {
+    public Country getCountryOfDeath() {
         return countryOfDeath;
     }
 
-    public void setCountryOfDeath(String countryOfDeath) {
+    public void setCountryOfDeath(Country countryOfDeath) {
         this.countryOfDeath = countryOfDeath;
     }
 

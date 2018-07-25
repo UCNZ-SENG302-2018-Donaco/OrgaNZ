@@ -125,7 +125,7 @@ public class ViewClientController extends ViewBaseController {
     @FXML
     private TextField regionTF;
     @FXML
-    private ChoiceBox country;
+    private ChoiceBox<Country> country;
 
     public ViewClientController() {
         manager = State.getClientManager();
