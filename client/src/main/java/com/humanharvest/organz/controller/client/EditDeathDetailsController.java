@@ -8,6 +8,7 @@ import java.time.format.DateTimeFormatter;
 
 import javax.management.Notification;
 
+import com.humanharvest.organz.utilities.view.Page;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
@@ -27,6 +28,7 @@ import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.views.client.ModifyClientObject;
+import javafx.stage.Stage;
 import org.controlsfx.control.Notifications;
 
 public class EditDeathDetailsController extends SubController{
@@ -150,6 +152,11 @@ public class EditDeathDetailsController extends SubController{
                     System.out.println(modifyClientObject.getCountryOfDeath());
                     System.out.println(client.getCountryOfDeath());
                     Notifications.create().title("Updated Death Details").text(actionText).showInformation();
+
+                    Stage stage = (Stage) applyButton.getScene().getWindow();
+                    stage.close();
+
+
 
                     HistoryItem save = new HistoryItem("UPDATE CLIENT INFO",
                         String.format("Updated client %s with values: %s", client.getFullName(), actionText));
