@@ -8,11 +8,11 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Client;
 
 public class ClientLoginResponse {
-    @JsonView(Views.Overview.class)
+    @JsonView(Views.Details.class)
     private final String token;
 
     @JsonInclude(Include.NON_NULL)
-    @JsonView(Views.Overview.class)
+    @JsonView(Views.Details.class)
     private Client userData;
 
     public ClientLoginResponse(String token) {

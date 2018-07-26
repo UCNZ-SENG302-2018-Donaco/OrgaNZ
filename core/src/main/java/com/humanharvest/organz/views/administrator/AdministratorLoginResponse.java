@@ -9,11 +9,11 @@ import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.views.client.Views;
 
 public class AdministratorLoginResponse {
-    @JsonView(Views.Overview.class)
+    @JsonView(Views.Details.class)
     private final String token;
 
     @JsonInclude(Include.NON_NULL)
-    @JsonView(Views.Overview.class)
+    @JsonView(Views.Details.class)
     private Administrator userData;
 
     public AdministratorLoginResponse(String token) {

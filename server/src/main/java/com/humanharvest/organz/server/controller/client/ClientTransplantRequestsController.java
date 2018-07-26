@@ -59,7 +59,7 @@ public class ClientTransplantRequestsController {
     public ResponseEntity<PaginatedTransplantList> getAllTransplantRequests(
             @RequestParam(value = "offset", required = false) Integer offset,
             @RequestParam(value = "count", required = false) Integer count,
-            @RequestParam(value = "region", required = false) List<Region> regions,
+            @RequestParam(value = "region", required = false) List<String> regions,
             @RequestParam(value = "organs", required = false) List<Organ> organs,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws AuthenticationException {

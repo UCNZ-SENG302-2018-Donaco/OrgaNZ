@@ -7,14 +7,17 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import javax.persistence.OptimisticLockException;
 import javax.persistence.RollbackException;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.database.DBManager;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.views.client.PaginatedTransplantList;
+import org.hibernate.ReplicationMode;
 import org.hibernate.Transaction;
 
 /**
@@ -101,9 +104,18 @@ public class ClientManagerDBPure implements ClientManager {
         try (org.hibernate.Session session = dbManager.getDBSession()) {
             trns = session.beginTransaction();
 
-            dbManager.getDBSession().update(client);
+            try {
+                dbManager.getDBSession().update(client);
+                trns.commit();
+            } catch (OptimisticLockException exc) {
+                // TODO fix this hack
+                try (org.hibernate.Session otherSession = dbManager.getDBSession()) {
+                    trns = otherSession.beginTransaction();
+                    dbManager.getDBSession().replicate(client, ReplicationMode.OVERWRITE);
+                    trns.commit();
+                }
+            }
 
-            trns.commit();
         } catch (RollbackException exc) {
             if (trns != null) {
                 trns.rollback();
@@ -203,5 +215,25 @@ public class ClientManagerDBPure implements ClientManager {
     public PaginatedTransplantList getAllCurrentTransplantRequests(Integer offset, Integer count,
             Set<Region> regions, Set<Organ> organs) {
         throw new UnsupportedOperationException("Not yet implemented");
+    }
+
+    @Override
+    public List<HistoryItem> getAllHistoryItems() {
+        List<HistoryItem> requests = null;
+        Transaction trns = null;
+
+        try (org.hibernate.Session session = dbManager.getDBSession()) {
+            trns = session.beginTransaction();
+            requests = dbManager.getDBSession()
+                    .createQuery("SELECT item FROM HistoryItem item", HistoryItem.class)
+                    .getResultList();
+            trns.commit();
+        } catch (RollbackException exc) {
+            if (trns != null) {
+                trns.rollback();
+            }
+        }
+
+        return requests == null ? new ArrayList<>() : requests;
     }
 }

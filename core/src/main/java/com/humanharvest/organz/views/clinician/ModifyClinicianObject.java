@@ -4,7 +4,7 @@ import java.lang.reflect.Member;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.humanharvest.organz.utilities.enums.Region;
+import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.views.ModifyBaseObject;
 
 @JsonSerialize(using = ModifyBaseObject.Serialiser.class)
@@ -16,8 +16,8 @@ public class ModifyClinicianObject extends ModifyBaseObject {
     private String middleName;
     private String workAddress;
     private String password;
-    private int staffId;
-    private Region region;
+    private String region;
+    private Country country;
 
     public String getFirstName() {
         return firstName;
@@ -64,22 +64,22 @@ public class ModifyClinicianObject extends ModifyBaseObject {
         this.password = password;
     }
 
-    public int getStaffId() {
-        return staffId;
-    }
-
-    public void setStaffId(int staffId) {
-        registerChange("staffId");
-        this.staffId = staffId;
-    }
-
-    public Region getRegion() {
+    public String getRegion() {
         return region;
     }
 
-    public void setRegion(Region region) {
+    public void setRegion(String region) {
         registerChange("region");
         this.region = region;
+    }
+
+    public Country getCountry() {
+        return country;
+    }
+
+    public void setCountry(Country country) {
+        registerChange("country");
+        this.country = country;
     }
 
     public String toString() {

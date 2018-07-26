@@ -10,8 +10,9 @@ import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.actions.clinician.CreateClinicianAction;
 import com.humanharvest.organz.state.ClinicianManager;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.enums.Region;
-import com.humanharvest.organz.utilities.pico_type_converters.PicoRegionConverter;
+import com.humanharvest.organz.utilities.enums.Country;
+import com.humanharvest.organz.utilities.pico_type_converters.PicoCountryConverter;
+import com.humanharvest.organz.utilities.validators.RegionValidator;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
@@ -54,8 +55,11 @@ public class CreateClinician implements Runnable {
     @Option(names = {"-a", "--address"}, description = "Work Address.")
     private String workAddress;
 
-    @Option(names = {"-r", "--region"}, description = "Region", converter = PicoRegionConverter.class)
-    private Region region;
+    @Option(names = {"-r", "--region"}, description = "Region")
+    private String region;
+
+    @Option(names = {"-c", "--country"}, description = "Country", converter = PicoCountryConverter.class)
+    private Country country;
 
     @Option(names = {"-p", "--password"}, description = "Clinician Password.", defaultValue = "")
     private String password;
@@ -69,7 +73,19 @@ public class CreateClinician implements Runnable {
             return;
         }
 
-        Clinician clinician = new Clinician(firstName, middleNames, lastName, workAddress, region, staffId,
+        if (!RegionValidator.isValid(country, region)) {
+            outputStream.printf("%s is not a valid NZ region%n", region);
+            return;
+        }
+
+        Clinician clinician = new Clinician(
+                firstName,
+                middleNames,
+                lastName,
+                workAddress,
+                region,
+                country,
+                staffId,
                 password);
 
         Action action = new CreateClinicianAction(clinician, manager);

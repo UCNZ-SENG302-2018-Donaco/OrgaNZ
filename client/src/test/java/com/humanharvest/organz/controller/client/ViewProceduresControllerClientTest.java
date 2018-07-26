@@ -31,6 +31,7 @@ public class ViewProceduresControllerClientTest extends ControllerTest {
     protected void initState() {
         State.reset();
         resetRecords();
+        State.getClientManager().addClient(testClient);
         State.login(testClient);
         mainController.setWindowContext(WindowContext.defaultContext());
     }

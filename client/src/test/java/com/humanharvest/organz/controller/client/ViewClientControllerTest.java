@@ -13,11 +13,13 @@ import com.humanharvest.organz.Client;
 import com.humanharvest.organz.controller.ControllerTest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.BloodType;
+import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.testfx.api.FxRobotException;
 
@@ -44,7 +46,8 @@ public class ViewClientControllerTest extends ControllerTest {
         testClient.setLastName("b");
         testClient.setDateOfBirth(LocalDate.now().minusDays(10));
         testClient.setBloodType(BloodType.A_POS);
-        testClient.setRegion(Region.AUCKLAND);
+        testClient.setCountry(Country.NZ);
+        testClient.setRegion(Region.AUCKLAND.toString());
         testClient.setHeight(180);
         testClient.setWeight(80);
         testClient.setCurrentAddress("1 Test Road");
@@ -61,8 +64,7 @@ public class ViewClientControllerTest extends ControllerTest {
         clickOn("#lname").type(KeyCode.BACK_SPACE).write("q");
         clickOn("#mname").write("m");
         clickOn("#pname").type(KeyCode.BACK_SPACE).type(KeyCode.BACK_SPACE).type(KeyCode.BACK_SPACE).write("p");
-        clickOn("#dod").write(LocalDate.now().minusDays(2).format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-        clickOn("#region");
+        clickOn("#regionCB");
         clickOn("West Coast");
         clickOn("#gender");
         clickOn("Male");
@@ -75,8 +77,7 @@ public class ViewClientControllerTest extends ControllerTest {
         assertEquals("q", testClient.getLastName());
         assertEquals("m", testClient.getMiddleName());
         assertEquals("p", testClient.getPreferredNameFormatted());
-        assertNotNull(testClient.getDateOfDeath());
-        assertEquals(Region.WEST_COAST, testClient.getRegion());
+        assertEquals(Region.WEST_COAST.toString(), testClient.getRegion());
         assertEquals(Gender.MALE, testClient.getGender());
         assertEquals(Gender.FEMALE, testClient.getGenderIdentity());
 
@@ -121,30 +122,5 @@ public class ViewClientControllerTest extends ControllerTest {
         clickOn("#applyButton");
         assertEquals("a", testClient.getFirstName());
         assertEquals("b", testClient.getLastName());
-    }
-
-    @Test
-    public void invalidChangesDOB() {
-        clickOn("#dob").type(KeyCode.BACK_SPACE)
-                .type(KeyCode.BACK_SPACE)
-                .type(KeyCode.BACK_SPACE)
-                .type(KeyCode.BACK_SPACE)
-                .type(KeyCode.BACK_SPACE)
-                .type(KeyCode.BACK_SPACE)
-                .type(KeyCode.BACK_SPACE)
-                .type(KeyCode.BACK_SPACE)
-                .type(KeyCode.BACK_SPACE)
-                .type(KeyCode.BACK_SPACE);
-        clickOn("#applyButton");
-        assertEquals(LocalDate.now().minusDays(10), testClient.getDateOfBirth());
-    }
-
-    @Test
-    public void invalidChangesDODAfterToday() {
-        testClient = new Client("a", "", "b", LocalDate.now().minusDays(10), 1);
-        clickOn("#dod").write(LocalDate.now().plusDays(1).format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-        clickOn("#applyButton");
-        press(KeyCode.ENTER);
-        assertNull(testClient.getDateOfDeath());
     }
 }

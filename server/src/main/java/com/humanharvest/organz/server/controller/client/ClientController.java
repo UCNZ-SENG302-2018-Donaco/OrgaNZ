@@ -177,8 +177,9 @@ public class ClientController {
      * @throws InvalidRequestException Generic 400 exception if fields are malformed or inconsistent
      */
     @PatchMapping("/clients/{uid}")
-    @JsonView(Views.Overview.class)
+    @JsonView(Views.Details.class)
     public ResponseEntity<Client> updateClient(
+
             @PathVariable int uid,
             @RequestBody ModifyClientObject modifyClientObject,
             @RequestHeader(value = "If-Match", required = false) String etag,
@@ -202,7 +203,7 @@ public class ClientController {
         State.getAuthenticationManager().verifyClientAccess(authToken, client);
 
         //Validate the request, if there are any errors an exception will be thrown.
-        if (!ModifyClientValidator.isValid(modifyClientObject)) {
+        if (!ModifyClientValidator.isValid(client, modifyClientObject)) {
             throw new InvalidRequestException();
         }
 

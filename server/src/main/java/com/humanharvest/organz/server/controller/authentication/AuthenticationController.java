@@ -30,7 +30,7 @@ public class AuthenticationController {
      * Logs in a client.
      */
     @PostMapping("/login/client")
-    @JsonView(Views.Overview.class)
+    @JsonView(Views.Details.class)
     public ResponseEntity<ClientLoginResponse> loginClient(
             @RequestBody ClientLoginRequest loginRequest,
             @RequestParam(required = false) String view) {
@@ -46,7 +46,7 @@ public class AuthenticationController {
         String token = State.getAuthenticationManager().generateClientToken(client.get().getUid());
 
         ClientLoginResponse loginResponse =
-                ("full".equals(view) || view == null) ?
+                "full".equals(view) || view == null ?
                         new ClientLoginResponse(token, client.get()) :
                         new ClientLoginResponse(token);
 
@@ -57,7 +57,7 @@ public class AuthenticationController {
      * Logs in a clinician.
      */
     @PostMapping("/login/clinician")
-    @JsonView(Views.Overview.class)
+    @JsonView(Views.Details.class)
     public ResponseEntity<ClinicianLoginResponse> loginClinician(
             @RequestBody ClinicianLoginRequest loginRequest,
             @RequestParam(required = false) String view) {
@@ -77,7 +77,7 @@ public class AuthenticationController {
         String token = State.getAuthenticationManager().generateClinicianToken(clinician.get().getStaffId());
 
         ClinicianLoginResponse loginResponse =
-                ("full".equals(view) || view == null) ?
+                "full".equals(view) || view == null ?
                         new ClinicianLoginResponse(token, clinician.get()) :
                         new ClinicianLoginResponse(token);
 
@@ -88,7 +88,7 @@ public class AuthenticationController {
      * Logs in an administrator.
      */
     @PostMapping("/login/administrator")
-    @JsonView(Views.Overview.class)
+    @JsonView(Views.Details.class)
     public ResponseEntity<AdministratorLoginResponse> loginAdministrator(
             @RequestBody AdministratorLoginRequest loginRequest,
             @RequestParam(required = false) String view) {
@@ -108,7 +108,7 @@ public class AuthenticationController {
         String token = State.getAuthenticationManager().generateAdministratorToken(administrator.get().getUsername());
 
         AdministratorLoginResponse loginResponse =
-                ("full".equals(view) || view == null) ?
+                "full".equals(view) || view == null ?
                         new AdministratorLoginResponse(token, administrator.get()) :
                         new AdministratorLoginResponse(token);
 

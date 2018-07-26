@@ -2,12 +2,13 @@ package com.humanharvest.organz.views.client;
 
 import java.lang.reflect.Member;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.humanharvest.organz.utilities.enums.BloodType;
+import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Gender;
-import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.views.ModifyBaseObject;
 
 @JsonSerialize(using = ModifyBaseObject.Serialiser.class)
@@ -18,8 +19,9 @@ public class ModifyClientObject extends ModifyBaseObject {
     private String middleName;
     private String preferredName;
     private String currentAddress;
+    private Country country;
 
-    private Region region;
+    private String region;
     private Gender gender;
     private BloodType bloodType;
     private Gender genderIdentity;
@@ -29,6 +31,11 @@ public class ModifyClientObject extends ModifyBaseObject {
 
     private LocalDate dateOfBirth;
     private LocalDate dateOfDeath;
+
+    private LocalTime timeOfDeath;
+    private String regionOfDeath;
+    private String cityOfDeath;
+    private Country countryOfDeath;
 
     public String getFirstName() {
         return firstName;
@@ -75,11 +82,11 @@ public class ModifyClientObject extends ModifyBaseObject {
         this.currentAddress = currentAddress;
     }
 
-    public Region getRegion() {
+    public String getRegion() {
         return region;
     }
 
-    public void setRegion(Region region) {
+    public void setRegion(String region) {
         registerChange("region");
         this.region = region;
     }
@@ -147,6 +154,42 @@ public class ModifyClientObject extends ModifyBaseObject {
         this.dateOfDeath = dateOfDeath;
     }
 
+    public LocalTime getTimeOfDeath() {
+        return timeOfDeath;
+    }
+
+    public void setTimeOfDeath(LocalTime timeOfDeath) {
+        registerChange("timeOfDeath");
+        this.timeOfDeath = timeOfDeath;
+    }
+
+    public String getRegionOfDeath() {
+        return regionOfDeath;
+    }
+
+    public void setRegionOfDeath(String regionOfDeath) {
+        registerChange("regionOfDeath");
+        this.regionOfDeath = regionOfDeath;
+    }
+
+    public String getCityOfDeath() {
+        return cityOfDeath;
+    }
+
+    public void setCityOfDeath(String cityOfDeath) {
+        registerChange("cityOfDeath");
+        this.cityOfDeath = cityOfDeath;
+    }
+
+    public Country getCountryOfDeath() {
+        return countryOfDeath;
+    }
+
+    public void setCountryOfDeath(Country countryOfDeath) {
+        registerChange("countryOfDeath");
+        this.countryOfDeath = countryOfDeath;
+    }
+
     public String toString() {
         String changesText = getModifiedFields().stream()
                 .map(ModifyClientObject::fieldString)
@@ -164,5 +207,14 @@ public class ModifyClientObject extends ModifyBaseObject {
 
     private static String fieldString(Member field) {
         return String.format("Updated %s", unCamelCase(field.getName()));
+    }
+
+    public Country getCountry() {
+        return country;
+    }
+
+    public void setCountry(Country country) {
+        registerChange("country");
+        this.country = country;
     }
 }

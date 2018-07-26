@@ -48,6 +48,7 @@ public class ViewIllnessHistoryClientTest extends ControllerTest {
     @Override
     protected void initState() {
         State.reset();
+        State.getClientManager().addClient(testClient);
         State.login(testClient);
         mainController.setWindowContext(WindowContext.defaultContext());
         resetTestClientIllnessHistory();

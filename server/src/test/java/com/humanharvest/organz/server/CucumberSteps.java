@@ -12,9 +12,11 @@ import java.time.LocalDate;
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
+import com.humanharvest.organz.actions.ModifyObjectByFieldAction;
 import com.humanharvest.organz.state.AuthenticationManager;
 import com.humanharvest.organz.state.AuthenticationManagerFake;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Region;
 import cucumber.api.java8.En;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -154,6 +156,10 @@ public final class CucumberSteps implements En {
             lastAction = lastAction.andExpect(jsonPath(String.format("$[%d].%s", index, fieldName), is(firstName)));
         });
 
+        Then("^paginated result (\\d+)'s (\\w+) is (\\w+)$", (Integer index, String fieldName, String firstName) -> {
+            lastAction = lastAction.andExpect(jsonPath(String.format("$.clients[%d].%s", index, fieldName), is(firstName)));
+        });
+
         Then("^result (\\d+)'s (\\w+) does not exist$", (Integer index, String fieldName) -> {
             lastAction = lastAction.andExpect(jsonPath(String.format("$[%d].%s", index, fieldName)).doesNotExist());
         });
@@ -205,6 +211,26 @@ public final class CucumberSteps implements En {
                     .orElseThrow(IllegalArgumentException::new)
                     .getETag();
         });
+
+        Given("^client (\\d+)'s (\\w+) is (.+)$", (Integer clientID, String field, String value) -> {
+            Client client = State
+                    .getClientManager()
+                    .getClientByID(clientID)
+                    .orElseThrow(IllegalArgumentException::new);
+
+            switch (field) {
+                case "age":
+                    client.setDateOfBirth(LocalDate.now().minusYears(Integer.parseInt(value)));
+                    break;
+
+                case "birthGender":
+                    client.setGender(Gender.fromString(value));
+                    break;
+
+                default:
+                    throw new IllegalArgumentException("Unknown field: " + field);
+            }
+        });
     }
 
     private void createClientWhen() {
@@ -220,7 +246,8 @@ public final class CucumberSteps implements En {
                             "test",
                             "test",
                             "test",
-                            Region.UNSPECIFIED,
+                            Region.UNSPECIFIED.name(),
+                            null,
                             staffId,
                             password);
                     State.getClinicianManager().addClinician(clinician);
@@ -264,6 +291,9 @@ public final class CucumberSteps implements En {
     }
 
     private void createAdministratorThen() {
+        Then("^the result contains (.+)", (String result) -> {
+            lastAction = lastAction.andExpect(content().string(containsString(result)));
+        });
     }
 
     private void stepSetup() {

@@ -18,6 +18,7 @@ import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.state.ClinicianManager;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.JSONConverter;
+import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
@@ -125,11 +126,21 @@ public class CreateClinicianController extends SubController {
             if (clinicianManager.doesStaffIdExist(Integer.parseInt(staffId.getText()))) {
                 staffIdLabel.setTextFill(Color.RED);
             } else {
+                Region r;
+                if (region.getValue() == null) {
+                    r = Region.UNSPECIFIED;
+                } else {
+                    r = region.getValue();
+                }
+                // TODO
                 Clinician clinician = new Clinician(fname.getText(), mname.getText(), lname.getText(),
-                        workAddress.getText(), region.getValue(), Integer.parseInt(staffId.getText()),
+                        workAddress.getText(), r.toString(),
+                        Country.NZ,
+                        Integer.parseInt(staffId.getText()),
                         password.getText());
 
                 State.getClinicianManager().addClinician(clinician);
+                State.setCreatedClinician(clinician);
 
                 HistoryItem save = new HistoryItem("CREATE CLINICIAN",
                         "Clinician " + fname.getText() + " " + lname.getText() + " with staff ID " + staffId.getText()

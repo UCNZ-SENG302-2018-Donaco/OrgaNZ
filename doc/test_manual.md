@@ -171,3 +171,16 @@ will navigate you to their client page.
 
 Run the `@Ignore`d tests in `controller.administrator.StaffListControllerTest.java` and `controller.administrator.SearchClientsControllerAdministratorTest.java` in headful mode.
 Run the `@Ignore`d test file `controller.clinician.ViewClinicianControllerTest.java`
+
+
+26/07/2018 James Toohey manual tests:
+
+## Story 46
+Context - Viewing the clinician details page.
+Logging in as an admin and viewing clinicians given the option for admins to search for all clinicians.
+Logging in as a clinician only allows them to strictly see only their details. They cannot search for details about any other clinicians
+
+As an admin, they can change the details of the default admin
+`Bug found` - editing a non default clinician throws a bad request. Has now been fixed.
+
+

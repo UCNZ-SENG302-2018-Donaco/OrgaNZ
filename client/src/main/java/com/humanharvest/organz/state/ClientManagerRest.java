@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
@@ -11,6 +12,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
 import com.humanharvest.organz.utilities.enums.ClientType;
@@ -190,4 +192,8 @@ public class ClientManagerRest implements ClientManager {
         return response.getBody();
     }
 
+    @Override
+    public List<HistoryItem> getAllHistoryItems() {
+        return Collections.emptyList();
+    }
 }

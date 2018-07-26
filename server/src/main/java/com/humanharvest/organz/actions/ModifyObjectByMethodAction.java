@@ -2,6 +2,7 @@ package com.humanharvest.organz.actions;
 
 import java.beans.Statement;
 import java.lang.reflect.Method;
+import java.util.Objects;
 
 import com.humanharvest.organz.utilities.type_converters.PrimitiveConverter;
 
@@ -16,7 +17,7 @@ public class ModifyObjectByMethodAction extends Action {
     private String field;
     private Object[] oldValue;
     private Object[] newValue;
-    private boolean isPrivate = false;
+    private boolean isPrivate;
 
     /**
      * Create a new modification
@@ -52,14 +53,14 @@ public class ModifyObjectByMethodAction extends Action {
             throws NoSuchMethodException, NoSuchFieldException {
         Method[] objectMethods = toModify.getClass().getMethods();
         for (Method method : objectMethods) {
-            if (method.getName().equals(field)) {
+            if (Objects.equals(method.getName(), field)) {
                 if (method.getParameterCount() != 1) {
                     throw new NoSuchFieldException("Method expects more than one field");
                 }
                 PrimitiveConverter converter = new PrimitiveConverter();
                 Class<?> expectedClass = converter.convertToWrapper(method.getParameterTypes()[0]);
-                if ((newValue != null && newValue.getClass() != expectedClass) || (oldValue != null
-                        && oldValue.getClass() != expectedClass)) {
+                if ((newValue != null && newValue.getClass() != expectedClass)
+                        || oldValue != null && oldValue.getClass() != expectedClass) {
                     throw new NoSuchFieldException("Method expects a different field type than the one given");
                 }
                 this.toModify = toModify;
@@ -82,12 +83,12 @@ public class ModifyObjectByMethodAction extends Action {
         runChange(oldValue);
     }
 
-    private String unCamelCase(String inCamelCase) {
+    private static String unCamelCase(String inCamelCase) {
         String unCamelCased = inCamelCase.replaceAll("([a-z])([A-Z]+)", "$1 $2");
         return unCamelCased.substring(0, 1).toUpperCase() + unCamelCased.substring(1);
     }
 
-    private String formatValue(Object[] value) {
+    private static String formatValue(Object[] value) {
         return value[0] != null ? String.format("'%s'", value[0].toString()) : "empty";
     }
 
