@@ -2,6 +2,7 @@ package com.humanharvest.organz.views.client;
 
 import java.lang.reflect.Member;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -30,6 +31,11 @@ public class ModifyClientObject extends ModifyBaseObject {
 
     private LocalDate dateOfBirth;
     private LocalDate dateOfDeath;
+
+    private LocalTime timeOfDeath;
+    private String regionOfDeath;
+    private String cityOfDeath;
+    private Country countryOfDeath;
 
     public String getFirstName() {
         return firstName;
@@ -146,6 +152,42 @@ public class ModifyClientObject extends ModifyBaseObject {
     public void setDateOfDeath(LocalDate dateOfDeath) {
         registerChange("dateOfDeath");
         this.dateOfDeath = dateOfDeath;
+    }
+
+    public LocalTime getTimeOfDeath() {
+        return timeOfDeath;
+    }
+
+    public void setTimeOfDeath(LocalTime timeOfDeath) {
+        registerChange("timeOfDeath");
+        this.timeOfDeath = timeOfDeath;
+    }
+
+    public String getRegionOfDeath() {
+        return regionOfDeath;
+    }
+
+    public void setRegionOfDeath(String regionOfDeath) {
+        registerChange("regionOfDeath");
+        this.regionOfDeath = regionOfDeath;
+    }
+
+    public String getCityOfDeath() {
+        return cityOfDeath;
+    }
+
+    public void setCityOfDeath(String cityOfDeath) {
+        registerChange("cityOfDeath");
+        this.cityOfDeath = cityOfDeath;
+    }
+
+    public Country getCountryOfDeath() {
+        return countryOfDeath;
+    }
+
+    public void setCountryOfDeath(Country countryOfDeath) {
+        registerChange("countryOfDeath");
+        this.countryOfDeath = countryOfDeath;
     }
 
     public String toString() {

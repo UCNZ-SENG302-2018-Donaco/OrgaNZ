@@ -12,7 +12,7 @@ public class ViewBaseController extends SubController {
 
     private static final Logger LOGGER = Logger.getLogger(ViewBaseController.class.getName());
 
-    protected static <T> void addChangeIfDifferent(
+    public static <T> void addChangeIfDifferent(
             ModifyBaseObject modifyObject,
             T viewedObject,
             String fieldString,

@@ -100,7 +100,6 @@
                 <TextField fx:id="mname" layoutX="122.0" layoutY="191.0" prefHeight="30.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                 <TextField fx:id="lname" layoutX="122.0" layoutY="136.0" prefHeight="30.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                 <DatePicker fx:id="dob" maxWidth="1.7976931348623157E308" prefHeight="30.0" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                <DatePicker fx:id="dod" maxWidth="1.7976931348623157E308" prefHeight="30.0" GridPane.columnIndex="1" GridPane.rowIndex="6" />
                 <ChoiceBox fx:id="gender" maxWidth="1.7976931348623157E308" prefHeight="30.0" GridPane.columnIndex="3" GridPane.rowIndex="6" />
                 <TextField fx:id="height" layoutX="530.0" layoutY="80.0" prefHeight="30.0" GridPane.columnIndex="3" GridPane.rowIndex="3" />
                 <TextField fx:id="weight" layoutX="530.0" layoutY="136.0" prefHeight="30.0" GridPane.columnIndex="3" GridPane.rowIndex="4" />
@@ -138,6 +137,11 @@
                         <Label text="Country: " GridPane.rowIndex="9" />
                         <ChoiceBox fx:id="country" prefHeight="26.0" prefWidth="183.0" GridPane.columnIndex="1" GridPane.rowIndex="9" />
                         <TextField fx:id="regionTF" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                <HBox GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="CENTER">
+                  <children>
+                    <Button fx:id="editDeathDetailsButton" mnemonicParsing="false" onAction="#editDeathDetails" prefHeight="50.0" prefWidth="170.0" text="View/Edit" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="CENTER" />
+                  </children>
+                </HBox>
               </GridPane>
             </VBox>
           </center>

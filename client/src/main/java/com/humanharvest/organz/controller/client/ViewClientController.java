@@ -51,7 +51,10 @@ import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
+import com.humanharvest.organz.utilities.validators.IntValidator;
+import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.utilities.view.WindowContext;
 import com.humanharvest.organz.views.client.ModifyClientObject;
 import org.apache.commons.io.IOUtils;
 import org.controlsfx.control.Notifications;
@@ -68,6 +71,7 @@ public class ViewClientController extends ViewBaseController {
     private static final int maxFileSize = 2000000; // (2mb)
     private final Session session;
     private final ClientManager manager;
+    public Button editDeathDetailsButton;
     private Client viewedClient;
 
     @FXML
@@ -223,7 +227,6 @@ public class ViewClientController extends ViewBaseController {
         mname.setText(viewedClient.getMiddleName());
         pname.setText(viewedClient.getPreferredName());
         dob.setValue(viewedClient.getDateOfBirth());
-        dod.setValue(viewedClient.getDateOfDeath());
         gender.setValue(viewedClient.getGender());
         genderIdentity.setValue(viewedClient.getGenderIdentity());
         height.setText(String.valueOf(viewedClient.getHeight()));
@@ -421,13 +424,6 @@ public class ViewClientController extends ViewBaseController {
      */
     private boolean checkNonMandatoryFields() {
         boolean update = true;
-        if (dod.getValue() == null ||
-                (dod.getValue().isAfter(dob.getValue())) && dod.getValue().isBefore(LocalDate.now().plusDays(1))) {
-            dodLabel.setTextFill(Color.BLACK);
-        } else {
-            dodLabel.setTextFill(Color.RED);
-            update = false;
-        }
 
         try {
             double h = Double.parseDouble(height.getText());
@@ -484,51 +480,6 @@ public class ViewClientController extends ViewBaseController {
         ModifyClientObject modifyClientObject = new ModifyClientObject();
 
         boolean clientDied = false;
-
-        if (viewedClient.getDateOfDeath() == null && dod.getValue() != null) {
-            Optional<ButtonType> buttonOpt = PageNavigator.showAlert(AlertType.CONFIRMATION,
-                    "Are you sure you want to mark this client as dead?",
-                    "This will cancel all waiting transplant requests for this client.");
-
-            if (buttonOpt.isPresent() && buttonOpt.get() == ButtonType.OK) {
-
-                try {
-                    State.getClientResolver().markClientAsDead(viewedClient, dod.getValue());
-                } catch (NotFoundException e) {
-                    LOGGER.log(Level.WARNING, "Client not found");
-                    PageNavigator.showAlert(
-                            AlertType.WARNING,
-                            "Client not found",
-                            "The client could not be found on the server, it may have been deleted");
-                    return false;
-                } catch (ServerRestException e) {
-                    LOGGER.log(Level.WARNING, e.getMessage(), e);
-                    PageNavigator.showAlert(
-                            AlertType.WARNING,
-                            "Server error",
-                            "Could not apply changes on the server, please try again later");
-                    return false;
-                } catch (IfMatchFailedException e) {
-                    LOGGER.log(Level.INFO, "If-Match did not match");
-                    PageNavigator.showAlert(
-                            AlertType.WARNING,
-                            "Outdated Data",
-                            "The client has been modified since you retrieved the data.\n"
-                                    + "If you would still like to apply these changes please submit again, "
-                                    + "otherwise refresh the page to update the data.");
-                    return false;
-                }
-                clientDied = true;
-
-                Notifications.create()
-                        .title("Marked Client as Dead")
-                        .text("All organ transplant requests have been cancelled, "
-                                + "and the date of death has been stored.")
-                        .showConfirm();
-            }
-        } else { // the client has not died for this update (ie they are either still alive, or were already dead)
-            addChangeIfDifferent(modifyClientObject, viewedClient, "dateOfDeath", dod.getValue());
-        }
 
         addChangeIfDifferent(modifyClientObject, viewedClient, "firstName", fname.getText());
         addChangeIfDifferent(modifyClientObject, viewedClient, "lastName", lname.getText());
@@ -626,5 +577,17 @@ public class ViewClientController extends ViewBaseController {
             ageDisplayLabel.setText("Age at death:");
         }
         ageLabel.setText(String.valueOf(viewedClient.getAge()));
+    }
+
+    @FXML
+    private void editDeathDetails() {
+
+        MainController newMain  = PageNavigator.openNewWindow();
+        newMain.setWindowContext(new WindowContext.WindowContextBuilder()
+                .setAsClinicianViewClientWindow()
+                .viewClient(viewedClient)
+                .build());
+
+        PageNavigator.loadPage(Page.EDIT_DEATH_DETAILS, newMain);
     }
 }

@@ -41,7 +41,7 @@ public class Session {
     }
 
     public Client getLoggedInClient() {
-        return loggedInClient;
+        return State.getClientManager().getClientByID(loggedInClient.getUid()).get();
     }
 
     public Clinician getLoggedInClinician() {

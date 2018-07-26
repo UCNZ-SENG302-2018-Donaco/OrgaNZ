@@ -26,7 +26,8 @@ public enum Page {
     VIEW_PROCEDURES("/fxml/view_procedures.fxml"),
     STAFF_LIST("/fxml/staff_list.fxml"),
     COMMAND_LINE("/fxml/command_line.fxml"),
-    ADMIN_CONFIG("/fxml/admin_config.fxml");
+    ADMIN_CONFIG("/fxml/admin_config.fxml"),
+    EDIT_DEATH_DETAILS("/fxml/edit_death_details.fxml");
 
     private String path;
 

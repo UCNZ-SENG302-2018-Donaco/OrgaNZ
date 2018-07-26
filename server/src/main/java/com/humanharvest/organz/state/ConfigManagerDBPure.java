@@ -28,6 +28,7 @@ public class ConfigManagerDBPure implements ConfigManager {
         Config config = new Config();
         EnumSet<Country> countries = EnumSet.noneOf(Country.class);
         countries.add(Country.NZ);
+        countries.add(Country.AU);
         config.setCountries(countries);
         try {
             dbManager.saveEntity(config);
