@@ -13,8 +13,8 @@ import java.util.NoSuchElementException;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.utilities.enums.BloodType;
+import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Gender;
-import com.humanharvest.organz.utilities.enums.Region;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
@@ -80,6 +80,7 @@ public class CSVReadClientStrategy implements ReadClientStrategy {
         client.setBloodType(BloodType.fromString(record.get(blood_type)));
         client.setHeight(Double.parseDouble(record.get(height)));
         client.setWeight(Double.parseDouble(record.get(weight)));
+        client.setCountry(Country.fromString(record.get(country)));
         client.setCurrentAddress(
                 record.get(street_number) + " " +
                 record.get(street_name) + ", " +
@@ -97,7 +98,7 @@ public class CSVReadClientStrategy implements ReadClientStrategy {
      * @throws IllegalArgumentException If the string does not match the M/dd/yyyy format.
      */
     private LocalDate parseDate(String string) throws IllegalArgumentException {
-        if ("".equals(string)) {
+        if (string != null && string.isEmpty()) {
             return null;
         }
 
