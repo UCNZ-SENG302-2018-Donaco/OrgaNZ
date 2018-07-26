@@ -101,18 +101,18 @@ public interface ClientManager {
 
                 .filter(maximumAge == null ? c -> true : client -> client.getAge() <= maximumAge)
 
-                .filter(regions == null ? c -> true : client -> regions.size() == 0 ||
+                .filter(regions == null ? c -> true : client -> regions.isEmpty() ||
                         regions.contains(client.getRegion()))
 
-                .filter(birthGenders == null ? c -> true : client -> birthGenders.size() == 0 ||
+                .filter(birthGenders == null ? c -> true : client -> birthGenders.isEmpty() ||
                         birthGenders.contains(client.getGender()))
 
                 .filter(clientType == null ? c -> true : client -> client.isOfType(clientType))
 
-                .filter(donating == null ? c -> true : client -> donating.size() == 0 ||
+                .filter(donating == null ? c -> true : client -> donating.isEmpty() ||
                         donating.stream().anyMatch(organ -> client.getCurrentlyDonatedOrgans().contains(organ)))
 
-                .filter(requesting == null ? c -> true : client -> requesting.size() == 0 ||
+                .filter(requesting == null ? c -> true : client -> requesting.isEmpty() ||
                         requesting.stream().anyMatch(organ -> client.getCurrentlyRequestedOrgans().contains(organ)))
 
                 .collect(Collectors.toList());

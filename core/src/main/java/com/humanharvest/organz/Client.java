@@ -595,9 +595,18 @@ public class Client implements ConcurrencyControlledEntity {
         return Collections.unmodifiableList(illnessHistory);
     }
 
-    public IllnessRecord getIllnessById(long index) {
-        System.out.println(illnessHistory);
-        return illnessHistory.stream().filter(record -> record.getId() == index).findFirst().orElse(null);
+    /**
+     * Returns an illness given it's ID value.
+     * @param id The id of the illness.
+     * @return The illness record requested, or null if it doesn't exist.
+     */
+    public IllnessRecord getIllnessById(long id) {
+        // TODO: Should be optional? Usages don't seem to take into account the null case.
+        return illnessHistory
+                .stream()
+                .filter(record -> record.getId() == id)
+                .findFirst()
+                .orElse(null);
     }
 
     /**
@@ -834,7 +843,7 @@ public class Client implements ConcurrencyControlledEntity {
      */
     @JsonIgnore
     public boolean isDonor() {
-        return getCurrentlyDonatedOrgans().size() > 0;
+        return !getCurrentlyDonatedOrgans().isEmpty();
     }
 
     /**
@@ -843,7 +852,7 @@ public class Client implements ConcurrencyControlledEntity {
      */
     @JsonIgnore
     public boolean isReceiver() {
-        return transplantRequests.size() > 0;
+        return !transplantRequests.isEmpty();
     }
 
     /**
@@ -867,6 +876,7 @@ public class Client implements ConcurrencyControlledEntity {
      * The hash is surrounded by double quotes as required for a valid ETag
      * @return The ETag string with double quotes
      */
+    @Override
     public String getETag() {
         if (modifiedTimestamp == null) {
             return String.format("\"%d\"", createdTimestamp.hashCode());
@@ -884,16 +894,21 @@ public class Client implements ConcurrencyControlledEntity {
         switch (type) {
             case ANY:
                 return true;
+
             case BOTH:
                 return isDonor() && isReceiver();
+
             case NEITHER:
                 return !isDonor() && !isReceiver();
+
             case ONLY_DONOR:
                 return isDonor() && !isReceiver();
+
             case ONLY_RECEIVER:
                 return !isDonor() && isReceiver();
+
             default:
-                return true;
+                throw new IllegalArgumentException("type isn't a valid ClientType value");
         }
     }
 }

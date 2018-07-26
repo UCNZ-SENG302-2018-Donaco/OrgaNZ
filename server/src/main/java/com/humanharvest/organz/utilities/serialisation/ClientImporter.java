@@ -22,11 +22,11 @@ public class ClientImporter {
     private final ReadClientStrategy readStrategy;
     private final ClientValidator validator = new ClientValidator();
 
-    private boolean imported = false;
-    private long validCount = 0;
-    private long invalidCount = 0;
-    private StringBuilder errorSummary = new StringBuilder();
-    private List<Client> validClients = new ArrayList<>();
+    private boolean imported;
+    private long validCount;
+    private long invalidCount;
+    private final StringBuilder errorSummary = new StringBuilder();
+    private final List<Client> validClients = new ArrayList<>();
 
     public ClientImporter(File file, ReadClientStrategy readStrategy) throws IOException {
         this.readStrategy = readStrategy;
@@ -85,7 +85,7 @@ public class ClientImporter {
      * only serialized in terms of clients "owning" records (to avoid infinite recursion in serialized form).
      * @param client The client to set as "owner" for all their records.
      */
-    private void setOwnerOnRelatedRecords(Client client) {
+    private static void setOwnerOnRelatedRecords(Client client) {
         for (TransplantRequest request : client.getTransplantRequests()) {
             request.setClient(client);
         }

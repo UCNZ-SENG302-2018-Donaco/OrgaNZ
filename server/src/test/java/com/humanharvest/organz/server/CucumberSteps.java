@@ -264,6 +264,9 @@ public final class CucumberSteps implements En {
     }
 
     private void createAdministratorThen() {
+        Then("^the result contains (.+)", (String result) -> {
+            lastAction = lastAction.andExpect(content().string(containsString(result)));
+        });
     }
 
     private void stepSetup() {
