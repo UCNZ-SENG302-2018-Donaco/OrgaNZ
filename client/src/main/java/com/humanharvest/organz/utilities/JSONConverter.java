@@ -20,7 +20,7 @@ import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 import com.humanharvest.organz.HistoryItem;
 
 /**
- * Uses GSON to convert Java objects into JSON files and from JSON files
+ * Uses jackson to convert Java objects into JSON files and from JSON files
  * to Java objects.
  */
 public final class JSONConverter {
@@ -94,8 +94,8 @@ public final class JSONConverter {
      * @param historyItemList An ArrayList of all history the system has recorded.
      */
     private static void writeHistoryToJSON(List<HistoryItem> historyItemList, String filename) {
-        File historyFile = new File(filename);
         try {
+            File historyFile = new File(filename);
             mapper.writeValue(historyFile, historyItemList);
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Error writing history to JSON", e);
