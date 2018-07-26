@@ -162,7 +162,6 @@ public class ViewClientController extends ViewBaseController {
         btype.setItems(FXCollections.observableArrayList(BloodType.values()));
         regionCB.setItems(FXCollections.observableArrayList(Region.values()));
         updateCountries();
-        setFieldsDisabled(true);
         fullName.setWrapText(true);
 
         country.valueProperty().addListener(change -> {
@@ -266,15 +265,6 @@ public class ViewClientController extends ViewBaseController {
             regionCB.setVisible(false);
             regionTF.setVisible(true);
         }
-    }
-
-    /**
-     * Disables the view of user fields as these will all be irrelevant to the id number supplied if no such client
-     * exists with this id. Or sets it to visible so that the user can see all fields relevant to the client.
-     * @param disabled the state of the pane.
-     */
-    private void setFieldsDisabled(boolean disabled) {
-        inputsPane.setVisible(!disabled);
     }
 
     /**
