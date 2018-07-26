@@ -5,7 +5,8 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.layout.HBox?>
-<HBox maxWidth="1.7976931348623157E308" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.MenuBarController">
+
+<HBox maxWidth="1.7976931348623157E308" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.151" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.MenuBarController">
    <children>
      <MenuBar fx:id="menuBar" maxWidth="1.7976931348623157E308" minWidth="-Infinity" HBox.hgrow="ALWAYS">
         <menus>
@@ -14,6 +15,7 @@
                <MenuItem fx:id="saveItem" mnemonicParsing="false" onAction="#save" text="Save" />
                <MenuItem fx:id="loadItem" mnemonicParsing="false" onAction="#load" text="Load" />
               <MenuItem fx:id="refreshCacheItem" mnemonicParsing="false" onAction="#refreshCache" text="Refresh cache" />
+                  <MenuItem fx:id="settings" mnemonicParsing="false" onAction="#goToSettings" text="Settings" />
                   <SeparatorMenuItem fx:id="topSeparator" mnemonicParsing="false" />
                <MenuItem fx:id="logOutItem" mnemonicParsing="false" onAction="#logout" text="Log Out" />
                   <SeparatorMenuItem mnemonicParsing="false" />

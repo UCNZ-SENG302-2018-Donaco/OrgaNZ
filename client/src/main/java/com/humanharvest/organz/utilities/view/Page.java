@@ -25,7 +25,8 @@ public enum Page {
     VIEW_MEDICAL_HISTORY("/fxml/view_medical_history.fxml"),
     VIEW_PROCEDURES("/fxml/view_procedures.fxml"),
     STAFF_LIST("/fxml/staff_list.fxml"),
-    COMMAND_LINE("/fxml/command_line.fxml");
+    COMMAND_LINE("/fxml/command_line.fxml"),
+    ADMIN_CONFIG("/fxml/admin_config.fxml");
 
     private String path;
 

@@ -72,6 +72,7 @@ public class MenuBarController extends SubController {
     public MenuItem closeItem;
     public MenuItem createClientItem;
     public MenuItem refreshCacheItem;
+    public MenuItem settings;
 
     public SeparatorMenuItem topSeparator;
 
@@ -161,7 +162,7 @@ public class MenuBarController extends SubController {
         hideMenuItem(loadItem);
         hideMenuItem(viewAdministratorItem);
         hideMenuItem(cliItem);
-
+        hideMenuItem(settings);
     }
 
     /**
@@ -330,6 +331,11 @@ public class MenuBarController extends SubController {
     @FXML
     private void goToCommandLine() {
         PageNavigator.loadPage(Page.COMMAND_LINE, mainController);
+    }
+
+    @FXML
+    private void goToSettings() {
+        PageNavigator.loadPage(Page.ADMIN_CONFIG, mainController);
     }
 
 
