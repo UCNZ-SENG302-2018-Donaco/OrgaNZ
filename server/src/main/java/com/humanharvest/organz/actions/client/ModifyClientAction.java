@@ -1,6 +1,7 @@
 package com.humanharvest.organz.actions.client;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import com.humanharvest.organz.Client;
@@ -12,7 +13,7 @@ import com.humanharvest.organz.state.ClientManager;
  */
 public class ModifyClientAction extends ClientAction {
 
-    private ArrayList<ModifyObjectByFieldAction> actions = new ArrayList<>();
+    private final List<ModifyObjectByFieldAction> actions = new ArrayList<>();
 
     /**
      * Create a new Action
