@@ -10,6 +10,7 @@ import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -217,6 +218,10 @@ public class EditDeathDetailsController extends SubController {
         } else {
             addChangeIfDifferent(modifyClientObject, client, "dateOfDeath",
                 deathDatePicker.getValue());
+            if(deathDatePicker.getValue().isAfter(LocalDate.now())){
+              PageNavigator.showAlert(AlertType.WARNING, "Incorrect Date",
+                  "Date of death cannot be in the future");
+            }
             try {
                 addChangeIfDifferent(modifyClientObject, client, "timeOfDeath",
                     LocalTime.parse(deathTimeField.getText()));
