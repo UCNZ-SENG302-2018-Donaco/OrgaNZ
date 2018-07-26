@@ -11,9 +11,6 @@ import picocli.CommandLine.Option;
 
 /**
  * Command line to print all of the information of a single client.
- * @author Dylan Carlyle, Jack Steel
- * @version sprint 1.
- * date 06/03/2018
  */
 
 @Command(name = "printclientinfo", description = "Print a single client with their personal information.", sortOptions =
