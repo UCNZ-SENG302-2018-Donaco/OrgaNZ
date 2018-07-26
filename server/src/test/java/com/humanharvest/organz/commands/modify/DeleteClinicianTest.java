@@ -10,6 +10,7 @@ import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.state.ClinicianManager;
 import com.humanharvest.organz.state.ClinicianManagerMemory;
+import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Region;
 import org.junit.Before;
 import org.junit.Test;
@@ -28,7 +29,7 @@ public class DeleteClinicianTest extends BaseTest {
         spyDeleteClinician = spy(new DeleteClinician(spyClinicianManager, new ActionInvoker()));
 
         Clinician clinician = new Clinician("first", "middle", "last",
-                "address", Region.CANTERBURY, staffId, "password");
+                "address", Region.CANTERBURY.name(), Country.NZ, staffId, "password");
         spyClinicianManager.addClinician(clinician);
     }
 

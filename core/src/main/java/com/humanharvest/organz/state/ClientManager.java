@@ -1,8 +1,5 @@
 package com.humanharvest.organz.state;
 
-import static com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum.NAME;
-
-import java.io.File;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Comparator;
@@ -14,6 +11,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.ClientNameSorter;
 import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
@@ -31,6 +29,7 @@ public interface ClientManager {
 
     List<Client> getClients();
 
+    // TODO: Change so regions isn't an enum
     default PaginatedClientList getClients(
             String q,
             Integer offset,
@@ -55,10 +54,10 @@ public interface ClientManager {
         }
 
         //Setup the primarySorter for the given sort option. Default to NAME if none is given
-        Comparator<Client> primarySorter;
         if (sortOption == null) {
-            sortOption = NAME;
+            sortOption = ClientSortOptionsEnum.NAME;
         }
+        Comparator<Client> primarySorter;
         switch (sortOption) {
             case ID:
                 primarySorter = Comparator.comparing(Client::getUid, Comparator.nullsLast(Comparator.naturalOrder()));
@@ -101,18 +100,18 @@ public interface ClientManager {
 
                 .filter(maximumAge == null ? c -> true : client -> client.getAge() <= maximumAge)
 
-                .filter(regions == null ? c -> true : client -> regions.size() == 0 ||
+                .filter(regions == null ? c -> true : client -> regions.isEmpty() ||
                         regions.contains(client.getRegion()))
 
-                .filter(birthGenders == null ? c -> true : client -> birthGenders.size() == 0 ||
+                .filter(birthGenders == null ? c -> true : client -> birthGenders.isEmpty() ||
                         birthGenders.contains(client.getGender()))
 
                 .filter(clientType == null ? c -> true : client -> client.isOfType(clientType))
 
-                .filter(donating == null ? c -> true : client -> donating.size() == 0 ||
+                .filter(donating == null ? c -> true : client -> donating.isEmpty() ||
                         donating.stream().anyMatch(organ -> client.getCurrentlyDonatedOrgans().contains(organ)))
 
-                .filter(requesting == null ? c -> true : client -> requesting.size() == 0 ||
+                .filter(requesting == null ? c -> true : client -> requesting.isEmpty() ||
                         requesting.stream().anyMatch(organ -> client.getCurrentlyRequestedOrgans().contains(organ)))
 
                 .collect(Collectors.toList());
@@ -172,4 +171,6 @@ public interface ClientManager {
 
     PaginatedTransplantList getAllCurrentTransplantRequests(Integer offset, Integer count, Set<Region> regions,
             Set<Organ> organs);
+
+    List<HistoryItem> getAllHistoryItems();
 }

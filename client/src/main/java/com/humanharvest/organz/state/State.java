@@ -2,6 +2,7 @@ package com.humanharvest.organz.state;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -10,6 +11,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
+import com.humanharvest.organz.Config;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.resolvers.CommandRunner;
 import com.humanharvest.organz.resolvers.CommandRunnerRest;
@@ -19,9 +21,9 @@ import com.humanharvest.organz.resolvers.actions.ActionResolverRest;
 import com.humanharvest.organz.resolvers.administrator.AdministratorResolver;
 import com.humanharvest.organz.resolvers.administrator.AdministratorResolverMemory;
 import com.humanharvest.organz.resolvers.administrator.AdministratorResolverRest;
-import com.humanharvest.organz.resolvers.administrator.ClientFileResolver;
-import com.humanharvest.organz.resolvers.administrator.ClientFileResolverMemory;
-import com.humanharvest.organz.resolvers.administrator.ClientFileResolverRest;
+import com.humanharvest.organz.resolvers.administrator.FileResolver;
+import com.humanharvest.organz.resolvers.administrator.FileResolverMemory;
+import com.humanharvest.organz.resolvers.administrator.FileResolverRest;
 import com.humanharvest.organz.resolvers.client.ClientResolver;
 import com.humanharvest.organz.resolvers.client.ClientResolverMemory;
 import com.humanharvest.organz.resolvers.client.ClientResolverRest;
@@ -29,6 +31,7 @@ import com.humanharvest.organz.resolvers.clinician.ClincianResolverMemory;
 import com.humanharvest.organz.resolvers.clinician.ClinicianResolver;
 import com.humanharvest.organz.resolvers.clinician.ClinicianResolverRest;
 import com.humanharvest.organz.utilities.RestErrorHandler;
+import com.humanharvest.organz.utilities.enums.Country;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -43,7 +46,7 @@ public final class State {
         MEMORY, REST
     }
 
-    public static final String BASE_URI = "http://localhost:8080/";
+    public static String BASE_URI = "http://localhost:8080/";
 
     private static DataStorageType currentStorageType = DataStorageType.MEMORY;
 
@@ -57,7 +60,8 @@ public final class State {
     private static ActionResolver actionResolver;
     private static ClinicianResolver clinicianResolver;
     private static AdministratorResolver administratorResolver;
-    private static ClientFileResolver clientFileResolver;
+    private static FileResolver fileResolver;
+    private static ConfigManager configManager;
 
     private static Session session;
     private static boolean unsavedChanges;
@@ -67,6 +71,8 @@ public final class State {
     private static String clinicianEtag = "";
     private static String administratorEtag = "";
     private static String token = "";
+    private static Clinician createdClinician;
+    private static EnumSet<Country> allowedCountries;
 
     private State() {
     }
@@ -90,11 +96,12 @@ public final class State {
             clinicianManager = new ClinicianManagerRest();
             administratorManager = new AdministratorManagerRest();
             authenticationManager = new AuthenticationManagerRest();
+            configManager = new ConfigManagerRest();
             commandRunner = new CommandRunnerRest();
             actionResolver = new ActionResolverRest();
             clinicianResolver = new ClinicianResolverRest();
             administratorResolver = new AdministratorResolverRest();
-            clientFileResolver = new ClientFileResolverRest();
+            fileResolver = new FileResolverRest();
             imageManager = new ImageManagerRest();
         } else if (storageType == DataStorageType.MEMORY) {
             clientManager = new ClientManagerMemory();
@@ -102,17 +109,22 @@ public final class State {
             clinicianManager = new ClinicianManagerMemory();
             administratorManager = new AdministratorManagerMemory();
             authenticationManager = new AuthenticationManagerMemory();
+            configManager = new ConfigManagerMemory();
             commandRunner = commandText -> {
                 throw new UnsupportedOperationException("Memory storage type does not support running commands.");
             };
             actionResolver = new ActionResolverMemory();
             clinicianResolver = new ClincianResolverMemory();
             administratorResolver = new AdministratorResolverMemory();
-            clientFileResolver = new ClientFileResolverMemory();
+            fileResolver = new FileResolverMemory();
             imageManager = new ImageManagerMemory();
         } else {
             throw new IllegalArgumentException("DataStorageType cannot be null.");
         }
+    }
+
+    public static void setBaseUri(String uri) {
+        BASE_URI = uri;
     }
 
     public static void login(Client client) {
@@ -133,6 +145,14 @@ public final class State {
 
     public static boolean isUnsavedChanges() {
         return unsavedChanges;
+    }
+
+    public static EnumSet<Country> getAllowedCountries() {
+        return allowedCountries;
+    }
+
+    public static void setAllowedCountries(EnumSet<Country> countries) {
+        allowedCountries = countries;
     }
 
     public static void logout() {
@@ -235,6 +255,10 @@ public final class State {
         return authenticationManager;
     }
 
+    public static ConfigManager getConfigManager() {
+        return configManager;
+    }
+
     public static Session getSession() {
         return session;
     }
@@ -259,11 +283,19 @@ public final class State {
         return administratorResolver;
     }
 
-    public static ClientFileResolver getClientFileResolver() {
-        return clientFileResolver;
+    public static FileResolver getFileResolver() {
+        return fileResolver;
     }
 
     public static ImageManager getImageManager() {
         return imageManager;
+    }
+
+    public static Clinician getCreatedClinician() {
+        return createdClinician;
+    }
+
+    public static void setCreatedClinician(Clinician createdClinician) {
+        State.createdClinician = createdClinician;
     }
 }

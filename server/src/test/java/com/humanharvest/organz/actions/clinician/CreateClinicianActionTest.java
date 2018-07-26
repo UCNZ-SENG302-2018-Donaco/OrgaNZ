@@ -21,7 +21,7 @@ public class CreateClinicianActionTest extends BaseTest {
     public void init() {
         invoker = new ActionInvoker();
         manager = new ClinicianManagerMemory();
-        baseClinician = new Clinician("First", null, "Last", "Address", Region.UNSPECIFIED, 1, "pass");
+        baseClinician = new Clinician("First", null, "Last", "Address", Region.UNSPECIFIED.name(), null, 1, "pass");
     }
 
     @Test
@@ -43,7 +43,7 @@ public class CreateClinicianActionTest extends BaseTest {
     public void CheckClinicianMultipleAddsOneUndoTest() {
         CreateClinicianAction action = new CreateClinicianAction(baseClinician, manager);
         invoker.execute(action);
-        Clinician second = new Clinician("First2", null, "Last2", "Address", Region.UNSPECIFIED, 2, "pass");
+        Clinician second = new Clinician("First2", null, "Last2", "Address", Region.UNSPECIFIED.name(), null, 2, "pass");
         CreateClinicianAction secondAction = new CreateClinicianAction(second, manager);
         invoker.execute(secondAction);
         invoker.undo();
@@ -55,7 +55,7 @@ public class CreateClinicianActionTest extends BaseTest {
     public void CheckClinicianMultipleAddsOneUndoRedoTest() {
         CreateClinicianAction action = new CreateClinicianAction(baseClinician, manager);
         invoker.execute(action);
-        Clinician second = new Clinician("First2", null, "Last2", "Address", Region.UNSPECIFIED, 2, "pass");
+        Clinician second = new Clinician("First2", null, "Last2", "Address", Region.UNSPECIFIED.name(), null, 2, "pass");
         CreateClinicianAction secondAction = new CreateClinicianAction(second, manager);
         invoker.execute(secondAction);
         invoker.undo();

@@ -18,7 +18,7 @@ import org.testfx.api.FxRobotException;
 
 public class ViewClinicianControllerTest extends ControllerTest {
 
-    private final Clinician testClinician = new Clinician("x", "y", "z", "t", Region.UNSPECIFIED, 3, "p");
+    private final Clinician testClinician = new Clinician("x", "y", "z", "t", Region.UNSPECIFIED.toString(), null, 3, "p");
 
     @Override
     protected Page getPage() {
@@ -39,7 +39,7 @@ public class ViewClinicianControllerTest extends ControllerTest {
         assertEquals("y", testClinician.getMiddleName());
         assertEquals("z", testClinician.getLastName());
         assertEquals("t", testClinician.getWorkAddress());
-        assertEquals(Region.UNSPECIFIED, testClinician.getRegion());
+        assertEquals(Region.UNSPECIFIED.toString(), testClinician.getRegion());
         assertEquals(3, testClinician.getStaffId());
         clickOn("Not yet modified."); // Checking the FxRobot can see this text.
     }

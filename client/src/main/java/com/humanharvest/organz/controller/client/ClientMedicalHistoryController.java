@@ -210,7 +210,6 @@ public class ClientMedicalHistoryController extends SubController {
     public void setup(MainController mainController) {
         super.setup(mainController);
 
-
         if (session.getLoggedInUserType() == UserType.CLIENT) {
             client = session.getLoggedInClient();
             mainController.loadSidebar(sidebarPane);

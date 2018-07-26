@@ -15,8 +15,15 @@ import org.hibernate.Transaction;
 public class ClinicianManagerDBPure implements ClinicianManager {
 
     private final DBManager dbManager;
-    private Clinician defaultClinician = new Clinician("admin", null, "admin", "admin", Region.UNSPECIFIED,
-            0, "admin");
+    private Clinician defaultClinician = new Clinician(
+            "admin",
+            null,
+            "admin",
+            "admin",
+            Region.UNSPECIFIED.name(),
+            null,
+            0,
+            "admin");
 
     public ClinicianManagerDBPure(){
         this.dbManager = DBManager.getInstance();

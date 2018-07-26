@@ -4,12 +4,16 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import com.humanharvest.organz.actions.ActionInvoker;
 import picocli.CommandLine;
 import picocli.CommandLine.Help.Ansi;
 
-public class CommandsHelper {
+public final class CommandsHelper {
+
+    private CommandsHelper() {
+    }
 
     /**
      * Takes a string line in the form of a command, and returns the space separated items. Double
@@ -25,8 +29,8 @@ public class CommandsHelper {
         boolean lastCharWasBackSlash = false;
 
         for (char ch : input.toCharArray()) {
-            if ((ch == ' ') && !betweenQuotes) {
-                if (currentItem.equals("")) {
+            if (ch == ' ' && !betweenQuotes) {
+                if (Objects.equals(currentItem, "")) {
                     continue;
                 }
                 inputs.add(currentItem);
@@ -51,7 +55,7 @@ public class CommandsHelper {
             }
             lastCharWasBackSlash = ch == '\\';
         }
-        if (!currentItem.equals("")) {
+        if (!Objects.equals(currentItem, "")) {
             inputs.add(currentItem);
         }
         return inputs.toArray(new String[0]);
@@ -68,13 +72,17 @@ public class CommandsHelper {
         ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
         PrintStream printStream = new PrintStream(byteStream);
 
-        CommandLine.run(
-                BaseCommand.class,
-                new CommandFactory(printStream, invoker),
-                printStream,
-                printStream,
-                Ansi.AUTO,
-                commands);
+        try {
+            CommandLine.run(
+                    BaseCommand.class,
+                    new CommandFactory(printStream, invoker),
+                    printStream,
+                    printStream,
+                    Ansi.AUTO,
+                    commands);
+        } catch (IllegalStateException e) {
+            e.printStackTrace(printStream);
+        }
 
         return byteStream.toString();
     }

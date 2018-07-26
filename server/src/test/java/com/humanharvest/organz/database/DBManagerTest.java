@@ -9,6 +9,7 @@ import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.ProcedureRecord;
 import com.humanharvest.organz.utilities.enums.BloodType;
+import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
@@ -43,7 +44,7 @@ public class DBManagerTest extends BaseTest {
         client.setDateOfDeath(LocalDate.now());
         client.setGender(Gender.MALE);
         client.setBloodType(BloodType.O_NEG);
-        client.setRegion(Region.CANTERBURY);
+        client.setRegion(Region.CANTERBURY.toString());
         client.setWeight(50.0);
         client.setHeight(120.0);
         client.setOrganDonationStatus(Organ.LUNG, true);
@@ -53,8 +54,8 @@ public class DBManagerTest extends BaseTest {
         client.addProcedureRecord(procRecord);
         dbManager.saveEntity(client);
 
-        Clinician clinician = new Clinician("Testwoman", "Malorie", "Testerson", "The Moon", Region.NELSON,
-                1001, "therecanbeonlyone");
+        Clinician clinician = new Clinician("Testwoman", "Malorie", "Testerson", "The Moon", Region.NELSON.name(),
+                Country.NZ, 1001, "therecanbeonlyone");
         dbManager.saveEntity(clinician);
     }
 }

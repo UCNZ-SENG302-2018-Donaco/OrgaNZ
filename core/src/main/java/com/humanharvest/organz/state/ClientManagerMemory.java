@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.ProcedureRecord;
@@ -217,5 +218,12 @@ public class ClientManagerMemory implements ClientManager {
                             Math.min(offset + count, matchingRequests.size())),
                     matchingRequests.size());
         }
+    }
+
+    @Override
+    public List<HistoryItem> getAllHistoryItems() {
+        return clients.stream()
+                .flatMap(client -> client.getChangesHistory().stream())
+                .collect(Collectors.toList());
     }
 }

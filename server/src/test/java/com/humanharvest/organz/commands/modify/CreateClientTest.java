@@ -6,8 +6,8 @@ import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.ClientManagerMemory;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import picocli.CommandLine;
 
 public class CreateClientTest extends BaseTest {
@@ -16,7 +16,7 @@ public class CreateClientTest extends BaseTest {
 
     private CreateClient spyCreateClient;
 
-    @Before
+    @BeforeEach
     public void init() {
         spyClientManager = spy(new ClientManagerMemory());
 

@@ -3,6 +3,7 @@ package com.humanharvest.organz;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.Period;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,10 +35,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.utilities.enums.BloodType;
+import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.ClientType;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
 import com.humanharvest.organz.views.client.Views;
@@ -65,9 +66,11 @@ public class Client implements ConcurrencyControlledEntity {
     @JsonView(Views.Details.class)
     private String currentAddress;
 
+    @JsonView(Views.Overview.class)
+    private String region;
     @Enumerated(EnumType.STRING)
     @JsonView(Views.Overview.class)
-    private Region region;
+    private Country country;
     @Enumerated(EnumType.STRING)
     @JsonView(Views.Overview.class)
     private Gender gender;
@@ -85,8 +88,20 @@ public class Client implements ConcurrencyControlledEntity {
 
     @JsonView(Views.Overview.class)
     private LocalDate dateOfBirth;
+
     @JsonView(Views.Details.class)
     private LocalDate dateOfDeath;
+    @JsonView(Views.Details.class)
+    private LocalTime timeOfDeath;
+    @JsonView(Views.Details.class)
+    private String regionOfDeath;
+    @JsonView(Views.Details.class)
+    private String cityOfDeath;
+    @JsonView(Views.Details.class)
+    @Enumerated(EnumType.STRING)
+    private Country countryOfDeath;
+
+
 
     @JsonView(Views.Details.class)
     private final Instant createdTimestamp;
@@ -377,6 +392,38 @@ public class Client implements ConcurrencyControlledEntity {
         return dateOfDeath;
     }
 
+    public LocalTime getTimeOfDeath() {
+        return timeOfDeath;
+    }
+
+    public void setTimeOfDeath(LocalTime timeOfDeath) {
+        this.timeOfDeath = timeOfDeath;
+    }
+
+    public String getRegionOfDeath() {
+        return regionOfDeath;
+    }
+
+    public void setRegionOfDeath(String regionOfDeath) {
+        this.regionOfDeath = regionOfDeath;
+    }
+
+    public String getCityOfDeath() {
+        return cityOfDeath;
+    }
+
+    public void setCityOfDeath(String cityOfDeath) {
+        this.cityOfDeath = cityOfDeath;
+    }
+
+    public Country getCountryOfDeath() {
+        return countryOfDeath;
+    }
+
+    public void setCountryOfDeath(Country countryOfDeath) {
+        this.countryOfDeath = countryOfDeath;
+    }
+
     public boolean isAlive() { return dateOfDeath == null; }
 
     public boolean isDead() { return dateOfDeath != null; }
@@ -440,11 +487,11 @@ public class Client implements ConcurrencyControlledEntity {
         this.currentAddress = currentAddress;
     }
 
-    public Region getRegion() {
+    public String getRegion() {
         return region;
     }
 
-    public void setRegion(Region region) {
+    public void setRegion(String region) {
         updateModifiedTimestamp();
         this.region = region;
     }
@@ -595,9 +642,18 @@ public class Client implements ConcurrencyControlledEntity {
         return Collections.unmodifiableList(illnessHistory);
     }
 
-    public IllnessRecord getIllnessById(long index) {
-        System.out.println(illnessHistory);
-        return illnessHistory.stream().filter(record -> record.getId() == index).findFirst().orElse(null);
+    /**
+     * Returns an illness given it's ID value.
+     * @param id The id of the illness.
+     * @return The illness record requested, or null if it doesn't exist.
+     */
+    public IllnessRecord getIllnessById(long id) {
+        // TODO: Should be optional? Usages don't seem to take into account the null case.
+        return illnessHistory
+                .stream()
+                .filter(record -> record.getId() == id)
+                .findFirst()
+                .orElse(null);
     }
 
     /**
@@ -834,7 +890,7 @@ public class Client implements ConcurrencyControlledEntity {
      */
     @JsonIgnore
     public boolean isDonor() {
-        return getCurrentlyDonatedOrgans().size() > 0;
+        return !getCurrentlyDonatedOrgans().isEmpty();
     }
 
     /**
@@ -843,7 +899,7 @@ public class Client implements ConcurrencyControlledEntity {
      */
     @JsonIgnore
     public boolean isReceiver() {
-        return transplantRequests.size() > 0;
+        return !transplantRequests.isEmpty();
     }
 
     /**
@@ -867,6 +923,7 @@ public class Client implements ConcurrencyControlledEntity {
      * The hash is surrounded by double quotes as required for a valid ETag
      * @return The ETag string with double quotes
      */
+    @Override
     public String getETag() {
         if (modifiedTimestamp == null) {
             return String.format("\"%d\"", createdTimestamp.hashCode());
@@ -884,16 +941,30 @@ public class Client implements ConcurrencyControlledEntity {
         switch (type) {
             case ANY:
                 return true;
+
             case BOTH:
                 return isDonor() && isReceiver();
+
             case NEITHER:
                 return !isDonor() && !isReceiver();
+
             case ONLY_DONOR:
                 return isDonor() && !isReceiver();
+
             case ONLY_RECEIVER:
                 return !isDonor() && isReceiver();
+
             default:
-                return true;
+                throw new IllegalArgumentException("type isn't a valid ClientType value");
         }
+    }
+
+    public Country getCountry() {
+        return country;
+    }
+
+    public void setCountry(Country country) {
+        this.country = country;
+        updateModifiedTimestamp();
     }
 }

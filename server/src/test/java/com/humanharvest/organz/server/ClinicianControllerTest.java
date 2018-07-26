@@ -8,8 +8,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
-import java.nio.charset.Charset;
-
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.state.AuthenticationManagerFake;
 import com.humanharvest.organz.state.State;
@@ -42,7 +40,7 @@ public class ClinicianControllerTest {
         State.reset();
         State.setAuthenticationManager(new AuthenticationManagerFake());
         this.mockMvc = webAppContextSetup(webApplicationContext).build();
-        testClinician = new Clinician("Shawn", "", "Michaels", "1", Region.UNSPECIFIED, 1, "hi");
+        testClinician = new Clinician("Shawn", "", "Michaels", "1", Region.UNSPECIFIED.toString(), null,1, "hi");
         State.setAuthenticationManager(new AuthenticationManagerFake());
 
     }
@@ -64,13 +62,6 @@ public class ClinicianControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)));
     }
-
-    @Test
-    public void getAuth() throws Exception {
-        //TODO auth for 401's and 403's
-    }
-    // /clinician/{staffId} endpoints
-
     @Test
     public void getDefaultDetails() throws Exception {
         mockMvc.perform(get("/clinicians/0"))
@@ -81,7 +72,7 @@ public class ClinicianControllerTest {
                 .andExpect(jsonPath("$.middleName", is(Matchers.isEmptyOrNullString())))
                 .andExpect(jsonPath("$.workAddress", is("admin")))
                 .andExpect(jsonPath("$.password", is("admin")))
-                .andExpect(jsonPath("$.region", is("UNSPECIFIED")))
+                .andExpect(jsonPath("$.region", is(Matchers.equalToIgnoringCase("UNSPECIFIED"))))
                 .andExpect(jsonPath("$.createdOn", Matchers.anything()))
                 .andExpect(jsonPath("$.modifiedOn", Matchers.anything()));
     }
@@ -158,7 +149,7 @@ public class ClinicianControllerTest {
                 .andExpect(jsonPath("$.middleName", is(Matchers.isEmptyOrNullString())))
                 .andExpect(jsonPath("$.workAddress", is("admin")))
                 .andExpect(jsonPath("$.password", is("ok")))
-                .andExpect(jsonPath("$.region", is("AUCKLAND")))
+                .andExpect(jsonPath("$.region", is(Matchers.equalToIgnoringCase("AUCKLAND"))))
                 .andExpect(jsonPath("$.createdOn", Matchers.anything()))
                 .andExpect(jsonPath("$.modifiedOn", Matchers.anything()));
     }
@@ -179,19 +170,9 @@ public class ClinicianControllerTest {
                 .andExpect(jsonPath("$.middleName", is("michael")))
                 .andExpect(jsonPath("$.workAddress", is("my home")))
                 .andExpect(jsonPath("$.password", is("ok")))
-                .andExpect(jsonPath("$.region", is("UNSPECIFIED")))
+                .andExpect(jsonPath("$.region", is(Matchers.equalToIgnoringCase("UNSPECIFIED"))))
                 .andExpect(jsonPath("$.createdOn", Matchers.anything()))
                 .andExpect(jsonPath("$.modifiedOn", Matchers.anything()));
-    }
-
-    // Attempting to patch the Id (it is a unique identifier)
-    @Test
-    public void invalidPatchId() throws Exception {
-        String json = "{\"staffId\": \"5\"}";
-        mockMvc.perform(patch("/clinicians/0")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(json))
-                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -200,7 +181,7 @@ public class ClinicianControllerTest {
         mockMvc.perform(patch("/clinicians/200")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(json))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
     }
 
 

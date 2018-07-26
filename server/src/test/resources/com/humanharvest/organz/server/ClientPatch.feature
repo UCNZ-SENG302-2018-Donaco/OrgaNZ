@@ -55,7 +55,7 @@ Feature: Does PATCH /clients/ work?
   Scenario: Update to an invalid region
     Given there is a test client
     Given I have an etag from client 1
-    When I patch to /clients/1 using { "region": "NOTAREGION" }
+    When I patch to /clients/1 using { "country": "NZ", "region": "NOTAREGION" }
     Then the result is bad request
 
   Scenario: Update blood type

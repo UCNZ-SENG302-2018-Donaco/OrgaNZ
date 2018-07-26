@@ -13,12 +13,13 @@ import com.humanharvest.organz.actions.client.ModifyClientAction;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.BloodType;
+import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Gender;
-import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.pico_type_converters.PicoBloodTypeConverter;
+import com.humanharvest.organz.utilities.pico_type_converters.PicoCountryConverter;
 import com.humanharvest.organz.utilities.pico_type_converters.PicoGenderConverter;
 import com.humanharvest.organz.utilities.pico_type_converters.PicoLocalDateConverter;
-import com.humanharvest.organz.utilities.pico_type_converters.PicoRegionConverter;
+import com.humanharvest.organz.utilities.validators.RegionValidator;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
@@ -60,8 +61,11 @@ public class SetAttribute implements Runnable {
     @Option(names = "--currentaddress", description = "Current address")
     private String address;
 
-    @Option(names = "--region", description = "Region", converter = PicoRegionConverter.class)
-    private Region region;
+    @Option(names = "--region", description = "Region")
+    private String region;
+
+    @Option(names = "--country", description = "Country", converter = PicoCountryConverter.class)
+    private Country country;
 
     @Option(names = "--gender", description = "Gender", converter = PicoGenderConverter.class)
     private Gender gender;
@@ -75,10 +79,12 @@ public class SetAttribute implements Runnable {
     @Option(names = "--weight", description = "Weight (kg)")
     private Double weight;
 
-    @Option(names = "--dateofbirth", description = "Date of birth (dd/mm/yyyy)", converter = PicoLocalDateConverter.class)
+    @Option(names = "--dateofbirth", description = "Date of birth (dd/mm/yyyy)",
+            converter = PicoLocalDateConverter.class)
     private LocalDate dateOfBirth;
 
-    @Option(names = "--dateofdeath", description = "Date of death (dd/mm/yyyy)", converter = PicoLocalDateConverter.class)
+    @Option(names = "--dateofdeath", description = "Date of death (dd/mm/yyyy)",
+            converter = PicoLocalDateConverter.class)
     private LocalDate dateOfDeath;
 
 
@@ -92,14 +98,20 @@ public class SetAttribute implements Runnable {
 
         Client client = possibleClient.get();
 
+        if (!RegionValidator.isValid(country == null ? client.getCountry() : country, region)) {
+            outputStream.printf("%s is not a valid NZ region%n", region);
+            return;
+        }
+
         ModifyClientAction action = new ModifyClientAction(client, manager);
 
         Map<String, Object[]> states = new HashMap<>();
         states.put("firstName", new String[]{client.getFirstName(), firstName});
         states.put("middleName", new String[]{client.getMiddleName(), middleName});
         states.put("lastName", new String[]{client.getLastName(), lastName});
-        states.put("currentAddress", new String[]{client.getCurrentAddress(), address});
-        states.put("region", new Region[]{client.getRegion(), region});
+        states.put("currentAddressgender", new String[]{client.getCurrentAddress(), address});
+        states.put("region", new String[]{client.getRegion(), region});
+        states.put("country", new Country[]{client.getCountry(), country});
         states.put("gender", new Gender[]{client.getGender(), gender});
         states.put("bloodType", new BloodType[]{client.getBloodType(), bloodType});
         states.put("height", new Double[]{client.getHeight(), height});
@@ -114,7 +126,7 @@ public class SetAttribute implements Runnable {
             try {
                 action.addChange(entry.getKey(), entry.getValue()[0], entry.getValue()[1]);
             } catch (NoSuchFieldException e) {
-                e.printStackTrace();
+                e.printStackTrace(outputStream);
             }
         }
 

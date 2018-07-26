@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.EnumSet;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Objects;
@@ -44,12 +45,16 @@ import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.enums.BloodType;
+import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
+import com.humanharvest.organz.utilities.validators.IntValidator;
+import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.utilities.view.WindowContext;
 import com.humanharvest.organz.views.client.ModifyClientObject;
 import org.apache.commons.io.IOUtils;
 import org.controlsfx.control.Notifications;
@@ -66,6 +71,7 @@ public class ViewClientController extends ViewBaseController {
     private static final int maxFileSize = 2000000; // (2mb)
     private final Session session;
     private final ClientManager manager;
+    public Button editDeathDetailsButton;
     private Client viewedClient;
 
     @FXML
@@ -129,7 +135,11 @@ public class ViewClientController extends ViewBaseController {
     @FXML
     private ChoiceBox<BloodType> btype;
     @FXML
-    private ChoiceBox<Region> region;
+    private ChoiceBox<Region> regionCB;
+    @FXML
+    private TextField regionTF;
+    @FXML
+    private ChoiceBox<Country> country;
     @FXML
     private ImageView imageView;
     @FXML
@@ -154,9 +164,22 @@ public class ViewClientController extends ViewBaseController {
         gender.setItems(FXCollections.observableArrayList(Gender.values()));
         genderIdentity.setItems(FXCollections.observableArrayList(Gender.values()));
         btype.setItems(FXCollections.observableArrayList(BloodType.values()));
-        region.setItems(FXCollections.observableArrayList(Region.values()));
+        regionCB.setItems(FXCollections.observableArrayList(Region.values()));
+        updateCountries();
         fullName.setWrapText(true);
 
+        country.valueProperty().addListener(change -> {
+            checkCountry();
+        });
+    }
+
+    private void updateCountries() {
+        EnumSet<Country> countries = EnumSet.noneOf(Country.class);
+        countries.addAll(State.getConfigManager().getAllowedCountries());
+        country.setItems(FXCollections.observableArrayList(countries));
+        if (viewedClient != null && viewedClient.getCountry() != null) {
+            country.setValue(viewedClient.getCountry());
+        }
     }
 
     @Override
@@ -191,6 +214,7 @@ public class ViewClientController extends ViewBaseController {
             mainController.setTitle("View Client: " + viewedClient.getFullName());
         }
         loadImage();
+        updateCountries();
     }
 
     /**
@@ -202,15 +226,22 @@ public class ViewClientController extends ViewBaseController {
         mname.setText(viewedClient.getMiddleName());
         pname.setText(viewedClient.getPreferredName());
         dob.setValue(viewedClient.getDateOfBirth());
-        dod.setValue(viewedClient.getDateOfDeath());
         gender.setValue(viewedClient.getGender());
         genderIdentity.setValue(viewedClient.getGenderIdentity());
         height.setText(String.valueOf(viewedClient.getHeight()));
         weight.setText(String.valueOf(viewedClient.getWeight()));
         btype.setValue(viewedClient.getBloodType());
-        region.setValue(viewedClient.getRegion());
+        country.setValue(viewedClient.getCountry());
+
+        checkCountry();
+        if (viewedClient.getCountry() == Country.NZ && viewedClient.getRegion() != null) {
+            regionCB.setValue(Region.fromString(viewedClient.getRegion()));
+        } else {
+            regionTF.setText(viewedClient.getRegion());
+
+        }
         address.setText(viewedClient.getCurrentAddress());
-        fullName.setText(viewedClient.getPreferredName());
+        fullName.setText(viewedClient.getPreferredNameFormatted());
 
         creationDate.setText(formatter.format(viewedClient.getCreatedTimestamp()));
 
@@ -225,6 +256,20 @@ public class ViewClientController extends ViewBaseController {
     }
 
     /**
+     * Checks the clients country, changes region input to a choicebox of NZ regions if the country is New Zealand,
+     * and changes to a textfield input for any other country
+     */
+    private void checkCountry() {
+        if (country.getValue() == Country.NZ) {
+            regionCB.setVisible(true);
+            regionTF.setVisible(false);
+        } else {
+            regionCB.setVisible(false);
+            regionTF.setVisible(true);
+        }
+    }
+
+    /**
      * Saves the changes a user makes to the viewed client if all their inputs are valid.
      * Otherwise the invalid fields text turns red.
      */
@@ -234,6 +279,7 @@ public class ViewClientController extends ViewBaseController {
             if (updateChanges()) {
                 displayBMI();
                 displayAge();
+                checkCountry();
 
                 lastModified.setText(formatter.format(viewedClient.getModifiedTimestamp()));
             }
@@ -377,13 +423,6 @@ public class ViewClientController extends ViewBaseController {
      */
     private boolean checkNonMandatoryFields() {
         boolean update = true;
-        if (dod.getValue() == null ||
-                (dod.getValue().isAfter(dob.getValue())) && dod.getValue().isBefore(LocalDate.now().plusDays(1))) {
-            dodLabel.setTextFill(Color.BLACK);
-        } else {
-            dodLabel.setTextFill(Color.RED);
-            update = false;
-        }
 
         try {
             double h = Double.parseDouble(height.getText());
@@ -441,51 +480,6 @@ public class ViewClientController extends ViewBaseController {
 
         boolean clientDied = false;
 
-        if (viewedClient.getDateOfDeath() == null && dod.getValue() != null) {
-            Optional<ButtonType> buttonOpt = PageNavigator.showAlert(AlertType.CONFIRMATION,
-                    "Are you sure you want to mark this client as dead?",
-                    "This will cancel all waiting transplant requests for this client.");
-
-            if (buttonOpt.isPresent() && buttonOpt.get() == ButtonType.OK) {
-
-                try {
-                    State.getClientResolver().markClientAsDead(viewedClient, dod.getValue());
-                } catch (NotFoundException e) {
-                    LOGGER.log(Level.WARNING, "Client not found");
-                    PageNavigator.showAlert(
-                            AlertType.WARNING,
-                            "Client not found",
-                            "The client could not be found on the server, it may have been deleted");
-                    return false;
-                } catch (ServerRestException e) {
-                    LOGGER.log(Level.WARNING, e.getMessage(), e);
-                    PageNavigator.showAlert(
-                            AlertType.WARNING,
-                            "Server error",
-                            "Could not apply changes on the server, please try again later");
-                    return false;
-                } catch (IfMatchFailedException e) {
-                    LOGGER.log(Level.INFO, "If-Match did not match");
-                    PageNavigator.showAlert(
-                            AlertType.WARNING,
-                            "Outdated Data",
-                            "The client has been modified since you retrieved the data.\n"
-                                    + "If you would still like to apply these changes please submit again, "
-                                    + "otherwise refresh the page to update the data.");
-                    return false;
-                }
-                clientDied = true;
-
-                Notifications.create()
-                        .title("Marked Client as Dead")
-                        .text("All organ transplant requests have been cancelled, "
-                                + "and the date of death has been stored.")
-                        .showConfirm();
-            }
-        } else { // the client has not died for this update (ie they are either still alive, or were already dead)
-            addChangeIfDifferent(modifyClientObject, viewedClient, "dateOfDeath", dod.getValue());
-        }
-
         addChangeIfDifferent(modifyClientObject, viewedClient, "firstName", fname.getText());
         addChangeIfDifferent(modifyClientObject, viewedClient, "lastName", lname.getText());
         addChangeIfDifferent(modifyClientObject, viewedClient, "middleName", mname.getText());
@@ -496,8 +490,21 @@ public class ViewClientController extends ViewBaseController {
         addChangeIfDifferent(modifyClientObject, viewedClient, "height", Double.parseDouble(height.getText()));
         addChangeIfDifferent(modifyClientObject, viewedClient, "weight", Double.parseDouble(weight.getText()));
         addChangeIfDifferent(modifyClientObject, viewedClient, "bloodType", btype.getValue());
-        addChangeIfDifferent(modifyClientObject, viewedClient, "region", region.getValue());
         addChangeIfDifferent(modifyClientObject, viewedClient, "currentAddress", address.getText());
+        addChangeIfDifferent(modifyClientObject, viewedClient, "country", country.getValue());
+
+        if (country.getValue() == Country.NZ) {
+            Region region = regionCB.getValue();
+            if (region == null) {
+                region = Region.UNSPECIFIED;
+            }
+            addChangeIfDifferent(modifyClientObject, viewedClient, "region", region.toString());
+        } else {
+            addChangeIfDifferent(modifyClientObject, viewedClient, "region", regionTF.getText());
+
+        }
+
+        //checkCountry();
 
         PageNavigator.refreshAllWindows();
 
@@ -546,7 +553,6 @@ public class ViewClientController extends ViewBaseController {
             return false;
         }
 
-        System.out.println("refreshing");
         PageNavigator.refreshAllWindows();
         return true;
 
@@ -570,5 +576,17 @@ public class ViewClientController extends ViewBaseController {
             ageDisplayLabel.setText("Age at death:");
         }
         ageLabel.setText(String.valueOf(viewedClient.getAge()));
+    }
+
+    @FXML
+    private void editDeathDetails() {
+
+        MainController newMain  = PageNavigator.openNewWindow();
+        newMain.setWindowContext(new WindowContext.WindowContextBuilder()
+                .setAsClinicianViewClientWindow()
+                .viewClient(viewedClient)
+                .build());
+
+        PageNavigator.loadPage(Page.EDIT_DEATH_DETAILS, newMain);
     }
 }
