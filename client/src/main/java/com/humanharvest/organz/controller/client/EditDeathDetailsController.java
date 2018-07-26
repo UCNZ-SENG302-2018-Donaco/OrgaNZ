@@ -4,8 +4,12 @@ import static com.humanharvest.organz.controller.clinician.ViewBaseController.ad
 
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.utilities.JSONConverter;
-import java.time.format.DateTimeFormatter;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Region;
@@ -28,9 +32,14 @@ import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.views.client.ModifyClientObject;
+
+import javafx.scene.control.TextFormatter;
 import javafx.stage.Stage;
+import javafx.util.converter.DateTimeStringConverter;
+
 import org.controlsfx.control.Notifications;
 
 public class EditDeathDetailsController extends SubController{
@@ -39,7 +48,7 @@ public class EditDeathDetailsController extends SubController{
     private ClientManager manager;
     private Client client;
 
-    private static final DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("HH:MM:SS");
+    private static final DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("HH:mm:ss");
 
     @FXML
     private TextField deathTimeField;
@@ -90,7 +99,7 @@ public class EditDeathDetailsController extends SubController{
             deathCity.setEditable(false);
             if (client.isDead()) {
                 if (client.getTimeOfDeath() != null) {
-                    deathTimeField.setText(client.getTimeOfDeath());
+                    deathTimeField.setText(timeFormat.format(client.getTimeOfDeath()));
                 }
                 if (client.getCurrentAddress() != null) {
                     deathCountry.setValue(client.getCountryOfDeath());
@@ -128,7 +137,7 @@ public class EditDeathDetailsController extends SubController{
             client = windowContext.getViewClient();
             if (client.isDead()) {
                 if (client.getTimeOfDeath() != null) {
-                    deathTimeField.setText(client.getTimeOfDeath());
+                    deathTimeField.setText(timeFormat.format(client.getTimeOfDeath()));
                 }
                 if (client.getCountryOfDeath() != null) {
                     deathCountry.setValue(client.getCountryOfDeath());
@@ -189,6 +198,7 @@ public class EditDeathDetailsController extends SubController{
         }
     }
 
+
     public void applyChanges () {
         ModifyClientObject modifyClientObject = new ModifyClientObject();
 
@@ -196,7 +206,13 @@ public class EditDeathDetailsController extends SubController{
             PageNavigator.showAlert(AlertType.ERROR, "Invalid Access", "Clients cannot edit death details");
         } else {
             addChangeIfDifferent(modifyClientObject, client, "dateOfDeath", deathDatePicker.getValue());
-            addChangeIfDifferent(modifyClientObject, client, "timeOfDeath", deathTimeField.getText());
+            try {
+                addChangeIfDifferent(modifyClientObject, client, "timeOfDeath",
+                        LocalTime.parse(deathTimeField.getText()));
+            } catch (DateTimeParseException e) {
+                PageNavigator.showAlert(AlertType.WARNING, "Incorrect time format", "Please enter the time of death"
+                        + " in 'HH:mm:ss'");
+            }
             addChangeIfDifferent(modifyClientObject, client, "cityOfDeath", deathCity.getText());
             addChangeIfDifferent(modifyClientObject, client, "countryOfDeath", deathCountry.getValue());
 
