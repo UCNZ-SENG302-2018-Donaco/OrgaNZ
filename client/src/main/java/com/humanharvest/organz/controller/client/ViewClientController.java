@@ -26,7 +26,6 @@ import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.clinician.ViewBaseController;
-import com.humanharvest.organz.resolvers.config.SetAllowedCountriesResolver;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
@@ -124,7 +123,7 @@ public class ViewClientController extends ViewBaseController {
     @FXML
     private TextField regionTF;
     @FXML
-    private ChoiceBox country;
+    private ChoiceBox<Country> country;
 
     public ViewClientController() {
         manager = State.getClientManager();
@@ -147,14 +146,21 @@ public class ViewClientController extends ViewBaseController {
         regionCB.setItems(FXCollections.observableArrayList(Region.values()));
         updateCountries();
         setFieldsDisabled(true);
-    }
 
+        country.valueProperty().addListener(change -> {
+            System.out.println("changed");
+            checkCountry();
+        });
+    }
 
     private void updateCountries() {
         EnumSet<Country> countries = State.getConfigManager().getAllowedCountries();
+        System.out.println(State.getConfigManager().getClass().toString());
         country.setItems(FXCollections.observableArrayList(countries));
+        if (viewedClient != null && viewedClient.getCountry() != null) {
+            country.setValue(viewedClient.getCountry());
+        }
     }
-
 
     @Override
     public void setup(MainController mainController) {
@@ -257,6 +263,7 @@ public class ViewClientController extends ViewBaseController {
         height.setText(String.valueOf(viewedClient.getHeight()));
         weight.setText(String.valueOf(viewedClient.getWeight()));
         btype.setValue(viewedClient.getBloodType());
+        country.setValue(viewedClient.getCountry());
 
         checkCountry();
         if (viewedClient.getCountry() == Country.NZ && viewedClient.getRegion() != null) {
@@ -280,19 +287,11 @@ public class ViewClientController extends ViewBaseController {
     }
 
     /**
-     * Triggered when the value of the country choicebox is changed
-     */
-    @FXML
-    private void countryChanged() {
-        checkCountry();
-    }
-
-    /**
      * Checks the clients country, changes region input to a choicebox of NZ regions if the country is New Zealand,
      * and changes to a textfield input for any other country
      */
     private void checkCountry() {
-        if (viewedClient.getCountry() == Country.NZ ) {
+        if (country.getValue() == Country.NZ) {
             regionCB.setVisible(true);
             regionTF.setVisible(false);
         } else {
@@ -474,15 +473,18 @@ public class ViewClientController extends ViewBaseController {
         addChangeIfDifferent(modifyClientObject, viewedClient, "currentAddress", address.getText());
         addChangeIfDifferent(modifyClientObject, viewedClient, "country", country.getValue());
 
-        if (viewedClient.getCountry() == Country.NZ) {
-            addChangeIfDifferent(modifyClientObject, viewedClient, "region", regionCB.getValue());
+        if (country.getValue() == Country.NZ) {
+            Region region = regionCB.getValue();
+            if (region == null) {
+                region = Region.UNSPECIFIED;
+            }
+            addChangeIfDifferent(modifyClientObject, viewedClient, "region", region.toString());
         } else {
-            addChangeIfDifferent(modifyClientObject, viewedClient,"region", regionTF.getText());
+            addChangeIfDifferent(modifyClientObject, viewedClient, "region", regionTF.getText());
 
         }
 
         //checkCountry();
-
 
         PageNavigator.refreshAllWindows();
 

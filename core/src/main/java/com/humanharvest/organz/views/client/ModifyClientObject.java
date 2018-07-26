@@ -21,7 +21,7 @@ public class ModifyClientObject extends ModifyBaseObject {
     private String currentAddress;
     private Country country;
 
-    private Region region;
+    private String region;
     private Gender gender;
     private BloodType bloodType;
     private Gender genderIdentity;
@@ -77,11 +77,11 @@ public class ModifyClientObject extends ModifyBaseObject {
         this.currentAddress = currentAddress;
     }
 
-    public Region getRegion() {
+    public String getRegion() {
         return region;
     }
 
-    public void setRegion(Region region) {
+    public void setRegion(String region) {
         registerChange("region");
         this.region = region;
     }

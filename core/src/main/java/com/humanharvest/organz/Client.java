@@ -70,9 +70,6 @@ public class Client implements ConcurrencyControlledEntity {
     private String region;
     @Enumerated(EnumType.STRING)
     @JsonView(Views.Details.class)
-    private String region;
-    @Enumerated(EnumType.STRING)
-    @JsonView(Views.Details.class)
     private Country country;
     @Enumerated(EnumType.STRING)
     @JsonView(Views.Overview.class)

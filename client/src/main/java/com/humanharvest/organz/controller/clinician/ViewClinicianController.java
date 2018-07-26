@@ -143,6 +143,28 @@ public class ViewClinicianController extends ViewBaseController {
         loadClinicianData();
     }
 
+    /**
+     * Triggered when the value of the country choicebox is changed
+     */
+    @FXML
+    private void countryChanged() {
+        checkClinicianCountry();
+    }
+
+    /**
+     * Checks the clients country, changes region input to a choicebox of NZ regions if the country is New Zealand,
+     * and changes to a textfield input for any other country
+     */
+    private void checkClinicianCountry() {
+        if (viewedClinician.getCountry() == Country.NZ ) {
+            regionCB.setVisible(true);
+            regionTF.setVisible(false);
+        } else {
+            regionCB.setVisible(false);
+            regionTF.setVisible(true);
+        }
+    }
+
 
     /**
      * Loads the clinician identified by the staff ID in loadStaffIdTextField.

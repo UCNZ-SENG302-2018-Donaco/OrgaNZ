@@ -13,10 +13,23 @@ import org.hibernate.Transaction;
 public class ConfigManagerDBPure implements ConfigManager {
 
     private final DBManager dbManager;
-    private Config config;
 
     public ConfigManagerDBPure() {
         this.dbManager = DBManager.getInstance();
+//
+//        Transaction trns = null;
+//
+//        try (org.hibernate.Session session = dbManager.getDBSession()) {
+//            trns = session.beginTransaction();
+//
+//            dbManager.getDBSession().update(State.getConfig());
+//
+//            trns.commit();
+//        } catch (RollbackException exc) {
+//            if (trns != null) {
+//                trns.rollback();
+//            }
+//        }
     }
 
     @Override

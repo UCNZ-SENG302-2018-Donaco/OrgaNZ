@@ -4,6 +4,7 @@ import java.lang.reflect.Member;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.views.ModifyBaseObject;
 
@@ -17,7 +18,9 @@ public class ModifyClinicianObject extends ModifyBaseObject {
     private String workAddress;
     private String password;
     private int staffId;
-    private Region region;
+    private String region;
+    private Country country;
+
 
     public String getFirstName() {
         return firstName;
@@ -73,11 +76,11 @@ public class ModifyClinicianObject extends ModifyBaseObject {
         this.staffId = staffId;
     }
 
-    public Region getRegion() {
+    public String getRegion() {
         return region;
     }
 
-    public void setRegion(Region region) {
+    public void setRegion(String region) {
         registerChange("region");
         this.region = region;
     }
@@ -94,5 +97,13 @@ public class ModifyClinicianObject extends ModifyBaseObject {
 
     private static String fieldString(Member field) {
         return String.format("Updated %s", field.getName());
+    }
+
+    public Country getCountry() {
+        return country;
+    }
+
+    public void setCountry(Country country) {
+        this.country = country;
     }
 }

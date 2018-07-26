@@ -2,7 +2,6 @@ package com.humanharvest.organz.resolvers.config;
 
 import java.util.EnumSet;
 
-import com.humanharvest.organz.Config;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Country;
 import org.springframework.core.ParameterizedTypeReference;

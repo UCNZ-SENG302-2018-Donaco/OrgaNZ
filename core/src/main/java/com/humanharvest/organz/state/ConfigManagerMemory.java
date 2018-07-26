@@ -10,7 +10,8 @@ public class ConfigManagerMemory implements ConfigManager {
 
     public ConfigManagerMemory() {
         allowedCountries = EnumSet.noneOf(Country.class);
-        allowedCountries.add(Country.NZ);  // Defaults to New Zealand as the only allowed country
+        allowedCountries.add(Country.NZ);
+        allowedCountries.add(Country.ZA);
     }
 
     @Override

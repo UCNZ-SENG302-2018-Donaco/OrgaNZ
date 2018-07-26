@@ -11,6 +11,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
+import com.humanharvest.organz.Config;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.resolvers.CommandRunner;
 import com.humanharvest.organz.resolvers.CommandRunnerRest;
@@ -248,10 +249,6 @@ public final class State {
 
     public static ConfigManager getConfigManager() {
         return configManager;
-    }
-
-    public static void setConfigManager(ConfigManager configManager) {
-        State.configManager = configManager;
     }
 
     public static Session getSession() {
