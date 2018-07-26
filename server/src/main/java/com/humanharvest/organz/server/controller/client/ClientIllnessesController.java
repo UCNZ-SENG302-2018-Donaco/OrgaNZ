@@ -163,8 +163,13 @@ public class ClientIllnessesController {
         DeleteIllnessRecordAction action = new DeleteIllnessRecordAction(client.get(),removeRecord,
             State.getClientManager());
         State.getActionInvoker(authToken).execute(action);
+
+        Client client1 = State.getClientManager()
+                .getClientByID(client.get().getUid())
+                .orElseThrow(IllegalStateException::new);
+
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client.get().getETag());
+        headers.setETag(client1.getETag());
 
         return new ResponseEntity<>(removeRecord, headers, HttpStatus.OK);
 
