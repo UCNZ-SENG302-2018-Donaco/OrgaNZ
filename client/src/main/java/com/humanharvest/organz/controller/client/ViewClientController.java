@@ -186,7 +186,7 @@ public class ViewClientController extends ViewBaseController {
         updateClientFields();
         mainController.refreshNavigation();
         if (session.getLoggedInUserType() == UserType.CLIENT) {
-            mainController.setTitle("View Client: " + viewedClient.getPreferredName());
+            mainController.setTitle("View Client: " + viewedClient.getPreferredNameFormatted());
         } else if (windowContext.isClinViewClientWindow()) {
             mainController.setTitle("View Client: " + viewedClient.getFullName());
         }
@@ -200,7 +200,7 @@ public class ViewClientController extends ViewBaseController {
         fname.setText(viewedClient.getFirstName());
         lname.setText(viewedClient.getLastName());
         mname.setText(viewedClient.getMiddleName());
-        pname.setText(viewedClient.getPreferredNameOnly());
+        pname.setText(viewedClient.getPreferredName());
         dob.setValue(viewedClient.getDateOfBirth());
         dod.setValue(viewedClient.getDateOfDeath());
         gender.setValue(viewedClient.getGender());
