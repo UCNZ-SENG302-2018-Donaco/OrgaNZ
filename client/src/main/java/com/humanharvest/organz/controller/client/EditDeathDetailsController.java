@@ -165,7 +165,7 @@ public class EditDeathDetailsController extends SubController{
                 deathCity.setText(client.getCurrentAddress());
                 if (client.getCountry() == Country.NZ) {
                     deathRegionCB.setVisible(true);
-                    deathRegionCB.setValue(deathRegionCB.getValue());
+                    deathRegionCB.setValue(Region.fromString(client.getRegion()));
                     deathRegionTF.setVisible(false);
                 } else if (client.getCountry() != Country.NZ){
                     deathRegionCB.setVisible(false);
