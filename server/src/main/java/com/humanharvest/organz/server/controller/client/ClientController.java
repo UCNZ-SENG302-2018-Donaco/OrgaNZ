@@ -164,6 +164,7 @@ public class ClientController {
     @PatchMapping("/clients/{uid}")
     @JsonView(Views.Details.class)
     public ResponseEntity<Client> updateClient(
+
             @PathVariable int uid,
             @RequestBody ModifyClientObject modifyClientObject,
             @RequestHeader(value = "If-Match", required = false) String etag,
