@@ -227,6 +227,7 @@ public class EditDeathDetailsController extends SubController{
                         .title("No changes were made.")
                         .text("No changes were made to the client.")
                         .showWarning();
+
             }
 
             else {
