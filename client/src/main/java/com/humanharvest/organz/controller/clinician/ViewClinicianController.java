@@ -133,11 +133,6 @@ public class ViewClinicianController extends ViewBaseController {
         country.valueProperty().addListener(change -> {
             checkCountry();
         });
-
-        loadClinicianData();
-        loadClinicianButton.setDisable(true); //TODO discuss whether we even need this?
-        loadStaffIdTextField.setDisable(true);
-        updateCountries();
     }
 
     /**
@@ -155,6 +150,9 @@ public class ViewClinicianController extends ViewBaseController {
         }
 
         loadClinicianData();
+        loadClinicianButton.setDisable(true); //TODO discuss whether we even need this?
+        loadStaffIdTextField.setDisable(true);
+        updateCountries();
     }
 
     @Override
