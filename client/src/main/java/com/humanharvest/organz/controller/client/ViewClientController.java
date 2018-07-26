@@ -148,7 +148,6 @@ public class ViewClientController extends ViewBaseController {
         setFieldsDisabled(true);
 
         country.valueProperty().addListener(change -> {
-            System.out.println("changed");
             checkCountry();
         });
     }

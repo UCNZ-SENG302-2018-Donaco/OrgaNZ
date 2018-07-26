@@ -1,6 +1,7 @@
 package com.humanharvest.organz.controller.clinician;
 
 import java.time.format.DateTimeFormatter;
+import java.util.EnumSet;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -77,7 +78,7 @@ public class ViewClinicianController extends ViewBaseController {
     @FXML
     private TextField regionTF;
     @FXML
-    private ChoiceBox country;
+    private ChoiceBox<Country> country;
     @FXML
     private Button loadClinicianButton;
 
@@ -97,7 +98,7 @@ public class ViewClinicianController extends ViewBaseController {
     }
 
     private void checkCountry() {
-        if (viewedClinician.getCountry() != null && viewedClinician.getCountry() == Country.NZ) {
+        if (country.getValue() != null && country.getValue() == Country.NZ) {
             regionCB.setVisible(true);
             regionTF.setVisible(false);
         } else {
@@ -117,9 +118,14 @@ public class ViewClinicianController extends ViewBaseController {
         }
         inputsPane.setVisible(true);
 
+        country.valueProperty().addListener(change -> {
+            checkCountry();
+        });
+
         loadClinicianData();
         loadClinicianButton.setDisable(true); //TODO discuss whether we even need this?
         loadStaffIdTextField.setDisable(true);
+        updateCountries();
     }
 
     /**
@@ -139,8 +145,9 @@ public class ViewClinicianController extends ViewBaseController {
 
     @Override
     public void refresh() {
-        checkCountry();
         loadClinicianData();
+        updateCountries();
+        checkCountry();
     }
 
     /**
@@ -273,6 +280,15 @@ public class ViewClinicianController extends ViewBaseController {
             return viewedClinician.getPassword();
         } else {
             return password.getText();
+        }
+    }
+
+    private void updateCountries() {
+        EnumSet<Country> countries = EnumSet.noneOf(Country.class);
+        countries.addAll(State.getConfigManager().getAllowedCountries());
+        country.setItems(FXCollections.observableArrayList(countries));
+        if (viewedClinician != null && viewedClinician.getCountry() != null) {
+            country.setValue(viewedClinician.getCountry());
         }
     }
 
