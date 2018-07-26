@@ -14,6 +14,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+
 <VBox prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.clinician.ViewClinicianController">
   <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
   <HBox fx:id="menuBarPane" maxHeight="20.0" minHeight="-Infinity" />
@@ -81,9 +82,9 @@
                                  <Font name="System Italic" size="13.0" />
                               </font></Label>
                   <PasswordField fx:id="password" prefHeight="30.0" GridPane.columnIndex="3" />
-                  <Label text="Country" GridPane.columnIndex="2" GridPane.rowIndex="4" />
-                  <ChoiceBox fx:id="country" onInputMethodTextChanged="#countryChanged" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="4" />
-                  <TextField fx:id="regionTF" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                  <Label text="Country" GridPane.columnIndex="2" GridPane.rowIndex="3" />
+                  <ChoiceBox fx:id="country" onInputMethodTextChanged="#countryChanged" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                  <TextField fx:id="regionTF" GridPane.columnIndex="3" GridPane.rowIndex="2" />
                 </children>
                 <VBox.margin>
                   <Insets />
