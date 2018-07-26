@@ -74,7 +74,7 @@ public class ViewClientControllerTest extends ControllerTest {
         assertEquals("z", testClient.getFirstName());
         assertEquals("q", testClient.getLastName());
         assertEquals("m", testClient.getMiddleName());
-        assertEquals("p", testClient.getPreferredName());
+        assertEquals("p", testClient.getPreferredNameFormatted());
         assertNotNull(testClient.getDateOfDeath());
         assertEquals(Region.WEST_COAST, testClient.getRegion());
         assertEquals(Gender.MALE, testClient.getGender());

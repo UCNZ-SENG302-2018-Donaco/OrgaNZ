@@ -43,7 +43,7 @@ public class ModifyBaseObject {
     }
 
     @JsonIgnore
-    private final Set<Field> modifiedFields = new HashSet<>();
+    protected final Set<Field> modifiedFields = new HashSet<>();
 
     @JsonIgnore
     public Set<Field> getModifiedFields() {
