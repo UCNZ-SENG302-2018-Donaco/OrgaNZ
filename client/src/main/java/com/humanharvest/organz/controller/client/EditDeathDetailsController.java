@@ -10,6 +10,8 @@ import java.time.format.DateTimeFormatter;
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Region;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;;
 import javafx.scene.control.Alert;
@@ -83,7 +85,6 @@ public class EditDeathDetailsController extends SubController{
             deathTimeField.setEditable(false);
             deathDatePicker.setEditable(false);
             deathCountry.setDisable(true);
-            checkCountry();
             deathRegionTF.setEditable(false);
             deathRegionCB.setDisable(true);
             deathCity.setEditable(false);
@@ -95,10 +96,10 @@ public class EditDeathDetailsController extends SubController{
                     deathCountry.setValue(client.getCountryOfDeath());
                 }
                 if (client.getRegion() != null && client.getCountry() == Country.NZ) {
-                    deathRegionCB.setValue(deathRegionCB.getValue());
+                   deathRegionCB.setValue(Region.fromString(client.getRegion()));
                 }
                 else if (client.getRegion() != null && client.getCountry() != Country.NZ) {
-                    deathRegionTF.setText(client.getRegionOfDeath());
+                    deathRegionTF.setText(client.getRegion());
                 }
                 if (client.getDateOfDeath() != null) {
                     deathDatePicker.setValue(client.getDateOfDeath());
@@ -110,6 +111,19 @@ public class EditDeathDetailsController extends SubController{
             }
 
         }
+
+        deathCountry.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue.equals(Country.NZ)) {
+                deathRegionCB.setVisible(true);
+                deathRegionTF.setVisible(false);
+                deathRegionTF.setEditable(false);
+            } else {
+                deathRegionTF.setVisible(true);
+                deathRegionTF.setEditable(true);
+                deathRegionCB.setVisible(false);
+            }
+        });
+
         if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
             if (client.isDead()) {
@@ -119,10 +133,13 @@ public class EditDeathDetailsController extends SubController{
                 if (client.getCountryOfDeath() != null) {
                     deathCountry.setValue(client.getCountryOfDeath());
                 }
-                if (client.getRegionOfDeath() != null && client.getCountry() == Country.NZ) {
-                    deathRegionCB.setValue(deathRegionCB.getValue());
-                } else if (client.getRegionOfDeath() != null && client.getCountry() != Country.NZ) {
-                    deathRegionTF.setText(client.getRegionOfDeath());
+                if (client.getRegionOfDeath() !=  null) {
+                    if (client.getCountryOfDeath() == Country.NZ) {
+                        deathRegionCB.setValue(deathRegionCB.getValue());
+                    }
+                    else {
+                        deathRegionTF.setText(client.getRegionOfDeath());
+                    }
                 }
                 if (client.getDateOfDeath() != null) {
                     deathDatePicker.setValue(client.getDateOfDeath());
@@ -134,12 +151,12 @@ public class EditDeathDetailsController extends SubController{
 
             else {
                 deathCountry.setValue(client.getCountry());
-                deathCity.setText(client.getRegion());
+                deathCity.setText(client.getCurrentAddress());
                 if (client.getCountry() == Country.NZ) {
                     deathRegionCB.setVisible(true);
-                    deathRegionCB.setValue(Region.fromString(client.getRegion()));
+                    deathRegionCB.setValue(deathRegionCB.getValue());
                     deathRegionTF.setVisible(false);
-                } else {
+                } else if (client.getCountry() != Country.NZ){
                     deathRegionCB.setVisible(false);
                     deathRegionTF.setVisible(true);
                     deathRegionTF.setText(client.getRegion());
@@ -148,7 +165,6 @@ public class EditDeathDetailsController extends SubController{
 
         }
 
-        updateDeathFields();
     }
 
     /**
@@ -157,19 +173,6 @@ public class EditDeathDetailsController extends SubController{
     @FXML
     private void countryChanged() {
         checkCountry();
-    }
-
-    private void updateDeathFields() {
-        deathTimeField.setText(client.getTimeOfDeath());
-        deathDatePicker.setValue(client.getDateOfDeath());
-        checkCountry();
-        if (client.getCountryOfDeath() == Country.NZ && client.getRegionOfDeath() != null) {
-            deathRegionCB.setValue(Region.fromString(client.getRegionOfDeath()));
-        } else {
-            deathRegionTF.setText(client.getRegionOfDeath());
-
-        }
-        deathCity.setText(client.getCityOfDeath());
     }
 
     /**
@@ -213,7 +216,6 @@ public class EditDeathDetailsController extends SubController{
             else {
                 client = State.getClientResolver().modifyClientDetails(client, modifyClientObject);
                 String actionText = modifyClientObject.toString();
-                updateDeathFields();
                 Notifications.create().title("Updated Death Details").text(actionText).showInformation();
                 checkCountry();
                 Stage stage = (Stage) applyButton.getScene().getWindow();
