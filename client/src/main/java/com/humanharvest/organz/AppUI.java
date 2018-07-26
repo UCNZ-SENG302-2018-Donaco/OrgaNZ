@@ -46,6 +46,10 @@ public class AppUI extends Application {
         primaryStage.setMinWidth(1016);
 
         State.init(DataStorageType.REST);
+
+        if (System.getenv("HOST") != null) {
+            State.setBaseUri(System.getenv("HOST"));
+        }
     }
 
     /**
