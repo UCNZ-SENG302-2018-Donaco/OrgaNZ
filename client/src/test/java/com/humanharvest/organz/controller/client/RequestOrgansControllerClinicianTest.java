@@ -81,8 +81,8 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
                 new CreateTransplantRequestView(Organ.LIVER, dateTime));
 
         State.getClientResolver().resolveTransplantRequest(testClient,
+                sampleRequests.get(2),
                 new ResolveTransplantRequestObject(
-                        sampleRequests.get(2),
                         LocalDateTime.now(),
                         TransplantRequestStatus.CANCELLED,
                         "Cancelled"));

@@ -161,7 +161,7 @@ public class ClinicianController {
             DeleteClinicianAction action = new DeleteClinicianAction(clinician.get(), State.getClinicianManager());
             ActionInvoker invoker = State.getActionInvoker(authToken);
             invoker.execute(action);
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.CREATED);
             // else 403
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

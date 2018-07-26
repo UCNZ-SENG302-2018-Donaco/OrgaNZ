@@ -207,7 +207,7 @@ public class ClinicianControllerTest {
     public void validDelete() throws Exception {
         State.getClinicianManager().addClinician(testClinician);
         mockMvc.perform(delete("/clinicians/1"))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
     }
 
     // The default admin cannot be deleted (this is prevented on the client side anyway).

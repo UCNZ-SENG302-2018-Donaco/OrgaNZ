@@ -1,15 +1,20 @@
 package com.humanharvest.organz.state;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import javax.persistence.RollbackException;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.database.DBManager;
+import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.enums.Region;
+import com.humanharvest.organz.views.client.PaginatedTransplantList;
 import org.hibernate.Transaction;
 
 /**
@@ -192,5 +197,11 @@ public class ClientManagerDBPure implements ClientManager {
         }
 
         return requests == null ? new ArrayList<>() : requests;
+    }
+
+    @Override
+    public PaginatedTransplantList getAllCurrentTransplantRequests(Integer offset, Integer count,
+            Set<Region> regions, Set<Organ> organs) {
+        throw new UnsupportedOperationException("Not yet implemented");
     }
 }

@@ -1,8 +1,17 @@
 package com.humanharvest.organz.server.controller.client;
 
+import java.awt.image.ImagingOpException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Client;
@@ -12,6 +21,8 @@ import com.humanharvest.organz.actions.client.CreateClientAction;
 import com.humanharvest.organz.actions.client.DeleteClientAction;
 import com.humanharvest.organz.actions.client.MarkClientAsDeadAction;
 import com.humanharvest.organz.actions.client.ModifyClientByObjectAction;
+import com.humanharvest.organz.actions.images.AddImageAction;
+import com.humanharvest.organz.actions.images.DeleteImageAction;
 import com.humanharvest.organz.server.exceptions.GlobalControllerExceptionHandler.InvalidRequestException;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
@@ -22,6 +33,7 @@ import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
+import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.validators.client.ClientBornAndDiedDatesValidator;
 import com.humanharvest.organz.utilities.validators.client.CreateClientValidator;
 import com.humanharvest.organz.utilities.validators.client.ModifyClientValidator;
@@ -30,6 +42,7 @@ import com.humanharvest.organz.views.client.ModifyClientObject;
 import com.humanharvest.organz.views.client.PaginatedClientList;
 import com.humanharvest.organz.views.client.SingleDateView;
 import com.humanharvest.organz.views.client.Views;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -46,6 +59,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class ClientController {
+
+    private static final Logger LOGGER = Logger.getLogger(ClientController.class.getName());
 
     /**
      * Returns all clients or some optional subset by filtering
@@ -201,7 +216,7 @@ public class ClientController {
         if (etag == null) {
             throw new IfMatchRequiredException();
         }
-        if (!client.getETag().equals(etag)) {
+        if (!Objects.equals(client.getETag(), etag)) {
             throw new IfMatchFailedException();
         }
 
@@ -256,7 +271,7 @@ public class ClientController {
         if (etag == null) {
             throw new IfMatchRequiredException();
         }
-        if (!client.getETag().equals(etag)) {
+        if (!Objects.equals(client.getETag(), etag)) {
             throw new IfMatchFailedException();
         }
 
@@ -269,7 +284,7 @@ public class ClientController {
 
     @PostMapping("/clients/{uid}/dead")
     @JsonView(Views.Details.class)
-    public ResponseEntity markClientAsDead(
+    public ResponseEntity<Client> markClientAsDead(
             @PathVariable int uid,
             @RequestHeader(value = "If-Match", required = false) String etag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken,
@@ -291,7 +306,7 @@ public class ClientController {
         if (etag == null) {
             throw new IfMatchRequiredException();
         }
-        if (!client.getETag().equals(etag)) {
+        if (!Objects.equals(client.getETag(), etag)) {
             throw new IfMatchFailedException();
         }
 
@@ -335,4 +350,131 @@ public class ClientController {
 
     }
 
+    @GetMapping("clients/{uid}/image")
+    public ResponseEntity<byte[]> getClientImage(
+            @PathVariable int uid,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
+            throws InvalidRequestException, IfMatchFailedException, IfMatchRequiredException {
+        String imagesDirectory = System.getProperty("user.home") + "/.organz/images/";
+
+        // Check if the directory exists. If not, then clearly the image doesn't
+        File directory = new File(imagesDirectory);
+        if (!directory.exists()) {
+            throw new NotFoundException();
+
+        }
+
+        // Get the relevant client
+        Optional<Client> optionalClient = State.getClientManager().getClientByID(uid);
+        if (!optionalClient.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        Client client = optionalClient.get();
+
+        // Verify they are authenticated to access this client
+        State.getAuthenticationManager().verifyClientAccess(authToken, client);
+
+        // Get image
+        try (InputStream in = new FileInputStream(imagesDirectory + uid + ".png")) {
+            byte[] out = IOUtils.toByteArray(in);
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Type", "image/png");
+            return new ResponseEntity<>(out, headers, HttpStatus.OK);
+        } catch (FileNotFoundException ex) {
+            throw new NotFoundException(ex);
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PostMapping("clients/{uid}/image")
+    public ResponseEntity<?> postClientImage(
+            @PathVariable int uid,
+            @RequestBody byte[] image,
+            @RequestHeader(value = "If-Match", required = false) String etag,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {
+
+        String imagesDirectory = System.getProperty("user.home") + "/.organz/images/";
+
+        // Create the directory if it doesn't exist
+        File directory = new File(imagesDirectory);
+        if (!directory.exists()) {
+            new File(System.getProperty("user.home") + "/.organz/").mkdir();
+            directory.mkdir();
+        }
+
+        // Get the relevant client
+        Optional<Client> optionalClient = State.getClientManager().getClientByID(uid);
+        if (!optionalClient.isPresent()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        Client client = optionalClient.get();
+
+        // Verify they are authenticated to access this client
+        State.getAuthenticationManager().verifyClientAccess(authToken, client);
+
+        // Check the etag
+        if (etag == null) {
+            throw new IfMatchRequiredException();
+        }
+        if (!Objects.equals(client.getETag(), etag)) {
+            throw new IfMatchFailedException();
+        }
+
+        AddImageAction action = new AddImageAction(client, image);
+
+        // Write the file
+        try {
+            State.getActionInvoker(authToken).execute(action);
+            return new ResponseEntity(HttpStatus.CREATED);
+        } catch (ImagingOpException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @DeleteMapping("clients/{uid}/image")
+    private ResponseEntity<?> deleteClientImage(
+            @PathVariable int uid,
+            @RequestHeader(value = "If-Match", required = false) String etag,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken) throws InvalidRequestException {
+        String imagesDirectory = System.getProperty("user.home") + "/.organz/images/";
+
+        // Check if the directory exists. If not, then clearly the image doesn't
+        File directory = new File(imagesDirectory);
+        if (!directory.exists()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        // Get the relevant client
+        Optional<Client> optionalClient = State.getClientManager().getClientByID(uid);
+        if (!optionalClient.isPresent()) {
+            throw new NotFoundException();
+        }
+        Client client = optionalClient.get();
+
+        // Verify they are authenticated to access this client
+        State.getAuthenticationManager().verifyClientAccess(authToken, client);
+
+        // Check the etag
+        if (etag == null) {
+            throw new IfMatchRequiredException();
+        }
+        if (!Objects.equals(client.getETag(), etag)) {
+            throw new IfMatchFailedException();
+        }
+
+        try {
+            DeleteImageAction action = new DeleteImageAction(client);
+            State.getActionInvoker(authToken).execute(action);
+            return new ResponseEntity<>(HttpStatus.OK);
+        } catch (FileNotFoundException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

@@ -40,8 +40,8 @@ public class ClientMedicationsController {
 
         if (ETag == null) {
             throw new IfMatchRequiredException();
-
         } else if (!client.getETag().equals(ETag)) {
+            System.out.println(client.getETag());
             throw new IfMatchFailedException();
         }
     }
@@ -107,15 +107,23 @@ public class ClientMedicationsController {
 
         checkClientEtag(client.get(), ETag);
 
-        MedicationRecord record = new MedicationRecord(medicationRecordView.getName(), medicationRecordView.getStarted(), null);
-        AddMedicationRecordAction action = new AddMedicationRecordAction(client.get(), record, State.getClientManager());
+        MedicationRecord record = new MedicationRecord(medicationRecordView.getName(),
+                medicationRecordView.getStarted(),
+                null);
+        AddMedicationRecordAction action = new AddMedicationRecordAction(client.get(),
+                record,
+                State.getClientManager());
         State.getActionInvoker(authToken).execute(action);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client.get().getETag());
-        System.out.println(client.get().getMedications());
+        // TODO: Is re-getting the client necessary?
+        Client client1 = State.getClientManager()
+                .getClientByID(client.get().getUid())
+                .orElseThrow(IllegalStateException::new);
 
-        return new ResponseEntity<>(client.get().getMedications(), headers, HttpStatus.CREATED);
+        HttpHeaders headers = new HttpHeaders();
+        headers.setETag(client1.getETag());
+
+        return new ResponseEntity<>(client1.getMedications(), headers, HttpStatus.CREATED);
     }
 
     /**
@@ -156,7 +164,10 @@ public class ClientMedicationsController {
                     .getClientManager());
             State.getActionInvoker(authToken).execute(action);
 
-            return new ResponseEntity<>(HttpStatus.CREATED);
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.setETag(client.get().getETag());
+
+            return new ResponseEntity<>(httpHeaders, HttpStatus.OK);
         }
     }
 
