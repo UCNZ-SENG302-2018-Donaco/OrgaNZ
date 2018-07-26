@@ -109,7 +109,7 @@ public class MenuBarController extends SubController {
         Menu viewAdminMenu[] = {staffPrimaryItem, transplantsPrimaryItem, filePrimaryItem,
                 profilePrimaryItem};
 
-        Menu clinicianWindowMenu[] = {staffPrimaryItem, medicationsPrimaryItem, };
+        Menu clinicianWindowMenu[] = {staffPrimaryItem, medicationsPrimaryItem,};
         MenuItem clinicianWindowMenuItems[] = {organPrimaryItem, viewClientItem, medicationsPrimaryItem};
 
         Menu clinViewClientMenu[] = {staffPrimaryItem, profilePrimaryItem, transplantsPrimaryItem};
@@ -128,10 +128,12 @@ public class MenuBarController extends SubController {
                 hideMenuItems(clinicianWindowMenuItems);
                 // staff primary item - StaffListController.lambda$null$1(StaffListController.java:89)
             }
+            viewClinicianItem.setText("View Clinician");
         }
+
         if (userType == UserType.ADMINISTRATOR) {
 
-            if (windowContext.isClinViewClientWindow()){
+            if (windowContext.isClinViewClientWindow()) {
                 hideMenuItem(profilePrimaryItem);
                 hideMenuItem(staffPrimaryItem);
                 hideMenuItem(createClientItem);
@@ -260,7 +262,9 @@ public class MenuBarController extends SubController {
      * Redirects the GUI to the Search clients page.
      */
     @FXML
-    private void goToSearch() { PageNavigator.loadPage(Page.SEARCH, mainController);}
+    private void goToSearch() {
+        PageNavigator.loadPage(Page.SEARCH, mainController);
+    }
 
     /**
      * Redirects the GUI to the Staff list page.
@@ -322,7 +326,9 @@ public class MenuBarController extends SubController {
      * Redirects the GUI to the Create clinician page.
      */
     @FXML
-    private void goToCreateClient() {PageNavigator.loadPage(Page.CREATE_CLIENT, mainController);}
+    private void goToCreateClient() {
+        PageNavigator.loadPage(Page.CREATE_CLIENT, mainController);
+    }
 
     /**
      * Redirects the GUI to the Admin command line page.
@@ -572,8 +578,9 @@ public class MenuBarController extends SubController {
     @FXML
     private void quitProgram() {
         if (State.isUnsavedChanges()) {
-            Alert unsavedAlert = PageNavigator.generateAlert(AlertType.WARNING, "Do you want to save the changes you have made?",
-                    "Your changes will be lost if you do not save them.");
+            Alert unsavedAlert = PageNavigator
+                    .generateAlert(AlertType.WARNING, "Do you want to save the changes you have made?",
+                            "Your changes will be lost if you do not save them.");
             ButtonType dontSave = new ButtonType("Don't Save");
             ButtonType cancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
             ButtonType save = new ButtonType("Save");

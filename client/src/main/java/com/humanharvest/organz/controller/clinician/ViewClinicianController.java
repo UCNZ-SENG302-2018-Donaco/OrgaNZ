@@ -81,8 +81,6 @@ public class ViewClinicianController extends ViewBaseController {
     private ChoiceBox<Region> region;
     @FXML
     private Button loadClinicianButton;
-    @FXML
-    private MenuItem viewClinicianItem;
 
     public ViewClinicianController() {
         session = State.getSession();
@@ -126,7 +124,6 @@ public class ViewClinicianController extends ViewBaseController {
         if (session.getLoggedInUserType() == Session.UserType.CLINICIAN) {
             loadClinicianPane.setVisible(false);
             loadClinicianPane.setManaged(false);
-            viewClinicianItem.setText("View Clinician");
         }
 
         loadClinicianData();
