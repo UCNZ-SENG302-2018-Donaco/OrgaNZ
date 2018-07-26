@@ -1,35 +1,26 @@
 package com.humanharvest.organz.server.client;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.nio.charset.Charset;
 import java.time.LocalDate;
 
 import com.humanharvest.organz.Client;
-import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.server.Application;
 import com.humanharvest.organz.state.AuthenticationManagerFake;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.enums.Region;
 import org.apache.commons.io.IOUtils;
-import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -152,7 +143,7 @@ public class ClientControllerImagesTest {
 
         mockMvc.perform(delete("/clients/9999/image")
                 .header("If-Match", testClient.getETag()))
-                .andExpect(status().isCreated());
+                .andExpect(status().isOk());
     }
 
     @Test
