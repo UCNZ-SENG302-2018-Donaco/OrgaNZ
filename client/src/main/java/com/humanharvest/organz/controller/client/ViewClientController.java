@@ -172,6 +172,7 @@ public class ViewClientController extends ViewBaseController {
             viewedClient = session.getLoggedInClient();
             idPane.setVisible(false);
             idPane.setManaged(false);
+            dod.setDisable(true);
             mainController.loadSidebar(sidebarPane);
         } else if (windowContext.isClinViewClientWindow()) {
             viewedClient = windowContext.getViewClient();

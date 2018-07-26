@@ -91,8 +91,8 @@ public class EditDeathDetailsController extends SubController{
 
         if (session.getLoggedInUserType() == UserType.CLIENT) {
             client = session.getLoggedInClient();
-            deathTimeField.setEditable(false);
-            deathDatePicker.setEditable(false);
+            deathTimeField.setDisable(true);
+            deathDatePicker.setDisable(true);
             deathCountry.setDisable(true);
             deathRegionTF.setEditable(false);
             deathRegionCB.setDisable(true);
