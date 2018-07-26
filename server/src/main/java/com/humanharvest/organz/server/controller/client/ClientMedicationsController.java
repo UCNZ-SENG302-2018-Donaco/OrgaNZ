@@ -107,16 +107,23 @@ public class ClientMedicationsController {
 
         checkClientEtag(client.get(), ETag);
 
-        MedicationRecord record = new MedicationRecord(medicationRecordView.getName(), medicationRecordView.getStarted(), null);
-        AddMedicationRecordAction action = new AddMedicationRecordAction(client.get(), record, State.getClientManager());
+        MedicationRecord record = new MedicationRecord(medicationRecordView.getName(),
+                medicationRecordView.getStarted(),
+                null);
+        AddMedicationRecordAction action = new AddMedicationRecordAction(client.get(),
+                record,
+                State.getClientManager());
         State.getActionInvoker(authToken).execute(action);
 
-        Optional<Client> client1 = State.getClientManager().getClientByID(client.get().getUid());
+        // TODO: Is re-getting the client necessary?
+        Client client1 = State.getClientManager()
+                .getClientByID(client.get().getUid())
+                .orElseThrow(IllegalStateException::new);
 
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client1.get().getETag());
+        headers.setETag(client1.getETag());
 
-        return new ResponseEntity<>(client.get().getMedications(), headers, HttpStatus.CREATED);
+        return new ResponseEntity<>(client1.getMedications(), headers, HttpStatus.CREATED);
     }
 
     /**
