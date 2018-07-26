@@ -14,7 +14,6 @@ import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class ViewClientControllerSetTitleTest extends ControllerTest {

@@ -6,7 +6,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
-import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,18 +28,18 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 
-import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.resolvers.client.ClientResolver;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 import com.humanharvest.organz.utilities.enums.ResolveReason;
+import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
@@ -59,8 +58,8 @@ public class RequestOrgansController extends SubController {
     private static final Logger LOGGER = Logger.getLogger(CreateClientController.class.getName());
 
     private Session session;
-    private ActionInvoker invoker;
     private ClientManager manager;
+    private ClientResolver resolver;
     private Client client;
 
     private Collection<TransplantRequest> allRequests;
@@ -137,8 +136,8 @@ public class RequestOrgansController extends SubController {
      */
     public RequestOrgansController() {
         session = State.getSession();
-        invoker = State.getInvoker();
         manager = State.getClientManager();
+        resolver = State.getClientResolver();
     }
 
     /**
@@ -229,7 +228,22 @@ public class RequestOrgansController extends SubController {
      */
     @Override
     public void refresh() {
-        allRequests = client.getTransplantRequests();
+        // Reload the client's transplant requests
+        try {
+            allRequests = resolver.getTransplantRequests(client);
+        } catch (NotFoundException e) {
+            LOGGER.log(Level.WARNING, "Client not found");
+            PageNavigator.showAlert(AlertType.ERROR,
+                    "Client not found",
+                    "The client could not be found on the server, it may have been deleted");
+            return;
+        } catch (ServerRestException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
+            PageNavigator.showAlert(AlertType.ERROR,
+                    "Server error",
+                    "Could not apply changes on the server, please try again later");
+            return;
+        }
 
         currentRequests = new FilteredList<>(
                 FXCollections.observableArrayList(allRequests),
@@ -244,7 +258,7 @@ public class RequestOrgansController extends SubController {
         pastRequestsTable.setItems(pastRequests);
 
         if (session.getLoggedInUserType() == UserType.CLIENT) {
-            mainController.setTitle("Request Organs: " + client.getPreferredName());
+            mainController.setTitle("Request Organs: " + client.getPreferredNameFormatted());
         } else if (windowContext.isClinViewClientWindow()) {
             mainController.setTitle("Request Organs: " + client.getFullName());
 
@@ -294,9 +308,8 @@ public class RequestOrgansController extends SubController {
                     new CreateTransplantRequestView(selectedOrgan, LocalDateTime.now());
 
             // Resolve the request
-            List<TransplantRequest> updatedTransplantRequests;
             try {
-                updatedTransplantRequests = State.getClientResolver().createTransplantRequest(client, newRequest);
+                resolver.createTransplantRequest(client, newRequest);
             } catch (ServerRestException e) { //500
                 LOGGER.severe(e.getMessage());
                 PageNavigator.showAlert(AlertType.ERROR,
@@ -305,6 +318,7 @@ public class RequestOrgansController extends SubController {
                                 + "Please try again later.");
                 return;
             } catch (IfMatchFailedException e) { //412
+                System.out.println(client.getModifiedTimestamp());
                 PageNavigator.showAlert(
                         AlertType.WARNING,
                         "Outdated Data",
@@ -323,9 +337,6 @@ public class RequestOrgansController extends SubController {
             // 403 - You do not have permission to perform that action
             // 428 - ETag header was missing and is required to modify a resource
 
-            // Update the client's transplant requests based on the server's response
-            client.setTransplantRequests(updatedTransplantRequests);
-
             // Refresh the page
             PageNavigator.refreshAllWindows();
         }
@@ -340,12 +351,6 @@ public class RequestOrgansController extends SubController {
         TransplantRequest selectedRequest = currentRequestsTable.getSelectionModel().getSelectedItem();
 
         if (selectedRequest != null) {
-
-            // Create a request
-
-            // Get data from existing request
-            Organ requestedOrgan = selectedRequest.getRequestedOrgan();
-            LocalDateTime requestDate = selectedRequest.getRequestDate();
 
             // Get resolved reason and the request's new status
             ResolveReason resolvedReasonDropdownChoice = cancelTransplantOptions.getValue();
@@ -369,9 +374,10 @@ public class RequestOrgansController extends SubController {
                                 "Are you sure you want to mark this client as dead?",
                                 "This will cancel all waiting transplant requests for this client.");
                         if (buttonOpt.isPresent() && buttonOpt.get() == ButtonType.OK) {
-                            Client updatedClient;
+
+                            // Mark the client as dead
                             try {
-                                updatedClient = State.getClientResolver().markClientAsDead(client, deathDate);
+                                resolver.markClientAsDead(client, deathDate);
                             } catch (NotFoundException e) {
                                 LOGGER.log(Level.WARNING, "Client not found");
                                 PageNavigator.showAlert(
@@ -396,9 +402,6 @@ public class RequestOrgansController extends SubController {
                                                 + "otherwise refresh the page to update the data.");
                                 return;
                             }
-                            client.setTransplantRequests(updatedClient.getTransplantRequests());
-                            client.setDateOfDeath(updatedClient.getDateOfDeath());
-                            //todo check if this can still be undone?
                         }
                         if (buttonOpt.isPresent()) { // if they chose OK or Cancel
                             deathDatePicker.setValue(LocalDate.now()); //reset datepicker
@@ -424,18 +427,14 @@ public class RequestOrgansController extends SubController {
                             + "statements.");
             }
 
-            ResolveTransplantRequestObject request = new ResolveTransplantRequestObject(client, requestedOrgan, requestDate,
-                    LocalDateTime.now(), status, resolvedReason);
+            ResolveTransplantRequestObject request = new ResolveTransplantRequestObject(LocalDateTime.now(), status,
+                    resolvedReason);
 
-            // Resolve the request
-            // TODO: Should we really use the index?
-            int transplantRequestIndex = client.getTransplantRequests().indexOf(selectedRequest);
-            TransplantRequest updatedTransplantRequest;
             try {
-                updatedTransplantRequest = State.getClientResolver().resolveTransplantRequest(
+                resolver.resolveTransplantRequest(
                         client,
-                        request,
-                        transplantRequestIndex);
+                        selectedRequest,
+                        request);
             } catch (ServerRestException e) { //500
                 LOGGER.severe(e.getMessage());
                 PageNavigator.showAlert(AlertType.ERROR,
@@ -461,10 +460,6 @@ public class RequestOrgansController extends SubController {
             // 401 - Access token is missing or invalid
             // 403 - You do not have permission to perform that action
             // 428 - ETag header was missing and is required to modify a resource
-
-            // Update the client's transplant request based on the server's response
-            client.getTransplantRequests().remove(transplantRequestIndex);
-            client.getTransplantRequests().add(updatedTransplantRequest);
 
             // Refresh the page
             PageNavigator.refreshAllWindows();

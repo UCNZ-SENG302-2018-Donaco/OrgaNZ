@@ -1,6 +1,5 @@
 package com.humanharvest.organz.controller.client;
 
-import com.humanharvest.organz.actions.client.DeleteIllnessRecordAction;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
@@ -25,12 +24,10 @@ import javafx.scene.text.Text;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.IllnessRecord;
-import com.humanharvest.organz.actions.ActionInvoker;
-import com.humanharvest.organz.actions.client.ModifyIllnessRecordAction;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SidebarController;
 import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.state.ClientManager;
+import com.humanharvest.organz.resolvers.client.ClientResolver;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
@@ -39,6 +36,7 @@ import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.views.client.CreateIllnessView;
+import com.humanharvest.organz.views.client.ModifyIllnessObject;
 import org.controlsfx.control.Notifications;
 
 /**
@@ -49,9 +47,8 @@ public class ClientMedicalHistoryController extends SubController {
     private static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("d MMM yyyy");
 
     private Session session;
-    private ActionInvoker invoker;
-    private ClientManager manager;
     private Client client;
+    private ClientResolver resolver;
 
     @FXML
     private Pane sidebarPane, menuBarPane;
@@ -151,12 +148,11 @@ public class ClientMedicalHistoryController extends SubController {
     }
 
     /**
-     * Gets the current session and action invoker from the global state.
+     * Gets the current session and resolver from the global state.
      */
     public ClientMedicalHistoryController() {
         session = State.getSession();
-        invoker = State.getInvoker();
-        manager = State.getClientManager();
+        resolver = State.getClientResolver();
     }
 
     /**
@@ -225,7 +221,6 @@ public class ClientMedicalHistoryController extends SubController {
         } else if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
             mainController.loadMenuBar(menuBarPane);
-
         }
 
         refresh();
@@ -237,6 +232,24 @@ public class ClientMedicalHistoryController extends SubController {
      */
     @Override
     public void refresh() {
+
+        // Reload the client's medical history
+        try {
+            client.setIllnessHistory(resolver.getIllnessRecords(client));
+        } catch (NotFoundException e) {
+            LOGGER.log(Level.WARNING, "Client not found");
+            PageNavigator.showAlert(AlertType.ERROR,
+                    "Client not found",
+                    "The client could not be found on the server, it may have been deleted");
+            return;
+        } catch (ServerRestException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
+            PageNavigator.showAlert(AlertType.ERROR,
+                    "Server error",
+                    "Could not apply changes on the server, please try again later");
+            return;
+        }
+
         SortedList<IllnessRecord> sortedCurrentIllnesses = new SortedList<>(FXCollections.observableArrayList(
                 client.getCurrentIllnesses()));
         SortedList<IllnessRecord> sortedPastIllnesses = new SortedList<>(FXCollections.observableArrayList(
@@ -252,7 +265,7 @@ public class ClientMedicalHistoryController extends SubController {
         pastIllnessView.sort();
 
         if (session.getLoggedInUserType() == UserType.CLIENT) {
-            mainController.setTitle("Medication History:  " + client.getPreferredName());
+            mainController.setTitle("Medication History:  " + client.getPreferredNameFormatted());
         } else if (windowContext.isClinViewClientWindow()) {
             mainController.setTitle("Medication History:  " + client.getFullName());
 
@@ -312,8 +325,9 @@ public class ClientMedicalHistoryController extends SubController {
      */
     @FXML
     private void toggleCured() {
-        // TODO: Add Client-Server Implementation
+
         IllnessRecord record = getSelectedRecord();
+        ModifyIllnessObject modifyIllnessObject = new ModifyIllnessObject();
         if (record != null) {
             if (record.isChronic()) {
                 PageNavigator.showAlert(AlertType.ERROR,
@@ -321,23 +335,16 @@ public class ClientMedicalHistoryController extends SubController {
                         "An illness can't be cured if it is chronic. If the illness has been cured, first mark it as"
                                 + " not chronic.");
             } else if (selectedTableView == currentIllnessView) {
-                // Moving from current to past (marking as cured)
-                ModifyIllnessRecordAction action = new ModifyIllnessRecordAction(record, manager);
-                action.changeCuredDate(LocalDate.now());
+                modifyIllnessObject.setCuredDate(LocalDate.now());
+                State.getClientResolver().modifyIllnessRecord(client, record, modifyIllnessObject);
 
-                invoker.execute(action);
                 PageNavigator.refreshAllWindows();
             } else if (selectedTableView == pastIllnessView) {
-                // Moving from past to current (marking as not cured)
-                ModifyIllnessRecordAction action = new ModifyIllnessRecordAction(record, manager);
-                action.changeCuredDate(null);
-                invoker.execute(action);
+                modifyIllnessObject.setCuredDate(null);
+                State.getClientResolver().modifyIllnessRecord(client, record, modifyIllnessObject);
                 PageNavigator.refreshAllWindows();
-
             }
-
         }
-
     }
 
     /**
@@ -347,7 +354,6 @@ public class ClientMedicalHistoryController extends SubController {
     private void deleteIllness() {
         IllnessRecord record = getSelectedRecord();
         if (record != null) {
-            //DeleteIllnessRecordAction action = new DeleteIllnessRecordAction(client, record, manager);
             try {
                 State.getClientResolver().deleteIllnessRecord(client, record);
             } catch (NotFoundException e) {
@@ -373,7 +379,6 @@ public class ClientMedicalHistoryController extends SubController {
                     .showWarning();
                 return;
             }
-            //invoker.execute(action);
             PageNavigator.refreshAllWindows();
         }
     }
@@ -385,22 +390,47 @@ public class ClientMedicalHistoryController extends SubController {
      */
     @FXML
     private void toggleChronic() {
-        // TODO: Add Client-Server Implementation
         IllnessRecord record = getSelectedRecord();
+        ModifyIllnessObject modifyIllnessObject = new ModifyIllnessObject();
         if (record != null) {
-            ModifyIllnessRecordAction action = new ModifyIllnessRecordAction(record, manager);
+
             if (record.isChronic()) {
                 // Current, chronic illness -> Current illness
-                action.changeChronicStatus(false);
+                modifyIllnessObject.setChronic(false);
             } else {
                 if (record.getCuredDate() != null) {
                     // Past illness -> Current, chronic illness
-                    action.changeCuredDate(null);
+                    modifyIllnessObject.setCuredDate(null);
                 }
                 // Illness -> chronic illness
-                action.changeChronicStatus(true);
+                modifyIllnessObject.setChronic(true);
             }
-            invoker.execute(action);
+            try {
+                State.getClientResolver().modifyIllnessRecord(client, record, modifyIllnessObject);
+
+            } catch (NotFoundException e) {
+                LOGGER.log(Level.WARNING, "Client not found");
+                Notifications.create()
+                    .title("Client not found")
+                    .text("The client could not be found on the server, it may have been deleted")
+                    .showWarning();
+            } catch (ServerRestException e) {
+                LOGGER.log(Level.WARNING, e.getMessage(), e);
+                Notifications.create()
+                    .title("Server error")
+                    .text("Could not apply changes on the server, please try again later")
+                    .showError();
+                return;
+            } catch (IfMatchFailedException e) {
+                LOGGER.log(Level.INFO, "If-Match did not match");
+                Notifications.create()
+                    .title("Outdated Data")
+                    .text(
+                        "The client has been modified since you retrieved the data. If you would still like to "
+                            + "apply these changes please submit again, otherwise refresh the page to update the data.")
+                    .showWarning();
+                return;
+            }
             PageNavigator.refreshAllWindows();
         }
 
@@ -454,9 +484,6 @@ public class ClientMedicalHistoryController extends SubController {
                     .showWarning();
                 return;
             }
-
-            //AddIllnessRecordAction action = new AddIllnessRecordAction(client, record, manager);
-            //invoker.execute(action);
 
             illnessNameField.setText(null);
             errorMessage.setText(null);

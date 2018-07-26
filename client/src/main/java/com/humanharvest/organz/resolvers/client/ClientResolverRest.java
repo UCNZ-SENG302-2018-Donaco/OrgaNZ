@@ -4,19 +4,21 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.ProcedureRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.views.client.CreateClientView;
 import com.humanharvest.organz.views.client.CreateIllnessView;
 import com.humanharvest.organz.views.client.CreateMedicationRecordView;
 import com.humanharvest.organz.views.client.CreateProcedureView;
 import com.humanharvest.organz.views.client.CreateTransplantRequestView;
 import com.humanharvest.organz.views.client.ModifyClientObject;
+import com.humanharvest.organz.views.client.ModifyIllnessObject;
 import com.humanharvest.organz.views.client.ModifyProcedureObject;
 import com.humanharvest.organz.views.client.ResolveTransplantRequestObject;
 import com.humanharvest.organz.views.client.SingleDateView;
@@ -31,257 +33,360 @@ public class ClientResolverRest implements ClientResolver {
 
     //------------GETs----------------
 
-    @Override
+
     public Map<Organ, Boolean> getOrganDonationStatus(Client client) {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
-        httpHeaders.set("X-Auth-Token", State.getToken());
+        HttpHeaders httpHeaders = createHeaders(false);
+        ResponseEntity<Map<Organ, Boolean>> responseEntity = sendQuery(httpHeaders,
+                State.BASE_URI + "clients/{id}/donationStatus",
+                HttpMethod.GET,
+                new ParameterizedTypeReference<Map<Organ, Boolean>>() {
+                }, client.getUid());
 
-        HttpEntity<?> entity = new HttpEntity<>(null, httpHeaders);
-
-        ResponseEntity<Map<Organ, Boolean>> responseEntity = State.getRestTemplate().exchange
-                (State.BASE_URI + "clients/{id}/donationStatus", HttpMethod.GET, entity, new
-                        ParameterizedTypeReference<Map<Organ, Boolean>>() {
-                        }, client.getUid());
-        State.setClientEtag(responseEntity.getHeaders().getETag());
         client.setOrganDonationStatus(responseEntity.getBody());
         return responseEntity.getBody();
     }
 
-    @Override
     public List<TransplantRequest> getTransplantRequests(Client client) {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
-        httpHeaders.set("X-Auth-Token", State.getToken());
+        HttpHeaders httpHeaders = createHeaders(false);
+        ResponseEntity<List<TransplantRequest>> responseEntity = sendQuery(httpHeaders,
+                State.BASE_URI + "clients/{id}/transplantRequests",
+                HttpMethod.GET,
+                new ParameterizedTypeReference<List<TransplantRequest>>() {
+                }, client.getUid());
 
-        HttpEntity<?> entity = new HttpEntity<>(null, httpHeaders);
-
-        ResponseEntity<List<TransplantRequest>> responseEntity = State.getRestTemplate().exchange
-                (State.BASE_URI + "clients/{id}/transplantRequests", HttpMethod.GET, entity, new
-                        ParameterizedTypeReference<List<TransplantRequest>>() {
-                        }, client.getUid());
-        State.setClientEtag(responseEntity.getHeaders().getETag());
         client.setTransplantRequests(responseEntity.getBody());
         return responseEntity.getBody();
     }
 
-    @Override
     public List<MedicationRecord> getMedicationRecords(Client client) {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
-        httpHeaders.set("X-Auth-Token", State.getToken());
+        HttpHeaders httpHeaders = createHeaders(false);
+        ResponseEntity<List<MedicationRecord>> responseEntity = sendQuery(httpHeaders,
+                State.BASE_URI + "clients/{id}/medications",
+                HttpMethod.GET,
+                new ParameterizedTypeReference<List<MedicationRecord>>() {
+                }, client.getUid());
 
-        HttpEntity<?> entity = new HttpEntity<>(null, httpHeaders);
-
-        ResponseEntity<List<MedicationRecord>> responseEntity = State.getRestTemplate().exchange
-                (State.BASE_URI + "clients/{id}/medications", HttpMethod.GET, entity,
-                        new ParameterizedTypeReference<List<MedicationRecord>>() {
-                        }, client.getUid());
-        State.setClientEtag(responseEntity.getHeaders().getETag());
         client.setMedicationHistory(responseEntity.getBody());
         return responseEntity.getBody();
     }
 
-    @Override
     public List<ProcedureRecord> getProcedureRecords(Client client) {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        HttpHeaders httpHeaders = createHeaders(false);
         httpHeaders.setETag(State.getClientEtag());
-        httpHeaders.set("X-Auth-Token", State.getToken());
 
-        HttpEntity<?> entity = new HttpEntity<>(null, httpHeaders);
+        ResponseEntity<List<ProcedureRecord>> responseEntity = sendQuery(httpHeaders,
+                State.BASE_URI + "clients/{id}/procedures",
+                HttpMethod.GET,
+                new ParameterizedTypeReference<List<ProcedureRecord>>() {
+                }, client.getUid());
+        return responseEntity.getBody();
+    }
 
-        ResponseEntity<List<ProcedureRecord>> responseEntity = State.getRestTemplate().exchange
-                (State.BASE_URI + "clients/{id}/procedures", HttpMethod.GET, entity,
-                        new ParameterizedTypeReference<List<ProcedureRecord>>() {
-                        }, client.getUid());
+    public List<IllnessRecord> getIllnessRecords(Client client) {
+        HttpHeaders httpHeaders = createHeaders(false);
+        httpHeaders.setETag(State.getClientEtag());
 
-        State.setClientEtag(responseEntity.getHeaders().getETag());
+        ResponseEntity<List<IllnessRecord>> responseEntity = sendQuery(httpHeaders,
+                State.BASE_URI + "clients/{id}/illnesses",
+                HttpMethod.GET,
+                new ParameterizedTypeReference<List<IllnessRecord>>() {
+                }, client.getUid());
+        return responseEntity.getBody();
+    }
+
+    @Override
+    public List<HistoryItem> getHistory(Client client) {
+        HttpHeaders httpHeaders = createHeaders(false);
+        httpHeaders.setETag(State.getClientEtag());
+
+        ResponseEntity<List<HistoryItem>> responseEntity = sendQuery(httpHeaders,
+                State.BASE_URI + "clients/{id}/history",
+                HttpMethod.GET,
+                new ParameterizedTypeReference<List<HistoryItem>>() {
+                }, client.getUid());
         return responseEntity.getBody();
     }
 
     //------------POSTs----------------
 
     @Override
-    public List<TransplantRequest> createTransplantRequest(Client client, CreateTransplantRequestView request) {
+    public Client createClient(CreateClientView createClientView) {
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setIfMatch(State.getClientEtag());
-        httpHeaders.set("X-Auth-Token", State.getToken());
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
-
-        HttpEntity<?> entity = new HttpEntity<>(request, httpHeaders);
-        System.out.println(entity);
-
-        ResponseEntity<List<TransplantRequest>> responseEntity = State.getRestTemplate().exchange(
-                State.BASE_URI + "clients/" + client.getUid() + "/transplantRequests", HttpMethod.POST,
-                entity, new ParameterizedTypeReference<List<TransplantRequest>>() {
-                });
-
-        State.setClientEtag(responseEntity.getHeaders().getETag());
-        return responseEntity.getBody();
-    }
-
-    @Override
-    public Client markClientAsDead(Client client, LocalDate dateOfDeath) {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setIfMatch(State.getClientEtag());
         httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
         httpHeaders.set("X-Auth-Token", State.getToken());
-        HttpEntity entity = new HttpEntity<>(new SingleDateView(dateOfDeath), httpHeaders);
+        HttpEntity entity = new HttpEntity<>(createClientView, httpHeaders);
 
         ResponseEntity<Client> responseEntity = State.getRestTemplate()
-                .postForEntity(State.BASE_URI + "clients/{uid}/dead", entity, Client.class, client.getUid());
+                .postForEntity(State.BASE_URI + "clients", entity, Client.class);
 
         State.setClientEtag(responseEntity.getHeaders().getETag());
         return responseEntity.getBody();
     }
 
-    @Override
+    public List<TransplantRequest> createTransplantRequest(Client client, CreateTransplantRequestView request) {
+        HttpHeaders httpHeaders = createHeaders(true);
+        System.out.println("State get clients etag: " + State.getClientEtag());
+        System.out.println("Client's IfMatch: " + httpHeaders.getIfMatch());
+        ResponseEntity<List<TransplantRequest>> responseEntity = sendQuery(httpHeaders,
+                State.BASE_URI + "clients/{id}/transplantRequests",
+                HttpMethod.POST,
+                request,
+                new ParameterizedTypeReference<List<TransplantRequest>>() {
+                }, client.getUid());
+        return responseEntity.getBody();
+    }
+
+    public Client markClientAsDead(Client client, LocalDate dateOfDeath) {
+        HttpHeaders httpHeaders = createHeaders(true);
+        ResponseEntity<Client> responseEntity = sendQuery(httpHeaders,
+                State.BASE_URI + "clients/{id}/dead",
+                HttpMethod.POST,
+                new SingleDateView(dateOfDeath),
+                Client.class,
+                client.getUid());
+        return responseEntity.getBody();
+    }
+
     public List<IllnessRecord> addIllnessRecord(Client client, CreateIllnessView createIllnessView) {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setIfMatch(State.getClientEtag());
-        httpHeaders.set("X-Auth-Token", State.getToken());
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        HttpHeaders httpHeaders = createHeaders(true);
+        ResponseEntity<List<IllnessRecord>> responseEntity = sendQuery(httpHeaders,
+                State.BASE_URI + "clients/{id}/illnesses",
+                HttpMethod.POST,
+                createIllnessView,
+                new ParameterizedTypeReference<List<IllnessRecord>>() {
+                }, client.getUid());
 
-        HttpEntity entity = new HttpEntity<>(createIllnessView, httpHeaders);
-
-        ResponseEntity<List<IllnessRecord>> responseEntity = State.getRestTemplate()
-                .exchange(State.BASE_URI + "clients/" + client.getUid() + "/illnesses", HttpMethod.POST, entity,
-                        new ParameterizedTypeReference<List<IllnessRecord>>() {});
-
-        State.setClientEtag(responseEntity.getHeaders().getETag());
         client.setIllnessHistory(responseEntity.getBody());
-
         return responseEntity.getBody();
-
-
     }
 
-    @Override
-    public List<MedicationRecord> addMedicationRecord(Client client, CreateMedicationRecordView recordView) {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setIfMatch(State.getClientEtag());
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
+    public List<MedicationRecord> addMedicationRecord(Client client, CreateMedicationRecordView medicationRecordView) {
+        HttpHeaders httpHeaders = createHeaders(true);
+        ResponseEntity<List<MedicationRecord>> responseEntity = sendQuery(httpHeaders,
+                State.BASE_URI + "clients/{id}/medications",
+                HttpMethod.POST,
+                medicationRecordView,
+                new ParameterizedTypeReference<List<MedicationRecord>>() {
+                }, client.getUid());
 
-        HttpEntity entity = new HttpEntity<>(recordView, httpHeaders);
-
-        // The full list of the client's medications is returned
-        ResponseEntity<List<MedicationRecord>> responseEntity = State.getRestTemplate()
-                .exchange(State.BASE_URI + "clients/" + client.getUid() + "/medications", HttpMethod.POST, entity,
-                        new ParameterizedTypeReference<List<MedicationRecord>>() {});
-
-        State.setClientEtag(responseEntity.getHeaders().getETag());
         client.setMedicationHistory(responseEntity.getBody());
-
         return responseEntity.getBody();
-
     }
 
-    @Override
     public List<ProcedureRecord> addProcedureRecord(Client client, CreateProcedureView procedureView) {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setIfMatch(State.getClientEtag());
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
-
-        HttpEntity entity = new HttpEntity<>(procedureView, httpHeaders);
-
-        ResponseEntity<List<ProcedureRecord>> responseEntity = State.getRestTemplate()
-                .exchange(State.BASE_URI + "clients/" + client.getUid() + "/procedures", HttpMethod.POST, entity,
-                        new ParameterizedTypeReference<List<ProcedureRecord>>() {});
-
-        State.setClientEtag(responseEntity.getHeaders().getETag());
+        HttpHeaders httpHeaders = createHeaders(true);
+        ResponseEntity<List<ProcedureRecord>> responseEntity = sendQuery(httpHeaders,
+                State.BASE_URI + "clients/{id}/procedures",
+                HttpMethod.POST,
+                procedureView,
+                new ParameterizedTypeReference<List<ProcedureRecord>>() {
+                }, client.getUid());
 
         return responseEntity.getBody();
-
     }
 
     //------------PATCHs----------------
 
     @Override
-    public TransplantRequest resolveTransplantRequest(Client client, ResolveTransplantRequestObject request,
-            int transplantRequestIndex) {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setIfMatch(State.getClientEtag());
-        httpHeaders.set("X-Auth-Token", State.getToken());
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
+    public Map<Organ, Boolean> modifyOrganDonation(Client client, Map<Organ, Boolean> changes) {
 
-        HttpEntity<ResolveTransplantRequestObject> entity = new HttpEntity<>(request, httpHeaders);
+        ParameterizedTypeReference<Map<Organ, Boolean>> mapRef =
+                new ParameterizedTypeReference<Map<Organ, Boolean>>() {
+                };
 
-        ResponseEntity<TransplantRequest> responseEntity = State.getRestTemplate().exchange(
-                State.BASE_URI + "clients/" + client.getUid() + "/transplantRequests/" + transplantRequestIndex,
-                HttpMethod.PATCH, entity, TransplantRequest.class);
+        HttpHeaders httpHeaders = createHeaders(true);
+        ResponseEntity<Map<Organ, Boolean>> responseEntity = sendQuery(httpHeaders,
+                State.BASE_URI + "clients/{uid}/donationStatus",
+                HttpMethod.PATCH,
+                changes,
+                mapRef,
+                client.getUid());
 
-        State.setClientEtag(responseEntity.getHeaders().getETag());
         return responseEntity.getBody();
     }
 
-    @Override
+    public TransplantRequest resolveTransplantRequest(Client client, TransplantRequest request,
+            ResolveTransplantRequestObject resolveTransplantRequestObject) {
+        HttpHeaders httpHeaders = createHeaders(true);
+        long id = request.getId();
+        ResponseEntity<TransplantRequest> responseEntity = sendQuery(httpHeaders,
+                State.BASE_URI + "clients/{id}/transplantRequests/{requestIndex}",
+                HttpMethod.PATCH,
+                resolveTransplantRequestObject,
+                TransplantRequest.class,
+                client.getUid(),
+                id);
+
+        return responseEntity.getBody();
+    }
+
     public Client modifyClientDetails(Client client, ModifyClientObject modifyClientObject) {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setIfMatch(State.getClientEtag());
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
-        httpHeaders.set("X-Auth-Token", State.getToken());
-        String serialized;
-        try {
-            serialized = State.customObjectMapper().writeValueAsString(modifyClientObject);
-        } catch (JsonProcessingException e) {
-            throw new RuntimeException(e);
+        HttpHeaders httpHeaders = createHeaders(true);
+        ResponseEntity<Client> responseEntity = sendQuery(httpHeaders,
+                State.BASE_URI + "clients/{id}",
+                HttpMethod.PATCH,
+                modifyClientObject,
+                Client.class,
+                client.getUid());
+
+        return responseEntity.getBody();
+    }
+
+    public MedicationRecord modifyMedicationRecord(Client client, MedicationRecord record, LocalDate stopDate) {
+
+        String modification;
+        if (stopDate == null) {
+            modification = "start";
+        } else {
+            modification = "stop";
         }
 
-        HttpEntity<String> entity = new HttpEntity<>(serialized, httpHeaders);
+        HttpHeaders httpHeaders = createHeaders(true);
+        ResponseEntity<MedicationRecord> responseEntity = sendQuery(httpHeaders,
+                State.BASE_URI + "clients/{id}/medications/{medicationId}/" + modification,
+                HttpMethod.POST,
+                MedicationRecord.class,
+                client.getUid(),
+                record.getId());
 
-        ResponseEntity<Client> responseEntity = State.getRestTemplate()
-                .exchange(
-                        State.BASE_URI + "clients/{uid}",
-                        HttpMethod.PATCH,
-                        entity,
-                        Client.class,
-                        client.getUid());
-
-        State.setClientEtag(responseEntity.getHeaders().getETag());
         return responseEntity.getBody();
     }
 
-    @Override
-    public ProcedureRecord modifyProcedureRecord(Client client, ModifyProcedureObject modifyProcedureObject, int
-            procedureRecordIndex) {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setIfMatch(State.getClientEtag());
-        httpHeaders.set("X-Auth-Token", State.getToken());
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
+    public IllnessRecord modifyIllnessRecord(Client client, IllnessRecord toModify,
+            ModifyIllnessObject modifyIllnessObject) {
+        System.out.println(modifyIllnessObject.isChronic());
+        HttpHeaders httpHeaders = createHeaders(true);
+        ResponseEntity<IllnessRecord> responseEntity = sendQuery(httpHeaders,
+                State.BASE_URI + "clients/{id}/illnesses/{illnessId}",
+                HttpMethod.PATCH,
+                modifyIllnessObject,
+                IllnessRecord.class,
+                client.getUid(),
+                toModify.getId());
 
-        HttpEntity<ModifyProcedureObject> entity = new HttpEntity<>(modifyProcedureObject, httpHeaders);
+        return responseEntity.getBody();
+    }
 
-        ResponseEntity<ProcedureRecord> responseEntity = State.getRestTemplate().exchange(
-                State.BASE_URI
-                        + "clients/"
-                        + client.getUid()
-                        + "/procedures/"
-                        + procedureRecordIndex,
-                HttpMethod.PATCH, entity, ProcedureRecord.class);
+    public ProcedureRecord modifyProcedureRecord(Client client, ProcedureRecord toModify, ModifyProcedureObject
+            modifyProcedureObject) {
+        HttpHeaders httpHeaders = createHeaders(true);
+        ResponseEntity<ProcedureRecord> responseEntity = sendQuery(httpHeaders,
+                State.BASE_URI + "clients/{id}/procedures/{procedureId}",
+                HttpMethod.PATCH,
+                modifyProcedureObject,
+                ProcedureRecord.class,
+                client.getUid(),
+                toModify.getId());
 
-        State.setClientEtag(responseEntity.getHeaders().getETag());
         return responseEntity.getBody();
     }
 
     //------------DELETEs----------------
 
-    @Override
     public void deleteIllnessRecord(Client client, IllnessRecord record) {
+
+        HttpHeaders httpHeaders = createHeaders(true);
+        sendQuery(httpHeaders,
+                State.BASE_URI + "clients/{id}/illnesses/{illnessId}",
+                HttpMethod.DELETE,
+                IllnessRecord.class,
+                client.getUid(),
+                record.getId());
+
+        client.deleteIllnessRecord(record);
+    }
+
+    public void deleteProcedureRecord(Client client, ProcedureRecord record) {
+        HttpHeaders httpHeaders = createHeaders(true);
+        sendQuery(httpHeaders,
+                State.BASE_URI + "clients/{id}/procedures/{procedureId}",
+                HttpMethod.DELETE,
+                ProcedureRecord.class,
+                client.getUid(),
+                record.getId());
+
+        client.deleteProcedureRecord(record);
+    }
+
+    @Override
+    public void deleteMedicationRecord(Client client, MedicationRecord record) {
+        HttpHeaders httpHeaders = createHeaders(true);
+        sendQuery(httpHeaders,
+                State.BASE_URI + "clients/{id}/medications/{procedureId}",
+                HttpMethod.DELETE,
+                MedicationRecord.class,
+                client.getUid(),
+                record.getId());
+
+        client.deleteMedicationRecord(record);
+    }
+
+    //------------Templates----------------
+
+    private static HttpHeaders createHeaders(boolean addIfMatch) {
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setIfMatch(State.getClientEtag());
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
         httpHeaders.set("X-Auth-Token", State.getToken());
-        HttpEntity entity = new HttpEntity<>(httpHeaders);
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        if (addIfMatch) {
+            httpHeaders.setIfMatch(State.getClientEtag());
+        }
+        return httpHeaders;
+    }
 
-        int id = client.getAllIllnessHistory().indexOf(record);
+    private static <T> ResponseEntity<T> sendQuery(HttpHeaders httpHeaders, String url, HttpMethod method,
+            ParameterizedTypeReference<T> typeReference, Object... uriVariables) {
 
-        ResponseEntity<IllnessRecord> responseEntity = State.getRestTemplate()
-                .exchange(State.BASE_URI + "clients/{uid}/illnesses/{id}", HttpMethod.DELETE, entity, IllnessRecord.class, client.getUid(),id);
+        HttpEntity<?> entity = new HttpEntity<>(null, httpHeaders);
 
-        client.deleteIllnessRecord(responseEntity.getBody());
+        ResponseEntity<T> responseEntity = State.getRestTemplate().exchange
+                (url, method, entity, typeReference, uriVariables);
 
-        State.setClientEtag(responseEntity.getHeaders().getETag());
+        if (!method.equals(HttpMethod.GET) && !method.equals(HttpMethod.HEAD)) { // if the method isn't safe
+            State.setClientEtag(responseEntity.getHeaders().getETag());
+        }
+        return responseEntity;
+    }
+
+    private static <T> ResponseEntity<T> sendQuery(HttpHeaders httpHeaders, String url, HttpMethod method,
+            Class<T> typeReference, Object... uriVariables) {
+
+        HttpEntity<?> entity = new HttpEntity<>(null, httpHeaders);
+
+        ResponseEntity<T> responseEntity = State.getRestTemplate().exchange
+                (url, method, entity, typeReference, uriVariables);
+
+        if (!method.equals(HttpMethod.GET) && !method.equals(HttpMethod.HEAD)) { // if the method isn't safe
+            State.setClientEtag(responseEntity.getHeaders().getETag());
+        }
+        return responseEntity;
+    }
+
+    private static <T, Y> ResponseEntity<T> sendQuery(HttpHeaders httpHeaders, String url, HttpMethod method,
+            Y value, ParameterizedTypeReference<T> typeReference, Object... uriVariables) {
+
+        HttpEntity<Y> entity = new HttpEntity<>(value, httpHeaders);
+
+        ResponseEntity<T> responseEntity = State.getRestTemplate().exchange
+                (url, method, entity, typeReference, uriVariables);
+
+        if (!method.equals(HttpMethod.GET) && !method.equals(HttpMethod.HEAD)) { // if the method isn't safe
+            State.setClientEtag(responseEntity.getHeaders().getETag());
+        }
+        return responseEntity;
+    }
+
+    private static <T, Y> ResponseEntity<T> sendQuery(HttpHeaders httpHeaders, String url, HttpMethod method,
+            Y value, Class<T> typeReference, Object... uriVariables) {
+
+        HttpEntity<Y> entity = new HttpEntity<>(value, httpHeaders);
+
+        ResponseEntity<T> responseEntity = State.getRestTemplate().exchange
+                (url, method, entity, typeReference, uriVariables);
+
+        if (!method.equals(HttpMethod.GET) && !method.equals(HttpMethod.HEAD)) { // if the method isn't safe
+            State.setClientEtag(responseEntity.getHeaders().getETag());
+        }
+        return responseEntity;
     }
 }
 

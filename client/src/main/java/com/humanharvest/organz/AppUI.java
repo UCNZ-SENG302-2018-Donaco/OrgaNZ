@@ -1,12 +1,9 @@
 package com.humanharvest.organz;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.logging.Level;
-import java.util.stream.Collectors;
 
 import javafx.application.Application;
-import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
@@ -22,9 +19,6 @@ import com.humanharvest.organz.utilities.view.WindowContext;
 
 /**
  * The main class that runs the JavaFX GUI.
- * @author Dylan Carlyle, Jack Steel, Alex Tompkins, James Toohey
- * @version sprint 2.
- * date: 2018-03-22
  */
 public class AppUI extends Application {
 

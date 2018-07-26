@@ -1,7 +1,7 @@
 package com.humanharvest.organz.utilities.type_converters;
 
-import picocli.CommandLine;
 import com.humanharvest.organz.utilities.enums.ResolveReason;
+import picocli.CommandLine;
 
 public class ResolveReasonConverter implements CommandLine.ITypeConverter<ResolveReason> {
 

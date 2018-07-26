@@ -7,6 +7,7 @@ import static org.testfx.matcher.control.TableViewMatchers.containsRow;
 import static org.testfx.util.NodeQueryUtils.isVisible;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -24,8 +25,6 @@ import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
-import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.testfx.util.NodeQueryUtils;
 
@@ -40,8 +39,8 @@ public class ViewProceduresControllerClinicianTest extends ControllerTest {
     private final ProcedureRecord[] pendingRecords = {
             new ProcedureRecord("Summary4", "Description4", LocalDate.of(2045, 10, 15))
     };
-    private Client testClient = new Client( "Alex", null, "Tester", LocalDate.of(1998, 5, 9), 1);
-    private Clinician testClinician = new Clinician("A", "B", "C", "D", Region.UNSPECIFIED, 0, "E");
+    private final Client testClient = new Client( "Alex", null, "Tester", LocalDate.of(1998, 5, 9), 1);
+    private final Clinician testClinician = new Clinician("A", "B", "C", "D", Region.UNSPECIFIED, 0, "E");
 
     @Override
     protected Page getPage() {
@@ -51,16 +50,16 @@ public class ViewProceduresControllerClinicianTest extends ControllerTest {
     @Override
     protected void initState() {
         State.reset();
+        resetRecords();
         State.login(testClinician);
+        State.getClientManager().addClient(testClient);
         mainController.setWindowContext(new WindowContext.WindowContextBuilder()
                 .setAsClinicianViewClientWindow()
                 .viewClient(testClient)
                 .build());
-        resetRecords();
     }
 
-    @Before
-    public void resetRecords() {
+    private void resetRecords() {
 
         Set<Organ> organs = new HashSet<>();
         organs.add(Organ.KIDNEY);
@@ -83,6 +82,7 @@ public class ViewProceduresControllerClinicianTest extends ControllerTest {
         for (ProcedureRecord record : pendingRecords) {
             testClient.addProcedureRecord(record);
         }
+        State.getClientManager().applyChangesTo(testClient);
     }
 
 
@@ -99,6 +99,7 @@ public class ViewProceduresControllerClinicianTest extends ControllerTest {
 
     @Test
     public void pastMedicationsContainsRecordsTest() {
+
         for (ProcedureRecord record : pastRecords) {
             verifyThat("#pastProcedureView", containsRow(
                     record.getSummary(),
@@ -171,53 +172,43 @@ public class ViewProceduresControllerClinicianTest extends ControllerTest {
     }
 
     @Test
-    public void addOrganSingleTest() throws Exception {
-        clickOn((Node) lookup((OrganCheckComboBoxCell o) -> true).nth(0).query());
-
-        Thread.sleep(500);
-
-        clickOn((Node) lookup((CheckBox c) -> true).nth(1).query());
-
-        Thread.sleep(500);
+    public void addOrganSingleTest() {
+        clickOn((Node)lookup((OrganCheckComboBoxCell<?> o) -> true).nth(0).query());
+        clickOn((Node)lookup((CheckBox checkBox) -> true).nth(1).query());
 
         clickOn("#pendingProcedureView");
 
         boolean hasMatch = false;
 
         for (ProcedureRecord record : testClient.getPastProcedures()) {
-            if (record.getSummary().equals("C Summary 3")) {
-                Set<Organ> affected = new HashSet<>();
+            if ("C Summary 3".equals(record.getSummary())) {
+                Collection<Organ> affected = new HashSet<>();
                 affected.add(Organ.KIDNEY);
                 assertEquals(affected, record.getAffectedOrgans());
                 hasMatch = true;
                 break;
             }
         }
-        if (!hasMatch) {
-            throw new Exception("No matches");
-        }
+
+        assertTrue(hasMatch);
     }
 
 
     @Test
-    public void addOrganMultipleTest() throws Exception {
-        clickOn((Node) lookup((OrganCheckComboBoxCell o) -> true).nth(0).query());
+    public void addOrganMultipleTest() {
+        clickOn((Node)lookup((OrganCheckComboBoxCell<?> o) -> true).nth(0).query());
 
-        Thread.sleep(500);
-
-        clickOn((Node) lookup((CheckBox c) -> true).nth(1).query());
-        clickOn((Node) lookup((CheckBox c) -> true).nth(2).query());
-        clickOn((Node) lookup((CheckBox c) -> true).nth(4).query());
-
-        Thread.sleep(500);
+        clickOn((Node)lookup((CheckBox checkBox) -> true).nth(1).query());
+        clickOn((Node)lookup((CheckBox checkBox) -> true).nth(2).query());
+        clickOn((Node)lookup((CheckBox checkBox) -> true).nth(4).query());
 
         clickOn("#pendingProcedureView");
 
         boolean hasMatch = false;
 
         for (ProcedureRecord record : testClient.getPastProcedures()) {
-            if (record.getSummary().equals("C Summary 3")) {
-                Set<Organ> affected = new HashSet<>();
+            if ("C Summary 3".equals(record.getSummary())) {
+                Collection<Organ> affected = new HashSet<>();
                 affected.add(Organ.LUNG);
                 affected.add(Organ.KIDNEY);
                 affected.add(Organ.PANCREAS);
@@ -226,28 +217,22 @@ public class ViewProceduresControllerClinicianTest extends ControllerTest {
                 break;
             }
         }
-        if (!hasMatch) {
-            throw new Exception("No matches");
-        }
+
+        assertTrue(hasMatch);
     }
 
     @Test
-    public void removeOrganSingleTest() throws Exception {
-        clickOn((Node) lookup((OrganCheckComboBoxCell o) -> true).nth(1).query());
-
-        Thread.sleep(500);
-
-        clickOn((Node) lookup((CheckBox c) -> true).nth(1).query());
-
-        Thread.sleep(500);
+    public void removeOrganSingleTest() {
+        clickOn((Node)lookup((OrganCheckComboBoxCell<?> o) -> true).nth(1).query());
+        clickOn((Node)lookup((CheckBox checkBox) -> true).nth(1).query());
 
         clickOn("#pendingProcedureView");
 
         boolean hasMatch = false;
 
         for (ProcedureRecord record : testClient.getPastProcedures()) {
-            if (record.getSummary().equals("B Summary 2")) {
-                Set<Organ> affected = new HashSet<>();
+            if ("B Summary 2".equals(record.getSummary())) {
+                Collection<Organ> affected = new HashSet<>();
                 affected.add(Organ.LIVER);
                 affected.add(Organ.HEART);
                 assertEquals(affected, record.getAffectedOrgans());
@@ -255,62 +240,49 @@ public class ViewProceduresControllerClinicianTest extends ControllerTest {
                 break;
             }
         }
-        if (!hasMatch) {
-            throw new Exception("No matches");
-        }
+
+        assertTrue(hasMatch);
     }
 
-
     @Test
-    public void removeOrganMultipleTest() throws Exception {
-        clickOn((Node) lookup((OrganCheckComboBoxCell o) -> true).nth(1).query());
-
-        Thread.sleep(500);
-
-        clickOn((Node) lookup((CheckBox c) -> true).nth(1).query());
-        clickOn((Node) lookup((CheckBox c) -> true).nth(0).query());
-
-        Thread.sleep(500);
+    public void removeOrganMultipleTest() {
+        clickOn((Node)lookup((OrganCheckComboBoxCell<?> o) -> true).nth(1).query());
+        clickOn((Node)lookup((CheckBox checkBox) -> true).nth(1).query());
+        clickOn((Node)lookup((CheckBox checkBox) -> true).nth(0).query());
 
         clickOn("#pendingProcedureView");
 
         boolean hasMatch = false;
 
         for (ProcedureRecord record : testClient.getPastProcedures()) {
-            if (record.getSummary().equals("B Summary 2")) {
-                Set<Organ> affected = new HashSet<>();
+            if ("B Summary 2".equals(record.getSummary())) {
+                Collection<Organ> affected = new HashSet<>();
                 affected.add(Organ.HEART);
                 assertEquals(affected, record.getAffectedOrgans());
                 hasMatch = true;
                 break;
             }
         }
-        if (!hasMatch) {
-            throw new Exception("No matches");
-        }
+
+        assertTrue(hasMatch);
     }
 
     @Test
-    public void toggleMultipleOrgansTest() throws Exception {
-        clickOn((Node) lookup((OrganCheckComboBoxCell o) -> true).nth(1).query());
-
-        Thread.sleep(500);
-
-        clickOn((Node) lookup((CheckBox c) -> true).nth(0).query());
-        clickOn((Node) lookup((CheckBox c) -> true).nth(1).query());
-        clickOn((Node) lookup((CheckBox c) -> true).nth(2).query());
-        clickOn((Node) lookup((CheckBox c) -> true).nth(3).query());
-        clickOn((Node) lookup((CheckBox c) -> true).nth(5).query());
-
-        Thread.sleep(500);
+    public void toggleMultipleOrgansTest() {
+        clickOn((Node)lookup((OrganCheckComboBoxCell<?> o) -> true).nth(1).query());
+        clickOn((Node)lookup((CheckBox checkBox) -> true).nth(0).query());
+        clickOn((Node)lookup((CheckBox checkBox) -> true).nth(1).query());
+        clickOn((Node)lookup((CheckBox checkBox) -> true).nth(2).query());
+        clickOn((Node)lookup((CheckBox checkBox) -> true).nth(3).query());
+        clickOn((Node)lookup((CheckBox checkBox) -> true).nth(5).query());
 
         clickOn("#pendingProcedureView");
 
         boolean hasMatch = false;
 
         for (ProcedureRecord record : testClient.getPastProcedures()) {
-            if (record.getSummary().equals("B Summary 2")) {
-                Set<Organ> affected = new HashSet<>();
+            if ("B Summary 2".equals(record.getSummary())) {
+                Collection<Organ> affected = new HashSet<>();
                 affected.add(Organ.PANCREAS);
                 affected.add(Organ.INTESTINE);
                 assertEquals(affected, record.getAffectedOrgans());
@@ -318,25 +290,24 @@ public class ViewProceduresControllerClinicianTest extends ControllerTest {
                 break;
             }
         }
-        if (!hasMatch) {
-            throw new Exception("No matches");
-        }
+
+        assertTrue(hasMatch);
     }
 
 
     @Test
-    public void toggleMultipleOrgansThenChangeFromPastToPendingTest() throws Exception {
-        clickOn((Node) lookup((OrganCheckComboBoxCell o) -> true).nth(1).query());
+    public void toggleMultipleOrgansThenChangeFromPastToPendingTest() {
+        clickOn((Node)lookup((OrganCheckComboBoxCell<?> o) -> true).nth(1).query());
 
-        clickOn((Node) lookup((CheckBox c) -> true).nth(0).query());
-        clickOn((Node) lookup((CheckBox c) -> true).nth(1).query());
-        clickOn((Node) lookup((CheckBox c) -> true).nth(2).query());
-        clickOn((Node) lookup((CheckBox c) -> true).nth(3).query());
-        clickOn((Node) lookup((CheckBox c) -> true).nth(5).query());
+        clickOn((Node)lookup((CheckBox checkBox) -> true).nth(0).query());
+        clickOn((Node)lookup((CheckBox checkBox) -> true).nth(1).query());
+        clickOn((Node)lookup((CheckBox checkBox) -> true).nth(2).query());
+        clickOn((Node)lookup((CheckBox checkBox) -> true).nth(3).query());
+        clickOn((Node)lookup((CheckBox checkBox) -> true).nth(5).query());
 
-        clickOn((Node) lookup(NodeQueryUtils.hasText("13/11/2000")).query());
-        clickOn((Node) lookup(NodeQueryUtils.hasText("13/11/2000")).query());
-        clickOn((Node) lookup(NodeQueryUtils.hasText("13/11/2000")).query()).write("10/12/2045");
+        clickOn((Node)lookup(NodeQueryUtils.hasText("13/11/2000")).query());
+        clickOn((Node)lookup(NodeQueryUtils.hasText("13/11/2000")).query());
+        clickOn((Node)lookup(NodeQueryUtils.hasText("13/11/2000")).query()).write("10/12/2045");
         press(KeyCode.ENTER);
 
         clickOn("#pendingProcedureView");
@@ -346,8 +317,8 @@ public class ViewProceduresControllerClinicianTest extends ControllerTest {
         assertEquals(2, testClient.getPendingProcedures().size());
 
         for (ProcedureRecord record : testClient.getPendingProcedures()) {
-            if (record.getSummary().equals("B Summary 2")) {
-                Set<Organ> affected = new HashSet<>();
+            if ("B Summary 2".equals(record.getSummary())) {
+                Collection<Organ> affected = new HashSet<>();
                 affected.add(Organ.PANCREAS);
                 affected.add(Organ.INTESTINE);
                 assertEquals(affected, record.getAffectedOrgans());
@@ -356,9 +327,8 @@ public class ViewProceduresControllerClinicianTest extends ControllerTest {
                 break;
             }
         }
-        if (!hasMatch) {
-            throw new Exception("No matches");
-        }
+
+        assertTrue(hasMatch);
     }
 
 

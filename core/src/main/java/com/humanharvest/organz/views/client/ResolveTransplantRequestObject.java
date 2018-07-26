@@ -2,15 +2,10 @@ package com.humanharvest.organz.views.client;
 
 import java.time.LocalDateTime;
 
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 
 public class ResolveTransplantRequestObject {
 
-    private Client client;
-    private Organ requestedOrgan;
-    private LocalDateTime requestDate;
     private LocalDateTime resolvedDate;
     private TransplantRequestStatus status;
     private String resolvedReason;
@@ -18,38 +13,11 @@ public class ResolveTransplantRequestObject {
     public ResolveTransplantRequestObject() {
     }
 
-    public ResolveTransplantRequestObject(Client client, Organ requestedOrgan, LocalDateTime requestDate,
-            LocalDateTime resolvedDate, TransplantRequestStatus status, String resolvedReason) {
-        this.client = client;
-        this.requestedOrgan = requestedOrgan;
-        this.requestDate = requestDate;
+    public ResolveTransplantRequestObject(LocalDateTime resolvedDate, TransplantRequestStatus status, String
+            resolvedReason) {
         this.resolvedDate = resolvedDate;
         this.status = status;
         this.resolvedReason = resolvedReason;
-    }
-
-    public Client getClient() {
-        return client;
-    }
-
-    public void setClient(Client client) {
-        this.client = client;
-    }
-
-    public Organ getRequestedOrgan() {
-        return requestedOrgan;
-    }
-
-    public void setRequestedOrgan(Organ requestedOrgan) {
-        this.requestedOrgan = requestedOrgan;
-    }
-
-    public LocalDateTime getRequestDate() {
-        return requestDate;
-    }
-
-    public void setRequestDate(LocalDateTime requestDate) {
-        this.requestDate = requestDate;
     }
 
     public LocalDateTime getResolvedDate() {

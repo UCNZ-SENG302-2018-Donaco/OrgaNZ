@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.persistence.Access;
@@ -65,13 +66,13 @@ public class Client implements ConcurrencyControlledEntity {
     private String currentAddress;
 
     @Enumerated(EnumType.STRING)
-    @JsonView(Views.Details.class)
+    @JsonView(Views.Overview.class)
     private Region region;
     @Enumerated(EnumType.STRING)
-    @JsonView(Views.Details.class)
+    @JsonView(Views.Overview.class)
     private Gender gender;
     @Enumerated(EnumType.STRING)
-    @JsonView(Views.Details.class)
+    @JsonView(Views.Overview.class)
     private BloodType bloodType;
     @Enumerated(EnumType.STRING)
     @JsonView(Views.Details.class)
@@ -98,34 +99,39 @@ public class Client implements ConcurrencyControlledEntity {
 
     @OneToMany(
             mappedBy = "client",
-            cascade = CascadeType.ALL
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
     )
     @JsonManagedReference
     private List<TransplantRequest> transplantRequests = new ArrayList<>();
 
     @OneToMany(
             mappedBy = "client",
-            cascade = CascadeType.ALL
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
     )
     @JsonManagedReference
     private List<MedicationRecord> medicationHistory = new ArrayList<>();
 
     @OneToMany(
             mappedBy = "client",
-            cascade = CascadeType.ALL
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
     )
     @JsonManagedReference
     private List<IllnessRecord> illnessHistory = new ArrayList<>();
 
     @OneToMany(
             mappedBy = "client",
-            cascade = CascadeType.ALL
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
     )
     @JsonManagedReference
     private List<ProcedureRecord> procedures = new ArrayList<>();
 
     @OneToMany(
-            cascade = CascadeType.ALL
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
     )
     private List<HistoryItem> changesHistory = new ArrayList<>();
 
@@ -187,18 +193,39 @@ public class Client implements ConcurrencyControlledEntity {
                 organsDonating.remove(entry.getKey());
             }
         }
+        updateModifiedTimestamp();
     }
 
     public void setTransplantRequests(List<TransplantRequest> requests) {
-        transplantRequests = requests;
+        transplantRequests = new ArrayList<>(requests);
+        for (TransplantRequest request : requests) {
+            request.setClient(this);
+        }
+        updateModifiedTimestamp();
     }
 
     public void setMedicationHistory(List<MedicationRecord> medicationHistory) {
-        this.medicationHistory = medicationHistory;
+        this.medicationHistory = new ArrayList<>(medicationHistory);
+        for (MedicationRecord record : medicationHistory) {
+            record.setClient(this);
+        }
+        updateModifiedTimestamp();
     }
 
     public void setIllnessHistory(List<IllnessRecord> illnessHistory) {
-        this.illnessHistory = illnessHistory;
+        this.illnessHistory = new ArrayList<>(illnessHistory);
+        for (IllnessRecord illnessRecord : illnessHistory) {
+            illnessRecord.setClient(this);
+        }
+        updateModifiedTimestamp();
+    }
+
+    public void setProcedures(List<ProcedureRecord> procedures) {
+        this.procedures = new ArrayList<>(procedures);
+        for (ProcedureRecord record : procedures) {
+            record.setClient(this);
+        }
+        updateModifiedTimestamp();
     }
 
     /**
@@ -224,12 +251,12 @@ public class Client implements ConcurrencyControlledEntity {
             if (builder.length() != 0) {
                 builder.append(", ");
             }
-            builder.append(organ.toString());
+            builder.append(organ);
         }
-        if (builder.length() != 0) {
-            return builder.toString();
-        } else {
+        if (builder.length() == 0) {
             return "None";
+        } else {
+            return builder.toString();
         }
     }
 
@@ -284,10 +311,10 @@ public class Client implements ConcurrencyControlledEntity {
      */
     public String getFullName() {
         String fullName = firstName + " ";
-        if (middleName != null && !middleName.equals("")) {
+        if (middleName != null && !middleName.isEmpty()) {
             fullName += middleName + " ";
         }
-        if (preferredName != null && !preferredName.equals("")) {
+        if (preferredName != null && !preferredName.isEmpty()) {
             fullName += "\"" + preferredName + "\" ";
         }
         fullName += lastName;
@@ -321,14 +348,14 @@ public class Client implements ConcurrencyControlledEntity {
         this.middleName = middleName;
     }
 
-    public String getPreferredName() {
-        if (preferredName == null || preferredName.equals("")) {
+    public String getPreferredNameFormatted() {
+        if (preferredName == null || preferredName.isEmpty()) {
             return getFullName();
         }
         return preferredName;
     }
 
-    public String getPreferredNameOnly() {
+    public String getPreferredName() {
         return preferredName;
     }
 
@@ -469,14 +496,6 @@ public class Client implements ConcurrencyControlledEntity {
     }
 
     /**
-     * Returns a list containing all the medication records.
-     * @return The list of medication records of the Client.
-     */
-    public List<MedicationRecord> getMedicationRecords() {
-        return Collections.unmodifiableList(medicationHistory);
-    }
-
-    /**
      * Returns a new list containing the medications which are currently being used by the Client.
      * @return The list of medications currently being used by the Client.
      */
@@ -508,21 +527,6 @@ public class Client implements ConcurrencyControlledEntity {
         return Collections.unmodifiableList(medicationHistory);
     }
 
-    /**
-     * Returns the list of all past and current medications of the client
-     * @return medicationHistory of the client
-     */
-    public List<MedicationRecord> getAllMedications() {
-        return Collections.unmodifiableList(medicationHistory);
-    }
-
-    /**
-     * Returns all illness history past and present
-     * @return All illness Records for a specific client
-     */
-    public List<IllnessRecord> getAllIllnessHistory() {
-        return Collections.unmodifiableList(illnessHistory);
-    }
 
     /**
      * Adds a new MedicationRecord to the client's history.
@@ -545,18 +549,12 @@ public class Client implements ConcurrencyControlledEntity {
     }
 
     /**
-     * todo: to be updated to use id once this is implemented
-     *
      * Returns the MedicationRecord for the client with the given index
      * @param index index of the MedicationRecord
      * @return the MedicationRecord with the given id
      */
     public MedicationRecord getMedicationRecord(int index) {
-        if (medicationHistory.size() > index) {
-            return medicationHistory.get(index);
-        } else {
-            return null;
-        }
+        return medicationHistory.stream().filter(record -> record.getId() == index).findFirst().orElse(null);
     }
 
     /**
@@ -597,6 +595,11 @@ public class Client implements ConcurrencyControlledEntity {
         return Collections.unmodifiableList(illnessHistory);
     }
 
+    public IllnessRecord getIllnessById(long index) {
+        System.out.println(illnessHistory);
+        return illnessHistory.stream().filter(record -> record.getId() == index).findFirst().orElse(null);
+    }
+
     /**
      * Returns a list of illnesses that Client previously had
      * @return List of illnesses held by Client
@@ -633,7 +636,8 @@ public class Client implements ConcurrencyControlledEntity {
      * @param record The illness history that is wanted to be deleted
      */
     public void deleteIllnessRecord(IllnessRecord record) {
-        illnessHistory.remove(record);
+        int index = illnessHistory.indexOf(record);
+        illnessHistory.remove(index);
         record.setClient(null);
         updateModifiedTimestamp();
     }
@@ -806,6 +810,12 @@ public class Client implements ConcurrencyControlledEntity {
 
     public List<TransplantRequest> getTransplantRequests() {
         return transplantRequests;
+    }
+
+    public Optional<TransplantRequest> getTransplantRequestById(long id){
+        return transplantRequests.stream()
+                .filter(transplantRequest -> transplantRequest.getId() == id)
+                .findFirst();
     }
 
     public void addTransplantRequest(TransplantRequest request) {

@@ -1,6 +1,5 @@
 package com.humanharvest.organz.controller.client;
 
-
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -28,13 +27,9 @@ import javafx.scene.layout.Pane;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.MedicationRecord;
-import com.humanharvest.organz.actions.ActionInvoker;
-import com.humanharvest.organz.actions.client.DeleteMedicationRecordAction;
-import com.humanharvest.organz.actions.client.ModifyMedicationRecordAction;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SidebarController;
 import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.resolvers.client.ModifyMedicationRecordResolver;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
@@ -58,7 +53,6 @@ import org.controlsfx.control.Notifications;
 public class ViewMedicationsController extends SubController {
 
     private Session session;
-    private ActionInvoker invoker;
     private ClientManager manager;
     private Client client;
     private List<String> lastResponse;
@@ -88,7 +82,6 @@ public class ViewMedicationsController extends SubController {
 
     public ViewMedicationsController() {
         session = State.getSession();
-        invoker = State.getInvoker();
         manager = State.getClientManager();
     }
 
@@ -172,7 +165,7 @@ public class ViewMedicationsController extends SubController {
     @Override
     public void refresh() {
         if (session.getLoggedInUserType() == UserType.CLIENT) {
-            mainController.setTitle("View Medications:  " + client.getPreferredName());
+            mainController.setTitle("View Medications:  " + client.getPreferredNameFormatted());
         } else if (windowContext.isClinViewClientWindow()) {
             mainController.setTitle("View Medications:  " + client.getFullName());
 
@@ -184,12 +177,8 @@ public class ViewMedicationsController extends SubController {
      * Refreshes the past/current medication list views from the client's properties.
      */
     private void refreshMedicationLists() {
-
-        List<MedicationRecord> medicationRecords;
-
         try {
-            medicationRecords = State.getClientResolver().getMedicationRecords(client);
-            client.setMedicationHistory(medicationRecords);
+            client.setMedicationHistory(State.getClientResolver().getMedicationRecords(client));
 
         } catch (NotFoundException e) {
             LOGGER.log(Level.WARNING, "Client or medication not found");
@@ -206,6 +195,7 @@ public class ViewMedicationsController extends SubController {
                     .showError();
             return;
         }
+
         pastMedicationsView.setItems(FXCollections.observableArrayList(client.getPastMedications()));
         currentMedicationsView.setItems(FXCollections.observableArrayList(client.getCurrentMedications()));
     }
@@ -217,10 +207,9 @@ public class ViewMedicationsController extends SubController {
      * @param record the record to modify
      */
     private void updateMedicationHistory(LocalDate date, MedicationRecord record) {
-        ModifyMedicationRecordResolver resolver = new ModifyMedicationRecordResolver(client, record, date);
 
         try {
-            resolver.execute();
+            State.getClientResolver().modifyMedicationRecord(client, record, date);
             record.setStopped(date);
         } catch (NotFoundException e) {
             LOGGER.log(Level.WARNING, "Client not found");
@@ -233,7 +222,8 @@ public class ViewMedicationsController extends SubController {
                     + "please try again later");
         } catch (IfMatchFailedException e) {
             LOGGER.log(Level.INFO, "If-Match did not match");
-            PageNavigator.showAlert(AlertType.WARNING, "Outdated Data", "The client has been modified since you retrieved the data.\nIf you would still like to "
+            PageNavigator.showAlert(AlertType.WARNING, "Outdated Data",
+                    "The client has been modified since you retrieved the data.\nIf you would still like to "
                     + "apply these changes please submit again, otherwise refresh the page to update the data.");
         }
     }
@@ -367,9 +357,10 @@ public class ViewMedicationsController extends SubController {
     private void deleteMedication() {
         MedicationRecord record = getSelectedRecord();
         if (record != null) {
-            DeleteMedicationRecordAction action = new DeleteMedicationRecordAction(client, record, manager);
 
-            invoker.execute(action);
+            //TODO: Handle errors
+            State.getClientResolver().deleteMedicationRecord(client, record);
+
             PageNavigator.refreshAllWindows();
             refreshMedicationLists();
         }

@@ -5,14 +5,14 @@
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.layout.HBox?>
-
 <HBox maxWidth="1.7976931348623157E308" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.MenuBarController">
    <children>
      <MenuBar fx:id="menuBar" maxWidth="1.7976931348623157E308" minWidth="-Infinity" HBox.hgrow="ALWAYS">
         <menus>
           <Menu fx:id="filePrimaryItem" mnemonicParsing="false" text="File">
              <items>
-               <MenuItem fx:id="saveItem" mnemonicParsing="false" onAction="#save" text="Save" />
+               <MenuItem fx:id="saveClientsItem" mnemonicParsing="false" onAction="#saveClients" text="Save Clients" />
+               <MenuItem fx:id="saveCliniciansItem" mnemonicParsing="false" onAction="#saveClinicians" text="Save Clinicians" />
                <MenuItem fx:id="loadItem" mnemonicParsing="false" onAction="#load" text="Load" />
               <MenuItem fx:id="refreshCacheItem" mnemonicParsing="false" onAction="#refreshCache" text="Refresh cache" />
                   <SeparatorMenuItem fx:id="topSeparator" mnemonicParsing="false" />
@@ -63,7 +63,7 @@
           <Menu fx:id="profilePrimaryItem" mnemonicParsing="false" text="Profile">
              <items>
                <MenuItem fx:id="viewAdministratorItem" mnemonicParsing="false" text="View Admin" />
-               <MenuItem fx:id="viewClinicianItem" mnemonicParsing="false" onAction="#goToViewClinician" text="View Clinician" />
+               <MenuItem fx:id="viewClinicianItem" mnemonicParsing="false" onAction="#goToViewClinician" text="View Clinicians" />
                <MenuItem fx:id="historyItem" mnemonicParsing="false" onAction="#goToHistory" text="History" />
                <MenuItem fx:id="cliItem" mnemonicParsing="false" onAction="#goToCommandLine" text="CLI" />
              </items>

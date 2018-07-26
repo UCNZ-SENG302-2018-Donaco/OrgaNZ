@@ -1,8 +1,10 @@
 package com.humanharvest.organz.controller;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,14 +29,15 @@ import javafx.stage.Stage;
 import com.humanharvest.organz.AppUI;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
-import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.CacheManager;
+import com.humanharvest.organz.utilities.exceptions.BadRequestException;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.views.ActionResponseView;
 import org.controlsfx.control.Notifications;
 
 /**
@@ -62,7 +65,8 @@ public class MenuBarController extends SubController {
     public MenuItem historyItem;
     public MenuItem cliItem;
     public MenuItem logOutItem;
-    public MenuItem saveItem;
+    public MenuItem saveClientsItem;
+    public MenuItem saveCliniciansItem;
     public MenuItem loadItem;
     public MenuItem undoItem;
     public MenuItem redoItem;
@@ -83,7 +87,6 @@ public class MenuBarController extends SubController {
     public Menu filePrimaryItem;
     public Menu administrationPrimaryItem;
 
-    private ActionInvoker invoker;
     private ClientManager clientManager;
     private Session session;
 
@@ -91,7 +94,6 @@ public class MenuBarController extends SubController {
      * Gets the ActionInvoker from the current state.
      */
     public MenuBarController() {
-        invoker = State.getInvoker();
         clientManager = State.getClientManager();
         session = State.getSession();
     }
@@ -107,7 +109,7 @@ public class MenuBarController extends SubController {
         Menu viewAdminMenu[] = {staffPrimaryItem, transplantsPrimaryItem, filePrimaryItem,
                 profilePrimaryItem};
 
-        Menu clinicianWindowMenu[] = {staffPrimaryItem, medicationsPrimaryItem, };
+        Menu clinicianWindowMenu[] = {staffPrimaryItem, medicationsPrimaryItem,};
         MenuItem clinicianWindowMenuItems[] = {organPrimaryItem, viewClientItem, medicationsPrimaryItem};
 
         Menu clinViewClientMenu[] = {staffPrimaryItem, profilePrimaryItem, transplantsPrimaryItem};
@@ -126,10 +128,12 @@ public class MenuBarController extends SubController {
                 hideMenuItems(clinicianWindowMenuItems);
                 // staff primary item - StaffListController.lambda$null$1(StaffListController.java:89)
             }
+            viewClinicianItem.setText("View Clinician");
         }
+
         if (userType == UserType.ADMINISTRATOR) {
 
-            if (windowContext.isClinViewClientWindow()){
+            if (windowContext.isClinViewClientWindow()) {
                 hideMenuItem(profilePrimaryItem);
                 hideMenuItem(staffPrimaryItem);
                 hideMenuItem(createClientItem);
@@ -145,10 +149,8 @@ public class MenuBarController extends SubController {
             hideMenus(viewAllMenus);
         }
         closeItem.setDisable(!windowContext.isClinViewClientWindow());
-        undoItem.setDisable(!invoker.canUndo());
-        redoItem.setDisable(!invoker.canRedo());
+        refresh();
     }
-
 
     /**
      * Removes all menu items and menus that only admins should have.
@@ -157,11 +159,11 @@ public class MenuBarController extends SubController {
         // Remove administrator file rights.
         hideMenuItem(createAdministratorItem);
         topSeparator.setVisible(false);
-        hideMenuItem(saveItem);
+        hideMenuItem(saveClientsItem);
+        hideMenuItem(saveCliniciansItem);
         hideMenuItem(loadItem);
         hideMenuItem(viewAdministratorItem);
         hideMenuItem(cliItem);
-
     }
 
     /**
@@ -260,7 +262,9 @@ public class MenuBarController extends SubController {
      * Redirects the GUI to the Search clients page.
      */
     @FXML
-    private void goToSearch() { PageNavigator.loadPage(Page.SEARCH, mainController);}
+    private void goToSearch() {
+        PageNavigator.loadPage(Page.SEARCH, mainController);
+    }
 
     /**
      * Redirects the GUI to the Staff list page.
@@ -322,7 +326,9 @@ public class MenuBarController extends SubController {
      * Redirects the GUI to the Create clinician page.
      */
     @FXML
-    private void goToCreateClient() {PageNavigator.loadPage(Page.CREATE_CLIENT, mainController);}
+    private void goToCreateClient() {
+        PageNavigator.loadPage(Page.CREATE_CLIENT, mainController);
+    }
 
     /**
      * Redirects the GUI to the Admin command line page.
@@ -332,12 +338,11 @@ public class MenuBarController extends SubController {
         PageNavigator.loadPage(Page.COMMAND_LINE, mainController);
     }
 
-
     /**
      * Opens a save file dialog to choose where to save all clients in the system to a file.
      */
     @FXML
-    private void save() {
+    private void saveClients() {
         try {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Save Clients File");
@@ -348,26 +353,52 @@ public class MenuBarController extends SubController {
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json"));
             File file = fileChooser.showSaveDialog(AppUI.getWindow());
             if (file != null) {
-                /* TODO replace with GET request to /clients/file
-                try (JSONFileWriter<Client> clientWriter = new JSONFileWriter<>(file, Client.class)) {
-                    clientWriter.overwriteWith(clientManager.getClients());
+                try (FileOutputStream output = new FileOutputStream(file)) {
+                    output.write(State.getFileResolver().exportClients());
                 }
-                */
 
                 Notifications.create()
                         .title("Saved Data")
-                        .text(String.format("Successfully saved %s clients to file '%s'.",
-                                clientManager.getClients().size(), file.getName()))
+                        .text(String.format("Successfully saved all clients to file '%s'.", file.getName()))
                         .showInformation();
-
-                HistoryItem historyItem = new HistoryItem("SAVE",
-                        String.format("The system's current state was saved to file '%s'.", file.getName()));
-                State.getSession().addToSessionHistory(historyItem);
 
                 State.setUnsavedChanges(false);
                 PageNavigator.refreshAllWindows();
             }
-        } catch (URISyntaxException e) {
+        } catch (URISyntaxException | IOException e) {
+            PageNavigator.showAlert(AlertType.WARNING, "Save Failed", ERROR_SAVING_MESSAGE);
+            LOGGER.log(Level.SEVERE, ERROR_SAVING_MESSAGE, e);
+        }
+    }
+
+    /**
+     * Opens a saveClinicians file dialog to choose where to save all clinicians in the system to a file.
+     */
+    @FXML
+    private void saveClinicians() {
+        try {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Save Clinicians File");
+            fileChooser.setInitialDirectory(
+                    new File(Paths.get(AppUI.class.getProtectionDomain().getCodeSource().getLocation().toURI())
+                            .getParent().toString())
+            );
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json"));
+            File file = fileChooser.showSaveDialog(AppUI.getWindow());
+            if (file != null) {
+                try (FileOutputStream output = new FileOutputStream(file)) {
+                    output.write(State.getFileResolver().exportClinicians());
+                }
+
+                Notifications.create()
+                        .title("Saved Data")
+                        .text(String.format("Successfully saved all clinicians to file '%s'.", file.getName()))
+                        .showInformation();
+                
+                State.setUnsavedChanges(false);
+                PageNavigator.refreshAllWindows();
+            }
+        } catch (URISyntaxException | IOException e) {
             PageNavigator.showAlert(AlertType.WARNING, "Save Failed", ERROR_SAVING_MESSAGE);
             LOGGER.log(Level.SEVERE, ERROR_SAVING_MESSAGE, e);
         }
@@ -402,37 +433,11 @@ public class MenuBarController extends SubController {
             if (file != null) {
                 String format = getFileExtension(file.getName());
 
-                /* TODO replace with POST request to /clients/file endpoint
                 try {
-                    ReadClientStrategy strategy;
-                    switch (format) {
-                        case "csv":
-                            strategy = new CSVReadClientStrategy();
-                            break;
-                        case "json":
-                            strategy = new JSONReadClientStrategy();
-                            break;
-                        default:
-                            throw new IOException(String.format("Unknown file format or extension: '%s'", format));
-                    }
-
-                    ClientImporter importer = new ClientImporter(file, strategy);
-                    importer.importAll();
-                    clientManager.setClients(importer.getValidClients());
-
-                    String errorSummary = importer.getErrorSummary();
-                    if (errorSummary.length() > 500) {
-                        errorSummary = errorSummary.substring(0, 500).concat("...");
-                    }
-
-                    String message = String.format("Loaded clients from file '%s'."
-                                    + "\n%d were valid, "
-                                    + "\n%d were invalid."
-                                    + "\n\n%s",
-                            file.getName(), importer.getValidCount(), importer.getInvalidCount(), errorSummary);
+                    String message = State.getFileResolver().importClients(
+                            Files.readAllBytes(file.toPath()), format);
 
                     LOGGER.log(Level.INFO, message);
-                    State.getSession().addToSessionHistory(new HistoryItem("LOAD", message));
 
                     Notifications.create()
                             .title("Loaded Clients")
@@ -442,15 +447,13 @@ public class MenuBarController extends SubController {
                     mainController.resetWindowContext();
                     PageNavigator.loadPage(Page.LANDING, mainController);
 
-                } catch (FileNotFoundException exc) {
+                } catch (IllegalArgumentException exc) {
+                    PageNavigator.showAlert(AlertType.ERROR, "Load Failed", exc.getMessage());
+                } catch (IOException | BadRequestException exc) {
                     PageNavigator.showAlert(AlertType.ERROR, "Load Failed",
-                            String.format("Could not find file: '%s'.", file.getAbsolutePath()));
-                } catch (IOException exc) {
-                    PageNavigator.showAlert(AlertType.ERROR, "Load Failed",
-                            String.format("An IO error occurred when loading from file: '%s'\n%s",
+                            String.format("An error occurred when loading from file: '%s'\n%s",
                                     file.getName(), exc.getMessage()));
                 }
-                */
             }
         }
     }
@@ -526,8 +529,9 @@ public class MenuBarController extends SubController {
      * Refreshes the undo/redo buttons based on if there are changes to be made
      */
     public void refresh() {
-        undoItem.setDisable(!invoker.canUndo());
-        redoItem.setDisable(!invoker.canRedo());
+        ActionResponseView responseView = State.getActionResolver().getUndo();
+        undoItem.setDisable(!responseView.isCanUndo());
+        redoItem.setDisable(!responseView.isCanRedo());
     }
 
     /**
@@ -535,11 +539,8 @@ public class MenuBarController extends SubController {
      */
     @FXML
     private void undo() {
-        String undoneText = invoker.undo();
-        Notifications.create()
-                .title("Undo")
-                .text(undoneText)
-                .showInformation();
+        ActionResponseView responseView = State.getActionResolver().executeUndo(State.getClientEtag());
+        Notifications.create().title("Undo").text(responseView.getResultText()).showInformation();
         PageNavigator.refreshAllWindows();
     }
 
@@ -548,11 +549,8 @@ public class MenuBarController extends SubController {
      */
     @FXML
     private void redo() {
-        String redoneText = invoker.redo();
-        Notifications.create()
-                .title("Redo")
-                .text(redoneText)
-                .showInformation();
+        ActionResponseView responseView = State.getActionResolver().executeRedo(State.getClientEtag());
+        Notifications.create().title("Redo").text(responseView.getResultText()).showInformation();
         PageNavigator.refreshAllWindows();
     }
 
@@ -571,8 +569,9 @@ public class MenuBarController extends SubController {
     @FXML
     private void quitProgram() {
         if (State.isUnsavedChanges()) {
-            Alert unsavedAlert = PageNavigator.generateAlert(AlertType.WARNING, "Do you want to save the changes you have made?",
-                    "Your changes will be lost if you do not save them.");
+            Alert unsavedAlert = PageNavigator
+                    .generateAlert(AlertType.WARNING, "Do you want to save the changes you have made?",
+                            "Your changes will be lost if you do not save them.");
             ButtonType dontSave = new ButtonType("Don't Save");
             ButtonType cancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
             ButtonType save = new ButtonType("Save");
@@ -582,7 +581,7 @@ public class MenuBarController extends SubController {
             if (result.isPresent() && result.get() == dontSave) {
                 exit();
             } else if (result.isPresent() && result.get() == save) {
-                save();
+                saveClients();
                 exit();
             } else {
                 unsavedAlert.hide();

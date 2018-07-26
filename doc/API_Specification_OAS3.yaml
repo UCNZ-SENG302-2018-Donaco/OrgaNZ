@@ -1,6 +1,6 @@
 openapi: "3.0.3"
 info:
-  version: 1.0.0
+  version: 1.0.6
   title: "Organz API"
   description: |
     An API used to access the Human Harvest Inc server.
@@ -18,14 +18,17 @@ tags:
       description: All client illness AKA medical history paths
     - name: Client Procedures
       description: All client procedure paths
+    - name: Client Profile Picture
+      description: All client profile picture paths
     - name: Client Transplant Requests
       description: All client transplant request paths
     - name: Clinician
       description: All base clinician paths
     - name: Administrator
       description: All base administrator paths
-  
+
 paths:
+  ### Clients
   /clients:
     get:
       tags:
@@ -45,16 +48,15 @@ paths:
         - $ref: '#/components/parameters/clientType'
         - $ref: '#/components/parameters/donating'
         - $ref: '#/components/parameters/requesting'
-        - $ref: '#/components/parameters/sortOrder'
+        - $ref: '#/components/parameters/sortOption'
+        - $ref: '#/components/parameters/isReversed'
       responses:
         200:
           description: A list of clients
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/clientOverview'
+                $ref: '#/components/schemas/paginatedClientList'
 
         400:
           $ref: '#/components/responses/400BadRequest'
@@ -89,6 +91,7 @@ paths:
           $ref: '#/components/responses/403Forbidden'
         500:
           $ref: '#/components/responses/500InternalServerError'
+
   '/clients/{uid}':
     parameters:
     - in: path
@@ -173,6 +176,196 @@ paths:
         - $ref: '#/components/parameters/ETag'
 
       responses:
+        200:
+          description: Deleted
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        412:
+          $ref: '#/components/responses/412PreconditionFailed'
+        428:
+          $ref: '#/components/responses/428PreconditionRequired'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+
+  '/clients/{uid}/dead':
+    parameters:
+    - in: path
+      name: uid
+      description: Client User ID
+      required: true
+      schema:
+        type: integer
+        minimum: 0
+    post:
+      tags:
+        - Client
+      summary: Mark a client as dead
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                date:
+                  $ref: '#/components/schemas/date'
+        required: true
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/clientDetails'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        412:
+          $ref: '#/components/responses/412PreconditionFailed'
+        428:
+          $ref: '#/components/responses/428PreconditionRequired'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+
+  '/clients/{uid}/history':
+    parameters:
+    - in: path
+      name: uid
+      description: Client User ID
+      required: true
+      schema:
+        type: integer
+        minimum: 0
+    get:
+      tags:
+        - Client
+      security:
+        - ClientAccess: []
+        - ClinicianAccess: []
+        - AdministratorAccess: []
+      summary: Get client history
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/historyItem'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+
+  '/clients/{uid}/image':
+    parameters:
+    - in: path
+      name: uid
+      description: Client User ID
+      required: true
+      schema:
+        type: integer
+        minimum: 0
+    get:
+      tags:
+        - Client Profile Picture
+      security:
+        - ClientAccess: []
+        - ClinicianAccess: []
+        - AdministratorAccess: []
+      summary: Get client profile picture
+      responses:
+        200:
+          description: OK
+          content:
+            image/png:
+              schema:
+                type: byte[]
+                format: binary
+                example: Raw content of PNG image file
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+
+    post:
+      tags:
+        - Client Profile Picture
+      security:
+        - ClientAccess: []
+        - ClinicianAccess: []
+        - AdministratorAccess: []
+      summary: Post client profile picture
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: byte[]
+              format: binary
+              example: Raw content of PNG image file
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/historyItem'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        412:
+          $ref: '#/components/responses/412PreconditionFailed'
+        428:
+          $ref: '#/components/responses/428PreconditionRequired'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+
+    deleted:
+      tags:
+        - Client Profile Picture
+      security:
+        - ClientAccess: []
+        - ClinicianAccess: []
+        - AdministratorAccess: []
+      summary: Delete client profile picture
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: byte[]
+              format: binary
+              example: Raw content of PNG image file
+      responses:
         201:
           description: Deleted
         400:
@@ -189,6 +382,7 @@ paths:
           $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
+
   '/clients/file':
     get:
       tags:
@@ -699,7 +893,6 @@ paths:
         500:
           $ref: '#/components/responses/500InternalServerError'
 
-
   '/clients/{uid}/procedures':
     parameters:
     - in: path
@@ -856,7 +1049,6 @@ paths:
         500:
           $ref: '#/components/responses/500InternalServerError'
 
-
   '/clients/transplantRequests':
     get:
       tags:
@@ -894,7 +1086,6 @@ paths:
           $ref: '#/components/responses/404NotFound'
         500:
           $ref: '#/components/responses/500InternalServerError'
-
 
   '/clients/{uid}/transplantRequests':
     parameters:
@@ -1025,10 +1216,6 @@ paths:
         500:
           $ref: '#/components/responses/500InternalServerError'
 
-
-
-
-
   ### Clinician
   /clinicians:
     get:
@@ -1088,6 +1275,32 @@ paths:
           $ref: '#/components/responses/403Forbidden'
         500:
           $ref: '#/components/responses/500InternalServerError'
+
+  '/clinicians/file':
+    get:
+      tags:
+      - Clinician
+      security:
+      - AdministratorAccess: []
+      summary: Get a file of all clinicians
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: string
+                format: binary
+                example: Raw content of JSON clinicians file
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+
   '/clinicians/{staffId}':
     parameters:
     - in: path
@@ -1186,8 +1399,41 @@ paths:
         500:
           $ref: '#/components/responses/500InternalServerError'
 
-
-
+  '/clinicians/{staffId}/history':
+    parameters:
+    - in: path
+      name: staffId
+      description: Clinician Staff ID
+      required: true
+      schema:
+        type: integer
+        minimum: 0
+    get:
+      tags:
+        - Clinician
+      security:
+        - ClinicianAccess: []
+        - AdministratorAccess: []
+      summary: Get clinician history
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/historyItem'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
 
   ### Administrator
   /administrators:
@@ -1246,6 +1492,7 @@ paths:
           $ref: '#/components/responses/403Forbidden'
         500:
           $ref: '#/components/responses/500InternalServerError'
+
   '/administrators/{username}':
     parameters:
     - in: path
@@ -1341,6 +1588,31 @@ paths:
         500:
           $ref: '#/components/responses/500InternalServerError'
 
+  '/history':
+    get:
+      tags:
+        - Administrator
+      security:
+        - AdministratorAccess: []
+      summary: Returns all history
+      responses:
+        200:
+          description: All action history
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/historyItem'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+
   '/commands':
     post:
       tags:
@@ -1365,7 +1637,7 @@ paths:
         500:
           $ref: '#/components/responses/500InternalServerError'
 
-
+  ### Login
   '/login/client':
     post:
       tags:
@@ -1443,6 +1715,7 @@ paths:
           $ref: '#/components/responses/500InternalServerError'
 
 
+  ### Undo/Redo
   '/actions/undo':
     get:
       tags:
@@ -1497,7 +1770,6 @@ paths:
           $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
-
 
   '/actions/redo':
     get:
@@ -1625,6 +1897,21 @@ components:
       description: "Only return clients that are requesting the given organs, may be comma separated for multiple"
       schema:
         $ref: '#/components/schemas/organEnum'
+
+    sortOption:
+      name: sortOption
+      in: query
+      description: "Returns clients in the order specified"
+      schema:
+        $ref: '#/components/schemas/clientSortOptionsEnum'
+
+    isReversed:
+      name: isReversed
+      in: query
+      description: "If the sort order should be reversed"
+      schema:
+        type: boolean
+
 
     ETag:
       name: ETag
@@ -1854,8 +2141,14 @@ components:
           type: string
         preferredName:
           type: string
+        region:
+          $ref: '#/components/schemas/regionEnum'
+        birthGender:
+          $ref: '#/components/schemas/genderEnum'
+        bloodType:
+          $ref: '#/components/schemas/bloodTypeEnum'
         dateOfBirth:
-            $ref: '#/components/schemas/date'
+          $ref: '#/components/schemas/date'
 
     clientDetails:
       type: object
@@ -1939,6 +2232,18 @@ components:
           $ref: '#/components/schemas/date'
         bloodType:
           $ref: '#/components/schemas/bloodTypeEnum'
+
+    paginatedClientList:
+      type: object
+      properties:
+        clients:
+          type: array
+          items:
+            $ref: '#/components/schemas/clientOverview'
+        totalResults:
+          type: integer
+          example: 308
+
 
     date:
       type: string

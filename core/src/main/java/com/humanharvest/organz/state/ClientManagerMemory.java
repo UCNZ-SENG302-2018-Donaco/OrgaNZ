@@ -1,5 +1,6 @@
 package com.humanharvest.organz.state;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -7,11 +8,20 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalInt;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.HistoryItem;
+import com.humanharvest.organz.IllnessRecord;
+import com.humanharvest.organz.MedicationRecord;
+import com.humanharvest.organz.ProcedureRecord;
 import com.humanharvest.organz.TransplantRequest;
+import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
+import com.humanharvest.organz.views.client.PaginatedTransplantList;
+import com.humanharvest.organz.views.client.TransplantRequestView;
 
 /**
  * An in-memory implementation of {@link ClientManager} that uses a simple list to hold all clients.
@@ -30,7 +40,9 @@ public class ClientManagerMemory implements ClientManager {
     @Override
     public void setClients(Collection<Client> clients) {
         this.clients.clear();
-        this.clients.addAll(clients);
+        for (Client client : clients) {
+            addClient(client);
+        }
     }
 
     /**
@@ -65,7 +77,45 @@ public class ClientManagerMemory implements ClientManager {
 
     @Override
     public void applyChangesTo(Client client) {
-        // Doesn't need to do anything
+        // Ensure that all records associated with the client have an id
+        long nextId;
+
+        nextId = client.getTransplantRequests().stream()
+                .mapToLong(request -> request.getId() == null ? 0 : request.getId())
+                .max().orElse(0) + 1;
+        for (TransplantRequest request : client.getTransplantRequests()) {
+            if (request.getId() == null) {
+                request.setId(nextId);
+                nextId++;
+            }
+        }
+        nextId = client.getMedications().stream()
+                .mapToLong(record -> record.getId() == null ? 0 : record.getId())
+                .max().orElse(0) + 1;
+        for (MedicationRecord record : client.getMedications()) {
+            if (record.getId() == null) {
+                record.setId(nextId);
+                nextId++;
+            }
+        }
+        nextId = client.getIllnesses().stream()
+                .mapToLong(record -> record.getId() == null ? 0 : record.getId())
+                .max().orElse(0) + 1;
+        for (IllnessRecord record : client.getIllnesses()) {
+            if (record.getId() == null) {
+                record.setId(nextId);
+                nextId++;
+            }
+        }
+        nextId = client.getProcedures().stream()
+                .mapToLong(record -> record.getId() == null ? 0 : record.getId())
+                .max().orElse(0) + 1;
+        for (ProcedureRecord record : client.getProcedures()) {
+            if (record.getId() == null) {
+                record.setId(nextId);
+                nextId++;
+            }
+        }
     }
 
     /**
@@ -137,6 +187,43 @@ public class ClientManagerMemory implements ClientManager {
                 .map(Client::getTransplantRequests)
                 .flatMap(Collection::stream)
                 .filter(request -> request.getStatus() == TransplantRequestStatus.WAITING)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public PaginatedTransplantList getAllCurrentTransplantRequests(Integer offset, Integer count,
+            Set<Region> regions, Set<Organ> organs) {
+        // Determine requests that match filters
+        List<TransplantRequestView> matchingRequests = getClients().stream()
+                .filter(client -> regions == null || regions.isEmpty() || regions.contains(client.getRegion()))
+                .flatMap(client -> client.getTransplantRequests().stream())
+                .filter(request -> organs == null || organs.isEmpty() || organs.contains(request.getRequestedOrgan()))
+                .map(TransplantRequestView::new)
+                .collect(Collectors.toList());
+
+        // Return subset for given offset/count parameters (used for pagination)
+        if (offset == null) {
+            offset = 0;
+        }
+        if (count == null) {
+            return new PaginatedTransplantList(
+                    matchingRequests.subList(
+                            Math.min(offset, matchingRequests.size()),
+                            matchingRequests.size()),
+                    matchingRequests.size());
+        } else {
+            return new PaginatedTransplantList(
+                    matchingRequests.subList(
+                            Math.min(offset, matchingRequests.size()),
+                            Math.min(offset + count, matchingRequests.size())),
+                    matchingRequests.size());
+        }
+    }
+
+    @Override
+    public List<HistoryItem> getAllHistoryItems() {
+        return clients.stream()
+                .flatMap(client -> client.getChangesHistory().stream())
                 .collect(Collectors.toList());
     }
 }

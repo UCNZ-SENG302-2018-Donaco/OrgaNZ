@@ -1,77 +1,20 @@
 package com.humanharvest.organz.views.client;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.SerializerProvider;
-import com.fasterxml.jackson.databind.ser.std.StdSerializer;
-import com.humanharvest.organz.Client;
-import java.io.IOException;
-import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
-public class ModifyIllnessObject {
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.humanharvest.organz.views.ModifyBaseObject;
+
+@JsonSerialize(using = ModifyBaseObject.Serialiser.class)
+public class ModifyIllnessObject extends ModifyBaseObject {
 
   private static DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
-  private Long id;
-  private Client client;
   private String illnessName;
   private LocalDate diagnosisDate;
   private LocalDate curedDate;
   private boolean isChronic;
-
-  @JsonIgnore
-  private Set<Field> modifiedFields = new HashSet<>();
-
-  public ModifyIllnessObject() {}
-
-  @JsonIgnore
-  public Set<Field> getModifiedFields() {return modifiedFields;}
-
-  @JsonIgnore
-  public String[] getUnmodifiedFields() {
-    //Get all fields
-    List<Field> allFields = new ArrayList<>(Arrays.asList(ModifyIllnessObject.class.getDeclaredFields()));
-    //Remove the ones that have been modified
-    allFields.removeAll(modifiedFields);
-    //Convert to a list of strings
-    return allFields.stream().map(Field::getName).toArray(String[]::new);
-  }
-
-
-  @JsonIgnore
-  public void registerChange(String fieldName) {
-    try {
-      modifiedFields.add(ModifyIllnessObject.class.getDeclaredField(fieldName));
-    } catch (NoSuchFieldException e) {
-      e.printStackTrace();
-    }
-  }
-
-  public Long getId() {
-
-    return id;
-  }
-
-  public void setId(Long id) {
-    registerChange("id");
-    this.id = id;
-  }
-
-  public Client getClient() {
-    return client;
-  }
-
-  public void setClient(Client client) {
-    registerChange("client");
-    this.client = client;
-  }
 
   public String getIllnessName() {
     return illnessName;
@@ -121,31 +64,5 @@ public class ModifyIllnessObject {
       return String.format("%s Diagnosed on: %s, Cured on: %s)", illnessName,
           diagnosisDate.format(dateFormat), curedDate.format(dateFormat));
     }
-  }
-}
-
-class ModifyIllnessObjectSerializer extends StdSerializer<ModifyIllnessObject> {
-
-  public ModifyIllnessObjectSerializer() {
-    this(null);
-  }
-
-  public ModifyIllnessObjectSerializer(Class<ModifyIllnessObject> t) {
-    super(t);
-  }
-
-  @Override
-  public void serialize(ModifyIllnessObject o, JsonGenerator jgen,
-      SerializerProvider serializerProvider) throws IOException {
-    jgen.writeStartObject();
-    for (Field field : o.getModifiedFields()) {
-      try {
-        field.setAccessible(true);
-        jgen.writeObjectField(field.getName(), field.get(o));
-      } catch (IllegalAccessException e) {
-        e.printStackTrace();
-      }
-    }
-    jgen.writeEndObject();
   }
 }

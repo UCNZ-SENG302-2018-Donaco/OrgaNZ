@@ -79,7 +79,7 @@ public class ClientNameSorter implements Comparator<Client> {
         }
 
         //Preferred name check
-        result = compareName(searchTerm, client1.getPreferredNameOnly(), client2.getPreferredNameOnly());
+        result = compareName(searchTerm, client1.getPreferredName(), client2.getPreferredName());
         if (result != 0) {
             return result;
         }

@@ -8,24 +8,16 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.HistoryItem;
-import com.humanharvest.organz.actions.clinician.CreateClinicianAction;
-import com.humanharvest.organz.actions.clinician.CreateClinicianAction;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.state.ClinicianManager;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.JSONConverter;
-import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
@@ -97,19 +89,18 @@ public class CreateClinicianController extends SubController {
             if (id < -1) {
                 staffIdLabel.setTextFill(Color.RED);
                 update = false;
+
+            } else if (clinicianManager
+                    .doesStaffIdExist(Integer.parseInt(staffId.getText()))) { // If the staffId is in use
+                PageNavigator.showAlert(AlertType.ERROR, "Staff Id in Use", "This staff Id is already in use.");
+                staffIdLabel.setTextFill(Color.RED);
+                update = false;
+
             } else {
                 staffIdLabel.setTextFill(Color.BLACK);
             }
 
         } catch (NumberFormatException ex) {
-            staffIdLabel.setTextFill(Color.RED);
-            update = false;
-        }
-        System.out.println(staffId.getText());
-        System.out.println(clinicianManager.doesStaffIdExist(Integer.parseInt(staffId.getText())));
-        if (clinicianManager.doesStaffIdExist(Integer.parseInt(staffId.getText()))) { // If the staffId is in use
-            PageNavigator.showAlert(AlertType.ERROR, "Staff Id in Use", "This staff Id is already in use.");
-
             staffIdLabel.setTextFill(Color.RED);
             update = false;
         }
@@ -139,6 +130,7 @@ public class CreateClinicianController extends SubController {
                         password.getText());
 
                 State.getClinicianManager().addClinician(clinician);
+                State.setCreatedClinician(clinician);
 
                 HistoryItem save = new HistoryItem("CREATE CLINICIAN",
                         "Clinician " + fname.getText() + " " + lname.getText() + " with staff ID " + staffId.getText()

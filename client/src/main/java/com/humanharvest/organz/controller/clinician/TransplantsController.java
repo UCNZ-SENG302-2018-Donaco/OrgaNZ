@@ -27,17 +27,17 @@ import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
-
+import com.humanharvest.organz.views.client.PaginatedTransplantList;
 import org.controlsfx.control.CheckComboBox;
 
 /**
@@ -84,7 +84,6 @@ public class TransplantsController extends SubController {
     private Set<Region> regionsToFilter;
     private Set<Organ> organsToFilter;
     private ObservableList<TransplantRequest> observableTransplantRequests = FXCollections.observableArrayList();
-    private FilteredList<TransplantRequest> filteredTransplantRequests;
     private SortedList<TransplantRequest> sortedTransplantRequests;
 
     /**
@@ -154,10 +153,7 @@ public class TransplantsController extends SubController {
      */
     @Override
     public void refresh() {
-        filteredTransplantRequests = new FilteredList<>(FXCollections.observableArrayList(
-                manager.getAllCurrentTransplantRequests()), client -> true);
-
-        sortedTransplantRequests = new SortedList<>(filteredTransplantRequests);
+        sortedTransplantRequests = new SortedList<>(observableTransplantRequests);
 
         //Link the sorted list sort to the tableView sort
         sortedTransplantRequests.comparatorProperty().bind(tableView.comparatorProperty());
@@ -260,37 +256,11 @@ public class TransplantsController extends SubController {
     }
 
     /**
-     * Upon pagination, update the table to show the correct items
-     * @param pageIndex The page we're now on (starts at 0)
-     * @return An empty pane as pagination requires a non null return. Not used.
-     */
-    private Node createPage(int pageIndex) {
-        int fromIndex = pageIndex * ROWS_PER_PAGE;
-        int toIndex = Math.min(fromIndex + ROWS_PER_PAGE, sortedTransplantRequests.size());
-        observableTransplantRequests.setAll(sortedTransplantRequests.subList(fromIndex, toIndex));
-        if (sortedTransplantRequests.size() < 2 || fromIndex + 1 == toIndex) {
-            // 0 or 1 items OR the last item, on its own page
-            displayingXToYOfZText.setText(String.format("Displaying %d of %d",
-                    sortedTransplantRequests.size(),
-                    sortedTransplantRequests.size()));
-        } else {
-            displayingXToYOfZText.setText(String.format("Displaying %d-%d of %d", fromIndex + 1, toIndex,
-                    sortedTransplantRequests.size()));
-        }
-        return new Pane();
-    }
-
-    /**
      * Filters the regions based on the RegionChoices current state and updates the organsToFilter Collection.
      */
     private void filterRegions() {
         regionsToFilter = EnumSet.noneOf(Region.class);
-
-        for (Region region : Region.values()) {
-            if (regionChoice.getCheckModel().isChecked(region)) {
-                regionsToFilter.add(region);
-            }
-        }
+        regionsToFilter.addAll(regionChoice.getCheckModel().getCheckedItems());
     }
 
     /**
@@ -298,12 +268,7 @@ public class TransplantsController extends SubController {
      */
     private void filterOrgans() {
         organsToFilter = EnumSet.noneOf(Organ.class);
-
-        for (Organ organ : Organ.values()) {
-            if (organChoice.getCheckModel().isChecked(organ)) {
-                organsToFilter.add(organ);
-            }
-        }
+        organsToFilter.addAll(organChoice.getCheckModel().getCheckedItems());
     }
 
     /**
@@ -313,22 +278,52 @@ public class TransplantsController extends SubController {
     private void filter() {
         filterRegions();
         filterOrgans();
-        filteredTransplantRequests.setPredicate(transplantRequest ->
-                (regionsToFilter.contains(transplantRequest.getClient().getRegion()) || regionsToFilter.size() == 0) &&
-                        (organsToFilter.contains(transplantRequest.getRequestedOrgan()) || organsToFilter.size() == 0));
-        refreshTable();
+        updateTransplantRequestList();
+    }
+
+    private void updateTransplantRequestList() {
+        PaginatedTransplantList newTransplantRequests = manager.getAllCurrentTransplantRequests(
+                pagination.getCurrentPageIndex() * ROWS_PER_PAGE,
+                ROWS_PER_PAGE,
+                regionsToFilter,
+                organsToFilter);
+
+        observableTransplantRequests.setAll(newTransplantRequests.getTransplantRequests());
+
+        int newPageCount = Math.max(1, (newTransplantRequests.getTotalResults() + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE);
+        if (pagination.getPageCount() != newPageCount) {
+            pagination.setPageCount(newPageCount);
+        }
+
+        setupDisplayingXToYOfZText(newTransplantRequests.getTotalResults());
     }
 
     /**
-     * Upon filtering update, update pagination
-     * Every refresh triggers the pagination to update and go to page zero
+     * Upon pagination, update the table to show the correct items
+     * @param pageIndex The page we're now on (starts at 0)
+     * @return An empty pane as pagination requires a non null return. Not used.
      */
-    private void refreshTable() {
-        int newPageCount = Math.max(1, (filteredTransplantRequests.size() + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE);
-        if (pagination.getPageCount() == newPageCount) {
-            createPage(pagination.getCurrentPageIndex());
+    private Node createPage(int pageIndex) {
+        updateTransplantRequestList();
+        return new Pane();
+    }
+
+    /**
+     * Set the text that advises the currently viewed and pending amount of results
+     * @param totalCount The total amount of current results matching filter options
+     */
+    private void setupDisplayingXToYOfZText(int totalCount) {
+        int fromIndex = pagination.getCurrentPageIndex() * ROWS_PER_PAGE;
+        int toIndex = Math.min(fromIndex + ROWS_PER_PAGE, totalCount);
+        if (totalCount < 2 || fromIndex + 1 == toIndex) {
+            // 0 or 1 items OR the last item, on its own page
+            displayingXToYOfZText.setText(String.format("Displaying %d of %d",
+                    totalCount,
+                    totalCount));
         } else {
-            pagination.setPageCount(newPageCount);
+            displayingXToYOfZText.setText(String.format("Displaying %d-%d of %d",
+                    fromIndex + 1, toIndex,
+                    totalCount));
         }
     }
 }

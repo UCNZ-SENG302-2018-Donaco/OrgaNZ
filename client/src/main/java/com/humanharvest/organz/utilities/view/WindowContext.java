@@ -1,6 +1,7 @@
 package com.humanharvest.organz.utilities.view;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.state.State;
 
 /**
  * A class to represent the parameters for a given window.
@@ -27,9 +28,6 @@ public class WindowContext {
         private boolean sidebarEnabled = true;
         private boolean isClinicianViewClientWindow;
         private Client viewClient;
-
-        public WindowContextBuilder() {
-        }
 
         public WindowContextBuilder setSidebarDisabled() {
             sidebarEnabled = false;
@@ -76,6 +74,6 @@ public class WindowContext {
     }
 
     public Client getViewClient() {
-        return viewClient;
+        return State.getClientManager().getClientByID(viewClient.getUid()).orElseThrow(IllegalStateException::new);
     }
 }

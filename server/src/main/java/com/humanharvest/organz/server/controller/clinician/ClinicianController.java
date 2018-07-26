@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Clinician;
+import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.actions.clinician.CreateClinicianAction;
 import com.humanharvest.organz.actions.clinician.DeleteClinicianAction;
@@ -110,11 +111,6 @@ public class ClinicianController {
 
         Optional<Clinician> clinician = State.getClinicianManager().getClinicianByStaffId(staffId);
 
-
-        if (editedClinician.getStaffId() != staffId) { // Cannot patch the unique id
-            throw new GlobalControllerExceptionHandler.InvalidRequestException();
-        }
-
         if (clinician.isPresent()) {
             System.out.println(State.getAuthenticationManager());
             State.getAuthenticationManager().verifyClinicianAccess(authToken, clinician.get());
@@ -160,8 +156,30 @@ public class ClinicianController {
             DeleteClinicianAction action = new DeleteClinicianAction(clinician.get(), State.getClinicianManager());
             ActionInvoker invoker = State.getActionInvoker(authToken);
             invoker.execute(action);
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.CREATED);
             // else 403
+        } else {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
+    /**
+     * Returns the specified clinicians history
+     * @param staffId identifier of the clinician
+     * @param authToken id token
+     * @return The list of HistoryItems
+     */
+    @GetMapping("/clinicians/{staffId}/history")
+    public ResponseEntity<List<HistoryItem>> getHistory(
+            @PathVariable int staffId,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {
+
+        Optional<Clinician> clinician = State.getClinicianManager().getClinicianByStaffId(staffId);
+        if (clinician.isPresent()) {
+            State.getAuthenticationManager().verifyClinicianAccess(authToken, clinician.get());
+            HttpHeaders headers = new HttpHeaders();
+            headers.setETag(clinician.get().getETag());
+            return new ResponseEntity<>(clinician.get().getChangesHistory(), headers, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
