@@ -16,6 +16,7 @@ import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.controller.ControllerTest;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
@@ -72,7 +73,8 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
             )
     };
 
-    private final Clinician testClinician = new Clinician("A", "B", "C", "D", Region.UNSPECIFIED.toString(), 0,
+    private final Clinician testClinician = new Clinician("A", "B", "C", "D", Region.UNSPECIFIED.toString(),
+            Country.NZ, 0,
             "E");
     private final Client testClient = new Client(1);
 

@@ -1,26 +1,26 @@
 package com.humanharvest.organz.state;
 
 import java.util.EnumSet;
+import java.util.Set;
 
+import com.humanharvest.organz.Config;
 import com.humanharvest.organz.utilities.enums.Country;
 
 public class ConfigManagerMemory implements ConfigManager {
 
-    private EnumSet<Country> allowedCountries;
+    private Config config;
 
     public ConfigManagerMemory() {
-        allowedCountries = EnumSet.noneOf(Country.class);
-        allowedCountries.add(Country.NZ);
-        allowedCountries.add(Country.ZA);
+        config = new Config();
     }
 
     @Override
-    public EnumSet<Country> getAllowedCountries() {
-        return allowedCountries;
+    public Set<Country> getAllowedCountries() {
+        return config.getCountries();
     }
 
     @Override
     public void setAllowedCountries(EnumSet<Country> allowedCountries) {
-        this.allowedCountries = allowedCountries;
+        config.setCountries(allowedCountries);
     }
 }

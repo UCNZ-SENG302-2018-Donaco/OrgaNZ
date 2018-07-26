@@ -1,8 +1,7 @@
 package com.humanharvest.organz.state;
 
 import java.util.EnumSet;
-import java.util.List;
-
+import javax.persistence.PersistenceException;
 import javax.persistence.RollbackException;
 
 import com.humanharvest.organz.Config;
@@ -13,35 +12,40 @@ import org.hibernate.Transaction;
 public class ConfigManagerDBPure implements ConfigManager {
 
     private final DBManager dbManager;
+    private Config configuration;
 
     public ConfigManagerDBPure() {
         this.dbManager = DBManager.getInstance();
-//
-//        Transaction trns = null;
-//
-//        try (org.hibernate.Session session = dbManager.getDBSession()) {
-//            trns = session.beginTransaction();
-//
-//            dbManager.getDBSession().update(State.getConfig());
-//
-//            trns.commit();
-//        } catch (RollbackException exc) {
-//            if (trns != null) {
-//                trns.rollback();
-//            }
-//        }
+        tryInsertDefault();
     }
 
-    @Override
-    public EnumSet<Country> getAllowedCountries() {
+    public ConfigManagerDBPure(DBManager dbManager) {
+        this.dbManager = dbManager;
+        tryInsertDefault();
+    }
+
+    private void tryInsertDefault() {
+        Config config = new Config();
+        EnumSet<Country> countries = EnumSet.noneOf(Country.class);
+        countries.add(Country.NZ);
+        config.setCountries(countries);
+        try {
+            dbManager.saveEntity(config);
+            configuration = config;
+        } catch (PersistenceException ignored) {
+            getConfig();
+        }
+    }
+
+    private Config getConfig() {
         Transaction trns = null;
-        List<Config> countries = null;
+        Config config = null;
 
         try (org.hibernate.Session session = dbManager.getDBSession()) {
             trns = session.beginTransaction();
-            countries = dbManager.getDBSession()
+            config = dbManager.getDBSession()
                     .createQuery("FROM Config", Config.class)
-                    .getResultList();
+                    .getSingleResult();
             trns.commit();
         } catch (RollbackException exc) {
             if (trns != null) {
@@ -49,25 +53,47 @@ public class ConfigManagerDBPure implements ConfigManager {
             }
         }
 
-        EnumSet<Country> countrySet = EnumSet.noneOf(Country.class);
-        if (countries != null) {
-            countrySet.addAll(countries.get(0).getCountries());
+        configuration = config;
+        return config;
+    }
+
+    @Override
+    public EnumSet<Country> getAllowedCountries() {
+        Transaction trns = null;
+        Config config = null;
+
+        try (org.hibernate.Session session = dbManager.getDBSession()) {
+            trns = session.beginTransaction();
+            config = dbManager.getDBSession()
+                    .createQuery("FROM Config", Config.class)
+                    .getSingleResult();
+            trns.commit();
+        } catch (RollbackException exc) {
+            if (trns != null) {
+                trns.rollback();
+            }
         }
 
-        return countrySet;
+        configuration = config;
+
+        EnumSet<Country> countries = EnumSet.noneOf(Country.class);
+        if (config != null) {
+            countries.addAll(config.getCountries());
+        }
+        return countries;
     }
 
     @Override
     public void setAllowedCountries(EnumSet<Country> countries) {
+
+        configuration.setCountries(countries);
+
         Transaction trns = null;
+
         try (org.hibernate.Session session = dbManager.getDBSession()) {
             trns = session.beginTransaction();
 
-            session.createQuery("DELETE FROM Config").executeUpdate();
-
-            for (Country country : countries) {
-                session.save(country);
-            }
+            dbManager.getDBSession().update(configuration);
 
             trns.commit();
         } catch (RollbackException exc) {

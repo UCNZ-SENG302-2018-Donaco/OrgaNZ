@@ -39,6 +39,7 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
 
     private List<TransplantRequest> sampleRequests = new ArrayList<>();
     private final Clinician testClinician = new Clinician("Mr", null, "Tester", "9 Fake St", Region.AUCKLAND.toString(),
+            Country.NZ,
             1000,
             "qwerty");
     private final Client testClient = new Client(1);

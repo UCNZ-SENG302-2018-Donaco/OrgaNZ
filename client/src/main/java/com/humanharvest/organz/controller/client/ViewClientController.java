@@ -154,8 +154,8 @@ public class ViewClientController extends ViewBaseController {
     }
 
     private void updateCountries() {
-        EnumSet<Country> countries = State.getConfigManager().getAllowedCountries();
-        System.out.println(State.getConfigManager().getClass().toString());
+        EnumSet<Country> countries = EnumSet.noneOf(Country.class);
+        countries.addAll(State.getConfigManager().getAllowedCountries());
         country.setItems(FXCollections.observableArrayList(countries));
         if (viewedClient != null && viewedClient.getCountry() != null) {
             country.setValue(viewedClient.getCountry());

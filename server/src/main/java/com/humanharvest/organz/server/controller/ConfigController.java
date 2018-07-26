@@ -1,6 +1,7 @@
 package com.humanharvest.organz.server.controller;
 
 import java.util.EnumSet;
+import java.util.Set;
 
 import com.humanharvest.organz.server.exceptions.GlobalControllerExceptionHandler;
 import com.humanharvest.organz.state.State;
@@ -24,7 +25,11 @@ public class ConfigController {
     public ResponseEntity<EnumSet<Country>> getCountries()
             throws GlobalControllerExceptionHandler.InvalidRequestException {
 
-        return new ResponseEntity<>(State.getConfigManager().getAllowedCountries(), HttpStatus.OK);
+        Set<Country> countries = State.getConfigManager().getAllowedCountries();
+        EnumSet<Country> countryEnumSet = EnumSet.noneOf(Country.class);
+        countryEnumSet.addAll(countries);
+
+        return new ResponseEntity<>(countryEnumSet, HttpStatus.OK);
     }
 
     /**
@@ -42,7 +47,7 @@ public class ConfigController {
         State.getAuthenticationManager().verifyAdminAccess(authToken);
         State.getConfigManager().setAllowedCountries(countries);
 
-        return new ResponseEntity(HttpStatus.CREATED);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
 }

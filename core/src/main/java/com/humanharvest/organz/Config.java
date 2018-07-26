@@ -2,7 +2,6 @@ package com.humanharvest.organz;
 
 import java.util.EnumSet;
 import java.util.Set;
-
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -17,7 +16,7 @@ import com.humanharvest.organz.utilities.enums.Country;
 public class Config {
 
     @Id
-    private Long id;
+    private int id = 0;
 
     @ElementCollection(targetClass = Country.class)
     @Enumerated(EnumType.STRING)
