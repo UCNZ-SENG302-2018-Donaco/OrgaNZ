@@ -20,7 +20,6 @@ import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,11 +73,11 @@ public class ConfigControllerTest {
     // ----------------------POST allowed countries-----------------------
 
     @Test
-    @Ignore()
     public void postCountriesOne() throws Exception {
         String json = "[ \"NL\" ]";
 
         mockMvc.perform(post("/config/countries")
+                .header("X-Auth-Token", VALID_AUTH)
                 .contentType(contentType)
                 .content(json))
                 .andExpect(status().isOk());
