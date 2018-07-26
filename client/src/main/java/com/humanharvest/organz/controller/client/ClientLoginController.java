@@ -63,10 +63,10 @@ public class ClientLoginController extends SubController {
                     setText(null);
                 } else {
                     String originalName = item.getFirstName() + " " + item.getLastName();
-                    if (Objects.equals(originalName, item.getPreferredName())) {
+                    if (Objects.equals(originalName, item.getPreferredNameFormatted())) {
                         setText(String.format("ID %d: %s %s", item.getUid(), item.getFirstName(), item.getLastName()));
                     } else {
-                        setText(String.format("ID %d: %s", item.getUid(), item.getPreferredName()));
+                        setText(String.format("ID %d: %s", item.getUid(), item.getPreferredNameFormatted()));
                     }
                 }
             }

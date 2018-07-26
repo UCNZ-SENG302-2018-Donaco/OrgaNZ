@@ -21,9 +21,9 @@ import com.humanharvest.organz.resolvers.actions.ActionResolverRest;
 import com.humanharvest.organz.resolvers.administrator.AdministratorResolver;
 import com.humanharvest.organz.resolvers.administrator.AdministratorResolverMemory;
 import com.humanharvest.organz.resolvers.administrator.AdministratorResolverRest;
-import com.humanharvest.organz.resolvers.administrator.ClientFileResolver;
-import com.humanharvest.organz.resolvers.administrator.ClientFileResolverMemory;
-import com.humanharvest.organz.resolvers.administrator.ClientFileResolverRest;
+import com.humanharvest.organz.resolvers.administrator.FileResolver;
+import com.humanharvest.organz.resolvers.administrator.FileResolverMemory;
+import com.humanharvest.organz.resolvers.administrator.FileResolverRest;
 import com.humanharvest.organz.resolvers.client.ClientResolver;
 import com.humanharvest.organz.resolvers.client.ClientResolverMemory;
 import com.humanharvest.organz.resolvers.client.ClientResolverRest;
@@ -55,11 +55,12 @@ public final class State {
     private static ClinicianManager clinicianManager;
     private static AdministratorManager administratorManager;
     private static AuthenticationManager authenticationManager;
+    private static ImageManager imageManager;
     private static CommandRunner commandRunner;
     private static ActionResolver actionResolver;
     private static ClinicianResolver clinicianResolver;
     private static AdministratorResolver administratorResolver;
-    private static ClientFileResolver clientFileResolver;
+    private static FileResolver fileResolver;
     private static ConfigManager configManager;
 
     private static Session session;
@@ -70,6 +71,7 @@ public final class State {
     private static String clinicianEtag = "";
     private static String administratorEtag = "";
     private static String token = "";
+    private static Clinician createdClinician;
     private static EnumSet<Country> allowedCountries;
 
     private State() {
@@ -99,7 +101,8 @@ public final class State {
             actionResolver = new ActionResolverRest();
             clinicianResolver = new ClinicianResolverRest();
             administratorResolver = new AdministratorResolverRest();
-            clientFileResolver = new ClientFileResolverRest();
+            fileResolver = new FileResolverRest();
+            imageManager = new ImageManagerRest();
         } else if (storageType == DataStorageType.MEMORY) {
             clientManager = new ClientManagerMemory();
             clientResolver = new ClientResolverMemory();
@@ -113,7 +116,8 @@ public final class State {
             actionResolver = new ActionResolverMemory();
             clinicianResolver = new ClincianResolverMemory();
             administratorResolver = new AdministratorResolverMemory();
-            clientFileResolver = new ClientFileResolverMemory();
+            fileResolver = new FileResolverMemory();
+            imageManager = new ImageManagerMemory();
         } else {
             throw new IllegalArgumentException("DataStorageType cannot be null.");
         }
@@ -275,7 +279,19 @@ public final class State {
         return administratorResolver;
     }
 
-    public static ClientFileResolver getClientFileResolver() {
-        return clientFileResolver;
+    public static FileResolver getFileResolver() {
+        return fileResolver;
+    }
+
+    public static ImageManager getImageManager() {
+        return imageManager;
+    }
+
+    public static Clinician getCreatedClinician() {
+        return createdClinician;
+    }
+
+    public static void setCreatedClinician(Clinician createdClinician) {
+        State.createdClinician = createdClinician;
     }
 }

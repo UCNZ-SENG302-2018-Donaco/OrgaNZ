@@ -30,7 +30,7 @@ public abstract class ClientAction extends Action {
     }
 
     private void recordInClientHistory() {
-        client.addToChangesHistory(getExecuteHistoryItem());
+        client.addToChangesHistory(getExecuteHistoryItem().clone());
     }
 
     private void eraseFromClientHistory() {

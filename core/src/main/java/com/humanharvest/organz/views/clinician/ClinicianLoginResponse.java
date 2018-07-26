@@ -9,11 +9,11 @@ import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.views.client.Views;
 
 public class ClinicianLoginResponse {
-    @JsonView(Views.Overview.class)
+    @JsonView(Views.Details.class)
     private final String token;
 
     @JsonInclude(Include.NON_NULL)
-    @JsonView(Views.Overview.class)
+    @JsonView(Views.Details.class)
     private Clinician userData;
 
     public ClinicianLoginResponse(String token) {

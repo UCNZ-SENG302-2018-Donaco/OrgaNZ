@@ -21,7 +21,7 @@ Feature: Does DELETE /administrators/ work?
     Given there is a test administrator with the username test1 and password test
     Given there is a test administrator with the username test2 and password test
     Given I have an etag from administrator test1
-    When I delete /administrators/test2
+    When I delete /administrators/test1
     Then the result is ok
 
   Scenario: Attempt to delete the default administrator

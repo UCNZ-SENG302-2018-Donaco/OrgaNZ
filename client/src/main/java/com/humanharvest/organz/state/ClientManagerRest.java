@@ -1,12 +1,18 @@
 package com.humanharvest.organz.state;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
 import com.humanharvest.organz.utilities.enums.ClientType;
@@ -18,6 +24,7 @@ import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
 import com.humanharvest.organz.utilities.type_converters.EnumSetToString;
 import com.humanharvest.organz.views.client.PaginatedClientList;
+import com.humanharvest.organz.views.client.PaginatedTransplantList;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -146,7 +153,47 @@ public class ClientManagerRest implements ClientManager {
 
     @Override
     public Collection<TransplantRequest> getAllCurrentTransplantRequests() {
-        //todo
-        throw new UnsupportedOperationException();
+        return getAllCurrentTransplantRequests(0, Integer.MAX_VALUE, null, null).getTransplantRequests();
+    }
+
+    @Override
+    public PaginatedTransplantList getAllCurrentTransplantRequests(Integer offset, Integer count,
+            Set<Region> regions, Set<Organ> organs) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+        httpHeaders.set("X-Auth-Token", State.getToken());
+        HttpEntity<String> entity = new HttpEntity<>(httpHeaders);
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(State.BASE_URI + "/clients/transplantRequests")
+                .queryParam("offset", offset)
+                .queryParam("count", count);
+
+        if (regions != null && !regions.isEmpty()) {
+            builder = builder.queryParam("region", regions.stream()
+                    .map(Region::name)
+                    .collect(Collectors.toList()).toString()
+                    .substring(1, regions.toString().length() - 1)
+                    .replaceAll(" ", ""));
+        }
+        if (organs != null && !organs.isEmpty()) {
+            builder = builder.queryParam("organs", organs.stream()
+                    .map(Organ::name)
+                    .collect(Collectors.toList()).toString()
+                    .substring(1, organs.toString().length() - 1)
+                    .replaceAll(" ", ""));
+        }
+
+        ResponseEntity<PaginatedTransplantList> response = State.getRestTemplate().exchange(
+                builder.toUriString(),
+                HttpMethod.GET,
+                entity,
+                PaginatedTransplantList.class);
+
+        return response.getBody();
+    }
+
+    @Override
+    public List<HistoryItem> getAllHistoryItems() {
+        return Collections.emptyList();
     }
 }

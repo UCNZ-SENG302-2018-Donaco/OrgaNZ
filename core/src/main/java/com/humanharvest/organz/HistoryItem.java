@@ -1,6 +1,7 @@
 package com.humanharvest.organz;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -14,7 +15,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
  */
 @Entity
 @Table
-public class HistoryItem {
+public class HistoryItem implements Cloneable {
 
     @Id
     @GeneratedValue
@@ -24,13 +25,19 @@ public class HistoryItem {
     private LocalDateTime timestamp;
 
     @JsonCreator
-    private HistoryItem() {
+    protected HistoryItem() {
     }
 
     public HistoryItem(String type, String details) {
         this.type = type;
         this.details = details;
         timestamp = LocalDateTime.now();
+    }
+
+    private HistoryItem(String type, String details, LocalDateTime timestamp) {
+        this.type = type;
+        this.details = details;
+        this.timestamp = timestamp;
     }
 
     public String getType() {
@@ -43,5 +50,30 @@ public class HistoryItem {
 
     public LocalDateTime getTimestamp() {
         return timestamp;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (!(obj instanceof HistoryItem)) {
+            return false;
+        }
+        HistoryItem other = (HistoryItem) obj;
+
+        return Objects.equals(other.details, details) &&
+                Objects.equals(other.type, type) &&
+                Objects.equals(other.timestamp, timestamp);
+    }
+
+    @Override
+    public int hashCode() {
+        return Long.hashCode(id);
+    }
+
+    @Override
+    public HistoryItem clone() {
+        return new HistoryItem(type, details, timestamp);
     }
 }

@@ -6,7 +6,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 
-public class ClientFileResolverRest implements ClientFileResolver {
+public class FileResolverRest implements FileResolver {
 
     @Override
     public byte[] exportClients() {
@@ -15,6 +15,19 @@ public class ClientFileResolverRest implements ClientFileResolver {
 
         return State.getRestTemplate().exchange(
                 State.BASE_URI + "clients/file",
+                HttpMethod.GET,
+                new HttpEntity<>(httpHeaders),
+                byte[].class
+        ).getBody();
+    }
+
+    @Override
+    public byte[] exportClinicians() {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.set("X-Auth-Token", State.getToken());
+
+        return State.getRestTemplate().exchange(
+                State.BASE_URI + "clinicians/file",
                 HttpMethod.GET,
                 new HttpEntity<>(httpHeaders),
                 byte[].class

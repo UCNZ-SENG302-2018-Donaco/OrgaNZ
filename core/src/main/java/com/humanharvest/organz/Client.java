@@ -101,34 +101,39 @@ public class Client implements ConcurrencyControlledEntity {
 
     @OneToMany(
             mappedBy = "client",
-            cascade = CascadeType.ALL
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
     )
     @JsonManagedReference
     private List<TransplantRequest> transplantRequests = new ArrayList<>();
 
     @OneToMany(
             mappedBy = "client",
-            cascade = CascadeType.ALL
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
     )
     @JsonManagedReference
     private List<MedicationRecord> medicationHistory = new ArrayList<>();
 
     @OneToMany(
             mappedBy = "client",
-            cascade = CascadeType.ALL
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
     )
     @JsonManagedReference
     private List<IllnessRecord> illnessHistory = new ArrayList<>();
 
     @OneToMany(
             mappedBy = "client",
-            cascade = CascadeType.ALL
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
     )
     @JsonManagedReference
     private List<ProcedureRecord> procedures = new ArrayList<>();
 
     @OneToMany(
-            cascade = CascadeType.ALL
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
     )
     private List<HistoryItem> changesHistory = new ArrayList<>();
 
@@ -190,22 +195,39 @@ public class Client implements ConcurrencyControlledEntity {
                 organsDonating.remove(entry.getKey());
             }
         }
+        updateModifiedTimestamp();
     }
 
     public void setTransplantRequests(List<TransplantRequest> requests) {
         transplantRequests = new ArrayList<>(requests);
+        for (TransplantRequest request : requests) {
+            request.setClient(this);
+        }
+        updateModifiedTimestamp();
     }
 
     public void setMedicationHistory(List<MedicationRecord> medicationHistory) {
         this.medicationHistory = new ArrayList<>(medicationHistory);
+        for (MedicationRecord record : medicationHistory) {
+            record.setClient(this);
+        }
+        updateModifiedTimestamp();
     }
 
     public void setIllnessHistory(List<IllnessRecord> illnessHistory) {
         this.illnessHistory = new ArrayList<>(illnessHistory);
+        for (IllnessRecord illnessRecord : illnessHistory) {
+            illnessRecord.setClient(this);
+        }
+        updateModifiedTimestamp();
     }
 
     public void setProcedures(List<ProcedureRecord> procedures) {
         this.procedures = new ArrayList<>(procedures);
+        for (ProcedureRecord record : procedures) {
+            record.setClient(this);
+        }
+        updateModifiedTimestamp();
     }
 
     /**
@@ -328,14 +350,14 @@ public class Client implements ConcurrencyControlledEntity {
         this.middleName = middleName;
     }
 
-    public String getPreferredName() {
+    public String getPreferredNameFormatted() {
         if (preferredName == null || preferredName.isEmpty()) {
             return getFullName();
         }
         return preferredName;
     }
 
-    public String getPreferredNameOnly() {
+    public String getPreferredName() {
         return preferredName;
     }
 
@@ -529,18 +551,12 @@ public class Client implements ConcurrencyControlledEntity {
     }
 
     /**
-     * todo: to be updated to use id once this is implemented
-     *
      * Returns the MedicationRecord for the client with the given index
      * @param index index of the MedicationRecord
      * @return the MedicationRecord with the given id
      */
     public MedicationRecord getMedicationRecord(int index) {
-        if (medicationHistory.size() > index) {
-            return medicationHistory.get(index);
-        } else {
-            return null;
-        }
+        return medicationHistory.stream().filter(record -> record.getId() == index).findFirst().orElse(null);
     }
 
     /**
@@ -579,6 +595,11 @@ public class Client implements ConcurrencyControlledEntity {
      */
     public List<IllnessRecord> getIllnesses() {
         return Collections.unmodifiableList(illnessHistory);
+    }
+
+    public IllnessRecord getIllnessById(long index) {
+        System.out.println(illnessHistory);
+        return illnessHistory.stream().filter(record -> record.getId() == index).findFirst().orElse(null);
     }
 
     /**

@@ -111,12 +111,6 @@ public class ClinicianController {
 
         Optional<Clinician> clinician = State.getClinicianManager().getClinicianByStaffId(staffId);
 
-
-        if (editedClinician.getStaffId() != staffId) {
-            // Cannot patch the unique id
-            throw new GlobalControllerExceptionHandler.InvalidRequestException();
-        }
-
         if (clinician.isPresent()) {
             State.getAuthenticationManager().verifyClinicianAccess(authToken, clinician.get());
 
@@ -161,7 +155,7 @@ public class ClinicianController {
             DeleteClinicianAction action = new DeleteClinicianAction(clinician.get(), State.getClinicianManager());
             ActionInvoker invoker = State.getActionInvoker(authToken);
             invoker.execute(action);
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.CREATED);
             // else 403
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

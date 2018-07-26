@@ -7,8 +7,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 import java.nio.charset.Charset;
 import java.time.LocalDate;
@@ -18,7 +18,6 @@ import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.server.Application;
 import com.humanharvest.organz.state.AuthenticationManagerFake;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.views.client.CreateMedicationRecordView;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -55,6 +54,7 @@ public class ClientMedicationsControllerTest {
         testClient.addMedicationRecord(testRecord);
         MedicationRecord testMedication2 = new MedicationRecord("Name2", LocalDate.now(), null);
         testClient.addMedicationRecord(testMedication2);
+        State.getClientManager().applyChangesTo(testClient);
 
     }
 
@@ -126,9 +126,9 @@ public class ClientMedicationsControllerTest {
 
     @Test
     public void testDeleteMedication() throws Exception {
-        mockMvc.perform(delete("/clients/1/medications/1")
+        mockMvc.perform(delete("/clients/1/medications/2")
                 .header("If-Match", testClient.getETag()))
-                .andExpect(status().isCreated());
+                .andExpect(status().isOk());
 
         mockMvc.perform(get("/clients/1/medications"))
                 .andExpect(status().isOk())
@@ -149,10 +149,10 @@ public class ClientMedicationsControllerTest {
     @Test
     public void startMedication() throws Exception {
         // Set to a past medication first
-        mockMvc.perform(post("/clients/1/medications/0/stop")
+        mockMvc.perform(post("/clients/1/medications/1/stop")
                 .header("If-Match", testClient.getETag()));
 
-        mockMvc.perform(post("/clients/1/medications/0/start")
+        mockMvc.perform(post("/clients/1/medications/1/start")
                 .header("If-Match", testClient.getETag()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(contentType))
@@ -168,7 +168,7 @@ public class ClientMedicationsControllerTest {
 
     @Test
     public void stopMedication() throws Exception {
-        mockMvc.perform(post("/clients/1/medications/0/stop")
+        mockMvc.perform(post("/clients/1/medications/1/stop")
                 .header("If-Match", testClient.getETag()))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(contentType))

@@ -89,19 +89,18 @@ public class CreateClinicianController extends SubController {
             if (id < -1) {
                 staffIdLabel.setTextFill(Color.RED);
                 update = false;
+
+            } else if (clinicianManager
+                    .doesStaffIdExist(Integer.parseInt(staffId.getText()))) { // If the staffId is in use
+                PageNavigator.showAlert(AlertType.ERROR, "Staff Id in Use", "This staff Id is already in use.");
+                staffIdLabel.setTextFill(Color.RED);
+                update = false;
+
             } else {
                 staffIdLabel.setTextFill(Color.BLACK);
             }
 
         } catch (NumberFormatException ex) {
-            staffIdLabel.setTextFill(Color.RED);
-            update = false;
-        }
-        System.out.println(staffId.getText());
-        System.out.println(clinicianManager.doesStaffIdExist(Integer.parseInt(staffId.getText())));
-        if (clinicianManager.doesStaffIdExist(Integer.parseInt(staffId.getText()))) { // If the staffId is in use
-            PageNavigator.showAlert(AlertType.ERROR, "Staff Id in Use", "This staff Id is already in use.");
-
             staffIdLabel.setTextFill(Color.RED);
             update = false;
         }
@@ -134,6 +133,7 @@ public class CreateClinicianController extends SubController {
                         password.getText());
 
                 State.getClinicianManager().addClinician(clinician);
+                State.setCreatedClinician(clinician);
 
                 HistoryItem save = new HistoryItem("CREATE CLINICIAN",
                         "Clinician " + fname.getText() + " " + lname.getText() + " with staff ID " + staffId.getText()

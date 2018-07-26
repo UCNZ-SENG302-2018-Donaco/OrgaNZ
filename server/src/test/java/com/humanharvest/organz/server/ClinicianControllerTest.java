@@ -182,23 +182,13 @@ public class ClinicianControllerTest {
                 .andExpect(jsonPath("$.modifiedOn", Matchers.anything()));
     }
 
-    // Attempting to patch the Id (it is a unique identifier)
-    @Test
-    public void invalidPatchId() throws Exception {
-        String json = "{\"staffId\": \"5\"}";
-        mockMvc.perform(patch("/clinicians/0")
-                .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(json))
-                .andExpect(status().isBadRequest());
-    }
-
     @Test
     public void patchNonExistingClinician() throws Exception {
         String json = "{\"password\": \"ok\", \"region\": \"AUCKLAND\"}";
         mockMvc.perform(patch("/clinicians/200")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
                 .content(json))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
     }
 
 
@@ -207,7 +197,7 @@ public class ClinicianControllerTest {
     public void validDelete() throws Exception {
         State.getClinicianManager().addClinician(testClinician);
         mockMvc.perform(delete("/clinicians/1"))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
     }
 
     // The default admin cannot be deleted (this is prevented on the client side anyway).
