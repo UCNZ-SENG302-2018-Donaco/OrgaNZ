@@ -21,6 +21,8 @@ import com.humanharvest.organz.utilities.enums.Region;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.validation.constraints.Null;
+
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
@@ -215,21 +217,32 @@ public class EditDeathDetailsController extends SubController {
         if (session.getLoggedInUserType() == UserType.CLIENT) {
             PageNavigator
                 .showAlert(AlertType.ERROR, "Invalid Access", "Clients cannot edit death details");
-        } else {
-            addChangeIfDifferent(modifyClientObject, client, "dateOfDeath",
-                deathDatePicker.getValue());
-            if(deathDatePicker.getValue().isAfter(LocalDate.now())){
-              PageNavigator.showAlert(AlertType.WARNING, "Incorrect Date",
-                  "Date of death cannot be in the future");
-            }
+        }
+        else
+            {
+
             try {
                 addChangeIfDifferent(modifyClientObject, client, "timeOfDeath",
                     LocalTime.parse(deathTimeField.getText()));
+                addChangeIfDifferent(modifyClientObject, client, "dateOfDeath",
+                        deathDatePicker.getValue());
+
             } catch (DateTimeParseException e) {
                 PageNavigator.showAlert(AlertType.WARNING, "Incorrect time format",
                     "Please enter the time of death"
-                        + " in 'HH:mm:ss'");
+                        + " in 'HH:mm:ss'. Time of death not saved.");
+                return;
+            } catch (NullPointerException e) {
+                PageNavigator.showAlert(AlertType.WARNING, "Required Date",
+                        "Date of death and time of death are required");
+                return;
+
             }
+                if(deathDatePicker.getValue().isAfter(LocalDate.now())){
+                    PageNavigator.showAlert(AlertType.WARNING, "Incorrect Date",
+                            "Date of death cannot be in the future");
+                    return;
+                }
             addChangeIfDifferent(modifyClientObject, client, "cityOfDeath", deathCity.getText());
             addChangeIfDifferent(modifyClientObject, client, "countryOfDeath",
                 deathCountry.getValue());
