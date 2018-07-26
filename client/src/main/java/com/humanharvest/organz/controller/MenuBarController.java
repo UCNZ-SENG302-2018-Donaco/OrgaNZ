@@ -357,10 +357,6 @@ public class MenuBarController extends SubController {
                         .text(String.format("Successfully saved all clients to file '%s'.", file.getName()))
                         .showInformation();
 
-                HistoryItem historyItem = new HistoryItem("SAVE",
-                        String.format("The system's current state was saved to file '%s'.", file.getName()));
-                State.getSession().addToSessionHistory(historyItem);
-
                 State.setUnsavedChanges(false);
                 PageNavigator.refreshAllWindows();
             }
@@ -404,7 +400,6 @@ public class MenuBarController extends SubController {
                             Files.readAllBytes(file.toPath()), format);
 
                     LOGGER.log(Level.INFO, message);
-                    State.getSession().addToSessionHistory(new HistoryItem("LOAD", message));
 
                     Notifications.create()
                             .title("Loaded Clients")

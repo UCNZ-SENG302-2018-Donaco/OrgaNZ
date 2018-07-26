@@ -262,8 +262,7 @@ public class AdministratorController {
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {
 
         State.getAuthenticationManager().verifyAdminAccess(authToken);
-        HttpHeaders headers = new HttpHeaders();
-        //TODO: return the full history or whatever we decide
-        return new ResponseEntity<>(new ArrayList<>(), headers, HttpStatus.OK);
+
+        return new ResponseEntity<>(State.getClientManager().getAllHistoryItems(), HttpStatus.OK);
     }
 }

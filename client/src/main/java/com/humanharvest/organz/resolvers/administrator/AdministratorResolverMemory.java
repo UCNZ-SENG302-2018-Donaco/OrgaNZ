@@ -1,5 +1,6 @@
 package com.humanharvest.organz.resolvers.administrator;
 
+import java.util.Collections;
 import java.util.List;
 
 import com.humanharvest.organz.Administrator;
@@ -27,6 +28,6 @@ public class AdministratorResolverMemory implements AdministratorResolver {
 
     @Override
     public List<HistoryItem> getHistory() {
-        return State.getSession().getSessionHistory();
+        return Collections.emptyList();
     }
 }

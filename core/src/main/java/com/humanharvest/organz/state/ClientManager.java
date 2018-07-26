@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.ClientNameSorter;
 import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
@@ -171,4 +172,6 @@ public interface ClientManager {
 
     PaginatedTransplantList getAllCurrentTransplantRequests(Integer offset, Integer count, Set<Region> regions,
             Set<Organ> organs);
+
+    List<HistoryItem> getAllHistoryItems();
 }
