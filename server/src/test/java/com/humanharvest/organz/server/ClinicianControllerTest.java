@@ -8,8 +8,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
-import java.nio.charset.Charset;
-
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.state.AuthenticationManagerFake;
 import com.humanharvest.organz.state.State;
@@ -42,7 +40,7 @@ public class ClinicianControllerTest {
         State.reset();
         State.setAuthenticationManager(new AuthenticationManagerFake());
         this.mockMvc = webAppContextSetup(webApplicationContext).build();
-        testClinician = new Clinician("Shawn", "", "Michaels", "1", Region.UNSPECIFIED.name(), null,1, "hi");
+        testClinician = new Clinician("Shawn", "", "Michaels", "1", Region.UNSPECIFIED.toString(), null,1, "hi");
         State.setAuthenticationManager(new AuthenticationManagerFake());
 
     }

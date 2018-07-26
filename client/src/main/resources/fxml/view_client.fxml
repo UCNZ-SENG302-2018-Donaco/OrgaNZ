@@ -114,8 +114,8 @@
                                 <TextField fx:id="pname" prefHeight="30.0" GridPane.columnIndex="2" GridPane.rowIndex="3" />
                                 <ChoiceBox fx:id="genderIdentity" maxWidth="1.7976931348623157E308" prefHeight="30.0" GridPane.columnIndex="4" GridPane.rowIndex="6" />
                                           <Label text="Country" GridPane.rowIndex="8" />
-                                          <ChoiceBox fx:id="country" onInputMethodTextChanged="#countryChanged" prefHeight="25.0" prefWidth="191.0" GridPane.columnIndex="2" GridPane.rowIndex="8" />
-                                          <TextField fx:id="regionTF" GridPane.columnIndex="2" GridPane.rowIndex="7" />
+                                          <ChoiceBox fx:id="country" prefWidth="150.0" GridPane.columnIndex="1" GridPane.rowIndex="8" />
+                                          <TextField fx:id="regionTF" GridPane.columnIndex="1" GridPane.rowIndex="7" />
                                           <Button fx:id="editDeathDetailsButton" mnemonicParsing="false" onAction="#editDeathDetails" text="View/Edit" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="CENTER" />
                               </children>
                            </GridPane>
