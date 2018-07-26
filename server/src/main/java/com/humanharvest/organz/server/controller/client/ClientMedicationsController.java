@@ -164,8 +164,12 @@ public class ClientMedicationsController {
                     .getClientManager());
             State.getActionInvoker(authToken).execute(action);
 
+            Client client1 = State.getClientManager()
+                    .getClientByID(client.get().getUid())
+                    .orElseThrow(IllegalStateException::new);
+
             HttpHeaders httpHeaders = new HttpHeaders();
-            httpHeaders.setETag(client.get().getETag());
+            httpHeaders.setETag(client1.getETag());
 
             return new ResponseEntity<>(httpHeaders, HttpStatus.OK);
         }
