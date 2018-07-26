@@ -2,9 +2,8 @@ package com.humanharvest.organz.state;
 
 import java.io.IOException;
 
-import org.springframework.http.HttpHeaders;
-
 public interface ImageManager {
+
     /**
      * Retrieves the image of the clients profile
      * @param uid id of the client
@@ -15,7 +14,7 @@ public interface ImageManager {
     /**
      * Retrive the default image for the clients profile
      * @return a byte array of the default image
-     * @throws IOException
+     * @throws IOException if there is an error loading default image
      */
     byte[] getDefaultImage() throws IOException;
 

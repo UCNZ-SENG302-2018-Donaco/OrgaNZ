@@ -111,12 +111,6 @@ public class ClinicianController {
 
         Optional<Clinician> clinician = State.getClinicianManager().getClinicianByStaffId(staffId);
 
-
-        if (editedClinician.getStaffId() != staffId) {
-            // Cannot patch the unique id
-            throw new GlobalControllerExceptionHandler.InvalidRequestException();
-        }
-
         if (clinician.isPresent()) {
             State.getAuthenticationManager().verifyClinicianAccess(authToken, clinician.get());
 

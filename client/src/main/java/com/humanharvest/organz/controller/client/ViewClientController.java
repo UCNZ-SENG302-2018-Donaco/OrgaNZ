@@ -239,7 +239,7 @@ public class ViewClientController extends ViewBaseController {
 
         }
         address.setText(viewedClient.getCurrentAddress());
-        fullName.setText(viewedClient.getPreferredName());
+        fullName.setText(viewedClient.getPreferredNameFormatted());
 
         creationDate.setText(formatter.format(viewedClient.getCreatedTimestamp()));
 

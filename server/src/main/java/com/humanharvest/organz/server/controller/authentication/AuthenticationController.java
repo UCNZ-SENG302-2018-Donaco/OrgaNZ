@@ -57,7 +57,7 @@ public class AuthenticationController {
      * Logs in a clinician.
      */
     @PostMapping("/login/clinician")
-    @JsonView(Views.Overview.class)
+    @JsonView(Views.Details.class)
     public ResponseEntity<ClinicianLoginResponse> loginClinician(
             @RequestBody ClinicianLoginRequest loginRequest,
             @RequestParam(required = false) String view) {

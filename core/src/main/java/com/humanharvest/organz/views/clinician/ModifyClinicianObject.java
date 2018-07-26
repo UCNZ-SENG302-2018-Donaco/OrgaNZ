@@ -16,7 +16,6 @@ public class ModifyClinicianObject extends ModifyBaseObject {
     private String middleName;
     private String workAddress;
     private String password;
-    private int staffId;
     private String region;
     private Country country;
 
@@ -63,15 +62,6 @@ public class ModifyClinicianObject extends ModifyBaseObject {
     public void setPassword(String password) {
         registerChange("password");
         this.password = password;
-    }
-
-    public int getStaffId() {
-        return staffId;
-    }
-
-    public void setStaffId(int staffId) {
-        registerChange("staffId");
-        this.staffId = staffId;
     }
 
     public String getRegion() {
