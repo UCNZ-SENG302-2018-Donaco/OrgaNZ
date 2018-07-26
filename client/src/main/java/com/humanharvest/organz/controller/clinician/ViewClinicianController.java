@@ -225,7 +225,7 @@ public class ViewClinicianController extends ViewBaseController {
         mname.setText(viewedClinician.getMiddleName());
         lname.setText(viewedClinician.getLastName());
         workAddress.setText(viewedClinician.getWorkAddress());
-        if (viewedClinician.getCountry() != null && viewedClinician.getCountry() == Country.NZ) {
+        if (viewedClinician.getCountry() == Country.NZ) {
             regionCB.setValue(Region.fromString(viewedClinician.getRegion()));
         } else {
             regionTF.setText(viewedClinician.getRegion());

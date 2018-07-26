@@ -20,7 +20,7 @@ public class StateTest extends BaseTest {
     @Test
     public void LoginClientValidTest() {
         Client client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
-
+        State.getClientManager().addClient(client);
         State.login(client);
 
         assertEquals(UserType.CLIENT, State.getSession().getLoggedInUserType());

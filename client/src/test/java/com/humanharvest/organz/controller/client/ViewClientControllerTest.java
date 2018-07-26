@@ -125,29 +125,4 @@ public class ViewClientControllerTest extends ControllerTest {
         assertEquals("a", testClient.getFirstName());
         assertEquals("b", testClient.getLastName());
     }
-
-    @Test
-    public void invalidChangesDOB() {
-        clickOn("#dob").type(KeyCode.BACK_SPACE)
-                .type(KeyCode.BACK_SPACE)
-                .type(KeyCode.BACK_SPACE)
-                .type(KeyCode.BACK_SPACE)
-                .type(KeyCode.BACK_SPACE)
-                .type(KeyCode.BACK_SPACE)
-                .type(KeyCode.BACK_SPACE)
-                .type(KeyCode.BACK_SPACE)
-                .type(KeyCode.BACK_SPACE)
-                .type(KeyCode.BACK_SPACE);
-        clickOn("#applyButton");
-        assertEquals(LocalDate.now().minusDays(10), testClient.getDateOfBirth());
-    }
-
-    @Test
-    public void invalidChangesDODAfterToday() {
-        testClient = new Client("a", "", "b", LocalDate.now().minusDays(10), 1);
-        clickOn("#dod").write(LocalDate.now().plusDays(1).format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-        clickOn("#applyButton");
-        press(KeyCode.ENTER);
-        assertNull(testClient.getDateOfDeath());
-    }
 }
