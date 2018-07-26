@@ -187,7 +187,7 @@ public class ClientController {
         State.getAuthenticationManager().verifyClientAccess(authToken, client);
 
         //Validate the request, if there are any errors an exception will be thrown.
-        if (!ModifyClientValidator.isValid(modifyClientObject)) {
+        if (!ModifyClientValidator.isValid(client, modifyClientObject)) {
             throw new InvalidRequestException();
         }
 

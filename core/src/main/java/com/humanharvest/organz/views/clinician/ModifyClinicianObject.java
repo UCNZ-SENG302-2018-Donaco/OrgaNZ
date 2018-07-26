@@ -21,7 +21,6 @@ public class ModifyClinicianObject extends ModifyBaseObject {
     private String region;
     private Country country;
 
-
     public String getFirstName() {
         return firstName;
     }
@@ -83,6 +82,15 @@ public class ModifyClinicianObject extends ModifyBaseObject {
     public void setRegion(String region) {
         registerChange("region");
         this.region = region;
+    }
+
+    public Country getCountry() {
+        return country;
+    }
+
+    public void setCountry(Country country) {
+        registerChange("country");
+        this.country = country;
     }
 
     public String toString() {

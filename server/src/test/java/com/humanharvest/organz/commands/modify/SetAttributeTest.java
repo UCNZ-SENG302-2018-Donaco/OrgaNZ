@@ -1,6 +1,6 @@
 package com.humanharvest.organz.commands.modify;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 import java.time.LocalDate;
@@ -12,10 +12,12 @@ import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.ClientManagerMemory;
 import com.humanharvest.organz.utilities.enums.BloodType;
+import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Region;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import picocli.CommandLine;
 
 public class SetAttributeTest extends BaseTest {
@@ -23,12 +25,10 @@ public class SetAttributeTest extends BaseTest {
     private ClientManager spyClientManager;
     private SetAttribute spySetAttribute;
 
-    @Before
+    @BeforeEach
     public void initTest() {
         spyClientManager = spy(new ClientManagerMemory());
-
         spySetAttribute = spy(new SetAttribute(spyClientManager, new ActionInvoker()));
-
     }
 
     @Test
@@ -67,7 +67,7 @@ public class SetAttributeTest extends BaseTest {
 
         CommandLine.run(spySetAttribute, System.out, inputs);
 
-        assertEquals("NewFirst", client.getFirstName());
+        Assertions.assertEquals("NewFirst", client.getFirstName());
     }
 
     @Test
@@ -78,7 +78,7 @@ public class SetAttributeTest extends BaseTest {
 
         CommandLine.run(spySetAttribute, System.out, inputs);
 
-        assertEquals(BloodType.O_POS, client.getBloodType());
+        Assertions.assertEquals(BloodType.O_POS, client.getBloodType());
     }
 
     @Test
@@ -97,7 +97,7 @@ public class SetAttributeTest extends BaseTest {
         String[] inputs = {"-u", "1", "--gender", "Male"};
         CommandLine.run(spySetAttribute, System.out, inputs);
 
-        assertEquals(Gender.MALE, client.getGender());
+        Assertions.assertEquals(Gender.MALE, client.getGender());
     }
 
     @Test
@@ -117,9 +117,8 @@ public class SetAttributeTest extends BaseTest {
 
         CommandLine.run(spySetAttribute, System.out, inputs);
 
-        assertEquals(LocalDate.of(2038, 1, 20), client.getDateOfDeath());
+        Assertions.assertEquals(LocalDate.of(2038, 1, 20), client.getDateOfDeath());
     }
-
 
     @Test
     public void setAttributeInvalidDateTest() {
@@ -139,7 +138,7 @@ public class SetAttributeTest extends BaseTest {
 
         CommandLine.run(spySetAttribute, System.out, inputs);
 
-        assertEquals(Region.CANTERBURY, client.getRegion());
+        Assertions.assertEquals(Region.CANTERBURY.toString(), client.getRegion());
     }
 
     @Test
@@ -151,17 +150,20 @@ public class SetAttributeTest extends BaseTest {
 
         CommandLine.run(spySetAttribute, System.out, inputs);
 
-        assertEquals(Region.WEST_COAST, client.getRegion());
+        Assertions.assertEquals(Region.WEST_COAST.toString(), client.getRegion());
     }
 
     @Test
     public void setAttributeInvalidRegionTest() {
+        Client client = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
+        client.setCountry(Country.NZ);
+        client.setRegion(Region.CANTERBURY.toString());
+        when(spyClientManager.getClientByID(anyInt())).thenReturn(Optional.of(client));
+
         String[] inputs = {"-u", "1", "--region", "notvalid"};
 
         CommandLine.run(spySetAttribute, System.out, inputs);
 
-        verify(spySetAttribute, times(0)).run();
+        assertTrue(Region.CANTERBURY.toString().equalsIgnoreCase(client.getRegion()));
     }
-
-
 }

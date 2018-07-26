@@ -45,7 +45,7 @@ public class ClientTransplantRequestsControllerTest {
     private MockMvc mockMvc;
     private Client testClient;
     private TransplantRequest testTransplantRequest;
-    private int transplantRequestIndex;
+    private long id;
     private String validTransplantRequestJson;
     private String VALID_AUTH = "valid auth";
     private String INVALID_AUTH = "invalid auth";
@@ -60,8 +60,12 @@ public class ClientTransplantRequestsControllerTest {
         testClient = new Client("Jan", "Michael", "Vincent", LocalDate.now(), 1);
         testTransplantRequest = new TransplantRequest(testClient, Organ.LIVER);
         testClient.addTransplantRequest(testTransplantRequest);
-        transplantRequestIndex = 0;
-        assertEquals(testTransplantRequest, testClient.getTransplantRequests().get(transplantRequestIndex));
+
+        State.getClientManager().applyChangesTo(testClient);
+        id = testTransplantRequest.getId();
+
+        assertEquals(testTransplantRequest, testClient.getTransplantRequestById(id).orElseThrow
+                (NullPointerException::new));
         State.getClientManager().addClient(testClient);
 
         // Create mock authentication manager that verifies all clinicianOrAdmins
@@ -253,7 +257,7 @@ public class ClientTransplantRequestsControllerTest {
         requestDateString = requestDateString.replaceAll("0+$", "");
 
         // Perform patch
-        mockMvc.perform(patch("/clients/" + testClient.getUid() + "/transplantRequests/" + transplantRequestIndex)
+        mockMvc.perform(patch("/clients/" + testClient.getUid() + "/transplantRequests/" + id)
                 .header("If-Match", testClient.getETag())
                 .header("X-Auth-Token", VALID_AUTH)
                 .contentType(contentType)
@@ -280,7 +284,7 @@ public class ClientTransplantRequestsControllerTest {
         requestDateString = requestDateString.replaceAll("0+$", "");
 
         // Perform patch
-        mockMvc.perform(patch("/clients/" + testClient.getUid() + "/transplantRequests/" + transplantRequestIndex)
+        mockMvc.perform(patch("/clients/" + testClient.getUid() + "/transplantRequests/" + id)
                 .header("If-Match", testClient.getETag())
                 .header("X-Auth-Token", VALID_AUTH)
                 .contentType(contentType)
@@ -301,7 +305,7 @@ public class ClientTransplantRequestsControllerTest {
         requestDateString = requestDateString.replaceAll("0+$", "");
 
         // Perform patch
-        mockMvc.perform(patch("/clients/" + testClient.getUid() + "/transplantRequests/" + transplantRequestIndex)
+        mockMvc.perform(patch("/clients/" + testClient.getUid() + "/transplantRequests/" + id)
                 .header("If-Match", testClient.getETag())
                 .header("X-Auth-Token", INVALID_AUTH)
                 .contentType(contentType)
@@ -322,7 +326,7 @@ public class ClientTransplantRequestsControllerTest {
         requestDateString = requestDateString.replaceAll("0+$", "");
 
         // Perform patch
-        mockMvc.perform(patch("/clients/" + testClient.getUid() + "/transplantRequests/" + transplantRequestIndex)
+        mockMvc.perform(patch("/clients/" + testClient.getUid() + "/transplantRequests/" + id)
                 .header("If-Match", testClient.getETag() + "X")
                 .header("X-Auth-Token", VALID_AUTH)
                 .contentType(contentType)

@@ -9,6 +9,7 @@ import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.ProcedureRecord;
 import com.humanharvest.organz.utilities.enums.BloodType;
+import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
@@ -54,7 +55,7 @@ public class DBManagerTest extends BaseTest {
         dbManager.saveEntity(client);
 
         Clinician clinician = new Clinician("Testwoman", "Malorie", "Testerson", "The Moon", Region.NELSON.name(),
-                1001, "therecanbeonlyone");
+                Country.NZ, 1001, "therecanbeonlyone");
         dbManager.saveEntity(clinician);
     }
 }

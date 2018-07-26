@@ -1,6 +1,7 @@
 package com.humanharvest.organz.actions.clinician;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.Clinician;
@@ -21,12 +22,12 @@ public class ModifyClinicianActionTest extends BaseTest {
     public void init() {
         invoker = new ActionInvoker();
         manager = new ClinicianManagerMemory();
-        baseClinician = new Clinician("First", null, "Last", "Address", Region.UNSPECIFIED.name(), 1, "pass");
+        baseClinician = new Clinician("First", null, "Last", "Address", Region.UNSPECIFIED.name(), null, 1, "pass");
         manager.addClinician(baseClinician);
     }
 
     @Test
-    public void CheckClinicianModifyNameTest() throws Exception {
+    public void CheckClinicianModifyNameTest() throws NoSuchMethodException, NoSuchFieldException {
         ModifyClinicianAction action = new ModifyClinicianAction(baseClinician,manager);
         action.addChange("setFirstName", baseClinician.getFirstName(), "New");
         invoker.execute(action);
@@ -34,7 +35,7 @@ public class ModifyClinicianActionTest extends BaseTest {
     }
 
     @Test
-    public void CheckClinicianModifyUndoNameTest() throws Exception {
+    public void CheckClinicianModifyUndoNameTest() throws NoSuchMethodException, NoSuchFieldException {
         ModifyClinicianAction action = new ModifyClinicianAction(baseClinician,manager);
         action.addChange("setFirstName", baseClinician.getFirstName(), "New");
         invoker.execute(action);
@@ -43,35 +44,35 @@ public class ModifyClinicianActionTest extends BaseTest {
     }
 
     @Test
-    public void CheckClinicianMultipleUpdateValuesTest() throws Exception {
+    public void CheckClinicianMultipleUpdateValuesTest() throws NoSuchMethodException, NoSuchFieldException {
         ModifyClinicianAction action = new ModifyClinicianAction(baseClinician,manager);
         action.addChange("setFirstName", baseClinician.getFirstName(), "New");
-        action.addChange("setRegion", baseClinician.getRegion(), Region.CANTERBURY);
+        action.addChange("setRegion", baseClinician.getRegion(), Region.CANTERBURY.toString());
         invoker.execute(action);
         assertEquals("New", manager.getClinicians().get(1).getFirstName());
-        assertEquals(Region.CANTERBURY, manager.getClinicians().get(1).getRegion());
+        assertTrue(Region.CANTERBURY.toString().equalsIgnoreCase(manager.getClinicians().get(1).getRegion()));
     }
 
     @Test
-    public void CheckClinicianMultipleUpdateValuesUndoTest() throws Exception {
+    public void CheckClinicianMultipleUpdateValuesUndoTest() throws NoSuchMethodException, NoSuchFieldException {
         ModifyClinicianAction action = new ModifyClinicianAction(baseClinician,manager);
         action.addChange("setFirstName", baseClinician.getFirstName(), "New");
-        action.addChange("setRegion", baseClinician.getRegion(), Region.CANTERBURY);
+        action.addChange("setRegion", baseClinician.getRegion(), Region.CANTERBURY.toString());
         invoker.execute(action);
         invoker.undo();
         assertEquals("First", manager.getClinicians().get(1).getFirstName());
-        assertEquals(Region.UNSPECIFIED, manager.getClinicians().get(1).getRegion());
+        assertTrue(Region.UNSPECIFIED.toString().equalsIgnoreCase(manager.getClinicians().get(1).getRegion()));
     }
 
     @Test(expected = NoSuchMethodException.class)
-    public void InvalidSetterFieldTest() throws Exception {
+    public void InvalidSetterFieldTest() throws NoSuchMethodException, NoSuchFieldException {
         ModifyClinicianAction action = new ModifyClinicianAction(baseClinician,manager);
         action.addChange("notAField", "Old", "New");
         invoker.execute(action);
     }
 
     @Test(expected = NoSuchFieldException.class)
-    public void InvalidSetterAttributeTest() throws Exception {
+    public void InvalidSetterAttributeTest() throws NoSuchMethodException, NoSuchFieldException {
         ModifyClinicianAction action = new ModifyClinicianAction(baseClinician,manager);
         action.addChange("setFirstName", 1, "New");
         invoker.execute(action);

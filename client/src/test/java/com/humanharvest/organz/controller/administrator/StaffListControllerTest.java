@@ -8,6 +8,7 @@ import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.controller.ControllerTest;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
@@ -17,7 +18,7 @@ public class StaffListControllerTest extends ControllerTest {
 
     private Administrator admin1 = new Administrator("admin1", "password");
     private Administrator admin2 = new Administrator("admin2", "password");
-    private Clinician clinician1 = new Clinician("First", "Middle", "Last", "UC", Region.CANTERBURY.toString(), 50,
+    private Clinician clinician1 = new Clinician("First", "Middle", "Last", "UC", Region.CANTERBURY.toString(), Country.NZ, 50,
             "password");
 
     @Override

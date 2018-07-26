@@ -18,7 +18,7 @@ import org.testfx.api.FxRobotException;
 
 public class ViewClinicianControllerTest extends ControllerTest {
 
-    private final Clinician testClinician = new Clinician("x", "y", "z", "t", Region.UNSPECIFIED.toString(), 3, "p");
+    private final Clinician testClinician = new Clinician("x", "y", "z", "t", Region.UNSPECIFIED.toString(), null, 3, "p");
 
     @Override
     protected Page getPage() {

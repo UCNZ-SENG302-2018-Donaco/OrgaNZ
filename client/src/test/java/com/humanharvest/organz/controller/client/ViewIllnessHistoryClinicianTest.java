@@ -72,7 +72,8 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
             )
     };
 
-    private final Clinician testClinician = new Clinician("A", "B", "C", "D", Region.UNSPECIFIED.toString(), 0, "E");
+    private final Clinician testClinician = new Clinician("A", "B", "C", "D", Region.UNSPECIFIED.toString(), 0,
+            "E");
     private final Client testClient = new Client(1);
 
     @Override
@@ -84,10 +85,12 @@ public class ViewIllnessHistoryClinicianTest extends ControllerTest {
     protected void initState() {
         State.reset();
         State.login(testClinician);
+        State.getClientManager().addClient(testClient);
         mainController.setWindowContext(new WindowContext.WindowContextBuilder()
                 .setAsClinicianViewClientWindow()
                 .viewClient(testClient)
                 .build());
+        State.getClientManager().addClient(testClient);
         resetTestClientIllnessHistory();
     }
 

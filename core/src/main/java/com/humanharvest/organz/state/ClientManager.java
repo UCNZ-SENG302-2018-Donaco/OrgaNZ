@@ -1,7 +1,5 @@
 package com.humanharvest.organz.state;
 
-import static com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum.NAME;
-
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Comparator;
@@ -28,6 +26,7 @@ public interface ClientManager {
 
     List<Client> getClients();
 
+    // TODO: Change so regions isn't an enum
     default PaginatedClientList getClients(
             String q,
             Integer offset,
@@ -54,7 +53,7 @@ public interface ClientManager {
         //Setup the primarySorter for the given sort option. Default to NAME if none is given
         Comparator<Client> primarySorter;
         if (sortOption == null) {
-            sortOption = NAME;
+            sortOption = ClientSortOptionsEnum.NAME;
         }
         switch (sortOption) {
             case ID:

@@ -38,7 +38,6 @@ import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.ClientType;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
 import com.humanharvest.organz.views.client.Views;
@@ -66,10 +65,10 @@ public class Client implements ConcurrencyControlledEntity {
     @JsonView(Views.Details.class)
     private String currentAddress;
 
-    @JsonView(Views.Details.class)
+    @JsonView(Views.Overview.class)
     private String region;
     @Enumerated(EnumType.STRING)
-    @JsonView(Views.Details.class)
+    @JsonView(Views.Overview.class)
     private Country country;
     @Enumerated(EnumType.STRING)
     @JsonView(Views.Overview.class)
@@ -206,7 +205,7 @@ public class Client implements ConcurrencyControlledEntity {
     }
 
     public void setProcedures(List<ProcedureRecord> procedures) {
-        this.procedures = procedures;
+        this.procedures = new ArrayList<>(procedures);
     }
 
     /**
@@ -794,7 +793,7 @@ public class Client implements ConcurrencyControlledEntity {
         return transplantRequests;
     }
 
-    public Optional<TransplantRequest> getTransplantRequestById(int id){
+    public Optional<TransplantRequest> getTransplantRequestById(long id){
         return transplantRequests.stream()
                 .filter(transplantRequest -> transplantRequest.getId() == id)
                 .findFirst();
@@ -856,6 +855,7 @@ public class Client implements ConcurrencyControlledEntity {
             return String.format("\"%d\"", modifiedTimestamp.hashCode());
         }
     }
+
     /**
      * Does the specified Client match the ClientType
      * @param type The ClientType to match

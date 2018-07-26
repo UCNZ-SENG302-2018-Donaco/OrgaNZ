@@ -221,6 +221,7 @@ public final class CucumberSteps implements En {
                             "test",
                             "test",
                             Region.UNSPECIFIED.name(),
+                            null,
                             staffId,
                             password);
                     State.getClinicianManager().addClinician(clinician);

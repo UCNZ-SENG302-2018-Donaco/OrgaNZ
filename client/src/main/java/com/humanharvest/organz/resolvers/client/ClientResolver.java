@@ -64,10 +64,7 @@ public interface ClientResolver {
 
     Map<Organ, Boolean> modifyOrganDonation(Client client, Map<Organ, Boolean> changes);
 
-    TransplantRequest resolveTransplantRequest(
-            Client client,
-            ResolveTransplantRequestObject request,
-            int transplantRequestIndex);
+    TransplantRequest resolveTransplantRequest(Client client, ResolveTransplantRequestObject request);
 
     Client modifyClientDetails(Client client, ModifyClientObject modifyClientObject);
 
