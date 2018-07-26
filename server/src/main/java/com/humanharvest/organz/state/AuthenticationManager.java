@@ -2,6 +2,7 @@ package com.humanharvest.organz.state;
 
 import java.time.Instant;
 import java.util.Date;
+import java.util.Objects;
 import java.util.Optional;
 
 import com.humanharvest.organz.Administrator;
@@ -95,7 +96,7 @@ public class AuthenticationManager {
             Optional<Client> client = State.getClientManager().getClientByID(id);
             if (!client.isPresent()) {
                 throw new AuthenticationException("X-Auth-Token refers to an invalid client");
-            } else if (!client.get().equals(viewedClient)) {
+            } else if (!Objects.equals(client.get(), viewedClient)) {
                 throw new AuthenticationException("X-Auth-Token refers to a different client");
             }
             return true;
@@ -121,7 +122,7 @@ public class AuthenticationManager {
             Optional<Clinician> clinician = State.getClinicianManager().getClinicianByStaffId(staffId);
             if (!clinician.isPresent()) {
                 throw new AuthenticationException("X-Auth-Token refers to an invalid clinician");
-            } else if (!clinician.get().equals(viewedClinician)) {
+            } else if (!Objects.equals(clinician.get(), viewedClinician)) {
                 throw new AuthenticationException("X-Auth-Token refers to a different clinician");
             }
             return true;
@@ -149,11 +150,11 @@ public class AuthenticationManager {
         }
 
         try {
-            Claims c = Jwts.parser()
+            Claims body = Jwts.parser()
                     .setSigningKey(getSecret())
                     .parseClaimsJws(token)
                     .getBody();
-            return c.getId();
+            return body.getId();
         } catch (SignatureException | MalformedJwtException e) {
             throw new AuthenticationException("X-Auth-Token is invalid or expired", e);
         }
