@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.clinician.ViewClinicianController">
+<VBox prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.151" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.clinician.ViewClinicianController">
   <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
   <HBox fx:id="menuBarPane" maxHeight="20.0" minHeight="-Infinity" />
     <SplitPane VBox.vgrow="ALWAYS">
@@ -64,7 +64,7 @@
                   <TextField fx:id="mname" layoutX="122.0" layoutY="191.0" prefHeight="30.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                   <TextField fx:id="lname" layoutX="122.0" layoutY="136.0" prefHeight="30.0" GridPane.columnIndex="1" GridPane.rowIndex="2" />
                   <TextField fx:id="workAddress" prefHeight="30.0" GridPane.columnIndex="3" GridPane.rowIndex="1" />
-                  <ChoiceBox fx:id="region" maxWidth="1.7976931348623157E308" prefHeight="30.0" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                  <ChoiceBox fx:id="regionCB" maxWidth="1.7976931348623157E308" prefHeight="30.0" GridPane.columnIndex="3" GridPane.rowIndex="2" />
                   <Label layoutX="41.0" text="Profile created on:" GridPane.columnIndex="2" GridPane.rowIndex="4" />
                   <Label fx:id="fnameLabel" layoutY="85.0" text="First name:" />
                   <Label fx:id="mnameLabel" layoutY="196.0" text="Middle name:" GridPane.rowIndex="1" />
