@@ -144,7 +144,7 @@ public class EditDeathDetailsController extends SubController{
                 }
                 if (client.getRegionOfDeath() !=  null) {
                     if (client.getCountryOfDeath() == Country.NZ) {
-                        deathRegionCB.setValue(deathRegionCB.getValue());
+                        deathRegionCB.setValue(Region.fromString(client.getRegionOfDeath()));
                     }
                     else {
                         deathRegionTF.setText(client.getRegionOfDeath());
@@ -216,7 +216,7 @@ public class EditDeathDetailsController extends SubController{
             addChangeIfDifferent(modifyClientObject, client, "cityOfDeath", deathCity.getText());
             addChangeIfDifferent(modifyClientObject, client, "countryOfDeath", deathCountry.getValue());
 
-            if (client.getCountryOfDeath() == Country.NZ) {
+            if (deathCountry.getValue() == Country.NZ) {
                 addChangeIfDifferent(modifyClientObject, client, "regionOfDeath", deathRegionCB.getValue().toString());
             }
             else {
