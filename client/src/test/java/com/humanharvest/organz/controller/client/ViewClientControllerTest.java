@@ -13,6 +13,7 @@ import com.humanharvest.organz.Client;
 import com.humanharvest.organz.controller.ControllerTest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.BloodType;
+import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.view.Page;
@@ -45,6 +46,7 @@ public class ViewClientControllerTest extends ControllerTest {
         testClient.setLastName("b");
         testClient.setDateOfBirth(LocalDate.now().minusDays(10));
         testClient.setBloodType(BloodType.A_POS);
+        testClient.setCountry(Country.NZ);
         testClient.setRegion(Region.AUCKLAND.toString());
         testClient.setHeight(180);
         testClient.setWeight(80);
@@ -63,7 +65,7 @@ public class ViewClientControllerTest extends ControllerTest {
         clickOn("#mname").write("m");
         clickOn("#pname").type(KeyCode.BACK_SPACE).type(KeyCode.BACK_SPACE).type(KeyCode.BACK_SPACE).write("p");
         clickOn("#dod").write(LocalDate.now().minusDays(2).format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
-        clickOn("#region");
+        clickOn("#regionCB");
         clickOn("West Coast");
         clickOn("#gender");
         clickOn("Male");
@@ -77,7 +79,7 @@ public class ViewClientControllerTest extends ControllerTest {
         assertEquals("m", testClient.getMiddleName());
         assertEquals("p", testClient.getPreferredNameFormatted());
         assertNotNull(testClient.getDateOfDeath());
-        assertEquals(Region.WEST_COAST, testClient.getRegion());
+        assertEquals(Region.WEST_COAST.toString(), testClient.getRegion());
         assertEquals(Gender.MALE, testClient.getGender());
         assertEquals(Gender.FEMALE, testClient.getGenderIdentity());
 

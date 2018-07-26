@@ -44,6 +44,7 @@ import org.testfx.api.FxRobot;
 import org.testfx.util.NodeQueryUtils;
 import org.testfx.util.WaitForAsyncUtils;
 
+@Ignore
 public class TransplantsControllerTest extends ControllerTest {
 
     // Test data
