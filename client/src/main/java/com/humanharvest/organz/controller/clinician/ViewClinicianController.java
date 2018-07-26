@@ -42,7 +42,6 @@ public class ViewClinicianController extends ViewBaseController {
 
     private static final Logger LOGGER = Logger.getLogger(ViewClinicianController.class.getName());
 
-    private final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy\nh:mm:ss a");
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
             .withZone(ZoneId.systemDefault());
 
