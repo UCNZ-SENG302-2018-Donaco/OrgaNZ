@@ -46,7 +46,7 @@ public class AuthenticationController {
         String token = State.getAuthenticationManager().generateClientToken(client.get().getUid());
 
         ClientLoginResponse loginResponse =
-                ("full".equals(view) || view == null) ?
+                "full".equals(view) || view == null ?
                         new ClientLoginResponse(token, client.get()) :
                         new ClientLoginResponse(token);
 
@@ -77,7 +77,7 @@ public class AuthenticationController {
         String token = State.getAuthenticationManager().generateClinicianToken(clinician.get().getStaffId());
 
         ClinicianLoginResponse loginResponse =
-                ("full".equals(view) || view == null) ?
+                "full".equals(view) || view == null ?
                         new ClinicianLoginResponse(token, clinician.get()) :
                         new ClinicianLoginResponse(token);
 
@@ -108,7 +108,7 @@ public class AuthenticationController {
         String token = State.getAuthenticationManager().generateAdministratorToken(administrator.get().getUsername());
 
         AdministratorLoginResponse loginResponse =
-                ("full".equals(view) || view == null) ?
+                "full".equals(view) || view == null ?
                         new AdministratorLoginResponse(token, administrator.get()) :
                         new AdministratorLoginResponse(token);
 

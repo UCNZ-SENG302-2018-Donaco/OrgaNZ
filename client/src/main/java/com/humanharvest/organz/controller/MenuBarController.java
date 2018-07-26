@@ -73,6 +73,7 @@ public class MenuBarController extends SubController {
     public MenuItem closeItem;
     public MenuItem createClientItem;
     public MenuItem refreshCacheItem;
+    public MenuItem settings;
 
     public SeparatorMenuItem topSeparator;
 
@@ -164,6 +165,7 @@ public class MenuBarController extends SubController {
         hideMenuItem(loadItem);
         hideMenuItem(viewAdministratorItem);
         hideMenuItem(cliItem);
+        hideMenuItem(settings);
     }
 
     /**
@@ -338,6 +340,12 @@ public class MenuBarController extends SubController {
         PageNavigator.loadPage(Page.COMMAND_LINE, mainController);
     }
 
+    @FXML
+    private void goToSettings() {
+        PageNavigator.loadPage(Page.ADMIN_CONFIG, mainController);
+    }
+
+
     /**
      * Opens a save file dialog to choose where to save all clients in the system to a file.
      */
@@ -394,7 +402,7 @@ public class MenuBarController extends SubController {
                         .title("Saved Data")
                         .text(String.format("Successfully saved all clinicians to file '%s'.", file.getName()))
                         .showInformation();
-                
+
                 State.setUnsavedChanges(false);
                 PageNavigator.refreshAllWindows();
             }

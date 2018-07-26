@@ -17,7 +17,7 @@ public class TransplantsControllerZeroItemsTest extends ControllerTest {
     // Test data
 
     private final Clinician testClinician = new Clinician("A", "B", "C", "D",
-            Region.UNSPECIFIED, 0, "E");
+            Region.UNSPECIFIED.name(), null, 0, "E");
 
     // Overridden classes from parent class
 

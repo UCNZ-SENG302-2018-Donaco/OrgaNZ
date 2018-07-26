@@ -50,7 +50,7 @@ public class TransplantsControllerTest extends ControllerTest {
     // Test data
 
     private Clinician testClinician = new Clinician("A", "B", "C", "D",
-            Region.UNSPECIFIED, 0, "E");
+            Region.UNSPECIFIED.toString(), null, 0, "E");
 
     private Client client1 = new Client("Client", "Number", "One", LocalDate.now(), 1);
     private TransplantRequest request1a = new TransplantRequest(client1, Organ.LIVER);
@@ -102,8 +102,8 @@ public class TransplantsControllerTest extends ControllerTest {
                 .getRequestedOrgan(), request3.getRequestDate()));
         requests.add(request3);
 
-        client1.setRegion(Region.CANTERBURY);
-        client2.setRegion(Region.AUCKLAND); // Changed to Auckland so that the checkbox is visible.
+        client1.setRegion(Region.CANTERBURY.toString());
+        client2.setRegion(Region.AUCKLAND.toString()); // Changed to Auckland so that the checkbox is visible.
         // client3's region is left as null
 
         for (int i = 100; i < 215; i++) {
@@ -112,7 +112,7 @@ public class TransplantsControllerTest extends ControllerTest {
             State.getClientManager().addClient(client);
             State.getClientResolver().createTransplantRequest(client, new CreateTransplantRequestView(request
                     .getRequestedOrgan(), request.getRequestDate()));
-            client.setRegion(Region.NELSON);
+            client.setRegion(Region.NELSON.toString());
             State.getClientManager().applyChangesTo(client);
             requests.add(request);
         }

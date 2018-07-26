@@ -1,6 +1,9 @@
 package com.humanharvest.organz.actions.clinician;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.humanharvest.organz.Clinician;
@@ -12,7 +15,7 @@ import com.humanharvest.organz.state.ClinicianManager;
  */
 public class ModifyClinicianAction extends ClinicianAction {
 
-    private ArrayList<ModifyObjectByMethodAction> actions = new ArrayList<>();
+    private final Collection<ModifyObjectByMethodAction> actions = new ArrayList<>();
     /**
      * Create a new Action
      * @param clinician The clinician to be modified
@@ -32,7 +35,7 @@ public class ModifyClinicianAction extends ClinicianAction {
      */
     public void addChange(String field, Object oldValue, Object newValue)
             throws NoSuchMethodException, NoSuchFieldException {
-        if (field.equals("setPassword")) {
+        if (Objects.equals(field, "setPassword")) {
             actions.add(new ModifyObjectByMethodAction(clinician, field, oldValue, newValue, true));
         } else {
             actions.add(new ModifyObjectByMethodAction(clinician, field, oldValue, newValue, false));
@@ -41,7 +44,7 @@ public class ModifyClinicianAction extends ClinicianAction {
 
     @Override
     protected void execute() {
-        if (actions.size() == 0) {
+        if (actions.isEmpty()) {
             throw new IllegalStateException("No changes were made to the clinician.");
         } else {
             super.execute();

@@ -21,6 +21,7 @@ import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.controller.ControllerTest;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
@@ -38,7 +39,9 @@ import org.testfx.matcher.control.TextMatchers;
 @Ignore
 public class SearchClientsControllerTest extends ControllerTest {
 
-    private final Clinician testClinician = new Clinician("Admin", "Da", "Nimda", "2 Two Street", Region.CANTERBURY,
+    private final Clinician testClinician = new Clinician("Admin", "Da", "Nimda", "2 Two Street",
+            Region.CANTERBURY.toString(),
+            Country.NZ,
             55, "admin");
     private final Client testClient1 = new Client(
             "tom", "Delta", "1", LocalDate.now().minusYears(100), 1); // 100 years old
@@ -70,8 +73,8 @@ public class SearchClientsControllerTest extends ControllerTest {
             State.getClientManager().addClient(client);
         }
 
-        testClient1.setRegion(Region.CANTERBURY);
-        testClient2.setRegion(Region.AUCKLAND);
+        testClient1.setRegion(Region.CANTERBURY.toString());
+        testClient2.setRegion(Region.AUCKLAND.toString());
         // client3's region is left as null
 
         mainController.setWindowContext(WindowContext.defaultContext());
@@ -81,10 +84,10 @@ public class SearchClientsControllerTest extends ControllerTest {
      * Method to set up the test details for the test client
      */
     private void setupClientDetails() {
-        testClient1.setRegion(Region.AUCKLAND);
-        testClient2.setRegion(Region.AUCKLAND);
-        testClient3.setRegion(Region.NORTHLAND);
-        testClient4.setRegion(Region.WEST_COAST);
+        testClient1.setRegion(Region.AUCKLAND.toString());
+        testClient2.setRegion(Region.AUCKLAND.toString());
+        testClient3.setRegion(Region.NORTHLAND.toString());
+        testClient4.setRegion(Region.WEST_COAST.toString());
 
         //Set Genders
         testClient1.setGender(Gender.MALE);
@@ -557,7 +560,7 @@ public class SearchClientsControllerTest extends ControllerTest {
             Client client = new Client("Client", "Number", "num" + i, LocalDate.now(), i);
             TransplantRequest request = new TransplantRequest(client, Organ.MIDDLE_EAR);
             client.addTransplantRequest(request);
-            client.setRegion(Region.NELSON);
+            client.setRegion(Region.NELSON.toString());
             State.getClientManager().addClient(client);
         }
         pageController.refresh();

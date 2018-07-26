@@ -51,7 +51,7 @@ public class ModifyClientAction extends ClientAction {
     @Override
     protected void execute() {
         super.execute();
-        if (actions.size() == 0) {
+        if (actions.isEmpty()) {
             throw new IllegalStateException("No changes were made to the client.");
         } else {
             for (ModifyObjectByFieldAction action : actions) {
