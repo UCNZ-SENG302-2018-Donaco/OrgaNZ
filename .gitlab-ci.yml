@@ -11,7 +11,7 @@ tag_checker:
 junit:
   stage: test
   script:
-    - mvn -B clean test verify sonar:sonar
+    - mvn -B clean test
 
 recent-artifacts:
   stage: deploy
@@ -24,6 +24,19 @@ recent-artifacts:
     expire_in: 1 week
   except:
     - tags
+    - development@seng302-2018/team-700
+
+recent-artifacts-dev:
+  stage: deploy
+  script:
+    - mvn -B clean site package verify sonar:sonar
+
+  artifacts:
+    paths:
+      - target/organz-*-*.jar
+    expire_in: 1 week
+  only:
+    - development@seng302-2018/team-700
 
 release-artifacts:
   stage: deploy

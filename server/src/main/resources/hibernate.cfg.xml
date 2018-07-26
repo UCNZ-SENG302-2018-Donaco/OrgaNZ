@@ -1,0 +1,45 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+  "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+  "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+  <session-factory>
+    <!-- SQL Dialect -->
+    <property name="hibernate.dialect">org.hibernate.dialect.MySQL55Dialect</property>
+
+    <!-- Create/update tables automatically from mappings (when needed) -->
+    <property name="hibernate.hbm2ddl.auto">update</property>
+
+    <!-- Fixes issue with @GeneratedValue AUTO mode -->
+    <property name="hibernate.id.new_generator_mappings">false</property>
+
+    <property name="hibernate.enable_lazy_load_no_trans">true</property>
+
+    <!-- Database Connection Settings -->
+    <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+    <property name="hibernate.connection.url">jdbc:mysql://mysql2.csse.canterbury.ac.nz/seng302-2018-team700-prod</property>
+    <property name="hibernate.connection.username">seng302-team700</property>
+    <property name="hibernate.connection.password">FormulaCadres2252</property>
+
+    <!-- Debug Output -->
+    <property name="show_sql">false</property>
+    <property name="format_sql">false</property>
+    <property name="use_sql_comments">false</property>
+    <property name="generate_statistics">false</property>
+
+
+    <!-- Specifying Session Context -->
+    <property name="hibernate.current_session_context_class">org.hibernate.context.internal.ThreadLocalSessionContext</property>
+
+    <!-- Mapping With Model Class Containing Annotations -->
+    <mapping class="com.humanharvest.organz.Client"/>
+    <mapping class="com.humanharvest.organz.TransplantRequest"/>
+    <mapping class="com.humanharvest.organz.MedicationRecord"/>
+    <mapping class="com.humanharvest.organz.IllnessRecord"/>
+    <mapping class="com.humanharvest.organz.ProcedureRecord"/>
+    <mapping class="com.humanharvest.organz.Clinician"/>
+    <mapping class="com.humanharvest.organz.Administrator"/>
+    <mapping class="com.humanharvest.organz.HistoryItem"/>
+  </session-factory>
+</hibernate-configuration>
