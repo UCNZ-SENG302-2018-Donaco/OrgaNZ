@@ -172,7 +172,6 @@ public class ViewClientController extends ViewBaseController {
             viewedClient = session.getLoggedInClient();
             idPane.setVisible(false);
             idPane.setManaged(false);
-            dod.setDisable(true);
             mainController.loadSidebar(sidebarPane);
         } else if (windowContext.isClinViewClientWindow()) {
             viewedClient = windowContext.getViewClient();
@@ -261,7 +260,6 @@ public class ViewClientController extends ViewBaseController {
         mname.setText(viewedClient.getMiddleName());
         pname.setText(viewedClient.getPreferredNameOnly());
         dob.setValue(viewedClient.getDateOfBirth());
-        dod.setValue(viewedClient.getDateOfDeath());
         gender.setValue(viewedClient.getGender());
         genderIdentity.setValue(viewedClient.getGenderIdentity());
         height.setText(String.valueOf(viewedClient.getHeight()));

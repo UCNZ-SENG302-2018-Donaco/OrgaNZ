@@ -104,11 +104,13 @@ public class EditDeathDetailsController extends SubController{
                 if (client.getCurrentAddress() != null) {
                     deathCountry.setValue(client.getCountryOfDeath());
                 }
-                if (client.getRegion() != null && client.getCountry() == Country.NZ) {
-                   deathRegionCB.setValue(Region.fromString(client.getRegion()));
+                if (client.getRegionOfDeath() != null && client.getCountry() == Country.NZ) {
+                   deathRegionCB.setValue(Region.fromString(client.getRegionOfDeath()));
+                   deathRegionTF.setVisible(false);
                 }
-                else if (client.getRegion() != null && client.getCountry() != Country.NZ) {
-                    deathRegionTF.setText(client.getRegion());
+                else if (client.getRegionOfDeath() != null && client.getCountry() != Country.NZ) {
+                    deathRegionTF.setText(client.getRegionOfDeath());
+                    deathRegionCB.setVisible(false);
                 }
                 if (client.getDateOfDeath() != null) {
                     deathDatePicker.setValue(client.getDateOfDeath());
@@ -227,7 +229,6 @@ public class EditDeathDetailsController extends SubController{
                         .title("No changes were made.")
                         .text("No changes were made to the client.")
                         .showWarning();
-
             }
 
             else {
