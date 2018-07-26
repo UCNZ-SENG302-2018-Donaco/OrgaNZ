@@ -29,9 +29,6 @@ public class WindowContext {
         private boolean isClinicianViewClientWindow;
         private Client viewClient;
 
-        public WindowContextBuilder() {
-        }
-
         public WindowContextBuilder setSidebarDisabled() {
             sidebarEnabled = false;
             return this;
@@ -77,6 +74,6 @@ public class WindowContext {
     }
 
     public Client getViewClient() {
-        return State.getClientManager().getClientByID(viewClient.getUid()).get();
+        return State.getClientManager().getClientByID(viewClient.getUid()).orElseThrow(IllegalStateException::new);
     }
 }

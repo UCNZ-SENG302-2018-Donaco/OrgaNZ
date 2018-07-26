@@ -122,9 +122,16 @@ public class MainController {
     public void refresh() {
         updateTitle();
         subController.refresh();
+        refreshNavigation();
+    }
+
+    /**
+     * Refreshes only the navigation bar
+     */
+    public void refreshNavigation() {
         if (MenuBarController != null) {
             MenuBarController.refresh();
-        } else {
+        } else if (sidebarController != null) {
             sidebarController.refresh();
         }
     }

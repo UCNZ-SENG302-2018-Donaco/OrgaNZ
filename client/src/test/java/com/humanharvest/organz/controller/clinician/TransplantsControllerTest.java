@@ -265,14 +265,13 @@ public class TransplantsControllerTest extends ControllerTest {
 
         GridPane gridPaneId = (GridPane) vbox3.getChildren().get(0); //Gridpane containing ID fields
         assertNotNull(gridPaneId);
-        assertEquals("idPane", gridPaneId.getId());
+        assertEquals("imagePane", gridPaneId.getId());
 
         GridPane gridPaneFields = (GridPane) vbox3.getChildren().get(1); //Gridpane containing all fields
         assertNotNull(gridPaneFields);
         assertEquals("inputsPane", gridPaneFields.getId());
 
         // Check all nodes we need to look in are visible
-        verifyThat("#id", isVisible());
         verifyThat("#fname", isVisible());
         verifyThat("#mname", isVisible());
         verifyThat("#lname", isVisible());
@@ -316,7 +315,7 @@ public class TransplantsControllerTest extends ControllerTest {
                 }
             }
         }
-        assertEquals(4, totalChecks); // it should have checked 4 fields
+        assertEquals(3, totalChecks); // it should have checked 4 fields
 
         WaitForAsyncUtils.asyncFx(topModalStage::close);
     }
@@ -387,7 +386,6 @@ public class TransplantsControllerTest extends ControllerTest {
         // Check all 30 requests are correct
         for (int i = 0; i < 30; i++) {
             TransplantRequest request = requests.get(i);
-            System.out.println(request);
             assertTableContainsRequestAtIndex(
                     lookup("#tableView").queryTableView(),
                     request,
