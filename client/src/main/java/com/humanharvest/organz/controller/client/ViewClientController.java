@@ -169,7 +169,6 @@ public class ViewClientController extends ViewBaseController {
         fullName.setWrapText(true);
 
         country.valueProperty().addListener(change -> {
-            System.out.println("changed");
             checkCountry();
         });
     }
