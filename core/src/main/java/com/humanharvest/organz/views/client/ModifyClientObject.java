@@ -32,7 +32,7 @@ public class ModifyClientObject extends ModifyBaseObject {
     private LocalDate dateOfBirth;
     private LocalDate dateOfDeath;
 
-    private String timeOfDeath;
+    private LocalTime timeOfDeath;
     private String regionOfDeath;
     private String cityOfDeath;
     private Country countryOfDeath;
@@ -154,11 +154,11 @@ public class ModifyClientObject extends ModifyBaseObject {
         this.dateOfDeath = dateOfDeath;
     }
 
-    public String getTimeOfDeath() {
+    public LocalTime getTimeOfDeath() {
         return timeOfDeath;
     }
 
-    public void setTimeOfDeath(String timeOfDeath) {
+    public void setTimeOfDeath(LocalTime timeOfDeath) {
         registerChange("timeOfDeath");
         this.timeOfDeath = timeOfDeath;
     }

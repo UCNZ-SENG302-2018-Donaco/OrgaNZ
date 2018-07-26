@@ -92,7 +92,7 @@ public class Client implements ConcurrencyControlledEntity {
     @JsonView(Views.Details.class)
     private LocalDate dateOfDeath;
     @JsonView(Views.Details.class)
-    private String timeOfDeath;
+    private LocalTime timeOfDeath;
     @JsonView(Views.Details.class)
     private String regionOfDeath;
     @JsonView(Views.Details.class)
@@ -370,11 +370,11 @@ public class Client implements ConcurrencyControlledEntity {
         return dateOfDeath;
     }
 
-    public String getTimeOfDeath() {
+    public LocalTime getTimeOfDeath() {
         return timeOfDeath;
     }
 
-    public void setTimeOfDeath(String timeOfDeath) {
+    public void setTimeOfDeath(LocalTime timeOfDeath) {
         this.timeOfDeath = timeOfDeath;
     }
 
