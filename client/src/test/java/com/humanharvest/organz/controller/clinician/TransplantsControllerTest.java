@@ -5,7 +5,6 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.matcher.base.NodeMatchers.isVisible;
-import static org.testfx.matcher.control.TableViewMatchers.containsRowAtIndex;
 import static org.testfx.matcher.control.TableViewMatchers.hasNumRows;
 import static org.testfx.matcher.control.TextMatchers.hasText;
 
@@ -602,7 +601,6 @@ public class TransplantsControllerTest extends ControllerTest {
         verifyThat("#tableView", hasNumRows(1));
     }
 
-    //TODO Just uncomment out the (//testOrderByX) methods once merged onto s24 branch.
     /**
      * Test that existing features work after one organ has been filtered
      */
@@ -617,7 +615,6 @@ public class TransplantsControllerTest extends ControllerTest {
                 0
         );
         verifyThat("#tableView", hasNumRows(1));
-        //testReorderByRegion();
     }
 
     /**
@@ -634,7 +631,6 @@ public class TransplantsControllerTest extends ControllerTest {
                 1
         );
         verifyThat("#tableView", hasNumRows(2));
-        //testReorderByDate();
     }
 
     /**
@@ -654,7 +650,6 @@ public class TransplantsControllerTest extends ControllerTest {
                 0
         );
         verifyThat("#tableView", hasNumRows(1));
-        //testReorderByOrgan();
     }
 
     /**

@@ -43,7 +43,7 @@ public final class State {
         MEMORY, REST
     }
 
-    public static final String BASE_URI = "http://localhost:8080/";
+    public static String BASE_URI = "http://localhost:8080/";
 
     private static DataStorageType currentStorageType = DataStorageType.MEMORY;
 
@@ -114,6 +114,10 @@ public final class State {
         } else {
             throw new IllegalArgumentException("DataStorageType cannot be null.");
         }
+    }
+
+    public static void setBaseUri(String uri) {
+        BASE_URI = uri;
     }
 
     public static void login(Client client) {

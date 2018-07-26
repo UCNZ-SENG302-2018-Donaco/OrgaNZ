@@ -20,7 +20,6 @@ public class AuthenticationManager {
      * Gets the secret used to sign tokens.
      */
     private String getSecret() {
-        // TODO
         return "secret";
     }
 

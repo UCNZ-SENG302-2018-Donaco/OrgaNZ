@@ -62,13 +62,6 @@ public class ClinicianControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)));
     }
-
-    @Test
-    public void getAuth() throws Exception {
-        //TODO auth for 401's and 403's
-    }
-    // /clinician/{staffId} endpoints
-
     @Test
     public void getDefaultDetails() throws Exception {
         mockMvc.perform(get("/clinicians/0"))
