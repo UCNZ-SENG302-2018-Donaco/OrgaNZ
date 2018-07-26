@@ -11,6 +11,7 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
+import com.humanharvest.organz.Config;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.resolvers.CommandRunner;
 import com.humanharvest.organz.resolvers.CommandRunnerRest;
@@ -59,6 +60,7 @@ public final class State {
     private static ClinicianResolver clinicianResolver;
     private static AdministratorResolver administratorResolver;
     private static ClientFileResolver clientFileResolver;
+    private static ConfigManager configManager;
 
     private static Session session;
     private static boolean unsavedChanges;
@@ -92,6 +94,7 @@ public final class State {
             clinicianManager = new ClinicianManagerRest();
             administratorManager = new AdministratorManagerRest();
             authenticationManager = new AuthenticationManagerRest();
+            configManager = new ConfigManagerRest();
             commandRunner = new CommandRunnerRest();
             actionResolver = new ActionResolverRest();
             clinicianResolver = new ClinicianResolverRest();
@@ -103,6 +106,7 @@ public final class State {
             clinicianManager = new ClinicianManagerMemory();
             administratorManager = new AdministratorManagerMemory();
             authenticationManager = new AuthenticationManagerMemory();
+            configManager = new ConfigManagerMemory();
             commandRunner = commandText -> {
                 throw new UnsupportedOperationException("Memory storage type does not support running commands.");
             };
@@ -241,6 +245,10 @@ public final class State {
 
     public static AuthenticationManager getAuthenticationManager() {
         return authenticationManager;
+    }
+
+    public static ConfigManager getConfigManager() {
+        return configManager;
     }
 
     public static Session getSession() {

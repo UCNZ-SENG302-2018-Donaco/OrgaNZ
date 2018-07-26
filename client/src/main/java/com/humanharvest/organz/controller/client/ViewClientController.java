@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.EnumSet;
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.logging.Level;
@@ -146,10 +147,23 @@ public class ViewClientController extends ViewBaseController {
         genderIdentity.setItems(FXCollections.observableArrayList(Gender.values()));
         btype.setItems(FXCollections.observableArrayList(BloodType.values()));
         regionCB.setItems(FXCollections.observableArrayList(Region.values()));
-        country.setItems(FXCollections.observableArrayList(Country.values()));
+        updateCountries();
         setFieldsDisabled(true);
+
+        country.valueProperty().addListener(change -> {
+            System.out.println("changed");
+            checkCountry();
+        });
     }
 
+    private void updateCountries() {
+        EnumSet<Country> countries = EnumSet.noneOf(Country.class);
+        countries.addAll(State.getConfigManager().getAllowedCountries());
+        country.setItems(FXCollections.observableArrayList(countries));
+        if (viewedClient != null && viewedClient.getCountry() != null) {
+            country.setValue(viewedClient.getCountry());
+        }
+    }
 
     @Override
     public void setup(MainController mainController) {
@@ -203,6 +217,7 @@ public class ViewClientController extends ViewBaseController {
         } else if (windowContext.isClinViewClientWindow()) {
             mainController.setTitle("View Client: " + viewedClient.getFullName());
         }
+        updateCountries();
     }
 
     /**
@@ -251,6 +266,7 @@ public class ViewClientController extends ViewBaseController {
         height.setText(String.valueOf(viewedClient.getHeight()));
         weight.setText(String.valueOf(viewedClient.getWeight()));
         btype.setValue(viewedClient.getBloodType());
+        country.setValue(viewedClient.getCountry());
 
         checkCountry();
         if (viewedClient.getCountry() == Country.NZ && viewedClient.getRegion() != null) {
@@ -274,19 +290,11 @@ public class ViewClientController extends ViewBaseController {
     }
 
     /**
-     * Triggered when the value of the country choicebox is changed
-     */
-    @FXML
-    private void countryChanged() {
-        checkCountry();
-    }
-
-    /**
      * Checks the clients country, changes region input to a choicebox of NZ regions if the country is New Zealand,
      * and changes to a textfield input for any other country
      */
     private void checkCountry() {
-        if (viewedClient.getCountry() == Country.NZ ) {
+        if (country.getValue() == Country.NZ) {
             regionCB.setVisible(true);
             regionTF.setVisible(false);
         } else {
@@ -468,15 +476,18 @@ public class ViewClientController extends ViewBaseController {
         addChangeIfDifferent(modifyClientObject, viewedClient, "currentAddress", address.getText());
         addChangeIfDifferent(modifyClientObject, viewedClient, "country", country.getValue());
 
-        if (viewedClient.getCountry() == Country.NZ) {
-            addChangeIfDifferent(modifyClientObject, viewedClient, "region", regionCB.getValue().toString());
+        if (country.getValue() == Country.NZ) {
+            Region region = regionCB.getValue();
+            if (region == null) {
+                region = Region.UNSPECIFIED;
+            }
+            addChangeIfDifferent(modifyClientObject, viewedClient, "region", region.toString());
         } else {
-            addChangeIfDifferent(modifyClientObject, viewedClient,"region", regionTF.getText());
+            addChangeIfDifferent(modifyClientObject, viewedClient, "region", regionTF.getText());
 
         }
 
         //checkCountry();
-
 
         PageNavigator.refreshAllWindows();
 
