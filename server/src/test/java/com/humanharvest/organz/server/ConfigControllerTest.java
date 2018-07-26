@@ -96,7 +96,7 @@ public class ConfigControllerTest {
                 .header("X-Auth-Token", VALID_AUTH)
                 .contentType(contentType)
                 .content(json))
-                .andExpect(status().isCreated());
+                .andExpect(status().isOk());
 
         EnumSet<Country> expectedCountries = EnumSet.noneOf(Country.class);
         expectedCountries.add(Country.NL);
