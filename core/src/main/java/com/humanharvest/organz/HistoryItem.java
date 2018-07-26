@@ -15,7 +15,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
  */
 @Entity
 @Table
-public final class HistoryItem implements Cloneable {
+public class HistoryItem implements Cloneable {
 
     @Id
     @GeneratedValue
@@ -25,7 +25,7 @@ public final class HistoryItem implements Cloneable {
     private LocalDateTime timestamp;
 
     @JsonCreator
-    private HistoryItem() {
+    protected HistoryItem() {
     }
 
     public HistoryItem(String type, String details) {

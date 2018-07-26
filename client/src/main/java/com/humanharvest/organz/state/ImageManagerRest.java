@@ -14,7 +14,7 @@ import org.springframework.http.ResponseEntity;
 /**
  * Deals with all image handling in with the server for the client.
  */
-public class ImageManagerRest  implements ImageManager{
+public class ImageManagerRest implements ImageManager{
 
     protected ImageManagerRest() {
     }

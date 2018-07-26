@@ -65,7 +65,8 @@ public class MenuBarController extends SubController {
     public MenuItem historyItem;
     public MenuItem cliItem;
     public MenuItem logOutItem;
-    public MenuItem saveItem;
+    public MenuItem saveClientsItem;
+    public MenuItem saveCliniciansItem;
     public MenuItem loadItem;
     public MenuItem undoItem;
     public MenuItem redoItem;
@@ -108,7 +109,7 @@ public class MenuBarController extends SubController {
         Menu viewAdminMenu[] = {staffPrimaryItem, transplantsPrimaryItem, filePrimaryItem,
                 profilePrimaryItem};
 
-        Menu clinicianWindowMenu[] = {staffPrimaryItem, medicationsPrimaryItem, };
+        Menu clinicianWindowMenu[] = {staffPrimaryItem, medicationsPrimaryItem,};
         MenuItem clinicianWindowMenuItems[] = {organPrimaryItem, viewClientItem, medicationsPrimaryItem};
 
         Menu clinViewClientMenu[] = {staffPrimaryItem, profilePrimaryItem, transplantsPrimaryItem};
@@ -127,10 +128,12 @@ public class MenuBarController extends SubController {
                 hideMenuItems(clinicianWindowMenuItems);
                 // staff primary item - StaffListController.lambda$null$1(StaffListController.java:89)
             }
+            viewClinicianItem.setText("View Clinician");
         }
+
         if (userType == UserType.ADMINISTRATOR) {
 
-            if (windowContext.isClinViewClientWindow()){
+            if (windowContext.isClinViewClientWindow()) {
                 hideMenuItem(profilePrimaryItem);
                 hideMenuItem(staffPrimaryItem);
                 hideMenuItem(createClientItem);
@@ -149,7 +152,6 @@ public class MenuBarController extends SubController {
         refresh();
     }
 
-
     /**
      * Removes all menu items and menus that only admins should have.
      */
@@ -157,11 +159,11 @@ public class MenuBarController extends SubController {
         // Remove administrator file rights.
         hideMenuItem(createAdministratorItem);
         topSeparator.setVisible(false);
-        hideMenuItem(saveItem);
+        hideMenuItem(saveClientsItem);
+        hideMenuItem(saveCliniciansItem);
         hideMenuItem(loadItem);
         hideMenuItem(viewAdministratorItem);
         hideMenuItem(cliItem);
-
     }
 
     /**
@@ -260,7 +262,9 @@ public class MenuBarController extends SubController {
      * Redirects the GUI to the Search clients page.
      */
     @FXML
-    private void goToSearch() { PageNavigator.loadPage(Page.SEARCH, mainController);}
+    private void goToSearch() {
+        PageNavigator.loadPage(Page.SEARCH, mainController);
+    }
 
     /**
      * Redirects the GUI to the Staff list page.
@@ -322,7 +326,9 @@ public class MenuBarController extends SubController {
      * Redirects the GUI to the Create clinician page.
      */
     @FXML
-    private void goToCreateClient() {PageNavigator.loadPage(Page.CREATE_CLIENT, mainController);}
+    private void goToCreateClient() {
+        PageNavigator.loadPage(Page.CREATE_CLIENT, mainController);
+    }
 
     /**
      * Redirects the GUI to the Admin command line page.
@@ -332,12 +338,11 @@ public class MenuBarController extends SubController {
         PageNavigator.loadPage(Page.COMMAND_LINE, mainController);
     }
 
-
     /**
      * Opens a save file dialog to choose where to save all clients in the system to a file.
      */
     @FXML
-    private void save() {
+    private void saveClients() {
         try {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Save Clients File");
@@ -349,7 +354,7 @@ public class MenuBarController extends SubController {
             File file = fileChooser.showSaveDialog(AppUI.getWindow());
             if (file != null) {
                 try (FileOutputStream output = new FileOutputStream(file)) {
-                    output.write(State.getClientFileResolver().exportClients());
+                    output.write(State.getFileResolver().exportClients());
                 }
 
                 Notifications.create()
@@ -357,6 +362,39 @@ public class MenuBarController extends SubController {
                         .text(String.format("Successfully saved all clients to file '%s'.", file.getName()))
                         .showInformation();
 
+                State.setUnsavedChanges(false);
+                PageNavigator.refreshAllWindows();
+            }
+        } catch (URISyntaxException | IOException e) {
+            PageNavigator.showAlert(AlertType.WARNING, "Save Failed", ERROR_SAVING_MESSAGE);
+            LOGGER.log(Level.SEVERE, ERROR_SAVING_MESSAGE, e);
+        }
+    }
+
+    /**
+     * Opens a saveClinicians file dialog to choose where to save all clinicians in the system to a file.
+     */
+    @FXML
+    private void saveClinicians() {
+        try {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Save Clinicians File");
+            fileChooser.setInitialDirectory(
+                    new File(Paths.get(AppUI.class.getProtectionDomain().getCodeSource().getLocation().toURI())
+                            .getParent().toString())
+            );
+            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json"));
+            File file = fileChooser.showSaveDialog(AppUI.getWindow());
+            if (file != null) {
+                try (FileOutputStream output = new FileOutputStream(file)) {
+                    output.write(State.getFileResolver().exportClinicians());
+                }
+
+                Notifications.create()
+                        .title("Saved Data")
+                        .text(String.format("Successfully saved all clinicians to file '%s'.", file.getName()))
+                        .showInformation();
+                
                 State.setUnsavedChanges(false);
                 PageNavigator.refreshAllWindows();
             }
@@ -396,7 +434,7 @@ public class MenuBarController extends SubController {
                 String format = getFileExtension(file.getName());
 
                 try {
-                    String message = State.getClientFileResolver().importClients(
+                    String message = State.getFileResolver().importClients(
                             Files.readAllBytes(file.toPath()), format);
 
                     LOGGER.log(Level.INFO, message);
@@ -531,8 +569,9 @@ public class MenuBarController extends SubController {
     @FXML
     private void quitProgram() {
         if (State.isUnsavedChanges()) {
-            Alert unsavedAlert = PageNavigator.generateAlert(AlertType.WARNING, "Do you want to save the changes you have made?",
-                    "Your changes will be lost if you do not save them.");
+            Alert unsavedAlert = PageNavigator
+                    .generateAlert(AlertType.WARNING, "Do you want to save the changes you have made?",
+                            "Your changes will be lost if you do not save them.");
             ButtonType dontSave = new ButtonType("Don't Save");
             ButtonType cancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
             ButtonType save = new ButtonType("Save");
@@ -542,7 +581,7 @@ public class MenuBarController extends SubController {
             if (result.isPresent() && result.get() == dontSave) {
                 exit();
             } else if (result.isPresent() && result.get() == save) {
-                save();
+                saveClients();
                 exit();
             } else {
                 unsavedAlert.hide();

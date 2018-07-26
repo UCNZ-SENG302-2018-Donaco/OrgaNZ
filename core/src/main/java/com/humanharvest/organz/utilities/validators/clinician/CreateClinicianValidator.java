@@ -2,7 +2,6 @@ package com.humanharvest.organz.utilities.validators.clinician;
 
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.utilities.validators.NotEmptyStringValidator;
-import com.humanharvest.organz.views.clinician.ModifyClinicianObject;
 
 /**
  * Class to ensure that all clinician's fields are valid
@@ -15,10 +14,6 @@ public class CreateClinicianValidator {
         }
 
         if (NotEmptyStringValidator.isInvalidString(clinician.getLastName())) {
-            return false;
-        }
-
-        if (NotEmptyStringValidator.isInvalidString(clinician.getWorkAddress())) {
             return false;
         }
 
