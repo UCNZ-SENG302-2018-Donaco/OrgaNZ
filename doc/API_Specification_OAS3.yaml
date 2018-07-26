@@ -18,6 +18,8 @@ tags:
       description: All client illness AKA medical history paths
     - name: Client Procedures
       description: All client procedure paths
+    - name: Client Profile Picture
+      description: All client profile picture paths
     - name: Client Transplant Requests
       description: All client transplant request paths
     - name: Clinician
@@ -265,6 +267,115 @@ paths:
           $ref: '#/components/responses/403Forbidden'
         404:
           $ref: '#/components/responses/404NotFound'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+
+  '/clients/{uid}/image':
+    parameters:
+    - in: path
+      name: uid
+      description: Client User ID
+      required: true
+      schema:
+        type: integer
+        minimum: 0
+    get:
+      tags:
+        - Client Profile Picture
+      security:
+        - ClientAccess: []
+        - ClinicianAccess: []
+        - AdministratorAccess: []
+      summary: Get client profile picture
+      responses:
+        200:
+          description: OK
+          content:
+            image/png:
+              schema:
+                type: byte[]
+                format: binary
+                example: Raw content of PNG image file
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+
+    post:
+      tags:
+        - Client Profile Picture
+      security:
+        - ClientAccess: []
+        - ClinicianAccess: []
+        - AdministratorAccess: []
+      summary: Post client profile picture
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: byte[]
+              format: binary
+              example: Raw content of PNG image file
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/historyItem'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        412:
+          $ref: '#/components/responses/412PreconditionFailed'
+        428:
+          $ref: '#/components/responses/428PreconditionRequired'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+
+    deleted:
+      tags:
+        - Client Profile Picture
+      security:
+        - ClientAccess: []
+        - ClinicianAccess: []
+        - AdministratorAccess: []
+      summary: Delete client profile picture
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: byte[]
+              format: binary
+              example: Raw content of PNG image file
+      responses:
+        201:
+          description: Deleted
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        412:
+          $ref: '#/components/responses/412PreconditionFailed'
+        428:
+          $ref: '#/components/responses/428PreconditionRequired'
         500:
           $ref: '#/components/responses/500InternalServerError'
 

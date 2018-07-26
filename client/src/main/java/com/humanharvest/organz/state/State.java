@@ -52,6 +52,7 @@ public final class State {
     private static ClinicianManager clinicianManager;
     private static AdministratorManager administratorManager;
     private static AuthenticationManager authenticationManager;
+    private static ImageManager imageManager;
     private static CommandRunner commandRunner;
     private static ActionResolver actionResolver;
     private static ClinicianResolver clinicianResolver;
@@ -94,6 +95,7 @@ public final class State {
             clinicianResolver = new ClinicianResolverRest();
             administratorResolver = new AdministratorResolverRest();
             clientFileResolver = new ClientFileResolverRest();
+            imageManager = new ImageManagerRest();
         } else if (storageType == DataStorageType.MEMORY) {
             clientManager = new ClientManagerMemory();
             clientResolver = new ClientResolverMemory();
@@ -107,6 +109,7 @@ public final class State {
             clinicianResolver = new ClincianResolverMemory();
             administratorResolver = new AdministratorResolverMemory();
             clientFileResolver = new ClientFileResolverMemory();
+            imageManager = new ImageManagerMemory();
         } else {
             throw new IllegalArgumentException("DataStorageType cannot be null.");
         }
@@ -258,5 +261,9 @@ public final class State {
 
     public static ClientFileResolver getClientFileResolver() {
         return clientFileResolver;
+    }
+
+    public static ImageManager getImageManager() {
+        return imageManager;
     }
 }
