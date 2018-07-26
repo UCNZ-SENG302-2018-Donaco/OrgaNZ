@@ -21,6 +21,7 @@ import com.humanharvest.organz.ProcedureRecord;
 import com.humanharvest.organz.controller.ControllerTest;
 import com.humanharvest.organz.controller.components.OrganCheckComboBoxCell;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.view.Page;
@@ -40,7 +41,9 @@ public class ViewProceduresControllerClinicianTest extends ControllerTest {
             new ProcedureRecord("Summary4", "Description4", LocalDate.of(2045, 10, 15))
     };
     private final Client testClient = new Client( "Alex", null, "Tester", LocalDate.of(1998, 5, 9), 1);
-    private final Clinician testClinician = new Clinician("A", "B", "C", "D", Region.UNSPECIFIED.toString(), 0, "E");
+    private final Clinician testClinician = new Clinician("A", "B", "C", "D", Region.UNSPECIFIED.toString(),
+            Country.NZ, 0,
+            "");
 
     @Override
     protected Page getPage() {
