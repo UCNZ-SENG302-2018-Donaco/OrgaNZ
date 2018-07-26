@@ -17,9 +17,6 @@ import picocli.CommandLine.Option;
 
 /**
  * Command line to set the status of their organs in terms of what they would like to donate.
- * @author Dylan Carlyle, Jack Steel
- * @version sprint 1.
- * date 05/03/2018
  */
 
 @Command(name = "setorganstatus", description = "Set the organ donation choices of an existing client.", sortOptions =

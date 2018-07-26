@@ -24,9 +24,6 @@ import picocli.CommandLine.Option;
 
 /**
  * Command line to set attributes of a Client, by using their ID as a reference key.
- * @author Dylan Carlyle, Jack Steel
- * @version sprint 1.
- * date 05/03/2018
  */
 
 @Command(name = "attribute", description = "Set the attributes of an existing client.", sortOptions = false)
