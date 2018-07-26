@@ -12,12 +12,12 @@ Developers:
 * Tom Kearsley <tke29@uclive.ac.nz>
 
 Scrum Master:
-* Stefan Hall <sha162@uclive.ac.nz>
+* Liam Beckett <lsb35@uclive.ac.nz>
 
 ## Product Info
 *Title:* OrgaNZ
 
-*Version*: Sprint 4 Release
+*Version*: Sprint 5 Release
 
 *Description:* This project has been designed to increase the deceased organ donation rates in New Zealand.
 It provides people in New Zealand with a system they can use to register as organ donors, or request organ transplants.

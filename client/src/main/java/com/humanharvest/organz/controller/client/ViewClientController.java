@@ -1,11 +1,18 @@
 package com.humanharvest.organz.controller.client;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.Objects;
 import java.util.Optional;
-import java.util.OptionalInt;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,9 +25,15 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 
+import com.humanharvest.organz.AppUI;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.controller.MainController;
@@ -29,7 +42,6 @@ import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.ui.validation.UIValidation;
 import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.enums.BloodType;
 import com.humanharvest.organz.utilities.enums.Gender;
@@ -37,9 +49,9 @@ import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
-import com.humanharvest.organz.utilities.validators.IntValidator;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.views.client.ModifyClientObject;
+import org.apache.commons.io.IOUtils;
 import org.controlsfx.control.Notifications;
 
 /**
@@ -51,7 +63,7 @@ public class ViewClientController extends ViewBaseController {
             .withZone(ZoneId.systemDefault());
 
     private static final Logger LOGGER = Logger.getLogger(ViewClientController.class.getName());
-
+    private static final int maxFileSize = 2000000; // (2mb)
     private final Session session;
     private final ClientManager manager;
     private Client viewedClient;
@@ -59,19 +71,15 @@ public class ViewClientController extends ViewBaseController {
     @FXML
     private Pane sidebarPane;
     @FXML
-    private Pane idPane;
+    private Pane imagePane;
     @FXML
     private Pane inputsPane;
     @FXML
     private Pane menuBarPane;
     @FXML
-    private Button searchClientButton;
-    @FXML
     private Label creationDate;
     @FXML
     private Label lastModified;
-    @FXML
-    private Label noClientLabel;
     @FXML
     private Label fnameLabel;
     @FXML
@@ -91,7 +99,7 @@ public class ViewClientController extends ViewBaseController {
     @FXML
     private Label bmiLabel;
     @FXML
-    private TextField id;
+    private Label fullName;
     @FXML
     private TextField fname;
     @FXML
@@ -107,6 +115,10 @@ public class ViewClientController extends ViewBaseController {
     @FXML
     private TextField address;
     @FXML
+    private Button uploadPhotoButton;
+    @FXML
+    private Button deletePhotoButton;
+    @FXML
     private DatePicker dob;
     @FXML
     private DatePicker dod;
@@ -118,6 +130,11 @@ public class ViewClientController extends ViewBaseController {
     private ChoiceBox<BloodType> btype;
     @FXML
     private ChoiceBox<Region> region;
+    @FXML
+    private ImageView imageView;
+    @FXML
+    private GridPane gridPane;
+    private Image image;
 
     public ViewClientController() {
         manager = State.getClientManager();
@@ -138,7 +155,8 @@ public class ViewClientController extends ViewBaseController {
         genderIdentity.setItems(FXCollections.observableArrayList(Gender.values()));
         btype.setItems(FXCollections.observableArrayList(BloodType.values()));
         region.setItems(FXCollections.observableArrayList(Region.values()));
-        setFieldsDisabled(true);
+        fullName.setWrapText(true);
+
     }
 
     @Override
@@ -146,35 +164,12 @@ public class ViewClientController extends ViewBaseController {
         super.setup(mainController);
         if (session.getLoggedInUserType() == Session.UserType.CLIENT) {
             viewedClient = session.getLoggedInClient();
-            idPane.setVisible(false);
-            idPane.setManaged(false);
             mainController.loadSidebar(sidebarPane);
         } else if (windowContext.isClinViewClientWindow()) {
             viewedClient = windowContext.getViewClient();
             mainController.loadMenuBar(menuBarPane);
         }
-        id.setText(Integer.toString(viewedClient.getUid()));
         refresh();
-
-        new UIValidation()
-                .add(id, new IntValidator() {
-                    @Override
-                    public boolean isValid(Object value) {
-                        OptionalInt clientId = getAsInt(value);
-                        if (!clientId.isPresent()) {
-                            return false;
-                        }
-
-                        return State.getClientManager().getClientByID(clientId.getAsInt()).isPresent();
-                    }
-
-                    @Override
-                    public String getErrorMessage() {
-                        return "Invalid client id";
-                    }
-                })
-                .addDisableButton(searchClientButton)
-                .validate();
     }
 
     @Override
@@ -186,50 +181,22 @@ public class ViewClientController extends ViewBaseController {
             PageNavigator.showAlert(AlertType.ERROR,
                     "Server Error",
                     "An error occurred while trying to fetch from the server.\nPlease try again later.");
+            return;
         }
         updateClientFields();
+        mainController.refreshNavigation();
         if (session.getLoggedInUserType() == UserType.CLIENT) {
             mainController.setTitle("View Client: " + viewedClient.getPreferredNameFormatted());
         } else if (windowContext.isClinViewClientWindow()) {
             mainController.setTitle("View Client: " + viewedClient.getFullName());
         }
+        loadImage();
     }
 
     /**
-     * Searches for a client based off the id number supplied in the text field. The users fields will be displayed if
-     * this user exists, otherwise an error message will display.
+     * Updates all of the fields of the client.
      */
-    @FXML
-    private void searchClient() {
-        int idValue;
-        try {
-            idValue = Integer.parseInt(id.getText());
-        } catch (NumberFormatException e) {
-            noClientLabel.setVisible(true);
-            setFieldsDisabled(true);
-            return;
-        }
-        try {
-            viewedClient = manager.getClientByID(idValue).orElse(null);
-            updateClientFields();
-        } catch (ServerRestException e) {
-            e.printStackTrace();
-            PageNavigator.showAlert(AlertType.ERROR,
-                    "Server Error",
-                    "An error occurred while trying to fetch from the server.\nPlease try again later.");
-        } catch (NotFoundException e) {
-            PageNavigator.showAlert(AlertType.WARNING,
-                    "Client Not Found",
-                    "The specified client could not be located. Please enter a different ID");
-            noClientLabel.setVisible(true);
-            setFieldsDisabled(true);
-        }
-    }
-
     private void updateClientFields() {
-        noClientLabel.setVisible(false);
-        setFieldsDisabled(false);
-
         fname.setText(viewedClient.getFirstName());
         lname.setText(viewedClient.getLastName());
         mname.setText(viewedClient.getMiddleName());
@@ -243,26 +210,18 @@ public class ViewClientController extends ViewBaseController {
         btype.setValue(viewedClient.getBloodType());
         region.setValue(viewedClient.getRegion());
         address.setText(viewedClient.getCurrentAddress());
+        fullName.setText(viewedClient.getPreferredName());
 
         creationDate.setText(formatter.format(viewedClient.getCreatedTimestamp()));
+
         if (viewedClient.getModifiedTimestamp() == null) {
-            lastModified.setText("User has not been modified yet.");
+            lastModified.setText("Not yet modified.");
         } else {
             lastModified.setText(formatter.format(viewedClient.getModifiedTimestamp()));
         }
-
         displayBMI();
         displayAge();
 
-    }
-
-    /**
-     * Disables the view of user fields as these will all be irrelevant to the id number supplied if no such client
-     * exists with this id. Or sets it to visible so that the user can see all fields relevant to the client.
-     * @param disabled the state of the pane.
-     */
-    private void setFieldsDisabled(boolean disabled) {
-        inputsPane.setVisible(!disabled);
     }
 
     /**
@@ -278,6 +237,100 @@ public class ViewClientController extends ViewBaseController {
 
                 lastModified.setText(formatter.format(viewedClient.getModifiedTimestamp()));
             }
+        }
+    }
+
+    /**
+     * Loads the viewed profiles image
+     */
+    private void loadImage() {
+        byte[] bytes;
+        try {
+            deletePhotoButton.setDisable(false);
+            bytes = State.getImageManager().getClientImage(viewedClient.getUid());
+        } catch (NotFoundException ex) {
+            try {
+                deletePhotoButton.setDisable(true);
+                bytes = State.getImageManager().getDefaultImage();
+
+            } catch (IOException e) {
+                LOGGER.log(Level.SEVERE, "IO Exception when loading image ", e);
+                return;
+            }
+        } catch (ServerRestException e) {
+            PageNavigator.showAlert(AlertType.ERROR, "Server Error", "Something went wrong with the server. "
+                    + "Please try again later.");
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            return;
+        }
+        image = new Image(new ByteArrayInputStream(bytes));
+
+        imageView.setImage(image);
+        imageView.setFitHeight(128);
+        imageView.setFitWidth(128);
+        imageView.setPreserveRatio(true);
+
+    }
+
+    /**
+     * Prompts a user with a file chooser which is restricted to png's and jpg's. If a valid file of correct size is
+     * input, this photo is uploaded as the viewed clients new profile photo.
+     */
+    @FXML
+    public void uploadPhoto() {
+        boolean uploadSuccess = false;
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Upload Profile Image");
+        fileChooser.getExtensionFilters().addAll(
+                new ExtensionFilter("PNG files (*.png)", "*.png") // Restricting only this file type.
+        );
+
+        File selectedFile = fileChooser.showOpenDialog(AppUI.getWindow());
+        if (selectedFile != null) {
+            if (selectedFile.length() > maxFileSize) {
+                PageNavigator.showAlert(AlertType.WARNING, "Image Size Too Large",
+                        "The image size is too large. It must be under 2MB.");
+            } else if (!selectedFile.canRead()) {
+                PageNavigator.showAlert(AlertType.WARNING, "File Couldn't Be Read",
+                        "This file could not be read. Ensure you are uploading a valid .png or .jpg");
+            } else {
+//                image = new Image(selectedFile.toURI().toString());
+                try {
+                    InputStream in = new FileInputStream(selectedFile);
+                    uploadSuccess = State.getImageManager()
+                            .postClientImage(viewedClient.getUid(), IOUtils.toByteArray(in));
+
+                } catch (FileNotFoundException ex) {
+                    PageNavigator.showAlert(AlertType.WARNING, "File Couldn't Be Found",
+                            "This file was not found.");
+                } catch (IOException ex) {
+                    PageNavigator.showAlert(AlertType.WARNING, "File Couldn't Be Read",
+                            "This file could not be read. Ensure you are uploading a valid .png or .jpg");
+                } catch (ServerRestException e) {
+                    LOGGER.log(Level.SEVERE, e.getMessage(), e);
+                    PageNavigator.showAlert(AlertType.ERROR, "Server Error", "Something went wrong with the server. "
+                            + "Please try again later.");
+                }
+            }
+        }
+        if (uploadSuccess) {
+            refresh();
+            PageNavigator.showAlert(AlertType.CONFIRMATION, "Success", "The image has been posted.");
+        }
+    }
+
+    /**
+     * Sets the profile image to null and refreshes the image.
+     */
+    @FXML
+    public void deletePhoto() {
+        try {
+            State.getImageManager().deleteClientImage(viewedClient.getUid());
+            refresh();
+        } catch (ServerRestException e) {
+            PageNavigator.showAlert(AlertType.ERROR, "Server Error", "Something went wrong with the server. "
+                    + "Please try again later.");
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
     }
 
@@ -359,6 +412,24 @@ public class ViewClientController extends ViewBaseController {
             update = false;
         }
         return update;
+    }
+
+    private void addChangeIfDifferent(ModifyClientObject modifyClientObject, String fieldString, Object newValue) {
+        try {
+            //Get the field from the string
+            Field field = modifyClientObject.getClass().getDeclaredField(fieldString);
+            Field clientField = viewedClient.getClass().getDeclaredField(fieldString);
+            //Allow access to any fields including private
+            field.setAccessible(true);
+            clientField.setAccessible(true);
+            //Only add the field if it differs from the client
+            if (!Objects.equals(clientField.get(viewedClient), newValue)) {
+                field.set(modifyClientObject, newValue);
+                modifyClientObject.registerChange(fieldString);
+            }
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+        }
     }
 
     /**
