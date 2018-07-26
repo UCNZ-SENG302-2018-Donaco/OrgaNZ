@@ -73,6 +73,10 @@
     <maven.compiler.target>1.8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <sonar.jacoco.reportPaths>${basedir}/target/coverage-reports/jacoco-unit.exec</sonar.jacoco.reportPaths>
+    <sonar.host.url>
+      http://localhost:9000/
+    </sonar.host.url>
     <resource.delimiter>@</resource.delimiter>
     <outputDirectory>${project.basedir}/../target</outputDirectory>
     <sonar.jacoco.reportPaths>${outputDirectory}/coverage-reports/jacoco-unit.exec</sonar.jacoco.reportPaths>

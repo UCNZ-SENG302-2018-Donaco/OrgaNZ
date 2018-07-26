@@ -333,7 +333,7 @@ public class MenuBarController extends SubController {
     }
 
     /**
-     * Opens a saveClients file dialog to choose where to save all clients in the system to a file.
+     * Opens a save file dialog to choose where to save all clients in the system to a file.
      */
     @FXML
     private void saveClients() {
@@ -357,7 +357,7 @@ public class MenuBarController extends SubController {
                         .showInformation();
 
                 HistoryItem historyItem = new HistoryItem("SAVE",
-                        String.format("The system's current client state was saved to file '%s'.", file.getName()));
+                        String.format("All clients were saved to file '%s'.", file.getName()));
                 State.getSession().addToSessionHistory(historyItem);
 
                 State.setUnsavedChanges(false);
@@ -394,7 +394,7 @@ public class MenuBarController extends SubController {
                         .showInformation();
 
                 HistoryItem historyItem = new HistoryItem("SAVE",
-                        String.format("The system's current clinician state was saved to file '%s'.", file.getName()));
+                        String.format("All clinicians were saved to file '%s'.", file.getName()));
                 State.getSession().addToSessionHistory(historyItem);
 
                 State.setUnsavedChanges(false);
@@ -567,13 +567,13 @@ public class MenuBarController extends SubController {
     }
 
     /**
-     * Prompts the user to saveClients their changes if there are changes unsaved, then exits the program.
+     * Prompts the user to save their changes if there are changes unsaved, then exits the program.
      */
     @FXML
     private void quitProgram() {
         if (State.isUnsavedChanges()) {
-            Alert unsavedAlert = PageNavigator.generateAlert(AlertType.WARNING, "Do you want to saveClients the changes you have made?",
-                    "Your changes will be lost if you do not saveClients them.");
+            Alert unsavedAlert = PageNavigator.generateAlert(AlertType.WARNING, "Do you want to save the changes you have made?",
+                    "Your changes will be lost if you do not save them.");
             ButtonType dontSave = new ButtonType("Don't Save");
             ButtonType cancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
             ButtonType save = new ButtonType("Save");

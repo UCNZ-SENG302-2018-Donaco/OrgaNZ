@@ -98,6 +98,8 @@ public class ClinicianManagerRest implements ClinicianManager {
         return getClinicianByStaffId(0).orElseThrow(IllegalStateException::new);
     }
 
+
+
     @Override
     public void setClinicians(Collection<Clinician> clinicians) {
         //Do nothing method

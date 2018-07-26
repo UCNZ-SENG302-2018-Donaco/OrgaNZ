@@ -42,7 +42,6 @@ public class ViewClinicianController extends ViewBaseController {
 
     private static final Logger LOGGER = Logger.getLogger(ViewClinicianController.class.getName());
 
-    private final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("dd/MM/yyyy\nh:mm:ss a");
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
             .withZone(ZoneId.systemDefault());
 
@@ -90,8 +89,13 @@ public class ViewClinicianController extends ViewBaseController {
 
         switch (session.getLoggedInUserType()) {
             case ADMINISTRATOR:
-                viewedClinician = State.getClinicianManager().getDefaultClinician();
-//                viewedClinician =
+                if (State.getCreatedClinician() != null) {
+                    viewedClinician = State.getCreatedClinician();
+                    State.setCreatedClinician(null);
+                    System.out.println(viewedClinician.getFirstName());
+                } else {
+                    viewedClinician = State.getClinicianManager().getDefaultClinician();
+                }
                 break;
             case CLINICIAN:
                 viewedClinician = session.getLoggedInClinician();
@@ -132,7 +136,6 @@ public class ViewClinicianController extends ViewBaseController {
     public void refresh() {
         loadClinicianData();
     }
-
 
     /**
      * Loads the clinician identified by the staff ID in loadStaffIdTextField.
@@ -227,7 +230,6 @@ public class ViewClinicianController extends ViewBaseController {
         }
         return update;
     }
-
 
     /**
      * Checks if the password has been updated. If the PasswordField is left blank, the old password remains current.

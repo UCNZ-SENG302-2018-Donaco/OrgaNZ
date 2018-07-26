@@ -1,35 +1,26 @@
 package com.humanharvest.organz.server.client;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.nio.charset.Charset;
 import java.time.LocalDate;
 
 import com.humanharvest.organz.Client;
-import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.server.Application;
 import com.humanharvest.organz.state.AuthenticationManagerFake;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.enums.Region;
 import org.apache.commons.io.IOUtils;
-import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -67,7 +58,8 @@ public class ClientControllerImagesTest {
 
     @Test
     public void getNonExistingImage() throws Exception {
-        mockMvc.perform(get("/clients/9999/image"))
+        mockMvc.perform(get("/clients/9999/image")
+                .header("If-Match", testClient.getETag()))
                 .andExpect(status().isNotFound());
     }
 
@@ -79,11 +71,13 @@ public class ClientControllerImagesTest {
 
         // Post an image
         mockMvc.perform(post("/clients/9999/image")
+                .header("If-Match", testClient.getETag())
                 .contentType(MediaType.IMAGE_PNG)
                 .content(bytes));
 
         // Test that the image belongs to the right client.
-        mockMvc.perform(get("/clients/9999/image"))
+        mockMvc.perform(get("/clients/9999/image")
+                .header("If-Match", testClient.getETag()))
                 .andExpect(status().isOk());
     }
 
@@ -92,37 +86,44 @@ public class ClientControllerImagesTest {
     public void validPost() throws Exception {
         InputStream in = new FileInputStream("./../images/default.png");
         byte[] bytes = IOUtils.toByteArray(in);
+        in.close();
 
         mockMvc.perform(post("/clients/9999/image")
                 .contentType(MediaType.IMAGE_PNG)
+                .header("If-Match", testClient.getETag())
                 .content(bytes))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
     }
 
     @Test
     public void validReplacingPost() throws Exception {
         InputStream in = new FileInputStream("./../images/default.png");
         byte[] bytes = IOUtils.toByteArray(in);
+        in.close();
 
         mockMvc.perform(post("/clients/9999/image")
                 .contentType(MediaType.IMAGE_PNG)
+                .header("If-Match", testClient.getETag())
                 .content(bytes))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
 
         // Make a post to replace the current image
         mockMvc.perform(post("/clients/9999/image")
                 .contentType(MediaType.IMAGE_PNG)
+                .header("If-Match", testClient.getETag())
                 .content(bytes))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
     }
 
     @Test
     public void invalidPost() throws Exception {
         InputStream in = new FileInputStream("./../images/default.png");
         byte[] bytes = IOUtils.toByteArray(in);
+        in.close();
 
         mockMvc.perform(post("/clients/9998/image")
                 .contentType(MediaType.IMAGE_PNG)
+                .header("If-Match", testClient.getETag())
                 .content(bytes))
                 .andExpect(status().isNotFound());
 
@@ -132,19 +133,23 @@ public class ClientControllerImagesTest {
     public void validDelete() throws Exception {
         InputStream in = new FileInputStream("./../images/default.png");
         byte[] bytes = IOUtils.toByteArray(in);
+        in.close();
 
         mockMvc.perform(post("/clients/9999/image")
                 .contentType(MediaType.IMAGE_PNG)
+                .header("If-Match", testClient.getETag())
                 .content(bytes))
-                .andExpect(status().isOk());
+                .andExpect(status().isCreated());
 
-        mockMvc.perform(delete("/clients/9999/image"))
+        mockMvc.perform(delete("/clients/9999/image")
+                .header("If-Match", testClient.getETag()))
                 .andExpect(status().isOk());
     }
 
     @Test
     public void invalidDelete() throws Exception {
-        mockMvc.perform(delete("/clients/9999/image"))
+        mockMvc.perform(delete("/clients/9999/image")
+                .header("If-Match", testClient.getETag()))
                 .andExpect(status().isNotFound());
     }
 

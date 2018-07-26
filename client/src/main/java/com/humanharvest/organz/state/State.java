@@ -67,6 +67,7 @@ public final class State {
     private static String clinicianEtag = "";
     private static String administratorEtag = "";
     private static String token = "";
+    private static Clinician createdClinician;
 
     private State() {
     }
@@ -76,8 +77,6 @@ public final class State {
      */
     public static void init(DataStorageType storageType) {
         currentStorageType = storageType;
-
-        imageManager = new ImageManager();
 
         if (storageType == DataStorageType.REST) {
             ClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
@@ -97,6 +96,7 @@ public final class State {
             clinicianResolver = new ClinicianResolverRest();
             administratorResolver = new AdministratorResolverRest();
             fileResolver = new FileResolverRest();
+            imageManager = new ImageManagerRest();
         } else if (storageType == DataStorageType.MEMORY) {
             clientManager = new ClientManagerMemory();
             clientResolver = new ClientResolverMemory();
@@ -110,6 +110,7 @@ public final class State {
             clinicianResolver = new ClincianResolverMemory();
             administratorResolver = new AdministratorResolverMemory();
             fileResolver = new FileResolverMemory();
+            imageManager = new ImageManagerMemory();
         } else {
             throw new IllegalArgumentException("DataStorageType cannot be null.");
         }
@@ -265,5 +266,13 @@ public final class State {
 
     public static ImageManager getImageManager() {
         return imageManager;
+    }
+
+    public static Clinician getCreatedClinician() {
+        return createdClinician;
+    }
+
+    public static void setCreatedClinician(Clinician createdClinician) {
+        State.createdClinician = createdClinician;
     }
 }
