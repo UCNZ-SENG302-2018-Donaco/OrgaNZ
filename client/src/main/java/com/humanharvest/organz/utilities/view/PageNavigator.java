@@ -5,10 +5,9 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.humanharvest.organz.AppTUIO;
+import javafx.event.EventTarget;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.TitledPane;
@@ -16,7 +15,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 
-import com.humanharvest.organz.AppUI;
+import com.humanharvest.organz.AppTUIO;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.state.State;
@@ -79,22 +78,26 @@ public class PageNavigator {
             mainController.setStage(newStage);
             State.addMainController(mainController);
             newStage.setOnCloseRequest(e -> State.deleteMainController(mainController));
-
-
             TitledPane pane = new TitledPane("New", mainPane);
             pane.getProperties().put("focusArea", "true");
 
-//            pane.setStyle("   -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 10, 10);"
-//                    + "-fx-background-color: derive(-fx-background,0%);");
-
+            pane.setStyle("   -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 10, 10);"
+                    + "-fx-background-color: derive(-fx-background,0%);");
 
             pane.setOnMousePressed(event -> {
+                System.out.println("p");
+                EventTarget t = event.getTarget();
+                System.out.println(t);
                 pane.toFront();
                 startDragX = event.getSceneX();
                 startDragY = event.getSceneY();
             });
 
             pane.setOnMouseDragged(event -> {
+                Class<? extends EventTarget> clazz = event.getTarget().getClass();
+                if (clazz.getName().contains("Slider")) {
+                    return;
+                }
                 pane.toFront();
                 //TODO: Not hardcode res and not have static startDrag vars
                 pane.setTranslateX(withinRange(0, 1920 - pane.getWidth(), pane.getTranslateX() + event.getSceneX() - startDragX));
@@ -104,10 +107,16 @@ public class PageNavigator {
             });
 
             pane.setOnScroll(event -> {
+                Class<? extends EventTarget> clazz = event.getTarget().getClass();
+                if (clazz.getName().contains("Slider")) {
+                    return;
+                }
                 pane.toFront();
                 //TODO: not hardcode res and not have static startDrag vars
-                pane.setTranslateX(withinRange(0, 1920 - pane.getWidth(), pane.getTranslateX() + event.getDeltaX()));
-                pane.setTranslateY(withinRange(0, 1080 - pane.getHeight(), pane.getTranslateY() + event.getDeltaY()));
+//                pane.setTranslateX(withinRange(0, 1920 - pane.getWidth(), pane.getTranslateX() + event.getDeltaX()));
+//                pane.setTranslateY(withinRange(0, 1080 - pane.getHeight(), pane.getTranslateY() + event.getDeltaY()));
+                pane.setTranslateX(pane.getTranslateX() + event.getDeltaX());
+                pane.setTranslateY(pane.getTranslateY() + event.getDeltaY());
 
             });
             pane.setOnRotate(event -> {
@@ -115,16 +124,12 @@ public class PageNavigator {
                 pane.setRotate(pane.getRotate() + event.getAngle());
             });
 
+            pane.setOnZoom(event -> {
+                pane.setScaleX(pane.getScaleX() * event.getZoomFactor());
+                pane.setScaleY(pane.getScaleY() * event.getZoomFactor());
+            });
+
             AppTUIO.root.getChildren().add(pane);
-
-
-//            Scene scene = new Scene(mainPane);
-//            AppUI.addCss(scene);
-//            newStage.setScene(scene);
-//            newStage.show();
-//
-//            newStage.setMinHeight(639);
-//            newStage.setMinWidth(1016);
 
             return mainController;
         } catch (IOException e) {

@@ -24,6 +24,9 @@ public final class CommandsHelper {
     public static String[] parseCommands(String input) {
         List<String> inputs = new ArrayList<>();
 
+        if (input.endsWith("\r")) {
+            input = input.substring(0, input.length() - 1);
+        }
         String currentItem = "";
         boolean betweenQuotes = false;
         boolean lastCharWasBackSlash = false;
@@ -56,7 +59,7 @@ public final class CommandsHelper {
             lastCharWasBackSlash = ch == '\\';
         }
         if (!Objects.equals(currentItem, "")) {
-            inputs.add(currentItem);
+            inputs.add(currentItem.trim());
         }
         return inputs.toArray(new String[0]);
     }
