@@ -6,6 +6,7 @@ import java.util.logging.Level;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.TitledPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
@@ -25,6 +26,7 @@ import org.tuiofx.TuioFX;
 public class AppTUIO extends Application {
 
     private static Stage window;
+    private TitledPane pane = null;
 
     public static Stage getWindow() {
         return window;
@@ -44,7 +46,9 @@ public class AppTUIO extends Application {
 
         final Scene scene = new Scene(root, 1920, 1080);
 
-        root.getChildren().add(loadMainPane(primaryStage));
+        pane = new TitledPane("Test", loadMainPane(new Stage()));
+
+        root.getChildren().add(pane);
 
         TuioFX tuioFX = new TuioFX(primaryStage, Configuration.debug());
         tuioFX.enableMTWidgets(true);
