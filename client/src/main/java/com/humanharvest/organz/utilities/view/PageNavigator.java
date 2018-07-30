@@ -5,11 +5,13 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.humanharvest.organz.AppTUIO;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.TitledPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
@@ -75,13 +77,15 @@ public class PageNavigator {
             State.addMainController(mainController);
             newStage.setOnCloseRequest(e -> State.deleteMainController(mainController));
 
-            Scene scene = new Scene(mainPane);
-            AppUI.addCss(scene);
-            newStage.setScene(scene);
-            newStage.show();
-
-            newStage.setMinHeight(639);
-            newStage.setMinWidth(1016);
+            TitledPane pane = new TitledPane("New", mainPane);
+            AppTUIO.root.getChildren().add(pane);
+//            Scene scene = new Scene(mainPane);
+//            AppUI.addCss(scene);
+//            newStage.setScene(scene);
+//            newStage.show();
+//
+//            newStage.setMinHeight(639);
+//            newStage.setMinWidth(1016);
 
             return mainController;
         } catch (IOException e) {

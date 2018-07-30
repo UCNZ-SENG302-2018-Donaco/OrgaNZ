@@ -30,6 +30,7 @@ public class AppTUIO extends Application {
 
     private static Stage window;
     private TitledPane pane = null;
+    public static final Pane root = new Pane();
 
     public static Stage getWindow() {
         return window;
@@ -45,8 +46,6 @@ public class AppTUIO extends Application {
     public void start(Stage primaryStage) throws IOException {
         LoggerSetup.setup(Level.INFO);
 
-        final Pane root = new Pane();
-
         final Scene scene = new Scene(root, 1920, 1080);
 
         pane = new TitledPane("Test", loadMainPane(new Stage()));
@@ -56,23 +55,18 @@ public class AppTUIO extends Application {
         pane.setStyle("   -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 10, 10);"
                 + "-fx-background-color: derive(-fx-background,0%);");
 
-        pane.setOnScroll(new EventHandler<ScrollEvent>() {
-            @Override
+        pane.setOnScroll(event -> {
+            pane.toFront();
+            pane.setTranslateX(pane.getTranslateX() + event.getDeltaX());
+            pane.setTranslateY(pane.getTranslateY() + event.getDeltaY());
 
-            public void handle(ScrollEvent event) {
-                pane.toFront();
-                pane.setTranslateX(pane.getTranslateX() + event.getDeltaX());
-                pane.setTranslateY(pane.getTranslateY() + event.getDeltaY());
+        });
+        pane.setOnRotate(event -> {
+            pane.toFront();
+            pane.setRotate(pane.getRotate() + event.getAngle());
+        });
 
-            }
-        });
-        pane.setOnRotate(new EventHandler<RotateEvent>() {
-            @Override
-            public void handle(RotateEvent event) {
-                pane.toFront();
-                pane.setRotate(pane.getRotate() + event.getAngle());
-            }
-        });
+
 
 
         TuioFX tuioFX = new TuioFX(primaryStage, Configuration.debug());
