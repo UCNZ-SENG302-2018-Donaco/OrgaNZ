@@ -4,9 +4,12 @@ import java.io.IOException;
 import java.util.logging.Level;
 
 import javafx.application.Application;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.TitledPane;
+import javafx.scene.input.RotateEvent;
+import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
@@ -49,6 +52,28 @@ public class AppTUIO extends Application {
         pane = new TitledPane("Test", loadMainPane(new Stage()));
 
         root.getChildren().add(pane);
+
+        pane.setStyle("   -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 10, 10);"
+                + "-fx-background-color: derive(-fx-background,0%);");
+
+        pane.setOnScroll(new EventHandler<ScrollEvent>() {
+            @Override
+
+            public void handle(ScrollEvent event) {
+                pane.toFront();
+                pane.setTranslateX(pane.getTranslateX() + event.getDeltaX());
+                pane.setTranslateY(pane.getTranslateY() + event.getDeltaY());
+
+            }
+        });
+        pane.setOnRotate(new EventHandler<RotateEvent>() {
+            @Override
+            public void handle(RotateEvent event) {
+                pane.toFront();
+                pane.setRotate(pane.getRotate() + event.getAngle());
+            }
+        });
+
 
         TuioFX tuioFX = new TuioFX(primaryStage, Configuration.debug());
         tuioFX.enableMTWidgets(true);
