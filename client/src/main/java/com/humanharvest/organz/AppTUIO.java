@@ -8,6 +8,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.TitledPane;
+import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.RotateEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
@@ -31,6 +32,8 @@ public class AppTUIO extends Application {
     private static Stage window;
     private TitledPane pane = null;
     public static final Pane root = new Pane();
+    public static double startDragX;
+    public static double startDragY;
 
     public static Stage getWindow() {
         return window;
@@ -49,23 +52,39 @@ public class AppTUIO extends Application {
         final Scene scene = new Scene(root, 1920, 1080);
 
         pane = new TitledPane("Test", loadMainPane(new Stage()));
+        pane.getProperties().put("focusArea", "true");
 
         root.getChildren().add(pane);
 
-        pane.setStyle("   -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 10, 10);"
-                + "-fx-background-color: derive(-fx-background,0%);");
+//        pane.setStyle("   -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 10, 10);"
+//                + "-fx-background-color: derive(-fx-background,0%);");
+
+        pane.setOnMousePressed(event -> {
+            pane.toFront();
+            startDragX = event.getSceneX();
+            startDragY = event.getSceneY();
+        });
+
+        pane.setOnMouseDragged(event -> {
+            pane.toFront();
+            //TODO: Not hardcode res and not have static startDrag vars
+            pane.setTranslateX(withinRange(0, 1920 - pane.getWidth(), pane.getTranslateX() + event.getSceneX() - startDragX));
+            pane.setTranslateY(withinRange(0, 1080 - pane.getHeight(), pane.getTranslateY() + event.getSceneY() - startDragY));
+            startDragX = event.getSceneX();
+            startDragY = event.getSceneY();
+        });
 
         pane.setOnScroll(event -> {
             pane.toFront();
-            pane.setTranslateX(pane.getTranslateX() + event.getDeltaX());
-            pane.setTranslateY(pane.getTranslateY() + event.getDeltaY());
+            //TODO: not hardcode res and not have static startDrag vars
+            pane.setTranslateX(withinRange(0, 1920 - pane.getWidth(), pane.getTranslateX() + event.getDeltaX()));
+            pane.setTranslateY(withinRange(0, 1080 - pane.getHeight(), pane.getTranslateY() + event.getDeltaY()));
 
         });
         pane.setOnRotate(event -> {
             pane.toFront();
             pane.setRotate(pane.getRotate() + event.getAngle());
         });
-
 
 
 
@@ -127,5 +146,9 @@ public class AppTUIO extends Application {
     public static void main(String[] args) {
         TuioFX.enableJavaFXTouchProperties();
         launch(args);
+    }
+
+    private static double withinRange(double min, double max, double value) {
+        return Math.min(Math.max(value, min), max);
     }
 }

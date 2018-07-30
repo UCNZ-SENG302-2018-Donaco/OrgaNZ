@@ -29,6 +29,9 @@ public class PageNavigator {
 
     private static final Logger LOGGER = Logger.getLogger(PageNavigator.class.getName());
 
+    public static double startDragX;
+    public static double startDragY;
+
     /**
      * Loads the given page in the given MainController.
      * @param page the Page (enum including path to fxml file) to be loaded.
@@ -77,8 +80,44 @@ public class PageNavigator {
             State.addMainController(mainController);
             newStage.setOnCloseRequest(e -> State.deleteMainController(mainController));
 
+
             TitledPane pane = new TitledPane("New", mainPane);
+            pane.getProperties().put("focusArea", "true");
+
+//            pane.setStyle("   -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 10, 10);"
+//                    + "-fx-background-color: derive(-fx-background,0%);");
+
+
+            pane.setOnMousePressed(event -> {
+                pane.toFront();
+                startDragX = event.getSceneX();
+                startDragY = event.getSceneY();
+            });
+
+            pane.setOnMouseDragged(event -> {
+                pane.toFront();
+                //TODO: Not hardcode res and not have static startDrag vars
+                pane.setTranslateX(withinRange(0, 1920 - pane.getWidth(), pane.getTranslateX() + event.getSceneX() - startDragX));
+                pane.setTranslateY(withinRange(0, 1080 - pane.getHeight(), pane.getTranslateY() + event.getSceneY() - startDragY));
+                startDragX = event.getSceneX();
+                startDragY = event.getSceneY();
+            });
+
+            pane.setOnScroll(event -> {
+                pane.toFront();
+                //TODO: not hardcode res and not have static startDrag vars
+                pane.setTranslateX(withinRange(0, 1920 - pane.getWidth(), pane.getTranslateX() + event.getDeltaX()));
+                pane.setTranslateY(withinRange(0, 1080 - pane.getHeight(), pane.getTranslateY() + event.getDeltaY()));
+
+            });
+            pane.setOnRotate(event -> {
+                pane.toFront();
+                pane.setRotate(pane.getRotate() + event.getAngle());
+            });
+
             AppTUIO.root.getChildren().add(pane);
+
+
 //            Scene scene = new Scene(mainPane);
 //            AppUI.addCss(scene);
 //            newStage.setScene(scene);
@@ -132,5 +171,9 @@ public class PageNavigator {
     public static Optional<ButtonType> showAlert(Alert.AlertType alertType, String title, String bodyText) {
         Alert alert = generateAlert(alertType, title, bodyText);
         return alert.showAndWait();
+    }
+
+    private static double withinRange(double min, double max, double value) {
+        return Math.min(Math.max(value, min), max);
     }
 }
