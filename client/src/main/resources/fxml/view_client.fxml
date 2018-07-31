@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.151" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.client.ViewClientController">
+<VBox prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.client.ViewClientController">
   <SplitPane dividerPositions="0.5" orientation="VERTICAL" VBox.vgrow="ALWAYS">
     <HBox fx:id="menuBarPane" maxHeight="-Infinity" />
     <SplitPane dividerPositions="0.29797979797979796" VBox.vgrow="ALWAYS">
@@ -137,11 +137,8 @@
                         <Label text="Country: " GridPane.rowIndex="9" />
                         <ChoiceBox fx:id="country" prefHeight="26.0" prefWidth="183.0" GridPane.columnIndex="1" GridPane.rowIndex="9" />
                         <TextField fx:id="regionTF" GridPane.columnIndex="1" GridPane.rowIndex="8" />
-                <HBox GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="CENTER">
-                  <children>
-                    <Button fx:id="editDeathDetailsButton" mnemonicParsing="false" onAction="#editDeathDetails" prefHeight="50.0" prefWidth="170.0" text="View/Edit" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="CENTER" />
-                  </children>
-                </HBox>
+                <HBox GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="5" GridPane.valignment="CENTER" />
+              <Button fx:id="editDeathDetailsButton" mnemonicParsing="false" onAction="#editDeathDetails" prefHeight="50.0" prefWidth="170.0" text="View/Edit" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="6" GridPane.valignment="CENTER" />
               </GridPane>
             </VBox>
           </center>
