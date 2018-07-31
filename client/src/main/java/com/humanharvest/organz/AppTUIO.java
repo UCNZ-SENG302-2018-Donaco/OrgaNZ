@@ -4,10 +4,8 @@ import java.io.IOException;
 import java.util.logging.Level;
 
 import javafx.application.Application;
-import javafx.event.EventTarget;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.TitledPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
@@ -17,6 +15,7 @@ import com.humanharvest.organz.state.State.DataStorageType;
 import com.humanharvest.organz.utilities.LoggerSetup;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.utilities.view.TuioFXUtils;
 import com.humanharvest.organz.utilities.view.WindowContext;
 import org.tuiofx.Configuration;
 import org.tuiofx.TuioFX;
@@ -26,15 +25,7 @@ import org.tuiofx.TuioFX;
  */
 public class AppTUIO extends Application {
 
-    private static Stage window;
-    private TitledPane pane = null;
     public static final Pane root = new Pane();
-    public static double startDragX;
-    public static double startDragY;
-
-    public static Stage getWindow() {
-        return window;
-    }
 
     /**
      * Starts the JavaFX GUI. Sets up the main stage and initialises the state of the system.
@@ -48,62 +39,14 @@ public class AppTUIO extends Application {
 
         final Scene scene = new Scene(root, 1920, 1080);
 
-        pane = new TitledPane("Test", loadMainPane(new Stage()));
-        pane.getProperties().put("focusArea", "true");
+        Pane pane = loadMainPane(new Stage());
+
+        TuioFXUtils.setupPaneWithTouchFeatures(pane);
 
         root.getChildren().add(pane);
 
         pane.setStyle("   -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 10, 10);"
                 + "-fx-background-color: grey");
-
-        pane.getStylesheets().removeAll();
-        pane.getStyleClass().removeAll();
-
-        pane.setOnMousePressed(event -> {
-            System.out.println("p");
-            EventTarget t = event.getTarget();
-            System.out.println(t);
-            pane.toFront();
-            startDragX = event.getSceneX();
-            startDragY = event.getSceneY();
-        });
-
-        pane.setOnMouseDragged(event -> {
-            Class<? extends EventTarget> clazz = event.getTarget().getClass();
-            if (clazz.getName().contains("Slider")) {
-                return;
-            }
-            pane.toFront();
-            //TODO: Not hardcode res and not have static startDrag vars
-            pane.setTranslateX(withinRange(0, 1920 - pane.getWidth(), pane.getTranslateX() + event.getSceneX() - startDragX));
-            pane.setTranslateY(withinRange(0, 1080 - pane.getHeight(), pane.getTranslateY() + event.getSceneY() - startDragY));
-            startDragX = event.getSceneX();
-            startDragY = event.getSceneY();
-        });
-
-        pane.setOnScroll(event -> {
-            Class<? extends EventTarget> clazz = event.getTarget().getClass();
-            if (clazz.getName().contains("Slider")) {
-                return;
-            }
-            pane.toFront();
-            //TODO: not hardcode res and not have static startDrag vars and enable this in some way to allow limits
-//            pane.setTranslateX(withinRange(0, 1920 - pane.getWidth(), pane.getTranslateX() + event.getDeltaX()));
-//            pane.setTranslateY(withinRange(0, 1080 - pane.getHeight(), pane.getTranslateY() + event.getDeltaY()));
-            pane.setTranslateX(pane.getTranslateX() + event.getDeltaX());
-            pane.setTranslateY(pane.getTranslateY() + event.getDeltaY());
-
-        });
-        pane.setOnRotate(event -> {
-            pane.toFront();
-            pane.setRotate(pane.getRotate() + event.getAngle());
-        });
-
-        pane.setOnZoom(event -> {
-            pane.setScaleX(pane.getScaleX() * event.getZoomFactor());
-            pane.setScaleY(pane.getScaleY() * event.getZoomFactor());
-        });
-
 
         TuioFX tuioFX = new TuioFX(primaryStage, Configuration.debug());
         tuioFX.enableMTWidgets(true);
