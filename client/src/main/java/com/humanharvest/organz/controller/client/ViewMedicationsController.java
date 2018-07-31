@@ -275,17 +275,20 @@ public class ViewMedicationsController extends SubController {
      * Tracks if the control key is pressed or released, and updates selectingMultiple accordingly.
      */
     private void trackControlOrShiftKeyPressed() {
+        //TODO: Fix this to use something more logical for multiple users?
         Scene scene = mainController.getStage().getScene();
-        scene.setOnKeyPressed(e -> {
-            if (e.getCode() == KeyCode.CONTROL || e.getCode() == KeyCode.SHIFT) {
-                selectingMultiple = true;
-            }
-        });
-        scene.setOnKeyReleased(e -> {
-            if (e.getCode() == KeyCode.CONTROL || e.getCode() == KeyCode.SHIFT) {
-                selectingMultiple = false;
-            }
-        });
+        if (scene != null) {
+            scene.setOnKeyPressed(e -> {
+                if (e.getCode() == KeyCode.CONTROL || e.getCode() == KeyCode.SHIFT) {
+                    selectingMultiple = true;
+                }
+            });
+            scene.setOnKeyReleased(e -> {
+                if (e.getCode() == KeyCode.CONTROL || e.getCode() == KeyCode.SHIFT) {
+                    selectingMultiple = false;
+                }
+            });
+        }
     }
 
     /**
