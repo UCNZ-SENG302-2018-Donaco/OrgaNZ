@@ -1,23 +1,10 @@
 package com.humanharvest.organz.utilities.view;
 
-import java.io.IOException;
-import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
+import com.humanharvest.organz.controller.MainController;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
-import javafx.stage.Stage;
 
-import com.humanharvest.organz.AppTUIO;
-import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.state.State;
+import java.util.Optional;
 
 /**
  * Utility class for controlling navigation between pages.
@@ -25,10 +12,11 @@ import com.humanharvest.organz.state.State;
  */
 public class PageNavigator {
 
-    private static final Logger LOGGER = Logger.getLogger(PageNavigator.class.getName());
+    private static IPageNavigator pageNavigator;
 
-    public static double startDragX;
-    public static double startDragY;
+    public static void setPageNavigator(IPageNavigator navigator) {
+        pageNavigator = navigator;
+    }
 
     /**
      * Loads the given page in the given MainController.
@@ -36,37 +24,14 @@ public class PageNavigator {
      * @param controller the MainController to load this page on to.
      */
     public static void loadPage(Page page, MainController controller) {
-        try {
-            LOGGER.info("Loading page: " + page);
-            FXMLLoader loader = new FXMLLoader(PageNavigator.class.getResource(page.getPath()));
-            Node loadedPage = loader.load();
-            SubController subController = loader.getController();
-            subController.setup(controller);
-            controller.setSubController(subController);
-
-            controller.setPage(page, loadedPage);
-
-            if (loadedPage instanceof Parent) {
-                TuioFXUtils.setTransparentNodes(loadedPage);
-                loadedPage.getProperties().put("isTouchTransparent", "true");
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-            LOGGER.log(Level.SEVERE, "Couldn't load the page", e);
-            showAlert(Alert.AlertType.ERROR, "Could not load page: " + page,
-                    "The page loader failed to load the layout for the page.");
-        }
+        pageNavigator.loadPage(page, controller);
     }
 
     /**
      * Refreshes all windows, to be used when an update occurs. Only refreshes titles and sidebars
      */
     public static void refreshAllWindows() {
-        LOGGER.info("Refreshing all windows");
-        for (MainController controller : State.getMainControllers()) {
-            controller.refresh();
-        }
+        pageNavigator.refreshAllWindows();
     }
 
     /**
@@ -74,36 +39,7 @@ public class PageNavigator {
      * @return The MainController for the new window, or null if the new window could not be created.
      */
     public static MainController openNewWindow() {
-        LOGGER.info("Opening new window");
-        try {
-            Stage newStage = new Stage();
-            newStage.setTitle("Organ Client Management System");
-            FXMLLoader loader = new FXMLLoader();
-            Pane mainPane = loader.load(PageNavigator.class.getResourceAsStream(Page.MAIN.getPath()));
-            MainController mainController = loader.getController();
-            mainController.setStage(newStage);
-            State.addMainController(mainController);
-            newStage.setOnCloseRequest(e -> State.deleteMainController(mainController));
-
-            TuioFXUtils.setupPaneWithTouchFeatures(mainPane);
-
-            AppTUIO.root.getChildren().add(mainPane);
-
-            return mainController;
-        } catch (IOException e) {
-            LOGGER.log(Level.SEVERE, "Error loading new window\n", e);
-            // Will throw if MAIN's fxml file could not be loaded.
-            showAlert(Alert.AlertType.ERROR, "New window could not be created",
-                    "The page loader failed to load the layout for the new window.");
-            return null;
-        }
-    }
-
-    /**
-     * Sets the alert window at the right size so that all the text can be read.
-     */
-    private static void resizeAlert(Alert alert) {
-        alert.getDialogPane().getScene().getWindow().sizeToScene();
+        return pageNavigator.openNewWindow();
     }
 
     /**
@@ -114,14 +50,7 @@ public class PageNavigator {
      * @return The generated alert.
      */
     public static Alert generateAlert(Alert.AlertType alertType, String title, String bodyText) {
-        Alert alert = new Alert(alertType);
-        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-        alert.contentTextProperty().addListener(observable -> resizeAlert(alert));
-
-        alert.setTitle(title);
-        alert.setHeaderText(title);
-        alert.setContentText(bodyText);
-        return alert;
+        return pageNavigator.generateAlert(alertType, title, bodyText);
     }
 
     /**
@@ -132,7 +61,6 @@ public class PageNavigator {
      * @return an Optional for the button that was clicked to dismiss the alert.
      */
     public static Optional<ButtonType> showAlert(Alert.AlertType alertType, String title, String bodyText) {
-        Alert alert = generateAlert(alertType, title, bodyText);
-        return alert.showAndWait();
+        return pageNavigator.showAlert(alertType, title, bodyText);
     }
 }
