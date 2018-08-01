@@ -271,7 +271,7 @@ ControlsFX
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-Hibernate
+Hibernate, libTUIO(TUIO11_JAVA)
 
 GNU LESSER GENERAL PUBLIC LICENSE
 Version 2.1, February 1999
@@ -570,3 +570,13 @@ by James Hacker.
 signature of Ty Coon, 1 April 1989
 Ty Coon, President of Vice
 This General Public License does not permit incorporating your program into proprietary programs. If your program is a subroutine library, you may consider it more useful to permit linking proprietary applications with the library. If this is what you want to do, use the GNU Lesser General Public License instead of this License.
+
+TUIOFX
+
+This software is not currently release with an explicit licence, but is released as a binary on Github, and therefor falls under the following clause as defined in the Github Terms of Service:
+
+D.5. License Grant to Other Users
+
+Any User-Generated Content you post publicly, including issues, comments, and contributions to other Users' repositories, may be viewed by others. By setting your repositories to be viewed publicly, you agree to allow others to view and "fork" your repositories (this means that others may make their own copies of Content from your repositories in repositories they control).
+
+If you set your pages and repositories to be viewed publicly, you grant each User of GitHub a nonexclusive, worldwide license to use, display, and perform Your Content through the GitHub Service and to reproduce Your Content solely on GitHub as permitted through GitHub's functionality (for example, through forking). You may grant further rights if you adopt a license. If you are uploading Content you did not create or own, you are responsible for ensuring that the Content you upload is licensed under terms that grant these permissions to other GitHub Users.
