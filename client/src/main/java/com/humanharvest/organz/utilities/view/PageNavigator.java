@@ -12,7 +12,7 @@ import java.util.Optional;
  */
 public class PageNavigator {
 
-    private static IPageNavigator pageNavigator;
+    private static IPageNavigator pageNavigator = new PageNavigatorStandard();
 
     public static void setPageNavigator(IPageNavigator navigator) {
         pageNavigator = navigator;
