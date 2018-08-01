@@ -82,8 +82,9 @@ public class AppTUIO extends Application {
 
         TouchPane touchPane = new TouchPane(pane);
 
+
+        Application.setUserAgentStylesheet("MODENA");
         StyleManager.getInstance().addUserAgentStylesheet("/css/multifocus.css");
-        root.getStylesheets().add(AppUI.class.getResource("/css/multifocus.css").toExternalForm());
 
 //        TuioFXUtils.setupPaneWithTouchFeatures(pane);
         //TuioFXUtils.setupPaneWithTouchFeatures(touchPane);
