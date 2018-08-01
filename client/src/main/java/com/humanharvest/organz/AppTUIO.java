@@ -5,6 +5,8 @@ import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.state.State.DataStorageType;
 import com.humanharvest.organz.utilities.LoggerSetup;
 import com.humanharvest.organz.utilities.view.*;
+import com.humanharvest.organz.utilities.view.tuiofx.skin.tuiofx.BaseCanvas;
+import com.sun.javafx.css.StyleManager;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -19,7 +21,7 @@ import java.util.logging.Level;
  */
 public class AppTUIO extends Application {
 
-    public static final Pane root = new Pane();
+    public static final Pane root = new BaseCanvas();
 
     public static void main(String[] args) {
         //TuioFX.enableJavaFXTouchProperties();
@@ -79,6 +81,9 @@ public class AppTUIO extends Application {
         Pane pane = loadMainPane(new Stage());
 
         TouchPane touchPane = new TouchPane(pane);
+
+        StyleManager.getInstance().addUserAgentStylesheet("/css/multifocus.css");
+        root.getStylesheets().add(AppUI.class.getResource("/css/multifocus.css").toExternalForm());
 
 //        TuioFXUtils.setupPaneWithTouchFeatures(pane);
 
