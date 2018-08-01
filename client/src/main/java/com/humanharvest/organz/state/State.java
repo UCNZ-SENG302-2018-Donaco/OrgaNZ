@@ -71,7 +71,7 @@ public final class State {
     private static String clinicianEtag = "";
     private static String administratorEtag = "";
     private static String token = "";
-    private static Clinician createdClinician;
+    private static Clinician viewedClinician;
     private static EnumSet<Country> allowedCountries;
 
     private State() {
@@ -291,11 +291,11 @@ public final class State {
         return imageManager;
     }
 
-    public static Clinician getCreatedClinician() {
-        return createdClinician;
+    public static Clinician getViewedClinician() {
+        return viewedClinician;
     }
 
-    public static void setCreatedClinician(Clinician createdClinician) {
-        State.createdClinician = createdClinician;
+    public static void setViewedClinician(Clinician viewedClinician) {
+        State.viewedClinician = viewedClinician;
     }
 }

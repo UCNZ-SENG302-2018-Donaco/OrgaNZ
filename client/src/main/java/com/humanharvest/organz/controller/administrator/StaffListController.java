@@ -2,6 +2,7 @@ package com.humanharvest.organz.controller.administrator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -10,6 +11,7 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
+import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 
 import com.humanharvest.organz.Administrator;
@@ -21,6 +23,7 @@ import com.humanharvest.organz.state.AdministratorManager;
 import com.humanharvest.organz.state.ClinicianManager;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.JSONConverter;
+import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 
 public class StaffListController extends SubController {
@@ -58,6 +61,20 @@ public class StaffListController extends SubController {
         staffList.setItems(getStaffIds());
     }
 
+    private void loadUser(String user) {
+        try {
+            int staffId = Integer.parseInt(user);
+            Optional<Clinician> clinician = State.getClinicianManager().getClinicianByStaffId(staffId);
+            State.setViewedClinician(clinician.get());
+        } catch (NumberFormatException ex) { // The user is an admin
+            System.out.println("admin");
+
+        }
+
+
+        PageNavigator.loadPage(Page.VIEW_CLINICIAN, mainController);
+    }
+
 
     @FXML
     private void initialize() {
@@ -71,7 +88,15 @@ public class StaffListController extends SubController {
 
             cell.textProperty().bind(cell.itemProperty());
 
+            cell.setOnMouseClicked(mouseEvent -> {
+                if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2) {
+                    System.out.println(cell.textProperty().getValue());
+                    loadUser(cell.textProperty().getValue());
+                    }
+                });
+
             // Listener to disable deleting of defaults
+
             cell.textProperty().addListener((obs, oldValue, newValue) -> {
                 if (newValue == null) {
                     // The new value is null (the cell is now empty)
@@ -134,14 +159,9 @@ public class StaffListController extends SubController {
         List<String> staffIds = new ArrayList<>();
 
         List<Clinician> clinicians = clinicianManager.getClinicians();
-        List<Administrator> administrators = adminManager.getAdministrators();
 
         for (Clinician clinician : clinicians) {
             staffIds.add(Integer.toString(clinician.getStaffId()));
-        }
-
-        for (Administrator administrator : administrators) {
-            staffIds.add(administrator.getUsername());
         }
 
         return FXCollections.observableArrayList(staffIds);

@@ -83,7 +83,7 @@
                               </font></Label>
                   <PasswordField fx:id="password" prefHeight="30.0" GridPane.columnIndex="3" />
                   <Label text="Country" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-                  <ChoiceBox fx:id="country" onInputMethodTextChanged="#countryChanged" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                  <ChoiceBox fx:id="country" onAction="#checkCountry" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="3" />
                   <TextField fx:id="regionTF" GridPane.columnIndex="3" GridPane.rowIndex="2" />
                 </children>
                 <VBox.margin>

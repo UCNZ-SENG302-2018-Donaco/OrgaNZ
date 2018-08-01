@@ -15,7 +15,6 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
@@ -93,9 +92,9 @@ public class ViewClinicianController extends ViewBaseController {
 
         switch (session.getLoggedInUserType()) {
             case ADMINISTRATOR:
-                if (State.getCreatedClinician() != null) {
-                    viewedClinician = State.getCreatedClinician();
-                    State.setCreatedClinician(null);
+                if (State.getViewedClinician() != null) {
+                    viewedClinician = State.getViewedClinician();
+                    State.setViewedClinician(null);
                     System.out.println(viewedClinician.getFirstName());
                 } else {
                     viewedClinician = State.getClinicianManager().getDefaultClinician();
@@ -109,30 +108,15 @@ public class ViewClinicianController extends ViewBaseController {
         }
     }
 
-    private void checkCountry() {
-        if (country.getValue() != null && country.getValue() == Country.NZ) {
-            regionCB.setVisible(true);
-            regionTF.setVisible(false);
-        } else {
-            regionCB.setVisible(false);
-            regionTF.setVisible(true);
-        }
-    }
 
     /**
      * Initialize the page.
      */
     @FXML
     private void initialize() {
-        checkCountry();
-        if (viewedClinician.getCountry() != null && viewedClinician.getCountry() == Country.NZ) {
-            regionCB.setItems(FXCollections.observableArrayList(Region.values()));
-        }
+        regionCB.setItems(FXCollections.observableArrayList(Region.values()));
         inputsPane.setVisible(true);
 
-        country.valueProperty().addListener(change -> {
-            checkCountry();
-        });
     }
 
     /**
@@ -143,38 +127,44 @@ public class ViewClinicianController extends ViewBaseController {
         super.setup(mainController);
         mainController.setTitle("Clinician profile: " + viewedClinician.getFullName());
         mainController.loadMenuBar(menuBarPane);
-
-        if (session.getLoggedInUserType() == Session.UserType.CLINICIAN) {
             loadClinicianPane.setVisible(false);
             loadClinicianPane.setManaged(false);
-        }
-        loadClinicianData();
+
+        getViewedClinicianData();
         updateCountries();
     }
 
     @Override
     public void refresh() {
-        loadClinicianData();
+        getViewedClinicianData();
         updateCountries();
-        checkCountry();
     }
 
-    /**
-     * Triggered when the value of the country choicebox is changed
-     */
-    @FXML
-    private void countryChanged() {
-        checkClinicianCountry();
-    }
 
     /**
-     * Checks the clients country, changes region input to a choicebox of NZ regions if the country is New Zealand,
+     * Checks the clinicians country, changes region input to a choicebox of NZ regions if the country is New Zealand,
      * and changes to a textfield input for any other country
      */
     private void checkClinicianCountry() {
         if (viewedClinician.getCountry() == Country.NZ ) {
             regionCB.setVisible(true);
             regionTF.setVisible(false);
+        } else {
+            regionCB.setVisible(false);
+            regionTF.setVisible(true);
+        }
+    }
+
+    /**
+     * If the choicebox for the country is changed then this method will be called to decide if region should display
+     * a textfield or choicebox
+     */
+    @FXML
+    private void checkCountry() {
+        if (country.getValue() != null && country.getValue() == Country.NZ) {
+            regionCB.setVisible(true);
+            regionTF.setVisible(false);
+
         } else {
             regionCB.setVisible(false);
             regionTF.setVisible(true);
@@ -204,14 +194,13 @@ public class ViewClinicianController extends ViewBaseController {
                     "This staff ID does not exist in the system.");
             return;
         }
-
-        loadClinicianData();
+        getViewedClinicianData();
     }
 
     /**
-     * Loads all of the currently logged in Clinician's details, except for their password.
+     * Loads all of the currently viewed Clinician's details.
      */
-    private void loadClinicianData() {
+    private void getViewedClinicianData() {
         mainController.setTitle("Clinician profile: " + viewedClinician.getFullName());
         password.setText(viewedClinician.getPassword());
         title.setText(viewedClinician.getFirstName());
@@ -222,13 +211,16 @@ public class ViewClinicianController extends ViewBaseController {
         mname.setText(viewedClinician.getMiddleName());
         lname.setText(viewedClinician.getLastName());
         workAddress.setText(viewedClinician.getWorkAddress());
-        if (viewedClinician.getCountry() == Country.NZ) { //TODO find the root cause for why Bouvet Island keeps getting set on the admins view
+
+        country.setValue(viewedClinician.getCountry());
+
+        if (viewedClinician.getCountry() == Country.NZ) {
             regionCB.setValue(Region.fromString(viewedClinician.getRegion()));
-            System.out.println("from nz " + viewedClinician.getFullName() + " id= " + viewedClinician.getStaffId() + viewedClinician.getRegion() + " " + viewedClinician.getCountry());
         } else {
-            System.out.println("not from nz " + viewedClinician.getFullName() + " id= " + viewedClinician.getStaffId() + viewedClinician.getRegion() + " " + viewedClinician.getCountry());
             regionTF.setText(viewedClinician.getRegion());
         }
+        checkClinicianCountry();
+
 
         creationDate.setText(formatter.format(viewedClinician.getCreatedOn()));
         if (viewedClinician.getModifiedOn() == null) {
@@ -318,7 +310,8 @@ public class ViewClinicianController extends ViewBaseController {
         addChangeIfDifferent(modifyClinicianObject, viewedClinician, "password", updatedPassword);
         addChangeIfDifferent(modifyClinicianObject, viewedClinician, "country", country.getValue());
 
-        if (viewedClinician.getCountry() != null && viewedClinician.getCountry() == Country.NZ) {
+
+        if (country.getValue() != null && country.getValue() == Country.NZ) {
             addChangeIfDifferent(modifyClinicianObject, viewedClinician, "region", regionCB.getValue().toString());
         } else {
             addChangeIfDifferent(modifyClinicianObject, viewedClinician, "region", regionTF.getText());
