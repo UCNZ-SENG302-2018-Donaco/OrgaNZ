@@ -1,5 +1,6 @@
 package com.humanharvest.organz.utilities.view.tuiofx.skin;
 
+import com.humanharvest.organz.utilities.view.tuiofx.skin.tuiofx.Util;
 import com.sun.javafx.scene.control.skin.ContextMenuContent;
 import com.sun.javafx.scene.control.skin.ContextMenuSkin;
 import javafx.css.PseudoClass;
@@ -14,9 +15,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.transform.Rotate;
-import org.tuiofx.widgets.utils.Util;
-
-import java.util.Iterator;
 
 public class MTContextMenuSkin extends ContextMenuSkin {
     private static final PseudoClass PRESSED_PSEUDO_CLASS = PseudoClass.getPseudoClass("pressed");
@@ -30,10 +28,8 @@ public class MTContextMenuSkin extends ContextMenuSkin {
             if (cmContent != null || !popupMenu.getStyleClass().contains("text-input-context-menu")) {
                 if (cmContent instanceof ContextMenuContent) {
                     VBox accMenu = ((ContextMenuContent) cmContent).getItemsContainer();
-                    Iterator var4 = accMenu.getChildren().iterator();
 
-                    while (var4.hasNext()) {
-                        final Node child = (Node) var4.next();
+                    for (Node child : accMenu.getChildren()) {
                         child.addEventHandler(TouchEvent.TOUCH_PRESSED, event12 -> child.pseudoClassStateChanged(MTContextMenuSkin.PRESSED_PSEUDO_CLASS, true));
                         child.addEventHandler(TouchEvent.TOUCH_RELEASED, event1 -> child.pseudoClassStateChanged(MTContextMenuSkin.PRESSED_PSEUDO_CLASS, false));
                     }

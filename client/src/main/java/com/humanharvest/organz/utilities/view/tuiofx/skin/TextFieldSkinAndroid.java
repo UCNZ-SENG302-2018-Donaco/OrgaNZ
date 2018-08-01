@@ -1,5 +1,6 @@
 package com.humanharvest.organz.utilities.view.tuiofx.skin;
 
+import com.humanharvest.organz.utilities.view.tuiofx.skin.tuiofx.Util;
 import com.sun.javafx.scene.control.skin.TextFieldSkin;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -26,7 +27,6 @@ import javafx.scene.text.Text;
 import javafx.util.Duration;
 import org.tuiofx.widgets.behavior.MTPasswordFieldBehavior;
 import org.tuiofx.widgets.behavior.MTTextFieldBehavior;
-import org.tuiofx.widgets.utils.Util;
 
 import java.lang.ref.WeakReference;
 import java.util.Iterator;
@@ -163,12 +163,10 @@ public class TextFieldSkinAndroid extends TextFieldSkin {
             } while (!(node instanceof Pane));
 
             Pane textGroup = (Pane) node;
-            Iterator var7 = textGroup.getChildren().iterator();
 
-            while (var7.hasNext()) {
-                Node node2 = (Node) var7.next();
-                if (node2 instanceof Path) {
-                    Path selectionHighlightPath = (Path) node2;
+            for (Node child : textGroup.getChildren()) {
+                if (child instanceof Path) {
+                    Path selectionHighlightPath = (Path) child;
                     selectionHighlightPath.visibleProperty().bind(textInput.anchorProperty().isNotEqualTo(textInput.caretPositionProperty()));
                 }
             }

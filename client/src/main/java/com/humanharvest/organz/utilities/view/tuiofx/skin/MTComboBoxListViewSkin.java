@@ -1,5 +1,6 @@
 package com.humanharvest.organz.utilities.view.tuiofx.skin;
 
+import com.humanharvest.organz.utilities.view.tuiofx.skin.tuiofx.Util;
 import com.sun.javafx.scene.control.behavior.ComboBoxBaseBehavior;
 import com.sun.javafx.scene.control.skin.ComboBoxListViewSkin;
 import javafx.beans.property.BooleanProperty;
@@ -13,7 +14,6 @@ import javafx.scene.control.ComboBoxBase;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
 import javafx.scene.transform.Rotate;
-import org.tuiofx.widgets.utils.Util;
 
 public class MTComboBoxListViewSkin<T> extends ComboBoxListViewSkin<T> {
     private static final PseudoClass PRESSED_PSEUDO_CLASS = PseudoClass.getPseudoClass("pressed");

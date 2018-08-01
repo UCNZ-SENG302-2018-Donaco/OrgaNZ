@@ -12,11 +12,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import org.tuiofx.Configuration;
-import org.tuiofx.TuioFX;
 
 import java.io.IOException;
-import java.util.Properties;
 import java.util.logging.Level;
 
 /**
@@ -97,9 +94,9 @@ public class AppTUIO extends Application {
         pane.setStyle("   -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 10, 10);"
                 + "-fx-background-color: grey");
 
-        TuioFX tuioFX = new TuioFX(primaryStage, Configuration.newBuilder().setMinimumInertiaVelocity(0.4D).setScrollTouchSlopDP(0.01D).setStartRotation(0.001D).setMinRotation(0.0015D).setLongPressDuration(400L).setMinZoomSpan(400.0D).setStartZoomSpan(400.0D).setDebugModeEnabled(true).setIndirectInputDevice(false).setShowCursor(true).build());
-        tuioFX.enableMTWidgets(true);
-        tuioFX.start();
+//        TuioFX tuioFX = new TuioFX(primaryStage, Configuration.newBuilder().setMinimumInertiaVelocity(0.4D).setScrollTouchSlopDP(0.01D).setStartRotation(0.001D).setMinRotation(0.0015D).setLongPressDuration(400L).setMinZoomSpan(400.0D).setStartZoomSpan(400.0D).setDebugModeEnabled(true).setIndirectInputDevice(false).setShowCursor(true).build());
+//        tuioFX.enableMTWidgets(true);
+//        tuioFX.start();
         scene.getStylesheets().add(AppUI.class.getResource("/css/touch.css").toExternalForm());
 
         primaryStage.setTitle("Test");

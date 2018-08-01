@@ -1,6 +1,7 @@
 package com.humanharvest.organz.utilities.view.tuiofx.skin;
 
 
+import com.humanharvest.organz.utilities.view.tuiofx.skin.tuiofx.Util;
 import com.sun.javafx.scene.control.skin.TextAreaSkin;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -23,7 +24,6 @@ import javafx.scene.input.TouchEvent;
 import javafx.scene.layout.Region;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
-import org.tuiofx.widgets.utils.Util;
 
 import java.lang.ref.WeakReference;
 import java.util.function.Function;

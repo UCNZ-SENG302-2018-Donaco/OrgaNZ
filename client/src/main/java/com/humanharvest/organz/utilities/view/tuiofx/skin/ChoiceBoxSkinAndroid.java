@@ -13,11 +13,13 @@ import javafx.scene.input.TouchEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Iterator;
-
 public class ChoiceBoxSkinAndroid<T> extends ChoiceBoxSkin<T> {
     private static final PseudoClass PRESSED_PSEUDO_CLASS = PseudoClass.getPseudoClass("pressed");
+    private final ChoiceBox choiceBox;
+
     private static Logger logger = LoggerFactory.getLogger(ChoiceBoxSkinAndroid.class);
+
+
     private BooleanProperty touchPressed = new BooleanPropertyBase(false) {
         protected void invalidated() {
             ChoiceBoxSkinAndroid.this.pseudoClassStateChanged(ChoiceBoxSkinAndroid.PRESSED_PSEUDO_CLASS, this.get());
@@ -32,8 +34,9 @@ public class ChoiceBoxSkinAndroid<T> extends ChoiceBoxSkin<T> {
         }
     };
 
-    public ChoiceBoxSkinAndroid(ChoiceBox checkbox) {
-        super(checkbox);
+    public ChoiceBoxSkinAndroid(ChoiceBox choiceBox) {
+        super(choiceBox);
+        this.choiceBox = choiceBox;
         this.getSkinnable().addEventHandler(TouchEvent.TOUCH_PRESSED, event -> ChoiceBoxSkinAndroid.this.touchPressed.set(true));
         this.getSkinnable().addEventHandler(TouchEvent.TOUCH_RELEASED, event -> ChoiceBoxSkinAndroid.this.touchPressed.set(false));
         this.getSkinnable().setFocusTraversable(false);
@@ -42,10 +45,8 @@ public class ChoiceBoxSkinAndroid<T> extends ChoiceBoxSkin<T> {
     protected void layoutChildren(double x, double y, double w, double h) {
         Node openButton = null;
         Node label = null;
-        Iterator var11 = this.getChildren().iterator();
 
-        while (var11.hasNext()) {
-            Node child = (Node) var11.next();
+        for (Node child : this.getChildren()) {
             if (child.getStyleClass().get(0).equals("open-button")) {
                 openButton = child;
             }
