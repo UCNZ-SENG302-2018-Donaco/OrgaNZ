@@ -127,7 +127,7 @@ public class Util {
                 } else {
                     while (parent != null) {
                         focusArea = getFocusArea(parent);
-                        if (!parent.getParent().equals(root) && !(parent.getParent() instanceof BaseCanvas)) {
+                        if (!parent.getParent().equals(root) && !(parent.getParent() instanceof TuioFXCanvas)) {
                             if (focusArea) {
                                 return parent;
                             }

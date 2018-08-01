@@ -1,6 +1,5 @@
 package com.humanharvest.organz.utilities.view.tuiofx.skin;
 
-import com.humanharvest.organz.utilities.view.tuiofx.skin.tuiofx.BaseCanvas;
 import com.sun.javafx.scene.control.behavior.BehaviorBase;
 import com.sun.javafx.scene.control.skin.BehaviorSkinBase;
 import javafx.scene.Node;
@@ -8,6 +7,7 @@ import javafx.scene.Parent;
 import javafx.scene.transform.Translate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.tuiofx.internal.base.TuioFXCanvas;
 import org.tuiofx.widgets.controls.KeyboardPane;
 
 import java.nio.file.Path;
@@ -22,22 +22,22 @@ public class OnScreenKeyBoardSkin extends BehaviorSkinBase<OnScreenKeyboard, Beh
     private double initScale = 0.0D;
     private Locale initLocal;
     private KeyboardPane keyboardPane;
-    private BaseCanvas baseCanvas;
+    private TuioFXCanvas tuioFXCanvas;
 
     public OnScreenKeyBoardSkin(final OnScreenKeyboard onScreenKeyboard) {
         super(onScreenKeyboard, new BehaviorBase(onScreenKeyboard, Collections.EMPTY_LIST));
         this.onScreenKeyboard = onScreenKeyboard;
         this.setupKeyboard();
         onScreenKeyboard.attachedNodeProperty().addListener(valueModel -> {
-            if (OnScreenKeyBoardSkin.this.baseCanvas == null) {
+            if (OnScreenKeyBoardSkin.this.tuioFXCanvas == null) {
                 Parent root = OnScreenKeyBoardSkin.this.getSkinnable().getAttachedNode().getScene().getRoot();
-                if (!(root instanceof BaseCanvas)) {
-                    OnScreenKeyBoardSkin.logger.error("BaseCanvas is missing.");
+                if (!(root instanceof TuioFXCanvas)) {
+                    OnScreenKeyBoardSkin.logger.error("TuioFXCanvas is missing.");
                     return;
                 }
 
-                OnScreenKeyBoardSkin.this.baseCanvas = (BaseCanvas) root;
-                OnScreenKeyBoardSkin.this.baseCanvas.getChildren().add(OnScreenKeyBoardSkin.this.keyboardPane);
+                OnScreenKeyBoardSkin.this.tuioFXCanvas = (TuioFXCanvas) root;
+                OnScreenKeyBoardSkin.this.tuioFXCanvas.getChildren().add(OnScreenKeyBoardSkin.this.keyboardPane);
             }
 
             Node oldNode = OnScreenKeyBoardSkin.this.attachedNode;

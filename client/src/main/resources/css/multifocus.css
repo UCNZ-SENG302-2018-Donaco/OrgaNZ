@@ -1843,7 +1843,6 @@ Windows 12px -> em units    -> Mac 13px      |
 }
 
 .custom-color-dialog .transparent-pattern {
-    -fx-background-image: url("pattern-transparent.png");
     -fx-background-repeat: repeat;
     -fx-background-size: auto;
 }

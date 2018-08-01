@@ -5,13 +5,13 @@ import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.state.State.DataStorageType;
 import com.humanharvest.organz.utilities.LoggerSetup;
 import com.humanharvest.organz.utilities.view.*;
-import com.humanharvest.organz.utilities.view.tuiofx.skin.tuiofx.BaseCanvas;
 import com.sun.javafx.css.StyleManager;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import org.tuiofx.internal.base.TuioFXCanvas;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -21,7 +21,7 @@ import java.util.logging.Level;
  */
 public class AppTUIO extends Application {
 
-    public static final Pane root = new BaseCanvas();
+    public static final Pane root = new TuioFXCanvas();
 
     public static void main(String[] args) {
         //TuioFX.enableJavaFXTouchProperties();
