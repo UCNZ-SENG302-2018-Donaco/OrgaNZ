@@ -148,10 +148,7 @@ public class ViewClinicianController extends ViewBaseController {
             loadClinicianPane.setVisible(false);
             loadClinicianPane.setManaged(false);
         }
-
         loadClinicianData();
-        loadClinicianButton.setDisable(true); //TODO discuss whether we even need this?
-        loadStaffIdTextField.setDisable(true);
         updateCountries();
     }
 
@@ -225,9 +222,11 @@ public class ViewClinicianController extends ViewBaseController {
         mname.setText(viewedClinician.getMiddleName());
         lname.setText(viewedClinician.getLastName());
         workAddress.setText(viewedClinician.getWorkAddress());
-        if (viewedClinician.getCountry() == Country.NZ) {
+        if (viewedClinician.getCountry() == Country.NZ) { //TODO find the root cause for why Bouvet Island keeps getting set on the admins view
             regionCB.setValue(Region.fromString(viewedClinician.getRegion()));
+            System.out.println("from nz " + viewedClinician.getFullName() + " id= " + viewedClinician.getStaffId() + viewedClinician.getRegion() + " " + viewedClinician.getCountry());
         } else {
+            System.out.println("not from nz " + viewedClinician.getFullName() + " id= " + viewedClinician.getStaffId() + viewedClinician.getRegion() + " " + viewedClinician.getCountry());
             regionTF.setText(viewedClinician.getRegion());
         }
 
@@ -320,7 +319,7 @@ public class ViewClinicianController extends ViewBaseController {
         addChangeIfDifferent(modifyClinicianObject, viewedClinician, "country", country.getValue());
 
         if (viewedClinician.getCountry() != null && viewedClinician.getCountry() == Country.NZ) {
-            addChangeIfDifferent(modifyClinicianObject, viewedClinician, "region", regionCB.getValue());
+            addChangeIfDifferent(modifyClinicianObject, viewedClinician, "region", regionCB.getValue().toString());
         } else {
             addChangeIfDifferent(modifyClinicianObject, viewedClinician, "region", regionTF.getText());
         }
