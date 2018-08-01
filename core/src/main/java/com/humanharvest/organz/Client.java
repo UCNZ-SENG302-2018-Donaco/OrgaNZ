@@ -145,6 +145,22 @@ public class Client implements ConcurrencyControlledEntity {
     private List<ProcedureRecord> procedures = new ArrayList<>();
 
     @OneToMany(
+            mappedBy = "donor",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    @JsonManagedReference
+    private List<DonatedOrgan> donatedOrgans = new ArrayList<>();
+
+    @OneToMany(
+            mappedBy = "receiver",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    @JsonManagedReference
+    private List<DonatedOrgan> receivedOrgans = new ArrayList<>();
+
+    @OneToMany(
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
@@ -744,6 +760,14 @@ public class Client implements ConcurrencyControlledEntity {
         procedures.remove(record);
         record.setClient(null);
         updateModifiedTimestamp();
+    }
+
+    public List<DonatedOrgan> getDonatedOrgans() {
+        return Collections.unmodifiableList(donatedOrgans);
+    }
+
+    public List<DonatedOrgan> getReceivedOrgans() {
+        return Collections.unmodifiableList(receivedOrgans);
     }
 
     public void addToChangesHistory(HistoryItem historyItem) {
