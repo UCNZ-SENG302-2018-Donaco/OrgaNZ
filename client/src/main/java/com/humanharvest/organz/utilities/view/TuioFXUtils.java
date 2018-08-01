@@ -1,19 +1,14 @@
 package com.humanharvest.organz.utilities.view;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import javafx.event.EventTarget;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.Accordion;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.SplitPane;
-import javafx.scene.control.Tab;
-import javafx.scene.control.TabPane;
-import javafx.scene.control.TitledPane;
+import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class TuioFXUtils {
 
@@ -33,6 +28,10 @@ public class TuioFXUtils {
 
         setupMouseDrag(pane);
         setupTouch(pane);
+    }
+
+    private static void setupTouchNewTest(Pane pane) {
+
     }
 
     private static void setupTouch(Pane pane) {
