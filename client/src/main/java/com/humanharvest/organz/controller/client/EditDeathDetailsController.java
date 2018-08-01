@@ -116,11 +116,11 @@ public class EditDeathDetailsController extends SubController {
                 if (client.getCurrentAddress() != null) {
                     deathCountry.setValue(client.getCountryOfDeath());
                 }
-                if (client.getRegionOfDeath() != null && client.getCountry() == Country.NZ) {
+                if (client.getRegionOfDeath() != null && client.getCountryOfDeath() == Country.NZ) {
                     deathRegionCB.setValue(Region.fromString(client.getRegionOfDeath()));
                     deathRegionTF.setVisible(false);
                 }
-                else if (client.getRegionOfDeath() != null && client.getCountry() != Country.NZ) {
+                else if (client.getRegionOfDeath() != null && client.getCountryOfDeath() != Country.NZ) {
                     deathRegionTF.setText(client.getRegionOfDeath());
                     deathRegionCB.setVisible(false);
                 }
@@ -150,42 +150,45 @@ public class EditDeathDetailsController extends SubController {
 
         if (windowContext.isClinViewClientWindow()) {
             client = windowContext.getViewClient();
+
             if (client.isDead()) {
-                if (client.getTimeOfDeath() != null) {
-                    deathTimeField.setText(timeFormat.format(client.getTimeOfDeath()));
-                }
                 if (client.getCountryOfDeath() != null) {
                     deathCountry.setValue(client.getCountryOfDeath());
-                }
-                if (client.getRegionOfDeath() != null) {
-                    if (client.getCountryOfDeath() == Country.NZ) {
-                        deathRegionCB.setValue(Region.fromString(client.getRegionOfDeath()));
-                    } else {
-                        deathRegionTF.setText(client.getRegionOfDeath());
-                    }
                 }
                 if (client.getDateOfDeath() != null) {
                     deathDatePicker.setValue(client.getDateOfDeath());
                 }
+                if (client.getTimeOfDeath() != null) {
+                    deathTimeField.setText(timeFormat.format(client.getTimeOfDeath()));
+                }
                 if (client.getCityOfDeath() != null) {
                     deathCity.setText(client.getCityOfDeath());
                 }
-            } else {
+                if (client.getCountryOfDeath() == Country.NZ) {
+                    deathRegionCB.setValue(Region.fromString(client.getRegionOfDeath()));
+                } else if (client.getCountryOfDeath() != Country.NZ) {
+                    deathRegionTF.setText(client.getRegionOfDeath());
+                }
+            }
+            else {
                 deathCountry.setValue(client.getCountry());
                 deathCity.setText(client.getCurrentAddress());
                 if (client.getCountry() == Country.NZ) {
-                    deathRegionCB.setVisible(true);
-                    deathRegionCB.setValue(Region.fromString(client.getRegion()));
                     deathRegionTF.setVisible(false);
+                    deathRegionCB.setDisable(false);
+                    deathRegionCB.setVisible(true);
+                    deathRegionTF.setDisable(true);
+                    deathRegionCB.setValue(Region.fromString(client.getRegion()));
                 } else if (client.getCountry() != Country.NZ) {
-                    deathRegionCB.setVisible(false);
+                    deathRegionTF.setDisable(false);
                     deathRegionTF.setVisible(true);
+                    deathRegionCB.setDisable(true);
+                    deathRegionCB.setVisible(false);
                     deathRegionTF.setText(client.getRegion());
                 }
+
             }
-
         }
-
     }
 
     /**
@@ -211,7 +214,8 @@ public class EditDeathDetailsController extends SubController {
     }
 
 
-    public void applyChanges() {
+    @FXML
+    private boolean applyChanges() {
         ModifyClientObject modifyClientObject = new ModifyClientObject();
 
         if (session.getLoggedInUserType() == UserType.CLIENT) {
@@ -220,7 +224,6 @@ public class EditDeathDetailsController extends SubController {
         }
         else
         {
-
             try {
                 addChangeIfDifferent(modifyClientObject, client, "timeOfDeath",
                         LocalTime.parse(deathTimeField.getText()));
@@ -231,22 +234,21 @@ public class EditDeathDetailsController extends SubController {
                 PageNavigator.showAlert(AlertType.WARNING, "Incorrect time format",
                         "Please enter the time of death"
                                 + " in 'HH:mm:ss'. Time of death not saved.");
-                return;
+                return false;
             } catch (NullPointerException e) {
                 PageNavigator.showAlert(AlertType.WARNING, "Required Date",
                         "Date of death and time of death are required");
-                return;
+                return false;
 
             }
-            if(deathDatePicker.getValue().isAfter(LocalDate.now())){
+            if (deathDatePicker.getValue().isAfter(LocalDate.now())){
                 PageNavigator.showAlert(AlertType.WARNING, "Incorrect Date",
                         "Date of death cannot be in the future");
-                return;
+                return false;
             }
             addChangeIfDifferent(modifyClientObject, client, "cityOfDeath", deathCity.getText());
             addChangeIfDifferent(modifyClientObject, client, "countryOfDeath",
                     deathCountry.getValue());
-
             if (deathCountry.getValue() == Country.NZ) {
                 addChangeIfDifferent(modifyClientObject, client, "regionOfDeath",
                         deathRegionCB.getValue().toString());
@@ -261,8 +263,7 @@ public class EditDeathDetailsController extends SubController {
                         .showWarning();
 
             } else {
-                Boolean clientDead = client.isDead();
-                if (!clientDead) {
+                if (!client.isDead()) {
                     if (client.getDateOfDeath() == null && deathDatePicker.getValue() != null) {
                         Optional<ButtonType> buttonOpt = PageNavigator.showAlert(AlertType.CONFIRMATION,
                                 "Are you sure you want to mark this client as dead?",
@@ -270,18 +271,26 @@ public class EditDeathDetailsController extends SubController {
                         try {
                             State.getClientResolver()
                                     .markClientAsDead(client, deathDatePicker.getValue());
+                            Notifications.create()
+                                    .title("Marked Client as Dead")
+                                    .text("All organ transplant requests have been cancelled, "
+                                            + "and the date of death has been stored.")
+                                    .showConfirm();
+                            return true;
                         } catch (NotFoundException e) {
                             LOGGER.log(Level.WARNING, "Client not found");
                             PageNavigator.showAlert(
                                     AlertType.WARNING,
                                     "Client not found",
                                     "The client could not be found on the server, it may have been deleted");
+                            return false;
                         } catch (ServerRestException e) {
                             LOGGER.log(Level.WARNING, e.getMessage(), e);
                             PageNavigator.showAlert(
                                     AlertType.WARNING,
                                     "Server error",
                                     "Could not apply changes on the server, please try again later");
+                            return false;
                         } catch (IfMatchFailedException e) {
                             LOGGER.log(Level.INFO, "If-Match did not match");
                             PageNavigator.showAlert(
@@ -290,13 +299,9 @@ public class EditDeathDetailsController extends SubController {
                                     "The client has been modified since you retrieved the data.\n"
                                             + "If you would still like to apply these changes please submit again, "
                                             + "otherwise refresh the page to update the data.");
+                            return false;
                         }
 
-                        Notifications.create()
-                                .title("Marked Client as Dead")
-                                .text("All organ transplant requests have been cancelled, "
-                                        + "and the date of death has been stored.")
-                                .showConfirm();
                     }
 
                 }
@@ -316,9 +321,8 @@ public class EditDeathDetailsController extends SubController {
             }
 
 
-
-
         }
+        return true;
 
     }
 }
