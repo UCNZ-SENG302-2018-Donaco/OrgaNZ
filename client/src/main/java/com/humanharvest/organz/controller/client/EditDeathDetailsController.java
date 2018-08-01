@@ -276,7 +276,6 @@ public class EditDeathDetailsController extends SubController {
                                     .text("All organ transplant requests have been cancelled, "
                                             + "and the date of death has been stored.")
                                     .showConfirm();
-                            return true;
                         } catch (NotFoundException e) {
                             LOGGER.log(Level.WARNING, "Client not found");
                             PageNavigator.showAlert(
@@ -306,6 +305,7 @@ public class EditDeathDetailsController extends SubController {
 
                 }
                 client = State.getClientResolver().modifyClientDetails(client, modifyClientObject);
+                setDefaults(client);
                 String actionText = modifyClientObject.toString();
                 Notifications.create().title("Updated Death Details").text(actionText)
                         .showInformation();
@@ -326,4 +326,20 @@ public class EditDeathDetailsController extends SubController {
         return true;
 
     }
+
+    public boolean showNotification(Client client){
+        return false;
+    }
+
+    public void setDefaults(Client client){
+        if(client.getCountryOfDeath() == null){
+            client.setCountryOfDeath(client.getCountry());
+        }
+        if(client.getCityOfDeath() == null) {
+            client.setCityOfDeath(client.getCurrentAddress());
+        }
+
+    }
+
+
 }
