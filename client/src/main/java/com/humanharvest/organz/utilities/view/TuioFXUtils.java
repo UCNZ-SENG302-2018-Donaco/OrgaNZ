@@ -37,8 +37,8 @@ public class TuioFXUtils {
     private static void setupTouch(Pane pane) {
         pane.setOnScroll(event -> {
             //TODO: Remove debug text
-            System.out.println(String.format("Scrolled: EventType: %s, TouchCount: %s, Target: %s, Source: %s",
-                    event.getEventType(), event.getTouchCount(), event.getTarget(), event.getSource()));
+            System.out.println(String.format("Scrolled: EventType: %s, TouchCount: %s, Target: %s, Source: %s, Direct: %s",
+                    event.getEventType(), event.getTouchCount(), event.getTarget(), event.getSource(), event.isDirect()));
 
             //Prevent dragging on sliders as we want to be able to drag on them to change their value
             //TODO: Check if there is a better way to check if an element is a slider. We cannot just check Slider
@@ -56,6 +56,7 @@ public class TuioFXUtils {
         });
 
         pane.setOnTouchPressed(event -> {
+            pane.toFront();
             System.out.println(String.format("Touched: EventType: %s, TouchCount: %s, Target: %s, Source: %s", event
                     .getEventType(), event.getTouchCount(), event.getTarget(), event.getSource()));
         });
