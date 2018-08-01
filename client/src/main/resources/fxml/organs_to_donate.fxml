@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
+<?import javafx.scene.text.*?>
 <?import java.lang.*?>
 <?import java.util.*?>
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="160.0">
+      <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="200.0">
          <items>
-            <HBox prefHeight="100.0" prefWidth="200.0" />
+            <HBox fx:id="menuBarPane" prefHeight="100.0" prefWidth="200.0" />
             <SplitPane prefHeight="200.0" prefWidth="200.0">
                <items>
-                  <BorderPane prefHeight="200.0" prefWidth="200.0">
+                  <BorderPane>
                      <top>
                         <GridPane BorderPane.alignment="CENTER">
                           <columnConstraints>
@@ -25,20 +26,35 @@
                             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                           </rowConstraints>
                            <children>
-                              <Label text="Organs to donate" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER" />
+                              <Label text="Organs to donate" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font></Label>
                            </children>
                         </GridPane>
                      </top>
                      <center>
-                        <TableView prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                        <TableView>
                           <columns>
-                            <TableColumn prefWidth="75.0" text="C1" />
-                            <TableColumn prefWidth="75.0" text="C2" />
+                            <TableColumn prefWidth="75.0" text="Client" />
+                            <TableColumn prefWidth="75.0" text="Organ" />
+                              <TableColumn prefWidth="75.0" text="Time of death" />
+                              <TableColumn prefWidth="75.0" text="Expires in..." />
                           </columns>
+                           <columnResizePolicy>
+                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                           </columnResizePolicy>
+                           <BorderPane.margin>
+                              <Insets left="10.0" right="10.0" top="20.0" />
+                           </BorderPane.margin>
                         </TableView>
                      </center>
                      <bottom>
-                        <VBox prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER" />
+                        <VBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                           <children>
+                              <Pagination prefHeight="70.0" prefWidth="200.0" />
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
+                           </children></VBox>
                      </bottom>
                   </BorderPane>
                </items>
