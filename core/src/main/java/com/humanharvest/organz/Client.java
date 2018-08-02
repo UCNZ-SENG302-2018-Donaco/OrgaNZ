@@ -943,7 +943,7 @@ public class Client implements ConcurrencyControlledEntity {
             }
         }
         for (Organ organType : getCurrentlyDonatedOrgans()) {
-            donateOrgan(organType, LocalDateTime.from(dateOfDeath));
+            donateOrgan(organType, LocalDateTime.of(dateOfDeath, LocalTime.MIDNIGHT));
         }
     }
 
