@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.List;
 
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
@@ -251,5 +252,20 @@ public class ClientTest {
         client = new Client(FIRST_NAME, null, FIRST_NAME, LocalDate.of(1970, 1, 1), 1);
         client.setOrganDonationStatus(Organ.HEART, true);
         assertTrue(client.isDonor());
+    }
+
+    @Test
+    void markDeadDonatesOrgansTest() throws OrganAlreadyRegisteredException {
+        client = new Client(FIRST_NAME, null, FIRST_NAME, LocalDate.of(1970, 1, 1), 1);
+        client.setOrganDonationStatus(Organ.BONE, true);
+        client.setOrganDonationStatus(Organ.BONE_MARROW, true);
+        client.setOrganDonationStatus(Organ.SKIN, true);
+
+        client.markDead(LocalDate.now());
+        List<DonatedOrgan> donatedOrgans = client.getDonatedOrgans();
+        assertEquals(3, donatedOrgans.size());
+        assertTrue(donatedOrgans.stream().anyMatch(donatedOrgan -> donatedOrgan.getOrganType().equals(Organ.BONE)));
+        assertTrue(donatedOrgans.stream().anyMatch(donatedOrgan -> donatedOrgan.getOrganType().equals(Organ.BONE_MARROW)));
+        assertTrue(donatedOrgans.stream().anyMatch(donatedOrgan -> donatedOrgan.getOrganType().equals(Organ.SKIN)));
     }
 }
