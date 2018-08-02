@@ -1,7 +1,10 @@
 package com.humanharvest.organz.state;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
@@ -11,6 +14,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.ClientNameSorter;
@@ -171,6 +175,37 @@ public interface ClientManager {
 
     PaginatedTransplantList getAllCurrentTransplantRequests(Integer offset, Integer count, Set<Region> regions,
             Set<Organ> organs);
+
+    /**
+     * Returns a collection of all the organs that are available to donate from dead peop[e.
+     * todo replace this test implementation with memory and rest versions
+     */
+    default Collection<DonatedOrgan> getAllOrgansToDonate() {
+        System.out.println("getting organs td");
+        // Find a valid client. hopefully there is one with id less than 1000, otherwise it will be null
+        Client client = null;
+        Optional<Client> optionalClient;
+        for (int id = 0; id < 1000 && client == null; id++) {
+            optionalClient = getClientByID(id);
+            if (optionalClient.isPresent()) {
+                client = optionalClient.get();
+            }
+        }
+
+        if (client == null) {
+            System.out.println("no client found");
+        } else {
+            System.out.println(client.getFirstName());
+        }
+        DonatedOrgan organ1 = new DonatedOrgan(Organ.LIVER, client, LocalDateTime.now().minusHours(1));
+        DonatedOrgan organ2 = new DonatedOrgan(Organ.HEART, client, LocalDateTime.now().minusHours(5).minusMinutes(30));
+        DonatedOrgan organ3 = new DonatedOrgan(Organ.LUNG, client, LocalDateTime.now().minusHours(5).minusMinutes(59));
+        Collection<DonatedOrgan> organsToDonate = new ArrayList<>();
+        organsToDonate.add(organ1);
+        organsToDonate.add(organ2);
+        organsToDonate.add(organ3);
+        return organsToDonate;
+    }
 
     List<HistoryItem> getAllHistoryItems();
 }

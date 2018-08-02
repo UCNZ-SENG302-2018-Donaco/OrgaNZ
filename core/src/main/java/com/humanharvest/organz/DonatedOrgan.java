@@ -1,6 +1,7 @@
 package com.humanharvest.organz;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -63,7 +64,7 @@ public class DonatedOrgan {
     }
 
     public Duration getDurationUntilExpiry() {
-        Duration timeToExpiry = getTimeSinceDonation().minus(organType.getMaxExpiration());
+        Duration timeToExpiry = organType.getMaxExpiration().minus(getTimeSinceDonation());
         return timeToExpiry.isNegative() ? Duration.ZERO : timeToExpiry;
     }
 }

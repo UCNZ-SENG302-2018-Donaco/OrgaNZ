@@ -41,15 +41,15 @@
                         </GridPane>
                      </top>
                      <center>
-                        <TableView>
+                       <TableView fx:id="tableView">
                           <placeholder>
                             <Label text="No organs to donate found that match those criteria." />
                           </placeholder>
                           <columns>
-                            <TableColumn prefWidth="75.0" text="Client" />
-                            <TableColumn prefWidth="75.0" text="Organ" />
-                              <TableColumn prefWidth="75.0" text="Time of death" />
-                              <TableColumn prefWidth="75.0" text="Time until expiry" />
+                            <TableColumn fx:id="clientCol" prefWidth="75.0" text="Client" />
+                            <TableColumn fx:id="organCol" prefWidth="75.0" text="Organ" />
+                            <TableColumn fx:id="timeOfDeathCol" prefWidth="75.0" text="Time of death" />
+                            <TableColumn fx:id="timeUntilExpiryCol" prefWidth="75.0" text="Time until expiry" />
                           </columns>
                            <columnResizePolicy>
                               <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
@@ -62,8 +62,8 @@
                      <bottom>
                         <VBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                            <children>
-                              <Pagination prefHeight="70.0" prefWidth="200.0" />
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Displaying x-y of z" />
+                              <Pagination fx:id="pagination" prefHeight="70.0" prefWidth="200.0" />
+                              <Text fx:id="displayingXToYOfZText" strokeType="OUTSIDE" strokeWidth="0.0" text="Displaying x-y of z" />
                            </children></VBox>
                      </bottom>
                   </BorderPane>

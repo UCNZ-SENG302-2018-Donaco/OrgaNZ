@@ -22,6 +22,7 @@ import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
+import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.type_converters.EnumSetToString;
 import com.humanharvest.organz.views.client.PaginatedClientList;
 import com.humanharvest.organz.views.client.PaginatedTransplantList;
@@ -133,8 +134,13 @@ public class ClientManagerRest implements ClientManager {
 
         HttpEntity<Client> entity = new HttpEntity<>(null, httpHeaders);
 
-        ResponseEntity<Client> responseEntity = State.getRestTemplate()
-                .exchange(State.BASE_URI + "clients/{id}", HttpMethod.GET, entity, Client.class, id);
+        ResponseEntity<Client> responseEntity;
+        try {
+            responseEntity = State.getRestTemplate()
+                    .exchange(State.BASE_URI + "clients/{id}", HttpMethod.GET, entity, Client.class, id);
+        } catch (NotFoundException e) {
+            return Optional.empty();
+        }
         State.setClientEtag(responseEntity.getHeaders().getETag());
         return Optional.ofNullable(responseEntity.getBody());
     }
