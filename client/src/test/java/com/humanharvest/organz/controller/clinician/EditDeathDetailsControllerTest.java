@@ -76,6 +76,7 @@ public class EditDeathDetailsControllerTest extends ControllerTest{
     @Test
     @Ignore
     public void setCountryOutsideNZ(){
+        clickOn("#editDeathDetailsButton");
         LocalTime time = LocalTime.now();
         clickOn("#deathTimeField").write(time.toString());
         clickOn("#deathDatePicker").write(LocalDate.now().minusDays(2).format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
@@ -85,8 +86,7 @@ public class EditDeathDetailsControllerTest extends ControllerTest{
         clickOn("#deathRegionTF").write("outsideNewZealand");
         clickOn("#deathCity").write("City in Austria");
         clickOn("#applyButton");
-        assertEquals(Country.AT,testClient.getCountryOfDeath());
-        assertEquals("outsideNewZealand",testClient.getRegionOfDeath());
-        assertEquals("City in Austria",testClient.getCityOfDeath());
+        type(KeyCode.ENTER);
+        assertEquals(Country.AZ,testClient.getCountryOfDeath());
     }
 }
