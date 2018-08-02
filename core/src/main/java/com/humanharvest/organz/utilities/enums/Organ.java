@@ -15,8 +15,8 @@ public enum Organ {
     INTESTINE("Intestine", null, null),
     CORNEA("Cornea", Duration.ofDays(5), Duration.ofDays(7)),
     MIDDLE_EAR("Middle ear", null, null),
-    SKIN("Skin", Duration.of(3, ChronoUnit.YEARS), Duration.of(10, ChronoUnit.YEARS)),
-    BONE("Bone", Duration.of(3, ChronoUnit.YEARS), Duration.of(10, ChronoUnit.YEARS)),
+    SKIN("Skin", Duration.ofDays(365 * 3), Duration.ofDays(365 * 10)),
+    BONE("Bone", Duration.ofDays(365 * 3), Duration.ofDays(365 * 10)),
     BONE_MARROW("Bone marrow", null, null),
     CONNECTIVE_TISSUE("Connective tissue", null, null);
 
