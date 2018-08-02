@@ -27,8 +27,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import com.humanharvest.organz.AppUI;
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
@@ -59,7 +57,8 @@ public class MenuBarController extends SubController {
     public MenuItem searchStaffItem;
     public MenuItem createAdministratorItem;
     public MenuItem createClinicianItem;
-    public MenuItem searchTransplantsItem;
+    public MenuItem transplantRequestsItem;
+    public MenuItem organsToDonateItem;
     public MenuItem viewAdministratorItem;
     public MenuItem viewClinicianItem;
     public MenuItem historyItem;
@@ -73,20 +72,19 @@ public class MenuBarController extends SubController {
     public MenuItem closeItem;
     public MenuItem createClientItem;
     public MenuItem refreshCacheItem;
-    public MenuItem settings;
+    public MenuItem settingsItem;
 
     public SeparatorMenuItem topSeparator;
 
     public MenuBar menuBar;
 
+    public Menu filePrimaryItem;
+    public Menu editPrimaryItem;
     public Menu clientPrimaryItem;
     public Menu organPrimaryItem;
     public Menu medicationsPrimaryItem;
     public Menu staffPrimaryItem;
-    public Menu transplantsPrimaryItem;
     public Menu profilePrimaryItem;
-    public Menu filePrimaryItem;
-    public Menu administrationPrimaryItem;
 
     private ClientManager clientManager;
     private Session session;
@@ -104,82 +102,57 @@ public class MenuBarController extends SubController {
         super.setup(controller);
         UserType userType = session.getLoggedInUserType();
 
-        Menu viewAllMenus[] = {clientPrimaryItem, organPrimaryItem, medicationsPrimaryItem, staffPrimaryItem,
-                transplantsPrimaryItem, profilePrimaryItem, filePrimaryItem};
+        // Define what menus and menu items should be hidden
 
-        Menu viewAdminMenu[] = {staffPrimaryItem, transplantsPrimaryItem, filePrimaryItem,
-                profilePrimaryItem};
+        // Menus/Menu items to hide from admins
+        Menu menusHideFromAdmins[] = {medicationsPrimaryItem};
+        MenuItem menuItemsHideFromAdmins[] = {viewClientItem, donateOrganItem, requestOrganItem, viewMedicationsItem,
+                medicalHistoryItem, proceduresItem, viewClinicianItem};
 
-        Menu clinicianWindowMenu[] = {staffPrimaryItem, medicationsPrimaryItem,};
-        MenuItem clinicianWindowMenuItems[] = {organPrimaryItem, viewClientItem, medicationsPrimaryItem};
+        // Menus/Menu items to hide from clinicians
+        Menu menusHideFromClinicians[] = {medicationsPrimaryItem, staffPrimaryItem};
+        MenuItem menuItemsHideFromClinicians[] = {viewClientItem, donateOrganItem, requestOrganItem, viewMedicationsItem,
+                medicalHistoryItem, proceduresItem, saveClientsItem, saveCliniciansItem, loadItem, settingsItem,
+                searchStaffItem, createAdministratorItem, createClinicianItem, viewAdministratorItem, cliItem};
 
-        Menu clinViewClientMenu[] = {staffPrimaryItem, profilePrimaryItem, transplantsPrimaryItem};
-        MenuItem clinViewClientMenuItem[] = {searchClientItem, createClientItem};
+        // Menus/Menu items to hide from clinicians (or admins) viewing a client
+        Menu menusHideFromClinViewClients[] = {staffPrimaryItem, profilePrimaryItem};
+        MenuItem menuItemsHideFromClinViewClients[] = {saveClientsItem, saveCliniciansItem, loadItem, settingsItem,
+                logOutItem, searchClientItem, createClientItem, transplantRequestsItem, organsToDonateItem,
+                searchStaffItem, createAdministratorItem, createClinicianItem, viewAdministratorItem,
+                viewClinicianItem, historyItem, cliItem};
 
-        if (userType == UserType.CLINICIAN) {
+        // Menus to hide from clients (aka all menus)
+        Menu allMenus[] = {filePrimaryItem, editPrimaryItem, clientPrimaryItem, organPrimaryItem,
+                medicationsPrimaryItem, staffPrimaryItem, profilePrimaryItem};
 
-            if (windowContext.isClinViewClientWindow()) {
-                removeAdminMenuItems();
-                hideMenus(clinViewClientMenu);
-                hideMenuItems(clinViewClientMenuItem);
+        // Hide the appropriate menus and menu items
 
-            } else if (!windowContext.isClinViewClientWindow()) {
-                removeAdminMenuItems();
-                hideMenus(clinicianWindowMenu);
-                hideMenuItems(clinicianWindowMenuItems);
-                // staff primary item - StaffListController.lambda$null$1(StaffListController.java:89)
-            }
+        // Clinicians (or admins) viewing a client
+        if ((userType == UserType.CLINICIAN || userType == UserType.ADMINISTRATOR)
+                && windowContext.isClinViewClientWindow()) {
+            hideMenus(menusHideFromClinViewClients);
+            hideMenuItems(menuItemsHideFromClinViewClients);
         }
 
-        if (userType == UserType.ADMINISTRATOR) {
+        // Admins
+        else if (userType == UserType.ADMINISTRATOR) {
+            hideMenus(menusHideFromAdmins);
+            hideMenuItems(menuItemsHideFromAdmins);
+        }
 
-            if (windowContext.isClinViewClientWindow()) {
-                hideMenuItem(profilePrimaryItem);
-                hideMenuItem(staffPrimaryItem);
-                hideMenuItem(createClientItem);
-                hideMenuItem(viewAdministratorItem);
-            } else if (!windowContext.isClinViewClientWindow()) {
-                hideMenuItem(organPrimaryItem);
-                hideMenuItem(medicationsPrimaryItem);
-                hideMenuItem(viewClientItem);
-                hideMenuItem(viewAdministratorItem);
-                hideMenuItem(viewClinicianItem);
-            }
+        // Clinicians
+        else if (userType == UserType.CLINICIAN) {
+            hideMenus(menusHideFromClinicians);
+            hideMenuItems(menuItemsHideFromClinicians);
         }
-        if (userType == UserType.CLIENT == true) {
-            hideMenus(viewAllMenus);
+
+        // Clients
+        else if (userType == UserType.CLIENT) {
+            hideMenus(allMenus);
         }
-        closeItem.setDisable(!windowContext.isClinViewClientWindow());
+
         refresh();
-    }
-
-    /**
-     * Removes all menu items and menus that only admins should have.
-     */
-    private void removeAdminMenuItems() {
-        // Remove administrator file rights.
-        hideMenuItem(createAdministratorItem);
-        topSeparator.setVisible(false);
-        hideMenuItem(saveClientsItem);
-        hideMenuItem(saveCliniciansItem);
-        hideMenuItem(loadItem);
-        hideMenuItem(viewAdministratorItem);
-        hideMenuItem(cliItem);
-        hideMenuItem(settings);
-    }
-
-    /**
-     * Evaluates if the request organs button should be displayed for the current user.
-     * @param userType the type of current user
-     * @return true if the button should be shown, false otherwise
-     */
-    private boolean shouldShowRequestOrgans(UserType userType) {
-        if (userType == UserType.CLIENT) {
-            Client currentClient = session.getLoggedInClient();
-            return currentClient.isReceiver();
-        } else {
-            return windowContext.isClinViewClientWindow();
-        }
     }
 
     /**
@@ -344,7 +317,6 @@ public class MenuBarController extends SubController {
     private void goToSettings() {
         PageNavigator.loadPage(Page.ADMIN_CONFIG, mainController);
     }
-
 
     /**
      * Opens a save file dialog to choose where to save all clients in the system to a file.
