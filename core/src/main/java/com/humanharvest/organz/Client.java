@@ -149,7 +149,7 @@ public class Client implements ConcurrencyControlledEntity {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    @JsonManagedReference
+    @JsonManagedReference(value = "donatedOrgan")
     private List<DonatedOrgan> donatedOrgans = new ArrayList<>();
 
     @OneToMany(
@@ -157,7 +157,7 @@ public class Client implements ConcurrencyControlledEntity {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    @JsonManagedReference
+    @JsonManagedReference(value = "receivedOrgan")
     private List<DonatedOrgan> receivedOrgans = new ArrayList<>();
 
     @OneToMany(

@@ -25,11 +25,11 @@ public class DonatedOrgan {
     private Organ organType;
     @ManyToOne
     @JoinColumn(name = "donor_uid")
-    @JsonBackReference
+    @JsonBackReference(value = "donatedOrgan")
     private Client donor;
     @ManyToOne
     @JoinColumn(name = "receiver_uid")
-    @JsonBackReference
+    @JsonBackReference(value = "receivedOrgan")
     private Client receiver;
     private LocalDateTime dateTimeOfDonation;
 
