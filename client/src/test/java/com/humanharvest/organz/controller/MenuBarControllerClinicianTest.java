@@ -4,6 +4,9 @@ import static org.junit.Assert.assertEquals;
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.matcher.base.NodeMatchers.isVisible;
 
+import java.time.LocalDate;
+
+import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Country;
@@ -16,6 +19,7 @@ public class MenuBarControllerClinicianTest extends  ControllerTest {
 
     private Clinician testClinician = new Clinician("Mr", null, "Tester",
             "9 Fake St", Region.AUCKLAND.toString(), Country.NZ, 3, "k");
+    private Client testClient = new Client("John", "Adams", "Smith", LocalDate.of(1989, 10, 10), 1);
 
     @Override
     protected Page getPage() { return Page.MENU_BAR;  }
@@ -24,6 +28,7 @@ public class MenuBarControllerClinicianTest extends  ControllerTest {
     protected void initState() {
         State.reset();
         State.getClinicianManager().addClinician(testClinician);
+        State.getClientManager().addClient(testClient);
         State.login(testClinician);
         mainController.setWindowContext(WindowContext.defaultContext());
     }
