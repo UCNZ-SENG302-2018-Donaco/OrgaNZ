@@ -63,12 +63,18 @@ public class MenuBarControllerClinicianTest extends  ControllerTest {
         assertEquals(Page.CREATE_CLIENT, mainController.getCurrentPage());
     }
 
-
     @Test
     public void testClickOnHistory() {
         clickOn("#profilePrimaryItem");
         clickOn("#historyItem");
         assertEquals(Page.HISTORY, mainController.getCurrentPage());
+    }
+
+    @Test
+    public void testClickOnOrgansToDonate() {
+        clickOn("#organPrimaryItem");
+        clickOn("#organsToDonateItem");
+        assertEquals(Page.ORGANS_TO_DONATE, mainController.getCurrentPage());
     }
 
     // Test buttons are hidden that should only be visible when LOGGED IN as a client (ie not just viewing a client)
