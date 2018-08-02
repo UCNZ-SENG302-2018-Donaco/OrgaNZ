@@ -11,10 +11,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import org.tuiofx.BaseCanvas;
 import org.tuiofx.Configuration;
 import org.tuiofx.TuioFX;
-import org.tuiofx.internal.base.TouchHandler;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -24,10 +22,10 @@ import java.util.logging.Level;
  */
 public class AppTUIO extends Application {
 
-    public static final Pane root = new BaseCanvas();
+    public static final Pane root = new Pane();
 
     public static void main(String[] args) {
-        //TuioFX.enableJavaFXTouchProperties();
+        TuioFX.enableJavaFXTouchProperties();
         launch(args);
     }
 
@@ -53,21 +51,6 @@ public class AppTUIO extends Application {
     }
 
     /**
-     * Creates the main application scene.
-     * @param mainPane The main application layout.
-     * @return Returns the created scene.
-     */
-    private static Scene createScene(Pane mainPane) {
-        Scene scene = new Scene(mainPane);
-        addCss(scene);
-        return scene;
-    }
-
-    public static void addCss(Scene scene) {
-        scene.getStylesheets().add(AppUI.class.getResource("/css/validation.css").toExternalForm());
-    }
-
-    /**
      * Starts the JavaFX GUI. Sets up the main stage and initialises the state of the system.
      * Loads from the save file or creates one if one does not yet exist.
      *
@@ -81,29 +64,20 @@ public class AppTUIO extends Application {
 
         final Scene scene = new Scene(root, 1920, 1080);
 
-        Pane pane = loadMainPane(new Stage());
-
-        TouchPane touchPane = new TouchPane(pane);
-
         TuioFX tuioFX = new TuioFX(primaryStage, Configuration.debug());
-        tuioFX.enableMTWidgets(true);
-        tuioFX.start();
-        TouchHandler touchHandler = tuioFX.getTouchHandler();
-
-
-
-
+        //Instead of tuioFX.enableMTWidgets(true);
+        // We set our own stylesheet that contains less style changes but still loads the skins required for multi touch
         Application.setUserAgentStylesheet("MODENA");
         StyleManager.getInstance().addUserAgentStylesheet("/css/multifocus.css");
+        tuioFX.start();
 
-//        TuioFXUtils.setupPaneWithTouchFeatures(pane);
-        //TuioFXUtils.setupPaneWithTouchFeatures(touchPane);
+        Pane pane = loadMainPane(new Stage());
+//        pane.setMaxWidth(600);
+//        pane.setMaxHeight(800);
+        TuioFXUtils.setupPaneWithTouchFeatures(pane);
 
-        touchPane.getProperties().put("focusArea", "true");
-        root.getChildren().add(touchPane);
+        root.getChildren().add(pane);
 
-        pane.setStyle("   -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 10, 10);"
-                + "-fx-background-color: grey");
 
         scene.getStylesheets().add(AppUI.class.getResource("/css/touch.css").toExternalForm());
 

@@ -81,6 +81,14 @@
     </dependency>
 
     <dependency>
+      <groupId>org.tuiofx</groupId>
+      <artifactId>all</artifactId>
+      <version>0.10.4</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/../lib/tuiofx-all-0.10.4.jar</systemPath>
+    </dependency>
+
+    <dependency>
       <groupId>org.testfx</groupId>
       <artifactId>openjfx-monocle</artifactId>
       <version>8u76-b04</version>

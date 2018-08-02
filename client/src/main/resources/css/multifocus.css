@@ -9,7 +9,7 @@
     -fx-font-size: 0.85em;
     -fx-alignment: CENTER;
     -fx-content-display: LEFT;
-    -fx-skin: "com.humanharvest.organz.utilities.view.tuiofx.skin.MTButtonSkin";
+    -fx-skin: "org.tuiofx.widgets.skin.MTButtonSkin";
 }
 
 
@@ -20,19 +20,19 @@
  *                                                                             *
  ******************************************************************************/
 .scroll-pane {
-    -fx-skin: "com.humanharvest.organz.utilities.view.tuiofx.skin.MTScrollPaneSkin";
+    -fx-skin: "org.tuiofx.widgets.skin.MTScrollPaneSkin";
 }
 
 
 .check-box {
-    -fx-skin: "com.humanharvest.organz.utilities.view.tuiofx.skin.MTCheckBoxSkin";
+    -fx-skin: "org.tuiofx.widgets.skin.MTCheckBoxSkin";
     -fx-label-padding: 0.0em 0.0em 0.0em 0.384615em;
     -fx-text-fill: -fx-text-background-color;
 }
 
 
 .choice-box {
-    -fx-skin: "com.humanharvest.organz.utilities.view.tuiofx.skin.ChoiceBoxSkinAndroid";
+    -fx-skin: "org.tuiofx.widgets.skin.ChoiceBoxSkinAndroid";
     -fx-background-color: transparent;
     -fx-background-insets: 0.0;
     -fx-background-radius: 0.0;
@@ -49,7 +49,7 @@
 /* TODO fix the missing border when using context-menu inside the choice-box*/
 
 .context-menu {
-    -fx-skin: "com.humanharvest.organz.utilities.view.tuiofx.skin.MTContextMenuSkin";
+    -fx-skin: "org.tuiofx.widgets.skin.MTContextMenuSkin";
     -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
     -fx-background-insets: 0.0 0.0 -2.0, -1.0, 0.0, 1.0 0.0 0.0;
     -fx-padding: 0.0;
@@ -60,7 +60,7 @@
 }
 
 .toggle-button {
-    -fx-skin: "com.humanharvest.organz.utilities.view.tuiofx.skin.ToggleButtonSkinAndroid";
+    -fx-skin: "org.tuiofx.widgets.skin.ToggleButtonSkinAndroid";
 }
 
 /*******************************************************************************
@@ -69,11 +69,11 @@
  *                                                                             *
  ******************************************************************************/
 .slider {
-    -fx-skin: "com.humanharvest.organz.utilities.view.tuiofx.skin.MTSliderSkin";
+    -fx-skin: "org.tuiofx.widgets.skin.MTSliderSkin";
 }
 
 .text-field {
-    -fx-skin: "com.humanharvest.organz.utilities.view.tuiofx.skin.TextFieldSkinAndroid";
+    -fx-skin: "org.tuiofx.widgets.skin.TextFieldSkinAndroid";
 }
 
 /*******************************************************************************
@@ -83,7 +83,7 @@
  ******************************************************************************/
 
 .text-area {
-    -fx-skin: "com.humanharvest.organz.utilities.view.tuiofx.skin.TextAreaSkinAndroid";
+    -fx-skin: "org.tuiofx.widgets.skin.TextAreaSkinAndroid";
     -fx-padding: 0.0;
     -fx-cursor: default;
     -fx-background-color: #454545, #5a5a5a, #2f3237, #2f3237;
@@ -99,7 +99,7 @@
     -fx-padding: 0.5em 0.583em 0.5em 0.583em;
     -fx-border-color: #363636;
     -fx-border-width: 0.0;
-    -fx-skin: "com.humanharvest.organz.utilities.view.tuiofx.skin.MTListCellSkin";
+    -fx-skin: "org.tuiofx.widgets.skin.MTListCellSkin";
     /*    -fx-border-width: 0 0 0.083333em;
       */
 }
@@ -111,5 +111,5 @@
  ******************************************************************************/
 
 .combo-box {
-    -fx-skin: "com.humanharvest.organz.utilities.view.tuiofx.skin.MTComboBoxListViewSkin";
+    -fx-skin: "org.tuiofx.widgets.skin.MTComboBoxListViewSkin";
 }

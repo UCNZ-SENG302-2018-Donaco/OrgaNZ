@@ -24,14 +24,10 @@ public class TuioFXUtils {
         pane.getProperties().put("focusArea", "true");
 
         pane.setStyle("   -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 10, 10);"
-                + "-fx-background-color: derive(-fx-background,0%);");
+                + "-fx-background-color: grey");
 
         setupMouseDrag(pane);
         setupTouch(pane);
-    }
-
-    private static void setupTouchNewTest(Pane pane) {
-
     }
 
     private static void setupTouch(Pane pane) {
@@ -62,7 +58,6 @@ public class TuioFXUtils {
         });
 
         pane.setOnRotate(event -> {
-            pane.toFront();
             pane.setRotate(pane.getRotate() + event.getAngle());
         });
 

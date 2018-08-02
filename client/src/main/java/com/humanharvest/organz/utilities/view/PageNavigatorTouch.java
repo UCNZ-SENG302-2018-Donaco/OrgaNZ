@@ -83,12 +83,8 @@ public class PageNavigatorTouch implements IPageNavigator {
             State.addMainController(mainController);
             newStage.setOnCloseRequest(e -> State.deleteMainController(mainController));
 
-
-            TouchPane touchPane = new TouchPane(mainPane);
-//            TuioFXUtils.setupPaneWithTouchFeatures(touchPane);
-            touchPane.getProperties().put("focusArea", "true");
-
-            AppTUIO.root.getChildren().add(touchPane);
+            TuioFXUtils.setupPaneWithTouchFeatures(mainPane);
+            AppTUIO.root.getChildren().add(mainPane);
 
             return mainController;
         } catch (IOException e) {
