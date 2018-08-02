@@ -24,11 +24,11 @@ public class DonatedOrgan {
     @Enumerated(EnumType.STRING)
     private Organ organType;
     @ManyToOne
-    @JoinColumn(name = "Client_uid")
+    @JoinColumn(name = "donor_uid")
     @JsonBackReference
     private Client donor;
     @ManyToOne
-    @JoinColumn(name = "Client_uid")
+    @JoinColumn(name = "receiver_uid")
     @JsonBackReference
     private Client receiver;
     private LocalDateTime dateTimeOfDonation;
