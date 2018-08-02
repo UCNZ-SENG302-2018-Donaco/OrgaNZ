@@ -54,7 +54,7 @@ public class MenuBarController extends SubController {
     public MenuItem viewMedicationsItem;
     public MenuItem medicalHistoryItem;
     public MenuItem proceduresItem;
-    public MenuItem searchStaffItem;
+    public MenuItem staffListItem;
     public MenuItem createAdministratorItem;
     public MenuItem createClinicianItem;
     public MenuItem transplantRequestsItem;
@@ -107,18 +107,19 @@ public class MenuBarController extends SubController {
         // Menus/Menu items to hide from admins
         Menu menusHideFromAdmins[] = {medicationsPrimaryItem};
         MenuItem menuItemsHideFromAdmins[] = {viewClientItem, donateOrganItem, requestOrganItem, viewMedicationsItem,
-                medicalHistoryItem, proceduresItem};
+                medicalHistoryItem, proceduresItem, viewClinicianItem};
 
-        // Menus/Menu items to hide from clinicians (apart from those already hidden from admins)
-        Menu menusHideFromClinicians[] = {staffPrimaryItem};
-        MenuItem menuItemsHideFromClinicians[] = {saveClientsItem, saveCliniciansItem, loadItem, settingsItem,
-                searchStaffItem, createAdministratorItem, createClinicianItem, viewAdministratorItem, cliItem};
+        // Menus/Menu items to hide from clinicians
+        Menu menusHideFromClinicians[] = {medicationsPrimaryItem, staffPrimaryItem};
+        MenuItem menuItemsHideFromClinicians[] = {viewClientItem, donateOrganItem, requestOrganItem, viewMedicationsItem,
+                medicalHistoryItem, proceduresItem, saveClientsItem, saveCliniciansItem, loadItem, settingsItem,
+                staffListItem, createAdministratorItem, createClinicianItem, viewAdministratorItem, cliItem};
 
         // Menus/Menu items to hide from clinicians (or admins) viewing a client
         Menu menusHideFromClinViewClients[] = {staffPrimaryItem, profilePrimaryItem};
         MenuItem menuItemsHideFromClinViewClients[] = {saveClientsItem, saveCliniciansItem, loadItem, settingsItem,
                 logOutItem, searchClientItem, createClientItem, transplantRequestsItem, organsToDonateItem,
-                searchStaffItem, createAdministratorItem, createClinicianItem, viewAdministratorItem,
+                staffListItem, createAdministratorItem, createClinicianItem, viewAdministratorItem,
                 viewClinicianItem, historyItem, cliItem};
 
         // Menus to hide from clients (aka all menus)
@@ -144,7 +145,6 @@ public class MenuBarController extends SubController {
         else if (userType == UserType.CLINICIAN) {
             hideMenus(menusHideFromClinicians);
             hideMenuItems(menuItemsHideFromClinicians);
-            viewClinicianItem.setText("View Clinician");
         }
 
         // Clients
