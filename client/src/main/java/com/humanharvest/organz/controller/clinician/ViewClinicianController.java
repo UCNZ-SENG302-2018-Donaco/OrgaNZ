@@ -53,8 +53,6 @@ public class ViewClinicianController extends ViewBaseController {
     @FXML
     private Pane menuBarPane;
     @FXML
-    private Pane loadClinicianPane;
-    @FXML
     private Pane inputsPane;
     @FXML
     private Label creationDate;
@@ -64,6 +62,8 @@ public class ViewClinicianController extends ViewBaseController {
     private Label fnameLabel;
     @FXML
     private Label lnameLabel;
+    @FXML
+    private Label staffIdLabel;
     @FXML
     private Label title;
     @FXML
@@ -95,7 +95,6 @@ public class ViewClinicianController extends ViewBaseController {
                 if (State.getViewedClinician() != null) {
                     viewedClinician = State.getViewedClinician();
                     State.setViewedClinician(null);
-                    System.out.println(viewedClinician.getFirstName());
                 } else {
                     viewedClinician = State.getClinicianManager().getDefaultClinician();
                 }
@@ -127,8 +126,6 @@ public class ViewClinicianController extends ViewBaseController {
         super.setup(mainController);
         mainController.setTitle("Clinician profile: " + viewedClinician.getFullName());
         mainController.loadMenuBar(menuBarPane);
-            loadClinicianPane.setVisible(false);
-            loadClinicianPane.setManaged(false);
 
         getViewedClinicianData();
         updateCountries();
@@ -201,17 +198,17 @@ public class ViewClinicianController extends ViewBaseController {
      * Loads all of the currently viewed Clinician's details.
      */
     private void getViewedClinicianData() {
+        viewedClinician = State.getClinicianManager().getClinicianByStaffId(viewedClinician.getStaffId())
+                .orElseThrow(IllegalStateException::new);
         mainController.setTitle("Clinician profile: " + viewedClinician.getFullName());
         password.setText(viewedClinician.getPassword());
         title.setText(viewedClinician.getFirstName());
-        viewedClinician = State.getClinicianManager().getClinicianByStaffId(viewedClinician.getStaffId())
-                .orElseThrow(IllegalStateException::new);
-        loadStaffIdTextField.setText(String.valueOf(viewedClinician.getStaffId()));
+
         fname.setText(viewedClinician.getFirstName());
         mname.setText(viewedClinician.getMiddleName());
         lname.setText(viewedClinician.getLastName());
         workAddress.setText(viewedClinician.getWorkAddress());
-
+        staffIdLabel.setText(Integer.toString(viewedClinician.getStaffId()));
         country.setValue(viewedClinician.getCountry());
 
         if (viewedClinician.getCountry() == Country.NZ) {

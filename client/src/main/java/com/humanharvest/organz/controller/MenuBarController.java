@@ -129,7 +129,6 @@ public class MenuBarController extends SubController {
                 hideMenuItems(clinicianWindowMenuItems);
                 // staff primary item - StaffListController.lambda$null$1(StaffListController.java:89)
             }
-            viewClinicianItem.setText("View Clinician");
         }
 
         if (userType == UserType.ADMINISTRATOR) {
@@ -144,6 +143,7 @@ public class MenuBarController extends SubController {
                 hideMenuItem(medicationsPrimaryItem);
                 hideMenuItem(viewClientItem);
                 hideMenuItem(viewAdministratorItem);
+                hideMenuItem(viewClinicianItem);
             }
         }
         if (userType == UserType.CLIENT == true) {
