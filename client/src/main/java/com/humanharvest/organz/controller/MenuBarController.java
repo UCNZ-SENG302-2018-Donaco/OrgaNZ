@@ -258,6 +258,14 @@ public class MenuBarController extends SubController {
     }
 
     /**
+     * Redirects the GUI to the Organs To Donate page.
+     */
+    @FXML
+    private void goToOrganstoDonate() {
+        //PageNavigator.loadPage(Page.ORGANS_TO_DONATE, mainController);
+    }
+
+    /**
      * Redirects the GUI to the History page.
      */
     @FXML
