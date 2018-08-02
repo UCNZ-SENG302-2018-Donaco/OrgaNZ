@@ -77,7 +77,7 @@ public class MenuBarControllerAdminTest extends ControllerTest {
 
     @Test
     public void testClickTransplantRequests() {
-        clickOn("#transplantsPrimaryItem");
+        clickOn("#organPrimaryItem");
         clickOn("#transplantRequestsItem");
         assertEquals(Page.TRANSPLANTS, mainController.getCurrentPage());
     }
