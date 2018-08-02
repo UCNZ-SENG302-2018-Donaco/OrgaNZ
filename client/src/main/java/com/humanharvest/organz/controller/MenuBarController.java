@@ -107,11 +107,12 @@ public class MenuBarController extends SubController {
         // Menus/Menu items to hide from admins
         Menu menusHideFromAdmins[] = {medicationsPrimaryItem};
         MenuItem menuItemsHideFromAdmins[] = {viewClientItem, donateOrganItem, requestOrganItem, viewMedicationsItem,
-                medicalHistoryItem, proceduresItem};
+                medicalHistoryItem, proceduresItem, viewClinicianItem};
 
-        // Menus/Menu items to hide from clinicians (apart from those already hidden from admins)
-        Menu menusHideFromClinicians[] = {staffPrimaryItem};
-        MenuItem menuItemsHideFromClinicians[] = {saveClientsItem, saveCliniciansItem, loadItem, settingsItem,
+        // Menus/Menu items to hide from clinicians
+        Menu menusHideFromClinicians[] = {medicationsPrimaryItem, staffPrimaryItem};
+        MenuItem menuItemsHideFromClinicians[] = {viewClientItem, donateOrganItem, requestOrganItem, viewMedicationsItem,
+                medicalHistoryItem, proceduresItem, saveClientsItem, saveCliniciansItem, loadItem, settingsItem,
                 searchStaffItem, createAdministratorItem, createClinicianItem, viewAdministratorItem, cliItem};
 
         // Menus/Menu items to hide from clinicians (or admins) viewing a client
@@ -144,7 +145,6 @@ public class MenuBarController extends SubController {
         else if (userType == UserType.CLINICIAN) {
             hideMenus(menusHideFromClinicians);
             hideMenuItems(menuItemsHideFromClinicians);
-            viewClinicianItem.setText("View Clinician");
         }
 
         // Clients
