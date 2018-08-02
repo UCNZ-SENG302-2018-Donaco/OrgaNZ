@@ -258,7 +258,7 @@ public class MenuBarController extends SubController {
     }
 
     /**
-     * Redirects the GUI to the Transplants page.
+     * Redirects the GUI to the Organs To Donate page.
      */
     @FXML
     private void goToOrganstoDonate() {
