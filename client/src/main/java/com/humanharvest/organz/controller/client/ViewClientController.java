@@ -9,11 +9,10 @@ import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.ZoneId;
-import java.util.EnumSet;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.EnumSet;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,14 +20,14 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
@@ -51,7 +50,6 @@ import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
-import com.humanharvest.organz.utilities.validators.IntValidator;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.utilities.view.WindowContext;
@@ -71,80 +69,34 @@ public class ViewClientController extends ViewBaseController {
     private static final int maxFileSize = 2000000; // (2mb)
     private final Session session;
     private final ClientManager manager;
-    public Button editDeathDetailsButton;
     private Client viewedClient;
 
     @FXML
-    private Pane sidebarPane;
+    private Pane sidebarPane, menuBarPane;
     @FXML
-    private Pane imagePane;
+    private Label creationDate, lastModified, legalNameLabel, dobLabel, heightLabel, weightLabel, ageDisplayLabel,
+            ageLabel, bmiLabel, fullName, dodLabel, timeOfDeathLabel, countryOfDeathLabel, regionOfDeathLabel,
+            cityOfDeathLabel;
     @FXML
-    private Pane inputsPane;
+    private TextField fname, lname, mname, pname, height, weight, regionTF, deathTimeField, deathRegionTF, deathCity;
     @FXML
-    private Pane menuBarPane;
+    private TextArea address;
     @FXML
-    private Label creationDate;
+    private Button uploadPhotoButton, deletePhotoButton, applyButton, cancelButton;
     @FXML
-    private Label lastModified;
+    private DatePicker dob, dod, deathDatePicker;
     @FXML
-    private Label fnameLabel;
-    @FXML
-    private Label lnameLabel;
-    @FXML
-    private Label dobLabel;
-    @FXML
-    private Label dodLabel;
-    @FXML
-    private Label heightLabel;
-    @FXML
-    private Label weightLabel;
-    @FXML
-    private Label ageDisplayLabel;
-    @FXML
-    private Label ageLabel;
-    @FXML
-    private Label bmiLabel;
-    @FXML
-    private Label fullName;
-    @FXML
-    private TextField fname;
-    @FXML
-    private TextField lname;
-    @FXML
-    private TextField mname;
-    @FXML
-    private TextField pname;
-    @FXML
-    private TextField height;
-    @FXML
-    private TextField weight;
-    @FXML
-    private TextField address;
-    @FXML
-    private Button uploadPhotoButton;
-    @FXML
-    private Button deletePhotoButton;
-    @FXML
-    private DatePicker dob;
-    @FXML
-    private DatePicker dod;
-    @FXML
-    private ChoiceBox<Gender> gender;
-    @FXML
-    private ChoiceBox<Gender> genderIdentity;
+    private ChoiceBox<Gender> gender, genderIdentity;
     @FXML
     private ChoiceBox<BloodType> btype;
     @FXML
-    private ChoiceBox<Region> regionCB;
+    private ChoiceBox<Region> regionCB, deathRegionCB;
     @FXML
-    private TextField regionTF;
-    @FXML
-    private ChoiceBox<Country> country;
+    private ChoiceBox<Country> country, deathCountry;
     @FXML
     private ImageView imageView;
     @FXML
-    private GridPane gridPane;
-    private Image image;
+    private ToggleButton aliveToggleBtn, deadToggleBtn;
 
     public ViewClientController() {
         manager = State.getClientManager();
@@ -168,9 +120,8 @@ public class ViewClientController extends ViewBaseController {
         updateCountries();
         fullName.setWrapText(true);
 
-        country.valueProperty().addListener(change -> {
-            checkCountry();
-        });
+        country.valueProperty().addListener(change -> checkCountry());
+        deathCountry.valueProperty().addListener(change -> checkDeathCountry());
     }
 
     private void updateCountries() {
@@ -270,6 +221,20 @@ public class ViewClientController extends ViewBaseController {
     }
 
     /**
+     * Checks the clients country, changes region input to a choicebox of NZ regions if the country is
+     * New Zealand, and changes to a textfield input for any other country
+     */
+    private void checkDeathCountry() {
+        if (viewedClient.getCountryOfDeath() == Country.NZ) {
+            deathRegionCB.setVisible(true);
+            deathRegionTF.setVisible(false);
+        } else {
+            deathRegionCB.setVisible(false);
+            deathRegionTF.setVisible(true);
+        }
+    }
+
+    /**
      * Saves the changes a user makes to the viewed client if all their inputs are valid.
      * Otherwise the invalid fields text turns red.
      */
@@ -309,7 +274,7 @@ public class ViewClientController extends ViewBaseController {
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
             return;
         }
-        image = new Image(new ByteArrayInputStream(bytes));
+        Image image = new Image(new ByteArrayInputStream(bytes));
 
         imageView.setImage(image);
         imageView.setFitHeight(128);
@@ -396,17 +361,17 @@ public class ViewClientController extends ViewBaseController {
     private boolean checkMandatoryFields() {
         boolean update = true;
         if (fname.getText().isEmpty()) {
-            fnameLabel.setTextFill(Color.RED);
+            legalNameLabel.setTextFill(Color.RED);
             update = false;
         } else {
-            fnameLabel.setTextFill(Color.BLACK);
+            legalNameLabel.setTextFill(Color.BLACK);
         }
 
         if (lname.getText().isEmpty()) {
-            lnameLabel.setTextFill(Color.RED);
+            legalNameLabel.setTextFill(Color.RED);
             update = false;
         } else {
-            lnameLabel.setTextFill(Color.BLACK);
+            legalNameLabel.setTextFill(Color.BLACK);
         }
         if (dob.getValue() == null || dob.getValue().isAfter(LocalDate.now())) {
             dobLabel.setTextFill(Color.RED);
