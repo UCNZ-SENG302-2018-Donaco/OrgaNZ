@@ -927,8 +927,10 @@ public class Client implements ConcurrencyControlledEntity {
     }
 
     /**
-     * Marks the client as dead and marks all organs as no for reception
-     * @param dateOfDeath LocalDate that the client died
+     * Marks the client as dead.
+     * - Resolves any pending organ requests by this client.
+     * - Marks all the organs they were willing to donate as donated.
+     * @param dateOfDeath LocalDate When the client died.
      */
     public void markDead(LocalDate dateOfDeath) {
         this.dateOfDeath = dateOfDeath;
@@ -940,6 +942,26 @@ public class Client implements ConcurrencyControlledEntity {
                 request.setResolvedReason("The client died.");
             }
         }
+        for (Organ organType : getCurrentlyDonatedOrgans()) {
+            donateOrgan(organType, LocalDateTime.from(dateOfDeath));
+        }
+    }
+
+    /**
+     * Registers the given {@link Organ} as having been donated by this client at the given time.
+     * @param organ The organ donated.
+     * @param timeDonated When the organ was removed from this client's body.
+     */
+    private void donateOrgan(Organ organ, LocalDateTime timeDonated) {
+        donatedOrgans.add(new DonatedOrgan(organ, this, timeDonated));
+    }
+
+    /**
+     * Registers the given {@link Organ} as having been donated by this client at this moment.
+     * @param organ The organ donated.
+     */
+    private void donateOrgan(Organ organ) {
+        donatedOrgans.add(new DonatedOrgan(organ, this, LocalDateTime.now()));
     }
 
     /**
