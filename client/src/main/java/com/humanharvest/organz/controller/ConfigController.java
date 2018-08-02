@@ -12,7 +12,6 @@ import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Country;
 import org.controlsfx.control.CheckComboBox;
 import org.controlsfx.control.Notifications;
-import sun.applet.Main;
 
 public class ConfigController extends SubController {
 

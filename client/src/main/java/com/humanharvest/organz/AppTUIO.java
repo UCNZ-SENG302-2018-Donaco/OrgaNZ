@@ -1,10 +1,26 @@
 package com.humanharvest.organz;
 
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.logging.Level;
+
+import javafx.application.Application;
+import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
+
+import TUIO.TuioCursor;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.state.State.DataStorageType;
 import com.humanharvest.organz.utilities.LoggerSetup;
-import com.humanharvest.organz.utilities.view.*;
+import com.humanharvest.organz.utilities.view.Page;
+import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.utilities.view.PageNavigatorTouch;
+import com.humanharvest.organz.utilities.view.WindowContext;
 import com.sun.javafx.css.StyleManager;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -16,6 +32,8 @@ import org.tuiofx.TuioFX;
 
 import java.io.IOException;
 import java.util.logging.Level;
+import org.tuiofx.internal.base.TuioFXCanvas;
+import org.tuiofx.internal.base.TuioInputService;
 
 /**
  * The main class that runs the JavaFX GUI.
@@ -67,6 +85,57 @@ public class AppTUIO extends Application {
         TuioFX tuioFX = new TuioFX(primaryStage, Configuration.debug());
         //Instead of tuioFX.enableMTWidgets(true);
         // We set our own stylesheet that contains less style changes but still loads the skins required for multi touch
+        tuioFX.enableMTWidgets(true);
+        tuioFX.start();
+
+//        primaryStage.addEventFilter(MouseEvent.ANY, event -> {
+//            event.consume();
+//
+//            EventType<TouchEvent> type = null;
+//            TouchPoint.State state = null;
+//            if (event.getEventType() == MouseEvent.MOUSE_PRESSED) {
+//                type = TouchEvent.TOUCH_PRESSED;
+//                state = TouchPoint.State.PRESSED;
+//            } else if (event.getEventType() == MouseEvent.MOUSE_RELEASED) {
+//                type = TouchEvent.TOUCH_RELEASED;
+//                state = TouchPoint.State.RELEASED;
+//            } else if (event.getEventType() == MouseEvent.MOUSE_DRAGGED) {
+//                type = TouchEvent.TOUCH_MOVED;
+//                state = TouchPoint.State.MOVED;
+//            } else if (event.getEventType() == MouseEvent.MOUSE_MOVED) {
+////                System.out.println(event);
+//            }
+//
+//            if (type != null) {
+//                TouchPoint touchPoint = new TouchPoint(1,
+//                        state,
+//                        event.getX(),
+//                        event.getY(),
+//                        event.getScreenX(),
+//                        event.getScreenY(),
+//                        event.getTarget(),
+//                        event.getPickResult());
+//                primaryStage.fireEvent(new TouchEvent(
+//                        event.getSource(),
+//                        event.getTarget(),
+//                        type,
+//                        touchPoint,
+//                        Collections.singletonList(touchPoint),
+//                        1,
+//                        event.isShiftDown(),
+//                        event.isControlDown(),
+//                        event.isAltDown(),
+//                        event.isMetaDown()));
+//            }
+//        });
+//
+//        primaryStage.addEventFilter(TouchEvent.ANY, System.out::println);
+
+//        TouchHandler touchHandler = tuioFX.getTouchHandler();
+
+
+
+
         Application.setUserAgentStylesheet("MODENA");
         StyleManager.getInstance().addUserAgentStylesheet("/css/multifocus.css");
         tuioFX.start();
@@ -86,6 +155,8 @@ public class AppTUIO extends Application {
         primaryStage.setFullScreen(true);
         primaryStage.show();
 
+//        initialiseFakeTUIO(tuioFX, primaryStage);
+
         State.init(DataStorageType.REST);
 
         if (System.getenv("HOST") != null) {
@@ -93,7 +164,44 @@ public class AppTUIO extends Application {
         }
     }
 
+    private static void initialiseFakeTUIO(TuioFX tuioFX, Stage primaryStage) {
+        TuioInputService inputService = null;
+
+        try {
+            Field inputServiceField = tuioFX.getClass().getDeclaredField("tuioInputService");
+            inputServiceField.setAccessible(true);
+            inputService = (TuioInputService)inputServiceField.get(tuioFX);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+
+        primaryStage.addEventFilter(MouseEvent.ANY, new TuioMouseEventFilter(inputService));
+    }
+
     private static double withinRange(double min, double max, double value) {
         return Math.min(Math.max(value, min), max);
+    }
+
+    private static class TuioMouseEventFilter implements EventHandler<MouseEvent> {
+
+        private final TuioInputService inputService;
+        int sessionId = 0;
+
+        public TuioMouseEventFilter(TuioInputService inputService) {
+            this.inputService = inputService;
+        }
+
+        @Override
+        public void handle(MouseEvent event) {
+            if (event.getEventType() == MouseEvent.MOUSE_PRESSED) {
+                inputService.addTuioCursor(new TuioCursor(0, sessionId++, (float)event.getX(), (float)event.getY()));
+
+            } else if (event.getEventType() == MouseEvent.MOUSE_RELEASED) {
+                inputService.updateTuioCursor(new TuioCursor(0, sessionId++, (float)event.getX(), (float)event.getY()));
+
+            } else if (event.getEventType() == MouseEvent.MOUSE_DRAGGED) {
+                inputService.removeTuioCursor(new TuioCursor(0, sessionId++, (float)event.getX(), (float)event.getY()));
+            }
+        }
     }
 }
