@@ -10,10 +10,10 @@
 
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
    <children>
-      <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="200.0">
+      <SplitPane dividerPositions="0.5" orientation="VERTICAL">
          <items>
-            <HBox fx:id="menuBarPane" prefHeight="100.0" prefWidth="200.0" />
-            <SplitPane prefHeight="200.0" prefWidth="200.0">
+            <HBox fx:id="menuBarPane" maxHeight="20.0" minHeight="-Infinity" />
+            <SplitPane prefHeight="600.0">
                <items>
                   <BorderPane>
                      <top>
@@ -35,6 +35,9 @@
                      </top>
                      <center>
                         <TableView>
+                          <placeholder>
+                            <Label text="No organs to donate found that match those criteria." />
+                          </placeholder>
                           <columns>
                             <TableColumn prefWidth="75.0" text="Client" />
                             <TableColumn prefWidth="75.0" text="Organ" />
@@ -53,7 +56,7 @@
                         <VBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                            <children>
                               <Pagination prefHeight="70.0" prefWidth="200.0" />
-                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Text" />
+                              <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Displaying x-y of z" />
                            </children></VBox>
                      </bottom>
                   </BorderPane>
