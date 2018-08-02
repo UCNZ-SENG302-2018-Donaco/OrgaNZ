@@ -1,6 +1,9 @@
 package com.humanharvest.organz;
 
+import com.humanharvest.organz.state.ClientManager;
+import com.humanharvest.organz.utilities.enums.Country;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.logging.Level;
 
 import javafx.application.Application;
@@ -46,6 +49,19 @@ public class AppUI extends Application {
         primaryStage.setMinWidth(1016);
 
         State.init(DataStorageType.REST);
+        /**
+        // DEMO CLIENTS FOR MEMORY TESTING
+        Client client = new Client("Thomas","Lives in Memory","Client", LocalDate.of(1998,02,02),
+            1);
+        client.setCountry(Country.NZ);
+        client.setCurrentAddress("Within Local Memory 0 - 8196GB of it");
+        client.setRegion("Within New Zealand");
+        Client client1 = new Client("Jordan","Resides in Memory","Client",LocalDate.of(1990,01,1),1);
+        client1.setCountry(Country.AD);
+        client1.setRegion("Outside NZ");
+
+        State.getClientManager().addClient(client);
+        State.getClientManager().addClient(client1); **/
 
         if (System.getenv("HOST") != null) {
             State.setBaseUri(System.getenv("HOST"));

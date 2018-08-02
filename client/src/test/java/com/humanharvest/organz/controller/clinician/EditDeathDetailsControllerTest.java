@@ -18,6 +18,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -29,7 +30,7 @@ public class EditDeathDetailsControllerTest extends ControllerTest{
 
     @Override
     protected Page getPage() {
-        return Page.EDIT_DEATH_DETAILS;
+        return Page.VIEW_CLIENT;
     }
 
     @Override
@@ -38,7 +39,7 @@ public class EditDeathDetailsControllerTest extends ControllerTest{
 
         Clinician testClinician = new Clinician("A", "B", "C", "D", Region.UNSPECIFIED.toString(), null,
                 0, "E");
-        testClient = new Client(1);
+        testClient = new Client("Test","Testy","String",LocalDate.of(1990,02,02),20000);
 
         State.getClientManager().addClient(testClient);
         State.login(testClinician);
@@ -50,26 +51,26 @@ public class EditDeathDetailsControllerTest extends ControllerTest{
 
     @Before
     public void setClientDetails() {
-        testClient.setFirstName("a");
-        testClient.setLastName("b");
         testClient.setDateOfBirth(LocalDate.now().minusDays(10));
         testClient.setBloodType(BloodType.A_POS);
         testClient.setRegion(Region.AUCKLAND.toString());
         testClient.setHeight(180);
         testClient.setWeight(80);
+        testClient.setCountry(Country.NZ);
         testClient.setCurrentAddress("1 Test Road");
     }
 
     @Test
-    @Ignore
     public void addDateAndTimeOfDeath(){
+        clickOn("#editDeathDetailsButton");
         LocalTime time = LocalTime.now();
         clickOn("#deathTimeField").write(time.toString());
         clickOn("#deathDatePicker").write(LocalDate.now().minusDays(2).format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         clickOn("#applyButton");
-        System.out.println(testClient.getDateOfDeath());
-        assertNotNull(testClient.getDateOfDeath());
-        assertEquals(time,testClient.getTimeOfDeath());
+        type(KeyCode.ENTER); // Close Check box.
+        Assert.assertEquals(time,testClient.getTimeOfDeath());
+        clickOn("#editDeathDetailsButton");
+
     }
 
     @Test

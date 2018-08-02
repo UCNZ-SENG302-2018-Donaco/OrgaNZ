@@ -52,7 +52,8 @@ import javafx.util.converter.DateTimeStringConverter;
 
 import org.controlsfx.control.Notifications;
 
-public class EditDeathDetailsController extends SubController {
+public class
+EditDeathDetailsController extends SubController {
 
     private Session session;
     private ClientManager manager;
@@ -263,48 +264,8 @@ public class EditDeathDetailsController extends SubController {
                         .showWarning();
 
             } else {
-                if (!client.isDead()) {
-                    if (client.getDateOfDeath() == null && deathDatePicker.getValue() != null) {
-                        Optional<ButtonType> buttonOpt = PageNavigator.showAlert(AlertType.CONFIRMATION,
-                                "Are you sure you want to mark this client as dead?",
-                                "This will cancel all waiting transplant requests for this client.");
-                        try {
-                            State.getClientResolver()
-                                    .markClientAsDead(client, deathDatePicker.getValue());
-                            Notifications.create()
-                                    .title("Marked Client as Dead")
-                                    .text("All organ transplant requests have been cancelled, "
-                                            + "and the date of death has been stored.")
-                                    .showConfirm();
-                        } catch (NotFoundException e) {
-                            LOGGER.log(Level.WARNING, "Client not found");
-                            PageNavigator.showAlert(
-                                    AlertType.WARNING,
-                                    "Client not found",
-                                    "The client could not be found on the server, it may have been deleted");
-                            return false;
-                        } catch (ServerRestException e) {
-                            LOGGER.log(Level.WARNING, e.getMessage(), e);
-                            PageNavigator.showAlert(
-                                    AlertType.WARNING,
-                                    "Server error",
-                                    "Could not apply changes on the server, please try again later");
-                            return false;
-                        } catch (IfMatchFailedException e) {
-                            LOGGER.log(Level.INFO, "If-Match did not match");
-                            PageNavigator.showAlert(
-                                    AlertType.WARNING,
-                                    "Outdated Data",
-                                    "The client has been modified since you retrieved the data.\n"
-                                            + "If you would still like to apply these changes please submit again, "
-                                            + "otherwise refresh the page to update the data.");
-                            return false;
-                        }
-
-                    }
-
-                }
-                client = State.getClientResolver().modifyClientDetails(client, modifyClientObject);
+                showNotification(client);
+                State.getClientResolver().modifyClientDetails(client, modifyClientObject);
                 setDefaults(client);
                 String actionText = modifyClientObject.toString();
                 Notifications.create().title("Updated Death Details").text(actionText)
@@ -328,7 +289,46 @@ public class EditDeathDetailsController extends SubController {
     }
 
     public boolean showNotification(Client client){
-        return false;
+            Optional<ButtonType> buttonOpt = PageNavigator.showAlert(AlertType.CONFIRMATION,
+                "Are you sure you want to mark this client as dead?",
+                "This will cancel all waiting transplant requests for this client.");
+            try {
+                if(!client.isDead()){
+                    State.getClientResolver()
+                        .markClientAsDead(client, deathDatePicker.getValue());
+                    Notifications.create()
+                        .title("Marked Client as Dead")
+                        .text("All organ transplant requests have been cancelled, "
+                            + "and the date of death has been stored.")
+                        .showConfirm();
+                }
+                return true;
+            } catch (NotFoundException e) {
+                LOGGER.log(Level.WARNING, "Client not found");
+                PageNavigator.showAlert(
+                    AlertType.WARNING,
+                    "Client not found",
+                    "The client could not be found on the server, it may have been deleted");
+                return false;
+            } catch (ServerRestException e) {
+                LOGGER.log(Level.WARNING, e.getMessage(), e);
+                PageNavigator.showAlert(
+                    AlertType.WARNING,
+                    "Server error",
+                    "Could not apply changes on the server, please try again later");
+                return false;
+            } catch (IfMatchFailedException e) {
+                LOGGER.log(Level.INFO, "If-Match did not match");
+                PageNavigator.showAlert(
+                    AlertType.WARNING,
+                    "Outdated Data",
+                    "The client has been modified since you retrieved the data.\n"
+                        + "If you would still like to apply these changes please submit again, "
+                        + "otherwise refresh the page to update the data.");
+                return false;
+            }
+
+
     }
 
     public void setDefaults(Client client){
