@@ -1,9 +1,12 @@
 package com.humanharvest.organz;
 
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.logging.Level;
-
+import TUIO.TuioCursor;
+import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.state.State.DataStorageType;
+import com.humanharvest.organz.utilities.LoggerSetup;
+import com.humanharvest.organz.utilities.view.*;
+import com.sun.javafx.css.StyleManager;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
@@ -11,29 +14,13 @@ import javafx.scene.Scene;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-
-import TUIO.TuioCursor;
-import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.state.State.DataStorageType;
-import com.humanharvest.organz.utilities.LoggerSetup;
-import com.humanharvest.organz.utilities.view.Page;
-import com.humanharvest.organz.utilities.view.PageNavigator;
-import com.humanharvest.organz.utilities.view.PageNavigatorTouch;
-import com.humanharvest.organz.utilities.view.WindowContext;
-import com.sun.javafx.css.StyleManager;
-import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.scene.layout.Pane;
-import javafx.stage.Stage;
 import org.tuiofx.Configuration;
 import org.tuiofx.TuioFX;
+import org.tuiofx.internal.base.TuioInputService;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.logging.Level;
-import org.tuiofx.internal.base.TuioFXCanvas;
-import org.tuiofx.internal.base.TuioInputService;
 
 /**
  * The main class that runs the JavaFX GUI.
@@ -85,8 +72,10 @@ public class AppTUIO extends Application {
         TuioFX tuioFX = new TuioFX(primaryStage, Configuration.debug());
         //Instead of tuioFX.enableMTWidgets(true);
         // We set our own stylesheet that contains less style changes but still loads the skins required for multi touch
-        tuioFX.enableMTWidgets(true);
+        Application.setUserAgentStylesheet("MODENA");
+        StyleManager.getInstance().addUserAgentStylesheet("/css/multifocus.css");
         tuioFX.start();
+
 
 //        primaryStage.addEventFilter(MouseEvent.ANY, event -> {
 //            event.consume();
@@ -134,11 +123,6 @@ public class AppTUIO extends Application {
 //        TouchHandler touchHandler = tuioFX.getTouchHandler();
 
 
-
-
-        Application.setUserAgentStylesheet("MODENA");
-        StyleManager.getInstance().addUserAgentStylesheet("/css/multifocus.css");
-        tuioFX.start();
 
         Pane pane = loadMainPane(new Stage());
 //        pane.setMaxWidth(600);
