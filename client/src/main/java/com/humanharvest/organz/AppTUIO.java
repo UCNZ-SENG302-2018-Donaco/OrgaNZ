@@ -11,7 +11,10 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import org.tuiofx.internal.base.TuioFXCanvas;
+import org.tuiofx.BaseCanvas;
+import org.tuiofx.Configuration;
+import org.tuiofx.TuioFX;
+import org.tuiofx.internal.base.TouchHandler;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -21,7 +24,7 @@ import java.util.logging.Level;
  */
 public class AppTUIO extends Application {
 
-    public static final Pane root = new TuioFXCanvas();
+    public static final Pane root = new BaseCanvas();
 
     public static void main(String[] args) {
         //TuioFX.enableJavaFXTouchProperties();
@@ -82,6 +85,13 @@ public class AppTUIO extends Application {
 
         TouchPane touchPane = new TouchPane(pane);
 
+        TuioFX tuioFX = new TuioFX(primaryStage, Configuration.debug());
+        tuioFX.enableMTWidgets(true);
+        tuioFX.start();
+        TouchHandler touchHandler = tuioFX.getTouchHandler();
+
+
+
 
         Application.setUserAgentStylesheet("MODENA");
         StyleManager.getInstance().addUserAgentStylesheet("/css/multifocus.css");
@@ -95,9 +105,6 @@ public class AppTUIO extends Application {
         pane.setStyle("   -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 10, 10);"
                 + "-fx-background-color: grey");
 
-//        TuioFX tuioFX = new TuioFX(primaryStage, Configuration.newBuilder().setMinimumInertiaVelocity(0.4D).setScrollTouchSlopDP(0.01D).setStartRotation(0.001D).setMinRotation(0.0015D).setLongPressDuration(400L).setMinZoomSpan(400.0D).setStartZoomSpan(400.0D).setDebugModeEnabled(true).setIndirectInputDevice(false).setShowCursor(true).build());
-//        tuioFX.enableMTWidgets(true);
-//        tuioFX.start();
         scene.getStylesheets().add(AppUI.class.getResource("/css/touch.css").toExternalForm());
 
         primaryStage.setTitle("Test");
