@@ -10,6 +10,7 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.Node;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -17,6 +18,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 
 import com.humanharvest.organz.Client;
@@ -29,6 +31,7 @@ import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
+import com.humanharvest.organz.views.client.PaginatedDonatedOrgansList;
 import org.hibernate.validator.internal.util.logging.formatter.DurationFormatter;
 
 public class OrgansToDonateController extends SubController {
@@ -70,6 +73,8 @@ public class OrgansToDonateController extends SubController {
         manager = State.getClientManager();
     }
 
+    // ---------------- Setup methods ----------------
+
     /**
      * Sets up the page, setting its title, loading the menu bar and doing the first refresh of the data.
      * @param mainController The main controller that defines which window this subcontroller belongs to.
@@ -83,21 +88,14 @@ public class OrgansToDonateController extends SubController {
     }
 
     /**
-     * Refreshes the data in the transplants waiting list table. Should be called whenever any page calls a global
-     * refresh.
-     */
-    @Override
-    public void refresh() {
-        observableOrgansToDonate.setAll(manager.getAllOrgansToDonate());
-        tableView.setItems(observableOrgansToDonate);
-    }
-
-    /**
      * Initializes the page and the table/pagination properties.
      */
     @FXML
     private void initialize() {
         setupTable();
+
+        //On pagination update call createPage
+        pagination.setPageFactory(this::createPage);
     }
 
     /**
@@ -146,6 +144,42 @@ public class OrgansToDonateController extends SubController {
         });
     }
 
+    /**
+     * Upon pagination, update the table to show the correct items
+     * @param pageIndex The page we're now on (starts at 0)
+     * @return An empty pane as pagination requires a non null return. Not used.
+     */
+    private Node createPage(int pageIndex) {
+        updateOrgansToDonateList();
+        return new Pane();
+    }
+
+    private void updateOrgansToDonateList() {
+        PaginatedDonatedOrgansList newOrgansToDonate = manager.getAllOrgansToDonate(
+                pagination.getCurrentPageIndex() * ROWS_PER_PAGE,
+                ROWS_PER_PAGE);
+
+        observableOrgansToDonate.setAll(newOrgansToDonate.getDonatedOrgans());
+
+        int newPageCount = Math.max(1, (newOrgansToDonate.getTotalResults() + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE);
+        if (pagination.getPageCount() != newPageCount) {
+            pagination.setPageCount(newPageCount);
+        }
+
+        setupDisplayingXToYOfZText(newOrgansToDonate.getTotalResults());
+    }
+
+    /**
+     * Refreshes the data in the transplants waiting list table. Should be called whenever any page calls a global
+     * refresh.
+     */
+    @Override
+    public void refresh() {
+        observableOrgansToDonate.setAll(manager.getAllOrgansToDonate());
+        tableView.setItems(observableOrgansToDonate);
+    }
+
+    // ---------------- Format methods ----------------
 
     /**
      * Formats a table cell that holds a {@link LocalDateTime} value to display that value in the date time format.
@@ -165,7 +199,6 @@ public class OrgansToDonateController extends SubController {
         };
     }
 
-
     /**
      * Formats a table cell that holds a {@link Duration} value to display that value in the right format.
      * @return The cell with the duration formatter set.
@@ -179,7 +212,8 @@ public class OrgansToDonateController extends SubController {
                 if (empty) {
                     setText(null);
 
-                } else if (item.isZero() || item.isNegative() || item.equals(Duration.ZERO) || item.minusSeconds(1).isNegative()) {
+                } else if (item.isZero() || item.isNegative()
+                        || item.equals(Duration.ZERO) || item.minusSeconds(1).isNegative()) {
                     // Duration is less than 1 second
                     setText("0 seconds");
 
@@ -189,16 +223,35 @@ public class OrgansToDonateController extends SubController {
                     // and stores that in displayedDuration, e.g. "3 days 2 hours"
                     String splitDurationString[] = new DurationFormatter(item).toString().split(" ");
                     String displayedDuration = "";
-                    for (int i = 0; i < 4; i++){
+                    for (int i = 0; i < 4; i++) {
                         displayedDuration += splitDurationString[i] + " ";
                         if (splitDurationString[i].equals("seconds")) {
-                            i = 5; // hack to exit the for-loop
+                            break;
                         }
                     }
                     setText(displayedDuration);
                 }
             }
         };
+    }
+
+    /**
+     * Set the text that advises the currently viewed and pending amount of results
+     * @param totalCount The total amount of current results matching filter options
+     */
+    private void setupDisplayingXToYOfZText(int totalCount) {
+        int fromIndex = pagination.getCurrentPageIndex() * ROWS_PER_PAGE;
+        int toIndex = Math.min(fromIndex + ROWS_PER_PAGE, totalCount);
+        if (totalCount < 2 || fromIndex + 1 == toIndex) {
+            // 0 or 1 items OR the last item, on its own page
+            displayingXToYOfZText.setText(String.format("Displaying %d of %d",
+                    totalCount,
+                    totalCount));
+        } else {
+            displayingXToYOfZText.setText(String.format("Displaying %d-%d of %d",
+                    fromIndex + 1, toIndex,
+                    totalCount));
+        }
     }
 
 }
