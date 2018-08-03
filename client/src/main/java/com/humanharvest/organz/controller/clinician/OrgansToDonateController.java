@@ -19,6 +19,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 
 import com.humanharvest.organz.Client;
@@ -205,11 +206,6 @@ public class OrgansToDonateController extends SubController {
      */
     private static TableCell<DonatedOrgan, Duration> formatDurationCell() {
         return new TableCell<DonatedOrgan, Duration>() {
-/*
-            private ProgressBar pb = new ProgressBar();
-            private Text txt = new Text();
-            private HBox hBox = HBoxBuilder.create().children(pb, txt).alignment(Pos.CENTER_LEFT).spacing(5).build();*/
-
 
             @Override
             protected void updateItem(Duration item, boolean empty) {
@@ -217,7 +213,6 @@ public class OrgansToDonateController extends SubController {
 
                 if (empty) {
                     setText(null);
-                    //setGraphic(null);
 
                 } else if (item.isZero() || item.isNegative()
                         || item.equals(Duration.ZERO) || item.minusSeconds(1).isNegative()) {
@@ -230,57 +225,103 @@ public class OrgansToDonateController extends SubController {
                     // and stores that in displayedDuration, e.g. "3 days 2 hours"
                     String splitDurationString[] = new DurationFormatter(item).toString().split(" ");
                     String displayedDuration = "";
-                    for (int i = 0; i < 4; i++) {
+                    for (int i = 0; i < 4 && i < splitDurationString.length; i++) {
+                        System.out.print(i);
+                        System.out.println(": " + splitDurationString[i]);
                         displayedDuration += splitDurationString[i] + " ";
-                        if (splitDurationString[i].equals("seconds")) {
+                        if (splitDurationString[i].contains("seconds") ||
+                                (splitDurationString.length >= i+2 && splitDurationString[i+2].contains("seconds"))) {
                             break;
                         }
                     }
                     // Progress as a decimal. starts at 0 (at time of death) and goes to 1.
                     double progressDecimal = getTableView().getItems().get(getIndex()).getProgressDecimal();
-                    double progressDecimalMinExpiry = getTableView().getItems().get(getIndex()).getProgressDecimalUntilMinExpiry();
+                    double fullMarker = getTableView().getItems().get(getIndex()).getFullMarker();
 
-                    double percent = progressDecimal * 100;
 
                     // Calculate colour
                     // There are 511 distinct colours between red (0xff, 0x00, 0x00) and green (0x00, 0xff, 0x00)
-                    // 0 maps to green, and 1 maps to red
+                    //
+                    String style = getStyleForProgress(progressDecimal, fullMarker);
 
-                    String green;
-                    String red;
-                    String blue = "00"; // no blue
-
-                    if (progressDecimalMinExpiry < 0.5) {
-                        green = "ff";
-                        int redNumber = (int) Math.round(progressDecimalMinExpiry*255*2);
-                        red = Integer.toHexString(redNumber);
-                        if (red.length() == 1) red = "0" + red;
+                    if (progressDecimal >= fullMarker) {
+                        this.setTextFill(Color.WHITE);
+                        if (this.isSelected()) {
+                            this.setTextFill(Color.BLACK);
+                        }
                     } else {
-                        int greenNumber = (int) Math.round((1-progressDecimalMinExpiry)*255*2);
-                        green = Integer.toHexString(greenNumber);
-                        if (green.length() == 1) green = "0" + green;
-                        red = "ff";
+                        this.setTextFill(Color.BLACK);
+                        if (this.isSelected()) {
+                            this.setTextFill(Color.WHITE);
+                        }
                     }
-
-                    String colour = red + green + blue;
-                    System.out.println(colour + " " + percent);
-                    String style = "-fx-background-color: linear-gradient("
-                            + "to right, #" + colour + " " + percent + "%, transparent " + percent + "%);";
-                    System.out.println(style);
 
                     setText(displayedDuration);
                     setStyle(style);
-
-
-                    /*
-
-                    pb.setProgress(progressDecimal);
-                    txt.setText(displayedDuration);
-                    setGraphic(hBox);
-                    setContentDisplay(ContentDisplay.GRAPHIC_ONLY);*/
                 }
             }
         };
+    }
+
+    /**
+     * Generates a stylesheet instruction for setting the background colour of a cell.
+     * The colour is based on progressForColour, and how much the cell is filled in is based on totalProgress.
+     * @param progress how far along the bar should be, from 0 to 1: 0 maps to empty, and 1 maps to full
+     * @param fullMarker how far along the lower bound starts; this area will be grey (e.g. 0.9 for near the end)
+     * @return stylesheet instruction, in the form "-fx-background-color: linear-gradient(...)"
+     */
+    private static String getStyleForProgress(double progress, double fullMarker) {
+
+        String green;
+        String red;
+        String blue = "00"; // no blue
+
+        double percent = progress * 100;
+        double lowerPercent;
+        double higherPercent;
+        double progressForColour;
+        String maroonColour = "aa0000";
+        String whiteColour = "transparent";
+        String greyColour = "aaaaaa";
+        String middleColour;
+
+        // Calculate percentages and the middle colour (white if it's not reached lower bound, maroon if it has)
+        if (progress < fullMarker) { // Hasn't reached lower bound yet
+            progressForColour = progress / fullMarker;
+            lowerPercent = percent;
+            higherPercent = fullMarker * 100;
+            middleColour = whiteColour;
+        } else { // In lower bound
+            progressForColour = 1;
+            lowerPercent = fullMarker * 100;
+            higherPercent = percent;
+            middleColour = maroonColour;
+        }
+
+        // Calculate colours
+        if (progressForColour < 0.5) { // less than halfway, mostly green
+            int redNumber = (int) Math.round(progressForColour*255*2);
+            red = Integer.toHexString(redNumber);
+            if (red.length() == 1) red = "0" + red;
+            green = "ff";
+
+        } else { // over halfway, mostly red
+            red = "ff";
+            int greenNumber = (int) Math.round((1-progressForColour)*255*2);
+            green = Integer.toHexString(greenNumber);
+            if (green.length() == 1) green = "0" + green;
+        }
+
+        // Generate style string
+        String colour = red + green + blue;
+        System.out.println(colour + " " + progress);
+        String style = "-fx-background-color: linear-gradient("
+                + "to right, #" + colour + " 0%, #" + colour + " " + lowerPercent + "%, "
+                + middleColour + " " + lowerPercent + "%, " + middleColour + " " + higherPercent + "%,"
+                + " #" + greyColour + " " + higherPercent + "%, #" + greyColour + " 100%);";
+        System.out.println(style);
+
+        return style;
     }
 
     /**
