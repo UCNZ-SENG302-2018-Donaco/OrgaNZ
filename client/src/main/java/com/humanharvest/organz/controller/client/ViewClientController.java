@@ -12,11 +12,11 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.FormatStyle;
-import java.util.EnumSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -60,13 +60,11 @@ import org.controlsfx.control.Notifications;
  */
 public class ViewClientController extends ViewBaseController {
 
+    private static final Logger LOGGER = Logger.getLogger(ViewClientController.class.getName());
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
             .withZone(ZoneId.systemDefault());
-
-    private static final DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("HH:mm:ss");
-
-    private static final Logger LOGGER = Logger.getLogger(ViewClientController.class.getName());
     private static final int maxFileSize = 2000000; // (2mb)
+
     private final Session session;
     private final ClientManager manager;
     private Client viewedClient;
@@ -115,18 +113,19 @@ public class ViewClientController extends ViewBaseController {
      */
     @FXML
     private void initialize() {
+        // Setup all dropdowns with correct values
         gender.setItems(FXCollections.observableArrayList(Gender.values()));
         genderIdentity.setItems(FXCollections.observableArrayList(Gender.values()));
         btype.setItems(FXCollections.observableArrayList(BloodType.values()));
         regionCB.setItems(FXCollections.observableArrayList(Region.values()));
         deathRegionCB.setItems(FXCollections.observableArrayList(Region.values()));
-        updateCountries();
-        fullName.setWrapText(true);
+        setEnabledCountries();
 
-
+        // Add listeners to switch input types for region depending on if the country is NZ
         country.valueProperty().addListener(change -> enableAppropriateRegionInput(country, regionCB, regionTF));
         deathCountry.valueProperty().addListener(change -> enableAppropriateRegionInput(deathCountry, deathRegionCB,
                 deathRegionTF));
+        // Add listeners to enable/disable death details pane if dead/alive is selected
         isDeadToggleGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == deadToggleBtn) {
                 deathDetailsPane.setDisable(false);
@@ -139,8 +138,7 @@ public class ViewClientController extends ViewBaseController {
                     deathRegionTF.setText(viewedClient.getRegion());
                 }
                 deathCity.setText(viewedClient.getCurrentAddress());
-            }
-            else if (newValue == aliveToggleBtn) {
+            } else if (newValue == aliveToggleBtn) {
                 deathDetailsPane.setDisable(true);
                 // Clear current input values
                 deathDatePicker.setValue(null);
@@ -153,16 +151,6 @@ public class ViewClientController extends ViewBaseController {
         });
     }
 
-    private void updateCountries() {
-        EnumSet<Country> countries = EnumSet.noneOf(Country.class);
-        countries.addAll(State.getConfigManager().getAllowedCountries());
-        country.setItems(FXCollections.observableArrayList(countries));
-        if (viewedClient != null && viewedClient.getCountry() != null) {
-            country.setValue(viewedClient.getCountry());
-        }
-        deathCountry.setItems(FXCollections.observableArrayList(countries));
-    }
-
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
@@ -173,54 +161,14 @@ public class ViewClientController extends ViewBaseController {
             viewedClient = windowContext.getViewClient();
             mainController.loadMenuBar(menuBarPane);
         }
-        if (viewedClient.isDead()) {
-            deadToggleBtn.setSelected(true);
-        } else if (!viewedClient.isDead()) {
-            aliveToggleBtn.setSelected(true);
-        }
-
-        if (viewedClient.isDead()) {
-            if (viewedClient.getCountryOfDeath() != null) {
-                deathCountry.setValue(viewedClient.getCountryOfDeath());
-            }
-            if (viewedClient.getDateOfDeath() != null) {
-                deathDatePicker.setValue(viewedClient.getDateOfDeath());
-            }
-            if (viewedClient.getTimeOfDeath() != null) {
-                deathTimeField.setText(timeFormat.format(viewedClient.getTimeOfDeath()));
-            }
-            if (viewedClient.getCityOfDeath() != null) {
-                deathCity.setText(viewedClient.getCityOfDeath());
-            }
-            if (viewedClient.getCountryOfDeath() == Country.NZ) {
-                deathRegionCB.setValue(Region.fromString(viewedClient.getRegionOfDeath()));
-            } else if (viewedClient.getCountryOfDeath() != Country.NZ) {
-                deathRegionTF.setText(viewedClient.getRegionOfDeath());
-            }
-        }
-        else if (viewedClient.isAlive()){
-            deathCountry.setValue(viewedClient.getCountry());
-            deathCity.setText(viewedClient.getCurrentAddress());
-            if (viewedClient.getCountry() == Country.NZ && viewedClient.getRegionOfDeath() != null) {
-                deathRegionTF.setVisible(false);
-                deathRegionCB.setDisable(false);
-                deathRegionCB.setVisible(true);
-                deathRegionTF.setDisable(true);
-                deathRegionCB.setValue(Region.fromString(viewedClient.getRegion()));
-            } else if (viewedClient.getCountry() != Country.NZ && viewedClient.getRegionOfDeath() != null) {
-                deathRegionTF.setDisable(false);
-                deathRegionTF.setVisible(true);
-                deathRegionCB.setDisable(true);
-                deathRegionCB.setVisible(false);
-                deathRegionTF.setText(viewedClient.getRegion());
-            }
-
-        }
         refresh();
     }
 
     @Override
-    public void refresh () {
+    public void refresh() {
+        setEnabledCountries();
+
+        // Refresh client data from server
         try {
             viewedClient = manager.getClientByID(viewedClient.getUid()).orElseThrow(ServerRestException::new);
         } catch (ServerRestException e) {
@@ -230,20 +178,32 @@ public class ViewClientController extends ViewBaseController {
                     "An error occurred while trying to fetch from the server.\nPlease try again later.");
             return;
         }
+        // Update all fields in the view with new data
         updateClientFields();
+        loadImage();
+
+        // Set window title accordingly
         mainController.refreshNavigation();
         if (session.getLoggedInUserType() == UserType.CLIENT) {
             mainController.setTitle("View Client: " + viewedClient.getPreferredNameFormatted());
         } else if (windowContext.isClinViewClientWindow()) {
             mainController.setTitle("View Client: " + viewedClient.getFullName());
         }
-        loadImage();
-        updateCountries();
 
         // Run these to reset all labels to correct colours
         checkMandatoryFields();
         checkNonMandatoryFields();
         checkDeathDetailsFields();
+    }
+
+    /**
+     * Sets which countries are enabled for the country/deathCountry dropdowns.
+     */
+    private void setEnabledCountries() {
+        ObservableList<Country> enabledCountries = FXCollections.observableArrayList(
+                State.getConfigManager().getAllowedCountries());
+        country.setItems(enabledCountries);
+        deathCountry.setItems(enabledCountries);
     }
 
     /**
@@ -375,7 +335,6 @@ public class ViewClientController extends ViewBaseController {
                 PageNavigator.showAlert(AlertType.WARNING, "File Couldn't Be Read",
                         "This file could not be read. Ensure you are uploading a valid .png or .jpg");
             } else {
-//                image = new Image(selectedFile.toURI().toString());
                 try {
                     InputStream in = new FileInputStream(selectedFile);
                     uploadSuccess = State.getImageManager()
@@ -602,7 +561,7 @@ public class ViewClientController extends ViewBaseController {
         }
 
         if (modifyClientObject.getModifiedFields().isEmpty()) {
-            //literally nothing was changed
+            // Literally nothing was changed
             Notifications.create()
                     .title("No changes were made.")
                     .text("No changes were made to the client.")

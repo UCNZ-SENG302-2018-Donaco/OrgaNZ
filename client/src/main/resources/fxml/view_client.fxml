@@ -116,7 +116,7 @@
                               </VBox>
                               <VBox prefHeight="200.0" prefWidth="100.0" spacing="10.0" HBox.hgrow="ALWAYS">
                                  <children>
-                                    <Label fx:id="fullName" text="Full Name">
+                                    <Label fx:id="fullName" text="Full Name" wrapText="true">
                                        <font>
                                           <Font size="30.0" />
                                        </font>
