@@ -232,13 +232,15 @@ public interface ClientManager {
             System.out.println(client.getFirstName());
         }
         DonatedOrgan organ1 = new DonatedOrgan(Organ.LUNG, client, LocalDateTime.now().minusHours(1));
-        DonatedOrgan organ2 = new DonatedOrgan(Organ.HEART, client, LocalDateTime.now().minusHours(5).minusMinutes(30));
-        DonatedOrgan organ3 = new DonatedOrgan(Organ.LUNG, client, LocalDateTime.now().minusHours(5).minusMinutes(59)
-                .minusSeconds(50));
-        DonatedOrgan organ4 = new DonatedOrgan(Organ.LIVER, client, LocalDateTime.now().plusDays(5));
+        DonatedOrgan organ2a = new DonatedOrgan(Organ.LUNG, client, LocalDateTime.now().minusHours(3).minusMinutes(30));
+        DonatedOrgan organ2 = new DonatedOrgan(Organ.LUNG, client, LocalDateTime.now().minusHours(5).minusMinutes(30));
+        DonatedOrgan organ3 = new DonatedOrgan(Organ.LUNG, client, LocalDateTime.now().minusHours(5).minusMinutes(59));
+                //.minusSeconds(50));
+        DonatedOrgan organ4 = new DonatedOrgan(Organ.LUNG, client, LocalDateTime.now());
         List<DonatedOrgan> organsToDonate = new ArrayList<>();
         organsToDonate.add(organ1);
         organsToDonate.add(organ2);
+        organsToDonate.add(organ2a);
         organsToDonate.add(organ3);
         organsToDonate.add(organ4);
         return new PaginatedDonatedOrgansList(organsToDonate, 200);
