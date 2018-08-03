@@ -7,18 +7,16 @@ import java.time.LocalDateTime;
 
 import com.humanharvest.organz.utilities.enums.Organ;
 import org.junit.Ignore;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
-class DonatedOrganTest {
+public class DonatedOrganTest {
 
     private Client donor;
     private Organ organ;
     private LocalDateTime dateTimeOfDonation;
     private DonatedOrgan donatedOrgan;
 
-    @BeforeEach
-    public void setup() {
+    public DonatedOrganTest(){
         donor = new Client(1);
         organ = Organ.LUNG; //4-6 hours
         dateTimeOfDonation = LocalDateTime.now();
@@ -88,6 +86,7 @@ class DonatedOrganTest {
         dateTimeOfDonation = LocalDateTime.now().minusHours(7);
         donatedOrgan = new DonatedOrgan(organ, donor, dateTimeOfDonation);
         assertEquals(1, donatedOrgan.getProgressDecimal(), 1e-3);
+
     }
 
     // getFullMarker tests
