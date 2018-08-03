@@ -276,12 +276,7 @@ public class ViewClientController extends ViewBaseController {
             return;
         }
         Image image = new Image(new ByteArrayInputStream(bytes));
-
         imageView.setImage(image);
-        imageView.setFitHeight(128);
-        imageView.setFitWidth(128);
-        imageView.setPreserveRatio(true);
-
     }
 
     /**
