@@ -5,24 +5,10 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.DonatedOrgan;
-import com.humanharvest.organz.TransplantRequest;
-import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.state.ClientManager;
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.view.Page;
-import com.humanharvest.organz.utilities.view.PageNavigator;
-import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
-import org.hibernate.validator.internal.util.logging.formatter.DurationFormatter;
-
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableCell;
@@ -32,6 +18,18 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
+
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.DonatedOrgan;
+import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.state.ClientManager;
+import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.view.Page;
+import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
+import org.hibernate.validator.internal.util.logging.formatter.DurationFormatter;
 
 public class OrgansToDonateController extends SubController {
 
@@ -135,37 +133,17 @@ public class OrgansToDonateController extends SubController {
                 }
             }
         });
-/*todo adapt this code from TransplantsController for sorting
+
         // Sets the comparator for sorting by organ column.
         organCol.setComparator(new Comparator<Organ>() {
             /**
              * Alphabetical order of the organ name.
-             *//*
+             */
             @Override
             public int compare(Organ o1, Organ o2) {
                 return o1.toString().compareTo(o2.toString());
             }
         });
-
-        // Sets the comparator for sorting by region column.
-        regionCol.setComparator(new Comparator<String>() {
-            /**
-             * Nulls are ordered first, then alphabetical order of the region name.
-             *//*
-            @Override
-            public int compare(String o1, String o2) {
-                if (o1 == null) {
-                    if (o2 == null) {
-                        return 0;
-                    } else {
-                        return -1;
-                    }
-                } else if (o2 == null) {
-                    return 1;
-                }
-                return o1.compareTo(o2);
-            }
-        });*/
     }
 
 
@@ -197,13 +175,25 @@ public class OrgansToDonateController extends SubController {
             @Override
             protected void updateItem(Duration item, boolean empty) {
                 super.updateItem(item, empty);
+
                 if (empty) {
                     setText(null);
+
+                } else if (item.isZero() || item.isNegative() || item.equals(Duration.ZERO) || item.minusSeconds(1).isNegative()) {
+                    // Duration is less than 1 second
+                    setText("0 seconds");
+
                 } else {
+                    // Split duration string into words, e.g. ["3", "days", "2", "hours", "10", "minutes",...]
+                    // It then takes the first 4 words (except for seconds, then it just takes up to the seconds)
+                    // and stores that in displayedDuration, e.g. "3 days 2 hours"
                     String splitDurationString[] = new DurationFormatter(item).toString().split(" ");
                     String displayedDuration = "";
                     for (int i = 0; i < 4; i++){
                         displayedDuration += splitDurationString[i] + " ";
+                        if (splitDurationString[i].equals("seconds")) {
+                            i = 5; // hack to exit the for-loop
+                        }
                     }
                     setText(displayedDuration);
                 }

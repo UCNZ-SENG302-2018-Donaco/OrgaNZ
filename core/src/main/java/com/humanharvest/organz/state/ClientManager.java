@@ -4,7 +4,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
@@ -197,13 +196,16 @@ public interface ClientManager {
         } else {
             System.out.println(client.getFirstName());
         }
-        DonatedOrgan organ1 = new DonatedOrgan(Organ.LIVER, client, LocalDateTime.now().minusHours(1));
+        DonatedOrgan organ1 = new DonatedOrgan(Organ.LUNG, client, LocalDateTime.now().minusHours(1));
         DonatedOrgan organ2 = new DonatedOrgan(Organ.HEART, client, LocalDateTime.now().minusHours(5).minusMinutes(30));
-        DonatedOrgan organ3 = new DonatedOrgan(Organ.LUNG, client, LocalDateTime.now().minusHours(5).minusMinutes(59));
+        DonatedOrgan organ3 = new DonatedOrgan(Organ.LUNG, client, LocalDateTime.now().minusHours(5).minusMinutes(59)
+                .minusSeconds(50));
+        DonatedOrgan organ4 = new DonatedOrgan(Organ.LIVER, client, LocalDateTime.now().plusDays(5));
         Collection<DonatedOrgan> organsToDonate = new ArrayList<>();
         organsToDonate.add(organ1);
         organsToDonate.add(organ2);
         organsToDonate.add(organ3);
+        organsToDonate.add(organ4);
         return organsToDonate;
     }
 
