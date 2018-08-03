@@ -11,10 +11,10 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.time.format.FormatStyle;
 import java.util.EnumSet;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -62,6 +62,8 @@ public class ViewClientController extends ViewBaseController {
 
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
             .withZone(ZoneId.systemDefault());
+
+    private static final DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("HH:mm:ss");
 
     private static final Logger LOGGER = Logger.getLogger(ViewClientController.class.getName());
     private static final int maxFileSize = 2000000; // (2mb)
@@ -117,13 +119,14 @@ public class ViewClientController extends ViewBaseController {
         genderIdentity.setItems(FXCollections.observableArrayList(Gender.values()));
         btype.setItems(FXCollections.observableArrayList(BloodType.values()));
         regionCB.setItems(FXCollections.observableArrayList(Region.values()));
+        deathRegionCB.setItems(FXCollections.observableArrayList(Region.values()));
         updateCountries();
         fullName.setWrapText(true);
 
         country.valueProperty().addListener(change -> checkCountry());
         deathCountry.valueProperty().addListener(change -> checkDeathCountry());
         isDeadToggleGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue == deadToggleBtn || viewedClient.isDead()) {
+            if (newValue == deadToggleBtn) {
                 deathCity.setDisable(false);
                 deathTimeField.setDisable(false);
                 deathDatePicker.setDisable(false);
@@ -149,6 +152,7 @@ public class ViewClientController extends ViewBaseController {
         if (viewedClient != null && viewedClient.getCountry() != null) {
             country.setValue(viewedClient.getCountry());
         }
+        deathCountry.setItems(FXCollections.observableArrayList(countries));
     }
 
     @Override
@@ -163,35 +167,71 @@ public class ViewClientController extends ViewBaseController {
         }
         if (viewedClient.isDead()) {
             deadToggleBtn.setSelected(true);
-        }
-        else if (!viewedClient.isDead()) {
+        } else if (!viewedClient.isDead()) {
             aliveToggleBtn.setSelected(true);
         }
 
+        if (viewedClient.isDead()) {
+            if (viewedClient.getCountryOfDeath() != null) {
+                deathCountry.setValue(viewedClient.getCountryOfDeath());
+            }
+            if (viewedClient.getDateOfDeath() != null) {
+                deathDatePicker.setValue(viewedClient.getDateOfDeath());
+            }
+            if (viewedClient.getTimeOfDeath() != null) {
+                deathTimeField.setText(timeFormat.format(viewedClient.getTimeOfDeath()));
+            }
+            if (viewedClient.getCityOfDeath() != null) {
+                deathCity.setText(viewedClient.getCityOfDeath());
+            }
+            if (viewedClient.getCountryOfDeath() == Country.NZ) {
+                deathRegionCB.setValue(Region.fromString(viewedClient.getRegionOfDeath()));
+            } else if (viewedClient.getCountryOfDeath() != Country.NZ) {
+                deathRegionTF.setText(viewedClient.getRegionOfDeath());
+            }
+        }
+        else if (viewedClient.isAlive()){
+            deathCountry.setValue(viewedClient.getCountry());
+            deathCity.setText(viewedClient.getCurrentAddress());
+            if (viewedClient.getCountry() == Country.NZ && viewedClient.getRegionOfDeath() != null) {
+                deathRegionTF.setVisible(false);
+                deathRegionCB.setDisable(false);
+                deathRegionCB.setVisible(true);
+                deathRegionTF.setDisable(true);
+                deathRegionCB.setValue(Region.fromString(viewedClient.getRegion()));
+            } else if (viewedClient.getCountry() != Country.NZ && viewedClient.getRegionOfDeath() != null) {
+                deathRegionTF.setDisable(false);
+                deathRegionTF.setVisible(true);
+                deathRegionCB.setDisable(true);
+                deathRegionCB.setVisible(false);
+                deathRegionTF.setText(viewedClient.getRegion());
+            }
+
+        }
         refresh();
     }
 
-    @Override
-    public void refresh() {
-        try {
-            viewedClient = manager.getClientByID(viewedClient.getUid()).orElseThrow(ServerRestException::new);
-        } catch (ServerRestException e) {
-            e.printStackTrace();
-            PageNavigator.showAlert(AlertType.ERROR,
-                    "Server Error",
-                    "An error occurred while trying to fetch from the server.\nPlease try again later.");
-            return;
+        @Override
+        public void refresh () {
+            try {
+                viewedClient = manager.getClientByID(viewedClient.getUid()).orElseThrow(ServerRestException::new);
+            } catch (ServerRestException e) {
+                e.printStackTrace();
+                PageNavigator.showAlert(AlertType.ERROR,
+                        "Server Error",
+                        "An error occurred while trying to fetch from the server.\nPlease try again later.");
+                return;
+            }
+            updateClientFields();
+            mainController.refreshNavigation();
+            if (session.getLoggedInUserType() == UserType.CLIENT) {
+                mainController.setTitle("View Client: " + viewedClient.getPreferredNameFormatted());
+            } else if (windowContext.isClinViewClientWindow()) {
+                mainController.setTitle("View Client: " + viewedClient.getFullName());
+            }
+            loadImage();
+            updateCountries();
         }
-        updateClientFields();
-        mainController.refreshNavigation();
-        if (session.getLoggedInUserType() == UserType.CLIENT) {
-            mainController.setTitle("View Client: " + viewedClient.getPreferredNameFormatted());
-        } else if (windowContext.isClinViewClientWindow()) {
-            mainController.setTitle("View Client: " + viewedClient.getFullName());
-        }
-        loadImage();
-        updateCountries();
-    }
 
     /**
      * Updates all of the fields of the client.
@@ -209,6 +249,7 @@ public class ViewClientController extends ViewBaseController {
         btype.setValue(viewedClient.getBloodType());
         country.setValue(viewedClient.getCountry());
 
+        checkDeathCountry();
         checkCountry();
         if (viewedClient.getCountry() == Country.NZ && viewedClient.getRegion() != null) {
             regionCB.setValue(Region.fromString(viewedClient.getRegion()));
@@ -270,6 +311,7 @@ public class ViewClientController extends ViewBaseController {
                 displayBMI();
                 displayAge();
                 checkCountry();
+                checkDeathCountry();
 
                 lastModified.setText(formatter.format(viewedClient.getModifiedTimestamp()));
             }
@@ -463,7 +505,7 @@ public class ViewClientController extends ViewBaseController {
     private boolean updateChanges() {
         ModifyClientObject modifyClientObject = new ModifyClientObject();
 
-        boolean clientDied = viewedClient.isDead();
+        boolean clientDied = false;
 
         addChangeIfDifferent(modifyClientObject, viewedClient, "firstName", fname.getText());
         addChangeIfDifferent(modifyClientObject, viewedClient, "lastName", lname.getText());
@@ -479,9 +521,19 @@ public class ViewClientController extends ViewBaseController {
         addChangeIfDifferent(modifyClientObject, viewedClient, "country", country.getValue());
 
         // DEATH DETAILS
-        addChangeIfDifferent(modifyClientObject, viewedClient, "timeOfDeath", LocalTime.parse(deathTimeField.getText()));
+        try {
+            addChangeIfDifferent(modifyClientObject, viewedClient, "timeOfDeath",
+                    LocalTime.parse(deathTimeField.getText()));
+
+        } catch (DateTimeParseException e) {
+            PageNavigator.showAlert(AlertType.WARNING, "Incorrect time format",
+                    "Please enter the time of death"
+                            + " in 'HH:mm:ss'. Time of death not saved.");
+            return false;
+        }
         addChangeIfDifferent(modifyClientObject, viewedClient, "dateOfDeath", deathDatePicker.getValue());
         addChangeIfDifferent(modifyClientObject, viewedClient, "countryOfDeath", deathCountry.getValue());
+
         addChangeIfDifferent(modifyClientObject, viewedClient, "cityOfDeath", deathCity.getText());
 
         if (country.getValue() == Country.NZ) {
@@ -506,7 +558,8 @@ public class ViewClientController extends ViewBaseController {
 
         }
 
-        //checkCountry();
+        checkCountry();
+        checkDeathCountry();
 
         PageNavigator.refreshAllWindows();
 
@@ -523,12 +576,6 @@ public class ViewClientController extends ViewBaseController {
         }
 
         try {
-            //Death Date has been set and client is not already dead.
-            if(deathDatePicker.getValue() != null && !clientDied){
-              Optional<ButtonType> buttonOpt = PageNavigator.showAlert(AlertType.CONFIRMATION,
-                  "Are you sure you want to mark this client as dead?",
-                  "This will cancel all waiting transplant requests for this client.");
-            }
             State.getClientResolver().modifyClientDetails(viewedClient, modifyClientObject);
             String actionText = modifyClientObject.toString();
 
