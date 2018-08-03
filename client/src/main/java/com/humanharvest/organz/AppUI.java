@@ -1,9 +1,6 @@
 package com.humanharvest.organz;
 
-import com.humanharvest.organz.state.ClientManager;
-import com.humanharvest.organz.utilities.enums.Country;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.logging.Level;
 
 import javafx.application.Application;
