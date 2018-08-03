@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
@@ -458,6 +459,13 @@ public class ViewClientController extends ViewBaseController {
         addChangeIfDifferent(modifyClientObject, viewedClient, "currentAddress", address.getText());
         addChangeIfDifferent(modifyClientObject, viewedClient, "country", country.getValue());
 
+        // DEATH DETAILS
+        addChangeIfDifferent(modifyClientObject, viewedClient, "timeOfDeath", LocalTime.parse(deathTimeField.getText()));
+        addChangeIfDifferent(modifyClientObject, viewedClient, "dateOfDeath", deathDatePicker.getValue());
+        addChangeIfDifferent(modifyClientObject, viewedClient, "countryOfDeath", deathCountry.getValue());
+
+        addChangeIfDifferent(modifyClientObject, viewedClient, "cityOfDeath", deathCity.getText());
+
         if (country.getValue() == Country.NZ) {
             Region region = regionCB.getValue();
             if (region == null) {
@@ -466,6 +474,17 @@ public class ViewClientController extends ViewBaseController {
             addChangeIfDifferent(modifyClientObject, viewedClient, "region", region.toString());
         } else {
             addChangeIfDifferent(modifyClientObject, viewedClient, "region", regionTF.getText());
+
+        }
+
+        if (deathCountry.getValue() == Country.NZ) {
+            Region region = deathRegionCB.getValue();
+            if (region == null) {
+                region = Region.UNSPECIFIED;
+            }
+            addChangeIfDifferent(modifyClientObject, viewedClient, "regionOfDeath", region.toString());
+        } else {
+            addChangeIfDifferent(modifyClientObject, viewedClient, "regionOfDeath", deathRegionTF.getText());
 
         }
 

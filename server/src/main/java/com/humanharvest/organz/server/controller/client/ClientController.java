@@ -289,7 +289,7 @@ public class ClientController {
             @PathVariable int uid,
             @RequestHeader(value = "If-Match", required = false) String etag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken,
-            @RequestBody SingleDateView dateOfDeath)
+            @RequestBody ModifyClientObject modifyClientObject)
             throws IfMatchRequiredException, IfMatchFailedException, InvalidRequestException {
 
         //Fetch the client given by ID
@@ -311,7 +311,7 @@ public class ClientController {
             throw new IfMatchFailedException();
         }
 
-        MarkClientAsDeadAction action = new MarkClientAsDeadAction(client, dateOfDeath.getDate(), State
+        MarkClientAsDeadAction action = new MarkClientAsDeadAction(client, modifyClientObject.getDateOfDeath(), State
                 .getClientManager
                         ());
         State.getActionInvoker(authToken).execute(action);
