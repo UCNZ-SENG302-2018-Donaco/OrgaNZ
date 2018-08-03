@@ -10,14 +10,18 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Pagination;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.HBoxBuilder;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 
@@ -205,12 +209,19 @@ public class OrgansToDonateController extends SubController {
      */
     private static TableCell<DonatedOrgan, Duration> formatDurationCell() {
         return new TableCell<DonatedOrgan, Duration>() {
+
+            private ProgressBar pb = new ProgressBar();
+            private Text txt = new Text();
+            private HBox hBox = HBoxBuilder.create().children(pb, txt).alignment(Pos.CENTER_LEFT).spacing(5).build();
+
+
             @Override
             protected void updateItem(Duration item, boolean empty) {
                 super.updateItem(item, empty);
 
                 if (empty) {
                     setText(null);
+                    setGraphic(null);
 
                 } else if (item.isZero() || item.isNegative()
                         || item.equals(Duration.ZERO) || item.minusSeconds(1).isNegative()) {
@@ -229,7 +240,11 @@ public class OrgansToDonateController extends SubController {
                             break;
                         }
                     }
-                    setText(displayedDuration);
+
+                    pb.setProgress(getTableView().getItems().get(getIndex()).getProgressDecimal());
+                    txt.setText(displayedDuration);
+                    setGraphic(hBox);
+                    setContentDisplay(ContentDisplay.GRAPHIC_ONLY);
                 }
             }
         };

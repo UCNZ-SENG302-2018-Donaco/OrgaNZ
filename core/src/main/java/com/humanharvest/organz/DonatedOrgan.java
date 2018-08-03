@@ -66,8 +66,19 @@ public class DonatedOrgan {
      * @return if the organ hasn't expired: the duration. else: Duration.ZERO
      */
     public Duration getDurationUntilExpiry() {
-
         Duration timeToExpiry = organType.getMaxExpiration().minus(getTimeSinceDonation());
         return timeToExpiry.isNegative() ? Duration.ZERO : timeToExpiry;
+    }
+
+    /**
+     * @return a decimal representation of how far along the organ is. starts at 0 (at time of death) and goes to 1.
+     */
+    public double getProgressDecimal() {
+        Duration timeToExpiry = getDurationUntilExpiry();
+        if (timeToExpiry.isZero()) {
+            return 1;
+        } else {
+            return 1 - ((double) timeToExpiry.getSeconds() / getOrganType().getMaxExpiration().getSeconds());
+        }
     }
 }
