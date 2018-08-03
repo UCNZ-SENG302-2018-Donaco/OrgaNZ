@@ -226,7 +226,7 @@ public class OrgansToDonateController extends SubController {
                     for (int i = 0; i < 4; i++) {
                         displayedDuration += splitDurationString[i] + " ";
                         if (splitDurationString[i].equals("seconds")) {
-                            i = 5; // hack to exit the for-loop
+                            break;
                         }
                     }
                     setText(displayedDuration);
