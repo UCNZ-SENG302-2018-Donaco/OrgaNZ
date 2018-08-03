@@ -52,6 +52,7 @@ import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.utilities.view.WindowContext;
 import com.humanharvest.organz.views.client.ModifyClientObject;
+import javax.validation.constraints.Null;
 import org.apache.commons.io.IOUtils;
 import org.controlsfx.control.Notifications;
 
@@ -119,6 +120,7 @@ public class ViewClientController extends ViewBaseController {
         regionCB.setItems(FXCollections.observableArrayList(Region.values()));
         updateCountries();
         fullName.setWrapText(true);
+
 
         country.valueProperty().addListener(change -> checkCountry());
         deathCountry.valueProperty().addListener(change -> checkDeathCountry());
