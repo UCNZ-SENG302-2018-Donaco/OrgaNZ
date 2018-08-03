@@ -3,12 +3,11 @@ package com.humanharvest.organz;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.Iterator;
-import java.util.concurrent.ExecutionException;
+import java.util.Objects;
 import java.util.logging.Level;
 
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.event.EventTarget;
 import javafx.fxml.FXMLLoader;
@@ -18,6 +17,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.input.TouchEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
@@ -166,6 +166,9 @@ public class AppTUIO extends Application {
 
         initialiseTUIOHook(tuioFX);
         initialiseFakeTUIO(tuioFX, primaryStage);
+        primaryStage.addEventFilter(TouchEvent.ANY, event -> {
+            System.out.println(event);
+        });
 
         State.init(DataStorageType.REST);
 
@@ -312,7 +315,7 @@ public class AppTUIO extends Application {
 
             while(windows.hasNext()) {
                 Window window = windows.next();
-                if (scene.getWindow() != window) {
+                if (!Objects.equals(scene.getWindow(), window)) {
                     double touchScreenMinX = screenX;
                     double touchScreenMinY = screenY;
                     if (config.isUseIndirectInputDevice()) {
@@ -337,41 +340,12 @@ public class AppTUIO extends Application {
                 }
             }
 
-            return hitTest(startNode, startNode, sceneX, sceneY);
+            return hitTest(startNode, sceneX, sceneY);
         }
 
-//        private Node hitTest(Parent root, Node node, double x, double y) {
-//            Node targetNode;
-//            Task<PickResultChooser> task = new Task<PickResultChooser>() {
-//                protected PickResultChooser call() {
-//                    PickRay pickRay = new PickRay(x, y, 1.0D, -1.0D / 0.0, 1.0D / 0.0);
-//                    PickResultChooser result = new PickResultChooser();
-//                    root.impl_pickNode(pickRay, result);
-//                    pickRay.getDirectionNoClone().normalize();
-//                    return result;
-//                }
-//            };
-//            Platform.runLater(task);
-//            PickResultChooser result = null;
-//
-//            try {
-//                result = task.get();
-//            } catch (InterruptedException ignored) {
-//            } catch (ExecutionException var12) {
-//                var12.printStackTrace();
-//            }
-//
-//            targetNode = result.getIntersectedNode();
-//            if (targetNode != null) {
-//                targetNode = getPickableNode(targetNode);
-//            }
-//
-//            return targetNode;
-//        }
+        private Node hitTest(Parent root, double x, double y) {
 
-        private Node hitTest(Parent root, Node node, double x, double y) {
-
-            PickRay pickRay = new PickRay(x, y, 1.0D, -1.0D / 0.0, 1.0D / 0.0);
+            PickRay pickRay = new PickRay(x, y, 1.0, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
             PickResultChooser result = new PickResultChooser();
             root.impl_pickNode(pickRay, result);
             pickRay.getDirectionNoClone().normalize();
@@ -386,30 +360,22 @@ public class AppTUIO extends Application {
         }
 
         private Node getPickableNode(Node targetNode) {
-            String pickIfMultiTouch = (String)targetNode.getProperties().get("pickIfMultiTouch");
-            String isTouchTransparent = (String)targetNode.getProperties().get("isTouchTransparent");
+            while (targetNode != null) {
+                String pickIfMultiTouch = (String) targetNode.getProperties().get("pickIfMultiTouch");
+                String isTouchTransparent = (String) targetNode.getProperties().get("isTouchTransparent");
 
-            if ((pickIfMultiTouch == null || !pickIfMultiTouch.equals("false")) && (isTouchTransparent == null || !isTouchTransparent.equals("true"))) {
-                return !(targetNode instanceof Text) || !(targetNode.getParent() instanceof Button) && !(targetNode.getParent() instanceof Label) ? targetNode : this.getPickableNode(targetNode.getParent());
-            } else {
-                return getPickableNode(targetNode.getParent());
-            }
-        }
-
-        private void updateTouchPointXY(TuioTouchPoint touchPoint, Scene targetScene) {
-            double sceneX;
-            double sceneY;
-            if (config.isUseIndirectInputDevice()) {
-                sceneX = touchPoint.getScreenX() + scene.getWindow().getX() + scene.getX();
-                sceneY = touchPoint.getScreenY() + scene.getWindow().getY() + scene.getY();
-                touchPoint.setScreenX(sceneX);
-                touchPoint.setScreenY(sceneY);
+                if (!Objects.equals(pickIfMultiTouch, "false")
+                        && !Objects.equals(isTouchTransparent, "true")) {
+                    return !(targetNode instanceof Text)
+                            || !(targetNode.getParent() instanceof Button)
+                            && !(targetNode.getParent() instanceof Label) ? targetNode
+                            : getPickableNode(targetNode.getParent());
+                } else {
+                    targetNode = targetNode.getParent();
+                }
             }
 
-            sceneX = touchPoint.getScreenX() - (targetScene.getWindow().getX() + targetScene.getX());
-            sceneY = touchPoint.getScreenY() - (targetScene.getWindow().getY() + targetScene.getY());
-            touchPoint.setSceneX(sceneX);
-            touchPoint.setSceneY(sceneY);
+            return null;
         }
 
         private void addTuioFXCanvas(Scene scene) {
