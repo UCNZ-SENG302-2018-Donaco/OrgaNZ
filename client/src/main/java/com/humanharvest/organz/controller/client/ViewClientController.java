@@ -14,6 +14,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.EnumSet;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -462,7 +463,7 @@ public class ViewClientController extends ViewBaseController {
     private boolean updateChanges() {
         ModifyClientObject modifyClientObject = new ModifyClientObject();
 
-        boolean clientDied = false;
+        boolean clientDied = viewedClient.isDead();
 
         addChangeIfDifferent(modifyClientObject, viewedClient, "firstName", fname.getText());
         addChangeIfDifferent(modifyClientObject, viewedClient, "lastName", lname.getText());
@@ -481,7 +482,6 @@ public class ViewClientController extends ViewBaseController {
         addChangeIfDifferent(modifyClientObject, viewedClient, "timeOfDeath", LocalTime.parse(deathTimeField.getText()));
         addChangeIfDifferent(modifyClientObject, viewedClient, "dateOfDeath", deathDatePicker.getValue());
         addChangeIfDifferent(modifyClientObject, viewedClient, "countryOfDeath", deathCountry.getValue());
-
         addChangeIfDifferent(modifyClientObject, viewedClient, "cityOfDeath", deathCity.getText());
 
         if (country.getValue() == Country.NZ) {
@@ -523,6 +523,12 @@ public class ViewClientController extends ViewBaseController {
         }
 
         try {
+            //Death Date has been set and client is not already dead.
+            if(deathDatePicker.getValue() != null && !clientDied){
+              Optional<ButtonType> buttonOpt = PageNavigator.showAlert(AlertType.CONFIRMATION,
+                  "Are you sure you want to mark this client as dead?",
+                  "This will cancel all waiting transplant requests for this client.");
+            }
             State.getClientResolver().modifyClientDetails(viewedClient, modifyClientObject);
             String actionText = modifyClientObject.toString();
 
