@@ -178,37 +178,8 @@ public interface ClientManager {
 
     /**
      * Returns a collection of all the organs that are available to donate from dead peop[e.
-     * todo replace this test implementation with memory and rest versions
      */
-    default Collection<DonatedOrgan> getAllOrgansToDonate() {
-        System.out.println("getting organs td");
-        // Find a valid client. hopefully there is one with id less than 1000, otherwise it will be null
-        Client client = null;
-        Optional<Client> optionalClient;
-        for (int id = 0; id < 1000 && client == null; id++) {
-            optionalClient = getClientByID(id);
-            if (optionalClient.isPresent()) {
-                client = optionalClient.get();
-            }
-        }
-
-        if (client == null) {
-            System.out.println("no client found");
-        } else {
-            System.out.println(client.getFirstName());
-        }
-        DonatedOrgan organ1 = new DonatedOrgan(Organ.LUNG, client, LocalDateTime.now().minusHours(1));
-        DonatedOrgan organ2 = new DonatedOrgan(Organ.HEART, client, LocalDateTime.now().minusHours(5).minusMinutes(30));
-        DonatedOrgan organ3 = new DonatedOrgan(Organ.LUNG, client, LocalDateTime.now().minusHours(5).minusMinutes(59)
-                .minusSeconds(50));
-        DonatedOrgan organ4 = new DonatedOrgan(Organ.LIVER, client, LocalDateTime.now().plusDays(5));
-        Collection<DonatedOrgan> organsToDonate = new ArrayList<>();
-        organsToDonate.add(organ1);
-        organsToDonate.add(organ2);
-        organsToDonate.add(organ3);
-        organsToDonate.add(organ4);
-        return organsToDonate;
-    }
+    Collection<DonatedOrgan> getAllOrgansToDonate();
 
     /**
      * Returns a collection of all the organs that are available to donate from dead peop[e.
