@@ -78,7 +78,7 @@ class DonatedOrganTest {
     void getProgressDecimalInLowerBoundTest() {
         dateTimeOfDonation = LocalDateTime.now().minusHours(5);
         donatedOrgan = new DonatedOrgan(organ, donor, dateTimeOfDonation);
-        assertEquals((double) 5/6, donatedOrgan.getProgressDecimal(), 1e-6);
+        assertEquals((double) 5 / 6, donatedOrgan.getProgressDecimal(), 1e-6);
     }
 
     @Test
@@ -100,14 +100,14 @@ class DonatedOrganTest {
     @Test
     void getFullMarkerLungTest() {
         donatedOrgan = new DonatedOrgan(organ, donor, dateTimeOfDonation);
-        assertEquals((double) 2/3, donatedOrgan.getFullMarker());
+        assertEquals((double) 2 / 3, donatedOrgan.getFullMarker());
     }
 
     @Test
     void getFullMarkerPancreasTest() {
         organ = Organ.PANCREAS;
         donatedOrgan = new DonatedOrgan(organ, donor, dateTimeOfDonation);
-        assertEquals((double) 1/2, donatedOrgan.getFullMarker());
+        assertEquals((double) 1 / 2, donatedOrgan.getFullMarker());
     }
 
     @Test
@@ -121,21 +121,21 @@ class DonatedOrganTest {
     void getFullMarkerKidneyTest() {
         organ = Organ.KIDNEY;
         donatedOrgan = new DonatedOrgan(organ, donor, dateTimeOfDonation);
-        assertEquals((double) 2/3, donatedOrgan.getFullMarker());
+        assertEquals((double) 2 / 3, donatedOrgan.getFullMarker());
     }
 
     @Test
     void getFullMarkerCorneaTest() {
         organ = Organ.CORNEA;
         donatedOrgan = new DonatedOrgan(organ, donor, dateTimeOfDonation);
-        assertEquals((double) 5/7, donatedOrgan.getFullMarker());
+        assertEquals((double) 5 / 7, donatedOrgan.getFullMarker());
     }
 
     @Test
     void getFullMarkerSkinTest() {
         organ = Organ.SKIN;
         donatedOrgan = new DonatedOrgan(organ, donor, dateTimeOfDonation);
-        assertEquals((double) 3/10, donatedOrgan.getFullMarker());
+        assertEquals((double) 3 / 10, donatedOrgan.getFullMarker());
     }
 
     // todo This should not result in an NPE. Expiration times for organs such as bone marrow are not yet implemented
