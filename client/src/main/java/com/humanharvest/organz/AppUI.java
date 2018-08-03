@@ -1,6 +1,7 @@
 package com.humanharvest.organz;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.logging.Level;
 
 import javafx.application.Application;
@@ -38,18 +39,22 @@ public class AppUI extends Application {
     public void start(Stage primaryStage) throws IOException {
         LoggerSetup.setup(Level.INFO);
 
-        primaryStage.setTitle("Organ Client Management System");
+        State.init(DataStorageType.REST);
+
+        Map<String, String> parameters = getParameters().getNamed();
+
+        if (parameters.containsKey("host")) {
+            State.setBaseUri(parameters.get("host"));
+        } else if (System.getenv("HOST") != null) {
+            State.setBaseUri(System.getenv("HOST"));
+        }
+
         primaryStage.setScene(createScene(loadMainPane(primaryStage)));
+        primaryStage.setTitle("Organ Client Management System");
         primaryStage.show();
 
         primaryStage.setMinHeight(639);
         primaryStage.setMinWidth(1016);
-
-        State.init(DataStorageType.REST);
-
-        if (System.getenv("HOST") != null) {
-            State.setBaseUri(System.getenv("HOST"));
-        }
     }
 
     /**
