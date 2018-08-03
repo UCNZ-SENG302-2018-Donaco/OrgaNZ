@@ -230,6 +230,16 @@ public class ClientController {
                 State.getClientManager(),
                 oldClient,
                 modifyClientObject);
+
+        //If client was not dead before but is now dead.
+        if(oldClient.getDateOfDeath() == null && modifyClientObject.getDateOfDeath() != null){
+            MarkClientAsDeadAction markClientAsDeadAction = new MarkClientAsDeadAction(client, modifyClientObject.getDateOfDeath(),modifyClientObject.getTimeOfDeath(),
+                modifyClientObject.getRegionOfDeath(),modifyClientObject.getCityOfDeath(),modifyClientObject.getCountryOfDeath(),State
+                .getClientManager
+                    ());
+            State.getActionInvoker(authToken).execute(markClientAsDeadAction);
+
+        }
         //Execute action, this would correspond to a specific users invoker in full version
         State.getActionInvoker(authToken).execute(action);
 
@@ -283,6 +293,8 @@ public class ClientController {
         return new ResponseEntity<>(client, HttpStatus.OK);
     }
 
+    /**
+
     @PostMapping("/clients/{uid}/dead")
     @JsonView(Views.Details.class)
     public ResponseEntity<Client> markClientAsDead(
@@ -322,7 +334,7 @@ public class ClientController {
 
         //Respond
         return new ResponseEntity<>(client, headers, HttpStatus.OK);
-    }
+    } **/
 
     /**
      * Returns the specified clients history
