@@ -71,14 +71,39 @@ public class DonatedOrgan {
     }
 
     /**
+     * @return if the organ hasn't expired, based on the minimum expiry: the duration until the minimum expiry.
+     * else: Duration.ZERO
+     */
+    public Duration getDurationUntilPartialExpiry() {
+        Duration timeToExpiry = organType.getMinExpiration().minus(getTimeSinceDonation());
+        return timeToExpiry.isNegative() ? Duration.ZERO : timeToExpiry;
+
+    }
+
+    /**
      * @return a decimal representation of how far along the organ is. starts at 0 (at time of death) and goes to 1.
      */
     public double getProgressDecimal() {
         Duration timeToExpiry = getDurationUntilExpiry();
+        Duration expiration = getOrganType().getMaxExpiration();
         if (timeToExpiry.isZero()) {
             return 1;
         } else {
-            return 1 - ((double) timeToExpiry.getSeconds() / getOrganType().getMaxExpiration().getSeconds());
+            return 1 - ((double) timeToExpiry.getSeconds() / expiration.getSeconds());
+        }
+    }
+
+    /**
+     * @return a decimal representation of how far along the organ is until the min expiry.
+     * starts at 0 (at time of death) and goes to 1.
+     */
+    public double getProgressDecimalUntilMinExpiry() {
+        Duration timeToMinExpiry = getDurationUntilPartialExpiry();
+        Duration minExpiration = getOrganType().getMinExpiration();
+        if (timeToMinExpiry.isZero()) {
+            return 1;
+        } else {
+            return 1 - ((double) timeToMinExpiry.getSeconds() / minExpiration.getSeconds());
         }
     }
 }

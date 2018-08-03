@@ -231,14 +231,28 @@ public interface ClientManager {
         } else {
             System.out.println(client.getFirstName());
         }
-        DonatedOrgan organ1 = new DonatedOrgan(Organ.LUNG, client, LocalDateTime.now().minusHours(1));
+        DonatedOrgan organ0h = new DonatedOrgan(Organ.LUNG, client, LocalDateTime.now().plusSeconds(30));
+        DonatedOrgan organ5m = new DonatedOrgan(Organ.LUNG, client, LocalDateTime.now().minusMinutes(5).plusSeconds(30));
+        DonatedOrgan organ1h = new DonatedOrgan(Organ.LUNG, client, LocalDateTime.now().minusHours(1).plusSeconds(30));
+        DonatedOrgan organ2h = new DonatedOrgan(Organ.LUNG, client, LocalDateTime.now().minusHours(2).plusSeconds(30));
+        DonatedOrgan organ3h = new DonatedOrgan(Organ.LUNG, client, LocalDateTime.now().minusHours(3).plusSeconds(30));
+        DonatedOrgan organ4h = new DonatedOrgan(Organ.LUNG, client, LocalDateTime.now().minusHours(4).plusSeconds(30));
+        DonatedOrgan organ5h = new DonatedOrgan(Organ.LUNG, client, LocalDateTime.now().minusHours(5).plusSeconds(30));
+        DonatedOrgan organ6h = new DonatedOrgan(Organ.LUNG, client, LocalDateTime.now().minusHours(6).plusSeconds(30));
         DonatedOrgan organ2a = new DonatedOrgan(Organ.LUNG, client, LocalDateTime.now().minusHours(3).minusMinutes(30));
         DonatedOrgan organ2 = new DonatedOrgan(Organ.LUNG, client, LocalDateTime.now().minusHours(5).minusMinutes(30));
-        DonatedOrgan organ3 = new DonatedOrgan(Organ.LUNG, client, LocalDateTime.now().minusHours(5).minusMinutes(59));
+        DonatedOrgan organ3 = new DonatedOrgan(Organ.LUNG, client, LocalDateTime.now().minusHours(5).minusMinutes(55));
                 //.minusSeconds(50));
         DonatedOrgan organ4 = new DonatedOrgan(Organ.LUNG, client, LocalDateTime.now());
         List<DonatedOrgan> organsToDonate = new ArrayList<>();
-        organsToDonate.add(organ1);
+        organsToDonate.add(organ0h);
+        organsToDonate.add(organ5m);
+        organsToDonate.add(organ1h);
+        organsToDonate.add(organ2h);
+        organsToDonate.add(organ3h);
+        organsToDonate.add(organ4h);
+        organsToDonate.add(organ5h);
+        organsToDonate.add(organ6h);
         organsToDonate.add(organ2);
         organsToDonate.add(organ2a);
         organsToDonate.add(organ3);
