@@ -138,9 +138,9 @@ class DonatedOrganTest {
         assertEquals((double) 3/10, donatedOrgan.getFullMarker());
     }
 
-    @Ignore
     // todo This should not result in an NPE. Expiration times for organs such as bone marrow are not yet implemented
     @Test
+    @Ignore
     void getFullMarkerBoneMarrowTest() {
         organ = Organ.BONE_MARROW;
         donatedOrgan = new DonatedOrgan(organ, donor, dateTimeOfDonation);
