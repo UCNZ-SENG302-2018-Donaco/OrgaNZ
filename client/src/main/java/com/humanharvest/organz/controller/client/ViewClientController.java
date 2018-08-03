@@ -17,16 +17,12 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleButton;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -97,6 +93,8 @@ public class ViewClientController extends ViewBaseController {
     @FXML
     private ImageView imageView;
     @FXML
+    private ToggleGroup isDeadToggleGroup;
+    @FXML
     private ToggleButton aliveToggleBtn, deadToggleBtn;
 
     public ViewClientController() {
@@ -123,6 +121,24 @@ public class ViewClientController extends ViewBaseController {
 
         country.valueProperty().addListener(change -> checkCountry());
         deathCountry.valueProperty().addListener(change -> checkDeathCountry());
+        isDeadToggleGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
+            if (newValue == deadToggleBtn || viewedClient.isDead()) {
+                deathCity.setDisable(false);
+                deathTimeField.setDisable(false);
+                deathDatePicker.setDisable(false);
+                deathCountry.setDisable(false);
+                deathRegionCB.setDisable(false);
+                deathRegionTF.setDisable(false);
+            }
+            else if (newValue == aliveToggleBtn) {
+                deathCity.setDisable(true);
+                deathTimeField.setDisable(true);
+                deathDatePicker.setDisable(true);
+                deathCountry.setDisable(true);
+                deathRegionCB.setDisable(true);
+                deathRegionTF.setDisable(true);
+            }
+        });
     }
 
     private void updateCountries() {
@@ -144,6 +160,13 @@ public class ViewClientController extends ViewBaseController {
             viewedClient = windowContext.getViewClient();
             mainController.loadMenuBar(menuBarPane);
         }
+        if (viewedClient.isDead()) {
+            deadToggleBtn.setSelected(true);
+        }
+        else if (!viewedClient.isDead()) {
+            aliveToggleBtn.setSelected(true);
+        }
+
         refresh();
     }
 
@@ -568,4 +591,5 @@ public class ViewClientController extends ViewBaseController {
 
         PageNavigator.loadPage(Page.EDIT_DEATH_DETAILS, newMain);
     }
+
 }
