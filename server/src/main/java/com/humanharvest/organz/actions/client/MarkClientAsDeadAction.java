@@ -22,7 +22,6 @@ public class MarkClientAsDeadAction extends ClientAction {
     private final String deathRegion;
     private final String deathCity;
     private final Country deathCountry;
-
     private final List<ResolveTransplantRequestAction> resolveTransplantActions;
 
     /**
@@ -32,7 +31,7 @@ public class MarkClientAsDeadAction extends ClientAction {
      * @param manager The ClientManager to apply the changes to
      */
     public MarkClientAsDeadAction(Client client, LocalDate deathDate, LocalTime deathTime, String deathRegion,
-        String deathCity, Country deathCountry,ClientManager manager) {
+        String deathCity, Country deathCountry, ClientManager manager) {
         super(client, manager);
         this.deathDate = deathDate;
         this.deathTime = deathTime;
@@ -64,8 +63,6 @@ public class MarkClientAsDeadAction extends ClientAction {
         client.setRegionOfDeath(deathRegion);
         client.setCityOfDeath(deathCity);
         client.setCountryOfDeath(deathCountry);
-
-
         for (ResolveTransplantRequestAction action : resolveTransplantActions) {
             action.execute();
         }
