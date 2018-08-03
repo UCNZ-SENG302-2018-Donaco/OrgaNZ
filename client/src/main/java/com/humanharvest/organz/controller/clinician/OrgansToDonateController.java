@@ -1,5 +1,7 @@
 package com.humanharvest.organz.controller.clinician;
 
+import java.awt.MouseInfo;
+import java.awt.Point;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -16,6 +18,8 @@ import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
+import org.controlsfx.control.PopOver;
+import org.controlsfx.control.PopOver.ArrowLocation;
 import org.hibernate.validator.internal.util.logging.formatter.DurationFormatter;
 
 import javafx.beans.property.SimpleObjectProperty;
@@ -24,6 +28,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -133,6 +140,12 @@ public class OrgansToDonateController extends SubController {
                         PageNavigator.loadPage(Page.VIEW_CLIENT, newMain);
                     }
                 }
+            } else if (mouseEvent.getButton().equals(MouseButton.SECONDARY)) {
+                MenuItem manualExpireItem = new MenuItem();
+                manualExpireItem.textProperty().setValue("Manually Expire");
+                manualExpireItem.setOnAction(event -> openManuallyExpireDialog(MouseInfo.getPointerInfo().getLocation()));
+                ContextMenu contextMenu = new ContextMenu(manualExpireItem);
+                tableView.setContextMenu(contextMenu);
             }
         });
 /*todo adapt this code from TransplantsController for sorting
@@ -168,6 +181,21 @@ public class OrgansToDonateController extends SubController {
         });*/
     }
 
+    private void openManuallyExpireDialog(Point point) {
+        PopOver popOver = new PopOver();
+        popOver.setX(point.x);
+        popOver.setY(point.y);
+        popOver.setTitle("Manually Override Organ Expiry");
+        System.out.println(popOver.getTitle());
+
+        popOver.show(tableView);
+//                popOver.set
+        DonatedOrgan organ = tableView.getSelectionModel().getSelectedItem();
+
+
+
+
+    }
 
     /**
      * Formats a table cell that holds a {@link LocalDateTime} value to display that value in the date time format.
