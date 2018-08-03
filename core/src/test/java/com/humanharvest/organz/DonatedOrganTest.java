@@ -35,14 +35,14 @@ class DonatedOrganTest {
     void getDurationUntilExpiryTest() {
         dateTimeOfDonation = LocalDateTime.now();
         donatedOrgan = new DonatedOrgan(organ, donor, dateTimeOfDonation);
-        assertEquals(Duration.ofHours(6), donatedOrgan.getDurationUntilExpiry());
+        assertEquals(Duration.ofHours(6).getSeconds(), donatedOrgan.getDurationUntilExpiry().getSeconds(), 1);
     }
 
     @Test
     void getDurationUntilExpiryHasntExpiredTest() {
         dateTimeOfDonation = LocalDateTime.now().minusHours(2);
         donatedOrgan = new DonatedOrgan(organ, donor, dateTimeOfDonation);
-        assertEquals(Duration.ofHours(4), donatedOrgan.getDurationUntilExpiry());
+        assertEquals(Duration.ofHours(4).getSeconds(), donatedOrgan.getDurationUntilExpiry().getSeconds(), 1);
     }
 
     @Test
