@@ -252,7 +252,7 @@
                                           <ToggleButton fx:id="deadToggleBtn" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" text="Deceased" toggleGroup="$isDeadToggleGroup" GridPane.columnIndex="1" />
                                        </children>
                                     </GridPane>
-                                    <GridPane vgap="5.0">
+                                    <GridPane fx:id="deathDetailsPane" vgap="5.0">
                                       <columnConstraints>
                                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                                         <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="65.0" prefWidth="100.0" />

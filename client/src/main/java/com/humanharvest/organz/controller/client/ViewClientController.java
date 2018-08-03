@@ -6,7 +6,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
@@ -14,16 +13,21 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.FormatStyle;
 import java.util.EnumSet;
-import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -33,14 +37,12 @@ import javafx.stage.FileChooser.ExtensionFilter;
 
 import com.humanharvest.organz.AppUI;
 import com.humanharvest.organz.Client;
-import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.clinician.ViewBaseController;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.enums.BloodType;
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Gender;
@@ -48,11 +50,8 @@ import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
-import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
-import com.humanharvest.organz.utilities.view.WindowContext;
 import com.humanharvest.organz.views.client.ModifyClientObject;
-import javax.validation.constraints.Null;
 import org.apache.commons.io.IOUtils;
 import org.controlsfx.control.Notifications;
 
@@ -73,7 +72,7 @@ public class ViewClientController extends ViewBaseController {
     private Client viewedClient;
 
     @FXML
-    private Pane sidebarPane, menuBarPane;
+    private Pane sidebarPane, menuBarPane, deathDetailsPane;
     @FXML
     private Label creationDate, lastModified, legalNameLabel, dobLabel, heightLabel, weightLabel, ageDisplayLabel,
             ageLabel, bmiLabel, fullName, dodLabel, timeOfDeathLabel, countryOfDeathLabel, regionOfDeathLabel,
@@ -85,7 +84,7 @@ public class ViewClientController extends ViewBaseController {
     @FXML
     private Button uploadPhotoButton, deletePhotoButton, applyButton, cancelButton;
     @FXML
-    private DatePicker dob, dod, deathDatePicker;
+    private DatePicker dob, deathDatePicker;
     @FXML
     private ChoiceBox<Gender> gender, genderIdentity;
     @FXML
@@ -125,24 +124,31 @@ public class ViewClientController extends ViewBaseController {
         fullName.setWrapText(true);
 
 
-        country.valueProperty().addListener(change -> checkCountry());
-        deathCountry.valueProperty().addListener(change -> checkDeathCountry());
+        country.valueProperty().addListener(change -> enableAppropriateRegionInput(country, regionCB, regionTF));
+        deathCountry.valueProperty().addListener(change -> enableAppropriateRegionInput(deathCountry, deathRegionCB,
+                deathRegionTF));
         isDeadToggleGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == deadToggleBtn) {
-                deathCity.setDisable(false);
-                deathTimeField.setDisable(false);
-                deathDatePicker.setDisable(false);
-                deathCountry.setDisable(false);
-                deathRegionCB.setDisable(false);
-                deathRegionTF.setDisable(false);
+                deathDetailsPane.setDisable(false);
+                // Pre-populate inputs with current location details
+                deathDatePicker.setValue(LocalDate.now());
+                deathCountry.setValue(viewedClient.getCountry());
+                if (viewedClient.getCountry() == Country.NZ) {
+                    deathRegionCB.setValue(Region.fromString(viewedClient.getRegion()));
+                } else {
+                    deathRegionTF.setText(viewedClient.getRegion());
+                }
+                deathCity.setText(viewedClient.getCurrentAddress());
             }
             else if (newValue == aliveToggleBtn) {
-                deathCity.setDisable(true);
-                deathTimeField.setDisable(true);
-                deathDatePicker.setDisable(true);
-                deathCountry.setDisable(true);
-                deathRegionCB.setDisable(true);
-                deathRegionTF.setDisable(true);
+                deathDetailsPane.setDisable(true);
+                // Clear current input values
+                deathDatePicker.setValue(null);
+                deathTimeField.setText("");
+                deathCountry.setValue(null);
+                deathRegionCB.setValue(null);
+                deathRegionTF.setText("");
+                deathCity.setText("");
             }
         });
     }
@@ -213,27 +219,32 @@ public class ViewClientController extends ViewBaseController {
         refresh();
     }
 
-        @Override
-        public void refresh () {
-            try {
-                viewedClient = manager.getClientByID(viewedClient.getUid()).orElseThrow(ServerRestException::new);
-            } catch (ServerRestException e) {
-                e.printStackTrace();
-                PageNavigator.showAlert(AlertType.ERROR,
-                        "Server Error",
-                        "An error occurred while trying to fetch from the server.\nPlease try again later.");
-                return;
-            }
-            updateClientFields();
-            mainController.refreshNavigation();
-            if (session.getLoggedInUserType() == UserType.CLIENT) {
-                mainController.setTitle("View Client: " + viewedClient.getPreferredNameFormatted());
-            } else if (windowContext.isClinViewClientWindow()) {
-                mainController.setTitle("View Client: " + viewedClient.getFullName());
-            }
-            loadImage();
-            updateCountries();
+    @Override
+    public void refresh () {
+        try {
+            viewedClient = manager.getClientByID(viewedClient.getUid()).orElseThrow(ServerRestException::new);
+        } catch (ServerRestException e) {
+            e.printStackTrace();
+            PageNavigator.showAlert(AlertType.ERROR,
+                    "Server Error",
+                    "An error occurred while trying to fetch from the server.\nPlease try again later.");
+            return;
         }
+        updateClientFields();
+        mainController.refreshNavigation();
+        if (session.getLoggedInUserType() == UserType.CLIENT) {
+            mainController.setTitle("View Client: " + viewedClient.getPreferredNameFormatted());
+        } else if (windowContext.isClinViewClientWindow()) {
+            mainController.setTitle("View Client: " + viewedClient.getFullName());
+        }
+        loadImage();
+        updateCountries();
+
+        // Run these to reset all labels to correct colours
+        checkMandatoryFields();
+        checkNonMandatoryFields();
+        checkDeathDetailsFields();
+    }
 
     /**
      * Updates all of the fields of the client.
@@ -251,13 +262,12 @@ public class ViewClientController extends ViewBaseController {
         btype.setValue(viewedClient.getBloodType());
         country.setValue(viewedClient.getCountry());
 
-        checkDeathCountry();
-        checkCountry();
+        enableAppropriateRegionInput(deathCountry, deathRegionCB, deathRegionTF);
+        enableAppropriateRegionInput(country, regionCB, regionTF);
         if (viewedClient.getCountry() == Country.NZ && viewedClient.getRegion() != null) {
             regionCB.setValue(Region.fromString(viewedClient.getRegion()));
         } else {
             regionTF.setText(viewedClient.getRegion());
-
         }
         address.setText(viewedClient.getCurrentAddress());
         fullName.setText(viewedClient.getPreferredNameFormatted());
@@ -272,33 +282,32 @@ public class ViewClientController extends ViewBaseController {
         displayBMI();
         displayAge();
 
-    }
-
-    /**
-     * Checks the clients country, changes region input to a choicebox of NZ regions if the country is New Zealand,
-     * and changes to a textfield input for any other country
-     */
-    private void checkCountry() {
-        if (country.getValue() == Country.NZ) {
-            regionCB.setVisible(true);
-            regionTF.setVisible(false);
+        // Set values of death details fields
+        if (viewedClient.isDead()) {
+            isDeadToggleGroup.selectToggle(deadToggleBtn);
+            aliveToggleBtn.setDisable(true);
+            deathDatePicker.setValue(viewedClient.getDateOfDeath());
+            deathTimeField.setText(viewedClient.getTimeOfDeath().toString());
+            deathCountry.setValue(viewedClient.getCountryOfDeath());
+            if (viewedClient.getCountryOfDeath() == Country.NZ && viewedClient.getRegionOfDeath() != null) {
+                deathRegionCB.setValue(Region.fromString(viewedClient.getRegionOfDeath()));
+            } else {
+                deathRegionTF.setText(viewedClient.getRegionOfDeath());
+            }
+            deathCity.setText(viewedClient.getCityOfDeath());
         } else {
-            regionCB.setVisible(false);
-            regionTF.setVisible(true);
+            isDeadToggleGroup.selectToggle(aliveToggleBtn);
         }
     }
 
-    /**
-     * Checks the clients country, changes region input to a choicebox of NZ regions if the country is
-     * New Zealand, and changes to a textfield input for any other country
-     */
-    private void checkDeathCountry() {
-        if (viewedClient.getCountryOfDeath() == Country.NZ) {
-            deathRegionCB.setVisible(true);
-            deathRegionTF.setVisible(false);
+    private void enableAppropriateRegionInput(ChoiceBox<Country> countryChoice, ChoiceBox<Region> regionChoice,
+            TextField regionTextField) {
+        if (countryChoice.getValue() == Country.NZ) {
+            regionChoice.setVisible(true);
+            regionTextField.setVisible(false);
         } else {
-            deathRegionCB.setVisible(false);
-            deathRegionTF.setVisible(true);
+            regionChoice.setVisible(false);
+            regionTextField.setVisible(true);
         }
     }
 
@@ -308,13 +317,10 @@ public class ViewClientController extends ViewBaseController {
      */
     @FXML
     private void apply() {
-        if (checkMandatoryFields() && checkNonMandatoryFields()) {
+        if (checkMandatoryFields() && checkNonMandatoryFields() && checkDeathDetailsFields()) {
             if (updateChanges()) {
                 displayBMI();
                 displayAge();
-                checkCountry();
-                checkDeathCountry();
-
                 lastModified.setText(formatter.format(viewedClient.getModifiedTimestamp()));
             }
         }
@@ -482,22 +488,55 @@ public class ViewClientController extends ViewBaseController {
         return update;
     }
 
-    private void addChangeIfDifferent(ModifyClientObject modifyClientObject, String fieldString, Object newValue) {
-        try {
-            //Get the field from the string
-            Field field = modifyClientObject.getClass().getDeclaredField(fieldString);
-            Field clientField = viewedClient.getClass().getDeclaredField(fieldString);
-            //Allow access to any fields including private
-            field.setAccessible(true);
-            clientField.setAccessible(true);
-            //Only add the field if it differs from the client
-            if (!Objects.equals(clientField.get(viewedClient), newValue)) {
-                field.set(modifyClientObject, newValue);
-                modifyClientObject.registerChange(fieldString);
+    /**
+     * Checks that death details fields have either valid input, or no input. Otherwise red text is shown.
+     * @return true if all non mandatory fields have valid input (or the dead toggle button is not selected).
+     */
+    private boolean checkDeathDetailsFields() {
+        boolean allValid = true;
+        if (deadToggleBtn.isSelected()) {
+            if (deathDatePicker.getValue() == null || deathDatePicker.getValue().isAfter(LocalDate.now())) {
+                dodLabel.setTextFill(Color.RED);
+                allValid = false;
+            } else {
+                dodLabel.setTextFill(Color.BLACK);
             }
-        } catch (NoSuchFieldException | IllegalAccessException e) {
-            LOGGER.log(Level.SEVERE, e.getMessage(), e);
+            try {
+                LocalTime.parse(deathTimeField.getText());
+                timeOfDeathLabel.setTextFill(Color.BLACK);
+            } catch (DateTimeParseException e) {
+                timeOfDeathLabel.setTextFill(Color.RED);
+                allValid = false;
+            }
+            if (deathCountry.getValue() == null) {
+                countryOfDeathLabel.setTextFill(Color.RED);
+                allValid = false;
+            } else {
+                countryOfDeathLabel.setTextFill(Color.BLACK);
+            }
+            if (deathCountry.getValue() == Country.NZ) {
+                if (deathRegionCB.getValue() == null) {
+                    regionOfDeathLabel.setTextFill(Color.RED);
+                    allValid = false;
+                } else {
+                    regionOfDeathLabel.setTextFill(Color.BLACK);
+                }
+            } else {
+                if (deathRegionTF.getText().isEmpty()) {
+                    regionOfDeathLabel.setTextFill(Color.RED);
+                    allValid = false;
+                } else {
+                    regionOfDeathLabel.setTextFill(Color.BLACK);
+                }
+            }
+            if (deathCity.getText().isEmpty()) {
+                cityOfDeathLabel.setTextFill(Color.RED);
+                allValid = false;
+            } else {
+                cityOfDeathLabel.setTextFill(Color.BLACK);
+            }
         }
+        return allValid;
     }
 
     /**
@@ -507,8 +546,7 @@ public class ViewClientController extends ViewBaseController {
     private boolean updateChanges() {
         ModifyClientObject modifyClientObject = new ModifyClientObject();
 
-        boolean clientDied = false;
-
+        // Register changes on generic fields
         addChangeIfDifferent(modifyClientObject, viewedClient, "firstName", fname.getText());
         addChangeIfDifferent(modifyClientObject, viewedClient, "lastName", lname.getText());
         addChangeIfDifferent(modifyClientObject, viewedClient, "middleName", mname.getText());
@@ -521,75 +559,64 @@ public class ViewClientController extends ViewBaseController {
         addChangeIfDifferent(modifyClientObject, viewedClient, "bloodType", btype.getValue());
         addChangeIfDifferent(modifyClientObject, viewedClient, "currentAddress", address.getText());
         addChangeIfDifferent(modifyClientObject, viewedClient, "country", country.getValue());
-
-        // DEATH DETAILS
-        try {
-            addChangeIfDifferent(modifyClientObject, viewedClient, "timeOfDeath",
-                    LocalTime.parse(deathTimeField.getText()));
-
-        } catch (DateTimeParseException e) {
-            PageNavigator.showAlert(AlertType.WARNING, "Incorrect time format",
-                    "Please enter the time of death"
-                            + " in 'HH:mm:ss'. Time of death not saved.");
-            return false;
-        }
-        addChangeIfDifferent(modifyClientObject, viewedClient, "dateOfDeath", deathDatePicker.getValue());
-        addChangeIfDifferent(modifyClientObject, viewedClient, "countryOfDeath", deathCountry.getValue());
-
-        addChangeIfDifferent(modifyClientObject, viewedClient, "cityOfDeath", deathCity.getText());
-
+        // Register region change
         if (country.getValue() == Country.NZ) {
-            Region region = regionCB.getValue();
-            if (region == null) {
-                region = Region.UNSPECIFIED;
-            }
+            Region region = regionCB.getValue() == null ? Region.UNSPECIFIED : regionCB.getValue();
             addChangeIfDifferent(modifyClientObject, viewedClient, "region", region.toString());
         } else {
             addChangeIfDifferent(modifyClientObject, viewedClient, "region", regionTF.getText());
-
         }
 
-        if (deathCountry.getValue() == Country.NZ) {
-            Region region = deathRegionCB.getValue();
-            if (region == null) {
-                region = Region.UNSPECIFIED;
+        // DEATH DETAILS
+        if (deadToggleBtn.isSelected()) {
+            // Warn user if about to mark a client as dead
+            if (viewedClient.isAlive()) {
+                ButtonType optionPicked = PageNavigator.showAlert(AlertType.CONFIRMATION,
+                        "Are you sure you want to mark this client as dead?",
+                        "This will cancel all waiting transplant requests for this client.")
+                        .orElse(ButtonType.CANCEL);
+                if (optionPicked != ButtonType.OK) {
+                    return false;
+                }
             }
-            addChangeIfDifferent(modifyClientObject, viewedClient, "regionOfDeath", region.toString());
-        } else {
-            addChangeIfDifferent(modifyClientObject, viewedClient, "regionOfDeath", deathRegionTF.getText());
 
-        }
-
-        checkCountry();
-        checkDeathCountry();
-
-        PageNavigator.refreshAllWindows();
-
-        if (modifyClientObject.getModifiedFields().isEmpty()) {
-            if (clientDied) { //only the client's date of death was changed
-                return true;
-            } else { //literally nothing was changed
-                Notifications.create()
-                        .title("No changes were made.")
-                        .text("No changes were made to the client.")
-                        .showWarning();
+            addChangeIfDifferent(modifyClientObject, viewedClient, "dateOfDeath", deathDatePicker.getValue());
+            try {
+                addChangeIfDifferent(modifyClientObject, viewedClient, "timeOfDeath",
+                        LocalTime.parse(deathTimeField.getText()));
+            } catch (DateTimeParseException e) {
+                PageNavigator.showAlert(AlertType.WARNING,
+                        "Incorrect time format",
+                        "Please enter the time of death in 'HH:mm:ss'. Time of death not saved.");
                 return false;
             }
+            addChangeIfDifferent(modifyClientObject, viewedClient, "countryOfDeath", deathCountry.getValue());
+            addChangeIfDifferent(modifyClientObject, viewedClient, "cityOfDeath", deathCity.getText());
+            // Register death region change
+            if (deathCountry.getValue() == Country.NZ) {
+                Region region = deathRegionCB.getValue() == null ? Region.UNSPECIFIED : deathRegionCB.getValue();
+                addChangeIfDifferent(modifyClientObject, viewedClient, "regionOfDeath", region.toString());
+            } else {
+                addChangeIfDifferent(modifyClientObject, viewedClient, "regionOfDeath", deathRegionTF.getText());
+            }
         }
 
+        if (modifyClientObject.getModifiedFields().isEmpty()) {
+            //literally nothing was changed
+            Notifications.create()
+                    .title("No changes were made.")
+                    .text("No changes were made to the client.")
+                    .showWarning();
+            return false;
+        }
 
         try {
             State.getClientResolver().modifyClientDetails(viewedClient, modifyClientObject);
             String actionText = modifyClientObject.toString();
-
             Notifications.create()
                     .title("Updated Client")
                     .text(actionText)
                     .showInformation();
-
-            HistoryItem save = new HistoryItem("UPDATE CLIENT INFO",
-                    String.format("Updated client %s with values: %s", viewedClient.getFullName(), actionText));
-            JSONConverter.updateHistory(save, "action_history.json");
 
         } catch (NotFoundException e) {
             LOGGER.log(Level.WARNING, "Client not found");
@@ -613,7 +640,6 @@ public class ViewClientController extends ViewBaseController {
 
         PageNavigator.refreshAllWindows();
         return true;
-
     }
 
     /**
@@ -635,17 +661,4 @@ public class ViewClientController extends ViewBaseController {
         }
         ageLabel.setText(String.valueOf(viewedClient.getAge()));
     }
-
-    @FXML
-    private void editDeathDetails() {
-
-        MainController newMain  = PageNavigator.openNewWindow();
-        newMain.setWindowContext(new WindowContext.WindowContextBuilder()
-                .setAsClinicianViewClientWindow()
-                .viewClient(viewedClient)
-                .build());
-
-        PageNavigator.loadPage(Page.EDIT_DEATH_DETAILS, newMain);
-    }
-
 }
