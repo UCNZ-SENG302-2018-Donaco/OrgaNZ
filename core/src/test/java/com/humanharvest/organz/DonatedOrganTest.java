@@ -59,35 +59,35 @@ class DonatedOrganTest {
     @Test
     public void getProgressDecimalTest() {
         donatedOrgan = new DonatedOrgan(organ, donor, dateTimeOfDonation);
-        assertEquals(0, donatedOrgan.getProgressDecimal(), 1e-6);
+        assertEquals(0, donatedOrgan.getProgressDecimal(), 1e-3);
     }
 
     @Test
     public void getProgressDecimalNotInLowerBoundTest() {
         dateTimeOfDonation = LocalDateTime.now().minusHours(3);
         donatedOrgan = new DonatedOrgan(organ, donor, dateTimeOfDonation);
-        assertEquals(0.5, donatedOrgan.getProgressDecimal(), 1e-6);
+        assertEquals(0.5, donatedOrgan.getProgressDecimal(), 1e-3);
     }
 
     @Test
     public void getProgressDecimalInLowerBoundTest() {
         dateTimeOfDonation = LocalDateTime.now().minusHours(5);
         donatedOrgan = new DonatedOrgan(organ, donor, dateTimeOfDonation);
-        assertEquals((double) 5 / 6, donatedOrgan.getProgressDecimal(), 1e-6);
+        assertEquals((double) 5 / 6, donatedOrgan.getProgressDecimal(), 1e-3);
     }
 
     @Test
     public void getProgressDecimalJustExpiredTest() {
         dateTimeOfDonation = LocalDateTime.now().minusHours(6);
         donatedOrgan = new DonatedOrgan(organ, donor, dateTimeOfDonation);
-        assertEquals(1, donatedOrgan.getProgressDecimal(), 1e-6);
+        assertEquals(1, donatedOrgan.getProgressDecimal(), 1e-3);
     }
 
     @Test
     public void getProgressDecimalExpiredTest() {
         dateTimeOfDonation = LocalDateTime.now().minusHours(7);
         donatedOrgan = new DonatedOrgan(organ, donor, dateTimeOfDonation);
-        assertEquals(1, donatedOrgan.getProgressDecimal(), 1e-6);
+        assertEquals(1, donatedOrgan.getProgressDecimal(), 1e-3);
     }
 
     // getFullMarker tests
