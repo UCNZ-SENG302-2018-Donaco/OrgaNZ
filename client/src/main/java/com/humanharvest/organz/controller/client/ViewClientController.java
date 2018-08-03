@@ -577,6 +577,7 @@ public class ViewClientController extends ViewBaseController {
             }
         }
 
+
         try {
             State.getClientResolver().modifyClientDetails(viewedClient, modifyClientObject);
             String actionText = modifyClientObject.toString();
