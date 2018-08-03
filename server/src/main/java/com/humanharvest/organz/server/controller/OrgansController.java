@@ -20,7 +20,7 @@ public class OrgansController {
      * @return response entity containing all organs that are available for donation
      * @throws GlobalControllerExceptionHandler.InvalidRequestException
      */
-    @GetMapping("organs")
+    @GetMapping("/organs")
     public ResponseEntity<Collection<DonatedOrgan>> getOrgansToDonate(
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws GlobalControllerExceptionHandler.InvalidRequestException {
