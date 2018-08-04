@@ -70,7 +70,6 @@ public class ClientController {
     @JsonView(Views.Overview.class)
     public ResponseEntity<PaginatedClientList> getClients(
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken,
-
             @RequestParam(required = false) String q,
             @RequestParam(required = false) Integer offset,
             @RequestParam(required = false) Integer count,
@@ -223,11 +222,6 @@ public class ClientController {
         ModifyClientObject oldClient = new ModifyClientObject();
         //Copy the values from the current client to our oldClient
         BeanUtils.copyProperties(client, oldClient, modifyClientObject.getUnmodifiedFields());
-        //Make the action (this is a new action)
-        ModifyClientByObjectAction action = new ModifyClientByObjectAction(client,
-                State.getClientManager(),
-                oldClient,
-                modifyClientObject);
 
         //If client was not dead before but is now dead.
         MarkClientAsDeadAction markClientAsDeadAction = null;
@@ -240,16 +234,24 @@ public class ClientController {
                     modifyClientObject.getCountryOfDeath(),
                     State.getClientManager());
 
-            // Fairly messy way of removing death detail fields from the modify object
-            // TODO figure out a better way of doing this
-            String[] deathFields = {"dateOfDeath", "timeOfDeath", "countryOfDeath", "regionOfDeath", "cityOfDeath"};
-            ModifyClientObject previousModifyObject = modifyClientObject;
-            modifyClientObject = new ModifyClientObject();
-            BeanUtils.copyProperties(previousModifyObject, modifyClientObject, deathFields);
+            // Deregister death fields from the generic modify object (they will be updated by the mark dead action)
+            modifyClientObject.deregisterChange("dateOfDeath");
+            modifyClientObject.deregisterChange("timeOfDeath");
+            modifyClientObject.deregisterChange("countryOfDeath");
+            modifyClientObject.deregisterChange("regionOfDeath");
+            modifyClientObject.deregisterChange("cityOfDeath");
         }
 
-        // Execute both actions; generic changes and mark dead (if applicable)
-        State.getActionInvoker(authToken).execute(action);
+        if (!modifyClientObject.getModifiedFields().isEmpty()) {
+            // Execute the action to make generic data changes
+            ModifyClientByObjectAction action = new ModifyClientByObjectAction(client,
+                    State.getClientManager(),
+                    oldClient,
+                    modifyClientObject);
+            State.getActionInvoker(authToken).execute(action);
+        }
+
+        // Execute mark dead action if applicable
         if (markClientAsDeadAction != null) {
             State.getActionInvoker(authToken).execute(markClientAsDeadAction);
         }
