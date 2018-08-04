@@ -434,7 +434,7 @@ public class RequestOrgansController extends SubController {
                 .viewClient(client)
                 .build());
 
-        PageNavigator.loadPage(Page.EDIT_DEATH_DETAILS, newMain);
+        PageNavigator.loadPage(Page.SUBMIT_DEATH_DETAILS, newMain);
     }
 
     /**
