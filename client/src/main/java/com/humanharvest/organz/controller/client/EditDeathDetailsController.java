@@ -2,58 +2,43 @@ package com.humanharvest.organz.controller.client;
 
 import static com.humanharvest.organz.controller.clinician.ViewBaseController.addChangeIfDifferent;
 
-import com.humanharvest.organz.HistoryItem;
-import com.humanharvest.organz.utilities.JSONConverter;
-
-import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
-import com.humanharvest.organz.utilities.exceptions.NotFoundException;
-import com.humanharvest.organz.utilities.exceptions.ServerRestException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-
-import com.humanharvest.organz.utilities.enums.Country;
-import com.humanharvest.organz.utilities.enums.Region;
-
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.validation.constraints.Null;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.view.Page;
+import com.humanharvest.organz.utilities.JSONConverter;
+import com.humanharvest.organz.utilities.enums.Country;
+import com.humanharvest.organz.utilities.enums.Region;
+import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
+import com.humanharvest.organz.utilities.exceptions.NotFoundException;
+import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.views.client.ModifyClientObject;
-
-import javafx.scene.control.TextFormatter;
-import javafx.stage.Stage;
-import javafx.util.converter.DateTimeStringConverter;
-
 import org.controlsfx.control.Notifications;
 
-public class
-EditDeathDetailsController extends SubController {
+public class EditDeathDetailsController extends SubController {
 
     private Session session;
     private ClientManager manager;

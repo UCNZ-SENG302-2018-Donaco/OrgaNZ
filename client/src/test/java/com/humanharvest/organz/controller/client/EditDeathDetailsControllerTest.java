@@ -1,9 +1,13 @@
-package com.humanharvest.organz.controller.clinician;
+package com.humanharvest.organz.controller.client;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
-import com.humanharvest.organz.Administrator;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+
+import javafx.scene.input.KeyCode;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.controller.ControllerTest;
@@ -13,11 +17,6 @@ import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import javafx.scene.Node;
-import javafx.scene.input.KeyCode;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -25,8 +24,6 @@ import org.junit.Test;
 
 public class EditDeathDetailsControllerTest extends ControllerTest{
     Client testClient;
-
-
 
     @Override
     protected Page getPage() {
@@ -60,7 +57,9 @@ public class EditDeathDetailsControllerTest extends ControllerTest{
         testClient.setCurrentAddress("1 Test Road");
     }
 
+
     @Test
+    @Ignore
     public void addDateAndTimeOfDeath(){
         clickOn("#editDeathDetailsButton");
         LocalTime time = LocalTime.now();
