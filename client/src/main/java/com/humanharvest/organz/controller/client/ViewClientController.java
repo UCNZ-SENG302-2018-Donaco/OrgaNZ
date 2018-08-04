@@ -457,7 +457,8 @@ public class ViewClientController extends ViewBaseController {
     private boolean checkDeathDetailsFields() {
         boolean allValid = true;
         if (deadToggleBtn.isSelected()) {
-            if (deathDatePicker.getValue() == null || deathDatePicker.getValue().isAfter(LocalDate.now())) {
+            if (deathDatePicker.getValue() == null || deathDatePicker.getValue().isAfter(LocalDate.now()) ||
+                    deathDatePicker.getValue().isBefore(viewedClient.getDateOfBirth())) {
                 dodLabel.setTextFill(Color.RED);
                 allValid = false;
             } else {

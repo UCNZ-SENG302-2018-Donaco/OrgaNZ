@@ -109,9 +109,10 @@ public class SubmitDeathDetailsController extends SubController {
                     "Date of death and time of death are required.");
             return;
         }
-        if (deathDatePicker.getValue().isAfter(LocalDate.now())) {
+        if (deathDatePicker.getValue().isAfter(LocalDate.now()) ||
+                deathDatePicker.getValue().isBefore(client.getDateOfBirth())) {
             PageNavigator.showAlert(AlertType.WARNING, "Incorrect Date",
-                    "Date of death cannot be in the future.");
+                    "Date of death cannot be in the future, or before the client's birth.");
             return;
         }
 
