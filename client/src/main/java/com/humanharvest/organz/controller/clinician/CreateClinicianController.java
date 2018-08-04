@@ -140,7 +140,7 @@ public class CreateClinicianController extends SubController {
                         password.getText());
 
                 State.getClinicianManager().addClinician(clinician);
-                State.setCreatedClinician(clinician);
+                State.setViewedClinician(clinician);
 
                 HistoryItem save = new HistoryItem("CREATE CLINICIAN",
                         "Clinician " + fname.getText() + " " + lname.getText() + " with staff ID " + staffId.getText()
