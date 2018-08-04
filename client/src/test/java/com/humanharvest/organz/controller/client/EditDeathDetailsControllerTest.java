@@ -22,7 +22,8 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-public class EditDeathDetailsControllerTest extends ControllerTest{
+public class EditDeathDetailsControllerTest extends ControllerTest {
+
     Client testClient;
 
     @Override
@@ -36,7 +37,7 @@ public class EditDeathDetailsControllerTest extends ControllerTest{
 
         Clinician testClinician = new Clinician("A", "B", "C", "D", Region.UNSPECIFIED.toString(), null,
                 0, "E");
-        testClient = new Client("Test","Testy","String",LocalDate.of(1990,02,02),20000);
+        testClient = new Client("Test", "Testy", "String", LocalDate.of(1990, 2, 2), 20000);
 
         State.getClientManager().addClient(testClient);
         State.login(testClinician);
@@ -60,25 +61,27 @@ public class EditDeathDetailsControllerTest extends ControllerTest{
 
     @Test
     @Ignore
-    public void addDateAndTimeOfDeath(){
+    public void addDateAndTimeOfDeath() {
         clickOn("#editDeathDetailsButton");
         LocalTime time = LocalTime.now();
         clickOn("#deathTimeField").write(time.toString());
-        clickOn("#deathDatePicker").write(LocalDate.now().minusDays(2).format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        clickOn("#deathDatePicker")
+                .write(LocalDate.now().minusDays(2).format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         clickOn("#applyButton");
         type(KeyCode.ENTER); // Close Check box.
-        Assert.assertEquals(time,testClient.getTimeOfDeath());
+        Assert.assertEquals(time, testClient.getTimeOfDeath());
         clickOn("#editDeathDetailsButton");
 
     }
 
     @Test
     @Ignore
-    public void setCountryOutsideNZ(){
+    public void setCountryOutsideNZ() {
         clickOn("#editDeathDetailsButton");
         LocalTime time = LocalTime.now();
         clickOn("#deathTimeField").write(time.toString());
-        clickOn("#deathDatePicker").write(LocalDate.now().minusDays(2).format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        clickOn("#deathDatePicker")
+                .write(LocalDate.now().minusDays(2).format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
         clickOn("#deathCountry");
         type(KeyCode.DOWN);
         type(KeyCode.ENTER);
@@ -86,6 +89,6 @@ public class EditDeathDetailsControllerTest extends ControllerTest{
         clickOn("#deathCity").write("City in Austria");
         clickOn("#applyButton");
         type(KeyCode.ENTER);
-        assertEquals(Country.AZ,testClient.getCountryOfDeath());
+        assertEquals(Country.AZ, testClient.getCountryOfDeath());
     }
 }

@@ -105,8 +105,7 @@ public class EditDeathDetailsController extends SubController {
                 if (client.getRegionOfDeath() != null && client.getCountryOfDeath() == Country.NZ) {
                     deathRegionCB.setValue(Region.fromString(client.getRegionOfDeath()));
                     deathRegionTF.setVisible(false);
-                }
-                else if (client.getRegionOfDeath() != null && client.getCountryOfDeath() != Country.NZ) {
+                } else if (client.getRegionOfDeath() != null && client.getCountryOfDeath() != Country.NZ) {
                     deathRegionTF.setText(client.getRegionOfDeath());
                     deathRegionCB.setVisible(false);
                 }
@@ -155,8 +154,7 @@ public class EditDeathDetailsController extends SubController {
                 } else if (client.getCountryOfDeath() != Country.NZ) {
                     deathRegionTF.setText(client.getRegionOfDeath());
                 }
-            }
-            else {
+            } else {
                 deathCountry.setValue(client.getCountry());
                 deathCity.setText(client.getCurrentAddress());
                 if (client.getCountry() == Country.NZ) {
@@ -207,9 +205,7 @@ public class EditDeathDetailsController extends SubController {
         if (session.getLoggedInUserType() == UserType.CLIENT) {
             PageNavigator
                     .showAlert(AlertType.ERROR, "Invalid Access", "Clients cannot edit death details");
-        }
-        else
-        {
+        } else {
             try {
                 addChangeIfDifferent(modifyClientObject, client, "timeOfDeath",
                         LocalTime.parse(deathTimeField.getText()));
@@ -227,7 +223,7 @@ public class EditDeathDetailsController extends SubController {
                 return false;
 
             }
-            if (deathDatePicker.getValue().isAfter(LocalDate.now())){
+            if (deathDatePicker.getValue().isAfter(LocalDate.now())) {
                 PageNavigator.showAlert(AlertType.WARNING, "Incorrect Date",
                         "Date of death cannot be in the future");
                 return false;
@@ -265,66 +261,57 @@ public class EditDeathDetailsController extends SubController {
                                 actionText));
                 JSONConverter.updateHistory(save, "action_history.json");
             }
-
-
-
         }
         return true;
-
     }
 
-    public boolean showNotification(Client client){
-            Optional<ButtonType> buttonOpt = PageNavigator.showAlert(AlertType.CONFIRMATION,
+    private boolean showNotification(Client client) {
+        Optional<ButtonType> buttonOpt = PageNavigator.showAlert(AlertType.CONFIRMATION,
                 "Are you sure you want to mark this client as dead?",
                 "This will cancel all waiting transplant requests for this client.");
-            try {
-                if(!client.isDead()){
-                    State.getClientResolver()
+        try {
+            if (!client.isDead()) {
+                State.getClientResolver()
                         .markClientAsDead(client, deathDatePicker.getValue());
-                    Notifications.create()
+                Notifications.create()
                         .title("Marked Client as Dead")
                         .text("All organ transplant requests have been cancelled, "
-                            + "and the date of death has been stored.")
+                                + "and the date of death has been stored.")
                         .showConfirm();
-                }
-                return true;
-            } catch (NotFoundException e) {
-                LOGGER.log(Level.WARNING, "Client not found");
-                PageNavigator.showAlert(
+            }
+            return true;
+        } catch (NotFoundException e) {
+            LOGGER.log(Level.WARNING, "Client not found");
+            PageNavigator.showAlert(
                     AlertType.WARNING,
                     "Client not found",
                     "The client could not be found on the server, it may have been deleted");
-                return false;
-            } catch (ServerRestException e) {
-                LOGGER.log(Level.WARNING, e.getMessage(), e);
-                PageNavigator.showAlert(
+            return false;
+        } catch (ServerRestException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
+            PageNavigator.showAlert(
                     AlertType.WARNING,
                     "Server error",
                     "Could not apply changes on the server, please try again later");
-                return false;
-            } catch (IfMatchFailedException e) {
-                LOGGER.log(Level.INFO, "If-Match did not match");
-                PageNavigator.showAlert(
+            return false;
+        } catch (IfMatchFailedException e) {
+            LOGGER.log(Level.INFO, "If-Match did not match");
+            PageNavigator.showAlert(
                     AlertType.WARNING,
                     "Outdated Data",
                     "The client has been modified since you retrieved the data.\n"
-                        + "If you would still like to apply these changes please submit again, "
-                        + "otherwise refresh the page to update the data.");
-                return false;
-            }
-
-
+                            + "If you would still like to apply these changes please submit again, "
+                            + "otherwise refresh the page to update the data.");
+            return false;
+        }
     }
 
-    public void setDefaults(Client client){
-        if(client.getCountryOfDeath() == null){
+    private void setDefaults(Client client) {
+        if (client.getCountryOfDeath() == null) {
             client.setCountryOfDeath(client.getCountry());
         }
-        if(client.getCityOfDeath() == null) {
+        if (client.getCityOfDeath() == null) {
             client.setCityOfDeath(client.getCurrentAddress());
         }
-
     }
-
-
 }
