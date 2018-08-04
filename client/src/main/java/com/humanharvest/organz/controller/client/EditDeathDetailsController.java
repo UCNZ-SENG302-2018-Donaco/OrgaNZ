@@ -21,14 +21,11 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import com.humanharvest.organz.Client;
-import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
@@ -40,29 +37,22 @@ import org.controlsfx.control.Notifications;
 
 public class EditDeathDetailsController extends SubController {
 
-    private Session session;
-    private ClientManager manager;
-    private Client client;
-
+    private static final Logger LOGGER = Logger.getLogger(EditDeathDetailsController.class.getName());
     private static final DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("HH:mm:ss");
-    private static final Logger LOGGER = Logger
-            .getLogger(EditDeathDetailsController.class.getName());
+
+    private Session session;
+    private Client client;
 
     @FXML
     private TextField deathTimeField;
-
     @FXML
     private DatePicker deathDatePicker;
-
     @FXML
     private TextField deathCity;
-
     @FXML
     private Button applyButton;
-
     @FXML
     private ChoiceBox<Country> deathCountry;
-
     @FXML
     private ChoiceBox<Region> deathRegionCB;
     @FXML
@@ -70,22 +60,15 @@ public class EditDeathDetailsController extends SubController {
 
     public EditDeathDetailsController() {
         session = State.getSession();
-        manager = State.getClientManager();
-
-    }
-
-
-    @FXML
-    public void initialize() {
-        deathCountry.setItems(FXCollections.observableArrayList(Country.values()));
-        deathRegionCB.setItems(FXCollections.observableArrayList(Region.values()));
     }
 
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
-
         mainController.setTitle("Details of Death");
+
+        deathCountry.setItems(FXCollections.observableArrayList(State.getConfigManager().getAllowedCountries()));
+        deathRegionCB.setItems(FXCollections.observableArrayList(Region.values()));
 
         if (session.getLoggedInUserType() == UserType.CLIENT) {
             client = session.getLoggedInClient();
@@ -115,9 +98,7 @@ public class EditDeathDetailsController extends SubController {
                 if (client.getCityOfDeath() != null) {
                     deathCity.setText(client.getCurrentAddress());
                 }
-
             }
-
         }
 
         deathCountry.getSelectionModel().selectedItemProperty()
@@ -170,7 +151,6 @@ public class EditDeathDetailsController extends SubController {
                     deathRegionCB.setVisible(false);
                     deathRegionTF.setText(client.getRegion());
                 }
-
             }
         }
     }
@@ -255,11 +235,6 @@ public class EditDeathDetailsController extends SubController {
                 Stage stage = (Stage) applyButton.getScene().getWindow();
                 stage.close();
                 PageNavigator.refreshAllWindows();
-
-                HistoryItem save = new HistoryItem("UPDATE CLIENT INFO",
-                        String.format("Updated client %s with values: %s", client.getFullName(),
-                                actionText));
-                JSONConverter.updateHistory(save, "action_history.json");
             }
         }
         return true;
