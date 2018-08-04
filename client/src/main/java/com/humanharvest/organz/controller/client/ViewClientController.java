@@ -186,6 +186,9 @@ public class ViewClientController extends ViewBaseController {
         mainController.refreshNavigation();
         if (session.getLoggedInUserType() == UserType.CLIENT) {
             mainController.setTitle("View Client: " + viewedClient.getPreferredNameFormatted());
+            aliveToggleBtn.setDisable(true);
+            deadToggleBtn.setDisable(true);
+            deathDetailsPane.setDisable(true);
         } else if (windowContext.isClinViewClientWindow()) {
             mainController.setTitle("View Client: " + viewedClient.getFullName());
         }
