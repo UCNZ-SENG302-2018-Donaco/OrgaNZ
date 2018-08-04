@@ -161,6 +161,7 @@ public class OrgansToDonateController extends SubController {
                 ROWS_PER_PAGE);
 
         observableOrgansToDonate.setAll(newOrgansToDonate.getDonatedOrgans());
+        tableView.getSortOrder().setAll(timeUntilExpiryCol);
 
         int newPageCount = Math.max(1, (newOrgansToDonate.getTotalResults() + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE);
         if (pagination.getPageCount() != newPageCount) {
@@ -230,14 +231,14 @@ public class OrgansToDonateController extends SubController {
                         System.out.println(": " + splitDurationString[i]);
                         displayedDuration += splitDurationString[i] + " ";
                         if (splitDurationString[i].contains("seconds") ||
-                                (splitDurationString.length >= i+2 && splitDurationString[i+2].contains("seconds"))) {
+                                (splitDurationString.length >= i + 2
+                                        && splitDurationString[i + 2].contains("seconds"))) {
                             break;
                         }
                     }
                     // Progress as a decimal. starts at 0 (at time of death) and goes to 1.
                     double progressDecimal = getTableView().getItems().get(getIndex()).getProgressDecimal();
                     double fullMarker = getTableView().getItems().get(getIndex()).getFullMarker();
-
 
                     // Calculate colour
                     // There are 511 distinct colours between red (0xff, 0x00, 0x00) and green (0x00, 0xff, 0x00)
@@ -300,16 +301,20 @@ public class OrgansToDonateController extends SubController {
 
         // Calculate colours
         if (progressForColour < 0.5) { // less than halfway, mostly green
-            int redNumber = (int) Math.round(progressForColour*255*2);
+            int redNumber = (int) Math.round(progressForColour * 255 * 2);
             red = Integer.toHexString(redNumber);
-            if (red.length() == 1) red = "0" + red;
+            if (red.length() == 1) {
+                red = "0" + red;
+            }
             green = "ff";
 
         } else { // over halfway, mostly red
             red = "ff";
-            int greenNumber = (int) Math.round((1-progressForColour)*255*2);
+            int greenNumber = (int) Math.round((1 - progressForColour) * 255 * 2);
             green = Integer.toHexString(greenNumber);
-            if (green.length() == 1) green = "0" + green;
+            if (green.length() == 1) {
+                green = "0" + green;
+            }
         }
 
         // Generate style string

@@ -187,15 +187,8 @@ public interface ClientManager {
      */
     default PaginatedDonatedOrgansList getAllOrgansToDonate(Integer offset, Integer count) {
         System.out.println("getting organs td");
-        // Find a valid client. hopefully there is one with id less than 1000, otherwise it will be null
-        Client client = null;
-        Optional<Client> optionalClient;
-        for (int id = 0; id < 1000 && client == null; id++) {
-            optionalClient = getClientByID(id);
-            if (optionalClient.isPresent()) {
-                client = optionalClient.get();
-            }
-        }
+        // get the first client
+        Client client = getClients().get(0);
 
         if (client == null) {
             System.out.println("no client found");
@@ -219,9 +212,9 @@ public interface ClientManager {
         List<DonatedOrgan> organsToDonate = new ArrayList<>();
         organsToDonate.add(organ0h);
         organsToDonate.add(organ5m);
-        organsToDonate.add(organ1h);
-        organsToDonate.add(organ2h);
         organsToDonate.add(organ3h);
+        organsToDonate.add(organ2h);
+        organsToDonate.add(organ1h);
         organsToDonate.add(organ4h);
         organsToDonate.add(organ5h);
         organsToDonate.add(organ6h);
