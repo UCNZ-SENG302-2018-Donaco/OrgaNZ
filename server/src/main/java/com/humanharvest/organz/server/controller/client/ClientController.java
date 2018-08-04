@@ -226,6 +226,9 @@ public class ClientController {
         //If client was not dead before but is now dead.
         MarkClientAsDeadAction markClientAsDeadAction = null;
         if (oldClient.getDateOfDeath() == null && modifyClientObject.getDateOfDeath() != null) {
+            // Verify that the user sending this request is a clinician/admin (clients cannot mark themselves as dead)
+            State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
+
             markClientAsDeadAction = new MarkClientAsDeadAction(client,
                     modifyClientObject.getDateOfDeath(),
                     modifyClientObject.getTimeOfDeath(),
