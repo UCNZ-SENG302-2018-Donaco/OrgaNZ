@@ -2,58 +2,43 @@ package com.humanharvest.organz.controller.client;
 
 import static com.humanharvest.organz.controller.clinician.ViewBaseController.addChangeIfDifferent;
 
-import com.humanharvest.organz.HistoryItem;
-import com.humanharvest.organz.utilities.JSONConverter;
-
-import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
-import com.humanharvest.organz.utilities.exceptions.NotFoundException;
-import com.humanharvest.organz.utilities.exceptions.ServerRestException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-
-import com.humanharvest.organz.utilities.enums.Country;
-import com.humanharvest.organz.utilities.enums.Region;
-
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.validation.constraints.Null;
 
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
+import javafx.stage.Stage;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.view.Page;
+import com.humanharvest.organz.utilities.JSONConverter;
+import com.humanharvest.organz.utilities.enums.Country;
+import com.humanharvest.organz.utilities.enums.Region;
+import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
+import com.humanharvest.organz.utilities.exceptions.NotFoundException;
+import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.views.client.ModifyClientObject;
-
-import javafx.scene.control.TextFormatter;
-import javafx.stage.Stage;
-import javafx.util.converter.DateTimeStringConverter;
-
 import org.controlsfx.control.Notifications;
 
-public class
-EditDeathDetailsController extends SubController {
+public class EditDeathDetailsController extends SubController {
 
     private Session session;
     private ClientManager manager;
@@ -120,8 +105,7 @@ EditDeathDetailsController extends SubController {
                 if (client.getRegionOfDeath() != null && client.getCountryOfDeath() == Country.NZ) {
                     deathRegionCB.setValue(Region.fromString(client.getRegionOfDeath()));
                     deathRegionTF.setVisible(false);
-                }
-                else if (client.getRegionOfDeath() != null && client.getCountryOfDeath() != Country.NZ) {
+                } else if (client.getRegionOfDeath() != null && client.getCountryOfDeath() != Country.NZ) {
                     deathRegionTF.setText(client.getRegionOfDeath());
                     deathRegionCB.setVisible(false);
                 }
@@ -170,8 +154,7 @@ EditDeathDetailsController extends SubController {
                 } else if (client.getCountryOfDeath() != Country.NZ) {
                     deathRegionTF.setText(client.getRegionOfDeath());
                 }
-            }
-            else {
+            } else {
                 deathCountry.setValue(client.getCountry());
                 deathCity.setText(client.getCurrentAddress());
                 if (client.getCountry() == Country.NZ) {
@@ -222,9 +205,7 @@ EditDeathDetailsController extends SubController {
         if (session.getLoggedInUserType() == UserType.CLIENT) {
             PageNavigator
                     .showAlert(AlertType.ERROR, "Invalid Access", "Clients cannot edit death details");
-        }
-        else
-        {
+        } else {
             try {
                 addChangeIfDifferent(modifyClientObject, client, "timeOfDeath",
                         LocalTime.parse(deathTimeField.getText()));
@@ -242,7 +223,7 @@ EditDeathDetailsController extends SubController {
                 return false;
 
             }
-            if (deathDatePicker.getValue().isAfter(LocalDate.now())){
+            if (deathDatePicker.getValue().isAfter(LocalDate.now())) {
                 PageNavigator.showAlert(AlertType.WARNING, "Incorrect Date",
                         "Date of death cannot be in the future");
                 return false;
@@ -280,66 +261,57 @@ EditDeathDetailsController extends SubController {
                                 actionText));
                 JSONConverter.updateHistory(save, "action_history.json");
             }
-
-
-
         }
         return true;
-
     }
 
-    public boolean showNotification(Client client){
-            Optional<ButtonType> buttonOpt = PageNavigator.showAlert(AlertType.CONFIRMATION,
+    private boolean showNotification(Client client) {
+        Optional<ButtonType> buttonOpt = PageNavigator.showAlert(AlertType.CONFIRMATION,
                 "Are you sure you want to mark this client as dead?",
                 "This will cancel all waiting transplant requests for this client.");
-            try {
-                if(!client.isDead()){
-                    State.getClientResolver()
+        try {
+            if (!client.isDead()) {
+                State.getClientResolver()
                         .markClientAsDead(client, deathDatePicker.getValue());
-                    Notifications.create()
+                Notifications.create()
                         .title("Marked Client as Dead")
                         .text("All organ transplant requests have been cancelled, "
-                            + "and the date of death has been stored.")
+                                + "and the date of death has been stored.")
                         .showConfirm();
-                }
-                return true;
-            } catch (NotFoundException e) {
-                LOGGER.log(Level.WARNING, "Client not found");
-                PageNavigator.showAlert(
+            }
+            return true;
+        } catch (NotFoundException e) {
+            LOGGER.log(Level.WARNING, "Client not found");
+            PageNavigator.showAlert(
                     AlertType.WARNING,
                     "Client not found",
                     "The client could not be found on the server, it may have been deleted");
-                return false;
-            } catch (ServerRestException e) {
-                LOGGER.log(Level.WARNING, e.getMessage(), e);
-                PageNavigator.showAlert(
+            return false;
+        } catch (ServerRestException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
+            PageNavigator.showAlert(
                     AlertType.WARNING,
                     "Server error",
                     "Could not apply changes on the server, please try again later");
-                return false;
-            } catch (IfMatchFailedException e) {
-                LOGGER.log(Level.INFO, "If-Match did not match");
-                PageNavigator.showAlert(
+            return false;
+        } catch (IfMatchFailedException e) {
+            LOGGER.log(Level.INFO, "If-Match did not match");
+            PageNavigator.showAlert(
                     AlertType.WARNING,
                     "Outdated Data",
                     "The client has been modified since you retrieved the data.\n"
-                        + "If you would still like to apply these changes please submit again, "
-                        + "otherwise refresh the page to update the data.");
-                return false;
-            }
-
-
+                            + "If you would still like to apply these changes please submit again, "
+                            + "otherwise refresh the page to update the data.");
+            return false;
+        }
     }
 
-    public void setDefaults(Client client){
-        if(client.getCountryOfDeath() == null){
+    private void setDefaults(Client client) {
+        if (client.getCountryOfDeath() == null) {
             client.setCountryOfDeath(client.getCountry());
         }
-        if(client.getCityOfDeath() == null) {
+        if (client.getCityOfDeath() == null) {
             client.setCityOfDeath(client.getCurrentAddress());
         }
-
     }
-
-
 }

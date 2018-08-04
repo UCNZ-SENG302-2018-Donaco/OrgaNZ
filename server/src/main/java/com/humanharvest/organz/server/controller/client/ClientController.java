@@ -40,7 +40,6 @@ import com.humanharvest.organz.utilities.validators.client.ModifyClientValidator
 import com.humanharvest.organz.views.client.CreateClientView;
 import com.humanharvest.organz.views.client.ModifyClientObject;
 import com.humanharvest.organz.views.client.PaginatedClientList;
-import com.humanharvest.organz.views.client.SingleDateView;
 import com.humanharvest.organz.views.client.Views;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.BeanUtils;
@@ -71,7 +70,6 @@ public class ClientController {
     @JsonView(Views.Overview.class)
     public ResponseEntity<PaginatedClientList> getClients(
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken,
-
             @RequestParam(required = false) String q,
             @RequestParam(required = false) Integer offset,
             @RequestParam(required = false) Integer count,
@@ -179,7 +177,6 @@ public class ClientController {
     @PatchMapping("/clients/{uid}")
     @JsonView(Views.Details.class)
     public ResponseEntity<Client> updateClient(
-
             @PathVariable int uid,
             @RequestBody ModifyClientObject modifyClientObject,
             @RequestHeader(value = "If-Match", required = false) String etag,
@@ -225,13 +222,39 @@ public class ClientController {
         ModifyClientObject oldClient = new ModifyClientObject();
         //Copy the values from the current client to our oldClient
         BeanUtils.copyProperties(client, oldClient, modifyClientObject.getUnmodifiedFields());
-        //Make the action (this is a new action)
-        ModifyClientByObjectAction action = new ModifyClientByObjectAction(client,
-                State.getClientManager(),
-                oldClient,
-                modifyClientObject);
-        //Execute action, this would correspond to a specific users invoker in full version
-        State.getActionInvoker(authToken).execute(action);
+
+        //If client was not dead before but is now dead.
+        MarkClientAsDeadAction markClientAsDeadAction = null;
+        if (oldClient.getDateOfDeath() == null && modifyClientObject.getDateOfDeath() != null) {
+            markClientAsDeadAction = new MarkClientAsDeadAction(client,
+                    modifyClientObject.getDateOfDeath(),
+                    modifyClientObject.getTimeOfDeath(),
+                    modifyClientObject.getRegionOfDeath(),
+                    modifyClientObject.getCityOfDeath(),
+                    modifyClientObject.getCountryOfDeath(),
+                    State.getClientManager());
+
+            // Deregister death fields from the generic modify object (they will be updated by the mark dead action)
+            modifyClientObject.deregisterChange("dateOfDeath");
+            modifyClientObject.deregisterChange("timeOfDeath");
+            modifyClientObject.deregisterChange("countryOfDeath");
+            modifyClientObject.deregisterChange("regionOfDeath");
+            modifyClientObject.deregisterChange("cityOfDeath");
+        }
+
+        if (!modifyClientObject.getModifiedFields().isEmpty()) {
+            // Execute the action to make generic data changes
+            ModifyClientByObjectAction action = new ModifyClientByObjectAction(client,
+                    State.getClientManager(),
+                    oldClient,
+                    modifyClientObject);
+            State.getActionInvoker(authToken).execute(action);
+        }
+
+        // Execute mark dead action if applicable
+        if (markClientAsDeadAction != null) {
+            State.getActionInvoker(authToken).execute(markClientAsDeadAction);
+        }
 
         //Add the new ETag to the headers
         HttpHeaders headers = new HttpHeaders();
@@ -281,47 +304,6 @@ public class ClientController {
 
         //Respond, apparently updates should be 200 not 201 unlike 365 and our spec
         return new ResponseEntity<>(client, HttpStatus.OK);
-    }
-
-    @PostMapping("/clients/{uid}/dead")
-    @JsonView(Views.Details.class)
-    public ResponseEntity<Client> markClientAsDead(
-            @PathVariable int uid,
-            @RequestHeader(value = "If-Match", required = false) String etag,
-            @RequestHeader(value = "X-Auth-Token", required = false) String authToken,
-            @RequestBody SingleDateView dateOfDeath)
-            throws IfMatchRequiredException, IfMatchFailedException, InvalidRequestException {
-
-        //Fetch the client given by ID
-        Optional<Client> optionalClient = State.getClientManager().getClientByID(uid);
-        if (!optionalClient.isPresent()) {
-            //Return 404 if that client does not exist
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        Client client = optionalClient.get();
-
-        State.getAuthenticationManager().verifyClientAccess(authToken, client);
-
-        //Check the ETag. These are handled in the exceptions class.
-        if (etag == null) {
-            throw new IfMatchRequiredException();
-        }
-        if (!Objects.equals(client.getETag(), etag)) {
-            throw new IfMatchFailedException();
-        }
-
-        MarkClientAsDeadAction action = new MarkClientAsDeadAction(client, dateOfDeath.getDate(), State
-                .getClientManager
-                        ());
-        State.getActionInvoker(authToken).execute(action);
-
-        //Add the new ETag to the headers
-        HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client.getETag());
-
-        //Respond
-        return new ResponseEntity<>(client, headers, HttpStatus.OK);
     }
 
     /**
