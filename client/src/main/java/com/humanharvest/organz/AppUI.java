@@ -23,12 +23,6 @@ import com.humanharvest.organz.utilities.view.WindowContext;
  */
 public class AppUI extends Application {
 
-    private static Stage window;
-
-    public static Stage getWindow() {
-        return window;
-    }
-
     /**
      * Starts the JavaFX GUI. Sets up the main stage and initialises the state of the system.
      * Loads from the save file or creates one if one does not yet exist.
@@ -49,12 +43,11 @@ public class AppUI extends Application {
             State.setBaseUri(System.getenv("HOST"));
         }
 
-        primaryStage.setScene(createScene(loadMainPane(primaryStage)));
         primaryStage.setTitle("Organ Client Management System");
-        primaryStage.show();
-
         primaryStage.setMinHeight(639);
         primaryStage.setMinWidth(1016);
+        primaryStage.setScene(createScene(loadMainPane(primaryStage)));
+        primaryStage.show();
     }
 
     /**
@@ -66,15 +59,11 @@ public class AppUI extends Application {
     private Pane loadMainPane(Stage stage) throws IOException {
         FXMLLoader loader = new FXMLLoader();
 
-        window = stage;
-
         Pane mainPane = loader.load(getClass().getResourceAsStream(Page.MAIN.getPath()));
         MainController mainController = loader.getController();
         mainController.setStage(stage);
         mainController.setWindowContext(WindowContext.defaultContext());
-
         State.addMainController(mainController);
-
         PageNavigator.loadPage(Page.LANDING, mainController);
 
         return mainPane;

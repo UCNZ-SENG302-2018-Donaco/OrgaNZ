@@ -331,7 +331,7 @@ public class ViewClientController extends ViewBaseController {
                 new ExtensionFilter("PNG files (*.png)", "*.png") // Restricting only this file type.
         );
 
-        File selectedFile = fileChooser.showOpenDialog(AppUI.getWindow());
+        File selectedFile = fileChooser.showOpenDialog(mainController.getStage());
         if (selectedFile != null) {
             if (selectedFile.length() > maxFileSize) {
                 PageNavigator.showAlert(AlertType.WARNING, "Image Size Too Large",
