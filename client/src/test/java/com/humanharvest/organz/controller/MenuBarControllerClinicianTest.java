@@ -92,7 +92,7 @@ public class MenuBarControllerClinicianTest extends  ControllerTest {
 
     @Test
     public void testTransplantRequest() {
-        clickOn("#transplantsPrimaryItem");
-        verifyThat("#searchTransplantsItem", isVisible());
+        clickOn("#organPrimaryItem");
+        verifyThat("#transplantRequestsItem", isVisible());
     }
 }
