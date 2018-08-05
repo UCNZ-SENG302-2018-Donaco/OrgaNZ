@@ -6,6 +6,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
+import java.util.Optional;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
@@ -18,6 +19,8 @@ import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
+import javafx.scene.control.*;
+import javafx.scene.layout.GridPane;
 import org.controlsfx.control.PopOver;
 import org.controlsfx.control.PopOver.ArrowLocation;
 import org.hibernate.validator.internal.util.logging.formatter.DurationFormatter;
@@ -28,13 +31,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.Pagination;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
@@ -86,6 +82,7 @@ public class OrgansToDonateController extends SubController {
 
     private ClientManager manager;
     private ObservableList<DonatedOrgan> observableOrgansToDonate = FXCollections.observableArrayList();
+    private DonatedOrgan selectedOrgan;
 
     /**
      * Gets the client manager from the global state.
@@ -153,7 +150,8 @@ public class OrgansToDonateController extends SubController {
             } else if (mouseEvent.getButton().equals(MouseButton.SECONDARY)) {
                 MenuItem manualExpireItem = new MenuItem();
                 manualExpireItem.textProperty().setValue("Manually Expire");
-                manualExpireItem.setOnAction(event -> openManuallyExpireDialog(MouseInfo.getPointerInfo().getLocation()));
+                selectedOrgan = tableView.getSelectionModel().getSelectedItem();
+                manualExpireItem.setOnAction(event -> openManuallyExpireDialog());
                 ContextMenu contextMenu = new ContextMenu(manualExpireItem);
                 tableView.setContextMenu(contextMenu);
             }
@@ -208,20 +206,36 @@ public class OrgansToDonateController extends SubController {
     }
 
     // ---------------- Format methods ----------------
-    private void openManuallyExpireDialog(Point point) {
-        PopOver popOver = new PopOver();
-        popOver.setX(point.x);
-        popOver.setY(point.y);
-        popOver.setTitle("Manually Override Organ Expiry");
-        System.out.println(popOver.getTitle());
+    private void openManuallyExpireDialog() {
+        Dialog<String> dialog = new Dialog<>();
+        dialog.setTitle("Manually Override Organ Expiry");
+        dialog.setHeaderText("Specify why you are overriding the expiry date.");
+        // Setup Buttons
+        ButtonType confirmButtonType = new ButtonType("Confirm", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(confirmButtonType);
+        // Setup TextArea for the reason
+        TextArea reason = new TextArea();
+        reason.setPromptText("Expiry reason");
+        reason.setWrapText(true);
+        // Add a listener for the confirmation button
+        Node confirmButton = dialog.getDialogPane().lookupButton(confirmButtonType);
+        confirmButton.setDisable(true);
+        reason.textProperty().addListener(((observable, oldValue, newValue) -> {
+            confirmButton.setDisable(newValue.trim().isEmpty());
+        }));
 
-        popOver.show(tableView);
-//                popOver.set
-        DonatedOrgan organ = tableView.getSelectionModel().getSelectedItem();
+        dialog.getDialogPane().setContent(reason);
+        dialog.getDialogPane().setMinHeight(200);
 
+        Optional<String> result = dialog.showAndWait();
+        if (result.isPresent()) {
+            manuallyExpire(reason.getText());
+        }
 
+    }
 
-
+    private void manuallyExpire(String message) {
+        System.out.println("expiring " + selectedOrgan.toString() + " becayse " +message);
     }
 
     /**
