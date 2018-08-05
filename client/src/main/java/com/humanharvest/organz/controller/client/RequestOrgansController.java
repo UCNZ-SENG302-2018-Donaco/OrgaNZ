@@ -86,8 +86,6 @@ public class RequestOrgansController extends SubController {
     private ComboBox<ResolveReason> cancelTransplantOptions;
     @FXML
     private TextField customReason;
-    @FXML
-    private DatePicker deathDatePicker;
 
     /**
      * Formats a table cell that holds a {@link LocalDateTime} value to display that value in the date time format.
@@ -151,8 +149,6 @@ public class RequestOrgansController extends SubController {
         cancelTransplantOptions.setValue(ResolveReason.ERROR);
 
         customReason.setManaged(false);
-        deathDatePicker.setManaged(false);
-        deathDatePicker.setValue(LocalDate.now());
 
         // Setup all cell value factories
         organCurrCol.setCellValueFactory(new PropertyValueFactory<>("requestedOrgan"));
@@ -184,15 +180,10 @@ public class RequestOrgansController extends SubController {
                 (observable, oldValue, newValue) -> {
                     customReason.setManaged(false);
                     customReason.setVisible(false);
-                    deathDatePicker.setManaged(false);
-                    deathDatePicker.setVisible(false);
 
                     if (newValue == ResolveReason.CUSTOM) {
                         customReason.setManaged(true);
                         customReason.setVisible(true);
-                    } else if (newValue == ResolveReason.DECEASED) {
-                        deathDatePicker.setManaged(true);
-                        deathDatePicker.setVisible(true);
                     }
                 }
         );
@@ -364,7 +355,7 @@ public class RequestOrgansController extends SubController {
                     break;
                 case DECEASED:  // "Client is deceased"
                     // A datepicker appears, for choosing the date of death
-                    LocalDate deathDate = deathDatePicker.getValue();
+                    LocalDate deathDate = LocalDate.now();// todo temp fix when removing datepicker from fxml
                     if (deathDate.isBefore(client.getDateOfBirth()) || deathDate.isAfter(LocalDate.now())) {
                         PageNavigator.showAlert(AlertType.ERROR,
                                 "Date of Death Invalid",
@@ -404,7 +395,8 @@ public class RequestOrgansController extends SubController {
                             }
                         }
                         if (buttonOpt.isPresent()) { // if they chose OK or Cancel
-                            deathDatePicker.setValue(LocalDate.now()); //reset datepicker
+                            // todo this was removed when datepicker was removed
+                            // deathDatePicker.setValue(LocalDate.now()); // reset datepicker
                         }
                     }
                     PageNavigator.refreshAllWindows();
