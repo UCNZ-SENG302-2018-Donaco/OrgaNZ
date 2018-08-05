@@ -789,7 +789,7 @@ public class Client implements ConcurrencyControlledEntity {
 
         boolean isMatch = true;
         for (String string : splitSearchItems) {
-            if (!firstName.toLowerCase().contains(string) &&
+            if (firstName == null || !firstName.toLowerCase().contains(string) &&
                     (middleName == null || !middleName.toLowerCase().contains(string)) &&
                     (preferredName == null || !preferredName.toLowerCase().contains(string)) &&
                     !lastName.toLowerCase().contains(string)) {

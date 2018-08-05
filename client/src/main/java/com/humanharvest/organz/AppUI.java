@@ -1,6 +1,7 @@
 package com.humanharvest.organz;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.logging.Level;
 
 import javafx.application.Application;
@@ -22,12 +23,6 @@ import com.humanharvest.organz.utilities.view.WindowContext;
  */
 public class AppUI extends Application {
 
-    private static Stage window;
-
-    public static Stage getWindow() {
-        return window;
-    }
-
     /**
      * Starts the JavaFX GUI. Sets up the main stage and initialises the state of the system.
      * Loads from the save file or creates one if one does not yet exist.
@@ -38,18 +33,21 @@ public class AppUI extends Application {
     public void start(Stage primaryStage) throws IOException {
         LoggerSetup.setup(Level.INFO);
 
-        primaryStage.setTitle("Organ Client Management System");
-        primaryStage.setScene(createScene(loadMainPane(primaryStage)));
-        primaryStage.show();
-
-        primaryStage.setMinHeight(639);
-        primaryStage.setMinWidth(1016);
-
         State.init(DataStorageType.REST);
 
-        if (System.getenv("HOST") != null) {
+        Map<String, String> parameters = getParameters().getNamed();
+
+        if (parameters.containsKey("host")) {
+            State.setBaseUri(parameters.get("host"));
+        } else if (System.getenv("HOST") != null) {
             State.setBaseUri(System.getenv("HOST"));
         }
+
+        primaryStage.setTitle("Organ Client Management System");
+        primaryStage.setMinHeight(639);
+        primaryStage.setMinWidth(1016);
+        primaryStage.setScene(createScene(loadMainPane(primaryStage)));
+        primaryStage.show();
     }
 
     /**
@@ -65,9 +63,7 @@ public class AppUI extends Application {
         MainController mainController = loader.getController();
         mainController.setStage(stage);
         mainController.setWindowContext(WindowContext.defaultContext());
-
         State.addMainController(mainController);
-
         PageNavigator.loadPage(Page.LANDING, mainController);
 
         return mainPane;
