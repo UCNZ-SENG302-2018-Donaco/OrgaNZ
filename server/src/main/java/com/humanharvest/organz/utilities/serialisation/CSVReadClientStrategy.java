@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.NoSuchElementException;
@@ -75,6 +76,9 @@ public class CSVReadClientStrategy implements ReadClientStrategy {
         client.setLastName(record.get(last_names));
         client.setDateOfBirth(parseDate(record.get(date_of_birth)));
         client.setDateOfDeath(parseDate(record.get(date_of_death)));
+        if (client.getDateOfDeath() != null) {
+            client.setTimeOfDeath(LocalTime.NOON);
+        }
         client.setGender(Gender.fromString(record.get(birth_gender)));
         client.setGenderIdentity(Gender.fromString(record.get(gender)));
         client.setBloodType(BloodType.fromString(record.get(blood_type)));
