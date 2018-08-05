@@ -1,7 +1,6 @@
 package com.humanharvest.organz;
 
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -63,8 +62,32 @@ public class DonatedOrgan {
         return Duration.between(dateTimeOfDonation, LocalDateTime.now());
     }
 
+    /**
+     * @return if the organ hasn't expired: the duration. else: Duration.ZERO
+     */
     public Duration getDurationUntilExpiry() {
         Duration timeToExpiry = organType.getMaxExpiration().minus(getTimeSinceDonation());
         return timeToExpiry.isNegative() ? Duration.ZERO : timeToExpiry;
+    }
+
+    /**
+     * @return a decimal representation of how far along the organ is. starts at 0 (at time of death) and goes to 1.
+     */
+    public double getProgressDecimal() {
+        Duration timeToExpiry = getDurationUntilExpiry();
+        Duration expiration = getOrganType().getMaxExpiration();
+        if (timeToExpiry.isZero()) {
+            return 1;
+        } else {
+            return 1 - ((double) timeToExpiry.getSeconds() / expiration.getSeconds());
+        }
+    }
+
+    /**
+     * @return a decimal representation of when the organ enters the lower bound (e.g. 0.5 for halfway, or 0.9 for
+     * near the end)
+     */
+    public double getFullMarker() {
+        return (double) getOrganType().getMinExpiration().getSeconds() / getOrganType().getMaxExpiration().getSeconds();
     }
 }

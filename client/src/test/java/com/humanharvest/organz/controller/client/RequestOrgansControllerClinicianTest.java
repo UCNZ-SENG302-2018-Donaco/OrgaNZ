@@ -4,7 +4,6 @@ import static org.junit.Assert.*;
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.matcher.control.TableViewMatchers.containsRow;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -174,34 +173,6 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
     public void submitTwoRequestsTest() {
         testOrganBeingAdded(Organ.LUNG);
         testOrganBeingAdded(Organ.MIDDLE_EAR);
-    }
-
-    @Test
-    public void resolveRequestDeceasedTest() {
-        testClient.setDateOfBirth(LocalDate.now());
-
-        TableView<TransplantRequest> currRequestsTable = lookup("#currentRequestsTable").queryTableView();
-        clickOn(currRequestsTable);
-
-        clickOn((Node) lookup(".table-row-cell").nth(1).query());
-
-        // Selects "deceased" from the options
-        clickOn("#cancelTransplantOptions")
-                .type(KeyCode.DOWN)
-                .type(KeyCode.DOWN)
-                .type(KeyCode.DOWN)
-                .type(KeyCode.ENTER);
-
-        // Check that death date picker is now visible
-        assertTrue(lookup("#deathDatePicker").query().isVisible());
-
-        clickOn("Resolve Request");
-        // Press enter to confirm marking the client as deceased
-        type(KeyCode.ENTER);
-
-        //Checks that the client had been marked dead and the request table is empty
-        assertNotNull(testClient.getDateOfDeath());
-        assertTrue(currRequestsTable.getItems().isEmpty());
     }
 
     @Test
