@@ -92,7 +92,6 @@
                                 </VBox.margin>
                                 <ComboBox fx:id="cancelTransplantOptions" prefHeight="25.0" promptText="Resolution Reason" HBox.hgrow="ALWAYS" />
                                 <TextField fx:id="customReason" promptText="Reason" visible="false" />
-                                <DatePicker fx:id="deathDatePicker" promptText="Date of Death" visible="false" />
                                 <Button alignment="CENTER_RIGHT" mnemonicParsing="false" onAction="#resolveRequest" text="Resolve Request" />
                             </HBox>
                         </VBox>
