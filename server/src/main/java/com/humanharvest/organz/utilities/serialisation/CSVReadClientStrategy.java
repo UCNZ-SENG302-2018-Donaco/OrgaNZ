@@ -1,11 +1,11 @@
 package com.humanharvest.organz.utilities.serialisation;
 
-import static com.humanharvest.organz.utilities.serialisation.CSVReadClientStrategy.Header.*;
-
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.InvalidObjectException;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -42,7 +42,8 @@ public class CSVReadClientStrategy implements ReadClientStrategy {
 
     @Override
     public void setup(File inputFile) throws IOException {
-        parser = new CSVParser(new FileReader(inputFile), CSVFormat.RFC4180.withFirstRecordAsHeader());
+        InputStreamReader reader = new InputStreamReader(new FileInputStream(inputFile), StandardCharsets.UTF_8);
+        parser = new CSVParser(reader, CSVFormat.RFC4180.withFirstRecordAsHeader());
     }
 
     @Override
@@ -70,44 +71,44 @@ public class CSVReadClientStrategy implements ReadClientStrategy {
      * @return The deserialized client.
      * @throws IllegalArgumentException If any data value specified in the record is not valid for its data type.
      */
-    private Client deserialise(CSVRecord record) throws IllegalArgumentException {
+    private static Client deserialise(CSVRecord record) throws IllegalArgumentException {
         Client client = new Client();
-        client.setFirstName(record.get(first_names));
-        client.setLastName(record.get(last_names));
-        client.setDateOfBirth(parseDate(record.get(date_of_birth)));
-        client.setDateOfDeath(parseDate(record.get(date_of_death)));
+        client.setFirstName(record.get(Header.first_names));
+        client.setLastName(record.get(Header.last_names));
+        client.setDateOfBirth(parseDate(record.get(Header.date_of_birth)));
+        client.setDateOfDeath(parseDate(record.get(Header.date_of_death)));
         if (client.getDateOfDeath() != null) {
             client.setTimeOfDeath(LocalTime.NOON);
         }
-        client.setGender(Gender.fromString(record.get(birth_gender)));
-        client.setGenderIdentity(Gender.fromString(record.get(gender)));
-        client.setBloodType(BloodType.fromString(record.get(blood_type)));
-        client.setHeight(Double.parseDouble(record.get(height)));
-        client.setWeight(Double.parseDouble(record.get(weight)));
-        client.setCountry(Country.fromString(record.get(country)));
+        client.setGender(Gender.fromString(record.get(Header.birth_gender)));
+        client.setGenderIdentity(Gender.fromString(record.get(Header.gender)));
+        client.setBloodType(BloodType.fromString(record.get(Header.blood_type)));
+        client.setHeight(Double.parseDouble(record.get(Header.height)));
+        client.setWeight(Double.parseDouble(record.get(Header.weight)));
+        client.setCountry(Country.fromString(record.get(Header.country)));
         client.setCurrentAddress(
-                record.get(street_number) + " " +
-                record.get(street_name) + ", " +
-                record.get(neighborhood) + ", " +
-                record.get(city) + ", " +
-                record.get(zip_code));
-        client.setRegion(record.get(region));
+                record.get(Header.street_number) + " " +
+                record.get(Header.street_name) + ", " +
+                record.get(Header.neighborhood) + ", " +
+                record.get(Header.city) + ", " +
+                record.get(Header.zip_code));
+        client.setRegion(record.get(Header.region));
         return client;
     }
 
     /**
      * Creates a {@link LocalDate} object from a date in string format (M/dd/yyyy).
-     * @param string A date in string format M/dd/yyyy.
+     * @param dateString A date in string format M/dd/yyyy.
      * @return A local date object representing the same date, or null if the string is blank.
      * @throws IllegalArgumentException If the string does not match the M/dd/yyyy format.
      */
-    private LocalDate parseDate(String string) throws IllegalArgumentException {
-        if (string != null && string.isEmpty()) {
+    private static LocalDate parseDate(String dateString) throws IllegalArgumentException {
+        if (dateString == null || dateString.isEmpty()) {
             return null;
         }
 
         try {
-            return LocalDate.parse(string, dateFormat);
+            return LocalDate.parse(dateString, dateFormat);
         } catch (DateTimeParseException exc) {
             throw new IllegalArgumentException(exc);
         }
