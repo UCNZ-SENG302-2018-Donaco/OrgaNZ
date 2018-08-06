@@ -50,7 +50,7 @@
                         </TableView>
                      </center>
                      <bottom>
-                        <VBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                        <VBox alignment="CENTER" disable="true" maxHeight="0.0" visible="false" BorderPane.alignment="CENTER">
                            <children>
                               <Pagination fx:id="pagination" prefHeight="70.0" prefWidth="200.0" />
                               <Text fx:id="displayingXToYOfZText" strokeType="OUTSIDE" strokeWidth="0.0" text="Displaying x-y of z" />
