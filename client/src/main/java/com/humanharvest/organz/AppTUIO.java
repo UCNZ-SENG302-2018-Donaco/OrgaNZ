@@ -1,7 +1,10 @@
 package com.humanharvest.organz;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
 import java.util.Iterator;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -36,6 +39,14 @@ import com.humanharvest.organz.utilities.view.WindowContext;
 import com.sun.javafx.css.StyleManager;
 import com.sun.javafx.geom.PickRay;
 import com.sun.javafx.scene.input.PickResultChooser;
+import org.objectweb.asm.ClassReader;
+import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.Opcodes;
+import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.tree.InsnNode;
+import org.objectweb.asm.tree.MethodInsnNode;
+import org.objectweb.asm.tree.MethodNode;
 import org.tuiofx.Configuration;
 import org.tuiofx.TuioFX;
 import org.tuiofx.internal.base.CoordinatesMapping;
@@ -55,8 +66,80 @@ public class AppTUIO extends Application {
     public static final Pane root = new Pane();
 
     public static void main(String[] args) {
+        initialiseTUIOTouch();
         TuioFX.enableJavaFXTouchProperties();
         launch(args);
+    }
+
+    private static void initialiseTUIOTouch() {
+        try {
+            URL url = AppTUIO.class.getResource("/classes/GestureRecognizer.class");
+            try (InputStream inputStream = url.openStream()) {
+                ClassReader reader = new ClassReader(inputStream);
+                ClassNode classNode = new ClassNode();
+                reader.accept(classNode, 0);
+
+                MethodNode patchMethod = classNode.methods.stream()
+                        .filter(methodNode -> Objects.equals(methodNode.name, "lambda$fireTouchEvent$32"))
+                        .findFirst()
+                        .orElseThrow(RuntimeException::new);
+
+                for (int i = 0; i < patchMethod.instructions.size(); i++) {
+                    AbstractInsnNode instruction = patchMethod.instructions.get(i);
+                    if (instruction.getOpcode() == Opcodes.INVOKESPECIAL) {
+                        MethodInsnNode methodInsnNode = (MethodInsnNode)instruction;
+                        if (Objects.equals(methodInsnNode.owner, "javafx/scene/input/TouchEvent")
+                                && Objects.equals(methodInsnNode.name, "<init>")) {
+
+                            for (int j = 0; j < 4; j++) {
+                                AbstractInsnNode pushInstruction = methodInsnNode.getPrevious();
+                                if (pushInstruction.getOpcode() != Opcodes.ICONST_0) {
+                                    throw new RuntimeException();
+                                }
+
+                                patchMethod.instructions.remove(pushInstruction);
+                            }
+
+                            for (int j = 0; j < 4; j++) {
+                                patchMethod.instructions.insertBefore(instruction, new InsnNode(Opcodes.ICONST_1));
+                            }
+                        }
+                    }
+                }
+
+                ClassWriter writer = new ClassWriter(0);
+                classNode.accept(writer);
+
+                loadClass(TuioFX.class.getClassLoader(), writer.toByteArray(),
+                        "org.tuiofx.internal.gesture.GestureRecognizer");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static <T> Class<T> loadClass(ClassLoader classLoader, byte[] data, String className) {
+        // Override defineClass (as it is protected) and define the class.
+        Class<T> clazz = null;
+        try {
+            Class<?> cls = Class.forName("java.lang.ClassLoader");
+            java.lang.reflect.Method method =
+                    cls.getDeclaredMethod(
+                            "defineClass",
+                            String.class, byte[].class, int.class, int.class);
+
+            // Protected method invocation.
+            method.setAccessible(true);
+            try {
+                Object[] args = { className, data, 0, data.length};
+                clazz = (Class<T>)method.invoke(classLoader, args);
+            } finally {
+                method.setAccessible(false);
+            }
+        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+            throw new RuntimeException(e);
+        }
+        return clazz;
     }
 
     /**
@@ -163,6 +246,8 @@ public class AppTUIO extends Application {
         primaryStage.setScene(scene);
 //        primaryStage.setFullScreen(true);
         primaryStage.show();
+        primaryStage.setWidth(1024);
+        primaryStage.setHeight(768);
 
         initialiseTUIOHook(tuioFX);
         initialiseFakeTUIO(tuioFX, primaryStage);
