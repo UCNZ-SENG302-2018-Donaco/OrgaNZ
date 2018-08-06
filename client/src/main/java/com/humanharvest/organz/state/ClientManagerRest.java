@@ -220,4 +220,17 @@ public class ClientManagerRest implements ClientManager {
 
         return responseEntity.getBody();
     }
+
+    @Override
+    public DonatedOrgan manuallyExpireOrgan(DonatedOrgan organ) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("X-Auth-Token",State.getToken());
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        //Todo: Unfinished
+
+        return organ;
+
+
+    }
 }

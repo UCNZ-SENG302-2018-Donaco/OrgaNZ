@@ -239,4 +239,13 @@ public class ClientManagerMemory implements ClientManager {
         }
         return donatedOrgans;
     }
+
+    @Override
+    public DonatedOrgan manuallyExpireOrgan(DonatedOrgan organ){
+        //ToDo: Need to implement
+        Client client = organ.getDonor();
+        client.getDonatedOrgans().remove(organ);
+        return organ;
+
+    }
 }

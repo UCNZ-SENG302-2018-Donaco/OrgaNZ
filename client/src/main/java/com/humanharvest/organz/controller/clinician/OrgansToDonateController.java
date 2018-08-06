@@ -207,6 +207,7 @@ public class OrgansToDonateController extends SubController {
 
     // ---------------- Format methods ----------------
     private void openManuallyExpireDialog() {
+        System.out.println(tableView.getSelectionModel().getSelectedItem());
         Dialog<String> dialog = new Dialog<>();
         dialog.setTitle("Manually Override Organ Expiry");
         dialog.setHeaderText("Specify why you are overriding the expiry date.");
@@ -235,7 +236,7 @@ public class OrgansToDonateController extends SubController {
     }
 
     private void manuallyExpire(String message) {
-        System.out.println("expiring " + selectedOrgan.toString() + " becayse " +message);
+        System.out.println("expiring " + selectedOrgan.toString() + " because " +message);
     }
 
     /**

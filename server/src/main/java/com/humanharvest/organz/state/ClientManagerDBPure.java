@@ -260,4 +260,10 @@ public class ClientManagerDBPure implements ClientManager {
 
         return requests == null ? new ArrayList<>() : requests;
     }
+
+    @Override
+    public DonatedOrgan manuallyExpireOrgan(DonatedOrgan organ){
+        //Todo: Implement
+        return organ;
+    }
 }

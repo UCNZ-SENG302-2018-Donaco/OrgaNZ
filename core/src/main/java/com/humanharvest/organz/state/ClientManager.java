@@ -181,6 +181,8 @@ public interface ClientManager {
      */
     Collection<DonatedOrgan> getAllOrgansToDonate();
 
+    DonatedOrgan manuallyExpireOrgan(DonatedOrgan organ);
+
     /**
      * Returns a collection of all the organs that are available to donate from dead peop[e.
      * todo replace this test implementation with memory and rest versions
@@ -224,6 +226,7 @@ public interface ClientManager {
         organsToDonate.add(organ4);
         return new PaginatedDonatedOrgansList(organsToDonate, 200);
     }
+
 
     List<HistoryItem> getAllHistoryItems();
 }
