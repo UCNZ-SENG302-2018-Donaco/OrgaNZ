@@ -49,11 +49,9 @@ server-build-image:
 server-deployment:
   stage: deploy
   script:
-  - docker stop team700_app_1
-  - docker stop testing
+  - docker stop team700_web
   - docker container prune -f
   - docker-compose up -d
-  - docker run -d -p 7016:7015 --name testing team700_app /srv/java/jvm/bin/java -jar server/target/ORGANZ-server-1.0.jar -t
   only:
   - deployment@seng302-2018/team-700
   - master@seng302-2018/team-700
