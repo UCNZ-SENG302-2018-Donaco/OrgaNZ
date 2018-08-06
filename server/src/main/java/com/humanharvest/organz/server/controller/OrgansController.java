@@ -1,9 +1,11 @@
 package com.humanharvest.organz.server.controller;
 
 import java.util.Collection;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonView;
+import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.server.exceptions.GlobalControllerExceptionHandler;
 import com.humanharvest.organz.state.State;
@@ -34,7 +36,6 @@ public class OrgansController {
             throws GlobalControllerExceptionHandler.InvalidRequestException {
 
         State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
-        System.out.println(authToken);
 
         Collection<DonatedOrganView> donatedOrgans = State.getClientManager().getAllOrgansToDonate().stream()
                 .map(DonatedOrganView::new)
@@ -42,16 +43,26 @@ public class OrgansController {
         return new ResponseEntity<>(donatedOrgans, HttpStatus.OK);
     }
 
-    @DeleteMapping("/organs")
+    @DeleteMapping("/organs/{uid}/id")
     public ResponseEntity<DonatedOrgan> manuallyExpireOrgan(
-            @RequestBody DonatedOrgan organ,
+            @PathVariable int uid,
+            @PathVariable int id,
             @RequestHeader(value = "X-Auth-Token",required = false) String authToken)
             throws GlobalControllerExceptionHandler.InvalidRequestException {
         State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
 
-        State.getClientManager().getAllOrgansToDonate().remove(organ);
+        Optional<Client> client = State.getClientManager().getClientByID(uid);
+        if (!client.isPresent()) {
+            //Return 404 if that client does not exist
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
 
-        return new ResponseEntity<>(organ,HttpStatus.OK);
+
+        DonatedOrgan donatedOrgan = client.get().getDonatedOrganById(id);
+
+        client.get().getDonatedOrgans().remove(donatedOrgan);
+
+        return new ResponseEntity<>(donatedOrgan,HttpStatus.OK);
 
     }
 

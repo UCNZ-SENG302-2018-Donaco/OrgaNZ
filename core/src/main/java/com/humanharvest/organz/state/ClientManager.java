@@ -117,7 +117,6 @@ public interface ClientManager {
 
                 .filter(requesting == null ? c -> true : client -> requesting.isEmpty() ||
                         requesting.stream().anyMatch(organ -> client.getCurrentlyRequestedOrgans().contains(organ)))
-
                 .collect(Collectors.toList());
 
         int totalResults = filteredClients.size();

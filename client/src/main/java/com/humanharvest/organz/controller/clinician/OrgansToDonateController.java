@@ -236,6 +236,8 @@ public class OrgansToDonateController extends SubController {
     }
 
     private void manuallyExpire(String message) {
+
+        manager.manuallyExpireOrgan(selectedOrgan);
         System.out.println("expiring " + selectedOrgan.toString() + " because " +message);
     }
 

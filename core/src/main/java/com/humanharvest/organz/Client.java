@@ -672,6 +672,14 @@ public class Client implements ConcurrencyControlledEntity {
                 .orElse(null);
     }
 
+    public DonatedOrgan getDonatedOrganById(long id) {
+        return donatedOrgans
+                .stream()
+                .filter(organ -> organ.getId() == id)
+                .findFirst()
+                .orElse(null);
+    }
+
     /**
      * Returns a list of illnesses that Client previously had
      * @return List of illnesses held by Client

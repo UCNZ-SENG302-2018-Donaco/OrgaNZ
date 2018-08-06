@@ -108,4 +108,8 @@ public class DonatedOrgan {
     public double getFullMarker() {
         return (double) getOrganType().getMinExpiration().getSeconds() / getOrganType().getMaxExpiration().getSeconds();
     }
+
+    public Long getId(){
+        return id;
+    }
 }

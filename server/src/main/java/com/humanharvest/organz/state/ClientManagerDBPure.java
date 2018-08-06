@@ -263,7 +263,20 @@ public class ClientManagerDBPure implements ClientManager {
 
     @Override
     public DonatedOrgan manuallyExpireOrgan(DonatedOrgan organ){
-        //Todo: Implement
-        return organ;
-    }
+        //Todo: Test
+        Transaction trns = null;
+        try(org.hibernate.Session session = dbManager.getDBSession()) {
+            trns = session.beginTransaction();
+            dbManager.getDBSession().remove(organ);
+
+            trns.commit();
+        } catch (RollbackException exc) {
+            if (trns != null) {
+                trns.rollback();
+            }
+        }
+            return organ;
+
+        }
+
 }
