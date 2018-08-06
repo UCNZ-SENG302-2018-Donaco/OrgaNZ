@@ -3,6 +3,7 @@ package com.humanharvest.organz.controller.clinician;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Collection;
 import java.util.Comparator;
 
 import javafx.beans.property.SimpleObjectProperty;
@@ -32,7 +33,6 @@ import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
-import com.humanharvest.organz.views.client.PaginatedDonatedOrgansList;
 import org.hibernate.validator.internal.util.logging.formatter.DurationFormatter;
 
 public class OrgansToDonateController extends SubController {
@@ -156,19 +156,19 @@ public class OrgansToDonateController extends SubController {
     }
 
     private void updateOrgansToDonateList() {
-        PaginatedDonatedOrgansList newOrgansToDonate = manager.getAllOrgansToDonate(
-                pagination.getCurrentPageIndex() * ROWS_PER_PAGE,
-                ROWS_PER_PAGE);
+        Collection<DonatedOrgan> newOrgansToDonate = manager.getAllOrgansToDonate();
 
-        observableOrgansToDonate.setAll(newOrgansToDonate.getDonatedOrgans());
+        observableOrgansToDonate.setAll(newOrgansToDonate);
         tableView.getSortOrder().setAll(timeUntilExpiryCol);
 
+        /* TODO decide whether we need to paginate or not
         int newPageCount = Math.max(1, (newOrgansToDonate.getTotalResults() + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE);
         if (pagination.getPageCount() != newPageCount) {
             pagination.setPageCount(newPageCount);
         }
 
         setupDisplayingXToYOfZText(newOrgansToDonate.getTotalResults());
+        */
     }
 
     /**
