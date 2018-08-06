@@ -77,10 +77,6 @@ public class PageNavigator {
             // Create new window
             Stage newStage = new Stage();
             newStage.setTitle("Organ Client Management System");
-            newStage.setMinWidth(width);
-            newStage.setMinHeight(height);
-            newStage.setWidth(width);
-            newStage.setHeight(height);
 
             // Load FXML for MAIN (window root)
             FXMLLoader loader = new FXMLLoader();
@@ -95,6 +91,12 @@ public class PageNavigator {
             AppUI.addCss(scene);
             newStage.setScene(scene);
             newStage.show();
+
+            newStage.setMinWidth(width);
+            newStage.setMinHeight(height);
+            newStage.setWidth(width);
+            newStage.setHeight(height);
+
             return mainController;
 
         } catch (IOException e) {
