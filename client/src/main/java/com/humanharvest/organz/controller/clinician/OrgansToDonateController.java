@@ -6,7 +6,9 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Comparator;
 
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -108,8 +110,7 @@ public class OrgansToDonateController extends SubController {
                 cellData.getValue().getDonor().getFullName()));
         organCol.setCellValueFactory(new PropertyValueFactory<>("organType"));
         timeOfDeathCol.setCellValueFactory(new PropertyValueFactory<>("dateTimeOfDonation"));
-        timeUntilExpiryCol.setCellValueFactory(cellData -> new SimpleObjectProperty<>(
-                cellData.getValue().getDurationUntilExpiry()));
+        timeUntilExpiryCol.setCellValueFactory(new PropertyValueFactory<>("durationUntilExpiry"));
 
         // Format all the datetime cells
         timeOfDeathCol.setCellFactory(cell -> formatDateTimeCell());
@@ -132,6 +133,13 @@ public class OrgansToDonateController extends SubController {
                 }
             }
         });
+
+        // Attach timer to update table each second (for time until expiration)
+        final Timeline clock = new Timeline(new KeyFrame(javafx.util.Duration.millis(1000), event -> {
+            tableView.refresh();
+        }));
+        clock.setCycleCount(Animation.INDEFINITE);
+        clock.play();
 
         // Sets the comparator for sorting by organ column.
         organCol.setComparator(new Comparator<Organ>() {
@@ -225,14 +233,11 @@ public class OrgansToDonateController extends SubController {
                     // It then takes the first 4 words (except for seconds, then it just takes up to the seconds)
                     // and stores that in displayedDuration, e.g. "3 days 2 hours"
                     String splitDurationString[] = new DurationFormatter(item).toString().split(" ");
-                    String displayedDuration = "";
+                    StringBuilder displayedDuration = new StringBuilder();
                     for (int i = 0; i < 4 && i < splitDurationString.length; i++) {
-                        System.out.print(i);
-                        System.out.println(": " + splitDurationString[i]);
-                        displayedDuration += splitDurationString[i] + " ";
-                        if (splitDurationString[i].contains("seconds") ||
-                                (splitDurationString.length >= i + 2
-                                        && splitDurationString[i + 2].contains("seconds"))) {
+                        displayedDuration.append(splitDurationString[i]).append(" ");
+                        if (splitDurationString[i].contains("seconds") || (splitDurationString.length >= i + 2 &&
+                                splitDurationString[i + 2].contains("seconds"))) {
                             break;
                         }
                     }
@@ -257,7 +262,7 @@ public class OrgansToDonateController extends SubController {
                         }
                     }
 
-                    setText(displayedDuration);
+                    setText(displayedDuration.toString());
                     setStyle(style);
                 }
             }
@@ -347,5 +352,4 @@ public class OrgansToDonateController extends SubController {
                     totalCount));
         }
     }
-
 }
