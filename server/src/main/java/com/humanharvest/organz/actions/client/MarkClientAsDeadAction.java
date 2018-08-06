@@ -1,32 +1,50 @@
 package com.humanharvest.organz.actions.client;
 
+import com.humanharvest.organz.utilities.enums.Country;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.state.ClientManager;
+import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 
 /**
- * A reversible action that will change the client's date of death to the date given, and cancel all their currently
- * pending transplant requests with the reason "The client died.".
+ * A reversible action that will change the client's date of death to the date given, cancel all their currently
+ * pending {@link com.humanharvest.organz.TransplantRequest}s with the reason "The client died.", and create
+ * {@link com.humanharvest.organz.DonatedOrgan}s for all the organs they were registered to donate.
  */
 public class MarkClientAsDeadAction extends ClientAction {
 
     private final LocalDate deathDate;
+    private final LocalTime deathTime;
+    private final String deathRegion;
+    private final String deathCity;
+    private final Country deathCountry;
     private final List<ResolveTransplantRequestAction> resolveTransplantActions;
 
     /**
-     * Creates a new action to mark the given client as dead, with the given date of death.
+     * Creates a new action to mark the given client as dead.
      * @param client The client to mark as dead.
      * @param deathDate Their date of death.
+     * @param deathTime Their time of death.
+     * @param deathRegion The region they died in.
+     * @param deathCity The city they died in.
+     * @param deathCountry The country they died in.
      * @param manager The ClientManager to apply the changes to
      */
-    public MarkClientAsDeadAction(Client client, LocalDate deathDate, ClientManager manager) {
+    public MarkClientAsDeadAction(Client client, LocalDate deathDate, LocalTime deathTime, String deathRegion,
+        String deathCity, Country deathCountry, ClientManager manager) {
         super(client, manager);
         this.deathDate = deathDate;
+        this.deathTime = deathTime;
+        this.deathRegion = deathRegion;
+        this.deathCity = deathCity;
+        this.deathCountry = deathCountry;
+
         resolveTransplantActions = client.getTransplantRequests()
                 .stream()
                 .filter(request -> request.getStatus() == TransplantRequestStatus.WAITING)
@@ -40,15 +58,23 @@ public class MarkClientAsDeadAction extends ClientAction {
     }
 
     /**
-     * Apply all changes to the client and their transplantRequests (all current requests are cancelled).
+     * Apply all changes to the client and their transplantRequests (all current requests are cancelled). Also marks
+     * all the organs they were willing to donate as donated.
      * @throws IllegalStateException If no changes were made.
      */
     @Override
     protected void execute() {
         super.execute();
         client.setDateOfDeath(deathDate);
+        client.setTimeOfDeath(deathTime);
+        client.setRegionOfDeath(deathRegion);
+        client.setCityOfDeath(deathCity);
+        client.setCountryOfDeath(deathCountry);
         for (ResolveTransplantRequestAction action : resolveTransplantActions) {
             action.execute();
+        }
+        for (Organ organType : client.getCurrentlyDonatedOrgans()) {
+            client.donateOrgan(organType, LocalDateTime.of(deathDate, deathTime));
         }
         manager.applyChangesTo(client);
     }
@@ -57,6 +83,10 @@ public class MarkClientAsDeadAction extends ClientAction {
     protected void unExecute() {
         super.unExecute();
         client.setDateOfDeath(null);
+        client.setCountryOfDeath(null);
+        client.setCityOfDeath(null);
+        client.setRegionOfDeath(null);
+        client.setTimeOfDeath(null);
         for (ResolveTransplantRequestAction action : resolveTransplantActions) {
             action.unExecute();
         }

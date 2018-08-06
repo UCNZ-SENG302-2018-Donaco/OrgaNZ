@@ -339,7 +339,7 @@ public class MenuBarController extends SubController {
                             .getParent().toString())
             );
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json"));
-            File file = fileChooser.showSaveDialog(AppUI.getWindow());
+            File file = fileChooser.showSaveDialog(mainController.getStage());
             if (file != null) {
                 try (FileOutputStream output = new FileOutputStream(file)) {
                     output.write(State.getFileResolver().exportClients());
@@ -372,7 +372,7 @@ public class MenuBarController extends SubController {
                             .getParent().toString())
             );
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json"));
-            File file = fileChooser.showSaveDialog(AppUI.getWindow());
+            File file = fileChooser.showSaveDialog(mainController.getStage());
             if (file != null) {
                 try (FileOutputStream output = new FileOutputStream(file)) {
                     output.write(State.getFileResolver().exportClinicians());
@@ -416,7 +416,7 @@ public class MenuBarController extends SubController {
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(
                     "JSON/CSV files (*.json, *.csv)",
                     "*.json", "*.csv"));
-            File file = fileChooser.showOpenDialog(AppUI.getWindow());
+            File file = fileChooser.showOpenDialog(mainController.getStage());
 
             if (file != null) {
                 String format = getFileExtension(file.getName());

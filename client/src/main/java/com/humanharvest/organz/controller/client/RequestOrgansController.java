@@ -1,8 +1,5 @@
 package com.humanharvest.organz.controller.client;
 
-import static com.humanharvest.organz.utilities.enums.TransplantRequestStatus.WAITING;
-
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
@@ -11,13 +8,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableRow;
@@ -33,7 +30,6 @@ import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.resolvers.client.ClientResolver;
-import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
@@ -45,6 +41,7 @@ import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.utilities.view.WindowContext;
 import com.humanharvest.organz.views.client.CreateTransplantRequestView;
 import com.humanharvest.organz.views.client.ResolveTransplantRequestObject;
 
@@ -55,29 +52,36 @@ import com.humanharvest.organz.views.client.ResolveTransplantRequestObject;
 public class RequestOrgansController extends SubController {
 
     private static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("d MMM yyyy hh:mm a");
-    private static final Logger LOGGER = Logger.getLogger(CreateClientController.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(RequestOrgansController.class.getName());
 
-    private Session session;
-    private ClientManager manager;
-    private ClientResolver resolver;
+    private final Session session;
+    private final ClientResolver resolver;
     private Client client;
 
-    private Collection<TransplantRequest> allRequests;
-    private FilteredList<TransplantRequest> currentRequests;
-    private FilteredList<TransplantRequest> pastRequests;
-
     @FXML
-    private Pane sidebarPane, menuBarPane;
+    private Pane sidebarPane;
     @FXML
-    private HBox newRequestForm, resolveRequestBar;
+    private Pane menuBarPane;
+    @FXML
+    private HBox newRequestForm;
+    @FXML
+    private HBox resolveRequestBar;
     @FXML
     private ChoiceBox<Organ> newOrganChoiceBox;
     @FXML
-    private TableView<TransplantRequest> currentRequestsTable, pastRequestsTable;
+    private TableView<TransplantRequest> currentRequestsTable;
     @FXML
-    private TableColumn<TransplantRequest, Organ> organCurrCol, organPastCol;
+    private TableView<TransplantRequest> pastRequestsTable;
     @FXML
-    private TableColumn<TransplantRequest, LocalDateTime> requestDateCurrCol, requestDatePastCol, resolvedDatePastCol;
+    private TableColumn<TransplantRequest, Organ> organCurrCol;
+    @FXML
+    private TableColumn<TransplantRequest, Organ> organPastCol;
+    @FXML
+    private TableColumn<TransplantRequest, LocalDateTime> requestDateCurrCol;
+    @FXML
+    private TableColumn<TransplantRequest, LocalDateTime> requestDatePastCol;
+    @FXML
+    private TableColumn<TransplantRequest, LocalDateTime> resolvedDatePastCol;
     @FXML
     private TableColumn<TransplantRequest, TransplantRequestStatus> requestStatusPastCol;
     @FXML
@@ -113,12 +117,12 @@ public class RequestOrgansController extends SubController {
     private TableRow<TransplantRequest> colourIfDonatedAndRequested() {
         return new TableRow<TransplantRequest>() {
             @Override
-            protected void updateItem(TransplantRequest request, boolean empty) {
-                super.updateItem(request, empty);
-                if (empty || request == null) {
+            protected void updateItem(TransplantRequest item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
                     setStyle(null);
                     setTooltip(null);
-                } else if (client.getOrganDonationStatus().get(request.getRequestedOrgan())) {
+                } else if (client.getOrganDonationStatus().get(item.getRequestedOrgan())) {
                     setStyle("-fx-background-color: lightcoral");
                     setTooltip(new Tooltip("This organ is currently set for donation."));
                 } else {
@@ -134,7 +138,6 @@ public class RequestOrgansController extends SubController {
      */
     public RequestOrgansController() {
         session = State.getSession();
-        manager = State.getClientManager();
         resolver = State.getClientResolver();
     }
 
@@ -170,11 +173,11 @@ public class RequestOrgansController extends SubController {
 
         // Add listeners to clear the other table when anything is selected in each table (and enable/disable buttons).
         currentRequestsTable.getSelectionModel().selectedItemProperty().addListener(
-                (observable) -> enableAppropriateButtons());
+                observable -> enableAppropriateButtons());
         currentRequestsTable.setOnMouseClicked(
-                (observable) -> pastRequestsTable.getSelectionModel().clearSelection());
+                observable -> pastRequestsTable.getSelectionModel().clearSelection());
         pastRequestsTable.setOnMouseClicked(
-                (observable) -> currentRequestsTable.getSelectionModel().clearSelection());
+                observable -> currentRequestsTable.getSelectionModel().clearSelection());
 
         cancelTransplantOptions.getSelectionModel().selectedItemProperty().addListener(
                 (observable, oldValue, newValue) -> {
@@ -220,6 +223,7 @@ public class RequestOrgansController extends SubController {
     @Override
     public void refresh() {
         // Reload the client's transplant requests
+        Collection<TransplantRequest> allRequests;
         try {
             allRequests = resolver.getTransplantRequests(client);
         } catch (NotFoundException e) {
@@ -236,13 +240,13 @@ public class RequestOrgansController extends SubController {
             return;
         }
 
-        currentRequests = new FilteredList<>(
+        ObservableList<TransplantRequest> currentRequests = new FilteredList<>(
                 FXCollections.observableArrayList(allRequests),
-                request -> request.getStatus() == WAITING
+                request -> request.getStatus() == TransplantRequestStatus.WAITING
         );
-        pastRequests = new FilteredList<>(
+        ObservableList<TransplantRequest> pastRequests = new FilteredList<>(
                 FXCollections.observableArrayList(allRequests),
-                request -> request.getStatus() != WAITING
+                request -> request.getStatus() != TransplantRequestStatus.WAITING
         );
 
         currentRequestsTable.setItems(currentRequests);
@@ -309,7 +313,6 @@ public class RequestOrgansController extends SubController {
                                 + "Please try again later.");
                 return;
             } catch (IfMatchFailedException e) { //412
-                System.out.println(client.getModifiedTimestamp());
                 PageNavigator.showAlert(
                         AlertType.WARNING,
                         "Outdated Data",
@@ -353,53 +356,8 @@ public class RequestOrgansController extends SubController {
                     resolvedReason = "Transplant took place.";
                     status = TransplantRequestStatus.COMPLETED;
                     break;
-                case DECEASED:  // "Client is deceased"
-                    // A datepicker appears, for choosing the date of death
-                    LocalDate deathDate = LocalDate.now();// todo temp fix when removing datepicker from fxml
-                    if (deathDate.isBefore(client.getDateOfBirth()) || deathDate.isAfter(LocalDate.now())) {
-                        PageNavigator.showAlert(AlertType.ERROR,
-                                "Date of Death Invalid",
-                                "Date of death must be between client's birth date and the current date.");
-                    } else { // valid date of death
-                        Optional<ButtonType> buttonOpt = PageNavigator.showAlert(AlertType.CONFIRMATION,
-                                "Are you sure you want to mark this client as dead?",
-                                "This will cancel all waiting transplant requests for this client.");
-                        if (buttonOpt.isPresent() && buttonOpt.get() == ButtonType.OK) {
-
-                            // Mark the client as dead
-                            try {
-                                resolver.markClientAsDead(client, deathDate);
-                            } catch (NotFoundException e) {
-                                LOGGER.log(Level.WARNING, "Client not found");
-                                PageNavigator.showAlert(
-                                        AlertType.WARNING,
-                                        "Client not found",
-                                        "The client could not be found on the server, it may have been deleted");
-                                return;
-                            } catch (ServerRestException e) {
-                                LOGGER.log(Level.WARNING, e.getMessage(), e);
-                                PageNavigator.showAlert(
-                                        AlertType.WARNING,
-                                        "Server error",
-                                        "Could not apply changes on the server, please try again later");
-                                return;
-                            } catch (IfMatchFailedException e) {
-                                LOGGER.log(Level.INFO, "If-Match did not match");
-                                PageNavigator.showAlert(
-                                        AlertType.WARNING,
-                                        "Outdated Data",
-                                        "The client has been modified since you retrieved the data.\n"
-                                                + "If you would still like to apply these changes please submit again, "
-                                                + "otherwise refresh the page to update the data.");
-                                return;
-                            }
-                        }
-                        if (buttonOpt.isPresent()) { // if they chose OK or Cancel
-                            // todo this was removed when datepicker was removed
-                            // deathDatePicker.setValue(LocalDate.now()); // reset datepicker
-                        }
-                    }
-                    PageNavigator.refreshAllWindows();
+                case DECEASED:
+                    resolveDeceasedRequest();
                     return;
                 case CURED:  // "Disease was cured"
                     resolvedReason = "The disease was cured.";
@@ -466,6 +424,17 @@ public class RequestOrgansController extends SubController {
                 }
             }
         }
+    }
+
+    private void resolveDeceasedRequest() {
+        MainController newMain = PageNavigator.openNewWindow(400, 400);
+        assert newMain != null;
+        newMain.setWindowContext(new WindowContext.WindowContextBuilder()
+                .setAsClinicianViewClientWindow()
+                .viewClient(client)
+                .build());
+
+        PageNavigator.loadPage(Page.SUBMIT_DEATH_DETAILS, newMain);
     }
 
     /**

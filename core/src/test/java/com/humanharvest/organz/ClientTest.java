@@ -3,9 +3,11 @@ package com.humanharvest.organz;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.Period;
 import java.util.List;
 
+import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
 import org.junit.jupiter.api.BeforeEach;
@@ -169,7 +171,7 @@ public class ClientTest {
         client.addTransplantRequest(request);
 
         LocalDate deathDate = LocalDate.now();
-        client.markDead(deathDate);
+        client.markDead(LocalDate.now(), LocalTime.MIDNIGHT, Country.DE, "Brandenburg", "Berlin");
 
         assertEquals(deathDate, client.getDateOfDeath());
         assertTrue(client.getOrganDonationStatus().get(Organ.BONE));
@@ -261,7 +263,7 @@ public class ClientTest {
         client.setOrganDonationStatus(Organ.BONE_MARROW, true);
         client.setOrganDonationStatus(Organ.SKIN, true);
 
-        client.markDead(LocalDate.now());
+        client.markDead(LocalDate.now(), LocalTime.MIDNIGHT, Country.DE, "Brandenburg", "Berlin");
         List<DonatedOrgan> donatedOrgans = client.getDonatedOrgans();
         assertEquals(3, donatedOrgans.size());
         assertTrue(donatedOrgans.stream().anyMatch(donatedOrgan -> donatedOrgan.getOrganType().equals(Organ.BONE)));

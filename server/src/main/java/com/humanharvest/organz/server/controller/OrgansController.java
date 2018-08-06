@@ -1,11 +1,14 @@
 package com.humanharvest.organz.server.controller;
 
 import java.util.Collection;
-import java.util.Map;
+import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.server.exceptions.GlobalControllerExceptionHandler;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.views.client.DonatedOrganView;
+import com.humanharvest.organz.views.client.Views;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,15 +27,18 @@ public class OrgansController {
      * @return response entity containing all organs that are available for donation
      * @throws GlobalControllerExceptionHandler.InvalidRequestException
      */
+    @JsonView(Views.Overview.class)
     @GetMapping("/organs")
-    public ResponseEntity<Collection<DonatedOrgan>> getOrgansToDonate(
+    public ResponseEntity<Collection<DonatedOrganView>> getOrgansToDonate(
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws GlobalControllerExceptionHandler.InvalidRequestException {
 
         State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
         System.out.println(authToken);
 
-        Collection<DonatedOrgan> donatedOrgans = State.getClientManager().getAllOrgansToDonate();
+        Collection<DonatedOrganView> donatedOrgans = State.getClientManager().getAllOrgansToDonate().stream()
+                .map(DonatedOrganView::new)
+                .collect(Collectors.toList());
         return new ResponseEntity<>(donatedOrgans, HttpStatus.OK);
     }
 

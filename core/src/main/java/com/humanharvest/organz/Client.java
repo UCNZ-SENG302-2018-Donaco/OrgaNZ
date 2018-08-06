@@ -789,7 +789,7 @@ public class Client implements ConcurrencyControlledEntity {
 
         boolean isMatch = true;
         for (String string : splitSearchItems) {
-            if (!firstName.toLowerCase().contains(string) &&
+            if (firstName == null || !firstName.toLowerCase().contains(string) &&
                     (middleName == null || !middleName.toLowerCase().contains(string)) &&
                     (preferredName == null || !preferredName.toLowerCase().contains(string)) &&
                     !lastName.toLowerCase().contains(string)) {
@@ -930,10 +930,19 @@ public class Client implements ConcurrencyControlledEntity {
      * Marks the client as dead.
      * - Resolves any pending organ requests by this client.
      * - Marks all the organs they were willing to donate as donated.
-     * @param dateOfDeath LocalDate When the client died.
+     * @param dateOfDeath Their date of death.
+     * @param timeOfDeath Their time of death.
+     * @param countryOfDeath The country they died in.
+     * @param regionOfDeath The region they died in.
+     * @param cityOfDeath The city they died in.
      */
-    public void markDead(LocalDate dateOfDeath) {
+    public void markDead(LocalDate dateOfDeath, LocalTime timeOfDeath, Country countryOfDeath, String regionOfDeath,
+            String cityOfDeath) {
         this.dateOfDeath = dateOfDeath;
+        this.timeOfDeath = timeOfDeath;
+        this.countryOfDeath = countryOfDeath;
+        this.regionOfDeath = regionOfDeath;
+        this.cityOfDeath = cityOfDeath;
 
         for (TransplantRequest request : transplantRequests) {
             if (request.getStatus() == TransplantRequestStatus.WAITING) {
@@ -943,7 +952,7 @@ public class Client implements ConcurrencyControlledEntity {
             }
         }
         for (Organ organType : getCurrentlyDonatedOrgans()) {
-            donateOrgan(organType, LocalDateTime.of(dateOfDeath, LocalTime.MIDNIGHT));
+            donateOrgan(organType, LocalDateTime.of(dateOfDeath, timeOfDeath));
         }
     }
 
@@ -952,7 +961,7 @@ public class Client implements ConcurrencyControlledEntity {
      * @param organ The organ donated.
      * @param timeDonated When the organ was removed from this client's body.
      */
-    private void donateOrgan(Organ organ, LocalDateTime timeDonated) {
+    public void donateOrgan(Organ organ, LocalDateTime timeDonated) {
         donatedOrgans.add(new DonatedOrgan(organ, this, timeDonated));
     }
 
