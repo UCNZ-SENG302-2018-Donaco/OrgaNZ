@@ -12,13 +12,17 @@ public enum Organ {
     PANCREAS("Pancreas", Duration.ofHours(12), Duration.ofHours(24)),
     HEART("Heart", Duration.ofHours(4), Duration.ofHours(6)),
     LUNG("Lung", Duration.ofHours(4), Duration.ofHours(6)),
-    INTESTINE("Intestine", null, null),
+    INTESTINE("Intestine", null, null),  // TODO find data
     CORNEA("Cornea", Duration.ofDays(5), Duration.ofDays(7)),
-    MIDDLE_EAR("Middle ear", null, null),
+    MIDDLE_EAR("Middle ear", null, null),  // TODO find data
     SKIN("Skin", Duration.ofDays(365 * 3), Duration.ofDays(365 * 10)),
     BONE("Bone", Duration.ofDays(365 * 3), Duration.ofDays(365 * 10)),
-    BONE_MARROW("Bone marrow", null, null),
-    CONNECTIVE_TISSUE("Connective tissue", null, null);
+    BONE_MARROW("Bone marrow", null, null),  // TODO find data
+    CONNECTIVE_TISSUE("Connective tissue", null, null);  // TODO find data
+
+    // Placeholder expiration durations for organs where no reliable data can be found
+    private static final Duration defaultMinExpiration = Duration.ofHours(12);
+    private static final Duration defaultMaxExpiration = Duration.ofHours(24);
 
     private final String text;
     private final Duration minExpiration;
@@ -38,11 +42,11 @@ public enum Organ {
     }
 
     public Duration getMinExpiration() {
-        return minExpiration;
+        return minExpiration == null ? defaultMinExpiration : minExpiration;
     }
 
     public Duration getMaxExpiration() {
-        return maxExpiration;
+        return maxExpiration == null ? defaultMaxExpiration : maxExpiration;
     }
 
     /**
