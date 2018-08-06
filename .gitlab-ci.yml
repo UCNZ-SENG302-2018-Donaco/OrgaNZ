@@ -41,6 +41,7 @@ recent-artifacts-dev:
 server-build-image:
   stage: build
   script:
+  - mvn -B clean package -Dmaven.test.skip=true
   - docker-compose build
   only:
   - deployment@seng302-2018/team-700
