@@ -50,7 +50,7 @@ server-build-image:
 server-deployment:
   stage: deploy
   script:
-  - docker stop team700_web
+  - docker stop team700_web_1 || echo "success"
   - docker container prune -f
   - docker-compose up -d
   only:
