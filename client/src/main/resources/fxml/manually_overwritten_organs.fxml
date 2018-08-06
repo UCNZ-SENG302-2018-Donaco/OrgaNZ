@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.client.ManuallyOverwrittenOrgansController">
+   <children>
+      <SplitPane dividerPositions="0.5" orientation="VERTICAL">
+         <items>
+            <HBox fx:id="menuBarPane" maxHeight="20.0" minHeight="-Infinity" />
+            <SplitPane prefHeight="600.0">
+               <items>
+                  <BorderPane>
+                     <bottom>
+                        <VBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                           <children>
+                              <Pagination fx:id="pagination" prefHeight="70.0" prefWidth="200.0" />
+                              <Text fx:id="displayingXToYOfZText" strokeType="OUTSIDE" strokeWidth="0.0" text="Displaying x-y of z" />
+                           </children>
+                        </VBox>
+                     </bottom>
+                     <center>
+                        <TableView fx:id="tableView">
+                           <columnResizePolicy>
+                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                           </columnResizePolicy>
+                           <columns>
+                              <TableColumn fx:id="organCol" prefWidth="75.0" text="Organ" />
+                              <TableColumn fx:id="timeOfDeathCol" prefWidth="75.0" text="Reason of Override" />
+                              <TableColumn fx:id="timeUntilExpiryCol" prefWidth="75.0" text="Clinician Details" />
+                              <TableColumn fx:id="timeUntilExpiryCol1" prefWidth="75.0" text="Time of Manual override" />
+                           </columns>
+                           <placeholder>
+                              <Label text="No organs to donate found that match those criteria." />
+                           </placeholder>
+                           <BorderPane.margin>
+                              <Insets left="10.0" right="10.0" top="20.0" />
+                           </BorderPane.margin>
+                        </TableView>
+                     </center>
+                     <top>
+                        <GridPane BorderPane.alignment="CENTER">
+                           <children>
+                              <Label text="Manually Expired Organs" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                              <Label alignment="CENTER" text="Donor ID:" textAlignment="CENTER" GridPane.columnIndex="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
+                                 <font>
+                                    <Font size="20.0" />
+                                 </font>
+                              </Label>
+                              <TextField GridPane.columnIndex="3" GridPane.valignment="CENTER" />
+                           </children>
+                           <columnConstraints>
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                           </columnConstraints>
+                           <rowConstraints>
+                              <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                           </rowConstraints>
+                        </GridPane>
+                     </top>
+                  </BorderPane>
+               </items>
+            </SplitPane>
+         </items>
+      </SplitPane>
+   </children>
+</VBox>
