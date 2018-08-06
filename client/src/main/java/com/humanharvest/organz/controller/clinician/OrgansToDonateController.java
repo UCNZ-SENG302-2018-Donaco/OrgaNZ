@@ -135,9 +135,9 @@ public class OrgansToDonateController extends SubController {
         });
 
         // Attach timer to update table each second (for time until expiration)
-        final Timeline clock = new Timeline(new KeyFrame(javafx.util.Duration.millis(1000), event -> {
-            tableView.refresh();
-        }));
+        final Timeline clock = new Timeline(new KeyFrame(
+                javafx.util.Duration.millis(1000),
+                event -> tableView.refresh()));
         clock.setCycleCount(Animation.INDEFINITE);
         clock.play();
 
@@ -236,8 +236,8 @@ public class OrgansToDonateController extends SubController {
                     StringBuilder displayedDuration = new StringBuilder();
                     for (int i = 0; i < 4 && i < splitDurationString.length; i++) {
                         displayedDuration.append(splitDurationString[i]).append(" ");
-                        if (splitDurationString[i].contains("seconds") || (splitDurationString.length >= i + 2 &&
-                                splitDurationString[i + 2].contains("seconds"))) {
+                        if (splitDurationString[i].contains("second") || (splitDurationString.length >= i + 2 &&
+                                splitDurationString[i + 2].contains("second"))) {
                             break;
                         }
                     }
@@ -324,14 +324,10 @@ public class OrgansToDonateController extends SubController {
 
         // Generate style string
         String colour = red + green + blue;
-        System.out.println(colour + " " + progress);
-        String style = "-fx-background-color: linear-gradient("
-                + "to right, #" + colour + " 0%, #" + colour + " " + lowerPercent + "%, "
-                + middleColour + " " + lowerPercent + "%, " + middleColour + " " + higherPercent + "%,"
-                + " #" + greyColour + " " + higherPercent + "%, #" + greyColour + " 100%);";
-        System.out.println(style);
-
-        return style;
+        return String.format("-fx-background-color: "
+                        + "linear-gradient(to right, #%s 0%%, #%s %s%%, %s %s%%, %s %s%%, #%s %s%%, #%s 100%%);",
+                        colour, colour, lowerPercent, middleColour, lowerPercent, middleColour, higherPercent,
+                        greyColour, higherPercent, greyColour);
     }
 
     /**
