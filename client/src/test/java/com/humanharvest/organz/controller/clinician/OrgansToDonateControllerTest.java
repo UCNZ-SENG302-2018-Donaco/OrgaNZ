@@ -45,6 +45,9 @@ public class OrgansToDonateControllerTest extends ControllerTest {
         State.login(testAdmin);
         mainController.setWindowContext(WindowContext.defaultContext());
 
+        // Setup clients
+        client1.setFirstName("Fred");
+
         // Add clients to list of clients
         clients.add(client1);
         clients.add(client2);

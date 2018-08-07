@@ -337,10 +337,10 @@ public class OrgansToDonateController extends SubController {
                         greyColour, higherPercent, greyColour);
     }
 
-    /**
+    /* TODO this is for pagination
      * Set the text that advises the currently viewed and pending amount of results
      * @param totalCount The total amount of current results matching filter options
-     */
+     *
     private void setupDisplayingXToYOfZText(int totalCount) {
         int fromIndex = pagination.getCurrentPageIndex() * ROWS_PER_PAGE;
         int toIndex = Math.min(fromIndex + ROWS_PER_PAGE, totalCount);
@@ -354,5 +354,5 @@ public class OrgansToDonateController extends SubController {
                     fromIndex + 1, toIndex,
                     totalCount));
         }
-    }
+    }*/
 }
