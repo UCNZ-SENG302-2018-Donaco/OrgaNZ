@@ -12,6 +12,8 @@ import javafx.animation.Timeline;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Pagination;
@@ -68,6 +70,8 @@ public class OrgansToDonateController extends SubController {
 
     private ClientManager manager;
     private ObservableList<DonatedOrgan> observableOrgansToDonate = FXCollections.observableArrayList();
+    private FilteredList<DonatedOrgan> filteredOrgansToDonate = new FilteredList<>(observableOrgansToDonate);
+    private SortedList<DonatedOrgan> sortedOrgansToDonate = new SortedList<>(filteredOrgansToDonate);
 
     /**
      * Gets the client manager from the global state.
@@ -151,6 +155,9 @@ public class OrgansToDonateController extends SubController {
                 return o1.toString().compareTo(o2.toString());
             }
         });
+
+        filteredOrgansToDonate.setPredicate(donatedOrgan -> !donatedOrgan.getDurationUntilExpiry().isZero());
+        sortedOrgansToDonate.comparatorProperty().bind(tableView.comparatorProperty());
     }
 
     /**
@@ -186,7 +193,7 @@ public class OrgansToDonateController extends SubController {
     @Override
     public void refresh() {
         observableOrgansToDonate.setAll(manager.getAllOrgansToDonate());
-        tableView.setItems(observableOrgansToDonate);
+        tableView.setItems(sortedOrgansToDonate);
     }
 
     // ---------------- Format methods ----------------
