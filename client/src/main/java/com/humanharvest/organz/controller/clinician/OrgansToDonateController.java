@@ -26,10 +26,14 @@ import org.controlsfx.control.PopOver;
 import org.controlsfx.control.PopOver.ArrowLocation;
 import org.hibernate.validator.internal.util.logging.formatter.DurationFormatter;
 
-import javafx.beans.property.SimpleObjectProperty;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -82,6 +86,8 @@ public class OrgansToDonateController extends SubController {
 
     private ClientManager manager;
     private ObservableList<DonatedOrgan> observableOrgansToDonate = FXCollections.observableArrayList();
+    private FilteredList<DonatedOrgan> filteredOrgansToDonate = new FilteredList<>(observableOrgansToDonate);
+    private SortedList<DonatedOrgan> sortedOrgansToDonate = new SortedList<>(filteredOrgansToDonate);
     private DonatedOrgan selectedOrgan;
 
     /**
@@ -125,8 +131,7 @@ public class OrgansToDonateController extends SubController {
                 cellData.getValue().getDonor().getFullName()));
         organCol.setCellValueFactory(new PropertyValueFactory<>("organType"));
         timeOfDeathCol.setCellValueFactory(new PropertyValueFactory<>("dateTimeOfDonation"));
-        timeUntilExpiryCol.setCellValueFactory(cellData -> new SimpleObjectProperty<>(
-                cellData.getValue().getDurationUntilExpiry()));
+        timeUntilExpiryCol.setCellValueFactory(new PropertyValueFactory<>("durationUntilExpiry"));
 
         // Format all the datetime cells
         timeOfDeathCol.setCellFactory(cell -> formatDateTimeCell());
@@ -157,6 +162,13 @@ public class OrgansToDonateController extends SubController {
             }
         });
 
+        // Attach timer to update table each second (for time until expiration)
+        final Timeline clock = new Timeline(new KeyFrame(
+                javafx.util.Duration.millis(1000),
+                event -> tableView.refresh()));
+        clock.setCycleCount(Animation.INDEFINITE);
+        clock.play();
+
         // Sets the comparator for sorting by organ column.
         organCol.setComparator(new Comparator<Organ>() {
             /**
@@ -167,6 +179,9 @@ public class OrgansToDonateController extends SubController {
                 return o1.toString().compareTo(o2.toString());
             }
         });
+
+        filteredOrgansToDonate.setPredicate(donatedOrgan -> !donatedOrgan.getDurationUntilExpiry().isZero());
+        sortedOrgansToDonate.comparatorProperty().bind(tableView.comparatorProperty());
     }
 
     /**
@@ -202,7 +217,7 @@ public class OrgansToDonateController extends SubController {
     @Override
     public void refresh() {
         observableOrgansToDonate.setAll(manager.getAllOrgansToDonate());
-        tableView.setItems(observableOrgansToDonate);
+        tableView.setItems(sortedOrgansToDonate);
     }
 
     // ---------------- Format methods ----------------
@@ -283,14 +298,11 @@ public class OrgansToDonateController extends SubController {
                     // It then takes the first 4 words (except for seconds, then it just takes up to the seconds)
                     // and stores that in displayedDuration, e.g. "3 days 2 hours"
                     String splitDurationString[] = new DurationFormatter(item).toString().split(" ");
-                    String displayedDuration = "";
+                    StringBuilder displayedDuration = new StringBuilder();
                     for (int i = 0; i < 4 && i < splitDurationString.length; i++) {
-                        System.out.print(i);
-                        System.out.println(": " + splitDurationString[i]);
-                        displayedDuration += splitDurationString[i] + " ";
-                        if (splitDurationString[i].contains("seconds") ||
-                                (splitDurationString.length >= i + 2
-                                        && splitDurationString[i + 2].contains("seconds"))) {
+                        displayedDuration.append(splitDurationString[i]).append(" ");
+                        if (splitDurationString[i].contains("second") || (splitDurationString.length >= i + 2 &&
+                                splitDurationString[i + 2].contains("second"))) {
                             break;
                         }
                     }
@@ -315,7 +327,7 @@ public class OrgansToDonateController extends SubController {
                         }
                     }
 
-                    setText(displayedDuration);
+                    setText(displayedDuration.toString());
                     setStyle(style);
                 }
             }
@@ -377,20 +389,16 @@ public class OrgansToDonateController extends SubController {
 
         // Generate style string
         String colour = red + green + blue;
-        System.out.println(colour + " " + progress);
-        String style = "-fx-background-color: linear-gradient("
-                + "to right, #" + colour + " 0%, #" + colour + " " + lowerPercent + "%, "
-                + middleColour + " " + lowerPercent + "%, " + middleColour + " " + higherPercent + "%,"
-                + " #" + greyColour + " " + higherPercent + "%, #" + greyColour + " 100%);";
-        System.out.println(style);
-
-        return style;
+        return String.format("-fx-background-color: "
+                        + "linear-gradient(to right, #%s 0%%, #%s %s%%, %s %s%%, %s %s%%, #%s %s%%, #%s 100%%);",
+                        colour, colour, lowerPercent, middleColour, lowerPercent, middleColour, higherPercent,
+                        greyColour, higherPercent, greyColour);
     }
 
-    /**
+    /* TODO this is for pagination
      * Set the text that advises the currently viewed and pending amount of results
      * @param totalCount The total amount of current results matching filter options
-     */
+     *
     private void setupDisplayingXToYOfZText(int totalCount) {
         int fromIndex = pagination.getCurrentPageIndex() * ROWS_PER_PAGE;
         int toIndex = Math.min(fromIndex + ROWS_PER_PAGE, totalCount);
@@ -404,6 +412,5 @@ public class OrgansToDonateController extends SubController {
                     fromIndex + 1, toIndex,
                     totalCount));
         }
-    }
-
+    }*/
 }

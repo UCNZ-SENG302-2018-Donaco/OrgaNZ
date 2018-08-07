@@ -7,38 +7,28 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.clinician.OrgansToDonateController">
+<VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.clinician.OrgansToDonateController">
    <children>
-      <SplitPane dividerPositions="0.5" orientation="VERTICAL">
+      <SplitPane dividerPositions="0.5" orientation="VERTICAL" VBox.vgrow="ALWAYS">
          <items>
             <HBox fx:id="menuBarPane" maxHeight="20.0" minHeight="-Infinity" />
             <SplitPane prefHeight="600.0">
                <items>
                   <BorderPane>
                      <top>
-                        <GridPane BorderPane.alignment="CENTER">
-                          <columnConstraints>
-                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                            <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                          </columnConstraints>
-                          <rowConstraints>
-                            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                          </rowConstraints>
-                           <children>
-                              <Label text="Organs to donate" GridPane.columnSpan="2" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
-                                 <font>
-                                    <Font size="20.0" />
-                                 </font></Label>
-                           </children>
-                        </GridPane>
+                        <Label text="Organs to Donate" BorderPane.alignment="TOP_CENTER">
+                           <font>
+                              <Font size="20.0" />
+                           </font>
+                           <BorderPane.margin>
+                              <Insets top="10.0" />
+                           </BorderPane.margin>
+                        </Label>
                      </top>
                      <center>
                        <TableView fx:id="tableView">
@@ -60,7 +50,7 @@
                         </TableView>
                      </center>
                      <bottom>
-                        <VBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                        <VBox alignment="CENTER" disable="true" maxHeight="0.0" visible="false" BorderPane.alignment="CENTER">
                            <children>
                               <Pagination fx:id="pagination" prefHeight="70.0" prefWidth="200.0" />
                               <Text fx:id="displayingXToYOfZText" strokeType="OUTSIDE" strokeWidth="0.0" text="Displaying x-y of z" />
