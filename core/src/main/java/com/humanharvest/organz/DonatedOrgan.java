@@ -11,16 +11,25 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.views.client.Views;
 
+@JsonAutoDetect(fieldVisibility = Visibility.ANY,
+        getterVisibility = Visibility.NONE,
+        setterVisibility = Visibility.NONE)
 @Entity
 @Table
 public class DonatedOrgan {
 
     @Id
     @GeneratedValue
+    @JsonView(Views.Overview.class)
     private Long id;
+    @JsonView(Views.Overview.class)
     @Enumerated(EnumType.STRING)
     private Organ organType;
     @ManyToOne
@@ -31,6 +40,7 @@ public class DonatedOrgan {
     @JoinColumn(name = "receiver_uid")
     @JsonBackReference(value = "receivedOrgan")
     private Client receiver;
+    @JsonView(Views.Overview.class)
     private LocalDateTime dateTimeOfDonation;
 
     protected DonatedOrgan() {
@@ -50,8 +60,16 @@ public class DonatedOrgan {
         return donor;
     }
 
+    public void setDonor(Client donor) {
+        this.donor = donor;
+    }
+
     public Client getReceiver() {
         return receiver;
+    }
+
+    public void setReceiver(Client receiver) {
+        this.receiver = receiver;
     }
 
     public LocalDateTime getDateTimeOfDonation() {
@@ -75,10 +93,19 @@ public class DonatedOrgan {
      */
     public double getProgressDecimal() {
         Duration timeToExpiry = getDurationUntilExpiry();
+        Duration expiration = getOrganType().getMaxExpiration();
         if (timeToExpiry.isZero()) {
             return 1;
         } else {
-            return 1 - ((double) timeToExpiry.getSeconds() / getOrganType().getMaxExpiration().getSeconds());
+            return 1 - ((double) timeToExpiry.getSeconds() / expiration.getSeconds());
         }
+    }
+
+    /**
+     * @return a decimal representation of when the organ enters the lower bound (e.g. 0.5 for halfway, or 0.9 for
+     * near the end)
+     */
+    public double getFullMarker() {
+        return (double) getOrganType().getMinExpiration().getSeconds() / getOrganType().getMaxExpiration().getSeconds();
     }
 }

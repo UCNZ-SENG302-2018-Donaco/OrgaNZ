@@ -25,6 +25,7 @@ import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.type_converters.EnumSetToString;
+import com.humanharvest.organz.views.client.DonatedOrganView;
 import com.humanharvest.organz.views.client.PaginatedClientList;
 import com.humanharvest.organz.views.client.PaginatedTransplantList;
 import org.springframework.core.ParameterizedTypeReference;
@@ -214,10 +215,11 @@ public class ClientManagerRest implements ClientManager {
         headers.set("X-Auth-Token", State.getToken());
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
-        ResponseEntity<Collection<DonatedOrgan>> responseEntity = State.getRestTemplate().exchange(State.BASE_URI + "organs",
+        ResponseEntity<Collection<DonatedOrganView>> responseEntity = State.getRestTemplate().exchange(
+                State.BASE_URI + "organs",
                 HttpMethod.GET,
-                entity, new ParameterizedTypeReference<Collection<DonatedOrgan>>(){});
+                entity, new ParameterizedTypeReference<Collection<DonatedOrganView>>(){});
 
-        return responseEntity.getBody();
+        return responseEntity.getBody().stream().map(DonatedOrganView::getDonatedOrgan).collect(Collectors.toList());
     }
 }
