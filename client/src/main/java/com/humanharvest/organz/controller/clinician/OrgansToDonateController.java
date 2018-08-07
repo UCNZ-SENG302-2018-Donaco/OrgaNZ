@@ -135,6 +135,8 @@ public class OrgansToDonateController extends SubController {
 
         // Format all the datetime cells
         timeOfDeathCol.setCellFactory(cell -> formatDateTimeCell());
+
+
         timeUntilExpiryCol.setCellFactory(cell -> formatDurationCell());
 
         // Register the mouse event for double-clicking on a record to open the client profile.
