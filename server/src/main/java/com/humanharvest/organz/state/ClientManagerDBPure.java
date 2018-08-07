@@ -251,6 +251,7 @@ public class ClientManagerDBPure implements ClientManager {
             requests = dbManager.getDBSession()
                     .createQuery("FROM DonatedOrgan", DonatedOrgan.class)
                     .getResultList();
+            System.out.println(requests);
             trns.commit();
         } catch (RollbackException exc) {
             if (trns != null) {
