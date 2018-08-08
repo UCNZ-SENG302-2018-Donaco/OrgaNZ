@@ -1,4 +1,4 @@
-package com.humanharvest.organz.server.client;
+package com.humanharvest.organz.server.controller.client;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
