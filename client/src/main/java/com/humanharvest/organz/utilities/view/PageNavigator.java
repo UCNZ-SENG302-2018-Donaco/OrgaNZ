@@ -38,8 +38,17 @@ public class PageNavigator {
      * Opens a new window.
      * @return The MainController for the new window, or null if the new window could not be created.
      */
+    public static MainController openNewWindow(int width, int height) {
+        return pageNavigator.openNewWindow(width, height);
+    }
+
+    /**
+     * Opens a new window with default width and height.
+     *
+     * @return The MainController for the new window, or null if the new window could not be created.
+     */
     public static MainController openNewWindow() {
-        return pageNavigator.openNewWindow();
+        return openNewWindow(1016, 639);
     }
 
     /**

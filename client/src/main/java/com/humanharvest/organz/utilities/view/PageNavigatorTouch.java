@@ -71,7 +71,7 @@ public class PageNavigatorTouch implements IPageNavigator {
      *
      * @return The MainController for the new window, or null if the new window could not be created.
      */
-    public MainController openNewWindow() {
+    public MainController openNewWindow(int width, int height) {
         LOGGER.info("Opening new window");
         try {
             Stage newStage = new Stage();

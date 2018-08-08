@@ -1,14 +1,14 @@
 package com.humanharvest.organz;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
-import java.util.Iterator;
-import java.util.Objects;
-import java.util.logging.Level;
-
+import TUIO.TuioCursor;
+import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.state.State.DataStorageType;
+import com.humanharvest.organz.utilities.LoggerSetup;
+import com.humanharvest.organz.utilities.view.*;
+import com.sun.javafx.css.StyleManager;
+import com.sun.javafx.geom.PickRay;
+import com.sun.javafx.scene.input.PickResultChooser;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -25,38 +25,24 @@ import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-
-import TUIO.TuioCursor;
-import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.state.State.DataStorageType;
-import com.humanharvest.organz.utilities.LoggerSetup;
-import com.humanharvest.organz.utilities.view.Page;
-import com.humanharvest.organz.utilities.view.PageNavigator;
-import com.humanharvest.organz.utilities.view.PageNavigatorTouch;
-import com.humanharvest.organz.utilities.view.TuioFXUtils;
-import com.humanharvest.organz.utilities.view.WindowContext;
-import com.sun.javafx.css.StyleManager;
-import com.sun.javafx.geom.PickRay;
-import com.sun.javafx.scene.input.PickResultChooser;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
-import org.objectweb.asm.tree.InsnNode;
-import org.objectweb.asm.tree.MethodInsnNode;
-import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.*;
 import org.tuiofx.Configuration;
 import org.tuiofx.TuioFX;
-import org.tuiofx.internal.base.CoordinatesMapping;
-import org.tuiofx.internal.base.GestureHandler;
-import org.tuiofx.internal.base.TargetSelection;
-import org.tuiofx.internal.base.TouchHandler;
-import org.tuiofx.internal.base.TuioFXCanvas;
-import org.tuiofx.internal.base.TuioInputService;
+import org.tuiofx.internal.base.*;
 import org.tuiofx.internal.gesture.TuioTouchPoint;
 import org.tuiofx.internal.util.Util;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.net.URL;
+import java.util.Iterator;
+import java.util.Objects;
+import java.util.logging.Level;
 
 /**
  * The main class that runs the JavaFX GUI.
@@ -184,54 +170,6 @@ public class AppTUIO extends Application {
         StyleManager.getInstance().addUserAgentStylesheet("/css/multifocus.css");
         tuioFX.start();
 
-
-//        primaryStage.addEventFilter(MouseEvent.ANY, event -> {
-//            event.consume();
-//
-//            EventType<TouchEvent> type = null;
-//            TouchPoint.State state = null;
-//            if (event.getEventType() == MouseEvent.MOUSE_PRESSED) {
-//                type = TouchEvent.TOUCH_PRESSED;
-//                state = TouchPoint.State.PRESSED;
-//            } else if (event.getEventType() == MouseEvent.MOUSE_RELEASED) {
-//                type = TouchEvent.TOUCH_RELEASED;
-//                state = TouchPoint.State.RELEASED;
-//            } else if (event.getEventType() == MouseEvent.MOUSE_DRAGGED) {
-//                type = TouchEvent.TOUCH_MOVED;
-//                state = TouchPoint.State.MOVED;
-//            } else if (event.getEventType() == MouseEvent.MOUSE_MOVED) {
-////                System.out.println(event);
-//            }
-//
-//            if (type != null) {
-//                TouchPoint touchPoint = new TouchPoint(1,
-//                        state,
-//                        event.getX(),
-//                        event.getY(),
-//                        event.getScreenX(),
-//                        event.getScreenY(),
-//                        event.getTarget(),
-//                        event.getPickResult());
-//                primaryStage.fireEvent(new TouchEvent(
-//                        event.getSource(),
-//                        event.getTarget(),
-//                        type,
-//                        touchPoint,
-//                        Collections.singletonList(touchPoint),
-//                        1,
-//                        event.isShiftDown(),
-//                        event.isControlDown(),
-//                        event.isAltDown(),
-//                        event.isMetaDown()));
-//            }
-//        });
-//
-//        primaryStage.addEventFilter(TouchEvent.ANY, System.out::println);
-
-//        TouchHandler touchHandler = tuioFX.getTouchHandler();
-
-
-
         Pane pane = loadMainPane(new Stage());
 //        pane.setMaxWidth(600);
 //        pane.setMaxHeight(800);
@@ -244,10 +182,10 @@ public class AppTUIO extends Application {
 
         primaryStage.setTitle("Test");
         primaryStage.setScene(scene);
-//        primaryStage.setFullScreen(true);
+        primaryStage.setFullScreen(true);
         primaryStage.show();
-        primaryStage.setWidth(1024);
-        primaryStage.setHeight(768);
+//        primaryStage.setWidth(1024);
+//        primaryStage.setHeight(768);
 
         initialiseTUIOHook(tuioFX);
         initialiseFakeTUIO(tuioFX, primaryStage);

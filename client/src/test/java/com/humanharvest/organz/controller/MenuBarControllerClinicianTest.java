@@ -1,9 +1,5 @@
 package com.humanharvest.organz.controller;
 
-import static org.junit.Assert.assertEquals;
-import static org.testfx.api.FxAssert.verifyThat;
-import static org.testfx.matcher.base.NodeMatchers.isVisible;
-
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Country;
@@ -11,6 +7,10 @@ import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.testfx.api.FxAssert.verifyThat;
+import static org.testfx.matcher.base.NodeMatchers.isVisible;
 
 public class MenuBarControllerClinicianTest extends  ControllerTest {
 

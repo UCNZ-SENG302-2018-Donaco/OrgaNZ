@@ -1,25 +1,5 @@
 package com.humanharvest.organz.controller.clinician;
 
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
-import java.util.EnumSet;
-import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javafx.collections.FXCollections;
-import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.controller.MainController;
@@ -33,7 +13,21 @@ import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.views.clinician.ModifyClinicianObject;
+import javafx.collections.FXCollections;
+import javafx.fxml.FXML;
+import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import org.controlsfx.control.Notifications;
+
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.util.EnumSet;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Presents an interface displaying all information of the currently logged in Clinician. Clinicians are able to edit

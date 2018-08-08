@@ -1,5 +1,25 @@
 package com.humanharvest.organz.controller;
 
+import com.humanharvest.organz.AppUI;
+import com.humanharvest.organz.state.ClientManager;
+import com.humanharvest.organz.state.Session;
+import com.humanharvest.organz.state.Session.UserType;
+import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.CacheManager;
+import com.humanharvest.organz.utilities.exceptions.BadRequestException;
+import com.humanharvest.organz.utilities.view.Page;
+import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.views.ActionResponseView;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
+import javafx.fxml.FXML;
+import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import org.controlsfx.control.Notifications;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -11,32 +31,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import javafx.application.Platform;
-import javafx.concurrent.Task;
-import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonBar.ButtonData;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
-
-import com.humanharvest.organz.AppUI;
-import com.humanharvest.organz.state.ClientManager;
-import com.humanharvest.organz.state.Session;
-import com.humanharvest.organz.state.Session.UserType;
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.CacheManager;
-import com.humanharvest.organz.utilities.exceptions.BadRequestException;
-import com.humanharvest.organz.utilities.view.Page;
-import com.humanharvest.organz.utilities.view.PageNavigator;
-import com.humanharvest.organz.views.ActionResponseView;
-import org.controlsfx.control.Notifications;
 
 /**
  * Controller for the sidebar pane imported into every page in the main part of the GUI.
