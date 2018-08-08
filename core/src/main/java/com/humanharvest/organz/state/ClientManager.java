@@ -1,8 +1,6 @@
 package com.humanharvest.organz.state;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.EnumSet;
@@ -23,7 +21,6 @@ import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.views.client.PaginatedClientList;
-import com.humanharvest.organz.views.client.PaginatedDonatedOrgansList;
 import com.humanharvest.organz.views.client.PaginatedTransplantList;
 
 /**
@@ -180,50 +177,6 @@ public interface ClientManager {
      * Returns a collection of all the organs that are available to donate from dead peop[e.
      */
     Collection<DonatedOrgan> getAllOrgansToDonate();
-
-    /**
-     * Returns a collection of all the organs that are available to donate from dead peop[e.
-     * todo replace this test implementation with memory and rest versions
-     */
-    default PaginatedDonatedOrgansList getAllOrgansToDonate(Integer offset, Integer count) {
-        System.out.println("getting organs td");
-        // get the first client
-        Client client = getClients().get(0);
-
-        if (client == null) {
-            System.out.println("no client found");
-        } else {
-            System.out.println(client.getFirstName());
-        }
-        DonatedOrgan organ0h = new DonatedOrgan(Organ.LUNG, client, LocalDateTime.now().plusSeconds(1));
-        DonatedOrgan organ5m = new DonatedOrgan(Organ.LUNG, client, LocalDateTime.now().minusMinutes(5).plusSeconds(1));
-        DonatedOrgan organ1h = new DonatedOrgan(Organ.LUNG, client, LocalDateTime.now().minusHours(1).plusSeconds(1));
-        DonatedOrgan organ2h = new DonatedOrgan(Organ.LUNG, client, LocalDateTime.now().minusHours(2).plusSeconds(1));
-        DonatedOrgan organ3h = new DonatedOrgan(Organ.LUNG, client, LocalDateTime.now().minusHours(3).plusSeconds(1));
-        DonatedOrgan organ4h = new DonatedOrgan(Organ.LUNG, client, LocalDateTime.now().minusHours(4).plusSeconds(1));
-        DonatedOrgan organ5h = new DonatedOrgan(Organ.LUNG, client, LocalDateTime.now().minusHours(5).plusSeconds(1));
-        DonatedOrgan organ6h = new DonatedOrgan(Organ.LUNG, client, LocalDateTime.now().minusHours(6).plusSeconds(2));
-        DonatedOrgan organ2a = new DonatedOrgan(Organ.CORNEA, client, LocalDateTime.now().minusDays(4).plusSeconds
-                (1));
-        DonatedOrgan organ2 = new DonatedOrgan(Organ.SKIN, client, LocalDateTime.now().minusYears(1));
-        DonatedOrgan organ3 = new DonatedOrgan(Organ.LUNG, client, LocalDateTime.now().minusHours(5).minusMinutes(55));
-                //.minusSeconds(50));
-        DonatedOrgan organ4 = new DonatedOrgan(Organ.LUNG, client, LocalDateTime.now());
-        List<DonatedOrgan> organsToDonate = new ArrayList<>();
-        organsToDonate.add(organ0h);
-        organsToDonate.add(organ5m);
-        organsToDonate.add(organ3h);
-        organsToDonate.add(organ2h);
-        organsToDonate.add(organ1h);
-        organsToDonate.add(organ4h);
-        organsToDonate.add(organ5h);
-        organsToDonate.add(organ6h);
-        organsToDonate.add(organ2);
-        organsToDonate.add(organ2a);
-        organsToDonate.add(organ3);
-        organsToDonate.add(organ4);
-        return new PaginatedDonatedOrgansList(organsToDonate, 200);
-    }
 
     List<HistoryItem> getAllHistoryItems();
 }

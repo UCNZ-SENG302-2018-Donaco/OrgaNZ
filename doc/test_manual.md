@@ -184,3 +184,5 @@ As an admin, they can change the details of the default admin
 `Bug found` - editing a non default clinician throws a bad request. Has now been fixed.
 
 
+## Story 47
+Go to the Organs To Donate page, and check there is a coloured countdown and it sorts by default, with the closest to expiring organs at the top
