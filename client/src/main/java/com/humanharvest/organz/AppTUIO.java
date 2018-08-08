@@ -140,9 +140,11 @@ public class AppTUIO extends Application {
         Pane mainPane = loader.load(getClass().getResourceAsStream(Page.MAIN.getPath()));
         MainController mainController = loader.getController();
         mainController.setStage(stage);
+        mainController.setPane(mainPane);
         mainController.setWindowContext(WindowContext.defaultContext());
 
         State.addMainController(mainController);
+        State.setUiType(State.UiType.TOUCH);
 
         PageNavigator.loadPage(Page.LANDING, mainController);
 
@@ -244,7 +246,7 @@ public class AppTUIO extends Application {
             throw new RuntimeException(e);
         }
 
-        primaryStage.addEventFilter(MouseEvent.ANY, new TuioMouseEventFilter(inputService, primaryStage));
+//        primaryStage.addEventFilter(MouseEvent.ANY, new TuioMouseEventFilter(inputService, primaryStage));
     }
 
     private static double withinRange(double min, double max, double value) {

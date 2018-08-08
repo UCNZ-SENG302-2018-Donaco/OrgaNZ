@@ -22,6 +22,7 @@ public class MainController {
 
     private Stage stage;
     private Page currentPage;
+    private Pane pane;
     private WindowContext windowContext;
     private String windowTitle;
     private SidebarController sidebarController;
@@ -50,6 +51,14 @@ public class MainController {
         this.stage = stage;
     }
 
+    public void setPane(Pane pane) {
+        this.pane = pane;
+    }
+
+    public Pane getPane() {
+        return pane;
+    }
+
     /**
      * Replaces the page displayed in the page holder with a new page.
      * @param page the new current Page.
@@ -73,6 +82,8 @@ public class MainController {
      */
     @FXML
     void closeWindow() {
+        System.out.println("closing");
+        System.out.println(stage);
         stage.close();
     }
 

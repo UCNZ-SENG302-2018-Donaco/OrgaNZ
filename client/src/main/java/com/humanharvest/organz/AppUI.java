@@ -64,6 +64,7 @@ public class AppUI extends Application {
         Pane mainPane = loader.load(getClass().getResourceAsStream(Page.MAIN.getPath()));
         MainController mainController = loader.getController();
         mainController.setStage(stage);
+        mainController.setPane(mainPane);
         mainController.setWindowContext(WindowContext.defaultContext());
         State.addMainController(mainController);
         PageNavigator.loadPage(Page.LANDING, mainController);

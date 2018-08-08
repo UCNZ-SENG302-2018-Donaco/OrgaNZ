@@ -1,6 +1,7 @@
 package com.humanharvest.organz.utilities.view;
 
 import com.humanharvest.organz.controller.MainController;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 
@@ -49,5 +50,4 @@ public interface IPageNavigator {
      * @return an Optional for the button that was clicked to dismiss the alert.
      */
     Optional<ButtonType> showAlert(Alert.AlertType alertType, String title, String bodyText);
-
 }

@@ -1,5 +1,34 @@
 package com.humanharvest.organz.controller;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import com.humanharvest.organz.AppTUIO;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
+import javafx.fxml.FXML;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+
 import com.humanharvest.organz.AppUI;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
@@ -145,6 +174,12 @@ public class MenuBarController extends SubController {
         else if (userType == UserType.CLIENT) {
             hideMenus(allMenus);
         }
+
+        if (State.getUiType() == State.UiType.TOUCH) { // Preventing users from logging out on the touch UI
+//            hideMenuItem(logOutItem);
+//            hideMenuItem(topSeparator);
+        }
+        closeItem.setDisable(!windowContext.isClinViewClientWindow());
 
         refresh();
     }
@@ -541,8 +576,12 @@ public class MenuBarController extends SubController {
      */
     @FXML
     private void closeWindow() {
-        Stage stage = (Stage) menuBar.getScene().getWindow();
-        stage.close();
+        if (State.getUiType() == State.UiType.TOUCH) {
+            AppTUIO.root.getChildren().remove(mainController.getPane());
+        } else {
+            Stage stage = (Stage) menuBar.getScene().getWindow();
+            stage.close();
+        }
     }
 
     /**

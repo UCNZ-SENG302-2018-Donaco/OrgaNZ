@@ -7,6 +7,7 @@ import com.humanharvest.organz.state.State;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.Pane;
@@ -80,6 +81,7 @@ public class PageNavigatorTouch implements IPageNavigator {
             Pane mainPane = loader.load(PageNavigatorTouch.class.getResourceAsStream(Page.MAIN.getPath()));
             MainController mainController = loader.getController();
             mainController.setStage(newStage);
+            mainController.setPane(mainPane);
             State.addMainController(mainController);
             newStage.setOnCloseRequest(e -> State.deleteMainController(mainController));
 
