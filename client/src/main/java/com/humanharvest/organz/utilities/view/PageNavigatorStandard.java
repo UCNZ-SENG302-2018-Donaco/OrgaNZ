@@ -64,7 +64,7 @@ public class PageNavigatorStandard implements IPageNavigator {
      *
      * @return The MainController for the new window, or null if the new window could not be created.
      */
-    public MainController openNewWindow() {
+    public MainController openNewWindow(int width, int height) {
         LOGGER.info("Opening new window");
         try {
             Stage newStage = new Stage();
@@ -82,8 +82,10 @@ public class PageNavigatorStandard implements IPageNavigator {
             newStage.setScene(scene);
             newStage.show();
 
-            newStage.setMinHeight(639);
-            newStage.setMinWidth(1016);
+            newStage.setMinWidth(width);
+            newStage.setMinHeight(height);
+            newStage.setWidth(width);
+            newStage.setHeight(height);
 
             return mainController;
         } catch (IOException e) {

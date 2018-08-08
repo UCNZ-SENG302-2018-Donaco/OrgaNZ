@@ -1,15 +1,15 @@
 package com.humanharvest.organz.controller;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.resolvers.CommandRunner;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class MenuBarControllerAdminTest extends ControllerTest {
 
@@ -57,7 +57,7 @@ public class MenuBarControllerAdminTest extends ControllerTest {
     @Test
     public void testClickSearchStaff() {
         clickOn("#staffPrimaryItem");
-        clickOn("#searchStaffItem");
+        clickOn("#staffListItem");
         assertEquals(Page.STAFF_LIST, mainController.getCurrentPage());
     }
 
@@ -77,8 +77,8 @@ public class MenuBarControllerAdminTest extends ControllerTest {
 
     @Test
     public void testClickTransplantRequests() {
-        clickOn("#transplantsPrimaryItem");
-        clickOn("#searchTransplantsItem");
+        clickOn("#organPrimaryItem");
+        clickOn("#transplantRequestsItem");
         assertEquals(Page.TRANSPLANTS, mainController.getCurrentPage());
     }
 

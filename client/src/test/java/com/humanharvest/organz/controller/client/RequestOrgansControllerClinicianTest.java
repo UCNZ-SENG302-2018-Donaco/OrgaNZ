@@ -1,24 +1,5 @@
 package com.humanharvest.organz.controller.client;
 
-import static org.junit.Assert.*;
-import static org.testfx.api.FxAssert.verifyThat;
-import static org.testfx.matcher.control.TableViewMatchers.containsRow;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import javafx.scene.Node;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.TableRow;
-import javafx.scene.control.TableView;
-import javafx.scene.input.KeyCode;
-
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.TransplantRequest;
@@ -32,8 +13,21 @@ import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
 import com.humanharvest.organz.views.client.CreateTransplantRequestView;
 import com.humanharvest.organz.views.client.ResolveTransplantRequestObject;
+import javafx.scene.Node;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.TableRow;
+import javafx.scene.control.TableView;
+import javafx.scene.input.KeyCode;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static org.junit.Assert.*;
+import static org.testfx.api.FxAssert.verifyThat;
+import static org.testfx.matcher.control.TableViewMatchers.containsRow;
 
 public class RequestOrgansControllerClinicianTest extends ControllerTest {
 
@@ -174,34 +168,6 @@ public class RequestOrgansControllerClinicianTest extends ControllerTest {
     public void submitTwoRequestsTest() {
         testOrganBeingAdded(Organ.LUNG);
         testOrganBeingAdded(Organ.MIDDLE_EAR);
-    }
-
-    @Test
-    public void resolveRequestDeceasedTest() {
-        testClient.setDateOfBirth(LocalDate.now());
-
-        TableView<TransplantRequest> currRequestsTable = lookup("#currentRequestsTable").queryTableView();
-        clickOn(currRequestsTable);
-
-        clickOn((Node) lookup(".table-row-cell").nth(1).query());
-
-        // Selects "deceased" from the options
-        clickOn("#cancelTransplantOptions")
-                .type(KeyCode.DOWN)
-                .type(KeyCode.DOWN)
-                .type(KeyCode.DOWN)
-                .type(KeyCode.ENTER);
-
-        // Check that death date picker is now visible
-        assertTrue(lookup("#deathDatePicker").query().isVisible());
-
-        clickOn("Resolve Request");
-        // Press enter to confirm marking the client as deceased
-        type(KeyCode.ENTER);
-
-        //Checks that the client had been marked dead and the request table is empty
-        assertNotNull(testClient.getDateOfDeath());
-        assertTrue(currRequestsTable.getItems().isEmpty());
     }
 
     @Test

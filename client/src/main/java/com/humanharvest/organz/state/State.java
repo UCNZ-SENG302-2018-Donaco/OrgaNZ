@@ -1,29 +1,18 @@
 package com.humanharvest.organz.state;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.List;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
-import com.humanharvest.organz.Config;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.resolvers.CommandRunner;
 import com.humanharvest.organz.resolvers.CommandRunnerRest;
 import com.humanharvest.organz.resolvers.actions.ActionResolver;
 import com.humanharvest.organz.resolvers.actions.ActionResolverMemory;
 import com.humanharvest.organz.resolvers.actions.ActionResolverRest;
-import com.humanharvest.organz.resolvers.administrator.AdministratorResolver;
-import com.humanharvest.organz.resolvers.administrator.AdministratorResolverMemory;
-import com.humanharvest.organz.resolvers.administrator.AdministratorResolverRest;
-import com.humanharvest.organz.resolvers.administrator.FileResolver;
-import com.humanharvest.organz.resolvers.administrator.FileResolverMemory;
-import com.humanharvest.organz.resolvers.administrator.FileResolverRest;
+import com.humanharvest.organz.resolvers.administrator.*;
 import com.humanharvest.organz.resolvers.client.ClientResolver;
 import com.humanharvest.organz.resolvers.client.ClientResolverMemory;
 import com.humanharvest.organz.resolvers.client.ClientResolverRest;
@@ -36,6 +25,11 @@ import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.List;
 
 /**
  * A static class to store the current state of the system.
@@ -75,7 +69,7 @@ public final class State {
     private static String clinicianEtag = "";
     private static String administratorEtag = "";
     private static String token = "";
-    private static Clinician createdClinician;
+    private static Clinician viewedClinician;
     private static EnumSet<Country> allowedCountries;
     private static UiType uiType = UiType.STANDARD;
 
@@ -296,12 +290,12 @@ public final class State {
         return imageManager;
     }
 
-    public static Clinician getCreatedClinician() {
-        return createdClinician;
+    public static Clinician getViewedClinician() {
+        return viewedClinician;
     }
 
-    public static void setCreatedClinician(Clinician createdClinician) {
-        State.createdClinician = createdClinician;
+    public static void setViewedClinician(Clinician viewedClinician) {
+        State.viewedClinician = viewedClinician;
     }
 
     public static void setUiType(UiType type) {

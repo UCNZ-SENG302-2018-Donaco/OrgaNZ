@@ -30,8 +30,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import com.humanharvest.organz.AppUI;
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
@@ -41,7 +39,27 @@ import com.humanharvest.organz.utilities.exceptions.BadRequestException;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.views.ActionResponseView;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
+import javafx.fxml.FXML;
+import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 import org.controlsfx.control.Notifications;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Controller for the sidebar pane imported into every page in the main part of the GUI.
@@ -59,10 +77,11 @@ public class MenuBarController extends SubController {
     public MenuItem viewMedicationsItem;
     public MenuItem medicalHistoryItem;
     public MenuItem proceduresItem;
-    public MenuItem searchStaffItem;
+    public MenuItem staffListItem;
     public MenuItem createAdministratorItem;
     public MenuItem createClinicianItem;
-    public MenuItem searchTransplantsItem;
+    public MenuItem transplantRequestsItem;
+    public MenuItem organsToDonateItem;
     public MenuItem viewAdministratorItem;
     public MenuItem viewClinicianItem;
     public MenuItem historyItem;
@@ -76,20 +95,19 @@ public class MenuBarController extends SubController {
     public MenuItem closeItem;
     public MenuItem createClientItem;
     public MenuItem refreshCacheItem;
-    public MenuItem settings;
+    public MenuItem settingsItem;
 
     public SeparatorMenuItem topSeparator;
 
     public MenuBar menuBar;
 
+    public Menu filePrimaryItem;
+    public Menu editPrimaryItem;
     public Menu clientPrimaryItem;
     public Menu organPrimaryItem;
     public Menu medicationsPrimaryItem;
     public Menu staffPrimaryItem;
-    public Menu transplantsPrimaryItem;
     public Menu profilePrimaryItem;
-    public Menu filePrimaryItem;
-    public Menu administrationPrimaryItem;
 
     private ClientManager clientManager;
     private Session session;
@@ -107,50 +125,54 @@ public class MenuBarController extends SubController {
         super.setup(controller);
         UserType userType = session.getLoggedInUserType();
 
-        Menu viewAllMenus[] = {clientPrimaryItem, organPrimaryItem, medicationsPrimaryItem, staffPrimaryItem,
-                transplantsPrimaryItem, profilePrimaryItem, filePrimaryItem};
+        // Define what menus and menu items should be hidden
 
-        Menu viewAdminMenu[] = {staffPrimaryItem, transplantsPrimaryItem, filePrimaryItem,
-                profilePrimaryItem};
+        // Menus/Menu items to hide from admins
+        Menu menusHideFromAdmins[] = {medicationsPrimaryItem};
+        MenuItem menuItemsHideFromAdmins[] = {viewClientItem, donateOrganItem, requestOrganItem, viewMedicationsItem,
+                medicalHistoryItem, proceduresItem, viewClinicianItem};
 
-        Menu clinicianWindowMenu[] = {staffPrimaryItem, medicationsPrimaryItem,};
-        MenuItem clinicianWindowMenuItems[] = {organPrimaryItem, viewClientItem, medicationsPrimaryItem};
+        // Menus/Menu items to hide from clinicians
+        Menu menusHideFromClinicians[] = {medicationsPrimaryItem, staffPrimaryItem};
+        MenuItem menuItemsHideFromClinicians[] = {viewClientItem, donateOrganItem, requestOrganItem, viewMedicationsItem,
+                medicalHistoryItem, proceduresItem, saveClientsItem, saveCliniciansItem, loadItem, settingsItem,
+                staffListItem, createAdministratorItem, createClinicianItem, viewAdministratorItem, cliItem};
 
-        Menu clinViewClientMenu[] = {staffPrimaryItem, profilePrimaryItem, transplantsPrimaryItem};
-        MenuItem clinViewClientMenuItem[] = {searchClientItem, createClientItem};
+        // Menus/Menu items to hide from clinicians (or admins) viewing a client
+        Menu menusHideFromClinViewClients[] = {staffPrimaryItem, profilePrimaryItem};
+        MenuItem menuItemsHideFromClinViewClients[] = {saveClientsItem, saveCliniciansItem, loadItem, settingsItem,
+                logOutItem, searchClientItem, createClientItem, transplantRequestsItem, organsToDonateItem,
+                staffListItem, createAdministratorItem, createClinicianItem, viewAdministratorItem,
+                viewClinicianItem, historyItem, cliItem};
 
-        if (userType == UserType.CLINICIAN) {
+        // Menus to hide from clients (aka all menus)
+        Menu allMenus[] = {filePrimaryItem, editPrimaryItem, clientPrimaryItem, organPrimaryItem,
+                medicationsPrimaryItem, staffPrimaryItem, profilePrimaryItem};
 
-            if (windowContext.isClinViewClientWindow()) {
-                removeAdminMenuItems();
-                hideMenus(clinViewClientMenu);
-                hideMenuItems(clinViewClientMenuItem);
+        // Hide the appropriate menus and menu items
 
-            } else if (!windowContext.isClinViewClientWindow()) {
-                removeAdminMenuItems();
-                hideMenus(clinicianWindowMenu);
-                hideMenuItems(clinicianWindowMenuItems);
-                // staff primary item - StaffListController.lambda$null$1(StaffListController.java:89)
-            }
-            viewClinicianItem.setText("View Clinician");
+        // Clinicians (or admins) viewing a client
+        if ((userType == UserType.CLINICIAN || userType == UserType.ADMINISTRATOR)
+                && windowContext.isClinViewClientWindow()) {
+            hideMenus(menusHideFromClinViewClients);
+            hideMenuItems(menuItemsHideFromClinViewClients);
         }
 
-        if (userType == UserType.ADMINISTRATOR) {
-
-            if (windowContext.isClinViewClientWindow()) {
-                hideMenuItem(profilePrimaryItem);
-                hideMenuItem(staffPrimaryItem);
-                hideMenuItem(createClientItem);
-                hideMenuItem(viewAdministratorItem);
-            } else if (!windowContext.isClinViewClientWindow()) {
-                hideMenuItem(organPrimaryItem);
-                hideMenuItem(medicationsPrimaryItem);
-                hideMenuItem(viewClientItem);
-                hideMenuItem(viewAdministratorItem);
-            }
+        // Admins
+        else if (userType == UserType.ADMINISTRATOR) {
+            hideMenus(menusHideFromAdmins);
+            hideMenuItems(menuItemsHideFromAdmins);
         }
-        if (userType == UserType.CLIENT == true) {
-            hideMenus(viewAllMenus);
+
+        // Clinicians
+        else if (userType == UserType.CLINICIAN) {
+            hideMenus(menusHideFromClinicians);
+            hideMenuItems(menuItemsHideFromClinicians);
+        }
+
+        // Clients
+        else if (userType == UserType.CLIENT) {
+            hideMenus(allMenus);
         }
 
         if (State.getUiType() == State.UiType.TOUCH) { // Preventing users from logging out on the touch UI
@@ -158,36 +180,8 @@ public class MenuBarController extends SubController {
 //            hideMenuItem(topSeparator);
         }
         closeItem.setDisable(!windowContext.isClinViewClientWindow());
+
         refresh();
-    }
-
-    /**
-     * Removes all menu items and menus that only admins should have.
-     */
-    private void removeAdminMenuItems() {
-        // Remove administrator file rights.
-        hideMenuItem(createAdministratorItem);
-        topSeparator.setVisible(false);
-        hideMenuItem(saveClientsItem);
-        hideMenuItem(saveCliniciansItem);
-        hideMenuItem(loadItem);
-        hideMenuItem(viewAdministratorItem);
-        hideMenuItem(cliItem);
-        hideMenuItem(settings);
-    }
-
-    /**
-     * Evaluates if the request organs button should be displayed for the current user.
-     * @param userType the type of current user
-     * @return true if the button should be shown, false otherwise
-     */
-    private boolean shouldShowRequestOrgans(UserType userType) {
-        if (userType == UserType.CLIENT) {
-            Client currentClient = session.getLoggedInClient();
-            return currentClient.isReceiver();
-        } else {
-            return windowContext.isClinViewClientWindow();
-        }
     }
 
     /**
@@ -293,6 +287,14 @@ public class MenuBarController extends SubController {
     }
 
     /**
+     * Redirects the GUI to the Organs To Donate page.
+     */
+    @FXML
+    private void goToOrganstoDonate() {
+        //PageNavigator.loadPage(Page.ORGANS_TO_DONATE, mainController);
+    }
+
+    /**
      * Redirects the GUI to the History page.
      */
     @FXML
@@ -353,7 +355,6 @@ public class MenuBarController extends SubController {
         PageNavigator.loadPage(Page.ADMIN_CONFIG, mainController);
     }
 
-
     /**
      * Opens a save file dialog to choose where to save all clients in the system to a file.
      */
@@ -367,7 +368,7 @@ public class MenuBarController extends SubController {
                             .getParent().toString())
             );
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json"));
-            File file = fileChooser.showSaveDialog(AppUI.getWindow());
+            File file = fileChooser.showSaveDialog(mainController.getStage());
             if (file != null) {
                 try (FileOutputStream output = new FileOutputStream(file)) {
                     output.write(State.getFileResolver().exportClients());
@@ -400,7 +401,7 @@ public class MenuBarController extends SubController {
                             .getParent().toString())
             );
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("JSON files (*.json)", "*.json"));
-            File file = fileChooser.showSaveDialog(AppUI.getWindow());
+            File file = fileChooser.showSaveDialog(mainController.getStage());
             if (file != null) {
                 try (FileOutputStream output = new FileOutputStream(file)) {
                     output.write(State.getFileResolver().exportClinicians());
@@ -444,7 +445,7 @@ public class MenuBarController extends SubController {
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(
                     "JSON/CSV files (*.json, *.csv)",
                     "*.json", "*.csv"));
-            File file = fileChooser.showOpenDialog(AppUI.getWindow());
+            File file = fileChooser.showOpenDialog(mainController.getStage());
 
             if (file != null) {
                 String format = getFileExtension(file.getName());

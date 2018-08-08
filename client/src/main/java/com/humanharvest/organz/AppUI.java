@@ -15,18 +15,13 @@ import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.logging.Level;
 
 /**
  * The main class that runs the JavaFX GUI.
  */
 public class AppUI extends Application {
-
-    private static Stage window;
-
-    public static Stage getWindow() {
-        return window;
-    }
 
     /**
      * Starts the JavaFX GUI. Sets up the main stage and initialises the state of the system.
@@ -39,18 +34,22 @@ public class AppUI extends Application {
         LoggerSetup.setup(Level.INFO);
         PageNavigator.setPageNavigator(new PageNavigatorStandard());
 
+        State.init(DataStorageType.REST);
+
+        Map<String, String> parameters = getParameters().getNamed();
+
+        if (parameters.containsKey("host")) {
+            State.setBaseUri(parameters.get("host"));
+        } else if (System.getenv("HOST") != null) {
+            State.setBaseUri(System.getenv("HOST"));
+        }
+
         primaryStage.setTitle("Organ Client Management System");
         primaryStage.setScene(createScene(loadMainPane(primaryStage)));
         primaryStage.show();
 
         primaryStage.setMinHeight(639);
         primaryStage.setMinWidth(1016);
-
-        State.init(DataStorageType.REST);
-
-        if (System.getenv("HOST") != null) {
-            State.setBaseUri(System.getenv("HOST"));
-        }
     }
 
     /**
@@ -67,9 +66,7 @@ public class AppUI extends Application {
         mainController.setStage(stage);
         mainController.setPane(mainPane);
         mainController.setWindowContext(WindowContext.defaultContext());
-
         State.addMainController(mainController);
-
         PageNavigator.loadPage(Page.LANDING, mainController);
 
         return mainPane;

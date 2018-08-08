@@ -24,12 +24,12 @@ public interface IPageNavigator {
 
 
     /**
-     * Opens a new window.
-     *
+     * Open a new window with the given size as min and current
+     * @param width The width to set
+     * @param height The height to set
      * @return The MainController for the new window, or null if the new window could not be created.
      */
-    MainController openNewWindow();
-
+    MainController openNewWindow(int width, int height);
 
     /**
      * Generates a pop-up alert of the given type.

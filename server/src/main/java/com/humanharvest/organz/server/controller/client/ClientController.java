@@ -1,18 +1,5 @@
 package com.humanharvest.organz.server.controller.client;
 
-import java.awt.image.ImagingOpException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
@@ -25,11 +12,7 @@ import com.humanharvest.organz.actions.images.AddImageAction;
 import com.humanharvest.organz.actions.images.DeleteImageAction;
 import com.humanharvest.organz.server.exceptions.GlobalControllerExceptionHandler.InvalidRequestException;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
-import com.humanharvest.organz.utilities.enums.ClientType;
-import com.humanharvest.organz.utilities.enums.Gender;
-import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.enums.Region;
+import com.humanharvest.organz.utilities.enums.*;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
@@ -40,22 +23,22 @@ import com.humanharvest.organz.utilities.validators.client.ModifyClientValidator
 import com.humanharvest.organz.views.client.CreateClientView;
 import com.humanharvest.organz.views.client.ModifyClientObject;
 import com.humanharvest.organz.views.client.PaginatedClientList;
-import com.humanharvest.organz.views.client.SingleDateView;
 import com.humanharvest.organz.views.client.Views;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.awt.image.ImagingOpException;
+import java.io.*;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @RestController
 public class ClientController {
@@ -71,7 +54,6 @@ public class ClientController {
     @JsonView(Views.Overview.class)
     public ResponseEntity<PaginatedClientList> getClients(
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken,
-
             @RequestParam(required = false) String q,
             @RequestParam(required = false) Integer offset,
             @RequestParam(required = false) Integer count,
@@ -179,7 +161,6 @@ public class ClientController {
     @PatchMapping("/clients/{uid}")
     @JsonView(Views.Details.class)
     public ResponseEntity<Client> updateClient(
-
             @PathVariable int uid,
             @RequestBody ModifyClientObject modifyClientObject,
             @RequestHeader(value = "If-Match", required = false) String etag,
@@ -225,13 +206,42 @@ public class ClientController {
         ModifyClientObject oldClient = new ModifyClientObject();
         //Copy the values from the current client to our oldClient
         BeanUtils.copyProperties(client, oldClient, modifyClientObject.getUnmodifiedFields());
-        //Make the action (this is a new action)
-        ModifyClientByObjectAction action = new ModifyClientByObjectAction(client,
-                State.getClientManager(),
-                oldClient,
-                modifyClientObject);
-        //Execute action, this would correspond to a specific users invoker in full version
-        State.getActionInvoker(authToken).execute(action);
+
+        //If client was not dead before but is now dead.
+        MarkClientAsDeadAction markClientAsDeadAction = null;
+        if (oldClient.getDateOfDeath() == null && modifyClientObject.getDateOfDeath() != null) {
+            // Verify that the user sending this request is a clinician/admin (clients cannot mark themselves as dead)
+            State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
+
+            markClientAsDeadAction = new MarkClientAsDeadAction(client,
+                    modifyClientObject.getDateOfDeath(),
+                    modifyClientObject.getTimeOfDeath(),
+                    modifyClientObject.getRegionOfDeath(),
+                    modifyClientObject.getCityOfDeath(),
+                    modifyClientObject.getCountryOfDeath(),
+                    State.getClientManager());
+
+            // Deregister death fields from the generic modify object (they will be updated by the mark dead action)
+            modifyClientObject.deregisterChange("dateOfDeath");
+            modifyClientObject.deregisterChange("timeOfDeath");
+            modifyClientObject.deregisterChange("countryOfDeath");
+            modifyClientObject.deregisterChange("regionOfDeath");
+            modifyClientObject.deregisterChange("cityOfDeath");
+        }
+
+        if (!modifyClientObject.getModifiedFields().isEmpty()) {
+            // Execute the action to make generic data changes
+            ModifyClientByObjectAction action = new ModifyClientByObjectAction(client,
+                    State.getClientManager(),
+                    oldClient,
+                    modifyClientObject);
+            State.getActionInvoker(authToken).execute(action);
+        }
+
+        // Execute mark dead action if applicable
+        if (markClientAsDeadAction != null) {
+            State.getActionInvoker(authToken).execute(markClientAsDeadAction);
+        }
 
         //Add the new ETag to the headers
         HttpHeaders headers = new HttpHeaders();
@@ -281,47 +291,6 @@ public class ClientController {
 
         //Respond, apparently updates should be 200 not 201 unlike 365 and our spec
         return new ResponseEntity<>(client, HttpStatus.OK);
-    }
-
-    @PostMapping("/clients/{uid}/dead")
-    @JsonView(Views.Details.class)
-    public ResponseEntity<Client> markClientAsDead(
-            @PathVariable int uid,
-            @RequestHeader(value = "If-Match", required = false) String etag,
-            @RequestHeader(value = "X-Auth-Token", required = false) String authToken,
-            @RequestBody SingleDateView dateOfDeath)
-            throws IfMatchRequiredException, IfMatchFailedException, InvalidRequestException {
-
-        //Fetch the client given by ID
-        Optional<Client> optionalClient = State.getClientManager().getClientByID(uid);
-        if (!optionalClient.isPresent()) {
-            //Return 404 if that client does not exist
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        Client client = optionalClient.get();
-
-        State.getAuthenticationManager().verifyClientAccess(authToken, client);
-
-        //Check the ETag. These are handled in the exceptions class.
-        if (etag == null) {
-            throw new IfMatchRequiredException();
-        }
-        if (!Objects.equals(client.getETag(), etag)) {
-            throw new IfMatchFailedException();
-        }
-
-        MarkClientAsDeadAction action = new MarkClientAsDeadAction(client, dateOfDeath.getDate(), State
-                .getClientManager
-                        ());
-        State.getActionInvoker(authToken).execute(action);
-
-        //Add the new ETag to the headers
-        HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client.getETag());
-
-        //Respond
-        return new ResponseEntity<>(client, headers, HttpStatus.OK);
     }
 
     /**

@@ -1,13 +1,15 @@
 package com.humanharvest.organz.actions.client;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.state.ClientManager;
+import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * A reversible action that will change the client's date of death to the date given, and cancel all their currently
@@ -16,6 +18,10 @@ import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 public class MarkClientAsDeadAction extends ClientAction {
 
     private final LocalDate deathDate;
+    private final LocalTime deathTime;
+    private final String deathRegion;
+    private final String deathCity;
+    private final Country deathCountry;
     private final List<ResolveTransplantRequestAction> resolveTransplantActions;
 
     /**
@@ -24,9 +30,15 @@ public class MarkClientAsDeadAction extends ClientAction {
      * @param deathDate Their date of death.
      * @param manager The ClientManager to apply the changes to
      */
-    public MarkClientAsDeadAction(Client client, LocalDate deathDate, ClientManager manager) {
+    public MarkClientAsDeadAction(Client client, LocalDate deathDate, LocalTime deathTime, String deathRegion,
+                                  String deathCity, Country deathCountry, ClientManager manager) {
         super(client, manager);
         this.deathDate = deathDate;
+        this.deathTime = deathTime;
+        this.deathRegion = deathRegion;
+        this.deathCity = deathCity;
+        this.deathCountry = deathCountry;
+
         resolveTransplantActions = client.getTransplantRequests()
                 .stream()
                 .filter(request -> request.getStatus() == TransplantRequestStatus.WAITING)
@@ -47,6 +59,10 @@ public class MarkClientAsDeadAction extends ClientAction {
     protected void execute() {
         super.execute();
         client.setDateOfDeath(deathDate);
+        client.setTimeOfDeath(deathTime);
+        client.setRegionOfDeath(deathRegion);
+        client.setCityOfDeath(deathCity);
+        client.setCountryOfDeath(deathCountry);
         for (ResolveTransplantRequestAction action : resolveTransplantActions) {
             action.execute();
         }
@@ -57,6 +73,10 @@ public class MarkClientAsDeadAction extends ClientAction {
     protected void unExecute() {
         super.unExecute();
         client.setDateOfDeath(null);
+        client.setCountryOfDeath(null);
+        client.setCityOfDeath(null);
+        client.setRegionOfDeath(null);
+        client.setTimeOfDeath(null);
         for (ResolveTransplantRequestAction action : resolveTransplantActions) {
             action.unExecute();
         }

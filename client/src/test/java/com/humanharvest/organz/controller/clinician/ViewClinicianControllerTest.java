@@ -1,20 +1,16 @@
 package com.humanharvest.organz.controller.clinician;
 
-import static org.junit.Assert.assertEquals;
-import static org.testfx.api.FxAssert.verifyThat;
-import static org.testfx.matcher.base.NodeMatchers.isInvisible;
-
-import javafx.scene.input.KeyCode;
-
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.controller.ControllerTest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
-import org.junit.Ignore;
+import javafx.scene.input.KeyCode;
 import org.junit.Test;
 import org.testfx.api.FxRobotException;
+
+import static org.junit.Assert.assertEquals;
 
 public class ViewClinicianControllerTest extends ControllerTest {
 
@@ -45,7 +41,6 @@ public class ViewClinicianControllerTest extends ControllerTest {
     }
 
     @Test
-    @Ignore
     public void validChanges() {
         clickOn("#fname").write("a");
         clickOn("#lname").write("b");
@@ -55,7 +50,6 @@ public class ViewClinicianControllerTest extends ControllerTest {
     }
 
     @Test(expected = FxRobotException.class)
-    @Ignore
     public void updateDisplayed() {
         clickOn("#fname").write("a");
         clickOn("#applyButton");
@@ -71,8 +65,4 @@ public class ViewClinicianControllerTest extends ControllerTest {
         assertEquals("z", testClinician.getLastName());
     }
 
-    @Test
-    public void testLoadClinicianPaneIsHidden() {
-        verifyThat("#loadClinicianPane", isInvisible());
-    }
 }
