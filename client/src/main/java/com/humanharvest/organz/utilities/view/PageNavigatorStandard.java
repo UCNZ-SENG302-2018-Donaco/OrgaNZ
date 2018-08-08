@@ -73,6 +73,7 @@ public class PageNavigatorStandard implements IPageNavigator {
             Pane mainPane = loader.load(PageNavigatorStandard.class.getResourceAsStream(Page.MAIN.getPath()));
             MainController mainController = loader.getController();
             mainController.setStage(newStage);
+            mainController.setPane(mainPane);
             State.addMainController(mainController);
             newStage.setOnCloseRequest(e -> State.deleteMainController(mainController));
 

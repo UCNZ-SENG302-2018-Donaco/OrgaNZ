@@ -46,6 +46,10 @@ public final class State {
         MEMORY, REST
     }
 
+    public enum UiType {
+        STANDARD, TOUCH
+    }
+
     public static String BASE_URI = "http://localhost:8080/";
 
     private static DataStorageType currentStorageType = DataStorageType.MEMORY;
@@ -73,6 +77,7 @@ public final class State {
     private static String token = "";
     private static Clinician createdClinician;
     private static EnumSet<Country> allowedCountries;
+    private static UiType uiType = UiType.STANDARD;
 
     private State() {
     }
@@ -297,5 +302,13 @@ public final class State {
 
     public static void setCreatedClinician(Clinician createdClinician) {
         State.createdClinician = createdClinician;
+    }
+
+    public static void setUiType(UiType type) {
+        uiType = type;
+    }
+
+    public static UiType getUiType() {
+        return uiType;
     }
 }

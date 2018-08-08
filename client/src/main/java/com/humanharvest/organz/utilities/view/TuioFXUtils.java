@@ -161,7 +161,6 @@ public class TuioFXUtils {
         });
 
         */
-
     }
 
     private static double withinRange(double min, double max, double value) {

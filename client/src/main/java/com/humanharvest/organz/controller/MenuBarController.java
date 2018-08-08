@@ -12,9 +12,12 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.humanharvest.organz.AppTUIO;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonBar.ButtonData;
@@ -148,6 +151,11 @@ public class MenuBarController extends SubController {
         }
         if (userType == UserType.CLIENT == true) {
             hideMenus(viewAllMenus);
+        }
+
+        if (State.getUiType() == State.UiType.TOUCH) { // Preventing users from logging out on the touch UI
+//            hideMenuItem(logOutItem);
+//            hideMenuItem(topSeparator);
         }
         closeItem.setDisable(!windowContext.isClinViewClientWindow());
         refresh();
@@ -567,8 +575,12 @@ public class MenuBarController extends SubController {
      */
     @FXML
     private void closeWindow() {
-        Stage stage = (Stage) menuBar.getScene().getWindow();
-        stage.close();
+        if (State.getUiType() == State.UiType.TOUCH) {
+            AppTUIO.root.getChildren().remove(mainController.getPane());
+        } else {
+            Stage stage = (Stage) menuBar.getScene().getWindow();
+            stage.close();
+        }
     }
 
     /**

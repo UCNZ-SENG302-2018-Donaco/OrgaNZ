@@ -1,6 +1,7 @@
 package com.humanharvest.organz.utilities.view;
 
 import com.humanharvest.organz.controller.MainController;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 
