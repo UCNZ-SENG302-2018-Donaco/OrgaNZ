@@ -383,6 +383,7 @@ public class ViewClientController extends ViewBaseController {
         } else {
             legalNameLabel.setTextFill(Color.BLACK);
         }
+
         if (dob.getValue() == null || dob.getValue().isAfter(LocalDate.now())) {
             dobLabel.setTextFill(Color.RED);
             update = false;
