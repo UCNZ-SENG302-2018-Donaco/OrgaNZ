@@ -45,7 +45,6 @@ public class ViewClinicianControllerTest extends ControllerTest {
     }
 
     @Test
-    @Ignore
     public void validChanges() {
         clickOn("#fname").write("a");
         clickOn("#lname").write("b");
@@ -55,7 +54,6 @@ public class ViewClinicianControllerTest extends ControllerTest {
     }
 
     @Test(expected = FxRobotException.class)
-    @Ignore
     public void updateDisplayed() {
         clickOn("#fname").write("a");
         clickOn("#applyButton");
@@ -71,8 +69,4 @@ public class ViewClinicianControllerTest extends ControllerTest {
         assertEquals("z", testClinician.getLastName());
     }
 
-    @Test
-    public void testLoadClinicianPaneIsHidden() {
-        verifyThat("#loadClinicianPane", isInvisible());
-    }
 }
