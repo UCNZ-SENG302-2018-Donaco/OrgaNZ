@@ -165,12 +165,12 @@ public class AppTUIO extends Application {
 
         Scene scene = new Scene(root, 1920, 1080);
 
-        TuioFX tuioFX = new TuioFX(primaryStage, Configuration.debug());
+//        TuioFX tuioFX = new TuioFX(primaryStage, Configuration.debug());
         //Instead of tuioFX.enableMTWidgets(true);
         // We set our own stylesheet that contains less style changes but still loads the skins required for multi touch
         Application.setUserAgentStylesheet("MODENA");
-        StyleManager.getInstance().addUserAgentStylesheet("/css/multifocus.css");
-        tuioFX.start();
+        StyleManager.getInstance().addUserAgentStylesheet("/css/multifocus.css") ;
+//        tuioFX.start();
 
         Pane pane = loadMainPane(new Stage());
 //        pane.setMaxWidth(600);
@@ -184,16 +184,15 @@ public class AppTUIO extends Application {
 
         primaryStage.setTitle("Test");
         primaryStage.setScene(scene);
-        primaryStage.setFullScreen(true);
+        new FuckingTouch(root);
+//        primaryStage.setFullScreen(true);
         primaryStage.show();
-//        primaryStage.setWidth(1024);
-//        primaryStage.setHeight(768);
+        primaryStage.setWidth(1024);
+        primaryStage.setHeight(768);
 
-        initialiseTUIOHook(tuioFX);
-        initialiseFakeTUIO(tuioFX, primaryStage);
-        primaryStage.addEventFilter(TouchEvent.ANY, event -> {
-            System.out.println(event);
-        });
+//        initialiseTUIOHook(tuioFX);
+//        initialiseFakeTUIO(tuioFX, primaryStage);
+//        primaryStage.addEventFilter(TouchEvent.ANY, new TouchEventHook());
 
         State.init(DataStorageType.REST);
 
@@ -414,6 +413,18 @@ public class AppTUIO extends Application {
                 oldRoot.getStyleClass().removeAll("root");
             }
 
+        }
+    }
+
+    private class TouchEventHook implements EventHandler<TouchEvent> {
+
+        @Override
+        public void handle(TouchEvent event) {
+            if (event.isAltDown() && event.isControlDown() && event.isMetaDown() && event.isShiftDown()) {
+                throw new RuntimeException();
+            } else {
+                event.consume();
+            }
         }
     }
 }
