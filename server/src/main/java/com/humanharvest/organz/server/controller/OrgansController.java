@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
-import com.humanharvest.organz.actions.client.DeleteDonatedOrganAction;
+//import com.humanharvest.organz.actions.client.DeleteDonatedOrganAction;
 import com.humanharvest.organz.server.exceptions.GlobalControllerExceptionHandler;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.views.client.DonatedOrganView;
@@ -63,9 +63,9 @@ public class OrgansController {
 
         DonatedOrgan donatedOrgan = client.get().getDonatedOrganById(id);
 
-        DeleteDonatedOrganAction action = new DeleteDonatedOrganAction(client.get(),donatedOrgan,State
+        /*DeleteDonatedOrganAction action = new DeleteDonatedOrganAction(client.get(),donatedOrgan,State
                 .getClientManager());
-        State.getActionInvoker(authToken).execute(action);
+        State.getActionInvoker(authToken).execute(action);*/
 
         Client client1 = State.getClientManager()
                 .getClientByID(client.get().getUid())

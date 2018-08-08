@@ -1,15 +1,18 @@
 package com.humanharvest.organz.controller.client;
 
+import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.state.ClientManager;
+import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.control.Label;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -53,17 +56,26 @@ public class ManuallyOverwrittenOrgansController extends SubController {
     @FXML
     public TableColumn<DonatedOrgan, LocalDateTime> manualOverrideCol;
 
+    public Label donorIDLabel;
+
+    private Session session;
     private ClientManager manager;
     private ObservableList<DonatedOrgan> manuallyExpiredOrgans = FXCollections.observableArrayList();
     private DonatedOrgan selectedOrgan;
+    private Client client;
 
-    public ManuallyOverwrittenOrgansController() { manager = State.getClientManager(); }
+    public ManuallyOverwrittenOrgansController() {
+        manager = State.getClientManager();
+        session = State.getSession();
+    }
 
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
         mainController.setTitle("Organs to donate");
         mainController.loadMenuBar(menuBarPane);
+        client = windowContext.getViewClient();
+        donorIDLabel.setText(client.getUid().toString());
         refresh();
     }
 
