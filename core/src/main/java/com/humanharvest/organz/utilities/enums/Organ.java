@@ -1,7 +1,6 @@
 package com.humanharvest.organz.utilities.enums;
 
 import java.time.Duration;
-import java.time.temporal.ChronoUnit;
 
 /**
  * Enum for organs. Allows for to/from string conversion
@@ -12,17 +11,13 @@ public enum Organ {
     PANCREAS("Pancreas", Duration.ofHours(12), Duration.ofHours(24)),
     HEART("Heart", Duration.ofHours(4), Duration.ofHours(6)),
     LUNG("Lung", Duration.ofHours(4), Duration.ofHours(6)),
-    INTESTINE("Intestine", null, null),  // TODO find data
+    INTESTINE("Intestine", Duration.ofHours(8), Duration.ofHours(12)),
     CORNEA("Cornea", Duration.ofDays(5), Duration.ofDays(7)),
     MIDDLE_EAR("Middle ear", null, null),  // TODO find data
     SKIN("Skin", Duration.ofDays(365 * 3), Duration.ofDays(365 * 10)),
     BONE("Bone", Duration.ofDays(365 * 3), Duration.ofDays(365 * 10)),
     BONE_MARROW("Bone marrow", null, null),  // TODO find data
     CONNECTIVE_TISSUE("Connective tissue", null, null);  // TODO find data
-
-    // Placeholder expiration durations for organs where no reliable data can be found
-    private static final Duration defaultMinExpiration = Duration.ofHours(12);
-    private static final Duration defaultMaxExpiration = Duration.ofHours(24);
 
     private final String text;
     private final Duration minExpiration;
@@ -42,11 +37,11 @@ public enum Organ {
     }
 
     public Duration getMinExpiration() {
-        return minExpiration == null ? defaultMinExpiration : minExpiration;
+        return minExpiration;
     }
 
     public Duration getMaxExpiration() {
-        return maxExpiration == null ? defaultMaxExpiration : maxExpiration;
+        return maxExpiration;
     }
 
     /**
