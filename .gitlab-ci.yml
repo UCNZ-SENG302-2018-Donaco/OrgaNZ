@@ -38,6 +38,25 @@ recent-artifacts-dev:
   only:
     - development@seng302-2018/team-700
 
+server-build-image:
+  stage: build
+  script:
+  - mvn -B clean package -Dmaven.test.skip=true
+  - docker-compose build
+  only:
+  - deployment@seng302-2018/team-700
+  - development@seng302-2018/team-700
+
+server-deployment:
+  stage: deploy
+  script:
+  - docker stop team700_web_1 || echo "success"
+  - docker container prune -f
+  - docker-compose up -d
+  only:
+  - deployment@seng302-2018/team-700
+  - development@seng302-2018/team-700
+
 release-artifacts:
   stage: deploy
   script:

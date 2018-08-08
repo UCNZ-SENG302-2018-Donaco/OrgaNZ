@@ -65,4 +65,13 @@ public class ModifyBaseObject {
             throw new RuntimeException("Invalid field", e);
         }
     }
+
+    @JsonIgnore
+    public void deregisterChange(String fieldName) {
+        try {
+            modifiedFields.remove(getClass().getDeclaredField(fieldName));
+        } catch (NoSuchFieldException e) {
+            throw new RuntimeException("Invalid field", e);
+        }
+    }
 }
