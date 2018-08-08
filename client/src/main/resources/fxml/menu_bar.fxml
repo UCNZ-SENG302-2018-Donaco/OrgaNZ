@@ -17,8 +17,9 @@
                   <SeparatorMenuItem fx:id="topSeparator" mnemonicParsing="false" />
                <MenuItem fx:id="logOutItem" mnemonicParsing="false" onAction="#logout" text="Log Out" />
                   <SeparatorMenuItem mnemonicParsing="false" />
+                  <MenuItem fx:id="duplicateItem" mnemonicParsing="false" onAction="#duplicateWindow" text="Duplicate Window" />
                   <MenuItem fx:id="closeItem" mnemonicParsing="false" onAction="#closeWindow" text="Close Window" />
-                  <MenuItem mnemonicParsing="false" onAction="#quitProgram" text="Quit" />
+                  <MenuItem fx:id="quitItem" mnemonicParsing="false" onAction="#quitProgram" text="Quit" />
              </items>
           </Menu>
           <Menu fx:id="editItem" mnemonicParsing="false" text="Edit">

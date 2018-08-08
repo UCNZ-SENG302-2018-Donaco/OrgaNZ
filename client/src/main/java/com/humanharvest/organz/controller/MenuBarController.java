@@ -13,6 +13,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.humanharvest.organz.AppTUIO;
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.utilities.view.WindowContext;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -96,6 +98,8 @@ public class MenuBarController extends SubController {
     public MenuItem createClientItem;
     public MenuItem refreshCacheItem;
     public MenuItem settingsItem;
+    public MenuItem quitItem;
+    public MenuItem duplicateItem;
 
     public SeparatorMenuItem topSeparator;
 
@@ -143,11 +147,13 @@ public class MenuBarController extends SubController {
         MenuItem menuItemsHideFromClinViewClients[] = {saveClientsItem, saveCliniciansItem, loadItem, settingsItem,
                 logOutItem, searchClientItem, createClientItem, transplantRequestsItem, organsToDonateItem,
                 staffListItem, createAdministratorItem, createClinicianItem, viewAdministratorItem,
-                viewClinicianItem, historyItem, cliItem};
+                viewClinicianItem, historyItem, cliItem, quitItem, topSeparator};
 
         // Menus to hide from clients (aka all menus)
         Menu allMenus[] = {filePrimaryItem, editPrimaryItem, clientPrimaryItem, organPrimaryItem,
                 medicationsPrimaryItem, staffPrimaryItem, profilePrimaryItem};
+
+        duplicateItem.setVisible(false); // Duplicate item is exclusively for the touch screen interface
 
         // Hide the appropriate menus and menu items
 
@@ -156,6 +162,9 @@ public class MenuBarController extends SubController {
                 && windowContext.isClinViewClientWindow()) {
             hideMenus(menusHideFromClinViewClients);
             hideMenuItems(menuItemsHideFromClinViewClients);
+            if (State.getUiType() == State.UiType.TOUCH) {
+                duplicateItem.setVisible(true);
+            }
         }
 
         // Admins
@@ -175,10 +184,6 @@ public class MenuBarController extends SubController {
             hideMenus(allMenus);
         }
 
-        if (State.getUiType() == State.UiType.TOUCH) { // Preventing users from logging out on the touch UI
-//            hideMenuItem(logOutItem);
-//            hideMenuItem(topSeparator);
-        }
         closeItem.setDisable(!windowContext.isClinViewClientWindow());
 
         refresh();
@@ -569,6 +574,21 @@ public class MenuBarController extends SubController {
         ActionResponseView responseView = State.getActionResolver().executeRedo(State.getClientEtag());
         Notifications.create().title("Redo").text(responseView.getResultText()).showInformation();
         PageNavigator.refreshAllWindows();
+    }
+
+    @FXML
+    private void duplicateWindow() {
+        Client client = windowContext.getViewClient();
+        if (client != null) {
+            MainController newMain = PageNavigator.openNewWindow();
+            if (newMain != null) {
+                newMain.setWindowContext(new WindowContext.WindowContextBuilder()
+                        .setAsClinicianViewClientWindow()
+                        .viewClient(client)
+                        .build());
+                PageNavigator.loadPage(Page.VIEW_CLIENT, newMain);
+            }
+        }
     }
 
     /**
