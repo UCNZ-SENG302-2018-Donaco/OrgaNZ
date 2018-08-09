@@ -180,8 +180,7 @@ Context - Viewing the clinician details page.
 Logging in as an admin and viewing clinicians given the option for admins to search for all clinicians.
 Logging in as a clinician only allows them to strictly see only their details. They cannot search for details about any other clinicians
 
-As an admin, they can change the details of the default admin
-`Bug found` - editing a non default clinician throws a bad request. Has now been fixed.
+As an admin, they can change the details of the default clinician
 
 
 ## Story 47
