@@ -68,8 +68,8 @@
                                  <RowConstraints vgrow="SOMETIMES" />
                              </rowConstraints>
                               <children>
-                                 <Button mnemonicParsing="false" text="Select All" />
-                                 <Button mnemonicParsing="false" text="Select None" GridPane.columnIndex="1" />
+                                 <Button mnemonicParsing="false" onAction="#selectAll" text="Select All" />
+                                 <Button mnemonicParsing="false" onAction="#selectNone" text="Select None" GridPane.columnIndex="1" />
                               </children>
                            </GridPane>
                    <CheckBox fx:id="checkBoxLiver" mnemonicParsing="false" text="Liver" GridPane.rowIndex="1" />
