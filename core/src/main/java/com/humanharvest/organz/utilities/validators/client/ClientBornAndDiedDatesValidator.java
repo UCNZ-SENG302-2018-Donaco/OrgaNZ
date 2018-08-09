@@ -22,12 +22,14 @@ public class ClientBornAndDiedDatesValidator {
     /**
      * Returns true if the date of death is not null, and
      * is not in the future, and
-     * is not before their date of birth
+     * is not before their date of birth (or the date of birth is null)
      * @param dateOfDeath their date of death
      * @param dateOfBirth their date of birth
      */
     public static boolean dateOfDeathIsValid(LocalDate dateOfDeath, LocalDate dateOfBirth) {
-        return dateOfDeath != null && !dateOfDeath.isAfter(LocalDate.now()) && !dateOfDeath.isBefore(dateOfBirth);
+        return dateOfDeath != null
+                && !dateOfDeath.isAfter(LocalDate.now())
+                && (dateOfBirth == null || !dateOfDeath.isBefore(dateOfBirth));
     }
 
     /**
@@ -37,8 +39,9 @@ public class ClientBornAndDiedDatesValidator {
      * @param timeOfDeath their time of death
      */
     public static boolean timeOfDeathIsValid(LocalDate dateOfDeath, LocalTime timeOfDeath) {
-        return timeOfDeath != null &&
-                (!LocalDate.now().equals(dateOfDeath) || !timeOfDeath.isAfter(LocalTime.now()));
+        return dateOfDeath == null
+                || (timeOfDeath != null &&
+                (!LocalDate.now().equals(dateOfDeath) || !timeOfDeath.isAfter(LocalTime.now())));
     }
 
     private static boolean dateTimeOfDeathIsValid(LocalDate dateOfDeath, LocalTime timeOfDeath, LocalDate dateOfBirth) {
