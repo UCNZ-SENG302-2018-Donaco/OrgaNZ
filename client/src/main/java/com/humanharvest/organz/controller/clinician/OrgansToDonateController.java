@@ -140,7 +140,11 @@ public class OrgansToDonateController extends SubController {
         // Attach timer to update table each second (for time until expiration)
         final Timeline clock = new Timeline(new KeyFrame(
                 javafx.util.Duration.millis(1000),
-                event -> tableView.refresh()));
+                event -> {
+                    tableView.refresh();
+                    observableOrgansToDonate.removeIf(donatedOrgan -> donatedOrgan.getDurationUntilExpiry() != null &&
+                            donatedOrgan.getDurationUntilExpiry().minusSeconds(1).isNegative());
+                }));
         clock.setCycleCount(Animation.INDEFINITE);
         clock.play();
 
