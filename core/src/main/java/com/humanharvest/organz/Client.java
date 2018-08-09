@@ -404,6 +404,10 @@ public class Client implements ConcurrencyControlledEntity {
         this.dateOfBirth = dateOfBirth;
     }
 
+    public LocalDateTime getDatetimeOfDeath() {
+        return LocalDateTime.of(dateOfDeath, timeOfDeath);
+    }
+
     public LocalDate getDateOfDeath() {
         return dateOfDeath;
     }

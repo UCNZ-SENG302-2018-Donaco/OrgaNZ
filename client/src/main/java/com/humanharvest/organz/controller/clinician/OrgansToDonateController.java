@@ -37,7 +37,6 @@ import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
-import org.hibernate.validator.internal.util.logging.formatter.DurationFormatter;
 
 public class OrgansToDonateController extends SubController {
 
@@ -156,7 +155,8 @@ public class OrgansToDonateController extends SubController {
             }
         });
 
-        filteredOrgansToDonate.setPredicate(donatedOrgan -> !donatedOrgan.getDurationUntilExpiry().isZero());
+        filteredOrgansToDonate.setPredicate(donatedOrgan -> donatedOrgan.getDurationUntilExpiry() == null
+                || !donatedOrgan.getDurationUntilExpiry().isZero());
         sortedOrgansToDonate.comparatorProperty().bind(tableView.comparatorProperty());
     }
 
@@ -230,6 +230,13 @@ public class OrgansToDonateController extends SubController {
                 if (empty) {
                     setText(null);
 
+                } else if (item == null) { // no expiration
+
+                    Duration timeSinceDeath = Duration.between(
+                            getTableView().getItems().get(getIndex()).getDateTimeOfDonation(),
+                            LocalDateTime.now());
+                    setText("N/A (" + getFormattedDuration(timeSinceDeath) + " since death)");
+
                 } else if (item.isZero() || item.isNegative()
                         || item.equals(Duration.ZERO) || item.minusSeconds(1).isNegative()) {
                     // Duration is less than 1 second
@@ -239,22 +246,13 @@ public class OrgansToDonateController extends SubController {
                     // Split duration string into words, e.g. ["3", "days", "2", "hours", "10", "minutes",...]
                     // It then takes the first 4 words (except for seconds, then it just takes up to the seconds)
                     // and stores that in displayedDuration, e.g. "3 days 2 hours"
-                    String splitDurationString[] = new DurationFormatter(item).toString().split(" ");
-                    StringBuilder displayedDuration = new StringBuilder();
-                    for (int i = 0; i < 4 && i < splitDurationString.length; i++) {
-                        displayedDuration.append(splitDurationString[i]).append(" ");
-                        if (splitDurationString[i].contains("second") || (splitDurationString.length >= i + 2 &&
-                                splitDurationString[i + 2].contains("second"))) {
-                            break;
-                        }
-                    }
+                    String displayedDuration = getFormattedDuration(item);
+
                     // Progress as a decimal. starts at 0 (at time of death) and goes to 1.
                     double progressDecimal = getTableView().getItems().get(getIndex()).getProgressDecimal();
                     double fullMarker = getTableView().getItems().get(getIndex()).getFullMarker();
 
                     // Calculate colour
-                    // There are 511 distinct colours between red (0xff, 0x00, 0x00) and green (0x00, 0xff, 0x00)
-                    //
                     String style = getStyleForProgress(progressDecimal, fullMarker);
 
                     if (progressDecimal >= fullMarker) {
@@ -269,7 +267,7 @@ public class OrgansToDonateController extends SubController {
                         }
                     }
 
-                    setText(displayedDuration.toString());
+                    setText(displayedDuration);
                     setStyle(style);
                 }
             }
@@ -289,7 +287,6 @@ public class OrgansToDonateController extends SubController {
         String red;
         String blue = "00"; // no blue
 
-        double percent = progress * 100;
         double lowerPercent;
         double higherPercent;
         double progressForColour;
@@ -297,6 +294,11 @@ public class OrgansToDonateController extends SubController {
         String whiteColour = "transparent";
         String greyColour = "aaaaaa";
         String middleColour;
+
+        double percent = progress * 100;
+        if (percent < 0.01) {
+            percent = 0;
+        }
 
         // Calculate percentages and the middle colour (white if it's not reached lower bound, maroon if it has)
         if (progress < fullMarker) { // Hasn't reached lower bound yet
@@ -333,8 +335,25 @@ public class OrgansToDonateController extends SubController {
         String colour = red + green + blue;
         return String.format("-fx-background-color: "
                         + "linear-gradient(to right, #%s 0%%, #%s %s%%, %s %s%%, %s %s%%, #%s %s%%, #%s 100%%);",
-                        colour, colour, lowerPercent, middleColour, lowerPercent, middleColour, higherPercent,
-                        greyColour, higherPercent, greyColour);
+                colour, colour, lowerPercent, middleColour, lowerPercent, middleColour, higherPercent,
+                greyColour, higherPercent, greyColour);
+    }
+
+    /**
+     * Returns the duration, formatted to display x hours, y minutes (or x hours, y seconds if there are less than 60
+     * seconds).
+     * @param duration the duration to format
+     * @return the formatted string
+     */
+    private static String getFormattedDuration(Duration duration) {
+        String formattedDuration = duration.toHours() + " hours ";
+        long minutes = duration.toMinutes() % 60;
+        if (minutes != 0) { // has some minutes
+            formattedDuration += minutes + " minutes";
+        } else { // no minutes, just seconds (and perhaps hours)
+            formattedDuration += duration.getSeconds() % 3600 + " seconds";
+        }
+        return formattedDuration;
     }
 
     /* TODO this is for pagination
