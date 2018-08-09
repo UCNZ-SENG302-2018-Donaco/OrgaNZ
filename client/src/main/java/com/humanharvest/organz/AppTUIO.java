@@ -184,7 +184,7 @@ public class AppTUIO extends Application {
 
         primaryStage.setTitle("Test");
         primaryStage.setScene(scene);
-        new FuckingTouch(root);
+        new MultitouchHandler(root);
 //        primaryStage.setFullScreen(true);
         primaryStage.show();
         primaryStage.setWidth(1024);

@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import javafx.event.Event;
+import javafx.collections.ObservableList;
 import javafx.scene.Node;
 import javafx.scene.input.GestureEvent;
 import javafx.scene.input.MouseEvent;
@@ -15,12 +15,16 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.input.TouchEvent;
 import javafx.scene.input.TouchPoint;
 import javafx.scene.layout.Pane;
+import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Scale;
+import javafx.scene.transform.Transform;
+import javafx.scene.transform.Translate;
 
-public class FuckingTouch {
+public class MultitouchHandler {
     private final List<CurrentTouch> touches = new ArrayList<>();
     private final Pane rootPane;
 
-    public FuckingTouch(Pane rootPane) {
+    public MultitouchHandler(Pane rootPane) {
         this.rootPane = rootPane;
         rootPane.addEventFilter(MouseEvent.ANY, event -> {
             if (event.isSynthesized()) {
@@ -35,6 +39,7 @@ public class FuckingTouch {
             CurrentTouch currentTouch = getCurrentTouch(touchPoint);
             if (event.getEventType() == TouchEvent.TOUCH_PRESSED) {
                 currentTouch.pane = findPane(touchPoint);
+                setupInitialTransforms(currentTouch);
                 currentTouch.originalPointX = touchPoint.getX();
                 currentTouch.originalPointY = touchPoint.getY();
                 currentTouch.setRelativeXY(event.getTouchPoint().getPickResult());
@@ -44,8 +49,6 @@ public class FuckingTouch {
             } else {
                 handleCurrentTouch(touchPoint, currentTouch);
             }
-
-            System.out.println(currentTouch);
         });
 
         rootPane.addEventFilter(ScrollEvent.ANY, event -> {
@@ -77,8 +80,10 @@ public class FuckingTouch {
         if (paneTouches.size() == 1) {
             double deltaX = touchPoint.getX() - currentTouch.originalPointX;
             double deltaY = touchPoint.getY() - currentTouch.originalPointY;
-            pane.setTranslateX(pane.getTranslateX() + deltaX);
-            pane.setTranslateY(pane.getTranslateY() + deltaY);
+
+            currentTouch.translate.setX(currentTouch.translate.getX() + deltaX);
+            currentTouch.translate.setY(currentTouch.translate.getY() + deltaY);
+
             currentTouch.originalPointX = touchPoint.getX();
             currentTouch.originalPointY = touchPoint.getY();
 
@@ -93,8 +98,13 @@ public class FuckingTouch {
             double oldAngle = calculateAngle(currentTouch.originalPointX, currentTouch.originalPointY, otherTouch.originalPointX, otherTouch.originalPointY);
             double newAngle = calculateAngle(touchPoint.getX(), touchPoint.getY(), otherTouch.originalPointX, otherTouch.originalPointY);
             double angleDelta = newAngle - oldAngle;
-            double centreX = Math.min(touchPoint.getX(), otherTouch.originalPointX) + Math.abs(touchPoint.getX() - otherTouch.originalPointX) / 2;
-            pane.setRotate(pane.getRotate() + Math.toDegrees(angleDelta));
+            double centreX =
+                    Math.min(touchPoint.getX(), otherTouch.originalPointX) + Math.abs(touchPoint.getX() - otherTouch.originalPointX) / 2;
+            double centreY =
+                    Math.min(touchPoint.getY(), otherTouch.originalPointY) + Math.abs(touchPoint.getY() - otherTouch.originalPointY) / 2;
+
+            currentTouch.rotate.setAngle(currentTouch.rotate.getAngle() + Math.toDegrees(angleDelta));
+
             currentTouch.originalPointX = touchPoint.getX();
             currentTouch.originalPointY = touchPoint.getY();
         } else {
@@ -130,6 +140,26 @@ public class FuckingTouch {
         return Optional.of((Pane)intersectNode);
     }
 
+    private void setupInitialTransforms(CurrentTouch currentTouch) {
+        currentTouch.pane.ifPresent(pane -> {
+            ObservableList<Transform> transforms = pane.getTransforms();
+            if (transforms.isEmpty()) {
+                currentTouch.translate = new Translate();
+                currentTouch.rotate = new Rotate();
+                currentTouch.scale = new Scale(1, 1);
+                transforms.add(currentTouch.translate);
+                transforms.add(currentTouch.rotate);
+                transforms.add(currentTouch.scale);
+            } else if (transforms.size() == 3) {
+                currentTouch.translate = (Translate)transforms.get(0);
+                currentTouch.rotate = (Rotate)transforms.get(1);
+                currentTouch.scale = (Scale)transforms.get(2);
+            } else {
+                throw new RuntimeException();
+            }
+        });
+    }
+
     private CurrentTouch getCurrentTouch(TouchPoint touchPoint) {
         while (touchPoint.getId() >= touches.size()) {
             touches.add(null);
@@ -154,6 +184,9 @@ public class FuckingTouch {
         public double originalPointY;
         public double originalRelativeX;
         public double originalRelativeY;
+        public Translate translate;
+        public Rotate rotate;
+        public Scale scale;
 
         @Override
         public String toString() {
