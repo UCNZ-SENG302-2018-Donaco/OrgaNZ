@@ -155,6 +155,19 @@ public class OrgansToDonateController extends SubController {
             }
         });
 
+        // Sets the comparator for sorting by duration column.
+        timeUntilExpiryCol.setComparator((o1, o2) -> {
+            if (o1 == o2) {
+                return 0;
+            } else if (o1 == null) {
+                return 1; // o1 is "biggest"
+            } else if (o2 == null) {
+                return -1; //o2 is "biggest"
+            } else {
+                return o1.compareTo(o2);
+            }
+        });
+
         filteredOrgansToDonate.setPredicate(donatedOrgan -> donatedOrgan.getDurationUntilExpiry() == null
                 || !donatedOrgan.getDurationUntilExpiry().isZero());
         sortedOrgansToDonate.comparatorProperty().bind(tableView.comparatorProperty());
