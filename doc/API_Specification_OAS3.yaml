@@ -26,6 +26,8 @@ tags:
       description: All base clinician paths
     - name: Administrator
       description: All base administrator paths
+    - name: Configuration
+      description: All configuration paths
 
 paths:
   ### Clients
@@ -1742,6 +1744,47 @@ paths:
           $ref: '#/components/responses/500InternalServerError'
 
 
+    ###Configurations
+  '/config/countries':
+    get:
+      tags:
+        - Configuration
+      summary: Returns the allowed list of countries
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/countryResponse'
+
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+    post:
+      tags:
+        - Configuration
+      summary: Updates the allowed list of countries
+      security:
+        - AdministratorAccess: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/countryResponse'
+      responses:
+        200:
+          description: OK
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+
   ### Undo/Redo
   '/actions/undo':
     get:
@@ -2460,6 +2503,11 @@ components:
         timestamp:
           $ref: '#/components/schemas/dateTime'
 
+    countryResponse:
+      type: array
+      items:
+        $ref: '#/components/schemas/countryEnum'
+
     textResponse:
       type: object
       properties:
@@ -2475,30 +2523,34 @@ components:
           type: boolean
         canRedo:
           type: boolean
-        
-        
-        
+
+
+
     #ENUMs
-    
+
     regionEnum:
       type: string
       enum: [NORTHLAND, AUCKLAND, WAIKATO, BAY_OF_PLENTY, GISBORNE, HAWKES_BAY, TARANAKI, MANAWATU_WANGANUI, WELLINGTON, TASMAN, NELSON, MARLBOROUGH, WEST_COAST, CANTERBURY, OTAGO, SOUTHLAND, UNSPECIFIED]
-      
+
     genderEnum:
       type: string
       enum: [MALE, FEMALE, OTHER, UNSPECIFIED]
-      
+
     clientTypeEnum:
       type: string
       enum: [ANY, ONLY_DONOR, ONLY_RECEIVER, BOTH, NEITHER]
-      
+
     organEnum:
       type: string
       enum: [LIVER, KIDNEY, PANCREAS, HEART, LUNG, INTESTINE, CORNEA, MIDDLE_EAR, SKIN, BONE, BONE_MARROW, CONNECTIVE_TISSUE]
-      
+
     bloodTypeEnum:
       type: string
       enum: [A_POS, A_NEG, B_POS, B_NEG, AB_POS, AB_NEG, O_POS, O_NEG]
+
+    countryEnum:
+      type: string
+      enum: [AF, AX, AL, DZ, AS, AD, AO, AI, ...]
       
     transplantRequestStatusEnum:
       type: string

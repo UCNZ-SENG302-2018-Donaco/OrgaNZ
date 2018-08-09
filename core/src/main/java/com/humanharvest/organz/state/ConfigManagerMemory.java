@@ -14,7 +14,6 @@ public class ConfigManagerMemory implements ConfigManager {
         config = new Config();
         EnumSet<Country> countries = EnumSet.noneOf(Country.class);
         countries.add(Country.NZ);
-        countries.add(Country.AU);
         config.setCountries(countries);
     }
 
