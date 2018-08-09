@@ -52,8 +52,29 @@ import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.validators.client.ClientBornAndDiedDatesValidator;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.views.client.ModifyClientObject;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import org.apache.commons.io.IOUtils;
 import org.controlsfx.control.Notifications;
+
+import java.io.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.format.FormatStyle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Controller for the view/edit client page.
@@ -280,7 +301,7 @@ public class ViewClientController extends ViewBaseController {
      */
     @FXML
     private void apply() {
-        if (checkMandatoryFields() && checkNonMandatoryFields() && checkDeathDetailsFields()) {
+        if (checkMandatoryFields() & checkNonMandatoryFields() & checkDeathDetailsFields()) {
             if (updateChanges()) {
                 displayBMI();
                 displayAge();
@@ -392,19 +413,15 @@ public class ViewClientController extends ViewBaseController {
      */
     private boolean checkMandatoryFields() {
         boolean update = true;
-        if (fname.getText().isEmpty()) {
+        // Validate legal name
+        if (fname.getText().isEmpty() || lname.getText().isEmpty()) {
             legalNameLabel.setTextFill(Color.RED);
             update = false;
         } else {
             legalNameLabel.setTextFill(Color.BLACK);
         }
 
-        if (lname.getText().isEmpty()) {
-            legalNameLabel.setTextFill(Color.RED);
-            update = false;
-        } else {
-            legalNameLabel.setTextFill(Color.BLACK);
-        }
+        // Validate date of birth
         if (ClientBornAndDiedDatesValidator.dateOfBirthIsValid(dob.getValue())) {
             dobLabel.setTextFill(Color.BLACK);
         } else {
@@ -500,7 +517,7 @@ public class ViewClientController extends ViewBaseController {
                     regionOfDeathLabel.setTextFill(Color.BLACK);
                 }
             } else {
-                if (deathRegionTF.getText().isEmpty()) {
+                if (deathRegionTF.getText() == null || deathRegionTF.getText().isEmpty()) {
                     regionOfDeathLabel.setTextFill(Color.RED);
                     allValid = false;
                 } else {
