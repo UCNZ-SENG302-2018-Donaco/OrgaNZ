@@ -44,10 +44,11 @@ public class AppUI extends Application {
         }
 
         primaryStage.setTitle("Organ Client Management System");
-        primaryStage.setMinHeight(639);
-        primaryStage.setMinWidth(1016);
         primaryStage.setScene(createScene(loadMainPane(primaryStage)));
         primaryStage.show();
+
+        primaryStage.setMinHeight(639);
+        primaryStage.setMinWidth(1016);
     }
 
     /**
