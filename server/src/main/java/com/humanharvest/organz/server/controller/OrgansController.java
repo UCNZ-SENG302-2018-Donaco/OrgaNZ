@@ -37,7 +37,7 @@ public class OrgansController {
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws GlobalControllerExceptionHandler.InvalidRequestException {
 
-        //State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
+        State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
 
         Collection<DonatedOrganView> donatedOrgans = State.getClientManager().getAllOrgansToDonate().stream()
                 .map(DonatedOrganView::new)
@@ -45,6 +45,14 @@ public class OrgansController {
         return new ResponseEntity<>(donatedOrgans, HttpStatus.OK);
     }
 
+    /**
+     * DELETE endpoint for manually expiring available organs
+     * @param uid The client UID to delete
+     * @param id of the available organ
+     * @param authToken authentication token - only clinicians and administrators can access donatable organs
+     * @return response entity containing the removed organ
+     * @throws GlobalControllerExceptionHandler.InvalidRequestException
+     */
     @JsonView(Views.Details.class)
     @DeleteMapping("/organs/{uid}/{id}")
     public ResponseEntity<DonatedOrgan> manuallyExpireOrgan(
@@ -52,7 +60,7 @@ public class OrgansController {
             @PathVariable int id,
             @RequestHeader(value = "X-Auth-Token",required = false) String authToken)
             throws GlobalControllerExceptionHandler.InvalidRequestException {
-        //State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
+        State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
 
         Optional<Client> client = State.getClientManager().getClientByID(uid);
         if (!client.isPresent()) {
