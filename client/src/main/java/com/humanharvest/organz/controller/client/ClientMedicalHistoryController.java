@@ -1,27 +1,5 @@
 package com.humanharvest.organz.controller.client;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Comparator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javafx.collections.FXCollections;
-import javafx.collections.transformation.SortedList;
-import javafx.fxml.FXML;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.text.Text;
-
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.controller.MainController;
@@ -37,7 +15,22 @@ import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.views.client.CreateIllnessView;
 import com.humanharvest.organz.views.client.ModifyIllnessObject;
+import javafx.collections.FXCollections;
+import javafx.collections.transformation.SortedList;
+import javafx.fxml.FXML;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.text.Text;
 import org.controlsfx.control.Notifications;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Controller for the medical history page, which shows a list of all current and past illnesses for the client.
@@ -239,13 +232,13 @@ public class ClientMedicalHistoryController extends SubController {
             LOGGER.log(Level.WARNING, "Client not found");
             PageNavigator.showAlert(AlertType.ERROR,
                     "Client not found",
-                    "The client could not be found on the server, it may have been deleted");
+                    "The client could not be found on the server, it may have been deleted", mainController.getStage());
             return;
         } catch (ServerRestException e) {
             LOGGER.log(Level.WARNING, e.getMessage(), e);
             PageNavigator.showAlert(AlertType.ERROR,
                     "Server error",
-                    "Could not apply changes on the server, please try again later");
+                    "Could not apply changes on the server, please try again later", mainController.getStage());
             return;
         }
 
@@ -332,7 +325,7 @@ public class ClientMedicalHistoryController extends SubController {
                 PageNavigator.showAlert(AlertType.ERROR,
                         "Can't move a chronic illness to past illnesses.",
                         "An illness can't be cured if it is chronic. If the illness has been cured, first mark it as"
-                                + " not chronic.");
+                                + " not chronic.", mainController.getStage());
             } else if (selectedTableView == currentIllnessView) {
                 modifyIllnessObject.setCuredDate(LocalDate.now());
                 State.getClientResolver().modifyIllnessRecord(client, record, modifyIllnessObject);

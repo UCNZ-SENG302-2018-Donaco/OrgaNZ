@@ -1,28 +1,5 @@
 package com.humanharvest.organz.controller.client;
 
-import java.time.LocalDate;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
-
-import javafx.collections.FXCollections;
-import javafx.collections.transformation.SortedList;
-import javafx.fxml.FXML;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableColumn.CellEditEvent;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.layout.Pane;
-import javafx.scene.text.Text;
-
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.ProcedureRecord;
 import com.humanharvest.organz.controller.MainController;
@@ -39,8 +16,25 @@ import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.views.client.CreateProcedureView;
 import com.humanharvest.organz.views.client.ModifyProcedureObject;
+import javafx.collections.FXCollections;
+import javafx.collections.transformation.SortedList;
+import javafx.fxml.FXML;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.*;
+import javafx.scene.control.TableColumn.CellEditEvent;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.layout.Pane;
+import javafx.scene.text.Text;
 import org.controlsfx.control.CheckComboBox;
 import org.controlsfx.control.Notifications;
+
+import java.time.LocalDate;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * Controller for the medical history page, which shows a list of all pending and past procedures for the client.
@@ -133,7 +127,7 @@ public class ViewProceduresController extends SubController {
         if (newDate.isBefore(client.getDateOfBirth())) {
             PageNavigator.showAlert(AlertType.ERROR,
                     "Invalid Date",
-                    "New procedure date must be after the client's date of birth.");
+                    "New procedure date must be after the client's date of birth.", mainController.getStage());
         } else {
             ModifyProcedureObject modification = new ModifyProcedureObject();
             modification.setDate(event.getNewValue());
@@ -162,7 +156,7 @@ public class ViewProceduresController extends SubController {
             LOGGER.severe(exc.getMessage());
             PageNavigator.showAlert(AlertType.ERROR,
                     "Server Error",
-                    "An error occurred when trying to send data to the server.\nPlease try again later.");
+                    "An error occurred when trying to send data to the server.\nPlease try again later.", mainController.getStage());
         } catch (BadRequestException exc) {
             LOGGER.info("No changes were made to the procedure.");
         }
@@ -362,7 +356,7 @@ public class ViewProceduresController extends SubController {
                 LOGGER.severe(exc.getMessage());
                 PageNavigator.showAlert(AlertType.ERROR,
                         "Server Error",
-                        "An error occurred when trying to send data to the server.\nPlease try again later.");
+                        "An error occurred when trying to send data to the server.\nPlease try again later.", mainController.getStage());
                 return;
             }
 
@@ -401,7 +395,7 @@ public class ViewProceduresController extends SubController {
                 LOGGER.severe(exc.getMessage());
                 PageNavigator.showAlert(AlertType.ERROR,
                         "Server Error",
-                        "An error occurred when trying to send data to the server.\nPlease try again later.");
+                        "An error occurred when trying to send data to the server.\nPlease try again later.", mainController.getStage());
             }
         }
     }

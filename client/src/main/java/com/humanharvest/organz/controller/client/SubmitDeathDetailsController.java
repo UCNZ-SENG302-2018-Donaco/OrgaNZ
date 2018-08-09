@@ -108,23 +108,23 @@ public class SubmitDeathDetailsController extends SubController {
                     LocalTime.parse(deathTimeField.getText()));
         } catch (DateTimeParseException e) {
             PageNavigator.showAlert(AlertType.WARNING, "Incorrect time format",
-                    "Please enter the time of death in this format: 'HH:mm:ss'");
+                    "Please enter the time of death in this format: 'HH:mm:ss'", mainController.getStage());
             return;
         } catch (NullPointerException e) {
             PageNavigator.showAlert(AlertType.WARNING, "Required data missing",
-                    "Date of death and time of death are required.");
+                    "Date of death and time of death are required.", mainController.getStage());
             return;
         }
         if (deathDatePicker.getValue().isAfter(LocalDate.now()) ||
                 deathDatePicker.getValue().isBefore(client.getDateOfBirth())) {
             PageNavigator.showAlert(AlertType.WARNING, "Incorrect Date",
-                    "Date of death cannot be in the future, or before the client's birth.");
+                    "Date of death cannot be in the future, or before the client's birth.", mainController.getStage());
             return;
         }
 
         if (deathCountry.getValue() == null) {
             PageNavigator.showAlert(AlertType.WARNING, "Required data missing",
-                    "Country of death is required.");
+                    "Country of death is required.", mainController.getStage());
             return;
         } else {
             addChangeIfDifferent(modifyClientObject, client, "countryOfDeath", deathCountry.getValue());
@@ -132,7 +132,7 @@ public class SubmitDeathDetailsController extends SubController {
         if (deathCountry.getValue() == Country.NZ) {
             if (deathRegionCB.getValue() == null) {
                 PageNavigator.showAlert(AlertType.WARNING, "Required data missing",
-                        "Region of death is required.");
+                        "Region of death is required.", mainController.getStage());
                 return;
             } else {
                 addChangeIfDifferent(modifyClientObject, client, "regionOfDeath",
@@ -141,7 +141,7 @@ public class SubmitDeathDetailsController extends SubController {
         } else {
             if (deathRegionTF.getText().isEmpty()) {
                 PageNavigator.showAlert(AlertType.WARNING, "Required data missing",
-                        "Region of death is required.");
+                        "Region of death is required.", mainController.getStage());
                 return;
             } else {
                 addChangeIfDifferent(modifyClientObject, client, "regionOfDeath", deathRegionTF.getText());
@@ -149,7 +149,7 @@ public class SubmitDeathDetailsController extends SubController {
         }
         if (deathCity.getText().isEmpty()) {
             PageNavigator.showAlert(AlertType.WARNING, "Required data missing",
-                    "City of death is required.");
+                    "City of death is required.", mainController.getStage());
             return;
         } else {
             addChangeIfDifferent(modifyClientObject, client, "cityOfDeath", deathCity.getText());
@@ -159,7 +159,7 @@ public class SubmitDeathDetailsController extends SubController {
         // Check that user really wants to mark as dead
         ButtonType buttonOpt = PageNavigator.showAlert(AlertType.CONFIRMATION,
                 "Are you sure you want to mark this client as dead?",
-                "This will cancel all waiting transplant requests for this client.")
+                "This will cancel all waiting transplant requests for this client.", mainController.getStage())
                 .orElse(ButtonType.CANCEL);
 
         if (buttonOpt == ButtonType.OK && makeRequest(modifyClientObject)) {
@@ -187,14 +187,14 @@ public class SubmitDeathDetailsController extends SubController {
             PageNavigator.showAlert(
                     AlertType.WARNING,
                     "Client not found",
-                    "The client could not be found on the server, it may have been deleted");
+                    "The client could not be found on the server, it may have been deleted", mainController.getStage());
             return false;
         } catch (ServerRestException e) {
             LOGGER.log(Level.WARNING, e.getMessage(), e);
             PageNavigator.showAlert(
                     AlertType.WARNING,
                     "Server error",
-                    "Could not apply changes on the server, please try again later");
+                    "Could not apply changes on the server, please try again later", mainController.getStage());
             return false;
         } catch (IfMatchFailedException e) {
             LOGGER.log(Level.INFO, "If-Match did not match");
@@ -203,7 +203,7 @@ public class SubmitDeathDetailsController extends SubController {
                     "Outdated Data",
                     "The client has been modified since you retrieved the data.\n"
                             + "If you would still like to apply these changes please submit again, "
-                            + "otherwise refresh the page to update the data.");
+                            + "otherwise refresh the page to update the data.", mainController.getStage());
             return false;
         }
     }

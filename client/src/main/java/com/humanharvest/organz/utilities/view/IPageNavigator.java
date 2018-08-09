@@ -1,9 +1,9 @@
 package com.humanharvest.organz.utilities.view;
 
 import com.humanharvest.organz.controller.MainController;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.stage.Window;
 
 import java.util.Optional;
 
@@ -49,5 +49,5 @@ public interface IPageNavigator {
      * @param bodyText  the text to show within the body of the alert.
      * @return an Optional for the button that was clicked to dismiss the alert.
      */
-    Optional<ButtonType> showAlert(Alert.AlertType alertType, String title, String bodyText);
+    Optional<ButtonType> showAlert(Alert.AlertType alertType, String title, String bodyText, Window window);
 }

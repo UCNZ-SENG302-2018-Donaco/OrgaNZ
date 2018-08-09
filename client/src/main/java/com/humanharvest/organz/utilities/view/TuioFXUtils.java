@@ -31,11 +31,13 @@ public class TuioFXUtils {
         pane.setStyle("   -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 10, 10);"
                 + "-fx-background-color: grey");
 
+//        addNativeTouchGrabber(pane);
         setupMouseDrag(pane);
         setupTouch(pane);
     }
 
     private static void setupTouch(Pane pane) {
+
         double translateX = pane.getTranslateX();
         double paneWidth = pane.getWidth();
         double paneHeight = pane.getHeight();
@@ -43,8 +45,8 @@ public class TuioFXUtils {
 
         pane.setOnScroll(event -> {
             //TODO: Remove debug text
-            System.out.println(String.format("Scrolled: EventType: %s, TouchCount: %s, Target: %s, Source: %s, Direct: %s",
-                    event.getEventType(), event.getTouchCount(), event.getTarget(), event.getSource(), event.isDirect()));
+            System.out.println(String.format("Scrolled: EventType: %s, TouchCount: %s, Target: %s, Source: %s, Direct: %s %s %s",
+                    event.getEventType(), event.getTouchCount(), event.getTarget(), event.getSource(), event.isDirect(), event.isMetaDown(), event.isAltDown()));
 
             //Prevent dragging on sliders as we want to be able to drag on them to change their value
             //TODO: Check if there is a better way to check if an element is a slider. We cannot just check Slider

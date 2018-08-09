@@ -221,13 +221,13 @@ public class RequestOrgansController extends SubController {
             LOGGER.log(Level.WARNING, "Client not found");
             PageNavigator.showAlert(AlertType.ERROR,
                     "Client not found",
-                    "The client could not be found on the server, it may have been deleted");
+                    "The client could not be found on the server, it may have been deleted", mainController.getStage());
             return;
         } catch (ServerRestException e) {
             LOGGER.log(Level.WARNING, e.getMessage(), e);
             PageNavigator.showAlert(AlertType.ERROR,
                     "Server error",
-                    "Could not apply changes on the server, please try again later");
+                    "Could not apply changes on the server, please try again later", mainController.getStage());
             return;
         }
 
@@ -277,17 +277,17 @@ public class RequestOrgansController extends SubController {
             PageNavigator.showAlert(
                     AlertType.ERROR,
                     "Select an organ",
-                    "You must select an organ to make a transplant request for.");
+                    "You must select an organ to make a transplant request for.", mainController.getStage());
         } else if (client.getCurrentlyRequestedOrgans().contains(selectedOrgan)) { // Already requested organ
             PageNavigator.showAlert(
                     AlertType.ERROR,
                     "Request already exists",
-                    "Client already has a waiting request for this organ.");
+                    "Client already has a waiting request for this organ.", mainController.getStage());
         } else if (client.isDead()) { // Client is dead, they can't request an organ
             PageNavigator.showAlert(
                     AlertType.ERROR,
                     "Client is dead",
-                    "Client is marked as dead, so can't request an organ transplant.");
+                    "Client is marked as dead, so can't request an organ transplant.", mainController.getStage());
         } else { // Bluesky scenario
             // Create a request
             CreateTransplantRequestView newRequest =
@@ -301,7 +301,7 @@ public class RequestOrgansController extends SubController {
                 PageNavigator.showAlert(AlertType.ERROR,
                         "Server Error",
                         "An error occurred on the server while trying to create the transplant request.\n"
-                                + "Please try again later.");
+                                + "Please try again later.", mainController.getStage());
                 return;
             } catch (IfMatchFailedException e) { //412
                 PageNavigator.showAlert(
@@ -309,12 +309,12 @@ public class RequestOrgansController extends SubController {
                         "Outdated Data",
                         "The client has been modified since you retrieved the data.\n"
                                 + "If you would still like to apply these changes please submit again, "
-                                + "otherwise refresh the page to update the data.");
+                                + "otherwise refresh the page to update the data.", mainController.getStage());
                 return;
             } catch (NotFoundException e) { //404
                 LOGGER.log(Level.WARNING, "Client not found");
                 PageNavigator.showAlert(AlertType.WARNING, "Client not found", "The client could not be found on the "
-                        + "server, it may have been deleted");
+                        + "server, it may have been deleted", mainController.getStage());
                 return;
             }
             // Not caught, as they should not happen:
@@ -381,7 +381,7 @@ public class RequestOrgansController extends SubController {
                 PageNavigator.showAlert(AlertType.ERROR,
                         "Server Error",
                         "An error occurred on the server while trying to create the transplant request.\n"
-                                + "Please try again later.");
+                                + "Please try again later.", mainController.getStage());
                 return;
             } catch (IfMatchFailedException e) { //412
                 PageNavigator.showAlert(
@@ -389,12 +389,12 @@ public class RequestOrgansController extends SubController {
                         "Outdated Data",
                         "The client has been modified since you retrieved the data.\n"
                                 + "If you would still like to apply these changes please submit again, "
-                                + "otherwise refresh the page to update the data.");
+                                + "otherwise refresh the page to update the data.", mainController.getStage());
                 return;
             } catch (NotFoundException e) { //404
                 LOGGER.log(Level.WARNING, "Client not found");
                 PageNavigator.showAlert(AlertType.WARNING, "Client not found", "The client could not be found on the "
-                        + "server, it may have been deleted");
+                        + "server, it may have been deleted", mainController.getStage());
                 return;
             }
             // Not caught, as they should not happen:
@@ -409,7 +409,7 @@ public class RequestOrgansController extends SubController {
             if (resolvedReasonDropdownChoice == ResolveReason.CURED) { // "Disease was cured"
                 Optional<ButtonType> buttonOpt = PageNavigator.showAlert(AlertType.CONFIRMATION,
                         "Go to Medical History Page",
-                        "Do you want to go to the medical history page to mark the disease that was cured?");
+                        "Do you want to go to the medical history page to mark the disease that was cured?", mainController.getStage());
                 if (buttonOpt.isPresent() && buttonOpt.get() == ButtonType.OK) {
                     PageNavigator.loadPage(Page.VIEW_MEDICAL_HISTORY, mainController);
                 }

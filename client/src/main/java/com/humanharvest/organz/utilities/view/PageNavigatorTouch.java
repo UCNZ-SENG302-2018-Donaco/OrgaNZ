@@ -7,12 +7,13 @@ import com.humanharvest.organz.state.State;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -53,7 +54,7 @@ public class PageNavigatorTouch implements IPageNavigator {
             e.printStackTrace();
             LOGGER.log(Level.SEVERE, "Couldn't load the page", e);
             showAlert(Alert.AlertType.ERROR, "Could not load page: " + page,
-                    "The page loader failed to load the layout for the page.");
+                    "The page loader failed to load the layout for the page.", controller.getStage());
         }
     }
 
@@ -86,14 +87,14 @@ public class PageNavigatorTouch implements IPageNavigator {
             newStage.setOnCloseRequest(e -> State.deleteMainController(mainController));
 
             TuioFXUtils.setupPaneWithTouchFeatures(mainPane);
-            AppTUIO.root.getChildren().add(mainPane);
+            AppTUIO.root.getChildren().add(0, mainPane);
 
             return mainController;
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Error loading new window\n", e);
             // Will throw if MAIN's fxml file could not be loaded.
             showAlert(Alert.AlertType.ERROR, "New window could not be created",
-                    "The page loader failed to load the layout for the new window.");
+                    "The page loader failed to load the layout for the new window.", new Stage());
             return null;
         }
     }
@@ -132,8 +133,9 @@ public class PageNavigatorTouch implements IPageNavigator {
      * @param bodyText  the text to show within the body of the alert.
      * @return an Optional for the button that was clicked to dismiss the alert.
      */
-    public Optional<ButtonType> showAlert(Alert.AlertType alertType, String title, String bodyText) {
+    public Optional<ButtonType> showAlert(Alert.AlertType alertType, String title, String bodyText, Window window) {
         Alert alert = generateAlert(alertType, title, bodyText);
+        alert.initModality(Modality.WINDOW_MODAL);
         return alert.showAndWait();
     }
 }

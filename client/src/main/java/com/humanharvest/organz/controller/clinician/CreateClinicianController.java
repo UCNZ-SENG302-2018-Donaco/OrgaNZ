@@ -88,7 +88,7 @@ public class CreateClinicianController extends SubController {
 
             } else if (clinicianManager
                     .doesStaffIdExist(Integer.parseInt(staffId.getText()))) { // If the staffId is in use
-                PageNavigator.showAlert(AlertType.ERROR, "Staff Id in Use", "This staff Id is already in use.");
+                PageNavigator.showAlert(AlertType.ERROR, "Staff Id in Use", "This staff Id is already in use.", mainController.getStage());
                 staffIdLabel.setTextFill(Color.RED);
                 update = false;
 

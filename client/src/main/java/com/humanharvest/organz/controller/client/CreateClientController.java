@@ -1,15 +1,5 @@
 package com.humanharvest.organz.controller.client;
 
-import java.util.logging.Logger;
-
-import javafx.fxml.FXML;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.Pane;
-
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.controller.MainController;
@@ -26,6 +16,15 @@ import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.utilities.view.WindowContext;
 import com.humanharvest.organz.views.client.CreateClientView;
+import javafx.fxml.FXML;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.Pane;
+
+import java.util.logging.Logger;
 
 /**
  * Controller for the create client page.
@@ -84,13 +83,13 @@ public class CreateClientController extends SubController {
     private void createClient() {
         if (validation.isInvalid()) {
             PageNavigator.showAlert(AlertType.ERROR, "Required Field Empty",
-                    "Please make sure that all the required fields are given.");
+                    "Please make sure that all the required fields are given.", mainController.getStage());
         } else {
             //Duplicate user warning alert
             if (manager.doesClientExist(firstNameFld.getText(), lastNamefld.getText(), dobFld.getValue())) {
                 ButtonType option = PageNavigator.showAlert(AlertType.CONFIRMATION,
                         "Duplicate Client Warning",
-                        "This client is a duplicate of one that already exists. Would you still like to create it?")
+                        "This client is a duplicate of one that already exists. Would you still like to create it?", mainController.getStage())
                         .orElse(ButtonType.CANCEL);
                 if (option != ButtonType.OK) {
                     // ... user chose CANCEL or closed the dialog
@@ -109,7 +108,7 @@ public class CreateClientController extends SubController {
                 LOGGER.severe(e.getMessage());
                 PageNavigator.showAlert(AlertType.ERROR,
                         "Server Error",
-                        "An error occurred while trying to fetch from the server.\nPlease try again later.");
+                        "An error occurred while trying to fetch from the server.\nPlease try again later.", mainController.getStage());
                 return;
             }
 
@@ -124,7 +123,7 @@ public class CreateClientController extends SubController {
                     LOGGER.severe(e.getMessage());
                     PageNavigator.showAlert(AlertType.ERROR,
                             "Server Error",
-                            "An error occurred while trying to fetch from the server.\nPlease try again later.");
+                            "An error occurred while trying to fetch from the server.\nPlease try again later.", mainController.getStage());
                     return;
                 }
                 PageNavigator.loadPage(Page.VIEW_CLIENT, mainController);

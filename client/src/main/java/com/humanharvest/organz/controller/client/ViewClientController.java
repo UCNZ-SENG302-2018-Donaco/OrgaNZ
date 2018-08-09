@@ -160,7 +160,7 @@ public class ViewClientController extends ViewBaseController {
             e.printStackTrace();
             PageNavigator.showAlert(AlertType.ERROR,
                     "Server Error",
-                    "An error occurred while trying to fetch from the server.\nPlease try again later.");
+                    "An error occurred while trying to fetch from the server.\nPlease try again later.", mainController.getStage());
             return;
         }
         // Update all fields in the view with new data
@@ -293,7 +293,7 @@ public class ViewClientController extends ViewBaseController {
             }
         } catch (ServerRestException e) {
             PageNavigator.showAlert(AlertType.ERROR, "Server Error", "Something went wrong with the server. "
-                    + "Please try again later.");
+                    + "Please try again later.", mainController.getStage());
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
             return;
         }
@@ -318,10 +318,10 @@ public class ViewClientController extends ViewBaseController {
         if (selectedFile != null) {
             if (selectedFile.length() > maxFileSize) {
                 PageNavigator.showAlert(AlertType.WARNING, "Image Size Too Large",
-                        "The image size is too large. It must be under 2MB.");
+                        "The image size is too large. It must be under 2MB.", mainController.getStage());
             } else if (!selectedFile.canRead()) {
                 PageNavigator.showAlert(AlertType.WARNING, "File Couldn't Be Read",
-                        "This file could not be read. Ensure you are uploading a valid .png or .jpg");
+                        "This file could not be read. Ensure you are uploading a valid .png or .jpg", mainController.getStage());
             } else {
                 try {
                     InputStream in = new FileInputStream(selectedFile);
@@ -330,20 +330,20 @@ public class ViewClientController extends ViewBaseController {
 
                 } catch (FileNotFoundException ex) {
                     PageNavigator.showAlert(AlertType.WARNING, "File Couldn't Be Found",
-                            "This file was not found.");
+                            "This file was not found.", mainController.getStage());
                 } catch (IOException ex) {
                     PageNavigator.showAlert(AlertType.WARNING, "File Couldn't Be Read",
-                            "This file could not be read. Ensure you are uploading a valid .png or .jpg");
+                            "This file could not be read. Ensure you are uploading a valid .png or .jpg", mainController.getStage());
                 } catch (ServerRestException e) {
                     LOGGER.log(Level.SEVERE, e.getMessage(), e);
                     PageNavigator.showAlert(AlertType.ERROR, "Server Error", "Something went wrong with the server. "
-                            + "Please try again later.");
+                            + "Please try again later.", mainController.getStage());
                 }
             }
         }
         if (uploadSuccess) {
             refresh();
-            PageNavigator.showAlert(AlertType.CONFIRMATION, "Success", "The image has been posted.");
+            PageNavigator.showAlert(AlertType.CONFIRMATION, "Success", "The image has been posted.", mainController.getStage());
         }
     }
 
@@ -357,7 +357,7 @@ public class ViewClientController extends ViewBaseController {
             refresh();
         } catch (ServerRestException e) {
             PageNavigator.showAlert(AlertType.ERROR, "Server Error", "Something went wrong with the server. "
-                    + "Please try again later.");
+                    + "Please try again later.", mainController.getStage());
             LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
     }
@@ -516,7 +516,7 @@ public class ViewClientController extends ViewBaseController {
             if (viewedClient.isAlive()) {
                 ButtonType optionPicked = PageNavigator.showAlert(AlertType.CONFIRMATION,
                         "Are you sure you want to mark this client as dead?",
-                        "This will cancel all waiting transplant requests for this client.")
+                        "This will cancel all waiting transplant requests for this client.", mainController.getStage())
                         .orElse(ButtonType.CANCEL);
                 if (optionPicked != ButtonType.OK) {
                     return false;
@@ -530,7 +530,7 @@ public class ViewClientController extends ViewBaseController {
             } catch (DateTimeParseException e) {
                 PageNavigator.showAlert(AlertType.WARNING,
                         "Incorrect time format",
-                        "Please enter the time of death in 'HH:mm:ss'. Time of death not saved.");
+                        "Please enter the time of death in 'HH:mm:ss'. Time of death not saved.", mainController.getStage());
                 return false;
             }
             addChangeIfDifferent(modifyClientObject, viewedClient, "countryOfDeath", deathCountry.getValue());
@@ -564,12 +564,12 @@ public class ViewClientController extends ViewBaseController {
         } catch (NotFoundException e) {
             LOGGER.log(Level.WARNING, "Client not found");
             PageNavigator.showAlert(AlertType.WARNING, "Client not found", "The client could not be found on the "
-                    + "server, it may have been deleted");
+                    + "server, it may have been deleted", mainController.getStage());
             return false;
         } catch (ServerRestException e) {
             LOGGER.log(Level.WARNING, e.getMessage(), e);
             PageNavigator.showAlert(AlertType.WARNING, "Server error", "Could not apply changes on the server, "
-                    + "please try again later");
+                    + "please try again later", mainController.getStage());
             return false;
         } catch (IfMatchFailedException e) {
             LOGGER.log(Level.INFO, "If-Match did not match");
@@ -577,7 +577,7 @@ public class ViewClientController extends ViewBaseController {
                     AlertType.WARNING,
                     "Outdated Data",
                     "The client has been modified since you retrieved the data.\nIf you would still like to "
-                            + "apply these changes please submit again, otherwise refresh the page to update the data.");
+                            + "apply these changes please submit again, otherwise refresh the page to update the data.", mainController.getStage());
             return false;
         }
 

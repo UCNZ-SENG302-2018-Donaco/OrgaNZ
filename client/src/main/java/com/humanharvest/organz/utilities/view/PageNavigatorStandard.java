@@ -12,6 +12,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 import java.io.IOException;
 import java.util.Optional;
@@ -45,7 +46,7 @@ public class PageNavigatorStandard implements IPageNavigator {
             e.printStackTrace();
             LOGGER.log(Level.SEVERE, "Couldn't load the page", e);
             showAlert(Alert.AlertType.ERROR, "Could not load page: " + page,
-                    "The page loader failed to load the layout for the page.");
+                    "The page loader failed to load the layout for the page.", controller.getStage());
         }
     }
 
@@ -92,7 +93,7 @@ public class PageNavigatorStandard implements IPageNavigator {
             LOGGER.log(Level.SEVERE, "Error loading new window\n", e);
             // Will throw if MAIN's fxml file could not be loaded.
             showAlert(Alert.AlertType.ERROR, "New window could not be created",
-                    "The page loader failed to load the layout for the new window.");
+                    "The page loader failed to load the layout for the new window.", new Stage());
             return null;
         }
     }
@@ -131,7 +132,7 @@ public class PageNavigatorStandard implements IPageNavigator {
      * @param bodyText  the text to show within the body of the alert.
      * @return an Optional for the button that was clicked to dismiss the alert.
      */
-    public Optional<ButtonType> showAlert(Alert.AlertType alertType, String title, String bodyText) {
+    public Optional<ButtonType> showAlert(Alert.AlertType alertType, String title, String bodyText, Window window) {
         Alert alert = generateAlert(alertType, title, bodyText);
         return alert.showAndWait();
     }

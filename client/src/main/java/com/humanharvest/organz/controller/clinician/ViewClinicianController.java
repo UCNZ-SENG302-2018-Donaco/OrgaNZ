@@ -174,7 +174,7 @@ public class ViewClinicianController extends ViewBaseController {
         } catch (NumberFormatException e) {
             LOGGER.log(Level.WARNING, "Invalid staff ID", e);
             PageNavigator.showAlert(Alert.AlertType.ERROR, "Invalid Staff ID",
-                    "The Staff ID must be an integer.");
+                    "The Staff ID must be an integer.", mainController.getStage());
             return;
         }
         try {
@@ -182,7 +182,7 @@ public class ViewClinicianController extends ViewBaseController {
             viewedClinician = newClin.get();
         } catch (NotFoundException ex) {
             PageNavigator.showAlert(Alert.AlertType.ERROR, "Invalid Staff ID",
-                    "This staff ID does not exist in the system.");
+                    "This staff ID does not exist in the system.", mainController.getStage());
             return;
         }
         getViewedClinicianData();
@@ -327,18 +327,18 @@ public class ViewClinicianController extends ViewBaseController {
         } catch (NotFoundException e) {
             LOGGER.log(Level.WARNING, "Client not found");
             PageNavigator.showAlert(AlertType.WARNING, "Clinician not found", "The clinician could not be found on "
-                    + "the server, it may have been deleted");
+                    + "the server, it may have been deleted", mainController.getStage());
             return false;
         } catch (ServerRestException e) {
             LOGGER.log(Level.WARNING, e.getMessage(), e);
             PageNavigator.showAlert(AlertType.WARNING, "Server error", "Could not apply changes on the server, "
-                    + "please try again later");
+                    + "please try again later", mainController.getStage());
             return false;
         } catch (IfMatchFailedException e) {
             LOGGER.log(Level.INFO, "If-Match did not match");
             PageNavigator.showAlert(AlertType.WARNING, "Outdated Data",
                     "The clinician has been modified since you retrieved the data.\nIf you would still like to "
-                            + "apply these changes please submit again, otherwise refresh the page to update the data.");
+                            + "apply these changes please submit again, otherwise refresh the page to update the data.", mainController.getStage());
             return false;
         }
     }
