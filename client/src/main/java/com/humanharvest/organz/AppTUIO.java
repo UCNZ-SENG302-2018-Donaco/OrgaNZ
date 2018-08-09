@@ -49,7 +49,7 @@ import java.util.logging.Level;
  */
 public class AppTUIO extends Application {
 
-    public static final Pane root = new Pane();
+    public static final Pane root = new TuioFXCanvas();
 
     public static void main(String[] args) {
         initialiseTUIOTouch();

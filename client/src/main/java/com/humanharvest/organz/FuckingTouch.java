@@ -83,10 +83,27 @@ public class FuckingTouch {
             currentTouch.originalPointY = touchPoint.getY();
 
         } else if (paneTouches.size() == 2) {
+            CurrentTouch otherTouch;
+            if (paneTouches.get(0) == currentTouch) {
+                otherTouch = paneTouches.get(1);
+            } else {
+                otherTouch = paneTouches.get(0);
+            }
 
+            double oldAngle = calculateAngle(currentTouch.originalPointX, currentTouch.originalPointY, otherTouch.originalPointX, otherTouch.originalPointY);
+            double newAngle = calculateAngle(touchPoint.getX(), touchPoint.getY(), otherTouch.originalPointX, otherTouch.originalPointY);
+            double angleDelta = newAngle - oldAngle;
+            double centreX = Math.min(touchPoint.getX(), otherTouch.originalPointX) + Math.abs(touchPoint.getX() - otherTouch.originalPointX) / 2;
+            pane.setRotate(pane.getRotate() + Math.toDegrees(angleDelta));
+            currentTouch.originalPointX = touchPoint.getX();
+            currentTouch.originalPointY = touchPoint.getY();
         } else {
 
         }
+    }
+
+    private double calculateAngle(double point1X, double point1Y, double point2X, double point2Y) {
+        return Math.atan2(point2Y - point1Y, point2X - point1X);
     }
 
     private List<CurrentTouch> findPaneTouches(Pane pane) {
