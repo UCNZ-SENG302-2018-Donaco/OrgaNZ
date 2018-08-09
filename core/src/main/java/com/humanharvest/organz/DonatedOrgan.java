@@ -76,6 +76,10 @@ public class DonatedOrgan {
         return dateTimeOfDonation;
     }
 
+    public void setDateTimeOfDonation(LocalDateTime dateTimeOfDonation) {
+        this.dateTimeOfDonation = dateTimeOfDonation;
+    }
+
     private Duration getTimeSinceDonation() {
         return Duration.between(dateTimeOfDonation, LocalDateTime.now());
     }
