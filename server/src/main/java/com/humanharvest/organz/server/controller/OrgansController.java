@@ -24,7 +24,7 @@ public class OrgansController {
      * @throws GlobalControllerExceptionHandler.InvalidRequestException
      */
     @JsonView(Views.Overview.class)
-    @GetMapping("/organs")
+    @GetMapping("/clients/organs")
     public ResponseEntity<Collection<DonatedOrganView>> getOrgansToDonate(
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws GlobalControllerExceptionHandler.InvalidRequestException {
