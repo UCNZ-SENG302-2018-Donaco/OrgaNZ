@@ -308,10 +308,10 @@ public class OrgansToDonateController extends SubController {
         String greyColour = "aaaaaa";
         String middleColour;
 
-        double percent = progress * 100;
-        if (percent < 0.01) {
-            percent = 0;
+        if (progress < 0.0001) {
+            progress = 0;
         }
+        double percent = progress * 100;
 
         // Calculate percentages and the middle colour (white if it's not reached lower bound, maroon if it has)
         if (progress < fullMarker) { // Hasn't reached lower bound yet
@@ -343,6 +343,10 @@ public class OrgansToDonateController extends SubController {
                 green = "0" + green;
             }
         }
+
+        // Check they haven't overflowed
+        assert red.length() == 2;
+        assert green.length() == 2;
 
         // Generate style string
         String colour = red + green + blue;
