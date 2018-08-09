@@ -246,7 +246,7 @@ public class AppTUIO extends Application {
             throw new RuntimeException(e);
         }
 
-//        primaryStage.addEventFilter(MouseEvent.ANY, new TuioMouseEventFilter(inputService, primaryStage));
+        primaryStage.addEventFilter(MouseEvent.ANY, new TuioMouseEventFilter(inputService, primaryStage));
     }
 
     private static double withinRange(double min, double max, double value) {

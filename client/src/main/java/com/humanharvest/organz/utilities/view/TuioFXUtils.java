@@ -12,6 +12,11 @@ import java.util.stream.Collectors;
 
 public class TuioFXUtils {
 
+
+    private static final double MAX_X_BOUNDARY = 650;
+    private static final double MAX_Y_BOUNDARY = 400;
+
+
     /**
      * Configure a Pane with touch properties.
      * Gives the pane a unique focus area, so touch events will not interfere with any other elements.
@@ -31,6 +36,11 @@ public class TuioFXUtils {
     }
 
     private static void setupTouch(Pane pane) {
+        double translateX = pane.getTranslateX();
+        double paneWidth = pane.getWidth();
+        double paneHeight = pane.getHeight();
+
+
         pane.setOnScroll(event -> {
             //TODO: Remove debug text
             System.out.println(String.format("Scrolled: EventType: %s, TouchCount: %s, Target: %s, Source: %s, Direct: %s",
@@ -46,9 +56,31 @@ public class TuioFXUtils {
                 return;
             }
             pane.toFront();
-            pane.setTranslateX(pane.getTranslateX() + event.getDeltaX());
-            pane.setTranslateY(pane.getTranslateY() + event.getDeltaY());
+//            setTranslateBoundaries(pane, event.getDeltaX(), event.getDeltaY());
+            System.out.println("deltaX = " + (pane.getTranslateX() + event.getDeltaX()));
+            System.out.println("deltaY = " + event.getDeltaY());
 
+            // X axis
+            if (pane.getTranslateX() + event.getDeltaX() + paneWidth < 0) {
+                pane.setTranslateX(0);
+
+            } else if (pane.getTranslateX() + event.getDeltaX() + paneWidth > MAX_X_BOUNDARY) {
+                pane.setTranslateX(MAX_X_BOUNDARY);
+
+            } else {
+                pane.setTranslateX(pane.getTranslateX() + event.getDeltaX());
+            }
+
+            // Y axis
+            if (pane.getTranslateY() + event.getDeltaY() + paneHeight < 0) {
+                pane.setTranslateY(0);
+
+            } else if (pane.getTranslateY() + event.getDeltaY() + paneHeight > MAX_Y_BOUNDARY) {
+                pane.setTranslateY(MAX_Y_BOUNDARY);
+
+            } else {
+                pane.setTranslateY(pane.getTranslateY() + event.getDeltaY());
+            }
         });
 
         pane.setOnTouchPressed(event -> {
@@ -68,6 +100,7 @@ public class TuioFXUtils {
 
         setTransparentNodes(pane);
     }
+
 
     /**
      * For a given Node, add the isTouchTransparent property if they are not focus traversable.
