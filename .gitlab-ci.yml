@@ -50,6 +50,7 @@ server-build-image:
 server-deployment:
   stage: deploy
   script:
+  - echo $CI_COMMIT_SHA > target/version
   - docker stop team700_web_1 || echo "success"
   - docker container prune -f
   - docker-compose up -d
@@ -64,6 +65,7 @@ release-artifacts:
   artifacts:
     paths:
       - target/organz-*-*.jar
+      - target/version
       - target/site/jacoco/*
   only:
     - tags
