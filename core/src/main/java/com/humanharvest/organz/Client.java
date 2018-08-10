@@ -259,6 +259,14 @@ public class Client implements ConcurrencyControlledEntity {
         updateModifiedTimestamp();
     }
 
+    public void setDonatedOrgans(Collection<DonatedOrgan> donatedOrgans) {
+        this.donatedOrgans = new ArrayList<>(donatedOrgans);
+        for (DonatedOrgan donatedOrgan : donatedOrgans) {
+            donatedOrgan.setDonor(this);
+        }
+        updateModifiedTimestamp();
+    }
+
     /**
      * Returns a string listing the organs that the client is currently donating, or a message that the client currently
      * has no organs registered for donation if that is the case.
@@ -956,7 +964,7 @@ public class Client implements ConcurrencyControlledEntity {
     @JsonIgnore
     public boolean hasOverriddenOrgans() {
         for (DonatedOrgan donatedOrgan : donatedOrgans) {
-            if (donatedOrgan.getExpiryReason() != null) {
+            if (donatedOrgan.getOverrideReason() != null) {
                 return true;
             }
         }

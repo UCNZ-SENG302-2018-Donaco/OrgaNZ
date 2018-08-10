@@ -42,9 +42,8 @@ public class DonatedOrgan {
     private Client receiver;
     @JsonView(Views.Overview.class)
     private LocalDateTime dateTimeOfDonation;
-
-
-    private String expiryReason; // If null this implies the organ was not manually expired
+    @JsonView(Views.Overview.class)
+    private String overrideReason;  // If null this implies the organ was not manually overriden
 
     protected DonatedOrgan() {
     }
@@ -126,11 +125,11 @@ public class DonatedOrgan {
         return id;
     }
 
-    public String getExpiryReason() {
-        return expiryReason;
+    public String getOverrideReason() {
+        return overrideReason;
     }
 
-    public void setExpiryReason(String expiryReason) {
-        this.expiryReason = expiryReason;
+    public void setOverrideReason(String expiryReason) {
+        this.overrideReason = expiryReason;
     }
 }

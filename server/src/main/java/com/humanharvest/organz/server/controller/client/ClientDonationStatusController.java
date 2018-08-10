@@ -6,7 +6,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-
+import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.actions.client.ModifyClientOrgansAction;
 import com.humanharvest.organz.state.State;
@@ -15,6 +15,7 @@ import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
 import com.humanharvest.organz.views.client.DonatedOrganView;
+import com.humanharvest.organz.views.client.Views;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -60,6 +61,7 @@ public class ClientDonationStatusController {
      * @param authToken authorization token
      * @return response entity containing the clients donated organs
      */
+    @JsonView(Views.Overview.class)
     @GetMapping("/clients/{id}/donatedOrgans")
     public ResponseEntity<Collection<DonatedOrganView>> getClientDonatedOrgans(
             @PathVariable int id,
@@ -86,7 +88,6 @@ public class ClientDonationStatusController {
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
     }
 
     @ResponseStatus(value = HttpStatus.BAD_REQUEST, reason = "One of the organs is already set to the value you gave")
