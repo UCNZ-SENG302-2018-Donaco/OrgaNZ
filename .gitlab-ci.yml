@@ -8,10 +8,10 @@ tag_checker:
   only:
     - tags
 
-junit:
-  stage: test
-  script:
-    - mvn -B clean test
+#junit:
+#  stage: test
+#  script:
+#    - mvn -B clean test
 
 recent-artifacts:
   stage: deploy
@@ -50,7 +50,7 @@ server-build-image:
 server-deployment:
   stage: deploy
   script:
-  - echo $CI_COMMIT_SHA > target/version
+  - echo $CI_COMMIT_SHA > ./target/version
   - docker stop team700_web_1 || echo "success"
   - docker container prune -f
   - docker-compose up -d
@@ -61,6 +61,7 @@ server-deployment:
 release-artifacts:
   stage: deploy
   script:
+    - echo $CI_COMMIT_SHA > ./target/version
     - mvn -B clean site package
   artifacts:
     paths:
