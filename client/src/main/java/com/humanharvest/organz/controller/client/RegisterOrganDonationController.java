@@ -9,19 +9,26 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.Tooltip;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.state.ClientManager;
+import com.humanharvest.organz.controller.components.ManualOverrideCell;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
@@ -41,7 +48,6 @@ public class RegisterOrganDonationController extends SubController {
     private static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("d MMM yyyy hh:mm a");
 
     private Session session;
-    private ClientManager manager;
     private Client client;
     private Map<Organ, Boolean> donationStatus;
 
@@ -52,11 +58,18 @@ public class RegisterOrganDonationController extends SubController {
             checkBoxCornea, checkBoxMiddleEar, checkBoxSkin, checkBoxBone, checkBoxBoneMarrow, checkBoxConnTissue;
     @FXML
     private Label fullName;
+    @FXML
+    private TableView<DonatedOrgan> donatedOrgansTable;
+    @FXML
+    private TableColumn<DonatedOrgan, Organ> organCol;
+    @FXML
+    private TableColumn<DonatedOrgan, String> statusCol;
+    @FXML
+    private TableColumn<DonatedOrgan, DonatedOrgan> manualOverrideCol;
 
     private final Map<Organ, CheckBox> organCheckBoxes = new HashMap<>();
 
     public RegisterOrganDonationController() {
-        manager = State.getClientManager();
         session = State.getSession();
     }
 
@@ -79,6 +92,7 @@ public class RegisterOrganDonationController extends SubController {
         organCheckBoxes.put(Organ.BONE, checkBoxBone);
         organCheckBoxes.put(Organ.BONE_MARROW, checkBoxBoneMarrow);
         organCheckBoxes.put(Organ.CONNECTIVE_TISSUE, checkBoxConnTissue);
+        initTable();
     }
 
     @Override
@@ -97,12 +111,36 @@ public class RegisterOrganDonationController extends SubController {
         refresh();
     }
 
+    private void initTable() {
+        organCol.setCellValueFactory(new PropertyValueFactory<>("organType"));
+//        statusCol.setCellFactory(RegisterOrganDonationController::statusColFactory);
+        manualOverrideCol.setCellValueFactory(row -> new SimpleObjectProperty<>(row.getValue()));
+        manualOverrideCol.setCellFactory(column -> new ManualOverrideCell(column,
+                RegisterOrganDonationController::handleOverride,
+                RegisterOrganDonationController::handleOverrideCancelled));
+    }
+
+    private static void handleOverride(DonatedOrgan donatedOrgan) {
+        // TODO implement
+        PageNavigator.showAlert(AlertType.INFORMATION, "PLACEHOLDER","Override button pressed");
+    }
+
+    private static void handleOverrideCancelled(DonatedOrgan donatedOrgan) {
+        // TODO implement
+        PageNavigator.showAlert(AlertType.INFORMATION, "PLACEHOLDER","Cancel override button pressed");
+    }
+
+    private static TableCell<DonatedOrgan, String> statusColFactory(TableColumn<DonatedOrgan, String> cell) {
+        return null;
+    }
+
     @Override
     public void refresh() {
         // Retrieve organ donation status and transplant requests from the server
         try {
             client.setTransplantRequests(State.getClientResolver().getTransplantRequests(client));
             client.setOrganDonationStatus(State.getClientResolver().getOrganDonationStatus(client));
+            client.setDonatedOrgans(State.getClientResolver().getDonatedOrgans(client));
         } catch (NotFoundException e) {
             LOGGER.log(Level.WARNING, "Client Not Found");
             Notifications.create()
@@ -149,6 +187,7 @@ public class RegisterOrganDonationController extends SubController {
         } else if (windowContext.isClinViewClientWindow()) {
             mainController.setTitle("Donate Organs: " + client.getFullName());
             name = client.getFullName();
+            donatedOrgansTable.setItems(FXCollections.observableArrayList(client.getDonatedOrgans()));
         }
         if (client.isDead()) {
             name += " (died at " + client.getDatetimeOfDeath().format(dateTimeFormat) + ")";
