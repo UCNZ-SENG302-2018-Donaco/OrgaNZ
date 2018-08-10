@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 
 import javafx.scene.input.KeyCode;
 
@@ -20,6 +21,7 @@ public class ViewClientControllerClinicianTest extends ControllerTest {
 
     private LocalDate dateOfBirth = LocalDate.now().minusYears(10);
     private LocalDate dateOfDeath = LocalDate.now().minusYears(1);
+    private LocalTime timeOfDeath = LocalTime.parse("10:00:00");
     private int futureYear = LocalDate.now().plusYears(2).getYear();
     private int recentYear = LocalDate.now().minusYears(2).getYear();
     private Client testClient = new Client(1);
@@ -47,7 +49,7 @@ public class ViewClientControllerClinicianTest extends ControllerTest {
         testClient.setLastName("b");
         testClient.setDateOfBirth(dateOfBirth);
         testClient.setDateOfDeath(dateOfDeath);
-        testClient.setTimeOfDeath(LocalTime.now());
+        testClient.setTimeOfDeath(timeOfDeath);
         testClient.setCountryOfDeath(Country.US);
         testClient.setRegionOfDeath("New York");
         testClient.setCityOfDeath("New York City");
@@ -76,6 +78,49 @@ public class ViewClientControllerClinicianTest extends ControllerTest {
         doubleClickOn("#deathDatePicker").type(KeyCode.BACK_SPACE);
         clickOn("#applyButton");
         assertEquals(dateOfDeath, testClient.getDateOfDeath());
+    }
+
+    @Test
+    public void invalidChangeDateOfDeathBeforeBirthday() {
+        String futureDate = "10/10/" + (dateOfBirth.getYear()-2);
+        clickOn("#deathDatePicker");
+        doubleClickOn("#deathDatePicker").type(KeyCode.BACK_SPACE);
+        clickOn("#applyButton");
+        assertEquals(dateOfDeath, testClient.getDateOfDeath());
+    }
+
+    @Test
+    public void validChangeTimeOfDeath() {
+        clickOn("#deathTimeField");
+        doubleClickOn("#deathTimeField").type(KeyCode.BACK_SPACE).write("10:10:10");
+        clickOn("#applyButton");
+        assertEquals(LocalTime.of(10, 10, 10), testClient.getTimeOfDeath());
+    }
+
+    @Test
+    public void invalidChangeTimeOfDeathBlank() {
+        clickOn("#deathTimeField");
+        doubleClickOn("#deathTimeField").type(KeyCode.BACK_SPACE);
+        clickOn("#applyButton");
+        assertEquals(timeOfDeath, testClient.getTimeOfDeath());
+    }
+
+    @Test
+    public void invalidChangeTimeOfDeathFuture() {
+        // Note that this tests a time in the future, but still today.
+        // To ensure that we can get a time in the future today, if this test is run in the last ten seconds of the day,
+        // it sleeps for 11 seconds to wait until tomorrow.
+        if (LocalTime.now().isAfter(LocalTime.of(23, 59, 50))) {
+            sleep(11*1000);
+        }
+        clickOn("#deathDatePicker");
+        doubleClickOn("#deathDatePicker").type(KeyCode.BACK_SPACE)
+                .write(LocalDate.now().format(DateTimeFormatter.ofPattern("dd/MM/yy"))); // today
+
+        clickOn("#deathTimeField");
+        doubleClickOn("#deathTimeField").type(KeyCode.BACK_SPACE).write("23:59:59");
+        clickOn("#applyButton");
+        assertEquals(timeOfDeath, testClient.getTimeOfDeath());
     }
 
 }
