@@ -1,18 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Pagination?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 
-<VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.clinician.OrgansToDonateController">
+<VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.clinician.OrgansToDonateController">
    <children>
       <SplitPane dividerPositions="0.5" orientation="VERTICAL" VBox.vgrow="ALWAYS">
          <items>
@@ -20,16 +23,6 @@
             <SplitPane prefHeight="600.0">
                <items>
                   <BorderPane>
-                     <top>
-                        <Label text="Organs to Donate" BorderPane.alignment="TOP_CENTER">
-                           <font>
-                              <Font size="20.0" />
-                           </font>
-                           <BorderPane.margin>
-                              <Insets top="10.0" />
-                           </BorderPane.margin>
-                        </Label>
-                     </top>
                      <center>
                        <TableView fx:id="tableView">
                           <placeholder>
@@ -37,8 +30,8 @@
                           </placeholder>
                           <columns>
                             <TableColumn fx:id="clientCol" prefWidth="75.0" text="Client" />
-                            <TableColumn fx:id="organCol" prefWidth="75.0" text="Organ" />
-                            <TableColumn fx:id="timeOfDeathCol" prefWidth="75.0" text="Time of death" />
+                            <TableColumn fx:id="organCol" prefWidth="250.0" text="Organ" />
+                            <TableColumn fx:id="timeOfDeathCol" prefWidth="238.0" text="Time of death" />
                             <TableColumn fx:id="timeUntilExpiryCol" prefWidth="75.0" text="Time until expiry" />
                           </columns>
                            <columnResizePolicy>
@@ -56,6 +49,24 @@
                               <Text fx:id="displayingXToYOfZText" strokeType="OUTSIDE" strokeWidth="0.0" text="Displaying x-y of z" />
                            </children></VBox>
                      </bottom>
+                     <top>
+                        <Accordion BorderPane.alignment="CENTER">
+                          <panes>
+                            <TitledPane animated="false" text="Filters">
+                              <content>
+                                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="64.0" prefWidth="996.0">
+                                       <children>
+                                          <Text layoutX="71.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Region:" />
+                                          <ChoiceBox fx:id="regionFilter" layoutX="135.0" layoutY="9.0" prefHeight="27.0" prefWidth="280.0" />
+                                          <Text layoutX="433.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Organ:" />
+                                          <ChoiceBox fx:id="organFilter" layoutX="491.0" layoutY="9.0" prefHeight="27.0" prefWidth="280.0" />
+                                       </children>
+                                    </AnchorPane>
+                              </content>
+                            </TitledPane>
+                          </panes>
+                        </Accordion>
+                     </top>
                   </BorderPane>
                </items>
             </SplitPane>
