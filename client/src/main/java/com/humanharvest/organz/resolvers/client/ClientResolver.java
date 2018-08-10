@@ -1,10 +1,12 @@
 package com.humanharvest.organz.resolvers.client;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.MedicationRecord;
@@ -46,6 +48,8 @@ public interface ClientResolver {
     List<ProcedureRecord> getProcedureRecords(Client client);
 
     List<IllnessRecord> getIllnessRecords(Client client);
+
+    Collection<DonatedOrgan> getDonatedOrgans(Client client);
 
     List<HistoryItem> getHistory(Client client);
 
