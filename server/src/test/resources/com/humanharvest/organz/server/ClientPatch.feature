@@ -84,7 +84,7 @@ Feature: Does PATCH /clients/ work?
   Scenario: Update dates
     Given there is a test client
     Given I have an etag from client 1
-    When I patch to /clients/1 using { "dateOfBirth": "1987-01-01", "dateOfDeath": "1997-01-01" }
+    When I patch to /clients/1 using { "dateOfBirth": "1987-01-01", "dateOfDeath": "1997-01-01", "timeOfDeath": "00:00:00" }
     Then the result is ok
     #assertEquals(LocalDate.of(1987, 1, 1), testClient.getDateOfBirth());
     #assertEquals(LocalDate.of(1997, 1, 1), testClient.getDateOfDeath());

@@ -60,14 +60,25 @@ public class PageNavigator {
     }
 
     /**
-     * Opens a new window.
+     * Opens a new window with default width and height.
      * @return The MainController for the new window, or null if the new window could not be created.
      */
     public static MainController openNewWindow() {
+        return openNewWindow(1016, 639);
+    }
+
+    /**
+     * Opens a new window with the given width and height.
+     * @return The MainController for the new window, or null if the new window could not be created.
+     */
+    public static MainController openNewWindow(double width, double height) {
         LOGGER.info("Opening new window");
         try {
+            // Create new window
             Stage newStage = new Stage();
             newStage.setTitle("Organ Client Management System");
+
+            // Load FXML for MAIN (window root)
             FXMLLoader loader = new FXMLLoader();
             Pane mainPane = loader.load(PageNavigator.class.getResourceAsStream(Page.MAIN.getPath()));
             MainController mainController = loader.getController();
@@ -75,15 +86,19 @@ public class PageNavigator {
             State.addMainController(mainController);
             newStage.setOnCloseRequest(e -> State.deleteMainController(mainController));
 
+            // Apply CSS and set the scene on the new window
             Scene scene = new Scene(mainPane);
             AppUI.addCss(scene);
             newStage.setScene(scene);
             newStage.show();
 
-            newStage.setMinHeight(639);
-            newStage.setMinWidth(1016);
+            newStage.setMinWidth(width);
+            newStage.setMinHeight(height);
+            newStage.setWidth(width);
+            newStage.setHeight(height);
 
             return mainController;
+
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Error loading new window\n", e);
             // Will throw if MAIN's fxml file could not be loaded.

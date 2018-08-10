@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.MedicationRecord;
@@ -225,5 +226,17 @@ public class ClientManagerMemory implements ClientManager {
         return clients.stream()
                 .flatMap(client -> client.getChangesHistory().stream())
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * @return a list of all organs available for donation
+     */
+    @Override
+    public Collection<DonatedOrgan> getAllOrgansToDonate() {
+        Collection<DonatedOrgan> donatedOrgans = new ArrayList<>();
+        for (Client client: clients) {
+            donatedOrgans.addAll(client.getDonatedOrgans());
+        }
+        return donatedOrgans;
     }
 }

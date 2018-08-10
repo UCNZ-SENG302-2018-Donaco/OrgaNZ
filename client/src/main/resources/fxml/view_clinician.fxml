@@ -15,7 +15,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.151" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.clinician.ViewClinicianController">
+<VBox prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.clinician.ViewClinicianController">
   <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
   <HBox fx:id="menuBarPane" maxHeight="20.0" minHeight="-Infinity" />
     <SplitPane VBox.vgrow="ALWAYS">
@@ -26,24 +26,6 @@
               <BorderPane.margin>
                 <Insets bottom="40.0" left="100.0" right="100.0" />
               </BorderPane.margin>
-              <GridPane fx:id="loadClinicianPane" hgap="30.0">
-                <columnConstraints>
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                  <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                </columnConstraints>
-                <rowConstraints>
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                </rowConstraints>
-                <VBox.margin>
-                  <Insets bottom="30.0" top="30.0" />
-                </VBox.margin>
-                <children>
-                  <TextField fx:id="loadStaffIdTextField" promptText="Staff ID" GridPane.columnIndex="1" />
-                  <Button fx:id="loadClinicianButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#loadClinician" text="Load clinician" GridPane.columnIndex="2" />
-                </children>
-              </GridPane>
               <GridPane fx:id="inputsPane" hgap="30.0" prefHeight="302.0" prefWidth="758.0" VBox.vgrow="ALWAYS">
                 <columnConstraints>
                   <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="100.0" />
@@ -83,8 +65,10 @@
                               </font></Label>
                   <PasswordField fx:id="password" prefHeight="30.0" GridPane.columnIndex="3" />
                   <Label text="Country" GridPane.columnIndex="2" GridPane.rowIndex="3" />
-                  <ChoiceBox fx:id="country" onInputMethodTextChanged="#countryChanged" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="3" />
+                  <ChoiceBox fx:id="country" onAction="#checkCountry" prefWidth="150.0" GridPane.columnIndex="3" GridPane.rowIndex="3" />
                   <TextField fx:id="regionTF" GridPane.columnIndex="3" GridPane.rowIndex="2" />
+                           <Label text="Staff ID" GridPane.rowIndex="3" />
+                           <Label fx:id="staffIdLabel" text="STAFF ID" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                 </children>
                 <VBox.margin>
                   <Insets />

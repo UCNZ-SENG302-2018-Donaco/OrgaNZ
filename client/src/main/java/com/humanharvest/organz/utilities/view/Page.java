@@ -18,6 +18,7 @@ public enum Page {
     HISTORY("/fxml/history.fxml"),
     SEARCH("/fxml/search_clients.fxml"),
     TRANSPLANTS("/fxml/transplants.fxml"),
+    ORGANS_TO_DONATE("/fxml/organs_to_donate.fxml"),
     LOGIN_STAFF("/fxml/login_staff.fxml"),
     CREATE_CLINICIAN("/fxml/create_clinician.fxml"),
     CREATE_ADMINISTRATOR("/fxml/create_administrator.fxml"),
@@ -27,7 +28,7 @@ public enum Page {
     STAFF_LIST("/fxml/staff_list.fxml"),
     COMMAND_LINE("/fxml/command_line.fxml"),
     ADMIN_CONFIG("/fxml/admin_config.fxml"),
-    EDIT_DEATH_DETAILS("/fxml/edit_death_details.fxml");
+    SUBMIT_DEATH_DETAILS("/fxml/submit_death_details.fxml");
 
     private String path;
 
