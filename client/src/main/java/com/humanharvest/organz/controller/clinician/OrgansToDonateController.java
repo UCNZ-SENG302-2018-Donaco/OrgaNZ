@@ -130,6 +130,7 @@ public class OrgansToDonateController extends SubController {
         //On pagination update call createPage
         pagination.setPageFactory(this::createPage);
         regionFilter.getItems().setAll(Region.values());
+        regionFilter.getItems().add("Other");
         organFilter.getItems().setAll(Organ.values());
 
 
