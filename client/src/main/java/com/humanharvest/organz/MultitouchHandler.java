@@ -6,6 +6,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import javafx.collections.ObservableList;
+import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.input.GestureEvent;
 import javafx.scene.input.MouseEvent;
@@ -15,10 +16,7 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.input.TouchEvent;
 import javafx.scene.input.TouchPoint;
 import javafx.scene.layout.Pane;
-import javafx.scene.transform.Rotate;
-import javafx.scene.transform.Scale;
-import javafx.scene.transform.Transform;
-import javafx.scene.transform.Translate;
+import javafx.scene.transform.*;
 
 public class MultitouchHandler {
     private final List<CurrentTouch> touches = new ArrayList<>();
@@ -37,12 +35,11 @@ public class MultitouchHandler {
 
             TouchPoint touchPoint = event.getTouchPoint();
             CurrentTouch currentTouch = getCurrentTouch(touchPoint);
+            currentTouch.setRelativeXY(event.getTouchPoint().getPickResult());
             if (event.getEventType() == TouchEvent.TOUCH_PRESSED) {
                 currentTouch.pane = findPane(touchPoint);
                 setupInitialTransforms(currentTouch);
-                currentTouch.originalPointX = touchPoint.getX();
-                currentTouch.originalPointY = touchPoint.getY();
-                currentTouch.setRelativeXY(event.getTouchPoint().getPickResult());
+                currentTouch.currentScreenPoint = new Point2D(touchPoint.getX(), touchPoint.getY());
                 currentTouch.pane.ifPresent(Node::toFront);
             } else if (event.getEventType() == TouchEvent.TOUCH_RELEASED) {
                 removeCurrentTouch(touchPoint);
@@ -76,44 +73,47 @@ public class MultitouchHandler {
 
         Pane pane = currentTouch.pane.get();
 
+        Point2D newTouchPoint = new Point2D(touchPoint.getX(), touchPoint.getY());
         List<CurrentTouch> paneTouches = findPaneTouches(pane);
         if (paneTouches.size() == 1) {
-            double deltaX = touchPoint.getX() - currentTouch.originalPointX;
-            double deltaY = touchPoint.getY() - currentTouch.originalPointY;
+            Point2D delta = newTouchPoint.subtract(currentTouch.currentScreenPoint);
 
-            currentTouch.translate.setX(currentTouch.translate.getX() + deltaX);
-            currentTouch.translate.setY(currentTouch.translate.getY() + deltaY);
+            currentTouch.transform.append(new Translate(delta.getX(), delta.getY()));
 
-            currentTouch.originalPointX = touchPoint.getX();
-            currentTouch.originalPointY = touchPoint.getY();
+            currentTouch.currentScreenPoint = newTouchPoint;
 
         } else if (paneTouches.size() == 2) {
             CurrentTouch otherTouch;
-            if (paneTouches.get(0) == currentTouch) {
+            if (Objects.equals(paneTouches.get(0), currentTouch)) {
                 otherTouch = paneTouches.get(1);
             } else {
                 otherTouch = paneTouches.get(0);
             }
 
-            double oldAngle = calculateAngle(currentTouch.originalPointX, currentTouch.originalPointY, otherTouch.originalPointX, otherTouch.originalPointY);
-            double newAngle = calculateAngle(touchPoint.getX(), touchPoint.getY(), otherTouch.originalPointX, otherTouch.originalPointY);
+            double oldAngle = calculateAngle(currentTouch.currentScreenPoint, otherTouch.currentScreenPoint);
+            double newAngle = calculateAngle(new Point2D(touchPoint.getX(), touchPoint.getY()), otherTouch.currentScreenPoint);
             double angleDelta = newAngle - oldAngle;
-            double centreX =
-                    Math.min(touchPoint.getX(), otherTouch.originalPointX) + Math.abs(touchPoint.getX() - otherTouch.originalPointX) / 2;
-            double centreY =
-                    Math.min(touchPoint.getY(), otherTouch.originalPointY) + Math.abs(touchPoint.getY() - otherTouch.originalPointY) / 2;
+            Point2D centre = min(currentTouch.currentPanePoint, otherTouch.currentPanePoint)
+                    .add(abs(currentTouch.currentPanePoint.subtract(otherTouch.currentPanePoint)).multiply(0.5));
 
-            currentTouch.rotate.setAngle(currentTouch.rotate.getAngle() + Math.toDegrees(angleDelta));
+//            currentTouch.rotate.setAngle(currentTouch.rotate.getAngle() + Math.toDegrees(angleDelta));
 
-            currentTouch.originalPointX = touchPoint.getX();
-            currentTouch.originalPointY = touchPoint.getY();
+            currentTouch.currentScreenPoint = newTouchPoint;
         } else {
 
         }
     }
 
-    private double calculateAngle(double point1X, double point1Y, double point2X, double point2Y) {
-        return Math.atan2(point2Y - point1Y, point2X - point1X);
+    private static Point2D abs(Point2D point2D) {
+        return new Point2D(Math.abs(point2D.getX()), Math.abs(point2D.getY()));
+    }
+
+    private static Point2D min(Point2D p1, Point2D p2) {
+        return new Point2D(Math.min(p1.getX(), p2.getX()), Math.min(p1.getY(), p2.getY()));
+    }
+
+    private double calculateAngle(Point2D point1, Point2D point2) {
+        return Math.atan2(point2.getY() - point1.getY(), point2.getX() - point1.getX());
     }
 
     private List<CurrentTouch> findPaneTouches(Pane pane) {
@@ -144,16 +144,10 @@ public class MultitouchHandler {
         currentTouch.pane.ifPresent(pane -> {
             ObservableList<Transform> transforms = pane.getTransforms();
             if (transforms.isEmpty()) {
-                currentTouch.translate = new Translate();
-                currentTouch.rotate = new Rotate();
-                currentTouch.scale = new Scale(1, 1);
-                transforms.add(currentTouch.translate);
-                transforms.add(currentTouch.rotate);
-                transforms.add(currentTouch.scale);
-            } else if (transforms.size() == 3) {
-                currentTouch.translate = (Translate)transforms.get(0);
-                currentTouch.rotate = (Rotate)transforms.get(1);
-                currentTouch.scale = (Scale)transforms.get(2);
+                currentTouch.transform = new Affine();
+                transforms.add(currentTouch.transform);
+            } else if (transforms.size() == 1) {
+                currentTouch.transform = (Affine)transforms.get(0);
             } else {
                 throw new RuntimeException();
             }
@@ -167,7 +161,7 @@ public class MultitouchHandler {
 
         CurrentTouch currentTouch = touches.get(touchPoint.getId());
         if (currentTouch == null) {
-            currentTouch = new CurrentTouch();
+            currentTouch = new CurrentTouch(findPane(touchPoint));
             touches.set(touchPoint.getId(), currentTouch);
         }
 
@@ -179,42 +173,30 @@ public class MultitouchHandler {
     }
 
     private static class CurrentTouch {
-        public Optional<Pane> pane;
-        public double originalPointX;
-        public double originalPointY;
-        public double originalRelativeX;
-        public double originalRelativeY;
-        public Translate translate;
-        public Rotate rotate;
-        public Scale scale;
+        private Optional<Pane> pane;
+        public Point2D currentScreenPoint;
+        public Point2D currentPanePoint;
+        public Affine transform;
 
-        @Override
-        public String toString() {
-            return "CurrentTouch{" +
-                    "pane=" + pane +
-                    ", originalPointX=" + originalPointX +
-                    ", originalPointY=" + originalPointY +
-                    ", originalRelativeX=" + originalRelativeX +
-                    ", originalRelativeY=" + originalRelativeY +
-                    '}';
+        public CurrentTouch(Optional<Pane> pane) {
+            this.pane = pane;
         }
 
         public void setRelativeXY(PickResult pickResult) {
-            if (pane.isPresent()) {
-                Pane realPane = pane.get();
-                double currentX = pickResult.getIntersectedPoint().getX();
-                double currentY = pickResult.getIntersectedPoint().getY();
+            pane.ifPresent(realPane -> {
+                Point2D newScreenPoint = new Point2D(
+                        pickResult.getIntersectedPoint().getX(),
+                        pickResult.getIntersectedPoint().getY()
+                );
                 Node currentNode = pickResult.getIntersectedNode();
 
                 while (!Objects.equals(currentNode, realPane)) {
-                    currentX += currentNode.getLayoutX();
-                    currentY += currentNode.getLayoutY();
+                    newScreenPoint = newScreenPoint.add(currentNode.getLayoutX(), currentNode.getLayoutY());
                     currentNode = currentNode.getParent();
                 }
 
-                originalRelativeX = currentX;
-                originalRelativeY = currentY;
-            }
+                currentPanePoint = newScreenPoint;
+            });
         }
     }
 }
