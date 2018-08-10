@@ -8,10 +8,10 @@ tag_checker:
   only:
     - tags
 
-#junit:
-#  stage: test
-#  script:
-#    - mvn -B clean test
+junit:
+  stage: test
+  script:
+    - mvn -B clean test
 
 recent-artifacts:
   stage: deploy
