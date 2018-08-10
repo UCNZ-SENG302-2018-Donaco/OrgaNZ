@@ -12,6 +12,7 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.humanharvest.organz.Client;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -59,6 +60,7 @@ public class MenuBarController extends SubController {
     public MenuItem createClinicianItem;
     public MenuItem transplantRequestsItem;
     public MenuItem organsToDonateItem;
+    public MenuItem manuallyOverwrittenOrgansItem;
     public MenuItem viewAdministratorItem;
     public MenuItem viewClinicianItem;
     public MenuItem historyItem;
@@ -86,8 +88,10 @@ public class MenuBarController extends SubController {
     public Menu staffPrimaryItem;
     public Menu profilePrimaryItem;
 
+
     private ClientManager clientManager;
     private Session session;
+    private Client client;
 
     /**
      * Gets the ActionInvoker from the current state.
@@ -107,13 +111,13 @@ public class MenuBarController extends SubController {
         // Menus/Menu items to hide from admins
         Menu menusHideFromAdmins[] = {medicationsPrimaryItem};
         MenuItem menuItemsHideFromAdmins[] = {viewClientItem, donateOrganItem, requestOrganItem, viewMedicationsItem,
-                medicalHistoryItem, proceduresItem, viewClinicianItem};
+                medicalHistoryItem, proceduresItem, viewClinicianItem, manuallyOverwrittenOrgansItem};
 
         // Menus/Menu items to hide from clinicians
         Menu menusHideFromClinicians[] = {medicationsPrimaryItem, staffPrimaryItem};
         MenuItem menuItemsHideFromClinicians[] = {viewClientItem, donateOrganItem, requestOrganItem, viewMedicationsItem,
                 medicalHistoryItem, proceduresItem, saveClientsItem, saveCliniciansItem, loadItem, settingsItem,
-                staffListItem, createAdministratorItem, createClinicianItem, viewAdministratorItem, cliItem};
+                staffListItem, createAdministratorItem, createClinicianItem, viewAdministratorItem, cliItem, manuallyOverwrittenOrgansItem};
 
         // Menus/Menu items to hide from clinicians (or admins) viewing a client
         Menu menusHideFromClinViewClients[] = {staffPrimaryItem, profilePrimaryItem};
@@ -133,6 +137,10 @@ public class MenuBarController extends SubController {
                 && windowContext.isClinViewClientWindow()) {
             hideMenus(menusHideFromClinViewClients);
             hideMenuItems(menuItemsHideFromClinViewClients);
+            client = windowContext.getViewClient();
+            if (!client.isDead()) {
+                hideMenuItem(manuallyOverwrittenOrgansItem);
+            }
         }
 
         // Admins
@@ -208,6 +216,12 @@ public class MenuBarController extends SubController {
     private void goToRegisterOrganDonation() {
         PageNavigator.loadPage(Page.REGISTER_ORGAN_DONATIONS, mainController);
     }
+
+    /**
+     * Redirects the GUI to the manually overwritten organs page.
+     */
+    @FXML
+    private void goToManuallyOverwrittenOrgans() { PageNavigator.loadPage(Page.MANUALLY_OVERWRITTEN_ORGANS, mainController);}
 
     /**
      * Redirects the GUI to the Request Organs page.

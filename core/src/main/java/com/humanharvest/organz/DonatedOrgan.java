@@ -43,6 +43,9 @@ public class DonatedOrgan {
     @JsonView(Views.Overview.class)
     private LocalDateTime dateTimeOfDonation;
 
+
+    private String expiryReason; // If null this implies the organ was not manually expired
+
     protected DonatedOrgan() {
     }
 
@@ -117,5 +120,17 @@ public class DonatedOrgan {
      */
     public double getFullMarker() {
         return (double) getOrganType().getMinExpiration().getSeconds() / getOrganType().getMaxExpiration().getSeconds();
+    }
+
+    public Long getId(){
+        return id;
+    }
+
+    public String getExpiryReason() {
+        return expiryReason;
+    }
+
+    public void setExpiryReason(String expiryReason) {
+        this.expiryReason = expiryReason;
     }
 }

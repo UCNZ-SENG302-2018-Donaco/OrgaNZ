@@ -692,6 +692,14 @@ public class Client implements ConcurrencyControlledEntity {
                 .orElse(null);
     }
 
+    public DonatedOrgan getDonatedOrganById(long id) {
+        return donatedOrgans
+                .stream()
+                .filter(organ -> organ.getId() == id)
+                .findFirst()
+                .orElse(null);
+    }
+
     /**
      * Returns a list of illnesses that Client previously had
      * @return List of illnesses held by Client
@@ -938,6 +946,19 @@ public class Client implements ConcurrencyControlledEntity {
     }
 
     /**
+     * @return true if any of their organs' expiry has been manually overridden
+     */
+    @JsonIgnore
+    public boolean hasOverriddenOrgans() {
+        for (DonatedOrgan donatedOrgan : donatedOrgans) {
+            if (donatedOrgan.getExpiryReason() != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Indicates whether the client is a receiver (has at least one transplant request)
      * @return boolean of whether the client has any organ transplant requests
      */
@@ -983,6 +1004,24 @@ public class Client implements ConcurrencyControlledEntity {
      */
     public void donateOrgan(Organ organ, LocalDateTime timeDonated) {
         donatedOrgans.add(new DonatedOrgan(organ, this, timeDonated));
+    }
+
+    /**
+     * Used for Redo accepts DonatedOrgan Object. Declared as different method to avoid using it unless redoing action.
+     * @param donatedOrgan Donated Organ Object
+     */
+    public void addDonatedOrgan(DonatedOrgan donatedOrgan){
+        donatedOrgans.add(donatedOrgan);
+    }
+
+    /**
+     * Deletes donated Organ from Person used for manual override
+     * @param donatedOrgan donated Organ that you wish to delete.
+     */
+    public void deleteDonatedOrgan(DonatedOrgan donatedOrgan) {
+        int index = donatedOrgans.indexOf(donatedOrgan);
+        donatedOrgans.remove(index);
+        updateModifiedTimestamp();
     }
 
     /**

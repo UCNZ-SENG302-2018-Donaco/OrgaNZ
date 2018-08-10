@@ -28,6 +28,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.Pane;
@@ -191,7 +192,15 @@ public class ViewClientController extends ViewBaseController {
             deathDetailsPane.setDisable(true);
         } else if (windowContext.isClinViewClientWindow()) {
             mainController.setTitle("View Client: " + viewedClient.getFullName());
+            if (viewedClient.hasOverriddenOrgans()) {
+                aliveToggleBtn.setDisable(true);
+                deadToggleBtn.setDisable(true);
+                deathDatePicker.setDisable(true);
+                deathDatePicker.setTooltip(new Tooltip("Date of death is not editable because at least one organ has been "
+                        + "manually overridden."));
+            }
         }
+
 
         // Run these to reset all labels to correct colours
         checkMandatoryFields();

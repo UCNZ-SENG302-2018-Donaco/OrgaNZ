@@ -214,12 +214,29 @@ public class ClientManagerRest implements ClientManager {
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-Auth-Token", State.getToken());
         HttpEntity<String> entity = new HttpEntity<>(headers);
-
         ResponseEntity<Collection<DonatedOrganView>> responseEntity = State.getRestTemplate().exchange(
                 State.BASE_URI + "/clients/organs",
                 HttpMethod.GET,
                 entity, new ParameterizedTypeReference<Collection<DonatedOrganView>>(){});
 
         return responseEntity.getBody().stream().map(DonatedOrganView::getDonatedOrgan).collect(Collectors.toList());
+    }
+
+    @Override
+    public DonatedOrgan manuallyExpireOrgan(DonatedOrgan organ) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        headers.set("X-Auth-Token",State.getToken());
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+        System.out.println(organ.getDonor().getUid());
+        System.out.println(organ.getId());
+        ResponseEntity<DonatedOrgan> responseEntity = State.getRestTemplate().exchange(State.BASE_URI +
+                        "organs/{uid}/{id}",
+                HttpMethod.DELETE,
+                entity,DonatedOrgan.class,organ.getDonor().getUid(),organ.getId());
+
+        return responseEntity.getBody();
+
+
     }
 }

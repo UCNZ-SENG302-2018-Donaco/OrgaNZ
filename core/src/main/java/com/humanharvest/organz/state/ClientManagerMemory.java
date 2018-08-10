@@ -165,7 +165,6 @@ public class ClientManagerMemory implements ClientManager {
             return 1;
         }
     }
-
     /**
      * Gets all transplant requests, regardless of whether or not they are current
      * @return List of all transplant requests
@@ -238,5 +237,13 @@ public class ClientManagerMemory implements ClientManager {
             donatedOrgans.addAll(client.getDonatedOrgans());
         }
         return donatedOrgans;
+    }
+
+    @Override
+    public DonatedOrgan manuallyExpireOrgan(DonatedOrgan organ){
+        Client client = organ.getDonor();
+        client.getDonatedOrgans().remove(organ);
+        return organ;
+
     }
 }
