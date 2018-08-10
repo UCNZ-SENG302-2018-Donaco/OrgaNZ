@@ -1,10 +1,13 @@
 package com.humanharvest.organz.resolvers.client;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.MedicationRecord;
@@ -17,6 +20,7 @@ import com.humanharvest.organz.views.client.CreateIllnessView;
 import com.humanharvest.organz.views.client.CreateMedicationRecordView;
 import com.humanharvest.organz.views.client.CreateProcedureView;
 import com.humanharvest.organz.views.client.CreateTransplantRequestView;
+import com.humanharvest.organz.views.client.DonatedOrganView;
 import com.humanharvest.organz.views.client.ModifyClientObject;
 import com.humanharvest.organz.views.client.ModifyIllnessObject;
 import com.humanharvest.organz.views.client.ModifyProcedureObject;
@@ -91,6 +95,17 @@ public class ClientResolverRest implements ClientResolver {
                 new ParameterizedTypeReference<List<IllnessRecord>>() {
                 }, client.getUid());
         return responseEntity.getBody();
+    }
+
+    public Collection<DonatedOrgan> getDonatedOrgans(Client client) {
+        HttpHeaders httpHeaders = createHeaders(false);
+        httpHeaders.setETag(State.getClientEtag());
+
+        ResponseEntity<Collection<DonatedOrganView>> responseEntity = sendQuery(httpHeaders,
+                State.BASE_URI + "clients/{id}/donatedOrgans", HttpMethod.GET,
+                new ParameterizedTypeReference<Collection<DonatedOrganView>>() {}, client.getUid());
+
+        return responseEntity.getBody().stream().map(DonatedOrganView::getDonatedOrgan).collect(Collectors.toList());
     }
 
     @Override

@@ -1,6 +1,7 @@
 package com.humanharvest.organz.resolvers.client;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -8,6 +9,7 @@ import java.util.Map.Entry;
 import java.util.Optional;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.MedicationRecord;
@@ -49,6 +51,10 @@ public class ClientResolverMemory implements ClientResolver {
 
     public List<IllnessRecord> getIllnessRecords(Client client) {
         return client.getIllnesses();
+    }
+
+    public Collection<DonatedOrgan> getDonatedOrgans(Client client) {
+        return client.getDonatedOrgans();
     }
 
     public List<HistoryItem> getHistory(Client client) {
