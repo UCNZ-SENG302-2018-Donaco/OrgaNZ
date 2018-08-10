@@ -1,8 +1,12 @@
 package com.humanharvest.organz.server.controller;
 
 import java.util.Collection;
+import java.util.EnumSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Client;
@@ -11,6 +15,8 @@ import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.actions.client.DeleteDonatedOrganAction;
 import com.humanharvest.organz.server.exceptions.GlobalControllerExceptionHandler;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.views.client.DonatedOrganView;
 import com.humanharvest.organz.views.client.Views;
 import org.springframework.http.HttpHeaders;
@@ -21,6 +27,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -35,7 +42,9 @@ public class OrgansController {
     @JsonView(Views.Overview.class)
     @GetMapping("/clients/organs")
     public ResponseEntity<Collection<DonatedOrganView>> getOrgansToDonate(
-            @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken,
+            @RequestParam(required = false) Set<String> regions,
+            @RequestParam(required = false) EnumSet<Organ> organType)
             throws GlobalControllerExceptionHandler.InvalidRequestException {
 
         //State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
@@ -43,7 +52,20 @@ public class OrgansController {
         Collection<DonatedOrganView> donatedOrgans = State.getClientManager().getAllOrgansToDonate().stream()
                 .map(DonatedOrganView::new)
                 .collect(Collectors.toList());
-        return new ResponseEntity<>(donatedOrgans, HttpStatus.OK);
+
+        Stream<DonatedOrganView> stream = donatedOrgans.stream();
+
+        List<DonatedOrganView> filteredOrgans = stream
+
+                .filter(regions == null ? o -> true : organ -> regions.isEmpty() ||
+                        regions.contains(organ.getDonatedOrgan().getDonor().getRegion()))
+
+                .filter(organType == null ? o -> true : organ -> organType.isEmpty() ||
+                        organType.contains(organ.getDonatedOrgan().getOrganType()))
+
+                .collect(Collectors.toList());
+
+        return new ResponseEntity<>(filteredOrgans, HttpStatus.OK);
     }
 
     @JsonView(Views.Details.class)
