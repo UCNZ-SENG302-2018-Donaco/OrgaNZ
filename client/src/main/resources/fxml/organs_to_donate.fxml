@@ -2,7 +2,6 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Accordion?>
-<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Pagination?>
 <?import javafx.scene.control.SplitPane?>
@@ -14,6 +13,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
+<?import org.controlsfx.control.CheckComboBox?>
 
 <VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.clinician.OrgansToDonateController">
    <children>
@@ -57,9 +57,9 @@
                                 <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="64.0" prefWidth="996.0">
                                        <children>
                                           <Text layoutX="71.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Region:" />
-                                          <ChoiceBox fx:id="regionFilter" layoutX="135.0" layoutY="9.0" prefHeight="27.0" prefWidth="280.0" />
                                           <Text layoutX="433.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Organ:" />
-                                          <ChoiceBox fx:id="organFilter" layoutX="491.0" layoutY="9.0" prefHeight="27.0" prefWidth="280.0" />
+                                          <CheckComboBox fx:id="regionFilter" layoutX="126.0" layoutY="9.0" prefHeight="27.0" prefWidth="280.0" />
+                                          <CheckComboBox fx:id="organFilter" layoutX="481.0" layoutY="9.0" prefHeight="27.0" prefWidth="280.0" />
                                        </children>
                                     </AnchorPane>
                               </content>
