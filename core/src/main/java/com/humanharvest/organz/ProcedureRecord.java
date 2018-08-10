@@ -1,23 +1,13 @@
 package com.humanharvest.organz;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.humanharvest.organz.utilities.enums.Organ;
+
+import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
-import javax.persistence.Access;
-import javax.persistence.AccessType;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.humanharvest.organz.utilities.enums.Organ;
 
 @Entity
 @Table
@@ -31,7 +21,9 @@ public class ProcedureRecord {
     @JoinColumn(name = "Client_uid")
     @JsonBackReference
     private Client client;
+    @Column(columnDefinition = "text")
     private String summary;
+    @Column(columnDefinition = "text")
     private String description;
     private LocalDate date;
     @ElementCollection(targetClass = Organ.class)
