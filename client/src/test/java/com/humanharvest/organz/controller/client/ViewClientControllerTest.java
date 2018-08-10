@@ -1,11 +1,9 @@
 package com.humanharvest.organz.controller.client;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.time.LocalTime;
 
 import javafx.scene.input.KeyCode;
 
@@ -19,12 +17,15 @@ import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.testfx.api.FxRobotException;
 
 public class ViewClientControllerTest extends ControllerTest {
-    private Client testClient = new Client("a", "", "b", LocalDate.now().minusDays(10), 1);
+
+    private LocalDate dateOfBirth = LocalDate.now().minusYears(10);
+    private LocalDate dateOfDeath = LocalDate.now().minusYears(1);
+    private int futureYear = LocalDate.now().plusYears(2).getYear();
+    private int recentYear = LocalDate.now().minusYears(2).getYear();
+    private Client testClient = new Client(1);
 
     @Override
     protected Page getPage() {
@@ -44,18 +45,18 @@ public class ViewClientControllerTest extends ControllerTest {
     public void setClientDetails() {
         testClient.setFirstName("a");
         testClient.setLastName("b");
-        testClient.setDateOfBirth(LocalDate.now().minusDays(10));
+        testClient.setDateOfBirth(dateOfBirth);
+        testClient.setDateOfDeath(dateOfDeath);
+        testClient.setTimeOfDeath(LocalTime.now());
+        testClient.setCountryOfDeath(Country.US);
+        testClient.setRegionOfDeath("New York");
+        testClient.setCityOfDeath("New York City");
         testClient.setBloodType(BloodType.A_POS);
         testClient.setCountry(Country.NZ);
         testClient.setRegion(Region.AUCKLAND.toString());
         testClient.setHeight(180);
         testClient.setWeight(80);
         testClient.setCurrentAddress("1 Test Road");
-    }
-
-    @Test (expected = FxRobotException.class) // Exception should be thrown because the robot cannot find the id!
-    public void correctSetupClient() { // Only Clinicians should be able to see this the id field.
-        clickOn("#id");
     }
 
     @Test
@@ -123,4 +124,38 @@ public class ViewClientControllerTest extends ControllerTest {
         assertEquals("a", testClient.getFirstName());
         assertEquals("b", testClient.getLastName());
     }
+
+    @Test
+    public void validChangeDateOfBirth() {
+        clickOn("#dob");
+        doubleClickOn("#dob").type(KeyCode.BACK_SPACE).write("10/10/2000");
+        clickOn("#applyButton");
+        assertEquals(LocalDate.of(2000, 10, 10), testClient.getDateOfBirth());
+    }
+
+    @Test
+    public void invalidChangeDateOfBirthBlank() {
+        clickOn("#dob");
+        doubleClickOn("#dob").type(KeyCode.BACK_SPACE);
+        clickOn("#applyButton");
+        assertEquals(dateOfBirth, testClient.getDateOfBirth());
+    }
+
+    @Test
+    public void invalidChangeDateOfBirthFuture() {
+        String futureDate = "10/10/" + futureYear;
+        clickOn("#dob");
+        doubleClickOn("#dob").type(KeyCode.BACK_SPACE).write(futureDate);
+        clickOn("#applyButton");
+        assertEquals(dateOfBirth, testClient.getDateOfBirth());
+    }
+
+    @Test
+    public void cannotChangeDateOfDeath() {
+        clickOn("#deathDatePicker");
+        doubleClickOn("#deathDatePicker").type(KeyCode.BACK_SPACE).write("10/10/" + recentYear);
+        clickOn("#applyButton");
+        assertEquals(dateOfDeath, testClient.getDateOfDeath());
+    }
+
 }
