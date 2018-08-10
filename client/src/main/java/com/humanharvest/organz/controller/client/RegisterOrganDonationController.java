@@ -1,5 +1,6 @@
 package com.humanharvest.organz.controller.client;
 
+import java.time.format.DateTimeFormatter;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
@@ -37,6 +38,7 @@ import org.controlsfx.control.Notifications;
 public class RegisterOrganDonationController extends SubController {
 
     private static final Logger LOGGER = Logger.getLogger(RegisterOrganDonationController.class.getName());
+    private static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("d MMM yyyy hh:mm a");
 
     private Session session;
     private ClientManager manager;
@@ -140,13 +142,18 @@ public class RegisterOrganDonationController extends SubController {
         }
 
         // Set appropriate name on window title and name label
+        String name = "";
         if (session.getLoggedInUserType() == UserType.CLIENT) {
-            mainController.setTitle("Register Organs:  " + client.getPreferredNameFormatted());
-            fullName.setText(client.getPreferredNameFormatted());
+            mainController.setTitle("Donate  Organs: " + client.getPreferredNameFormatted());
+            name = client.getPreferredNameFormatted();
         } else if (windowContext.isClinViewClientWindow()) {
-            mainController.setTitle("Register Organs:  " + client.getFullName());
-            fullName.setText(client.getFullName());
+            mainController.setTitle("Donate Organs: " + client.getFullName());
+            name = client.getFullName();
         }
+        if (client.isDead()) {
+            name += " (died at " + client.getDatetimeOfDeath().format(dateTimeFormat) + ")";
+        }
+        fullName.setText(name);
 
         // Disable organ donation registration pane if client is dead
         if (client.isDead()) {
