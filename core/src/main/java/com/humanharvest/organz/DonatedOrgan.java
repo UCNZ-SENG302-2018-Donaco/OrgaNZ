@@ -85,6 +85,13 @@ public class DonatedOrgan {
     }
 
     /**
+     * @return true if the organ has expired
+     */
+    public boolean hasExpired() {
+        return getDurationUntilExpiry() != Duration.ZERO;
+    }
+
+    /**
      * @return if the organ hasn't expired: the duration. else: Duration.ZERO
      */
     public Duration getDurationUntilExpiry() {
