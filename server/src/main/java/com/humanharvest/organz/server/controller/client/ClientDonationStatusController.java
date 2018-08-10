@@ -6,10 +6,8 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import javax.xml.ws.Response;
 
 import com.humanharvest.organz.Client;
-import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.actions.client.ModifyClientOrgansAction;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
