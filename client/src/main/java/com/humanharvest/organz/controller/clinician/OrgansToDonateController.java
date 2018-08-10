@@ -1,5 +1,7 @@
 package com.humanharvest.organz.controller.clinician;
 
+import com.humanharvest.organz.utilities.enums.Region;
+import com.sun.tools.corba.se.idl.constExpr.Or;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.time.Duration;
@@ -20,6 +22,7 @@ import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
+import javafx.collections.ListChangeListener;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import org.controlsfx.control.CheckComboBox;
@@ -126,6 +129,15 @@ public class OrgansToDonateController extends SubController {
 
         //On pagination update call createPage
         pagination.setPageFactory(this::createPage);
+        regionFilter.getItems().setAll(Region.values());
+        organFilter.getItems().setAll(Organ.values());
+
+
+        regionFilter.getCheckModel().getCheckedItems().addListener(
+            (ListChangeListener<Region>) change -> updateOrgansToDonateList());
+
+        organFilter.getCheckModel().getCheckedItems().addListener(
+            (ListChangeListener<Organ>) change -> updateOrgansToDonateList());
 
 
     }
