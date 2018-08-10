@@ -1,6 +1,8 @@
 package com.humanharvest.organz.controller.clinician;
 
 import com.humanharvest.organz.utilities.enums.Region;
+import com.humanharvest.organz.views.client.PaginatedDonatedOrgansList;
+import com.sun.tools.corba.se.idl.constExpr.Or;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.time.Duration;
@@ -8,6 +10,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.EnumSet;
 import java.util.Optional;
 
 import com.humanharvest.organz.Client;
@@ -125,9 +128,6 @@ public class OrgansToDonateController extends SubController {
     @FXML
     private void initialize() {
         setupTable();
-
-        //On pagination update call createPage
-        pagination.setPageFactory(this::createPage);
         regionFilter.getItems().setAll(Region.values());
         regionFilter.getItems().add("Other");
         organFilter.getItems().setAll(Organ.values());
@@ -137,7 +137,10 @@ public class OrgansToDonateController extends SubController {
             (ListChangeListener<Region>) change -> updateOrgansToDonateList());
 
         organFilter.getCheckModel().getCheckedItems().addListener(
-            (ListChangeListener<Organ>) change -> updateOrgansToDonateList());
+            (ListChangeListener<DonatedOrgan>) change -> updateOrgansToDonateList());
+
+        //On pagination update call createPage
+        pagination.setPageFactory(this::createPage);
 
 
     }
@@ -286,6 +289,12 @@ public class OrgansToDonateController extends SubController {
             manuallyExpire(reason.getText());
         }
 
+    }
+
+    private <T extends Enum<T>> EnumSet<T> filterToSet(CheckComboBox<T> filter, Class<T> enumType) {
+        EnumSet<T> enumSet = EnumSet.noneOf(enumType);
+        enumSet.addAll(filter.getCheckModel().getCheckedItems());
+        return enumSet;
     }
 
     private void manuallyExpire(String message) {
