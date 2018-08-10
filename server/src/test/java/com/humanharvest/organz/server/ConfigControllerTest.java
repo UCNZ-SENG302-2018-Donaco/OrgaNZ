@@ -67,7 +67,7 @@ public class ConfigControllerTest {
         mockMvc.perform(get("/config/countries"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(contentType))
-                .andExpect(jsonPath("$", hasSize(2)));
+                .andExpect(jsonPath("$", hasSize(1)));
     }
 
     // ----------------------POST allowed countries-----------------------

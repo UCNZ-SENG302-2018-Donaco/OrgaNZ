@@ -79,6 +79,10 @@ public class DonatedOrgan {
         return dateTimeOfDonation;
     }
 
+    public void setDateTimeOfDonation(LocalDateTime dateTimeOfDonation) {
+        this.dateTimeOfDonation = dateTimeOfDonation;
+    }
+
     private Duration getTimeSinceDonation() {
         return Duration.between(dateTimeOfDonation, LocalDateTime.now());
     }
@@ -87,6 +91,9 @@ public class DonatedOrgan {
      * @return if the organ hasn't expired: the duration. else: Duration.ZERO
      */
     public Duration getDurationUntilExpiry() {
+        if (organType.getMaxExpiration() == null) {
+            return null;
+        }
         Duration timeToExpiry = organType.getMaxExpiration().minus(getTimeSinceDonation());
         return timeToExpiry.isNegative() ? Duration.ZERO : timeToExpiry;
     }
@@ -97,7 +104,10 @@ public class DonatedOrgan {
     public double getProgressDecimal() {
         Duration timeToExpiry = getDurationUntilExpiry();
         Duration expiration = getOrganType().getMaxExpiration();
-        if (timeToExpiry.isZero()) {
+
+        if (timeToExpiry == null) { // no expiration
+            return -1;
+        } else if (timeToExpiry.isZero()) { // expired
             return 1;
         } else {
             return 1 - ((double) timeToExpiry.getSeconds() / expiration.getSeconds());

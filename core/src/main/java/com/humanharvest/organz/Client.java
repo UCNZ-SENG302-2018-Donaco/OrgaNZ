@@ -412,8 +412,17 @@ public class Client implements ConcurrencyControlledEntity {
         return timeOfDeath;
     }
 
-    public void setTimeOfDeath(LocalTime timeOfDeath) {
-        this.timeOfDeath = timeOfDeath;
+    public void setTimeOfDeath(LocalTime newTimeOfDeath) {
+        updateModifiedTimestamp();
+        // Check if date/time of donation needs to be updated for any DonatedOrgans
+        if (timeOfDeath != null && dateOfDeath != null) {
+            for (DonatedOrgan organ : donatedOrgans) {
+                if (organ.getDateTimeOfDonation().equals(LocalDateTime.of(dateOfDeath, timeOfDeath))) {
+                    organ.setDateTimeOfDonation(LocalDateTime.of(dateOfDeath, newTimeOfDeath));
+                }
+            }
+        }
+        this.timeOfDeath = newTimeOfDeath;
     }
 
     public String getRegionOfDeath() {
@@ -421,6 +430,7 @@ public class Client implements ConcurrencyControlledEntity {
     }
 
     public void setRegionOfDeath(String regionOfDeath) {
+        updateModifiedTimestamp();
         this.regionOfDeath = regionOfDeath;
     }
 
@@ -429,6 +439,7 @@ public class Client implements ConcurrencyControlledEntity {
     }
 
     public void setCityOfDeath(String cityOfDeath) {
+        updateModifiedTimestamp();
         this.cityOfDeath = cityOfDeath;
     }
 
@@ -437,6 +448,7 @@ public class Client implements ConcurrencyControlledEntity {
     }
 
     public void setCountryOfDeath(Country countryOfDeath) {
+        updateModifiedTimestamp();
         this.countryOfDeath = countryOfDeath;
     }
 
@@ -444,9 +456,17 @@ public class Client implements ConcurrencyControlledEntity {
 
     public boolean isDead() { return dateOfDeath != null; }
 
-    public void setDateOfDeath(LocalDate dateOfDeath) {
+    public void setDateOfDeath(LocalDate newDateOfDeath) {
         updateModifiedTimestamp();
-        this.dateOfDeath = dateOfDeath;
+        // Check if date/time of donation needs to be updated for any DonatedOrgans
+        if (timeOfDeath != null && dateOfDeath != null) {
+            for (DonatedOrgan organ : donatedOrgans) {
+                if (organ.getDateTimeOfDonation().equals(LocalDateTime.of(dateOfDeath, timeOfDeath))) {
+                    organ.setDateTimeOfDonation(LocalDateTime.of(newDateOfDeath, timeOfDeath));
+                }
+            }
+        }
+        this.dateOfDeath = newDateOfDeath;
     }
 
     public Gender getGender() {
@@ -926,6 +946,19 @@ public class Client implements ConcurrencyControlledEntity {
     }
 
     /**
+     * @return true if any of their organs' expiry has been manually overridden
+     */
+    @JsonIgnore
+    public boolean hasOverriddenOrgans() {
+        for (DonatedOrgan donatedOrgan : donatedOrgans) {
+            if (donatedOrgan.getExpiryReason() != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Indicates whether the client is a receiver (has at least one transplant request)
      * @return boolean of whether the client has any organ transplant requests
      */
@@ -990,7 +1023,6 @@ public class Client implements ConcurrencyControlledEntity {
         donatedOrgans.remove(index);
         updateModifiedTimestamp();
     }
-
 
     /**
      * Registers the given {@link Organ} as having been donated by this client at this moment.
