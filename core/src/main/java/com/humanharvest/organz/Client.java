@@ -926,6 +926,19 @@ public class Client implements ConcurrencyControlledEntity {
     }
 
     /**
+     * @return true if any of their organs' expiry has been manually overridden
+     */
+    @JsonIgnore
+    public boolean hasOverriddenOrgans() {
+        for (DonatedOrgan donatedOrgan : donatedOrgans) {
+            if (donatedOrgan.getExpiryReason() != null) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Indicates whether the client is a receiver (has at least one transplant request)
      * @return boolean of whether the client has any organ transplant requests
      */
@@ -990,7 +1003,6 @@ public class Client implements ConcurrencyControlledEntity {
         donatedOrgans.remove(index);
         updateModifiedTimestamp();
     }
-
 
     /**
      * Registers the given {@link Organ} as having been donated by this client at this moment.
