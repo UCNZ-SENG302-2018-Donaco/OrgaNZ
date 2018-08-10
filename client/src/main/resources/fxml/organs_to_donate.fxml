@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Pagination?>
 <?import javafx.scene.control.SplitPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
+<?import org.controlsfx.control.CheckComboBox?>
 
 <VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.clinician.OrgansToDonateController">
    <children>
@@ -19,44 +23,65 @@
             <HBox fx:id="menuBarPane" maxHeight="20.0" minHeight="-Infinity" />
             <SplitPane prefHeight="600.0">
                <items>
-                  <BorderPane>
-                     <top>
-                        <Label text="Organs to Donate" BorderPane.alignment="TOP_CENTER">
+                  <VBox>
+                     <children>
+                        <Label alignment="CENTER" contentDisplay="CENTER" text="Organs to Donate" VBox.vgrow="ALWAYS">
                            <font>
-                              <Font size="20.0" />
+                              <Font size="22.0" />
                            </font>
-                           <BorderPane.margin>
-                              <Insets top="10.0" />
-                           </BorderPane.margin>
+                           <padding>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </padding>
                         </Label>
-                     </top>
-                     <center>
-                       <TableView fx:id="tableView">
-                          <placeholder>
-                            <Label text="No organs to donate found that match those criteria." />
-                          </placeholder>
-                          <columns>
-                            <TableColumn fx:id="clientCol" prefWidth="75.0" text="Client" />
-                            <TableColumn fx:id="organCol" prefWidth="75.0" text="Organ" />
-                            <TableColumn fx:id="timeOfDeathCol" prefWidth="75.0" text="Time of death" />
-                            <TableColumn fx:id="timeUntilExpiryCol" prefWidth="75.0" text="Time until expiry" />
-                          </columns>
-                           <columnResizePolicy>
-                              <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                           </columnResizePolicy>
-                           <BorderPane.margin>
-                              <Insets left="10.0" right="10.0" top="20.0" />
-                           </BorderPane.margin>
-                        </TableView>
-                     </center>
-                     <bottom>
-                        <VBox alignment="CENTER" disable="true" maxHeight="0.0" visible="false" BorderPane.alignment="CENTER">
-                           <children>
-                              <Pagination fx:id="pagination" prefHeight="70.0" prefWidth="200.0" />
-                              <Text fx:id="displayingXToYOfZText" strokeType="OUTSIDE" strokeWidth="0.0" text="Displaying x-y of z" />
-                           </children></VBox>
-                     </bottom>
-                  </BorderPane>
+                        <BorderPane>
+                           <center>
+                             <TableView fx:id="tableView">
+                                <placeholder>
+                                  <Label text="No organs to donate found that match those criteria." />
+                                </placeholder>
+                                <columns>
+                                  <TableColumn fx:id="clientCol" prefWidth="75.0" text="Client" />
+                                  <TableColumn fx:id="organCol" prefWidth="250.0" text="Organ" />
+                                  <TableColumn fx:id="timeOfDeathCol" prefWidth="238.0" text="Time of death" />
+                                  <TableColumn fx:id="timeUntilExpiryCol" prefWidth="75.0" text="Time until expiry" />
+                                </columns>
+                                 <columnResizePolicy>
+                                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                                 </columnResizePolicy>
+                                 <BorderPane.margin>
+                                    <Insets left="10.0" right="10.0" top="20.0" />
+                                 </BorderPane.margin>
+                              </TableView>
+                           </center>
+                           <bottom>
+                              <VBox alignment="CENTER" disable="true" maxHeight="0.0" visible="false" BorderPane.alignment="CENTER">
+                                 <children>
+                                    <Pagination fx:id="pagination" prefHeight="70.0" prefWidth="200.0" />
+                                    <Text fx:id="displayingXToYOfZText" strokeType="OUTSIDE" strokeWidth="0.0" text="Displaying x-y of z" />
+                                 </children>
+                              </VBox>
+                           </bottom>
+                           <top>
+                              <Accordion BorderPane.alignment="CENTER">
+                                <panes>
+                                  <TitledPane animated="false" text="Filters">
+                                    <content>
+                                      <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="64.0" prefWidth="996.0">
+                                             <children>
+                                                <Text layoutX="71.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Region:" />
+                                                <Text layoutX="433.0" layoutY="27.0" strokeType="OUTSIDE" strokeWidth="0.0" text="Organ:" />
+                                                <CheckComboBox fx:id="regionFilter" layoutX="126.0" layoutY="9.0" prefHeight="27.0" prefWidth="280.0" />
+                                                <CheckComboBox fx:id="organFilter" layoutX="481.0" layoutY="9.0" prefHeight="27.0" prefWidth="280.0" />
+                                             </children>
+                                          </AnchorPane>
+                                    </content>
+                                  </TitledPane>
+                                </panes>
+                              </Accordion>
+                           </top>
+                        </BorderPane>
+                     </children>
+                  </VBox>
                </items>
             </SplitPane>
          </items>

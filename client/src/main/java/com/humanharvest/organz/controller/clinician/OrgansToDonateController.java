@@ -1,5 +1,6 @@
 package com.humanharvest.organz.controller.clinician;
 
+import com.humanharvest.organz.utilities.enums.Region;
 import java.awt.MouseInfo;
 import java.awt.Point;
 import java.time.Duration;
@@ -20,8 +21,10 @@ import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
+import javafx.collections.ListChangeListener;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import org.controlsfx.control.CheckComboBox;
 import org.controlsfx.control.PopOver;
 import org.controlsfx.control.PopOver.ArrowLocation;
 import org.hibernate.validator.internal.util.logging.formatter.DurationFormatter;
@@ -81,6 +84,12 @@ public class OrgansToDonateController extends SubController {
     private Pagination pagination;
 
     @FXML
+    private CheckComboBox regionFilter;
+
+    @FXML
+    private CheckComboBox organFilter;
+
+    @FXML
     private Text displayingXToYOfZText;
 
     private ClientManager manager;
@@ -119,6 +128,18 @@ public class OrgansToDonateController extends SubController {
 
         //On pagination update call createPage
         pagination.setPageFactory(this::createPage);
+        regionFilter.getItems().setAll(Region.values());
+        regionFilter.getItems().add("Other");
+        organFilter.getItems().setAll(Organ.values());
+
+
+        regionFilter.getCheckModel().getCheckedItems().addListener(
+            (ListChangeListener<Region>) change -> updateOrgansToDonateList());
+
+        organFilter.getCheckModel().getCheckedItems().addListener(
+            (ListChangeListener<Organ>) change -> updateOrgansToDonateList());
+
+
     }
 
     /**
