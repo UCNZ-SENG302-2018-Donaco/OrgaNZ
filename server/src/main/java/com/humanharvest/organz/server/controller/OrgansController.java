@@ -43,7 +43,7 @@ public class OrgansController {
     @GetMapping("/clients/organs")
     public ResponseEntity<Collection<DonatedOrganView>> getOrgansToDonate(
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken,
-            @RequestParam(required = false) EnumSet<Region> region,
+            @RequestParam(required = false) Set<String> regions,
             @RequestParam(required = false) EnumSet<Organ> organType)
             throws GlobalControllerExceptionHandler.InvalidRequestException {
 
@@ -57,8 +57,8 @@ public class OrgansController {
 
         List<DonatedOrganView> filteredOrgans = stream
 
-                .filter(region == null ? o -> true : organ -> region.isEmpty() ||
-                        region.contains(organ.getDonatedOrgan().getDonor().getRegion()))
+                .filter(regions == null ? o -> true : organ -> regions.isEmpty() ||
+                        regions.contains(organ.getDonatedOrgan().getDonor().getRegion()))
 
                 .filter(organType == null ? o -> true : organ -> organType.isEmpty() ||
                         organType.contains(organ.getDonatedOrgan().getOrganType()))
