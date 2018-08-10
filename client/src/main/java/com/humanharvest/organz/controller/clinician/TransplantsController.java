@@ -136,7 +136,7 @@ public class TransplantsController extends SubController {
     }
 
     /**
-     * Sets up the page, setting its title, loading the sidebar and doing the first refresh of the data.
+     * Sets up the page, setting its title, loading the menu bar and doing the first refresh of the data.
      * @param mainController The main controller that defines which window this subcontroller belongs to.
      */
     @Override

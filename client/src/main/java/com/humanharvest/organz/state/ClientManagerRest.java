@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
@@ -22,9 +23,12 @@ import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
+import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.type_converters.EnumSetToString;
+import com.humanharvest.organz.views.client.DonatedOrganView;
 import com.humanharvest.organz.views.client.PaginatedClientList;
 import com.humanharvest.organz.views.client.PaginatedTransplantList;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -133,8 +137,13 @@ public class ClientManagerRest implements ClientManager {
 
         HttpEntity<Client> entity = new HttpEntity<>(null, httpHeaders);
 
-        ResponseEntity<Client> responseEntity = State.getRestTemplate()
-                .exchange(State.BASE_URI + "clients/{id}", HttpMethod.GET, entity, Client.class, id);
+        ResponseEntity<Client> responseEntity;
+        try {
+            responseEntity = State.getRestTemplate()
+                    .exchange(State.BASE_URI + "clients/{id}", HttpMethod.GET, entity, Client.class, id);
+        } catch (NotFoundException e) {
+            return Optional.empty();
+        }
         State.setClientEtag(responseEntity.getHeaders().getETag());
         return Optional.ofNullable(responseEntity.getBody());
     }
@@ -195,5 +204,22 @@ public class ClientManagerRest implements ClientManager {
     @Override
     public List<HistoryItem> getAllHistoryItems() {
         return Collections.emptyList();
+    }
+
+    /**
+     * @return a list of all organs available for donation
+     */
+    @Override
+    public Collection<DonatedOrgan> getAllOrgansToDonate() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("X-Auth-Token", State.getToken());
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<Collection<DonatedOrganView>> responseEntity = State.getRestTemplate().exchange(
+                State.BASE_URI + "/clients/organs",
+                HttpMethod.GET,
+                entity, new ParameterizedTypeReference<Collection<DonatedOrganView>>(){});
+
+        return responseEntity.getBody().stream().map(DonatedOrganView::getDonatedOrgan).collect(Collectors.toList());
     }
 }
