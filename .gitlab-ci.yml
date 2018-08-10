@@ -42,6 +42,7 @@ server-build-image:
   stage: build
   script:
   - mvn -B clean package -Dmaven.test.skip=true
+  - echo $CI_COMMIT_SHA > ./target/version
   - docker-compose build
   only:
   - deployment@seng302-2018/team-700
@@ -50,7 +51,6 @@ server-build-image:
 server-deployment:
   stage: deploy
   script:
-  - echo $CI_COMMIT_SHA > ./target/version
   - docker stop team700_web_1 || echo "success"
   - docker container prune -f
   - docker-compose up -d
@@ -61,7 +61,6 @@ server-deployment:
 release-artifacts:
   stage: deploy
   script:
-    - echo $CI_COMMIT_SHA > ./target/version
     - mvn -B clean site package
   artifacts:
     paths:
