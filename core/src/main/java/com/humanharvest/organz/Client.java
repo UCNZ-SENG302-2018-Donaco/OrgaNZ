@@ -35,8 +35,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.utilities.enums.BloodType;
-import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.ClientType;
+import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
@@ -410,6 +410,11 @@ public class Client implements ConcurrencyControlledEntity {
 
     public LocalTime getTimeOfDeath() {
         return timeOfDeath;
+    }
+
+    @JsonIgnore
+    public LocalDateTime getDatetimeOfDeath() {
+        return LocalDateTime.of(dateOfDeath, timeOfDeath);
     }
 
     public void setTimeOfDeath(LocalTime newTimeOfDeath) {
