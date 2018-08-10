@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.ClientNameSorter;
@@ -171,6 +172,11 @@ public interface ClientManager {
 
     PaginatedTransplantList getAllCurrentTransplantRequests(Integer offset, Integer count, Set<Region> regions,
             Set<Organ> organs);
+
+    /**
+     * Returns a collection of all the organs that are available to donate from dead peop[e.
+     */
+    Collection<DonatedOrgan> getAllOrgansToDonate();
 
     List<HistoryItem> getAllHistoryItems();
 }

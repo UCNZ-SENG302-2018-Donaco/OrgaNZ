@@ -18,6 +18,7 @@ public enum Page {
     HISTORY("/fxml/history.fxml"),
     SEARCH("/fxml/search_clients.fxml"),
     TRANSPLANTS("/fxml/transplants.fxml"),
+    ORGANS_TO_DONATE("/fxml/organs_to_donate.fxml"),
     LOGIN_STAFF("/fxml/login_staff.fxml"),
     CREATE_CLINICIAN("/fxml/create_clinician.fxml"),
     CREATE_ADMINISTRATOR("/fxml/create_administrator.fxml"),

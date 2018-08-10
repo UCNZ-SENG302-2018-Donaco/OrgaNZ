@@ -145,6 +145,22 @@ public class Client implements ConcurrencyControlledEntity {
     private List<ProcedureRecord> procedures = new ArrayList<>();
 
     @OneToMany(
+            mappedBy = "donor",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    @JsonManagedReference(value = "donatedOrgan")
+    private List<DonatedOrgan> donatedOrgans = new ArrayList<>();
+
+    @OneToMany(
+            mappedBy = "receiver",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    @JsonManagedReference(value = "receivedOrgan")
+    private List<DonatedOrgan> receivedOrgans = new ArrayList<>();
+
+    @OneToMany(
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
@@ -396,8 +412,17 @@ public class Client implements ConcurrencyControlledEntity {
         return timeOfDeath;
     }
 
-    public void setTimeOfDeath(LocalTime timeOfDeath) {
-        this.timeOfDeath = timeOfDeath;
+    public void setTimeOfDeath(LocalTime newTimeOfDeath) {
+        updateModifiedTimestamp();
+        // Check if date/time of donation needs to be updated for any DonatedOrgans
+        if (timeOfDeath != null && dateOfDeath != null) {
+            for (DonatedOrgan organ : donatedOrgans) {
+                if (organ.getDateTimeOfDonation().equals(LocalDateTime.of(dateOfDeath, timeOfDeath))) {
+                    organ.setDateTimeOfDonation(LocalDateTime.of(dateOfDeath, newTimeOfDeath));
+                }
+            }
+        }
+        this.timeOfDeath = newTimeOfDeath;
     }
 
     public String getRegionOfDeath() {
@@ -405,6 +430,7 @@ public class Client implements ConcurrencyControlledEntity {
     }
 
     public void setRegionOfDeath(String regionOfDeath) {
+        updateModifiedTimestamp();
         this.regionOfDeath = regionOfDeath;
     }
 
@@ -413,6 +439,7 @@ public class Client implements ConcurrencyControlledEntity {
     }
 
     public void setCityOfDeath(String cityOfDeath) {
+        updateModifiedTimestamp();
         this.cityOfDeath = cityOfDeath;
     }
 
@@ -421,6 +448,7 @@ public class Client implements ConcurrencyControlledEntity {
     }
 
     public void setCountryOfDeath(Country countryOfDeath) {
+        updateModifiedTimestamp();
         this.countryOfDeath = countryOfDeath;
     }
 
@@ -428,9 +456,17 @@ public class Client implements ConcurrencyControlledEntity {
 
     public boolean isDead() { return dateOfDeath != null; }
 
-    public void setDateOfDeath(LocalDate dateOfDeath) {
+    public void setDateOfDeath(LocalDate newDateOfDeath) {
         updateModifiedTimestamp();
-        this.dateOfDeath = dateOfDeath;
+        // Check if date/time of donation needs to be updated for any DonatedOrgans
+        if (timeOfDeath != null && dateOfDeath != null) {
+            for (DonatedOrgan organ : donatedOrgans) {
+                if (organ.getDateTimeOfDonation().equals(LocalDateTime.of(dateOfDeath, timeOfDeath))) {
+                    organ.setDateTimeOfDonation(LocalDateTime.of(newDateOfDeath, timeOfDeath));
+                }
+            }
+        }
+        this.dateOfDeath = newDateOfDeath;
     }
 
     public Gender getGender() {
@@ -746,6 +782,14 @@ public class Client implements ConcurrencyControlledEntity {
         updateModifiedTimestamp();
     }
 
+    public List<DonatedOrgan> getDonatedOrgans() {
+        return Collections.unmodifiableList(donatedOrgans);
+    }
+
+    public List<DonatedOrgan> getReceivedOrgans() {
+        return Collections.unmodifiableList(receivedOrgans);
+    }
+
     public void addToChangesHistory(HistoryItem historyItem) {
         changesHistory.add(historyItem);
     }
@@ -903,11 +947,22 @@ public class Client implements ConcurrencyControlledEntity {
     }
 
     /**
-     * Marks the client as dead and marks all organs as no for reception
-     * @param dateOfDeath LocalDate that the client died
+     * Marks the client as dead.
+     * - Resolves any pending organ requests by this client.
+     * - Marks all the organs they were willing to donate as donated.
+     * @param dateOfDeath Their date of death.
+     * @param timeOfDeath Their time of death.
+     * @param countryOfDeath The country they died in.
+     * @param regionOfDeath The region they died in.
+     * @param cityOfDeath The city they died in.
      */
-    public void markDead(LocalDate dateOfDeath) {
+    public void markDead(LocalDate dateOfDeath, LocalTime timeOfDeath, Country countryOfDeath, String regionOfDeath,
+            String cityOfDeath) {
         this.dateOfDeath = dateOfDeath;
+        this.timeOfDeath = timeOfDeath;
+        this.countryOfDeath = countryOfDeath;
+        this.regionOfDeath = regionOfDeath;
+        this.cityOfDeath = cityOfDeath;
 
         for (TransplantRequest request : transplantRequests) {
             if (request.getStatus() == TransplantRequestStatus.WAITING) {
@@ -916,6 +971,26 @@ public class Client implements ConcurrencyControlledEntity {
                 request.setResolvedReason("The client died.");
             }
         }
+        for (Organ organType : getCurrentlyDonatedOrgans()) {
+            donateOrgan(organType, LocalDateTime.of(dateOfDeath, timeOfDeath));
+        }
+    }
+
+    /**
+     * Registers the given {@link Organ} as having been donated by this client at the given time.
+     * @param organ The organ donated.
+     * @param timeDonated When the organ was removed from this client's body.
+     */
+    public void donateOrgan(Organ organ, LocalDateTime timeDonated) {
+        donatedOrgans.add(new DonatedOrgan(organ, this, timeDonated));
+    }
+
+    /**
+     * Registers the given {@link Organ} as having been donated by this client at this moment.
+     * @param organ The organ donated.
+     */
+    private void donateOrgan(Organ organ) {
+        donatedOrgans.add(new DonatedOrgan(organ, this, LocalDateTime.now()));
     }
 
     /**
