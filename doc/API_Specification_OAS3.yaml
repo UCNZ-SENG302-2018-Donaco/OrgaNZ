@@ -519,6 +519,33 @@ paths:
         500:
           $ref: '#/components/responses/500InternalServerError'
 
+  '/clients/organs':
+    get:
+      tags:
+        - Client Donation Status
+      security:
+        - ClinicianAccess: []
+        - AdministratorAccess: []
+      summary: Get the list of all currently available organs
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/donatedOrganList'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+
+
   '/clients/{uid}/medications':
     parameters:
     - in: path
@@ -2287,6 +2314,25 @@ components:
           type: integer
           example: 308
 
+    donatedOrgan:
+      type: object
+      properties:
+        id:
+          type: number
+        organType:
+          $ref: '#/components/schemas/organEnum'
+        dateTimeOfDonation:
+          $ref: '#/components/schemas/dateTime'
+
+    donatedOrganList:
+      type: object
+      properties:
+        donatedOrgan:
+          $ref: '#/components/schemas/donatedOrgan'
+        donor:
+          $ref: '#/components/schemas/clientOverview'
+        receiver:
+          $ref: '#/components/schemas/clientOverview'
 
     date:
       type: string

@@ -61,15 +61,11 @@ these changes > Check in the history tab that this has been made > Click undo > 
 bottom of the history table > Navigate back to View Clinician > If the default details are shown, the test passes,
 otherwise it fails. Continue with this test for Story 14;
 
-
-
 ## Story 13
 #### AC1
 Following Story 13's manual test, navigate to the history page > Click Redo > This should come up at the bottom of the 
 history table showing a REDO action has occurred > Navigate to the View Clinicians page > the middle name should now 
 show "test" in this field for the test to pass, otherwise it fails.
-
-
 
 ## Story 14
 #### AC1
@@ -100,8 +96,6 @@ These include:
 
 The remaining fields must be blank. If all these attributes are correct, the test passes.
 
-
-
 ## Story 15
 Note: All clinician updates are performed on the default clinician.
 
@@ -124,28 +118,6 @@ updates you made now must show in the 'View/Edit Clinician' page for this test t
 the default Clinician. If so, this first test passes.
 * Terminate any running AppUI programs > Run AppUi > Log into the default clinician > If Last Modified is set to "Not yet modified"
 the test passes. Otherwise it fails.
-
-
-
-## Story 16
-
-
-
-## Story 17
-
-## Story 18
-
-## Story 19
-
-## Story 20
-
-## Story 21
-
-## Story 22
-
-## Story 23
-
-## Story 24
 
 ## Story 25
 
@@ -172,17 +144,12 @@ will navigate you to their client page.
 Run the `@Ignore`d tests in `controller.administrator.StaffListControllerTest.java` and `controller.administrator.SearchClientsControllerAdministratorTest.java` in headful mode.
 Run the `@Ignore`d test file `controller.clinician.ViewClinicianControllerTest.java`
 
-
-26/07/2018 James Toohey manual tests:
-
 ## Story 46
 Context - Viewing the clinician details page.
 Logging in as an admin and viewing clinicians given the option for admins to search for all clinicians.
 Logging in as a clinician only allows them to strictly see only their details. They cannot search for details about any other clinicians
 
-As an admin, they can change the details of the default admin
-`Bug found` - editing a non default clinician throws a bad request. Has now been fixed.
-
+As an admin, they can change the details of the default clinician
 
 ## Story 47
 Go to the Organs To Donate page, and check there is a coloured countdown and it sorts by default, with the closest to expiring organs at the top
