@@ -248,6 +248,7 @@ public class OrgansToDonateController extends SubController {
         */
     }
 
+
     /**
      * Refreshes the data in the transplants waiting list table. Should be called whenever any page calls a global
      * refresh.
@@ -257,6 +258,7 @@ public class OrgansToDonateController extends SubController {
         observableOrgansToDonate.setAll(manager.getAllOrgansToDonate());
         tableView.setItems(sortedOrgansToDonate);
     }
+
 
     // ---------------- Format methods ----------------
     private void openManuallyExpireDialog() {

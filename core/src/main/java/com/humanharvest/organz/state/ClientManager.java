@@ -1,5 +1,6 @@
 package com.humanharvest.organz.state;
 
+import com.humanharvest.organz.views.client.PaginatedDonatedOrgansList;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Comparator;
@@ -173,11 +174,27 @@ public interface ClientManager {
     PaginatedTransplantList getAllCurrentTransplantRequests(Integer offset, Integer count, Set<Region> regions,
             Set<Organ> organs);
 
+    Collection<DonatedOrgan> getAllOrgansToDonate();
+
     /**
      * Returns a collection of all the organs that are available to donate from dead peop[e.
      */
-    Collection<DonatedOrgan> getAllOrgansToDonate();
 
+    default PaginatedDonatedOrgansList getAllOrgansToDonate(EnumSet<Region> regions) {
+
+        Stream<DonatedOrgan> stream = getAllOrgansToDonate().stream();
+
+
+        List<DonatedOrgan> filteredOrgans = stream
+            .filter(regions == null ? c -> true : organ -> regions.isEmpty() ||
+                regions.contains(organ.getDonor().getRegion()))
+            .collect(Collectors.toList());
+
+        int results = filteredOrgans.size();
+
+        return new PaginatedDonatedOrgansList(filteredOrgans,results);
+
+    };
     /** Used by clinician to manually expire an organ
      * @param organ Organ that clinician wishes to expire
      * @return Returns expired organ.

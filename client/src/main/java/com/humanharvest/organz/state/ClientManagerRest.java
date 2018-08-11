@@ -1,5 +1,6 @@
 package com.humanharvest.organz.state;
 
+import com.humanharvest.organz.views.client.PaginatedDonatedOrgansList;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -202,6 +203,11 @@ public class ClientManagerRest implements ClientManager {
     }
 
     @Override
+    public Collection<DonatedOrgan> getAllOrgansToDonate() {
+        return null;
+    }
+
+    @Override
     public List<HistoryItem> getAllHistoryItems() {
         return Collections.emptyList();
     }
@@ -210,17 +216,24 @@ public class ClientManagerRest implements ClientManager {
      * @return a list of all organs available for donation
      */
     @Override
-    public Collection<DonatedOrgan> getAllOrgansToDonate() {
+    public PaginatedDonatedOrgansList getAllOrgansToDonate(EnumSet<Region> regions) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-Auth-Token", State.getToken());
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-        ResponseEntity<Collection<DonatedOrganView>> responseEntity = State.getRestTemplate().exchange(
-                State.BASE_URI + "/clients/organs",
-                HttpMethod.GET,
-                entity, new ParameterizedTypeReference<Collection<DonatedOrganView>>(){});
+        headers.set("Accept",MediaType.APPLICATION_JSON_VALUE);
 
-        return responseEntity.getBody().stream().map(DonatedOrganView::getDonatedOrgan).collect(Collectors.toList());
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(State.BASE_URI + "/clients/organs")
+            .queryParam("regions",EnumSetToString.convert(regions));
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        HttpEntity<PaginatedDonatedOrgansList> responseEntity = State.getRestTemplate().exchange(builder.toUriString(),
+            HttpMethod.GET,
+            entity,
+            PaginatedDonatedOrgansList.class);
+
+        return responseEntity.getBody();
+
     }
+
 
     @Override
     public DonatedOrgan manuallyExpireOrgan(DonatedOrgan organ) {
