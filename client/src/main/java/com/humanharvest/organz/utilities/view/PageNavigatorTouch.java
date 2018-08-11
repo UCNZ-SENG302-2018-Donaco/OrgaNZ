@@ -1,9 +1,10 @@
 package com.humanharvest.organz.utilities.view;
 
-import com.humanharvest.organz.AppTUIO;
-import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.state.State;
+import java.io.IOException;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -11,14 +12,13 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
-import java.io.IOException;
-import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.humanharvest.organz.AppTUIO;
+import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.state.State;
 
 /**
  * Utility class for controlling navigation between pages.
@@ -134,8 +134,14 @@ public class PageNavigatorTouch implements IPageNavigator {
      * @return an Optional for the button that was clicked to dismiss the alert.
      */
     public Optional<ButtonType> showAlert(Alert.AlertType alertType, String title, String bodyText, Window window) {
-        Alert alert = generateAlert(alertType, title, bodyText);
-        alert.initModality(Modality.WINDOW_MODAL);
-        return alert.showAndWait();
+        AlertResponseHandler responseHandler = new AlertResponseHandler();
+
+        boolean response = responseHandler.showAndWait(alertType, title, bodyText, window);
+
+        if (response) {
+            return Optional.of(ButtonType.OK);
+        } else {
+            return Optional.empty();
+        }
     }
 }
