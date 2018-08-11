@@ -9,11 +9,14 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.state.AuthenticationManagerFake;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
@@ -56,6 +59,10 @@ public class OrganControllerTest {
             System.out.println("Error setting up organ donation status: " + ex.getMessage());
         }
         janMichael.setDateOfDeath(LocalDate.now()); //TODO find how to mark a client as dead and have this register.
+        janMichael.setTimeOfDeath(LocalTime.now());
+        janMichael.setCountryOfDeath(Country.US);
+        janMichael.setRegionOfDeath("New York");
+        janMichael.setCityOfDeath("New York City");
 
         State.getClientManager().addClient(janMichael);
         State.getClientManager().addClient(michaelShoeMaker);
@@ -65,8 +72,8 @@ public class OrganControllerTest {
     @Test
     public void getDefault() throws Exception {
         mockMvc.perform(get("/clients/organs"))
-                .andExpect(status().isOk());
-//                .andExpect(jsonPath("$", hasSize(2)));
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(1)));
 
     }
 

@@ -2,9 +2,6 @@ package com.humanharvest.organz.controller.clinician;
 
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.views.client.PaginatedDonatedOrgansList;
-import com.sun.tools.corba.se.idl.constExpr.Or;
-import java.awt.MouseInfo;
-import java.awt.Point;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;

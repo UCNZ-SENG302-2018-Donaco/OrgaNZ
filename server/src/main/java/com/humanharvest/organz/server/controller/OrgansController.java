@@ -48,13 +48,13 @@ public class OrgansController {
             throws GlobalControllerExceptionHandler.InvalidRequestException {
 
         //State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
-
+        // Get all organs for donation
         Collection<DonatedOrganView> donatedOrgans = State.getClientManager().getAllOrgansToDonate().stream()
                 .map(DonatedOrganView::new)
                 .collect(Collectors.toList());
 
+        // Filter by region and organ type if the params have been set
         Stream<DonatedOrganView> stream = donatedOrgans.stream();
-
         List<DonatedOrganView> filteredOrgans = stream
 
                 .filter(regions == null ? o -> true : organ -> regions.isEmpty() ||
