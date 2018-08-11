@@ -65,7 +65,7 @@
                                     </VBox.margin>
                                 </Label>
                                 <ListView fx:id="pastMedicationsView" prefHeight="330.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
-                        <Label text="Medication Interactions">
+                        <Label text="Medication Ingredients">
                            <VBox.margin>
                               <Insets top="10.0" />
                            </VBox.margin>
@@ -73,7 +73,7 @@
                               <Font name="System Bold" size="12.0" />
                            </font>
                         </Label>
-                        <TextArea fx:id="medicationIngredients" editable="false" prefHeight="200.0" prefWidth="200.0" promptText="Select two medications to show interactions for ..." />
+                        <TextArea fx:id="medicationIngredients" editable="false" prefHeight="200.0" prefWidth="200.0" />
                             </VBox>
                             <VBox alignment="TOP_CENTER" spacing="5.0">
                                 <HBox.margin>
@@ -101,7 +101,7 @@
                                         </VBox.margin>
                                     </Label>
                                     <ListView fx:id="currentMedicationsView" prefHeight="330.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
-                           <Label text="Medication Ingredients">
+                           <Label text="Medication Interactions">
                               <VBox.margin>
                                  <Insets top="10.0" />
                               </VBox.margin>
@@ -109,7 +109,7 @@
                                  <Font name="System Bold" size="12.0" />
                               </font>
                            </Label>
-                           <TextArea fx:id="medicationInteractions" editable="false" prefHeight="200.0" prefWidth="200.0" promptText="Select a medication to show its ingredients ..." />
+                           <TextArea fx:id="medicationInteractions" editable="false" prefHeight="200.0" prefWidth="200.0" promptText="Select two medications to show interactions for ..." />
                                 </children>
                             </VBox>
                         </HBox>
