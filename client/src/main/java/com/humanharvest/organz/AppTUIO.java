@@ -5,6 +5,7 @@ import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.state.State.DataStorageType;
 import com.humanharvest.organz.utilities.LoggerSetup;
+import com.humanharvest.organz.utilities.ReflectionUtils;
 import com.humanharvest.organz.utilities.view.*;
 import com.sun.javafx.css.StyleManager;
 import com.sun.javafx.geom.PickRay;
@@ -203,44 +204,30 @@ public class AppTUIO extends Application {
 
     private static void initialiseTUIOHook(TuioFX tuioFX) {
         try {
-            AppTUIO.<TuioInputService>getField(tuioFX, "tuioInputService").disconnectTUIO();
+            ReflectionUtils.<TuioInputService>getField(tuioFX, "tuioInputService").disconnectTUIO();
 
-            Configuration config = getField(tuioFX, "config");
+            Configuration config = ReflectionUtils.getField(tuioFX, "config");
             GestureHandler gestureHandler = new GestureHandler(config);
-            TargetSelection targetSelection = new TargetSelectionHook(getField(tuioFX, "scene"), config);
-            CoordinatesMapping coordinatesMapping = new CoordinatesMapping(getField(tuioFX, "stage"), config);
+            TargetSelection targetSelection = new TargetSelectionHook(ReflectionUtils.getField(tuioFX, "scene"), config);
+            CoordinatesMapping coordinatesMapping = new CoordinatesMapping(ReflectionUtils.getField(tuioFX, "stage"), config);
             TouchHandler touchHandler = new TouchHandler(gestureHandler, targetSelection, coordinatesMapping, config);
             TuioInputService inputService = new TuioInputServiceHook(coordinatesMapping, touchHandler, config);
 
-            setField(tuioFX, "gestureHandler", gestureHandler);
-            setField(tuioFX, "targetSelection", targetSelection);
-            setField(tuioFX, "coordinatesMapping", coordinatesMapping);
-            setField(tuioFX, "touchHandler", touchHandler);
-            setField(tuioFX, "tuioInputService", inputService);
+            ReflectionUtils.setField(tuioFX, "gestureHandler", gestureHandler);
+            ReflectionUtils.setField(tuioFX, "targetSelection", targetSelection);
+            ReflectionUtils.setField(tuioFX, "coordinatesMapping", coordinatesMapping);
+            ReflectionUtils.setField(tuioFX, "touchHandler", touchHandler);
+            ReflectionUtils.setField(tuioFX, "tuioInputService", inputService);
         } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    private static <T> T getField(Object o, String fieldName)
-            throws NoSuchFieldException, IllegalAccessException {
-        Field field = o.getClass().getDeclaredField(fieldName);
-        field.setAccessible(true);
-        return (T)field.get(o);
-    }
-
-    private static <T> void setField(Object o, String fieldName, T value)
-            throws NoSuchFieldException, IllegalAccessException {
-        Field field = o.getClass().getDeclaredField(fieldName);
-        field.setAccessible(true);
-        field.set(o, value);
     }
 
     private static void initialiseFakeTUIO(TuioFX tuioFX, Stage primaryStage) {
         TuioInputService inputService;
 
         try {
-            inputService = getField(tuioFX, "tuioInputService");
+            inputService = ReflectionUtils.getField(tuioFX, "tuioInputService");
         } catch (NoSuchFieldException | IllegalAccessException e) {
             throw new RuntimeException(e);
         }
