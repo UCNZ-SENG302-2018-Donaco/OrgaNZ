@@ -129,7 +129,11 @@ public class DonatedOrgan {
         return overrideReason;
     }
 
-    public void setOverrideReason(String expiryReason) {
-        this.overrideReason = expiryReason;
+    public void manuallyOverride(String overrideReason) {
+        this.overrideReason = overrideReason;
+    }
+
+    public void cancelManualOverride() {
+        this.overrideReason = null;
     }
 }

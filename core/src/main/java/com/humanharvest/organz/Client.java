@@ -1020,24 +1020,6 @@ public class Client implements ConcurrencyControlledEntity {
     }
 
     /**
-     * Used for Redo accepts DonatedOrgan Object. Declared as different method to avoid using it unless redoing action.
-     * @param donatedOrgan Donated Organ Object
-     */
-    public void addDonatedOrgan(DonatedOrgan donatedOrgan){
-        donatedOrgans.add(donatedOrgan);
-    }
-
-    /**
-     * Deletes donated Organ from Person used for manual override
-     * @param donatedOrgan donated Organ that you wish to delete.
-     */
-    public void deleteDonatedOrgan(DonatedOrgan donatedOrgan) {
-        int index = donatedOrgans.indexOf(donatedOrgan);
-        donatedOrgans.remove(index);
-        updateModifiedTimestamp();
-    }
-
-    /**
      * Registers the given {@link Organ} as having been donated by this client at this moment.
      * @param organ The organ donated.
      */
