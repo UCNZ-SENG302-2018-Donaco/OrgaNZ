@@ -23,6 +23,7 @@ import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
 import javafx.collections.ListChangeListener;
 import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.GridPane;
 import org.controlsfx.control.CheckComboBox;
 import org.controlsfx.control.PopOver;
@@ -243,7 +244,16 @@ public class OrgansToDonateController extends SubController {
      */
     private void filterRegions() {
         regionsToFilter = EnumSet.noneOf(Region.class);
-        regionsToFilter.addAll(regionFilter.getCheckModel().getCheckedItems());
+        if (regionFilter.getCheckModel().getCheckedItems().contains("Other")) {
+            // do something
+        }
+        try {
+            regionsToFilter.addAll(regionFilter.getCheckModel().getCheckedItems());
+        } catch (ClassCastException cce) {
+            PageNavigator.showAlert(AlertType.ERROR, "Regions Outside NZ Not Filtered", "Currently not supporting "
+                    + "regions outside of NZ");
+            // TODO remove this message and implement the filtering for all regions outside of NZ.
+        }
     }
 
     /**
