@@ -124,7 +124,7 @@ public class MenuBarController extends SubController {
         MenuItem menuItemsHideFromClinViewClients[] = {saveClientsItem, saveCliniciansItem, loadItem, settingsItem,
                 logOutItem, searchClientItem, createClientItem, transplantRequestsItem, organsToDonateItem,
                 staffListItem, createAdministratorItem, createClinicianItem, viewAdministratorItem,
-                viewClinicianItem, historyItem, cliItem};
+                viewClinicianItem, historyItem, cliItem, topSeparator};
 
         // Menus to hide from clients (aka all menus)
         Menu allMenus[] = {filePrimaryItem, editPrimaryItem, clientPrimaryItem, organPrimaryItem,

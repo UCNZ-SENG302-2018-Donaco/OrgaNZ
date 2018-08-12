@@ -75,7 +75,7 @@ public class OrgansToDonateController extends SubController {
     private TableColumn<DonatedOrgan, Organ> organCol;
 
     @FXML
-    private  TableColumn<Region,String> regionCol;
+    private  TableColumn<DonatedOrgan, String> regionCol;
 
     @FXML
     private TableColumn<DonatedOrgan, LocalDateTime> timeOfDeathCol;
@@ -155,7 +155,7 @@ public class OrgansToDonateController extends SubController {
         clientCol.setCellValueFactory(cellData -> new SimpleStringProperty(
                 cellData.getValue().getDonor().getFullName()));
         organCol.setCellValueFactory(new PropertyValueFactory<>("organType"));
-        regionCol.setCellValueFactory(new PropertyValueFactory<>("region"));
+        regionCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDonor().getRegion()));
         timeOfDeathCol.setCellValueFactory(new PropertyValueFactory<>("dateTimeOfDonation"));
         timeUntilExpiryCol.setCellValueFactory(new PropertyValueFactory<>("durationUntilExpiry"));
 
