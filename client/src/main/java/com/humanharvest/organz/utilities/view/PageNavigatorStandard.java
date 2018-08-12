@@ -4,6 +4,8 @@ import com.humanharvest.organz.AppUI;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.state.State;
+import javafx.beans.property.Property;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -132,8 +134,15 @@ public class PageNavigatorStandard implements IPageNavigator {
      * @param bodyText  the text to show within the body of the alert.
      * @return an Optional for the button that was clicked to dismiss the alert.
      */
-    public Optional<ButtonType> showAlert(Alert.AlertType alertType, String title, String bodyText, Window window) {
+    public Property<Boolean> showAlert(Alert.AlertType alertType, String title, String bodyText, Window window) {
+        Property<Boolean> booleanProperty = new SimpleBooleanProperty();
         Alert alert = generateAlert(alertType, title, bodyText);
-        return alert.showAndWait();
+        Optional<ButtonType> result = alert.showAndWait();
+        if (result.isPresent() && result.get() == ButtonType.OK) {
+            booleanProperty.setValue(true);
+        } else {
+            booleanProperty.setValue(false);
+        }
+        return booleanProperty;
     }
 }

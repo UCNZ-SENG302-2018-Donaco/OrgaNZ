@@ -19,6 +19,7 @@ import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.utilities.view.WindowContext;
 import com.humanharvest.organz.views.client.CreateTransplantRequestView;
 import com.humanharvest.organz.views.client.ResolveTransplantRequestObject;
+import javafx.beans.property.Property;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -32,7 +33,6 @@ import javafx.scene.layout.Pane;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
-import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -407,11 +407,20 @@ public class RequestOrgansController extends SubController {
 
             // Offer to go to medical history page if they said a disease was cured
             if (resolvedReasonDropdownChoice == ResolveReason.CURED) { // "Disease was cured"
-                Optional<ButtonType> buttonOpt = PageNavigator.showAlert(AlertType.CONFIRMATION,
+                Property<Boolean> response = PageNavigator.showAlert(AlertType.CONFIRMATION,
                         "Go to Medical History Page",
                         "Do you want to go to the medical history page to mark the disease that was cured?", mainController.getStage());
-                if (buttonOpt.isPresent() && buttonOpt.get() == ButtonType.OK) {
-                    PageNavigator.loadPage(Page.VIEW_MEDICAL_HISTORY, mainController);
+
+                if (response.getValue() != null) {
+                    if (response.getValue()) {
+                        PageNavigator.loadPage(Page.VIEW_MEDICAL_HISTORY, mainController);
+                    }
+                } else {
+                    response.addListener((observable, oldValue, newValue) -> {
+                        if (newValue) {
+                            PageNavigator.loadPage(Page.VIEW_MEDICAL_HISTORY, mainController);
+                        }
+                    });
                 }
             }
         }

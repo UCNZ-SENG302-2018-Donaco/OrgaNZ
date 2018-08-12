@@ -1,24 +1,24 @@
 package com.humanharvest.organz.utilities.view;
 
-import java.io.IOException;
-import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+import com.humanharvest.organz.AppTUIO;
+import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.controller.components.TouchAlertController;
+import com.humanharvest.organz.state.State;
+import javafx.beans.property.Property;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
-import com.humanharvest.organz.AppTUIO;
-import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.state.State;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Utility class for controlling navigation between pages.
@@ -87,7 +87,7 @@ public class PageNavigatorTouch implements IPageNavigator {
             newStage.setOnCloseRequest(e -> State.deleteMainController(mainController));
 
             TuioFXUtils.setupPaneWithTouchFeatures(mainPane);
-            AppTUIO.root.getChildren().add(0, mainPane);
+            AppTUIO.root.getChildren().add(mainPane);
 
             return mainController;
         } catch (IOException e) {
@@ -133,15 +133,35 @@ public class PageNavigatorTouch implements IPageNavigator {
      * @param bodyText  the text to show within the body of the alert.
      * @return an Optional for the button that was clicked to dismiss the alert.
      */
-    public Optional<ButtonType> showAlert(Alert.AlertType alertType, String title, String bodyText, Window window) {
-        AlertResponseHandler responseHandler = new AlertResponseHandler();
+    public Property<Boolean> showAlert(Alert.AlertType alertType, String title, String bodyText, Window window) {
+        LOGGER.info("Opening new window");
+        try {
+            Stage newStage = new Stage();
+            FXMLLoader loader = new FXMLLoader(PageNavigatorTouch.class.getResource(Page.TOUCH_ALERT.getPath()));
+            Pane mainPane = loader.load();
+            TouchAlertController controller = loader.getController();
+            controller.setStage(newStage);
 
-        boolean response = responseHandler.showAndWait(alertType, title, bodyText, window);
+            controller.setStage(newStage);
+            controller.setTitle(title);
+            controller.setBody(bodyText);
+            controller.setPane(mainPane);
 
-        if (response) {
-            return Optional.of(ButtonType.OK);
-        } else {
-            return Optional.empty();
+            TuioFXUtils.setupPaneWithTouchFeatures(mainPane);
+            AppTUIO.root.getChildren().add(mainPane);
+
+            System.out.println("added");
+
+            return controller.getResultProperty();
+
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Error loading new window\n", e);
+            // Will throw if MAIN's fxml file could not be loaded.
+//            showAlert(Alert.AlertType.ERROR, "New window could not be created",
+//                    "The page loader failed to load the layout for the new window.", new Stage());
         }
+        Property<Boolean> result = new SimpleBooleanProperty();
+        result.setValue(false);
+        return result;
     }
 }

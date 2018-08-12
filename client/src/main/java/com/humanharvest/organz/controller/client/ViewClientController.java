@@ -16,6 +16,7 @@ import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.views.client.ModifyClientObject;
+import javafx.beans.property.Property;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -514,13 +515,10 @@ public class ViewClientController extends ViewBaseController {
         if (deadToggleBtn.isSelected()) {
             // Warn user if about to mark a client as dead
             if (viewedClient.isAlive()) {
-                ButtonType optionPicked = PageNavigator.showAlert(AlertType.CONFIRMATION,
+                Property<Boolean> optionPicked = PageNavigator.showAlert(AlertType.CONFIRMATION,
                         "Are you sure you want to mark this client as dead?",
-                        "This will cancel all waiting transplant requests for this client.", mainController.getStage())
-                        .orElse(ButtonType.CANCEL);
-                if (optionPicked != ButtonType.OK) {
-                    return false;
-                }
+                        "This will cancel all waiting transplant requests for this client.", mainController.getStage());
+                //TODO: FIX this not doing any checking of response. Refactor this whole flow
             }
 
             addChangeIfDifferent(modifyClientObject, viewedClient, "dateOfDeath", deathDatePicker.getValue());

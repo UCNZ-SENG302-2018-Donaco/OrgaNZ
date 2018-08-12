@@ -11,10 +11,10 @@ import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.views.client.ModifyClientObject;
+import javafx.beans.property.Property;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
@@ -157,19 +157,20 @@ public class SubmitDeathDetailsController extends SubController {
 
         // All valid, all death details registered as changes
         // Check that user really wants to mark as dead
-        ButtonType buttonOpt = PageNavigator.showAlert(AlertType.CONFIRMATION,
+        Property<Boolean> response = PageNavigator.showAlert(AlertType.CONFIRMATION,
                 "Are you sure you want to mark this client as dead?",
-                "This will cancel all waiting transplant requests for this client.", mainController.getStage())
-                .orElse(ButtonType.CANCEL);
+                "This will cancel all waiting transplant requests for this client.", mainController.getStage());
 
-        if (buttonOpt == ButtonType.OK && makeRequest(modifyClientObject)) {
-            Notifications.create()
-                    .title("Marked Client as Dead")
-                    .text("All organ transplant requests have been cancelled, "
-                            + "and their details of death has been stored.")
-                    .showConfirm();
-            mainController.getStage().close();
-            PageNavigator.refreshAllWindows();
+        if (response.getValue() != null) {
+            if (response.getValue()) {
+                makeRequest(modifyClientObject);
+            }
+        } else {
+            response.addListener((observable, oldValue, newValue) -> {
+                if (newValue) {
+                    makeRequest(modifyClientObject);
+                }
+            });
         }
     }
 
@@ -178,24 +179,28 @@ public class SubmitDeathDetailsController extends SubController {
         mainController.getStage().close();
     }
 
-    private boolean makeRequest(ModifyClientObject modifyClientObject) {
+    private void makeRequest(ModifyClientObject modifyClientObject) {
         try {
             State.getClientResolver().modifyClientDetails(client, modifyClientObject);
-            return true;
+            Notifications.create()
+                    .title("Marked Client as Dead")
+                    .text("All organ transplant requests have been cancelled, "
+                            + "and their details of death has been stored.")
+                    .showConfirm();
+            mainController.getStage().close();
+            PageNavigator.refreshAllWindows();
         } catch (NotFoundException e) {
             LOGGER.log(Level.WARNING, "Client not found");
             PageNavigator.showAlert(
                     AlertType.WARNING,
                     "Client not found",
                     "The client could not be found on the server, it may have been deleted", mainController.getStage());
-            return false;
         } catch (ServerRestException e) {
             LOGGER.log(Level.WARNING, e.getMessage(), e);
             PageNavigator.showAlert(
                     AlertType.WARNING,
                     "Server error",
                     "Could not apply changes on the server, please try again later", mainController.getStage());
-            return false;
         } catch (IfMatchFailedException e) {
             LOGGER.log(Level.INFO, "If-Match did not match");
             PageNavigator.showAlert(
@@ -204,7 +209,6 @@ public class SubmitDeathDetailsController extends SubController {
                     "The client has been modified since you retrieved the data.\n"
                             + "If you would still like to apply these changes please submit again, "
                             + "otherwise refresh the page to update the data.", mainController.getStage());
-            return false;
         }
     }
 }
