@@ -472,7 +472,7 @@ public class ViewMedicationsController extends SubController {
 
             if (interactions.size() == 0) {
                 medicationInteractions.setText(String.format(
-                        "There is no information on interactions between '%s' and '%s'.",
+                        "There is no information on interactions between %s and %s.",
                         medication1, medication2));
             } else {
                 String interactionsText = interactions.stream().collect(Collectors.joining("\n"));
