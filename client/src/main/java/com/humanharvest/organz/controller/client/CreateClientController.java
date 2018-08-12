@@ -103,6 +103,8 @@ public class CreateClientController extends SubController {
                         }
                     });
                 }
+            } else {
+                createClientLogic();
             }
         }
     }
