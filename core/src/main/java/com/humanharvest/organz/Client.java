@@ -35,8 +35,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.utilities.enums.BloodType;
-import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.ClientType;
+import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
@@ -100,8 +100,6 @@ public class Client implements ConcurrencyControlledEntity {
     @JsonView(Views.Details.class)
     @Enumerated(EnumType.STRING)
     private Country countryOfDeath;
-
-
 
     @JsonView(Views.Details.class)
     private final Instant createdTimestamp;
@@ -452,9 +450,13 @@ public class Client implements ConcurrencyControlledEntity {
         this.countryOfDeath = countryOfDeath;
     }
 
-    public boolean isAlive() { return dateOfDeath == null; }
+    public boolean isAlive() {
+        return dateOfDeath == null;
+    }
 
-    public boolean isDead() { return dateOfDeath != null; }
+    public boolean isDead() {
+        return dateOfDeath != null;
+    }
 
     public void setDateOfDeath(LocalDate newDateOfDeath) {
         updateModifiedTimestamp();
@@ -610,7 +612,6 @@ public class Client implements ConcurrencyControlledEntity {
         return Collections.unmodifiableList(medicationHistory);
     }
 
-
     /**
      * Adds a new MedicationRecord to the client's history.
      * @param record The given MedicationRecord.
@@ -656,11 +657,15 @@ public class Client implements ConcurrencyControlledEntity {
     }
 
     /**
-     * Calculates the users age based on their date of birth and date of death. If the date of death is null the age
-     * is calculated base of the LocalDate.now().
+     * Calculates the users age based on their date of birth and date of death.
+     * If the date of death is null the age is calculated base of the LocalDate.now().
+     * If the date of birth is null, -1 is returned.
      * @return age of the Client.
      */
     public int getAge() {
+        if (dateOfBirth == null) {
+            return -1;
+        }
         int age;
         if (dateOfDeath == null) {
             age = Period.between(dateOfBirth, LocalDate.now()).getYears();
@@ -728,8 +733,7 @@ public class Client implements ConcurrencyControlledEntity {
      * @param record The illness history that is wanted to be deleted
      */
     public void deleteIllnessRecord(IllnessRecord record) {
-        int index = illnessHistory.indexOf(record);
-        illnessHistory.remove(index);
+        illnessHistory.remove(record);
         record.setClient(null);
         updateModifiedTimestamp();
     }
@@ -912,7 +916,7 @@ public class Client implements ConcurrencyControlledEntity {
         return transplantRequests;
     }
 
-    public Optional<TransplantRequest> getTransplantRequestById(long id){
+    public Optional<TransplantRequest> getTransplantRequestById(long id) {
         return transplantRequests.stream()
                 .filter(transplantRequest -> transplantRequest.getId() == id)
                 .findFirst();

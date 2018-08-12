@@ -1,5 +1,10 @@
 package com.humanharvest.organz.utilities.algorithms;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.TransplantRequest;
@@ -7,13 +12,7 @@ import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Region;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-
 public class MatchOrganToRecipients {
-
 
     private static boolean agesMatch(int donorAge, int recipientAge) {
         // If one is under 12, they must both be under 12
@@ -25,11 +24,36 @@ public class MatchOrganToRecipients {
         return Math.abs(donorAge - recipientAge) <= 15;
     }
 
+    private static double degreesToRadians(double degrees) {
+        return degrees * Math.PI / 180;
+    }
+
+    /**
+     * Calculates distance between two points on earth.
+     * Note that there is no unit - standardising it to a unit is unnecessary, as this is just used for comparisons.
+     * (To get km, multiply by 6371; to get miles, multiply by 3959)
+     * Adapted from https://stackoverflow.com/a/365853/8355496
+     * @param lat1 Point 1's latitude
+     * @param lon1 Point 1's longitude
+     * @param lat2 Point 2's latitude
+     * @param lon2 Point 2's longitude
+     * @return the distance between the points
+     */
+    private static double distanceBetween(double lat1, double lon1, double lat2, double lon2) {
+        double dLat = degreesToRadians(lat2 - lat1);
+        double dLon = degreesToRadians(lon2 - lon1);
+
+        lat1 = degreesToRadians(lat1);
+        lat2 = degreesToRadians(lat2);
+
+        double a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
+        return 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    }
+
     private static double distanceBetween(Country country1, Country country2) {
-        double latitudeDelta = Math.abs(country1.getLatitude() - country2.getLatitude());
-        double longitudeDelta = Math.abs(country1.getLongitude() - country2.getLongitude());
-        // Using trigonometry, calculate distance = sqrt(a^2 + b^2)
-        return Math.sqrt(latitudeDelta * latitudeDelta + longitudeDelta * longitudeDelta);
+        return distanceBetween(country1.getLatitude(), country1.getLongitude(),
+                country2.getLatitude(), country2.getLongitude());
     }
 
     private static double distanceBetween(Region region1, Region region2) {
@@ -37,10 +61,8 @@ public class MatchOrganToRecipients {
             // For at least one region, we don't know where it is
             return Double.MAX_VALUE;
         }
-        double latitudeDelta = Math.abs(region1.getLatitude() - region2.getLatitude());
-        double longitudeDelta = Math.abs(region1.getLongitude() - region2.getLongitude());
-        // Using trigonometry, calculate distance = sqrt(a^2 + b^2)
-        return Math.sqrt(latitudeDelta * latitudeDelta + longitudeDelta * longitudeDelta);
+        return distanceBetween(region1.getLatitude(), region1.getLongitude(),
+                region2.getLatitude(), region2.getLongitude());
 
     }
 
@@ -59,13 +81,14 @@ public class MatchOrganToRecipients {
             Client recipient = transplantRequest.getClient();
 
             if (donatedOrgan.getOrganType().equals(transplantRequest.getRequestedOrgan())
+                    && donor.getBloodType() != null && recipient.getBloodType() != null
                     && donor.getBloodType().equals(recipient.getBloodType())
                     && agesMatch(donor.getAge(), recipient.getAge())) {
                 potentialTransplantRequests.add(transplantRequest);
             }
         }
 
-        // Sort the list by when the transplant request was made
+        // Sort the list by when the transplant request was made, then where the potential recipient lives
         potentialTransplantRequests.sort((t1, t2) -> {
             LocalDateTime requestDate1 = t1.getRequestDate().truncatedTo(ChronoUnit.DAYS);
             LocalDateTime requestDate2 = t2.getRequestDate().truncatedTo(ChronoUnit.DAYS);
@@ -88,7 +111,7 @@ public class MatchOrganToRecipients {
                         return 1;
                     } else { // Neither is in the same country, so calculate closest country
                         double distanceToCountry1 = distanceBetween(c1.getCountry(), deathCountry);
-                        double distanceToCountry2 = distanceBetween(c1.getCountry(), deathCountry);
+                        double distanceToCountry2 = distanceBetween(c2.getCountry(), deathCountry);
                         return Double.compare(distanceToCountry1, distanceToCountry2);
                     }
                 }
@@ -121,10 +144,15 @@ public class MatchOrganToRecipients {
                     }
                 }
 
-                // They are in the same region - we don't store cities, so there is no more comparisons that are doable
+                // They are in the same region - we don't store cities, so there are no more comparisons that are doable
                 return 0;
             }
         });
+
+        // Create the list of matches from the list of transplant requests
+        for (TransplantRequest transplantRequest : potentialTransplantRequests) {
+            potentialMatches.add(transplantRequest.getClient());
+        }
         return potentialMatches;
     }
 }
