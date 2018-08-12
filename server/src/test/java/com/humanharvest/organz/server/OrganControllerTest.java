@@ -14,6 +14,7 @@ import java.time.LocalTime;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
+import com.humanharvest.organz.actions.client.MarkClientAsDeadAction;
 import com.humanharvest.organz.state.AuthenticationManagerFake;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Country;
@@ -22,6 +23,7 @@ import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
 import org.hamcrest.Matchers;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +32,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.web.context.WebApplicationContext;
 
 @RunWith(SpringRunner.class)
@@ -54,27 +57,62 @@ public class OrganControllerTest {
         michaelShoeMaker.setRegion("Canterbury");
         try {
             janMichael.setOrganDonationStatus(Organ.LIVER, true);
+            janMichael.setOrganDonationStatus(Organ.HEART, true);
+            janMichael.setOrganDonationStatus(Organ.CORNEA, true);
             michaelShoeMaker.setOrganDonationStatus(Organ.LIVER, true);
         } catch (OrganAlreadyRegisteredException ex) {
             System.out.println("Error setting up organ donation status: " + ex.getMessage());
         }
-        janMichael.setDateOfDeath(LocalDate.now()); //TODO find how to mark a client as dead and have this register.
-        janMichael.setTimeOfDeath(LocalTime.now());
-        janMichael.setCountryOfDeath(Country.US);
-        janMichael.setRegionOfDeath("New York");
-        janMichael.setCityOfDeath("New York City");
 
         State.getClientManager().addClient(janMichael);
         State.getClientManager().addClient(michaelShoeMaker);
+
+        MarkClientAsDeadAction action1  = new MarkClientAsDeadAction(janMichael, LocalDate.now(), LocalTime.now(),
+                "AUCKLAND","Auckland", Country.NZ, State.getClientManager());
+        MarkClientAsDeadAction action2  = new MarkClientAsDeadAction(michaelShoeMaker, LocalDate.now(), LocalTime.now(),
+                "Canterbury","Canterbury", Country.NZ, State.getClientManager());
+
+        State.getActionInvoker("").execute(action1);
+        State.getActionInvoker("").execute(action2);
+
 
     }
 
     @Test
     public void getDefault() throws Exception {
         mockMvc.perform(get("/clients/organs"))
-                .andExpect(status().isOk());
-//                .andExpect(jsonPath("$", hasSize(1)));
-
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(4)));
     }
+
+
+    @Test
+    public void getFilteredOrgans() throws Exception {
+        mockMvc.perform(get("/clients/organs?organType=LIVER"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(2)));
+    }
+
+    @Test
+    public void getMultipleFilteredOrgans() throws Exception {
+        mockMvc.perform(get("/clients/organs?organType=LIVER,HEART,CORNEA"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(4)));
+    }
+
+    @Test
+    public void getFilteredRegion() throws Exception {
+        mockMvc.perform(get("/clients/organs?regions=AUCKLAND"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(3)));
+    }
+
+    @Test
+    public void getMultipleFilteredRegions() throws Exception {
+        mockMvc.perform(get("/clients/organs?regions=AUCKLAND,CANTERBURY"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(4)));
+    }
+
 
 }

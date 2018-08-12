@@ -58,7 +58,8 @@ public class OrgansController {
         List<DonatedOrganView> filteredOrgans = stream
 
                 .filter(regions == null ? o -> true : organ -> regions.isEmpty() ||
-                        regions.contains(organ.getDonatedOrgan().getDonor().getRegion()))
+                        regions.contains(organ.getDonatedOrgan().getDonor().getRegion().toUpperCase()))
+
 
                 .filter(organType == null ? o -> true : organ -> organType.isEmpty() ||
                         organType.contains(organ.getDonatedOrgan().getOrganType()))
