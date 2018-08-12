@@ -196,6 +196,7 @@ public class AppTUIO extends Application {
         });
 
         State.init(DataStorageType.REST);
+        State.setPrimaryStage(primaryStage);
 
         if (System.getenv("HOST") != null) {
             State.setBaseUri(System.getenv("HOST"));

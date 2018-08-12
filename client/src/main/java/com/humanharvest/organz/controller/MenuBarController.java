@@ -436,7 +436,7 @@ public class MenuBarController extends SubController {
         fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(
                 "JSON/CSV files (*.json, *.csv)",
                 "*.json", "*.csv"));
-        File file = fileChooser.showOpenDialog(mainController.getStage());
+        File file = fileChooser.showOpenDialog(State.getPrimaryStage());
 
         if (file != null) {
             String format = getFileExtension(file.getName());
