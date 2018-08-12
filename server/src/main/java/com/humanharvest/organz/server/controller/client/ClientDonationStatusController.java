@@ -1,12 +1,9 @@
 package com.humanharvest.organz.server.controller.client;
 
-import java.util.Collection;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.actions.client.ModifyClientOrgansAction;
 import com.humanharvest.organz.state.State;
@@ -14,8 +11,6 @@ import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
-import com.humanharvest.organz.views.client.DonatedOrganView;
-import com.humanharvest.organz.views.client.Views;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,41 +45,6 @@ public class ClientDonationStatusController {
             headers.add("ETag", client.getETag());
 
             return new ResponseEntity<>(client.getOrganDonationStatus(), headers, HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-    }
-
-    /**
-     * GET endpoint for getting a clients donated organs
-     * @param id the uid of the client
-     * @param authToken authorization token
-     * @return response entity containing the clients donated organs
-     */
-    @JsonView(Views.Overview.class)
-    @GetMapping("/clients/{id}/donatedOrgans")
-    public ResponseEntity<Collection<DonatedOrganView>> getClientDonatedOrgans(
-            @PathVariable int id,
-            @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {
-
-            Optional<Client> optionalClient = State.getClientManager().getClientByID(id);
-
-        if (optionalClient.isPresent()) {
-            Client client = optionalClient.get();
-
-            //Auth check
-            State.getAuthenticationManager().verifyClientAccess(authToken, client);
-
-            //Add the ETag to the headers
-            HttpHeaders headers = new HttpHeaders();
-            headers.add("ETag", client.getETag());
-
-            Collection<DonatedOrganView> donatedOrgans = client.getDonatedOrgans().stream()
-                    .map(DonatedOrganView::new)
-                    .collect(Collectors.toList());
-
-            return new ResponseEntity<>(donatedOrgans, headers, HttpStatus.OK);
-
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
