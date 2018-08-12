@@ -102,6 +102,17 @@ public class MatchOrganToRecipients {
 
                 Country deathCountry = donatedOrgan.getDonor().getCountryOfDeath();
 
+                // Check for null countries
+                if (c1.getCountry() == null) {
+                    if (c2.getCountry() == null) {
+                        return 0; // neither has a country
+                    } else {
+                        return 1; // only c2 has a country
+                    }
+                } else if (c2.getCountry() == null) {
+                    return -1; // only c1 has a country
+                }
+
                 // If they are in different countries, check which one is closest
                 if (!c1.getCountry().equals(c2.getCountry())) {
                     // Check if the one of the recipients is in the same country that the donor died
@@ -122,6 +133,17 @@ public class MatchOrganToRecipients {
                 }
 
                 String deathRegion = donatedOrgan.getDonor().getRegionOfDeath();
+
+                // Check for null regions
+                if (c1.getRegion() == null) {
+                    if (c2.getRegion() == null) {
+                        return 0; // neither has a region
+                    } else {
+                        return 1; // only c2 has a region
+                    }
+                } else if (c2.getRegion() == null) {
+                    return -1; // only c1 has a region
+                }
 
                 // If they are in different regions, check which one is closest
                 // Note that for non-NZ regions, it just checks if one is the same as where the person died
