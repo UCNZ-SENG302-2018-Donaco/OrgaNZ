@@ -174,7 +174,6 @@ public class ViewMedicationsController extends SubController {
             mainController.setTitle("View Medications:  " + client.getPreferredNameFormatted());
         } else if (windowContext.isClinViewClientWindow()) {
             mainController.setTitle("View Medications:  " + client.getFullName());
-
         }
         refreshMedicationLists();
     }
@@ -382,10 +381,14 @@ public class ViewMedicationsController extends SubController {
         selectedItems.addAll(currentMedicationsView.getSelectionModel().getSelectedItems());
         selectedItems.addAll(pastMedicationsView.getSelectionModel().getSelectedItems());
 
+        System.out.println(String.format("Number of medications selected: %d", selectedItems.size()));
+
         if (selectedItems.size() == 1) {
             setActiveIngredients(selectedItems.get(0));
+            medicationInteractions.clear();
         } else if (selectedItems.size() == 2) {
             setInteractions(selectedItems);
+            medicationIngredients.clear();
         } else {
             // If None or more than two are selected, the textareas are reset to their prompts
             medicationIngredients.clear();
@@ -399,6 +402,8 @@ public class ViewMedicationsController extends SubController {
      */
     private void setActiveIngredients(MedicationRecord selectedMedication) {
         String medicationName = selectedMedication.getMedicationName();
+
+        medicationIngredients.setText("Loading ...");
 
         Task<List<String>> task = new Task<List<String>>() {
             @Override
@@ -437,7 +442,41 @@ public class ViewMedicationsController extends SubController {
      * @param selectedMedications The two currently selected medications
      */
     private void setInteractions(List<MedicationRecord> selectedMedications) {
+        Collections.sort(selectedMedications);
+        String medication1 = selectedMedications.get(0).getMedicationName();
+        String medication2 = selectedMedications.get(1).getMedicationName();
 
+        medicationIngredients.clear();
+
+        medicationInteractions.setText("Loading ...");
+
+        Task<List<String>> task = new Task<List<String>>() {
+            @Override
+            public List<String> call() throws IOException, BadDrugNameException, BadGatewayException {
+                return drugInteractionsHandler.getInteractions(client, medication1, medication2);
+            }
+        };
+
+        task.setOnFailed(event -> {
+            medicationInteractions.setText("An error occurred when retrieving drug interactions: \n" +
+                    task.getException().getMessage());
+            task.getException().printStackTrace();
+        });
+
+        task.setOnSucceeded(event -> {
+            List<String> interactions = task.getValue();
+
+            if (interactions.size() == 0) {
+                medicationInteractions.setText(String.format(
+                        "There is no information on interactions between '%s' and '%s'.",
+                        medication1, medication2));
+            } else {
+                String interactionsText = interactions.stream().collect(Collectors.joining("\n"));
+                medicationInteractions.setText(interactionsText);
+            }
+        });
+
+        new Thread(task).start();
     }
 
     /**
