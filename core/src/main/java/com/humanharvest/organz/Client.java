@@ -1023,7 +1023,7 @@ public class Client implements ConcurrencyControlledEntity {
      * Registers the given {@link Organ} as having been donated by this client at this moment.
      * @param organ The organ donated.
      */
-    private void donateOrgan(Organ organ) {
+    public void donateOrgan(Organ organ) {
         donatedOrgans.add(new DonatedOrgan(organ, this, LocalDateTime.now()));
     }
 

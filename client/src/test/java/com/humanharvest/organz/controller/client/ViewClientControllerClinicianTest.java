@@ -98,8 +98,7 @@ public class ViewClientControllerClinicianTest extends ControllerTest {
     @Ignore("Ignored until manually overridden organs has been properly implemented")
     @Test
     public void invalidChangeDateOfDeathManuallyOverriddenOrgans() {
-        DonatedOrgan donatedOrgan = new DonatedOrgan(Organ.LIVER, testClient, LocalDateTime.now());
-        testClient.addDonatedOrgan(donatedOrgan);
+        testClient.donateOrgan(Organ.LIVER);
         clickOn("#deathDatePicker");
         doubleClickOn("#deathDatePicker").type(KeyCode.BACK_SPACE).write("10/10/" + recentYear);
         clickOn("#applyButton");
