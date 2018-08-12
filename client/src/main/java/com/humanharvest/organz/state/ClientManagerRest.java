@@ -203,34 +203,59 @@ public class ClientManagerRest implements ClientManager {
     }
 
     @Override
-    public Collection<DonatedOrgan> getAllOrgansToDonate() {
-        return null;
-    }
-
-    @Override
     public List<HistoryItem> getAllHistoryItems() {
         return Collections.emptyList();
     }
 
     /**
-     * @return a list of all organs available for donation
+     * Gets all organs that are available for donation
+     * @return a collection of all available organs for donation
      */
     @Override
-    public PaginatedDonatedOrgansList getAllOrgansToDonate(EnumSet<Region> regions) {
+    public Collection<DonatedOrgan> getAllOrgansToDonate() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("X-Auth-Token", State.getToken());
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<Collection<DonatedOrganView>> responseEntity = State.getRestTemplate().exchange(
+                State.BASE_URI + "/clients/organs",
+                HttpMethod.GET,
+                entity, new ParameterizedTypeReference<Collection<DonatedOrganView>>(){});
+
+        return responseEntity.getBody().stream().map(DonatedOrganView::getDonatedOrgan).collect(Collectors.toList());
+
+    }
+
+    /**
+     * Gets all organs to donate for the specified regions and organTypes.
+     * @param regions regions to filter by. If empty, all regions are selected
+     * @param organType organ types to filter by. If empty, all types are selected
+     * @return A collection of the the organs available to donate based off the specified filters.
+     */
+    @Override
+    public Collection<DonatedOrgan> getAllOrgansToDonate(EnumSet<Region> regions, EnumSet<Organ> organType) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-Auth-Token", State.getToken());
         headers.set("Accept",MediaType.APPLICATION_JSON_VALUE);
 
+        for (Region region: regions) {
+            System.out.println(region);
+        }
+
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(State.BASE_URI + "/clients/organs")
-            .queryParam("regions",EnumSetToString.convert(regions));
+                .queryParam("regions",EnumSetToString.convert(regions))
+                .queryParam("organType", EnumSetToString.convert(organType));
+        System.out.println(builder.toUriString());
+
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
-        HttpEntity<PaginatedDonatedOrgansList> responseEntity = State.getRestTemplate().exchange(builder.toUriString(),
-            HttpMethod.GET,
-            entity,
-            PaginatedDonatedOrgansList.class);
+        ResponseEntity<Collection<DonatedOrganView>> responseEntity = State.getRestTemplate().exchange(
+                builder.toUriString(),
+                HttpMethod.GET,
+                entity, new ParameterizedTypeReference<Collection<DonatedOrganView>>(){});
 
-        return responseEntity.getBody();
+
+        return responseEntity.getBody().stream().map(DonatedOrganView::getDonatedOrgan).collect(Collectors.toList());
 
     }
 

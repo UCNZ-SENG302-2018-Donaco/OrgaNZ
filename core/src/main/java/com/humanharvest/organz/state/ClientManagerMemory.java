@@ -5,11 +5,13 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
@@ -21,6 +23,7 @@ import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
+import com.humanharvest.organz.views.client.DonatedOrganView;
 import com.humanharvest.organz.views.client.PaginatedTransplantList;
 import com.humanharvest.organz.views.client.TransplantRequestView;
 
@@ -236,6 +239,30 @@ public class ClientManagerMemory implements ClientManager {
         for (Client client: clients) {
             donatedOrgans.addAll(client.getDonatedOrgans());
         }
+        return donatedOrgans;
+    }
+
+    /**
+     * @return a list of all organs available for donation
+     */
+    @Override
+    public Collection<DonatedOrgan> getAllOrgansToDonate(EnumSet<Region> regions, EnumSet<Organ> organType) {
+
+        Collection<DonatedOrgan> donatedOrgans = new ArrayList<>();
+        for (Client client: clients) {
+            donatedOrgans.addAll(client.getDonatedOrgans());
+        }
+        Stream<DonatedOrgan> stream = donatedOrgans.stream();
+        donatedOrgans = stream
+
+                .filter(regions == null ? o -> true : organ -> regions.isEmpty() ||
+                        regions.contains(organ.getDonor().getRegion()))
+
+                .filter(organType == null ? o -> true : organ -> organType.isEmpty() ||
+                        organType.contains(organ.getOrganType()))
+
+                .collect(Collectors.toList());
+
         return donatedOrgans;
     }
 

@@ -97,6 +97,8 @@ public class OrgansToDonateController extends SubController {
     private FilteredList<DonatedOrgan> filteredOrgansToDonate = new FilteredList<>(observableOrgansToDonate);
     private SortedList<DonatedOrgan> sortedOrgansToDonate = new SortedList<>(filteredOrgansToDonate);
     private DonatedOrgan selectedOrgan;
+    private EnumSet<Region> regionsToFilter;
+    private EnumSet<Organ> organsToFilter;
 
     /**
      * Gets the client manager from the global state.
@@ -232,8 +234,27 @@ public class OrgansToDonateController extends SubController {
         return new Pane();
     }
 
+    /**
+     * Filters the regions based on the RegionChoices current state and updates the organsToFilter Collection.
+     */
+    private void filterRegions() {
+        regionsToFilter = EnumSet.noneOf(Region.class);
+        regionsToFilter.addAll(regionFilter.getCheckModel().getCheckedItems());
+    }
+
+    /**
+     * Filters the organs based on the OrganChoices current state and updates the organsToFilter Collection.
+     */
+    private void filterOrgans() {
+        organsToFilter = EnumSet.noneOf(Organ.class);
+        organsToFilter.addAll(organFilter.getCheckModel().getCheckedItems());
+    }
+
     private void updateOrgansToDonateList() {
-        Collection<DonatedOrgan> newOrgansToDonate = manager.getAllOrgansToDonate();
+        filterOrgans();
+        filterRegions();
+
+        Collection<DonatedOrgan> newOrgansToDonate = manager.getAllOrgansToDonate(regionsToFilter, organsToFilter);
 
         observableOrgansToDonate.setAll(newOrgansToDonate);
         tableView.getSortOrder().setAll(timeUntilExpiryCol);

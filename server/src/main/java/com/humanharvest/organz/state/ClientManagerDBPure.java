@@ -4,6 +4,7 @@ import java.io.File;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -17,6 +18,7 @@ import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.database.DBManager;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
+import com.humanharvest.organz.utilities.type_converters.EnumSetToString;
 import com.humanharvest.organz.views.client.PaginatedTransplantList;
 import org.hibernate.ReplicationMode;
 import org.hibernate.Transaction;
@@ -258,6 +260,18 @@ public class ClientManagerDBPure implements ClientManager {
                 trns.rollback();
             }
         }
+
+        return requests == null ? new ArrayList<>() : requests;
+    }
+
+    /**
+     * @return a list of all organs available for donation
+     */
+    @Override
+    public Collection<DonatedOrgan> getAllOrgansToDonate(EnumSet<Region> regions, EnumSet<Organ> organType) {
+        //TODO Implement the WHERE statements for this.
+        List<DonatedOrgan> requests = null;
+        Transaction trns = null;
 
         return requests == null ? new ArrayList<>() : requests;
     }
