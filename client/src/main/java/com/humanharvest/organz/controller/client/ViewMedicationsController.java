@@ -401,40 +401,44 @@ public class ViewMedicationsController extends SubController {
      * @param selectedMedication Currently selected medication
      */
     private void setActiveIngredients(MedicationRecord selectedMedication) {
-        String medicationName = selectedMedication.getMedicationName();
 
-        medicationIngredients.setText("Loading ...");
+        if (selectedMedication != null) {
+            String medicationName = selectedMedication.getMedicationName();
 
-        Task<List<String>> task = new Task<List<String>>() {
-            @Override
-            public List<String> call() throws IOException {
-                return activeIngredientsHandler.getActiveIngredients(medicationName);
-            }
-        };
+            medicationIngredients.setText("Loading ...");
 
-        task.setOnSucceeded(e -> {
-            List<String> activeIngredients = task.getValue();
-            // If there are no results, display an error, else display the results.
-            // It is assumed that every valid drug has active ingredients, thus if an empty list is returned,
-            //     then the drug name wasn't valid.
-            if (activeIngredients.isEmpty()) {
-                medicationIngredients.setText("No active ingredients found for " + medicationName);
-            } else {
-                // Build list of active ingredients into a string, each ingredient on a new line
-                StringBuilder sb = new StringBuilder();
-                for (String ingredient : activeIngredients) {
-                    sb.append(ingredient).append("\n");
+            Task<List<String>> task = new Task<List<String>>() {
+                @Override
+                public List<String> call() throws IOException {
+                    return activeIngredientsHandler.getActiveIngredients(medicationName);
                 }
-                medicationIngredients.setText(sb.toString());
-            }
-        });
+            };
 
-        task.setOnFailed(e -> {
-            medicationIngredients.setText("Error loading ingredients, please try again later");
-            System.out.println(e);
-        });
+            task.setOnSucceeded(e -> {
+                List<String> activeIngredients = task.getValue();
+                // If there are no results, display an error, else display the results.
+                // It is assumed that every valid drug has active ingredients, thus if an empty list is returned,
+                //     then the drug name wasn't valid.
+                if (activeIngredients.isEmpty()) {
+                    medicationIngredients.setText("No active ingredients found for " + medicationName);
+                } else {
+                    // Build list of active ingredients into a string, each ingredient on a new line
+                    StringBuilder sb = new StringBuilder();
+                    for (String ingredient : activeIngredients) {
+                        sb.append(ingredient).append("\n");
+                    }
+                    medicationIngredients.setText(sb.toString());
+                }
+            });
 
-        new Thread(task).start();
+            task.setOnFailed(e -> {
+                medicationIngredients.setText("Error loading ingredients, please try again later");
+                System.out.println(e);
+            });
+
+            new Thread(task).start();
+        }
+
     }
 
     /**
