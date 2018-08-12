@@ -21,7 +21,6 @@ import com.humanharvest.organz.views.client.ModifyClientObject;
 import com.humanharvest.organz.views.client.ModifyIllnessObject;
 import com.humanharvest.organz.views.client.ModifyProcedureObject;
 import com.humanharvest.organz.views.client.ResolveTransplantRequestObject;
-import com.humanharvest.organz.views.client.SingleDateView;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -133,17 +132,6 @@ public class ClientResolverRest implements ClientResolver {
                 request,
                 new ParameterizedTypeReference<List<TransplantRequest>>() {
                 }, client.getUid());
-        return responseEntity.getBody();
-    }
-
-    public Client markClientAsDead(Client client, LocalDate dateOfDeath) {
-        HttpHeaders httpHeaders = createHeaders(true);
-        ResponseEntity<Client> responseEntity = sendQuery(httpHeaders,
-                State.BASE_URI + "clients/{id}/dead",
-                HttpMethod.POST,
-                new SingleDateView(dateOfDeath),
-                Client.class,
-                client.getUid());
         return responseEntity.getBody();
     }
 
