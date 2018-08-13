@@ -10,6 +10,13 @@ import javafx.event.Event;
 import javafx.event.EventType;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.ListView;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TitledPane;
 import javafx.scene.input.GestureEvent;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -24,7 +31,8 @@ import javafx.scene.transform.Scale;
 import javafx.scene.transform.Transform;
 import javafx.scene.transform.Translate;
 
-import com.humanharvest.organz.utilities.ReflectionUtils;
+import com.sun.javafx.scene.control.skin.LabeledText;
+import com.sun.javafx.scene.control.skin.PaginationSkin;
 
 public class MultitouchHandler {
     private final List<CurrentTouch> touches = new ArrayList<>();
@@ -32,20 +40,21 @@ public class MultitouchHandler {
 
     public MultitouchHandler(Pane rootPane) {
         this.rootPane = rootPane;
-        rootPane.addEventFilter(MouseEvent.ANY, event -> {
-            // TODO: Don't ignore events that don't hit the root pane
-            if (event.isSynthesized()) {
-                if (event.getClickCount() == Integer.MAX_VALUE) {
-                    try {
-                        ReflectionUtils.setField(event, "clickCount", 1);
-                    } catch (NoSuchFieldException | IllegalAccessException e) {
-                        throw new RuntimeException(e);
-                    }
-                } else {
-                    event.consume();
-                }
-            }
-        });
+        // TODO: Might need this if it is funky with multiple users
+//        rootPane.addEventFilter(MouseEvent.ANY, event -> {
+//            // TODO: Don't ignore events that don't hit the root pane
+//            if (event.isSynthesized()) {
+//                if (event.getClickCount() == Integer.MAX_VALUE) {
+//                    try {
+//                        ReflectionUtils.setField(event, "clickCount", 1);
+//                    } catch (NoSuchFieldException | IllegalAccessException e) {
+//                        throw new RuntimeException(e);
+//                    }
+//                } else {
+//                    event.consume();
+//                }
+//            }
+//        });
 
         rootPane.addEventFilter(TouchEvent.ANY, event -> {
             event.consume();
@@ -92,9 +101,11 @@ public class MultitouchHandler {
 
             List<CurrentTouch> paneTouches = findPaneTouches(pane);
             if (paneTouches.size() == 1) {
-                Point2D delta = newTouchPoint.subtract(currentTouch.getCurrentScreenPoint());
-                currentTouch.getTransform().prepend(new Translate(delta.getX(), delta.getY()));
-                currentTouch.setCurrentScreenPoint(newTouchPoint);
+                if (!currentTouch.isTouchingImportantElement()) {
+                    Point2D delta = newTouchPoint.subtract(currentTouch.getCurrentScreenPoint());
+                    currentTouch.getTransform().prepend(new Translate(delta.getX(), delta.getY()));
+                    currentTouch.setCurrentScreenPoint(newTouchPoint);
+                }
 
             } else if (paneTouches.size() == 2) {
                 CurrentTouch otherTouch = getOtherTouch(currentTouch, paneTouches);
@@ -127,12 +138,12 @@ public class MultitouchHandler {
 
     private static void handleTouchToMouse(CurrentTouch currentTouch, TouchPoint touchPoint) {
         // TODO: Handle double click
-        Node target = (Node)touchPoint.getTarget();
-        target.fireEvent(createMouseEvent(currentTouch, touchPoint, MouseEvent.MOUSE_ENTERED_TARGET, false));
-        target.fireEvent(createMouseEvent(currentTouch, touchPoint, MouseEvent.MOUSE_MOVED, false));
-        target.fireEvent(createMouseEvent(currentTouch, touchPoint, MouseEvent.MOUSE_PRESSED, true));
-        target.fireEvent(createMouseEvent(currentTouch, touchPoint, MouseEvent.MOUSE_RELEASED, true));
-        target.fireEvent(createMouseEvent(currentTouch, touchPoint, MouseEvent.MOUSE_CLICKED, true));
+//        Node target = (Node)touchPoint.getTarget();
+//        target.fireEvent(createMouseEvent(currentTouch, touchPoint, MouseEvent.MOUSE_ENTERED_TARGET, false));
+//        target.fireEvent(createMouseEvent(currentTouch, touchPoint, MouseEvent.MOUSE_MOVED, false));
+//        target.fireEvent(createMouseEvent(currentTouch, touchPoint, MouseEvent.MOUSE_PRESSED, true));
+//        target.fireEvent(createMouseEvent(currentTouch, touchPoint, MouseEvent.MOUSE_RELEASED, true));
+//        target.fireEvent(createMouseEvent(currentTouch, touchPoint, MouseEvent.MOUSE_CLICKED, true));
     }
 
     private static Event createMouseEvent(CurrentTouch currentTouch, TouchPoint touchPoint,
@@ -214,7 +225,14 @@ public class MultitouchHandler {
                 return Optional.empty();
             }
         }
-        return Optional.of((Pane)intersectNode);
+
+        if (intersectNode instanceof Pane) {
+            return Optional.of((Pane)intersectNode);
+        }
+
+        // Also has org.tuiofx.widgets.controls.KeyboardPane
+
+        return Optional.empty();
     }
 
     private CurrentTouch getCurrentTouch(TouchPoint touchPoint) {
@@ -224,11 +242,53 @@ public class MultitouchHandler {
 
         CurrentTouch currentTouch = touches.get(touchPoint.getId());
         if (currentTouch == null) {
-            currentTouch = new CurrentTouch(findPane(touchPoint));
+            currentTouch = new CurrentTouch(findPane(touchPoint), isTouchingUsefulElement(touchPoint));
             touches.set(touchPoint.getId(), currentTouch);
         }
 
         return currentTouch;
+    }
+
+    private boolean isTouchingUsefulElement(TouchPoint touchPoint) {
+        Node node = touchPoint.getPickResult().getIntersectedNode();
+
+        while (node != null && node != rootPane) {
+            if (node instanceof Button) {
+                return true;
+            }
+            if (node instanceof TextField) {
+                return true;
+            }
+            if (node instanceof ListView) {
+                return true;
+            }
+            if (node instanceof DatePicker) {
+                return true;
+            }
+            if (node instanceof MenuBar) {
+                return true;
+            }
+            if (node instanceof TitledPane) {
+                return true;
+            }
+            if (node instanceof TableView) {
+                return true;
+            }
+
+            // Pagination buttons
+            if (Objects.equals(
+                    node.getClass().getName(),
+                    "com.sun.javafx.scene.control.skin.PaginationSkin$NavigationControl")) {
+                return true;
+            }
+
+            node = node.getParent();
+        }
+
+        node = touchPoint.getPickResult().getIntersectedNode();
+
+        System.out.println(node);
+        return false;
     }
 
     private void removeCurrentTouch(TouchPoint touchPoint) {
@@ -237,13 +297,15 @@ public class MultitouchHandler {
 
     private static class CurrentTouch {
         private final Optional<Pane> pane;
+        private boolean touchingImportantElement;
         private Point2D currentScreenPoint;
         private Point2D currentPanePoint;
         private Affine transform;
         private Point2D lastCentre;
 
-        public CurrentTouch(Optional<Pane> pane) {
+        public CurrentTouch(Optional<Pane> pane, boolean touchingImportantElement) {
             this.pane = pane;
+            this.touchingImportantElement = touchingImportantElement;
             setupInitialTransforms();
         }
 
@@ -291,6 +353,10 @@ public class MultitouchHandler {
 
         public void setLastCentre(Point2D lastCentre) {
             this.lastCentre = lastCentre;
+        }
+
+        public boolean isTouchingImportantElement() {
+            return touchingImportantElement;
         }
     }
 }
