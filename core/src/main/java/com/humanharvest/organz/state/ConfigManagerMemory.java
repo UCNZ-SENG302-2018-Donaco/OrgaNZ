@@ -1,10 +1,10 @@
 package com.humanharvest.organz.state;
 
-import java.util.EnumSet;
-import java.util.Set;
-
 import com.humanharvest.organz.Config;
 import com.humanharvest.organz.utilities.enums.Country;
+
+import java.util.EnumSet;
+import java.util.Set;
 
 public class ConfigManagerMemory implements ConfigManager {
 

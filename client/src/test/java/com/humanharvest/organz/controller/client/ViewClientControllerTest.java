@@ -1,12 +1,5 @@
 package com.humanharvest.organz.controller.client;
 
-import static org.junit.Assert.assertEquals;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
-
-import javafx.scene.input.KeyCode;
-
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.controller.ControllerTest;
 import com.humanharvest.organz.state.State;
@@ -16,8 +9,14 @@ import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
+import javafx.scene.input.KeyCode;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+
+import static org.junit.Assert.assertEquals;
 
 public class ViewClientControllerTest extends ControllerTest {
 

@@ -323,7 +323,7 @@ public class ClientManagerMemory implements ClientManager {
     @Override
     public Collection<DonatedOrgan> getAllOrgansToDonate() {
         Collection<DonatedOrgan> donatedOrgans = new ArrayList<>();
-        for (Client client: clients) {
+        for (Client client : clients) {
             donatedOrgans.addAll(client.getDonatedOrgans());
         }
         return donatedOrgans;

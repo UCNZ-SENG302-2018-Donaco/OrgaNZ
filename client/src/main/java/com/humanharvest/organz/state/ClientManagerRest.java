@@ -199,7 +199,8 @@ public class ClientManagerRest implements ClientManager {
         ResponseEntity<Collection<DonatedOrganView>> responseEntity = State.getRestTemplate().exchange(
                 State.BASE_URI + "/clients/organs",
                 HttpMethod.GET,
-                entity, new ParameterizedTypeReference<Collection<DonatedOrganView>>(){});
+                entity, new ParameterizedTypeReference<Collection<DonatedOrganView>>() {
+                });
 
         return responseEntity.getBody().stream().map(DonatedOrganView::getDonatedOrgan).collect(Collectors.toList());
     }

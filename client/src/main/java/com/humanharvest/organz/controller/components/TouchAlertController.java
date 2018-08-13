@@ -31,7 +31,7 @@ public class TouchAlertController {
     }
 
     public void setup(Alert.AlertType alertType, String title, String body, Stage stage, Pane pane) {
-        this.title.setText(alertType.toString() + title);
+        this.title.setText(alertType.toString() + ": " + title);
         this.body.setText(body);
         this.stage = stage;
         this.pane = pane;

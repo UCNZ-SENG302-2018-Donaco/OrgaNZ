@@ -1,21 +1,20 @@
 package com.humanharvest.organz.controller.client;
 
-import static org.junit.Assert.assertEquals;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-
-import javafx.scene.input.KeyCode;
-
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.controller.ControllerTest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
+import javafx.scene.input.KeyCode;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+
+import static org.junit.Assert.assertEquals;
 
 public class ViewClientControllerClinicianTest extends ControllerTest {
 
@@ -82,7 +81,7 @@ public class ViewClientControllerClinicianTest extends ControllerTest {
 
     @Test
     public void invalidChangeDateOfDeathBeforeBirthday() {
-        String futureDate = "10/10/" + (dateOfBirth.getYear()-2);
+        String futureDate = "10/10/" + (dateOfBirth.getYear() - 2);
         clickOn("#deathDatePicker");
         doubleClickOn("#deathDatePicker").type(KeyCode.BACK_SPACE);
         clickOn("#applyButton");
@@ -111,7 +110,7 @@ public class ViewClientControllerClinicianTest extends ControllerTest {
         // To ensure that we can get a time in the future today, if this test is run in the last ten seconds of the day,
         // it sleeps for 11 seconds to wait until tomorrow.
         if (LocalTime.now().isAfter(LocalTime.of(23, 59, 50))) {
-            sleep(11*1000);
+            sleep(11 * 1000);
         }
         clickOn("#deathDatePicker");
         doubleClickOn("#deathDatePicker").type(KeyCode.BACK_SPACE)

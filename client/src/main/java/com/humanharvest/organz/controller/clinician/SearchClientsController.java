@@ -14,13 +14,6 @@ import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.utilities.view.WindowContext;
 import com.humanharvest.organz.views.client.ClientSortPolicy;
 import com.humanharvest.organz.views.client.PaginatedClientList;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
-
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableValueBase;
 import javafx.collections.FXCollections;
@@ -39,6 +32,13 @@ import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import org.controlsfx.control.CheckComboBox;
 import org.controlsfx.control.RangeSlider;
+
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class SearchClientsController extends SubController {
 
