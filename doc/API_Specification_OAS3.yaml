@@ -28,6 +28,8 @@ tags:
       description: All base administrator paths
     - name: Configuration
       description: All configuration paths
+    - name: Algorithms
+      description: All algorithm paths
 
 paths:
   ### Clients
@@ -1893,6 +1895,35 @@ paths:
           $ref: '#/components/responses/412PreconditionFailed'
         428:
           $ref: '#/components/responses/428PreconditionRequired'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+
+  ### Algorithms
+  /matchOrganToRecipients:
+    get:
+      tags:
+        - Algorithms
+      security:
+        - ClinicianAccess: []
+        - AdministratorAccess: []
+      summary: "Returns a list of potential recipients for the organ, in priority order."
+      parameters:
+        - $ref: '#/components/parameters/donatedOrgan'
+      responses:
+        200:
+          description: A list of clients
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TODO'
+
+# TODO finalise these:
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
         500:
           $ref: '#/components/responses/500InternalServerError'
 
