@@ -28,9 +28,6 @@ public class TuioFXUtils {
     public static void setupPaneWithTouchFeatures(Pane pane) {
         pane.getProperties().put("focusArea", "true");
 
-        pane.setStyle("   -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.8), 10, 0, 10, 10);"
-                + "-fx-background-color: grey");
-
 //        addNativeTouchGrabber(pane);
         setupMouseDrag(pane);
         setupTouch(pane);

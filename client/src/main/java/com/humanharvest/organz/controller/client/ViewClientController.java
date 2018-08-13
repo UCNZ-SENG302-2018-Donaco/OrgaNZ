@@ -443,7 +443,7 @@ public class ViewClientController extends ViewBaseController {
      */
     private boolean checkDeathDetailsFields() {
         boolean allValid = true;
-        if (deadToggleBtn.isSelected()) { // they are marked dead
+        if (!deathDetailsPane.isDisabled()) { // they are marked dead
 
             LocalDate dateOfBirth = dob.getValue();
             LocalDate dateOfDeath = deathDatePicker.getValue();
@@ -524,7 +524,7 @@ public class ViewClientController extends ViewBaseController {
         // If we are marking a client as dead, we need to alert them that this will also resolve the transplant requests
         // Calling either method will flow through the chain. Prompt will continue if okay is selected and call updateDeathFields
         // and updateDeathFields calls applyChanges
-        if (deadToggleBtn.isSelected()) {
+        if (!deathDetailsPane.isDisabled()) {
             if (viewedClient.isAlive()) {
                 promptMarkAsDead(modifyClientObject);
             } else {

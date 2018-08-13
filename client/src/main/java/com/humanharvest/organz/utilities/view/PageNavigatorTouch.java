@@ -84,7 +84,10 @@ public class PageNavigatorTouch implements IPageNavigator {
             mainController.setStage(newStage);
             mainController.setPane(mainPane);
             State.addMainController(mainController);
-            newStage.setOnCloseRequest(e -> State.deleteMainController(mainController));
+            newStage.setOnCloseRequest(e -> {
+                State.deleteMainController(mainController);
+                AppTUIO.root.getChildren().remove(mainPane);
+            });
 
             TuioFXUtils.setupPaneWithTouchFeatures(mainPane);
             AppTUIO.root.getChildren().add(mainPane);
@@ -139,6 +142,7 @@ public class PageNavigatorTouch implements IPageNavigator {
             Stage newStage = new Stage();
             FXMLLoader loader = new FXMLLoader(PageNavigatorTouch.class.getResource(Page.TOUCH_ALERT.getPath()));
             Pane mainPane = loader.load();
+            mainPane.getStyleClass().add("window");
             TouchAlertController controller = loader.getController();
             controller.setup(alertType, title, bodyText, newStage, mainPane);
 
