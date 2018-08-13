@@ -11,6 +11,7 @@ import javax.persistence.OptimisticLockException;
 import javax.persistence.RollbackException;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.database.DBManager;
@@ -226,6 +227,29 @@ public class ClientManagerDBPure implements ClientManager {
             trns = session.beginTransaction();
             requests = dbManager.getDBSession()
                     .createQuery("SELECT item FROM HistoryItem item", HistoryItem.class)
+                    .getResultList();
+            trns.commit();
+        } catch (RollbackException exc) {
+            if (trns != null) {
+                trns.rollback();
+            }
+        }
+
+        return requests == null ? new ArrayList<>() : requests;
+    }
+
+    /**
+     * @return a list of all organs available for donation
+     */
+    @Override
+    public Collection<DonatedOrgan> getAllOrgansToDonate() {
+        List<DonatedOrgan> requests = null;
+        Transaction trns = null;
+
+        try (org.hibernate.Session session = dbManager.getDBSession()) {
+            trns = session.beginTransaction();
+            requests = dbManager.getDBSession()
+                    .createQuery("FROM DonatedOrgan", DonatedOrgan.class)
                     .getResultList();
             trns.commit();
         } catch (RollbackException exc) {

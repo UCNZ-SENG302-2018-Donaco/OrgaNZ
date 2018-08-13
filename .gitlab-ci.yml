@@ -42,6 +42,7 @@ server-build-image:
   stage: build
   script:
   - mvn -B clean package -Dmaven.test.skip=true
+  - echo $CI_COMMIT_SHA > ./target/version
   - docker-compose build
   only:
   - deployment@seng302-2018/team-700
@@ -64,6 +65,7 @@ release-artifacts:
   artifacts:
     paths:
       - target/organz-*-*.jar
+      - target/version
       - target/site/jacoco/*
   only:
     - tags

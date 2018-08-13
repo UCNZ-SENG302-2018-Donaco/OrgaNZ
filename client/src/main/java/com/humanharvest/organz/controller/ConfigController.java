@@ -1,22 +1,16 @@
 package com.humanharvest.organz.controller;
 
-import java.awt.MenuBar;
-import java.util.EnumSet;
-import java.util.logging.Logger;
+import java.util.EnumSet;;
 
 import javafx.fxml.FXML;
 import javafx.scene.layout.HBox;
 
-import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Country;
 import org.controlsfx.control.CheckComboBox;
 import org.controlsfx.control.Notifications;
 
 public class ConfigController extends SubController {
-
-    private static final Logger LOGGER = Logger.getLogger(ConfigController.class.getName());
-    private final Session session;
 
     @FXML
     CheckComboBox<Country> countries;
@@ -25,7 +19,6 @@ public class ConfigController extends SubController {
     HBox menuBarPane;
 
     public ConfigController() {
-        session = State.getSession();
     }
 
     @FXML
@@ -41,15 +34,20 @@ public class ConfigController extends SubController {
         refresh();
     }
 
+    /**
+     * Fetches the current allowed countries and checks them in the combocheckboxes
+     */
     @Override
     public void refresh() {
-        System.out.println(State.getConfigManager().getAllowedCountries());
         countries.getCheckModel().clearChecks();
         for (Country country: State.getConfigManager().getAllowedCountries()) {
             countries.getCheckModel().check(country);
         }
     }
 
+    /**
+     * Sets the countries selected as the allowed countries
+     */
     @FXML
     private void apply() {
         EnumSet<Country> allowedCountries = EnumSet.noneOf(Country.class);
@@ -59,6 +57,9 @@ public class ConfigController extends SubController {
         Notifications.create().title("Updated Countries").text("Allowed countries have been updated").showInformation();
     }
 
+    /**
+     * Sets all countries in the combobox as checked
+     */
     @FXML
     private void selectAll() {
         EnumSet<Country> allowedCountries = EnumSet.allOf(Country.class);
@@ -67,6 +68,9 @@ public class ConfigController extends SubController {
         refresh();
     }
 
+    /**
+     * Clears all countries so that none are selected
+     */
     @FXML
     private void selectNone() {
         EnumSet<Country> allowedCountries = EnumSet.noneOf(Country.class);
@@ -75,6 +79,9 @@ public class ConfigController extends SubController {
         refresh();
     }
 
+    /**
+     * Resets the countries selected
+     */
     @FXML
     private void cancel() {
         refresh();
