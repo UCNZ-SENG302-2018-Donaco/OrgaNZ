@@ -32,12 +32,11 @@ public class JSONFileReader<T> implements Closeable {
     public JSONFileReader(File file, Class<T> dataClass) throws IOException {
         this.dataClass = dataClass;
 
-        try (FileInputStream inputStream = new FileInputStream(file)) {
+        FileInputStream inputStream = new FileInputStream(file);
 
-            JsonFactory factory = new JsonFactory();
-            parser = factory.createParser(inputStream);
-            channel = inputStream.getChannel();
-        }
+        JsonFactory factory = new JsonFactory();
+        parser = factory.createParser(inputStream);
+        channel = inputStream.getChannel();
     }
 
     /**
