@@ -15,6 +15,7 @@ import com.humanharvest.organz.ProcedureRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.views.SingleStringView;
 import com.humanharvest.organz.views.client.CreateClientView;
 import com.humanharvest.organz.views.client.CreateIllnessView;
 import com.humanharvest.organz.views.client.CreateMedicationRecordView;
@@ -36,7 +37,7 @@ public class ClientResolverRest implements ClientResolver {
 
     //------------GETs----------------
 
-
+    @Override
     public Map<Organ, Boolean> getOrganDonationStatus(Client client) {
         HttpHeaders httpHeaders = createHeaders(false);
         ResponseEntity<Map<Organ, Boolean>> responseEntity = sendQuery(httpHeaders,
@@ -49,6 +50,7 @@ public class ClientResolverRest implements ClientResolver {
         return responseEntity.getBody();
     }
 
+    @Override
     public List<TransplantRequest> getTransplantRequests(Client client) {
         HttpHeaders httpHeaders = createHeaders(false);
         ResponseEntity<List<TransplantRequest>> responseEntity = sendQuery(httpHeaders,
@@ -61,6 +63,7 @@ public class ClientResolverRest implements ClientResolver {
         return responseEntity.getBody();
     }
 
+    @Override
     public List<MedicationRecord> getMedicationRecords(Client client) {
         HttpHeaders httpHeaders = createHeaders(false);
         ResponseEntity<List<MedicationRecord>> responseEntity = sendQuery(httpHeaders,
@@ -73,6 +76,7 @@ public class ClientResolverRest implements ClientResolver {
         return responseEntity.getBody();
     }
 
+    @Override
     public List<ProcedureRecord> getProcedureRecords(Client client) {
         HttpHeaders httpHeaders = createHeaders(false);
         httpHeaders.setETag(State.getClientEtag());
@@ -85,6 +89,7 @@ public class ClientResolverRest implements ClientResolver {
         return responseEntity.getBody();
     }
 
+    @Override
     public List<IllnessRecord> getIllnessRecords(Client client) {
         HttpHeaders httpHeaders = createHeaders(false);
         httpHeaders.setETag(State.getClientEtag());
@@ -97,6 +102,7 @@ public class ClientResolverRest implements ClientResolver {
         return responseEntity.getBody();
     }
 
+    @Override
     public Collection<DonatedOrgan> getDonatedOrgans(Client client) {
         HttpHeaders httpHeaders = createHeaders(false);
         httpHeaders.setETag(State.getClientEtag());
@@ -137,6 +143,7 @@ public class ClientResolverRest implements ClientResolver {
         return responseEntity.getBody();
     }
 
+    @Override
     public List<TransplantRequest> createTransplantRequest(Client client, CreateTransplantRequestView request) {
         HttpHeaders httpHeaders = createHeaders(true);
         System.out.println("State get clients etag: " + State.getClientEtag());
@@ -150,6 +157,7 @@ public class ClientResolverRest implements ClientResolver {
         return responseEntity.getBody();
     }
 
+    @Override
     public List<IllnessRecord> addIllnessRecord(Client client, CreateIllnessView createIllnessView) {
         HttpHeaders httpHeaders = createHeaders(true);
         ResponseEntity<List<IllnessRecord>> responseEntity = sendQuery(httpHeaders,
@@ -163,6 +171,7 @@ public class ClientResolverRest implements ClientResolver {
         return responseEntity.getBody();
     }
 
+    @Override
     public List<MedicationRecord> addMedicationRecord(Client client, CreateMedicationRecordView medicationRecordView) {
         HttpHeaders httpHeaders = createHeaders(true);
         ResponseEntity<List<MedicationRecord>> responseEntity = sendQuery(httpHeaders,
@@ -176,6 +185,7 @@ public class ClientResolverRest implements ClientResolver {
         return responseEntity.getBody();
     }
 
+    @Override
     public List<ProcedureRecord> addProcedureRecord(Client client, CreateProcedureView procedureView) {
         HttpHeaders httpHeaders = createHeaders(true);
         ResponseEntity<List<ProcedureRecord>> responseEntity = sendQuery(httpHeaders,
@@ -185,6 +195,19 @@ public class ClientResolverRest implements ClientResolver {
                 new ParameterizedTypeReference<List<ProcedureRecord>>() {
                 }, client.getUid());
 
+        return responseEntity.getBody();
+    }
+
+    @Override
+    public DonatedOrgan manuallyOverrideOrgan(DonatedOrgan donatedOrgan, String overrideReason) {
+        HttpHeaders httpHeaders = createHeaders(true);
+        ResponseEntity<DonatedOrgan> responseEntity = sendQuery(httpHeaders,
+                State.BASE_URI + "clients/{uid}/donatedOrgans/{id}/override",
+                HttpMethod.POST,
+                new SingleStringView(overrideReason),
+                DonatedOrgan.class,
+                donatedOrgan.getDonor().getUid(),
+                donatedOrgan.getId());
         return responseEntity.getBody();
     }
 
@@ -208,6 +231,7 @@ public class ClientResolverRest implements ClientResolver {
         return responseEntity.getBody();
     }
 
+    @Override
     public TransplantRequest resolveTransplantRequest(Client client, TransplantRequest request,
             ResolveTransplantRequestObject resolveTransplantRequestObject) {
         HttpHeaders httpHeaders = createHeaders(true);
@@ -223,6 +247,7 @@ public class ClientResolverRest implements ClientResolver {
         return responseEntity.getBody();
     }
 
+    @Override
     public Client modifyClientDetails(Client client, ModifyClientObject modifyClientObject) {
         HttpHeaders httpHeaders = createHeaders(true);
         ResponseEntity<Client> responseEntity = sendQuery(httpHeaders,
@@ -235,6 +260,7 @@ public class ClientResolverRest implements ClientResolver {
         return responseEntity.getBody();
     }
 
+    @Override
     public MedicationRecord modifyMedicationRecord(Client client, MedicationRecord record, LocalDate stopDate) {
 
         String modification;
@@ -255,6 +281,7 @@ public class ClientResolverRest implements ClientResolver {
         return responseEntity.getBody();
     }
 
+    @Override
     public IllnessRecord modifyIllnessRecord(Client client, IllnessRecord toModify,
             ModifyIllnessObject modifyIllnessObject) {
         System.out.println(modifyIllnessObject.isChronic());
@@ -270,6 +297,7 @@ public class ClientResolverRest implements ClientResolver {
         return responseEntity.getBody();
     }
 
+    @Override
     public ProcedureRecord modifyProcedureRecord(Client client, ProcedureRecord toModify, ModifyProcedureObject
             modifyProcedureObject) {
         HttpHeaders httpHeaders = createHeaders(true);
@@ -284,8 +312,22 @@ public class ClientResolverRest implements ClientResolver {
         return responseEntity.getBody();
     }
 
+    @Override
+    public DonatedOrgan editManualOverrideForOrgan(DonatedOrgan donatedOrgan, String newOverrideReason) {
+        HttpHeaders httpHeaders = createHeaders(true);
+        ResponseEntity<DonatedOrgan> responseEntity = sendQuery(httpHeaders,
+                State.BASE_URI + "clients/{uid}/donatedOrgans/{id}/override",
+                HttpMethod.PATCH,
+                new SingleStringView(newOverrideReason),
+                DonatedOrgan.class,
+                donatedOrgan.getDonor().getUid(),
+                donatedOrgan.getId());
+        return responseEntity.getBody();
+    }
+
     //------------DELETEs----------------
 
+    @Override
     public void deleteIllnessRecord(Client client, IllnessRecord record) {
 
         HttpHeaders httpHeaders = createHeaders(true);
@@ -299,6 +341,7 @@ public class ClientResolverRest implements ClientResolver {
         client.deleteIllnessRecord(record);
     }
 
+    @Override
     public void deleteProcedureRecord(Client client, ProcedureRecord record) {
         HttpHeaders httpHeaders = createHeaders(true);
         sendQuery(httpHeaders,
@@ -322,6 +365,18 @@ public class ClientResolverRest implements ClientResolver {
                 record.getId());
 
         client.deleteMedicationRecord(record);
+    }
+
+    @Override
+    public DonatedOrgan cancelManualOverrideForOrgan(DonatedOrgan donatedOrgan) {
+        HttpHeaders httpHeaders = createHeaders(true);
+        ResponseEntity<DonatedOrgan> responseEntity = sendQuery(httpHeaders,
+                State.BASE_URI + "clients/{uid}/donatedOrgans/{id}/override",
+                HttpMethod.DELETE,
+                DonatedOrgan.class,
+                donatedOrgan.getDonor().getUid(),
+                donatedOrgan.getId());
+        return responseEntity.getBody();
     }
 
     //------------Templates----------------
@@ -392,4 +447,3 @@ public class ClientResolverRest implements ClientResolver {
         return responseEntity;
     }
 }
-

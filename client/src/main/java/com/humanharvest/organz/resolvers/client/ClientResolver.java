@@ -65,6 +65,8 @@ public interface ClientResolver {
 
     List<ProcedureRecord> addProcedureRecord(Client client, CreateProcedureView procedureView);
 
+    DonatedOrgan manuallyOverrideOrgan(DonatedOrgan donatedOrgan, String overrideReason);
+
     //------------PATCHs----------------
 
     Map<Organ, Boolean> modifyOrganDonation(Client client, Map<Organ, Boolean> changes);
@@ -81,6 +83,8 @@ public interface ClientResolver {
     ProcedureRecord modifyProcedureRecord(Client client, ProcedureRecord toModify,
             ModifyProcedureObject modifyProcedureObject);
 
+    DonatedOrgan editManualOverrideForOrgan(DonatedOrgan donatedOrgan, String newOverrideReason);
+
     //------------DELETEs----------------
 
     void deleteIllnessRecord(Client client, IllnessRecord record);
@@ -89,4 +93,5 @@ public interface ClientResolver {
 
     void deleteMedicationRecord(Client client, MedicationRecord record);
 
+    DonatedOrgan cancelManualOverrideForOrgan(DonatedOrgan donatedOrgan);
 }
