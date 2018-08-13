@@ -401,33 +401,39 @@ public class ViewClientController extends ViewBaseController {
     private boolean checkNonMandatoryFields() {
         boolean update = true;
 
-        try {
-            double h = Double.parseDouble(height.getText());
-            if (h < 0) {
-                heightLabel.setTextFill(Color.RED);
-                update = false;
-            } else {
-                heightLabel.setTextFill(Color.BLACK);
-            }
-
-        } catch (NumberFormatException ex) {
-            heightLabel.setTextFill(Color.RED);
-        }
-
-        try {
-            double w = Double.parseDouble(weight.getText());
-            if (w < 0) {
-                weightLabel.setTextFill(Color.RED);
-                update = false;
-            } else {
-                weightLabel.setTextFill(Color.BLACK);
-            }
-
-        } catch (NumberFormatException ex) {
-            weightLabel.setTextFill(Color.RED);
+        if (doubleFieldIsInvalid(weight, weightLabel)) {
             update = false;
         }
+        if (doubleFieldIsInvalid(height, heightLabel)) {
+            update = false;
+        }
+
         return update;
+    }
+
+    /**
+     * Given a field and it's corresponding label, check that it is a valid positive number.
+     * If it is not, set the label text to red. If it is, set it to black.
+     *
+     * @param field The field to check
+     * @param label The label to apply color to
+     * @return If the field value was a valid non negative number
+     */
+    private boolean doubleFieldIsInvalid(TextField field, Label label) {
+        try {
+            double w = Double.parseDouble(field.getText());
+            if (w < 0) {
+                label.setTextFill(Color.RED);
+                return true;
+            } else {
+                label.setTextFill(Color.BLACK);
+                return false;
+            }
+
+        } catch (NumberFormatException ex) {
+            label.setTextFill(Color.RED);
+            return true;
+        }
     }
 
     /**
