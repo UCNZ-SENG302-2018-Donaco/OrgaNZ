@@ -192,7 +192,7 @@ public class ViewClientController extends ViewBaseController {
             deathDetailsPane.setDisable(true);
         } else if (windowContext.isClinViewClientWindow()) {
             mainController.setTitle("View Client: " + viewedClient.getFullName());
-            if (viewedClient.hasOverriddenOrgans()) {
+            if (viewedClient.getDateOfDeathIsEditable()) {
                 aliveToggleBtn.setDisable(true);
                 deadToggleBtn.setDisable(true);
                 deathDatePicker.setDisable(true);

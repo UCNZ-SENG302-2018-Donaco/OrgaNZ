@@ -99,7 +99,13 @@ public class Client implements ConcurrencyControlledEntity {
     private String cityOfDeath;
     @JsonView(Views.Details.class)
     @Enumerated(EnumType.STRING)
-    private Country countryOfDeath;
+    private Country countryOfDeath;/*
+    @JsonView(Views.Details.class)
+    private boolean dateOfDeathIsEditable;
+
+    public void setDateOfDeathIsEditable(boolean dateOfDeathIsEditable) {
+        this.dateOfDeathIsEditable = dateOfDeathIsEditable;
+    }*/
 
 
 
@@ -958,11 +964,24 @@ public class Client implements ConcurrencyControlledEntity {
         return !getCurrentlyDonatedOrgans().isEmpty();
     }
 
+    @JsonIgnore
+    public boolean getDateOfDeathIsEditable() {
+        return true;//dateOfDeathIsEditable;
+    }
+
+    /**
+     * Updates dateOfDeathIsEditable to reflect if any organs are overriden.
+     */
+    @JsonIgnore
+    public void updateHasOverriddenOrgans() {
+        //dateOfDeathIsEditable = hasOverriddenOrgans();
+    }
+
     /**
      * @return true if any of their organs' expiry has been manually overridden
      */
     @JsonIgnore
-    public boolean hasOverriddenOrgans() {
+    private boolean hasOverriddenOrgans() {
         for (DonatedOrgan donatedOrgan : donatedOrgans) {
             if (donatedOrgan.getOverrideReason() != null) {
                 return true;

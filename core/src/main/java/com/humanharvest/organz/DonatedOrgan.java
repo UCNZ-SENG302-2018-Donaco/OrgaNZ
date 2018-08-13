@@ -130,10 +130,12 @@ public class DonatedOrgan {
     }
 
     public void manuallyOverride(String overrideReason) {
+        donor.updateHasOverriddenOrgans();
         this.overrideReason = overrideReason;
     }
 
     public void cancelManualOverride() {
+        donor.updateHasOverriddenOrgans();
         this.overrideReason = null;
     }
 }
