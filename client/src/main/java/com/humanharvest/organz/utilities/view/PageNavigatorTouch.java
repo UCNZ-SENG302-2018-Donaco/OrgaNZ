@@ -140,12 +140,7 @@ public class PageNavigatorTouch implements IPageNavigator {
             FXMLLoader loader = new FXMLLoader(PageNavigatorTouch.class.getResource(Page.TOUCH_ALERT.getPath()));
             Pane mainPane = loader.load();
             TouchAlertController controller = loader.getController();
-            controller.setStage(newStage);
-
-            controller.setStage(newStage);
-            controller.setTitle(title);
-            controller.setBody(bodyText);
-            controller.setPane(mainPane);
+            controller.setup(alertType, title, bodyText, newStage, mainPane);
 
             TuioFXUtils.setupPaneWithTouchFeatures(mainPane);
             AppTUIO.root.getChildren().add(mainPane);
@@ -155,6 +150,7 @@ public class PageNavigatorTouch implements IPageNavigator {
             return controller.getResultProperty();
 
         } catch (IOException e) {
+            e.printStackTrace();
             LOGGER.log(Level.SEVERE, "Error loading new window\n", e);
             // Will throw if MAIN's fxml file could not be loaded.
 //            showAlert(Alert.AlertType.ERROR, "New window could not be created",
