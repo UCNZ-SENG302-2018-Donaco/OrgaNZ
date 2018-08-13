@@ -19,6 +19,7 @@ import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.views.client.DonatedOrganView;
+import com.humanharvest.organz.views.client.PaginatedDonatedOrgansList;
 import com.humanharvest.organz.views.client.Views;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -42,7 +43,7 @@ public class OrgansController {
      */
     @JsonView(Views.Overview.class)
     @GetMapping("/clients/organs")
-    public ResponseEntity<Collection<DonatedOrganView>> getOrgansToDonate(
+    public ResponseEntity<PaginatedDonatedOrgansList> getOrgansToDonate(
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken,
             @RequestParam(required = false) Set<String> regions,
             @RequestParam(required = false) EnumSet<Organ> organType)
@@ -75,7 +76,11 @@ public class OrgansController {
 
                 .collect(Collectors.toList());
 
-        return new ResponseEntity<>(filteredOrgans, HttpStatus.OK);
+        PaginatedDonatedOrgansList paginatedDonatedOrgansList = new PaginatedDonatedOrgansList(filteredOrgans,
+                filteredOrgans.size());
+
+
+        return new ResponseEntity<>(paginatedDonatedOrgansList, HttpStatus.OK);
     }
 
     @JsonView(Views.Details.class)

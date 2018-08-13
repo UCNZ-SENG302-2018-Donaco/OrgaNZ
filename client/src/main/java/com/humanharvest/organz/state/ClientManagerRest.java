@@ -88,6 +88,8 @@ public class ClientManagerRest implements ClientManager {
                 PaginatedClientList.class
         );
 
+        System.out.println("sadsadsadsad" + response.getBody());
+
         return response.getBody();
     }
 
@@ -209,12 +211,12 @@ public class ClientManagerRest implements ClientManager {
         headers.set("X-Auth-Token", State.getToken());
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
-        ResponseEntity<Collection<DonatedOrganView>> responseEntity = State.getRestTemplate().exchange(
+        ResponseEntity<PaginatedDonatedOrgansList> responseEntity = State.getRestTemplate().exchange(
                 State.BASE_URI + "/clients/organs",
                 HttpMethod.GET,
-                entity, new ParameterizedTypeReference<Collection<DonatedOrganView>>(){});
+                entity, PaginatedDonatedOrgansList.class);
 
-        return responseEntity.getBody().stream().map(DonatedOrganView::getDonatedOrgan).collect(Collectors.toList());
+        return Objects.requireNonNull(responseEntity.getBody()).getDonatedOrgans().stream().map(DonatedOrganView::getDonatedOrgan).collect(Collectors.toList());
 
     }
 
@@ -225,7 +227,7 @@ public class ClientManagerRest implements ClientManager {
      * @return A collection of the the organs available to donate based off the specified filters.
      */
     @Override
-    public Collection<DonatedOrgan> getAllOrgansToDonate(Set<String> regions, EnumSet<Organ> organType) {
+    public PaginatedDonatedOrgansList getAllOrgansToDonate(Set<String> regions, EnumSet<Organ> organType) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-Auth-Token", State.getToken());
         headers.set("Accept",MediaType.APPLICATION_JSON_VALUE);
@@ -237,13 +239,15 @@ public class ClientManagerRest implements ClientManager {
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
-        ResponseEntity<Collection<DonatedOrganView>> responseEntity = State.getRestTemplate().exchange(
+        ResponseEntity<PaginatedDonatedOrgansList> responseEntity = State.getRestTemplate().exchange(
                 builder.toUriString(),
                 HttpMethod.GET,
-                entity, new ParameterizedTypeReference<Collection<DonatedOrganView>>(){});
+                entity,PaginatedDonatedOrgansList.class);
+
+        System.out.println("sadsadsadsad"+responseEntity.getBody());
 
 
-        return responseEntity.getBody().stream().map(DonatedOrganView::getDonatedOrgan).collect(Collectors.toList());
+        return responseEntity.getBody();
 
     }
 

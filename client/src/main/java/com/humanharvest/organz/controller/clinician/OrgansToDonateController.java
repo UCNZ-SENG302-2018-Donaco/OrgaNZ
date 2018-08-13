@@ -1,6 +1,7 @@
 package com.humanharvest.organz.controller.clinician;
 
 import com.humanharvest.organz.utilities.enums.Region;
+import com.humanharvest.organz.views.client.DonatedOrganView;
 import com.humanharvest.organz.views.client.PaginatedDonatedOrgansList;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -63,7 +64,7 @@ import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder
 
 public class OrgansToDonateController extends SubController {
 
-    private static final int ROWS_PER_PAGE = 30;
+    private static final int ROWS_PER_PAGE = 10;
     private static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("d MMM yyyy hh:mm a");
 
     @FXML
@@ -265,19 +266,23 @@ public class OrgansToDonateController extends SubController {
         filterOrgans();
         filterRegions();
 
-        Collection<DonatedOrgan> newOrgansToDonate = manager.getAllOrgansToDonate(regionsToFilter, organsToFilter);
+        //Collection<DonatedOrgan> newOrgansToDonate = manager.getAllOrgansToDonate(regionsToFilter, organsToFilter);
 
-        observableOrgansToDonate.setAll(newOrgansToDonate);
+        PaginatedDonatedOrgansList newOrgansToDonate = manager.getAllOrgansToDonate(regionsToFilter,organsToFilter);
+
+        observableOrgansToDonate.setAll(newOrgansToDonate.getDonatedOrgans().stream().map(
+                DonatedOrganView::getDonatedOrgan).collect(Collectors.toList()));
         tableView.getSortOrder().setAll(timeUntilExpiryCol);
 
-        /* TODO decide whether we need to paginate or not
+
+
         int newPageCount = Math.max(1, (newOrgansToDonate.getTotalResults() + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE);
         if (pagination.getPageCount() != newPageCount) {
             pagination.setPageCount(newPageCount);
         }
 
         setupDisplayingXToYOfZText(newOrgansToDonate.getTotalResults());
-        */
+
     }
 
 
@@ -322,10 +327,18 @@ public class OrgansToDonateController extends SubController {
 
     }
 
-    private <T extends Enum<T>> EnumSet<T> filterToSet(CheckComboBox<T> filter, Class<T> enumType) {
-        EnumSet<T> enumSet = EnumSet.noneOf(enumType);
-        enumSet.addAll(filter.getCheckModel().getCheckedItems());
-        return enumSet;
+    private void setupDisplayingXToYOfZText(int totalCount) {
+        int fromIndex = pagination.getCurrentPageIndex() * ROWS_PER_PAGE;
+        int toIndex = Math.min(fromIndex + ROWS_PER_PAGE, totalCount);
+        if (totalCount < 2 || fromIndex + 1 == toIndex) {
+            // 0 or 1 items OR the last item, on its own page
+            displayingXToYOfZText.setText(String.format("Displaying %d of %d",
+                    totalCount,
+                    totalCount));
+        } else {
+            displayingXToYOfZText.setText(String.format("Displaying %d-%d of %d", fromIndex + 1, toIndex,
+                    totalCount));
+        }
     }
 
     private void manuallyExpire(String message) {

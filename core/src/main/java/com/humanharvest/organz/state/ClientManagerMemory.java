@@ -28,6 +28,7 @@ import com.humanharvest.organz.*;
 import com.humanharvest.organz.utilities.ClientNameSorter;
 import com.humanharvest.organz.utilities.enums.*;
 import com.humanharvest.organz.views.client.PaginatedClientList;
+import com.humanharvest.organz.views.client.PaginatedDonatedOrgansList;
 import com.humanharvest.organz.views.client.PaginatedTransplantList;
 import com.humanharvest.organz.views.client.TransplantRequestView;
 
@@ -356,24 +357,30 @@ public class ClientManagerMemory implements ClientManager {
      * @return a list of all organs available for donation
      */
     @Override
-    public Collection<DonatedOrgan> getAllOrgansToDonate(Set<String> regions, EnumSet<Organ> organType) {
+    public PaginatedDonatedOrgansList getAllOrgansToDonate(Set<String> regions, EnumSet<Organ> organType) {
 
-        Collection<DonatedOrgan> donatedOrgans = new ArrayList<>();
+        List<DonatedOrganView> donatedOrgans = new ArrayList<>();
+
         for (Client client: clients) {
-            donatedOrgans.addAll(client.getDonatedOrgans());
+            for (DonatedOrgan organ: client.getDonatedOrgans()) {
+                donatedOrgans.add(new DonatedOrganView(organ));
+            }
         }
-        Stream<DonatedOrgan> stream = donatedOrgans.stream();
+        Stream<DonatedOrganView> stream = donatedOrgans.stream();
         donatedOrgans = stream
 
                 .filter(regions == null ? o -> true : organ -> regions.isEmpty() ||
-                        regions.contains(organ.getDonor().getRegion()))
+                        regions.contains(organ.getDonatedOrgan().getDonor().getRegion()))
 
                 .filter(organType == null ? o -> true : organ -> organType.isEmpty() ||
-                        organType.contains(organ.getOrganType()))
+                        organType.contains(organ.getDonatedOrgan().getOrganType()))
 
                 .collect(Collectors.toList());
+        int totalResults = donatedOrgans.size();
 
-        return donatedOrgans;
+
+        return new PaginatedDonatedOrgansList(donatedOrgans,totalResults);
+
     }
 
     @Override

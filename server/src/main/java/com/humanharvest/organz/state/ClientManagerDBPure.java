@@ -19,6 +19,7 @@ import com.humanharvest.organz.database.DBManager;
 import com.humanharvest.organz.utilities.enums.*;
 import com.humanharvest.organz.views.client.PaginatedClientList;
 import com.humanharvest.organz.utilities.type_converters.EnumSetToString;
+import com.humanharvest.organz.views.client.PaginatedDonatedOrgansList;
 import com.humanharvest.organz.views.client.PaginatedTransplantList;
 import org.hibernate.ReplicationMode;
 import org.hibernate.Transaction;
@@ -564,7 +565,7 @@ public class ClientManagerDBPure implements ClientManager {
      * @return a list of all organs available for donation
      */
     @Override
-    public Collection<DonatedOrgan> getAllOrgansToDonate(Set<String> regions, EnumSet<Organ> organType) {
+    public PaginatedDonatedOrgansList getAllOrgansToDonate(Set<String> regions, EnumSet<Organ> organType) {
         //TODO Implement the WHERE statements for this.
         List<DonatedOrgan> requests = null;
         Transaction trns = null;
