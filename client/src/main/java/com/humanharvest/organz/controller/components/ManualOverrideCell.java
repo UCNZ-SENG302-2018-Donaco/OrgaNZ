@@ -43,6 +43,7 @@ public class ManualOverrideCell extends TableCell<DonatedOrgan, DonatedOrgan> {
             if (item.getOverrideReason() == null) {
                 // Create override button
                 Button overrideBtn = new Button("Override");
+                overrideBtn.setDisable(item.getDurationUntilExpiry() != null && item.getDurationUntilExpiry().isZero());
                 overrideBtn.setOnAction(event -> onOverridePressed.handle(item));
                 overrideBtn.setMaxWidth(Double.POSITIVE_INFINITY);
                 HBox.setHgrow(overrideBtn, Priority.ALWAYS);
