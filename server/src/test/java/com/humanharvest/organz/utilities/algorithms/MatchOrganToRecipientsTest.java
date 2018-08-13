@@ -1,6 +1,5 @@
 package com.humanharvest.organz.utilities.algorithms;
 
-import static java.lang.Thread.sleep;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
@@ -114,7 +113,7 @@ public class MatchOrganToRecipientsTest {
     public void testDonatedOrganExpired() throws Exception {
         donor.setDateOfDeath(LocalDate.now().minusDays(10));
 
-        sleep(100);
+        organsToDonate = State.getClientManager().getAllOrgansToDonate();
 
         getListOfPotentialRecipients();
         assertEquals(0, eligibleClients.size());
