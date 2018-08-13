@@ -1,5 +1,6 @@
 package com.humanharvest.organz.controller.client;
 
+import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -117,8 +118,8 @@ public class RegisterOrganDonationController extends SubController {
 //        statusCol.setCellFactory(RegisterOrganDonationController::statusColFactory);
         manualOverrideCol.setCellValueFactory(row -> new SimpleObjectProperty<>(row.getValue()));
         manualOverrideCol.setCellFactory(column -> new ManualOverrideCell(column,
-                RegisterOrganDonationController::handleOverride,
-                RegisterOrganDonationController::handleOverrideCancelled));
+                this::handleOverride,
+                this::handleCancelOverride));
     }
 
     /**
@@ -126,7 +127,7 @@ public class RegisterOrganDonationController extends SubController {
      * the user to enter the reason they are overriding this organ.
      * @param donatedOrgan The donated organ the user wants to override.
      */
-    private static void handleOverride(DonatedOrgan donatedOrgan) {
+    private void handleOverride(DonatedOrgan donatedOrgan) {
         // Create a popup with a text field to enter the reason
         TextInputDialog popup = new TextInputDialog();
         popup.setTitle("Manually Override Organ");
@@ -140,7 +141,16 @@ public class RegisterOrganDonationController extends SubController {
         String response = popup.showAndWait().orElse("");
         if (!response.isEmpty()) {
             try {
-                State.getClientResolver().manuallyOverrideOrgan(donatedOrgan, response);
+                StringBuilder overrideReason = new StringBuilder(response);
+                overrideReason.append("\n").append(LocalDateTime.now().format(dateTimeFormat));
+                if (session.getLoggedInUserType() == UserType.CLINICIAN) {
+                    overrideReason.append(String.format("\nOverriden by clinician %d (%s)",
+                            session.getLoggedInClinician().getStaffId(), session.getLoggedInClinician().getFullName()));
+                } else if (session.getLoggedInUserType() == UserType.ADMINISTRATOR) {
+                    overrideReason.append(String.format("\nOverriden by admin '%s'.",
+                            session.getLoggedInAdministrator().getUsername()));
+                }
+                State.getClientResolver().manuallyOverrideOrgan(donatedOrgan, overrideReason.toString());
                 PageNavigator.refreshAllWindows();
             } catch (IfMatchFailedException exc) {
                 // TODO deal with outdated error
@@ -164,7 +174,7 @@ public class RegisterOrganDonationController extends SubController {
      * Handles the event when the user wants to cancel the override on a given donated organ.
      * @param donatedOrgan The donated organ the user wants to cancel the override for.
      */
-    private static void handleOverrideCancelled(DonatedOrgan donatedOrgan) {
+    private void handleCancelOverride(DonatedOrgan donatedOrgan) {
         try {
             State.getClientResolver().cancelManualOverrideForOrgan(donatedOrgan);
             PageNavigator.refreshAllWindows();

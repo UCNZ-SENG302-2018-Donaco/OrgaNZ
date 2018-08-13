@@ -36,6 +36,8 @@ import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.state.ClientManager;
+import com.humanharvest.organz.state.Session;
+import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
@@ -75,6 +77,7 @@ public class OrgansToDonateController extends SubController {
     @FXML
     private Text displayingXToYOfZText;
 
+    private Session session;
     private ClientManager manager;
     private ObservableList<DonatedOrgan> observableOrgansToDonate = FXCollections.observableArrayList();
     private FilteredList<DonatedOrgan> filteredOrgansToDonate = new FilteredList<>(observableOrgansToDonate);
@@ -85,6 +88,7 @@ public class OrgansToDonateController extends SubController {
      * Gets the client manager from the global state.
      */
     public OrgansToDonateController() {
+        session = State.getSession();
         manager = State.getClientManager();
     }
 
@@ -243,7 +247,16 @@ public class OrgansToDonateController extends SubController {
         String response = popup.showAndWait().orElse("");
         if (!response.isEmpty()) {
             try {
-                State.getClientResolver().manuallyOverrideOrgan(selectedOrgan, response);
+                StringBuilder overrideReason = new StringBuilder(response);
+                overrideReason.append("\n").append(LocalDateTime.now().format(dateTimeFormat));
+                if (session.getLoggedInUserType() == UserType.CLINICIAN) {
+                    overrideReason.append(String.format("\nOverriden by clinician %d (%s)",
+                            session.getLoggedInClinician().getStaffId(), session.getLoggedInClinician().getFullName()));
+                } else if (session.getLoggedInUserType() == UserType.ADMINISTRATOR) {
+                    overrideReason.append(String.format("\nOverriden by admin '%s'.",
+                            session.getLoggedInAdministrator().getUsername()));
+                }
+                State.getClientResolver().manuallyOverrideOrgan(selectedOrgan, overrideReason.toString());
                 PageNavigator.refreshAllWindows();
             } catch (IfMatchFailedException exc) {
                 // TODO deal with outdated error
