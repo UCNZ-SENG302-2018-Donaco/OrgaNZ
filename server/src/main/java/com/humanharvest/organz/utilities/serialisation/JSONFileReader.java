@@ -1,19 +1,14 @@
 package com.humanharvest.organz.utilities.serialisation;
 
-import java.io.Closeable;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.channels.FileChannel;
-import java.util.List;
-
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.type.CollectionType;
+
+import java.io.*;
+import java.nio.channels.FileChannel;
+import java.util.List;
 
 /**
  * Provides functionality to read a JSON file as a stream of objects of a given datatype. Also provides the ability
@@ -37,11 +32,12 @@ public class JSONFileReader<T> implements Closeable {
     public JSONFileReader(File file, Class<T> dataClass) throws IOException {
         this.dataClass = dataClass;
 
-        FileInputStream inputStream = new FileInputStream(file);
+        try (FileInputStream inputStream = new FileInputStream(file)) {
 
-        JsonFactory factory = new JsonFactory();
-        parser = factory.createParser(inputStream);
-        channel = inputStream.getChannel();
+            JsonFactory factory = new JsonFactory();
+            parser = factory.createParser(inputStream);
+            channel = inputStream.getChannel();
+        }
     }
 
     /**
