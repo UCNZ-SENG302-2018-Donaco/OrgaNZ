@@ -59,7 +59,6 @@ public class MenuBarController extends SubController {
     public MenuItem createClinicianItem;
     public MenuItem transplantRequestsItem;
     public MenuItem organsToDonateItem;
-    public MenuItem viewAdministratorItem;
     public MenuItem viewClinicianItem;
     public MenuItem historyItem;
     public MenuItem cliItem;
@@ -113,13 +112,13 @@ public class MenuBarController extends SubController {
         Menu menusHideFromClinicians[] = {medicationsPrimaryItem, staffPrimaryItem};
         MenuItem menuItemsHideFromClinicians[] = {viewClientItem, donateOrganItem, requestOrganItem, viewMedicationsItem,
                 medicalHistoryItem, proceduresItem, saveClientsItem, saveCliniciansItem, loadItem, settingsItem,
-                staffListItem, createAdministratorItem, createClinicianItem, viewAdministratorItem, cliItem};
+                staffListItem, createAdministratorItem, createClinicianItem, cliItem};
 
         // Menus/Menu items to hide from clinicians (or admins) viewing a client
         Menu menusHideFromClinViewClients[] = {staffPrimaryItem, profilePrimaryItem};
         MenuItem menuItemsHideFromClinViewClients[] = {saveClientsItem, saveCliniciansItem, loadItem, settingsItem,
                 logOutItem, searchClientItem, createClientItem, transplantRequestsItem, organsToDonateItem,
-                staffListItem, createAdministratorItem, createClinicianItem, viewAdministratorItem,
+                staffListItem, createAdministratorItem, createClinicianItem,
                 viewClinicianItem, historyItem, cliItem};
 
         // Menus to hide from clients (aka all menus)

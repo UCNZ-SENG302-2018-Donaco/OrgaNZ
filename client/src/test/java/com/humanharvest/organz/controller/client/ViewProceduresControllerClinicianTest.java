@@ -31,16 +31,18 @@ import org.testfx.util.NodeQueryUtils;
 
 public class ViewProceduresControllerClinicianTest extends ControllerTest {
 
+    private final int futureYear = LocalDate.now().plusYears(2).getYear();
+
     private final ProcedureRecord[] pastRecords = {
-            new ProcedureRecord("A Summary 1", "Description1", LocalDate.of(2000, 10, 12)),
+            new ProcedureRecord("A Summary 1", "Description1", LocalDate.of(2000, 10, 19)),
             new ProcedureRecord("B Summary 2", "Description2", LocalDate.of(2000, 11, 13)),
             new ProcedureRecord("C Summary 3", "Description3", LocalDate.of(2000, 12, 14))
 
     };
     private final ProcedureRecord[] pendingRecords = {
-            new ProcedureRecord("Summary4", "Description4", LocalDate.of(2045, 10, 15))
+            new ProcedureRecord("Summary4", "Description4", LocalDate.of(futureYear, 10, 15))
     };
-    private final Client testClient = new Client( "Alex", null, "Tester", LocalDate.of(1998, 5, 9), 1);
+    private final Client testClient = new Client("Alex", null, "Tester", LocalDate.of(1998, 5, 9), 1);
     private final Clinician testClinician = new Clinician("A", "B", "C", "D", Region.UNSPECIFIED.toString(),
             Country.NZ, 0,
             "");
@@ -87,7 +89,6 @@ public class ViewProceduresControllerClinicianTest extends ControllerTest {
         }
         State.getClientManager().applyChangesTo(testClient);
     }
-
 
     @Test
     public void bothListViewsVisibleTest() {
@@ -138,14 +139,17 @@ public class ViewProceduresControllerClinicianTest extends ControllerTest {
                 .anyMatch(record -> record.getDescription().equals(toBeAdded.getDescription())));
     }
 
+    // Editing an existing procedure - date
+
     @Test
     public void setDateFromPastToFutureTest() {
-        clickOn((Node) lookup(NodeQueryUtils.hasText("12/10/2000")).query());
-        clickOn((Node) lookup(NodeQueryUtils.hasText("12/10/2000")).query());
-        clickOn((Node) lookup(NodeQueryUtils.hasText("12/10/2000")).query()).write("10/12/2045");
+        clickOn((Node) lookup(NodeQueryUtils.hasText("19/10/2000")).query());
+        clickOn((Node) lookup(NodeQueryUtils.hasText("19/10/2000")).query());
+        String futureDate = "19/10/" + futureYear;
+        clickOn((Node) lookup(NodeQueryUtils.hasText("19/10/2000")).query()).write(futureDate);
         press(KeyCode.ENTER);
 
-        assertEquals(LocalDate.of(2045, 12, 10), pastRecords[0].getDate());
+        assertEquals(LocalDate.of(futureYear, 10, 19), pastRecords[0].getDate());
         assertEquals(2, testClient.getPendingProcedures().size());
         verifyThat("#pendingProcedureView", containsRow(
                 pastRecords[0].getSummary(),
@@ -153,6 +157,24 @@ public class ViewProceduresControllerClinicianTest extends ControllerTest {
                 pastRecords[0].getAffectedOrgans(),
                 pastRecords[0].getDescription()));
     }
+
+    @Test
+    public void failToClearDateTest() {
+        doubleClickOn((Node) lookup(NodeQueryUtils.hasText("19/10/2000")).query());
+        clickOn((Node) lookup(NodeQueryUtils.hasText("19/10/2000")).query());
+        press(KeyCode.DELETE);
+        press(KeyCode.ENTER);
+
+        assertEquals(LocalDate.of(2000, 10, 19), pastRecords[0].getDate()); // unchanged
+        assertEquals(3, testClient.getPastProcedures().size()); // still has 3 past procedures
+        verifyThat("#pendingProcedureView", containsRow(
+                pendingRecords[pendingRecords.length - 1].getSummary(),
+                pendingRecords[pendingRecords.length - 1].getDate(),
+                pendingRecords[pendingRecords.length - 1].getAffectedOrgans(),
+                pendingRecords[pendingRecords.length - 1].getDescription()));
+    }
+
+    // Editing an existing procedure - summary
 
     @Test
     public void editSummaryTest() {
@@ -165,6 +187,17 @@ public class ViewProceduresControllerClinicianTest extends ControllerTest {
     }
 
     @Test
+    public void failToClearSummaryTest() {
+        doubleClickOn((Node) lookup(NodeQueryUtils.hasText("A Summary 1")).query());
+        press(KeyCode.DELETE);
+        press(KeyCode.ENTER);
+
+        assertEquals("A Summary 1", pastRecords[0].getSummary());
+    }
+
+    // Editing an existing procedure - description
+
+    @Test
     public void editDescriptionTest() {
         clickOn((Node) lookup(NodeQueryUtils.hasText("Description1")).query());
         clickOn((Node) lookup(NodeQueryUtils.hasText("Description1")).query());
@@ -174,10 +207,12 @@ public class ViewProceduresControllerClinicianTest extends ControllerTest {
         assertEquals("NewDescription", pastRecords[0].getDescription());
     }
 
+    // Editing an existing procedure - organs
+
     @Test
     public void addOrganSingleTest() {
-        clickOn((Node)lookup((OrganCheckComboBoxCell<?> o) -> true).nth(0).query());
-        clickOn((Node)lookup((CheckBox checkBox) -> true).nth(1).query());
+        clickOn((Node) lookup((OrganCheckComboBoxCell<?> o) -> true).nth(0).query());
+        clickOn((Node) lookup((CheckBox checkBox) -> true).nth(1).query());
 
         clickOn("#pendingProcedureView");
 
@@ -196,14 +231,13 @@ public class ViewProceduresControllerClinicianTest extends ControllerTest {
         assertTrue(hasMatch);
     }
 
-
     @Test
     public void addOrganMultipleTest() {
-        clickOn((Node)lookup((OrganCheckComboBoxCell<?> o) -> true).nth(0).query());
+        clickOn((Node) lookup((OrganCheckComboBoxCell<?> o) -> true).nth(0).query());
 
-        clickOn((Node)lookup((CheckBox checkBox) -> true).nth(1).query());
-        clickOn((Node)lookup((CheckBox checkBox) -> true).nth(2).query());
-        clickOn((Node)lookup((CheckBox checkBox) -> true).nth(4).query());
+        clickOn((Node) lookup((CheckBox checkBox) -> true).nth(1).query());
+        clickOn((Node) lookup((CheckBox checkBox) -> true).nth(2).query());
+        clickOn((Node) lookup((CheckBox checkBox) -> true).nth(4).query());
 
         clickOn("#pendingProcedureView");
 
@@ -226,8 +260,8 @@ public class ViewProceduresControllerClinicianTest extends ControllerTest {
 
     @Test
     public void removeOrganSingleTest() {
-        clickOn((Node)lookup((OrganCheckComboBoxCell<?> o) -> true).nth(1).query());
-        clickOn((Node)lookup((CheckBox checkBox) -> true).nth(1).query());
+        clickOn((Node) lookup((OrganCheckComboBoxCell<?> o) -> true).nth(1).query());
+        clickOn((Node) lookup((CheckBox checkBox) -> true).nth(1).query());
 
         clickOn("#pendingProcedureView");
 
@@ -249,9 +283,9 @@ public class ViewProceduresControllerClinicianTest extends ControllerTest {
 
     @Test
     public void removeOrganMultipleTest() {
-        clickOn((Node)lookup((OrganCheckComboBoxCell<?> o) -> true).nth(1).query());
-        clickOn((Node)lookup((CheckBox checkBox) -> true).nth(1).query());
-        clickOn((Node)lookup((CheckBox checkBox) -> true).nth(0).query());
+        clickOn((Node) lookup((OrganCheckComboBoxCell<?> o) -> true).nth(1).query());
+        clickOn((Node) lookup((CheckBox checkBox) -> true).nth(1).query());
+        clickOn((Node) lookup((CheckBox checkBox) -> true).nth(0).query());
 
         clickOn("#pendingProcedureView");
 
@@ -272,12 +306,12 @@ public class ViewProceduresControllerClinicianTest extends ControllerTest {
 
     @Test
     public void toggleMultipleOrgansTest() {
-        clickOn((Node)lookup((OrganCheckComboBoxCell<?> o) -> true).nth(1).query());
-        clickOn((Node)lookup((CheckBox checkBox) -> true).nth(0).query());
-        clickOn((Node)lookup((CheckBox checkBox) -> true).nth(1).query());
-        clickOn((Node)lookup((CheckBox checkBox) -> true).nth(2).query());
-        clickOn((Node)lookup((CheckBox checkBox) -> true).nth(3).query());
-        clickOn((Node)lookup((CheckBox checkBox) -> true).nth(5).query());
+        clickOn((Node) lookup((OrganCheckComboBoxCell<?> o) -> true).nth(1).query());
+        clickOn((Node) lookup((CheckBox checkBox) -> true).nth(0).query());
+        clickOn((Node) lookup((CheckBox checkBox) -> true).nth(1).query());
+        clickOn((Node) lookup((CheckBox checkBox) -> true).nth(2).query());
+        clickOn((Node) lookup((CheckBox checkBox) -> true).nth(3).query());
+        clickOn((Node) lookup((CheckBox checkBox) -> true).nth(5).query());
 
         clickOn("#pendingProcedureView");
 
@@ -297,20 +331,20 @@ public class ViewProceduresControllerClinicianTest extends ControllerTest {
         assertTrue(hasMatch);
     }
 
-
     @Test
     public void toggleMultipleOrgansThenChangeFromPastToPendingTest() {
-        clickOn((Node)lookup((OrganCheckComboBoxCell<?> o) -> true).nth(1).query());
+        clickOn((Node) lookup((OrganCheckComboBoxCell<?> o) -> true).nth(1).query());
 
-        clickOn((Node)lookup((CheckBox checkBox) -> true).nth(0).query());
-        clickOn((Node)lookup((CheckBox checkBox) -> true).nth(1).query());
-        clickOn((Node)lookup((CheckBox checkBox) -> true).nth(2).query());
-        clickOn((Node)lookup((CheckBox checkBox) -> true).nth(3).query());
-        clickOn((Node)lookup((CheckBox checkBox) -> true).nth(5).query());
+        clickOn((Node) lookup((CheckBox checkBox) -> true).nth(0).query());
+        clickOn((Node) lookup((CheckBox checkBox) -> true).nth(1).query());
+        clickOn((Node) lookup((CheckBox checkBox) -> true).nth(2).query());
+        clickOn((Node) lookup((CheckBox checkBox) -> true).nth(3).query());
+        clickOn((Node) lookup((CheckBox checkBox) -> true).nth(5).query());
 
-        clickOn((Node)lookup(NodeQueryUtils.hasText("13/11/2000")).query());
-        clickOn((Node)lookup(NodeQueryUtils.hasText("13/11/2000")).query());
-        clickOn((Node)lookup(NodeQueryUtils.hasText("13/11/2000")).query()).write("10/12/2045");
+        clickOn((Node) lookup(NodeQueryUtils.hasText("13/11/2000")).query());
+        clickOn((Node) lookup(NodeQueryUtils.hasText("13/11/2000")).query());
+        String futureDate = "19/10/" + futureYear;
+        clickOn((Node) lookup(NodeQueryUtils.hasText("13/11/2000")).query()).write(futureDate);
         press(KeyCode.ENTER);
 
         clickOn("#pendingProcedureView");
@@ -325,7 +359,7 @@ public class ViewProceduresControllerClinicianTest extends ControllerTest {
                 affected.add(Organ.PANCREAS);
                 affected.add(Organ.INTESTINE);
                 assertEquals(affected, record.getAffectedOrgans());
-                assertEquals(LocalDate.of(2045, 12, 10), record.getDate());
+                assertEquals(LocalDate.of(futureYear, 10, 19), record.getDate());
                 hasMatch = true;
                 break;
             }
@@ -334,6 +368,7 @@ public class ViewProceduresControllerClinicianTest extends ControllerTest {
         assertTrue(hasMatch);
     }
 
+    // Deleting an existing procedure
 
     @Test
     public void deletePendingTest() {

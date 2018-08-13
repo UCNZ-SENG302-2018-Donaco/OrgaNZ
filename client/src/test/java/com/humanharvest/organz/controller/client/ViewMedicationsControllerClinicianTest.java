@@ -20,8 +20,10 @@ import java.util.Collections;
 import java.util.List;
 
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.DialogPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.input.KeyCode;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -269,10 +271,10 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
 
         verifyThat("#currentMedicationsView", hasListCell(ibuprofenRecord));
         clickOn((Node) lookup(hasText(ibuprofenRecord.toString())).query());
-        clickOn("#viewActiveIngredientsButton");
-        checkAlertHasHeaderAndContent("Active ingredients in Ibuprofen", ibuprofenActiveIngredients);
-        press(KeyCode.ENTER); // Close the dialog
-        release(KeyCode.ENTER);
+
+        TextArea medicationIngredients = lookup("#medicationIngredients").query();
+        String ingredientsInfo = medicationIngredients.getText();
+        assertEquals(ibuprofenActiveIngredients, ingredientsInfo);
     }
 
     @Test
@@ -287,10 +289,9 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
 
         verifyThat("#currentMedicationsView", hasListCell(toBeMoved));
         clickOn((Node) lookup(hasText(toBeMoved.toString())).query());
-        clickOn("#viewActiveIngredientsButton");
-        checkAlertHasHeaderAndContent("Active ingredients in Med C", "No results found for Med C");
-        press(KeyCode.ENTER); // Close the dialog
-        release(KeyCode.ENTER);
+
+        String medicationInfo = ((TextArea) lookup("#medicationIngredients").query()).getText();
+        assertEquals("No active ingredients found for Med C", medicationInfo);
     }
 
     @Test
@@ -305,12 +306,9 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
 
         verifyThat("#currentMedicationsView", hasListCell(toBeMoved));
         clickOn((Node) lookup(hasText(toBeMoved.toString())).query());
-        clickOn("#viewActiveIngredientsButton");
-        checkAlertHasHeaderAndContent(
-                "Active ingredients in A medication that should throw IOException",
-                "Error loading results. Please try again later.");
-        press(KeyCode.ENTER); // Close the dialog
-        release(KeyCode.ENTER);
+
+        String medicationInfo = ((TextArea) lookup("#medicationIngredients").query()).getText();
+        assertEquals("Error loading ingredients, please try again later", medicationInfo);
     }
 
     //------ Viewing interactions between drugs ------------
@@ -351,27 +349,15 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
     }
 
     @Test
-    public void viewInteractionsBetweenZeroDrugsTest() {
-        clickOn("#viewInteractionsButton");
-        checkAlertHasHeaderAndContent("Incorrect number of medications selected (0).",
-                "Please select exactly two medications to view their interactions.");
-        press(KeyCode.ENTER); // Close the dialog
-        release(KeyCode.ENTER);
-    }
-
-    @Test
     public void viewInteractionsBetweenOneDrugTest() {
         MedicationRecord drug0 = testCurrentMedicationRecords[0];
 
         verifyThat("#currentMedicationsView", hasListCell(drug0));
 
         clickOn((Node) lookup(hasText(drug0.toString())).query());
-        clickOn("#viewInteractionsButton");
 
-        checkAlertHasHeaderAndContent("Incorrect number of medications selected (1).",
-                "Please select exactly two medications to view their interactions.");
-        press(KeyCode.ENTER); // Close the dialog
-        release(KeyCode.ENTER);
+        String interactionsInfo = ((TextArea) lookup("#medicationInteractions").query()).getText();
+        assertEquals("", interactionsInfo);
     }
 
     @Test
@@ -393,12 +379,9 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
         verifyThat((Node) lookup(hasText(drug2.toString())).query(), Node::isFocused);
         release(KeyCode.CONTROL);
 
-        clickOn("#viewInteractionsButton");
-
-        checkAlertHasHeaderAndContent("Incorrect number of medications selected (3).",
-                "Please select exactly two medications to view their interactions.");
-        press(KeyCode.ENTER); // Close the dialog
-        release(KeyCode.ENTER);
+        // Check that no interactions are displayed with three medications selected
+        String interactionsInfo = ((TextArea) lookup("#medicationInteractions").query()).getText();
+        assertEquals("", interactionsInfo);
     }
 
     @Test
@@ -420,17 +403,13 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
         clickOn((Node) lookup(hasText(prednisoneRecord.toString())).query());
         release(KeyCode.CONTROL);
 
-        clickOn("#viewInteractionsButton");
-
-        checkAlertHasHeaderAndContent("Interactions between Ibuprofen and Prednisone",
-                "anxiety\n"
-                        + "arthralgia\n"
-                        + "dyspnoea\n"
-                        + "fatigue\n"
-                        + "nausea\n"
-                        + "pyrexia");
-        press(KeyCode.ENTER); // Close the dialog
-        release(KeyCode.ENTER);
+        String interactionsInfo = ((TextArea) lookup("#medicationInteractions").query()).getText();
+        assertEquals("anxiety\n"
+                + "arthralgia\n"
+                + "dyspnoea\n"
+                + "fatigue\n"
+                + "nausea\n"
+                + "pyrexia", interactionsInfo);
     }
 
     @Test
@@ -452,13 +431,8 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
         clickOn((Node) lookup(hasText(pastDrug.toString())).query());
         release(KeyCode.CONTROL);
 
-        clickOn("#viewInteractionsButton");
-
-        checkAlertHasHeaderAndContent("Interactions between Med A and Med C",
-                "anxiety\n"
-                        + "nausea");
-        press(KeyCode.ENTER); // Close the dialog
-        release(KeyCode.ENTER);
+        String interactionsInfo = ((TextArea) lookup("#medicationInteractions").query()).getText();
+        assertEquals("anxiety\n" + "nausea", interactionsInfo);
     }
 
     @Test
@@ -478,12 +452,8 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
         clickOn((Node) lookup(hasText(prednisoneRecord.toString())).query());
         release(KeyCode.CONTROL);
 
-        clickOn("#viewInteractionsButton");
-
-        checkAlertHasHeaderAndContent("Interactions between Ibuprofen and Prednisone",
-                "A study has not yet been done on the interactions between 'Ibuprofen' and 'Prednisone'.");
-        press(KeyCode.ENTER); // Close the dialog
-        release(KeyCode.ENTER);
+        String interactionsInfo = ((TextArea) lookup("#medicationInteractions").query()).getText();
+        assertEquals("There is no information on interactions between Ibuprofen and Prednisone.", interactionsInfo);
     }
 
     @Test
@@ -504,13 +474,9 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
         clickOn((Node) lookup(hasText(drug1.toString())).query());
         release(KeyCode.CONTROL);
 
-        clickOn("#viewInteractionsButton");
-
-        checkAlertHasHeaderAndContent("Interactions between Ibuprofen and Med C",
-                "An error occurred when retrieving drug interactions: \n"
-                        + "The drug interactions web API could not retrieve the results.");
-        press(KeyCode.ENTER); // Close the dialog
-        release(KeyCode.ENTER);
+        String interactionsInfo = ((TextArea) lookup("#medicationInteractions").query()).getText();
+        assertEquals("An error occurred when retrieving drug interactions: \n"
+                + "The drug interactions web API could not retrieve the results.", interactionsInfo);
     }
 
     @Test
@@ -531,14 +497,10 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
         clickOn((Node) lookup(hasText(drug1.toString())).query());
         release(KeyCode.CONTROL);
 
-        clickOn("#viewInteractionsButton");
-
-        checkAlertHasHeaderAndContent("Interactions between Ibuprofen and Med C",
-                "An error occurred when retrieving drug interactions: \n"
-                        + "The drug interactions API could not be reached. Check your internet connection and try "
-                        + "again.");
-        press(KeyCode.ENTER); // Close the dialog
-        release(KeyCode.ENTER);
+        String interactionsInfo = ((TextArea) lookup("#medicationInteractions").query()).getText();
+        assertEquals("An error occurred when retrieving drug interactions: \n"
+                + "The drug interactions API could not be reached. Check your internet connection and try "
+                + "again.", interactionsInfo);
     }
 
     @Test
@@ -559,13 +521,9 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
         clickOn((Node) lookup(hasText(drug1.toString())).query());
         release(KeyCode.CONTROL);
 
-        clickOn("#viewInteractionsButton");
-
-        checkAlertHasHeaderAndContent("Interactions between Ibuprofen and Med C",
-                "An error occurred when retrieving drug interactions: \n"
-                        + "The drug interactions API responded in an unexpected way.");
-        press(KeyCode.ENTER); // Close the dialog
-        release(KeyCode.ENTER);
+        String interactionsInfo = ((TextArea) lookup("#medicationInteractions").query()).getText();
+        assertEquals("An error occurred when retrieving drug interactions: \n"
+                + "The drug interactions API responded in an unexpected way.", interactionsInfo);
     }
 
 }
