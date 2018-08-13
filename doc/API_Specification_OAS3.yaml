@@ -299,7 +299,7 @@ paths:
           content:
             image/png:
               schema:
-                type: byte[]
+                type: string
                 format: binary
                 example: Raw content of PNG image file
         400:
@@ -325,7 +325,7 @@ paths:
         content:
           application/json:
             schema:
-              type: byte[]
+              type: string
               format: binary
               example: Raw content of PNG image file
       responses:
@@ -352,7 +352,7 @@ paths:
         500:
           $ref: '#/components/responses/500InternalServerError'
 
-    deleted:
+    delete:
       tags:
         - Client Profile Picture
       security:
@@ -360,13 +360,6 @@ paths:
         - ClinicianAccess: []
         - AdministratorAccess: []
       summary: Delete client profile picture
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: byte[]
-              format: binary
-              example: Raw content of PNG image file
       responses:
         201:
           description: Deleted

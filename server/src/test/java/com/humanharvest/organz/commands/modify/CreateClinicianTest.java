@@ -25,7 +25,7 @@ public class CreateClinicianTest extends BaseTest {
     @Test
     public void ValidWithStaffIdTest() {
         doNothing().when(spyClientManager).addClinician(any());
-        String[] inputs = {"-f", "Jack", "-l", "Steel", "-s", "2"};
+        String[] inputs = {"-f", "Jack", "-l", "Steel", "-s", "2", "-p", "password"};
 
         CommandLine.run(spyCreateClient, System.out, inputs);
 
