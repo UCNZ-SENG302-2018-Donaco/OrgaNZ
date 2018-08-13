@@ -119,6 +119,7 @@ public class RegisterOrganDonationController extends SubController {
         manualOverrideCol.setCellValueFactory(row -> new SimpleObjectProperty<>(row.getValue()));
         manualOverrideCol.setCellFactory(column -> new ManualOverrideCell(column,
                 this::handleOverride,
+                this::handleEditOverride,
                 this::handleCancelOverride));
     }
 
@@ -151,6 +152,54 @@ public class RegisterOrganDonationController extends SubController {
                             session.getLoggedInAdministrator().getUsername()));
                 }
                 State.getClientResolver().manuallyOverrideOrgan(donatedOrgan, overrideReason.toString());
+                PageNavigator.refreshAllWindows();
+            } catch (IfMatchFailedException exc) {
+                // TODO deal with outdated error
+            } catch (NotFoundException exc) {
+                LOGGER.log(Level.WARNING, "Client/Organ Not Found");
+                Notifications.create()
+                        .title("Client/Organ Not Found")
+                        .text("The client/donated organ could not be found on the server; it may have been deleted.")
+                        .showWarning();
+            } catch (ServerRestException exc) {
+                LOGGER.log(Level.WARNING, exc.getMessage(), exc);
+                Notifications.create()
+                        .title("Server Error")
+                        .text("A server error occurred when overriding this donated organ; please try again later.")
+                        .showError();
+            }
+        }
+    }
+
+    /**
+     * Handles the event when the user wants to edit the override on a given donated organ. Creates a popup with a text
+     * field for the user to modify the override reason on this organ.
+     * @param donatedOrgan The donated organ the user wants to edit the override for.
+     */
+    private void handleEditOverride(DonatedOrgan donatedOrgan) {
+        // Create a popup with a text field to enter the reason
+        String oldReason = donatedOrgan.getOverrideReason().split("\n")[0];
+        TextInputDialog popup = new TextInputDialog(oldReason);
+        popup.setTitle("Edit Manual Override");
+        popup.setHeaderText("Enter the reason for overriding this organ:");
+        popup.setContentText("Reason:");
+        popup.getEditor().textProperty().addListener((observable, oldValue, newValue) -> popup.getDialogPane()
+                .lookupButton(ButtonType.OK).setDisable(newValue.isEmpty() || newValue.equals(oldReason)));
+
+        // If user clicks the OK button
+        String response = popup.showAndWait().orElse("");
+        if (!response.isEmpty()) {
+            try {
+                StringBuilder overrideReason = new StringBuilder(response);
+                overrideReason.append("\n").append(LocalDateTime.now().format(dateTimeFormat));
+                if (session.getLoggedInUserType() == UserType.CLINICIAN) {
+                    overrideReason.append(String.format("\nOverriden by clinician %d (%s)",
+                            session.getLoggedInClinician().getStaffId(), session.getLoggedInClinician().getFullName()));
+                } else if (session.getLoggedInUserType() == UserType.ADMINISTRATOR) {
+                    overrideReason.append(String.format("\nOverriden by admin '%s'.",
+                            session.getLoggedInAdministrator().getUsername()));
+                }
+                State.getClientResolver().editManualOverrideForOrgan(donatedOrgan, overrideReason.toString());
                 PageNavigator.refreshAllWindows();
             } catch (IfMatchFailedException exc) {
                 // TODO deal with outdated error
