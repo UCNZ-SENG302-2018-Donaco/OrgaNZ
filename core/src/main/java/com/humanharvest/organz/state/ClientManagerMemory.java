@@ -356,7 +356,7 @@ public class ClientManagerMemory implements ClientManager {
      * @return a list of all organs available for donation
      */
     @Override
-    public Collection<DonatedOrgan> getAllOrgansToDonate(EnumSet<Region> regions, EnumSet<Organ> organType) {
+    public Collection<DonatedOrgan> getAllOrgansToDonate(Set<String> regions, EnumSet<Organ> organType) {
 
         Collection<DonatedOrgan> donatedOrgans = new ArrayList<>();
         for (Client client: clients) {

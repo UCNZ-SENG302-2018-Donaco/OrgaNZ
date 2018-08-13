@@ -8,7 +8,10 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
@@ -88,10 +91,10 @@ public class OrgansToDonateController extends SubController {
     private Pagination pagination;
 
     @FXML
-    private CheckComboBox regionFilter;
+    private CheckComboBox<Region> regionFilter;
 
     @FXML
-    private CheckComboBox organFilter;
+    private CheckComboBox<Organ> organFilter;
 
     @FXML
     private Text displayingXToYOfZText;
@@ -101,7 +104,7 @@ public class OrgansToDonateController extends SubController {
     private FilteredList<DonatedOrgan> filteredOrgansToDonate = new FilteredList<>(observableOrgansToDonate);
     private SortedList<DonatedOrgan> sortedOrgansToDonate = new SortedList<>(filteredOrgansToDonate);
     private DonatedOrgan selectedOrgan;
-    private EnumSet<Region> regionsToFilter;
+    private Set<String> regionsToFilter;
     private EnumSet<Organ> organsToFilter;
 
     /**
@@ -131,8 +134,8 @@ public class OrgansToDonateController extends SubController {
     @FXML
     private void initialize() {
         setupTable();
+        //TODO: Add ability to filter by OTHER region
         regionFilter.getItems().setAll(Region.values());
-        regionFilter.getItems().add("Other");
         organFilter.getItems().setAll(Organ.values());
 
 
@@ -140,7 +143,7 @@ public class OrgansToDonateController extends SubController {
             (ListChangeListener<Region>) change -> updateOrgansToDonateList());
 
         organFilter.getCheckModel().getCheckedItems().addListener(
-            (ListChangeListener<DonatedOrgan>) change -> updateOrgansToDonateList());
+            (ListChangeListener<Organ>) change -> updateOrgansToDonateList());
 
         //On pagination update call createPage
         pagination.setPageFactory(this::createPage);
@@ -243,17 +246,11 @@ public class OrgansToDonateController extends SubController {
      * Filters the regions based on the RegionChoices current state and updates the organsToFilter Collection.
      */
     private void filterRegions() {
-        regionsToFilter = EnumSet.noneOf(Region.class);
-        if (regionFilter.getCheckModel().getCheckedItems().contains("Other")) {
-            // do something
-        }
-        try {
-            regionsToFilter.addAll(regionFilter.getCheckModel().getCheckedItems());
-        } catch (ClassCastException cce) {
-            PageNavigator.showAlert(AlertType.ERROR, "Regions Outside NZ Not Filtered", "Currently not supporting "
-                    + "regions outside of NZ");
-            // TODO remove this message and implement the filtering for all regions outside of NZ.
-        }
+        regionsToFilter = new HashSet<>();
+        regionsToFilter.addAll(
+                regionFilter.getCheckModel().getCheckedItems().stream()
+                        .map(Enum::toString)
+                        .collect(Collectors.toSet()));
     }
 
     /**

@@ -225,17 +225,14 @@ public class ClientManagerRest implements ClientManager {
      * @return A collection of the the organs available to donate based off the specified filters.
      */
     @Override
-    public Collection<DonatedOrgan> getAllOrgansToDonate(EnumSet<Region> regions, EnumSet<Organ> organType) {
+    public Collection<DonatedOrgan> getAllOrgansToDonate(Set<String> regions, EnumSet<Organ> organType) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-Auth-Token", State.getToken());
         headers.set("Accept",MediaType.APPLICATION_JSON_VALUE);
 
-        for (Region region: regions) {
-            System.out.println(region);
-        }
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(State.BASE_URI + "/clients/organs")
-                .queryParam("regions",EnumSetToString.convert(regions))
+                .queryParam("regions", String.join(",", regions))
                 .queryParam("organType", EnumSetToString.convert(organType));
         System.out.println(builder.toUriString());
 

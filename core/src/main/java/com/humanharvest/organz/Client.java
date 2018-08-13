@@ -951,7 +951,7 @@ public class Client implements ConcurrencyControlledEntity {
     @JsonIgnore
     public boolean hasOverriddenOrgans() {
         for (DonatedOrgan donatedOrgan : donatedOrgans) {
-            if (donatedOrgan.getExpiryReason() != null) {
+            if (donatedOrgan.getOverrideReason() != null) {
                 return true;
             }
         }

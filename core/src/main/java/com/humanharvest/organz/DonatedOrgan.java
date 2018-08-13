@@ -16,7 +16,6 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.views.client.Views;
 
 @JsonAutoDetect(fieldVisibility = Visibility.ANY,
@@ -45,7 +44,7 @@ public class DonatedOrgan {
     private LocalDateTime dateTimeOfDonation;
 
 
-    private String expiryReason; // If null this implies the organ was not manually expired
+    private String overrideReason; // If null this implies the organ was not manually expired
     private String region;
 
     protected DonatedOrgan() {
@@ -129,11 +128,11 @@ public class DonatedOrgan {
         return id;
     }
 
-    public String getExpiryReason() {
-        return expiryReason;
+    public String getOverrideReason() {
+        return overrideReason;
     }
 
-    public void setExpiryReason(String expiryReason) {
-        this.expiryReason = expiryReason;
+    public void setOverrideReason(String overrideReason) {
+        this.overrideReason = overrideReason;
     }
 }

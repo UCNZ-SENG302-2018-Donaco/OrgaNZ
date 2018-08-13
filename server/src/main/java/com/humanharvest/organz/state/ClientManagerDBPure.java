@@ -23,6 +23,7 @@ import com.humanharvest.organz.views.client.PaginatedTransplantList;
 import org.hibernate.ReplicationMode;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import javax.persistence.OptimisticLockException;
 import javax.persistence.RollbackException;
@@ -563,12 +564,14 @@ public class ClientManagerDBPure implements ClientManager {
      * @return a list of all organs available for donation
      */
     @Override
-    public Collection<DonatedOrgan> getAllOrgansToDonate(EnumSet<Region> regions, EnumSet<Organ> organType) {
+    public Collection<DonatedOrgan> getAllOrgansToDonate(Set<String> regions, EnumSet<Organ> organType) {
         //TODO Implement the WHERE statements for this.
         List<DonatedOrgan> requests = null;
         Transaction trns = null;
 
-        return requests == null ? new ArrayList<>() : requests;
+        throw new NotImplementedException();
+
+//        return requests == null ? new ArrayList<>() : requests;
     }
 
     @Override

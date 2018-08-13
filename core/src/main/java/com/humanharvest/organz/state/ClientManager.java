@@ -90,22 +90,9 @@ public interface ClientManager {
     /**
      * Returns a collection of all the organs that are available to donate from dead peop[e.
      */
-    Collection<DonatedOrgan> getAllOrgansToDonate(EnumSet<Region> regions, EnumSet<Organ> organType);
-//    default PaginatedDonatedOrgansList getAllOrgansToDonate(EnumSet<Region> regions, EnumSet<Organ> organType) {
-//
-//        Stream<DonatedOrgan> stream = getAllOrgansToDonate().stream();
-//
-//
-//        List<DonatedOrgan> filteredOrgans = stream
-//            .filter(regions == null ? c -> true : organ -> regions.isEmpty() ||
-//                regions.contains(organ.getDonor().getRegion()))
-//            .collect(Collectors.toList());
-//
-//        int results = filteredOrgans.size();
-//
-//        return new PaginatedDonatedOrgansList(filteredOrgans,results);
-//
-//    };
+    Collection<DonatedOrgan> getAllOrgansToDonate(Set<String> regions, EnumSet<Organ> organType);
+
+
     /** Used by clinician to manually expire an organ
      * @param organ Organ that clinician wishes to expire
      * @return Returns expired organ.

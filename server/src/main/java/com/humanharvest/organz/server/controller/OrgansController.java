@@ -2,6 +2,7 @@ package com.humanharvest.organz.server.controller;
 
 import java.util.Collection;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -48,6 +49,14 @@ public class OrgansController {
             throws GlobalControllerExceptionHandler.InvalidRequestException {
 
         //State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
+
+        Set<String> newRegions = new HashSet<>();
+        if (regions != null) {
+            for (String region : regions) {
+                newRegions.add(region.replace("%20", " "));
+            }
+        }
+
         // Get all organs for donation
         Collection<DonatedOrganView> donatedOrgans = State.getClientManager().getAllOrgansToDonate().stream()
                 .map(DonatedOrganView::new)
@@ -57,8 +66,8 @@ public class OrgansController {
         Stream<DonatedOrganView> stream = donatedOrgans.stream();
         List<DonatedOrganView> filteredOrgans = stream
 
-                .filter(regions == null ? o -> true : organ -> regions.isEmpty() ||
-                        regions.contains(organ.getDonatedOrgan().getDonor().getRegion().toUpperCase()))
+                .filter(regions == null ? o -> true : organ -> newRegions.isEmpty() ||
+                        newRegions.contains(organ.getDonatedOrgan().getDonor().getRegion()))
 
 
                 .filter(organType == null ? o -> true : organ -> organType.isEmpty() ||
