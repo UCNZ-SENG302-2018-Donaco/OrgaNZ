@@ -28,8 +28,7 @@ public enum Page {
     STAFF_LIST("/fxml/staff_list.fxml"),
     COMMAND_LINE("/fxml/command_line.fxml"),
     ADMIN_CONFIG("/fxml/admin_config.fxml"),
-    SUBMIT_DEATH_DETAILS("/fxml/submit_death_details.fxml"),
-    MANUALLY_OVERWRITTEN_ORGANS("/fxml/manually_overwritten_organs.fxml");
+    SUBMIT_DEATH_DETAILS("/fxml/submit_death_details.fxml");
 
     private String path;
 

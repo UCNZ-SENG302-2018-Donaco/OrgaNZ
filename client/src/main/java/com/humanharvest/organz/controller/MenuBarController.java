@@ -60,7 +60,6 @@ public class MenuBarController extends SubController {
     public MenuItem createClinicianItem;
     public MenuItem transplantRequestsItem;
     public MenuItem organsToDonateItem;
-    public MenuItem manuallyOverwrittenOrgansItem;
     public MenuItem viewAdministratorItem;
     public MenuItem viewClinicianItem;
     public MenuItem historyItem;
@@ -111,13 +110,13 @@ public class MenuBarController extends SubController {
         // Menus/Menu items to hide from admins
         Menu menusHideFromAdmins[] = {medicationsPrimaryItem};
         MenuItem menuItemsHideFromAdmins[] = {viewClientItem, donateOrganItem, requestOrganItem, viewMedicationsItem,
-                medicalHistoryItem, proceduresItem, viewClinicianItem, manuallyOverwrittenOrgansItem};
+                medicalHistoryItem, proceduresItem, viewClinicianItem};
 
         // Menus/Menu items to hide from clinicians
         Menu menusHideFromClinicians[] = {medicationsPrimaryItem, staffPrimaryItem};
         MenuItem menuItemsHideFromClinicians[] = {viewClientItem, donateOrganItem, requestOrganItem, viewMedicationsItem,
                 medicalHistoryItem, proceduresItem, saveClientsItem, saveCliniciansItem, loadItem, settingsItem,
-                staffListItem, createAdministratorItem, createClinicianItem, viewAdministratorItem, cliItem, manuallyOverwrittenOrgansItem};
+                staffListItem, createAdministratorItem, createClinicianItem, viewAdministratorItem, cliItem};
 
         // Menus/Menu items to hide from clinicians (or admins) viewing a client
         Menu menusHideFromClinViewClients[] = {staffPrimaryItem, profilePrimaryItem};
@@ -138,9 +137,6 @@ public class MenuBarController extends SubController {
             hideMenus(menusHideFromClinViewClients);
             hideMenuItems(menuItemsHideFromClinViewClients);
             client = windowContext.getViewClient();
-            if (!client.isDead()) {
-                hideMenuItem(manuallyOverwrittenOrgansItem);
-            }
         }
 
         // Admins
@@ -216,12 +212,6 @@ public class MenuBarController extends SubController {
     private void goToRegisterOrganDonation() {
         PageNavigator.loadPage(Page.REGISTER_ORGAN_DONATIONS, mainController);
     }
-
-    /**
-     * Redirects the GUI to the manually overwritten organs page.
-     */
-    @FXML
-    private void goToManuallyOverwrittenOrgans() { PageNavigator.loadPage(Page.MANUALLY_OVERWRITTEN_ORGANS, mainController);}
 
     /**
      * Redirects the GUI to the Request Organs page.
