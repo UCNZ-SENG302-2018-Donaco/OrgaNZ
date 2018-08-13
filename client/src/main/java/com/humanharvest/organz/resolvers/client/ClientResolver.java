@@ -55,8 +55,6 @@ public interface ClientResolver {
 
     List<TransplantRequest> createTransplantRequest(Client client, CreateTransplantRequestView request);
 
-    Client markClientAsDead(Client client, LocalDate dateOfDeath);
-
     List<IllnessRecord> addIllnessRecord(Client client, CreateIllnessView createIllnessView);
 
     List<MedicationRecord> addMedicationRecord(Client client, CreateMedicationRecordView medicationRecordView);

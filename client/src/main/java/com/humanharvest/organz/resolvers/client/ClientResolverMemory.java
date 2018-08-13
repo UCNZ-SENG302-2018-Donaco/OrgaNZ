@@ -85,11 +85,6 @@ public class ClientResolverMemory implements ClientResolver {
         return client.getTransplantRequests();
     }
 
-    public Client markClientAsDead(Client client, LocalDate dateOfDeath) {
-        client.markDead(dateOfDeath);
-        return client;
-    }
-
     public List<IllnessRecord> addIllnessRecord(Client client, CreateIllnessView createIllnessView) {
         IllnessRecord illnessRecord = new IllnessRecord(createIllnessView.getIllnessName(),
                 createIllnessView.getDiagnosisDate(),

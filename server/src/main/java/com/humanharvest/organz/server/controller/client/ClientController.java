@@ -12,7 +12,10 @@ import com.humanharvest.organz.actions.images.AddImageAction;
 import com.humanharvest.organz.actions.images.DeleteImageAction;
 import com.humanharvest.organz.server.exceptions.GlobalControllerExceptionHandler.InvalidRequestException;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.enums.*;
+import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
+import com.humanharvest.organz.utilities.enums.ClientType;
+import com.humanharvest.organz.utilities.enums.Gender;
+import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
@@ -33,12 +36,13 @@ import org.springframework.web.bind.annotation.*;
 
 import java.awt.image.ImagingOpException;
 import java.io.*;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @RestController
 public class ClientController {
@@ -59,7 +63,7 @@ public class ClientController {
             @RequestParam(required = false) Integer count,
             @RequestParam(required = false) Integer minimumAge,
             @RequestParam(required = false) Integer maximumAge,
-            @RequestParam(required = false) EnumSet<Region> regions,
+            @RequestParam(required = false) Set<String> regions,
             @RequestParam(required = false) EnumSet<Gender> birthGenders,
             @RequestParam(required = false) ClientType clientType,
             @RequestParam(required = false) EnumSet<Organ> donating,
@@ -71,13 +75,21 @@ public class ClientController {
         //TODO: Add the auth check, but need to remake the login page to not get the list of clients
         //State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
 
+        //We need to remove the space characters here. Possibly needs to be done for other types as well
+        Set<String> newRegions = new HashSet<>();
+        if (regions != null) {
+            for (String region : regions) {
+                newRegions.add(region.replace("%20", " "));
+            }
+        }
+
         PaginatedClientList clients = State.getClientManager().getClients(
                 q,
                 offset,
                 count,
                 minimumAge,
                 maximumAge,
-                regions,
+                newRegions,
                 birthGenders,
                 clientType,
                 donating,

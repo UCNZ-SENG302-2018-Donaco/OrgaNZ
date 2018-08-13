@@ -1,5 +1,41 @@
 package com.humanharvest.organz.controller.client;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.format.FormatStyle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javafx.beans.property.Property;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.clinician.ViewBaseController;
@@ -14,32 +50,11 @@ import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
+import com.humanharvest.organz.utilities.validators.client.ClientBornAndDiedDatesValidator;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.views.client.ModifyClientObject;
-import javafx.beans.property.Property;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.*;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.stage.FileChooser;
-import javafx.stage.FileChooser.ExtensionFilter;
 import org.apache.commons.io.IOUtils;
 import org.controlsfx.control.Notifications;
-
-import java.io.*;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.time.format.FormatStyle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Controller for the view/edit client page.
@@ -379,6 +394,7 @@ public class ViewClientController extends ViewBaseController {
      */
     private boolean checkMandatoryFields() {
         boolean update = true;
+        // Validate legal name
         if (fname.getText().isEmpty() || lname.getText().isEmpty()) {
             legalNameLabel.setTextFill(Color.RED);
             update = false;
@@ -386,11 +402,12 @@ public class ViewClientController extends ViewBaseController {
             legalNameLabel.setTextFill(Color.BLACK);
         }
 
-        if (dob.getValue() == null || dob.getValue().isAfter(LocalDate.now())) {
+        // Validate date of birth
+        if (ClientBornAndDiedDatesValidator.dateOfBirthIsValid(dob.getValue())) {
+            dobLabel.setTextFill(Color.BLACK);
+        } else {
             dobLabel.setTextFill(Color.RED);
             update = false;
-        } else {
-            dobLabel.setTextFill(Color.BLACK);
         }
         return update;
     }
@@ -438,27 +455,42 @@ public class ViewClientController extends ViewBaseController {
      */
     private boolean checkDeathDetailsFields() {
         boolean allValid = true;
-        if (deadToggleBtn.isSelected()) {
-            if (deathDatePicker.getValue() == null || deathDatePicker.getValue().isAfter(LocalDate.now()) ||
-                    deathDatePicker.getValue().isBefore(viewedClient.getDateOfBirth())) {
+        if (deadToggleBtn.isSelected()) { // they are marked dead
+
+            LocalDate dateOfBirth = dob.getValue();
+            LocalDate dateOfDeath = deathDatePicker.getValue();
+
+            // Validate date of death
+            if (ClientBornAndDiedDatesValidator.dateOfDeathIsValid(dateOfDeath, dateOfBirth)) {
+                dodLabel.setTextFill(Color.BLACK);
+            } else {
                 dodLabel.setTextFill(Color.RED);
                 allValid = false;
-            } else {
-                dodLabel.setTextFill(Color.BLACK);
             }
+
+            // Validate time of death
             try {
-                LocalTime.parse(deathTimeField.getText());
-                timeOfDeathLabel.setTextFill(Color.BLACK);
+                LocalTime timeOfDeath = LocalTime.parse(deathTimeField.getText());
+                if (ClientBornAndDiedDatesValidator.timeOfDeathIsValid(dateOfDeath, timeOfDeath)) {
+                    timeOfDeathLabel.setTextFill(Color.BLACK);
+                } else {
+                    timeOfDeathLabel.setTextFill(Color.RED);
+                    allValid = false;
+                }
             } catch (DateTimeParseException e) {
                 timeOfDeathLabel.setTextFill(Color.RED);
                 allValid = false;
             }
+
+            // Validate country of death
             if (deathCountry.getValue() == null) {
                 countryOfDeathLabel.setTextFill(Color.RED);
                 allValid = false;
             } else {
                 countryOfDeathLabel.setTextFill(Color.BLACK);
             }
+
+            // Validate region of death
             if (deathCountry.getValue() == Country.NZ) {
                 if (deathRegionCB.getValue() == null) {
                     regionOfDeathLabel.setTextFill(Color.RED);
@@ -474,6 +506,8 @@ public class ViewClientController extends ViewBaseController {
                     regionOfDeathLabel.setTextFill(Color.BLACK);
                 }
             }
+
+            // Validate city of death
             if (deathCity.getText() == null || deathCity.getText().isEmpty()) {
                 cityOfDeathLabel.setTextFill(Color.RED);
                 allValid = false;
@@ -527,9 +561,8 @@ public class ViewClientController extends ViewBaseController {
                 addChangeIfDifferent(modifyClientObject, viewedClient, "timeOfDeath",
                         LocalTime.parse(deathTimeField.getText()));
             } catch (DateTimeParseException e) {
-                PageNavigator.showAlert(AlertType.WARNING,
-                        "Incorrect time format",
-                        "Please enter the time of death in 'HH:mm:ss'. Time of death not saved.", mainController.getStage());
+                // NOTE: this exception shouldn't occur, as checkDeathDetailsFields() should've been run first
+                timeOfDeathLabel.setTextFill(Color.RED);
                 return false;
             }
             addChangeIfDifferent(modifyClientObject, viewedClient, "countryOfDeath", deathCountry.getValue());

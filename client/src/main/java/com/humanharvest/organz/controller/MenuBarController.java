@@ -269,7 +269,7 @@ public class MenuBarController extends SubController {
      */
     @FXML
     private void goToOrganstoDonate() {
-        //PageNavigator.loadPage(Page.ORGANS_TO_DONATE, mainController);
+        PageNavigator.loadPage(Page.ORGANS_TO_DONATE, mainController);
     }
 
     /**
