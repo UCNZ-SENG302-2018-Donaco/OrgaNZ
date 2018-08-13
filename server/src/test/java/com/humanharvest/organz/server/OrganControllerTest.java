@@ -102,14 +102,14 @@ public class OrganControllerTest {
 
     @Test
     public void getFilteredRegion() throws Exception {
-        mockMvc.perform(get("/clients/organs?regions=AUCKLAND"))
+        mockMvc.perform(get("/clients/organs?regions=Auckland"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(3)));
     }
 
     @Test
     public void getMultipleFilteredRegions() throws Exception {
-        mockMvc.perform(get("/clients/organs?regions=AUCKLAND,CANTERBURY"))
+        mockMvc.perform(get("/clients/organs?regions=Auckland,Canterbury"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(4)));
     }

@@ -234,7 +234,6 @@ public class ClientManagerRest implements ClientManager {
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(State.BASE_URI + "/clients/organs")
                 .queryParam("regions", String.join(",", regions))
                 .queryParam("organType", EnumSetToString.convert(organType));
-        System.out.println(builder.toUriString());
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
