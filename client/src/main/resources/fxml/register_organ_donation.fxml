@@ -112,7 +112,7 @@
                                              </columnResizePolicy>
                                              <columns>
                                                 <TableColumn fx:id="organCol" prefWidth="75.0" text="Organ" />
-                                                <TableColumn fx:id="statusCol" prefWidth="75.0" text="Status" />
+                                                <TableColumn fx:id="timeUntilExpiryCol" prefWidth="75.0" text="Time Until Expiry" />
                                                 <TableColumn fx:id="manualOverrideCol" prefWidth="75.0" text="Manual Override" />
                                              </columns>
                                              <placeholder>

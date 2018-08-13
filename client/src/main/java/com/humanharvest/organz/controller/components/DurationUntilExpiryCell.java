@@ -14,6 +14,10 @@ public class DurationUntilExpiryCell extends TableCell<DonatedOrgan, Duration> {
     public DurationUntilExpiryCell(TableColumn<DonatedOrgan, Duration> column) {
         super();
     }
+    
+    private DonatedOrgan getDonatedOrganForRow() {
+        return getTableView().getItems().get(getIndex());
+    }
 
     @Override
     protected void updateItem(Duration item, boolean empty) {
@@ -21,17 +25,26 @@ public class DurationUntilExpiryCell extends TableCell<DonatedOrgan, Duration> {
 
         if (empty) {
             setText(null);
+            setStyle(null);
 
         } else if (item == null) { // no expiration
             Duration timeSinceDeath = Duration.between(
-                    getTableView().getItems().get(getIndex()).getDateTimeOfDonation(),
+                    getDonatedOrganForRow().getDateTimeOfDonation(),
                     LocalDateTime.now());
             setText("N/A (" + getFormattedDuration(timeSinceDeath) + " since death)");
+            setStyle(null);
+            setTextFill(Color.BLACK);
 
-        } else if (item.isZero() || item.isNegative()
-                || item.equals(Duration.ZERO) || item.minusSeconds(1).isNegative()) {
-            // Duration is less than 1 second
-            setText("0 seconds");
+        } else if (item.isZero() || item.isNegative() || item.equals(Duration.ZERO) ||
+                item.minusSeconds(1).isNegative()) {
+            // Duration is essentially zero
+            Duration timeSinceExpiry = Duration.between(
+                    getDonatedOrganForRow().getDateTimeOfDonation()
+                            .plus(getDonatedOrganForRow().getOrganType().getMaxExpiration()),
+                    LocalDateTime.now());
+            setText(String.format("Expired (%s ago)", getFormattedDuration(timeSinceExpiry)));
+            setStyle("-fx-background-color: #202020");
+            setTextFill(Color.WHITE);
 
         } else {
             // Split duration string into words, e.g. ["3", "days", "2", "hours", "10", "minutes",...]
@@ -40,21 +53,21 @@ public class DurationUntilExpiryCell extends TableCell<DonatedOrgan, Duration> {
             String displayedDuration = getFormattedDuration(item);
 
             // Progress as a decimal. starts at 0 (at time of death) and goes to 1.
-            double progressDecimal = getTableView().getItems().get(getIndex()).getProgressDecimal();
-            double fullMarker = getTableView().getItems().get(getIndex()).getFullMarker();
+            double progressDecimal = getDonatedOrganForRow().getProgressDecimal();
+            double fullMarker = getDonatedOrganForRow().getFullMarker();
 
             // Calculate colour
             String style = getStyleForProgress(progressDecimal, fullMarker);
 
             if (progressDecimal >= fullMarker) {
-                this.setTextFill(Color.WHITE);
-                if (this.isSelected()) {
-                    this.setTextFill(Color.BLACK);
+                setTextFill(Color.WHITE);
+                if (isSelected()) {
+                    setTextFill(Color.BLACK);
                 }
             } else {
-                this.setTextFill(Color.BLACK);
-                if (this.isSelected()) {
-                    this.setTextFill(Color.WHITE);
+                setTextFill(Color.BLACK);
+                if (isSelected()) {
+                    setTextFill(Color.WHITE);
                 }
             }
 

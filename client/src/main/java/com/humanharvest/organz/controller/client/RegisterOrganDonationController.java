@@ -1,11 +1,13 @@
 package com.humanharvest.organz.controller.client;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -17,7 +19,6 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
-import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextInputDialog;
@@ -30,6 +31,7 @@ import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.controller.components.DurationUntilExpiryCell;
 import com.humanharvest.organz.controller.components.ManualOverrideCell;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
@@ -65,7 +67,7 @@ public class RegisterOrganDonationController extends SubController {
     @FXML
     private TableColumn<DonatedOrgan, Organ> organCol;
     @FXML
-    private TableColumn<DonatedOrgan, String> statusCol;
+    private TableColumn<DonatedOrgan, Duration> timeUntilExpiryCol;
     @FXML
     private TableColumn<DonatedOrgan, DonatedOrgan> manualOverrideCol;
 
@@ -114,13 +116,31 @@ public class RegisterOrganDonationController extends SubController {
     }
 
     private void initTable() {
+        // Setup the cell factories
         organCol.setCellValueFactory(new PropertyValueFactory<>("organType"));
-//        statusCol.setCellFactory(RegisterOrganDonationController::statusColFactory);
+        timeUntilExpiryCol.setCellValueFactory(new PropertyValueFactory<>("durationUntilExpiry"));
+        timeUntilExpiryCol.setCellFactory(DurationUntilExpiryCell::new);
         manualOverrideCol.setCellValueFactory(row -> new SimpleObjectProperty<>(row.getValue()));
         manualOverrideCol.setCellFactory(column -> new ManualOverrideCell(column,
                 this::handleOverride,
                 this::handleEditOverride,
                 this::handleCancelOverride));
+
+        // Sets the comparator for sorting by time until expiry column.
+        timeUntilExpiryCol.setComparator((dur1, dur2) -> {
+            if (Objects.equals(dur1, dur2)) {
+                return 0;
+            } else if (dur1 == null) {
+                return 1;  // nulls are considered "bigger" than actual durations
+            } else if (dur2 == null) {
+                return -1;
+            } else {
+                return dur1.compareTo(dur2);
+            }
+        });
+
+        // Sort by time until expiry column by default.
+        donatedOrgansTable.getSortOrder().setAll(timeUntilExpiryCol);
     }
 
     /**
@@ -245,10 +265,6 @@ public class RegisterOrganDonationController extends SubController {
         }
     }
 
-    private static TableCell<DonatedOrgan, String> statusColFactory(TableColumn<DonatedOrgan, String> cell) {
-        return null;
-    }
-
     @Override
     public void refresh() {
         // Retrieve organ donation status and transplant requests from the server
@@ -302,7 +318,9 @@ public class RegisterOrganDonationController extends SubController {
         } else if (windowContext.isClinViewClientWindow()) {
             mainController.setTitle("Donate Organs: " + client.getFullName());
             name = client.getFullName();
-            donatedOrgansTable.setItems(FXCollections.observableArrayList(client.getDonatedOrgans()));
+            donatedOrgansTable.setItems(
+                    FXCollections.observableArrayList(client.getDonatedOrgans())
+                            .sorted((donatedOrgansTable.getComparator())));
         }
         if (client.isDead()) {
             name += " (died at " + client.getDatetimeOfDeath().format(dateTimeFormat) + ")";
