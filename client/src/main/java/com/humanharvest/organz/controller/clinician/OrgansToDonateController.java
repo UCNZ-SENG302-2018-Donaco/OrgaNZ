@@ -15,7 +15,10 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -62,6 +65,10 @@ public class OrgansToDonateController extends SubController {
     private TableColumn<DonatedOrgan, Duration> timeUntilExpiryCol;
 
     @FXML
+    private ListView<Client> potentialRecipients;
+
+
+    @FXML
     private Pagination pagination;
 
     @FXML
@@ -99,9 +106,15 @@ public class OrgansToDonateController extends SubController {
     @FXML
     private void initialize() {
         setupTable();
+        Label placeholder = new Label("Select an available organ to show potential recipients");
+        placeholder.setWrapText(true);
+        placeholder.setPadding(new Insets(0, 0, 0, 8));
+        placeholder.setTextFill(Color.GREY);
+        potentialRecipients.setPlaceholder(placeholder);
 
         //On pagination update call createPage
-        pagination.setPageFactory(this::createPage);
+        // todo include pagination?
+        //pagination.setPageFactory(this::createPage);
     }
 
     /**
