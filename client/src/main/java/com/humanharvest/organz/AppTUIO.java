@@ -130,15 +130,17 @@ public class AppTUIO extends Application {
 
     /**
      * Loads the main FXML. Sets up the page-switching PageNavigator. Loads the landing page as the initial page.
-     * @param stage The stage to set the window to
      * @return The loaded pane.
      * @throws IOException Thrown if the pane could not be loaded.
      */
-    private Pane loadMainPane(Stage stage) throws IOException {
+    private Pane loadMainPane() throws IOException {
         FXMLLoader loader = new FXMLLoader();
 
         Pane mainPane = loader.load(getClass().getResourceAsStream(Page.MAIN.getPath()));
         MainController mainController = loader.getController();
+        Scene scene = new Scene(mainPane);
+        Stage stage = new Stage();
+        stage.setScene(scene);
         mainController.setStage(stage);
         mainController.setPane(mainPane);
         mainController.setWindowContext(WindowContext.defaultContext());
@@ -172,7 +174,7 @@ public class AppTUIO extends Application {
         StyleManager.getInstance().addUserAgentStylesheet("/css/multifocus.css");
         tuioFX.start();
 
-        Pane pane = loadMainPane(new Stage());
+        Pane pane = loadMainPane();
 //        pane.setMaxWidth(600);
 //        pane.setMaxHeight(800);
         TuioFXUtils.setupPaneWithTouchFeatures(pane);

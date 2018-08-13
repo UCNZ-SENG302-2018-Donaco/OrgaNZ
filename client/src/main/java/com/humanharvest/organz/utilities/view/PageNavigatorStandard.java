@@ -95,7 +95,7 @@ public class PageNavigatorStandard implements IPageNavigator {
             LOGGER.log(Level.SEVERE, "Error loading new window\n", e);
             // Will throw if MAIN's fxml file could not be loaded.
             showAlert(Alert.AlertType.ERROR, "New window could not be created",
-                    "The page loader failed to load the layout for the new window.", new Stage());
+                    "The page loader failed to load the layout for the new window.", null);
             return null;
         }
     }

@@ -10,6 +10,7 @@ import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
@@ -77,10 +78,13 @@ public class PageNavigatorTouch implements IPageNavigator {
         LOGGER.info("Opening new window");
         try {
             Stage newStage = new Stage();
-            newStage.setTitle("Organ Client Management System");
             FXMLLoader loader = new FXMLLoader();
             Pane mainPane = loader.load(PageNavigatorTouch.class.getResourceAsStream(Page.MAIN.getPath()));
             MainController mainController = loader.getController();
+
+            Scene scene = new Scene(mainPane);
+            newStage.setScene(scene);
+
             mainController.setStage(newStage);
             mainController.setPane(mainPane);
             State.addMainController(mainController);
@@ -97,7 +101,7 @@ public class PageNavigatorTouch implements IPageNavigator {
             LOGGER.log(Level.SEVERE, "Error loading new window\n", e);
             // Will throw if MAIN's fxml file could not be loaded.
             showAlert(Alert.AlertType.ERROR, "New window could not be created",
-                    "The page loader failed to load the layout for the new window.", new Stage());
+                    "The page loader failed to load the layout for the new window.", null);
             return null;
         }
     }
@@ -147,9 +151,18 @@ public class PageNavigatorTouch implements IPageNavigator {
             controller.setup(alertType, title, bodyText, newStage, mainPane);
 
             TuioFXUtils.setupPaneWithTouchFeatures(mainPane);
+
             AppTUIO.root.getChildren().add(mainPane);
 
-            System.out.println("added");
+            // Set the positioning based off the calling window if it is valid.
+            if (window != null && window.getScene() != null && window.getScene().getRoot() != null) {
+                Parent root = window.getScene().getRoot();
+                mainPane.setTranslateX(root.getTranslateX() + 100);
+                mainPane.setTranslateY(root.getTranslateY() + 100);
+                mainPane.setRotate(root.getRotate());
+                mainPane.setScaleX(root.getScaleX());
+                mainPane.setScaleY(root.getScaleY());
+            }
 
             return controller.getResultProperty();
 

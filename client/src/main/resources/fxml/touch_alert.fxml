@@ -4,8 +4,8 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Text?>
-<BorderPane xmlns:fx="http://javafx.com/fxml/1" prefHeight="200.0" prefWidth="200.0"
-            xmlns="http://javafx.com/javafx/8.0.151"
+<BorderPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="200.0" maxWidth="300.0" minHeight="200.0" minWidth="300.0"
+            prefHeight="200.0" prefWidth="300.0" xmlns="http://javafx.com/javafx/8.0.121"
             fx:controller="com.humanharvest.organz.controller.components.TouchAlertController">
     <center>
         <Text fx:id="body" strokeType="OUTSIDE" strokeWidth="0.0" text="Body" BorderPane.alignment="CENTER"/>
