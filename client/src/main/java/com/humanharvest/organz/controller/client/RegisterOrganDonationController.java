@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
@@ -19,9 +20,11 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.VBox;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
@@ -120,14 +123,69 @@ public class RegisterOrganDonationController extends SubController {
                 RegisterOrganDonationController::handleOverrideCancelled));
     }
 
+    /**
+     * Handles the event when the user wants to override a given donated organ. Creates a popup with a text field for
+     * the user to enter the reason they are overriding this organ.
+     * @param donatedOrgan The donated organ the user wants to override.
+     */
     private static void handleOverride(DonatedOrgan donatedOrgan) {
-        // TODO implement
-        PageNavigator.showAlert(AlertType.INFORMATION, "PLACEHOLDER","Override button pressed");
+        // Create a popup with a text field to enter the reason
+        Alert popup = PageNavigator.generateAlert(AlertType.CONFIRMATION, "Manually Override Organ", "");
+        VBox popupContent = new VBox();
+        popupContent.setSpacing(5);
+        popupContent.getChildren().add(new Label("Enter the reason for overriding this organ:"));
+        TextField reasonField = new TextField();
+        popupContent.getChildren().add(reasonField);
+        popup.getDialogPane().setContent(popupContent);
+
+        // If user clicks the OK button
+        ButtonType response = popup.showAndWait().orElse(ButtonType.CANCEL);
+        if (response == ButtonType.OK) {
+            try {
+                State.getClientResolver().manuallyOverrideOrgan(donatedOrgan, reasonField.getText());
+                PageNavigator.refreshAllWindows();
+            } catch (IfMatchFailedException exc) {
+                // TODO deal with outdated error
+            } catch (NotFoundException exc) {
+                LOGGER.log(Level.WARNING, "Client/Organ Not Found");
+                Notifications.create()
+                        .title("Client/Organ Not Found")
+                        .text("The client/donated organ could not be found on the server; it may have been deleted.")
+                        .showWarning();
+            } catch (ServerRestException exc) {
+                LOGGER.log(Level.WARNING, exc.getMessage(), exc);
+                Notifications.create()
+                        .title("Server Error")
+                        .text("A server error occurred when overriding this donated organ; please try again later.")
+                        .showError();
+            }
+        }
     }
 
+    /**
+     * Handles the event when the user wants to cancel the override on a given donated organ.
+     * @param donatedOrgan The donated organ the user wants to cancel the override for.
+     */
     private static void handleOverrideCancelled(DonatedOrgan donatedOrgan) {
-        // TODO implement
-        PageNavigator.showAlert(AlertType.INFORMATION, "PLACEHOLDER","Cancel override button pressed");
+        try {
+            State.getClientResolver().cancelManualOverrideForOrgan(donatedOrgan);
+            PageNavigator.refreshAllWindows();
+        } catch (IfMatchFailedException exc) {
+            // TODO deal with outdated error
+        } catch (NotFoundException exc) {
+            LOGGER.log(Level.WARNING, "Client/Organ Not Found");
+            Notifications.create()
+                    .title("Client/Organ Not Found")
+                    .text("The client/donated organ could not be found on the server; it may have been deleted.")
+                    .showWarning();
+        } catch (ServerRestException exc) {
+            LOGGER.log(Level.WARNING, exc.getMessage(), exc);
+            Notifications.create()
+                    .title("Server Error")
+                    .text("A server error occurred when cancelling the override on this donated organ; please try "
+                            + "again later.")
+                    .showError();
+        }
     }
 
     private static TableCell<DonatedOrgan, String> statusColFactory(TableColumn<DonatedOrgan, String> cell) {
