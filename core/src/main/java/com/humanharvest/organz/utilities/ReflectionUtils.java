@@ -1,6 +1,9 @@
 package com.humanharvest.organz.utilities;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Objects;
 
 public final class ReflectionUtils {
 
@@ -19,5 +22,23 @@ public final class ReflectionUtils {
         Field field = o.getClass().getDeclaredField(fieldName);
         field.setAccessible(true);
         field.set(o, value);
+    }
+
+    public static <T> T invoke(Object o, String methodName, Object... parameters)
+            throws InvocationTargetException, IllegalAccessException {
+        Method method = findMethod(o.getClass().getDeclaredMethods(), methodName, parameters.length);
+        assert method != null;
+        method.setAccessible(true);
+        return (T)method.invoke(o, parameters);
+    }
+
+    private static Method findMethod(Method[] methods, String name, int numberParameters) {
+        for (Method method : methods) {
+            if (Objects.equals(method.getName(), name) && method.getParameterCount() == numberParameters) {
+                return method;
+            }
+        }
+
+        return null;
     }
 }

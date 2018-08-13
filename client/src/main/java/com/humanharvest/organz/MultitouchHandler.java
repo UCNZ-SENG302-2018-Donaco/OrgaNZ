@@ -1,5 +1,6 @@
 package com.humanharvest.organz;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -7,6 +8,7 @@ import java.util.Optional;
 
 import javafx.collections.ObservableList;
 import javafx.event.Event;
+import javafx.event.EventTarget;
 import javafx.event.EventType;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
@@ -15,6 +17,8 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuBar;
+import javafx.scene.control.Skin;
+import javafx.scene.control.Skinnable;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
@@ -31,6 +35,9 @@ import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Transform;
 import javafx.scene.transform.Translate;
+
+import com.humanharvest.organz.utilities.ReflectionUtils;
+import org.tuiofx.widgets.skin.TextFieldSkinAndroid;
 
 public class MultitouchHandler {
     private final List<CurrentTouch> touches = new ArrayList<>();
@@ -69,6 +76,11 @@ public class MultitouchHandler {
             if (event.getEventType() == TouchEvent.TOUCH_PRESSED) {
                 currentTouch.setCurrentScreenPoint(new Point2D(touchPoint.getX(), touchPoint.getY()));
                 currentTouch.getPane().ifPresent(Node::toFront);
+                currentTouch.getPane().ifPresent(pane -> {
+                    if (findPaneTouches(pane).size() == 1) {
+                        handleTUIOFX(event.getTarget());
+                    }
+                });
             } else if (event.getEventType() == TouchEvent.TOUCH_RELEASED) {
 //                if (currentTouch.getPane().isPresent()) {
 //                    List<CurrentTouch> paneTouches = findPaneTouches(currentTouch.getPane().get());
@@ -93,6 +105,34 @@ public class MultitouchHandler {
 //        rootPane.addEventFilter(Event.ANY, event -> {
 //            System.out.println(event);
 //        });
+    }
+
+    private void handleTUIOFX(EventTarget target) {
+        if (target instanceof Node) {
+            Skin<?> nextSkinned = findNextSkinned((Node)target);
+            if (nextSkinned != null) {
+                try {
+                    ReflectionUtils.invoke(nextSkinned, "detachKeyboard",
+                            ReflectionUtils.getField(nextSkinned, "keyboard"), target);
+                } catch (NoSuchFieldException | IllegalAccessException | InvocationTargetException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+    }
+
+    private Skin<?> findNextSkinned(Node node) {
+        while (!Objects.equals(node, rootPane) && !Objects.isNull(node)) {
+            if (node instanceof Skinnable) {
+                Skin<?> skin = ((Skinnable)node).getSkin();
+                if (skin instanceof TextFieldSkinAndroid) {
+                    return skin;
+                }
+            }
+
+            node = node.getParent();
+        }
+        return null;
     }
 
     private void handleCurrentTouch(TouchPoint touchPoint, CurrentTouch currentTouch) {
