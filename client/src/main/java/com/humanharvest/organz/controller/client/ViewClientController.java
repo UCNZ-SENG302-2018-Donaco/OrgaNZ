@@ -1,41 +1,5 @@
 package com.humanharvest.organz.controller.client;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.time.format.FormatStyle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javafx.beans.property.Property;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.ToggleGroup;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.stage.FileChooser;
-import javafx.stage.FileChooser.ExtensionFilter;
-
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.clinician.ViewBaseController;
@@ -53,8 +17,30 @@ import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.validators.client.ClientBornAndDiedDatesValidator;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.views.client.ModifyClientObject;
+import javafx.beans.property.Property;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import org.apache.commons.io.IOUtils;
 import org.controlsfx.control.Notifications;
+
+import java.io.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.format.FormatStyle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Controller for the view/edit client page.
@@ -282,11 +268,7 @@ public class ViewClientController extends ViewBaseController {
     @FXML
     private void apply() {
         if (checkMandatoryFields() & checkNonMandatoryFields() & checkDeathDetailsFields()) {
-            if (updateChanges()) {
-                displayBMI();
-                displayAge();
-                lastModified.setText(formatter.format(viewedClient.getModifiedTimestamp()));
-            }
+            updateChanges();
         }
     }
 
@@ -519,12 +501,40 @@ public class ViewClientController extends ViewBaseController {
     }
 
     /**
-     * Records the changes updated as a ModifyClientAction to trace the change in record.
-     * @return If there were any changes made
+     * Applies the changes to the client, with various error checking by given method.
+     * Flow is:
+     * updateChanges calls addChangesIfDifferent, which adds various changes to the ModifyClientObject only if they have changed.
+     * Then, if the client has been marked as dead, prompts the user for confirmation.
+     * If yes, or if the user is already dead, updateDeathFields is called, which adds any changed death fields.
+     * Once that occurs, updateDeathFields calls applyChanges, or that is called directly if the client is not dead.
      */
-    private boolean updateChanges() {
+    private void updateChanges() {
         ModifyClientObject modifyClientObject = new ModifyClientObject();
 
+
+        // Add the basic changes to the ModifyClientObject
+        addChangesIfDifferent(modifyClientObject);
+
+        // If we are marking a client as dead, we need to alert them that this will also resolve the transplant requests
+        // Calling either method will flow through the chain. Prompt will continue if okay is selected and call updateDeathFields
+        // and updateDeathFields calls applyChanges
+        if (deadToggleBtn.isSelected()) {
+            if (viewedClient.isAlive()) {
+                promptMarkAsDead(modifyClientObject);
+            } else {
+                updateDeathFields(modifyClientObject);
+            }
+        } else {
+            applyChanges(modifyClientObject);
+        }
+    }
+
+    /**
+     * Applies simple property changes to the client only if they've changed.
+     *
+     * @param modifyClientObject The object to apply changes to.
+     */
+    private void addChangesIfDifferent(ModifyClientObject modifyClientObject) {
         // Register changes on generic fields
         addChangeIfDifferent(modifyClientObject, viewedClient, "firstName", fname.getText());
         addChangeIfDifferent(modifyClientObject, viewedClient, "lastName", lname.getText());
@@ -538,6 +548,7 @@ public class ViewClientController extends ViewBaseController {
         addChangeIfDifferent(modifyClientObject, viewedClient, "bloodType", btype.getValue());
         addChangeIfDifferent(modifyClientObject, viewedClient, "currentAddress", address.getText());
         addChangeIfDifferent(modifyClientObject, viewedClient, "country", country.getValue());
+
         // Register region change
         if (country.getValue() == Country.NZ) {
             Region region = regionCB.getValue() == null ? Region.UNSPECIFIED : regionCB.getValue();
@@ -545,76 +556,110 @@ public class ViewClientController extends ViewBaseController {
         } else {
             addChangeIfDifferent(modifyClientObject, viewedClient, "region", regionTF.getText());
         }
+    }
 
-        // DEATH DETAILS
-        if (deadToggleBtn.isSelected()) {
-            // Warn user if about to mark a client as dead
-            if (viewedClient.isAlive()) {
-                Property<Boolean> optionPicked = PageNavigator.showAlert(AlertType.CONFIRMATION,
-                        "Are you sure you want to mark this client as dead?",
-                        "This will cancel all waiting transplant requests for this client.", mainController.getStage());
-                //TODO: FIX this not doing any checking of response. Refactor this whole flow
-            }
+    /**
+     * Prompt the user for confirmation if they are marking the client as dead.
+     * Awaits a response, if it is true then the execution continues with updateDeathFields.
+     *
+     * @param modifyClientObject The object to pass along that changes are applied to.
+     */
+    private void promptMarkAsDead(ModifyClientObject modifyClientObject) {
+        Property<Boolean> response = PageNavigator.showAlert(AlertType.CONFIRMATION,
+                "Are you sure you want to mark this client as dead?",
+                "This will cancel all waiting transplant requests for this client.", mainController.getStage());
 
-            addChangeIfDifferent(modifyClientObject, viewedClient, "dateOfDeath", deathDatePicker.getValue());
-            try {
-                addChangeIfDifferent(modifyClientObject, viewedClient, "timeOfDeath",
-                        LocalTime.parse(deathTimeField.getText()));
-            } catch (DateTimeParseException e) {
-                // NOTE: this exception shouldn't occur, as checkDeathDetailsFields() should've been run first
-                timeOfDeathLabel.setTextFill(Color.RED);
-                return false;
-            }
-            addChangeIfDifferent(modifyClientObject, viewedClient, "countryOfDeath", deathCountry.getValue());
-            addChangeIfDifferent(modifyClientObject, viewedClient, "cityOfDeath", deathCity.getText());
-            // Register death region change
-            if (deathCountry.getValue() == Country.NZ) {
-                Region region = deathRegionCB.getValue() == null ? Region.UNSPECIFIED : deathRegionCB.getValue();
-                addChangeIfDifferent(modifyClientObject, viewedClient, "regionOfDeath", region.toString());
-            } else {
-                addChangeIfDifferent(modifyClientObject, viewedClient, "regionOfDeath", deathRegionTF.getText());
-            }
+        if (response.getValue() != null) {
+            updateDeathFields(modifyClientObject);
+        } else {
+            response.addListener((observable, oldValue, newValue) -> {
+                if (newValue) {
+                    updateDeathFields(modifyClientObject);
+                }
+            });
+        }
+    }
+
+    /**
+     * Apply death details changes to the client
+     *
+     * @param modifyClientObject The object to apply the changes to
+     */
+    private void updateDeathFields(ModifyClientObject modifyClientObject) {
+        addChangeIfDifferent(modifyClientObject, viewedClient, "dateOfDeath", deathDatePicker.getValue());
+        try {
+            addChangeIfDifferent(modifyClientObject, viewedClient, "timeOfDeath",
+                    LocalTime.parse(deathTimeField.getText()));
+        } catch (DateTimeParseException e) {
+            // NOTE: this exception shouldn't occur, as checkDeathDetailsFields() should've been run first
+            timeOfDeathLabel.setTextFill(Color.RED);
+            return;
         }
 
+        addChangeIfDifferent(modifyClientObject, viewedClient, "countryOfDeath", deathCountry.getValue());
+        addChangeIfDifferent(modifyClientObject, viewedClient, "cityOfDeath", deathCity.getText());
+        // Register death region change
+        if (deathCountry.getValue() == Country.NZ) {
+            Region region = deathRegionCB.getValue() == null ? Region.UNSPECIFIED : deathRegionCB.getValue();
+            addChangeIfDifferent(modifyClientObject, viewedClient, "regionOfDeath", region.toString());
+        } else {
+            addChangeIfDifferent(modifyClientObject, viewedClient, "regionOfDeath", deathRegionTF.getText());
+        }
+
+        applyChanges(modifyClientObject);
+    }
+
+    /**
+     * Checks if any changes have been made, and if so applies those changes.
+     * If none have been made or other errors occur, errors are displayed.
+     *
+     * @param modifyClientObject The object to apply the changes from.
+     */
+    private void applyChanges(ModifyClientObject modifyClientObject) {
         if (modifyClientObject.getModifiedFields().isEmpty()) {
             // Literally nothing was changed
             Notifications.create()
                     .title("No changes were made.")
                     .text("No changes were made to the client.")
                     .showWarning();
-            return false;
+        } else {
+            try {
+                State.getClientResolver().modifyClientDetails(viewedClient, modifyClientObject);
+                String actionText = modifyClientObject.toString();
+                Notifications.create()
+                        .title("Updated Client")
+                        .text(actionText)
+                        .showInformation();
+
+                finishUpdateChanges();
+
+            } catch (NotFoundException e) {
+                LOGGER.log(Level.WARNING, "Client not found");
+                PageNavigator.showAlert(AlertType.WARNING, "Client not found", "The client could not be found on the "
+                        + "server, it may have been deleted", mainController.getStage());
+            } catch (ServerRestException e) {
+                LOGGER.log(Level.WARNING, e.getMessage(), e);
+                PageNavigator.showAlert(AlertType.WARNING, "Server error", "Could not apply changes on the server, "
+                        + "please try again later", mainController.getStage());
+            } catch (IfMatchFailedException e) {
+                LOGGER.log(Level.INFO, "If-Match did not match");
+                PageNavigator.showAlert(
+                        AlertType.WARNING,
+                        "Outdated Data",
+                        "The client has been modified since you retrieved the data.\nIf you would still like to "
+                                + "apply these changes please submit again, otherwise refresh the page to update the data.", mainController.getStage());
+            }
         }
+    }
 
-        try {
-            State.getClientResolver().modifyClientDetails(viewedClient, modifyClientObject);
-            String actionText = modifyClientObject.toString();
-            Notifications.create()
-                    .title("Updated Client")
-                    .text(actionText)
-                    .showInformation();
-
-        } catch (NotFoundException e) {
-            LOGGER.log(Level.WARNING, "Client not found");
-            PageNavigator.showAlert(AlertType.WARNING, "Client not found", "The client could not be found on the "
-                    + "server, it may have been deleted", mainController.getStage());
-            return false;
-        } catch (ServerRestException e) {
-            LOGGER.log(Level.WARNING, e.getMessage(), e);
-            PageNavigator.showAlert(AlertType.WARNING, "Server error", "Could not apply changes on the server, "
-                    + "please try again later", mainController.getStage());
-            return false;
-        } catch (IfMatchFailedException e) {
-            LOGGER.log(Level.INFO, "If-Match did not match");
-            PageNavigator.showAlert(
-                    AlertType.WARNING,
-                    "Outdated Data",
-                    "The client has been modified since you retrieved the data.\nIf you would still like to "
-                            + "apply these changes please submit again, otherwise refresh the page to update the data.", mainController.getStage());
-            return false;
-        }
-
+    /**
+     * Called after the applyChanges function successfully resolves
+     */
+    private void finishUpdateChanges() {
         PageNavigator.refreshAllWindows();
-        return true;
+        displayBMI();
+        displayAge();
+        lastModified.setText(formatter.format(viewedClient.getModifiedTimestamp()));
     }
 
     /**
