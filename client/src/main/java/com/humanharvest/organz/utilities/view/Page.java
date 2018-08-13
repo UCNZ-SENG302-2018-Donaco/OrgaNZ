@@ -6,6 +6,8 @@ package com.humanharvest.organz.utilities.view;
  */
 public enum Page {
     MAIN("/fxml/main.fxml"),
+    TOUCH_MAIN("/fxml/touch_main.fxml"),
+    BACKDROP("/fxml/backdrop.fxml"),
     LANDING("/fxml/landing.fxml"),
     LOGIN_CLIENT("/fxml/login_client.fxml"),
     CREATE_CLIENT("/fxml/create_client.fxml"),
@@ -30,13 +32,13 @@ public enum Page {
     ADMIN_CONFIG("/fxml/admin_config.fxml"),
     SUBMIT_DEATH_DETAILS("/fxml/submit_death_details.fxml");
 
-    private String path;
+    private final String path;
 
     Page(String path) {
         this.path = path;
     }
 
     public String getPath() {
-        return this.path;
+        return path;
     }
 }

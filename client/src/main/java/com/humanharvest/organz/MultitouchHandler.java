@@ -11,6 +11,7 @@ import javafx.event.EventType;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuBar;
@@ -31,15 +32,14 @@ import javafx.scene.transform.Scale;
 import javafx.scene.transform.Transform;
 import javafx.scene.transform.Translate;
 
-import com.sun.javafx.scene.control.skin.LabeledText;
-import com.sun.javafx.scene.control.skin.PaginationSkin;
-
 public class MultitouchHandler {
     private final List<CurrentTouch> touches = new ArrayList<>();
     private final Pane rootPane;
+    private final Node backdropPane;
 
     public MultitouchHandler(Pane rootPane) {
         this.rootPane = rootPane;
+        this.backdropPane = rootPane.getChildren().get(0);
         // TODO: Might need this if it is funky with multiple users
 //        rootPane.addEventFilter(MouseEvent.ANY, event -> {
 //            // TODO: Don't ignore events that don't hit the root pane
@@ -70,16 +70,16 @@ public class MultitouchHandler {
                 currentTouch.setCurrentScreenPoint(new Point2D(touchPoint.getX(), touchPoint.getY()));
                 currentTouch.getPane().ifPresent(Node::toFront);
             } else if (event.getEventType() == TouchEvent.TOUCH_RELEASED) {
-                if (currentTouch.getPane().isPresent()) {
-                    List<CurrentTouch> paneTouches = findPaneTouches(currentTouch.getPane().get());
-                    if (paneTouches.size() == 1) {
-                        // TODO: Only if not actual element
-
-                        if (true) {
-                            handleTouchToMouse(currentTouch, touchPoint);
-                        }
-                    }
-                }
+//                if (currentTouch.getPane().isPresent()) {
+//                    List<CurrentTouch> paneTouches = findPaneTouches(currentTouch.getPane().get());
+//                    if (paneTouches.size() == 1) {
+//                        // TODO: Only if not actual element
+//
+//                        if (true) {
+//                            handleTouchToMouse(currentTouch, touchPoint);
+//                        }
+//                    }
+//                }
                 removeCurrentTouch(touchPoint);
             } else {
                 handleCurrentTouch(touchPoint, currentTouch);
@@ -226,6 +226,10 @@ public class MultitouchHandler {
             }
         }
 
+        if (Objects.equals(intersectNode, backdropPane)) {
+            return Optional.empty();
+        }
+
         if (intersectNode instanceof Pane) {
             return Optional.of((Pane)intersectNode);
         }
@@ -272,6 +276,9 @@ public class MultitouchHandler {
                 return true;
             }
             if (node instanceof TableView) {
+                return true;
+            }
+            if (node instanceof ChoiceBox) {
                 return true;
             }
 

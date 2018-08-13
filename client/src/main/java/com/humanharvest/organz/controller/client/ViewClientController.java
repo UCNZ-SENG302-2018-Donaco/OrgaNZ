@@ -280,7 +280,7 @@ public class ViewClientController extends ViewBaseController {
      */
     @FXML
     private void apply() {
-        if (checkMandatoryFields() & checkNonMandatoryFields() & checkDeathDetailsFields()) {
+        if (checkMandatoryFields() && checkNonMandatoryFields() && checkDeathDetailsFields()) {
             if (updateChanges()) {
                 displayBMI();
                 displayAge();

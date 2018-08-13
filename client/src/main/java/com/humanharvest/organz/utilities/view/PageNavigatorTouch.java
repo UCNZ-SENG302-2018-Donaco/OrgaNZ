@@ -1,23 +1,24 @@
 package com.humanharvest.organz.utilities.view;
 
-import com.humanharvest.organz.AppTUIO;
-import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.state.State;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
-import javafx.stage.Stage;
-
 import java.io.IOException;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
+import javafx.stage.Stage;
+
+import com.humanharvest.organz.AppTUIO;
+import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.state.State;
 
 /**
  * Utility class for controlling navigation between pages.
@@ -50,7 +51,6 @@ public class PageNavigatorTouch implements IPageNavigator {
             }
 
         } catch (IOException e) {
-            e.printStackTrace();
             LOGGER.log(Level.SEVERE, "Couldn't load the page", e);
             showAlert(Alert.AlertType.ERROR, "Could not load page: " + page,
                     "The page loader failed to load the layout for the page.");
@@ -78,7 +78,7 @@ public class PageNavigatorTouch implements IPageNavigator {
             Stage newStage = new Stage();
             newStage.setTitle("Organ Client Management System");
             FXMLLoader loader = new FXMLLoader();
-            Pane mainPane = loader.load(PageNavigatorTouch.class.getResourceAsStream(Page.MAIN.getPath()));
+            Pane mainPane = loader.load(PageNavigatorTouch.class.getResourceAsStream(Page.TOUCH_MAIN.getPath()));
             MainController mainController = loader.getController();
             mainController.setStage(newStage);
             mainController.setPane(mainPane);
