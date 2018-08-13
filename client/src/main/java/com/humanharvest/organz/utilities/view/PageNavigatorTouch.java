@@ -88,6 +88,8 @@ public class PageNavigatorTouch implements IPageNavigator {
             TuioFXUtils.setupPaneWithTouchFeatures(mainPane);
             AppTUIO.root.getChildren().add(mainPane);
 
+//TODO             mainPane.getChildren().addListener();
+
             return mainController;
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Error loading new window\n", e);

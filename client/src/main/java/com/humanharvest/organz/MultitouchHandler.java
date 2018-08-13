@@ -19,6 +19,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.Skin;
 import javafx.scene.control.Skinnable;
+import javafx.scene.control.Slider;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
@@ -319,6 +320,9 @@ public class MultitouchHandler {
                 return true;
             }
             if (node instanceof ChoiceBox) {
+                return true;
+            }
+            if (node instanceof Slider) {
                 return true;
             }
 
