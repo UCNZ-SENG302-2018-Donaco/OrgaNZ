@@ -19,6 +19,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -69,6 +70,9 @@ public class ViewMedicationsController extends SubController {
     private TextField newMedField;
 
     @FXML
+    private TextArea medicationIngredients, medicationInteractions;
+
+    @FXML
     private HBox newMedicationPane;
 
     @FXML
@@ -117,6 +121,7 @@ public class ViewMedicationsController extends SubController {
                     if (!selectingMultiple) {
                         currentMedicationsView.getSelectionModel().clearSelection();
                     }
+                    updateMedicationInformation();
                 });
 
         currentMedicationsView.getSelectionModel().selectedItemProperty().addListener(
@@ -126,6 +131,7 @@ public class ViewMedicationsController extends SubController {
                     if (!selectingMultiple) {
                         pastMedicationsView.getSelectionModel().clearSelection();
                     }
+                    updateMedicationInformation();
                 });
 
         pastMedicationsView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
@@ -168,7 +174,6 @@ public class ViewMedicationsController extends SubController {
             mainController.setTitle("View Medications:  " + client.getPreferredNameFormatted());
         } else if (windowContext.isClinViewClientWindow()) {
             mainController.setTitle("View Medications:  " + client.getFullName());
-
         }
         refreshMedicationLists();
     }
@@ -367,7 +372,120 @@ public class ViewMedicationsController extends SubController {
     }
 
     /**
-     * Generates a pop-up with a list of active ingredients.
+     * Checks what medications are currently selected, if one is selected, its ingredients are displayed, if two are
+     * selected, their interactions are displayed. Otherwise nothing is displayed for medication ingredients and
+     * interactions
+     */
+    private void updateMedicationInformation() {
+        List<MedicationRecord> selectedItems = new ArrayList<>();
+        selectedItems.addAll(currentMedicationsView.getSelectionModel().getSelectedItems());
+        selectedItems.addAll(pastMedicationsView.getSelectionModel().getSelectedItems());
+
+        System.out.println(String.format("Number of medications selected: %d", selectedItems.size()));
+
+        if (selectedItems.size() == 1) {
+            setActiveIngredients(selectedItems.get(0));
+            medicationInteractions.clear();
+        } else if (selectedItems.size() == 2) {
+            setInteractions(selectedItems);
+            medicationIngredients.clear();
+        } else {
+            // If None or more than two are selected, the textareas are reset to their prompts
+            medicationIngredients.clear();
+            medicationInteractions.clear();
+        }
+    }
+
+    /**
+     * Displays the ingredients of the currently selected medication, given that it is a valid medication
+     * @param selectedMedication Currently selected medication
+     */
+    private void setActiveIngredients(MedicationRecord selectedMedication) {
+
+        if (selectedMedication != null) {
+            String medicationName = selectedMedication.getMedicationName();
+
+            medicationIngredients.setText("Loading ...");
+
+            Task<List<String>> task = new Task<List<String>>() {
+                @Override
+                public List<String> call() throws IOException {
+                    return activeIngredientsHandler.getActiveIngredients(medicationName);
+                }
+            };
+
+            task.setOnSucceeded(e -> {
+                List<String> activeIngredients = task.getValue();
+                // If there are no results, display an error, else display the results.
+                // It is assumed that every valid drug has active ingredients, thus if an empty list is returned,
+                //     then the drug name wasn't valid.
+                if (activeIngredients.isEmpty()) {
+                    medicationIngredients.setText("No active ingredients found for " + medicationName);
+                } else {
+                    // Build list of active ingredients into a string, each ingredient on a new line
+                    StringBuilder sb = new StringBuilder();
+                    for (String ingredient : activeIngredients) {
+                        sb.append(ingredient).append("\n");
+                    }
+                    medicationIngredients.setText(sb.toString());
+                }
+            });
+
+            task.setOnFailed(e -> {
+                medicationIngredients.setText("Error loading ingredients, please try again later");
+                System.out.println(e);
+            });
+
+            new Thread(task).start();
+        }
+
+    }
+
+    /**
+     * Displays the interactions between the two currently selected medications, given that both are valid medications
+     * @param selectedMedications The two currently selected medications
+     */
+    private void setInteractions(List<MedicationRecord> selectedMedications) {
+        Collections.sort(selectedMedications);
+        String medication1 = selectedMedications.get(0).getMedicationName();
+        String medication2 = selectedMedications.get(1).getMedicationName();
+
+        medicationIngredients.clear();
+
+        medicationInteractions.setText("Loading ...");
+
+        Task<List<String>> task = new Task<List<String>>() {
+            @Override
+            public List<String> call() throws IOException, BadDrugNameException, BadGatewayException {
+                return drugInteractionsHandler.getInteractions(client, medication1, medication2);
+            }
+        };
+
+        task.setOnFailed(event -> {
+            medicationInteractions.setText("An error occurred when retrieving drug interactions: \n" +
+                    task.getException().getMessage());
+            task.getException().printStackTrace();
+        });
+
+        task.setOnSucceeded(event -> {
+            List<String> interactions = task.getValue();
+
+            if (interactions.size() == 0) {
+                medicationInteractions.setText(String.format(
+                        "There is no information on interactions between '%s' and '%s'.",
+                        medication1, medication2));
+            } else {
+                String interactionsText = interactions.stream().collect(Collectors.joining("\n"));
+                medicationInteractions.setText(interactionsText);
+            }
+        });
+
+        new Thread(task).start();
+    }
+
+    /**
+     * Updates the active ingredients textfield with the ingredients of the medication currently selected
+     * This happens automatically whenever a new medication is selected
      */
     @FXML
     private void viewActiveIngredients() {
