@@ -192,10 +192,13 @@ public class ViewClientController extends ViewBaseController {
             deathDetailsPane.setDisable(true);
         } else if (windowContext.isClinViewClientWindow()) {
             mainController.setTitle("View Client: " + viewedClient.getFullName());
-            if (viewedClient.getDateOfDeathIsEditable()) {
+            if (!viewedClient.getDateOfDeathIsEditable()) {
+                // date of death is not editable - disable all the things
                 aliveToggleBtn.setDisable(true);
                 deadToggleBtn.setDisable(true);
                 deathDatePicker.setDisable(true);
+                // todo put the tooltip in a javafx wrapper (ie some kind of pane), as disabled nodes don't register
+                // mouse events
                 deathDatePicker.setTooltip(new Tooltip("Date of death is not editable because at least one organ has been "
                         + "manually overridden."));
             }
