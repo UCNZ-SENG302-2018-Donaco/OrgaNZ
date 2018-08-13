@@ -1,6 +1,5 @@
 package com.humanharvest.organz.state;
 
-import java.io.File;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -237,13 +236,5 @@ public class ClientManagerMemory implements ClientManager {
             donatedOrgans.addAll(client.getDonatedOrgans());
         }
         return donatedOrgans;
-    }
-
-    @Override
-    public DonatedOrgan manuallyExpireOrgan(DonatedOrgan organ){
-        Client client = organ.getDonor();
-        client.getDonatedOrgans().remove(organ);
-        return organ;
-
     }
 }
