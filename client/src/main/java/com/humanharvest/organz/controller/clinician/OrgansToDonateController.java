@@ -1,30 +1,10 @@
 package com.humanharvest.organz.controller.clinician;
 
-import java.awt.MouseInfo;
-import java.awt.Point;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.Optional;
-
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.DonatedOrgan;
-import com.humanharvest.organz.TransplantRequest;
-import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.state.ClientManager;
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.view.Page;
-import com.humanharvest.organz.utilities.view.PageNavigator;
-import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
-import javafx.scene.control.*;
-import javafx.scene.layout.GridPane;
-import org.controlsfx.control.PopOver;
-import org.controlsfx.control.PopOver.ArrowLocation;
-import org.hibernate.validator.internal.util.logging.formatter.DurationFormatter;
 
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -36,6 +16,14 @@ import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.Pagination;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
@@ -50,9 +38,13 @@ import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
+import com.humanharvest.organz.utilities.exceptions.NotFoundException;
+import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
+import org.controlsfx.control.Notifications;
 
 public class OrgansToDonateController extends SubController {
 
@@ -153,7 +145,7 @@ public class OrgansToDonateController extends SubController {
                 }
             } else if (mouseEvent.getButton().equals(MouseButton.SECONDARY)) {
                 MenuItem manualExpireItem = new MenuItem();
-                manualExpireItem.textProperty().setValue("Manually Expire");
+                manualExpireItem.textProperty().setValue("Manually Override");
                 selectedOrgan = tableView.getSelectionModel().getSelectedItem();
                 manualExpireItem.setOnAction(event -> openManuallyExpireDialog());
                 ContextMenu contextMenu = new ContextMenu(manualExpireItem);
@@ -237,43 +229,39 @@ public class OrgansToDonateController extends SubController {
         tableView.setItems(sortedOrgansToDonate);
     }
 
-    // ---------------- Format methods ----------------
     private void openManuallyExpireDialog() {
-        System.out.println(tableView.getSelectionModel().getSelectedItem());
-        Dialog<String> dialog = new Dialog<>();
-        dialog.setTitle("Manually Override Organ Expiry");
-        dialog.setHeaderText("Specify why you are overriding the expiry date.");
-        // Setup Buttons
-        ButtonType confirmButtonType = new ButtonType("Confirm", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(confirmButtonType);
-        // Setup TextArea for the reason
-        TextArea reason = new TextArea();
-        reason.setPromptText("Expiry reason");
-        reason.setWrapText(true);
-        // Add a listener for the confirmation button
-        Node confirmButton = dialog.getDialogPane().lookupButton(confirmButtonType);
-        confirmButton.setDisable(true);
-        reason.textProperty().addListener(((observable, oldValue, newValue) -> {
-            confirmButton.setDisable(newValue.trim().isEmpty());
-        }));
+        // Create a popup with a text field to enter the reason
+        TextInputDialog popup = new TextInputDialog();
+        popup.setTitle("Manually Override Organ");
+        popup.setHeaderText("Enter the reason for overriding this organ:");
+        popup.setContentText("Reason:");
+        popup.getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
+        popup.getEditor().textProperty().addListener((observable, oldValue, newValue) ->
+                popup.getDialogPane().lookupButton(ButtonType.OK).setDisable(newValue.isEmpty()));
 
-        dialog.getDialogPane().setContent(reason);
-        dialog.getDialogPane().setMinHeight(200);
-
-        Optional<String> result = dialog.showAndWait();
-        if (result.isPresent()) {
-            manuallyExpire(reason.getText());
+        // If user clicks the OK button
+        String response = popup.showAndWait().orElse("");
+        if (!response.isEmpty()) {
+            try {
+                State.getClientResolver().manuallyOverrideOrgan(selectedOrgan, response);
+                PageNavigator.refreshAllWindows();
+            } catch (IfMatchFailedException exc) {
+                // TODO deal with outdated error
+            } catch (NotFoundException exc) {
+                Notifications.create()
+                        .title("Client/Organ Not Found")
+                        .text("The client/donated organ could not be found on the server; it may have been deleted.")
+                        .showWarning();
+            } catch (ServerRestException exc) {
+                Notifications.create()
+                        .title("Server Error")
+                        .text("A server error occurred when overriding this donated organ; please try again later.")
+                        .showError();
+            }
         }
-
     }
 
-    private void manuallyExpire(String message) {
-
-        manager.manuallyExpireOrgan(selectedOrgan);
-        System.out.println("expiring " + selectedOrgan.toString() + " because " +message);
-        PageNavigator.refreshAllWindows();
-    }
-
+    // ---------------- Format methods ----------------
     /**
      * Formats a table cell that holds a {@link LocalDateTime} value to display that value in the date time format.
      * @return The cell with the date time formatter set.

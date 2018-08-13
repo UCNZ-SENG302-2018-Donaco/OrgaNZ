@@ -12,7 +12,6 @@ import java.util.stream.Collectors;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
@@ -20,11 +19,10 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
@@ -130,19 +128,19 @@ public class RegisterOrganDonationController extends SubController {
      */
     private static void handleOverride(DonatedOrgan donatedOrgan) {
         // Create a popup with a text field to enter the reason
-        Alert popup = PageNavigator.generateAlert(AlertType.CONFIRMATION, "Manually Override Organ", "");
-        VBox popupContent = new VBox();
-        popupContent.setSpacing(5);
-        popupContent.getChildren().add(new Label("Enter the reason for overriding this organ:"));
-        TextField reasonField = new TextField();
-        popupContent.getChildren().add(reasonField);
-        popup.getDialogPane().setContent(popupContent);
+        TextInputDialog popup = new TextInputDialog();
+        popup.setTitle("Manually Override Organ");
+        popup.setHeaderText("Enter the reason for overriding this organ:");
+        popup.setContentText("Reason:");
+        popup.getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
+        popup.getEditor().textProperty().addListener((observable, oldValue, newValue) -> 
+                popup.getDialogPane().lookupButton(ButtonType.OK).setDisable(newValue.isEmpty()));
 
         // If user clicks the OK button
-        ButtonType response = popup.showAndWait().orElse(ButtonType.CANCEL);
-        if (response == ButtonType.OK) {
+        String response = popup.showAndWait().orElse("");
+        if (!response.isEmpty()) {
             try {
-                State.getClientResolver().manuallyOverrideOrgan(donatedOrgan, reasonField.getText());
+                State.getClientResolver().manuallyOverrideOrgan(donatedOrgan, response);
                 PageNavigator.refreshAllWindows();
             } catch (IfMatchFailedException exc) {
                 // TODO deal with outdated error
