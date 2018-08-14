@@ -1,23 +1,22 @@
 package com.humanharvest.organz.controller.client;
 
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.utilities.enums.Country;
-import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.enums.Region;
-import javafx.scene.input.KeyCode;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 import java.time.LocalDate;
 
-import static org.junit.Assert.assertEquals;
+import javafx.scene.input.KeyCode;
+
+import com.humanharvest.organz.utilities.enums.Country;
+import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.enums.Region;
+import org.junit.Before;
+import org.junit.Test;
 
 public class ViewClientControllerClinician3Test extends ViewClientControllerClinicianBaseTest {
 
+    @Override
     @Before
     public void setClientDetails() {
-        System.out.println("setting cd in 3");
-        testClient = new Client(1);
         testClient.setFirstName("a");
         testClient.setLastName("b");
         testClient.setDateOfBirth(dateOfBirth);
