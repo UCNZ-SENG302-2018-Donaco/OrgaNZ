@@ -16,6 +16,7 @@ import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.actions.client.DeleteDonatedOrganAction;
 import com.humanharvest.organz.server.exceptions.GlobalControllerExceptionHandler;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.views.client.DonatedOrganView;
@@ -68,7 +69,9 @@ public class OrgansController {
         List<DonatedOrganView> filteredOrgans = stream
 
                 .filter(regions == null ? o -> true : organ -> newRegions.isEmpty() ||
-                        newRegions.contains(organ.getDonatedOrgan().getDonor().getRegion()))
+                        newRegions.contains(organ.getDonatedOrgan().getDonor().getRegion()) ||
+                        ( newRegions.contains("International") && organ.getDonatedOrgan().getDonor().getCountry() !=
+                                Country.NZ))
 
 
                 .filter(organType == null ? o -> true : organ -> organType.isEmpty() ||

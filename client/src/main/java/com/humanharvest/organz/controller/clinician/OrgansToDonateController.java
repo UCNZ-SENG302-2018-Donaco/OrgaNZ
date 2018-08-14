@@ -92,7 +92,7 @@ public class OrgansToDonateController extends SubController {
     private Pagination pagination;
 
     @FXML
-    private CheckComboBox<Region> regionFilter;
+    private CheckComboBox<String> regionFilter;
 
     @FXML
     private CheckComboBox<Organ> organFilter;
@@ -136,12 +136,16 @@ public class OrgansToDonateController extends SubController {
     private void initialize() {
         setupTable();
         //TODO: Add ability to filter by OTHER region
-        regionFilter.getItems().setAll(Region.values());
+        for (Region region : Region.values()) {
+            regionFilter.getItems().add(region.toString());
+        }
+        regionFilter.getItems().add("International");
+//        regionFilter.getItems().setAll(Region.values());
         organFilter.getItems().setAll(Organ.values());
 
 
         regionFilter.getCheckModel().getCheckedItems().addListener(
-            (ListChangeListener<Region>) change -> updateOrgansToDonateList());
+            (ListChangeListener<String>) change -> updateOrgansToDonateList());
 
         organFilter.getCheckModel().getCheckedItems().addListener(
             (ListChangeListener<Organ>) change -> updateOrgansToDonateList());
@@ -249,9 +253,7 @@ public class OrgansToDonateController extends SubController {
     private void filterRegions() {
         regionsToFilter = new HashSet<>();
         regionsToFilter.addAll(
-                regionFilter.getCheckModel().getCheckedItems().stream()
-                        .map(Enum::toString)
-                        .collect(Collectors.toSet()));
+                regionFilter.getCheckModel().getCheckedItems());
     }
 
     /**
