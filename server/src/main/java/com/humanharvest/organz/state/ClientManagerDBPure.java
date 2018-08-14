@@ -1,16 +1,5 @@
 package com.humanharvest.organz.state;
 
-import java.io.File;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import javax.persistence.OptimisticLockException;
-import javax.persistence.RollbackException;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,9 +23,7 @@ import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
 import com.humanharvest.organz.utilities.enums.ClientType;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.views.client.PaginatedClientList;
-import com.humanharvest.organz.utilities.type_converters.EnumSetToString;
 import com.humanharvest.organz.views.client.PaginatedDonatedOrgansList;
 import com.humanharvest.organz.views.client.PaginatedTransplantList;
 import org.hibernate.ReplicationMode;
@@ -164,9 +151,9 @@ public class ClientManagerDBPure implements ClientManager {
                                 " requesting.status='WAITING' AND " +
                                 " requesting.requestedOrgan IN (";
 
-                joinQuery +=
-                        requesting.stream().map(organ -> "'" + organ.ordinal() + "'").collect(Collectors.joining(","))
-                                + ")";
+                joinQuery += requesting.stream()
+                        .map(organ -> "'" + organ.ordinal() + "'")
+                        .collect(Collectors.joining(",")) + ")";
 
                 joinQuery += " GROUP BY requesting.Client_uid) requesting ON c.uid=requesting.Client_uid ";
 
@@ -269,9 +256,8 @@ public class ClientManagerDBPure implements ClientManager {
             }
 
             // Quite a complex string build, but all defined as above, just simple string combinations
-            String queryString =
-                    "SELECT c.* FROM Client c " + joinBuilder + whereJoiner.toString() + " ORDER BY " + sort + " " + dir
-                            + ", " + nameSort + " ASC LIMIT :limit OFFSET :offset";
+            String queryString = "SELECT c.* FROM Client c " + joinBuilder + whereJoiner.toString() + " "
+                    + "ORDER BY " + sort + " " + dir + ", " + nameSort + " ASC LIMIT :limit OFFSET :offset";
             String countString = "SELECT count(*) FROM Client c " + joinBuilder + whereJoiner.toString();
 
             System.out.println(queryString);
@@ -580,9 +566,9 @@ public class ClientManagerDBPure implements ClientManager {
      * @return a list of all organs available for donation
      */
     @Override
-    public PaginatedDonatedOrgansList getAllOrgansToDonate(Integer offset, Integer count, Set<String> regions,
+    public PaginatedDonatedOrgansList getAllOrgansToDonate(Integer offset, Integer count,Set<String> regions,
             EnumSet<Organ>
-                    organType) {
+            organType) {
         //TODO Implement the WHERE statements for this.
         List<DonatedOrgan> requests = null;
         Transaction trns = null;
@@ -591,23 +577,4 @@ public class ClientManagerDBPure implements ClientManager {
 
 //        return requests == null ? new ArrayList<>() : requests;
     }
-
-    @Override
-    public DonatedOrgan manuallyExpireOrgan(DonatedOrgan organ) {
-        //Todo: Test
-        Transaction trns = null;
-        try (org.hibernate.Session session = dbManager.getDBSession()) {
-            trns = session.beginTransaction();
-            dbManager.getDBSession().remove(organ);
-
-            trns.commit();
-        } catch (RollbackException exc) {
-            if (trns != null) {
-                trns.rollback();
-            }
-        }
-        return organ;
-
-    }
-
 }

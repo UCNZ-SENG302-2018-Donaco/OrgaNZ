@@ -1,44 +1,20 @@
 package com.humanharvest.organz.controller.clinician;
 
-import com.humanharvest.organz.utilities.enums.Region;
-import com.humanharvest.organz.views.client.DonatedOrganView;
-import com.humanharvest.organz.views.client.PaginatedDonatedOrgansList;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.DonatedOrgan;
-import com.humanharvest.organz.TransplantRequest;
-import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.state.ClientManager;
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.view.Page;
-import com.humanharvest.organz.utilities.view.PageNavigator;
-import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
-import javafx.collections.ListChangeListener;
-import javafx.scene.control.*;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.layout.GridPane;
-import org.controlsfx.control.CheckComboBox;
-import org.controlsfx.control.PopOver;
-import org.controlsfx.control.PopOver.ArrowLocation;
-import org.hibernate.validator.internal.util.logging.formatter.DurationFormatter;
 
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
@@ -68,12 +44,16 @@ import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
+import com.humanharvest.organz.views.client.DonatedOrganView;
+import com.humanharvest.organz.views.client.PaginatedDonatedOrgansList;
+import org.controlsfx.control.CheckComboBox;
 import org.controlsfx.control.Notifications;
 
 public class OrgansToDonateController extends SubController {
@@ -168,8 +148,6 @@ public class OrgansToDonateController extends SubController {
 
         //On pagination update call createPage
         pagination.setPageFactory(this::createPage);
-
-
     }
 
     /**
@@ -297,17 +275,13 @@ public class OrgansToDonateController extends SubController {
                 DonatedOrganView::getDonatedOrgan).collect(Collectors.toList()));
         tableView.getSortOrder().setAll(timeUntilExpiryCol);
 
-
-
         int newPageCount = Math.max(1, (newOrgansToDonate.getTotalResults() + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE);
         if (pagination.getPageCount() != newPageCount) {
             pagination.setPageCount(newPageCount);
         }
 
         setupDisplayingXToYOfZText(newOrgansToDonate.getTotalResults());
-
     }
-
 
     /**
      * Refreshes the data in the transplants waiting list table. Should be called whenever any page calls a global
@@ -319,8 +293,6 @@ public class OrgansToDonateController extends SubController {
         tableView.setItems(sortedOrgansToDonate);
     }
 
-
-    // ---------------- Format methods ----------------
     private void openManuallyExpireDialog() {
         // Create a popup with a text field to enter the reason
         TextInputDialog popup = new TextInputDialog();
@@ -376,13 +348,6 @@ public class OrgansToDonateController extends SubController {
         }
     }
 
-    private void manuallyExpire(String message) {
-
-        manager.manuallyExpireOrgan(selectedOrgan);
-        System.out.println("expiring " + selectedOrgan.toString() + " because " +message);
-        PageNavigator.refreshAllWindows();
-    }
-
     // ---------------- Format methods ----------------
     /**
      * Formats a table cell that holds a {@link LocalDateTime} value to display that value in the date time format.
@@ -401,23 +366,4 @@ public class OrgansToDonateController extends SubController {
             }
         };
     }
-
-    /* TODO this is for pagination
-     * Set the text that advises the currently viewed and pending amount of results
-     * @param totalCount The total amount of current results matching filter options
-     *
-    private void setupDisplayingXToYOfZText(int totalCount) {
-        int fromIndex = pagination.getCurrentPageIndex() * ROWS_PER_PAGE;
-        int toIndex = Math.min(fromIndex + ROWS_PER_PAGE, totalCount);
-        if (totalCount < 2 || fromIndex + 1 == toIndex) {
-            // 0 or 1 items OR the last item, on its own page
-            displayingXToYOfZText.setText(String.format("Displaying %d of %d",
-                    totalCount,
-                    totalCount));
-        } else {
-            displayingXToYOfZText.setText(String.format("Displaying %d-%d of %d",
-                    fromIndex + 1, toIndex,
-                    totalCount));
-        }
-    }*/
 }

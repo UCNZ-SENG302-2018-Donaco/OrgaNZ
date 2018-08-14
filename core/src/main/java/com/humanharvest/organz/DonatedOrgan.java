@@ -44,8 +44,6 @@ public class DonatedOrgan {
     private LocalDateTime dateTimeOfDonation;
     @JsonView(Views.Overview.class)
     private String overrideReason;  // If null this implies the organ was not manually overriden
-    @JsonView(Views.Overview.class)
-    private String region;
 
     protected DonatedOrgan() {
     }
@@ -54,7 +52,6 @@ public class DonatedOrgan {
         this.organType = organType;
         this.donor = donor;
         this.dateTimeOfDonation = dateTimeOfDonation;
-        this.region = donor.getRegion();
     }
 
     public Organ getOrganType() {

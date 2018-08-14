@@ -20,7 +20,6 @@ import com.humanharvest.organz.server.exceptions.GlobalControllerExceptionHandle
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.views.SingleStringView;
 import com.humanharvest.organz.views.client.DonatedOrganView;
 import com.humanharvest.organz.views.client.PaginatedDonatedOrgansList;
@@ -45,6 +44,7 @@ public class OrgansController {
      * The GET endpoint for getting all organs currently available to be donated
      * @param authToken authentication token - only clinicians and administrators can access donatable organs
      * @return response entity containing all organs that are available for donation
+     * @throws GlobalControllerExceptionHandler.InvalidRequestException
      */
     @JsonView(Views.Overview.class)
     @GetMapping("/clients/organs")
@@ -76,8 +76,9 @@ public class OrgansController {
 
                 .filter(regions == null ? o -> true : organ -> newRegions.isEmpty() ||
                         newRegions.contains(organ.getDonatedOrgan().getDonor().getRegion()) ||
-                        (newRegions.contains("International") && organ.getDonatedOrgan().getDonor().getCountry() !=
+                        ( newRegions.contains("International") && organ.getDonatedOrgan().getDonor().getCountry() !=
                                 Country.NZ))
+
 
                 .filter(organType == null ? o -> true : organ -> organType.isEmpty() ||
                         organType.contains(organ.getDonatedOrgan().getOrganType()))
@@ -87,7 +88,7 @@ public class OrgansController {
         if (offset == null) {
             offset = 0;
         }
-        if (count == null) {
+        if(count == null){
             return new ResponseEntity<>(new PaginatedDonatedOrgansList(
                     filteredOrgans.subList(
                             Math.min(offset, filteredOrgans.size()),
@@ -95,11 +96,11 @@ public class OrgansController {
                     filteredOrgans.size()),
                     HttpStatus.OK);
 
-        } else {
+        }else {
             return new ResponseEntity<>(new PaginatedDonatedOrgansList(filteredOrgans.subList(
                     Math.min(offset, filteredOrgans.size()),
                     Math.min(offset + count, filteredOrgans.size())),
-                    filteredOrgans.size()), HttpStatus.OK);
+                    filteredOrgans.size()),HttpStatus.OK);
         }
 
     }
