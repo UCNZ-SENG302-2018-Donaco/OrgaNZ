@@ -1,18 +1,5 @@
 package com.humanharvest.organz.server.controller.client;
 
-import java.awt.image.ImagingOpException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
@@ -29,7 +16,6 @@ import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
 import com.humanharvest.organz.utilities.enums.ClientType;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
@@ -46,15 +32,13 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.awt.image.ImagingOpException;
+import java.io.*;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @RestController
 public class ClientController {
@@ -75,7 +59,7 @@ public class ClientController {
             @RequestParam(required = false) Integer count,
             @RequestParam(required = false) Integer minimumAge,
             @RequestParam(required = false) Integer maximumAge,
-            @RequestParam(required = false) EnumSet<Region> regions,
+            @RequestParam(required = false) Set<String> regions,
             @RequestParam(required = false) EnumSet<Gender> birthGenders,
             @RequestParam(required = false) ClientType clientType,
             @RequestParam(required = false) EnumSet<Organ> donating,
@@ -87,13 +71,21 @@ public class ClientController {
         //TODO: Add the auth check, but need to remake the login page to not get the list of clients
         //State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
 
+        //We need to remove the space characters here. Possibly needs to be done for other types as well
+        Set<String> newRegions = new HashSet<>();
+        if (regions != null) {
+            for (String region : regions) {
+                newRegions.add(region.replace("%20", " "));
+            }
+        }
+
         PaginatedClientList clients = State.getClientManager().getClients(
                 q,
                 offset,
                 count,
                 minimumAge,
                 maximumAge,
-                regions,
+                newRegions,
                 birthGenders,
                 clientType,
                 donating,
