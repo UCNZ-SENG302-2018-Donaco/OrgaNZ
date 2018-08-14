@@ -1,26 +1,23 @@
 package com.humanharvest.organz.state;
 
-import com.humanharvest.organz.views.client.PaginatedDonatedOrgansList;
 import java.time.LocalDate;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.TransplantRequest;
-import com.humanharvest.organz.utilities.enums.*;
+import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
+import com.humanharvest.organz.utilities.enums.ClientType;
+import com.humanharvest.organz.utilities.enums.Gender;
+import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.views.client.PaginatedClientList;
+import com.humanharvest.organz.views.client.PaginatedDonatedOrgansList;
 import com.humanharvest.organz.views.client.PaginatedTransplantList;
-
-import java.time.LocalDate;
-import java.util.*;
 
 /**
  * Handles the manipulation of the clients currently stored in the system.
@@ -90,15 +87,8 @@ public interface ClientManager {
     /**
      * Returns a collection of all the organs that are available to donate from dead peop[e.
      */
-    PaginatedDonatedOrgansList getAllOrgansToDonate(Integer offset,Integer count,Set<String> regions, EnumSet<Organ>
+    PaginatedDonatedOrgansList getAllOrgansToDonate(Integer offset, Integer count, Set<String> regions, EnumSet<Organ>
             organType);
-
-
-    /** Used by clinician to manually expire an organ
-     * @param organ Organ that clinician wishes to expire
-     * @return Returns expired organ.
-     */
-    DonatedOrgan manuallyExpireOrgan(DonatedOrgan organ);
 
     List<HistoryItem> getAllHistoryItems();
 }

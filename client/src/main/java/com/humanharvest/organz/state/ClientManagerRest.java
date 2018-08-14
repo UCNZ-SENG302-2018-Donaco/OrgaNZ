@@ -222,17 +222,16 @@ public class ClientManagerRest implements ClientManager {
      * @return A collection of the the organs available to donate based off the specified filters.
      */
     @Override
-    public PaginatedDonatedOrgansList getAllOrgansToDonate(Integer offset,Integer count,Set<String> regions,
+    public PaginatedDonatedOrgansList getAllOrgansToDonate(Integer offset, Integer count, Set<String> regions,
             EnumSet<Organ>
-            organType) {
+                    organType) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-Auth-Token", State.getToken());
-        headers.set("Accept",MediaType.APPLICATION_JSON_VALUE);
-
+        headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(State.BASE_URI + "/clients/organs")
-                .queryParam("offset",offset)
-                .queryParam("count",count)
+                .queryParam("offset", offset)
+                .queryParam("count", count)
                 .queryParam("regions", String.join(",", regions))
                 .queryParam("organType", EnumSetToString.convert(organType));
 
@@ -241,10 +240,9 @@ public class ClientManagerRest implements ClientManager {
         ResponseEntity<PaginatedDonatedOrgansList> responseEntity = State.getRestTemplate().exchange(
                 builder.toUriString(),
                 HttpMethod.GET,
-                entity,PaginatedDonatedOrgansList.class);
+                entity, PaginatedDonatedOrgansList.class);
 
-        System.out.println("sadsadsadsad"+responseEntity.getBody());
-
+        System.out.println("sadsadsadsad" + responseEntity.getBody());
 
         return responseEntity.getBody();
 
