@@ -51,6 +51,7 @@ public class OrganControllerTest {
         State.setAuthenticationManager(new AuthenticationManagerFake());
         this.mockMvc = webAppContextSetup(webApplicationContext).build();
         State.setAuthenticationManager(new AuthenticationManagerFake());
+        Client outsider = new Client("Out", "Si", "Der", LocalDate.now(), 9997);
         Client janMichael = new Client("Jan", "Michael", "Vincent", LocalDate.now(), 9998);
         Client michaelShoeMaker = new Client("Michael", "Shoe", "Maker", LocalDate.now(), 9999);
         janMichael.setRegion("Auckland");
@@ -60,6 +61,7 @@ public class OrganControllerTest {
             janMichael.setOrganDonationStatus(Organ.HEART, true);
             janMichael.setOrganDonationStatus(Organ.CORNEA, true);
             michaelShoeMaker.setOrganDonationStatus(Organ.LIVER, true);
+            outsider.setOrganDonationStatus(Organ.BONE, true);
         } catch (OrganAlreadyRegisteredException ex) {
             System.out.println("Error setting up organ donation status: " + ex.getMessage());
         }
@@ -71,9 +73,12 @@ public class OrganControllerTest {
                 "AUCKLAND","Auckland", Country.NZ, State.getClientManager());
         MarkClientAsDeadAction action2  = new MarkClientAsDeadAction(michaelShoeMaker, LocalDate.now(), LocalTime.now(),
                 "Canterbury","Canterbury", Country.NZ, State.getClientManager());
+        MarkClientAsDeadAction action3  = new MarkClientAsDeadAction(michaelShoeMaker, LocalDate.now(), LocalTime.now(),
+                "Rio","Rio", Country.BR, State.getClientManager());
 
         State.getActionInvoker("").execute(action1);
         State.getActionInvoker("").execute(action2);
+//        State.getActionInvoker("").execute(action3);
 
 
     }
@@ -82,7 +87,7 @@ public class OrganControllerTest {
     public void getDefault() throws Exception {
         mockMvc.perform(get("/clients/organs"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(4)));
+                .andExpect(jsonPath("$.totalResults", is(4)));
     }
 
 
@@ -90,28 +95,36 @@ public class OrganControllerTest {
     public void getFilteredOrgans() throws Exception {
         mockMvc.perform(get("/clients/organs?organType=LIVER"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(2)));
+                .andExpect(jsonPath("$.totalResults", is(2)));
     }
 
     @Test
     public void getMultipleFilteredOrgans() throws Exception {
         mockMvc.perform(get("/clients/organs?organType=LIVER,HEART,CORNEA"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(4)));
+                .andExpect(jsonPath("$.totalResults", is(4)));
     }
 
     @Test
     public void getFilteredRegion() throws Exception {
         mockMvc.perform(get("/clients/organs?regions=Auckland"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(3)));
+                .andExpect(jsonPath("$.totalResults", is(3)));
     }
 
     @Test
     public void getMultipleFilteredRegions() throws Exception {
         mockMvc.perform(get("/clients/organs?regions=Auckland,Canterbury"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(4)));
+                .andExpect(jsonPath("$.totalResults", is(4)));
+    }
+
+    @Ignore
+    @Test
+    public void getRegionOutsideNZ() throws Exception {
+        mockMvc.perform(get("/clients/organs?regions=International"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalResults", is(1)));
     }
 
 
