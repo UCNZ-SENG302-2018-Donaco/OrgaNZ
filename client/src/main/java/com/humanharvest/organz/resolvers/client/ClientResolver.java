@@ -1,10 +1,12 @@
 package com.humanharvest.organz.resolvers.client;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.MedicationRecord;
@@ -47,6 +49,8 @@ public interface ClientResolver {
 
     List<IllnessRecord> getIllnessRecords(Client client);
 
+    Collection<DonatedOrgan> getDonatedOrgans(Client client);
+
     List<HistoryItem> getHistory(Client client);
 
     //------------POSTs----------------
@@ -60,6 +64,8 @@ public interface ClientResolver {
     List<MedicationRecord> addMedicationRecord(Client client, CreateMedicationRecordView medicationRecordView);
 
     List<ProcedureRecord> addProcedureRecord(Client client, CreateProcedureView procedureView);
+
+    DonatedOrgan manuallyOverrideOrgan(DonatedOrgan donatedOrgan, String overrideReason);
 
     //------------PATCHs----------------
 
@@ -77,6 +83,8 @@ public interface ClientResolver {
     ProcedureRecord modifyProcedureRecord(Client client, ProcedureRecord toModify,
             ModifyProcedureObject modifyProcedureObject);
 
+    DonatedOrgan editManualOverrideForOrgan(DonatedOrgan donatedOrgan, String newOverrideReason);
+
     //------------DELETEs----------------
 
     void deleteIllnessRecord(Client client, IllnessRecord record);
@@ -85,4 +93,5 @@ public interface ClientResolver {
 
     void deleteMedicationRecord(Client client, MedicationRecord record);
 
+    DonatedOrgan cancelManualOverrideForOrgan(DonatedOrgan donatedOrgan);
 }

@@ -1,8 +1,5 @@
 package com.humanharvest.organz.state;
 
-import com.humanharvest.organz.views.client.PaginatedDonatedOrgansList;
-import java.io.File;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;
@@ -16,7 +13,10 @@ import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.TransplantRequest;
-import com.humanharvest.organz.utilities.enums.*;
+import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
+import com.humanharvest.organz.utilities.enums.ClientType;
+import com.humanharvest.organz.utilities.enums.Gender;
+import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
@@ -24,14 +24,14 @@ import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.type_converters.EnumSetToString;
 import com.humanharvest.organz.views.client.DonatedOrganView;
 import com.humanharvest.organz.views.client.PaginatedClientList;
+import com.humanharvest.organz.views.client.PaginatedDonatedOrgansList;
 import com.humanharvest.organz.views.client.PaginatedTransplantList;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import java.time.LocalDate;
-import java.util.*;
-import java.util.stream.Collectors;
 
 public class ClientManagerRest implements ClientManager {
 
@@ -87,8 +87,6 @@ public class ClientManagerRest implements ClientManager {
                 entity,
                 PaginatedClientList.class
         );
-
-        System.out.println("sadsadsadsad" + response.getBody());
 
         return response.getBody();
     }
@@ -212,8 +210,9 @@ public class ClientManagerRest implements ClientManager {
                 HttpMethod.GET,
                 entity, PaginatedDonatedOrgansList.class);
 
-        return Objects.requireNonNull(responseEntity.getBody()).getDonatedOrgans().stream().map(DonatedOrganView::getDonatedOrgan).collect(Collectors.toList());
-
+        return responseEntity.getBody().getDonatedOrgans().stream()
+                .map(DonatedOrganView::getDonatedOrgan)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -248,25 +247,6 @@ public class ClientManagerRest implements ClientManager {
 
 
         return responseEntity.getBody();
-
-    }
-
-
-    @Override
-    public DonatedOrgan manuallyExpireOrgan(DonatedOrgan organ) {
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
-        headers.set("X-Auth-Token",State.getToken());
-        HttpEntity<String> entity = new HttpEntity<>(headers);
-        System.out.println(organ.getDonor().getUid());
-        System.out.println(organ.getId());
-        ResponseEntity<DonatedOrgan> responseEntity = State.getRestTemplate().exchange(State.BASE_URI +
-                        "organs/{uid}/{id}",
-                HttpMethod.DELETE,
-                entity,DonatedOrgan.class,organ.getDonor().getUid(),organ.getId());
-
-        return responseEntity.getBody();
-
 
     }
 }

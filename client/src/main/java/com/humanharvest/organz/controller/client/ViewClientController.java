@@ -31,6 +31,7 @@ import javafx.scene.control.ToggleGroup;
 import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
@@ -98,6 +99,8 @@ public class ViewClientController extends ViewBaseController {
     private ToggleGroup isDeadToggleGroup;
     @FXML
     private ToggleButton aliveToggleBtn, deadToggleBtn;
+    @FXML
+    private GridPane dateOfDeathPane;
 
     public ViewClientController() {
         manager = State.getClientManager();
@@ -192,15 +195,16 @@ public class ViewClientController extends ViewBaseController {
             deathDetailsPane.setDisable(true);
         } else if (windowContext.isClinViewClientWindow()) {
             mainController.setTitle("View Client: " + viewedClient.getFullName());
-            if (viewedClient.hasOverriddenOrgans()) {
+            if (!viewedClient.getDateOfDeathIsEditable()) {
+                // date of death is not editable - disable all the things
                 aliveToggleBtn.setDisable(true);
                 deadToggleBtn.setDisable(true);
                 deathDatePicker.setDisable(true);
-                deathDatePicker.setTooltip(new Tooltip("Date of death is not editable because at least one organ has been "
-                        + "manually overridden."));
+                Tooltip tooltip = new Tooltip(
+                        "Date of death is not editable because at least one organ has been manually overridden.");
+                Tooltip.install(dateOfDeathPane, tooltip);
             }
         }
-
 
         // Run these to reset all labels to correct colours
         checkMandatoryFields();

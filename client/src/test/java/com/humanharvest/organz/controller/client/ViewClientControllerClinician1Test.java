@@ -1,50 +1,25 @@
 package com.humanharvest.organz.controller.client;
 
-import static org.junit.Assert.assertEquals;
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.utilities.enums.Country;
+import com.humanharvest.organz.utilities.enums.Organ;
+import javafx.scene.input.KeyCode;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
-import javafx.scene.input.KeyCode;
+import static org.junit.Assert.assertEquals;
 
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.controller.ControllerTest;
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.enums.Country;
-import com.humanharvest.organz.utilities.view.Page;
-import com.humanharvest.organz.utilities.view.WindowContext;
-import org.junit.Before;
-import org.junit.Test;
+public class ViewClientControllerClinician1Test extends ViewClientControllerClinicianBaseTest {
 
-public class ViewClientControllerClinicianTest extends ControllerTest {
-
-    private LocalDate dateOfBirth = LocalDate.now().minusYears(10);
-    private LocalDate dateOfDeath = LocalDate.now().minusYears(1);
-    private LocalTime timeOfDeath = LocalTime.parse("10:00:00");
-    private int futureYear = LocalDate.now().plusYears(2).getYear();
-    private int recentYear = LocalDate.now().minusYears(2).getYear();
-    private Client testClient = new Client(1);
-
-    @Override
-    protected Page getPage() {
-        return Page.VIEW_CLIENT;
-    }
-
-    @Override
-    protected void initState() {
-        State.reset();
-        setClientDetails();
-        State.getClientManager().addClient(testClient);
-        State.login(State.getClinicianManager().getDefaultClinician()); // login as default clinician
-        mainController.setWindowContext(new WindowContext.WindowContextBuilder()
-                .setAsClinicianViewClientWindow()
-                .viewClient(testClient)
-                .build());
-    }
 
     @Before
     public void setClientDetails() {
+        testClient = new Client(1);
         testClient.setFirstName("a");
         testClient.setLastName("b");
         testClient.setDateOfBirth(dateOfBirth);
@@ -54,6 +29,8 @@ public class ViewClientControllerClinicianTest extends ControllerTest {
         testClient.setRegionOfDeath("New York");
         testClient.setCityOfDeath("New York City");
     }
+
+    // Changing date of death
 
     @Test
     public void validChangeDateOfDeath() {
@@ -75,19 +52,31 @@ public class ViewClientControllerClinicianTest extends ControllerTest {
     public void invalidChangeDateOfDeathFuture() {
         String futureDate = "10/10/" + futureYear;
         clickOn("#deathDatePicker");
-        doubleClickOn("#deathDatePicker").type(KeyCode.BACK_SPACE);
+        doubleClickOn("#deathDatePicker").type(KeyCode.BACK_SPACE).write(futureDate);
         clickOn("#applyButton");
         assertEquals(dateOfDeath, testClient.getDateOfDeath());
     }
 
     @Test
     public void invalidChangeDateOfDeathBeforeBirthday() {
-        String futureDate = "10/10/" + (dateOfBirth.getYear()-2);
+        String beforeBirthday = "10/10/" + (dateOfBirth.getYear() - 2);
         clickOn("#deathDatePicker");
-        doubleClickOn("#deathDatePicker").type(KeyCode.BACK_SPACE);
+        doubleClickOn("#deathDatePicker").type(KeyCode.BACK_SPACE).write(beforeBirthday);
         clickOn("#applyButton");
         assertEquals(dateOfDeath, testClient.getDateOfDeath());
     }
+
+    @Ignore("Ignored until manually overridden organs has been properly implemented")
+    @Test
+    public void invalidChangeDateOfDeathManuallyOverriddenOrgans() {
+        testClient.donateOrgan(Organ.LIVER);
+        clickOn("#deathDatePicker");
+        doubleClickOn("#deathDatePicker").type(KeyCode.BACK_SPACE).write("10/10/" + recentYear);
+        clickOn("#applyButton");
+        assertEquals(dateOfDeath, testClient.getDateOfDeath());
+    }
+
+    // Changing time of death
 
     @Test
     public void validChangeTimeOfDeath() {
@@ -111,7 +100,7 @@ public class ViewClientControllerClinicianTest extends ControllerTest {
         // To ensure that we can get a time in the future today, if this test is run in the last ten seconds of the day,
         // it sleeps for 11 seconds to wait until tomorrow.
         if (LocalTime.now().isAfter(LocalTime.of(23, 59, 50))) {
-            sleep(11*1000);
+            sleep(11 * 1000);
         }
         clickOn("#deathDatePicker");
         doubleClickOn("#deathDatePicker").type(KeyCode.BACK_SPACE)
@@ -122,5 +111,4 @@ public class ViewClientControllerClinicianTest extends ControllerTest {
         clickOn("#applyButton");
         assertEquals(timeOfDeath, testClient.getTimeOfDeath());
     }
-
 }
