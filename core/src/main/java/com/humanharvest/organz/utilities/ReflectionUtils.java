@@ -27,7 +27,7 @@ public final class ReflectionUtils {
     public static <T> T invoke(Object o, String methodName, Object... parameters)
             throws InvocationTargetException, IllegalAccessException {
         Method method = findMethod(o.getClass().getDeclaredMethods(), methodName, parameters.length);
-        assert method != null;
+        Objects.requireNonNull(method);
         method.setAccessible(true);
         return (T)method.invoke(o, parameters);
     }
@@ -40,5 +40,18 @@ public final class ReflectionUtils {
         }
 
         return null;
+    }
+
+    public static Field getFieldReference(Object o, String fieldName) throws NoSuchFieldException {
+        Field field = o.getClass().getDeclaredField(fieldName);
+        field.setAccessible(true);
+        return field;
+    }
+
+    public static Method getMethodReference(Object o, String methodName, Class<?>... parameterTypes) throws NoSuchMethodException {
+        Method method = o.getClass().getDeclaredMethod(methodName, parameterTypes);
+        Objects.requireNonNull(method);
+        method.setAccessible(true);
+        return method;
     }
 }

@@ -27,8 +27,8 @@ import org.tuiofx.internal.base.TuioFXCanvas;
  * The main class that runs the JavaFX GUI.
  */
 public class AppTUIO extends Application {
-
     public static final Pane root = new TuioFXCanvas();
+    private static MultitouchHandler multitouchHandler;
 
     public static void main(String[] args) {
         TuioFX.enableJavaFXTouchProperties();
@@ -71,16 +71,17 @@ public class AppTUIO extends Application {
         // Instead of tuioFX.enableMTWidgets(true)
         // We set our own stylesheet that contains less style changes but still loads the skins required for multi touch
         Application.setUserAgentStylesheet("MODENA");
-        StyleManager.getInstance().addUserAgentStylesheet("/css/multifocus.css") ;
+        StyleManager.getInstance().addUserAgentStylesheet("/css/multifocus.css");
 
         loadBackPane();
+        multitouchHandler = new MultitouchHandler(root);
+
         loadMainPane();
 
         scene.getStylesheets().add(AppUI.class.getResource("/css/touch.css").toExternalForm());
 
         primaryStage.setTitle("Test");
         primaryStage.setScene(scene);
-        new MultitouchHandler(root);
 //        primaryStage.setFullScreen(true);
         primaryStage.show();
         primaryStage.setWidth(1024);
@@ -95,5 +96,13 @@ public class AppTUIO extends Application {
         } else if (System.getenv("HOST") != null) {
             State.setBaseUri(System.getenv("HOST"));
         }
+    }
+
+    public static Pane getRoot() {
+        return root;
+    }
+
+    public static MultitouchHandler getMultitouchHandler() {
+        return multitouchHandler;
     }
 }

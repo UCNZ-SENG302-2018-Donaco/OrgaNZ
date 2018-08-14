@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.humanharvest.organz.MultitouchHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -83,12 +84,14 @@ public class PageNavigatorTouch implements IPageNavigator {
             mainController.setStage(newStage);
             mainController.setPane(mainPane);
             State.addMainController(mainController);
-            newStage.setOnCloseRequest(e -> State.deleteMainController(mainController));
+            newStage.setOnCloseRequest(e -> {
+                State.deleteMainController(mainController);
+            });
 
             TuioFXUtils.setupPaneWithTouchFeatures(mainPane);
             AppTUIO.root.getChildren().add(mainPane);
 
-//TODO             mainPane.getChildren().addListener();
+            MultitouchHandler.setupPaneListener(mainPane);
 
             return mainController;
         } catch (IOException e) {
