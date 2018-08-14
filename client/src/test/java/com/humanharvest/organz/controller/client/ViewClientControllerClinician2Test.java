@@ -10,6 +10,9 @@ import com.humanharvest.organz.utilities.enums.Region;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * Testing that date and time of death are not editable when client has overridden organs
+ */
 public class ViewClientControllerClinician2Test extends ViewClientControllerClinicianBaseTest {
 
     @Override
@@ -23,14 +26,19 @@ public class ViewClientControllerClinician2Test extends ViewClientControllerClin
         testClient.getDonatedOrgans().get(0).manuallyOverride("dropped it");
     }
 
-    // Date of death not editable when has overridden organs
-
     @Test
     public void dateOfDeathIsNotEditableTest() {
-
         clickOn("#deathDatePicker");
         doubleClickOn("#deathDatePicker").type(KeyCode.BACK_SPACE).write("10/10/" + recentYear);
         clickOn("#applyButton");
         assertEquals(dateOfDeath, testClient.getDateOfDeath());
+    }
+
+    @Test
+    public void TimeOfDeathIsNotEditableTest() {
+        clickOn("#deathTimeField");
+        doubleClickOn("#deathTimeField").type(KeyCode.BACK_SPACE).write(adjustedTimeOfDeathString);
+        clickOn("#applyButton");
+        assertEquals(timeOfDeath, testClient.getTimeOfDeath());
     }
 }
