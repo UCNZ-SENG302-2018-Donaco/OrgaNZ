@@ -1,12 +1,5 @@
 package com.humanharvest.organz.controller.client;
 
-import static org.junit.Assert.assertEquals;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
-
-import javafx.scene.input.KeyCode;
-
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.controller.ControllerTest;
 import com.humanharvest.organz.state.State;
@@ -16,8 +9,14 @@ import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
+import javafx.scene.input.KeyCode;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+
+import static org.junit.Assert.assertEquals;
 
 public class ViewClientControllerTest extends ControllerTest {
 
@@ -156,6 +155,15 @@ public class ViewClientControllerTest extends ControllerTest {
         doubleClickOn("#deathDatePicker").type(KeyCode.BACK_SPACE).write("10/10/" + recentYear);
         clickOn("#applyButton");
         assertEquals(dateOfDeath, testClient.getDateOfDeath());
+    }
+
+    @Test
+    public void checkTitleSetTest() {
+        testClient = new Client("a", "", "b", LocalDate.now().minusDays(10), 1);
+        clickOn("#pname").type(KeyCode.BACK_SPACE).type(KeyCode.BACK_SPACE).type(KeyCode.BACK_SPACE).write("Dad");
+        sleep(1000);
+        clickOn("#applyButton");
+        assertEquals("View Client: Dad", mainController.getTitle());
     }
 
 }
