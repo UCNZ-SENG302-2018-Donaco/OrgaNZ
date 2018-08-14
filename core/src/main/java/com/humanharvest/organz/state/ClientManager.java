@@ -82,7 +82,7 @@ public interface ClientManager {
      */
     Collection<TransplantRequest> getAllCurrentTransplantRequests();
 
-    PaginatedTransplantList getAllCurrentTransplantRequests(Integer offset, Integer count, Set<Region> regions,
+    PaginatedTransplantList getAllCurrentTransplantRequests(Integer offset, Integer count, Set<String> regions,
             Set<Organ> organs);
 
     Collection<DonatedOrgan> getAllOrgansToDonate();

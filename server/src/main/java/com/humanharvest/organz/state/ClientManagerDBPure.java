@@ -513,7 +513,7 @@ public class ClientManagerDBPure implements ClientManager {
 
     @Override
     public PaginatedTransplantList getAllCurrentTransplantRequests(Integer offset, Integer count,
-                                                                   Set<Region> regions, Set<Organ> organs) {
+                                                                   Set<String> regions, Set<Organ> organs) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 

@@ -4,11 +4,13 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.Set;
 
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
@@ -75,13 +77,13 @@ public class TransplantsController extends SubController {
     private Text displayingXToYOfZText;
 
     @FXML
-    private CheckComboBox<Region> regionChoice;
+    private CheckComboBox<String> regionChoice;
 
     @FXML
     private CheckComboBox<Organ> organChoice;
 
     private ClientManager manager;
-    private Set<Region> regionsToFilter;
+    private Set<String> regionsToFilter;
     private Set<Organ> organsToFilter;
     private ObservableList<TransplantRequest> observableTransplantRequests = FXCollections.observableArrayList();
     private SortedList<TransplantRequest> sortedTransplantRequests;
@@ -177,14 +179,24 @@ public class TransplantsController extends SubController {
     @FXML
     private void initialize() {
         setupTable();
+        for (Region region : Region.values()) {
+            regionChoice.getItems().add(region.toString());
+        }
+        regionChoice.getItems().add("International");
 
         tableView.setOnSort((o) -> createPage(pagination.getCurrentPageIndex()));
 
+        organChoice.getItems().addAll(Organ.values());
+
+        regionChoice.getCheckModel().getCheckedItems().addListener(
+                (ListChangeListener<String>) change -> updateTransplantRequestList());
+
+        organChoice.getCheckModel().getCheckedItems().addListener(
+                (ListChangeListener<Organ>) change -> updateTransplantRequestList());
+
+
         //On pagination update call createPage
         pagination.setPageFactory(this::createPage);
-
-        regionChoice.getItems().addAll(Region.values());
-        organChoice.getItems().addAll(Organ.values());
     }
 
     /**
@@ -195,7 +207,7 @@ public class TransplantsController extends SubController {
         clientCol.setCellValueFactory(cellData -> new SimpleStringProperty(
                 cellData.getValue().getClient().getFullName()));
         organCol.setCellValueFactory(new PropertyValueFactory<>("requestedOrgan"));
-        regionCol.setCellValueFactory(cellData -> new SimpleObjectProperty<>(
+        regionCol.setCellValueFactory(cellData -> new SimpleStringProperty(
                 cellData.getValue().getClient().getRegion()));
         dateCol.setCellValueFactory(new PropertyValueFactory<>("requestDate"));
 
@@ -259,8 +271,9 @@ public class TransplantsController extends SubController {
      * Filters the regions based on the RegionChoices current state and updates the organsToFilter Collection.
      */
     private void filterRegions() {
-        regionsToFilter = EnumSet.noneOf(Region.class);
-        regionsToFilter.addAll(regionChoice.getCheckModel().getCheckedItems());
+        regionsToFilter = new HashSet<>();
+        regionsToFilter.addAll(
+                regionChoice.getCheckModel().getCheckedItems());
     }
 
     /**
@@ -271,17 +284,11 @@ public class TransplantsController extends SubController {
         organsToFilter.addAll(organChoice.getCheckModel().getCheckedItems());
     }
 
-    /**
-     * Filters the transplant waiting list based on what organs/regions are chosen.
-     */
-    @FXML
-    private void filter() {
-        filterRegions();
-        filterOrgans();
-        updateTransplantRequestList();
-    }
+
 
     private void updateTransplantRequestList() {
+        filterRegions();
+        filterOrgans();
         PaginatedTransplantList newTransplantRequests = manager.getAllCurrentTransplantRequests(
                 pagination.getCurrentPageIndex() * ROWS_PER_PAGE,
                 ROWS_PER_PAGE,

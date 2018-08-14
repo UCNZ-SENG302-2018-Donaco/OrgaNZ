@@ -162,7 +162,7 @@ public class ClientManagerRest implements ClientManager {
 
     @Override
     public PaginatedTransplantList getAllCurrentTransplantRequests(Integer offset, Integer count,
-            Set<Region> regions, Set<Organ> organs) {
+            Set<String> regions, Set<Organ> organs) {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set("Accept", MediaType.APPLICATION_JSON_VALUE);
         httpHeaders.set("X-Auth-Token", State.getToken());
@@ -173,11 +173,7 @@ public class ClientManagerRest implements ClientManager {
                 .queryParam("count", count);
 
         if (regions != null && !regions.isEmpty()) {
-            builder = builder.queryParam("region", regions.stream()
-                    .map(Region::name)
-                    .collect(Collectors.toList()).toString()
-                    .substring(1, regions.toString().length() - 1)
-                    .replaceAll(" ", ""));
+            builder = builder.queryParam("regions", String.join(",", regions));
         }
         if (organs != null && !organs.isEmpty()) {
             builder = builder.queryParam("organs", organs.stream()
