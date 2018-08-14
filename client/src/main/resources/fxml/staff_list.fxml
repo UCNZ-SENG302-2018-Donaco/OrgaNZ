@@ -31,10 +31,13 @@
                   <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
               </VBox.margin>
                <columns>
-                  <TableColumn fx:id="idCol" prefWidth="157.0" text="Staff ID" />
-                  <TableColumn fx:id="firstNameCol" prefWidth="225.0" text="First Name" />
-                  <TableColumn fx:id="lastNameCol" prefWidth="231.0" text="Last Name" />
+                  <TableColumn fx:id="idCol" prefWidth="116.0" resizable="false" text="Staff ID" />
+                  <TableColumn fx:id="firstNameCol" prefWidth="287.00001525878906" resizable="false" text="First Name" />
+                  <TableColumn fx:id="lastNameCol" prefWidth="573.0" resizable="false" text="Last Name" />
                </columns>
+               <columnResizePolicy>
+                  <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+               </columnResizePolicy>
            </TableView>
        </VBox>
    </SplitPane>
