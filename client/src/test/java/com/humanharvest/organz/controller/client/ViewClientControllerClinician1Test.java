@@ -1,25 +1,22 @@
 package com.humanharvest.organz.controller.client;
 
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.utilities.enums.Country;
-import com.humanharvest.organz.utilities.enums.Organ;
-import javafx.scene.input.KeyCode;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
-import static org.junit.Assert.assertEquals;
+import javafx.scene.input.KeyCode;
+
+import com.humanharvest.organz.utilities.enums.Country;
+import org.junit.Before;
+import org.junit.Test;
 
 public class ViewClientControllerClinician1Test extends ViewClientControllerClinicianBaseTest {
 
-
+    @Override
     @Before
     public void setClientDetails() {
-        testClient = new Client(1);
         testClient.setFirstName("a");
         testClient.setLastName("b");
         testClient.setDateOfBirth(dateOfBirth);
@@ -62,16 +59,6 @@ public class ViewClientControllerClinician1Test extends ViewClientControllerClin
         String beforeBirthday = "10/10/" + (dateOfBirth.getYear() - 2);
         clickOn("#deathDatePicker");
         doubleClickOn("#deathDatePicker").type(KeyCode.BACK_SPACE).write(beforeBirthday);
-        clickOn("#applyButton");
-        assertEquals(dateOfDeath, testClient.getDateOfDeath());
-    }
-
-    @Ignore("Ignored until manually overridden organs has been properly implemented")
-    @Test
-    public void invalidChangeDateOfDeathManuallyOverriddenOrgans() {
-        testClient.donateOrgan(Organ.LIVER);
-        clickOn("#deathDatePicker");
-        doubleClickOn("#deathDatePicker").type(KeyCode.BACK_SPACE).write("10/10/" + recentYear);
         clickOn("#applyButton");
         assertEquals(dateOfDeath, testClient.getDateOfDeath());
     }

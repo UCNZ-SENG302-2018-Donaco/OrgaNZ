@@ -1,13 +1,13 @@
 package com.humanharvest.organz.controller.client;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.controller.ControllerTest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
 
 public abstract class ViewClientControllerClinicianBaseTest extends ControllerTest {
 
@@ -26,7 +26,7 @@ public abstract class ViewClientControllerClinicianBaseTest extends ControllerTe
     @Override
     protected void initState() {
         State.reset();
-        setClientDetails();
+        setUpClient();
         State.getClientManager().addClient(testClient);
         State.login(State.getClinicianManager().getDefaultClinician()); // login as default clinician
         mainController.setWindowContext(new WindowContext.WindowContextBuilder()
@@ -35,5 +35,11 @@ public abstract class ViewClientControllerClinicianBaseTest extends ControllerTe
                 .build());
     }
 
+    private void setUpClient() {
+        testClient = new Client(1);
+        setClientDetails();
+    }
+
     public abstract void setClientDetails();
+
 }

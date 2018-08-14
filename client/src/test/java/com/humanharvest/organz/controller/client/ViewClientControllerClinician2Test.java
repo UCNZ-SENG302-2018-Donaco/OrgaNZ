@@ -1,20 +1,20 @@
 package com.humanharvest.organz.controller.client;
 
-import com.humanharvest.organz.Client;
+import static org.junit.Assert.assertEquals;
+
+import javafx.scene.input.KeyCode;
+
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
-import javafx.scene.input.KeyCode;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-
 public class ViewClientControllerClinician2Test extends ViewClientControllerClinicianBaseTest {
 
+    @Override
     @Before
     public void setClientDetails() {
-        testClient = new Client(1);
         testClient.setFirstName("a");
         testClient.setLastName("b");
         testClient.setDateOfBirth(dateOfBirth);
