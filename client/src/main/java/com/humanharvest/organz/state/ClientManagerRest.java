@@ -1,7 +1,5 @@
 package com.humanharvest.organz.state;
 
-import java.io.File;
-import java.io.IOException;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.Collections;
@@ -57,7 +55,7 @@ public class ClientManagerRest implements ClientManager {
             Integer count,
             Integer minimumAge,
             Integer maximumAge,
-            EnumSet<Region> regions,
+            Set<String> regions,
             EnumSet<Gender> birthGenders,
             ClientType clientType,
             EnumSet<Organ> donating,
@@ -74,7 +72,7 @@ public class ClientManagerRest implements ClientManager {
                 .queryParam("count", count)
                 .queryParam("minimumAge", minimumAge)
                 .queryParam("maximumAge", maximumAge)
-                .queryParam("regions", EnumSetToString.convert(regions))
+                .queryParam("regions", String.join(",", regions))
                 .queryParam("birthGenders", EnumSetToString.convert(birthGenders))
                 .queryParam("clientType", clientType)
                 .queryParam("donating", EnumSetToString.convert(donating))
@@ -83,10 +81,6 @@ public class ClientManagerRest implements ClientManager {
                 .queryParam("isReversed", isReversed);
 
         HttpEntity<String> entity = new HttpEntity<>(httpHeaders);
-
-        String outString = builder.toUriString();
-
-        System.out.println(outString);
 
         HttpEntity<PaginatedClientList> response = State.getRestTemplate().exchange(
                 builder.toUriString(),
@@ -214,7 +208,6 @@ public class ClientManagerRest implements ClientManager {
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-Auth-Token", State.getToken());
         HttpEntity<String> entity = new HttpEntity<>(headers);
-
         ResponseEntity<Collection<DonatedOrganView>> responseEntity = State.getRestTemplate().exchange(
                 State.BASE_URI + "/clients/organs",
                 HttpMethod.GET,
