@@ -1,12 +1,8 @@
 package com.humanharvest.organz.controller.client;
 
 import com.humanharvest.organz.Client;
-import com.humanharvest.organz.controller.ControllerTest;
-import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.view.Page;
-import com.humanharvest.organz.utilities.view.WindowContext;
 import javafx.scene.input.KeyCode;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -18,34 +14,12 @@ import java.time.format.DateTimeFormatter;
 
 import static org.junit.Assert.assertEquals;
 
-public class ViewClientControllerClinicianTest extends ControllerTest {
+public class ViewClientControllerClinician1Test extends ViewClientControllerClinicianBaseTest {
 
-    private LocalDate dateOfBirth = LocalDate.now().minusYears(10);
-    private LocalDate dateOfDeath = LocalDate.now().minusYears(1);
-    private LocalTime timeOfDeath = LocalTime.parse("10:00:00");
-    private int futureYear = LocalDate.now().plusYears(2).getYear();
-    private int recentYear = LocalDate.now().minusYears(2).getYear();
-    private Client testClient = new Client(1);
-
-    @Override
-    protected Page getPage() {
-        return Page.VIEW_CLIENT;
-    }
-
-    @Override
-    protected void initState() {
-        State.reset();
-        setClientDetails();
-        State.getClientManager().addClient(testClient);
-        State.login(State.getClinicianManager().getDefaultClinician()); // login as default clinician
-        mainController.setWindowContext(new WindowContext.WindowContextBuilder()
-                .setAsClinicianViewClientWindow()
-                .viewClient(testClient)
-                .build());
-    }
 
     @Before
     public void setClientDetails() {
+        testClient = new Client(1);
         testClient.setFirstName("a");
         testClient.setLastName("b");
         testClient.setDateOfBirth(dateOfBirth);
