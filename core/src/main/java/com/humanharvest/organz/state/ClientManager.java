@@ -94,11 +94,5 @@ public interface ClientManager {
             organType);
 
 
-    /** Used by clinician to manually expire an organ
-     * @param organ Organ that clinician wishes to expire
-     * @return Returns expired organ.
-     */
-    DonatedOrgan manuallyExpireOrgan(DonatedOrgan organ);
-
     List<HistoryItem> getAllHistoryItems();
 }

@@ -11,12 +11,30 @@ import java.util.Set;
 import javax.persistence.OptimisticLockException;
 import javax.persistence.RollbackException;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
+import javax.persistence.OptimisticLockException;
+import javax.persistence.RollbackException;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.database.DBManager;
-import com.humanharvest.organz.utilities.enums.*;
+import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
+import com.humanharvest.organz.utilities.enums.ClientType;
+import com.humanharvest.organz.utilities.enums.Gender;
+import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.views.client.PaginatedClientList;
 import com.humanharvest.organz.utilities.type_converters.EnumSetToString;
 import com.humanharvest.organz.views.client.PaginatedDonatedOrgansList;
@@ -25,12 +43,6 @@ import org.hibernate.ReplicationMode;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
-import javax.persistence.OptimisticLockException;
-import javax.persistence.RollbackException;
-import java.time.LocalDate;
-import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * A pure database implementation of {@link ClientManager} that uses a database to store clients, then retrieves them
@@ -95,11 +107,9 @@ public class ClientManagerDBPure implements ClientManager {
         try (org.hibernate.Session session = dbManager.getDBSession()) {
             trns = session.beginTransaction();
 
-
             Map<String, Object> params = new HashMap<>();
             StringBuilder joinBuilder = new StringBuilder();
             StringJoiner whereJoiner = new StringJoiner(" AND ");
-
 
             //Setup minimum age filter
             if (minimumAge != null) {
@@ -118,14 +128,17 @@ public class ClientManagerDBPure implements ClientManager {
             //Setup region filter. We use region IN, then have to do some fancy string conversions as the Hibernate params weren't working
             if (regions != null && regions.size() > 0) {
                 //TODO: Work out why the params didn't work with EnumSet or even when converting it to string so we can use that instead of this uglyness
-                whereJoiner.add("c.region IN (" + regions.stream().map(region -> "'" + region.replace("'", "''") + "'").collect(Collectors.joining(",")) + ")");
+                whereJoiner.add("c.region IN (" + regions.stream().map(region -> "'" + region.replace("'", "''") + "'")
+                        .collect(Collectors.joining(",")) + ")");
 //                params.put("regions", regions);
             }
 
             //Setup birth gender filter. We use gender IN, then have to do some fancy string conversions as the Hibernate params weren't working
             if (birthGenders != null && birthGenders.size() > 0) {
                 //TODO: Work out why the params didn't work with EnumSet or even when converting it to string so we can use that instead of this uglyness
-                whereJoiner.add("c.gender IN (" + birthGenders.stream().map(birthGender -> "'" + birthGender.name().replace("'", "''") + "'").collect(Collectors.joining(",")) + ")");
+                whereJoiner.add("c.gender IN (" + birthGenders.stream()
+                        .map(birthGender -> "'" + birthGender.name().replace("'", "''") + "'")
+                        .collect(Collectors.joining(",")) + ")");
 //                params.put("genders", birthGenders);
             }
 
@@ -134,7 +147,8 @@ public class ClientManagerDBPure implements ClientManager {
                 //TODO: Work out why the params didn't work with EnumSet or even when converting it to string so we can use that instead of this uglyness
                 String joinQuery = " INNER JOIN (SELECT donating.Client_uid FROM Client_organsDonating AS donating WHERE donating.organsDonating IN (";
 
-                joinQuery += donating.stream().map(organ -> "'" + organ.name().replace("'", "''") + "'").collect(Collectors.joining(",")) + ")";
+                joinQuery += donating.stream().map(organ -> "'" + organ.name().replace("'", "''") + "'")
+                        .collect(Collectors.joining(",")) + ")";
 
                 joinQuery += " GROUP BY donating.Client_uid) donating ON c.uid=donating.Client_uid ";
 
@@ -145,11 +159,14 @@ public class ClientManagerDBPure implements ClientManager {
             //Setup requesting filter. We use an INNER JOIN and therefor select only clients where they have an entry in the TransplantRequest table that matches one of the given organs and is status=WAITING
             if (requesting != null && requesting.size() > 0) {
                 //TODO: Work out why the params didn't work with EnumSet or even when converting it to string so we can use that instead of this uglyness
-                String joinQuery = " INNER JOIN (SELECT requesting.Client_uid FROM TransplantRequest AS requesting WHERE" +
-                        " requesting.status='WAITING' AND " +
-                        " requesting.requestedOrgan IN (";
+                String joinQuery =
+                        " INNER JOIN (SELECT requesting.Client_uid FROM TransplantRequest AS requesting WHERE" +
+                                " requesting.status='WAITING' AND " +
+                                " requesting.requestedOrgan IN (";
 
-                joinQuery += requesting.stream().map(organ -> "'" + organ.ordinal() + "'").collect(Collectors.joining(",")) + ")";
+                joinQuery +=
+                        requesting.stream().map(organ -> "'" + organ.ordinal() + "'").collect(Collectors.joining(","))
+                                + ")";
 
                 joinQuery += " GROUP BY requesting.Client_uid) requesting ON c.uid=requesting.Client_uid ";
 
@@ -242,7 +259,6 @@ public class ClientManagerDBPure implements ClientManager {
                 dir = "ASC";
             }
 
-
             // Create the final strings, in the basic format
             // START_TEXT + JOINS + WHERES + ORDER BY + LIMIT + OFFSET
             // Only add the WHERE if there are some where checks.
@@ -253,7 +269,9 @@ public class ClientManagerDBPure implements ClientManager {
             }
 
             // Quite a complex string build, but all defined as above, just simple string combinations
-            String queryString = "SELECT c.* FROM Client c " + joinBuilder + whereJoiner.toString() + " ORDER BY " + sort + " " + dir + ", " + nameSort + " ASC LIMIT :limit OFFSET :offset";
+            String queryString =
+                    "SELECT c.* FROM Client c " + joinBuilder + whereJoiner.toString() + " ORDER BY " + sort + " " + dir
+                            + ", " + nameSort + " ASC LIMIT :limit OFFSET :offset";
             String countString = "SELECT count(*) FROM Client c " + joinBuilder + whereJoiner.toString();
 
             System.out.println(queryString);
@@ -267,11 +285,9 @@ public class ClientManagerDBPure implements ClientManager {
                 countQuery.setParameter(entry.getKey(), entry.getValue());
             }
 
-
             // Set the limit and offset for the main query
             mainQuery.setParameter("limit", count);
             mainQuery.setParameter("offset", offset);
-
 
             // Execute the queries
             int totalCount = Integer.valueOf(countQuery.uniqueResult().toString());
@@ -513,7 +529,7 @@ public class ClientManagerDBPure implements ClientManager {
 
     @Override
     public PaginatedTransplantList getAllCurrentTransplantRequests(Integer offset, Integer count,
-                                                                   Set<String> regions, Set<Organ> organs) {
+            Set<String> regions, Set<Organ> organs) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
@@ -550,7 +566,6 @@ public class ClientManagerDBPure implements ClientManager {
             requests = dbManager.getDBSession()
                     .createQuery("FROM DonatedOrgan", DonatedOrgan.class)
                     .getResultList();
-            System.out.println(requests);
             trns.commit();
         } catch (RollbackException exc) {
             if (trns != null) {
@@ -565,9 +580,9 @@ public class ClientManagerDBPure implements ClientManager {
      * @return a list of all organs available for donation
      */
     @Override
-    public PaginatedDonatedOrgansList getAllOrgansToDonate(Integer offset, Integer count,Set<String> regions,
+    public PaginatedDonatedOrgansList getAllOrgansToDonate(Integer offset, Integer count, Set<String> regions,
             EnumSet<Organ>
-            organType) {
+                    organType) {
         //TODO Implement the WHERE statements for this.
         List<DonatedOrgan> requests = null;
         Transaction trns = null;
@@ -578,10 +593,10 @@ public class ClientManagerDBPure implements ClientManager {
     }
 
     @Override
-    public DonatedOrgan manuallyExpireOrgan(DonatedOrgan organ){
+    public DonatedOrgan manuallyExpireOrgan(DonatedOrgan organ) {
         //Todo: Test
         Transaction trns = null;
-        try(org.hibernate.Session session = dbManager.getDBSession()) {
+        try (org.hibernate.Session session = dbManager.getDBSession()) {
             trns = session.beginTransaction();
             dbManager.getDBSession().remove(organ);
 
@@ -591,8 +606,8 @@ public class ClientManagerDBPure implements ClientManager {
                 trns.rollback();
             }
         }
-            return organ;
+        return organ;
 
-        }
+    }
 
 }

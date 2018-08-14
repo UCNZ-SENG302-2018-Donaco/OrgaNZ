@@ -43,7 +43,6 @@
                <MenuItem fx:id="requestOrganItem" mnemonicParsing="false" onAction="#goToRequestOrganDonation" text="Request Organs" />
                <MenuItem fx:id="transplantRequestsItem" mnemonicParsing="false" onAction="#goToTransplants" text="Transplant Requests" />
                   <MenuItem fx:id="organsToDonateItem" mnemonicParsing="false" onAction="#goToOrganstoDonate" text="Organs To Donate" />
-                  <MenuItem fx:id="manuallyOverwrittenOrgansItem" mnemonicParsing="false" onAction="#goToManuallyOverwrittenOrgans" text="Manually Overwritten Organs" />
              </items>
           </Menu>
           <Menu fx:id="medicationsPrimaryItem" mnemonicParsing="false" text="Medications">
