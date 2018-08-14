@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableValueBase;
@@ -407,7 +408,7 @@ public class SearchClientsController extends SubController {
                 ROWS_PER_PAGE,
                 (int) ageSlider.getLowValue(),
                 (int) ageSlider.getHighValue(),
-                filterToSet(regionFilter, Region.class),
+                regionFilter.getCheckModel().getCheckedItems().stream().map(Enum::toString).collect(Collectors.toSet()),
                 filterToSet(birthGenderFilter, Gender.class),
                 clientTypeFilter.getValue(),
                 filterToSet(organsDonatingFilter, Organ.class),
