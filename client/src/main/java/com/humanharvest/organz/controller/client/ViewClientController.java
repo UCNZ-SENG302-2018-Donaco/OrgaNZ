@@ -200,8 +200,11 @@ public class ViewClientController extends ViewBaseController {
                 aliveToggleBtn.setDisable(true);
                 deadToggleBtn.setDisable(true);
                 deathDatePicker.setDisable(true);
+                deathTimeField.setDisable(true);
                 Tooltip tooltip = new Tooltip(
-                        "Date of death is not editable because at least one organ has been manually overridden.");
+                        "Date and time of death is not editable, "
+                                + "because at least one organ has been manually overridden. "
+                                + "To edit the date and/or time, please cancel all manual overrides.");
                 Tooltip.install(dateOfDeathPane, tooltip);
             }
         }
