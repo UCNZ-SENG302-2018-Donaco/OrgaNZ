@@ -122,10 +122,6 @@ public class SetOrganStatus implements Runnable {
             }
         }
 
-        outputStream.print("test");
-        PrintStream newStream = System.out;
-        System.out.println("test");
-
         outputStream.println(invoker.execute(action));
     }
 }

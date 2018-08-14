@@ -242,9 +242,6 @@ public class ClientManagerRest implements ClientManager {
                 HttpMethod.GET,
                 entity, PaginatedDonatedOrgansList.class);
 
-        System.out.println("sadsadsadsad" + responseEntity.getBody());
-
         return responseEntity.getBody();
-
     }
 }

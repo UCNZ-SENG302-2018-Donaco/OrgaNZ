@@ -211,7 +211,6 @@ public final class State {
     }
 
     public static void setClientEtag(String etag) {
-        System.out.println("Setting client etag to: " + etag);
         clientEtag = etag;
     }
 

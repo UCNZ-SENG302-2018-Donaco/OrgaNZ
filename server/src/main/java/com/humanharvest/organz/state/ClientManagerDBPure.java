@@ -260,8 +260,6 @@ public class ClientManagerDBPure implements ClientManager {
                     + "ORDER BY " + sort + " " + dir + ", " + nameSort + " ASC LIMIT :limit OFFSET :offset";
             String countString = "SELECT count(*) FROM Client c " + joinBuilder + whereJoiner.toString();
 
-            System.out.println(queryString);
-
             Query countQuery = session.createNativeQuery(countString);
             Query<Client> mainQuery = session.createNativeQuery(queryString, Client.class);
 
