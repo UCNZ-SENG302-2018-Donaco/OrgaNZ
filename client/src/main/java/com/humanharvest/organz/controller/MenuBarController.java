@@ -12,7 +12,6 @@ import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.humanharvest.organz.Client;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
@@ -28,7 +27,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import com.humanharvest.organz.AppUI;
-import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
@@ -88,15 +86,12 @@ public class MenuBarController extends SubController {
     public Menu profilePrimaryItem;
 
 
-    private ClientManager clientManager;
     private Session session;
-    private Client client;
 
     /**
      * Gets the ActionInvoker from the current state.
      */
     public MenuBarController() {
-        clientManager = State.getClientManager();
         session = State.getSession();
     }
 
@@ -136,7 +131,6 @@ public class MenuBarController extends SubController {
                 && windowContext.isClinViewClientWindow()) {
             hideMenus(menusHideFromClinViewClients);
             hideMenuItems(menuItemsHideFromClinViewClients);
-            client = windowContext.getViewClient();
         }
 
         // Admins
@@ -492,9 +486,9 @@ public class MenuBarController extends SubController {
 
         Task<List<String>> task = new Task<List<String>>() {
             @Override
-            public List<String> call() throws IOException {
+            public List<String> call() {
                 CacheManager.INSTANCE.refreshCachedData();
-                return new ArrayList<String>();
+                return new ArrayList<>();
             }
         };
 
