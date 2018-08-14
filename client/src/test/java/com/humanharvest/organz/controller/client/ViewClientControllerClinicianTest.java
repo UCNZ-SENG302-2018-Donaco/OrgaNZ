@@ -3,18 +3,17 @@ package com.humanharvest.organz.controller.client;
 import static org.junit.Assert.assertEquals;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
 import javafx.scene.input.KeyCode;
 
 import com.humanharvest.organz.Client;
-import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.controller.ControllerTest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
 import org.junit.Before;
@@ -139,6 +138,20 @@ public class ViewClientControllerClinicianTest extends ControllerTest {
         doubleClickOn("#deathTimeField").type(KeyCode.BACK_SPACE).write("23:59:59");
         clickOn("#applyButton");
         assertEquals(timeOfDeath, testClient.getTimeOfDeath());
+    }
+
+    // Date of death not editable when has overridden organs
+
+    @Test
+    public void dateOfDeathIsNotEditableTest() {
+        testClient.donateOrgan(Organ.LIVER);
+        testClient.markDead(LocalDate.now(), LocalTime.now(), Country.NZ, Region.CANTERBURY.toString(), "ChCh");
+        testClient.getDonatedOrgans().get(0).manuallyOverride("dropped it");
+
+        clickOn("#deathTimeField");
+        doubleClickOn("#deathTimeField").type(KeyCode.BACK_SPACE).write("10:10:10");
+        clickOn("#applyButton");
+        assertEquals(LocalDate.of(recentYear, 10, 10), testClient.getDateOfDeath());
     }
 
 }
