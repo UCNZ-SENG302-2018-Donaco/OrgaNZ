@@ -162,7 +162,9 @@ public class OrgansToDonateController extends SubController {
                 javafx.util.Duration.millis(1000),
                 event -> {
                     tableView.refresh();
-                    observableOrgansToDonate.removeIf(donatedOrgan -> donatedOrgan.getDurationUntilExpiry() != null &&
+                    observableOrgansToDonate.removeIf(donatedOrgan ->
+                            donatedOrgan.getOverrideReason() != null ||
+                            donatedOrgan.getDurationUntilExpiry() != null &&
                             donatedOrgan.getDurationUntilExpiry().minusSeconds(1).isNegative());
                 }));
         clock.setCycleCount(Animation.INDEFINITE);
@@ -192,8 +194,8 @@ public class OrgansToDonateController extends SubController {
             }
         });
 
-        filteredOrgansToDonate.setPredicate(donatedOrgan -> donatedOrgan.getDurationUntilExpiry() == null
-                || !donatedOrgan.getDurationUntilExpiry().isZero());
+        filteredOrgansToDonate.setPredicate(donatedOrgan -> donatedOrgan.getOverrideReason() == null &&
+                (donatedOrgan.getDurationUntilExpiry() == null || !donatedOrgan.getDurationUntilExpiry().isZero()));
         sortedOrgansToDonate.comparatorProperty().bind(tableView.comparatorProperty());
     }
 
