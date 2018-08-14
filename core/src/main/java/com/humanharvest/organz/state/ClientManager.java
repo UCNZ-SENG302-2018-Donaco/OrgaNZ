@@ -79,5 +79,7 @@ public interface ClientManager {
      */
     Collection<DonatedOrgan> getAllOrgansToDonate();
 
+    List<Client> getOrganMatches(DonatedOrgan donatedOrgan);
+
     List<HistoryItem> getAllHistoryItems();
 }

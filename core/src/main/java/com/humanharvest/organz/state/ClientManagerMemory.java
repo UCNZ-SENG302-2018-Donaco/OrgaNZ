@@ -328,4 +328,9 @@ public class ClientManagerMemory implements ClientManager {
         }
         return donatedOrgans;
     }
+
+    @Override
+    public List<Client> getOrganMatches(DonatedOrgan donatedOrgan) {
+        return null;
+    }
 }

@@ -203,4 +203,13 @@ public class ClientManagerRest implements ClientManager {
 
         return responseEntity.getBody().stream().map(DonatedOrganView::getDonatedOrgan).collect(Collectors.toList());
     }
+
+    /**
+     * @param donatedOrgan available organ to find potential matches for
+     * @return list of potential recipients of the client
+     */
+    @Override
+    public List<Client> getOrganMatches(DonatedOrgan donatedOrgan) {
+        return null;
+    }
 }

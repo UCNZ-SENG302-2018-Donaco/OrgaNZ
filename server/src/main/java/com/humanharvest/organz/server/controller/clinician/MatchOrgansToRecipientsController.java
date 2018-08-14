@@ -1,6 +1,7 @@
 package com.humanharvest.organz.server.controller.clinician;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import com.humanharvest.organz.Client;
@@ -37,8 +38,9 @@ public class MatchOrgansToRecipientsController {
 
         // Verify that request has clinician/admin authorization
         State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
+        Collection<TransplantRequest> allTransplantRequests = State.getClientManager().getAllTransplantRequests();
 
-        List<Client> potentialMatches = MatchOrganToRecipients.getListOfPotentialRecipients(donatedOrgan);
+        List<Client> potentialMatches = MatchOrganToRecipients.getListOfPotentialRecipients(donatedOrgan, allTransplantRequests);
 
         return new ResponseEntity<>(potentialMatches, HttpStatus.OK);
 

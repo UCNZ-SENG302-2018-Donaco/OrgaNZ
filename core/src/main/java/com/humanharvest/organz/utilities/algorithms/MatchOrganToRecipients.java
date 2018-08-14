@@ -3,12 +3,12 @@ package com.humanharvest.organz.utilities.algorithms;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.TransplantRequest;
-import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Region;
 
@@ -66,7 +66,8 @@ public class MatchOrganToRecipients {
 
     }
 
-    public static List<Client> getListOfPotentialRecipients(DonatedOrgan donatedOrgan) {
+    public static List<Client> getListOfPotentialRecipients(DonatedOrgan donatedOrgan, Collection<TransplantRequest>
+            transplantRequests) {
         List<TransplantRequest> potentialTransplantRequests = new ArrayList<>();
         List<Client> potentialMatches = new ArrayList<>();
 
@@ -76,7 +77,7 @@ public class MatchOrganToRecipients {
         }
 
         // Create a list of eligible transplant requests
-        for (TransplantRequest transplantRequest : State.getClientManager().getAllCurrentTransplantRequests()) {
+        for (TransplantRequest transplantRequest : transplantRequests) {
             Client donor = donatedOrgan.getDonor();
             Client recipient = transplantRequest.getClient();
 
