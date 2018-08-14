@@ -68,9 +68,9 @@ public class ViewClientControllerClinician1Test extends ViewClientControllerClin
     @Test
     public void validChangeTimeOfDeath() {
         clickOn("#deathTimeField");
-        doubleClickOn("#deathTimeField").type(KeyCode.BACK_SPACE).write("10:10:10");
+        doubleClickOn("#deathTimeField").type(KeyCode.BACK_SPACE).write(adjustedTimeOfDeathString);
         clickOn("#applyButton");
-        assertEquals(LocalTime.of(10, 10, 10), testClient.getTimeOfDeath());
+        assertEquals(adjustedTimeOfDeath, testClient.getTimeOfDeath());
     }
 
     @Test

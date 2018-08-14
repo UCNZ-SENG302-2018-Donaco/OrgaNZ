@@ -3,6 +3,7 @@ package com.humanharvest.organz.controller.client;
 import static org.junit.Assert.assertEquals;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 
 import javafx.scene.input.KeyCode;
 
@@ -12,6 +13,9 @@ import com.humanharvest.organz.utilities.enums.Region;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * Testing that date and time of death are editable when client has cancelled the overrides on all overridden organs
+ */
 public class ViewClientControllerClinician3Test extends ViewClientControllerClinicianBaseTest {
 
     @Override
@@ -28,11 +32,18 @@ public class ViewClientControllerClinician3Test extends ViewClientControllerClin
 
     @Test
     public void dateOfDeathIsEditableAgainTest() {
-
         clickOn("#deathDatePicker");
         doubleClickOn("#deathDatePicker").type(KeyCode.BACK_SPACE).write("10/10/" + recentYear);
         clickOn("#applyButton");
         assertEquals(LocalDate.of(recentYear, 10, 10), testClient.getDateOfDeath());
+    }
+
+    @Test
+    public void timeOfDeathIsEditableAgainTest() {
+        clickOn("#deathTimeField");
+        doubleClickOn("#deathTimeField").type(KeyCode.BACK_SPACE).write(adjustedTimeOfDeathString);
+        clickOn("#applyButton");
+        assertEquals(adjustedTimeOfDeath, testClient.getTimeOfDeath());
     }
 
 }

@@ -14,6 +14,8 @@ public abstract class ViewClientControllerClinicianBaseTest extends ControllerTe
     LocalDate dateOfBirth = LocalDate.now().minusYears(10);
     LocalDate dateOfDeath = LocalDate.now().minusYears(1);
     LocalTime timeOfDeath = LocalTime.parse("10:00:00");
+    String adjustedTimeOfDeathString = "11:22:33";
+    LocalTime adjustedTimeOfDeath = LocalTime.parse(adjustedTimeOfDeathString);
     int futureYear = LocalDate.now().plusYears(2).getYear();
     int recentYear = LocalDate.now().minusYears(2).getYear();
     Client testClient;
