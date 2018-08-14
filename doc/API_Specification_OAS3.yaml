@@ -1,6 +1,6 @@
 openapi: "3.0.3"
 info:
-  version: 1.0.6
+  version: 1.0.7
   title: "Organz API"
   description: |
     An API used to access the Human Harvest Inc server.
@@ -517,7 +517,7 @@ paths:
   '/clients/organs':
     get:
       tags:
-        - Client Donation Status
+        - Client Organs
       security:
         - ClinicianAccess: []
         - AdministratorAccess: []
@@ -540,6 +540,138 @@ paths:
         500:
           $ref: '#/components/responses/500InternalServerError'
 
+  '/clients/{uid}/donatedOrgans':
+    parameters:
+      - in: path
+        name: uid
+        description: Client User ID
+        required: true
+        schema:
+          type: integer
+          minimum: 0
+    get:
+      tags:
+        - Client Organs
+      security:
+        - ClinicianAccess: []
+        - AdministratorAccess: []
+      summary: Get the list of organs this client has donated
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/donatedOrganList'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+
+  '/clients/{uid}/donatedOrgans/{id}/override':
+    parameters:
+      - in: path
+        name: uid
+        description: Client User ID
+        required: true
+        schema:
+          type: integer
+          minimum: 0
+      - in: path
+        name: id
+        description: Donated Organ ID
+        required: true
+        schema:
+          type: integer
+          minimum: 0
+    post:
+      summary: Manually override a given donated organ so it cannot be donated
+      tags:
+        - Client Organs
+      security:
+        - ClinicianAccess: []
+        - AdministratorAccess: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/singleStringView'
+      responses:
+        201:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/donatedOrgan'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+    patch:
+      summary: Edit the manual override on a given donated organ
+      tags:
+        - Client Organs
+      security:
+        - ClinicianAccess: []
+        - AdministratorAccess: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/singleStringView'
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/donatedOrgan'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+    delete:
+      summary: Cancel the manual override on a given donated organ so it can be donated again
+      tags:
+        - Client Organs
+      security:
+        - ClinicianAccess: []
+        - AdministratorAccess: []
+      responses:
+        200:
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/donatedOrgan'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        404:
+          $ref: '#/components/responses/404NotFound'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
 
   '/clients/{uid}/medications':
     parameters:
@@ -2347,6 +2479,9 @@ components:
           $ref: '#/components/schemas/organEnum'
         dateTimeOfDonation:
           $ref: '#/components/schemas/dateTime'
+        overrideReason:
+          type: string
+          example: "It got dropped"
 
     donatedOrganList:
       type: object
@@ -2537,6 +2672,15 @@ components:
       properties:
         response:
           type: string
+
+    singleStringView:
+      type: object
+      required:
+        - value
+      properties:
+        value:
+          type: string
+          example: "This is my request."
 
     actionResponse:
       type: object
