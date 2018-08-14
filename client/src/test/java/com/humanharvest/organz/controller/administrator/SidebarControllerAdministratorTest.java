@@ -29,20 +29,11 @@ public class SidebarControllerAdministratorTest extends ControllerTest {
         mainController.setWindowContext(new WindowContextBuilder().build());
     }
 
-    // Test clicking on action buttons
 
     @Test
-    public void testClickOnUndo() {
+    public void testActionButtons() {
         clickOn("#undoButton");
-    }
-
-    @Test
-    public void testClickOnRedo() {
         clickOn("#redoButton");
-    }
-
-    @Test
-    public void testClickOnLogout() {
         clickOn("#logoutButton");
         assertEquals(Page.LANDING, mainController.getCurrentPage());
     }
@@ -91,32 +82,16 @@ public class SidebarControllerAdministratorTest extends ControllerTest {
         assertEquals(Page.VIEW_CLINICIAN, mainController.getCurrentPage());
     }
 
-    // Test client-only buttons are hidden
 
     @Test
-    public void testClientDetailsHidden() {
+    public void testHiddenButtons() {
         verifyThat("#viewClientButton", isInvisible());
-    }
-
-    @Test
-    public void testDonateOrgansHidden() {
         verifyThat("#registerOrganDonationButton", isInvisible());
-    }
-
-    @Test
-    public void testRequestOrgansHidden() {
         verifyThat("#requestOrganDonationButton", isInvisible());
-    }
-
-    @Test
-    public void testMedicationsHidden() {
         verifyThat("#viewMedicationsButton", isInvisible());
-    }
-
-    @Test
-    public void testMedicalHistoryHidden() {
         verifyThat("#illnessHistoryButton", isInvisible());
     }
+
 
 
 }
