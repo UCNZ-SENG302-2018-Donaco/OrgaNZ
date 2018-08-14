@@ -64,7 +64,7 @@ import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder
 
 public class OrgansToDonateController extends SubController {
 
-    private static final int ROWS_PER_PAGE = 10;
+    private static final int ROWS_PER_PAGE = 30;
     private static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("d MMM yyyy hh:mm a");
 
     @FXML
@@ -270,7 +270,10 @@ public class OrgansToDonateController extends SubController {
 
         //Collection<DonatedOrgan> newOrgansToDonate = manager.getAllOrgansToDonate(regionsToFilter, organsToFilter);
 
-        PaginatedDonatedOrgansList newOrgansToDonate = manager.getAllOrgansToDonate(regionsToFilter,organsToFilter);
+        PaginatedDonatedOrgansList newOrgansToDonate = manager.getAllOrgansToDonate(
+                pagination.getCurrentPageIndex() * ROWS_PER_PAGE,
+                ROWS_PER_PAGE,
+                regionsToFilter,organsToFilter);
 
         observableOrgansToDonate.setAll(newOrgansToDonate.getDonatedOrgans().stream().map(
                 DonatedOrganView::getDonatedOrgan).collect(Collectors.toList()));

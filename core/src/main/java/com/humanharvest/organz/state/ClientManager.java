@@ -90,7 +90,8 @@ public interface ClientManager {
     /**
      * Returns a collection of all the organs that are available to donate from dead peop[e.
      */
-    PaginatedDonatedOrgansList getAllOrgansToDonate(Set<String> regions, EnumSet<Organ> organType);
+    PaginatedDonatedOrgansList getAllOrgansToDonate(Integer offset,Integer count,Set<String> regions, EnumSet<Organ>
+            organType);
 
 
     /** Used by clinician to manually expire an organ

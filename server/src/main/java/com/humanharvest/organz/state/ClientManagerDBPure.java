@@ -565,7 +565,9 @@ public class ClientManagerDBPure implements ClientManager {
      * @return a list of all organs available for donation
      */
     @Override
-    public PaginatedDonatedOrgansList getAllOrgansToDonate(Set<String> regions, EnumSet<Organ> organType) {
+    public PaginatedDonatedOrgansList getAllOrgansToDonate(Integer offset, Integer count,Set<String> regions,
+            EnumSet<Organ>
+            organType) {
         //TODO Implement the WHERE statements for this.
         List<DonatedOrgan> requests = null;
         Transaction trns = null;

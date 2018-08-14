@@ -353,11 +353,12 @@ public class ClientManagerMemory implements ClientManager {
         return donatedOrgans;
     }
 
-    /**
+    /**donatedOrgans,totalResults)
      * @return a list of all organs available for donation
      */
     @Override
-    public PaginatedDonatedOrgansList getAllOrgansToDonate(Set<String> regions, EnumSet<Organ> organType) {
+    public PaginatedDonatedOrgansList getAllOrgansToDonate(Integer offset, Integer count,Set<String> regions,
+            EnumSet<Organ> organType) {
 
         List<DonatedOrganView> donatedOrgans = new ArrayList<>();
 
@@ -376,10 +377,12 @@ public class ClientManagerMemory implements ClientManager {
                         organType.contains(organ.getDonatedOrgan().getOrganType()))
 
                 .collect(Collectors.toList());
-        int totalResults = donatedOrgans.size();
 
 
-        return new PaginatedDonatedOrgansList(donatedOrgans,totalResults);
+        return new PaginatedDonatedOrgansList(donatedOrgans.subList(
+                Math.min(offset, donatedOrgans.size()),
+                Math.min(offset + count, donatedOrgans.size())),
+                donatedOrgans.size());
 
     }
 

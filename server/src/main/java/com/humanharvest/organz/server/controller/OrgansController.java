@@ -46,6 +46,8 @@ public class OrgansController {
     @GetMapping("/clients/organs")
     public ResponseEntity<PaginatedDonatedOrgansList> getOrgansToDonate(
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken,
+            @RequestParam(required = false) Integer offset,
+            @RequestParam(required = false) Integer count,
             @RequestParam(required = false) Set<String> regions,
             @RequestParam(required = false) EnumSet<Organ> organType)
             throws GlobalControllerExceptionHandler.InvalidRequestException {
@@ -79,11 +81,24 @@ public class OrgansController {
 
                 .collect(Collectors.toList());
 
-        PaginatedDonatedOrgansList paginatedDonatedOrgansList = new PaginatedDonatedOrgansList(filteredOrgans,
-                filteredOrgans.size());
+        if (offset == null) {
+            offset = 0;
+        }
+        if(count == null){
+            return new ResponseEntity<>(new PaginatedDonatedOrgansList(
+                    filteredOrgans.subList(
+                            Math.min(offset, filteredOrgans.size()),
+                            filteredOrgans.size()),
+                    filteredOrgans.size()),
+                    HttpStatus.OK);
 
+        }else {
+            return new ResponseEntity<>(new PaginatedDonatedOrgansList(filteredOrgans.subList(
+                    Math.min(offset, filteredOrgans.size()),
+                    Math.min(offset + count, filteredOrgans.size())),
+                    filteredOrgans.size()),HttpStatus.OK);
+        }
 
-        return new ResponseEntity<>(paginatedDonatedOrgansList, HttpStatus.OK);
     }
 
     @JsonView(Views.Details.class)
