@@ -88,7 +88,7 @@ public class OrgansController {
             return new ResponseEntity<>(new PaginatedDonatedOrgansList(filteredOrgans.subList(
                     Math.min(offset, filteredOrgans.size()),
                     Math.min(offset + count, filteredOrgans.size())),
-                    filteredOrgans.size()),HttpStatus.OK);
+                    filteredOrgans.size()), HttpStatus.OK);
         }
     }
 
