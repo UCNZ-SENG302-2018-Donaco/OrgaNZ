@@ -13,9 +13,11 @@ import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.state.AdministratorManager;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.views.administrator.CreateAdministratorView;
+import org.controlsfx.control.Notifications;
 
 public class CreateAdministratorController extends SubController {
 
@@ -120,14 +122,28 @@ public class CreateAdministratorController extends SubController {
                             username,
                             password);
 
-            //TODO: Add error handling for rest errors
-            State.getAdministratorResolver().createAdministrator(administratorView);
+            try {
+                State.getAdministratorResolver().createAdministrator(administratorView);
+                State.getAuthenticationManager().loginAdministrator(username, password);
+                Notifications.create()
+                        .title("Created Administrator")
+                        .text(String.format("Administrator was created with username:%s",username))
+                        .showInformation();
 
-            State.getAuthenticationManager().loginAdministrator(username, password);
 
-            PageNavigator.loadPage(Page.SEARCH, mainController);
+                PageNavigator.loadPage(Page.SEARCH, mainController);
+            } catch (ServerRestException e) {
+                PageNavigator.showAlert(AlertType.ERROR,
+                        "Error",
+                        "An Administrator with this username exists. Please pick another");
+                return;
+            }
+            }
+
+
+
+
         }
-    }
 
     @FXML
     void goBack() {

@@ -273,7 +273,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
 
         TextArea medicationIngredients = lookup("#medicationIngredients").query();
         String ingredientsInfo = medicationIngredients.getText();
-        assertEquals(ibuprofenActiveIngredients, ingredientsInfo);
+        assertEquals("Active ingredients in Ibuprofen: \n" + ibuprofenActiveIngredients, ingredientsInfo);
     }
 
     @Test
@@ -398,7 +398,8 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
         release(KeyCode.CONTROL);
 
         String interactionsInfo = ((TextArea) lookup("#medicationInteractions").query()).getText();
-        assertEquals("anxiety\n"
+        assertEquals("Interactions between Ibuprofen and Prednisone: \n"
+                + "anxiety\n"
                 + "arthralgia\n"
                 + "dyspnoea\n"
                 + "fatigue\n"
@@ -426,7 +427,9 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
         release(KeyCode.CONTROL);
 
         String interactionsInfo = ((TextArea) lookup("#medicationInteractions").query()).getText();
-        assertEquals("anxiety\n" + "nausea", interactionsInfo);
+        assertEquals("Interactions between Med A and Med C: \n"
+                + "anxiety\n"
+                + "nausea", interactionsInfo);
     }
 
     @Test

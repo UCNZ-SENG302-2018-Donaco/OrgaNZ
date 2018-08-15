@@ -65,7 +65,7 @@
                                     </VBox.margin>
                                 </Label>
                                 <ListView fx:id="pastMedicationsView" prefHeight="330.0" prefWidth="200.0" VBox.vgrow="ALWAYS" />
-                        <Label text="Medication Ingredients">
+                        <Label text="Medication Active Ingredients">
                            <VBox.margin>
                               <Insets top="10.0" />
                            </VBox.margin>

@@ -1,19 +1,22 @@
 package com.humanharvest.organz.utilities.web;
 
+import com.google.api.client.http.HttpRequest;
+import com.google.api.client.http.HttpRequestFactory;
+import com.google.api.client.http.HttpTransport;
+import com.google.api.client.json.JsonObjectParser;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.google.api.client.http.HttpRequest;
-import com.google.api.client.http.HttpRequestFactory;
-import com.google.api.client.http.HttpResponseException;
-import com.google.api.client.http.HttpTransport;
-import com.google.api.client.json.JsonObjectParser;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A handler for requests to the drug autocompletion web API provided by MAPI.
  */
 public class MedAutoCompleteHandler extends WebAPIHandler {
+
+    private static final Logger LOGGER = Logger.getLogger(MedAutoCompleteHandler.class.getName());
 
     private static final String AUTOCOMPLETE_ENDPOINT = "http://mapi-us.iterar.co/api/autocomplete";
 
@@ -63,12 +66,8 @@ public class MedAutoCompleteHandler extends WebAPIHandler {
             url.setQueryString(queryString);
             HttpRequest request = requestFactory.buildGetRequest(url);
             suggestions = request.execute().parseAs(MedAutoCompleteResponse.class).getSuggestions();
-        } catch (HttpResponseException exc) {
-            // TODO handle more gracefully
-            exc.printStackTrace();
-        } catch (IOException exc) {
-            // TODO handle more gracefully
-            exc.printStackTrace();
+        } catch (IOException e) {
+            LOGGER.log(Level.INFO, e.getMessage(), e);
         }
         return suggestions;
     }

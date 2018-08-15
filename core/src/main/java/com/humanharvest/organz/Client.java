@@ -11,7 +11,6 @@ import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
-import com.humanharvest.organz.utilities.enums.*;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
 import com.humanharvest.organz.views.client.Views;
 
@@ -49,10 +48,10 @@ public class Client implements ConcurrencyControlledEntity {
     private String currentAddress;
 
     @JsonView(Views.Overview.class)
-    private String region;
+    private String region = "Unspecified";
     @Enumerated(EnumType.STRING)
     @JsonView(Views.Overview.class)
-    private Country country;
+    private Country country = Country.NZ;
     @Enumerated(EnumType.STRING)
     @JsonView(Views.Overview.class)
     private Gender gender;
