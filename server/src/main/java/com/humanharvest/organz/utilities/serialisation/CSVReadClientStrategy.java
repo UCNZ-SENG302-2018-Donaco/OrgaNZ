@@ -1,17 +1,5 @@
 package com.humanharvest.organz.utilities.serialisation;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.InvalidObjectException;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.util.NoSuchElementException;
-
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.utilities.enums.BloodType;
 import com.humanharvest.organz.utilities.enums.Country;
@@ -19,6 +7,14 @@ import com.humanharvest.organz.utilities.enums.Gender;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVRecord;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.NoSuchElementException;
 
 /**
  * An implementation of {@link ReadClientStrategy} that can be used for reading clients serialized to CSV. This
@@ -78,7 +74,10 @@ public class CSVReadClientStrategy implements ReadClientStrategy {
         client.setDateOfBirth(parseDate(record.get(Header.date_of_birth)));
         client.setDateOfDeath(parseDate(record.get(Header.date_of_death)));
         if (client.getDateOfDeath() != null) {
+            // These values are not provided, so we set them to some default values to ensure data is valid
             client.setTimeOfDeath(LocalTime.NOON);
+            client.setCountry(Country.NZ);
+            client.setRegionOfDeath("Unspecified");
         }
         client.setGender(Gender.fromString(record.get(Header.birth_gender)));
         client.setGenderIdentity(Gender.fromString(record.get(Header.gender)));
