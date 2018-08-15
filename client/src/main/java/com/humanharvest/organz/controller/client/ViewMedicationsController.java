@@ -14,7 +14,6 @@ import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
@@ -31,7 +30,6 @@ import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SidebarController;
 import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
@@ -54,7 +52,6 @@ import org.controlsfx.control.Notifications;
 public class ViewMedicationsController extends SubController {
 
     private Session session;
-    private ClientManager manager;
     private Client client;
     private List<String> lastResponse;
     private MedAutoCompleteHandler autoCompleteHandler;
@@ -86,7 +83,6 @@ public class ViewMedicationsController extends SubController {
 
     public ViewMedicationsController() {
         session = State.getSession();
-        manager = State.getClientManager();
     }
 
     void setDrugInteractionsHandler(DrugInteractionsHandler handler) {
@@ -363,8 +359,23 @@ public class ViewMedicationsController extends SubController {
         MedicationRecord record = getSelectedRecord();
         if (record != null) {
 
-            //TODO: Handle errors
-            State.getClientResolver().deleteMedicationRecord(client, record);
+            try {
+                State.getClientResolver().deleteMedicationRecord(client, record);
+
+            } catch (NotFoundException e) {
+                LOGGER.log(Level.WARNING, "Medication not found");
+                Notifications.create()
+                        .title("Medication not found")
+                        .text("The medication could not be found on the server, it may have been deleted")
+                        .showWarning();
+            } catch (ServerRestException e) {
+                LOGGER.log(Level.WARNING, e.getMessage(), e);
+                Notifications.create()
+                        .title("Server error")
+                        .text("Could not apply changes on the server, please try again later")
+                        .showError();
+                return;
+            }
 
             PageNavigator.refreshAllWindows();
             refreshMedicationLists();
@@ -407,6 +418,9 @@ public class ViewMedicationsController extends SubController {
 
             medicationIngredients.setText("Loading ...");
 
+            String formattedIngredientss = String.format("Active ingredients in %s: %s", medicationName, "");
+            medicationIngredients.setText(formattedIngredientss);
+
             Task<List<String>> task = new Task<List<String>>() {
                 @Override
                 public List<String> call() throws IOException {
@@ -427,7 +441,9 @@ public class ViewMedicationsController extends SubController {
                     for (String ingredient : activeIngredients) {
                         sb.append(ingredient).append("\n");
                     }
-                    medicationIngredients.setText(sb.toString());
+                    String formattedIngredients = String.format("Active ingredients in %s: %s", medicationName, sb
+                            .toString());
+                    medicationIngredients.setText(formattedIngredients);
                 }
             });
 
@@ -462,6 +478,7 @@ public class ViewMedicationsController extends SubController {
         };
 
         task.setOnFailed(event -> {
+
             medicationInteractions.setText("An error occurred when retrieving drug interactions: \n" +
                     task.getException().getMessage());
             task.getException().printStackTrace();
@@ -471,128 +488,21 @@ public class ViewMedicationsController extends SubController {
             List<String> interactions = task.getValue();
 
             if (interactions.size() == 0) {
+
                 medicationInteractions.setText(String.format(
                         "There is no information on interactions between %s and %s.",
                         medication1, medication2));
             } else {
                 String interactionsText = interactions.stream().collect(Collectors.joining("\n"));
-                medicationInteractions.setText(interactionsText);
+                String formattedInteractions = String.format("Interactions between %s and %s: \n%s", medication1, medication2,
+                        interactionsText);
+                medicationInteractions.setText(formattedInteractions);
             }
         });
 
         new Thread(task).start();
     }
 
-    /**
-     * Updates the active ingredients textfield with the ingredients of the medication currently selected
-     * This happens automatically whenever a new medication is selected
-     */
-    @FXML
-    private void viewActiveIngredients() {
-        MedicationRecord medicationRecord = getSelectedRecord();
-
-        if (medicationRecord != null) {
-            String medicationName = medicationRecord.getMedicationName();
-            // Generate initial alert popup
-            String alertTitle = "Active ingredients in " + medicationName;
-            Alert alert = PageNavigator.generateAlert(AlertType.INFORMATION, alertTitle, "Loading...");
-            alert.show();
-
-            Task<List<String>> task = new Task<List<String>>() {
-                @Override
-                public List<String> call() throws IOException {
-                    return activeIngredientsHandler.getActiveIngredients(medicationName);
-                }
-            };
-
-            task.setOnSucceeded(e -> {
-                List<String> activeIngredients = task.getValue();
-                // If there are no results, display an error, else display the results.
-                // It is assumed that every valid drug has active ingredients, thus if an empty list is returned,
-                //     then the drug name wasn't valid.
-                if (activeIngredients.isEmpty()) {
-                    alert.setAlertType(AlertType.ERROR);
-                    alert.setContentText("No results found for " + medicationName);
-                } else {
-                    // Build list of active ingredients into a string, each ingredient on a new line
-                    StringBuilder sb = new StringBuilder();
-                    for (String ingredient : activeIngredients) {
-                        sb.append(ingredient).append("\n");
-                    }
-                    alert.setContentText(sb.toString());
-                }
-            });
-
-            task.setOnFailed(e -> {
-                alert.setAlertType(AlertType.ERROR);
-                alert.setContentText("Error loading results. Please try again later.");
-
-            });
-
-            new Thread(task).start();
-        }
-    }
-
-
-    /**
-     * Generates a pop-up with a list of interactions between the 2 medications selected. If any errors occurs when
-     * retrieving the interactions, the popup will display the appropriate error message instead.
-     */
-    @FXML
-    private void viewInteractions() {
-
-        // Check if there are two medications selected
-        List<MedicationRecord> selectedItems = new ArrayList<>();
-        selectedItems.addAll(currentMedicationsView.getSelectionModel().getSelectedItems());
-        selectedItems.addAll(pastMedicationsView.getSelectionModel().getSelectedItems());
-
-        if (selectedItems.size() != 2) {
-            PageNavigator.showAlert(AlertType.ERROR,
-                    String.format("Incorrect number of medications selected (%d).", selectedItems.size()),
-                    "Please select exactly two medications to view their interactions.");
-
-        } else {
-            Collections.sort(selectedItems);
-            String medication1 = selectedItems.get(0).getMedicationName();
-            String medication2 = selectedItems.get(1).getMedicationName();
-
-            // Generate initial alert popup
-            Alert alert = PageNavigator.generateAlert(AlertType.INFORMATION,
-                    String.format("Interactions between %s and %s", medication1, medication2),
-                    "Loading...");
-            alert.show();
-
-            Task<List<String>> task = new Task<List<String>>() {
-                @Override
-                public List<String> call() throws IOException, BadDrugNameException, BadGatewayException {
-                    return drugInteractionsHandler.getInteractions(client, medication1, medication2);
-                }
-            };
-
-            task.setOnFailed(event -> {
-                alert.setAlertType(AlertType.ERROR);
-                alert.setContentText("An error occurred when retrieving drug interactions: \n" +
-                        task.getException().getMessage());
-                task.getException().printStackTrace();
-            });
-
-            task.setOnSucceeded(event -> {
-                List<String> interactions = task.getValue();
-
-                if (interactions.size() == 0) {
-                    alert.setAlertType(AlertType.WARNING);
-                    alert.setContentText(String.format(
-                            "A study has not yet been done on the interactions between '%s' and '%s'.",
-                            medication1, medication2));
-                } else {
-                    String interactionsText = interactions.stream().collect(Collectors.joining("\n"));
-                    alert.setContentText(interactionsText);
-                }
-            });
-
-            new Thread(task).start();
-        }
-    }
 
     /**
      * Gets a list of medication suggestions for the given input from the autocomplete WebAPIHandler.
