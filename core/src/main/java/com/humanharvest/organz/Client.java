@@ -1016,6 +1016,23 @@ public class Client implements ConcurrencyControlledEntity {
     }
 
     /**
+     * Registers the given {@link Organ} as having been donated by this client at this moment.
+     * @param organ The organ donated.
+     */
+    public void donateOrgan(Organ organ) {
+        donatedOrgans.add(new DonatedOrgan(organ, this, LocalDateTime.now()));
+    }
+
+    /**
+     * Registers the given {@link Organ} as having been donated by this client at this moment.
+     * @param organ The organ donated.
+     * @param id The id to use for the {@link DonatedOrgan}
+     */
+    public void donateOrgan(Organ organ, Long id) {
+        donatedOrgans.add(new DonatedOrgan(organ, this, LocalDateTime.now(), id));
+    }
+
+    /**
      * Registers the given {@link Organ} as having been donated by this client at the given time.
      * @param organ The organ donated.
      * @param timeDonated When the organ was removed from this client's body.
@@ -1025,11 +1042,13 @@ public class Client implements ConcurrencyControlledEntity {
     }
 
     /**
-     * Registers the given {@link Organ} as having been donated by this client at this moment.
+     * Registers the given {@link Organ} as having been donated by this client at the given time.
      * @param organ The organ donated.
+     * @param timeDonated When the organ was removed from this client's body.
+     * @param id The id to use for the {@link DonatedOrgan}
      */
-    public void donateOrgan(Organ organ) {
-        donatedOrgans.add(new DonatedOrgan(organ, this, LocalDateTime.now()));
+    public void donateOrgan(Organ organ, LocalDateTime timeDonated, Long id) {
+        donatedOrgans.add(new DonatedOrgan(organ, this, timeDonated, id));
     }
 
     /**

@@ -37,7 +37,7 @@ public class MatchOrgansToRecipientsController {
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws AuthenticationException {
 
-
+        // Check if there is a donated organ with that id - otherwise 404 not found
         Optional<DonatedOrgan> donatedOrganOptional = State.getClientManager().getAllOrgansToDonate().stream().filter(donatedOrgan1 -> donatedOrgan1.getId().equals(id)).findFirst();
         DonatedOrgan donatedOrgan;
 

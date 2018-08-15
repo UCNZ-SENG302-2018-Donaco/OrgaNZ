@@ -7,6 +7,7 @@ import com.humanharvest.organz.state.AuthenticationManager;
 import com.humanharvest.organz.state.AuthenticationManagerFake;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Gender;
+import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
 import cucumber.api.java8.En;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,11 +55,13 @@ public final class CucumberSteps implements En {
         createClientGiven();
         createClinicianGiven();
         createAdministratorGiven();
+        createDonatedOrganGiven();
 
         createSharedWhen();
         createClientWhen();
         createClinicianWhen();
         createAdministratorWhen();
+        createDonatedOrganWhen();
 
         createSharedThen();
         createClientThen();
@@ -89,14 +92,6 @@ public final class CucumberSteps implements En {
     private void createSharedWhen() {
         When("^I get ([^ ]+)$", (String url) -> {
             MockHttpServletRequestBuilder request = get(url);
-            request = setupSharedHeaders(request);
-            lastAction = mockMvc.perform(request);
-        });
-
-        When("^I get (.+) using (.+)$", (String url, String json) -> {
-            MockHttpServletRequestBuilder request = get(url)
-                    .contentType(MediaType.APPLICATION_JSON_UTF8)
-                    .content(json);
             request = setupSharedHeaders(request);
             lastAction = mockMvc.perform(request);
         });
@@ -308,6 +303,26 @@ public final class CucumberSteps implements En {
         Then("^the result contains (.+)", (String result) -> {
             lastAction = lastAction.andExpect(content().string(containsString(result)));
         });
+    }
+
+    private void createDonatedOrganGiven() {
+        Given("^there is a test donated organ$", () -> {
+            Client testClient = new Client(1);
+            State.getClientManager().addClient(testClient);
+            testClient.donateOrgan(Organ.LIVER, (long) 1);
+            assert(!testClient.getDonatedOrgans().isEmpty());
+        });
+    }
+
+    private void createDonatedOrganWhen() {
+
+        When("^I get (.+) with a valid donated organ id", (String url) -> {
+            url += "/" + State.getClientManager().getAllOrgansToDonate().stream().findFirst().get().getId();
+            MockHttpServletRequestBuilder request = get(url);
+            request = setupSharedHeaders(request);
+            lastAction = mockMvc.perform(request);
+        });
+
     }
 
     private void stepSetup() {
