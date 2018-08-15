@@ -48,7 +48,6 @@ public class MatchOrgansToRecipientsController {
         if (donatedOrganOptional.isPresent()) {
             donatedOrgan = donatedOrganOptional.get();
         } else {
-            System.out.println("optional not present");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 

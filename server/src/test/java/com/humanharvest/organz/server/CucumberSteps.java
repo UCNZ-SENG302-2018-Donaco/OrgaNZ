@@ -166,7 +166,8 @@ public final class CucumberSteps implements En {
         });
 
         Then("^paginated result (\\d+)'s (\\w+) is (\\w+)$", (Integer index, String fieldName, String firstName) -> {
-            lastAction = lastAction.andExpect(jsonPath(String.format("$.clients[%d].%s", index, fieldName), is(firstName)));
+            lastAction = lastAction
+                    .andExpect(jsonPath(String.format("$.clients[%d].%s", index, fieldName), is(firstName)));
         });
 
         Then("^result (\\d+)'s (\\w+) does not exist$", (Integer index, String fieldName) -> {
@@ -310,7 +311,13 @@ public final class CucumberSteps implements En {
             Client testClient = new Client(1);
             State.getClientManager().addClient(testClient);
             testClient.donateOrgan(Organ.LIVER, (long) 1);
-            assert(!testClient.getDonatedOrgans().isEmpty());
+            assert (!testClient.getDonatedOrgans().isEmpty());
+        });
+        Given("^there is an invalid test donated organ$", () -> {
+            Client testClient = new Client(1);
+            State.getClientManager().addClient(testClient);
+            testClient.donateOrgan(Organ.LIVER, null, (long) 1);
+            assert !testClient.getDonatedOrgans().isEmpty();
         });
     }
 
