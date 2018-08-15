@@ -1,9 +1,5 @@
 package com.humanharvest.organz.server.controller.administrator;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.HistoryItem;
@@ -28,15 +24,10 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class AdministratorController {
@@ -146,11 +137,12 @@ public class AdministratorController {
         // duplicate code in tons of places but need to work it out
 
         //Fetch the administrator given by username
-        Optional<Administrator> administrator = State.getAdministratorManager().getAdministratorByUsername(username);
-        if (!administrator.isPresent()) {
+        Optional<Administrator> optionalAdministrator = State.getAdministratorManager().getAdministratorByUsername(username);
+        if (!optionalAdministrator.isPresent()) {
             //Return 404 if that administrator does not exist
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        Administrator administrator = optionalAdministrator.get();
 
         //Check authentication
         State.getAuthenticationManager().verifyAdminAccess(authToken);
@@ -165,16 +157,16 @@ public class AdministratorController {
             throw new IfMatchRequiredException();
         }
 
-        if (!administrator.get().getETag().equals(etag)) {
+        if (!administrator.getETag().equals(etag)) {
             throw new IfMatchFailedException();
         }
 
         //Create the old details to allow undoable action
         ModifyAdministratorObject oldClient = new ModifyAdministratorObject();
         //Copy the values from the current client to our oldClient
-        BeanUtils.copyProperties(administrator.get(), oldClient, modifyAdministratorObject.getUnmodifiedFields());
+        BeanUtils.copyProperties(administrator, oldClient, modifyAdministratorObject.getUnmodifiedFields());
         //Make the action (this is a new action)
-        ModifyAdministratorByObjectAction action = new ModifyAdministratorByObjectAction(administrator.get(),
+        ModifyAdministratorByObjectAction action = new ModifyAdministratorByObjectAction(administrator,
                 State.getAdministratorManager(),
                 oldClient,
                 modifyAdministratorObject);
@@ -183,10 +175,10 @@ public class AdministratorController {
 
         //Add the new ETag to the headers
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(administrator.get().getETag());
+        headers.setETag(administrator.getETag());
 
         //Respond, apparently updates should be 200 not 201 unlike 365 and our spec
-        return new ResponseEntity<>(administrator.get(), headers, HttpStatus.OK);
+        return new ResponseEntity<>(administrator, headers, HttpStatus.OK);
     }
 
     /**
@@ -210,13 +202,14 @@ public class AdministratorController {
         AdministratorManager administratorManager = State.getAdministratorManager();
 
         //Fetch the administrator given by username
-        Optional<Administrator> administrator = administratorManager.getAdministratorByUsername(username);
-        if (!administrator.isPresent()) {
+        Optional<Administrator> optionalAdministrator = State.getAdministratorManager().getAdministratorByUsername(username);
+        if (!optionalAdministrator.isPresent()) {
             //Return 404 if that administrator does not exist
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        Administrator administrator = optionalAdministrator.get();
 
-        if (administrator.get().equals(State.getAdministratorManager().getDefaultAdministrator())) {
+        if (administrator.equals(State.getAdministratorManager().getDefaultAdministrator())) {
             return new ResponseEntity<>("Unable to delete the default administrator.", HttpStatus.BAD_REQUEST);
         }
 
@@ -224,23 +217,29 @@ public class AdministratorController {
         if (etag == null) {
             throw new IfMatchRequiredException("Etag does not exist");
         }
-        if (!administrator.get().getETag().equals(etag)) {
+        if (!administrator.getETag().equals(etag)) {
             throw new IfMatchFailedException("Etag is not valid for this administrator");
         }
 
         DeleteAdministratorAction action = new DeleteAdministratorAction(
-                administrator.get(),
+                administrator,
                 administratorManager);
         State.getActionInvoker(authentication).execute(action);
 
         //Respond, apparently updates should be 200 not 201 unlike 365 and our spec
-        return new ResponseEntity<>(administrator.get(), HttpStatus.OK);
+        return new ResponseEntity<>(administrator, HttpStatus.OK);
     }
 
+    /**
+     * Allows admin commands to be run via the server
+     *
+     * @param commandText The text object to execute
+     * @param authToken   The authentication token of a valid administrator
+     * @return The result string of a command execution
+     */
     @PostMapping("/commands")
-    public ResponseEntity<String> executeSql(
+    public ResponseEntity<String> executeCommands(
             @RequestBody CommandView commandText,
-            @RequestHeader(value = "If-Match", required = false) String etag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {
         //Check valid admin
         State.getAuthenticationManager().verifyAdminAccess(authToken);
