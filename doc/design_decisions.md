@@ -26,6 +26,17 @@ focuses on the pluming of enterprise applications, it allows us to focus on the 
 having to deal with ties to specific deployment environments.
 
 
+#### Hibernate
+> Fill this in
+
+
+#### Google HTTP Client
+> Fill this in
+
+
+#### MySQL Connector
+> Fill this in
+
 #### Controls FX
 * *CheckComboBoxes* - These were chosen as they reduce the number of clicks that users require to filter their lists. 
 It allows them to select multiple regions/organs at once, rather than only one using a drop down box.
@@ -69,5 +80,10 @@ token generation is handled properly.
 
 #### Commons CSV
 This library was used to save time on creating our own csv parser. This provides a robust csv parser.
+
+#### TestFX
+TestFX provides us with a front-end testing framework that reduces the amount of manual testing we have to perform.
+Basic functionality of the pages forms can be tested to ensure new development of our project isn't breaking existing
+functionality.
 
 
