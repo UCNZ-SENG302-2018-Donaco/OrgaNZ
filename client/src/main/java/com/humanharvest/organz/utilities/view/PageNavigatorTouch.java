@@ -1,26 +1,26 @@
 package com.humanharvest.organz.utilities.view;
 
-import java.io.IOException;
-import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+import com.humanharvest.organz.AppTUIO;
 import com.humanharvest.organz.MultitouchHandler;
+import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.controller.components.TouchAlertController;
+import com.humanharvest.organz.state.State;
+import javafx.beans.property.Property;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
-import com.humanharvest.organz.AppTUIO;
-import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.state.State;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Utility class for controlling navigation between pages.
@@ -74,6 +74,7 @@ public class PageNavigatorTouch implements IPageNavigator {
      *
      * @return The MainController for the new window, or null if the new window could not be created.
      */
+    @Override
     public MainController openNewWindow(int width, int height) {
         LOGGER.info("Opening new window");
         try {
@@ -153,8 +154,8 @@ public class PageNavigatorTouch implements IPageNavigator {
             controller.setup(alertType, title, bodyText, newStage, mainPane);
 
             TuioFXUtils.setupPaneWithTouchFeatures(mainPane);
-
             AppTUIO.root.getChildren().add(mainPane);
+            MultitouchHandler.setupPaneListener(mainPane);
 
             // Set the positioning based off the calling window if it is valid.
             if (window != null && window.getScene() != null && window.getScene().getRoot() != null) {
