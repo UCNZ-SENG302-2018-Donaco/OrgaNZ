@@ -1,4 +1,4 @@
-package com.humanharvest.organz.controller.client;
+package com.humanharvest.organz.controller;
 
 import static org.junit.Assert.assertEquals;
 import static org.testfx.api.FxAssert.verifyThat;
@@ -15,7 +15,7 @@ import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
 import org.junit.Test;
 
-public class SidebarControllerClientReceiverTest extends ControllerTest {
+public class SidebarControllerTest extends ControllerTest {
 
     private final Client client = new Client("Client", "Number", "One", LocalDate.now(), 1);
 
@@ -36,17 +36,12 @@ public class SidebarControllerClientReceiverTest extends ControllerTest {
     // Test clicking on action buttons
 
     @Test
-    public void
-    testClickOnUndo() {
+    public void testActionButtons() {
         clickOn("#undoButton");
-    }
-
-    @Test
-    public void testClickOnRedo() {
         clickOn("#redoButton");
     }
 
-    // Test clicking on buttons to go to another screen
+    // Page navigation working correctly
 
     @Test
     public void testClickOnViewClient() {
@@ -90,37 +85,14 @@ public class SidebarControllerClientReceiverTest extends ControllerTest {
         assertEquals(Page.LANDING, mainController.getCurrentPage());
     }
 
-    // Test admin-only buttons are hidden
-
     @Test
-    public void testCreateAdminHidden() {
+    public void testCorrectHiddenButtons() {
         verifyThat("#createAdminButton", isInvisible());
-    }
-
-    @Test
-    public void testCreateClinicianHidden() {
         verifyThat("#createClinicianButton", isInvisible());
-    }
-
-    @Test
-    public void testStaffListHidden() {
         verifyThat("#staffListButton", isInvisible());
-    }
-
-    // Test staff-only buttons are hidden
-
-    @Test
-    public void testClinicianDetailsHidden() {
         verifyThat("#viewClinicianButton", isInvisible());
-    }
-
-    @Test
-    public void testClientSearchHidden() {
         verifyThat("#searchButton", isInvisible());
-    }
-
-    @Test
-    public void testTranplantRequestsHidden() {
         verifyThat("#transplantsButton", isInvisible());
     }
+
 }

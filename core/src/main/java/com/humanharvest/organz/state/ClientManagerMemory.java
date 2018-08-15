@@ -21,6 +21,7 @@ import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.ProcedureRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.ClientNameSorter;
+import com.humanharvest.organz.utilities.algorithms.MatchOrganToRecipients;
 import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
 import com.humanharvest.organz.utilities.enums.ClientType;
 import com.humanharvest.organz.utilities.enums.Country;
@@ -419,5 +420,15 @@ public class ClientManagerMemory implements ClientManager {
                         .map(DonatedOrganView::new)
                         .collect(Collectors.toList()),
                 totalResults);
+    }
+
+    /**
+     * Gets potential recipients for an available organ
+     * @param donatedOrgan available organ to match to potential recipients
+     * @return list of clients that are waiting for the available organ
+     */
+    @Override
+    public List<Client> getOrganMatches(DonatedOrgan donatedOrgan) {
+        return MatchOrganToRecipients.getListOfPotentialRecipients(donatedOrgan, getAllCurrentTransplantRequests());
     }
 }

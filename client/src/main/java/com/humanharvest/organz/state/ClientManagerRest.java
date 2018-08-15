@@ -27,6 +27,7 @@ import com.humanharvest.organz.views.client.DonatedOrganView;
 import com.humanharvest.organz.views.client.PaginatedClientList;
 import com.humanharvest.organz.views.client.PaginatedDonatedOrgansList;
 import com.humanharvest.organz.views.client.PaginatedTransplantList;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -243,6 +244,24 @@ public class ClientManagerRest implements ClientManager {
                 builder.toUriString(),
                 HttpMethod.GET,
                 entity, PaginatedDonatedOrgansList.class);
+
+        return responseEntity.getBody();
+    }
+
+    /**
+     * @param donatedOrgan available organ to find potential matches for
+     * @return list of potential recipients of the client
+     */
+    @Override
+    public List<Client> getOrganMatches(DonatedOrgan donatedOrgan) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.set("X-Auth-Token", State.getToken());
+
+        HttpEntity<String> entity = new HttpEntity<>(httpHeaders);
+
+        ResponseEntity<List<Client>> responseEntity = State.getRestTemplate().exchange(State.BASE_URI +
+                "/matchOrganToRecipients/" + donatedOrgan.getId(), HttpMethod.GET, entity, new
+                ParameterizedTypeReference<List<Client>>() {});
 
         return responseEntity.getBody();
     }
