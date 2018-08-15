@@ -3,6 +3,7 @@ package com.humanharvest.organz.state;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
@@ -21,15 +22,17 @@ import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.database.DBManager;
 import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
 import com.humanharvest.organz.utilities.enums.ClientType;
+import com.humanharvest.organz.utilities.enums.Country;
+import com.humanharvest.organz.utilities.enums.DonatedOrganSortOptionsEnum;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.views.client.DonatedOrganView;
 import com.humanharvest.organz.views.client.PaginatedClientList;
 import com.humanharvest.organz.views.client.PaginatedDonatedOrgansList;
 import com.humanharvest.organz.views.client.PaginatedTransplantList;
 import org.hibernate.ReplicationMode;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
  * A pure database implementation of {@link ClientManager} that uses a database to store clients, then retrieves them
@@ -564,15 +567,68 @@ public class ClientManagerDBPure implements ClientManager {
      * @return a list of all organs available for donation
      */
     @Override
-    public PaginatedDonatedOrgansList getAllOrgansToDonate(Integer offset, Integer count,Set<String> regions,
-            EnumSet<Organ>
-            organType) {
-        //TODO Implement the WHERE statements for this.
-        List<DonatedOrgan> requests = null;
-        Transaction trns = null;
+    public PaginatedDonatedOrgansList getAllOrgansToDonate(Integer offset, Integer count, Set<String> regionsToFilter,
+            Set<Organ> organType, DonatedOrganSortOptionsEnum sortOption, Boolean reversed) {
 
-        throw new NotImplementedException();
+        // TODO implement using Hibernate queries instead of in-memory filtering/sorting
 
-//        return requests == null ? new ArrayList<>() : requests;
+        Comparator<DonatedOrgan> comparator;
+        if (sortOption == null) {
+            comparator = Comparator.comparing(DonatedOrgan::getDurationUntilExpiry,
+                    Comparator.nullsLast(Comparator.naturalOrder()));
+        } else {
+            switch (sortOption) {
+                case CLIENT:
+                    comparator = Comparator.comparing(organ -> organ.getDonor().getFullName());
+                    break;
+                case ORGAN_TYPE:
+                    comparator = Comparator.comparing(organ -> organ.getOrganType().toString());
+                    break;
+                case REGION_OF_DEATH:
+                    comparator = Comparator.comparing(organ -> organ.getDonor().getRegionOfDeath());
+                    break;
+                case TIME_OF_DEATH:
+                    comparator = Comparator.comparing(organ -> organ.getDonor().getDateOfDeath());
+                    break;
+                default:
+                case TIME_UNTIL_EXPIRY:
+                    comparator = Comparator.comparing(DonatedOrgan::getDurationUntilExpiry,
+                            Comparator.nullsLast(Comparator.naturalOrder()));
+                    break;
+            }
+        }
+
+        if (reversed != null && reversed) {
+            comparator = comparator.reversed();
+        }
+
+        // Get all organs for donation
+        // Filter by region and organ type if the params have been set
+        List<DonatedOrgan> filteredOrgans = getAllOrgansToDonate().stream()
+                .filter(organ -> organ.getDurationUntilExpiry() == null || !organ.getDurationUntilExpiry().isZero())
+                .filter(organ -> organ.getOverrideReason() == null)
+                .filter(organ -> regionsToFilter.isEmpty()
+                        || regionsToFilter.contains(organ.getDonor().getRegionOfDeath())
+                        || regionsToFilter.contains("International") && organ.getDonor().getCountryOfDeath() != Country.NZ)
+                .filter(organ -> organType == null || organType.isEmpty()
+                        || organType.contains(organ.getOrganType()))
+                .collect(Collectors.toList());
+
+        int totalResults = filteredOrgans.size();
+        if (offset == null) {
+            offset = 0;
+        }
+        if (count == null) {
+            count = Integer.MAX_VALUE;
+        }
+
+        return new PaginatedDonatedOrgansList(
+                filteredOrgans.stream()
+                        .sorted(comparator)
+                        .skip(offset)
+                        .limit(count)
+                        .map(DonatedOrganView::new)
+                        .collect(Collectors.toList()),
+                totalResults);
     }
 }

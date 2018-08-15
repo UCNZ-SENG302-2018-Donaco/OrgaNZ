@@ -16,7 +16,6 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -26,6 +25,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.Pagination;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.SortType;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -43,6 +43,7 @@ import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.enums.DonatedOrganSortOptionsEnum;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
@@ -53,6 +54,7 @@ import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
 import com.humanharvest.organz.views.client.DonatedOrganView;
 import com.humanharvest.organz.views.client.PaginatedDonatedOrgansList;
+import com.humanharvest.organz.views.clinician.DonatedOrganSortPolicy;
 import org.controlsfx.control.CheckComboBox;
 import org.controlsfx.control.Notifications;
 
@@ -97,8 +99,7 @@ public class OrgansToDonateController extends SubController {
     private Session session;
     private ClientManager manager;
     private ObservableList<DonatedOrgan> observableOrgansToDonate = FXCollections.observableArrayList();
-    private FilteredList<DonatedOrgan> filteredOrgansToDonate = new FilteredList<>(observableOrgansToDonate);
-    private SortedList<DonatedOrgan> sortedOrgansToDonate = new SortedList<>(filteredOrgansToDonate);
+    private SortedList<DonatedOrgan> sortedOrgansToDonate = new SortedList<>(observableOrgansToDonate);
     private DonatedOrgan selectedOrgan;
     private Set<String> regionsToFilter;
     private EnumSet<Organ> organsToFilter;
@@ -131,14 +132,15 @@ public class OrgansToDonateController extends SubController {
     @FXML
     private void initialize() {
         setupTable();
-        //TODO: Add ability to filter by OTHER region
+
+        tableView.setOnSort(event -> updateOrgansToDonateList());
+
         for (Region region : Region.values()) {
             regionFilter.getItems().add(region.toString());
         }
         regionFilter.getItems().add("International");
-//        regionFilter.getItems().setAll(Region.values());
-        organFilter.getItems().setAll(Organ.values());
 
+        organFilter.getItems().setAll(Organ.values());
 
         regionFilter.getCheckModel().getCheckedItems().addListener(
             (ListChangeListener<String>) change -> updateOrgansToDonateList());
@@ -148,6 +150,8 @@ public class OrgansToDonateController extends SubController {
 
         //On pagination update call createPage
         pagination.setPageFactory(this::createPage);
+
+        tableView.getSortOrder().setAll(timeUntilExpiryCol);
     }
 
     /**
@@ -158,7 +162,8 @@ public class OrgansToDonateController extends SubController {
         clientCol.setCellValueFactory(cellData -> new SimpleStringProperty(
                 cellData.getValue().getDonor().getFullName()));
         organCol.setCellValueFactory(new PropertyValueFactory<>("organType"));
-        regionCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDonor().getRegion()));
+        regionCol.setCellValueFactory(cellData -> new SimpleStringProperty(
+                cellData.getValue().getDonor().getRegionOfDeath()));
         timeOfDeathCol.setCellValueFactory(new PropertyValueFactory<>("dateTimeOfDonation"));
         timeUntilExpiryCol.setCellValueFactory(new PropertyValueFactory<>("durationUntilExpiry"));
 
@@ -228,8 +233,6 @@ public class OrgansToDonateController extends SubController {
             }
         });
 
-        filteredOrgansToDonate.setPredicate(donatedOrgan -> donatedOrgan.getOverrideReason() == null &&
-                (donatedOrgan.getDurationUntilExpiry() == null || !donatedOrgan.getDurationUntilExpiry().isZero()));
         sortedOrgansToDonate.comparatorProperty().bind(tableView.comparatorProperty());
     }
 
@@ -261,19 +264,21 @@ public class OrgansToDonateController extends SubController {
     }
 
     private void updateOrgansToDonateList() {
+        DonatedOrganSortPolicy sortPolicy = getSortPolicy();
         filterOrgans();
         filterRegions();
-
-        //Collection<DonatedOrgan> newOrgansToDonate = manager.getAllOrgansToDonate(regionsToFilter, organsToFilter);
 
         PaginatedDonatedOrgansList newOrgansToDonate = manager.getAllOrgansToDonate(
                 pagination.getCurrentPageIndex() * ROWS_PER_PAGE,
                 ROWS_PER_PAGE,
-                regionsToFilter,organsToFilter);
+                regionsToFilter,
+                organsToFilter,
+                sortPolicy.getSortOption(),
+                sortPolicy.isReversed());
 
-        observableOrgansToDonate.setAll(newOrgansToDonate.getDonatedOrgans().stream().map(
-                DonatedOrganView::getDonatedOrgan).collect(Collectors.toList()));
-        tableView.getSortOrder().setAll(timeUntilExpiryCol);
+        observableOrgansToDonate.setAll(newOrgansToDonate.getDonatedOrgans().stream()
+                .map(DonatedOrganView::getDonatedOrgan)
+                .collect(Collectors.toList()));
 
         int newPageCount = Math.max(1, (newOrgansToDonate.getTotalResults() + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE);
         if (pagination.getPageCount() != newPageCount) {
@@ -284,12 +289,48 @@ public class OrgansToDonateController extends SubController {
     }
 
     /**
+     * Used to detect the current sort policy of the table and convert it to a value that the server will understand.
+     * @return A {@link DonatedOrganSortPolicy} that maps to one of the SortOptions and a boolean if the sort should
+     * be reversed.
+     */
+    private DonatedOrganSortPolicy getSortPolicy() {
+        ObservableList<TableColumn<DonatedOrgan, ?>> sortOrder = tableView.getSortOrder();
+        if (sortOrder.size() == 0) {
+            return new DonatedOrganSortPolicy(DonatedOrganSortOptionsEnum.TIME_UNTIL_EXPIRY, false);
+        }
+        TableColumn<DonatedOrgan, ?> sortColumn = tableView.getSortOrder().get(0);
+
+        DonatedOrganSortOptionsEnum sortOption;
+        switch (sortColumn.getId()) {
+            case "clientCol":
+                sortOption = DonatedOrganSortOptionsEnum.CLIENT;
+                break;
+            case "organCol":
+                sortOption = DonatedOrganSortOptionsEnum.ORGAN_TYPE;
+                break;
+            case "regionCol":
+                sortOption = DonatedOrganSortOptionsEnum.REGION_OF_DEATH;
+                break;
+            case "timeOfDeathCol":
+                sortOption = DonatedOrganSortOptionsEnum.TIME_OF_DEATH;
+                break;
+            case "timeUntilExpiryCol":
+                sortOption = DonatedOrganSortOptionsEnum.TIME_UNTIL_EXPIRY;
+                break;
+            default:
+                sortOption = DonatedOrganSortOptionsEnum.TIME_UNTIL_EXPIRY;
+                break;
+        }
+        return new DonatedOrganSortPolicy(sortOption, sortColumn.getSortType().equals(SortType.DESCENDING));
+    }
+
+    /**
      * Refreshes the data in the transplants waiting list table. Should be called whenever any page calls a global
      * refresh.
      */
     @Override
     public void refresh() {
-        observableOrgansToDonate.setAll(manager.getAllOrgansToDonate());
+        updateOrgansToDonateList();
         tableView.setItems(sortedOrgansToDonate);
     }
 
