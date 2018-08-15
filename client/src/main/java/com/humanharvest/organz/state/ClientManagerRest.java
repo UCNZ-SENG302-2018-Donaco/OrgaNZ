@@ -224,7 +224,7 @@ public class ClientManagerRest implements ClientManager {
      */
     @Override
     public PaginatedDonatedOrgansList getAllOrgansToDonate(Integer offset, Integer count, Set<String> regions,
-            EnumSet<Organ> organType, DonatedOrganSortOptionsEnum sortOption, Boolean reversed) {
+            Set<Organ> organType, DonatedOrganSortOptionsEnum sortOption, Boolean reversed) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-Auth-Token", State.getToken());
         headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
@@ -233,7 +233,7 @@ public class ClientManagerRest implements ClientManager {
                 .queryParam("offset", offset)
                 .queryParam("count", count)
                 .queryParam("regions", String.join(",", regions))
-                .queryParam("organType", EnumSetToString.convert(organType))
+                .queryParam("organType", EnumSetToString.convert(EnumSet.copyOf(organType)))
                 .queryParam("sortOption", sortOption)
                 .queryParam("reversed", reversed);
 

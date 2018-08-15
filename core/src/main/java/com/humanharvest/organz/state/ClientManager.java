@@ -27,7 +27,6 @@ public interface ClientManager {
 
     List<Client> getClients();
 
-    // TODO: Change so regions isn't an enum
     PaginatedClientList getClients(
             String q,
             Integer offset,
@@ -88,7 +87,7 @@ public interface ClientManager {
     /**
      * Returns a collection of all the organs that are available to donate from dead peop[e.
      */
-    PaginatedDonatedOrgansList getAllOrgansToDonate(Integer offset, Integer count, Set<String> regions, EnumSet<Organ>
+    PaginatedDonatedOrgansList getAllOrgansToDonate(Integer offset, Integer count, Set<String> regions, Set<Organ>
             organType, DonatedOrganSortOptionsEnum sortOption, Boolean reversed);
 
     List<HistoryItem> getAllHistoryItems();

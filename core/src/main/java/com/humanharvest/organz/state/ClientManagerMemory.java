@@ -6,7 +6,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumSet;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalInt;
@@ -357,39 +356,37 @@ public class ClientManagerMemory implements ClientManager {
      * @return a list of all organs available for donation
      */
     @Override
-    public PaginatedDonatedOrgansList getAllOrgansToDonate(Integer offset, Integer count,Set<String> regions,
-            EnumSet<Organ> organType, DonatedOrganSortOptionsEnum sortOption, Boolean reversed) {
+    public PaginatedDonatedOrgansList getAllOrgansToDonate(Integer offset, Integer count, Set<String> regionsToFilter,
+            Set<Organ> organType, DonatedOrganSortOptionsEnum sortOption, Boolean reversed) {
 
         Comparator<DonatedOrgan> comparator;
-        switch (sortOption) {
-            case CLIENT:
-                comparator = Comparator.comparing(organ -> organ.getDonor().getFullName());
-                break;
-            case ORGAN_TYPE:
-                comparator = Comparator.comparing(organ -> organ.getOrganType().toString());
-                break;
-            case REGION_OF_DEATH:
-                comparator = Comparator.comparing(organ -> organ.getDonor().getRegionOfDeath());
-                break;
-            case TIME_OF_DEATH:
-                comparator = Comparator.comparing(organ -> organ.getDonor().getDateOfDeath());
-                break;
-            default:
-            case TIME_UNTIL_EXPIRY:
-                comparator = Comparator.comparing(DonatedOrgan::getDurationUntilExpiry,
-                        Comparator.nullsLast(Comparator.naturalOrder()));
-                break;
-        }
-
-        if (reversed) {
-            comparator = comparator.reversed();
-        }
-
-        final Set<String> regionsToFilter = new HashSet<>();
-        if (regions != null) {
-            for (String region : regions) {
-                regionsToFilter.add(region.replaceAll("%20", " "));
+        if (sortOption == null) {
+            comparator = Comparator.comparing(DonatedOrgan::getDurationUntilExpiry,
+                    Comparator.nullsLast(Comparator.naturalOrder()));
+        } else {
+            switch (sortOption) {
+                case CLIENT:
+                    comparator = Comparator.comparing(organ -> organ.getDonor().getFullName());
+                    break;
+                case ORGAN_TYPE:
+                    comparator = Comparator.comparing(organ -> organ.getOrganType().toString());
+                    break;
+                case REGION_OF_DEATH:
+                    comparator = Comparator.comparing(organ -> organ.getDonor().getRegionOfDeath());
+                    break;
+                case TIME_OF_DEATH:
+                    comparator = Comparator.comparing(organ -> organ.getDonor().getDateOfDeath());
+                    break;
+                default:
+                case TIME_UNTIL_EXPIRY:
+                    comparator = Comparator.comparing(DonatedOrgan::getDurationUntilExpiry,
+                            Comparator.nullsLast(Comparator.naturalOrder()));
+                    break;
             }
+        }
+
+        if (reversed != null && reversed) {
+            comparator = comparator.reversed();
         }
 
         // Get all organs for donation
