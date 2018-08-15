@@ -176,6 +176,7 @@ public class MatchOrganToRecipients {
         for (TransplantRequest transplantRequest : potentialTransplantRequests) {
             potentialMatches.add(transplantRequest.getClient());
         }
+
         return potentialMatches;
     }
 }

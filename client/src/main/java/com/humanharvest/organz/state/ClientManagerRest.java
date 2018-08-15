@@ -225,10 +225,11 @@ public class ClientManagerRest implements ClientManager {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set("X-Auth-Token", State.getToken());
 
-        HttpEntity<DonatedOrgan> entity = new HttpEntity<>(donatedOrgan, httpHeaders);
+        HttpEntity<String> entity = new HttpEntity<>(httpHeaders);
 
         ResponseEntity<List<Client>> responseEntity = State.getRestTemplate().exchange(State.BASE_URI +
-                "/matchOrganToRecipients", HttpMethod.GET, entity, new ParameterizedTypeReference<List<Client>>() {});
+                "/matchOrganToRecipients/" + donatedOrgan.getId(), HttpMethod.GET, entity, new
+                ParameterizedTypeReference<List<Client>>() {});
 
         return responseEntity.getBody();
     }

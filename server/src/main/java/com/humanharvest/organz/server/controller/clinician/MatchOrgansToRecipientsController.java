@@ -1,13 +1,11 @@
 package com.humanharvest.organz.server.controller.clinician;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+import java.util.Optional;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.algorithms.MatchOrganToRecipients;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import com.humanharvest.organz.utilities.validators.client.DonatedOrganValidator;
 import org.springframework.http.HttpStatus;
@@ -16,9 +14,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Provides handlers for requests to these endpoints:
@@ -42,6 +37,7 @@ public class MatchOrgansToRecipientsController {
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws AuthenticationException {
 
+
         Optional<DonatedOrgan> donatedOrganOptional = State.getClientManager().getAllOrgansToDonate().stream().filter(donatedOrgan1 -> donatedOrgan1.getId().equals(id)).findFirst();
         DonatedOrgan donatedOrgan;
 
@@ -61,7 +57,7 @@ public class MatchOrgansToRecipientsController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        List<Client> potentialMatches = MatchOrganToRecipients.getListOfPotentialRecipients(donatedOrgan);
+        List<Client> potentialMatches = State.getClientManager().getOrganMatches(donatedOrgan);
 
         return new ResponseEntity<>(potentialMatches, HttpStatus.OK);
 

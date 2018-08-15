@@ -1,5 +1,15 @@
 package com.humanharvest.organz.controller.clinician;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.controller.MainController;
@@ -30,6 +40,7 @@ import javafx.scene.Node;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Pagination;
@@ -43,6 +54,24 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.DonatedOrgan;
+import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.SidebarController;
+import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.controller.components.DurationUntilExpiryCell;
+import com.humanharvest.organz.state.ClientManager;
+import com.humanharvest.organz.state.Session;
+import com.humanharvest.organz.state.Session.UserType;
+import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
+import com.humanharvest.organz.utilities.exceptions.NotFoundException;
+import com.humanharvest.organz.utilities.exceptions.ServerRestException;
+import com.humanharvest.organz.utilities.view.Page;
+import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
 import org.controlsfx.control.Notifications;
 
 import java.time.Duration;
@@ -54,6 +83,7 @@ import java.util.Comparator;
 public class OrgansToDonateController extends SubController {
 
     private static final int ROWS_PER_PAGE = 30;
+    private static final Logger LOGGER = Logger.getLogger(SidebarController.class.getName());
     private static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("d MMM yyyy hh:mm a");
 
     @FXML
@@ -77,7 +107,6 @@ public class OrgansToDonateController extends SubController {
     @FXML
     private ListView<Client> potentialRecipients;
 
-
     @FXML
     private Pagination pagination;
 
@@ -90,6 +119,8 @@ public class OrgansToDonateController extends SubController {
     private FilteredList<DonatedOrgan> filteredOrgansToDonate = new FilteredList<>(observableOrgansToDonate);
     private SortedList<DonatedOrgan> sortedOrgansToDonate = new SortedList<>(filteredOrgansToDonate);
     private DonatedOrgan selectedOrgan;
+
+    private Label placeholder;
 
     /**
      * Gets the client manager from the global state.
@@ -118,8 +149,8 @@ public class OrgansToDonateController extends SubController {
      */
     @FXML
     private void initialize() {
-        setupTable();
-        Label placeholder = new Label("Select an available organ to show potential recipients");
+        setupOrgansTable();
+        placeholder = new Label("Select an available organ to show potential recipients");
         placeholder.setWrapText(true);
         placeholder.setPadding(new Insets(0, 0, 0, 8));
         placeholder.setTextFill(Color.GREY);
@@ -134,7 +165,7 @@ public class OrgansToDonateController extends SubController {
      * Sets up the table columns with their respective value factories and representation factories. Also registers a
      * mouse event handler for double-clicking on a record in the table to open up the appropriate client profile.
      */
-    private void setupTable() {
+    private void setupOrgansTable() {
         clientCol.setCellValueFactory(cellData -> new SimpleStringProperty(
                 cellData.getValue().getDonor().getFullName()));
         organCol.setCellValueFactory(new PropertyValueFactory<>("organType"));
@@ -145,8 +176,31 @@ public class OrgansToDonateController extends SubController {
         timeOfDeathCol.setCellFactory(cell -> formatDateTimeCell());
         timeUntilExpiryCol.setCellFactory(DurationUntilExpiryCell::new);
 
+        potentialRecipients.setCellFactory(listView -> new ListCell<Client>() {
+            @Override
+            public void updateItem(Client item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setText(null);
+                } else {
+                    setText(item.getFullName());
+                }
+            }
+        });
+
         // Register the mouse event for double-clicking on a record to open the client profile.
         tableView.setOnMouseClicked(mouseEvent -> {
+
+            // Showing potential matches for the donated organ
+            if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 1) {
+                DonatedOrgan donatedOrgan = tableView.getSelectionModel().getSelectedItem();
+                if (donatedOrgan != null) {
+                    potentialRecipients.getItems().clear();
+                    displayMatches(donatedOrgan);
+                }
+            }
+
+            // Double clicking brings up the profile of the client who has donated the organ
             if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2) {
                 DonatedOrgan organToDonate = tableView.getSelectionModel().getSelectedItem();
                 if (organToDonate != null) {
@@ -160,6 +214,8 @@ public class OrgansToDonateController extends SubController {
                         PageNavigator.loadPage(Page.VIEW_CLIENT, newMain);
                     }
                 }
+
+            // Right click to allow manual override of organ expiry
             } else if (mouseEvent.getButton().equals(MouseButton.SECONDARY)) {
                 MenuItem manualExpireItem = new MenuItem();
                 manualExpireItem.textProperty().setValue("Manually Override");
@@ -236,6 +292,30 @@ public class OrgansToDonateController extends SubController {
 
         setupDisplayingXToYOfZText(newOrgansToDonate.getTotalResults());
         */
+    }
+
+    private void displayMatches(DonatedOrgan selectedOrgan) {
+        try {
+            List<Client> matches = State.getClientManager().getOrganMatches(selectedOrgan);
+            potentialRecipients.setItems(FXCollections.observableArrayList(matches));
+
+            if (matches.size() == 0) {
+                placeholder.setText("No potential recipients for this organ");
+            }
+
+        }  catch (NotFoundException e) {
+            LOGGER.log(Level.WARNING, "Organ not found");
+            Notifications.create()
+                    .title("Organ not found")
+                    .text("The organ could not be found on the server, it may have been deleted")
+                    .showWarning();
+        } catch (ServerRestException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
+            Notifications.create()
+                    .title("Server error")
+                    .text("Could not access the server, please try again later")
+                    .showError();
+        }
     }
 
     /**

@@ -1,5 +1,7 @@
 package com.humanharvest.organz;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -22,6 +24,9 @@ import java.util.stream.Collectors;
 /**
  * The main Client class.
  */
+@JsonAutoDetect(fieldVisibility = Visibility.ANY,
+        getterVisibility = Visibility.NONE,
+        setterVisibility = Visibility.NONE)
 @Entity
 @Table
 @Access(AccessType.FIELD)
@@ -442,10 +447,12 @@ public class Client implements ConcurrencyControlledEntity {
         this.countryOfDeath = countryOfDeath;
     }
 
+    @JsonIgnore
     public boolean isAlive() {
         return dateOfDeath == null;
     }
 
+    @JsonIgnore
     public boolean isDead() {
         return dateOfDeath != null;
     }

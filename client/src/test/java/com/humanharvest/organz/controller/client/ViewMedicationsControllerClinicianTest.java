@@ -359,7 +359,6 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
         assertEquals("", interactionsInfo);
     }
 
-    // todo fix this test !!!
     @Test
     public void viewInteractionsBetweenThreeDrugsTest() {
         MedicationRecord drug0 = testCurrentMedicationRecords[0];
@@ -375,7 +374,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
         clickOn((Node) lookup(hasText(drug2.toString())).query());
 
         // Make sure that the third node selected does not select
-        Node node = (Node) lookup(hasText(drug2.toString())).query();
+        Node node = lookup(hasText(drug2.toString())).query();
         assertFalse(node.isFocused());
     }
 
