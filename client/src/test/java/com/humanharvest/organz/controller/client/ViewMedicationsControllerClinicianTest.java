@@ -19,8 +19,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import javafx.scene.Node;
-import javafx.scene.Scene;
+import javafx.scene.Node;;
 import javafx.scene.control.Button;
 import javafx.scene.control.DialogPane;
 import javafx.scene.control.TextArea;

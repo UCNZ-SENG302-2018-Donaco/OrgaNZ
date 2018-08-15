@@ -1,8 +1,16 @@
 package com.humanharvest.organz;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
+import com.humanharvest.organz.utilities.enums.BloodType;
+import com.humanharvest.organz.utilities.enums.ClientType;
+import com.humanharvest.organz.utilities.enums.Country;
+import com.humanharvest.organz.utilities.enums.Gender;
+import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 import com.humanharvest.organz.utilities.enums.*;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
 import com.humanharvest.organz.views.client.Views;
@@ -16,6 +24,9 @@ import java.util.stream.Collectors;
 /**
  * The main Client class.
  */
+@JsonAutoDetect(fieldVisibility = Visibility.ANY,
+        getterVisibility = Visibility.NONE,
+        setterVisibility = Visibility.NONE)
 @Entity
 @Table
 @Access(AccessType.FIELD)
@@ -436,9 +447,15 @@ public class Client implements ConcurrencyControlledEntity {
         this.countryOfDeath = countryOfDeath;
     }
 
-    public boolean isAlive() { return dateOfDeath == null; }
+    @JsonIgnore
+    public boolean isAlive() {
+        return dateOfDeath == null;
+    }
 
-    public boolean isDead() { return dateOfDeath != null; }
+    @JsonIgnore
+    public boolean isDead() {
+        return dateOfDeath != null;
+    }
 
     public void setDateOfDeath(LocalDate newDateOfDeath) {
         updateModifiedTimestamp();
@@ -594,7 +611,6 @@ public class Client implements ConcurrencyControlledEntity {
         return Collections.unmodifiableList(medicationHistory);
     }
 
-
     /**
      * Adds a new MedicationRecord to the client's history.
      * @param record The given MedicationRecord.
@@ -640,11 +656,15 @@ public class Client implements ConcurrencyControlledEntity {
     }
 
     /**
-     * Calculates the users age based on their date of birth and date of death. If the date of death is null the age
-     * is calculated base of the LocalDate.now().
+     * Calculates the users age based on their date of birth and date of death.
+     * If the date of death is null the age is calculated base of the LocalDate.now().
+     * If the date of birth is null, -1 is returned.
      * @return age of the Client.
      */
     public int getAge() {
+        if (dateOfBirth == null) {
+            return -1;
+        }
         int age;
         if (dateOfDeath == null) {
             age = Period.between(dateOfBirth, LocalDate.now()).getYears();
@@ -720,8 +740,7 @@ public class Client implements ConcurrencyControlledEntity {
      * @param record The illness history that is wanted to be deleted
      */
     public void deleteIllnessRecord(IllnessRecord record) {
-        int index = illnessHistory.indexOf(record);
-        illnessHistory.remove(index);
+        illnessHistory.remove(record);
         record.setClient(null);
         updateModifiedTimestamp();
     }
@@ -904,7 +923,7 @@ public class Client implements ConcurrencyControlledEntity {
         return transplantRequests;
     }
 
-    public Optional<TransplantRequest> getTransplantRequestById(long id){
+    public Optional<TransplantRequest> getTransplantRequestById(long id) {
         return transplantRequests.stream()
                 .filter(transplantRequest -> transplantRequest.getId() == id)
                 .findFirst();
@@ -997,6 +1016,23 @@ public class Client implements ConcurrencyControlledEntity {
     }
 
     /**
+     * Registers the given {@link Organ} as having been donated by this client at this moment.
+     * @param organ The organ donated.
+     */
+    public void donateOrgan(Organ organ) {
+        donatedOrgans.add(new DonatedOrgan(organ, this, LocalDateTime.now()));
+    }
+
+    /**
+     * Registers the given {@link Organ} as having been donated by this client at this moment.
+     * @param organ The organ donated.
+     * @param id The id to use for the {@link DonatedOrgan}
+     */
+    public void donateOrgan(Organ organ, Long id) {
+        donatedOrgans.add(new DonatedOrgan(organ, this, LocalDateTime.now(), id));
+    }
+
+    /**
      * Registers the given {@link Organ} as having been donated by this client at the given time.
      * @param organ The organ donated.
      * @param timeDonated When the organ was removed from this client's body.
@@ -1006,11 +1042,13 @@ public class Client implements ConcurrencyControlledEntity {
     }
 
     /**
-     * Registers the given {@link Organ} as having been donated by this client at this moment.
+     * Registers the given {@link Organ} as having been donated by this client at the given time.
      * @param organ The organ donated.
+     * @param timeDonated When the organ was removed from this client's body.
+     * @param id The id to use for the {@link DonatedOrgan}
      */
-    public void donateOrgan(Organ organ) {
-        donatedOrgans.add(new DonatedOrgan(organ, this, LocalDateTime.now()));
+    public void donateOrgan(Organ organ, LocalDateTime timeDonated, Long id) {
+        donatedOrgans.add(new DonatedOrgan(organ, this, timeDonated, id));
     }
 
     /**
