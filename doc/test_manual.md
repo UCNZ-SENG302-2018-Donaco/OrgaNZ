@@ -151,5 +151,82 @@ Logging in as a clinician only allows them to strictly see only their details. T
 
 As an admin, they can change the details of the default clinician
 
-## Story 47
+## Story 47 - Table of currently available organs
+
+####AC1 
+
+As a logged in clinician, you navigate to the "Organs to Donate" page from the top menu bar, under the "Organs" tab.
+A table is shown, displaying the Donor's name, Organ, Region, Time of death and the Time until expiry. Any alive donors
+are not displayed.
+
+####AC2
+
+The date of death is shown in the table.
+
+####AC3
+
+The countdown timer is displayed in the "Time until expiry" column. The timer also indicates at the top of the list
+organs that are going to expire soon, and descending from there.
+
+####AC4
+
+Organs that are past the expiry are not shown in the list.
+
+####AC5
+
+The progress bar is coloured. An organ that is closer in reference to how long it needs in order to expire is 
+coloured more red, and the more "fresh" organs are displayed being green-coloured. This coloured progress bar is 
+shown in the "Time until expiry" column of the table.
+
+####AC6
+
+The default ordering of the table is done by the least amount of time left at the top of the tab;e for an organ.
+
+####AC7
+
+Normal table sorting is fully functional.
+
+####AC8
+
+Double-clicking on a row opens a new window, showing the particular donor's profile.
+
 Go to the Organs To Donate page, and check there is a coloured countdown and it sorts by default, with the closest to expiring organs at the top
+
+## Story 48 - Manually overriding the organ expiry
+
+####AC1
+
+####AC2
+
+####AC3
+
+####AC4
+
+####AC5
+
+####AC6
+
+
+## Story 49 - Available organs table: filtering
+
+####AC1
+
+####AC2
+
+####AC3
+
+
+## Story 50 - Potential recipients matching for organs
+
+####AC1
+
+####AC2
+
+####AC3
+
+####AC4
+
+####AC5
+
+####AC6
+

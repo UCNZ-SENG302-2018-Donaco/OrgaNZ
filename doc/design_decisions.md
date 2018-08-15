@@ -50,6 +50,8 @@ of Java Generics. Gson considers both of these as very important design goals.
 
 
 
-S25 - CheckComboBoxes
-These were chosen as they reduce the number of clicks that users require to filter their lists. It allows them to select
-multiple regions/organs at once, rather than only one using a drop down box.
+**ControlsFX (More notably, CheckComboBoxes)**
+
+CheckComboboxes were chosen as they reduce the number of clicks that users require to filter their lists. It allows them to select
+multiple regions/organs at once, rather than only one using a drop down box. They have been implemented in a number
+of clinician windows including the list of transplant requests, searching clients and organs to donate.
