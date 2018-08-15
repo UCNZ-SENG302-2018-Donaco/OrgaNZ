@@ -1,16 +1,28 @@
 # User Manual
 
+
+## Touch Screen Interface
+
+
+
+## Desktop Interface
 Open JAR file
+
+
+## Command Line Interface
+
+
+
 
 
 Run Server JAR then Client JAR
 
-### Default Clinician Login
+#### Default Clinician Login
 Staff ID: `0`
 
 Password: `clinician`
 
-### Default Admin Login
+#### Default Admin Login
 Staff ID: `0`
 
 Password: `<No password>`
