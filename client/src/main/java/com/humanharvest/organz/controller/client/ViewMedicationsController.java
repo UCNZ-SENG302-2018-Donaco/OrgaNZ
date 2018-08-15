@@ -38,7 +38,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-
 /**
  * Controller for the view/edit medications page.
  */
@@ -425,9 +424,7 @@ public class ViewMedicationsController extends SubController {
      * interactions
      */
     private void updateMedicationInformation() {
-        List<MedicationRecord> selectedItems = new ArrayList<>();
-        selectedItems.addAll(currentMedicationsView.getSelectionModel().getSelectedItems());
-        selectedItems.addAll(pastMedicationsView.getSelectionModel().getSelectedItems());
+        List<MedicationRecord> selectedItems = getSelectedRecords();
 
         if (selectedItems.size() == 1) {
             setActiveIngredients(selectedItems.get(0));
