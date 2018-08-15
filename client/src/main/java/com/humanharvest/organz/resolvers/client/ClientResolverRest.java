@@ -146,8 +146,6 @@ public class ClientResolverRest implements ClientResolver {
     @Override
     public List<TransplantRequest> createTransplantRequest(Client client, CreateTransplantRequestView request) {
         HttpHeaders httpHeaders = createHeaders(true);
-        System.out.println("State get clients etag: " + State.getClientEtag());
-        System.out.println("Client's IfMatch: " + httpHeaders.getIfMatch());
         ResponseEntity<List<TransplantRequest>> responseEntity = sendQuery(httpHeaders,
                 State.BASE_URI + "clients/{id}/transplantRequests",
                 HttpMethod.POST,
@@ -284,7 +282,6 @@ public class ClientResolverRest implements ClientResolver {
     @Override
     public IllnessRecord modifyIllnessRecord(Client client, IllnessRecord toModify,
             ModifyIllnessObject modifyIllnessObject) {
-        System.out.println(modifyIllnessObject.isChronic());
         HttpHeaders httpHeaders = createHeaders(true);
         ResponseEntity<IllnessRecord> responseEntity = sendQuery(httpHeaders,
                 State.BASE_URI + "clients/{id}/illnesses/{illnessId}",
