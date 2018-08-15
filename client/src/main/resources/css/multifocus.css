@@ -12,7 +12,7 @@
 }
 
 .combo-box {
-    -fx-skin: "com.humanharvest.organz.utilities.view.MTComboBoxListViewSkin";
+    -fx-skin: "com.humanharvest.organz.skin.MTComboBoxListViewSkin";
 }
 
 /* All below are defaults from TuioFX. All above are custom */

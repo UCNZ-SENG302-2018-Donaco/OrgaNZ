@@ -1,4 +1,4 @@
-package com.humanharvest.organz.utilities.view;
+package com.humanharvest.organz.skin;
 
 import com.sun.javafx.scene.control.behavior.ComboBoxBaseBehavior;
 import com.sun.javafx.scene.control.skin.ComboBoxListViewSkin;
