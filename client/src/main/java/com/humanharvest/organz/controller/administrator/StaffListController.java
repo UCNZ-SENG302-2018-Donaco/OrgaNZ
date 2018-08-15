@@ -113,7 +113,7 @@ public class StaffListController extends SubController {
 
         if (id == 0) {
             PageNavigator.showAlert(Alert.AlertType.ERROR, "Cannot delete the default Clinician",
-                    "The default clinician cannot be deleted from the system.");
+                    "The default clinician cannot be deleted from the system.", mainController.getStage());
             return;
 
         } else {

@@ -1,7 +1,9 @@
 package com.humanharvest.organz.controller;
 
-import java.io.IOException;
-
+import com.humanharvest.organz.AppTUIO;
+import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.view.Page;
+import com.humanharvest.organz.utilities.view.WindowContext;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -11,9 +13,7 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.view.Page;
-import com.humanharvest.organz.utilities.view.WindowContext;
+import java.io.IOException;
 
 /**
  * Main controller class for the application window.
@@ -34,6 +34,11 @@ public class MainController {
      */
     @FXML
     private StackPane pageHolder;
+
+    @FXML
+    public void initialize() {
+        pageHolder.getStyleClass().add("window");
+    }
 
     public Stage getStage() {
         return this.stage;
@@ -85,6 +90,9 @@ public class MainController {
         System.out.println("closing");
         System.out.println(stage);
         stage.close();
+        if (State.getUiType() == State.UiType.TOUCH) {
+            AppTUIO.root.getChildren().remove(pane);
+        }
     }
 
     /**

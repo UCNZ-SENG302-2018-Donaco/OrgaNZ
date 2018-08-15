@@ -21,6 +21,7 @@ import com.humanharvest.organz.resolvers.clinician.ClinicianResolver;
 import com.humanharvest.organz.resolvers.clinician.ClinicianResolverRest;
 import com.humanharvest.organz.utilities.RestErrorHandler;
 import com.humanharvest.organz.utilities.enums.Country;
+import javafx.stage.Stage;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -72,6 +73,7 @@ public final class State {
     private static Clinician viewedClinician;
     private static EnumSet<Country> allowedCountries;
     private static UiType uiType = UiType.STANDARD;
+    private static Stage primaryStage;
 
     private State() {
     }
@@ -212,6 +214,14 @@ public final class State {
     public static void setClientEtag(String etag) {
         System.out.println("Setting client etag to: " + etag);
         clientEtag = etag;
+    }
+
+    public static Stage getPrimaryStage() {
+        return primaryStage;
+    }
+
+    public static void setPrimaryStage(Stage primaryStage) {
+        State.primaryStage = primaryStage;
     }
 
     public static String getClinicianEtag() {

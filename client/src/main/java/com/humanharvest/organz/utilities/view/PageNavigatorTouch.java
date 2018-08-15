@@ -15,6 +15,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 
 import com.humanharvest.organz.AppTUIO;
 import com.humanharvest.organz.controller.MainController;
@@ -54,7 +55,7 @@ public class PageNavigatorTouch implements IPageNavigator {
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Couldn't load the page", e);
             showAlert(Alert.AlertType.ERROR, "Could not load page: " + page,
-                    "The page loader failed to load the layout for the page.");
+                    "The page loader failed to load the layout for the page.", controller.getStage());
         }
     }
 
@@ -77,15 +78,19 @@ public class PageNavigatorTouch implements IPageNavigator {
         LOGGER.info("Opening new window");
         try {
             Stage newStage = new Stage();
-            newStage.setTitle("Organ Client Management System");
             FXMLLoader loader = new FXMLLoader();
             Pane mainPane = loader.load(PageNavigatorTouch.class.getResourceAsStream(Page.TOUCH_MAIN.getPath()));
             MainController mainController = loader.getController();
+
+            Scene scene = new Scene(mainPane);
+            newStage.setScene(scene);
+
             mainController.setStage(newStage);
             mainController.setPane(mainPane);
             State.addMainController(mainController);
             newStage.setOnCloseRequest(e -> {
                 State.deleteMainController(mainController);
+                AppTUIO.root.getChildren().remove(mainPane);
             });
 
             TuioFXUtils.setupPaneWithTouchFeatures(mainPane);
@@ -98,7 +103,7 @@ public class PageNavigatorTouch implements IPageNavigator {
             LOGGER.log(Level.SEVERE, "Error loading new window\n", e);
             // Will throw if MAIN's fxml file could not be loaded.
             showAlert(Alert.AlertType.ERROR, "New window could not be created",
-                    "The page loader failed to load the layout for the new window.");
+                    "The page loader failed to load the layout for the new window.", null);
             return null;
         }
     }
@@ -137,8 +142,41 @@ public class PageNavigatorTouch implements IPageNavigator {
      * @param bodyText  the text to show within the body of the alert.
      * @return an Optional for the button that was clicked to dismiss the alert.
      */
-    public Optional<ButtonType> showAlert(Alert.AlertType alertType, String title, String bodyText) {
-        Alert alert = generateAlert(alertType, title, bodyText);
-        return alert.showAndWait();
+    public Property<Boolean> showAlert(Alert.AlertType alertType, String title, String bodyText, Window window) {
+        LOGGER.info("Opening new window");
+        try {
+            Stage newStage = new Stage();
+            FXMLLoader loader = new FXMLLoader(PageNavigatorTouch.class.getResource(Page.TOUCH_ALERT.getPath()));
+            Pane mainPane = loader.load();
+            mainPane.getStyleClass().add("window");
+            TouchAlertController controller = loader.getController();
+            controller.setup(alertType, title, bodyText, newStage, mainPane);
+
+            TuioFXUtils.setupPaneWithTouchFeatures(mainPane);
+
+            AppTUIO.root.getChildren().add(mainPane);
+
+            // Set the positioning based off the calling window if it is valid.
+            if (window != null && window.getScene() != null && window.getScene().getRoot() != null) {
+                Parent root = window.getScene().getRoot();
+                mainPane.setTranslateX(root.getTranslateX() + 100);
+                mainPane.setTranslateY(root.getTranslateY() + 100);
+                mainPane.setRotate(root.getRotate());
+                mainPane.setScaleX(root.getScaleX());
+                mainPane.setScaleY(root.getScaleY());
+            }
+
+            return controller.getResultProperty();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error loading new window\n", e);
+            // Will throw if MAIN's fxml file could not be loaded.
+//            showAlert(Alert.AlertType.ERROR, "New window could not be created",
+//                    "The page loader failed to load the layout for the new window.", new Stage());
+        }
+        Property<Boolean> result = new SimpleBooleanProperty();
+        result.setValue(false);
+        return result;
     }
 }

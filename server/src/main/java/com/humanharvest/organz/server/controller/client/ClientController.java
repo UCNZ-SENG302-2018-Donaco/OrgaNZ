@@ -12,7 +12,10 @@ import com.humanharvest.organz.actions.images.AddImageAction;
 import com.humanharvest.organz.actions.images.DeleteImageAction;
 import com.humanharvest.organz.server.exceptions.GlobalControllerExceptionHandler.InvalidRequestException;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.enums.*;
+import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
+import com.humanharvest.organz.utilities.enums.ClientType;
+import com.humanharvest.organz.utilities.enums.Gender;
+import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
@@ -33,10 +36,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.awt.image.ImagingOpException;
 import java.io.*;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -59,7 +59,7 @@ public class ClientController {
             @RequestParam(required = false) Integer count,
             @RequestParam(required = false) Integer minimumAge,
             @RequestParam(required = false) Integer maximumAge,
-            @RequestParam(required = false) EnumSet<Region> regions,
+            @RequestParam(required = false) Set<String> regions,
             @RequestParam(required = false) EnumSet<Gender> birthGenders,
             @RequestParam(required = false) ClientType clientType,
             @RequestParam(required = false) EnumSet<Organ> donating,
@@ -71,13 +71,21 @@ public class ClientController {
         //TODO: Add the auth check, but need to remake the login page to not get the list of clients
         //State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
 
+        //We need to remove the space characters here. Possibly needs to be done for other types as well
+        Set<String> newRegions = new HashSet<>();
+        if (regions != null) {
+            for (String region : regions) {
+                newRegions.add(region.replace("%20", " "));
+            }
+        }
+
         PaginatedClientList clients = State.getClientManager().getClients(
                 q,
                 offset,
                 count,
                 minimumAge,
                 maximumAge,
-                regions,
+                newRegions,
                 birthGenders,
                 clientType,
                 donating,
@@ -325,10 +333,9 @@ public class ClientController {
             @PathVariable int uid,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws InvalidRequestException, IfMatchFailedException, IfMatchRequiredException {
-        String imagesDirectory = System.getProperty("user.home") + "/.organz/images/";
 
         // Check if the directory exists. If not, then clearly the image doesn't
-        File directory = new File(imagesDirectory);
+        File directory = new File(State.getImageDirectory());
         if (!directory.exists()) {
             throw new NotFoundException();
 
@@ -345,7 +352,7 @@ public class ClientController {
         State.getAuthenticationManager().verifyClientAccess(authToken, client);
 
         // Get image
-        try (InputStream in = new FileInputStream(imagesDirectory + uid + ".png")) {
+        try (InputStream in = new FileInputStream(State.getImageDirectory() + uid + ".png")) {
             byte[] out = IOUtils.toByteArray(in);
             HttpHeaders headers = new HttpHeaders();
             headers.add("Content-Type", "image/png");
@@ -365,12 +372,9 @@ public class ClientController {
             @RequestHeader(value = "If-Match", required = false) String etag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {
 
-        String imagesDirectory = System.getProperty("user.home") + "/.organz/images/";
-
         // Create the directory if it doesn't exist
-        File directory = new File(imagesDirectory);
+        File directory = new File(State.getImageDirectory());
         if (!directory.exists()) {
-            new File(System.getProperty("user.home") + "/.organz/").mkdir();
             directory.mkdir();
         }
 
@@ -392,7 +396,7 @@ public class ClientController {
             throw new IfMatchFailedException();
         }
 
-        AddImageAction action = new AddImageAction(client, image);
+        AddImageAction action = new AddImageAction(client, image, State.getImageDirectory());
 
         // Write the file
         try {
@@ -409,10 +413,9 @@ public class ClientController {
             @PathVariable int uid,
             @RequestHeader(value = "If-Match", required = false) String etag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken) throws InvalidRequestException {
-        String imagesDirectory = System.getProperty("user.home") + "/.organz/images/";
 
         // Check if the directory exists. If not, then clearly the image doesn't
-        File directory = new File(imagesDirectory);
+        File directory = new File(State.getImageDirectory());
         if (!directory.exists()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -436,7 +439,7 @@ public class ClientController {
         }
 
         try {
-            DeleteImageAction action = new DeleteImageAction(client);
+            DeleteImageAction action = new DeleteImageAction(client, State.getImageDirectory());
             State.getActionInvoker(authToken).execute(action);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (FileNotFoundException e) {

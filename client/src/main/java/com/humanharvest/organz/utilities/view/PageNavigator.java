@@ -1,11 +1,9 @@
 package com.humanharvest.organz.utilities.view;
 
 import com.humanharvest.organz.controller.MainController;
-import javafx.scene.Scene;
+import javafx.beans.property.Property;
 import javafx.scene.control.Alert;
-import javafx.scene.control.ButtonType;
-
-import java.util.Optional;
+import javafx.stage.Window;
 
 /**
  * Utility class for controlling navigation between pages.
@@ -70,7 +68,7 @@ public class PageNavigator {
      * @param bodyText the text to show within the body of the alert.
      * @return an Optional for the button that was clicked to dismiss the alert.
      */
-    public static Optional<ButtonType> showAlert(Alert.AlertType alertType, String title, String bodyText) {
-        return pageNavigator.showAlert(alertType, title, bodyText);
+    public static Property<Boolean> showAlert(Alert.AlertType alertType, String title, String bodyText, Window window) {
+        return pageNavigator.showAlert(alertType, title, bodyText, window);
     }
 }

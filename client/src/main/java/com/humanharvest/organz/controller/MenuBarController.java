@@ -1,37 +1,8 @@
 package com.humanharvest.organz.controller;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import com.humanharvest.organz.AppTUIO;
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.utilities.view.WindowContext;
-import javafx.application.Platform;
-import javafx.concurrent.Task;
-import javafx.fxml.FXML;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonBar.ButtonData;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Menu;
-import javafx.scene.control.MenuBar;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.SeparatorMenuItem;
-import javafx.stage.FileChooser;
-import javafx.stage.Stage;
-
 import com.humanharvest.organz.AppUI;
+import com.humanharvest.organz.Client;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
@@ -40,8 +11,10 @@ import com.humanharvest.organz.utilities.CacheManager;
 import com.humanharvest.organz.utilities.exceptions.BadRequestException;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.utilities.view.WindowContext;
 import com.humanharvest.organz.views.ActionResponseView;
 import javafx.application.Platform;
+import javafx.beans.property.Property;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -388,7 +361,7 @@ public class MenuBarController extends SubController {
                 PageNavigator.refreshAllWindows();
             }
         } catch (URISyntaxException | IOException e) {
-            PageNavigator.showAlert(AlertType.WARNING, "Save Failed", ERROR_SAVING_MESSAGE);
+            PageNavigator.showAlert(AlertType.WARNING, "Save Failed", ERROR_SAVING_MESSAGE, mainController.getStage());
             LOGGER.log(Level.SEVERE, ERROR_SAVING_MESSAGE, e);
         }
     }
@@ -421,7 +394,7 @@ public class MenuBarController extends SubController {
                 PageNavigator.refreshAllWindows();
             }
         } catch (URISyntaxException | IOException e) {
-            PageNavigator.showAlert(AlertType.WARNING, "Save Failed", ERROR_SAVING_MESSAGE);
+            PageNavigator.showAlert(AlertType.WARNING, "Save Failed", ERROR_SAVING_MESSAGE, mainController.getStage());
             LOGGER.log(Level.SEVERE, ERROR_SAVING_MESSAGE, e);
         }
     }
@@ -433,49 +406,61 @@ public class MenuBarController extends SubController {
     private void load() {
 
         // Confirm that the user wants to overwrite current data with data from a file
-        Optional<ButtonType> response = PageNavigator.showAlert(AlertType.CONFIRMATION,
+        Property<Boolean> response = PageNavigator.showAlert(AlertType.CONFIRMATION,
                 "Confirm load from file",
-                "Loading from a file will overwrite all current data. Would you like to proceed?");
+                "Loading from a file will overwrite all current data. Would you like to proceed?", mainController.getStage());
 
-        if (response.isPresent() && response.get() == ButtonType.OK) {
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Load Clients File");
-            try {
-                fileChooser.setInitialDirectory(
-                        new File(Paths.get(AppUI.class.getProtectionDomain().getCodeSource().getLocation().toURI())
-                                .getParent().toString()));
-            } catch (URISyntaxException exc) {
-                exc.printStackTrace();
+        if (response.getValue() != null) {
+            if (response.getValue()) {
+                loadFile();
             }
-            fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(
-                    "JSON/CSV files (*.json, *.csv)",
-                    "*.json", "*.csv"));
-            File file = fileChooser.showOpenDialog(mainController.getStage());
-
-            if (file != null) {
-                String format = getFileExtension(file.getName());
-
-                try {
-                    String message = State.getFileResolver().importClients(
-                            Files.readAllBytes(file.toPath()), format);
-
-                    LOGGER.log(Level.INFO, message);
-
-                    Notifications.create()
-                            .title("Loaded Clients")
-                            .text(message)
-                            .showInformation();
-
-                    mainController.resetWindowContext();
-                    PageNavigator.loadPage(Page.LANDING, mainController);
-
-                } catch (IllegalArgumentException exc) {
-                    PageNavigator.showAlert(AlertType.ERROR, "Load Failed", exc.getMessage());
-                } catch (IOException | BadRequestException exc) {
-                    PageNavigator.showAlert(AlertType.ERROR, "Load Failed",
-                            String.format("An error occurred when loading from file: '%s'\n%s",
-                                    file.getName(), exc.getMessage()));
+        } else {
+            response.addListener((observable, oldValue, newValue) -> {
+                if (newValue) {
+                    loadFile();
                 }
+            });
+        }
+    }
+
+    private void loadFile() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Load Clients File");
+        try {
+            fileChooser.setInitialDirectory(
+                    new File(Paths.get(AppUI.class.getProtectionDomain().getCodeSource().getLocation().toURI())
+                            .getParent().toString()));
+        } catch (URISyntaxException exc) {
+            exc.printStackTrace();
+        }
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(
+                "JSON/CSV files (*.json, *.csv)",
+                "*.json", "*.csv"));
+        File file = fileChooser.showOpenDialog(State.getPrimaryStage());
+
+        if (file != null) {
+            String format = getFileExtension(file.getName());
+
+            try {
+                String message = State.getFileResolver().importClients(
+                        Files.readAllBytes(file.toPath()), format);
+
+                LOGGER.log(Level.INFO, message);
+
+                Notifications.create()
+                        .title("Loaded Clients")
+                        .text(message)
+                        .showInformation();
+
+                mainController.resetWindowContext();
+                PageNavigator.loadPage(Page.LANDING, mainController);
+
+            } catch (IllegalArgumentException exc) {
+                PageNavigator.showAlert(AlertType.ERROR, "Load Failed", exc.getMessage(), mainController.getStage());
+            } catch (IOException | BadRequestException exc) {
+                PageNavigator.showAlert(AlertType.ERROR, "Load Failed",
+                        String.format("An error occurred when loading from file: '%s'\n%s",
+                                file.getName(), exc.getMessage()), mainController.getStage());
             }
         }
     }

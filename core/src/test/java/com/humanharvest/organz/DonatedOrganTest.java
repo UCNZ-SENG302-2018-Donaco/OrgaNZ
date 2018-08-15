@@ -1,13 +1,13 @@
 package com.humanharvest.organz;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import com.humanharvest.organz.utilities.enums.Organ;
+import org.junit.Ignore;
+import org.junit.Test;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-import com.humanharvest.organz.utilities.enums.Organ;
-import org.junit.Ignore;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DonatedOrganTest {
 
@@ -16,7 +16,7 @@ public class DonatedOrganTest {
     private LocalDateTime dateTimeOfDonation;
     private DonatedOrgan donatedOrgan;
 
-    public DonatedOrganTest(){
+    public DonatedOrganTest() {
         donor = new Client(1);
         organ = Organ.LUNG; //4-6 hours
         dateTimeOfDonation = LocalDateTime.now();

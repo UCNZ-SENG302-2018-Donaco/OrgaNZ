@@ -60,6 +60,7 @@ public class AppTUIO extends Application {
      * Loads from the save file or creates one if one does not yet exist.
      *
      * @param primaryStage The stage given by the JavaFX launcher.
+     * @throws IOException If the save file cannot be loaded/created.
      */
     @Override
     public void start(Stage primaryStage) throws IOException {
@@ -82,12 +83,13 @@ public class AppTUIO extends Application {
 
         primaryStage.setTitle("Test");
         primaryStage.setScene(scene);
-//        primaryStage.setFullScreen(true);
+        primaryStage.setFullScreen(true);
         primaryStage.show();
-        primaryStage.setWidth(1024);
-        primaryStage.setHeight(768);
+//        primaryStage.setWidth(1024);
+//        primaryStage.setHeight(768);
 
         State.init(DataStorageType.REST);
+        State.setPrimaryStage(primaryStage);
 
         Map<String, String> parameters = getParameters().getNamed();
 

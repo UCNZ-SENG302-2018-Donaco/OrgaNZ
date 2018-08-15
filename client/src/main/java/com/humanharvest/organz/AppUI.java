@@ -35,6 +35,7 @@ public class AppUI extends Application {
         PageNavigator.setPageNavigator(new PageNavigatorStandard());
 
         State.init(DataStorageType.REST);
+        State.setPrimaryStage(primaryStage);
 
         Map<String, String> parameters = getParameters().getNamed();
 

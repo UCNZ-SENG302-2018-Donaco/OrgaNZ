@@ -1,25 +1,12 @@
 package com.humanharvest.organz.resolvers.client;
 
+import com.humanharvest.organz.*;
+import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.views.client.*;
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
-
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.HistoryItem;
-import com.humanharvest.organz.IllnessRecord;
-import com.humanharvest.organz.MedicationRecord;
-import com.humanharvest.organz.ProcedureRecord;
-import com.humanharvest.organz.TransplantRequest;
-import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.views.client.CreateClientView;
-import com.humanharvest.organz.views.client.CreateIllnessView;
-import com.humanharvest.organz.views.client.CreateMedicationRecordView;
-import com.humanharvest.organz.views.client.CreateProcedureView;
-import com.humanharvest.organz.views.client.CreateTransplantRequestView;
-import com.humanharvest.organz.views.client.ModifyClientObject;
-import com.humanharvest.organz.views.client.ModifyIllnessObject;
-import com.humanharvest.organz.views.client.ModifyProcedureObject;
-import com.humanharvest.organz.views.client.ResolveTransplantRequestObject;
 
 public interface ClientResolver {
 
