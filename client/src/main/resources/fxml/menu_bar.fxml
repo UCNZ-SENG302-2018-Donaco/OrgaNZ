@@ -32,7 +32,8 @@
              <items>
                <MenuItem fx:id="searchClientItem" mnemonicParsing="false" onAction="#goToSearch" text="Search Clients" />
                <MenuItem fx:id="viewClientItem" mnemonicParsing="false" onAction="#goToViewClient" text="View Client Profile" />
-                  <MenuItem fx:id="createClientItem" mnemonicParsing="false" onAction="#goToCreateClient" text="Create a client" />
+                 <MenuItem fx:id="createClientItem" mnemonicParsing="false" onAction="#goToCreateClient"
+                           text="Create a client"/>
              </items>
           </Menu>
           <Menu fx:id="organPrimaryItem" mnemonicParsing="false" text="Organs">
@@ -62,7 +63,8 @@
           </Menu>
           <Menu fx:id="profilePrimaryItem" mnemonicParsing="false" text="Profile">
              <items>
-               <MenuItem fx:id="viewClinicianItem" mnemonicParsing="false" onAction="#goToViewClinician" text="View Clinician" />
+                 <MenuItem fx:id="viewClinicianItem" mnemonicParsing="false" onAction="#goToViewClinician"
+                           text="View Clinician"/>
                <MenuItem fx:id="historyItem" mnemonicParsing="false" onAction="#goToHistory" text="History" />
                <MenuItem fx:id="cliItem" mnemonicParsing="false" onAction="#goToCommandLine" text="CLI" />
              </items>

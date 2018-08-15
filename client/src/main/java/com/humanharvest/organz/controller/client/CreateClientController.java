@@ -1,16 +1,5 @@
 package com.humanharvest.organz.controller.client;
 
-import java.time.LocalDate;
-import java.util.logging.Logger;
-
-import javafx.fxml.FXML;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.Pane;
-
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.controller.MainController;
@@ -35,6 +24,7 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 
+import java.time.LocalDate;
 import java.util.logging.Logger;
 
 /**
@@ -96,6 +86,10 @@ public class CreateClientController extends SubController {
         if (validation.isInvalid()) {
             PageNavigator.showAlert(AlertType.ERROR, "Required Field Empty",
                     "Please make sure that all the required fields are given.", mainController.getStage());
+        } else if (dobFld.getValue().isAfter(LocalDate.now())) {
+            PageNavigator.showAlert(AlertType.ERROR,
+                    "Invalid Date of Birth",
+                    "The date of birth cannot be after today.", mainController.getStage());
         } else {
             //Duplicate user warning alert
             if (manager.doesClientExist(firstNameFld.getText(), lastNamefld.getText(), dobFld.getValue())) {

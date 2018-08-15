@@ -1,4 +1,5 @@
 Feature: Does GET /matchOrgansToRecipients work?
+
   Scenario: Get a list of recipients for an organ
     Given authentication is required
     Given there is a test administrator with the username Test and password Test
@@ -22,6 +23,7 @@ Feature: Does GET /matchOrgansToRecipients work?
     Then the result is unauthenticated
 
   Scenario: Fail to get a list of recipients for an invalid donated organ
+
   Scenario: Get a list of recipients for an organ
     Given authentication is required
     Given there is a test administrator with the username Test and password Test

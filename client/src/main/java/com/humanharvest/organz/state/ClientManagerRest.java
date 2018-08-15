@@ -5,11 +5,6 @@ import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.enums.*;
-import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
-import com.humanharvest.organz.utilities.enums.ClientType;
-import com.humanharvest.organz.utilities.enums.DonatedOrganSortOptionsEnum;
-import com.humanharvest.organz.utilities.enums.Gender;
-import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
@@ -154,7 +149,7 @@ public class ClientManagerRest implements ClientManager {
 
     @Override
     public PaginatedTransplantList getAllCurrentTransplantRequests(Integer offset, Integer count,
-            Set<String> regions, Set<Organ> organs) {
+                                                                   Set<String> regions, Set<Organ> organs) {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set("Accept", MediaType.APPLICATION_JSON_VALUE);
         httpHeaders.set("X-Auth-Token", State.getToken());
@@ -211,13 +206,14 @@ public class ClientManagerRest implements ClientManager {
 
     /**
      * Gets all organs to donate for the specified regions and organTypes.
-     * @param regions regions to filter by. If empty, all regions are selected
+     *
+     * @param regions   regions to filter by. If empty, all regions are selected
      * @param organType organ types to filter by. If empty, all types are selected
      * @return A collection of the the organs available to donate based off the specified filters.
      */
     @Override
     public PaginatedDonatedOrgansList getAllOrgansToDonate(Integer offset, Integer count, Set<String> regions,
-            Set<Organ> organType, DonatedOrganSortOptionsEnum sortOption, Boolean reversed) {
+                                                           Set<Organ> organType, DonatedOrganSortOptionsEnum sortOption, Boolean reversed) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-Auth-Token", State.getToken());
         headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
@@ -253,7 +249,8 @@ public class ClientManagerRest implements ClientManager {
 
         ResponseEntity<List<Client>> responseEntity = State.getRestTemplate().exchange(State.BASE_URI +
                 "/matchOrganToRecipients/" + donatedOrgan.getId(), HttpMethod.GET, entity, new
-                ParameterizedTypeReference<List<Client>>() {});
+                ParameterizedTypeReference<List<Client>>() {
+                });
 
         return responseEntity.getBody();
     }

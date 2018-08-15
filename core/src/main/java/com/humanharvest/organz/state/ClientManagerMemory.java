@@ -2,20 +2,9 @@ package com.humanharvest.organz.state;
 
 import com.humanharvest.organz.*;
 import com.humanharvest.organz.utilities.ClientNameSorter;
-import com.humanharvest.organz.utilities.enums.*;
 import com.humanharvest.organz.utilities.algorithms.MatchOrganToRecipients;
-import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
-import com.humanharvest.organz.utilities.enums.ClientType;
-import com.humanharvest.organz.utilities.enums.Country;
-import com.humanharvest.organz.utilities.enums.DonatedOrganSortOptionsEnum;
-import com.humanharvest.organz.utilities.enums.Gender;
-import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
-import com.humanharvest.organz.views.client.DonatedOrganView;
-import com.humanharvest.organz.views.client.PaginatedClientList;
-import com.humanharvest.organz.views.client.PaginatedDonatedOrgansList;
-import com.humanharvest.organz.views.client.PaginatedTransplantList;
-import com.humanharvest.organz.views.client.TransplantRequestView;
+import com.humanharvest.organz.utilities.enums.*;
+import com.humanharvest.organz.views.client.*;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -293,7 +282,7 @@ public class ClientManagerMemory implements ClientManager {
 
     @Override
     public PaginatedTransplantList getAllCurrentTransplantRequests(Integer offset, Integer count,
-            Set<String> regions, Set<Organ> organs) {
+                                                                   Set<String> regions, Set<Organ> organs) {
         // Determine requests that match filters
         List<TransplantRequestView> matchingRequests = getClients().stream()
                 .filter(client -> regions == null || regions.isEmpty() || regions.contains(client.getRegion()))
@@ -340,12 +329,14 @@ public class ClientManagerMemory implements ClientManager {
         return donatedOrgans;
     }
 
-    /**donatedOrgans,totalResults)
+    /**
+     * donatedOrgans,totalResults)
+     *
      * @return a list of all organs available for donation
      */
     @Override
     public PaginatedDonatedOrgansList getAllOrgansToDonate(Integer offset, Integer count, Set<String> regionsToFilter,
-            Set<Organ> organType, DonatedOrganSortOptionsEnum sortOption, Boolean reversed) {
+                                                           Set<Organ> organType, DonatedOrganSortOptionsEnum sortOption, Boolean reversed) {
 
         Comparator<DonatedOrgan> comparator;
         if (sortOption == null) {
@@ -411,6 +402,7 @@ public class ClientManagerMemory implements ClientManager {
 
     /**
      * Gets potential recipients for an available organ
+     *
      * @param donatedOrgan available organ to match to potential recipients
      * @return list of clients that are waiting for the available organ
      */

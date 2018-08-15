@@ -1,14 +1,5 @@
 package com.humanharvest.organz.server;
 
-import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
-
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.actions.client.MarkClientAsDeadAction;
 import com.humanharvest.organz.state.AuthenticationManagerFake;
@@ -26,15 +17,23 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+
+import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
 @WebAppConfiguration
 public class OrganControllerTest {
 
-    private MockMvc mockMvc;
-
     @Autowired
     WebApplicationContext webApplicationContext;
+    private MockMvc mockMvc;
 
     @Before
     public void init() {
@@ -62,12 +61,12 @@ public class OrganControllerTest {
         State.getClientManager().addClient(michaelShoeMaker);
         State.getClientManager().addClient(outsider);
 
-        MarkClientAsDeadAction action1  = new MarkClientAsDeadAction(janMichael, LocalDate.now(), LocalTime.now(),
-                "Auckland","Auckland", Country.NZ, State.getClientManager());
-        MarkClientAsDeadAction action2  = new MarkClientAsDeadAction(michaelShoeMaker, LocalDate.now(), LocalTime.now(),
-                "Canterbury","Canterbury", Country.NZ, State.getClientManager());
-        MarkClientAsDeadAction action3  = new MarkClientAsDeadAction(outsider, LocalDate.now(), LocalTime.now(),
-                "Rio","Rio", Country.BR, State.getClientManager());
+        MarkClientAsDeadAction action1 = new MarkClientAsDeadAction(janMichael, LocalDate.now(), LocalTime.now(),
+                "Auckland", "Auckland", Country.NZ, State.getClientManager());
+        MarkClientAsDeadAction action2 = new MarkClientAsDeadAction(michaelShoeMaker, LocalDate.now(), LocalTime.now(),
+                "Canterbury", "Canterbury", Country.NZ, State.getClientManager());
+        MarkClientAsDeadAction action3 = new MarkClientAsDeadAction(outsider, LocalDate.now(), LocalTime.now(),
+                "Rio", "Rio", Country.BR, State.getClientManager());
 
         State.getActionInvoker("").execute(action1);
         State.getActionInvoker("").execute(action2);
