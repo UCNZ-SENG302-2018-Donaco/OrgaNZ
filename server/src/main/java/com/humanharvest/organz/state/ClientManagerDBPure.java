@@ -18,12 +18,6 @@ import org.hibernate.query.Query;
 
 import javax.persistence.OptimisticLockException;
 import javax.persistence.RollbackException;
-import java.time.LocalDate;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import javax.persistence.OptimisticLockException;
-import javax.persistence.RollbackException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -65,6 +59,29 @@ public class ClientManagerDBPure implements ClientManager {
         }
 
         return clients == null ? new ArrayList<>() : clients;
+    }
+
+    @Override
+    public void setClients(Collection<Client> clients) {
+        // Clear all clients currently in the database
+        clearPersistedClients();
+
+        Transaction trns = null;
+        try (Session session = dbManager.getDBSession()) {
+            // Persist all the clients in the given collection
+            trns = session.beginTransaction();
+            for (Client client : clients) {
+                if (client.getUid() == null) {
+                    client.setUid(0);
+                }
+                session.replicate(client, ReplicationMode.OVERWRITE);
+            }
+            trns.commit();
+        } catch (RollbackException exc) {
+            if (trns != null) {
+                trns.rollback();
+            }
+        }
     }
 
     public PaginatedClientList getClients(
@@ -284,29 +301,6 @@ public class ClientManagerDBPure implements ClientManager {
                 trns.rollback();
             }
             return null;
-        }
-    }
-
-    @Override
-    public void setClients(Collection<Client> clients) {
-        // Clear all clients currently in the database
-        clearPersistedClients();
-
-        Transaction trns = null;
-        try (Session session = dbManager.getDBSession()) {
-            // Persist all the clients in the given collection
-            trns = session.beginTransaction();
-            for (Client client : clients) {
-                if (client.getUid() == null) {
-                    client.setUid(0);
-                }
-                session.replicate(client, ReplicationMode.OVERWRITE);
-            }
-            trns.commit();
-        } catch (RollbackException exc) {
-            if (trns != null) {
-                trns.rollback();
-            }
         }
     }
 

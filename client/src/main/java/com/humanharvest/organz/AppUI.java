@@ -1,38 +1,23 @@
 package com.humanharvest.organz;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.logging.Level;
-
-import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.scene.layout.Pane;
-import javafx.stage.Stage;
-
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.state.State.DataStorageType;
 import com.humanharvest.organz.utilities.LoggerSetup;
-import com.humanharvest.organz.utilities.view.Page;
-import com.humanharvest.organz.utilities.view.PageNavigator;
-import com.humanharvest.organz.utilities.view.PageNavigatorStandard;
-import com.humanharvest.organz.utilities.view.PageNavigatorTouch;
-import com.humanharvest.organz.utilities.view.TuioFXUtils;
-import com.humanharvest.organz.utilities.view.WindowContext;
+import com.humanharvest.organz.utilities.view.*;
 import com.sun.javafx.css.StyleManager;
-import org.tuiofx.TuioFX;
-import org.tuiofx.internal.base.TuioFXCanvas;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
+import org.tuiofx.TuioFX;
+import org.tuiofx.internal.base.TuioFXCanvas;
 
 import java.io.IOException;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.logging.Level;
 
 /**

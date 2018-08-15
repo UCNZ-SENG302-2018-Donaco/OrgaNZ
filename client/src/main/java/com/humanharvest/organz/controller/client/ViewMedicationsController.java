@@ -230,6 +230,7 @@ public class ViewMedicationsController extends SubController {
 
     /**
      * Gets all selected medication records from both the current and past medication lists
+     *
      * @return list of all currently selected medication records
      */
     private List<MedicationRecord> getSelectedRecords() {

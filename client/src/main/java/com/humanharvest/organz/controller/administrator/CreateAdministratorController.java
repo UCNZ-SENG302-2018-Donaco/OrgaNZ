@@ -4,6 +4,7 @@ import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.state.AdministratorManager;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.views.administrator.CreateAdministratorView;
@@ -15,15 +16,6 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-
-import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.state.AdministratorManager;
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.exceptions.ServerRestException;
-import com.humanharvest.organz.utilities.view.Page;
-import com.humanharvest.organz.utilities.view.PageNavigator;
-import com.humanharvest.organz.views.administrator.CreateAdministratorView;
 import org.controlsfx.control.Notifications;
 
 public class CreateAdministratorController extends SubController {
@@ -120,21 +112,17 @@ public class CreateAdministratorController extends SubController {
     @FXML
     void createUser() {
         if (fieldsAreValid()) {
-
             String username = usernameTextField.getText();
             String password = passwordField.getText();
 
-            CreateAdministratorView administratorView =
-                    new CreateAdministratorView(
-                            username,
-                            password);
+            CreateAdministratorView administratorView = new CreateAdministratorView(username, password);
 
             try {
                 State.getAdministratorResolver().createAdministrator(administratorView);
                 State.getAuthenticationManager().loginAdministrator(username, password);
                 Notifications.create()
                         .title("Created Administrator")
-                        .text(String.format("Administrator was created with username:%s",username))
+                        .text(String.format("Administrator was created with username:%s", username))
                         .showInformation();
 
 
@@ -142,15 +130,10 @@ public class CreateAdministratorController extends SubController {
             } catch (ServerRestException e) {
                 PageNavigator.showAlert(AlertType.ERROR,
                         "Error",
-                        "An Administrator with this username exists. Please pick another");
-                return;
+                        "An Administrator with this username exists. Please pick another", mainController.getStage());
             }
-            }
-
-
-
-
         }
+    }
 
     @FXML
     void goBack() {

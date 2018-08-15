@@ -71,7 +71,7 @@ public class OrgansToDonateController extends SubController {
     private TableColumn<DonatedOrgan, Organ> organCol;
 
     @FXML
-    private  TableColumn<DonatedOrgan, String> regionCol;
+    private TableColumn<DonatedOrgan, String> regionCol;
 
     @FXML
     private TableColumn<DonatedOrgan, LocalDateTime> timeOfDeathCol;
@@ -127,6 +127,25 @@ public class OrgansToDonateController extends SubController {
     }
 
     /**
+     * Formats a table cell that holds a {@link LocalDateTime} value to display that value in the date time format.
+     *
+     * @return The cell with the date time formatter set.
+     */
+    private static TableCell<DonatedOrgan, LocalDateTime> formatDateTimeCell() {
+        return new TableCell<DonatedOrgan, LocalDateTime>() {
+            @Override
+            protected void updateItem(LocalDateTime item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setText(null);
+                } else {
+                    setText(item.format(dateTimeFormat));
+                }
+            }
+        };
+    }
+
+    /**
      * Initializes the page and the table/pagination properties.
      */
     @FXML
@@ -148,15 +167,26 @@ public class OrgansToDonateController extends SubController {
         organFilter.getItems().setAll(Organ.values());
 
         regionFilter.getCheckModel().getCheckedItems().addListener(
-            (ListChangeListener<String>) change -> updateOrgansToDonateList());
+                (ListChangeListener<String>) change -> updateOrgansToDonateList());
 
         organFilter.getCheckModel().getCheckedItems().addListener(
-            (ListChangeListener<Organ>) change -> updateOrgansToDonateList());
+                (ListChangeListener<Organ>) change -> updateOrgansToDonateList());
 
         //On pagination update call createPage
         pagination.setPageFactory(this::createPage);
 
         tableView.getSortOrder().setAll(timeUntilExpiryCol);
+    }
+
+    /**
+     * Upon pagination, update the table to show the correct items
+     *
+     * @param pageIndex The page we're now on (starts at 0)
+     * @return An empty pane as pagination requires a non null return. Not used.
+     */
+    private Node createPage(int pageIndex) {
+        updateOrgansToDonateList();
+        return new Pane();
     }
 
     /**
@@ -250,7 +280,7 @@ public class OrgansToDonateController extends SubController {
                     tableView.refresh();
                     observableOrgansToDonate.removeIf(donatedOrgan ->
                             donatedOrgan.getOverrideReason() != null ||
-                            donatedOrgan.getDurationUntilExpiry() != null &&
+                                    donatedOrgan.getDurationUntilExpiry() != null &&
                             donatedOrgan.getDurationUntilExpiry().minusSeconds(1).isNegative());
                 }));
         clock.setCycleCount(Animation.INDEFINITE);
@@ -281,16 +311,6 @@ public class OrgansToDonateController extends SubController {
         });
 
         sortedOrgansToDonate.comparatorProperty().bind(tableView.comparatorProperty());
-    }
-
-    /**
-     * Upon pagination, update the table to show the correct items
-     * @param pageIndex The page we're now on (starts at 0)
-     * @return An empty pane as pagination requires a non null return. Not used.
-     */
-    private Node createPage(int pageIndex) {
-        updateOrgansToDonateList();
-        return new Pane();
     }
 
     /**
@@ -337,6 +357,7 @@ public class OrgansToDonateController extends SubController {
 
     /**
      * Used to detect the current sort policy of the table and convert it to a value that the server will understand.
+     *
      * @return A {@link DonatedOrganSortPolicy} that maps to one of the SortOptions and a boolean if the sort should
      * be reversed.
      */
@@ -395,16 +416,6 @@ public class OrgansToDonateController extends SubController {
         }
     }
 
-    /**
-     * Refreshes the data in the transplants waiting list table. Should be called whenever any page calls a global
-     * refresh.
-     */
-    @Override
-    public void refresh() {
-        updateOrgansToDonateList();
-        tableView.setItems(sortedOrgansToDonate);
-    }
-
     private void openManuallyExpireDialog() {
         // Create a popup with a text field to enter the reason
         TextInputDialog popup = new TextInputDialog();
@@ -446,6 +457,18 @@ public class OrgansToDonateController extends SubController {
         }
     }
 
+    /**
+     * Refreshes the data in the transplants waiting list table. Should be called whenever any page calls a global
+     * refresh.
+     */
+    @Override
+    public void refresh() {
+        updateOrgansToDonateList();
+        tableView.setItems(sortedOrgansToDonate);
+    }
+
+    // ---------------- Format methods ----------------
+
     private void setupDisplayingXToYOfZText(int totalCount) {
         int fromIndex = pagination.getCurrentPageIndex() * ROWS_PER_PAGE;
         int toIndex = Math.min(fromIndex + ROWS_PER_PAGE, totalCount);
@@ -458,24 +481,5 @@ public class OrgansToDonateController extends SubController {
             displayingXToYOfZText.setText(String.format("Displaying %d-%d of %d", fromIndex + 1, toIndex,
                     totalCount));
         }
-    }
-
-    // ---------------- Format methods ----------------
-    /**
-     * Formats a table cell that holds a {@link LocalDateTime} value to display that value in the date time format.
-     * @return The cell with the date time formatter set.
-     */
-    private static TableCell<DonatedOrgan, LocalDateTime> formatDateTimeCell() {
-        return new TableCell<DonatedOrgan, LocalDateTime>() {
-            @Override
-            protected void updateItem(LocalDateTime item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty) {
-                    setText(null);
-                } else {
-                    setText(item.format(dateTimeFormat));
-                }
-            }
-        };
     }
 }

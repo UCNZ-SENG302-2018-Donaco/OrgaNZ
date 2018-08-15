@@ -1,5 +1,6 @@
 package com.humanharvest.organz.controller;
 
+import com.humanharvest.organz.MultitouchHandler;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
@@ -15,10 +16,6 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import com.humanharvest.organz.MultitouchHandler;
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.view.Page;
-import com.humanharvest.organz.utilities.view.WindowContext;
 
 /**
  * Main controller class for the application window.
