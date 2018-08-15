@@ -371,17 +371,12 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
         verifyThat("#currentMedicationsView", hasListCell(drug2));
 
         clickOn((Node) lookup(hasText(drug0.toString())).query());
-        verifyThat((Node) lookup(hasText(drug0.toString())).query(), Node::isFocused);
-        press(KeyCode.CONTROL); // So all the drugs are selected
         clickOn((Node) lookup(hasText(drug1.toString())).query());
-        verifyThat((Node) lookup(hasText(drug1.toString())).query(), Node::isFocused);
         clickOn((Node) lookup(hasText(drug2.toString())).query());
-        verifyThat((Node) lookup(hasText(drug2.toString())).query(), Node::isFocused);
-        release(KeyCode.CONTROL);
 
-        // Check that no interactions are displayed with three medications selected
-        String interactionsInfo = ((TextArea) lookup("#medicationInteractions").query()).getText();
-        assertEquals("", interactionsInfo);
+        // Make sure that the third node selected does not select
+        Node node = lookup(hasText(drug2.toString())).query();
+        assertFalse(node.isFocused());
     }
 
     @Test
