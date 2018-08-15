@@ -75,8 +75,8 @@ public class OrgansController {
         List<DonatedOrganView> filteredOrgans = stream
 
                 .filter(regions == null ? o -> true : organ -> newRegions.isEmpty() ||
-                        newRegions.contains(organ.getDonatedOrgan().getDonor().getRegion()) ||
-                        ( newRegions.contains("International") && organ.getDonatedOrgan().getDonor().getCountry() !=
+                        newRegions.contains(organ.getDonatedOrgan().getDonor().getRegionOfDeath()) ||
+                        ( newRegions.contains("International") && organ.getDonatedOrgan().getDonor().getCountryOfDeath() !=
                                 Country.NZ))
 
 
@@ -96,7 +96,7 @@ public class OrgansController {
                     filteredOrgans.size()),
                     HttpStatus.OK);
 
-        }else {
+        } else {
             return new ResponseEntity<>(new PaginatedDonatedOrgansList(filteredOrgans.subList(
                     Math.min(offset, filteredOrgans.size()),
                     Math.min(offset + count, filteredOrgans.size())),

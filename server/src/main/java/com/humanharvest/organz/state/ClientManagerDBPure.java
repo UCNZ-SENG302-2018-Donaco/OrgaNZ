@@ -575,6 +575,5 @@ public class ClientManagerDBPure implements ClientManager {
 
         throw new NotImplementedException();
 
-//        return requests == null ? new ArrayList<>() : requests;
     }
 }

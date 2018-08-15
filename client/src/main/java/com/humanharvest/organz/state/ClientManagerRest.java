@@ -223,8 +223,7 @@ public class ClientManagerRest implements ClientManager {
      */
     @Override
     public PaginatedDonatedOrgansList getAllOrgansToDonate(Integer offset, Integer count, Set<String> regions,
-            EnumSet<Organ>
-                    organType) {
+            EnumSet<Organ> organType) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-Auth-Token", State.getToken());
         headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
@@ -241,8 +240,6 @@ public class ClientManagerRest implements ClientManager {
                 builder.toUriString(),
                 HttpMethod.GET,
                 entity, PaginatedDonatedOrgansList.class);
-
-        System.out.println("sadsadsadsad" + responseEntity.getBody());
 
         return responseEntity.getBody();
 

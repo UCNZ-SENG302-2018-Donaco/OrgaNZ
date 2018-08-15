@@ -1,8 +1,10 @@
 package com.humanharvest.organz.server.controller.client;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonView;
@@ -12,6 +14,7 @@ import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.actions.client.AddTransplantRequestAction;
 import com.humanharvest.organz.actions.client.ResolveTransplantRequestAction;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
@@ -60,21 +63,30 @@ public class ClientTransplantRequestsController {
     public ResponseEntity<PaginatedTransplantList> getAllTransplantRequests(
             @RequestParam(value = "offset", required = false) Integer offset,
             @RequestParam(value = "count", required = false) Integer count,
-            @RequestParam(value = "region", required = false) List<String> regions,
-            @RequestParam(value = "organs", required = false) List<Organ> organs,
+            @RequestParam(value = "region", required = false) Set<String> regions,
+            @RequestParam(value = "organs", required = false) Set<Organ> organs,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws AuthenticationException {
 
         // Verify that request has clinician/admin authorization
         State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
 
+        Set<String> newRegions = new HashSet<>();
+        if (regions != null) {
+            for (String region : regions) {
+                newRegions.add(region.replace("%20", " "));
+            }
+        }
+
         // Get all requests that match region/organ filters
         List<TransplantRequestView> matchingRequests = State.getClientManager().getAllTransplantRequests().stream()
-                .filter(transplantRequest ->
-                        regions == null || regions.contains(transplantRequest.getClient().getRegion()))
-                .filter(transplantRequest ->
-                        organs == null || organs.contains(transplantRequest.getRequestedOrgan()))
+
+                .filter(request-> regions == null || newRegions.isEmpty() || newRegions.contains(request.getClient().getRegion()))
+
+                .filter(request -> organs == null || organs.contains(request.getRequestedOrgan()))
+
                 .map(TransplantRequestView::new)
+
                 .collect(Collectors.toList());
 
         // Return subset for given offset/count parameters (used for pagination)
