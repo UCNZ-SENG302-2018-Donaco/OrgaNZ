@@ -14,9 +14,6 @@
 # Exception for library JARs #
 !*/lib/*.jar
 
-# Allow all types of resources
-!*/src/*/resources/*
-
 # JSON Files (used for storing data from the system)
 *.json
 !*doc/examples/*.json
@@ -35,6 +32,9 @@ organz.log.*
 *.jpg
 *.png
 !*images/default.png
+
+# Allow all types of resources
+!**/src/**/resources/**
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
