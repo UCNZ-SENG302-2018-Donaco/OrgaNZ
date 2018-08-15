@@ -73,13 +73,12 @@ public class AppTUIO extends Application {
         // We set our own stylesheet that contains less style changes but still loads the skins required for multi touch
         Application.setUserAgentStylesheet("MODENA");
         StyleManager.getInstance().addUserAgentStylesheet("/css/multifocus.css");
+        StyleManager.getInstance().addUserAgentStylesheet("/css/touch.css");
 
         loadBackPane();
         multitouchHandler = new MultitouchHandler(root);
 
         loadMainPane();
-
-        scene.getStylesheets().add(AppUI.class.getResource("/css/touch.css").toExternalForm());
 
         primaryStage.setTitle("Test");
         primaryStage.setScene(scene);

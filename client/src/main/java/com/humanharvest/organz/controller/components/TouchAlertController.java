@@ -22,12 +22,17 @@ public class TouchAlertController {
     @FXML
     private Button cancelButton;
 
+    @FXML
+    private Pane pageHolder;
+
     private Stage stage;
     private Pane pane;
 
     private ObjectProperty<Boolean> resultProperty = new SimpleObjectProperty<>();
 
-    public TouchAlertController() {
+    @FXML
+    public void initialize() {
+        pageHolder.getStyleClass().add("window");
     }
 
     public void setup(Alert.AlertType alertType, String title, String body, Stage stage, Pane pane) {
