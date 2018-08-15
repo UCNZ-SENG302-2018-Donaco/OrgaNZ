@@ -59,11 +59,11 @@ public class ViewClientControllerTest extends ControllerTest {
     }
 
     @Test
-    public void validChangesAll() {
+    public void validChangesAllAndTitleTest() {
         clickOn("#fname").type(KeyCode.BACK_SPACE).write("z");
         clickOn("#lname").type(KeyCode.BACK_SPACE).write("q");
         clickOn("#mname").write("m");
-        clickOn("#pname").type(KeyCode.BACK_SPACE).type(KeyCode.BACK_SPACE).type(KeyCode.BACK_SPACE).write("p");
+        clickOn("#pname").type(KeyCode.BACK_SPACE).type(KeyCode.BACK_SPACE).type(KeyCode.BACK_SPACE).write("Dad");
         clickOn("#regionCB");
         clickOn("West Coast");
         clickOn("#gender");
@@ -76,11 +76,12 @@ public class ViewClientControllerTest extends ControllerTest {
         assertEquals("z", testClient.getFirstName());
         assertEquals("q", testClient.getLastName());
         assertEquals("m", testClient.getMiddleName());
-        assertEquals("p", testClient.getPreferredNameFormatted());
+        assertEquals("Dad", testClient.getPreferredName());
         assertEquals(Region.WEST_COAST.toString(), testClient.getRegion());
         assertEquals(Gender.MALE, testClient.getGender());
         assertEquals(Gender.FEMALE, testClient.getGenderIdentity());
 
+        assertEquals("View Client: Dad", mainController.getTitle());
     }
 
     @Test
@@ -156,5 +157,4 @@ public class ViewClientControllerTest extends ControllerTest {
         clickOn("#applyButton");
         assertEquals(dateOfDeath, testClient.getDateOfDeath());
     }
-
 }

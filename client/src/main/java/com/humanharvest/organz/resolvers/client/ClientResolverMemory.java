@@ -8,42 +8,76 @@ import com.humanharvest.organz.views.client.*;
 import org.springframework.beans.BeanUtils;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.DonatedOrgan;
+import com.humanharvest.organz.HistoryItem;
+import com.humanharvest.organz.IllnessRecord;
+import com.humanharvest.organz.MedicationRecord;
+import com.humanharvest.organz.ProcedureRecord;
+import com.humanharvest.organz.TransplantRequest;
+import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
+import com.humanharvest.organz.views.client.CreateClientView;
+import com.humanharvest.organz.views.client.CreateIllnessView;
+import com.humanharvest.organz.views.client.CreateMedicationRecordView;
+import com.humanharvest.organz.views.client.CreateProcedureView;
+import com.humanharvest.organz.views.client.CreateTransplantRequestView;
+import com.humanharvest.organz.views.client.ModifyClientObject;
+import com.humanharvest.organz.views.client.ModifyIllnessObject;
+import com.humanharvest.organz.views.client.ModifyProcedureObject;
+import com.humanharvest.organz.views.client.ResolveTransplantRequestObject;
+import org.springframework.beans.BeanUtils;
+
 public class ClientResolverMemory implements ClientResolver {
 
     //------------GETs----------------
 
+    @Override
     public Map<Organ, Boolean> getOrganDonationStatus(Client client) {
         return client.getOrganDonationStatus();
     }
 
+    @Override
     public List<TransplantRequest> getTransplantRequests(Client client) {
         return client.getTransplantRequests();
     }
 
+    @Override
     public List<MedicationRecord> getMedicationRecords(Client client) {
         return client.getMedications();
     }
 
+    @Override
     public List<ProcedureRecord> getProcedureRecords(Client client) {
         return client.getProcedures();
     }
 
+    @Override
     public List<IllnessRecord> getIllnessRecords(Client client) {
         return client.getIllnesses();
     }
 
+    @Override
+    public Collection<DonatedOrgan> getDonatedOrgans(Client client) {
+        return client.getDonatedOrgans();
+    }
+
+    @Override
     public List<HistoryItem> getHistory(Client client) {
         return client.getChangesHistory();
     }
 
     //------------POSTs----------------
 
+    @Override
     public Client createClient(CreateClientView createClientView) {
 
         //Get the next empty UID
@@ -65,6 +99,7 @@ public class ClientResolverMemory implements ClientResolver {
         return client;
     }
 
+    @Override
     public List<TransplantRequest> createTransplantRequest(Client client, CreateTransplantRequestView request) {
         TransplantRequest transplantRequest = new TransplantRequest(client, request.getRequestedOrgan());
         client.addTransplantRequest(transplantRequest);
@@ -72,6 +107,7 @@ public class ClientResolverMemory implements ClientResolver {
         return client.getTransplantRequests();
     }
 
+    @Override
     public List<IllnessRecord> addIllnessRecord(Client client, CreateIllnessView createIllnessView) {
         IllnessRecord illnessRecord = new IllnessRecord(createIllnessView.getIllnessName(),
                 createIllnessView.getDiagnosisDate(),
@@ -81,6 +117,7 @@ public class ClientResolverMemory implements ClientResolver {
         return client.getIllnesses();
     }
 
+    @Override
     public List<MedicationRecord> addMedicationRecord(Client client, CreateMedicationRecordView medicationRecordView) {
         MedicationRecord medicationRecord = new MedicationRecord(medicationRecordView.getName(),
                 LocalDate.now(), null);
@@ -89,6 +126,7 @@ public class ClientResolverMemory implements ClientResolver {
         return client.getMedications();
     }
 
+    @Override
     public List<ProcedureRecord> addProcedureRecord(Client client, CreateProcedureView procedureView) {
         ProcedureRecord procedureRecord = new ProcedureRecord(
                 procedureView.getSummary(),
@@ -97,6 +135,13 @@ public class ClientResolverMemory implements ClientResolver {
         client.addProcedureRecord(procedureRecord);
         State.getClientManager().applyChangesTo(client);
         return client.getProcedures();
+    }
+
+    @Override
+    public DonatedOrgan manuallyOverrideOrgan(DonatedOrgan donatedOrgan, String overrideReason) {
+        donatedOrgan.manuallyOverride(overrideReason);
+        State.getClientManager().applyChangesTo(donatedOrgan.getDonor());
+        return donatedOrgan;
     }
 
     //------------PATCHs----------------
@@ -113,6 +158,7 @@ public class ClientResolverMemory implements ClientResolver {
         return client.getOrganDonationStatus();
     }
 
+    @Override
     public TransplantRequest resolveTransplantRequest(Client client, TransplantRequest request,
             ResolveTransplantRequestObject resolveTransplantRequestObject) {
         request.setStatus(resolveTransplantRequestObject.getStatus());
@@ -121,11 +167,13 @@ public class ClientResolverMemory implements ClientResolver {
         return request;
     }
 
+    @Override
     public Client modifyClientDetails(Client client, ModifyClientObject modifyClientObject) {
         BeanUtils.copyProperties(modifyClientObject, client, modifyClientObject.getUnmodifiedFields());
         return client;
     }
 
+    @Override
     public MedicationRecord modifyMedicationRecord(Client client, MedicationRecord record, LocalDate stopDate) {
         if (stopDate == null) {
             record.setStarted(LocalDate.now());
@@ -136,25 +184,35 @@ public class ClientResolverMemory implements ClientResolver {
         return record;
     }
 
+    @Override
     public IllnessRecord modifyIllnessRecord(Client client, IllnessRecord toModify,
             ModifyIllnessObject modifyIllnessObject) {
         BeanUtils.copyProperties(modifyIllnessObject, toModify, modifyIllnessObject.getUnmodifiedFields());
         return toModify;
     }
 
+    @Override
     public ProcedureRecord modifyProcedureRecord(Client client, ProcedureRecord toModify, ModifyProcedureObject
             modifyProcedureObject) {
-
         BeanUtils.copyProperties(modifyProcedureObject, toModify, modifyProcedureObject.getUnmodifiedFields());
         return toModify;
     }
 
+    @Override
+    public DonatedOrgan editManualOverrideForOrgan(DonatedOrgan donatedOrgan, String newOverrideReason) {
+        donatedOrgan.manuallyOverride(newOverrideReason);
+        State.getClientManager().applyChangesTo(donatedOrgan.getDonor());
+        return donatedOrgan;
+    }
+
     //------------DELETEs----------------
 
+    @Override
     public void deleteIllnessRecord(Client client, IllnessRecord record) {
         client.deleteIllnessRecord(record);
     }
 
+    @Override
     public void deleteProcedureRecord(Client client, ProcedureRecord record) {
         client.deleteProcedureRecord(record);
     }
@@ -162,5 +220,12 @@ public class ClientResolverMemory implements ClientResolver {
     @Override
     public void deleteMedicationRecord(Client client, MedicationRecord record) {
         client.deleteMedicationRecord(record);
+    }
+
+    @Override
+    public DonatedOrgan cancelManualOverrideForOrgan(DonatedOrgan donatedOrgan) {
+        donatedOrgan.cancelManualOverride();
+        State.getClientManager().applyChangesTo(donatedOrgan.getDonor());
+        return donatedOrgan;
     }
 }

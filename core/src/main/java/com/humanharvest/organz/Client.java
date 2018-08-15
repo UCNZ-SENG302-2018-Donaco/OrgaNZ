@@ -4,6 +4,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.utilities.enums.*;
+import com.humanharvest.organz.utilities.enums.BloodType;
+import com.humanharvest.organz.utilities.enums.ClientType;
+import com.humanharvest.organz.utilities.enums.Country;
+import com.humanharvest.organz.utilities.enums.Gender;
+import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
 import com.humanharvest.organz.views.client.Views;
 
@@ -70,8 +76,8 @@ public class Client implements ConcurrencyControlledEntity {
     @JsonView(Views.Details.class)
     @Enumerated(EnumType.STRING)
     private Country countryOfDeath;
-
-
+    @JsonView(Views.Details.class)
+    private boolean dateOfDeathIsEditable = true;
 
     @JsonView(Views.Details.class)
     private final Instant createdTimestamp;
@@ -229,6 +235,14 @@ public class Client implements ConcurrencyControlledEntity {
         updateModifiedTimestamp();
     }
 
+    public void setDonatedOrgans(Collection<DonatedOrgan> donatedOrgans) {
+        this.donatedOrgans = new ArrayList<>(donatedOrgans);
+        for (DonatedOrgan donatedOrgan : donatedOrgans) {
+            donatedOrgan.setDonor(this);
+        }
+        updateModifiedTimestamp();
+    }
+
     /**
      * Returns a string listing the organs that the client is currently donating, or a message that the client currently
      * has no organs registered for donation if that is the case.
@@ -380,6 +394,11 @@ public class Client implements ConcurrencyControlledEntity {
 
     public LocalTime getTimeOfDeath() {
         return timeOfDeath;
+    }
+
+    @JsonIgnore
+    public LocalDateTime getDatetimeOfDeath() {
+        return LocalDateTime.of(dateOfDeath, timeOfDeath);
     }
 
     public void setTimeOfDeath(LocalTime newTimeOfDeath) {
@@ -662,6 +681,14 @@ public class Client implements ConcurrencyControlledEntity {
                 .orElse(null);
     }
 
+    public DonatedOrgan getDonatedOrganById(long id) {
+        return donatedOrgans
+                .stream()
+                .filter(organ -> organ.getId() == id)
+                .findFirst()
+                .orElse(null);
+    }
+
     /**
      * Returns a list of illnesses that Client previously had
      * @return List of illnesses held by Client
@@ -906,6 +933,34 @@ public class Client implements ConcurrencyControlledEntity {
         return !getCurrentlyDonatedOrgans().isEmpty();
     }
 
+    @JsonIgnore
+    public boolean getDateOfDeathIsEditable() {
+        return dateOfDeathIsEditable;
+    }
+
+    /**
+     * Updates dateOfDeathIsEditable to reflect if any organs are overridden.
+     */
+    @JsonIgnore
+    public void updateHasOverriddenOrgans() {
+        // You can edit the date of death if there are no overridden organs
+        dateOfDeathIsEditable = !hasOverriddenOrgans();
+    }
+
+    /**
+     * @return true if any of their organs' expiry has been manually overridden
+     */
+    @JsonIgnore
+    private boolean hasOverriddenOrgans() {
+        for (DonatedOrgan donatedOrgan : donatedOrgans) {
+            if (donatedOrgan.getOverrideReason() != null) {
+                // there is some reason why they were overridden
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * Indicates whether the client is a receiver (has at least one transplant request)
      * @return boolean of whether the client has any organ transplant requests
@@ -960,7 +1015,7 @@ public class Client implements ConcurrencyControlledEntity {
      *
      * @param organ The organ donated.
      */
-    private void donateOrgan(Organ organ) {
+    public void donateOrgan(Organ organ) {
         donatedOrgans.add(new DonatedOrgan(organ, this, LocalDateTime.now()));
     }
 

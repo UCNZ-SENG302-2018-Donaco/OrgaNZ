@@ -86,14 +86,13 @@ public class MenuBarController extends SubController {
     public Menu staffPrimaryItem;
     public Menu profilePrimaryItem;
 
-    private ClientManager clientManager;
+
     private Session session;
 
     /**
      * Gets the ActionInvoker from the current state.
      */
     public MenuBarController() {
-        clientManager = State.getClientManager();
         session = State.getSession();
     }
 
@@ -509,9 +508,9 @@ public class MenuBarController extends SubController {
 
         Task<List<String>> task = new Task<List<String>>() {
             @Override
-            public List<String> call() throws IOException {
+            public List<String> call() {
                 CacheManager.INSTANCE.refreshCachedData();
-                return new ArrayList<String>();
+                return new ArrayList<>();
             }
         };
 

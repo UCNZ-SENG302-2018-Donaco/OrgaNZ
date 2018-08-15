@@ -35,6 +35,8 @@ public class DonatedOrgan {
     private Client receiver;
     @JsonView(Views.Overview.class)
     private LocalDateTime dateTimeOfDonation;
+    @JsonView(Views.Overview.class)
+    private String overrideReason;  // If null this implies the organ was not manually overriden
 
     protected DonatedOrgan() {
     }
@@ -110,5 +112,23 @@ public class DonatedOrgan {
      */
     public double getFullMarker() {
         return (double) getOrganType().getMinExpiration().getSeconds() / getOrganType().getMaxExpiration().getSeconds();
+    }
+
+    public Long getId(){
+        return id;
+    }
+
+    public String getOverrideReason() {
+        return overrideReason;
+    }
+
+    public void manuallyOverride(String overrideReason) {
+        this.overrideReason = overrideReason;
+        donor.updateHasOverriddenOrgans();
+    }
+
+    public void cancelManualOverride() {
+        this.overrideReason = null;
+        donor.updateHasOverriddenOrgans();
     }
 }
