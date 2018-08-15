@@ -1,33 +1,33 @@
 package com.humanharvest.organz.actions.images;
 
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.actions.Action;
+import com.humanharvest.organz.utilities.exceptions.NotFoundException;
+
 import java.awt.image.ImagingOpException;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.actions.Action;
-import com.humanharvest.organz.utilities.exceptions.NotFoundException;
-
 public class AddImageAction extends Action {
 
     private Client client;
     private byte[] image;
+    private String imagesDirectory;
 
-    public AddImageAction(Client client, byte[] image) {
+    public AddImageAction(Client client, byte[] image, String imagesDirectory) {
         this.client = client;
         this.image = image;
+        this.imagesDirectory = imagesDirectory;
     }
 
     @Override
     protected void execute() throws ImagingOpException {
-        String imagesDirectory = System.getProperty("user.home") + "/.organz/images/";
 
         // Create the directory if it doesn't exist
         File directory = new File(imagesDirectory);
         if (!directory.exists()) {
-            new File(System.getProperty("user.home") + "/.organz/").mkdir();
             directory.mkdir();
         }
 
@@ -41,8 +41,6 @@ public class AddImageAction extends Action {
 
     @Override
     protected void unExecute() {
-        String imagesDirectory = System.getProperty("user.home") + "/.organz/images/";
-
         // Delete the file
         File file = new File(imagesDirectory + client.getUid() + ".png");
         if (!file.delete()) {
