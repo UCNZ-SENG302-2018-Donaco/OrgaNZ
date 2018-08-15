@@ -54,8 +54,9 @@ public class OrganControllerTest {
         Client outsider = new Client("Out", "Si", "Der", LocalDate.now(), 9997);
         Client janMichael = new Client("Jan", "Michael", "Vincent", LocalDate.now(), 9998);
         Client michaelShoeMaker = new Client("Michael", "Shoe", "Maker", LocalDate.now(), 9999);
-        janMichael.setRegion("Auckland");
-        michaelShoeMaker.setRegion("Canterbury");
+        janMichael.setRegionOfDeath("Auckland");
+        michaelShoeMaker.setRegionOfDeath("Canterbury");
+        outsider.setRegionOfDeath("Rio");
         try {
             janMichael.setOrganDonationStatus(Organ.LIVER, true);
             janMichael.setOrganDonationStatus(Organ.HEART, true);
@@ -68,17 +69,18 @@ public class OrganControllerTest {
 
         State.getClientManager().addClient(janMichael);
         State.getClientManager().addClient(michaelShoeMaker);
+        State.getClientManager().addClient(outsider);
 
         MarkClientAsDeadAction action1  = new MarkClientAsDeadAction(janMichael, LocalDate.now(), LocalTime.now(),
-                "AUCKLAND","Auckland", Country.NZ, State.getClientManager());
+                "Auckland","Auckland", Country.NZ, State.getClientManager());
         MarkClientAsDeadAction action2  = new MarkClientAsDeadAction(michaelShoeMaker, LocalDate.now(), LocalTime.now(),
                 "Canterbury","Canterbury", Country.NZ, State.getClientManager());
-        MarkClientAsDeadAction action3  = new MarkClientAsDeadAction(michaelShoeMaker, LocalDate.now(), LocalTime.now(),
+        MarkClientAsDeadAction action3  = new MarkClientAsDeadAction(outsider, LocalDate.now(), LocalTime.now(),
                 "Rio","Rio", Country.BR, State.getClientManager());
 
         State.getActionInvoker("").execute(action1);
         State.getActionInvoker("").execute(action2);
-//        State.getActionInvoker("").execute(action3);
+        State.getActionInvoker("").execute(action3);
 
 
     }
@@ -87,7 +89,7 @@ public class OrganControllerTest {
     public void getDefault() throws Exception {
         mockMvc.perform(get("/clients/organs"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.totalResults", is(4)));
+                .andExpect(jsonPath("$.totalResults", is(5)));
     }
 
 
@@ -105,7 +107,6 @@ public class OrganControllerTest {
                 .andExpect(jsonPath("$.totalResults", is(4)));
     }
 
-    @Ignore
     @Test
     public void getFilteredRegion() throws Exception {
         mockMvc.perform(get("/clients/organs?regions=Auckland"))
@@ -113,7 +114,6 @@ public class OrganControllerTest {
                 .andExpect(jsonPath("$.totalResults", is(3)));
     }
 
-    @Ignore
     @Test
     public void getMultipleFilteredRegions() throws Exception {
         mockMvc.perform(get("/clients/organs?regions=Auckland,Canterbury"))
@@ -121,7 +121,6 @@ public class OrganControllerTest {
                 .andExpect(jsonPath("$.totalResults", is(4)));
     }
 
-    @Ignore
     @Test
     public void getRegionOutsideNZ() throws Exception {
         mockMvc.perform(get("/clients/organs?regions=International"))
@@ -129,5 +128,10 @@ public class OrganControllerTest {
                 .andExpect(jsonPath("$.totalResults", is(1)));
     }
 
-
+    @Test
+    public void filterRegionAndOrgans() throws Exception {
+        mockMvc.perform(get("/clients/organs?regions=Auckland&organType=LIVER"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalResults", is(1)));
+    }
 }

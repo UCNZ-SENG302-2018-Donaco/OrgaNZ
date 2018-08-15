@@ -78,7 +78,7 @@ public class ClientTransplantRequestsController {
         // Get all requests that match region/organ filters
         List<TransplantRequestView> matchingRequests = State.getClientManager().getAllTransplantRequests().stream()
                 .filter(request-> regions == null || newRegions.isEmpty() || newRegions.contains(request.getClient().getRegion()))
-                .filter(request -> organs == null || organs.contains(request.getRequestedOrgan()))
+                .filter(request -> organs == null || organs.isEmpty() || organs.contains(request.getRequestedOrgan()))
                 .map(TransplantRequestView::new)
                 .collect(Collectors.toList());
 
