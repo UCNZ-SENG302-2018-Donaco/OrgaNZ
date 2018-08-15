@@ -16,12 +16,14 @@ import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 
@@ -94,6 +96,40 @@ public class ViewMedicationsController extends SubController {
     }
 
     /**
+     * Creates a cell factory for the list view, that allows cells to be deselected by clicking a second time
+     * Only up to two cells may be selected at once
+     * @param listView to create a cellfactory for
+     */
+    private void configureCellFactory(ListView<MedicationRecord> listView) {
+        listView.setCellFactory(listview -> {
+            ListCell<MedicationRecord> cell = new ListCell<MedicationRecord>() {
+                @Override
+                public void updateItem(MedicationRecord record, boolean empty) {
+                    super.updateItem(record, empty);
+                    if (!empty) {
+                        setText(record.toString());
+                    }
+                }
+            };
+            cell.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
+                listView.requestFocus();
+                if (!cell.isEmpty()) {
+                    int numSelected = getSelectedRecords().size();
+                    int index = cell.getIndex();
+
+                    if (listView.getSelectionModel().getSelectedIndices().contains(index)) {
+                        listView.getSelectionModel().clearSelection(index);
+                    } else if (numSelected < 2){  // Only select if there are less than two currently selected
+                        listView.getSelectionModel().select(index);
+                    }
+                    event.consume();
+                }
+            });
+            return cell ;
+        });
+    }
+
+    /**
      * Initializes the UI for this page.
      * - Starts the WebAPIHandler for drug name autocompletion.
      * - Sets listeners for changing selection on two list views so that if an item is selected on one, the selection
@@ -109,6 +145,9 @@ public class ViewMedicationsController extends SubController {
 
         activeIngredientsHandler = new MedActiveIngredientsHandler();
         drugInteractionsHandler = new DrugInteractionsHandler();
+
+        configureCellFactory(currentMedicationsView);
+        configureCellFactory(pastMedicationsView);
 
         pastMedicationsView.getSelectionModel().selectedItemProperty().addListener(
                 (observable) -> {
@@ -200,6 +239,19 @@ public class ViewMedicationsController extends SubController {
         pastMedicationsView.setItems(FXCollections.observableArrayList(client.getPastMedications()));
         currentMedicationsView.setItems(FXCollections.observableArrayList(client.getCurrentMedications()));
     }
+
+    /**
+     * Gets all selected medication records from both the current and past medication lists
+     * @return list of all currently selected medication records
+     */
+    private List<MedicationRecord> getSelectedRecords() {
+        List<MedicationRecord> selectedItems = new ArrayList<>();
+        selectedItems.addAll(currentMedicationsView.getSelectionModel().getSelectedItems());
+        selectedItems.addAll(pastMedicationsView.getSelectionModel().getSelectedItems());
+
+        return selectedItems;
+    }
+
 
     /**
      * Creates and executes the resolver to update the given medication record, either setting it as a current
