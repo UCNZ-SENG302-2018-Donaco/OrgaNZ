@@ -1,38 +1,29 @@
 package com.humanharvest.organz.state;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.StringJoiner;
-import java.util.stream.Collectors;
-import javax.persistence.OptimisticLockException;
-import javax.persistence.RollbackException;
-
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.database.DBManager;
-import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
-import com.humanharvest.organz.utilities.enums.ClientType;
-import com.humanharvest.organz.utilities.enums.Country;
-import com.humanharvest.organz.utilities.enums.DonatedOrganSortOptionsEnum;
-import com.humanharvest.organz.utilities.enums.Gender;
-import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.algorithms.MatchOrganToRecipients;
+import com.humanharvest.organz.utilities.enums.*;
 import com.humanharvest.organz.views.client.DonatedOrganView;
 import com.humanharvest.organz.views.client.PaginatedClientList;
 import com.humanharvest.organz.views.client.PaginatedDonatedOrgansList;
 import com.humanharvest.organz.views.client.PaginatedTransplantList;
 import org.hibernate.ReplicationMode;
+import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
+
+import javax.persistence.OptimisticLockException;
+import javax.persistence.RollbackException;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * A pure database implementation of {@link ClientManager} that uses a database to store clients, then retrieves them
@@ -55,7 +46,7 @@ public class ClientManagerDBPure implements ClientManager {
         List<Client> clients = null;
         Transaction trns = null;
 
-        try (org.hibernate.Session session = dbManager.getDBSession()) {
+        try (Session session = dbManager.getDBSession()) {
             trns = session.beginTransaction();
             clients = dbManager.getDBSession()
                     .createQuery("FROM Client", Client.class)
@@ -94,7 +85,7 @@ public class ClientManagerDBPure implements ClientManager {
         //TODO: Make this use the complex sort as in ClientNameSorter
         String nameSort = "lastName";
 
-        try (org.hibernate.Session session = dbManager.getDBSession()) {
+        try (Session session = dbManager.getDBSession()) {
             trns = session.beginTransaction();
 
             Map<String, Object> params = new HashMap<>();
@@ -290,94 +281,46 @@ public class ClientManagerDBPure implements ClientManager {
             }
             return null;
         }
-        /*
-        return clients == null ? new ArrayList<>() : clients;
-
-        //Setup the primarySorter for the given sort option. Default to NAME if none is given
-        if (sortOption == null) {
-            sortOption = ClientSortOptionsEnum.NAME;
-        }
-        Comparator<Client> primarySorter;
-        switch (sortOption) {
-            case ID:
-                primarySorter = Comparator.comparing(Client::getUid, Comparator.nullsLast(Comparator.naturalOrder()));
-                break;
-            case AGE:
-                primarySorter = Comparator.comparing(Client::getAge, Comparator.nullsLast(Comparator.naturalOrder()));
-                break;
-            case DONOR:
-                primarySorter = Comparator.comparing(Client::isDonor, Comparator.nullsLast(Comparator.naturalOrder()));
-                break;
-            case RECEIVER:
-                primarySorter = Comparator
-                        .comparing(Client::isReceiver, Comparator.nullsLast(Comparator.naturalOrder()));
-                break;
-            case REGION:
-                primarySorter = Comparator
-                        .comparing(Client::getRegion, Comparator.nullsLast(Comparator.naturalOrder()));
-                break;
-            case BIRTH_GENDER:
-                primarySorter = Comparator
-                        .comparing(Client::getGender, Comparator.nullsLast(Comparator.naturalOrder()));
-                break;
-            case NAME:
-            default:
-                primarySorter = new ClientNameSorter(q);
-        }
-
-        //Setup a second comparison
-        Comparator<Client> dualSorter = primarySorter.thenComparing(new ClientNameSorter(q));
-
-        //If the sort should be reversed
-        if (isReversed != null && isReversed) {
-            dualSorter = dualSorter.reversed();
-        }
-
-        List<Client> filteredClients = stream
-                .filter(q == null ? c -> true : client -> client.nameContains(q))
-
-                .filter(minimumAge == null ? c -> true : client -> client.getAge() >= minimumAge)
-
-                .filter(maximumAge == null ? c -> true : client -> client.getAge() <= maximumAge)
-
-                .filter(regions == null ? c -> true : client -> regions.isEmpty() ||
-                        regions.contains(client.getRegion()))
-
-                .filter(birthGenders == null ? c -> true : client -> birthGenders.isEmpty() ||
-                        birthGenders.contains(client.getGender()))
-
-                .filter(clientType == null ? c -> true : client -> client.isOfType(clientType))
-
-                .filter(donating == null ? c -> true : client -> donating.isEmpty() ||
-                        donating.stream().anyMatch(organ -> client.getCurrentlyDonatedOrgans().contains(organ)))
-
-                .filter(requesting == null ? c -> true : client -> requesting.isEmpty() ||
-                        requesting.stream().anyMatch(organ -> client.getCurrentlyRequestedOrgans().contains(organ)))
-
-                .collect(Collectors.toList());
-
-
-        return new PaginatedClientList(paginatedClients, totalResults);
-        */
     }
 
     @Override
     public void setClients(Collection<Client> clients) {
+        // Clear all clients currently in the database
+        clearPersistedClients();
+
         Transaction trns = null;
-        try (org.hibernate.Session session = dbManager.getDBSession()) {
+        try (Session session = dbManager.getDBSession()) {
+            // Persist all the clients in the given collection
             trns = session.beginTransaction();
-
-            session.createQuery("DELETE FROM Client").executeUpdate();
-
             for (Client client : clients) {
-                session.save(client);
+                if (client.getUid() == null) {
+                    client.setUid(0);
+                }
+                session.replicate(client, ReplicationMode.OVERWRITE);
             }
-
             trns.commit();
         } catch (RollbackException exc) {
             if (trns != null) {
                 trns.rollback();
             }
+        }
+    }
+
+    private void clearPersistedClients() {
+        try (Connection connection = dbManager.getStandardSqlConnection()) {
+            try (Statement stmt = connection.createStatement()) {
+                stmt.executeUpdate("DELETE FROM Client_organsDonating");
+                stmt.executeUpdate("DELETE FROM Client_HistoryItem");
+                stmt.executeUpdate("DELETE FROM DonatedOrgan");
+                stmt.executeUpdate("DELETE FROM IllnessRecord");
+                stmt.executeUpdate("DELETE FROM MedicationRecord");
+                stmt.executeUpdate("DELETE FROM ProcedureRecord_affectedOrgans");
+                stmt.executeUpdate("DELETE FROM ProcedureRecord");
+                stmt.executeUpdate("DELETE FROM TransplantRequest");
+                stmt.executeUpdate("DELETE FROM Client");
+            }
+        } catch (SQLException exc) {
+            exc.printStackTrace();
         }
     }
 
@@ -389,10 +332,10 @@ public class ClientManagerDBPure implements ClientManager {
     @Override
     public void removeClient(Client client) {
         Transaction trns = null;
-        try (org.hibernate.Session session = dbManager.getDBSession()) {
+        try (Session session = dbManager.getDBSession()) {
             trns = session.beginTransaction();
 
-            dbManager.getDBSession().remove(client);
+            session.remove(client);
 
             trns.commit();
         } catch (RollbackException exc) {
@@ -406,17 +349,17 @@ public class ClientManagerDBPure implements ClientManager {
     public void applyChangesTo(Client client) {
         Transaction trns = null;
 
-        try (org.hibernate.Session session = dbManager.getDBSession()) {
+        try (Session session = dbManager.getDBSession()) {
             trns = session.beginTransaction();
 
             try {
-                dbManager.getDBSession().update(client);
+                session.update(client);
                 trns.commit();
             } catch (OptimisticLockException exc) {
                 // TODO fix this hack
-                try (org.hibernate.Session otherSession = dbManager.getDBSession()) {
+                try (Session otherSession = dbManager.getDBSession()) {
                     trns = otherSession.beginTransaction();
-                    dbManager.getDBSession().replicate(client, ReplicationMode.OVERWRITE);
+                    otherSession.replicate(client, ReplicationMode.OVERWRITE);
                     trns.commit();
                 }
             }
@@ -433,10 +376,10 @@ public class ClientManagerDBPure implements ClientManager {
         Transaction trns = null;
         Client client = null;
 
-        try (org.hibernate.Session session = dbManager.getDBSession()) {
+        try (Session session = dbManager.getDBSession()) {
             trns = session.beginTransaction();
 
-            client = dbManager.getDBSession().find(Client.class, id);
+            client = session.find(Client.class, id);
 
             trns.commit();
         } catch (RollbackException exc) {
@@ -453,9 +396,9 @@ public class ClientManagerDBPure implements ClientManager {
         boolean collision = false;
         Transaction trns = null;
 
-        try (org.hibernate.Session session = dbManager.getDBSession()) {
+        try (Session session = dbManager.getDBSession()) {
             trns = session.beginTransaction();
-            collision = dbManager.getDBSession().createQuery("SELECT c FROM Client c "
+            collision = session.createQuery("SELECT c FROM Client c "
                     + "WHERE c.firstName = :firstName "
                     + "AND c.lastName = :lastName "
                     + "AND c.dateOfBirth = :dateOfBirth", Client.class)
@@ -478,9 +421,9 @@ public class ClientManagerDBPure implements ClientManager {
         List<TransplantRequest> requests = null;
         Transaction trns = null;
 
-        try (org.hibernate.Session session = dbManager.getDBSession()) {
+        try (Session session = dbManager.getDBSession()) {
             trns = session.beginTransaction();
-            requests = dbManager.getDBSession()
+            requests = session
                     .createQuery("FROM TransplantRequest", TransplantRequest.class)
                     .getResultList();
             trns.commit();
@@ -498,9 +441,9 @@ public class ClientManagerDBPure implements ClientManager {
         List<TransplantRequest> requests = null;
         Transaction trns = null;
 
-        try (org.hibernate.Session session = dbManager.getDBSession()) {
+        try (Session session = dbManager.getDBSession()) {
             trns = session.beginTransaction();
-            requests = dbManager.getDBSession()
+            requests = session
                     .createQuery("SELECT req FROM TransplantRequest req "
                                     + "WHERE req.status = "
                                     + "com.humanharvest.organz.utilities.enums.TransplantRequestStatus.WAITING",
@@ -527,9 +470,9 @@ public class ClientManagerDBPure implements ClientManager {
         List<HistoryItem> requests = null;
         Transaction trns = null;
 
-        try (org.hibernate.Session session = dbManager.getDBSession()) {
+        try (Session session = dbManager.getDBSession()) {
             trns = session.beginTransaction();
-            requests = dbManager.getDBSession()
+            requests = session
                     .createQuery("SELECT item FROM HistoryItem item", HistoryItem.class)
                     .getResultList();
             trns.commit();
@@ -550,9 +493,9 @@ public class ClientManagerDBPure implements ClientManager {
         List<DonatedOrgan> requests = null;
         Transaction trns = null;
 
-        try (org.hibernate.Session session = dbManager.getDBSession()) {
+        try (Session session = dbManager.getDBSession()) {
             trns = session.beginTransaction();
-            requests = dbManager.getDBSession()
+            requests = session
                     .createQuery("FROM DonatedOrgan", DonatedOrgan.class)
                     .getResultList();
             trns.commit();
@@ -632,5 +575,16 @@ public class ClientManagerDBPure implements ClientManager {
                         .map(DonatedOrganView::new)
                         .collect(Collectors.toList()),
                 totalResults);
+    }
+
+    /**
+     * @param donatedOrgan Available organ to find potential recipients for
+     * @return List of clients who may receive the donated organ
+     */
+    @Override
+    public List<Client> getOrganMatches(DonatedOrgan donatedOrgan) {
+
+        Collection<TransplantRequest> transplantRequests = getAllTransplantRequests();
+        return MatchOrganToRecipients.getListOfPotentialRecipients(donatedOrgan, transplantRequests);
     }
 }

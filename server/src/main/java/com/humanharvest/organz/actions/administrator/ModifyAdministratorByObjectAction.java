@@ -6,6 +6,9 @@ import com.humanharvest.organz.state.AdministratorManager;
 import com.humanharvest.organz.views.administrator.ModifyAdministratorObject;
 import org.springframework.beans.BeanUtils;
 
+import java.lang.reflect.Field;
+import java.util.stream.Collectors;
+
 public class ModifyAdministratorByObjectAction extends Action {
 
     private final Administrator administrator;
@@ -35,16 +38,35 @@ public class ModifyAdministratorByObjectAction extends Action {
         manager.applyChangesTo(administrator);
     }
 
+
     @Override
     public String getExecuteText() {
-        return "Todo";
+        String changesText = newDetails.getModifiedFields().stream()
+                .map(Field::getName)
+                .map(this::unCamelCase)
+                .collect(Collectors.joining("\n"));
+
+        return String.format("Updated details for admin %s. \n"
+                        + "These changes were made: \n\n%s",
+                administrator.getUsername(), changesText);
     }
 
     @Override
     public String getUnexecuteText() {
-        return "Todo";
+        String changesText = oldDetails.getModifiedFields().stream()
+                .map(Field::getName)
+                .map(this::unCamelCase)
+                .collect(Collectors.joining("\n"));
+
+        return String.format("Reversed update for admin %s. \n"
+                        + "These changes were reversed: \n\n%s",
+                administrator.getUsername(), changesText);
     }
 
+    private String unCamelCase(String inCamelCase) {
+        String unCamelCased = inCamelCase.replaceAll("([a-z])([A-Z]+)", "$1 $2");
+        return unCamelCased.substring(0, 1).toUpperCase() + unCamelCased.substring(1);
+    }
     @Override
     public Object getModifiedObject() {
         return administrator;

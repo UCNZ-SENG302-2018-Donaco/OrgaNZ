@@ -39,12 +39,12 @@ public class AppUI extends Application {
         Map<String, String> parameters = getParameters().getNamed();
 
         if (parameters.containsKey("host")) {
-            State.setBaseUri(parameters.get("host"));
+            State.BASE_URI = parameters.get("host");
         } else if (System.getenv("HOST") != null) {
-            State.setBaseUri(System.getenv("HOST"));
+            State.BASE_URI = System.getenv("HOST");
         }
 
-
+        primaryStage.setTitle("Organ Donor Management System");
         primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/images/ORGANZ.png")));
         primaryStage.setScene(createScene(loadMainPane(primaryStage)));
         primaryStage.show();
