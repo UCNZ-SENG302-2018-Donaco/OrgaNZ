@@ -392,8 +392,6 @@ public class ViewMedicationsController extends SubController {
         selectedItems.addAll(currentMedicationsView.getSelectionModel().getSelectedItems());
         selectedItems.addAll(pastMedicationsView.getSelectionModel().getSelectedItems());
 
-        System.out.println(String.format("Number of medications selected: %d", selectedItems.size()));
-
         if (selectedItems.size() == 1) {
             setActiveIngredients(selectedItems.get(0));
             medicationInteractions.clear();
@@ -418,9 +416,6 @@ public class ViewMedicationsController extends SubController {
 
             medicationIngredients.setText("Loading ...");
 
-            String formattedIngredientss = String.format("Active ingredients in %s: %s", medicationName, "");
-            medicationIngredients.setText(formattedIngredientss);
-
             Task<List<String>> task = new Task<List<String>>() {
                 @Override
                 public List<String> call() throws IOException {
@@ -441,7 +436,7 @@ public class ViewMedicationsController extends SubController {
                     for (String ingredient : activeIngredients) {
                         sb.append(ingredient).append("\n");
                     }
-                    String formattedIngredients = String.format("Active ingredients in %s: %s", medicationName, sb
+                    String formattedIngredients = String.format("Active ingredients in %s: \n%s", medicationName, sb
                             .toString());
                     medicationIngredients.setText(formattedIngredients);
                 }
