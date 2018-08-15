@@ -577,6 +577,5 @@ public class MenuBarController extends SubController {
      */
     private void exit() {
         Platform.exit();
-        System.exit(0);
     }
 }
