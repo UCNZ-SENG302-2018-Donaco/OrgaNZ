@@ -4,7 +4,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -16,14 +15,23 @@ import javafx.beans.Observable;
 import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.event.EventTarget;
-import javafx.event.EventType;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBoxBase;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.ListView;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.Skin;
+import javafx.scene.control.Skinnable;
+import javafx.scene.control.Slider;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TitledPane;
 import javafx.scene.input.GestureEvent;
-import javafx.scene.input.MouseButton;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.input.RotateEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.input.TouchEvent;
@@ -36,7 +44,13 @@ import javafx.scene.transform.Transform;
 import javafx.scene.transform.Translate;
 
 import com.humanharvest.organz.utilities.ReflectionUtils;
-import org.tuiofx.widgets.skin.*;
+import org.tuiofx.widgets.skin.ChoiceBoxSkinAndroid;
+import org.tuiofx.widgets.skin.KeyboardManager;
+import org.tuiofx.widgets.skin.MTComboBoxListViewSkin;
+import org.tuiofx.widgets.skin.MTContextMenuSkin;
+import org.tuiofx.widgets.skin.OnScreenKeyboard;
+import org.tuiofx.widgets.skin.TextAreaSkinAndroid;
+import org.tuiofx.widgets.skin.TextFieldSkinAndroid;
 import org.tuiofx.widgets.utils.Util;
 
 public class MultitouchHandler {
@@ -47,21 +61,6 @@ public class MultitouchHandler {
     public MultitouchHandler(Pane rootPane) {
         this.rootPane = rootPane;
         backdropPane = rootPane.getChildren().get(0);
-        // TODO: Might need this if it is funky with multiple users
-//        rootPane.addEventFilter(MouseEvent.ANY, event -> {
-//            // TODO: Don't ignore events that don't hit the root pane
-//            if (event.isSynthesized()) {
-//                if (event.getClickCount() == Integer.MAX_VALUE) {
-//                    try {
-//                        ReflectionUtils.setField(event, "clickCount", 1);
-//                    } catch (NoSuchFieldException | IllegalAccessException e) {
-//                        throw new RuntimeException(e);
-//                    }
-//                } else {
-//                    event.consume();
-//                }
-//            }
-//        });
 
         rootPane.addEventFilter(TouchEvent.ANY, event -> {
             TouchPoint touchPoint = event.getTouchPoint();
@@ -80,21 +79,11 @@ public class MultitouchHandler {
                         eventDispatcher.dispatchCapturingEvent(event);
                     });
                     if (findPaneTouches(pane).size() == 1) {
-                        handleTUIOFX((SkinInvalidationListener)pane.getUserData(), event.getTarget());
+                        FocusAreaHandler focusAreaHandler = (FocusAreaHandler)pane.getUserData();
+                        focusAreaHandler.propagateEvent(event.getTarget());
                     }
                 });
             } else if (event.getEventType() == TouchEvent.TOUCH_RELEASED) {
-//                if (currentTouch.getPane().isPresent()) {
-//                    List<CurrentTouch> paneTouches = findPaneTouches(currentTouch.getPane().get());
-//                    if (paneTouches.size() == 1) {
-//                        // TODO: Only if not actual element
-//
-//                        if (true) {
-//                            handleTouchToMouse(currentTouch, touchPoint);
-//                        }
-//                    }
-//                }
-
                 currentTouch.getImportantElement().ifPresent(node -> {
                     NodeEventDispatcher eventDispatcher = (NodeEventDispatcher)node.getEventDispatcher();
                     eventDispatcher.dispatchCapturingEvent(event);
@@ -111,10 +100,6 @@ public class MultitouchHandler {
         rootPane.addEventFilter(ScrollEvent.ANY, Event::consume);
         rootPane.addEventFilter(GestureEvent.ANY, Event::consume);
         rootPane.addEventFilter(RotateEvent.ANY, Event::consume);
-
-//        rootPane.addEventFilter(Event.ANY, event -> {
-//            System.out.println(event);
-//        });
     }
 
     private void handleCurrentTouch(TouchPoint touchPoint, CurrentTouch currentTouch) {
@@ -156,42 +141,6 @@ public class MultitouchHandler {
                 currentTouch.setCurrentScreenPoint(newTouchPoint);
             }
         });
-    }
-
-    private static void handleTouchToMouse(CurrentTouch currentTouch, TouchPoint touchPoint) {
-        // TODO: Handle double click
-//        Node target = (Node)touchPoint.getTarget();
-//        target.fireEvent(createMouseEvent(currentTouch, touchPoint, MouseEvent.MOUSE_ENTERED_TARGET, false));
-//        target.fireEvent(createMouseEvent(currentTouch, touchPoint, MouseEvent.MOUSE_MOVED, false));
-//        target.fireEvent(createMouseEvent(currentTouch, touchPoint, MouseEvent.MOUSE_PRESSED, true));
-//        target.fireEvent(createMouseEvent(currentTouch, touchPoint, MouseEvent.MOUSE_RELEASED, true));
-//        target.fireEvent(createMouseEvent(currentTouch, touchPoint, MouseEvent.MOUSE_CLICKED, true));
-    }
-
-    private static Event createMouseEvent(CurrentTouch currentTouch, TouchPoint touchPoint,
-            EventType<MouseEvent> eventType,
-            boolean primaryButton) {
-        return new MouseEvent(
-                currentTouch,
-                touchPoint.getTarget(),
-                eventType,
-                currentTouch.getCurrentScreenPoint().getX(),
-                currentTouch.getCurrentScreenPoint().getY(),
-                currentTouch.getCurrentScreenPoint().getX(),
-                currentTouch.getCurrentScreenPoint().getY(),
-                primaryButton ? MouseButton.PRIMARY : MouseButton.NONE,
-                Integer.MAX_VALUE,
-                false,
-                false,
-                false,
-                false,
-                primaryButton,
-                false,
-                false,
-                true,
-                false,
-                true,
-                touchPoint.getPickResult());
     }
 
     private static double calculateAngleDelta(
@@ -239,8 +188,8 @@ public class MultitouchHandler {
         return results;
     }
 
-    private Optional<Pane> findPane(TouchPoint touchPoint) {
-        Node intersectNode = touchPoint.getPickResult().getIntersectedNode();
+    private Optional<Pane> findPane(Node node) {
+        Node intersectNode = node;
         while (!Objects.equals(intersectNode.getParent(), rootPane)) {
             intersectNode = intersectNode.getParent();
             if (intersectNode == null) {
@@ -268,7 +217,7 @@ public class MultitouchHandler {
 
         CurrentTouch currentTouch = touches.get(touchPoint.getId());
         if (currentTouch == null) {
-            currentTouch = new CurrentTouch(findPane(touchPoint), getImportantElement(touchPoint));
+            currentTouch = new CurrentTouch(findPane(touchPoint.getPickResult().getIntersectedNode()), getImportantElement(touchPoint));
             touches.set(touchPoint.getId(), currentTouch);
         }
 
@@ -325,13 +274,13 @@ public class MultitouchHandler {
     }
 
     public static void setupPaneListener(Pane pane) {
-        SkinInvalidationListener handlerListener = new SkinInvalidationListener(pane);
+        FocusAreaHandler handlerListener = new FocusAreaHandler(pane);
         pane.setUserData(handlerListener);
 
         addPaneListenerChildren(handlerListener, pane);
     }
 
-    private static void addPaneListenerChildren(SkinInvalidationListener handlerListener, Node node) {
+    private static void addPaneListenerChildren(FocusAreaHandler handlerListener, Node node) {
         if (node instanceof Parent) {
             ((Parent)node).getChildrenUnmodifiable().addListener(handlerListener);
             for (Node child : ((Parent)node).getChildrenUnmodifiable()) {
@@ -340,16 +289,17 @@ public class MultitouchHandler {
         }
     }
 
-    private static void handleTUIOFX(SkinInvalidationListener invalidationListener, EventTarget target) {
-        invalidationListener.refresh();
-        for (Consumer<EventTarget> handler : invalidationListener.getSkinHandlers()) {
-            handler.accept(target);
-        }
+    public Optional<FocusAreaHandler> getFocusAreaHandler(Node node) {
+        Optional<Pane> pane = findPane(node);
+        return pane.map(pane1 -> {
+            return (FocusAreaHandler)pane1.getUserData();
+        });
     }
 
     private static class CurrentTouch {
         private final Optional<Pane> pane;
-        private Optional<Node> importantElement;
+        private final Optional<Node> importantElement;
+
         private Point2D currentScreenPoint;
         private Point2D currentPanePoint;
         private Affine transform;
@@ -513,9 +463,9 @@ public class MultitouchHandler {
     }
 
     private static final class ChoiceBoxSkinConsumer implements Consumer<EventTarget> {
-        private final Skin<ChoiceBox<?>> skin;
+        private final Skin<? extends ChoiceBox<?>> skin;
 
-        public ChoiceBoxSkinConsumer(Skin<ChoiceBox<?>> skin) {
+        public ChoiceBoxSkinConsumer(Skin<? extends ChoiceBox<?>> skin) {
             this.skin = skin;
         }
 
@@ -527,14 +477,14 @@ public class MultitouchHandler {
         }
     }
 
-    private static class SkinInvalidationListener implements InvalidationListener {
-        private final Collection<Consumer<EventTarget>> skinHandlers;
+    public static class FocusAreaHandler implements InvalidationListener {
+        private final Collection<Consumer<EventTarget>> skinHandlers = new ArrayList<>();
+        private final Collection<Consumer<EventTarget>> popupHandlers = new ArrayList<>();
         private final Pane pane;
         private boolean outOfDate = true;
 
-        public SkinInvalidationListener(Pane pane) {
+        public FocusAreaHandler(Pane pane) {
             this.pane = pane;
-            skinHandlers = new ArrayList<>();
         }
 
         @Override
@@ -542,11 +492,19 @@ public class MultitouchHandler {
             outOfDate = true;
         }
 
-        public Iterable<Consumer<EventTarget>> getSkinHandlers() {
-            return Collections.unmodifiableCollection(skinHandlers);
+        public void propagateEvent(EventTarget target) {
+            refresh();
+
+            for (Consumer<EventTarget> consumer : skinHandlers) {
+                consumer.accept(target);
+            }
+
+            for (Consumer<EventTarget> consumer : popupHandlers) {
+                consumer.accept(target);
+            }
         }
 
-        public void refresh() {
+        private void refresh() {
             if (outOfDate) {
                 skinHandlers.clear();
 
@@ -578,6 +536,10 @@ public class MultitouchHandler {
                     findSkinHandlers(child);
                 }
             }
+        }
+
+        public void addPopup(ContextMenu popupMenu, Consumer<EventTarget> eventHandler) {
+            popupHandlers.add(eventHandler);
         }
     }
 }
