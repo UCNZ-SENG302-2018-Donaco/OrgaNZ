@@ -5,7 +5,9 @@ import com.humanharvest.organz.DonatedOrgan;
 public class DonatedOrganValidator {
 
     public static boolean isValid(DonatedOrgan donatedOrgan) {
-        return donatedOrgan.getOrganType() != null
+        System.out.println(donatedOrgan);
+        return donatedOrgan != null
+                && donatedOrgan.getOrganType() != null
                 && donatedOrgan.getDonor() != null
                 && donatedOrgan.getDateTimeOfDonation() != null
                 && donatedOrgan.getId() != null;

@@ -87,8 +87,16 @@ public final class CucumberSteps implements En {
     }
 
     private void createSharedWhen() {
-        When("^I get (.+)$", (String url) -> {
+        When("^I get ([^ ]+)$", (String url) -> {
             MockHttpServletRequestBuilder request = get(url);
+            request = setupSharedHeaders(request);
+            lastAction = mockMvc.perform(request);
+        });
+
+        When("^I get (.+) using (.+)$", (String url, String json) -> {
+            MockHttpServletRequestBuilder request = get(url)
+                    .contentType(MediaType.APPLICATION_JSON_UTF8)
+                    .content(json);
             request = setupSharedHeaders(request);
             lastAction = mockMvc.perform(request);
         });
