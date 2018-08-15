@@ -1,23 +1,5 @@
 package com.humanharvest.organz.state;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.StringJoiner;
-import java.util.stream.Collectors;
-import javax.persistence.OptimisticLockException;
-import javax.persistence.RollbackException;
-
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.HistoryItem;
@@ -33,6 +15,15 @@ import org.hibernate.ReplicationMode;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
+
+import javax.persistence.OptimisticLockException;
+import javax.persistence.RollbackException;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * A pure database implementation of {@link ClientManager} that uses a database to store clients, then retrieves them
@@ -290,75 +281,6 @@ public class ClientManagerDBPure implements ClientManager {
             }
             return null;
         }
-        /*
-        return clients == null ? new ArrayList<>() : clients;
-
-        //Setup the primarySorter for the given sort option. Default to NAME if none is given
-        if (sortOption == null) {
-            sortOption = ClientSortOptionsEnum.NAME;
-        }
-        Comparator<Client> primarySorter;
-        switch (sortOption) {
-            case ID:
-                primarySorter = Comparator.comparing(Client::getUid, Comparator.nullsLast(Comparator.naturalOrder()));
-                break;
-            case AGE:
-                primarySorter = Comparator.comparing(Client::getAge, Comparator.nullsLast(Comparator.naturalOrder()));
-                break;
-            case DONOR:
-                primarySorter = Comparator.comparing(Client::isDonor, Comparator.nullsLast(Comparator.naturalOrder()));
-                break;
-            case RECEIVER:
-                primarySorter = Comparator
-                        .comparing(Client::isReceiver, Comparator.nullsLast(Comparator.naturalOrder()));
-                break;
-            case REGION:
-                primarySorter = Comparator
-                        .comparing(Client::getRegion, Comparator.nullsLast(Comparator.naturalOrder()));
-                break;
-            case BIRTH_GENDER:
-                primarySorter = Comparator
-                        .comparing(Client::getGender, Comparator.nullsLast(Comparator.naturalOrder()));
-                break;
-            case NAME:
-            default:
-                primarySorter = new ClientNameSorter(q);
-        }
-
-        //Setup a second comparison
-        Comparator<Client> dualSorter = primarySorter.thenComparing(new ClientNameSorter(q));
-
-        //If the sort should be reversed
-        if (isReversed != null && isReversed) {
-            dualSorter = dualSorter.reversed();
-        }
-
-        List<Client> filteredClients = stream
-                .filter(q == null ? c -> true : client -> client.nameContains(q))
-
-                .filter(minimumAge == null ? c -> true : client -> client.getAge() >= minimumAge)
-
-                .filter(maximumAge == null ? c -> true : client -> client.getAge() <= maximumAge)
-
-                .filter(regions == null ? c -> true : client -> regions.isEmpty() ||
-                        regions.contains(client.getRegion()))
-
-                .filter(birthGenders == null ? c -> true : client -> birthGenders.isEmpty() ||
-                        birthGenders.contains(client.getGender()))
-
-                .filter(clientType == null ? c -> true : client -> client.isOfType(clientType))
-
-                .filter(donating == null ? c -> true : client -> donating.isEmpty() ||
-                        donating.stream().anyMatch(organ -> client.getCurrentlyDonatedOrgans().contains(organ)))
-
-                .filter(requesting == null ? c -> true : client -> requesting.isEmpty() ||
-                        requesting.stream().anyMatch(organ -> client.getCurrentlyRequestedOrgans().contains(organ)))
-
-                .collect(Collectors.toList());
-
-
-        return new PaginatedClientList(paginatedClients, totalResults);
-        */
     }
 
     @Override
