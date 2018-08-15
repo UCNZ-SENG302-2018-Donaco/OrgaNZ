@@ -38,9 +38,11 @@ public class MatchOrgansToRecipientsController {
 
         // Verify that request has clinician/admin authorization
         State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
-        Collection<TransplantRequest> allTransplantRequests = State.getClientManager().getAllTransplantRequests();
+        //Collection<TransplantRequest> allTransplantRequests = State.getClientManager().getAllTransplantRequests();
 
-        List<Client> potentialMatches = MatchOrganToRecipients.getListOfPotentialRecipients(donatedOrgan, allTransplantRequests);
+        //List<Client> potentialMatches = MatchOrganToRecipients.getListOfPotentialRecipients(donatedOrgan,
+                //allTransplantRequests);
+        List<Client> potentialMatches = State.getClientManager().getOrganMatches(donatedOrgan);
 
         return new ResponseEntity<>(potentialMatches, HttpStatus.OK);
 

@@ -21,6 +21,8 @@ import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.ProcedureRecord;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.ClientNameSorter;
+import com.humanharvest.organz.utilities.algorithms.MatchOrganToRecipients;
+import com.humanharvest.organz.utilities.enums.*;
 import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
 import com.humanharvest.organz.utilities.enums.ClientType;
 import com.humanharvest.organz.utilities.enums.Gender;
@@ -30,6 +32,7 @@ import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 import com.humanharvest.organz.views.client.PaginatedClientList;
 import com.humanharvest.organz.views.client.PaginatedTransplantList;
 import com.humanharvest.organz.views.client.TransplantRequestView;
+import com.sun.org.apache.xerces.internal.impl.xs.identity.Selector.Matcher;
 
 /**
  * An in-memory implementation of {@link ClientManager} that uses a simple list to hold all clients.
@@ -349,8 +352,13 @@ public class ClientManagerMemory implements ClientManager {
         return donatedOrgans;
     }
 
+    /**
+     * Gets potential recipients for an available organ
+     * @param donatedOrgan available organ to match to potential recipients
+     * @return list of clients that are waiting for the available organ
+     */
     @Override
     public List<Client> getOrganMatches(DonatedOrgan donatedOrgan) {
-        return null;
+        return MatchOrganToRecipients.getListOfPotentialRecipients(donatedOrgan, getAllCurrentTransplantRequests());
     }
 }

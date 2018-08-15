@@ -130,7 +130,6 @@ public class ViewMedicationsController extends SubController {
                     event.consume();
                 }
             });
-            System.out.println(cell);
             return cell ;
         });
     }

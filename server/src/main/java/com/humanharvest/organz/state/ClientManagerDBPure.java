@@ -19,6 +19,8 @@ import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.database.DBManager;
+import com.humanharvest.organz.utilities.algorithms.MatchOrganToRecipients;
+import com.humanharvest.organz.utilities.enums.*;
 import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
 import com.humanharvest.organz.utilities.enums.ClientType;
 import com.humanharvest.organz.utilities.enums.Gender;
@@ -560,5 +562,16 @@ public class ClientManagerDBPure implements ClientManager {
         }
 
         return requests == null ? new ArrayList<>() : requests;
+    }
+
+    /**
+     * @param donatedOrgan Available organ to find potential recipients for
+     * @return List of clients who may receive the donated organ
+     */
+    @Override
+    public List<Client> getOrganMatches(DonatedOrgan donatedOrgan) {
+
+        Collection<TransplantRequest> transplantRequests = getAllTransplantRequests();
+        return MatchOrganToRecipients.getListOfPotentialRecipients(donatedOrgan, transplantRequests);
     }
 }
