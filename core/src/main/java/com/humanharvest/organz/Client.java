@@ -11,6 +11,7 @@ import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
+import com.humanharvest.organz.utilities.enums.*;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
 import com.humanharvest.organz.views.client.Views;
 
@@ -1016,6 +1017,7 @@ public class Client implements ConcurrencyControlledEntity {
 
     /**
      * Registers the given {@link Organ} as having been donated by this client at this moment.
+     *
      * @param organ The organ donated.
      */
     public void donateOrgan(Organ organ) {
@@ -1024,8 +1026,9 @@ public class Client implements ConcurrencyControlledEntity {
 
     /**
      * Registers the given {@link Organ} as having been donated by this client at this moment.
+     *
      * @param organ The organ donated.
-     * @param id The id to use for the {@link DonatedOrgan}
+     * @param id    The id to use for the {@link DonatedOrgan}
      */
     public void donateOrgan(Organ organ, Long id) {
         donatedOrgans.add(new DonatedOrgan(organ, this, LocalDateTime.now(), id));

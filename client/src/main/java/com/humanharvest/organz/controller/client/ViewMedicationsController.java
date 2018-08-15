@@ -10,12 +10,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListCell;
@@ -245,7 +243,6 @@ public class ViewMedicationsController extends SubController {
 
         return selectedItems;
     }
-
 
     /**
      * Creates and executes the resolver to update the given medication record, either setting it as a current

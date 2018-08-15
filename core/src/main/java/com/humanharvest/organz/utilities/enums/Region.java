@@ -35,18 +35,6 @@ public enum Region {
         this.longitude = longitude;
     }
 
-    public double getLatitude() {
-        return latitude;
-    }
-
-    public double getLongitude() {
-        return longitude;
-    }
-
-    public String toString() {
-        return text;
-    }
-
     /**
      * Get a Region object from a string
      *
@@ -73,5 +61,17 @@ public enum Region {
             mismatchText = mismatchTextBuilder.toString();
             throw new IllegalArgumentException(mismatchText);
         }
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public String toString() {
+        return text;
+    }
+
+    public double getLongitude() {
+        return longitude;
     }
 }
