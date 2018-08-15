@@ -1,6 +1,7 @@
 package com.humanharvest.organz.server.controller;
 
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -17,6 +18,7 @@ import com.humanharvest.organz.actions.client.ManuallyOverrideOrganAction;
 import com.humanharvest.organz.server.exceptions.GlobalControllerExceptionHandler;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Country;
+import com.humanharvest.organz.utilities.enums.DonatedOrganSortOptionsEnum;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.views.SingleStringView;
 import com.humanharvest.organz.views.client.DonatedOrganView;
@@ -51,10 +53,37 @@ public class OrgansController {
             @RequestParam(required = false) Integer offset,
             @RequestParam(required = false) Integer count,
             @RequestParam(required = false) Set<String> regions,
-            @RequestParam(value = "organType", required = false) Set<Organ> organsToFilter)
+            @RequestParam(value = "organType", required = false) Set<Organ> organsToFilter,
+            @RequestParam(required = false) DonatedOrganSortOptionsEnum sortOption,
+            @RequestParam(required = false) Boolean reversed)
             throws GlobalControllerExceptionHandler.InvalidRequestException {
 
         State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
+
+        Comparator<DonatedOrgan> comparator;
+        switch (sortOption) {
+            case CLIENT:
+                comparator = Comparator.comparing(organ -> organ.getDonor().getFullName());
+                break;
+            case ORGAN_TYPE:
+                comparator = Comparator.comparing(organ -> organ.getOrganType().toString());
+                break;
+            case REGION_OF_DEATH:
+                comparator = Comparator.comparing(organ -> organ.getDonor().getRegionOfDeath());
+                break;
+            case TIME_OF_DEATH:
+                comparator = Comparator.comparing(organ -> organ.getDonor().getDateOfDeath());
+                break;
+            default:
+            case TIME_UNTIL_EXPIRY:
+                comparator = Comparator.comparing(DonatedOrgan::getDurationUntilExpiry,
+                        Comparator.nullsLast(Comparator.naturalOrder()));
+                break;
+        }
+
+        if (reversed) {
+            comparator = comparator.reversed();
+        }
 
         final Set<String> regionsToFilter = new HashSet<>();
         if (regions != null) {
@@ -65,31 +94,34 @@ public class OrgansController {
 
         // Get all organs for donation
         // Filter by region and organ type if the params have been set
-        List<DonatedOrganView> filteredOrgans = State.getClientManager().getAllOrgansToDonate().stream()
+        List<DonatedOrgan> filteredOrgans = State.getClientManager().getAllOrgansToDonate().stream()
+                .filter(organ -> organ.getDurationUntilExpiry() == null || !organ.getDurationUntilExpiry().isZero())
+                .filter(organ -> organ.getOverrideReason() == null)
                 .filter(organ -> regionsToFilter.isEmpty()
                         || regionsToFilter.contains(organ.getDonor().getRegionOfDeath())
                         || regionsToFilter.contains("International") && organ.getDonor().getCountryOfDeath() != Country.NZ)
                 .filter(organ -> organsToFilter == null || organsToFilter.isEmpty()
                         || organsToFilter.contains(organ.getOrganType()))
-                .map(DonatedOrganView::new)
                 .collect(Collectors.toList());
 
+        int totalResults = filteredOrgans.size();
         if (offset == null) {
             offset = 0;
         }
         if (count == null) {
-            return new ResponseEntity<>(new PaginatedDonatedOrgansList(
-                    filteredOrgans.subList(
-                            Math.min(offset, filteredOrgans.size()),
-                            filteredOrgans.size()),
-                    filteredOrgans.size()),
-                    HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>(new PaginatedDonatedOrgansList(filteredOrgans.subList(
-                    Math.min(offset, filteredOrgans.size()),
-                    Math.min(offset + count, filteredOrgans.size())),
-                    filteredOrgans.size()),HttpStatus.OK);
+            count = Integer.MAX_VALUE;
         }
+
+        return new ResponseEntity<>(
+                new PaginatedDonatedOrgansList(
+                        filteredOrgans.stream()
+                                .sorted(comparator)
+                                .skip(offset)
+                                .limit(count)
+                                .map(DonatedOrganView::new)
+                                .collect(Collectors.toList()),
+                        totalResults),
+                HttpStatus.OK);
     }
 
     /**

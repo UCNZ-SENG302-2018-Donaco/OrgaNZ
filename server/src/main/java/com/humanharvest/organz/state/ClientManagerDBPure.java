@@ -21,6 +21,7 @@ import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.database.DBManager;
 import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
 import com.humanharvest.organz.utilities.enums.ClientType;
+import com.humanharvest.organz.utilities.enums.DonatedOrganSortOptionsEnum;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.views.client.PaginatedClientList;
@@ -567,13 +568,11 @@ public class ClientManagerDBPure implements ClientManager {
      */
     @Override
     public PaginatedDonatedOrgansList getAllOrgansToDonate(Integer offset, Integer count,Set<String> regions,
-            EnumSet<Organ>
-            organType) {
+            EnumSet<Organ> organType, DonatedOrganSortOptionsEnum sortOption, Boolean reversed) {
         //TODO Implement the WHERE statements for this.
         List<DonatedOrgan> requests = null;
         Transaction trns = null;
 
         throw new NotImplementedException();
-
     }
 }

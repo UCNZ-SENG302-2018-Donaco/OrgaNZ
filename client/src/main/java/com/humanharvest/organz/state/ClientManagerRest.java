@@ -15,6 +15,7 @@ import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
 import com.humanharvest.organz.utilities.enums.ClientType;
+import com.humanharvest.organz.utilities.enums.DonatedOrganSortOptionsEnum;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
@@ -223,7 +224,7 @@ public class ClientManagerRest implements ClientManager {
      */
     @Override
     public PaginatedDonatedOrgansList getAllOrgansToDonate(Integer offset, Integer count, Set<String> regions,
-            EnumSet<Organ> organType) {
+            EnumSet<Organ> organType, DonatedOrganSortOptionsEnum sortOption, Boolean reversed) {
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-Auth-Token", State.getToken());
         headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
@@ -232,7 +233,9 @@ public class ClientManagerRest implements ClientManager {
                 .queryParam("offset", offset)
                 .queryParam("count", count)
                 .queryParam("regions", String.join(",", regions))
-                .queryParam("organType", EnumSetToString.convert(organType));
+                .queryParam("organType", EnumSetToString.convert(organType))
+                .queryParam("sortOption", sortOption)
+                .queryParam("reversed", reversed);
 
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
@@ -242,6 +245,5 @@ public class ClientManagerRest implements ClientManager {
                 entity, PaginatedDonatedOrgansList.class);
 
         return responseEntity.getBody();
-
     }
 }

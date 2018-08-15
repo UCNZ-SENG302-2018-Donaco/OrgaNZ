@@ -13,6 +13,7 @@ import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
 import com.humanharvest.organz.utilities.enums.ClientType;
+import com.humanharvest.organz.utilities.enums.DonatedOrganSortOptionsEnum;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.views.client.PaginatedClientList;
@@ -88,7 +89,7 @@ public interface ClientManager {
      * Returns a collection of all the organs that are available to donate from dead peop[e.
      */
     PaginatedDonatedOrgansList getAllOrgansToDonate(Integer offset, Integer count, Set<String> regions, EnumSet<Organ>
-            organType);
+            organType, DonatedOrganSortOptionsEnum sortOption, Boolean reversed);
 
     List<HistoryItem> getAllHistoryItems();
 }
