@@ -1,8 +1,5 @@
 package com.humanharvest.organz.server.controller.clinician;
 
-import java.util.List;
-import java.util.Optional;
-
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.HistoryItem;
@@ -20,14 +17,10 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
 
 @RestController
 public class ClinicianController {
@@ -109,23 +102,25 @@ public class ClinicianController {
             @RequestBody ModifyClinicianObject editedClinician,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {
 
-        Optional<Clinician> clinician = State.getClinicianManager().getClinicianByStaffId(staffId);
+        Optional<Clinician> optionalClinician = State.getClinicianManager().getClinicianByStaffId(staffId);
 
-        if (clinician.isPresent()) {
-            State.getAuthenticationManager().verifyClinicianAccess(authToken, clinician.get());
+        if (optionalClinician.isPresent()) {
+            Clinician clinician = optionalClinician.get();
+            State.getAuthenticationManager().verifyClinicianAccess(authToken, clinician);
 
             if (ModifyClinicianValidator.isValid(editedClinician)) {
 
                 ModifyClinicianObject oldClinician = new ModifyClinicianObject();
-                BeanUtils.copyProperties(editedClinician, oldClinician, editedClinician.getUnmodifiedFields());
-                ModifyClinicianByObjectAction action = new ModifyClinicianByObjectAction(clinician.get(),
+                BeanUtils.copyProperties(clinician, oldClinician, editedClinician.getUnmodifiedFields());
+                ModifyClinicianByObjectAction action = new ModifyClinicianByObjectAction(clinician,
                         State.getClinicianManager(),
                         oldClinician, editedClinician);
                 State.getActionInvoker(authToken).execute(action);
 
-                State.getClinicianManager().applyChangesTo(clinician.get());
+                State.getClinicianManager().applyChangesTo(clinician);
                 HttpHeaders headers = new HttpHeaders();
-                return new ResponseEntity<>(clinician.get(), headers, HttpStatus.OK);
+                headers.setETag(clinician.getETag());
+                return new ResponseEntity<>(clinician, headers, HttpStatus.OK);
             } else {
                 throw new GlobalControllerExceptionHandler.InvalidRequestException();
             }

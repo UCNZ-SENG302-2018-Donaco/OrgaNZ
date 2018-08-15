@@ -19,14 +19,14 @@ public class ClinicianManagerMemory implements ClinicianManager{
     private static final int defaultClinicianId = 0;
 
     private final Clinician defaultClinician = new Clinician(
-            "admin",
+            "Default",
             null,
-            "admin",
-            "admin",
+            "Clinician",
+            "Unspecified",
             "Unspecified",
             null,
             defaultClinicianId,
-            "admin");
+            "clinician");
 
     public ClinicianManagerMemory() {
         clinicians = new ArrayList<>();
