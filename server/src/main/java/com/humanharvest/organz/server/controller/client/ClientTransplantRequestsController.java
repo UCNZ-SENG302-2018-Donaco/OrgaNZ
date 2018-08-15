@@ -14,6 +14,7 @@ import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.actions.client.AddTransplantRequestAction;
 import com.humanharvest.organz.actions.client.ResolveTransplantRequestAction;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
@@ -68,16 +69,18 @@ public class ClientTransplantRequestsController {
         // Verify that request has clinician/admin authorization
         State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
 
-        Set<String> newRegions = new HashSet<>();
+        final Set<String> regionsToFilter = new HashSet<>();
         if (regions != null) {
             for (String region : regions) {
-                newRegions.add(region.replace("%20", " "));
+                regionsToFilter.add(region.replace("%20", " "));
             }
         }
 
         // Get all requests that match region/organ filters
         List<TransplantRequestView> matchingRequests = State.getClientManager().getAllTransplantRequests().stream()
-                .filter(request-> regions == null || newRegions.isEmpty() || newRegions.contains(request.getClient().getRegion()))
+                .filter(request -> regionsToFilter.isEmpty()
+                        || regionsToFilter.contains(request.getClient().getRegion())
+                        || regionsToFilter.contains("International") && request.getClient().getCountry() != Country.NZ)
                 .filter(request -> organs == null || organs.isEmpty() || organs.contains(request.getRequestedOrgan()))
                 .map(TransplantRequestView::new)
                 .collect(Collectors.toList());
