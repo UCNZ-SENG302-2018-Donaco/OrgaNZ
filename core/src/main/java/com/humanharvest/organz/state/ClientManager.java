@@ -90,5 +90,7 @@ public interface ClientManager {
     PaginatedDonatedOrgansList getAllOrgansToDonate(Integer offset, Integer count, Set<String> regions, Set<Organ>
             organType, DonatedOrganSortOptionsEnum sortOption, Boolean reversed);
 
+    List<Client> getOrganMatches(DonatedOrgan donatedOrgan);
+
     List<HistoryItem> getAllHistoryItems();
 }

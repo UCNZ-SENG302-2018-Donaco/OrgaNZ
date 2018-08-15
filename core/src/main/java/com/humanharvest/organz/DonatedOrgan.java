@@ -54,6 +54,13 @@ public class DonatedOrgan {
         this.dateTimeOfDonation = dateTimeOfDonation;
     }
 
+    public DonatedOrgan(Organ organType, Client donor, LocalDateTime dateTimeOfDonation, Long id) {
+        this.organType = organType;
+        this.donor = donor;
+        this.dateTimeOfDonation = dateTimeOfDonation;
+        this.id = id;
+    }
+
     public Organ getOrganType() {
         return organType;
     }
@@ -84,6 +91,13 @@ public class DonatedOrgan {
 
     private Duration getTimeSinceDonation() {
         return Duration.between(dateTimeOfDonation, LocalDateTime.now());
+    }
+
+    /**
+     * @return true if the organ has expired
+     */
+    public boolean hasExpired() {
+        return getDurationUntilExpiry() == Duration.ZERO;
     }
 
     /**

@@ -16,14 +16,14 @@ public class ClinicianManagerDBPure implements ClinicianManager {
 
     private final DBManager dbManager;
     private Clinician defaultClinician = new Clinician(
-            "admin",
+            "Default",
             null,
-            "admin",
-            "admin",
+            "Clinician",
+            "Unspecified",
             Region.UNSPECIFIED.name(),
             null,
             0,
-            "admin");
+            "clinician");
 
     public ClinicianManagerDBPure(){
         this.dbManager = DBManager.getInstance();
