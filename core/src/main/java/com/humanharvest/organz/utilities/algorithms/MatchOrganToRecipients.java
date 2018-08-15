@@ -1,16 +1,16 @@
 package com.humanharvest.organz.utilities.algorithms;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Region;
+
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class MatchOrganToRecipients {
 
@@ -33,6 +33,7 @@ public class MatchOrganToRecipients {
      * Note that there is no unit - standardising it to a unit is unnecessary, as this is just used for comparisons.
      * (To get km, multiply by 6371; to get miles, multiply by 3959)
      * Adapted from https://stackoverflow.com/a/365853/8355496
+     *
      * @param lat1 Point 1's latitude
      * @param lon1 Point 1's longitude
      * @param lat2 Point 2's latitude

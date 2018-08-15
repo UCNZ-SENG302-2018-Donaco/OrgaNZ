@@ -1,34 +1,5 @@
 package com.humanharvest.organz.controller.client;
 
-import java.io.IOException;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
-
-import javafx.beans.value.ObservableValue;
-import javafx.collections.FXCollections;
-import javafx.concurrent.Task;
-import javafx.fxml.FXML;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.controller.MainController;
@@ -44,7 +15,28 @@ import com.humanharvest.organz.utilities.web.MedActiveIngredientsHandler;
 import com.humanharvest.organz.utilities.web.MedAutoCompleteHandler;
 import com.humanharvest.organz.views.client.CreateMedicationRecordView;
 import impl.org.controlsfx.autocompletion.AutoCompletionTextFieldBinding;
+import javafx.collections.FXCollections;
+import javafx.concurrent.Task;
+import javafx.fxml.FXML;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import org.controlsfx.control.Notifications;
+
+import java.io.IOException;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * Controller for the view/edit medications page.
@@ -245,7 +237,6 @@ public class ViewMedicationsController extends SubController {
         return selectedItems;
     }
 
-
     /**
      * Creates and executes the resolver to update the given medication record, either setting it as a current
      * medication or a past one
@@ -425,18 +416,6 @@ public class ViewMedicationsController extends SubController {
             PageNavigator.refreshAllWindows();
             refreshMedicationLists();
         }
-    }
-
-    /**
-     * Gets all selected medication records from both the current and past medication lists
-     * @return list of all currently selected medication records
-     */
-    private List<MedicationRecord> getSelectedRecords() {
-        List<MedicationRecord> selectedItems = new ArrayList<>();
-        selectedItems.addAll(currentMedicationsView.getSelectionModel().getSelectedItems());
-        selectedItems.addAll(pastMedicationsView.getSelectionModel().getSelectedItems());
-
-        return selectedItems;
     }
 
     /**
