@@ -91,13 +91,15 @@ public class ViewMedicationsController extends SubController {
      * @param listView to create a cellfactory for
      */
     private void configureCellFactory(ListView<MedicationRecord> listView) {
-        listView.setCellFactory(listview -> {
+        listView.setCellFactory(view -> {
             ListCell<MedicationRecord> cell = new ListCell<MedicationRecord>() {
                 @Override
                 public void updateItem(MedicationRecord record, boolean empty) {
                     super.updateItem(record, empty);
                     if (!empty) {
                         setText(record.toString());
+                    } else {
+                        setText("");
                     }
                 }
             };
