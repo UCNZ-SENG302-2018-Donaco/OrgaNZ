@@ -8,33 +8,8 @@ import com.humanharvest.organz.views.client.*;
 import org.springframework.beans.BeanUtils;
 
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Optional;
-
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.DonatedOrgan;
-import com.humanharvest.organz.HistoryItem;
-import com.humanharvest.organz.IllnessRecord;
-import com.humanharvest.organz.MedicationRecord;
-import com.humanharvest.organz.ProcedureRecord;
-import com.humanharvest.organz.TransplantRequest;
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
-import com.humanharvest.organz.views.client.CreateClientView;
-import com.humanharvest.organz.views.client.CreateIllnessView;
-import com.humanharvest.organz.views.client.CreateMedicationRecordView;
-import com.humanharvest.organz.views.client.CreateProcedureView;
-import com.humanharvest.organz.views.client.CreateTransplantRequestView;
-import com.humanharvest.organz.views.client.ModifyClientObject;
-import com.humanharvest.organz.views.client.ModifyIllnessObject;
-import com.humanharvest.organz.views.client.ModifyProcedureObject;
-import com.humanharvest.organz.views.client.ResolveTransplantRequestObject;
-import org.springframework.beans.BeanUtils;
 
 public class ClientResolverMemory implements ClientResolver {
 
@@ -160,7 +135,7 @@ public class ClientResolverMemory implements ClientResolver {
 
     @Override
     public TransplantRequest resolveTransplantRequest(Client client, TransplantRequest request,
-            ResolveTransplantRequestObject resolveTransplantRequestObject) {
+                                                      ResolveTransplantRequestObject resolveTransplantRequestObject) {
         request.setStatus(resolveTransplantRequestObject.getStatus());
         request.setResolvedReason(resolveTransplantRequestObject.getResolvedReason());
         request.setResolvedDate(resolveTransplantRequestObject.getResolvedDate());
@@ -186,7 +161,7 @@ public class ClientResolverMemory implements ClientResolver {
 
     @Override
     public IllnessRecord modifyIllnessRecord(Client client, IllnessRecord toModify,
-            ModifyIllnessObject modifyIllnessObject) {
+                                             ModifyIllnessObject modifyIllnessObject) {
         BeanUtils.copyProperties(modifyIllnessObject, toModify, modifyIllnessObject.getUnmodifiedFields());
         return toModify;
     }

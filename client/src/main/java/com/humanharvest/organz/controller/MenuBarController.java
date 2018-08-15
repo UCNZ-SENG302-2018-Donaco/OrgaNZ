@@ -2,8 +2,6 @@ package com.humanharvest.organz.controller;
 
 import com.humanharvest.organz.AppTUIO;
 import com.humanharvest.organz.AppUI;
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
@@ -11,7 +9,6 @@ import com.humanharvest.organz.utilities.CacheManager;
 import com.humanharvest.organz.utilities.exceptions.BadRequestException;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
-import com.humanharvest.organz.utilities.view.WindowContext;
 import com.humanharvest.organz.views.ActionResponseView;
 import javafx.application.Platform;
 import javafx.beans.property.Property;
@@ -35,6 +32,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static com.humanharvest.organz.state.State.UiType.TOUCH;
 
 /**
  * Controller for the sidebar pane imported into every page in the main part of the GUI.
@@ -126,7 +125,7 @@ public class MenuBarController extends SubController {
                 medicationsPrimaryItem, staffPrimaryItem, profilePrimaryItem};
 
         // Duplicate item is exclusively for the touch screen interface
-        if (State.getUiType() == State.UiType.TOUCH) {
+        if (State.getUiType() == TOUCH) {
             duplicateItem.setVisible(true);
         } else {
             duplicateItem.setVisible(false);
@@ -158,7 +157,7 @@ public class MenuBarController extends SubController {
             hideMenus(allMenus);
         }
 
-        closeItem.setDisable(!windowContext.isClinViewClientWindow());
+        closeItem.setDisable(!windowContext.isClinViewClientWindow() && State.getUiType() != TOUCH);
 
         refresh();
     }
@@ -564,16 +563,12 @@ public class MenuBarController extends SubController {
 
     @FXML
     private void duplicateWindow() {
-        Client client = windowContext.getViewClient();
-        if (client != null) {
-            MainController newMain = PageNavigator.openNewWindow();
-            if (newMain != null) {
-                newMain.setWindowContext(new WindowContext.WindowContextBuilder()
-                        .setAsClinicianViewClientWindow()
-                        .viewClient(client)
-                        .build());
-                PageNavigator.loadPage(Page.VIEW_CLIENT, newMain);
-            }
+        MainController newMain = PageNavigator.openNewWindow();
+        if (newMain != null) {
+            newMain.setWindowContext(mainController.getWindowContext());
+            PageNavigator.loadPage(mainController.getCurrentPage(), newMain);
+        } else {
+            PageNavigator.showAlert(AlertType.ERROR, "Error duplicating page", "The new page could not be created", mainController.getStage());
         }
     }
 
@@ -582,7 +577,7 @@ public class MenuBarController extends SubController {
      */
     @FXML
     private void closeWindow() {
-        if (State.getUiType() == State.UiType.TOUCH) {
+        if (State.getUiType() == TOUCH) {
             AppTUIO.root.getChildren().remove(mainController.getPane());
         } else {
             Stage stage = (Stage) menuBar.getScene().getWindow();

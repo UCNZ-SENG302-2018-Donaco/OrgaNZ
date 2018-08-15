@@ -1,13 +1,13 @@
 package com.humanharvest.organz.controller.client;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.controller.ControllerTest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 public abstract class ViewClientControllerClinicianBaseTest extends ControllerTest {
 

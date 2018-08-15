@@ -53,6 +53,7 @@ public class PageNavigatorTouch implements IPageNavigator {
             }
 
         } catch (IOException e) {
+            e.printStackTrace();
             LOGGER.log(Level.SEVERE, "Couldn't load the page", e);
             showAlert(Alert.AlertType.ERROR, "Could not load page: " + page,
                     "The page loader failed to load the layout for the page.", controller.getStage());
@@ -101,6 +102,7 @@ public class PageNavigatorTouch implements IPageNavigator {
 
             return mainController;
         } catch (IOException e) {
+            e.printStackTrace();
             LOGGER.log(Level.SEVERE, "Error loading new window\n", e);
             // Will throw if MAIN's fxml file could not be loaded.
             showAlert(Alert.AlertType.ERROR, "New window could not be created",

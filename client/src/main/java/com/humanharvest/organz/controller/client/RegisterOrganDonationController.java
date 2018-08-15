@@ -1,31 +1,5 @@
 package com.humanharvest.organz.controller.client;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
-
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.FXCollections;
-import javafx.fxml.FXML;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextInputDialog;
-import javafx.scene.control.Tooltip;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.Pane;
-
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.TransplantRequest;
@@ -41,7 +15,22 @@ import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.PageNavigator;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
+import javafx.fxml.FXML;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.*;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.Pane;
 import org.controlsfx.control.Notifications;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 /**
  * Controller for the register organs page.
@@ -146,6 +135,7 @@ public class RegisterOrganDonationController extends SubController {
     /**
      * Handles the event when the user wants to override a given donated organ. Creates a popup with a text field for
      * the user to enter the reason they are overriding this organ.
+     *
      * @param donatedOrgan The donated organ the user wants to override.
      */
     private void handleOverride(DonatedOrgan donatedOrgan) {
@@ -155,7 +145,7 @@ public class RegisterOrganDonationController extends SubController {
         popup.setHeaderText("Enter the reason for overriding this organ:");
         popup.setContentText("Reason:");
         popup.getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
-        popup.getEditor().textProperty().addListener((observable, oldValue, newValue) -> 
+        popup.getEditor().textProperty().addListener((observable, oldValue, newValue) ->
                 popup.getDialogPane().lookupButton(ButtonType.OK).setDisable(newValue.isEmpty()));
 
         // If user clicks the OK button
@@ -194,6 +184,7 @@ public class RegisterOrganDonationController extends SubController {
     /**
      * Handles the event when the user wants to edit the override on a given donated organ. Creates a popup with a text
      * field for the user to modify the override reason on this organ.
+     *
      * @param donatedOrgan The donated organ the user wants to edit the override for.
      */
     private void handleEditOverride(DonatedOrgan donatedOrgan) {
@@ -241,6 +232,7 @@ public class RegisterOrganDonationController extends SubController {
 
     /**
      * Handles the event when the user wants to cancel the override on a given donated organ.
+     *
      * @param donatedOrgan The donated organ the user wants to cancel the override for.
      */
     private void handleCancelOverride(DonatedOrgan donatedOrgan) {
@@ -370,18 +362,11 @@ public class RegisterOrganDonationController extends SubController {
                 return;
             } catch (IfMatchFailedException e) {
                 LOGGER.log(Level.INFO, "If-Match did not match");
-                ButtonType optionSelected = PageNavigator.showAlert(AlertType.CONFIRMATION,
+                PageNavigator.showAlert(AlertType.WARNING,
                         "Outdated Data",
                         "The client has been modified since you retrieved the data. "
-                                + "\nIf you would still like to apply these changes, press OK. "
-                                + "\nOtherwise, press Cancel to refresh the data.")
-                        .orElse(ButtonType.CANCEL);
-                if (optionSelected == ButtonType.OK) {
-                    // TODO submit the request again with new eTag
-                } else {
-                    refresh();
-                    return;
-                }
+                                + "\nThe user data will now be refreshed.", mainController.getStage());
+                refresh();
             }
 
             PageNavigator.refreshAllWindows();
@@ -419,7 +404,7 @@ public class RegisterOrganDonationController extends SubController {
      */
     @FXML
     private void selectAll() {
-        for (CheckBox checkBox: organCheckBoxes.values()) {
+        for (CheckBox checkBox : organCheckBoxes.values()) {
             checkBox.setSelected(true);
         }
     }
@@ -429,7 +414,7 @@ public class RegisterOrganDonationController extends SubController {
      */
     @FXML
     private void selectNone() {
-        for (CheckBox checkBox: organCheckBoxes.values()) {
+        for (CheckBox checkBox : organCheckBoxes.values()) {
             checkBox.setSelected(false);
         }
     }

@@ -1,42 +1,5 @@
 package com.humanharvest.organz.controller.client;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.time.format.FormatStyle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleButton;
-import javafx.scene.control.ToggleGroup;
-import javafx.scene.control.Tooltip;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.stage.FileChooser;
-import javafx.stage.FileChooser.ExtensionFilter;
-
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.clinician.ViewBaseController;
@@ -62,6 +25,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
@@ -217,11 +181,11 @@ public class ViewClientController extends ViewBaseController {
             deathDetailsPane.setDisable(true);
         } else if (windowContext.isClinViewClientWindow()) {
             mainController.setTitle("View Client: " + viewedClient.getFullName());
-                // date of death is not editable - disable all the things
-                aliveToggleBtn.setDisable(!viewedClient.getDateOfDeathIsEditable());
-                deadToggleBtn.setDisable(!viewedClient.getDateOfDeathIsEditable());
-                deathDatePicker.setDisable(!viewedClient.getDateOfDeathIsEditable());
-                deathTimeField.setDisable(!viewedClient.getDateOfDeathIsEditable());
+            // date of death is not editable - disable all the things
+            aliveToggleBtn.setDisable(!viewedClient.getDateOfDeathIsEditable());
+            deadToggleBtn.setDisable(!viewedClient.getDateOfDeathIsEditable());
+            deathDatePicker.setDisable(!viewedClient.getDateOfDeathIsEditable());
+            deathTimeField.setDisable(!viewedClient.getDateOfDeathIsEditable());
             if (!viewedClient.getDateOfDeathIsEditable()) {
                 Tooltip tooltip = new Tooltip(
                         "Date and time of death is not editable, "

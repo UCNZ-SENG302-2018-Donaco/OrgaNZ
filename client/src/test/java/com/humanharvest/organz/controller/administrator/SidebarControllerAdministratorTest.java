@@ -1,15 +1,15 @@
 package com.humanharvest.organz.controller.administrator;
 
-import static org.junit.Assert.assertEquals;
-import static org.testfx.api.FxAssert.verifyThat;
-import static org.testfx.matcher.base.NodeMatchers.isInvisible;
-
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.controller.ControllerTest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.testfx.api.FxAssert.verifyThat;
+import static org.testfx.matcher.base.NodeMatchers.isInvisible;
 
 public class SidebarControllerAdministratorTest extends ControllerTest {
 
@@ -91,7 +91,6 @@ public class SidebarControllerAdministratorTest extends ControllerTest {
         verifyThat("#viewMedicationsButton", isInvisible());
         verifyThat("#illnessHistoryButton", isInvisible());
     }
-
 
 
 }

@@ -74,6 +74,10 @@ public class WindowContext {
     }
 
     public Client getViewClient() {
-        return State.getClientManager().getClientByID(viewClient.getUid()).orElseThrow(IllegalStateException::new);
+        if (viewClient == null) {
+            return null;
+        } else {
+            return State.getClientManager().getClientByID(viewClient.getUid()).orElseThrow(IllegalStateException::new);
+        }
     }
 }

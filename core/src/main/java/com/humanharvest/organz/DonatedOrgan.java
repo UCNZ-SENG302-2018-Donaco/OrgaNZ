@@ -114,7 +114,7 @@ public class DonatedOrgan {
         return (double) getOrganType().getMinExpiration().getSeconds() / getOrganType().getMaxExpiration().getSeconds();
     }
 
-    public Long getId(){
+    public Long getId() {
         return id;
     }
 

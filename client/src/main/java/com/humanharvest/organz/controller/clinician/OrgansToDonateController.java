@@ -4,9 +4,15 @@ import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.controller.components.DurationUntilExpiryCell;
 import com.humanharvest.organz.state.ClientManager;
+import com.humanharvest.organz.state.Session;
+import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
+import com.humanharvest.organz.utilities.exceptions.NotFoundException;
+import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
@@ -20,42 +26,19 @@ import javafx.collections.transformation.FilteredList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.Pagination;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
+import org.controlsfx.control.Notifications;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Comparator;
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.DonatedOrgan;
-import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.controller.components.DurationUntilExpiryCell;
-import com.humanharvest.organz.state.ClientManager;
-import com.humanharvest.organz.state.Session;
-import com.humanharvest.organz.state.Session.UserType;
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
-import com.humanharvest.organz.utilities.exceptions.NotFoundException;
-import com.humanharvest.organz.utilities.exceptions.ServerRestException;
-import com.humanharvest.organz.utilities.view.Page;
-import com.humanharvest.organz.utilities.view.PageNavigator;
-import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
-import org.controlsfx.control.Notifications;
 
 public class OrgansToDonateController extends SubController {
 
@@ -127,6 +110,62 @@ public class OrgansToDonateController extends SubController {
     }
 
     /**
+     * Formats a table cell that holds a {@link LocalDateTime} value to display that value in the date time format.
+     *
+     * @return The cell with the date time formatter set.
+     */
+    private static TableCell<DonatedOrgan, LocalDateTime> formatDateTimeCell() {
+        return new TableCell<DonatedOrgan, LocalDateTime>() {
+            @Override
+            protected void updateItem(LocalDateTime item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setText(null);
+                } else {
+                    setText(item.format(dateTimeFormat));
+                }
+            }
+        };
+    }
+
+    /**
+     * Upon pagination, update the table to show the correct items
+     *
+     * @param pageIndex The page we're now on (starts at 0)
+     * @return An empty pane as pagination requires a non null return. Not used.
+     */
+    private Node createPage(int pageIndex) {
+        updateOrgansToDonateList();
+        return new Pane();
+    }
+
+    private void updateOrgansToDonateList() {
+        Collection<DonatedOrgan> newOrgansToDonate = manager.getAllOrgansToDonate();
+
+        observableOrgansToDonate.setAll(newOrgansToDonate);
+        tableView.getSortOrder().setAll(timeUntilExpiryCol);
+
+        /* TODO decide whether we need to paginate or not
+        int newPageCount = Math.max(1, (newOrgansToDonate.getTotalResults() + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE);
+        if (pagination.getPageCount() != newPageCount) {
+            pagination.setPageCount(newPageCount);
+        }
+
+        setupDisplayingXToYOfZText(newOrgansToDonate.getTotalResults());
+        */
+    }
+
+    /**
+     * Refreshes the data in the transplants waiting list table. Should be called whenever any page calls a global
+     * refresh.
+     */
+    @Override
+    public void refresh() {
+        observableOrgansToDonate.setAll(manager.getAllOrgansToDonate());
+        tableView.setItems(sortedOrgansToDonate);
+    }
+
+    /**
      * Sets up the table columns with their respective value factories and representation factories. Also registers a
      * mouse event handler for double-clicking on a record in the table to open up the appropriate client profile.
      */
@@ -173,7 +212,7 @@ public class OrgansToDonateController extends SubController {
                     tableView.refresh();
                     observableOrgansToDonate.removeIf(donatedOrgan ->
                             donatedOrgan.getOverrideReason() != null ||
-                            donatedOrgan.getDurationUntilExpiry() != null &&
+                                    donatedOrgan.getDurationUntilExpiry() != null &&
                             donatedOrgan.getDurationUntilExpiry().minusSeconds(1).isNegative());
                 }));
         clock.setCycleCount(Animation.INDEFINITE);
@@ -208,41 +247,7 @@ public class OrgansToDonateController extends SubController {
         sortedOrgansToDonate.comparatorProperty().bind(tableView.comparatorProperty());
     }
 
-    /**
-     * Upon pagination, update the table to show the correct items
-     * @param pageIndex The page we're now on (starts at 0)
-     * @return An empty pane as pagination requires a non null return. Not used.
-     */
-    private Node createPage(int pageIndex) {
-        updateOrgansToDonateList();
-        return new Pane();
-    }
-
-    private void updateOrgansToDonateList() {
-        Collection<DonatedOrgan> newOrgansToDonate = manager.getAllOrgansToDonate();
-
-        observableOrgansToDonate.setAll(newOrgansToDonate);
-        tableView.getSortOrder().setAll(timeUntilExpiryCol);
-
-        /* TODO decide whether we need to paginate or not
-        int newPageCount = Math.max(1, (newOrgansToDonate.getTotalResults() + ROWS_PER_PAGE - 1) / ROWS_PER_PAGE);
-        if (pagination.getPageCount() != newPageCount) {
-            pagination.setPageCount(newPageCount);
-        }
-
-        setupDisplayingXToYOfZText(newOrgansToDonate.getTotalResults());
-        */
-    }
-
-    /**
-     * Refreshes the data in the transplants waiting list table. Should be called whenever any page calls a global
-     * refresh.
-     */
-    @Override
-    public void refresh() {
-        observableOrgansToDonate.setAll(manager.getAllOrgansToDonate());
-        tableView.setItems(sortedOrgansToDonate);
-    }
+    // ---------------- Format methods ----------------
 
     private void openManuallyExpireDialog() {
         // Create a popup with a text field to enter the reason
@@ -283,26 +288,6 @@ public class OrgansToDonateController extends SubController {
                         .showError();
             }
         }
-    }
-
-    // ---------------- Format methods ----------------
-    /**
-     * Formats a table cell that holds a {@link LocalDateTime} value to display that value in the date time format.
-     *
-     * @return The cell with the date time formatter set.
-     */
-    private static TableCell<DonatedOrgan, LocalDateTime> formatDateTimeCell() {
-        return new TableCell<DonatedOrgan, LocalDateTime>() {
-            @Override
-            protected void updateItem(LocalDateTime item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty) {
-                    setText(null);
-                } else {
-                    setText(item.format(dateTimeFormat));
-                }
-            }
-        };
     }
 
     /* TODO this is for pagination
