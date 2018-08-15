@@ -1,5 +1,11 @@
 package com.humanharvest.organz.server.controller;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
@@ -9,17 +15,24 @@ import com.humanharvest.organz.actions.client.EditManualOverrideAction;
 import com.humanharvest.organz.actions.client.ManuallyOverrideOrganAction;
 import com.humanharvest.organz.server.exceptions.GlobalControllerExceptionHandler;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.enums.DonatedOrganSortOptionsEnum;
+import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.views.SingleStringView;
 import com.humanharvest.organz.views.client.DonatedOrganView;
+import com.humanharvest.organz.views.client.PaginatedDonatedOrgansList;
 import com.humanharvest.organz.views.client.Views;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Collection;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class OrgansController {
@@ -33,16 +46,32 @@ public class OrgansController {
      */
     @JsonView(Views.Overview.class)
     @GetMapping("/clients/organs")
-    public ResponseEntity<Collection<DonatedOrganView>> getOrgansToDonate(
-            @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
+    public ResponseEntity<PaginatedDonatedOrgansList> getOrgansToDonate(
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken,
+            @RequestParam(required = false) Integer offset,
+            @RequestParam(required = false) Integer count,
+            @RequestParam(required = false) Set<String> regions,
+            @RequestParam(value = "organType", required = false) Set<Organ> organsToFilter,
+            @RequestParam(required = false) DonatedOrganSortOptionsEnum sortOption,
+            @RequestParam(required = false) Boolean reversed)
             throws GlobalControllerExceptionHandler.InvalidRequestException {
 
         State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
 
-        Collection<DonatedOrganView> donatedOrgans = State.getClientManager().getAllOrgansToDonate().stream()
-                .map(DonatedOrganView::new)
-                .collect(Collectors.toList());
-        return new ResponseEntity<>(donatedOrgans, HttpStatus.OK);
+        final Set<String> regionsToFilter = new HashSet<>();
+        if (regions != null) {
+            for (String region : regions) {
+                regionsToFilter.add(region.replaceAll("%20", " "));
+            }
+        }
+
+        PaginatedDonatedOrgansList paginatedDonatedOrgansList = State.getClientManager().getAllOrgansToDonate(
+                offset, count,
+                regionsToFilter,
+                organsToFilter,
+                sortOption, reversed);
+
+        return new ResponseEntity<>(paginatedDonatedOrgansList, HttpStatus.OK);
     }
 
     /**

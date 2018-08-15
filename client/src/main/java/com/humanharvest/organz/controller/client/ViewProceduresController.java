@@ -1,5 +1,29 @@
 package com.humanharvest.organz.controller.client;
 
+import java.time.LocalDate;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
+import javafx.collections.FXCollections;
+import javafx.collections.transformation.SortedList;
+import javafx.fxml.FXML;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.CellEditEvent;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
+import javafx.scene.layout.Pane;
+import javafx.scene.text.Text;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.ProcedureRecord;
 import com.humanharvest.organz.controller.MainController;
@@ -11,30 +35,14 @@ import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.BadRequestException;
+import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.views.client.CreateProcedureView;
 import com.humanharvest.organz.views.client.ModifyProcedureObject;
-import javafx.collections.FXCollections;
-import javafx.collections.transformation.SortedList;
-import javafx.fxml.FXML;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.*;
-import javafx.scene.control.TableColumn.CellEditEvent;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.scene.layout.Pane;
-import javafx.scene.text.Text;
 import org.controlsfx.control.CheckComboBox;
 import org.controlsfx.control.Notifications;
-
-import java.time.LocalDate;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 /**
  * Controller for the medical history page, which shows a list of all pending and past procedures for the client.
@@ -100,22 +108,32 @@ public class ViewProceduresController extends SubController {
      * Handles the edit event when a procedure summary cell is edited.
      * @param event The cell edit event.
      */
-    private void editSummaryCell(CellEditEvent<ProcedureRecord,String> event) {
-        ModifyProcedureObject modification = new ModifyProcedureObject();
-        modification.setSummary(event.getNewValue());
-        ProcedureRecord record = event.getRowValue();
-        sendModification(record, modification);
+    private void editSummaryCell(CellEditEvent<ProcedureRecord, String> event) {
+        String summary = event.getNewValue();
+        if (summary == null || summary.equals("")) {
+            PageNavigator.showAlert(AlertType.ERROR,
+                    "Invalid summary",
+                    "New procedure summary must not be blank.");
+        } else {
+            ModifyProcedureObject modification = new ModifyProcedureObject();
+            modification.setSummary(event.getNewValue());
+            System.out.println(event.getNewValue());
+            ProcedureRecord record = event.getRowValue();
+            sendModification(record, modification);
+        }
+        PageNavigator.refreshAllWindows();
     }
 
     /**
      * Handles the edit event when a procedure description cell is edited.
      * @param event The cell edit event.
      */
-    private void editDescriptionCell(CellEditEvent<ProcedureRecord,String> event) {
+    private void editDescriptionCell(CellEditEvent<ProcedureRecord, String> event) {
         ModifyProcedureObject modification = new ModifyProcedureObject();
         modification.setDescription(event.getNewValue());
         ProcedureRecord record = event.getRowValue();
         sendModification(record, modification);
+        PageNavigator.refreshAllWindows();
     }
 
     /**
@@ -124,10 +142,14 @@ public class ViewProceduresController extends SubController {
      */
     private void editDateCell(CellEditEvent<ProcedureRecord, LocalDate> event) {
         LocalDate newDate = event.getNewValue();
-        if (newDate.isBefore(client.getDateOfBirth())) {
+        if (newDate == null) {
             PageNavigator.showAlert(AlertType.ERROR,
-                    "Invalid Date",
-                    "New procedure date must be after the client's date of birth.", mainController.getStage());
+                    "Invalid date",
+                    "New procedure date must not be blank.");
+        } else if (newDate.isBefore(client.getDateOfBirth())) {
+            PageNavigator.showAlert(AlertType.ERROR,
+                    "Invalid date",
+                    "New procedure date must be after the client's date of birth.");
         } else {
             ModifyProcedureObject modification = new ModifyProcedureObject();
             modification.setDate(event.getNewValue());
@@ -146,19 +168,27 @@ public class ViewProceduresController extends SubController {
         modification.setAffectedOrgans(event.getNewValue());
         ProcedureRecord record = event.getRowValue();
         sendModification(record, modification);
+        PageNavigator.refreshAllWindows();
     }
 
     private void sendModification(ProcedureRecord procedureRecord, ModifyProcedureObject modification) {
         try {
             State.getClientResolver().modifyProcedureRecord(client, procedureRecord, modification);
             PageNavigator.refreshAllWindows();
-        } catch (ServerRestException exc) {
-            LOGGER.severe(exc.getMessage());
+        } catch (ServerRestException e) {
+            LOGGER.severe(e.getMessage());
             PageNavigator.showAlert(AlertType.ERROR,
                     "Server Error",
-                    "An error occurred when trying to send data to the server.\nPlease try again later.", mainController.getStage());
-        } catch (BadRequestException exc) {
+                    "An error occurred when trying to send data to the server.\nPlease try again later.");
+        } catch (BadRequestException e) {
             LOGGER.info("No changes were made to the procedure.");
+        } catch (IfMatchFailedException e) {
+            LOGGER.log(Level.INFO, "If-Match did not match");
+            Notifications.create()
+                    .title("Outdated Data")
+                    .text("The client has been modified since you retrieved the data. If you would still like to "
+                            + "apply these changes please submit again, otherwise refresh the page to update the data.")
+                    .showWarning();
         }
     }
 
@@ -240,7 +270,6 @@ public class ViewProceduresController extends SubController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
-
 
         if (session.getLoggedInUserType() == UserType.CLIENT) {
             client = session.getLoggedInClient();
@@ -356,7 +385,7 @@ public class ViewProceduresController extends SubController {
                 LOGGER.severe(exc.getMessage());
                 PageNavigator.showAlert(AlertType.ERROR,
                         "Server Error",
-                        "An error occurred when trying to send data to the server.\nPlease try again later.", mainController.getStage());
+                        "An error occurred when trying to send data to the server.\nPlease try again later.");
                 return;
             }
 
@@ -395,7 +424,7 @@ public class ViewProceduresController extends SubController {
                 LOGGER.severe(exc.getMessage());
                 PageNavigator.showAlert(AlertType.ERROR,
                         "Server Error",
-                        "An error occurred when trying to send data to the server.\nPlease try again later.", mainController.getStage());
+                        "An error occurred when trying to send data to the server.\nPlease try again later.");
             }
         }
     }

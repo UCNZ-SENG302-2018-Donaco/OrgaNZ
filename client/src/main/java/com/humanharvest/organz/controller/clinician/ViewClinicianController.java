@@ -217,7 +217,7 @@ public class ViewClinicianController extends ViewBaseController {
         if (viewedClinician.getModifiedOn() == null) {
             lastModified.setText("Not yet modified.");
         } else {
-            lastModified.setText(formatter.format(viewedClinician.getCreatedOn()));
+            lastModified.setText(formatter.format(viewedClinician.getModifiedOn()));
         }
     }
 
@@ -230,7 +230,7 @@ public class ViewClinicianController extends ViewBaseController {
         if (checkMandatoryFields()) {
             updatedPassword = checkPassword();
             if (updateChanges() && viewedClinician.getModifiedOn() != null) {
-                lastModified.setText(formatter.format(viewedClinician.getCreatedOn()));
+                lastModified.setText(formatter.format(viewedClinician.getModifiedOn()));
             }
         }
     }

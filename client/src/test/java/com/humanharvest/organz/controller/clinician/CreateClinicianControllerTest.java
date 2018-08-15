@@ -82,17 +82,7 @@ public class CreateClinicianControllerTest extends ControllerTest {
     }
 
     @Test
-    public void validClinician1() {
-        clickOn("#fname").write("f");
-        clickOn("#lname").write("l");
-        clickOn("#staffId").write("8");
-        clickOn("#password").write("a");
-        clickOn("#createButton");
-        assertEquals(Page.VIEW_CLINICIAN, mainController.getCurrentPage());
-    }
-
-    @Test
-    public void validClinician2() {
+    public void validClinician() {
         clickOn("#fname").write("f");
         clickOn("#mname").write("m");
         clickOn("#lname").write("l");

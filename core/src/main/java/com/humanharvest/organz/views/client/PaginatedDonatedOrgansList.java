@@ -15,19 +15,19 @@ import java.util.List;
 @JsonView(Views.Overview.class)
 public class PaginatedDonatedOrgansList {
 
-    private final List<DonatedOrgan> donatedOrgans;
+    private final List<DonatedOrganView> donatedOrganViews;
     private final int totalResults;
 
     @JsonCreator
     public PaginatedDonatedOrgansList(
-            @JsonProperty("donatedOrgans") List<DonatedOrgan> donatedOrgans,
+            @JsonProperty("donatedOrgans") List<DonatedOrganView> donatedOrganViews,
             @JsonProperty("totalResults") int totalResults) {
-        this.donatedOrgans = donatedOrgans;
+        this.donatedOrganViews = donatedOrganViews;
         this.totalResults = totalResults;
     }
 
-    public List<DonatedOrgan> getDonatedOrgans() {
-        return donatedOrgans;
+    public List<DonatedOrganView> getDonatedOrgans() {
+        return donatedOrganViews;
     }
 
     public int getTotalResults() {

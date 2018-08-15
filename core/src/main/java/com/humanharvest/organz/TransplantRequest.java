@@ -1,22 +1,13 @@
 package com.humanharvest.organz;
 
-import java.time.LocalDateTime;
-import javax.persistence.Access;
-import javax.persistence.AccessType;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 import com.humanharvest.organz.views.client.Views;
+
+import javax.persistence.*;
+import java.time.LocalDateTime;
 
 /**
  * Represents a request for a client to receive a transplant for a given organ.
@@ -44,6 +35,7 @@ public class TransplantRequest {
     @JsonView(Views.Overview.class)
     private TransplantRequestStatus status = TransplantRequestStatus.WAITING;
     @JsonView(Views.Overview.class)
+    @Column(columnDefinition = "text")
     private String resolvedReason;
 
     protected TransplantRequest() {
