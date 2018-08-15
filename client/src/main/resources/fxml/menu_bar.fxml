@@ -34,7 +34,7 @@
              <items>
                <MenuItem fx:id="searchClientItem" mnemonicParsing="false" onAction="#goToSearch" text="Search Clients" />
                <MenuItem fx:id="viewClientItem" mnemonicParsing="false" onAction="#goToViewClient" text="View Client Profile" />
-                  <MenuItem fx:id="createClientItem" mnemonicParsing="false" onAction="#goToCreateClient" text="Create Client" />
+                  <MenuItem fx:id="createClientItem" mnemonicParsing="false" onAction="#goToCreateClient" text="Create a client" />
              </items>
           </Menu>
           <Menu fx:id="organPrimaryItem" mnemonicParsing="false" text="Organs">
