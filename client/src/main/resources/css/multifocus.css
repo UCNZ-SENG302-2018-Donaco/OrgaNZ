@@ -111,5 +111,5 @@
  ******************************************************************************/
 
 .combo-box {
-    -fx-skin: "org.tuiofx.widgets.skin.MTComboBoxListViewSkin";
+    -fx-skin: "com.humanharvest.organz.utilities.view.MTComboBoxListViewSkin";
 }
