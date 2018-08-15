@@ -158,7 +158,7 @@ public class OrgansToDonateController extends SubController {
         clientCol.setCellValueFactory(cellData -> new SimpleStringProperty(
                 cellData.getValue().getDonor().getFullName()));
         organCol.setCellValueFactory(new PropertyValueFactory<>("organType"));
-        regionCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDonor().getRegion()));
+        regionCol.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getDonor().getRegionOfDeath()));
         timeOfDeathCol.setCellValueFactory(new PropertyValueFactory<>("dateTimeOfDonation"));
         timeUntilExpiryCol.setCellValueFactory(new PropertyValueFactory<>("durationUntilExpiry"));
 
