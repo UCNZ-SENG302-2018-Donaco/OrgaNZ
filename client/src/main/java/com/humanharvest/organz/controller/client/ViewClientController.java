@@ -195,12 +195,12 @@ public class ViewClientController extends ViewBaseController {
             deathDetailsPane.setDisable(true);
         } else if (windowContext.isClinViewClientWindow()) {
             mainController.setTitle("View Client: " + viewedClient.getFullName());
-            if (!viewedClient.getDateOfDeathIsEditable()) {
                 // date of death is not editable - disable all the things
-                aliveToggleBtn.setDisable(true);
-                deadToggleBtn.setDisable(true);
-                deathDatePicker.setDisable(true);
-                deathTimeField.setDisable(true);
+                aliveToggleBtn.setDisable(!viewedClient.getDateOfDeathIsEditable());
+                deadToggleBtn.setDisable(!viewedClient.getDateOfDeathIsEditable());
+                deathDatePicker.setDisable(!viewedClient.getDateOfDeathIsEditable());
+                deathTimeField.setDisable(!viewedClient.getDateOfDeathIsEditable());
+            if (!viewedClient.getDateOfDeathIsEditable()) {
                 Tooltip tooltip = new Tooltip(
                         "Date and time of death is not editable, "
                                 + "because at least one organ has been manually overridden. "
