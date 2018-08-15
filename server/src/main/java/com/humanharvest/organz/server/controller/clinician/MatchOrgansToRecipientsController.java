@@ -2,10 +2,8 @@ package com.humanharvest.organz.server.controller.clinician;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
-import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.algorithms.MatchOrganToRecipients;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
-import com.humanharvest.organz.utilities.validators.client.DonatedOrganValidator;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,7 +32,8 @@ public class MatchOrgansToRecipientsController {
             @RequestParam(value = "donatedOrgan", required = false) DonatedOrgan donatedOrgan,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws AuthenticationException {
-
+        System.out.println("here");
+/*
         // Verify that request has clinician/admin authorization - otherwise 401 Unauthorised
         State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
 
@@ -42,7 +41,7 @@ public class MatchOrgansToRecipientsController {
         if (!DonatedOrganValidator.isValid(donatedOrgan)) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-
+*/
         List<Client> potentialMatches = MatchOrganToRecipients.getListOfPotentialRecipients(donatedOrgan);
 
         return new ResponseEntity<>(potentialMatches, HttpStatus.OK);
