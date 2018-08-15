@@ -1,27 +1,22 @@
 package com.humanharvest.organz;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.logging.Level;
-
+import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.state.State.DataStorageType;
+import com.humanharvest.organz.utilities.LoggerSetup;
+import com.humanharvest.organz.utilities.view.*;
+import com.sun.javafx.css.StyleManager;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-
-import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.state.State.DataStorageType;
-import com.humanharvest.organz.utilities.LoggerSetup;
-import com.humanharvest.organz.utilities.view.Page;
-import com.humanharvest.organz.utilities.view.PageNavigator;
-import com.humanharvest.organz.utilities.view.PageNavigatorTouch;
-import com.humanharvest.organz.utilities.view.TuioFXUtils;
-import com.humanharvest.organz.utilities.view.WindowContext;
-import com.sun.javafx.css.StyleManager;
 import org.tuiofx.TuioFX;
 import org.tuiofx.internal.base.TuioFXCanvas;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.logging.Level;
 
 /**
  * The main class that runs the JavaFX GUI.
@@ -65,6 +60,7 @@ public class AppTUIO extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
         LoggerSetup.setup(Level.INFO);
+        State.setUiType(State.UiType.TOUCH);
         PageNavigator.setPageNavigator(new PageNavigatorTouch());
 
         Scene scene = new Scene(root, 1920, 1080);

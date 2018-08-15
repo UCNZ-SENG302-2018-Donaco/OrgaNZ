@@ -150,6 +150,18 @@ public class PageNavigatorTouch implements IPageNavigator {
             FXMLLoader loader = new FXMLLoader(PageNavigatorTouch.class.getResource(Page.TOUCH_ALERT.getPath()));
             Pane mainPane = loader.load();
             mainPane.getStyleClass().add("window");
+            //TODO: Fix this to actually load the style.
+            mainPane.getStylesheets().add(".window {\n" +
+                    "    -fx-border-insets: 10;\n" +
+                    "    -fx-background-color: grey;\n" +
+                    "    -fx-background-radius: 3;\n" +
+                    "    -fx-border-radius: 3;\n" +
+                    "    -fx-border-color: white;\n" +
+                    "    -fx-border-style: solid;\n" +
+                    "    -fx-border-width: 2;\n" +
+                    "    -fx-effect: dropshadow(three-pass-box, rgba(100, 100, 100, 1), 24, 0.5, 0, 0);\n" +
+                    "    -fx-background-insets: 10;\n" +
+                    "}");
             TouchAlertController controller = loader.getController();
             controller.setup(alertType, title, bodyText, newStage, mainPane);
 

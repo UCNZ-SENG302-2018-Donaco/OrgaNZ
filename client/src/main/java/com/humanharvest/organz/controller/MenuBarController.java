@@ -126,7 +126,12 @@ public class MenuBarController extends SubController {
         Menu allMenus[] = {filePrimaryItem, editPrimaryItem, clientPrimaryItem, organPrimaryItem,
                 medicationsPrimaryItem, staffPrimaryItem, profilePrimaryItem};
 
-        duplicateItem.setVisible(false); // Duplicate item is exclusively for the touch screen interface
+        // Duplicate item is exclusively for the touch screen interface
+        if (State.getUiType() == State.UiType.TOUCH) {
+            duplicateItem.setVisible(true);
+        } else {
+            duplicateItem.setVisible(false);
+        }
 
         // Hide the appropriate menus and menu items
 
@@ -135,9 +140,6 @@ public class MenuBarController extends SubController {
                 && windowContext.isClinViewClientWindow()) {
             hideMenus(menusHideFromClinViewClients);
             hideMenuItems(menuItemsHideFromClinViewClients);
-            if (State.getUiType() == State.UiType.TOUCH) {
-                duplicateItem.setVisible(true);
-            }
         }
 
         // Admins
