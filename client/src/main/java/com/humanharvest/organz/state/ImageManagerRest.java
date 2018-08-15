@@ -47,10 +47,10 @@ public class ImageManagerRest implements ImageManager{
     public byte[] getDefaultImage() throws IOException {
         InputStream in;
         try {
-            in = new FileInputStream("./images/default.png");
+            in = new FileInputStream("./images/ORGANZ.png");
         } catch (FileNotFoundException e) {
             // try a directory up - this fixes some tests, e.g. ViewClientController tests
-            in = new FileInputStream("../images/default.png");
+            in = new FileInputStream("../images/ORGANZ.png");
         }
         byte[] res = IOUtils.toByteArray(in);
         in.close();

@@ -7,6 +7,7 @@ import java.util.logging.Level;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 
@@ -43,7 +44,8 @@ public class AppUI extends Application {
             State.setBaseUri(System.getenv("HOST"));
         }
 
-        primaryStage.setTitle("Organ Client Management System");
+
+        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/images/ORGANZ.png")));
         primaryStage.setScene(createScene(loadMainPane(primaryStage)));
         primaryStage.show();
 
