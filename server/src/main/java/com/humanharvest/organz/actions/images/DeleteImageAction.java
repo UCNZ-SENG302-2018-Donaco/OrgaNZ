@@ -1,31 +1,27 @@
 package com.humanharvest.organz.actions.images;
 
-import java.awt.image.ImagingOpException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import org.apache.commons.io.IOUtils;
 
+import java.awt.image.ImagingOpException;
+import java.io.*;
+
 public class DeleteImageAction extends Action {
 
-    private final String imagesDirectory = System.getProperty("user.home") + "/.organz/images/";
+    private final String imagesDirectory;
     private Client client;
     private byte[] image;
 
-    public DeleteImageAction(Client client) throws IOException {
+    public DeleteImageAction(Client client, String imagesDirectory) throws IOException {
         this.client = client;
+        this.imagesDirectory = imagesDirectory;
 
         // Load the file to allow it to be redone
-        File file = new File(imagesDirectory + client.getUid() + ".png");
-        InputStream in = new FileInputStream(imagesDirectory + client.getUid() + ".png");
-        image = IOUtils.toByteArray(in);
+        try (InputStream in = new FileInputStream(imagesDirectory + client.getUid() + ".png")) {
+            image = IOUtils.toByteArray(in);
+        }
     }
 
     @Override
@@ -42,7 +38,6 @@ public class DeleteImageAction extends Action {
         // Create the directory if it doesn't exist
         File directory = new File(imagesDirectory);
         if (!directory.exists()) {
-            new File(System.getProperty("user.home") + "/.organz/").mkdir();
             directory.mkdir();
         }
 
