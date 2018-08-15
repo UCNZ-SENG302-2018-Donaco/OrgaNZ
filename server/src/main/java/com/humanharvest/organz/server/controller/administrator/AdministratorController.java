@@ -68,6 +68,7 @@ public class AdministratorController {
      * @throws AuthenticationException throws when a non-administrator attempts access.
      */
     @PostMapping("/administrators")
+    @JsonView(Views.Details.class)
     public ResponseEntity<Administrator> addAdministrator(
             @RequestBody CreateAdministratorView createAdministratorView,
             @RequestHeader(value = "X-Auth-Token", required = false) String authentication) {
@@ -90,6 +91,7 @@ public class AdministratorController {
         //Add the new ETag to the headers
         HttpHeaders headers = new HttpHeaders();
         headers.setETag(administrator.getETag());
+        System.out.println(administrator.getETag());
 
         return new ResponseEntity<>(administrator, headers, HttpStatus.CREATED);
     }
