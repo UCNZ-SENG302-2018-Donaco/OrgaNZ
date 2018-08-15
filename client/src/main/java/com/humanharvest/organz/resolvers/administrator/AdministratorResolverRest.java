@@ -17,11 +17,11 @@ public class AdministratorResolverRest implements AdministratorResolver {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
         httpHeaders.set("X-Auth-Token", State.getToken());
-
         HttpEntity entity = new HttpEntity<>(createAdministratorView, httpHeaders);
+        System.out.println(State.getToken());
 
         ResponseEntity<Administrator> responseEntity = State.getRestTemplate().exchange
-                (State.BASE_URI + "administrator",
+                (State.BASE_URI + "administrators",
                         HttpMethod.POST,
                         entity,
                         Administrator.class);
@@ -38,7 +38,7 @@ public class AdministratorResolverRest implements AdministratorResolver {
         HttpEntity entity = new HttpEntity<>(modifyAdministratorObject, httpHeaders);
 
         ResponseEntity<Administrator> responseEntity = State.getRestTemplate().exchange
-                (State.BASE_URI + "administrator",
+                (State.BASE_URI + "administrators",
                         HttpMethod.PATCH,
                         entity,
                         Administrator.class);

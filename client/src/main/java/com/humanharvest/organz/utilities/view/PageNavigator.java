@@ -4,6 +4,23 @@ import com.humanharvest.organz.controller.MainController;
 import javafx.beans.property.Property;
 import javafx.scene.control.Alert;
 import javafx.stage.Window;
+import com.humanharvest.organz.AppUI;
+import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.state.State;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
+import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
+import javafx.stage.Stage;
+
+import java.io.IOException;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Utility class for controlling navigation between pages.

@@ -409,7 +409,7 @@ public class ClientController {
     }
 
     @DeleteMapping("clients/{uid}/image")
-    private ResponseEntity<?> deleteClientImage(
+    public ResponseEntity<?> deleteClientImage(
             @PathVariable int uid,
             @RequestHeader(value = "If-Match", required = false) String etag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken) throws InvalidRequestException {

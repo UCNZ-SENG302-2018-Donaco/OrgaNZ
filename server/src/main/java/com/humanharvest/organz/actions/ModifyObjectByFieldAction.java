@@ -1,8 +1,10 @@
 package com.humanharvest.organz.actions;
 
-import java.lang.reflect.Field;
-
 import com.humanharvest.organz.utilities.type_converters.PrimitiveConverter;
+
+import java.lang.reflect.Field;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Create a new modification on any object using it's field name and the old and new values
@@ -10,6 +12,8 @@ import com.humanharvest.organz.utilities.type_converters.PrimitiveConverter;
  * If you have a field such as a password, use the isPrivate boolean to ensure the values are not leaked
  */
 public class ModifyObjectByFieldAction extends Action {
+
+    private static final Logger LOGGER = Logger.getLogger(ModifyObjectByFieldAction.class.getName());
 
     private Object toModify;
     private Field field;
@@ -73,7 +77,7 @@ public class ModifyObjectByFieldAction extends Action {
         try {
             oldValue = this.field.get(toModify);
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
             throw new NoSuchFieldException("Something went wrong");
         }
     }
@@ -85,10 +89,6 @@ public class ModifyObjectByFieldAction extends Action {
             throw new NoSuchFieldException("Field does not exist in that object");
         }
         this.field.setAccessible(true);
-    }
-
-    private void checkIsInView() {
-
     }
 
     private void checkTypes() throws NoSuchFieldException {
@@ -152,8 +152,8 @@ public class ModifyObjectByFieldAction extends Action {
     private void runChange(Object value) {
         try {
             field.set(toModify, value);
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
     }
 }

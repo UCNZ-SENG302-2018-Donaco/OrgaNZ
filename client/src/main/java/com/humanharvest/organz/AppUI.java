@@ -25,6 +25,15 @@ import com.humanharvest.organz.utilities.view.WindowContext;
 import com.sun.javafx.css.StyleManager;
 import org.tuiofx.TuioFX;
 import org.tuiofx.internal.base.TuioFXCanvas;
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
+
+import java.io.IOException;
+import java.util.Map;
+import java.util.logging.Level;
 
 /**
  * The main class that runs the JavaFX GUI.
@@ -50,6 +59,14 @@ public class AppUI extends Application {
 
         State.init(DataStorageType.REST);
         State.setPrimaryStage(primaryStage);
+
+        Map<String, String> parameters = getParameters().getNamed();
+
+        if (parameters.containsKey("host")) {
+            State.BASE_URI = parameters.get("host");
+        } else if (System.getenv("HOST") != null) {
+            State.BASE_URI = System.getenv("HOST");
+        }
 
         primaryStage.setTitle("Organ Client Management System");
 

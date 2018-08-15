@@ -5,7 +5,6 @@ import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SidebarController;
 import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
@@ -44,15 +43,14 @@ import java.util.stream.Collectors;
  */
 public class ViewMedicationsController extends SubController {
 
+    private static final Logger LOGGER = Logger.getLogger(SidebarController.class.getName());
+
     private Session session;
-    private ClientManager manager;
     private Client client;
     private List<String> lastResponse;
     private MedAutoCompleteHandler autoCompleteHandler;
     private MedActiveIngredientsHandler activeIngredientsHandler;
     private DrugInteractionsHandler drugInteractionsHandler;
-
-    private static final Logger LOGGER = Logger.getLogger(SidebarController.class.getName());
 
     @FXML
     private Pane sidebarPane, menuBarPane;
@@ -77,7 +75,6 @@ public class ViewMedicationsController extends SubController {
 
     public ViewMedicationsController() {
         session = State.getSession();
-        manager = State.getClientManager();
     }
 
     void setDrugInteractionsHandler(DrugInteractionsHandler handler) {
@@ -95,13 +92,15 @@ public class ViewMedicationsController extends SubController {
      * @param listView to create a cellfactory for
      */
     private void configureCellFactory(ListView<MedicationRecord> listView) {
-        listView.setCellFactory(listview -> {
+        listView.setCellFactory(view -> {
             ListCell<MedicationRecord> cell = new ListCell<MedicationRecord>() {
                 @Override
                 public void updateItem(MedicationRecord record, boolean empty) {
                     super.updateItem(record, empty);
                     if (!empty) {
                         setText(record.toString());
+                    } else {
+                        setText("");
                     }
                 }
             };
@@ -227,6 +226,18 @@ public class ViewMedicationsController extends SubController {
 
         pastMedicationsView.setItems(FXCollections.observableArrayList(client.getPastMedications()));
         currentMedicationsView.setItems(FXCollections.observableArrayList(client.getCurrentMedications()));
+    }
+
+    /**
+     * Gets all selected medication records from both the current and past medication lists
+     * @return list of all currently selected medication records
+     */
+    private List<MedicationRecord> getSelectedRecords() {
+        List<MedicationRecord> selectedItems = new ArrayList<>();
+        selectedItems.addAll(currentMedicationsView.getSelectionModel().getSelectedItems());
+        selectedItems.addAll(pastMedicationsView.getSelectionModel().getSelectedItems());
+
+        return selectedItems;
     }
 
     /**
@@ -387,25 +398,27 @@ public class ViewMedicationsController extends SubController {
         MedicationRecord record = getSelectedRecord();
         if (record != null) {
 
-            //TODO: Handle errors
-            State.getClientResolver().deleteMedicationRecord(client, record);
+            try {
+                State.getClientResolver().deleteMedicationRecord(client, record);
+
+            } catch (NotFoundException e) {
+                LOGGER.log(Level.WARNING, "Medication not found");
+                Notifications.create()
+                        .title("Medication not found")
+                        .text("The medication could not be found on the server, it may have been deleted")
+                        .showWarning();
+            } catch (ServerRestException e) {
+                LOGGER.log(Level.WARNING, e.getMessage(), e);
+                Notifications.create()
+                        .title("Server error")
+                        .text("Could not apply changes on the server, please try again later")
+                        .showError();
+                return;
+            }
 
             PageNavigator.refreshAllWindows();
             refreshMedicationLists();
         }
-    }
-
-    /**
-     * Gets all selected medication records from both the current and past medication lists
-     *
-     * @return list of all currently selected medication records
-     */
-    private List<MedicationRecord> getSelectedRecords() {
-        List<MedicationRecord> selectedItems = new ArrayList<>();
-        selectedItems.addAll(currentMedicationsView.getSelectionModel().getSelectedItems());
-        selectedItems.addAll(pastMedicationsView.getSelectionModel().getSelectedItems());
-
-        return selectedItems;
     }
 
     /**
@@ -461,7 +474,9 @@ public class ViewMedicationsController extends SubController {
                     for (String ingredient : activeIngredients) {
                         sb.append(ingredient).append("\n");
                     }
-                    medicationIngredients.setText(sb.toString());
+                    String formattedIngredients = String.format("Active ingredients in %s: \n%s", medicationName, sb
+                            .toString());
+                    medicationIngredients.setText(formattedIngredients);
                 }
             });
 
@@ -496,6 +511,7 @@ public class ViewMedicationsController extends SubController {
         };
 
         task.setOnFailed(event -> {
+
             medicationInteractions.setText("An error occurred when retrieving drug interactions: \n" +
                     task.getException().getMessage());
             task.getException().printStackTrace();
@@ -505,12 +521,15 @@ public class ViewMedicationsController extends SubController {
             List<String> interactions = task.getValue();
 
             if (interactions.size() == 0) {
+
                 medicationInteractions.setText(String.format(
                         "There is no information on interactions between %s and %s.",
                         medication1, medication2));
             } else {
                 String interactionsText = interactions.stream().collect(Collectors.joining("\n"));
-                medicationInteractions.setText(interactionsText);
+                String formattedInteractions = String.format("Interactions between %s and %s: \n%s", medication1, medication2,
+                        interactionsText);
+                medicationInteractions.setText(formattedInteractions);
             }
         });
 

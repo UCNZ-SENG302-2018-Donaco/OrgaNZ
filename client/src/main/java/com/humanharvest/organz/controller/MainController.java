@@ -1,7 +1,8 @@
 package com.humanharvest.organz.controller;
 
-import java.io.IOException;
-
+import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.view.Page;
+import com.humanharvest.organz.utilities.view.WindowContext;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -11,6 +12,9 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import com.humanharvest.organz.MultitouchHandler;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.view.Page;
@@ -20,6 +24,8 @@ import com.humanharvest.organz.utilities.view.WindowContext;
  * Main controller class for the application window.
  */
 public class MainController {
+
+    private static final Logger LOGGER = Logger.getLogger(MainController.class.getName());
 
     private Stage stage;
     private Page currentPage;
@@ -88,8 +94,6 @@ public class MainController {
      */
     @FXML
     void closeWindow() {
-        System.out.println("closing");
-        System.out.println(stage);
         stage.close();
         if (State.getUiType() == State.UiType.TOUCH) {
             MultitouchHandler.removePane(pane);
@@ -108,9 +112,8 @@ public class MainController {
             sidebarController = loader.getController();
             sidebarController.setup(this);
             sidebarPane.getChildren().setAll(sidebar);
-        } catch (IOException exc) {
-            System.err.println("Couldn't load sidebar from fxml file.");
-            exc.printStackTrace();
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Couldn't load sidebar from fxml file.", e);
         }
     }
 
@@ -126,9 +129,8 @@ public class MainController {
             menuBarController = loader.getController();
             menuBarController.setup(this);
             menuBarPane.getChildren().setAll(menuBar);
-        } catch (IOException exc) {
-            System.err.println("Couldn't load sidebar from fxml file.");
-            exc.printStackTrace();
+        } catch (IOException e) {
+            LOGGER.log(Level.SEVERE, "Couldn't load sidebar from fxml file.", e);
         }
     }
 

@@ -30,6 +30,18 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.fxml.FXML;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
 import org.apache.commons.io.IOUtils;
 import org.controlsfx.control.Notifications;
 
@@ -162,7 +174,7 @@ public class ViewClientController extends ViewBaseController {
         try {
             viewedClient = manager.getClientByID(viewedClient.getUid()).orElseThrow(ServerRestException::new);
         } catch (ServerRestException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.INFO, e.getMessage(), e);
             PageNavigator.showAlert(AlertType.ERROR,
                     "Server Error",
                     "An error occurred while trying to fetch from the server.\nPlease try again later.", mainController.getStage());
@@ -338,8 +350,7 @@ public class ViewClientController extends ViewBaseController {
                 PageNavigator.showAlert(AlertType.WARNING, "File Couldn't Be Read",
                         "This file could not be read. Ensure you are uploading a valid .png or .jpg", mainController.getStage());
             } else {
-                try {
-                    InputStream in = new FileInputStream(selectedFile);
+                try (InputStream in = new FileInputStream(selectedFile)) {
                     uploadSuccess = State.getImageManager()
                             .postClientImage(viewedClient.getUid(), IOUtils.toByteArray(in));
 

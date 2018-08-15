@@ -11,7 +11,15 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.Map.Entry;
 
+import java.time.LocalDate;
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class ClientResolverMemory implements ClientResolver {
+
+    private static final Logger LOGGER = Logger.getLogger(ClientResolverMemory.class.getName());
 
     //------------GETs----------------
 
@@ -127,7 +135,7 @@ public class ClientResolverMemory implements ClientResolver {
             try {
                 client.setOrganDonationStatus(entry.getKey(), entry.getValue());
             } catch (OrganAlreadyRegisteredException e) {
-                e.printStackTrace();
+                LOGGER.log(Level.INFO, e.getMessage(), e);
             }
         }
         return client.getOrganDonationStatus();

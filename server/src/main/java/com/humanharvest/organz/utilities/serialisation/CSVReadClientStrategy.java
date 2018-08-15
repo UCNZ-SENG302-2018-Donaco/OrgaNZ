@@ -51,7 +51,10 @@ public class CSVReadClientStrategy implements ReadClientStrategy {
         client.setDateOfBirth(parseDate(record.get(Header.date_of_birth)));
         client.setDateOfDeath(parseDate(record.get(Header.date_of_death)));
         if (client.getDateOfDeath() != null) {
+            // These values are not provided, so we set them to some default values to ensure data is valid
             client.setTimeOfDeath(LocalTime.NOON);
+            client.setCountry(Country.NZ);
+            client.setRegionOfDeath("Unspecified");
         }
         client.setGender(Gender.fromString(record.get(Header.birth_gender)));
         client.setGenderIdentity(Gender.fromString(record.get(Header.gender)));
