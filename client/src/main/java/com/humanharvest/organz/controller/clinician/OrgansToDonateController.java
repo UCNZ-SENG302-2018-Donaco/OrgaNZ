@@ -188,6 +188,23 @@ public class OrgansToDonateController extends SubController {
             }
         });
 
+        // Open the client profile when double-clicked
+        potentialRecipients.setOnMouseClicked(mouseEvent -> {
+            if (mouseEvent.getButton().equals(MouseButton.PRIMARY) && mouseEvent.getClickCount() == 2) {
+                Client client = potentialRecipients.getSelectionModel().getSelectedItem();
+                if (client != null) {
+                    MainController newMain = PageNavigator.openNewWindow();
+                    if (newMain != null) {
+                        newMain.setWindowContext(new WindowContextBuilder()
+                                .setAsClinicianViewClientWindow()
+                                .viewClient(client)
+                                .build());
+                        PageNavigator.loadPage(Page.VIEW_CLIENT, newMain);
+                    }
+                }
+            }
+        });
+
         // Register the mouse event for double-clicking on a record to open the client profile.
         tableView.setOnMouseClicked(mouseEvent -> {
 
