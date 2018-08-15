@@ -1,15 +1,5 @@
 package com.humanharvest.organz.actions.client;
 
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
-
 import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.actions.ActionInvoker;
@@ -19,6 +9,18 @@ import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.logging.Handler;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
+
+import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 public class ModifyClientOrgansActionTest extends BaseTest {
 
@@ -187,18 +189,38 @@ public class ModifyClientOrgansActionTest extends BaseTest {
 
     @Test
     public void CheckExecuteExistingTest() throws OrganAlreadyRegisteredException {
-        ByteArrayOutputStream errContent = new ByteArrayOutputStream();
-        System.setErr(new PrintStream(errContent));
+        // We need to hook in to the logger to check that the event has been logged
+        final Logger logger = Logger.getLogger(ModifyClientOrgansAction.class.getName());
+        List<LogRecord> logRecords = new ArrayList<>();
+        logger.addHandler(new Handler() {
+            // When a log is added, put it in our list to check at the end
+            @Override
+            public void publish(LogRecord record) {
+                logRecords.add(record);
+            }
+
+            @Override
+            public void flush() {
+            }
+
+            @Override
+            public void close() throws SecurityException {
+            }
+        });
 
         ModifyClientOrgansAction action = new ModifyClientOrgansAction(baseClient, manager);
 
+        // Add the action, which is valid as the liver is not yet registered
         action.addChange(Organ.LIVER, true);
 
+        // Register the organ, so now the action is invalid
         baseClient.setOrganDonationStatus(Organ.LIVER, true);
 
         invoker.execute(action);
 
-        assertTrue(errContent.toString().contains("OrganAlreadyRegisteredException"));
+        // Check that this was detected and logged
+        assertEquals(1, logRecords.size());
+        assertEquals("Liver is already registered for donation", logRecords.get(0).getMessage());
     }
 
     @Test

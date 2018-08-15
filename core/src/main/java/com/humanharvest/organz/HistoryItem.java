@@ -1,13 +1,10 @@
 package com.humanharvest.organz;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
 
 /**
  * Object to display an action a user takes when using the system. It includes the
@@ -21,6 +18,7 @@ public class HistoryItem implements Cloneable {
     @GeneratedValue
     private Long id;
     private String type;
+    @Column(columnDefinition = "text")
     private String details;
     private LocalDateTime timestamp;
 

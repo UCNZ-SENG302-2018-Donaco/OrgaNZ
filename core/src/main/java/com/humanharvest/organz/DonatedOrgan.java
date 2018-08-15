@@ -1,22 +1,15 @@
 package com.humanharvest.organz;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.views.client.Views;
+
+import javax.persistence.*;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 @JsonAutoDetect(fieldVisibility = Visibility.ANY,
         getterVisibility = Visibility.NONE,
@@ -54,6 +47,13 @@ public class DonatedOrgan {
         this.dateTimeOfDonation = dateTimeOfDonation;
     }
 
+    public DonatedOrgan(Organ organType, Client donor, LocalDateTime dateTimeOfDonation, Long id) {
+        this.organType = organType;
+        this.donor = donor;
+        this.dateTimeOfDonation = dateTimeOfDonation;
+        this.id = id;
+    }
+
     public Organ getOrganType() {
         return organType;
     }
@@ -84,6 +84,13 @@ public class DonatedOrgan {
 
     private Duration getTimeSinceDonation() {
         return Duration.between(dateTimeOfDonation, LocalDateTime.now());
+    }
+
+    /**
+     * @return true if the organ has expired
+     */
+    public boolean hasExpired() {
+        return getDurationUntilExpiry() == Duration.ZERO;
     }
 
     /**

@@ -1,10 +1,12 @@
 package com.humanharvest.organz.actions;
 
+import com.humanharvest.organz.utilities.type_converters.PrimitiveConverter;
+
 import java.beans.Statement;
 import java.lang.reflect.Method;
 import java.util.Objects;
-
-import com.humanharvest.organz.utilities.type_converters.PrimitiveConverter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Create a new modification on any object using it's field name and the old and new values
@@ -12,6 +14,8 @@ import com.humanharvest.organz.utilities.type_converters.PrimitiveConverter;
  * If you have a field such as a password, use the isPrivate boolean to ensure the values are not leaked
  */
 public class ModifyObjectByMethodAction extends Action {
+
+    private static final Logger LOGGER = Logger.getLogger(ModifyObjectByMethodAction.class.getName());
 
     private Object toModify;
     private String field;
@@ -124,8 +128,9 @@ public class ModifyObjectByMethodAction extends Action {
         try {
             Statement statement = new Statement(toModify, field, value);
             statement.execute();
+            // We cannot avoid catching generic Exception as Statement.execute() throws any Exception
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
         }
     }
 }

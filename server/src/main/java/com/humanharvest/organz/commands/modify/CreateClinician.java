@@ -49,6 +49,9 @@ public class CreateClinician implements Runnable {
     @Option(names = {"-l", "--lastname"}, description = "Last name.", required = true)
     private String lastName;
 
+    @Option(names = {"-p", "--password"}, description = "Clinician password", required = true)
+    private String password;
+
     @Option(names = {"-m", "--middlenames", "--middlename"}, description = "Middle name(s)")
     private String middleNames;
 
@@ -60,9 +63,6 @@ public class CreateClinician implements Runnable {
 
     @Option(names = {"-c", "--country"}, description = "Country", converter = PicoCountryConverter.class)
     private Country country;
-
-    @Option(names = {"-p", "--password"}, description = "Clinician Password.", defaultValue = "")
-    private String password;
 
     @Override
     public void run() {

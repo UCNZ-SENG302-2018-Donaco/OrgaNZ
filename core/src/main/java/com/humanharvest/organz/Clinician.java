@@ -1,21 +1,15 @@
 package com.humanharvest.organz;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import com.humanharvest.organz.utilities.enums.Country;
+import com.humanharvest.organz.views.client.Views;
+
+import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-
-import com.fasterxml.jackson.annotation.JsonView;
-import com.humanharvest.organz.utilities.enums.Country;
-import com.humanharvest.organz.views.client.Views;
 
 /**
  * The main Clinician class.
@@ -34,6 +28,7 @@ public class Clinician implements ConcurrencyControlledEntity {
     @JsonView(Views.Overview.class)
     private String middleName;
     @JsonView(Views.Overview.class)
+    @Column(columnDefinition = "text")
     private String workAddress;
     @JsonView(Views.Details.class)
     private String password;
@@ -214,11 +209,18 @@ public class Clinician implements ConcurrencyControlledEntity {
         return staffId;
     }
 
+    /**
+     * Returns a hashed version of the latest timestamp for use in concurrency control
+     * The hash is surrounded by double quotes as required for a valid ETag
+     *
+     * @return The ETag string with double quotes
+     */
+    @Override
     public String getETag() {
         if (modifiedOn == null) {
-            return "\"" + String.valueOf(createdOn.hashCode()) + "\"";
+            return String.format("\"%d\"", createdOn.hashCode());
         } else {
-            return "\"" + String.valueOf(modifiedOn.hashCode()) + "\"";
+            return String.format("\"%d\"", modifiedOn.hashCode());
         }
     }
 

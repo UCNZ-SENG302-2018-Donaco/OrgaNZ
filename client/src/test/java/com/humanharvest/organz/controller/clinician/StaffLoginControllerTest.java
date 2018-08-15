@@ -37,7 +37,7 @@ public class StaffLoginControllerTest extends ControllerTest {
     @Test
     public void loginDefaultClinician() {
         clickOn("#staffId").write("0");
-        clickOn("#password").write("admin");
+        clickOn("#password").write("clinician");
         clickOn("Log in");
         assertEquals(Page.VIEW_CLINICIAN, mainController.getCurrentPage());
     }

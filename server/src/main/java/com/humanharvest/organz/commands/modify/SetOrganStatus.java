@@ -1,10 +1,5 @@
 package com.humanharvest.organz.commands.modify;
 
-import java.io.PrintStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
-
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.actions.client.ModifyClientOrgansAction;
@@ -15,6 +10,13 @@ import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredExcept
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
+import java.io.PrintStream;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 /**
  * Command line to set the status of their organs in terms of what they would like to donate.
  */
@@ -22,6 +24,8 @@ import picocli.CommandLine.Option;
 @Command(name = "setorganstatus", description = "Set the organ donation choices of an existing client.", sortOptions =
         false)
 public class SetOrganStatus implements Runnable {
+
+    private static final Logger LOGGER = Logger.getLogger(SetOrganStatus.class.getName());
 
     private final ClientManager manager;
     private final ActionInvoker invoker;
@@ -116,8 +120,9 @@ public class SetOrganStatus implements Runnable {
             } else {
                 try {
                     action.addChange(organ, newState);
+                    // This should not be thrown as we do checks before to ensure it is correct
                 } catch (OrganAlreadyRegisteredException e) {
-                    e.printStackTrace();
+                    LOGGER.log(Level.WARNING, e.getMessage(), e);
                 }
             }
         }

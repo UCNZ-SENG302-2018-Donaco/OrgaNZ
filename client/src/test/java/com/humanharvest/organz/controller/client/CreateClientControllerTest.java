@@ -72,9 +72,10 @@ public class CreateClientControllerTest extends ControllerTest {
     }
 
     @Test
-    public void noPassword() {
+    public void invalidDOB() {
         clickOn("#firstNameFld").write("a");
         clickOn("#lastNamefld").write("b");
+        clickOn("#dobFld").write("01/01/3000");
         clickOn("#createButton");
         clickOn("OK");
         assertEquals(Page.CREATE_CLIENT, mainController.getCurrentPage());
