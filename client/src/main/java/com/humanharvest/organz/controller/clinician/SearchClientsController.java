@@ -5,7 +5,11 @@ import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.enums.*;
+import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
+import com.humanharvest.organz.utilities.enums.ClientType;
+import com.humanharvest.organz.utilities.enums.Gender;
+import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
@@ -23,8 +27,17 @@ import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.*;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.Pagination;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.SortType;
+import javafx.scene.control.TableRow;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
@@ -191,23 +204,7 @@ public class SearchClientsController extends SubController {
 
             tableView.setRowFactory(tableView -> {
                 //Enable the tooltip to show organ donation status
-                TableRow<Client> row = new TableRow<Client>() {
-                    private Tooltip tooltip = new Tooltip();
-
-                    @Override
-                    public void updateItem(Client client, boolean empty) {
-                        super.updateItem(client, empty);
-                        if (client == null) {
-                            setTooltip(null);
-                        } else {
-                            tooltip.setText(String.format("%s with blood type %s. Donating: %s",
-                                    client.getFullName(),
-                                    client.getBloodType(),
-                                    client.getOrganStatusString("donations")));
-                            setTooltip(tooltip);
-                        }
-                    }
-                };
+                TableRow<Client> row = new ClientTableRow();
 
                 //Enable right click to delete
                 MenuItem removeItem = new MenuItem("Delete");
@@ -461,6 +458,33 @@ public class SearchClientsController extends SubController {
         } else {
             displayingXToYOfZText.setText(String.format("Displaying %d-%d of %d", fromIndex + 1, toIndex,
                     totalCount));
+        }
+    }
+
+    private static class ClientTableRow extends TableRow<Client> {
+        private final Tooltip tooltip = new Tooltip();
+
+        public ClientTableRow() {
+            // This enables the context menu skin to work with multitouch
+            contextMenuProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue != null) {
+                    newValue.setImpl_showRelativeToWindow(false);
+                }
+            });
+        }
+
+        @Override
+        public void updateItem(Client item, boolean empty) {
+            super.updateItem(item, empty);
+            if (item == null) {
+                setTooltip(null);
+            } else {
+                tooltip.setText(String.format("%s with blood type %s. Donating: %s",
+                        item.getFullName(),
+                        item.getBloodType(),
+                        item.getOrganStatusString("donations")));
+                setTooltip(tooltip);
+            }
         }
     }
 }

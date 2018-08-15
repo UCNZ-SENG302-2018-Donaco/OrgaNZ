@@ -49,7 +49,7 @@
 /* TODO fix the missing border when using context-menu inside the choice-box*/
 
 .context-menu {
-    -fx-skin: "org.tuiofx.widgets.skin.MTContextMenuSkin";
+    -fx-skin: "com.humanharvest.organz.skin.MTContextMenuSkin";
     -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
     -fx-background-insets: 0.0 0.0 -2.0, -1.0, 0.0, 1.0 0.0 0.0;
     -fx-padding: 0.0;

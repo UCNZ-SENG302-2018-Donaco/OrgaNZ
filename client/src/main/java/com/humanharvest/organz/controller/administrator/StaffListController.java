@@ -59,8 +59,7 @@ public class StaffListController extends SubController {
 
         tableView.setRowFactory(tableView -> {
 
-            TableRow<Clinician> row = new TableRow<Clinician>() {
-            };
+            TableRow<Clinician> row = new ClinicianTableRow();
             MenuItem deleteItem = new MenuItem();
             deleteItem.textProperty().setValue("Delete");
             deleteItem.setOnAction(event -> delete(getClinicianClickedOn().getStaffId()));
@@ -128,4 +127,14 @@ public class StaffListController extends SubController {
         PageNavigator.refreshAllWindows();
     }
 
+    private static class ClinicianTableRow extends TableRow<Clinician> {
+        public ClinicianTableRow() {
+            contextMenuProperty().addListener((observable, oldValue, newValue) -> {
+                // This enables the context menu skin to work with multitouch
+                if (newValue != null) {
+                    newValue.setImpl_showRelativeToWindow(false);
+                }
+            });
+        }
+    }
 }

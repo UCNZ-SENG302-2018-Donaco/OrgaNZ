@@ -55,6 +55,10 @@ public class AppTUIO extends Application {
         PageNavigator.loadPage(Page.LANDING, mainController);
     }
 
+    public static MultitouchHandler getMultitouchHandler() {
+        return multitouchHandler;
+    }
+
     /**
      * Starts the JavaFX GUI. Sets up the main stage and initialises the state of the system.
      * Loads from the save file or creates one if one does not yet exist.
@@ -83,10 +87,10 @@ public class AppTUIO extends Application {
 
         primaryStage.setTitle("Test");
         primaryStage.setScene(scene);
-        primaryStage.setFullScreen(true);
+//        primaryStage.setFullScreen(true);
         primaryStage.show();
-//        primaryStage.setWidth(1024);
-//        primaryStage.setHeight(768);
+        primaryStage.setWidth(1024);
+        primaryStage.setHeight(768);
 
         State.init(DataStorageType.REST);
         State.setPrimaryStage(primaryStage);
@@ -98,13 +102,5 @@ public class AppTUIO extends Application {
         } else if (System.getenv("HOST") != null) {
             State.setBaseUri(System.getenv("HOST"));
         }
-    }
-
-    public static Pane getRoot() {
-        return root;
-    }
-
-    public static MultitouchHandler getMultitouchHandler() {
-        return multitouchHandler;
     }
 }
