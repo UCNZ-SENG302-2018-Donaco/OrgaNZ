@@ -1,9 +1,0 @@
-Planning for TUIOFX and multi touch app:
-
-Main issues that need fixing:
-State tracking is currently done partially by the stages and window context, which do not quite apply in a single stage multi widget app
-Multiple touch events need to be linked to a single page using the "Task Based Focus" feature of TUIOFX
-Slider bars do not work in TUIO (look into the onScroll, possibly just a check if it's touching a slider?)
-Application layout needs to change to allow for many windows in a 1080p space
-Virtual keyboard does not give consistent visual feedback on key press (and is not that good at detecting key presses at that, although maybe that's the capacitive touch?)
-

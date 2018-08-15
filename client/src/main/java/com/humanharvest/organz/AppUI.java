@@ -152,7 +152,6 @@ public class AppUI extends Application {
         FXMLLoader loader = new FXMLLoader();
         Pane backPane = loader.load(PageNavigatorTouch.class.getResourceAsStream(Page.BACKDROP.getPath()));
 
-        TuioFXUtils.setupPaneWithTouchFeatures(backPane);
         rootPane.getChildren().add(backPane);
     }
 
