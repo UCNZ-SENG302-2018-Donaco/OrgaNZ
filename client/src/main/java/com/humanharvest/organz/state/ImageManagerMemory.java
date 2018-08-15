@@ -1,6 +1,7 @@
 package com.humanharvest.organz.state;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -30,7 +31,13 @@ public class ImageManagerMemory implements ImageManager{
     }
 
     public byte[] getDefaultImage() throws IOException {
-        InputStream in = new FileInputStream("./images/default.png");
+        InputStream in;
+        try {
+            in = new FileInputStream("./images/default.png");
+        } catch (FileNotFoundException e) {
+            // try a directory up - this fixes some tests, e.g. ViewClientController tests
+            in = new FileInputStream("../images/default.png");
+        }
         byte[] res = IOUtils.toByteArray(in);
         in.close();
         return res;
