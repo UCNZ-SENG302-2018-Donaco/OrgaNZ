@@ -1,11 +1,9 @@
 package com.humanharvest.organz.utilities.view;
 
-import com.humanharvest.organz.AppTUIO;
-import com.humanharvest.organz.MultitouchHandler;
-import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.controller.components.TouchAlertController;
-import com.humanharvest.organz.state.State;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXMLLoader;
@@ -18,9 +16,12 @@ import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.humanharvest.organz.AppUI;
+import com.humanharvest.organz.MultitouchHandler;
+import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.controller.components.TouchAlertController;
+import com.humanharvest.organz.state.State;
 
 /**
  * Utility class for controlling navigation between pages.
@@ -85,6 +86,7 @@ public class PageNavigatorTouch implements IPageNavigator {
             MainController mainController = loader.getController();
 
             Scene scene = new Scene(mainPane);
+            AppUI.addCss(scene);
             newStage.setScene(scene);
 
             mainController.setStage(newStage);
@@ -92,11 +94,11 @@ public class PageNavigatorTouch implements IPageNavigator {
             State.addMainController(mainController);
             newStage.setOnCloseRequest(e -> {
                 State.deleteMainController(mainController);
-                AppTUIO.root.getChildren().remove(mainPane);
+                MultitouchHandler.removePane(mainPane);
             });
 
             TuioFXUtils.setupPaneWithTouchFeatures(mainPane);
-            AppTUIO.root.getChildren().add(mainPane);
+            MultitouchHandler.addPane(mainPane);
 
             MultitouchHandler.setupPaneListener(mainPane);
 
@@ -156,7 +158,7 @@ public class PageNavigatorTouch implements IPageNavigator {
             controller.setup(alertType, title, bodyText, newStage, mainPane);
 
             TuioFXUtils.setupPaneWithTouchFeatures(mainPane);
-            AppTUIO.root.getChildren().add(mainPane);
+            MultitouchHandler.addPane(mainPane);
             MultitouchHandler.setupPaneListener(mainPane);
 
             // Set the positioning based off the calling window if it is valid.

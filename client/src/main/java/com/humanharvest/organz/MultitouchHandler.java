@@ -53,13 +53,16 @@ import org.tuiofx.widgets.skin.TextAreaSkinAndroid;
 import org.tuiofx.widgets.skin.TextFieldSkinAndroid;
 import org.tuiofx.widgets.utils.Util;
 
-public class MultitouchHandler {
-    private final List<CurrentTouch> touches = new ArrayList<>();
-    private final Pane rootPane;
-    private final Node backdropPane;
+public final class MultitouchHandler {
+    private static final List<CurrentTouch> touches = new ArrayList<>();
+    private static Pane rootPane;
+    private static Node backdropPane;
 
-    public MultitouchHandler(Pane rootPane) {
-        this.rootPane = rootPane;
+    private MultitouchHandler() {
+    }
+
+    public static void initialise(Pane rootPane) {
+        MultitouchHandler.rootPane = rootPane;
         backdropPane = rootPane.getChildren().get(0);
 
         rootPane.addEventFilter(TouchEvent.ANY, event -> {
@@ -102,7 +105,7 @@ public class MultitouchHandler {
         rootPane.addEventFilter(RotateEvent.ANY, Event::consume);
     }
 
-    private void handleCurrentTouch(TouchPoint touchPoint, CurrentTouch currentTouch) {
+    private static void handleCurrentTouch(TouchPoint touchPoint, CurrentTouch currentTouch) {
         currentTouch.getPane().ifPresent(pane -> {
             Point2D newTouchPoint = new Point2D(touchPoint.getX(), touchPoint.getY());
 
@@ -175,7 +178,7 @@ public class MultitouchHandler {
         return Math.atan2(point2.getY() - point1.getY(), point2.getX() - point1.getX());
     }
 
-    private List<CurrentTouch> findPaneTouches(Pane pane) {
+    private static List<CurrentTouch> findPaneTouches(Pane pane) {
         List<CurrentTouch> results = new ArrayList<>();
         for (CurrentTouch currentTouch : touches) {
             if (currentTouch != null) {
@@ -188,7 +191,7 @@ public class MultitouchHandler {
         return results;
     }
 
-    private Optional<Pane> findPane(Node node) {
+    private static Optional<Pane> findPane(Node node) {
         Node intersectNode = node;
         while (!Objects.equals(intersectNode.getParent(), rootPane)) {
             intersectNode = intersectNode.getParent();
@@ -210,7 +213,7 @@ public class MultitouchHandler {
         return Optional.empty();
     }
 
-    private CurrentTouch getCurrentTouch(TouchPoint touchPoint) {
+    private static CurrentTouch getCurrentTouch(TouchPoint touchPoint) {
         while (touchPoint.getId() >= touches.size()) {
             touches.add(null);
         }
@@ -224,7 +227,7 @@ public class MultitouchHandler {
         return currentTouch;
     }
 
-    private Optional<Node> getImportantElement(TouchPoint touchPoint) {
+    private static Optional<Node> getImportantElement(TouchPoint touchPoint) {
         Node node = touchPoint.getPickResult().getIntersectedNode();
 
         while (node != null && !Objects.equals(node, rootPane)) {
@@ -269,7 +272,7 @@ public class MultitouchHandler {
         return Optional.empty();
     }
 
-    private void removeCurrentTouch(TouchPoint touchPoint) {
+    private static void removeCurrentTouch(TouchPoint touchPoint) {
         touches.set(touchPoint.getId(), null);
     }
 
@@ -289,11 +292,19 @@ public class MultitouchHandler {
         }
     }
 
-    public Optional<FocusAreaHandler> getFocusAreaHandler(Node node) {
+    public static Optional<FocusAreaHandler> getFocusAreaHandler(Node node) {
         Optional<Pane> pane = findPane(node);
         return pane.map(pane1 -> {
             return (FocusAreaHandler)pane1.getUserData();
         });
+    }
+
+    public static void addPane(Pane pane) {
+        rootPane.getChildren().add(pane);
+    }
+
+    public static void removePane(Pane pane) {
+        rootPane.getChildren().remove(pane);
     }
 
     private static class CurrentTouch {

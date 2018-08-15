@@ -1,6 +1,7 @@
 package com.humanharvest.organz.controller.components;
 
-import com.humanharvest.organz.AppTUIO;
+import com.humanharvest.organz.MultitouchHandler;
+
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
@@ -28,7 +29,7 @@ public class TouchAlertController {
     private Stage stage;
     private Pane pane;
 
-    private ObjectProperty<Boolean> resultProperty = new SimpleObjectProperty<>();
+    private final ObjectProperty<Boolean> resultProperty = new SimpleObjectProperty<>();
 
     @FXML
     public void initialize() {
@@ -36,7 +37,7 @@ public class TouchAlertController {
     }
 
     public void setup(Alert.AlertType alertType, String title, String body, Stage stage, Pane pane) {
-        this.title.setText(alertType.toString() + ": " + title);
+        this.title.setText(alertType + ": " + title);
         this.body.setText(body);
         this.stage = stage;
         this.pane = pane;
@@ -54,14 +55,14 @@ public class TouchAlertController {
     @FXML
     private void ok() {
         resultProperty.setValue(true);
-        AppTUIO.root.getChildren().remove(pane);
+        MultitouchHandler.removePane(pane);
         stage.close();
     }
 
     @FXML
     private void cancel() {
         resultProperty.setValue(false);
-        AppTUIO.root.getChildren().remove(pane);
+        MultitouchHandler.removePane(pane);
         stage.close();
     }
 }

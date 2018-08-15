@@ -1,8 +1,8 @@
 package com.humanharvest.organz.skin;
 
-import com.humanharvest.organz.AppTUIO;
-import com.sun.javafx.scene.control.skin.ContextMenuSkin;
-import javafx.css.PseudoClass;
+import java.util.Objects;
+import java.util.Optional;
+
 import javafx.event.Event;
 import javafx.event.EventTarget;
 import javafx.scene.Node;
@@ -11,14 +11,13 @@ import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
-import org.tuiofx.widgets.utils.Util;
 
-import java.util.Objects;
-import java.util.Optional;
+import com.humanharvest.organz.MultitouchHandler;
+import com.sun.javafx.scene.control.skin.ContextMenuSkin;
+import org.tuiofx.widgets.utils.Util;
 
 public class MTContextMenuSkin extends ContextMenuSkin {
     private final ContextMenu popupMenu;
-    private static final PseudoClass PRESSED_PSEUDO_CLASS = PseudoClass.getPseudoClass("pressed");
 
     public MTContextMenuSkin(ContextMenu popupMenu) {
         super(popupMenu);
@@ -38,7 +37,7 @@ public class MTContextMenuSkin extends ContextMenuSkin {
         popupMenu.setAutoHide(false);
         Node focusAreaNode = Util.getFocusAreaStartingNode(owner);
         if (focusAreaNode != null) {
-            AppTUIO.getMultitouchHandler()
+            MultitouchHandler
                     .getFocusAreaHandler(owner)
                     .ifPresent(focusAreaHandler -> {
                         focusAreaHandler.addPopup(popupMenu, this::handleAutoHidingEvents);
