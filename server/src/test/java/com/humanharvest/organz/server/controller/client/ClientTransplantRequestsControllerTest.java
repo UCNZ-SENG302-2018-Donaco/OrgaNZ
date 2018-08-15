@@ -6,6 +6,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -59,6 +60,7 @@ public class ClientTransplantRequestsControllerTest {
         State.reset();
         this.mockMvc = webAppContextSetup(webApplicationContext).build();
         testClient = new Client("Jan", "Michael", "Vincent", LocalDate.now(), 1);
+        testClient.setRegion("Auckland");
         TransplantRequest testTransplantRequest = new TransplantRequest(testClient, Organ.LIVER);
         justAfterCreatedTime = LocalDateTime.now();
         testClient.addTransplantRequest(testTransplantRequest);
@@ -88,6 +90,73 @@ public class ClientTransplantRequestsControllerTest {
                 + "  \"resolvedReason\": \"reason\"\n"
                 + "}";
 
+    }
+
+    //------------GET---------------
+
+    @Test
+    public void getAllTransplantRequestsTest() throws Exception {
+        setUpTransplantRequests();
+
+        mockMvc.perform(get("/clients/transplantRequests").header("X-Auth-Token", VALID_AUTH))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalResults", is(3)));
+    }
+
+    @Test
+    public void filterByRegionTest() throws Exception {
+        setUpTransplantRequests();
+
+        mockMvc.perform(get("/clients/transplantRequests?regions=Auckland").header("X-Auth-Token", VALID_AUTH))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalResults", is(3)));
+    }
+
+    @Test
+    public void filterByRegionTestNull() throws Exception {
+        setUpTransplantRequests();
+
+        mockMvc.perform(get("/clients/transplantRequests?regions=Christchurch").header("X-Auth-Token", VALID_AUTH))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalResults", is(0)));
+    }
+
+    @Test
+    public void filterByOrganTest() throws Exception {
+        setUpTransplantRequests();
+
+        mockMvc.perform(get("/clients/transplantRequests?organs=LIVER").header("X-Auth-Token", VALID_AUTH))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalResults", is(1)));
+    }
+
+    @Test
+    public void filterByOrganTest2() throws Exception {
+        setUpTransplantRequests();
+
+        mockMvc.perform(get("/clients/transplantRequests?organs=LIVER,HEART,CORNEA").header("X-Auth-Token",
+                VALID_AUTH))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalResults", is(3)));
+    }
+
+    @Test
+    public void filterByOrganTestNull() throws Exception {
+        setUpTransplantRequests();
+
+        mockMvc.perform(get("/clients/transplantRequests?organs=KIDNEY").header("X-Auth-Token", VALID_AUTH))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalResults", is(0)));
+    }
+
+    @Test
+    public void filterByOrganAndRegionTest() throws Exception {
+        setUpTransplantRequests();
+
+        mockMvc.perform(get("/clients/transplantRequests?organs=HEART&regions=Auckland").header("X-Auth-Token",
+                VALID_AUTH))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.totalResults", is(1)));
     }
 
     //------------POST---------------
@@ -344,5 +413,38 @@ public class ClientTransplantRequestsControllerTest {
                         + "  \"resolvedReason\": \"it was a mistake\"\n"
                         + "}"))
                 .andExpect(status().is(412));
+    }
+
+    /**
+     * Creates two extra transplant requests.
+     */
+    private void setUpTransplantRequests() throws Exception {
+        String anotherValidTransplantRequestJson = "{\n"
+                + "  \"requestedOrgan\": \"HEART\",\n"
+                + "  \"requestDate\": \"2017-07-18T14:11:20.202\",\n"
+                + "  \"resolvedDate\": \"2017-07-19T14:11:20.202\",\n"
+                + "  \"status\": \"WAITING\",\n"
+                + "  \"resolvedReason\": \"reason\"\n"
+                + "}";
+
+        String oneMoreValidTransplantRequestJson = "{\n"
+                + "  \"requestedOrgan\": \"CORNEA\",\n"
+                + "  \"requestDate\": \"2017-07-18T14:11:20.202\",\n"
+                + "  \"resolvedDate\": \"2017-07-19T14:11:20.202\",\n"
+                + "  \"status\": \"WAITING\",\n"
+                + "  \"resolvedReason\": \"reason\"\n"
+                + "}";
+
+        mockMvc.perform(post("/clients/" + testClient.getUid() + "/transplantRequests")
+                .header("If-Match", testClient.getETag())
+                .header("X-Auth-Token", VALID_AUTH)
+                .contentType(contentType)
+                .content(anotherValidTransplantRequestJson));
+
+        mockMvc.perform(post("/clients/" + testClient.getUid() + "/transplantRequests")
+                .header("If-Match", testClient.getETag())
+                .header("X-Auth-Token", VALID_AUTH)
+                .contentType(contentType)
+                .content(oneMoreValidTransplantRequestJson));
     }
 }

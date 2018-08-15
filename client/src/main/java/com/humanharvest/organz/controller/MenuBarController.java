@@ -27,7 +27,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 import com.humanharvest.organz.AppUI;
-import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
@@ -86,14 +85,13 @@ public class MenuBarController extends SubController {
     public Menu staffPrimaryItem;
     public Menu profilePrimaryItem;
 
-    private ClientManager clientManager;
+
     private Session session;
 
     /**
      * Gets the ActionInvoker from the current state.
      */
     public MenuBarController() {
-        clientManager = State.getClientManager();
         session = State.getSession();
     }
 
@@ -120,7 +118,7 @@ public class MenuBarController extends SubController {
         MenuItem menuItemsHideFromClinViewClients[] = {saveClientsItem, saveCliniciansItem, loadItem, settingsItem,
                 logOutItem, searchClientItem, createClientItem, transplantRequestsItem, organsToDonateItem,
                 staffListItem, createAdministratorItem, createClinicianItem, viewAdministratorItem,
-                viewClinicianItem, historyItem, cliItem};
+                viewClinicianItem, historyItem, cliItem, topSeparator};
 
         // Menus to hide from clients (aka all menus)
         Menu allMenus[] = {filePrimaryItem, editPrimaryItem, clientPrimaryItem, organPrimaryItem,
@@ -488,9 +486,9 @@ public class MenuBarController extends SubController {
 
         Task<List<String>> task = new Task<List<String>>() {
             @Override
-            public List<String> call() throws IOException {
+            public List<String> call() {
                 CacheManager.INSTANCE.refreshCachedData();
-                return new ArrayList<String>();
+                return new ArrayList<>();
             }
         };
 

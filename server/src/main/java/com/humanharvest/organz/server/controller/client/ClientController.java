@@ -333,10 +333,9 @@ public class ClientController {
             @PathVariable int uid,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws InvalidRequestException, IfMatchFailedException, IfMatchRequiredException {
-        String imagesDirectory = System.getProperty("user.home") + "/.organz/images/";
 
         // Check if the directory exists. If not, then clearly the image doesn't
-        File directory = new File(imagesDirectory);
+        File directory = new File(State.getImageDirectory());
         if (!directory.exists()) {
             throw new NotFoundException();
 
@@ -353,7 +352,7 @@ public class ClientController {
         State.getAuthenticationManager().verifyClientAccess(authToken, client);
 
         // Get image
-        try (InputStream in = new FileInputStream(imagesDirectory + uid + ".png")) {
+        try (InputStream in = new FileInputStream(State.getImageDirectory() + uid + ".png")) {
             byte[] out = IOUtils.toByteArray(in);
             HttpHeaders headers = new HttpHeaders();
             headers.add("Content-Type", "image/png");
@@ -373,12 +372,9 @@ public class ClientController {
             @RequestHeader(value = "If-Match", required = false) String etag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {
 
-        String imagesDirectory = System.getProperty("user.home") + "/.organz/images/";
-
         // Create the directory if it doesn't exist
-        File directory = new File(imagesDirectory);
+        File directory = new File(State.getImageDirectory());
         if (!directory.exists()) {
-            new File(System.getProperty("user.home") + "/.organz/").mkdir();
             directory.mkdir();
         }
 
@@ -400,7 +396,7 @@ public class ClientController {
             throw new IfMatchFailedException();
         }
 
-        AddImageAction action = new AddImageAction(client, image);
+        AddImageAction action = new AddImageAction(client, image, State.getImageDirectory());
 
         // Write the file
         try {
@@ -417,10 +413,9 @@ public class ClientController {
             @PathVariable int uid,
             @RequestHeader(value = "If-Match", required = false) String etag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken) throws InvalidRequestException {
-        String imagesDirectory = System.getProperty("user.home") + "/.organz/images/";
 
         // Check if the directory exists. If not, then clearly the image doesn't
-        File directory = new File(imagesDirectory);
+        File directory = new File(State.getImageDirectory());
         if (!directory.exists()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -444,7 +439,7 @@ public class ClientController {
         }
 
         try {
-            DeleteImageAction action = new DeleteImageAction(client);
+            DeleteImageAction action = new DeleteImageAction(client, State.getImageDirectory());
             State.getActionInvoker(authToken).execute(action);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (FileNotFoundException e) {
