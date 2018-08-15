@@ -14,9 +14,7 @@ import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.actions.client.AddTransplantRequestAction;
 import com.humanharvest.organz.actions.client.ResolveTransplantRequestAction;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
@@ -28,7 +26,6 @@ import com.humanharvest.organz.views.client.Views;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -80,13 +77,9 @@ public class ClientTransplantRequestsController {
 
         // Get all requests that match region/organ filters
         List<TransplantRequestView> matchingRequests = State.getClientManager().getAllTransplantRequests().stream()
-
                 .filter(request-> regions == null || newRegions.isEmpty() || newRegions.contains(request.getClient().getRegion()))
-
                 .filter(request -> organs == null || organs.contains(request.getRequestedOrgan()))
-
                 .map(TransplantRequestView::new)
-
                 .collect(Collectors.toList());
 
         // Return subset for given offset/count parameters (used for pagination)

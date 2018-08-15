@@ -1,13 +1,11 @@
 package com.humanharvest.organz.server.controller;
 
 import java.util.Collection;
-import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Client;
@@ -53,56 +51,45 @@ public class OrgansController {
             @RequestParam(required = false) Integer offset,
             @RequestParam(required = false) Integer count,
             @RequestParam(required = false) Set<String> regions,
-            @RequestParam(required = false) EnumSet<Organ> organType)
+            @RequestParam(value = "organType", required = false) Set<Organ> organsToFilter)
             throws GlobalControllerExceptionHandler.InvalidRequestException {
 
         State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
 
-        Set<String> newRegions = new HashSet<>();
+        final Set<String> regionsToFilter = new HashSet<>();
         if (regions != null) {
             for (String region : regions) {
-                newRegions.add(region.replace("%20", " "));
+                regionsToFilter.add(region.replaceAll("%20", " "));
             }
         }
 
         // Get all organs for donation
-        Collection<DonatedOrganView> donatedOrgans = State.getClientManager().getAllOrgansToDonate().stream()
-                .map(DonatedOrganView::new)
-                .collect(Collectors.toList());
-
         // Filter by region and organ type if the params have been set
-        Stream<DonatedOrganView> stream = donatedOrgans.stream();
-        List<DonatedOrganView> filteredOrgans = stream
-
-                .filter(regions == null ? o -> true : organ -> newRegions.isEmpty() ||
-                        newRegions.contains(organ.getDonatedOrgan().getDonor().getRegionOfDeath()) ||
-                        ( newRegions.contains("International") && organ.getDonatedOrgan().getDonor().getCountryOfDeath() !=
-                                Country.NZ))
-
-
-                .filter(organType == null ? o -> true : organ -> organType.isEmpty() ||
-                        organType.contains(organ.getDonatedOrgan().getOrganType()))
-
+        List<DonatedOrganView> filteredOrgans = State.getClientManager().getAllOrgansToDonate().stream()
+                .filter(organ -> regionsToFilter.isEmpty()
+                        || regionsToFilter.contains(organ.getDonor().getRegionOfDeath())
+                        || regionsToFilter.contains("International") && organ.getDonor().getCountryOfDeath() != Country.NZ)
+                .filter(organ -> organsToFilter == null || organsToFilter.isEmpty()
+                        || organsToFilter.contains(organ.getOrganType()))
+                .map(DonatedOrganView::new)
                 .collect(Collectors.toList());
 
         if (offset == null) {
             offset = 0;
         }
-        if(count == null){
+        if (count == null) {
             return new ResponseEntity<>(new PaginatedDonatedOrgansList(
                     filteredOrgans.subList(
                             Math.min(offset, filteredOrgans.size()),
                             filteredOrgans.size()),
                     filteredOrgans.size()),
                     HttpStatus.OK);
-
         } else {
             return new ResponseEntity<>(new PaginatedDonatedOrgansList(filteredOrgans.subList(
                     Math.min(offset, filteredOrgans.size()),
                     Math.min(offset + count, filteredOrgans.size())),
                     filteredOrgans.size()),HttpStatus.OK);
         }
-
     }
 
     /**
