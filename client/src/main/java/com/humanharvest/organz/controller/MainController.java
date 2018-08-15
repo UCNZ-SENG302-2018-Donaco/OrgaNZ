@@ -1,9 +1,7 @@
 package com.humanharvest.organz.controller;
 
-import com.humanharvest.organz.AppTUIO;
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.view.Page;
-import com.humanharvest.organz.utilities.view.WindowContext;
+import java.io.IOException;
+
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -13,7 +11,10 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.io.IOException;
+import com.humanharvest.organz.MultitouchHandler;
+import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.view.Page;
+import com.humanharvest.organz.utilities.view.WindowContext;
 
 /**
  * Main controller class for the application window.
@@ -24,9 +25,9 @@ public class MainController {
     private Page currentPage;
     private Pane pane;
     private WindowContext windowContext;
-    private String windowTitle;
+    private String title;
     private SidebarController sidebarController;
-    private MenuBarController MenuBarController;
+    private MenuBarController menuBarController;
     private SubController subController;
 
     /**
@@ -41,7 +42,7 @@ public class MainController {
     }
 
     public Stage getStage() {
-        return this.stage;
+        return stage;
     }
 
     public Page getCurrentPage() {
@@ -75,11 +76,11 @@ public class MainController {
     }
 
     public void setWindowContext(WindowContext context) {
-        this.windowContext = context;
+        windowContext = context;
     }
 
     void resetWindowContext() {
-        this.windowContext = WindowContext.defaultContext();
+        windowContext = WindowContext.defaultContext();
     }
 
     /**
@@ -91,7 +92,7 @@ public class MainController {
         System.out.println(stage);
         stage.close();
         if (State.getUiType() == State.UiType.TOUCH) {
-            AppTUIO.root.getChildren().remove(pane);
+            MultitouchHandler.removePane(pane);
         }
     }
 
@@ -122,8 +123,8 @@ public class MainController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(Page.MENU_BAR.getPath()));
             HBox menuBar = loader.load();
-            MenuBarController = loader.getController();
-            MenuBarController.setup(this);
+            menuBarController = loader.getController();
+            menuBarController.setup(this);
             menuBarPane.getChildren().setAll(menuBar);
         } catch (IOException exc) {
             System.err.println("Couldn't load sidebar from fxml file.");
@@ -148,21 +149,21 @@ public class MainController {
      * Refreshes only the navigation bar
      */
     public void refreshNavigation() {
-        if (MenuBarController != null) {
-            MenuBarController.refresh();
+        if (menuBarController != null) {
+            menuBarController.refresh();
         } else if (sidebarController != null) {
             sidebarController.refresh();
         }
     }
 
-    public String getTitle() {return windowTitle;}
+    public String getTitle() {return title;}
 
     /**
      * Sets the title of the window to the given text.
      * @param title The new title of the window.
      */
     public void setTitle(String title) {
-        windowTitle = title;
+        this.title = title;
         updateTitle();
     }
 
@@ -171,9 +172,9 @@ public class MainController {
      */
     private void updateTitle() {
         if (State.isUnsavedChanges()) {
-            stage.setTitle("*" + windowTitle);
+            stage.setTitle("*" + title);
         } else {
-            stage.setTitle(windowTitle);
+            stage.setTitle(title);
         }
     }
 }

@@ -1,10 +1,11 @@
 package com.humanharvest.organz.controller;
 
-import com.humanharvest.organz.AppTUIO;
 import com.humanharvest.organz.AppUI;
+import com.humanharvest.organz.MultitouchHandler;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.state.State.UiType;
 import com.humanharvest.organz.utilities.CacheManager;
 import com.humanharvest.organz.utilities.exceptions.BadRequestException;
 import com.humanharvest.organz.utilities.view.Page;
@@ -14,9 +15,14 @@ import javafx.application.Platform;
 import javafx.beans.property.Property;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.controlsfx.control.Notifications;
@@ -32,8 +38,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import static com.humanharvest.organz.state.State.UiType.TOUCH;
 
 /**
  * Controller for the sidebar pane imported into every page in the main part of the GUI.
@@ -124,7 +128,7 @@ public class MenuBarController extends SubController {
                 medicationsPrimaryItem, staffPrimaryItem, profilePrimaryItem};
 
         // Duplicate item is exclusively for the touch screen interface
-        if (State.getUiType() == TOUCH) {
+        if (State.getUiType() == UiType.TOUCH) {
             duplicateItem.setVisible(true);
         } else {
             duplicateItem.setVisible(false);
@@ -156,7 +160,7 @@ public class MenuBarController extends SubController {
             hideMenus(allMenus);
         }
 
-        closeItem.setDisable(!windowContext.isClinViewClientWindow() && State.getUiType() != TOUCH);
+        closeItem.setDisable(!windowContext.isClinViewClientWindow() && State.getUiType() != UiType.TOUCH);
 
         refresh();
     }
@@ -576,10 +580,10 @@ public class MenuBarController extends SubController {
      */
     @FXML
     private void closeWindow() {
-        if (State.getUiType() == TOUCH) {
-            AppTUIO.root.getChildren().remove(mainController.getPane());
+        if (State.getUiType() == UiType.TOUCH) {
+            MultitouchHandler.removePane(mainController.getPane());
         } else {
-            Stage stage = (Stage) menuBar.getScene().getWindow();
+            Stage stage = (Stage)menuBar.getScene().getWindow();
             stage.close();
         }
     }
@@ -617,7 +621,7 @@ public class MenuBarController extends SubController {
     /**
      * Exit program.
      */
-    private void exit() {
+    private static void exit() {
         Platform.exit();
         System.exit(0);
     }
