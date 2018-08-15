@@ -1,18 +1,22 @@
 package com.humanharvest.organz.actions.client;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
 /**
  * A reversible client organ modification Action
  */
 public class ModifyClientOrgansAction extends ClientAction {
+
+    private static final Logger LOGGER = Logger.getLogger(ModifyClientOrgansAction.class.getName());
 
     private Map<Organ, Boolean> changes = new HashMap<>();
 
@@ -94,7 +98,7 @@ public class ModifyClientOrgansAction extends ClientAction {
                 }
                 client.setOrganDonationStatus(organ, newState);
             } catch (OrganAlreadyRegisteredException e) {
-                e.printStackTrace();
+                LOGGER.log(Level.INFO, e.getMessage(), e);
             }
         }
     }

@@ -161,7 +161,7 @@ public class ViewClientController extends ViewBaseController {
         try {
             viewedClient = manager.getClientByID(viewedClient.getUid()).orElseThrow(ServerRestException::new);
         } catch (ServerRestException e) {
-            e.printStackTrace();
+            LOGGER.log(Level.INFO, e.getMessage(), e);
             PageNavigator.showAlert(AlertType.ERROR,
                     "Server Error",
                     "An error occurred while trying to fetch from the server.\nPlease try again later.");

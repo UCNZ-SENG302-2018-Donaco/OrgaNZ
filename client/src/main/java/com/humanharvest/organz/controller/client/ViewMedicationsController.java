@@ -1,5 +1,33 @@
 package com.humanharvest.organz.controller.client;
 
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.MedicationRecord;
+import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.SidebarController;
+import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.state.Session;
+import com.humanharvest.organz.state.Session.UserType;
+import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.exceptions.*;
+import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.utilities.web.DrugInteractionsHandler;
+import com.humanharvest.organz.utilities.web.MedActiveIngredientsHandler;
+import com.humanharvest.organz.utilities.web.MedAutoCompleteHandler;
+import com.humanharvest.organz.views.client.CreateMedicationRecordView;
+import impl.org.controlsfx.autocompletion.AutoCompletionTextFieldBinding;
+import javafx.collections.FXCollections;
+import javafx.concurrent.Task;
+import javafx.fxml.FXML;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import org.controlsfx.control.Notifications;
+
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -10,48 +38,12 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import javafx.collections.FXCollections;
-import javafx.concurrent.Task;
-import javafx.fxml.FXML;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.MedicationRecord;
-import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.controller.SidebarController;
-import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.state.Session;
-import com.humanharvest.organz.state.Session.UserType;
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.exceptions.BadDrugNameException;
-import com.humanharvest.organz.utilities.exceptions.BadGatewayException;
-import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
-import com.humanharvest.organz.utilities.exceptions.NotFoundException;
-import com.humanharvest.organz.utilities.exceptions.ServerRestException;
-import com.humanharvest.organz.utilities.view.PageNavigator;
-import com.humanharvest.organz.utilities.web.DrugInteractionsHandler;
-import com.humanharvest.organz.utilities.web.MedActiveIngredientsHandler;
-import com.humanharvest.organz.utilities.web.MedAutoCompleteHandler;
-import com.humanharvest.organz.views.client.CreateMedicationRecordView;
-import impl.org.controlsfx.autocompletion.AutoCompletionTextFieldBinding;
-import org.controlsfx.control.Notifications;
-
 /**
  * Controller for the view/edit medications page.
  */
 public class ViewMedicationsController extends SubController {
+
+    private static final Logger LOGGER = Logger.getLogger(SidebarController.class.getName());
 
     private Session session;
     private Client client;
@@ -59,8 +51,6 @@ public class ViewMedicationsController extends SubController {
     private MedAutoCompleteHandler autoCompleteHandler;
     private MedActiveIngredientsHandler activeIngredientsHandler;
     private DrugInteractionsHandler drugInteractionsHandler;
-
-    private static final Logger LOGGER = Logger.getLogger(SidebarController.class.getName());
 
     @FXML
     private Pane sidebarPane, menuBarPane;

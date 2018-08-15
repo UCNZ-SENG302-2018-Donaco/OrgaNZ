@@ -1,9 +1,11 @@
 package com.humanharvest.organz.utilities;
 
+import jline.console.ConsoleReader;
+
 import java.io.IOException;
 import java.util.Scanner;
-
-import jline.console.ConsoleReader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A platform-independent Scanner for console input that features a command history that can be cycled through with
@@ -11,6 +13,8 @@ import jline.console.ConsoleReader;
  * features command history. On all other platforms, a ConsoleReader from the JLine library is used instead.
  */
 public class ConsoleScanner {
+
+    private static final Logger LOGGER = Logger.getLogger(ConsoleScanner.class.getName());
 
     private boolean isWindows = false;
     private Scanner scanIn;
@@ -32,7 +36,7 @@ public class ConsoleScanner {
                 consoleIn = new ConsoleReader();
                 consoleIn.setHistoryEnabled(true);
             } catch (IOException e) {
-                e.printStackTrace();
+                LOGGER.log(Level.WARNING, e.getMessage(), e);
             }
         }
     }
@@ -48,7 +52,7 @@ public class ConsoleScanner {
             try {
                 return consoleIn.readLine();
             } catch (IOException e) {
-                e.printStackTrace();
+                LOGGER.log(Level.WARNING, e.getMessage(), e);
                 return "";
             }
         }

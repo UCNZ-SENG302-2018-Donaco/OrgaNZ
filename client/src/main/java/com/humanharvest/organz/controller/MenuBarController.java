@@ -401,8 +401,8 @@ public class MenuBarController extends SubController {
                 fileChooser.setInitialDirectory(
                         new File(Paths.get(AppUI.class.getProtectionDomain().getCodeSource().getLocation().toURI())
                                 .getParent().toString()));
-            } catch (URISyntaxException exc) {
-                exc.printStackTrace();
+            } catch (URISyntaxException e) {
+                LOGGER.log(Level.INFO, e.getMessage(), e);
             }
             fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter(
                     "JSON/CSV files (*.json, *.csv)",
