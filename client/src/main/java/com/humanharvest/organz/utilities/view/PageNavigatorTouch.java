@@ -1,9 +1,11 @@
 package com.humanharvest.organz.utilities.view;
 
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
+import com.humanharvest.organz.AppUI;
+import com.humanharvest.organz.MultitouchHandler;
+import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.controller.components.TouchAlertController;
+import com.humanharvest.organz.state.State;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXMLLoader;
@@ -13,15 +15,13 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
+import javafx.scene.transform.Transform;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
-import com.humanharvest.organz.AppUI;
-import com.humanharvest.organz.MultitouchHandler;
-import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.controller.components.TouchAlertController;
-import com.humanharvest.organz.state.State;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Utility class for controlling navigation between pages.
@@ -48,13 +48,7 @@ public class PageNavigatorTouch implements IPageNavigator {
 
             controller.setPage(page, loadedPage);
 
-            if (loadedPage instanceof Parent) {
-                TuioFXUtils.setTransparentNodes(loadedPage);
-                loadedPage.getProperties().put("isTouchTransparent", "true");
-            }
-
         } catch (IOException e) {
-            e.printStackTrace();
             LOGGER.log(Level.SEVERE, "Couldn't load the page", e);
             showAlert(Alert.AlertType.ERROR, "Could not load page: " + page,
                     "The page loader failed to load the layout for the page.", controller.getStage());
@@ -97,14 +91,11 @@ public class PageNavigatorTouch implements IPageNavigator {
                 MultitouchHandler.removePane(mainPane);
             });
 
-            TuioFXUtils.setupPaneWithTouchFeatures(mainPane);
             MultitouchHandler.addPane(mainPane);
-
             MultitouchHandler.setupPaneListener(mainPane);
 
             return mainController;
         } catch (IOException e) {
-            e.printStackTrace();
             LOGGER.log(Level.SEVERE, "Error loading new window\n", e);
             // Will throw if MAIN's fxml file could not be loaded.
             showAlert(Alert.AlertType.ERROR, "New window could not be created",
@@ -157,31 +148,24 @@ public class PageNavigatorTouch implements IPageNavigator {
             TouchAlertController controller = loader.getController();
             controller.setup(alertType, title, bodyText, newStage, mainPane);
 
-            TuioFXUtils.setupPaneWithTouchFeatures(mainPane);
             MultitouchHandler.addPane(mainPane);
             MultitouchHandler.setupPaneListener(mainPane);
 
             // Set the positioning based off the calling window if it is valid.
-            if (window != null && window.getScene() != null && window.getScene().getRoot() != null) {
+            if (window != null && window.getScene() != null && window.getScene().getRoot() != null && window.getScene().getRoot().getTransforms().size() == 1) {
                 Parent root = window.getScene().getRoot();
-                mainPane.setTranslateX(root.getTranslateX() + 100);
-                mainPane.setTranslateY(root.getTranslateY() + 100);
-                mainPane.setRotate(root.getRotate());
-                mainPane.setScaleX(root.getScaleX());
-                mainPane.setScaleY(root.getScaleY());
+
+                Transform transforms = root.getTransforms().get(0).clone();
+                mainPane.getTransforms().add(transforms);
             }
 
             return controller.getResultProperty();
 
         } catch (IOException e) {
-            e.printStackTrace();
             LOGGER.log(Level.SEVERE, "Error loading new window\n", e);
-            // Will throw if MAIN's fxml file could not be loaded.
-//            showAlert(Alert.AlertType.ERROR, "New window could not be created",
-//                    "The page loader failed to load the layout for the new window.", new Stage());
+            Property<Boolean> result = new SimpleBooleanProperty();
+            result.setValue(false);
+            return result;
         }
-        Property<Boolean> result = new SimpleBooleanProperty();
-        result.setValue(false);
-        return result;
     }
 }
