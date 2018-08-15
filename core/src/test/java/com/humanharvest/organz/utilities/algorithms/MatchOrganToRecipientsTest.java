@@ -1,16 +1,5 @@
 package com.humanharvest.organz.utilities.algorithms;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-
-import java.lang.reflect.Field;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.TransplantRequest;
@@ -20,6 +9,17 @@ import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.lang.reflect.Field;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 public class MatchOrganToRecipientsTest {
 
@@ -35,7 +35,7 @@ public class MatchOrganToRecipientsTest {
     private Country country = Country.NZ;
     private String region = Region.CANTERBURY.toString();
 
-    private Collection<TransplantRequest> allTransplantRequests =  new ArrayList<>();
+    private Collection<TransplantRequest> allTransplantRequests = new ArrayList<>();
 
     @Before
     public void setUp() {

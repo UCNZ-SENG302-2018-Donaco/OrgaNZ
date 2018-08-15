@@ -5,12 +5,6 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.humanharvest.organz.utilities.enums.BloodType;
-import com.humanharvest.organz.utilities.enums.ClientType;
-import com.humanharvest.organz.utilities.enums.Country;
-import com.humanharvest.organz.utilities.enums.Gender;
-import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 import com.humanharvest.organz.utilities.enums.*;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
 import com.humanharvest.organz.views.client.Views;
@@ -49,10 +43,10 @@ public class Client implements ConcurrencyControlledEntity {
     private String currentAddress;
 
     @JsonView(Views.Overview.class)
-    private String region;
+    private String region = "Unspecified";
     @Enumerated(EnumType.STRING)
     @JsonView(Views.Overview.class)
-    private Country country;
+    private Country country = Country.NZ;
     @Enumerated(EnumType.STRING)
     @JsonView(Views.Overview.class)
     private Gender gender;
@@ -89,6 +83,11 @@ public class Client implements ConcurrencyControlledEntity {
     private final Instant createdTimestamp;
     @JsonView(Views.Details.class)
     private Instant modifiedTimestamp;
+
+    @JsonView(Views.Overview.class)
+    private boolean isDonor = false;
+    @JsonView(Views.Overview.class)
+    private boolean isReceiver = false;
 
     @ElementCollection(targetClass = Organ.class)
     @Enumerated(EnumType.STRING)
@@ -195,6 +194,7 @@ public class Client implements ConcurrencyControlledEntity {
         } else {
             organsDonating.remove(organ);
         }
+        isDonor = !organsDonating.isEmpty();
         updateModifiedTimestamp();
     }
 
@@ -206,14 +206,16 @@ public class Client implements ConcurrencyControlledEntity {
                 organsDonating.remove(entry.getKey());
             }
         }
+        isDonor = !organsDonating.isEmpty();
         updateModifiedTimestamp();
     }
 
-    public void setTransplantRequests(List<TransplantRequest> requests) {
-        transplantRequests = new ArrayList<>(requests);
-        for (TransplantRequest request : requests) {
-            request.setClient(this);
+    public void setDonatedOrgans(Collection<DonatedOrgan> donatedOrgans) {
+        this.donatedOrgans = new ArrayList<>(donatedOrgans);
+        for (DonatedOrgan donatedOrgan : donatedOrgans) {
+            donatedOrgan.setDonor(this);
         }
+        isDonor = !organsDonating.isEmpty();
         updateModifiedTimestamp();
     }
 
@@ -241,12 +243,8 @@ public class Client implements ConcurrencyControlledEntity {
         updateModifiedTimestamp();
     }
 
-    public void setDonatedOrgans(Collection<DonatedOrgan> donatedOrgans) {
-        this.donatedOrgans = new ArrayList<>(donatedOrgans);
-        for (DonatedOrgan donatedOrgan : donatedOrgans) {
-            donatedOrgan.setDonor(this);
-        }
-        updateModifiedTimestamp();
+    public Set<Organ> getCurrentlyDonatedOrgans() {
+        return Collections.unmodifiableSet(organsDonating);
     }
 
     /**
@@ -557,16 +555,24 @@ public class Client implements ConcurrencyControlledEntity {
         return organDonationStatus;
     }
 
-    public Set<Organ> getCurrentlyDonatedOrgans() {
-        return organsDonating;
-    }
-
     public Set<Organ> getCurrentlyRequestedOrgans() {
-        return transplantRequests
+        return Collections.unmodifiableSet(transplantRequests
                 .stream()
                 .filter(request -> request.getStatus() == TransplantRequestStatus.WAITING)
                 .map(TransplantRequest::getRequestedOrgan)
-                .collect(Collectors.toCollection(() -> EnumSet.noneOf(Organ.class)));
+                .collect(Collectors.toCollection(() -> EnumSet.noneOf(Organ.class))));
+    }
+
+    /**
+     * Returns a list of illnesses that Client previously had
+     *
+     * @return List of illnesses held by Client
+     */
+    public List<IllnessRecord> getPastIllnesses() {
+        return Collections.unmodifiableList(illnessHistory.stream().filter(
+                record -> record.getCuredDate() != null
+
+        ).collect(Collectors.toList()));
     }
 
     public Map<Organ, Boolean> getOrganRequestStatus() {
@@ -705,24 +711,24 @@ public class Client implements ConcurrencyControlledEntity {
     }
 
     /**
-     * Returns a list of illnesses that Client previously had
-     * @return List of illnesses held by Client
-     */
-    public List<IllnessRecord> getPastIllnesses() {
-        return illnessHistory.stream().filter(
-                record -> record.getCuredDate() != null
-
-        ).collect(Collectors.toList());
-    }
-
-    /**
      * Returns list of illnesses client currently has
      * @return List of illnesses client currently has
      */
     public List<IllnessRecord> getCurrentIllnesses() {
-        return illnessHistory.stream().filter(
+        return Collections.unmodifiableList(illnessHistory.stream().filter(
                 record -> record.getCuredDate() == null
-        ).collect(Collectors.toList());
+        ).collect(Collectors.toList()));
+    }
+
+    /**
+     * Returns a list of procedures that the client has previously undergone.
+     *
+     * @return A list of past procedures for the client.
+     */
+    public List<ProcedureRecord> getPastProcedures() {
+        return Collections.unmodifiableList(procedures.stream()
+                .filter(record -> record.getDate().isBefore(LocalDate.now()))
+                .collect(Collectors.toList()));
     }
 
     /**
@@ -754,23 +760,17 @@ public class Client implements ConcurrencyControlledEntity {
     }
 
     /**
-     * Returns a list of procedures that the client has previously undergone.
-     * @return A list of past procedures for the client.
-     */
-    public List<ProcedureRecord> getPastProcedures() {
-        return procedures.stream()
-                .filter(record -> record.getDate().isBefore(LocalDate.now()))
-                .collect(Collectors.toList());
-    }
-
-    /**
      * Returns a list of procedures that the client is going to undergo.
      * @return A list of pending procedures for the client.
      */
     public List<ProcedureRecord> getPendingProcedures() {
-        return procedures.stream()
+        return Collections.unmodifiableList(procedures.stream()
                 .filter(record -> !record.getDate().isBefore(LocalDate.now()))
-                .collect(Collectors.toList());
+                .collect(Collectors.toList()));
+    }
+
+    public List<TransplantRequest> getTransplantRequests() {
+        return Collections.unmodifiableList(transplantRequests);
     }
 
     /**
@@ -919,8 +919,13 @@ public class Client implements ConcurrencyControlledEntity {
         return Objects.hash(uid);
     }
 
-    public List<TransplantRequest> getTransplantRequests() {
-        return transplantRequests;
+    public void setTransplantRequests(List<TransplantRequest> requests) {
+        transplantRequests = new ArrayList<>(requests);
+        for (TransplantRequest request : requests) {
+            request.setClient(this);
+        }
+        isReceiver = !transplantRequests.isEmpty();
+        updateModifiedTimestamp();
     }
 
     public Optional<TransplantRequest> getTransplantRequestById(long id) {
@@ -932,20 +937,21 @@ public class Client implements ConcurrencyControlledEntity {
     public void addTransplantRequest(TransplantRequest request) {
         transplantRequests.add(request);
         request.setClient(this);
+        isReceiver = !transplantRequests.isEmpty();
     }
 
     public void removeTransplantRequest(TransplantRequest request) {
         transplantRequests.remove(request);
         request.setClient(null);
+        isReceiver = !transplantRequests.isEmpty();
     }
 
     /**
      * Indicates whether the client is a donor (has chosen to donate at least one organ)
      * @return boolean of whether the client has chosen to donate any organs
      */
-    @JsonIgnore
     public boolean isDonor() {
-        return !getCurrentlyDonatedOrgans().isEmpty();
+        return isDonor;
     }
 
     @JsonIgnore
@@ -980,9 +986,8 @@ public class Client implements ConcurrencyControlledEntity {
      * Indicates whether the client is a receiver (has at least one transplant request)
      * @return boolean of whether the client has any organ transplant requests
      */
-    @JsonIgnore
     public boolean isReceiver() {
-        return !transplantRequests.isEmpty();
+        return isReceiver;
     }
 
     /**
@@ -1017,6 +1022,7 @@ public class Client implements ConcurrencyControlledEntity {
 
     /**
      * Registers the given {@link Organ} as having been donated by this client at this moment.
+     *
      * @param organ The organ donated.
      */
     public void donateOrgan(Organ organ) {
@@ -1025,8 +1031,9 @@ public class Client implements ConcurrencyControlledEntity {
 
     /**
      * Registers the given {@link Organ} as having been donated by this client at this moment.
+     *
      * @param organ The organ donated.
-     * @param id The id to use for the {@link DonatedOrgan}
+     * @param id    The id to use for the {@link DonatedOrgan}
      */
     public void donateOrgan(Organ organ, Long id) {
         donatedOrgans.add(new DonatedOrgan(organ, this, LocalDateTime.now(), id));

@@ -209,11 +209,18 @@ public class Clinician implements ConcurrencyControlledEntity {
         return staffId;
     }
 
+    /**
+     * Returns a hashed version of the latest timestamp for use in concurrency control
+     * The hash is surrounded by double quotes as required for a valid ETag
+     *
+     * @return The ETag string with double quotes
+     */
+    @Override
     public String getETag() {
         if (modifiedOn == null) {
-            return "\"" + String.valueOf(createdOn.hashCode()) + "\"";
+            return String.format("\"%d\"", createdOn.hashCode());
         } else {
-            return "\"" + String.valueOf(modifiedOn.hashCode()) + "\"";
+            return String.format("\"%d\"", modifiedOn.hashCode());
         }
     }
 
