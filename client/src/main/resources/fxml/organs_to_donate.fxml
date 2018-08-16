@@ -128,7 +128,7 @@
                   <children>
                   <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="25.0" prefWidth="208.0" text="Potential recipients">
                     <font>
-                      <Font size="20.0" />
+                      <Font size="17.0" />
                     </font>
                                  <padding>
                                     <Insets bottom="2.0" />
