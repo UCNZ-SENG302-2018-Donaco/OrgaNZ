@@ -40,8 +40,7 @@
               <top>
                 <GridPane vgap="5.0" BorderPane.alignment="CENTER">
                   <columnConstraints>
-                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="922.0" minWidth="10.0" prefWidth="776.0" />
-                              <ColumnConstraints hgrow="SOMETIMES" maxWidth="204.0" minWidth="10.0" prefWidth="202.0" />
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" percentWidth="100.0" prefWidth="776.0" />
                   </columnConstraints>
                   <rowConstraints>
                     <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -50,9 +49,9 @@
                   <children>
                     <HBox>
                       <children>
-                        <Label alignment="CENTER" prefHeight="25.0" prefWidth="797.0" text="Organs to Donate">
+                        <Label prefHeight="25.0" prefWidth="797.0" text="Organs to Donate">
                           <font>
-                            <Font size="27.0" />
+                            <Font size="20.0" />
                           </font>
                                        <HBox.margin>
                                           <Insets bottom="5.0" />
@@ -65,7 +64,7 @@
                                     <Insets />
                                  </GridPane.margin>
                                  <children>
-                          <TitledPane expanded="false" prefHeight="26.0" prefWidth="798.0" text="Filter">
+                          <TitledPane expanded="false" prefHeight="26.0" prefWidth="798.0" text="Filter" HBox.hgrow="ALWAYS">
                             <content>
                               <GridPane hgap="10.0">
                                 <columnConstraints>
@@ -95,11 +94,6 @@
                           </TitledPane>
                                  </children>
                               </HBox>
-                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="25.0" prefWidth="208.0" text="Potential Recipients" GridPane.columnIndex="1" GridPane.rowIndex="1">
-                    <font>
-                      <Font size="20.0" />
-                    </font>
-                  </Label>
                   </children>
                 </GridPane>
               </top>
@@ -127,11 +121,19 @@
                 </TableView>
               </center>
               <right>
-                <VBox BorderPane.alignment="CENTER">
+                <VBox prefHeight="359.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                   <BorderPane.margin>
                     <Insets left="5.0" top="10.0" />
                   </BorderPane.margin>
                   <children>
+                  <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="25.0" prefWidth="208.0" text="Potential recipients">
+                    <font>
+                      <Font size="20.0" />
+                    </font>
+                                 <padding>
+                                    <Insets bottom="2.0" />
+                                 </padding>
+                  </Label>
                     <ListView fx:id="potentialRecipients" prefHeight="428.0" prefWidth="200.0">
                       <VBox.margin>
                         <Insets />
