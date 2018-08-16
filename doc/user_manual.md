@@ -32,6 +32,6 @@ Staff ID: `0`
 Password: `clinician`
 
 ## Default Admin Login
-Staff ID: `0`
+Staff ID: `admin`
 
 Password: `<No password>`
