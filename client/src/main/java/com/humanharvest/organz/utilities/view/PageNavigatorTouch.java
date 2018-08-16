@@ -4,6 +4,7 @@ import com.humanharvest.organz.MultitouchHandler;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.controller.components.TouchAlertController;
+import com.humanharvest.organz.controller.components.TouchAlertTextController;
 import com.humanharvest.organz.state.State;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -164,6 +165,36 @@ public class PageNavigatorTouch implements IPageNavigator {
             Property<Boolean> result = new SimpleBooleanProperty();
             result.setValue(false);
             return result;
+        }
+    }
+
+    public TouchAlertTextController showAlertWithText(String title, String bodyText, Window window) {
+        LOGGER.info("Opening new window");
+        try {
+            Stage newStage = new Stage();
+            FXMLLoader loader = new FXMLLoader(PageNavigatorTouch.class.getResource(Page.TOUCH_ALERT_TEXT.getPath()));
+            Pane mainPane = loader.load();
+
+            TouchAlertTextController controller = loader.getController();
+            controller.setup(title, bodyText, newStage, mainPane);
+
+            MultitouchHandler.addPane(mainPane);
+            MultitouchHandler.setupPaneListener(mainPane);
+
+            // Set the positioning based off the calling window if it is valid.
+            if (window != null && window.getScene() != null && window.getScene().getRoot() != null && window.getScene().getRoot().getTransforms().size() == 1) {
+                Parent root = window.getScene().getRoot();
+
+                Transform transforms = root.getTransforms().get(0).clone();
+                mainPane.getTransforms().add(transforms);
+            }
+
+            return controller;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            LOGGER.log(Level.SEVERE, "Error loading new window\n", e);
+            return null;
         }
     }
 }

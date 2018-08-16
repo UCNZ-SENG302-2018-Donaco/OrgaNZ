@@ -2,6 +2,7 @@ package com.humanharvest.organz.utilities.view;
 
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.controller.components.TouchAlertTextController;
 import com.humanharvest.organz.state.State;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleBooleanProperty;
@@ -10,6 +11,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
@@ -142,5 +144,19 @@ public class PageNavigatorStandard implements IPageNavigator {
             booleanProperty.setValue(false);
         }
         return booleanProperty;
+    }
+
+    @Override
+    public TouchAlertTextController showAlertWithText(String title, String bodyText, Window window) {
+        TextInputDialog popup = new TextInputDialog();
+        popup.setTitle(title);
+        popup.setHeaderText(bodyText);
+        popup.setContentText("Reason:");
+        popup.getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
+        popup.getEditor().textProperty().addListener((observable, oldValue, newValue) ->
+                popup.getDialogPane().lookupButton(ButtonType.OK).setDisable(newValue.isEmpty()));
+
+        String response = popup.showAndWait().orElse("");
+        return new TouchAlertTextController(!response.isEmpty(), response);
     }
 }

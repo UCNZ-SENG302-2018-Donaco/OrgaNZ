@@ -41,6 +41,9 @@ public class MTContextMenuSkin extends ContextMenuSkin {
             if (cmContent != null || !popupMenu.getStyleClass().contains("text-input-context-menu")) {
 
                 Node owner = getSkinnable().getOwnerNode();
+                if (owner == null) {
+                    return;
+                }
                 double angle = Util.getRotationDegreesLocalToScene(owner);
                 double offsetY = 0.0D;
                 if (cmContent instanceof ContextMenuContent) {

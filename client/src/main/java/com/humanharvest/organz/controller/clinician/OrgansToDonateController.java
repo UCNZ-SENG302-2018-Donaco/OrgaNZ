@@ -6,6 +6,7 @@ import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SidebarController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.controller.components.DurationUntilExpiryCell;
+import com.humanharvest.organz.controller.components.TouchAlertTextController;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
@@ -416,44 +417,50 @@ public class OrgansToDonateController extends SubController {
         }
     }
 
+
     private void openManuallyExpireDialog() {
         // Create a popup with a text field to enter the reason
-        TextInputDialog popup = new TextInputDialog();
-        popup.setTitle("Manually Override Organ");
-        popup.setHeaderText("Enter the reason for overriding this organ:");
-        popup.setContentText("Reason:");
-        popup.getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
-        popup.getEditor().textProperty().addListener((observable, oldValue, newValue) ->
-                popup.getDialogPane().lookupButton(ButtonType.OK).setDisable(newValue.isEmpty()));
 
-        // If user clicks the OK button
-        String response = popup.showAndWait().orElse("");
-        if (!response.isEmpty()) {
-            try {
-                StringBuilder overrideReason = new StringBuilder(response);
-                overrideReason.append("\n").append(LocalDateTime.now().format(dateTimeFormat));
-                if (session.getLoggedInUserType() == UserType.CLINICIAN) {
-                    overrideReason.append(String.format("\nOverriden by clinician %d (%s)",
-                            session.getLoggedInClinician().getStaffId(), session.getLoggedInClinician().getFullName()));
-                } else if (session.getLoggedInUserType() == UserType.ADMINISTRATOR) {
-                    overrideReason.append(String.format("\nOverriden by admin '%s'.",
-                            session.getLoggedInAdministrator().getUsername()));
-                }
-                State.getClientResolver().manuallyOverrideOrgan(selectedOrgan, overrideReason.toString());
-                PageNavigator.refreshAllWindows();
-            } catch (IfMatchFailedException exc) {
-                // TODO deal with outdated error
-            } catch (NotFoundException exc) {
-                Notifications.create()
-                        .title("Client/Organ Not Found")
-                        .text("The client/donated organ could not be found on the server; it may have been deleted.")
-                        .showWarning();
-            } catch (ServerRestException exc) {
-                Notifications.create()
-                        .title("Server Error")
-                        .text("A server error occurred when overriding this donated organ; please try again later.")
-                        .showError();
+        TouchAlertTextController controller = PageNavigator.showTextAlert("Manually Override Organ", "Enter the reason for overriding this organ:", mainController.getStage());
+
+        if (controller.getResultProperty().getValue() != null) {
+            if (controller.getResultProperty().getValue()) {
+                overrideOrgan(controller.getText());
             }
+        } else {
+            controller.getResultProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue) {
+                    overrideOrgan(controller.getText());
+                }
+            });
+        }
+    }
+
+    private void overrideOrgan(String reason) {
+        try {
+            StringBuilder overrideReason = new StringBuilder(reason);
+            overrideReason.append("\n").append(LocalDateTime.now().format(dateTimeFormat));
+            if (session.getLoggedInUserType() == UserType.CLINICIAN) {
+                overrideReason.append(String.format("\nOverriden by clinician %d (%s)",
+                        session.getLoggedInClinician().getStaffId(), session.getLoggedInClinician().getFullName()));
+            } else if (session.getLoggedInUserType() == UserType.ADMINISTRATOR) {
+                overrideReason.append(String.format("\nOverriden by admin '%s'.",
+                        session.getLoggedInAdministrator().getUsername()));
+            }
+            State.getClientResolver().manuallyOverrideOrgan(selectedOrgan, overrideReason.toString());
+            PageNavigator.refreshAllWindows();
+        } catch (IfMatchFailedException exc) {
+            // TODO deal with outdated error
+        } catch (NotFoundException exc) {
+            Notifications.create()
+                    .title("Client/Organ Not Found")
+                    .text("The client/donated organ could not be found on the server; it may have been deleted.")
+                    .showWarning();
+        } catch (ServerRestException exc) {
+            Notifications.create()
+                    .title("Server Error")
+                    .text("A server error occurred when overriding this donated organ; please try again later.")
+                    .showError();
         }
     }
 
