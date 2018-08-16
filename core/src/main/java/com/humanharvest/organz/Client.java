@@ -950,6 +950,7 @@ public class Client implements ConcurrencyControlledEntity {
      * Indicates whether the client is a donor (has chosen to donate at least one organ)
      * @return boolean of whether the client has chosen to donate any organs
      */
+    @JsonIgnore
     public boolean isDonor() {
         return isDonor;
     }
@@ -986,6 +987,7 @@ public class Client implements ConcurrencyControlledEntity {
      * Indicates whether the client is a receiver (has at least one transplant request)
      * @return boolean of whether the client has any organ transplant requests
      */
+    @JsonIgnore
     public boolean isReceiver() {
         return isReceiver;
     }
