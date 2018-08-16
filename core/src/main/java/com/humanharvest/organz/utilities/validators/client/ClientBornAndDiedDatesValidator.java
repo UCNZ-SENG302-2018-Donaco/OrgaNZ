@@ -41,7 +41,7 @@ public class ClientBornAndDiedDatesValidator {
     public static boolean timeOfDeathIsValid(LocalDate dateOfDeath, LocalTime timeOfDeath) {
         return dateOfDeath == null
                 || (timeOfDeath != null &&
-                (!LocalDate.now().equals(dateOfDeath) || !timeOfDeath.isAfter(LocalTime.now())));
+                (!LocalDate.now().equals(dateOfDeath) || !timeOfDeath.isAfter(LocalTime.now().plusMinutes(1))));
     }
 
     private static boolean dateTimeOfDeathIsValid(LocalDate dateOfDeath, LocalTime timeOfDeath, LocalDate dateOfBirth) {
@@ -55,7 +55,7 @@ public class ClientBornAndDiedDatesValidator {
         LocalDateTime dateTimeOfDeath = LocalDateTime.of(dateOfDeath, timeOfDeath);
 
         // Check datetime of death is not in the future, and is not before their date of birth
-        return !dateTimeOfDeath.isAfter(LocalDateTime.now()) && !dateOfDeath.isBefore(dateOfBirth);
+        return !dateTimeOfDeath.isAfter(LocalDateTime.now().plusMinutes(1)) && !dateOfDeath.isBefore(dateOfBirth);
     }
 
     public static boolean isValid(ModifyClientObject clientView, Client client) {
