@@ -18,11 +18,13 @@ having to deal with ties to specific deployment environments.
 
 
 #### Google HTTP Client
-> Fill this in
+This library provides a simple and robust bare bones HTTP Client, initially used for external API queries.
+It now also backs the Spring REST service used for client server architecture.
 
 
 #### MySQL Connector
-> Fill this in
+This library provides MySQL direct database access, used for the SQL command which requires direct access, as opposed
+to the Hibernate higher level library.
 
 #### Controls FX
 * *CheckComboBoxes* - These were chosen as they reduce the number of clicks that users require to filter their lists. 
@@ -75,5 +77,6 @@ functionality.
 
 
 #### Mockito
-> Fill this in
+This robust testing library allows us to ensure our tests only focus on core logic. This is used to mock server
+and external influences into expected results.
 
