@@ -5,22 +5,9 @@ We had a very simple approach to the styling; clean, tabbed spaces and whitespac
 commenting if necessary. Each class had a Javadoc header explaining the purpose of it as well as the version
 that it implemented and the Authors and date created.
 
-#### Commands and Utilities
-Our project was set up in two main files: Commands and Utilities. As weird as it may sound,
-any classes inheriting off our command base was put into the commands section and anything that related to
-the utilisation of the data surrounding the client was put into the utilities section, including blood type converter,
-gender and the local date converter. We also had a client manager that used functions requested from the commands and
-updated the client's information using the utilities section.
+## External Libraries
 
-#### Testing
-The testing of the project was simple: Unit testing. we would test whether the classes would produce
-valid results, what would happen if a user forgot to enter a necessary part into the command, what processes
-would occur if there were duplicate results entered, and any other valid acceptance or rejecting tests.
-
-
-## Libraries
-
-#### Sprint Boot
+#### Spring Boot
 Spring boot provides us with a simple stand-alone framework to build our client-server architecture. Since Spring
 focuses on the pluming of enterprise applications, it allows us to focus on the application-level business logic without
 having to deal with ties to specific deployment environments.
@@ -31,11 +18,13 @@ having to deal with ties to specific deployment environments.
 
 
 #### Google HTTP Client
-> Fill this in
+This library provides a simple and robust bare bones HTTP Client, initially used for external API queries.
+It now also backs the Spring REST service used for client server architecture.
 
 
 #### MySQL Connector
-> Fill this in
+This library provides MySQL direct database access, used for the SQL command which requires direct access, as opposed
+to the Hibernate higher level library.
 
 #### Controls FX
 * *CheckComboBoxes* - These were chosen as they reduce the number of clicks that users require to filter their lists. 
@@ -87,9 +76,8 @@ TestFX provides us with a front-end testing framework that reduces the amount of
 Basic functionality of the pages forms can be tested to ensure new development of our project isn't breaking existing
 functionality.
 
-#### JLine 2
-> Fill this in
 
 #### Mockito
-> Fill this in
+This robust testing library allows us to ensure our tests only focus on core logic. This is used to mock server
+and external influences into expected results.
 
