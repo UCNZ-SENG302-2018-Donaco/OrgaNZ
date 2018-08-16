@@ -12,7 +12,7 @@
 }
 
 .combo-box {
-    -fx-skin: "com.humanharvest.organz.skin.MTComboBoxListViewSkin";
+    -fx-skin: "com.humanharvest.organz.skin.CustomMTComboBoxListViewSkin";
 }
 
 .date-picker {
