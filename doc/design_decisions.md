@@ -20,7 +20,7 @@ would occur if there were duplicate results entered, and any other valid accepta
 
 ## Libraries
 
-#### Sprint Boot
+#### Spring Boot
 Spring boot provides us with a simple stand-alone framework to build our client-server architecture. Since Spring
 focuses on the pluming of enterprise applications, it allows us to focus on the application-level business logic without
 having to deal with ties to specific deployment environments.
@@ -86,8 +86,6 @@ TestFX provides us with a front-end testing framework that reduces the amount of
 Basic functionality of the pages forms can be tested to ensure new development of our project isn't breaking existing
 functionality.
 
-#### JLine 2
-> Fill this in
 
 #### Mockito
 > Fill this in

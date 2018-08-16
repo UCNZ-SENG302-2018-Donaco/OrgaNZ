@@ -1,4 +1,5 @@
 # SENG302 Team 700: Human Harvest Inc
+![alt text](https://eng-git.canterbury.ac.nz/seng302-2018/team-700/uploads/aa0996125ee57a65f6db44f06e51d034/ORGANZ.png "OrgaNZ Logo")
 
 ## Team Info
 Developers:
