@@ -619,6 +619,21 @@ public final class MultitouchHandler {
         }
     }
 
+    private static final class DatePickerSkinConsumer implements Consumer<EventTarget> {
+        private final Skin<? extends DatePicker> skin;
+
+        public DatePickerSkinConsumer(Skin<? extends DatePicker> skin) {
+            this.skin = skin;
+        }
+
+        @Override
+        public void accept(EventTarget t) {
+            if (!Objects.equals(t, skin.getSkinnable())) {
+                skin.getSkinnable().hide();
+            }
+        }
+    }
+
     public static class FocusAreaHandler implements InvalidationListener {
         private final Collection<Consumer<EventTarget>> skinHandlers = new ArrayList<>();
         private final Collection<Consumer<EventTarget>> popupHandlers = new ArrayList<>();
@@ -671,7 +686,7 @@ public final class MultitouchHandler {
                 } else if (skin instanceof ChoiceBoxSkinAndroid) {
                     skinHandlers.add(new ChoiceBoxSkinConsumer((Skin<ChoiceBox<?>>)skin));
                 } else if (skin instanceof MTDatePickerSkin) {
-                    skinHandlers.add(((MTDatePickerSkin) skin)::handleAutoHidingEvents);
+                    skinHandlers.add(new DatePickerSkinConsumer((Skin<DatePicker>) skin));
                 }
             }
 
