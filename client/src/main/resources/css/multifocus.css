@@ -15,6 +15,10 @@
     -fx-skin: "com.humanharvest.organz.skin.MTComboBoxListViewSkin";
 }
 
+.date-picker {
+    -fx-skin: "com.humanharvest.organz.skin.MTDatePickerSkin";
+}
+
 /* All below are defaults from TuioFX. All above are custom */
 
 
