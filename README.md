@@ -32,6 +32,7 @@ This application makes use of a number of external libraries, including:
 * ControlsFX
 * Hibernate
 * MySqlConnector
+* TUIOFX
 
 And also makes use of these external libraries for testing purposes:
 * JUnit 4
