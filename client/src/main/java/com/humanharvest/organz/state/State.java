@@ -45,7 +45,7 @@ public final class State {
         MEMORY, REST
     }
 
-    public static String BASE_URI = "http://localhost:8080/";
+    public static String BASE_URI = "http://csse-s302g7.canterbury.ac.nz:8080/";
 
     private static DataStorageType currentStorageType = DataStorageType.MEMORY;
 
