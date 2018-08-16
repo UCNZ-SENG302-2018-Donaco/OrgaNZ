@@ -1,11 +1,5 @@
 package com.humanharvest.organz.controller.administrator;
 
-import static org.testfx.api.FxAssert.verifyThat;
-import static org.testfx.matcher.control.ListViewMatchers.hasItems;
-import static org.testfx.matcher.control.ListViewMatchers.hasListCell;
-import static org.testfx.matcher.control.TableViewMatchers.hasNumRows;
-import static org.testfx.util.NodeQueryUtils.hasText;
-
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.controller.ControllerTest;
@@ -15,6 +9,9 @@ import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
 import org.junit.Test;
+
+import static org.testfx.api.FxAssert.verifyThat;
+import static org.testfx.matcher.control.TableViewMatchers.hasNumRows;
 
 public class StaffListControllerTest extends ControllerTest {
 
@@ -42,7 +39,7 @@ public class StaffListControllerTest extends ControllerTest {
 
     @Test
     public void clinicianIsVisible() {
-        verifyThat("#tableView",hasNumRows(2)); // Should have default and clinician1
+        verifyThat("#tableView", hasNumRows(2)); // Should have default and clinician1
 
     }
 }

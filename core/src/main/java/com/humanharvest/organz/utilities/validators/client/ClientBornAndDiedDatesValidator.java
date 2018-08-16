@@ -1,18 +1,19 @@
 package com.humanharvest.organz.utilities.validators.client;
 
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.views.client.ModifyClientObject;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
 
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.views.client.ModifyClientObject;
-
 public class ClientBornAndDiedDatesValidator {
 
     /**
      * Returns true if the date of birth is not null and is not in the future
+     *
      * @param dateOfBirth their date of birth
      */
     public static boolean dateOfBirthIsValid(LocalDate dateOfBirth) {
@@ -23,6 +24,7 @@ public class ClientBornAndDiedDatesValidator {
      * Returns true if the date of death is not null, and
      * is not in the future, and
      * is not before their date of birth (or the date of birth is null)
+     *
      * @param dateOfDeath their date of death
      * @param dateOfBirth their date of birth
      */
@@ -35,6 +37,7 @@ public class ClientBornAndDiedDatesValidator {
     /**
      * Returns true if the time of death is not null, and
      * (they didn't die today or they died today, but before the current time)
+     *
      * @param dateOfDeath their date of death
      * @param timeOfDeath their time of death
      */

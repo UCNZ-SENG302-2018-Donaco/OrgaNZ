@@ -61,6 +61,29 @@ public class ClientManagerDBPure implements ClientManager {
         return clients == null ? new ArrayList<>() : clients;
     }
 
+    @Override
+    public void setClients(Collection<Client> clients) {
+        // Clear all clients currently in the database
+        clearPersistedClients();
+
+        Transaction trns = null;
+        try (Session session = dbManager.getDBSession()) {
+            // Persist all the clients in the given collection
+            trns = session.beginTransaction();
+            for (Client client : clients) {
+                if (client.getUid() == null) {
+                    client.setUid(0);
+                }
+                session.replicate(client, ReplicationMode.OVERWRITE);
+            }
+            trns.commit();
+        } catch (RollbackException exc) {
+            if (trns != null) {
+                trns.rollback();
+            }
+        }
+    }
+
     public PaginatedClientList getClients(
             String q,
             Integer offset,
@@ -281,29 +304,6 @@ public class ClientManagerDBPure implements ClientManager {
         }
     }
 
-    @Override
-    public void setClients(Collection<Client> clients) {
-        // Clear all clients currently in the database
-        clearPersistedClients();
-
-        Transaction trns = null;
-        try (Session session = dbManager.getDBSession()) {
-            // Persist all the clients in the given collection
-            trns = session.beginTransaction();
-            for (Client client : clients) {
-                if (client.getUid() == null) {
-                    client.setUid(0);
-                }
-                session.replicate(client, ReplicationMode.OVERWRITE);
-            }
-            trns.commit();
-        } catch (RollbackException exc) {
-            if (trns != null) {
-                trns.rollback();
-            }
-        }
-    }
-
     private void clearPersistedClients() {
         try (Connection connection = dbManager.getStandardSqlConnection()) {
             try (Statement stmt = connection.createStatement()) {
@@ -459,7 +459,7 @@ public class ClientManagerDBPure implements ClientManager {
 
     @Override
     public PaginatedTransplantList getAllCurrentTransplantRequests(Integer offset, Integer count,
-            Set<String> regions, Set<Organ> organs) {
+                                                                   Set<String> regions, Set<Organ> organs) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
@@ -511,7 +511,7 @@ public class ClientManagerDBPure implements ClientManager {
      */
     @Override
     public PaginatedDonatedOrgansList getAllOrgansToDonate(Integer offset, Integer count, Set<String> regionsToFilter,
-            Set<Organ> organType, DonatedOrganSortOptionsEnum sortOption, Boolean reversed) {
+                                                           Set<Organ> organType, DonatedOrganSortOptionsEnum sortOption, Boolean reversed) {
 
         // TODO implement using Hibernate queries instead of in-memory filtering/sorting
 

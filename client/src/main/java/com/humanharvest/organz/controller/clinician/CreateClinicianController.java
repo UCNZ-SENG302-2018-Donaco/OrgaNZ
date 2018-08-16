@@ -1,16 +1,5 @@
 package com.humanharvest.organz.controller.clinician;
 
-import javafx.collections.FXCollections;
-import javafx.fxml.FXML;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.controller.MainController;
@@ -22,6 +11,12 @@ import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
+import javafx.collections.FXCollections;
+import javafx.fxml.FXML;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.*;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 
 /**
  * This controller provides the user with an interface allowing them to enter clinician details. This creates a
@@ -93,7 +88,7 @@ public class CreateClinicianController extends SubController {
 
             } else if (clinicianManager
                     .doesStaffIdExist(Integer.parseInt(staffId.getText()))) { // If the staffId is in use
-                PageNavigator.showAlert(AlertType.ERROR, "Staff Id in Use", "This staff Id is already in use.");
+                PageNavigator.showAlert(AlertType.ERROR, "Staff Id in Use", "This staff Id is already in use.", mainController.getStage());
                 staffIdLabel.setTextFill(Color.RED);
                 update = false;
 

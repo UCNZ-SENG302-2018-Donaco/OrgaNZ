@@ -1,14 +1,13 @@
 package com.humanharvest.organz.controller.clinician;
 
-import static org.junit.Assert.assertEquals;
-
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.controller.ControllerTest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
-import org.junit.Ignore;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class CreateClinicianControllerTest extends ControllerTest {
     private Administrator testAdmin = new Administrator("username", "password");

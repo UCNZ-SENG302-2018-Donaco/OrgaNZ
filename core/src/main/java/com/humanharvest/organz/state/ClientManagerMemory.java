@@ -282,7 +282,7 @@ public class ClientManagerMemory implements ClientManager {
 
     @Override
     public PaginatedTransplantList getAllCurrentTransplantRequests(Integer offset, Integer count,
-            Set<String> regions, Set<Organ> organs) {
+                                                                   Set<String> regions, Set<Organ> organs) {
         // Determine requests that match filters
         List<TransplantRequestView> matchingRequests = getClients().stream()
                 .filter(client -> regions == null || regions.isEmpty() || regions.contains(client.getRegion()))
@@ -323,18 +323,20 @@ public class ClientManagerMemory implements ClientManager {
     @Override
     public Collection<DonatedOrgan> getAllOrgansToDonate() {
         Collection<DonatedOrgan> donatedOrgans = new ArrayList<>();
-        for (Client client: clients) {
+        for (Client client : clients) {
             donatedOrgans.addAll(client.getDonatedOrgans());
         }
         return donatedOrgans;
     }
 
-    /**donatedOrgans,totalResults)
+    /**
+     * donatedOrgans,totalResults)
+     *
      * @return a list of all organs available for donation
      */
     @Override
     public PaginatedDonatedOrgansList getAllOrgansToDonate(Integer offset, Integer count, Set<String> regionsToFilter,
-            Set<Organ> organType, DonatedOrganSortOptionsEnum sortOption, Boolean reversed) {
+                                                           Set<Organ> organType, DonatedOrganSortOptionsEnum sortOption, Boolean reversed) {
 
         Comparator<DonatedOrgan> comparator;
         if (sortOption == null) {

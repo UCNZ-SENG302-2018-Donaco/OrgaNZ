@@ -19,6 +19,7 @@
       </VBox.margin>
     </Button>
     <BorderPane VBox.vgrow="ALWAYS">
+      <properties isTouchTransparent="true" />
       <top>
         <Label text="Staff login" BorderPane.alignment="CENTER">
           <font>
@@ -31,6 +32,7 @@
       </top>
       <center>
         <GridPane>
+          <properties isTouchTransparent="true" />
           <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="128.0" minWidth="10.0" prefWidth="43.0" />
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="224.0" minWidth="10.0" prefWidth="189.0" />

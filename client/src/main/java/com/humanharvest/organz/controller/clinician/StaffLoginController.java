@@ -1,12 +1,5 @@
 package com.humanharvest.organz.controller.clinician;
 
-import java.util.regex.Pattern;
-
-import javafx.fxml.FXML;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
-
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.HistoryItem;
@@ -17,6 +10,12 @@ import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
+import javafx.fxml.FXML;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
+
+import java.util.regex.Pattern;
 
 /**
  * Controller to handle the login of staff.
@@ -61,9 +60,9 @@ public class StaffLoginController extends SubController {
     /**
      * Alert to display that an invalid StaffId has been entered.
      */
-    private static void invalidStaffIdAlert() {
+    private void invalidStaffIdAlert() {
         PageNavigator.showAlert(AlertType.ERROR, "Invalid Staff ID",
-                "Staff ID is invalid");
+                "Staff ID is invalid", mainController.getStage());
     }
 
     /**
@@ -77,7 +76,7 @@ public class StaffLoginController extends SubController {
         try {
             clinician = State.getAuthenticationManager().loginClinician(id, password.getText());
         } catch (AuthenticationException e) {
-            PageNavigator.showAlert(AlertType.ERROR, "Invalid login", e.getLocalizedMessage());
+            PageNavigator.showAlert(AlertType.ERROR, "Invalid login", e.getLocalizedMessage(), mainController.getStage());
             return;
         }
 
@@ -97,7 +96,7 @@ public class StaffLoginController extends SubController {
         try {
             administrator = State.getAuthenticationManager().loginAdministrator(staffId.getText(), password.getText());
         } catch (AuthenticationException e) {
-            PageNavigator.showAlert(AlertType.ERROR, "Invalid login", e.getLocalizedMessage());
+            PageNavigator.showAlert(AlertType.ERROR, "Invalid login", e.getLocalizedMessage(), mainController.getStage());
             return;
         }
 
