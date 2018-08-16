@@ -21,10 +21,10 @@ import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ComboBoxBase;
-import javafx.scene.control.ContextMenu;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.ListView;
 import javafx.scene.control.MenuBar;
+import javafx.scene.control.PopupControl;
 import javafx.scene.control.Skin;
 import javafx.scene.control.Skinnable;
 import javafx.scene.control.Slider;
@@ -710,7 +710,7 @@ public final class MultitouchHandler {
             }
         }
 
-        public void addPopup(ContextMenu popupMenu, Consumer<EventTarget> eventHandler) {
+        public void addPopup(PopupControl popupMenu, Consumer<EventTarget> eventHandler) {
             popupHandlers.add(eventHandler);
         }
     }

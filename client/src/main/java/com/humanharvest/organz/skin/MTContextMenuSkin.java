@@ -27,6 +27,7 @@ public class MTContextMenuSkin extends ContextMenuSkin {
         this.popupMenu = popupMenu;
 
         popupMenu.setAutoHide(false);
+
         if (popupMenu.getOwnerNode() != null) {
             addOwnerNodeHandlers(popupMenu.getOwnerNode());
         } else {

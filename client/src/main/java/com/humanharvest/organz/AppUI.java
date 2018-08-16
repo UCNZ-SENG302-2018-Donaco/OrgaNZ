@@ -72,7 +72,7 @@ public class AppUI extends Application {
 
                 primaryStage.setScene(scene);
 
-                //primaryStage.setFullScreen(true);
+                primaryStage.setFullScreen(true);
                 break;
 
             default:
