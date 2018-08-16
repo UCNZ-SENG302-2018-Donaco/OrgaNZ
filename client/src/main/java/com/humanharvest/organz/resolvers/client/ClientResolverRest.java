@@ -1,37 +1,18 @@
 package com.humanharvest.organz.resolvers.client;
 
+import com.humanharvest.organz.*;
+import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.views.SingleStringView;
+import com.humanharvest.organz.views.client.*;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.*;
+
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.DonatedOrgan;
-import com.humanharvest.organz.HistoryItem;
-import com.humanharvest.organz.IllnessRecord;
-import com.humanharvest.organz.MedicationRecord;
-import com.humanharvest.organz.ProcedureRecord;
-import com.humanharvest.organz.TransplantRequest;
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.views.SingleStringView;
-import com.humanharvest.organz.views.client.CreateClientView;
-import com.humanharvest.organz.views.client.CreateIllnessView;
-import com.humanharvest.organz.views.client.CreateMedicationRecordView;
-import com.humanharvest.organz.views.client.CreateProcedureView;
-import com.humanharvest.organz.views.client.CreateTransplantRequestView;
-import com.humanharvest.organz.views.client.DonatedOrganView;
-import com.humanharvest.organz.views.client.ModifyClientObject;
-import com.humanharvest.organz.views.client.ModifyIllnessObject;
-import com.humanharvest.organz.views.client.ModifyProcedureObject;
-import com.humanharvest.organz.views.client.ResolveTransplantRequestObject;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 
 public class ClientResolverRest implements ClientResolver {
 
@@ -109,7 +90,8 @@ public class ClientResolverRest implements ClientResolver {
 
         ResponseEntity<Collection<DonatedOrganView>> responseEntity = sendQuery(httpHeaders,
                 State.BASE_URI + "clients/{id}/donatedOrgans", HttpMethod.GET,
-                new ParameterizedTypeReference<Collection<DonatedOrganView>>() {}, client.getUid());
+                new ParameterizedTypeReference<Collection<DonatedOrganView>>() {
+                }, client.getUid());
 
         return responseEntity.getBody().stream().map(DonatedOrganView::getDonatedOrgan).collect(Collectors.toList());
     }
@@ -231,7 +213,7 @@ public class ClientResolverRest implements ClientResolver {
 
     @Override
     public TransplantRequest resolveTransplantRequest(Client client, TransplantRequest request,
-            ResolveTransplantRequestObject resolveTransplantRequestObject) {
+                                                      ResolveTransplantRequestObject resolveTransplantRequestObject) {
         HttpHeaders httpHeaders = createHeaders(true);
         long id = request.getId();
         ResponseEntity<TransplantRequest> responseEntity = sendQuery(httpHeaders,

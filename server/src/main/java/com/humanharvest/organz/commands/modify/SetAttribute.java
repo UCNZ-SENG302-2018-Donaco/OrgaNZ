@@ -109,7 +109,7 @@ public class SetAttribute implements Runnable {
         states.put("firstName", new String[]{client.getFirstName(), firstName});
         states.put("middleName", new String[]{client.getMiddleName(), middleName});
         states.put("lastName", new String[]{client.getLastName(), lastName});
-        states.put("currentAddressgender", new String[]{client.getCurrentAddress(), address});
+        states.put("currentAddress", new String[]{client.getCurrentAddress(), address});
         states.put("region", new String[]{client.getRegion(), region});
         states.put("country", new Country[]{client.getCountry(), country});
         states.put("gender", new Gender[]{client.getGender(), gender});

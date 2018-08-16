@@ -1,16 +1,16 @@
 package com.humanharvest.organz.state;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import javax.persistence.PersistenceException;
-import javax.persistence.RollbackException;
-
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.database.DBManager;
 import com.humanharvest.organz.utilities.enums.Region;
 import org.hibernate.Transaction;
+
+import javax.persistence.PersistenceException;
+import javax.persistence.RollbackException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 public class ClinicianManagerDBPure implements ClinicianManager {
 

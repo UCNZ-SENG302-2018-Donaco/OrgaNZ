@@ -1,25 +1,5 @@
 package com.humanharvest.organz.controller.clinician;
 
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
-import java.util.EnumSet;
-import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import javafx.collections.FXCollections;
-import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.controller.MainController;
@@ -33,7 +13,21 @@ import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.views.clinician.ModifyClinicianObject;
+import javafx.collections.FXCollections;
+import javafx.fxml.FXML;
+import javafx.scene.control.*;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import org.controlsfx.control.Notifications;
+
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.util.EnumSet;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Presents an interface displaying all information of the currently logged in Clinician. Clinicians are able to edit
@@ -180,7 +174,7 @@ public class ViewClinicianController extends ViewBaseController {
         } catch (NumberFormatException e) {
             LOGGER.log(Level.WARNING, "Invalid staff ID", e);
             PageNavigator.showAlert(Alert.AlertType.ERROR, "Invalid Staff ID",
-                    "The Staff ID must be an integer.");
+                    "The Staff ID must be an integer.", mainController.getStage());
             return;
         }
         try {
@@ -188,7 +182,7 @@ public class ViewClinicianController extends ViewBaseController {
             viewedClinician = newClin.get();
         } catch (NotFoundException ex) {
             PageNavigator.showAlert(Alert.AlertType.ERROR, "Invalid Staff ID",
-                    "This staff ID does not exist in the system.");
+                    "This staff ID does not exist in the system.", mainController.getStage());
             return;
         }
         getViewedClinicianData();
@@ -333,18 +327,18 @@ public class ViewClinicianController extends ViewBaseController {
         } catch (NotFoundException e) {
             LOGGER.log(Level.WARNING, "Client not found");
             PageNavigator.showAlert(AlertType.WARNING, "Clinician not found", "The clinician could not be found on "
-                    + "the server, it may have been deleted");
+                    + "the server, it may have been deleted", mainController.getStage());
             return false;
         } catch (ServerRestException e) {
             LOGGER.log(Level.WARNING, e.getMessage(), e);
             PageNavigator.showAlert(AlertType.WARNING, "Server error", "Could not apply changes on the server, "
-                    + "please try again later");
+                    + "please try again later", mainController.getStage());
             return false;
         } catch (IfMatchFailedException e) {
             LOGGER.log(Level.INFO, "If-Match did not match");
             PageNavigator.showAlert(AlertType.WARNING, "Outdated Data",
                     "The clinician has been modified since you retrieved the data.\nIf you would still like to "
-                            + "apply these changes please submit again, otherwise refresh the page to update the data.");
+                            + "apply these changes please submit again, otherwise refresh the page to update the data.", mainController.getStage());
             return false;
         }
     }

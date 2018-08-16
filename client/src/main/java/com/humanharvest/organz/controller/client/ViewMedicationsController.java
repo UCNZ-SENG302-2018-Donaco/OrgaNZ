@@ -88,6 +88,7 @@ public class ViewMedicationsController extends SubController {
     /**
      * Creates a cell factory for the list view, that allows cells to be deselected by clicking a second time
      * Only up to two cells may be selected at once
+     *
      * @param listView to create a cellfactory for
      */
     private void configureCellFactory(ListView<MedicationRecord> listView) {
@@ -111,13 +112,13 @@ public class ViewMedicationsController extends SubController {
 
                     if (listView.getSelectionModel().getSelectedIndices().contains(index)) {
                         listView.getSelectionModel().clearSelection(index);
-                    } else if (numSelected < 2){  // Only select if there are less than two currently selected
+                    } else if (numSelected < 2) {  // Only select if there are less than two currently selected
                         listView.getSelectionModel().select(index);
                     }
                     event.consume();
                 }
             });
-            return cell ;
+            return cell;
         });
     }
 
@@ -229,6 +230,7 @@ public class ViewMedicationsController extends SubController {
 
     /**
      * Gets all selected medication records from both the current and past medication lists
+     *
      * @return list of all currently selected medication records
      */
     private List<MedicationRecord> getSelectedRecords() {
@@ -254,16 +256,16 @@ public class ViewMedicationsController extends SubController {
             LOGGER.log(Level.WARNING, "Client not found");
             PageNavigator.showAlert(AlertType.WARNING, "Client or medication not found", "The client could not "
                     + "be found on the "
-                    + "server, it may have been deleted");
+                    + "server, it may have been deleted", mainController.getStage());
         } catch (ServerRestException e) {
             LOGGER.log(Level.WARNING, e.getMessage(), e);
             PageNavigator.showAlert(AlertType.WARNING, "Server error", "Could not apply changes on the server, "
-                    + "please try again later");
+                    + "please try again later", mainController.getStage());
         } catch (IfMatchFailedException e) {
             LOGGER.log(Level.INFO, "If-Match did not match");
             PageNavigator.showAlert(AlertType.WARNING, "Outdated Data",
                     "The client has been modified since you retrieved the data.\nIf you would still like to "
-                    + "apply these changes please submit again, otherwise refresh the page to update the data.");
+                            + "apply these changes please submit again, otherwise refresh the page to update the data.", mainController.getStage());
         }
     }
 
@@ -443,6 +445,7 @@ public class ViewMedicationsController extends SubController {
 
     /**
      * Displays the ingredients of the currently selected medication, given that it is a valid medication
+     *
      * @param selectedMedication Currently selected medication
      */
     private void setActiveIngredients(MedicationRecord selectedMedication) {

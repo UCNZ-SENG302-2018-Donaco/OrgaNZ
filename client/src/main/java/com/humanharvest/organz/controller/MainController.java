@@ -1,5 +1,6 @@
 package com.humanharvest.organz.controller;
 
+import com.humanharvest.organz.MultitouchHandler;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
@@ -25,10 +26,11 @@ public class MainController {
 
     private Stage stage;
     private Page currentPage;
+    private Pane pane;
     private WindowContext windowContext;
-    private String windowTitle;
+    private String title;
     private SidebarController sidebarController;
-    private MenuBarController MenuBarController;
+    private MenuBarController menuBarController;
     private SubController subController;
 
     /**
@@ -37,8 +39,13 @@ public class MainController {
     @FXML
     private StackPane pageHolder;
 
+    @FXML
+    public void initialize() {
+        pageHolder.getStyleClass().add("window");
+    }
+
     public Stage getStage() {
-        return this.stage;
+        return stage;
     }
 
     public Page getCurrentPage() {
@@ -53,6 +60,14 @@ public class MainController {
         this.stage = stage;
     }
 
+    public void setPane(Pane pane) {
+        this.pane = pane;
+    }
+
+    public Pane getPane() {
+        return pane;
+    }
+
     /**
      * Replaces the page displayed in the page holder with a new page.
      * @param page the new current Page.
@@ -64,11 +79,11 @@ public class MainController {
     }
 
     public void setWindowContext(WindowContext context) {
-        this.windowContext = context;
+        windowContext = context;
     }
 
     void resetWindowContext() {
-        this.windowContext = WindowContext.defaultContext();
+        windowContext = WindowContext.defaultContext();
     }
 
     /**
@@ -77,6 +92,9 @@ public class MainController {
     @FXML
     void closeWindow() {
         stage.close();
+        if (State.getUiType() == State.UiType.TOUCH) {
+            MultitouchHandler.removePane(pane);
+        }
     }
 
     /**
@@ -105,8 +123,8 @@ public class MainController {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource(Page.MENU_BAR.getPath()));
             HBox menuBar = loader.load();
-            MenuBarController = loader.getController();
-            MenuBarController.setup(this);
+            menuBarController = loader.getController();
+            menuBarController.setup(this);
             menuBarPane.getChildren().setAll(menuBar);
         } catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Couldn't load sidebar from fxml file.", e);
@@ -130,21 +148,21 @@ public class MainController {
      * Refreshes only the navigation bar
      */
     public void refreshNavigation() {
-        if (MenuBarController != null) {
-            MenuBarController.refresh();
+        if (menuBarController != null) {
+            menuBarController.refresh();
         } else if (sidebarController != null) {
             sidebarController.refresh();
         }
     }
 
-    public String getTitle() {return windowTitle;}
+    public String getTitle() {return title;}
 
     /**
      * Sets the title of the window to the given text.
      * @param title The new title of the window.
      */
     public void setTitle(String title) {
-        windowTitle = title;
+        this.title = title;
         updateTitle();
     }
 
@@ -153,9 +171,9 @@ public class MainController {
      */
     private void updateTitle() {
         if (State.isUnsavedChanges()) {
-            stage.setTitle("*" + windowTitle);
+            stage.setTitle("*" + title);
         } else {
-            stage.setTitle(windowTitle);
+            stage.setTitle(title);
         }
     }
 }

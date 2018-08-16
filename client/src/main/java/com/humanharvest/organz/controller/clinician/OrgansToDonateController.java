@@ -6,6 +6,7 @@ import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SidebarController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.controller.components.DurationUntilExpiryCell;
+import com.humanharvest.organz.controller.components.TouchAlertTextController;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
@@ -71,7 +72,7 @@ public class OrgansToDonateController extends SubController {
     private TableColumn<DonatedOrgan, Organ> organCol;
 
     @FXML
-    private  TableColumn<DonatedOrgan, String> regionCol;
+    private TableColumn<DonatedOrgan, String> regionCol;
 
     @FXML
     private TableColumn<DonatedOrgan, LocalDateTime> timeOfDeathCol;
@@ -121,9 +122,28 @@ public class OrgansToDonateController extends SubController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
-        mainController.setTitle("Organs to donate");
+        mainController.setTitle("Organs to Donate");
         mainController.loadMenuBar(menuBarPane);
         refresh();
+    }
+
+    /**
+     * Formats a table cell that holds a {@link LocalDateTime} value to display that value in the date time format.
+     *
+     * @return The cell with the date time formatter set.
+     */
+    private static TableCell<DonatedOrgan, LocalDateTime> formatDateTimeCell() {
+        return new TableCell<DonatedOrgan, LocalDateTime>() {
+            @Override
+            protected void updateItem(LocalDateTime item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setText(null);
+                } else {
+                    setText(item.format(dateTimeFormat));
+                }
+            }
+        };
     }
 
     /**
@@ -148,15 +168,26 @@ public class OrgansToDonateController extends SubController {
         organFilter.getItems().setAll(Organ.values());
 
         regionFilter.getCheckModel().getCheckedItems().addListener(
-            (ListChangeListener<String>) change -> updateOrgansToDonateList());
+                (ListChangeListener<String>) change -> updateOrgansToDonateList());
 
         organFilter.getCheckModel().getCheckedItems().addListener(
-            (ListChangeListener<Organ>) change -> updateOrgansToDonateList());
+                (ListChangeListener<Organ>) change -> updateOrgansToDonateList());
 
         //On pagination update call createPage
         pagination.setPageFactory(this::createPage);
 
         tableView.getSortOrder().setAll(timeUntilExpiryCol);
+    }
+
+    /**
+     * Upon pagination, update the table to show the correct items
+     *
+     * @param pageIndex The page we're now on (starts at 0)
+     * @return An empty pane as pagination requires a non null return. Not used.
+     */
+    private Node createPage(int pageIndex) {
+        updateOrgansToDonateList();
+        return new Pane();
     }
 
     /**
@@ -250,7 +281,7 @@ public class OrgansToDonateController extends SubController {
                     tableView.refresh();
                     observableOrgansToDonate.removeIf(donatedOrgan ->
                             donatedOrgan.getOverrideReason() != null ||
-                            donatedOrgan.getDurationUntilExpiry() != null &&
+                                    donatedOrgan.getDurationUntilExpiry() != null &&
                             donatedOrgan.getDurationUntilExpiry().minusSeconds(1).isNegative());
                 }));
         clock.setCycleCount(Animation.INDEFINITE);
@@ -281,16 +312,6 @@ public class OrgansToDonateController extends SubController {
         });
 
         sortedOrgansToDonate.comparatorProperty().bind(tableView.comparatorProperty());
-    }
-
-    /**
-     * Upon pagination, update the table to show the correct items
-     * @param pageIndex The page we're now on (starts at 0)
-     * @return An empty pane as pagination requires a non null return. Not used.
-     */
-    private Node createPage(int pageIndex) {
-        updateOrgansToDonateList();
-        return new Pane();
     }
 
     /**
@@ -337,6 +358,7 @@ public class OrgansToDonateController extends SubController {
 
     /**
      * Used to detect the current sort policy of the table and convert it to a value that the server will understand.
+     *
      * @return A {@link DonatedOrganSortPolicy} that maps to one of the SortOptions and a boolean if the sort should
      * be reversed.
      */
@@ -395,6 +417,53 @@ public class OrgansToDonateController extends SubController {
         }
     }
 
+
+    private void openManuallyExpireDialog() {
+        // Create a popup with a text field to enter the reason
+
+        TouchAlertTextController controller = PageNavigator.showTextAlert("Manually Override Organ", "Enter the reason for overriding this organ:", mainController.getStage());
+
+        if (controller.getResultProperty().getValue() != null) {
+            if (controller.getResultProperty().getValue()) {
+                overrideOrgan(controller.getText());
+            }
+        } else {
+            controller.getResultProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue) {
+                    overrideOrgan(controller.getText());
+                }
+            });
+        }
+    }
+
+    private void overrideOrgan(String reason) {
+        try {
+            StringBuilder overrideReason = new StringBuilder(reason);
+            overrideReason.append("\n").append(LocalDateTime.now().format(dateTimeFormat));
+            if (session.getLoggedInUserType() == UserType.CLINICIAN) {
+                overrideReason.append(String.format("\nOverriden by clinician %d (%s)",
+                        session.getLoggedInClinician().getStaffId(), session.getLoggedInClinician().getFullName()));
+            } else if (session.getLoggedInUserType() == UserType.ADMINISTRATOR) {
+                overrideReason.append(String.format("\nOverriden by admin '%s'.",
+                        session.getLoggedInAdministrator().getUsername()));
+            }
+            State.getClientResolver().manuallyOverrideOrgan(selectedOrgan, overrideReason.toString());
+            PageNavigator.refreshAllWindows();
+        } catch (IfMatchFailedException exc) {
+            // TODO deal with outdated error
+        } catch (NotFoundException exc) {
+            Notifications.create()
+                    .title("Client/Organ Not Found")
+                    .text("The client/donated organ could not be found on the server; it may have been deleted.")
+                    .showWarning();
+        } catch (ServerRestException exc) {
+            Notifications.create()
+                    .title("Server Error")
+                    .text("A server error occurred when overriding this donated organ; please try again later.")
+                    .showError();
+        }
+    }
+
     /**
      * Refreshes the data in the transplants waiting list table. Should be called whenever any page calls a global
      * refresh.
@@ -405,46 +474,7 @@ public class OrgansToDonateController extends SubController {
         tableView.setItems(sortedOrgansToDonate);
     }
 
-    private void openManuallyExpireDialog() {
-        // Create a popup with a text field to enter the reason
-        TextInputDialog popup = new TextInputDialog();
-        popup.setTitle("Manually Override Organ");
-        popup.setHeaderText("Enter the reason for overriding this organ:");
-        popup.setContentText("Reason:");
-        popup.getDialogPane().lookupButton(ButtonType.OK).setDisable(true);
-        popup.getEditor().textProperty().addListener((observable, oldValue, newValue) ->
-                popup.getDialogPane().lookupButton(ButtonType.OK).setDisable(newValue.isEmpty()));
-
-        // If user clicks the OK button
-        String response = popup.showAndWait().orElse("");
-        if (!response.isEmpty()) {
-            try {
-                StringBuilder overrideReason = new StringBuilder(response);
-                overrideReason.append("\n").append(LocalDateTime.now().format(dateTimeFormat));
-                if (session.getLoggedInUserType() == UserType.CLINICIAN) {
-                    overrideReason.append(String.format("\nOverriden by clinician %d (%s)",
-                            session.getLoggedInClinician().getStaffId(), session.getLoggedInClinician().getFullName()));
-                } else if (session.getLoggedInUserType() == UserType.ADMINISTRATOR) {
-                    overrideReason.append(String.format("\nOverriden by admin '%s'.",
-                            session.getLoggedInAdministrator().getUsername()));
-                }
-                State.getClientResolver().manuallyOverrideOrgan(selectedOrgan, overrideReason.toString());
-                PageNavigator.refreshAllWindows();
-            } catch (IfMatchFailedException exc) {
-                // TODO deal with outdated error
-            } catch (NotFoundException exc) {
-                Notifications.create()
-                        .title("Client/Organ Not Found")
-                        .text("The client/donated organ could not be found on the server; it may have been deleted.")
-                        .showWarning();
-            } catch (ServerRestException exc) {
-                Notifications.create()
-                        .title("Server Error")
-                        .text("A server error occurred when overriding this donated organ; please try again later.")
-                        .showError();
-            }
-        }
-    }
+    // ---------------- Format methods ----------------
 
     private void setupDisplayingXToYOfZText(int totalCount) {
         int fromIndex = pagination.getCurrentPageIndex() * ROWS_PER_PAGE;
@@ -458,24 +488,5 @@ public class OrgansToDonateController extends SubController {
             displayingXToYOfZText.setText(String.format("Displaying %d-%d of %d", fromIndex + 1, toIndex,
                     totalCount));
         }
-    }
-
-    // ---------------- Format methods ----------------
-    /**
-     * Formats a table cell that holds a {@link LocalDateTime} value to display that value in the date time format.
-     * @return The cell with the date time formatter set.
-     */
-    private static TableCell<DonatedOrgan, LocalDateTime> formatDateTimeCell() {
-        return new TableCell<DonatedOrgan, LocalDateTime>() {
-            @Override
-            protected void updateItem(LocalDateTime item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty) {
-                    setText(null);
-                } else {
-                    setText(item.format(dateTimeFormat));
-                }
-            }
-        };
     }
 }

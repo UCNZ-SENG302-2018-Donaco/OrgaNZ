@@ -1,14 +1,13 @@
 package com.humanharvest.organz.controller.client;
 
-import static org.junit.Assert.assertEquals;
-
-import javafx.scene.input.KeyCode;
-
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
+import javafx.scene.input.KeyCode;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Testing that date and time of death are not editable when client has overridden organs

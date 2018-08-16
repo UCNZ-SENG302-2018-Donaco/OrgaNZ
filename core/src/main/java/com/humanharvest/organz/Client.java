@@ -1003,7 +1003,7 @@ public class Client implements ConcurrencyControlledEntity {
      * @param cityOfDeath The city they died in.
      */
     public void markDead(LocalDate dateOfDeath, LocalTime timeOfDeath, Country countryOfDeath, String regionOfDeath,
-            String cityOfDeath) {
+                         String cityOfDeath) {
         this.dateOfDeath = dateOfDeath;
         this.timeOfDeath = timeOfDeath;
         this.countryOfDeath = countryOfDeath;
@@ -1043,7 +1043,8 @@ public class Client implements ConcurrencyControlledEntity {
 
     /**
      * Registers the given {@link Organ} as having been donated by this client at the given time.
-     * @param organ The organ donated.
+     *
+     * @param organ       The organ donated.
      * @param timeDonated When the organ was removed from this client's body.
      */
     public void donateOrgan(Organ organ, LocalDateTime timeDonated) {
@@ -1051,7 +1052,8 @@ public class Client implements ConcurrencyControlledEntity {
     }
 
     /**
-     * Registers the given {@link Organ} as having been donated by this client at the given time.
+     * Registers the given {@link Organ} as having been donated by this client at this moment.
+     *
      * @param organ The organ donated.
      * @param timeDonated When the organ was removed from this client's body.
      * @param id The id to use for the {@link DonatedOrgan}

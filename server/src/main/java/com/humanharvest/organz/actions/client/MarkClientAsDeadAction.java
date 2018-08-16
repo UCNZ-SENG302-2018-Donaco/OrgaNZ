@@ -37,7 +37,7 @@ public class MarkClientAsDeadAction extends ClientAction {
      * @param manager The ClientManager to apply the changes to
      */
     public MarkClientAsDeadAction(Client client, LocalDate deathDate, LocalTime deathTime, String deathRegion,
-        String deathCity, Country deathCountry, ClientManager manager) {
+                                  String deathCity, Country deathCountry, ClientManager manager) {
         super(client, manager);
         this.deathDate = deathDate;
         this.deathTime = deathTime;

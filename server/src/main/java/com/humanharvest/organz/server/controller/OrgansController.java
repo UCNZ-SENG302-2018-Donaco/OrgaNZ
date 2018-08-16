@@ -1,11 +1,5 @@
 package com.humanharvest.organz.server.controller;
 
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
@@ -24,21 +18,20 @@ import com.humanharvest.organz.views.client.Views;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 public class OrgansController {
 
     /**
      * The GET endpoint for getting all organs currently available to be donated
+     *
      * @param authToken authentication token - only clinicians and administrators can access donatable organs
      * @return response entity containing all organs that are available for donation
      * @throws GlobalControllerExceptionHandler.InvalidRequestException
@@ -75,7 +68,8 @@ public class OrgansController {
 
     /**
      * GET endpoint for getting a clients donated organs
-     * @param uid the uid of the client
+     *
+     * @param uid       the uid of the client
      * @param authToken authorization token
      * @return response entity containing the clients donated organs
      */
@@ -110,13 +104,14 @@ public class OrgansController {
 
     /**
      * POST endpoint for manually overriding an available organ.
-     * @param uid The UID of the client the organ was donated by.
-     * @param id The ID of the available organ.
+     *
+     * @param uid            The UID of the client the organ was donated by.
+     * @param id             The ID of the available organ.
      * @param overrideReason The reason to override this organ.
-     * @param authToken Authentication token - only clinicians and administrators can override available organs.
+     * @param authToken      Authentication token - only clinicians and administrators can override available organs.
      * @return Response entity containing the overriden organ.
      * @throws GlobalControllerExceptionHandler.InvalidRequestException If the organ has already been overriden, or if
-     * the reason given is blank.
+     *                                                                  the reason given is blank.
      */
     @JsonView(Views.Details.class)
     @PostMapping("/clients/{uid}/donatedOrgans/{id}/override")
@@ -165,8 +160,9 @@ public class OrgansController {
 
     /**
      * DELETE endpoint for cancelling a manual override on an available organ.
-     * @param uid The UID of the client the organ was donated by.
-     * @param id The ID of the available organ.
+     *
+     * @param uid       The UID of the client the organ was donated by.
+     * @param id        The ID of the available organ.
      * @param authToken Authentication token - only clinicians and administrators can override available organs.
      * @return Response entity containing the overriden organ.
      * @throws GlobalControllerExceptionHandler.InvalidRequestException If the organ has not yet been overriden.
@@ -216,13 +212,14 @@ public class OrgansController {
 
     /**
      * PATCH endpoint for manually overriding an available organ.
-     * @param uid The UID of the client the organ was donated by.
-     * @param id The ID of the available organ.
+     *
+     * @param uid               The UID of the client the organ was donated by.
+     * @param id                The ID of the available organ.
      * @param newOverrideReason The new reason to override this organ.
-     * @param authToken Authentication token - only clinicians and administrators can override available organs.
+     * @param authToken         Authentication token - only clinicians and administrators can override available organs.
      * @return Response entity containing the overriden organ.
      * @throws GlobalControllerExceptionHandler.InvalidRequestException If the organ has already been overriden, or if
-     * the reason given is blank.
+     *                                                                  the reason given is blank.
      */
     @JsonView(Views.Details.class)
     @PatchMapping("/clients/{uid}/donatedOrgans/{id}/override")

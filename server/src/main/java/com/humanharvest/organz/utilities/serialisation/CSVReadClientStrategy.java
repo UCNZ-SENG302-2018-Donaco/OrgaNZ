@@ -36,33 +36,10 @@ public class CSVReadClientStrategy implements ReadClientStrategy {
 
     private CSVParser parser;
 
-    @Override
-    public void setup(File inputFile) throws IOException {
-        InputStreamReader reader = new InputStreamReader(new FileInputStream(inputFile), StandardCharsets.UTF_8);
-        parser = new CSVParser(reader, CSVFormat.RFC4180.withFirstRecordAsHeader());
-    }
-
-    @Override
-    public Client readNext() throws InvalidObjectException {
-        try {
-            try {
-                return deserialise(parser.iterator().next());
-            } catch (IllegalArgumentException exc) {
-                throw new InvalidObjectException(exc.getMessage());
-            }
-        } catch (NoSuchElementException exc) {
-            return null;
-        }
-    }
-
-    @Override
-    public void close() throws IOException {
-        parser.close();
-    }
-
     /**
      * Deseralizes a given {@link CSVRecord} to a {@link Client} object, using the {@link Header} to determine which
      * columns represent which data.
+     *
      * @param record The CSVRecord to deserialise.
      * @return The deserialized client.
      * @throws IllegalArgumentException If any data value specified in the record is not valid for its data type.
@@ -87,12 +64,30 @@ public class CSVReadClientStrategy implements ReadClientStrategy {
         client.setCountry(Country.fromString(record.get(Header.country)));
         client.setCurrentAddress(
                 record.get(Header.street_number) + " " +
-                record.get(Header.street_name) + ", " +
-                record.get(Header.neighborhood) + ", " +
-                record.get(Header.city) + ", " +
-                record.get(Header.zip_code));
+                        record.get(Header.street_name) + ", " +
+                        record.get(Header.neighborhood) + ", " +
+                        record.get(Header.city) + ", " +
+                        record.get(Header.zip_code));
         client.setRegion(record.get(Header.region));
         return client;
+    }
+
+    @Override
+    public Client readNext() throws InvalidObjectException {
+        try {
+            try {
+                return deserialise(parser.iterator().next());
+            } catch (IllegalArgumentException exc) {
+                throw new InvalidObjectException(exc.getMessage());
+            }
+        } catch (NoSuchElementException exc) {
+            return null;
+        }
+    }
+
+    @Override
+    public void close() throws IOException {
+        parser.close();
     }
 
     /**
@@ -111,5 +106,11 @@ public class CSVReadClientStrategy implements ReadClientStrategy {
         } catch (DateTimeParseException exc) {
             throw new IllegalArgumentException(exc);
         }
+    }
+
+    @Override
+    public void setup(File inputFile) throws IOException {
+        InputStreamReader reader = new InputStreamReader(new FileInputStream(inputFile), StandardCharsets.UTF_8);
+        parser = new CSVParser(reader, CSVFormat.RFC4180.withFirstRecordAsHeader());
     }
 }

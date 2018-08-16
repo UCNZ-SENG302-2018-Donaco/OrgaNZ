@@ -1,16 +1,15 @@
 package com.humanharvest.organz.controller.client;
 
-import static org.junit.Assert.assertEquals;
+import com.humanharvest.organz.utilities.enums.Country;
+import javafx.scene.input.KeyCode;
+import org.junit.Before;
+import org.junit.Test;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
-import javafx.scene.input.KeyCode;
-
-import com.humanharvest.organz.utilities.enums.Country;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 public class ViewClientControllerClinician1Test extends ViewClientControllerClinicianBaseTest {
 
