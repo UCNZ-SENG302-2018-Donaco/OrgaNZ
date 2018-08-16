@@ -55,7 +55,7 @@ public class TransplantRequestValidator {
 
     private boolean requestDateValid(TransplantRequest request) {
         return datetimeIsValid(request.getRequestDate()) &&
-                !request.getRequestDate().isAfter(LocalDateTime.now());
+                !request.getRequestDate().isAfter(LocalDateTime.now().plusMinutes(1));
     }
 
     private boolean resolvedDateValid(TransplantRequest request) {
