@@ -1,6 +1,5 @@
 package com.humanharvest.organz.skin;
 
-import com.sun.javafx.scene.control.behavior.ComboBoxBaseBehavior;
 import com.sun.javafx.scene.control.skin.ComboBoxListViewSkin;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.BooleanPropertyBase;
@@ -81,7 +80,7 @@ public class MTComboBoxListViewSkin<T> extends ComboBoxListViewSkin<T> {
                 }
 
             });
-            ((ComboBoxBase) ((ComboBoxBaseBehavior) getBehavior()).getControl()).showingProperty().addListener((observable, oldValue, newValue) -> {
+            getBehavior().getControl().showingProperty().addListener((observable, oldValue, newValue) -> {
                 if (!newValue) {
                     getPopup().setAutoHide(false);
                 }

@@ -245,6 +245,5 @@ public class MTDatePickerSkin extends DatePickerSkin {
             this.getSkinnable().hide();
             this.isShowing = false;
         }
-
     }
 }
