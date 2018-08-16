@@ -41,7 +41,6 @@ public class ClientMedicationsController {
         if (ETag == null) {
             throw new IfMatchRequiredException();
         } else if (!client.getETag().equals(ETag)) {
-            System.out.println(client.getETag());
             throw new IfMatchFailedException();
         }
     }

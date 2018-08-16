@@ -1,5 +1,10 @@
 package com.humanharvest.organz.state;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.List;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -12,7 +17,12 @@ import com.humanharvest.organz.resolvers.CommandRunnerRest;
 import com.humanharvest.organz.resolvers.actions.ActionResolver;
 import com.humanharvest.organz.resolvers.actions.ActionResolverMemory;
 import com.humanharvest.organz.resolvers.actions.ActionResolverRest;
-import com.humanharvest.organz.resolvers.administrator.*;
+import com.humanharvest.organz.resolvers.administrator.AdministratorResolver;
+import com.humanharvest.organz.resolvers.administrator.AdministratorResolverMemory;
+import com.humanharvest.organz.resolvers.administrator.AdministratorResolverRest;
+import com.humanharvest.organz.resolvers.administrator.FileResolver;
+import com.humanharvest.organz.resolvers.administrator.FileResolverMemory;
+import com.humanharvest.organz.resolvers.administrator.FileResolverRest;
 import com.humanharvest.organz.resolvers.client.ClientResolver;
 import com.humanharvest.organz.resolvers.client.ClientResolverMemory;
 import com.humanharvest.organz.resolvers.client.ClientResolverRest;
@@ -25,11 +35,6 @@ import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.List;
 
 /**
  * A static class to store the current state of the system.
