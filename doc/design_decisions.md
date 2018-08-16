@@ -5,20 +5,7 @@ We had a very simple approach to the styling; clean, tabbed spaces and whitespac
 commenting if necessary. Each class had a Javadoc header explaining the purpose of it as well as the version
 that it implemented and the Authors and date created.
 
-#### Commands and Utilities
-Our project was set up in two main files: Commands and Utilities. As weird as it may sound,
-any classes inheriting off our command base was put into the commands section and anything that related to
-the utilisation of the data surrounding the client was put into the utilities section, including blood type converter,
-gender and the local date converter. We also had a client manager that used functions requested from the commands and
-updated the client's information using the utilities section.
-
-#### Testing
-The testing of the project was simple: Unit testing. we would test whether the classes would produce
-valid results, what would happen if a user forgot to enter a necessary part into the command, what processes
-would occur if there were duplicate results entered, and any other valid acceptance or rejecting tests.
-
-
-## Libraries
+## External Libraries
 
 #### Spring Boot
 Spring boot provides us with a simple stand-alone framework to build our client-server architecture. Since Spring

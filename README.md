@@ -16,21 +16,20 @@ Scrum Master:
 * Liam Beckett <lsb35@uclive.ac.nz>
 
 ## Product Info
-*Title:* OrgaNZ
+Title: **OrgaNZ**
 
-*Version*: Sprint 5 Release
+Version: **Sprint 6 Release**
 
-*Description:* This project has been designed to increase the deceased organ donation rates in New Zealand.
-It provides people in New Zealand with a system they can use to register as organ donors, or request organ transplants.
+Description: **This project has been designed to increase the deceased organ donation rates in New Zealand.
+It provides people in New Zealand with a system they can use to register as organ donors, or request organ transplants.**
 
 ## External Libraries
 
 This application makes use of a number of external libraries, including:
-* JLine 2
+* Spring Boot
 * GSON
 * PicoCLI
 * ControlsFX
-* Google HTPP Client
 * Hibernate
 * MySqlConnector
 
@@ -39,6 +38,8 @@ And also makes use of these external libraries for testing purposes:
 * Mockito
 * Cucumber
 * TestFX
+
+Design decisions about our external libraries used can be found under our `doc/design_decisions.md` file.
 
 All applicable copyright notices and licenses for the libraries used are provided in the `LICENSES.txt` file.
 
