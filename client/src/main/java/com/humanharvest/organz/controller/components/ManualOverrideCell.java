@@ -9,6 +9,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
 import com.humanharvest.organz.DonatedOrgan;
@@ -61,11 +62,15 @@ public class ManualOverrideCell extends TableCell<DonatedOrgan, DonatedOrgan> {
                 Button editBtn = new Button("Edit");
                 editBtn.setOnAction(event -> onEditPressed.handle(item));
                 editBtn.setMaxWidth(Double.POSITIVE_INFINITY);
+                editBtn.setFont(Font.font(12));
+                editBtn.setMinHeight(30);
 
                 // Create cancel button
                 Button cancelBtn = new Button("Cancel");
                 cancelBtn.setOnAction(event -> onCancelPressed.handle(item));
                 cancelBtn.setMaxWidth(Double.POSITIVE_INFINITY);
+                cancelBtn.setFont(Font.font(12));
+                cancelBtn.setMinHeight(30);
 
                 // Create override reason label
                 Text reason = new Text(item.getOverrideReason());
