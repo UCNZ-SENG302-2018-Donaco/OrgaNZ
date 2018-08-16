@@ -9,6 +9,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonType;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.stage.Stage;
@@ -88,6 +89,8 @@ public class PageNavigator {
             Scene scene = new Scene(mainPane);
             AppUI.addCss(scene);
             newStage.setScene(scene);
+            Image image = new Image("images/ORGANZ.png");
+            newStage.getIcons().add(image);
             newStage.show();
 
             newStage.setMinWidth(width);
