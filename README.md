@@ -44,8 +44,6 @@ All applicable copyright notices and licenses for the libraries used are provide
 
 ## Usage
 
-To start the application, run as a JAR file.
-
 Please refer to the documentation found in `doc/user_manual.md` to find out more on how to use the application.
 
 For more information on the design decisions that were made, please refer to the documentation found in
