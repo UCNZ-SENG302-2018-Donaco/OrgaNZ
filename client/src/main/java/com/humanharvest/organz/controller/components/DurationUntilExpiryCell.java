@@ -1,13 +1,12 @@
 package com.humanharvest.organz.controller.components;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
-
+import com.humanharvest.organz.DonatedOrgan;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.paint.Color;
 
-import com.humanharvest.organz.DonatedOrgan;
+import java.time.Duration;
+import java.time.LocalDateTime;
 
 public class DurationUntilExpiryCell extends TableCell<DonatedOrgan, Duration> {
 
@@ -37,12 +36,16 @@ public class DurationUntilExpiryCell extends TableCell<DonatedOrgan, Duration> {
 
         } else if (item.isZero() || item.isNegative() || item.equals(Duration.ZERO) ||
                 item.minusSeconds(1).isNegative()) {
-            // Duration is essentially zero
-            Duration timeSinceExpiry = Duration.between(
-                    getDonatedOrganForRow().getDateTimeOfDonation()
-                            .plus(getDonatedOrganForRow().getOrganType().getMaxExpiration()),
-                    LocalDateTime.now());
-            setText(String.format("Expired (%s ago)", getFormattedDuration(timeSinceExpiry)));
+            // Duration is essentially zero, or is zero, or the organ was overridden
+            if (getDonatedOrganForRow().getOverrideReason()==null) {
+                Duration timeSinceExpiry = Duration.between(
+                        getDonatedOrganForRow().getDateTimeOfDonation()
+                                .plus(getDonatedOrganForRow().getOrganType().getMaxExpiration()),
+                        LocalDateTime.now());
+                setText(String.format("Expired (%s ago)", getFormattedDuration(timeSinceExpiry)));
+            } else {
+                setText("Overridden");
+            }
             setStyle("-fx-background-color: #202020");
             setTextFill(Color.WHITE);
 

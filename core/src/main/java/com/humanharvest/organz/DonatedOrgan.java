@@ -94,14 +94,14 @@ public class DonatedOrgan {
     }
 
     /**
-     * @return if the organ hasn't expired: the duration. else: Duration.ZERO
+     * @return the duration; except if the organ has expired or is overridden, then it returns Duration.ZERO
      */
     public Duration getDurationUntilExpiry() {
         if (organType.getMaxExpiration() == null) {
             return null;
         }
         Duration timeToExpiry = organType.getMaxExpiration().minus(getTimeSinceDonation());
-        return timeToExpiry.isNegative() ? Duration.ZERO : timeToExpiry;
+        return timeToExpiry.isNegative() || getOverrideReason()!=null ? Duration.ZERO : timeToExpiry;
     }
 
     /**
