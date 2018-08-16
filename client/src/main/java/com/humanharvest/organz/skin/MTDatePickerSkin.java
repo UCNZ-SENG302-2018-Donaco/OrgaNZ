@@ -19,7 +19,7 @@ import java.time.LocalDate;
 public class MTDatePickerSkin extends DatePickerSkin {
 
     private static final PseudoClass PRESSED_PSEUDO_CLASS = PseudoClass.getPseudoClass("pressed");
-    private DatePicker datePicker;
+
     private boolean isShowing;
     private BooleanProperty touchPressed = new BooleanPropertyBase(false) {
         protected void invalidated() {
@@ -37,10 +37,8 @@ public class MTDatePickerSkin extends DatePickerSkin {
 
     public MTDatePickerSkin(DatePicker datePicker) {
         super(datePicker);
-        this.datePicker = datePicker;
 
-        this.getPopup().setAutoHide(false);
-
+        getPopup().setAutoHide(false);
 
         this.arrowButton.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> {
             if (event.isSynthesized()) {
@@ -105,17 +103,15 @@ public class MTDatePickerSkin extends DatePickerSkin {
 
     }
 
-
     private boolean isComboBoxOrButton(EventTarget target, ComboBoxBase<LocalDate> comboBoxBase) {
         return target instanceof Node && "arrow-button".equals(((Node) target).getId()) || comboBoxBase.equals(target);
     }
 
     private void handleAutoHidingEvents() {
-        if (this.getSkinnable().isShowing()) {
-            this.getPopup().hide();
-            this.getSkinnable().hide();
-            this.isShowing = false;
+        if (getSkinnable().isShowing()) {
+            getPopup().hide();
+            getSkinnable().hide();
+            isShowing = false;
         }
-
     }
 }
