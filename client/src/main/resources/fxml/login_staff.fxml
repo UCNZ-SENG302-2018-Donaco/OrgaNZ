@@ -12,7 +12,6 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <VBox prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.humanharvest.organz.controller.clinician.StaffLoginController">
-  <properties focusArea="true" />
   <children>
     <Button focusTraversable="false" mnemonicParsing="false" onAction="#goBack" prefHeight="30.0" prefWidth="120.0" style="-fx-base: rgba(173,216,230, 0.8);" text="Back">
       <VBox.margin>

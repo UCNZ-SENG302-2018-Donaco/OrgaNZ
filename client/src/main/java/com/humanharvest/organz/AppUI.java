@@ -4,7 +4,11 @@ import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.state.State.DataStorageType;
 import com.humanharvest.organz.utilities.LoggerSetup;
-import com.humanharvest.organz.utilities.view.*;
+import com.humanharvest.organz.utilities.view.Page;
+import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.utilities.view.PageNavigatorStandard;
+import com.humanharvest.organz.utilities.view.PageNavigatorTouch;
+import com.humanharvest.organz.utilities.view.WindowContext;
 import com.sun.javafx.css.StyleManager;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -33,6 +37,7 @@ public class AppUI extends Application {
     /**
      * Starts the JavaFX GUI. Sets up the main stage and initialises the state of the system.
      * Loads from the save file or creates one if one does not yet exist.
+     *
      * @param primaryStage The stage given by the JavaFX launcher.
      * @throws IOException If the save file cannot be loaded/created.
      */
@@ -54,11 +59,12 @@ public class AppUI extends Application {
             State.BASE_URI = System.getenv("HOST");
         }
 
-        primaryStage.setTitle("Organ Client Management System");
+        primaryStage.setTitle("Organ Donor Management System");
 
         switch (State.getUiType()) {
             case STANDARD:
                 primaryStage.setScene(new Scene(loadStandardMainPane(primaryStage)));
+                AppUI.addCss(primaryStage.getScene());
                 break;
 
             case TOUCH:
@@ -152,6 +158,7 @@ public class AppUI extends Application {
 
     /**
      * Loads the main FXML. Sets up the page-switching PageNavigator. Loads the landing page as the initial page.
+     *
      * @param stage The stage to set the window to
      * @return The loaded pane.
      * @throws IOException Thrown if the pane could not be loaded.
@@ -169,4 +176,9 @@ public class AppUI extends Application {
 
         return mainPane;
     }
+
+    private static void addCss(Scene scene) {
+        scene.getStylesheets().add(AppUI.class.getResource("/css/validation.css").toExternalForm());
+    }
+
 }

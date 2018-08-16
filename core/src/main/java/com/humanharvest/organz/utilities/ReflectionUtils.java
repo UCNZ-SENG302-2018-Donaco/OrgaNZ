@@ -49,9 +49,22 @@ public final class ReflectionUtils {
     }
 
     public static Method getMethodReference(Object o, String methodName, Class<?>... parameterTypes) throws NoSuchMethodException {
-        Method method = o.getClass().getDeclaredMethod(methodName, parameterTypes);
+        Method method = findDeclaredMethod(o.getClass(), methodName, parameterTypes);
         Objects.requireNonNull(method);
         method.setAccessible(true);
         return method;
+    }
+
+    private static Method findDeclaredMethod(Class<?> clazz, String methodName, Class<?>... parameterTypes)
+        throws NoSuchMethodException {
+        while (clazz != null) {
+            try {
+                return clazz.getDeclaredMethod(methodName, parameterTypes);
+            } catch (NoSuchMethodException e) {
+                clazz = clazz.getSuperclass();
+            }
+        }
+
+        throw new NoSuchMethodException("Unable to find declared method " + methodName);
     }
 }

@@ -16,7 +16,6 @@
 
 # JSON Files (used for storing data from the system)
 *.json
-!*/src/*/resources/*.json
 !*doc/examples/*.json
 !*doc/postman/*.json
 
@@ -29,8 +28,13 @@ organz.log.*
 .~lock.*
 
 # Image files
+*.jpeg
+*.jpg
 *.png
 !*images/default.png
+
+# Allow all types of resources
+!**/src/**/resources/**
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*

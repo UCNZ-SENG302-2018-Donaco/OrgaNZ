@@ -1,4 +1,5 @@
 # SENG302 Team 700: Human Harvest Inc
+![alt text](https://eng-git.canterbury.ac.nz/seng302-2018/team-700/uploads/aa0996125ee57a65f6db44f06e51d034/ORGANZ.png "OrgaNZ Logo")
 
 ## Team Info
 Developers:
@@ -15,34 +16,35 @@ Scrum Master:
 * Liam Beckett <lsb35@uclive.ac.nz>
 
 ## Product Info
-*Title:* OrgaNZ
+Title: **OrgaNZ**
 
-*Version*: Sprint 5 Release
+Version: **Sprint 6 Release**
 
-*Description:* This project has been designed to increase the deceased organ donation rates in New Zealand.
-It provides people in New Zealand with a system they can use to register as organ donors, or request organ transplants.
+Description: **This project has been designed to increase the deceased organ donation rates in New Zealand.
+It provides people in New Zealand with a system they can use to register as organ donors, or request organ transplants.**
 
 ## External Libraries
 
 This application makes use of a number of external libraries, including:
-* JLine 2
+* Spring Boot
 * GSON
 * PicoCLI
 * ControlsFX
-* Google HTPP Client
 * Hibernate
 * MySqlConnector
+* TUIOFX
 
 And also makes use of these external libraries for testing purposes:
 * JUnit 4
 * Mockito
+* Cucumber
 * TestFX
+
+Design decisions about our external libraries used can be found under our `doc/design_decisions.md` file.
 
 All applicable copyright notices and licenses for the libraries used are provided in the `LICENSES.txt` file.
 
 ## Usage
-
-To start the application, run as a JAR file.
 
 Please refer to the documentation found in `doc/user_manual.md` to find out more on how to use the application.
 

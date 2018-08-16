@@ -122,7 +122,7 @@ public class OrgansToDonateController extends SubController {
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
-        mainController.setTitle("Organs to donate");
+        mainController.setTitle("Organs to Donate");
         mainController.loadMenuBar(menuBarPane);
         refresh();
     }
