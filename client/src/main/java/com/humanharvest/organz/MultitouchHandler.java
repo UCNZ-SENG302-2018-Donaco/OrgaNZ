@@ -549,6 +549,7 @@ public final class MultitouchHandler {
             try {
                 detachKeyboard.invoke(skin, keyboard, t);
             } catch (IllegalAccessException | InvocationTargetException e) {
+                // Sometimes an exception is thrown from the keyboard.
                 throw new RuntimeException(e);
             }
         }
