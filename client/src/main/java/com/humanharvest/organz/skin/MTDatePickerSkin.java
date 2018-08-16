@@ -3,51 +3,29 @@ package com.humanharvest.organz.skin;
 import com.humanharvest.organz.MultitouchHandler;
 import com.sun.javafx.scene.control.skin.ContextMenuContent;
 import com.sun.javafx.scene.control.skin.DatePickerSkin;
-import javafx.beans.property.BooleanProperty;
-import javafx.beans.property.BooleanPropertyBase;
-import javafx.css.PseudoClass;
 import javafx.event.Event;
 import javafx.event.EventTarget;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.*;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Menu;
+import javafx.scene.control.PopupControl;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
 import javafx.scene.transform.Rotate;
 import org.tuiofx.widgets.utils.Util;
 
-import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Optional;
 
 public class MTDatePickerSkin extends DatePickerSkin {
 
-    private static final PseudoClass PRESSED_PSEUDO_CLASS = PseudoClass.getPseudoClass("pressed");
-
-    private DatePicker datePicker;
-
     private final PopupControl popupMenu;
-
-
-    private boolean isShowing;
-    private BooleanProperty touchPressed = new BooleanPropertyBase(false) {
-        protected void invalidated() {
-            getPopupContent().pseudoClassStateChanged(PRESSED_PSEUDO_CLASS, this.get());
-        }
-
-        public Object getBean() {
-            return this;
-        }
-
-        public String getName() {
-            return "pressed";
-        }
-    };
 
     public MTDatePickerSkin(DatePicker datePicker) {
         super(datePicker);
-        this.datePicker = datePicker;
 
         this.popupMenu = getPopup();
 
@@ -61,7 +39,6 @@ public class MTDatePickerSkin extends DatePickerSkin {
 
 
         arrowButton.addEventHandler(MouseEvent.MOUSE_ENTERED, event -> {
-            System.out.println("Arrow event");
             if (event.isSynthesized()) {
                 getBehavior().mouseEntered(event);
             }
@@ -101,67 +78,6 @@ public class MTDatePickerSkin extends DatePickerSkin {
                 popupMenu.setAnchorY(anchorY);
             }
         });
-
-
-//        getPopupContent().focusedProperty().addListener((observable, oldValue, newValue) -> {
-//            System.out.println("Focused");
-//            Node owner = getSkinnable();
-//            double offsetY = getSkinnable().prefHeight(-1.0D);
-//            double angle = Util.getRotationDegreesLocalToScene(owner);
-//            getPopupContent().getTransforms().setAll(new Rotate(angle));
-//            Rotate rotate = new Rotate(angle);
-//            Point2D transformedPoint = rotate.transform(0.0D, offsetY);
-//            double popupTopLeftX = owner.getLocalToSceneTransform().getTx();
-//            double popupTopLeftY = owner.getLocalToSceneTransform().getTy();
-//            double anchorX = popupTopLeftX + transformedPoint.getX() + Util.getOffsetX(owner);
-//            double anchorY = popupTopLeftY + transformedPoint.getY() + Util.getOffsetY(owner);
-//            getPopup().setAnchorX(anchorX);
-//            getPopup().setAnchorY(anchorY);
-//        });
-//
-//        final ComboBoxBase<LocalDate> comboBoxBase = getSkinnable();
-//        Node focusAreaNode = Util.getFocusAreaStartingNode(comboBoxBase);
-//        if (focusAreaNode != null) {
-//            focusAreaNode.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
-//                System.out.println("Mouse pressed");
-//                if (!event.isSynthesized() && !isComboBoxOrButton(event.getTarget(), comboBoxBase)) {
-//                    handleAutoHidingEvents();
-//                }
-//
-//            });
-//            focusAreaNode.addEventFilter(TouchEvent.TOUCH_PRESSED, event -> {
-//                if (!isComboBoxOrButton(event.getTarget(), comboBoxBase)) {
-//                    handleAutoHidingEvents();
-//                }
-//
-//            });
-//            comboBoxBase.addEventHandler(MouseEvent.MOUSE_RELEASED, event -> {
-//                System.out.println("Mouse released");
-//                if (!event.isSynthesized() && isComboBoxOrButton(event.getTarget(), comboBoxBase) && isShowing) {
-//                    handleAutoHidingEvents();
-//                    isShowing = false;
-//                } else {
-//                    isShowing = true;
-//                }
-//
-//            });
-//            getBehavior().getControl().showingProperty().addListener((observable, oldValue, newValue) -> {
-//                System.out.println("Showing" + newValue);
-//                if (!newValue) {
-//                    getPopup().setAutoHide(false);
-//                }
-//
-//            });
-//            datePicker.getScene().getWindow().focusedProperty().addListener((observable, oldValue, newValue) -> {
-//                System.out.println("Window focused" + newValue);
-//                if (!newValue) {
-//                    handleAutoHidingEvents();
-//                }
-//
-//            });
-//            this.getPopupContent().addEventHandler(TouchEvent.TOUCH_PRESSED, event -> touchPressed.setValue(true));
-//        }
-
     }
 
 
@@ -203,7 +119,7 @@ public class MTDatePickerSkin extends DatePickerSkin {
         });
     }
 
-    private void handleAutoHidingEvents(EventTarget eventTarget) {
+    public void handleAutoHidingEvents(EventTarget eventTarget) {
         Node owner = popupMenu.getOwnerNode();
         if (eventTarget != null && owner instanceof ChoiceBox) {
             Node targetNode = (Node) eventTarget;
@@ -229,21 +145,6 @@ public class MTDatePickerSkin extends DatePickerSkin {
                 }
             }
             return false;
-        }
-    }
-
-    private boolean isComboBoxOrButton(EventTarget target, ComboBoxBase<LocalDate> comboBoxBase) {
-        System.out.println("Checked is cmbo or btn");
-        System.out.println(target instanceof Node && "arrow-button".equals(((Node) target).getId()) || comboBoxBase.equals(target));
-        return target instanceof Node && "arrow-button".equals(((Node) target).getId()) || comboBoxBase.equals(target);
-    }
-
-    private void handleAutoHidingEvents() {
-        System.out.println("handling auto hide");
-        if (this.getSkinnable().isShowing()) {
-            this.getPopup().hide();
-            this.getSkinnable().hide();
-            this.isShowing = false;
         }
     }
 }
