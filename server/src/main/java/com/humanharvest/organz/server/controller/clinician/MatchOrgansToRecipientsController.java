@@ -1,8 +1,5 @@
 package com.humanharvest.organz.server.controller.clinician;
 
-import java.util.List;
-import java.util.Optional;
-
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.state.State;
@@ -14,6 +11,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Provides handlers for requests to these endpoints:
@@ -37,7 +37,7 @@ public class MatchOrgansToRecipientsController {
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws AuthenticationException {
 
-
+        // Check if there is a donated organ with that id - otherwise 404 not found
         Optional<DonatedOrgan> donatedOrganOptional = State.getClientManager().getAllOrgansToDonate().stream().filter(donatedOrgan1 -> donatedOrgan1.getId().equals(id)).findFirst();
         DonatedOrgan donatedOrgan;
 
@@ -48,7 +48,6 @@ public class MatchOrgansToRecipientsController {
         if (donatedOrganOptional.isPresent()) {
             donatedOrgan = donatedOrganOptional.get();
         } else {
-            System.out.println("optional not present");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 

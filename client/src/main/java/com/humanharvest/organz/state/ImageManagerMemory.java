@@ -31,15 +31,10 @@ public class ImageManagerMemory implements ImageManager{
     }
 
     public byte[] getDefaultImage() throws IOException {
-        InputStream in;
-        try {
-            in = new FileInputStream("./images/default.png");
-        } catch (FileNotFoundException e) {
-            // try a directory up - this fixes some tests, e.g. ViewClientController tests
-            in = new FileInputStream("../images/default.png");
+        byte[] res;
+        try (InputStream in = getClass().getResourceAsStream("/images/ORGANZ.png")) {
+            res = IOUtils.toByteArray(in);
         }
-        byte[] res = IOUtils.toByteArray(in);
-        in.close();
         return res;
     }
 
@@ -67,7 +62,6 @@ public class ImageManagerMemory implements ImageManager{
      * @return true if the image is successfully deleted.
      */
     public boolean deleteClientImage(int uid) {
-        System.out.println(State.getClientManager().getClientByID(uid));
         if (State.getClientManager().getClientByID(uid).isPresent()) {
             imageMap.remove(uid);
             return true;

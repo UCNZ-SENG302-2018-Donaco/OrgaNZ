@@ -7,6 +7,7 @@ import com.humanharvest.organz.state.AuthenticationManager;
 import com.humanharvest.organz.state.AuthenticationManagerFake;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Gender;
+import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
 import cucumber.api.java8.En;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,18 +21,9 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.time.LocalDate;
 
-import static org.hamcrest.Matchers.anything;
-import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.nullValue;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.hamcrest.Matchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 @SpringBootTest(classes = Application.class)
@@ -54,11 +46,13 @@ public final class CucumberSteps implements En {
         createClientGiven();
         createClinicianGiven();
         createAdministratorGiven();
+        createDonatedOrganGiven();
 
         createSharedWhen();
         createClientWhen();
         createClinicianWhen();
         createAdministratorWhen();
+        createDonatedOrganWhen();
 
         createSharedThen();
         createClientThen();
@@ -89,14 +83,6 @@ public final class CucumberSteps implements En {
     private void createSharedWhen() {
         When("^I get ([^ ]+)$", (String url) -> {
             MockHttpServletRequestBuilder request = get(url);
-            request = setupSharedHeaders(request);
-            lastAction = mockMvc.perform(request);
-        });
-
-        When("^I get (.+) using (.+)$", (String url, String json) -> {
-            MockHttpServletRequestBuilder request = get(url)
-                    .contentType(MediaType.APPLICATION_JSON_UTF8)
-                    .content(json);
             request = setupSharedHeaders(request);
             lastAction = mockMvc.perform(request);
         });
@@ -171,7 +157,8 @@ public final class CucumberSteps implements En {
         });
 
         Then("^paginated result (\\d+)'s (\\w+) is (\\w+)$", (Integer index, String fieldName, String firstName) -> {
-            lastAction = lastAction.andExpect(jsonPath(String.format("$.clients[%d].%s", index, fieldName), is(firstName)));
+            lastAction = lastAction
+                    .andExpect(jsonPath(String.format("$.clients[%d].%s", index, fieldName), is(firstName)));
         });
 
         Then("^result (\\d+)'s (\\w+) does not exist$", (Integer index, String fieldName) -> {
@@ -308,6 +295,32 @@ public final class CucumberSteps implements En {
         Then("^the result contains (.+)", (String result) -> {
             lastAction = lastAction.andExpect(content().string(containsString(result)));
         });
+    }
+
+    private void createDonatedOrganGiven() {
+        Given("^there is a test donated organ$", () -> {
+            Client testClient = new Client(1);
+            State.getClientManager().addClient(testClient);
+            testClient.donateOrgan(Organ.LIVER, (long) 1);
+            assert (!testClient.getDonatedOrgans().isEmpty());
+        });
+        Given("^there is an invalid test donated organ$", () -> {
+            Client testClient = new Client(1);
+            State.getClientManager().addClient(testClient);
+            testClient.donateOrgan(Organ.LIVER, null, (long) 1);
+            assert !testClient.getDonatedOrgans().isEmpty();
+        });
+    }
+
+    private void createDonatedOrganWhen() {
+
+        When("^I get (.+) with a valid donated organ id", (String url) -> {
+            url += "/" + State.getClientManager().getAllOrgansToDonate().stream().findFirst().get().getId();
+            MockHttpServletRequestBuilder request = get(url);
+            request = setupSharedHeaders(request);
+            lastAction = mockMvc.perform(request);
+        });
+
     }
 
     private void stepSetup() {

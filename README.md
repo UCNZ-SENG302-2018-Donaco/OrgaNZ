@@ -36,6 +36,7 @@ This application makes use of a number of external libraries, including:
 And also makes use of these external libraries for testing purposes:
 * JUnit 4
 * Mockito
+* Cucumber
 * TestFX
 
 All applicable copyright notices and licenses for the libraries used are provided in the `LICENSES.txt` file.
