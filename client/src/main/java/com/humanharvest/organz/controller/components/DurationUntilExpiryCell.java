@@ -13,7 +13,7 @@ public class DurationUntilExpiryCell extends TableCell<DonatedOrgan, Duration> {
     public DurationUntilExpiryCell(TableColumn<DonatedOrgan, Duration> column) {
         super();
     }
-    
+
     private DonatedOrgan getDonatedOrganForRow() {
         return getTableView().getItems().get(getIndex());
     }
@@ -82,7 +82,8 @@ public class DurationUntilExpiryCell extends TableCell<DonatedOrgan, Duration> {
     /**
      * Generates a stylesheet instruction for setting the background colour of a cell.
      * The colour is based on progressForColour, and how much the cell is filled in is based on totalProgress.
-     * @param progress how far along the bar should be, from 0 to 1: 0 maps to empty, and 1 maps to full
+     *
+     * @param progress   how far along the bar should be, from 0 to 1: 0 maps to empty, and 1 maps to full
      * @param fullMarker how far along the lower bound starts; this area will be grey (e.g. 0.9 for near the end)
      * @return stylesheet instruction, in the form "-fx-background-color: linear-gradient(...)"
      */
@@ -150,16 +151,30 @@ public class DurationUntilExpiryCell extends TableCell<DonatedOrgan, Duration> {
     /**
      * Returns the duration, formatted to display x hours, y minutes (or x hours, y seconds if there are less than 60
      * seconds).
+     *
      * @param duration the duration to format
      * @return the formatted string
      */
     private static String getFormattedDuration(Duration duration) {
-        String formattedDuration = duration.toHours() + " hours ";
+        String formattedDuration;
+        long hours = duration.toHours();
+        if (hours == 1) {
+            formattedDuration = "1 hour ";
+        } else {
+            formattedDuration = hours + " hours ";
+        }
         long minutes = duration.toMinutes() % 60;
-        if (minutes != 0) { // has some minutes
+        if (minutes == 0) { // no minutes, just seconds (and perhaps hours)
+            long seconds = duration.getSeconds() % 3600;
+            if (seconds == 1) {
+                formattedDuration += "1 second";
+            } else {
+                formattedDuration += seconds + " seconds";
+            }
+        } else if (minutes == 1) {
+            formattedDuration += "1 minute";
+        } else {
             formattedDuration += minutes + " minutes";
-        } else { // no minutes, just seconds (and perhaps hours)
-            formattedDuration += duration.getSeconds() % 3600 + " seconds";
         }
         return formattedDuration;
     }
