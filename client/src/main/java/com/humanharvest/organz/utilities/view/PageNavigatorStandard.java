@@ -1,6 +1,5 @@
 package com.humanharvest.organz.utilities.view;
 
-import com.humanharvest.organz.AppUI;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.state.State;
@@ -81,7 +80,6 @@ public class PageNavigatorStandard implements IPageNavigator {
             newStage.setOnCloseRequest(e -> State.deleteMainController(mainController));
 
             Scene scene = new Scene(mainPane);
-            AppUI.addCss(scene);
             newStage.setScene(scene);
             newStage.show();
 

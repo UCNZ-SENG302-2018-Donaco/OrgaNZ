@@ -44,6 +44,7 @@ public class AppUI extends Application {
 
         State.init(DataStorageType.REST);
         State.setPrimaryStage(primaryStage);
+        StyleManager.getInstance().addUserAgentStylesheet("/css/validation.css");
 
         Map<String, String> parameters = getParameters().getNamed();
 
@@ -57,7 +58,7 @@ public class AppUI extends Application {
 
         switch (State.getUiType()) {
             case STANDARD:
-                primaryStage.setScene(createScene(loadStandardMainPane(primaryStage)));
+                primaryStage.setScene(new Scene(loadStandardMainPane(primaryStage)));
                 break;
 
             case TOUCH:
@@ -128,21 +129,6 @@ public class AppUI extends Application {
         }
 
         return Optional.empty();
-    }
-
-    /**
-     * Creates the main application scene.
-     * @param mainPane The main application layout.
-     * @return Returns the created scene.
-     */
-    private static Scene createScene(Pane mainPane) {
-        Scene scene = new Scene(mainPane);
-        addCss(scene);
-        return scene;
-    }
-
-    public static void addCss(Scene scene) {
-        scene.getStylesheets().add(AppUI.class.getResource("/css/validation.css").toExternalForm());
     }
 
     /**

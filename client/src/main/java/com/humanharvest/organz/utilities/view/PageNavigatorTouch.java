@@ -1,6 +1,5 @@
 package com.humanharvest.organz.utilities.view;
 
-import com.humanharvest.organz.AppUI;
 import com.humanharvest.organz.MultitouchHandler;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
@@ -80,7 +79,6 @@ public class PageNavigatorTouch implements IPageNavigator {
             MainController mainController = loader.getController();
 
             Scene scene = new Scene(mainPane);
-            AppUI.addCss(scene);
             newStage.setScene(scene);
 
             mainController.setStage(newStage);
