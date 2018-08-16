@@ -26,7 +26,7 @@ public class ClinicianResolverRest implements ClinicianResolver {
 
         ResponseEntity<Clinician> responseEntity = State.getRestTemplate()
                 .exchange(
-                        State.BASE_URI + "clinicians/{staffId}",
+                        State.getBaseUri() + "clinicians/{staffId}",
                         HttpMethod.PATCH,
                         entity,
                         Clinician.class,
@@ -46,7 +46,7 @@ public class ClinicianResolverRest implements ClinicianResolver {
 
         ResponseEntity<List<HistoryItem>> responseEntity = State.getRestTemplate()
                 .exchange(
-                        State.BASE_URI + "clinicians/{staffId}/history",
+                        State.getBaseUri() + "clinicians/{staffId}/history",
                         HttpMethod.GET,
                         entity,
                         new ParameterizedTypeReference<List<HistoryItem>>() {

@@ -99,8 +99,10 @@ public class StaffListController extends SubController {
      * Loads the selected user's profile page in the current window.
      */
     private void loadUser(Integer staffId) {
-        Optional<Clinician> clinician = clinicianManager.getClinicianByStaffId(staffId);
-        State.setViewedClinician(clinician.get());
+        Clinician clinician = clinicianManager
+            .getClinicianByStaffId(staffId)
+            .orElseThrow(IllegalStateException::new);
+        State.setViewedClinician(clinician);
         PageNavigator.loadPage(Page.VIEW_CLINICIAN, mainController);
     }
 

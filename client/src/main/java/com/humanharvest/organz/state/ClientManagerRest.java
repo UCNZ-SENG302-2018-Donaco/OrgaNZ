@@ -28,7 +28,7 @@ public class ClientManagerRest implements ClientManager {
     public List<Client> getClients() throws AuthenticationException {
 
         ResponseEntity<PaginatedClientList> clientResponse = State.getRestTemplate().exchange(
-                State.BASE_URI + "clients",
+                State.getBaseUri() + "clients",
                 HttpMethod.GET,
                 null,
                 PaginatedClientList.class);
@@ -54,7 +54,7 @@ public class ClientManagerRest implements ClientManager {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set("Accept", MediaType.APPLICATION_JSON_VALUE);
 
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(State.BASE_URI + "/clients")
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(State.getBaseUri() + "/clients")
                 .queryParam("q", q)
                 .queryParam("offset", offset)
                 .queryParam("count", count)
@@ -99,7 +99,7 @@ public class ClientManagerRest implements ClientManager {
         httpHeaders.set("X-Auth-Token", State.getToken());
         HttpEntity entity = new HttpEntity<>(httpHeaders);
 
-        State.getRestTemplate().exchange(State.BASE_URI + "clients/{uid}", HttpMethod.DELETE,
+        State.getRestTemplate().exchange(State.getBaseUri() + "clients/{uid}", HttpMethod.DELETE,
                 entity,
                 String.class, client.getUid());
     }
@@ -122,7 +122,7 @@ public class ClientManagerRest implements ClientManager {
         ResponseEntity<Client> responseEntity;
         try {
             responseEntity = State.getRestTemplate()
-                    .exchange(State.BASE_URI + "clients/{id}", HttpMethod.GET, entity, Client.class, id);
+                    .exchange(State.getBaseUri() + "clients/{id}", HttpMethod.GET, entity, Client.class, id);
         } catch (NotFoundException e) {
             return Optional.empty();
         }
@@ -155,7 +155,7 @@ public class ClientManagerRest implements ClientManager {
         httpHeaders.set("X-Auth-Token", State.getToken());
         HttpEntity<String> entity = new HttpEntity<>(httpHeaders);
 
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(State.BASE_URI + "/clients/transplantRequests")
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(State.getBaseUri() + "/clients/transplantRequests")
                 .queryParam("offset", offset)
                 .queryParam("count", count);
 
@@ -195,7 +195,7 @@ public class ClientManagerRest implements ClientManager {
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         ResponseEntity<PaginatedDonatedOrgansList> responseEntity = State.getRestTemplate().exchange(
-                State.BASE_URI + "/clients/organs",
+                State.getBaseUri() + "/clients/organs",
                 HttpMethod.GET,
                 entity, PaginatedDonatedOrgansList.class);
 
@@ -218,7 +218,7 @@ public class ClientManagerRest implements ClientManager {
         headers.set("X-Auth-Token", State.getToken());
         headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
 
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(State.BASE_URI + "/clients/organs")
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(State.getBaseUri() + "/clients/organs")
                 .queryParam("offset", offset)
                 .queryParam("count", count)
                 .queryParam("regions", String.join(",", regions))
@@ -247,7 +247,7 @@ public class ClientManagerRest implements ClientManager {
 
         HttpEntity<String> entity = new HttpEntity<>(httpHeaders);
 
-        ResponseEntity<List<Client>> responseEntity = State.getRestTemplate().exchange(State.BASE_URI +
+        ResponseEntity<List<Client>> responseEntity = State.getRestTemplate().exchange(State.getBaseUri() +
                 "/matchOrganToRecipients/" + donatedOrgan.getId(), HttpMethod.GET, entity, new
                 ParameterizedTypeReference<List<Client>>() {
                 });

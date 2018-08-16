@@ -1,14 +1,12 @@
 package com.humanharvest.organz.state;
 
-import java.util.EnumSet;
-import java.util.Set;
-
 import com.humanharvest.organz.utilities.enums.Country;
+import java.util.Set;
 
 public interface ConfigManager {
 
     Set<Country> getAllowedCountries();
 
-    void setAllowedCountries(EnumSet<Country> countries);
+    void setAllowedCountries(Set<Country> countries);
 
 }

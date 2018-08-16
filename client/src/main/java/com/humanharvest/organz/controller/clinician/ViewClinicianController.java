@@ -177,15 +177,15 @@ public class ViewClinicianController extends ViewBaseController {
                     "The Staff ID must be an integer.", mainController.getStage());
             return;
         }
-        try {
-            Optional<Clinician> newClin = State.getClinicianManager().getClinicianByStaffId(idValue);
-            viewedClinician = newClin.get();
-        } catch (NotFoundException ex) {
+
+        Optional<Clinician> newClinician = State.getClinicianManager().getClinicianByStaffId(idValue);
+        if (newClinician.isPresent()) {
+            viewedClinician = newClinician.get();
+            getViewedClinicianData();
+        } else {
             PageNavigator.showAlert(Alert.AlertType.ERROR, "Invalid Staff ID",
-                    "This staff ID does not exist in the system.", mainController.getStage());
-            return;
+                "This staff ID does not exist in the system.", mainController.getStage());
         }
-        getViewedClinicianData();
     }
 
     /**

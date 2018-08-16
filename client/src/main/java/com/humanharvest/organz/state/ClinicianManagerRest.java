@@ -35,7 +35,7 @@ public class ClinicianManagerRest implements ClinicianManager {
         HttpEntity<Clinician> entity = new HttpEntity<>(null, httpHeaders);
 
         ResponseEntity<List<Clinician>> clinicianResponse = State.getRestTemplate().exchange(
-                State.BASE_URI + "clinicians", HttpMethod.GET, entity,
+                State.getBaseUri() + "clinicians", HttpMethod.GET, entity,
                 new ParameterizedTypeReference<List<Clinician>>() {
                 });
         List<Clinician> restClinicians = clinicianResponse.getBody();
@@ -58,7 +58,7 @@ public class ClinicianManagerRest implements ClinicianManager {
         httpHeaders.set("X-Auth-Token", State.getToken());
         HttpEntity<Clinician> entity = new HttpEntity<>(null, httpHeaders);
 
-        ResponseEntity<Clinician> clinician = State.getRestTemplate().exchange(State.BASE_URI + "clinicians/{staffId}",
+        ResponseEntity<Clinician> clinician = State.getRestTemplate().exchange(State.getBaseUri() + "clinicians/{staffId}",
                 HttpMethod.GET, entity, Clinician.class, staffId);
         State.setClinicianEtag(clinician.getHeaders().getETag());
         return Optional.ofNullable(clinician.getBody());
@@ -68,7 +68,7 @@ public class ClinicianManagerRest implements ClinicianManager {
     public void addClinician(Clinician clinician) {
         HttpHeaders httpHeaders = newHttpHeaders();
         HttpEntity<Clinician> entity = new HttpEntity<>(clinician, httpHeaders);
-        State.getRestTemplate().exchange(State.BASE_URI + "clinicians", HttpMethod.POST, entity, Clinician.class);
+        State.getRestTemplate().exchange(State.getBaseUri() + "clinicians", HttpMethod.POST, entity, Clinician.class);
     }
 
     @Override
@@ -81,7 +81,7 @@ public class ClinicianManagerRest implements ClinicianManager {
         HttpHeaders httpHeaders = newHttpHeaders();
         HttpEntity<Clinician> entity = new HttpEntity<>(clinician, httpHeaders);
         State.getRestTemplate().exchange(
-                        State.BASE_URI + "clinicians/{staffId}",
+                        State.getBaseUri() + "clinicians/{staffId}",
                         HttpMethod.DELETE,
                         entity,
                         Clinician.class,

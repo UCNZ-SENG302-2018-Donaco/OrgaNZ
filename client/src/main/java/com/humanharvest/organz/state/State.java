@@ -1,10 +1,5 @@
 package com.humanharvest.organz.state;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.List;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -31,6 +26,10 @@ import com.humanharvest.organz.resolvers.clinician.ClinicianResolver;
 import com.humanharvest.organz.resolvers.clinician.ClinicianResolverRest;
 import com.humanharvest.organz.utilities.RestErrorHandler;
 import com.humanharvest.organz.utilities.enums.Country;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 import javafx.stage.Stage;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -50,7 +49,7 @@ public final class State {
         STANDARD, TOUCH
     }
 
-    public static String BASE_URI = "http://csse-s302g7.canterbury.ac.nz:8080/";
+    private static String baseUri = "http://csse-s302g7.canterbury.ac.nz:8080/";
 
     private static DataStorageType currentStorageType = DataStorageType.MEMORY;
 
@@ -77,7 +76,7 @@ public final class State {
     private static String recentEtag = "";
     private static String token = "";
     private static Clinician viewedClinician;
-    private static EnumSet<Country> allowedCountries;
+    private static Set<Country> allowedCountries;
     private static UiType uiType = UiType.STANDARD;
     private static Stage primaryStage;
 
@@ -130,8 +129,12 @@ public final class State {
         }
     }
 
+    public static String getBaseUri() {
+        return baseUri;
+    }
+
     public static void setBaseUri(String uri) {
-        BASE_URI = uri;
+        baseUri = uri;
     }
 
     public static void login(Client client) {
@@ -154,11 +157,11 @@ public final class State {
         return unsavedChanges;
     }
 
-    public static EnumSet<Country> getAllowedCountries() {
+    public static Set<Country> getAllowedCountries() {
         return allowedCountries;
     }
 
-    public static void setAllowedCountries(EnumSet<Country> countries) {
+    public static void setAllowedCountries(Set<Country> countries) {
         allowedCountries = countries;
     }
 
