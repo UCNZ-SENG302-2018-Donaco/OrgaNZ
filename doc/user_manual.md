@@ -1,7 +1,7 @@
 # User Manual
 
 ## Touch Screen Interface
-The touch screen interface has been optimised to work on a windows 10 touch screen device. To run the touch screen
+The touch screen interface has been optimised to work on a Windows 10 touch screen device. To run the touch screen
 version of the UI, enter the following command from the target directory:
 ```
 java -jar organz-client-<version>.jar --ui=touch
@@ -18,7 +18,7 @@ java -jar organz-client-<version>.jar
 Our server is hosted using docker on `http://csse-s302g7.canterbury.ac.nz`. If you wish to run a local server,
 you can do this using:
 ```
-java -jar organz-client-<version>.jar host=<local-server>
+java -jar organz-client-<version>.jar --host=<local-server>
 ```
 
 
