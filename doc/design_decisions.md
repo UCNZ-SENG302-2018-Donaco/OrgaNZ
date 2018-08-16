@@ -39,7 +39,8 @@ having to deal with ties to specific deployment environments.
 
 #### Controls FX
 * *CheckComboBoxes* - These were chosen as they reduce the number of clicks that users require to filter their lists. 
-It allows them to select multiple regions/organs at once, rather than only one using a drop down box.
+It allows them to select multiple regions/organs at once, rather than only one using a drop down box. They have been implemented 
+in a numberof clinician windows including the list of transplant requests, searching clients and organs to donate.
 * *Notifications* - These were chosen as they provide a passive notification for users in the bottom corner of the screen
 which is not intrusive and annoying for the system users.
 * *Range Slider* - The slider provides an intuitive way for users to filter by an age range.

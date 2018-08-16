@@ -1,5 +1,16 @@
 package com.humanharvest.organz;
 
+import java.io.IOException;
+import java.util.Map;
+import java.util.logging.Level;
+
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.image.Image;
+import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
+
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.state.State.DataStorageType;
@@ -7,15 +18,6 @@ import com.humanharvest.organz.utilities.LoggerSetup;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.utilities.view.WindowContext;
-import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.scene.layout.Pane;
-import javafx.stage.Stage;
-
-import java.io.IOException;
-import java.util.Map;
-import java.util.logging.Level;
 
 /**
  * The main class that runs the JavaFX GUI.
@@ -42,7 +44,8 @@ public class AppUI extends Application {
             State.BASE_URI = System.getenv("HOST");
         }
 
-        primaryStage.setTitle("Organ Client Management System");
+        primaryStage.setTitle("Organ Donor Management System");
+        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/images/ORGANZ.png")));
         primaryStage.setScene(createScene(loadMainPane(primaryStage)));
         primaryStage.show();
 
