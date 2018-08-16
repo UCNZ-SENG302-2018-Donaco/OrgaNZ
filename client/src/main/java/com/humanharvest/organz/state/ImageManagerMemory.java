@@ -62,7 +62,6 @@ public class ImageManagerMemory implements ImageManager{
      * @return true if the image is successfully deleted.
      */
     public boolean deleteClientImage(int uid) {
-        System.out.println(State.getClientManager().getClientByID(uid));
         if (State.getClientManager().getClientByID(uid).isPresent()) {
             imageMap.remove(uid);
             return true;

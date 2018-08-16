@@ -73,7 +73,6 @@ public class ImageManagerRest implements ImageManager{
      * @return true if the image is successfully deleted.
      */
     public boolean deleteClientImage(int uid) {
-        System.out.println("here");
         HttpHeaders httpHeaders = generateHeaders();
         HttpEntity<Object> entity = new HttpEntity<>(null, httpHeaders);
 
