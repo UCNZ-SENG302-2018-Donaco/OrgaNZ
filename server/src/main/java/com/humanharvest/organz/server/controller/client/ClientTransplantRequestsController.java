@@ -1,8 +1,10 @@
 package com.humanharvest.organz.server.controller.client;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonView;
@@ -12,8 +14,8 @@ import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.actions.client.AddTransplantRequestAction;
 import com.humanharvest.organz.actions.client.ResolveTransplantRequestAction;
 import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
@@ -59,20 +61,27 @@ public class ClientTransplantRequestsController {
     public ResponseEntity<PaginatedTransplantList> getAllTransplantRequests(
             @RequestParam(value = "offset", required = false) Integer offset,
             @RequestParam(value = "count", required = false) Integer count,
-            @RequestParam(value = "region", required = false) List<String> regions,
-            @RequestParam(value = "organs", required = false) List<Organ> organs,
+            @RequestParam(value = "regions", required = false) Set<String> regions,
+            @RequestParam(value = "organs", required = false) Set<Organ> organs,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws AuthenticationException {
 
         // Verify that request has clinician/admin authorization
         State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
 
+        final Set<String> regionsToFilter = new HashSet<>();
+        if (regions != null) {
+            for (String region : regions) {
+                regionsToFilter.add(region.replace("%20", " "));
+            }
+        }
+
         // Get all requests that match region/organ filters
         List<TransplantRequestView> matchingRequests = State.getClientManager().getAllTransplantRequests().stream()
-                .filter(transplantRequest ->
-                        regions == null || regions.contains(transplantRequest.getClient().getRegion()))
-                .filter(transplantRequest ->
-                        organs == null || organs.contains(transplantRequest.getRequestedOrgan()))
+                .filter(request -> regionsToFilter.isEmpty()
+                        || regionsToFilter.contains(request.getClient().getRegion())
+                        || regionsToFilter.contains("International") && request.getClient().getCountry() != Country.NZ)
+                .filter(request -> organs == null || organs.isEmpty() || organs.contains(request.getRequestedOrgan()))
                 .map(TransplantRequestView::new)
                 .collect(Collectors.toList());
 
@@ -149,13 +158,9 @@ public class ClientTransplantRequestsController {
 
             // Check etag
             if (etag == null) {
-                System.out.println("Client etag is null");
                 throw new IfMatchRequiredException();
             }
             if (!client.getETag().equals(etag)) {
-                System.out.println("Server modified timestamp: " + client.getModifiedTimestamp());
-                System.out.println("Server etag: " + client.getETag());
-                System.out.println("Client etag: " + etag);
                 throw new IfMatchFailedException();
             }
 

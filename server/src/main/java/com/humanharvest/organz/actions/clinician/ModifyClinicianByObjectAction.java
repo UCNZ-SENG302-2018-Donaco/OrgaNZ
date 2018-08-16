@@ -5,6 +5,9 @@ import com.humanharvest.organz.state.ClinicianManager;
 import com.humanharvest.organz.views.clinician.ModifyClinicianObject;
 import org.springframework.beans.BeanUtils;
 
+import java.lang.reflect.Field;
+import java.util.stream.Collectors;
+
 public class ModifyClinicianByObjectAction extends ClinicianAction {
 
     private ModifyClinicianObject oldClinicianDetails;
@@ -38,12 +41,30 @@ public class ModifyClinicianByObjectAction extends ClinicianAction {
 
     @Override
     public String getExecuteText() {
-        return "Todo";
+        String changesText = newClinicianDetails.getModifiedFields().stream()
+                .map(Field::getName)
+                .map(this::unCamelCase)
+                .collect(Collectors.joining("\n"));
+
+        return String.format("Updated details for clinician %d: %s. \n"
+                        + "These changes were made: \n\n%s",
+                clinician.getStaffId(), clinician.getFullName(), changesText);
     }
 
     @Override
     public String getUnexecuteText() {
-        return "Todo";
+        String changesText = oldClinicianDetails.getModifiedFields().stream()
+                .map(Field::getName)
+                .map(this::unCamelCase)
+                .collect(Collectors.joining("\n"));
+
+        return String.format("Reversed update for clinician %d: %s. \n"
+                        + "These changes were reversed: \n\n%s",
+                clinician.getStaffId(), clinician.getFullName(), changesText);
     }
 
+    private String unCamelCase(String inCamelCase) {
+        String unCamelCased = inCamelCase.replaceAll("([a-z])([A-Z]+)", "$1 $2");
+        return unCamelCased.substring(0, 1).toUpperCase() + unCamelCased.substring(1);
+    }
 }

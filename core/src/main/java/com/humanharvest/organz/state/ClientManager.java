@@ -6,6 +6,7 @@ import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.enums.*;
 import com.humanharvest.organz.views.client.PaginatedClientList;
+import com.humanharvest.organz.views.client.PaginatedDonatedOrgansList;
 import com.humanharvest.organz.views.client.PaginatedTransplantList;
 
 import java.time.LocalDate;
@@ -18,7 +19,6 @@ public interface ClientManager {
 
     List<Client> getClients();
 
-    // TODO: Change so regions isn't an enum
     PaginatedClientList getClients(
             String q,
             Integer offset,
@@ -71,13 +71,18 @@ public interface ClientManager {
      */
     Collection<TransplantRequest> getAllCurrentTransplantRequests();
 
-    PaginatedTransplantList getAllCurrentTransplantRequests(Integer offset, Integer count, Set<Region> regions,
+    PaginatedTransplantList getAllCurrentTransplantRequests(Integer offset, Integer count, Set<String> regions,
             Set<Organ> organs);
+
+    Collection<DonatedOrgan> getAllOrgansToDonate();
 
     /**
      * Returns a collection of all the organs that are available to donate from dead peop[e.
      */
-    Collection<DonatedOrgan> getAllOrgansToDonate();
+    PaginatedDonatedOrgansList getAllOrgansToDonate(Integer offset, Integer count, Set<String> regions, Set<Organ>
+            organType, DonatedOrganSortOptionsEnum sortOption, Boolean reversed);
+
+    List<Client> getOrganMatches(DonatedOrgan donatedOrgan);
 
     List<HistoryItem> getAllHistoryItems();
 }

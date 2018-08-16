@@ -1,5 +1,33 @@
 package com.humanharvest.organz.controller.client;
 
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.MedicationRecord;
+import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.SidebarController;
+import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.state.Session;
+import com.humanharvest.organz.state.Session.UserType;
+import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.exceptions.*;
+import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.utilities.web.DrugInteractionsHandler;
+import com.humanharvest.organz.utilities.web.MedActiveIngredientsHandler;
+import com.humanharvest.organz.utilities.web.MedAutoCompleteHandler;
+import com.humanharvest.organz.views.client.CreateMedicationRecordView;
+import impl.org.controlsfx.autocompletion.AutoCompletionTextFieldBinding;
+import javafx.collections.FXCollections;
+import javafx.concurrent.Task;
+import javafx.fxml.FXML;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.*;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import org.controlsfx.control.Notifications;
+
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -10,63 +38,28 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import javafx.collections.FXCollections;
-import javafx.concurrent.Task;
-import javafx.fxml.FXML;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.MedicationRecord;
-import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.controller.SidebarController;
-import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.state.ClientManager;
-import com.humanharvest.organz.state.Session;
-import com.humanharvest.organz.state.Session.UserType;
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.exceptions.BadDrugNameException;
-import com.humanharvest.organz.utilities.exceptions.BadGatewayException;
-import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
-import com.humanharvest.organz.utilities.exceptions.NotFoundException;
-import com.humanharvest.organz.utilities.exceptions.ServerRestException;
-import com.humanharvest.organz.utilities.view.PageNavigator;
-import com.humanharvest.organz.utilities.web.DrugInteractionsHandler;
-import com.humanharvest.organz.utilities.web.MedActiveIngredientsHandler;
-import com.humanharvest.organz.utilities.web.MedAutoCompleteHandler;
-import com.humanharvest.organz.views.client.CreateMedicationRecordView;
-import impl.org.controlsfx.autocompletion.AutoCompletionTextFieldBinding;
-import org.controlsfx.control.Notifications;
-
 /**
  * Controller for the view/edit medications page.
  */
 public class ViewMedicationsController extends SubController {
 
+    private static final Logger LOGGER = Logger.getLogger(SidebarController.class.getName());
+
     private Session session;
-    private ClientManager manager;
     private Client client;
     private List<String> lastResponse;
     private MedAutoCompleteHandler autoCompleteHandler;
     private MedActiveIngredientsHandler activeIngredientsHandler;
     private DrugInteractionsHandler drugInteractionsHandler;
 
-    private static final Logger LOGGER = Logger.getLogger(SidebarController.class.getName());
-
     @FXML
     private Pane sidebarPane, menuBarPane;
 
     @FXML
     private TextField newMedField;
+
+    @FXML
+    private TextArea medicationIngredients, medicationInteractions;
 
     @FXML
     private HBox newMedicationPane;
@@ -82,7 +75,6 @@ public class ViewMedicationsController extends SubController {
 
     public ViewMedicationsController() {
         session = State.getSession();
-        manager = State.getClientManager();
     }
 
     void setDrugInteractionsHandler(DrugInteractionsHandler handler) {
@@ -91,6 +83,42 @@ public class ViewMedicationsController extends SubController {
 
     void setActiveIngredientsHandler(MedActiveIngredientsHandler handler) {
         this.activeIngredientsHandler = handler;
+    }
+
+    /**
+     * Creates a cell factory for the list view, that allows cells to be deselected by clicking a second time
+     * Only up to two cells may be selected at once
+     * @param listView to create a cellfactory for
+     */
+    private void configureCellFactory(ListView<MedicationRecord> listView) {
+        listView.setCellFactory(view -> {
+            ListCell<MedicationRecord> cell = new ListCell<MedicationRecord>() {
+                @Override
+                public void updateItem(MedicationRecord record, boolean empty) {
+                    super.updateItem(record, empty);
+                    if (!empty) {
+                        setText(record.toString());
+                    } else {
+                        setText("");
+                    }
+                }
+            };
+            cell.addEventFilter(MouseEvent.MOUSE_PRESSED, event -> {
+                listView.requestFocus();
+                if (!cell.isEmpty()) {
+                    int numSelected = getSelectedRecords().size();
+                    int index = cell.getIndex();
+
+                    if (listView.getSelectionModel().getSelectedIndices().contains(index)) {
+                        listView.getSelectionModel().clearSelection(index);
+                    } else if (numSelected < 2){  // Only select if there are less than two currently selected
+                        listView.getSelectionModel().select(index);
+                    }
+                    event.consume();
+                }
+            });
+            return cell ;
+        });
     }
 
     /**
@@ -110,22 +138,19 @@ public class ViewMedicationsController extends SubController {
         activeIngredientsHandler = new MedActiveIngredientsHandler();
         drugInteractionsHandler = new DrugInteractionsHandler();
 
+        configureCellFactory(currentMedicationsView);
+        configureCellFactory(pastMedicationsView);
+
         pastMedicationsView.getSelectionModel().selectedItemProperty().addListener(
                 (observable) -> {
                     selectedListView = pastMedicationsView;
-                    // Clear the other list if CTRL or SHIFT is not being held down
-                    if (!selectingMultiple) {
-                        currentMedicationsView.getSelectionModel().clearSelection();
-                    }
+                    updateMedicationInformation();
                 });
 
         currentMedicationsView.getSelectionModel().selectedItemProperty().addListener(
                 (observable) -> {
                     selectedListView = currentMedicationsView;
-                    // Clear the other list if CTRL or SHIFT is not being held down
-                    if (!selectingMultiple) {
-                        pastMedicationsView.getSelectionModel().clearSelection();
-                    }
+                    updateMedicationInformation();
                 });
 
         pastMedicationsView.getSelectionModel().setSelectionMode(SelectionMode.MULTIPLE);
@@ -162,13 +187,15 @@ public class ViewMedicationsController extends SubController {
         trackControlOrShiftKeyPressed();
     }
 
+    /**
+     * Updates the window title and medication lists
+     */
     @Override
     public void refresh() {
         if (session.getLoggedInUserType() == UserType.CLIENT) {
             mainController.setTitle("View Medications:  " + client.getPreferredNameFormatted());
         } else if (windowContext.isClinViewClientWindow()) {
             mainController.setTitle("View Medications:  " + client.getFullName());
-
         }
         refreshMedicationLists();
     }
@@ -198,6 +225,18 @@ public class ViewMedicationsController extends SubController {
 
         pastMedicationsView.setItems(FXCollections.observableArrayList(client.getPastMedications()));
         currentMedicationsView.setItems(FXCollections.observableArrayList(client.getCurrentMedications()));
+    }
+
+    /**
+     * Gets all selected medication records from both the current and past medication lists
+     * @return list of all currently selected medication records
+     */
+    private List<MedicationRecord> getSelectedRecords() {
+        List<MedicationRecord> selectedItems = new ArrayList<>();
+        selectedItems.addAll(currentMedicationsView.getSelectionModel().getSelectedItems());
+        selectedItems.addAll(pastMedicationsView.getSelectionModel().getSelectedItems());
+
+        return selectedItems;
     }
 
     /**
@@ -358,8 +397,23 @@ public class ViewMedicationsController extends SubController {
         MedicationRecord record = getSelectedRecord();
         if (record != null) {
 
-            //TODO: Handle errors
-            State.getClientResolver().deleteMedicationRecord(client, record);
+            try {
+                State.getClientResolver().deleteMedicationRecord(client, record);
+
+            } catch (NotFoundException e) {
+                LOGGER.log(Level.WARNING, "Medication not found");
+                Notifications.create()
+                        .title("Medication not found")
+                        .text("The medication could not be found on the server, it may have been deleted")
+                        .showWarning();
+            } catch (ServerRestException e) {
+                LOGGER.log(Level.WARNING, e.getMessage(), e);
+                Notifications.create()
+                        .title("Server error")
+                        .text("Could not apply changes on the server, please try again later")
+                        .showError();
+                return;
+            }
 
             PageNavigator.refreshAllWindows();
             refreshMedicationLists();
@@ -367,18 +421,36 @@ public class ViewMedicationsController extends SubController {
     }
 
     /**
-     * Generates a pop-up with a list of active ingredients.
+     * Checks what medications are currently selected, if one is selected, its ingredients are displayed, if two are
+     * selected, their interactions are displayed. Otherwise nothing is displayed for medication ingredients and
+     * interactions
      */
-    @FXML
-    private void viewActiveIngredients() {
-        MedicationRecord medicationRecord = getSelectedRecord();
+    private void updateMedicationInformation() {
+        List<MedicationRecord> selectedItems = getSelectedRecords();
 
-        if (medicationRecord != null) {
-            String medicationName = medicationRecord.getMedicationName();
-            // Generate initial alert popup
-            String alertTitle = "Active ingredients in " + medicationName;
-            Alert alert = PageNavigator.generateAlert(AlertType.INFORMATION, alertTitle, "Loading...");
-            alert.show();
+        if (selectedItems.size() == 1) {
+            setActiveIngredients(selectedItems.get(0));
+            medicationInteractions.clear();
+        } else if (selectedItems.size() == 2) {
+            setInteractions(selectedItems);
+            medicationIngredients.clear();
+        } else {
+            // If None or more than two are selected, the textareas are reset to their prompts
+            medicationIngredients.clear();
+            medicationInteractions.clear();
+        }
+    }
+
+    /**
+     * Displays the ingredients of the currently selected medication, given that it is a valid medication
+     * @param selectedMedication Currently selected medication
+     */
+    private void setActiveIngredients(MedicationRecord selectedMedication) {
+
+        if (selectedMedication != null) {
+            String medicationName = selectedMedication.getMedicationName();
+
+            medicationIngredients.setText("Loading ...");
 
             Task<List<String>> task = new Task<List<String>>() {
                 @Override
@@ -393,87 +465,73 @@ public class ViewMedicationsController extends SubController {
                 // It is assumed that every valid drug has active ingredients, thus if an empty list is returned,
                 //     then the drug name wasn't valid.
                 if (activeIngredients.isEmpty()) {
-                    alert.setAlertType(AlertType.ERROR);
-                    alert.setContentText("No results found for " + medicationName);
+                    medicationIngredients.setText("No active ingredients found for " + medicationName);
                 } else {
                     // Build list of active ingredients into a string, each ingredient on a new line
                     StringBuilder sb = new StringBuilder();
                     for (String ingredient : activeIngredients) {
                         sb.append(ingredient).append("\n");
                     }
-                    alert.setContentText(sb.toString());
+                    String formattedIngredients = String.format("Active ingredients in %s: \n%s", medicationName, sb
+                            .toString());
+                    medicationIngredients.setText(formattedIngredients);
                 }
             });
 
             task.setOnFailed(e -> {
-                alert.setAlertType(AlertType.ERROR);
-                alert.setContentText("Error loading results. Please try again later.");
-
+                medicationIngredients.setText("Error loading ingredients, please try again later");
+                System.out.println(e);
             });
 
             new Thread(task).start();
         }
+
     }
 
-
     /**
-     * Generates a pop-up with a list of interactions between the 2 medications selected. If any errors occurs when
-     * retrieving the interactions, the popup will display the appropriate error message instead.
+     * Displays the interactions between the two currently selected medications, given that both are valid medications
+     * @param selectedMedications The two currently selected medications
      */
-    @FXML
-    private void viewInteractions() {
+    private void setInteractions(List<MedicationRecord> selectedMedications) {
+        Collections.sort(selectedMedications);
+        String medication1 = selectedMedications.get(0).getMedicationName();
+        String medication2 = selectedMedications.get(1).getMedicationName();
 
-        // Check if there are two medications selected
-        List<MedicationRecord> selectedItems = new ArrayList<>();
-        selectedItems.addAll(currentMedicationsView.getSelectionModel().getSelectedItems());
-        selectedItems.addAll(pastMedicationsView.getSelectionModel().getSelectedItems());
+        medicationIngredients.clear();
 
-        if (selectedItems.size() != 2) {
-            PageNavigator.showAlert(AlertType.ERROR,
-                    String.format("Incorrect number of medications selected (%d).", selectedItems.size()),
-                    "Please select exactly two medications to view their interactions.");
+        medicationInteractions.setText("Loading ...");
 
-        } else {
-            Collections.sort(selectedItems);
-            String medication1 = selectedItems.get(0).getMedicationName();
-            String medication2 = selectedItems.get(1).getMedicationName();
+        Task<List<String>> task = new Task<List<String>>() {
+            @Override
+            public List<String> call() throws IOException, BadDrugNameException, BadGatewayException {
+                return drugInteractionsHandler.getInteractions(client, medication1, medication2);
+            }
+        };
 
-            // Generate initial alert popup
-            Alert alert = PageNavigator.generateAlert(AlertType.INFORMATION,
-                    String.format("Interactions between %s and %s", medication1, medication2),
-                    "Loading...");
-            alert.show();
+        task.setOnFailed(event -> {
 
-            Task<List<String>> task = new Task<List<String>>() {
-                @Override
-                public List<String> call() throws IOException, BadDrugNameException, BadGatewayException {
-                    return drugInteractionsHandler.getInteractions(client, medication1, medication2);
-                }
-            };
+            medicationInteractions.setText("An error occurred when retrieving drug interactions: \n" +
+                    task.getException().getMessage());
+            task.getException().printStackTrace();
+        });
 
-            task.setOnFailed(event -> {
-                alert.setAlertType(AlertType.ERROR);
-                alert.setContentText("An error occurred when retrieving drug interactions: \n" +
-                        task.getException().getMessage());
-                task.getException().printStackTrace();
-            });
+        task.setOnSucceeded(event -> {
+            List<String> interactions = task.getValue();
 
-            task.setOnSucceeded(event -> {
-                List<String> interactions = task.getValue();
+            if (interactions.size() == 0) {
 
-                if (interactions.size() == 0) {
-                    alert.setAlertType(AlertType.WARNING);
-                    alert.setContentText(String.format(
-                            "A study has not yet been done on the interactions between '%s' and '%s'.",
-                            medication1, medication2));
-                } else {
-                    String interactionsText = interactions.stream().collect(Collectors.joining("\n"));
-                    alert.setContentText(interactionsText);
-                }
-            });
+                medicationInteractions.setText(String.format(
+                        "There is no information on interactions between %s and %s.",
+                        medication1, medication2));
+            } else {
+                String interactionsText = interactions.stream().collect(Collectors.joining("\n"));
+                String formattedInteractions = String.format("Interactions between %s and %s: \n%s", medication1, medication2,
+                        interactionsText);
+                medicationInteractions.setText(formattedInteractions);
+            }
+        });
 
-            new Thread(task).start();
-        }
+        new Thread(task).start();
     }
 
     /**

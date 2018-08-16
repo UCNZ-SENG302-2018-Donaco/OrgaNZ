@@ -1,15 +1,5 @@
 package com.humanharvest.organz.controller.client;
 
-import java.util.logging.Logger;
-
-import javafx.fxml.FXML;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.Pane;
-
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.controller.MainController;
@@ -26,6 +16,16 @@ import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.utilities.view.WindowContext;
 import com.humanharvest.organz.views.client.CreateClientView;
+import javafx.fxml.FXML;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.Pane;
+
+import java.time.LocalDate;
+import java.util.logging.Logger;
 
 /**
  * Controller for the create client page.
@@ -56,12 +56,13 @@ public class CreateClientController extends SubController {
 
     /**
      * Override so we can set the page title.
+     *
      * @param mainController The MainController
      */
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
-        mainController.setTitle("Create a new Client");
+        mainController.setTitle("Create a client");
 
         if (State.getSession() != null) { //they're a clinician or admin
             mainController.loadMenuBar(menuBarPane);
@@ -98,9 +99,18 @@ public class CreateClientController extends SubController {
                 }
             }
 
+            if (dobFld.getValue().isAfter(LocalDate.now())) {
+                PageNavigator.showAlert(AlertType.ERROR,
+                        "Invalid Date of Birth",
+                        "The date of birth cannot be after today.");
+                return; // DOB must be <= to the current date.
+            }
+
+
             CreateClientView newClient = new CreateClientView(firstNameFld.getText(), middleNamefld.getText(),
                     lastNamefld.getText(),
                     dobFld.getValue());
+
 
             Client client;
             try {

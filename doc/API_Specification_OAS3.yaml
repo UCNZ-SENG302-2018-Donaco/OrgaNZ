@@ -28,6 +28,8 @@ tags:
       description: All base administrator paths
     - name: Configuration
       description: All configuration paths
+    - name: Algorithms
+      description: All algorithm paths
 
 paths:
   ### Clients
@@ -299,7 +301,7 @@ paths:
           content:
             image/png:
               schema:
-                type: byte[]
+                type: string
                 format: binary
                 example: Raw content of PNG image file
         400:
@@ -325,7 +327,7 @@ paths:
         content:
           application/json:
             schema:
-              type: byte[]
+              type: string
               format: binary
               example: Raw content of PNG image file
       responses:
@@ -352,7 +354,7 @@ paths:
         500:
           $ref: '#/components/responses/500InternalServerError'
 
-    deleted:
+    delete:
       tags:
         - Client Profile Picture
       security:
@@ -360,13 +362,6 @@ paths:
         - ClinicianAccess: []
         - AdministratorAccess: []
       summary: Delete client profile picture
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: byte[]
-              format: binary
-              example: Raw content of PNG image file
       responses:
         201:
           description: Deleted
@@ -1875,7 +1870,6 @@ paths:
         500:
           $ref: '#/components/responses/500InternalServerError'
 
-
     ###Configurations
   '/config/countries':
     get:
@@ -2028,6 +2022,35 @@ paths:
         500:
           $ref: '#/components/responses/500InternalServerError'
 
+  ### Algorithms
+  /matchOrganToRecipients:
+    get:
+      tags:
+        - Algorithms
+      security:
+        - ClinicianAccess: []
+        - AdministratorAccess: []
+      summary: "Returns a list of potential recipients for the organ, in priority order."
+      parameters:
+        - $ref: '#/components/parameters/donatedOrgan'
+      responses:
+        200:
+          description: A list of clients
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/clientOverview'
+        400:
+          $ref: '#/components/responses/400BadRequest'
+        401:
+          $ref: '#/components/responses/401Unauthorized'
+        403:
+          $ref: '#/components/responses/403Forbidden'
+        500:
+          $ref: '#/components/responses/500InternalServerError'
+
 components:
   parameters:
     q:
@@ -2122,7 +2145,6 @@ components:
       required: true
       schema:
         $ref: '#/components/schemas/ETag'
-
 
   examples:
     clientDetailsExample:
@@ -2229,7 +2251,6 @@ components:
       description: A JSON Web Token used for all further authentication. Should be included in the Authentication header
       example: eyJhbGR5cCI6IkpXVCJ9.eyJzdWIiDIyfQ.Vxrhpalxry4EfsAKGITz02x0
 
-
     ### Clinician
 
     clinicianOverview:
@@ -2300,8 +2321,8 @@ components:
         region:
           $ref: '#/components/schemas/regionEnum'
 
-
     ### Administrator
+
     administratorDetails:
       type: object
       properties:
@@ -2325,8 +2346,6 @@ components:
       properties:
         username:
           type: string
-
-
 
     #Client attributes
 
@@ -2389,7 +2408,6 @@ components:
           $ref: '#/components/schemas/dateTime'
       example:
         $ref: '#/components/examples/clientDetailsExample'
-
 
     clientCreateDetails:
       type: object
@@ -2473,13 +2491,14 @@ components:
       type: string
       example: "2018-07-19"
       nullable: true
+
     time:
       type: string
       example: "14:56:01.562"
+
     dateTime:
       type: string
       example: "2018-07-19T14:56:01.562"
-
 
     organBooleanArray:
       type: object
@@ -2564,8 +2583,7 @@ components:
         curedDate:
           $ref: '#/components/schemas/date'
         isChronic:
-          type: boolean
-
+          type: boolea
 
     procedureRecord:
       type: object
@@ -2668,9 +2686,7 @@ components:
         canRedo:
           type: boolean
 
-
-
-    #ENUMs
+    # Enums
 
     regionEnum:
       type: string
@@ -2704,6 +2720,7 @@ components:
       type: string
       enum: [ID, NAME, AGE, BIRTH_GENDER, REGION, DONOR, RECEIVER]
 
+    # Other
 
     command:
       type: object
@@ -2711,14 +2728,11 @@ components:
         command:
           type: string
           example: help
-          
     
     ETag:
       type: string
       description: A hashed value of the object used for optimistic concurrency control
-      
-      
-      
+
   responses:
     400BadRequest:
       description: Bad request
@@ -2734,7 +2748,6 @@ components:
       description: ETag header was missing and is required to modify a resource
     500InternalServerError:
       description: Internal server error
-    
       
   securitySchemes:
           

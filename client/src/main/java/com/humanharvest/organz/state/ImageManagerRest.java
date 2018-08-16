@@ -1,6 +1,7 @@
 package com.humanharvest.organz.state;
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -44,9 +45,10 @@ public class ImageManagerRest implements ImageManager{
     }
 
     public byte[] getDefaultImage() throws IOException {
-        InputStream in = new FileInputStream("./images/default.png");
-        byte[] res = IOUtils.toByteArray(in);
-        in.close();
+        byte[] res;
+        try (InputStream in = getClass().getResourceAsStream("/images/ORGANZ.png")) {
+            res = IOUtils.toByteArray(in);
+        }
         return res;
     }
 
@@ -71,7 +73,6 @@ public class ImageManagerRest implements ImageManager{
      * @return true if the image is successfully deleted.
      */
     public boolean deleteClientImage(int uid) {
-        System.out.println("here");
         HttpHeaders httpHeaders = generateHeaders();
         HttpEntity<Object> entity = new HttpEntity<>(null, httpHeaders);
 

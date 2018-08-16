@@ -1,35 +1,15 @@
 package com.humanharvest.organz.state;
 
+import com.humanharvest.organz.*;
+import com.humanharvest.organz.utilities.ClientNameSorter;
+import com.humanharvest.organz.utilities.algorithms.MatchOrganToRecipients;
+import com.humanharvest.organz.utilities.enums.*;
+import com.humanharvest.organz.views.client.*;
+
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.OptionalInt;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.DonatedOrgan;
-import com.humanharvest.organz.HistoryItem;
-import com.humanharvest.organz.IllnessRecord;
-import com.humanharvest.organz.MedicationRecord;
-import com.humanharvest.organz.ProcedureRecord;
-import com.humanharvest.organz.TransplantRequest;
-import com.humanharvest.organz.utilities.ClientNameSorter;
-import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
-import com.humanharvest.organz.utilities.enums.ClientType;
-import com.humanharvest.organz.utilities.enums.Gender;
-import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.enums.Region;
-import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
-import com.humanharvest.organz.views.client.PaginatedClientList;
-import com.humanharvest.organz.views.client.PaginatedTransplantList;
-import com.humanharvest.organz.views.client.TransplantRequestView;
 
 /**
  * An in-memory implementation of {@link ClientManager} that uses a simple list to hold all clients.
@@ -302,7 +282,7 @@ public class ClientManagerMemory implements ClientManager {
 
     @Override
     public PaginatedTransplantList getAllCurrentTransplantRequests(Integer offset, Integer count,
-            Set<Region> regions, Set<Organ> organs) {
+            Set<String> regions, Set<Organ> organs) {
         // Determine requests that match filters
         List<TransplantRequestView> matchingRequests = getClients().stream()
                 .filter(client -> regions == null || regions.isEmpty() || regions.contains(client.getRegion()))
@@ -347,5 +327,85 @@ public class ClientManagerMemory implements ClientManager {
             donatedOrgans.addAll(client.getDonatedOrgans());
         }
         return donatedOrgans;
+    }
+
+    /**donatedOrgans,totalResults)
+     * @return a list of all organs available for donation
+     */
+    @Override
+    public PaginatedDonatedOrgansList getAllOrgansToDonate(Integer offset, Integer count, Set<String> regionsToFilter,
+            Set<Organ> organType, DonatedOrganSortOptionsEnum sortOption, Boolean reversed) {
+
+        Comparator<DonatedOrgan> comparator;
+        if (sortOption == null) {
+            comparator = Comparator.comparing(DonatedOrgan::getDurationUntilExpiry,
+                    Comparator.nullsLast(Comparator.naturalOrder()));
+        } else {
+            switch (sortOption) {
+                case CLIENT:
+                    comparator = Comparator.comparing(organ -> organ.getDonor().getFullName());
+                    break;
+                case ORGAN_TYPE:
+                    comparator = Comparator.comparing(organ -> organ.getOrganType().toString());
+                    break;
+                case REGION_OF_DEATH:
+                    comparator = Comparator.comparing(organ -> organ.getDonor().getRegionOfDeath());
+                    break;
+                case TIME_OF_DEATH:
+                    comparator = Comparator.comparing(organ -> organ.getDonor().getDateOfDeath());
+                    break;
+                default:
+                case TIME_UNTIL_EXPIRY:
+                    comparator = Comparator.comparing(DonatedOrgan::getDurationUntilExpiry,
+                            Comparator.nullsLast(Comparator.naturalOrder()));
+                    break;
+            }
+        }
+
+        if (reversed != null && reversed) {
+            comparator = comparator.reversed();
+        }
+
+        // Get all organs for donation
+        // Filter by region and organ type if the params have been set
+        List<DonatedOrgan> filteredOrgans = clients.stream()
+                .map(Client::getDonatedOrgans)
+                .flatMap(Collection::stream)
+                .filter(organ -> organ.getDurationUntilExpiry() == null || !organ.getDurationUntilExpiry().isZero())
+                .filter(organ -> organ.getOverrideReason() == null)
+                .filter(organ -> regionsToFilter.isEmpty()
+                        || regionsToFilter.contains(organ.getDonor().getRegionOfDeath())
+                        || regionsToFilter.contains("International") && organ.getDonor().getCountryOfDeath() != Country.NZ)
+                .filter(organ -> organType == null || organType.isEmpty()
+                        || organType.contains(organ.getOrganType()))
+                .collect(Collectors.toList());
+
+        int totalResults = filteredOrgans.size();
+        if (offset == null) {
+            offset = 0;
+        }
+        if (count == null) {
+            count = Integer.MAX_VALUE;
+        }
+
+        return new PaginatedDonatedOrgansList(
+                filteredOrgans.stream()
+                        .sorted(comparator)
+                        .skip(offset)
+                        .limit(count)
+                        .map(DonatedOrganView::new)
+                        .collect(Collectors.toList()),
+                totalResults);
+    }
+
+    /**
+     * Gets potential recipients for an available organ
+     *
+     * @param donatedOrgan available organ to match to potential recipients
+     * @return list of clients that are waiting for the available organ
+     */
+    @Override
+    public List<Client> getOrganMatches(DonatedOrgan donatedOrgan) {
+        return MatchOrganToRecipients.getListOfPotentialRecipients(donatedOrgan, getAllCurrentTransplantRequests());
     }
 }

@@ -1,23 +1,10 @@
 package com.humanharvest.organz.state;
 
-import java.time.LocalDate;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.TransplantRequest;
-import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
-import com.humanharvest.organz.utilities.enums.ClientType;
-import com.humanharvest.organz.utilities.enums.Gender;
-import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.enums.Region;
+import com.humanharvest.organz.utilities.enums.*;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
@@ -25,14 +12,15 @@ import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.type_converters.EnumSetToString;
 import com.humanharvest.organz.views.client.DonatedOrganView;
 import com.humanharvest.organz.views.client.PaginatedClientList;
+import com.humanharvest.organz.views.client.PaginatedDonatedOrgansList;
 import com.humanharvest.organz.views.client.PaginatedTransplantList;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import java.time.LocalDate;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class ClientManagerRest implements ClientManager {
 
@@ -161,7 +149,7 @@ public class ClientManagerRest implements ClientManager {
 
     @Override
     public PaginatedTransplantList getAllCurrentTransplantRequests(Integer offset, Integer count,
-            Set<Region> regions, Set<Organ> organs) {
+            Set<String> regions, Set<Organ> organs) {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set("Accept", MediaType.APPLICATION_JSON_VALUE);
         httpHeaders.set("X-Auth-Token", State.getToken());
@@ -172,11 +160,7 @@ public class ClientManagerRest implements ClientManager {
                 .queryParam("count", count);
 
         if (regions != null && !regions.isEmpty()) {
-            builder = builder.queryParam("region", regions.stream()
-                    .map(Region::name)
-                    .collect(Collectors.toList()).toString()
-                    .substring(1, regions.toString().length() - 1)
-                    .replaceAll(" ", ""));
+            builder = builder.queryParam("regions", String.join(",", regions));
         }
         if (organs != null && !organs.isEmpty()) {
             builder = builder.queryParam("organs", organs.stream()
@@ -201,18 +185,72 @@ public class ClientManagerRest implements ClientManager {
     }
 
     /**
-     * @return a list of all organs available for donation
+     * Gets all organs that are available for donation
+     * @return a collection of all available organs for donation
      */
     @Override
     public Collection<DonatedOrgan> getAllOrgansToDonate() {
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-Auth-Token", State.getToken());
         HttpEntity<String> entity = new HttpEntity<>(headers);
-        ResponseEntity<Collection<DonatedOrganView>> responseEntity = State.getRestTemplate().exchange(
+
+        ResponseEntity<PaginatedDonatedOrgansList> responseEntity = State.getRestTemplate().exchange(
                 State.BASE_URI + "/clients/organs",
                 HttpMethod.GET,
-                entity, new ParameterizedTypeReference<Collection<DonatedOrganView>>(){});
+                entity, PaginatedDonatedOrgansList.class);
 
-        return responseEntity.getBody().stream().map(DonatedOrganView::getDonatedOrgan).collect(Collectors.toList());
+        return responseEntity.getBody().getDonatedOrgans().stream()
+                .map(DonatedOrganView::getDonatedOrgan)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Gets all organs to donate for the specified regions and organTypes.
+     * @param regions regions to filter by. If empty, all regions are selected
+     * @param organType organ types to filter by. If empty, all types are selected
+     * @return A collection of the the organs available to donate based off the specified filters.
+     */
+    @Override
+    public PaginatedDonatedOrgansList getAllOrgansToDonate(Integer offset, Integer count, Set<String> regions,
+                                                           Set<Organ> organType, DonatedOrganSortOptionsEnum sortOption, Boolean reversed) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("X-Auth-Token", State.getToken());
+        headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(State.BASE_URI + "/clients/organs")
+                .queryParam("offset", offset)
+                .queryParam("count", count)
+                .queryParam("regions", String.join(",", regions))
+                .queryParam("organType", EnumSetToString.convert(EnumSet.copyOf(organType)))
+                .queryParam("sortOption", sortOption)
+                .queryParam("reversed", reversed);
+
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<PaginatedDonatedOrgansList> responseEntity = State.getRestTemplate().exchange(
+                builder.toUriString(),
+                HttpMethod.GET,
+                entity, PaginatedDonatedOrgansList.class);
+
+        return responseEntity.getBody();
+    }
+
+    /**
+     * @param donatedOrgan available organ to find potential matches for
+     * @return list of potential recipients of the client
+     */
+    @Override
+    public List<Client> getOrganMatches(DonatedOrgan donatedOrgan) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.set("X-Auth-Token", State.getToken());
+
+        HttpEntity<String> entity = new HttpEntity<>(httpHeaders);
+
+        ResponseEntity<List<Client>> responseEntity = State.getRestTemplate().exchange(State.BASE_URI +
+                "/matchOrganToRecipients/" + donatedOrgan.getId(), HttpMethod.GET, entity, new
+                ParameterizedTypeReference<List<Client>>() {
+                });
+
+        return responseEntity.getBody();
     }
 }

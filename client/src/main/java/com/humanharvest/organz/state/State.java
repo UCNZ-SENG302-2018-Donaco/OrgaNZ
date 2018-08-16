@@ -11,7 +11,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
-import com.humanharvest.organz.Config;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.resolvers.CommandRunner;
 import com.humanharvest.organz.resolvers.CommandRunnerRest;
@@ -70,6 +69,7 @@ public final class State {
     private static String clientEtag = "";
     private static String clinicianEtag = "";
     private static String administratorEtag = "";
+    private static String recentEtag = "";
     private static String token = "";
     private static Clinician viewedClinician;
     private static EnumSet<Country> allowedCountries;
@@ -211,7 +211,7 @@ public final class State {
     }
 
     public static void setClientEtag(String etag) {
-        System.out.println("Setting client etag to: " + etag);
+        recentEtag = etag;
         clientEtag = etag;
     }
 
@@ -220,6 +220,7 @@ public final class State {
     }
 
     public static void setClinicianEtag(String etag) {
+        recentEtag = etag;
         clinicianEtag = etag;
     }
 
@@ -228,7 +229,12 @@ public final class State {
     }
 
     public static void setAdministratorEtag(String etag) {
+        recentEtag = etag;
         administratorEtag = etag;
+    }
+
+    public static String getRecentEtag() {
+        return recentEtag;
     }
 
     public static RestTemplate getRestTemplate() {

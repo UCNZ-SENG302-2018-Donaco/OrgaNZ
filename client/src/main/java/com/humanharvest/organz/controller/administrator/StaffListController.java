@@ -118,7 +118,7 @@ public class StaffListController extends SubController {
         String actionHistoryFilename = "action_history.json";
 
         if (id == 0) {
-            PageNavigator.showAlert(Alert.AlertType.ERROR, "Cannot delete the default Clinician",
+            PageNavigator.showAlert(Alert.AlertType.ERROR, "Cannot Delete the Default Clinician",
                     "The default clinician cannot be deleted from the system.");
             return;
 
