@@ -1,7 +1,14 @@
 package com.humanharvest.organz;
 
-import com.humanharvest.organz.utilities.ReflectionUtils;
-import com.sun.javafx.scene.NodeEventDispatcher;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Consumer;
+
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.collections.ObservableList;
@@ -11,17 +18,42 @@ import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.*;
-import javafx.scene.input.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBoxBase;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.ListView;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.Skin;
+import javafx.scene.control.Skinnable;
+import javafx.scene.control.Slider;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TitledPane;
+import javafx.scene.input.GestureEvent;
+import javafx.scene.input.RotateEvent;
+import javafx.scene.input.ScrollEvent;
+import javafx.scene.input.TouchEvent;
+import javafx.scene.input.TouchPoint;
 import javafx.scene.layout.Pane;
-import javafx.scene.transform.*;
-import org.tuiofx.widgets.skin.*;
-import org.tuiofx.widgets.utils.Util;
+import javafx.scene.transform.Affine;
+import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Scale;
+import javafx.scene.transform.Transform;
+import javafx.scene.transform.Translate;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.*;
-import java.util.function.Consumer;
+import com.humanharvest.organz.utilities.ReflectionUtils;
+import com.sun.javafx.scene.NodeEventDispatcher;
+import org.tuiofx.widgets.controls.KeyboardPane;
+import org.tuiofx.widgets.skin.ChoiceBoxSkinAndroid;
+import org.tuiofx.widgets.skin.KeyboardManager;
+import org.tuiofx.widgets.skin.MTComboBoxListViewSkin;
+import org.tuiofx.widgets.skin.MTContextMenuSkin;
+import org.tuiofx.widgets.skin.OnScreenKeyboard;
+import org.tuiofx.widgets.skin.TextAreaSkinAndroid;
+import org.tuiofx.widgets.skin.TextFieldSkinAndroid;
+import org.tuiofx.widgets.utils.Util;
 
 public final class MultitouchHandler {
     private static final List<CurrentTouch> touches = new ArrayList<>();
@@ -215,6 +247,10 @@ public final class MultitouchHandler {
      * Finds the pane this node belongs to, or Optional.empty() if the node doesn't belong to any pane.
      */
     private static Optional<Pane> findPane(Node node) {
+        if (node == null) {
+            return Optional.empty();
+        }
+
         Node intersectNode = node;
         // Traverse the node parent history, until the parent doesn't exist or is the root pane.
         while (!Objects.equals(intersectNode.getParent(), rootPane)) {
@@ -360,7 +396,16 @@ public final class MultitouchHandler {
 
         if (event.getEventType() == TouchEvent.TOUCH_PRESSED) {
             currentTouch.setCurrentScreenPoint(new Point2D(touchPoint.getX(), touchPoint.getY()));
-            currentTouch.getPane().ifPresent(Node::toFront);
+            currentTouch.getPane().ifPresent(pane -> {
+                pane.toFront();
+
+                OnScreenKeyboard<?> keyboard = KeyboardManager.getInstance().getKeyboard(pane);
+                try {
+                    ReflectionUtils.<KeyboardPane>getField(keyboard.getSkin(), "keyboardPane").toFront();
+                } catch (NoSuchFieldException | IllegalAccessException e) {
+                    throw new RuntimeException(e);
+                }
+            });
             currentTouch.getPane().ifPresent(pane -> {
                 // Forwards the touch event to an important node.
                 currentTouch.getImportantElement().ifPresent(node -> {
