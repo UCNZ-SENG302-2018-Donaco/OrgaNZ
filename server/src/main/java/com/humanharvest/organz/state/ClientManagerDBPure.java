@@ -43,19 +43,12 @@ public class ClientManagerDBPure implements ClientManager {
 
     @Override
     public List<Client> getClients() {
-        List<Client> clients = null;
-        Transaction trns = null;
+        List<Client> clients;
 
         try (Session session = dbManager.getDBSession()) {
-            trns = session.beginTransaction();
-            clients = dbManager.getDBSession()
+            clients = session
                     .createQuery("FROM Client", Client.class)
                     .getResultList();
-            trns.commit();
-        } catch (RollbackException exc) {
-            if (trns != null) {
-                trns.rollback();
-            }
         }
 
         return clients == null ? new ArrayList<>() : clients;
@@ -91,12 +84,12 @@ public class ClientManagerDBPure implements ClientManager {
             Integer minimumAge,
             Integer maximumAge,
             Set<String> regions,
-            EnumSet<Gender> birthGenders,
+            Set<Gender> birthGenders,
             ClientType clientType,
-            EnumSet<Organ> donating,
-            EnumSet<Organ> requesting,
+            Set<Organ> donating,
+            Set<Organ> requesting,
             ClientSortOptionsEnum sortOption,
-            Boolean isReversed) {
+            boolean isReversed) {
 
         Transaction trns = null;
 
@@ -277,7 +270,7 @@ public class ClientManagerDBPure implements ClientManager {
                     + "ORDER BY " + sort + " " + dir + ", " + nameSort + " ASC LIMIT :limit OFFSET :offset";
             String countString = "SELECT count(*) FROM Client c " + joinBuilder + whereJoiner.toString();
 
-            Query countQuery = session.createNativeQuery(countString);
+            Query<?> countQuery = session.createNativeQuery(countString);
             Query<Client> mainQuery = session.createNativeQuery(queryString, Client.class);
 
             // Go through the params and set the values.
@@ -291,7 +284,7 @@ public class ClientManagerDBPure implements ClientManager {
             mainQuery.setParameter("offset", offset);
 
             // Execute the queries
-            int totalCount = Integer.valueOf(countQuery.uniqueResult().toString());
+            int totalCount = Integer.parseInt(countQuery.uniqueResult().toString());
             List<Client> clients = mainQuery.getResultList();
 
             return new PaginatedClientList(clients, totalCount);
