@@ -2,8 +2,8 @@ package com.humanharvest.organz.controller.client;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.IllnessRecord;
+import com.humanharvest.organz.controller.AlertHelper;
 import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.controller.SidebarController;
 import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.resolvers.client.ClientResolver;
 import com.humanharvest.organz.state.Session;
@@ -15,22 +15,28 @@ import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.views.client.CreateIllnessView;
 import com.humanharvest.organz.views.client.ModifyIllnessObject;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import org.controlsfx.control.Notifications;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Comparator;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Controller for the medical history page, which shows a list of all current and past illnesses for the client.
@@ -39,14 +45,18 @@ public class ClientMedicalHistoryController extends SubController {
 
     private static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("d MMM yyyy");
 
-    private Session session;
+    private final Session session;
+    private final ClientResolver resolver;
     private Client client;
-    private ClientResolver resolver;
 
     @FXML
-    private Pane sidebarPane, menuBarPane;
+    private Pane sidebarPane;
     @FXML
-    private HBox newIllnessPane, illnessButtonsPane;
+    private Pane menuBarPane;
+    @FXML
+    private HBox newIllnessPane;
+    @FXML
+    private HBox illnessButtonsPane;
 
     @FXML
     private TextField illnessNameField;
@@ -58,19 +68,31 @@ public class ClientMedicalHistoryController extends SubController {
     private Text errorMessage;
 
     @FXML
-    private TableView<IllnessRecord> pastIllnessView, currentIllnessView;
+    private TableView<IllnessRecord> pastIllnessView;
     @FXML
-    private TableColumn<IllnessRecord, String> illnessPastCol, illnessCurrCol;
+    private TableView<IllnessRecord> currentIllnessView;
     @FXML
-    private TableColumn<IllnessRecord, LocalDate> diagnosisDatePastCol, diagnosisDateCurrCol, curedDatePastCol;
+    private TableColumn<IllnessRecord, String> illnessPastCol;
+    @FXML
+    private TableColumn<IllnessRecord, String> illnessCurrCol;
+    @FXML
+    private TableColumn<IllnessRecord, LocalDate> diagnosisDatePastCol;
+    @FXML
+    private TableColumn<IllnessRecord, LocalDate> diagnosisDateCurrCol;
+    @FXML
+    private TableColumn<IllnessRecord, LocalDate> curedDatePastCol;
     @FXML
     private TableColumn<IllnessRecord, Boolean> chronicCurrCol;
     @FXML
-    private Button toggleCuredButton, deleteButton, toggleChronicButton;
+    private Button toggleCuredButton;
+    @FXML
+    private Button deleteButton;
+    @FXML
+    private Button toggleChronicButton;
 
-    private TableView<IllnessRecord> selectedTableView = null;
+    private TableView<IllnessRecord> selectedTableView;
 
-    private static final Logger LOGGER = Logger.getLogger(SidebarController.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(ClientMedicalHistoryController.class.getName());
 
     /**
      * Formats a table cell that holds a {@link LocalDate} value to display that value in the date time format.
@@ -100,15 +122,12 @@ public class ClientMedicalHistoryController extends SubController {
             @Override
             protected void updateItem(Boolean isChronic, boolean empty) {
                 super.updateItem(isChronic, empty);
-                if (isChronic == null || empty) {
+                if (isChronic == null || empty || !isChronic) {
                     setText(null);
                     setStyle(null);
-                } else if (isChronic) {
+                } else {
                     setText("CHRONIC");
                     setStyle("-fx-text-fill: red;");
-                } else {
-                    setText(null);
-                    setStyle(null);
                 }
             }
         };
@@ -172,14 +191,14 @@ public class ClientMedicalHistoryController extends SubController {
 
         // Set listeners so that the other table's selection is cleared when an item in each table is selected.
         pastIllnessView.getSelectionModel().selectedItemProperty().addListener(
-                (observable) -> {
+                observable -> {
                     selectedTableView = pastIllnessView;
                     currentIllnessView.getSelectionModel().clearSelection();
                     enableAppropriateButtons();
                 });
 
         currentIllnessView.getSelectionModel().selectedItemProperty().addListener(
-                (observable) -> {
+                observable -> {
                     selectedTableView = currentIllnessView;
                     pastIllnessView.getSelectionModel().clearSelection();
                     enableAppropriateButtons();
@@ -229,16 +248,10 @@ public class ClientMedicalHistoryController extends SubController {
         try {
             client.setIllnessHistory(resolver.getIllnessRecords(client));
         } catch (NotFoundException e) {
-            LOGGER.log(Level.WARNING, "Client not found");
-            PageNavigator.showAlert(AlertType.ERROR,
-                    "Client not found",
-                    "The client could not be found on the server, it may have been deleted", mainController.getStage());
+            AlertHelper.showNotFoundAlert(LOGGER, e, mainController);
             return;
         } catch (ServerRestException e) {
-            LOGGER.log(Level.WARNING, e.getMessage(), e);
-            PageNavigator.showAlert(AlertType.ERROR,
-                    "Server error",
-                    "Could not apply changes on the server, please try again later", mainController.getStage());
+            AlertHelper.showRestAlert(LOGGER, e, mainController);
             return;
         }
 
@@ -276,7 +289,7 @@ public class ClientMedicalHistoryController extends SubController {
                 toggleCuredButton.setText("Mark as Cured");
                 toggleChronicButton.setText("Mark as Chronic");
 
-            } else if (selectedTableView == currentIllnessView) {
+            } else if (Objects.equals(selectedTableView, currentIllnessView)) {
                 toggleCuredButton.setDisable(false);
                 toggleChronicButton.setDisable(false);
                 deleteButton.setDisable(false);
@@ -287,7 +300,7 @@ public class ClientMedicalHistoryController extends SubController {
                     toggleChronicButton.setText("Mark as Chronic");
                 }
 
-            } else if (selectedTableView == pastIllnessView) {
+            } else if (Objects.equals(selectedTableView, pastIllnessView)) {
                 toggleCuredButton.setDisable(false);
                 toggleChronicButton.setDisable(false);
                 deleteButton.setDisable(false);
@@ -326,12 +339,12 @@ public class ClientMedicalHistoryController extends SubController {
                         "Can't move a chronic illness to past illnesses.",
                         "An illness can't be cured if it is chronic. If the illness has been cured, first mark it as"
                                 + " not chronic.", mainController.getStage());
-            } else if (selectedTableView == currentIllnessView) {
+            } else if (Objects.equals(selectedTableView, currentIllnessView)) {
                 modifyIllnessObject.setCuredDate(LocalDate.now());
                 State.getClientResolver().modifyIllnessRecord(client, record, modifyIllnessObject);
 
                 PageNavigator.refreshAllWindows();
-            } else if (selectedTableView == pastIllnessView) {
+            } else if (Objects.equals(selectedTableView, pastIllnessView)) {
                 modifyIllnessObject.setCuredDate(null);
                 State.getClientResolver().modifyIllnessRecord(client, record, modifyIllnessObject);
                 PageNavigator.refreshAllWindows();
@@ -349,26 +362,12 @@ public class ClientMedicalHistoryController extends SubController {
             try {
                 State.getClientResolver().deleteIllnessRecord(client, record);
             } catch (NotFoundException e) {
-                LOGGER.log(Level.WARNING, "Client not found");
-                Notifications.create()
-                    .title("Client not found")
-                    .text("The client could not be found on the server, it may have been deleted")
-                    .showWarning();
+                AlertHelper.showNotFoundAlert(LOGGER, e, mainController);
             } catch (ServerRestException e) {
-                LOGGER.log(Level.WARNING, e.getMessage(), e);
-                Notifications.create()
-                    .title("Server error")
-                    .text("Could not apply changes on the server, please try again later")
-                    .showError();
+                AlertHelper.showRestAlert(LOGGER, e, mainController);
                 return;
             } catch (IfMatchFailedException e) {
-                LOGGER.log(Level.INFO, "If-Match did not match");
-                Notifications.create()
-                    .title("Outdated Data")
-                    .text(
-                        "The client has been modified since you retrieved the data. If you would still like to "
-                            + "apply these changes please submit again, otherwise refresh the page to update the data.")
-                    .showWarning();
+                AlertHelper.showIfMatchAlert(LOGGER, e, mainController);
                 return;
             }
             PageNavigator.refreshAllWindows();
@@ -401,26 +400,12 @@ public class ClientMedicalHistoryController extends SubController {
                 State.getClientResolver().modifyIllnessRecord(client, record, modifyIllnessObject);
 
             } catch (NotFoundException e) {
-                LOGGER.log(Level.WARNING, "Client not found");
-                Notifications.create()
-                    .title("Client not found")
-                    .text("The client could not be found on the server, it may have been deleted")
-                    .showWarning();
+                AlertHelper.showNotFoundAlert(LOGGER, e, mainController);
             } catch (ServerRestException e) {
-                LOGGER.log(Level.WARNING, e.getMessage(), e);
-                Notifications.create()
-                    .title("Server error")
-                    .text("Could not apply changes on the server, please try again later")
-                    .showError();
+                AlertHelper.showRestAlert(LOGGER, e, mainController);
                 return;
             } catch (IfMatchFailedException e) {
-                LOGGER.log(Level.INFO, "If-Match did not match");
-                Notifications.create()
-                    .title("Outdated Data")
-                    .text(
-                        "The client has been modified since you retrieved the data. If you would still like to "
-                            + "apply these changes please submit again, otherwise refresh the page to update the data.")
-                    .showWarning();
+                AlertHelper.showIfMatchAlert(LOGGER, e, mainController);
                 return;
             }
             PageNavigator.refreshAllWindows();
@@ -442,9 +427,9 @@ public class ClientMedicalHistoryController extends SubController {
         boolean beforeBirth = dateDiagnosed.isBefore(client.getDateOfBirth());
         boolean inFuture = dateDiagnosed.isAfter(LocalDate.now());
 
-        if (illnessName == null || illnessName.equals("")) {
+        if (illnessName == null || illnessName.isEmpty()) {
             errorMessage.setText("Illness name must not be blank.");
-        } else if (beforeBirth) {
+        }   else if (beforeBirth) {
             errorMessage.setText("Diagnosis date cannot be before person is born.");
         } else if (inFuture) {
             errorMessage.setText("Diagnosis date cannot be in the future.");
@@ -454,26 +439,12 @@ public class ClientMedicalHistoryController extends SubController {
             try{
                 State.getClientResolver().addIllnessRecord(client, view);
             } catch (NotFoundException e) {
-                LOGGER.log(Level.WARNING, "Client not found");
-                Notifications.create()
-                    .title("Client not found")
-                    .text("The client could not be found on the server, it may have been deleted")
-                    .showWarning();
+                AlertHelper.showNotFoundAlert(LOGGER, e, mainController);
             } catch (ServerRestException e) {
-                LOGGER.log(Level.WARNING, e.getMessage(), e);
-                Notifications.create()
-                    .title("Server error")
-                    .text("Could not apply changes on the server, please try again later")
-                    .showError();
+                AlertHelper.showRestAlert(LOGGER, e, mainController);
                 return;
             } catch (IfMatchFailedException e) {
-                LOGGER.log(Level.INFO, "If-Match did not match");
-                Notifications.create()
-                    .title("Outdated Data")
-                    .text(
-                        "The client has been modified since you retrieved the data. If you would still like to "
-                            + "apply these changes please submit again, otherwise refresh the page to update the data.")
-                    .showWarning();
+                AlertHelper.showIfMatchAlert(LOGGER, e, mainController);
                 return;
             }
 
