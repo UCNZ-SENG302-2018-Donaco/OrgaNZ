@@ -1,11 +1,5 @@
 package com.humanharvest.organz.server.controller.client;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.file.Files;
-
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
@@ -14,6 +8,10 @@ import com.humanharvest.organz.utilities.serialisation.ClientImporter;
 import com.humanharvest.organz.utilities.serialisation.JSONFileWriter;
 import com.humanharvest.organz.utilities.serialisation.JSONReadClientStrategy;
 import com.humanharvest.organz.utilities.serialisation.ReadClientStrategy;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -77,7 +75,7 @@ public class ClientFileController {
         }
     }
 
-    private String loadData(File file, String mimeType) throws IOException {
+    private static String loadData(File file, String mimeType) throws IOException {
         ReadClientStrategy strategy;
         switch (mimeType) {
             case "text/csv":
@@ -98,7 +96,7 @@ public class ClientFileController {
 
         String errorSummary = importer.getErrorSummary();
         if (errorSummary.length() > 500) {
-            errorSummary = errorSummary.substring(0, 500).concat("...");
+            errorSummary = errorSummary.substring(0, 500) + "...";
         }
 
         return String.format("Loaded clients from file."

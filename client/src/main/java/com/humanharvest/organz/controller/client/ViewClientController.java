@@ -1,6 +1,7 @@
 package com.humanharvest.organz.controller.client;
 
 import com.humanharvest.organz.Client;
+import com.humanharvest.organz.controller.AlertHelper;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.clinician.ViewBaseController;
 import com.humanharvest.organz.state.ClientManager;
@@ -17,12 +18,27 @@ import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.validators.client.ClientBornAndDiedDatesValidator;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.views.client.ModifyClientObject;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Objects;
 import javafx.beans.property.Property;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleButton;
+import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.GridPane;
@@ -33,7 +49,6 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import org.apache.commons.io.IOUtils;
 import org.controlsfx.control.Notifications;
 
-import java.io.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
@@ -51,7 +66,8 @@ public class ViewClientController extends ViewBaseController {
     private static final Logger LOGGER = Logger.getLogger(ViewClientController.class.getName());
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
             .withZone(ZoneId.systemDefault());
-    private static final int maxFileSize = 2000000; // (2mb)
+
+    private static final int MAX_FILE_SIZE = 2_000_000; // (2mb)
 
     private final Session session;
     private final ClientManager manager;
@@ -68,7 +84,7 @@ public class ViewClientController extends ViewBaseController {
     @FXML
     private TextArea address;
     @FXML
-    private Button uploadPhotoButton, deletePhotoButton, applyButton, cancelButton;
+    private Button deletePhotoButton;
     @FXML
     private DatePicker dob, deathDatePicker;
     @FXML
@@ -117,7 +133,7 @@ public class ViewClientController extends ViewBaseController {
                 deathRegionTF));
         // Add listeners to enable/disable death details pane if dead/alive is selected
         isDeadToggleGroup.selectedToggleProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue == deadToggleBtn) {
+            if (Objects.equals(newValue, deadToggleBtn)) {
                 deathDetailsPane.setDisable(false);
                 // Pre-populate inputs with current location details
                 deathDatePicker.setValue(LocalDate.now());
@@ -128,7 +144,7 @@ public class ViewClientController extends ViewBaseController {
                     deathRegionTF.setText(viewedClient.getRegion());
                 }
                 deathCity.setText(viewedClient.getCurrentAddress());
-            } else if (newValue == aliveToggleBtn) {
+            } else if (Objects.equals(newValue, aliveToggleBtn)) {
                 deathDetailsPane.setDisable(true);
                 // Clear current input values
                 deathDatePicker.setValue(null);
@@ -162,10 +178,7 @@ public class ViewClientController extends ViewBaseController {
         try {
             viewedClient = manager.getClientByID(viewedClient.getUid()).orElseThrow(ServerRestException::new);
         } catch (ServerRestException e) {
-            LOGGER.log(Level.INFO, e.getMessage(), e);
-            PageNavigator.showAlert(AlertType.ERROR,
-                    "Server Error",
-                    "An error occurred while trying to fetch from the server.\nPlease try again later.", mainController.getStage());
+            AlertHelper.showRestAlert(LOGGER, e, mainController);
             return;
         }
         // Update all fields in the view with new data
@@ -265,8 +278,11 @@ public class ViewClientController extends ViewBaseController {
         }
     }
 
-    private void enableAppropriateRegionInput(ChoiceBox<Country> countryChoice, ChoiceBox<Region> regionChoice,
-                                              TextField regionTextField) {
+    private static void enableAppropriateRegionInput(
+        ChoiceBox<Country> countryChoice,
+        ChoiceBox<Region> regionChoice,
+        TextField regionTextField) {
+
         if (countryChoice.getValue() == Country.NZ) {
             regionChoice.setVisible(true);
             regionTextField.setVisible(false);
@@ -282,8 +298,11 @@ public class ViewClientController extends ViewBaseController {
      */
     @FXML
     private void apply() {
-        // We use bitwise and so all functions get called, this marks all fields as checked.
-        if (checkMandatoryFields() & checkNonMandatoryFields() & checkDeathDetailsFields()) {
+        // We need to call all functions because they have side effects
+        boolean mandatoryFields = checkMandatoryFields();
+        boolean nonMandatoryFields = checkNonMandatoryFields();
+        boolean deathDetails =  checkDeathDetailsFields();
+        if (mandatoryFields && nonMandatoryFields && deathDetails) {
             updateChanges();
         }
     }
@@ -296,11 +315,10 @@ public class ViewClientController extends ViewBaseController {
         try {
             deletePhotoButton.setDisable(false);
             bytes = State.getImageManager().getClientImage(viewedClient.getUid());
-        } catch (NotFoundException ex) {
+        } catch (NotFoundException ignored) {
             try {
                 deletePhotoButton.setDisable(true);
                 bytes = State.getImageManager().getDefaultImage();
-
             } catch (IOException e) {
                 LOGGER.log(Level.SEVERE, "IO Exception when loading image ", e);
                 return;
@@ -321,17 +339,16 @@ public class ViewClientController extends ViewBaseController {
      */
     @FXML
     public void uploadPhoto() {
-        boolean uploadSuccess = false;
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Upload Profile Image");
         fileChooser.getExtensionFilters().addAll(
                 new ExtensionFilter("PNG files (*.png)", "*.png") // Restricting only this file type.
         );
 
-
         File selectedFile = fileChooser.showOpenDialog(State.getPrimaryStage());
+        boolean uploadSuccess = false;
         if (selectedFile != null) {
-            if (selectedFile.length() > maxFileSize) {
+            if (selectedFile.length() > MAX_FILE_SIZE) {
                 PageNavigator.showAlert(AlertType.WARNING, "Image Size Too Large",
                         "The image size is too large. It must be under 2MB.", mainController.getStage());
             } else if (!selectedFile.canRead()) {
@@ -434,7 +451,7 @@ public class ViewClientController extends ViewBaseController {
      * @param label The label to apply color to
      * @return If the field value was a valid non negative number
      */
-    private boolean doubleFieldIsInvalid(TextField field, Label label) {
+    private static boolean doubleFieldIsInvalid(TextField field, Label label) {
         try {
             double w = Double.parseDouble(field.getText());
             if (w < 0) {
@@ -524,7 +541,8 @@ public class ViewClientController extends ViewBaseController {
     /**
      * Applies the changes to the client, with various error checking by given method.
      * Flow is:
-     * updateChanges calls addChangesIfDifferent, which adds various changes to the ModifyClientObject only if they have changed.
+     * updateChanges calls addChangesIfDifferent,
+     * which adds various changes to the ModifyClientObject only if they have changed.
      * Then, if the client has been marked as dead, prompts the user for confirmation.
      * If yes, or if the user is already dead, updateDeathFields is called, which adds any changed death fields.
      * Once that occurs, updateDeathFields calls applyChanges, or that is called directly if the client is not dead.
@@ -537,16 +555,17 @@ public class ViewClientController extends ViewBaseController {
         addChangesIfDifferent(modifyClientObject);
 
         // If we are marking a client as dead, we need to alert them that this will also resolve the transplant requests
-        // Calling either method will flow through the chain. Prompt will continue if okay is selected and call updateDeathFields
+        // Calling either method will flow through the chain.
+        // Prompt will continue if okay is selected and call updateDeathFields
         // and updateDeathFields calls applyChanges
-        if (!deathDetailsPane.isDisabled()) {
+        if (deathDetailsPane.isDisabled()) {
+            applyChanges(modifyClientObject);
+        } else {
             if (viewedClient.isAlive()) {
                 promptMarkAsDead(modifyClientObject);
             } else {
                 updateDeathFields(modifyClientObject);
             }
-        } else {
-            applyChanges(modifyClientObject);
         }
     }
 
@@ -655,20 +674,11 @@ public class ViewClientController extends ViewBaseController {
                 finishUpdateChanges();
 
             } catch (NotFoundException e) {
-                LOGGER.log(Level.WARNING, "Client not found");
-                PageNavigator.showAlert(AlertType.WARNING, "Client not found", "The client could not be found on the "
-                        + "server, it may have been deleted", mainController.getStage());
+                AlertHelper.showNotFoundAlert(LOGGER, e, mainController);
             } catch (ServerRestException e) {
-                LOGGER.log(Level.WARNING, e.getMessage(), e);
-                PageNavigator.showAlert(AlertType.WARNING, "Server error", "Could not apply changes on the server, "
-                        + "please try again later", mainController.getStage());
+                AlertHelper.showRestAlert(LOGGER, e, mainController);
             } catch (IfMatchFailedException e) {
-                LOGGER.log(Level.INFO, "If-Match did not match");
-                PageNavigator.showAlert(
-                        AlertType.WARNING,
-                        "Outdated Data",
-                        "The client has been modified since you retrieved the data.\nIf you would still like to "
-                                + "apply these changes please submit again, otherwise refresh the page to update the data.", mainController.getStage());
+                AlertHelper.showIfMatchAlert(LOGGER, e, mainController);
             }
         }
     }

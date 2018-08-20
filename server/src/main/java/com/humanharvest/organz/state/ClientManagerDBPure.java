@@ -213,13 +213,13 @@ public class ClientManagerDBPure implements ClientManager {
 
             //Setup the name filter. For this we make a series of OR checks on the names, if any is true it's true.
             //Checks any portion of any name
-            if (q != null && q.length() > 0) {
+            if (q != null && !q.isEmpty()) {
                 StringJoiner qOrJoiner = new StringJoiner(" OR ");
                 qOrJoiner.add("UPPER(c.firstName) LIKE UPPER(:q)");
                 qOrJoiner.add("UPPER(c.middleName) LIKE UPPER(:q)");
                 qOrJoiner.add("UPPER(c.preferredName) LIKE UPPER(:q)");
                 qOrJoiner.add("UPPER(c.lastName) LIKE UPPER(:q)");
-                whereJoiner.add("(" + qOrJoiner.toString() + ")");
+                whereJoiner.add("(" + qOrJoiner + ")");
                 params.put("q", "%" + q + "%");
             }
 
