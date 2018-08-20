@@ -6,11 +6,25 @@ import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.database.DBManager;
 import com.humanharvest.organz.utilities.algorithms.MatchOrganToRecipients;
-import com.humanharvest.organz.utilities.enums.*;
+import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
+import com.humanharvest.organz.utilities.enums.ClientType;
+import com.humanharvest.organz.utilities.enums.Country;
+import com.humanharvest.organz.utilities.enums.DonatedOrganSortOptionsEnum;
+import com.humanharvest.organz.utilities.enums.Gender;
+import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.views.client.DonatedOrganView;
 import com.humanharvest.organz.views.client.PaginatedClientList;
 import com.humanharvest.organz.views.client.PaginatedDonatedOrgansList;
 import com.humanharvest.organz.views.client.PaginatedTransplantList;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.StringJoiner;
 import org.hibernate.ReplicationMode;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -22,7 +36,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
-import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -34,7 +47,7 @@ public class ClientManagerDBPure implements ClientManager {
     private final DBManager dbManager;
 
     public ClientManagerDBPure() {
-        this.dbManager = DBManager.getInstance();
+        dbManager = DBManager.getInstance();
     }
 
     public ClientManagerDBPure(DBManager dbManager) {
@@ -77,19 +90,20 @@ public class ClientManagerDBPure implements ClientManager {
         }
     }
 
+    @Override
     public PaginatedClientList getClients(
-            String q,
-            Integer offset,
-            Integer count,
-            Integer minimumAge,
-            Integer maximumAge,
-            Set<String> regions,
-            Set<Gender> birthGenders,
-            ClientType clientType,
-            Set<Organ> donating,
-            Set<Organ> requesting,
-            ClientSortOptionsEnum sortOption,
-            boolean isReversed) {
+        String q,
+        Integer offset,
+        Integer count,
+        Integer minimumAge,
+        Integer maximumAge,
+        Set<String> regions,
+        Set<Gender> birthGenders,
+        ClientType clientType,
+        Set<Organ> donating,
+        Set<Organ> requesting,
+        ClientSortOptionsEnum sortOption,
+        Boolean isReversed) {
 
         Transaction trns = null;
 

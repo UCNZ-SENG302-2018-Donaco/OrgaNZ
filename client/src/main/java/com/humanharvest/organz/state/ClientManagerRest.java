@@ -44,10 +44,10 @@ public class ClientManagerRest implements ClientManager {
             Integer minimumAge,
             Integer maximumAge,
             Set<String> regions,
-            EnumSet<Gender> birthGenders,
+            Set<Gender> birthGenders,
             ClientType clientType,
-            EnumSet<Organ> donating,
-            EnumSet<Organ> requesting,
+            Set<Organ> donating,
+            Set<Organ> requesting,
             ClientSortOptionsEnum sortOption,
             Boolean isReversed) {
 
