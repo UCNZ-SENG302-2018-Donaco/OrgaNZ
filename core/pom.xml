@@ -4,7 +4,7 @@
   <parent>
     <artifactId>organz</artifactId>
     <groupId>com.humanharvest.organz</groupId>
-    <version>0.5</version>
+    <version>0.7</version>
     <relativePath>../pom.xml</relativePath>
   </parent>
 
