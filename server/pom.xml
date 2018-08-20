@@ -15,7 +15,7 @@
     <dependency>
       <groupId>com.humanharvest.organz</groupId>
       <artifactId>organz-core</artifactId>
-      <version>0.5</version>
+      <version>0.7</version>
       <scope>compile</scope>
     </dependency>
 
