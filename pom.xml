@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.humanharvest.organz</groupId>
   <artifactId>organz</artifactId>
-  <version>0.5</version>
+  <version>0.7</version>
   <packaging>pom</packaging>
   <name>organz</name>
   <url>https://eng-git.canterbury.ac.nz/seng302-2018/team-700</url>
