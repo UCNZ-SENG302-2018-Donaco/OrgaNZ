@@ -322,7 +322,7 @@ public class RegisterOrganDonationController extends SubController {
             name = client.getFullName();
             donatedOrgansTable.setItems(
                     FXCollections.observableArrayList(client.getDonatedOrgans())
-                            .sorted((donatedOrgansTable.getComparator())));
+                            .sorted(donatedOrgansTable.getComparator()));
         }
         if (client.isDead()) {
             name += " (died at " + client.getDatetimeOfDeath().format(dateTimeFormat) + ")";

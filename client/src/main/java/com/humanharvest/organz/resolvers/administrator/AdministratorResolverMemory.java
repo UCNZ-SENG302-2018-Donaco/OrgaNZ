@@ -12,6 +12,7 @@ import org.springframework.beans.BeanUtils;
 
 public class AdministratorResolverMemory implements AdministratorResolver {
 
+    @Override
     public Administrator createAdministrator(CreateAdministratorView createAdministratorView) {
         Administrator administrator = new Administrator(createAdministratorView.getUsername(),
                 createAdministratorView.getPassword());
@@ -19,6 +20,7 @@ public class AdministratorResolverMemory implements AdministratorResolver {
         return administrator;
     }
 
+    @Override
     public Administrator modifyAdministrator(Administrator administrator,
             ModifyAdministratorObject modifyAdministratorObject) {
         BeanUtils.copyProperties(modifyAdministratorObject, administrator,

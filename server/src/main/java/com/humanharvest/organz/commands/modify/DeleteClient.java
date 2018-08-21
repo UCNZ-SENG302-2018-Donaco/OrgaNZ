@@ -37,6 +37,7 @@ public class DeleteClient implements Runnable {
     @Option(names = "-y", description = "Confirms you would like to execute the removal")
     private boolean yes;
 
+    @Override
     public void run() {
         Optional<Client> client = manager.getClientByID(uid);
         if (!client.isPresent()) {

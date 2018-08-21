@@ -21,6 +21,7 @@ public class Undo implements Runnable {
         this.outputStream = outputStream;
     }
 
+    @Override
     public void run() {
         outputStream.println(invoker.undo());
     }

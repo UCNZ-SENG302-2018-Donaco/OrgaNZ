@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 
 public class ClinicianResolverRest implements ClinicianResolver {
 
+    @Override
     public Clinician modifyClinician(Clinician clinician, ModifyClinicianObject modifyClinicianObject) {
 
         HttpHeaders httpHeaders = new HttpHeaders();

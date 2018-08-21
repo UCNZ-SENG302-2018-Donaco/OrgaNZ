@@ -9,6 +9,7 @@ import org.springframework.beans.BeanUtils;
 
 public class ClincianResolverMemory implements ClinicianResolver {
 
+    @Override
     public Clinician modifyClinician(Clinician clinician, ModifyClinicianObject modifyClinicianObject) {
         BeanUtils.copyProperties(modifyClinicianObject, clinician, modifyClinicianObject.getUnmodifiedFields());
         return clinician;

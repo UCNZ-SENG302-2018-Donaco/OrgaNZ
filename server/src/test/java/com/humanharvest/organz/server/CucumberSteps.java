@@ -302,7 +302,7 @@ public final class CucumberSteps implements En {
             Client testClient = new Client(1);
             State.getClientManager().addClient(testClient);
             testClient.donateOrgan(Organ.LIVER, (long) 1);
-            assert (!testClient.getDonatedOrgans().isEmpty());
+            assert !testClient.getDonatedOrgans().isEmpty();
         });
         Given("^there is an invalid test donated organ$", () -> {
             Client testClient = new Client(1);

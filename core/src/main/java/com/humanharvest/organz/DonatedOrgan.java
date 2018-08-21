@@ -116,7 +116,7 @@ public class DonatedOrgan {
         } else if (timeToExpiry.isZero()) { // expired
             return 1;
         } else {
-            return 1 - ((double) timeToExpiry.getSeconds() / expiration.getSeconds());
+            return 1 - (double) timeToExpiry.getSeconds() / expiration.getSeconds();
         }
     }
 

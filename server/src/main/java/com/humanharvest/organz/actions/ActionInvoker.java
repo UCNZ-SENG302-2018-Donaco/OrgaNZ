@@ -29,7 +29,7 @@ public class ActionInvoker {
             action.unExecute();
             redoStack.push(action);
 
-            listeners.forEach((listener -> listener.onActionUndone(action)));
+            listeners.forEach(listener -> listener.onActionUndone(action));
 
             return action.getUnexecuteText();
         }
@@ -47,7 +47,7 @@ public class ActionInvoker {
             action.execute();
             undoStack.push(action);
 
-            listeners.forEach((listener -> listener.onActionRedone(action)));
+            listeners.forEach(listener -> listener.onActionRedone(action));
 
             return action.getExecuteText();
         }

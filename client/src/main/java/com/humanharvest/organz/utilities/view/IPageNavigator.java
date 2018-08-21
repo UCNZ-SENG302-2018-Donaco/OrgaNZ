@@ -4,6 +4,7 @@ import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.components.TouchAlertTextController;
 import javafx.beans.property.Property;
 import javafx.scene.control.Alert;
+import javafx.scene.layout.Region;
 import javafx.stage.Window;
 
 public interface IPageNavigator {
@@ -31,6 +32,13 @@ public interface IPageNavigator {
     MainController openNewWindow(int width, int height);
 
     /**
+     * Sets the alert window at the right size so that all the text can be read.
+     */
+    static void resizeAlert(Alert alert) {
+        alert.getDialogPane().getScene().getWindow().sizeToScene();
+    }
+
+    /**
      * Generates a pop-up alert of the given type.
      *
      * @param alertType the type of alert to show (can determine its style and button options).
@@ -38,7 +46,16 @@ public interface IPageNavigator {
      * @param bodyText  the text to show within the body of the alert.
      * @return The generated alert.
      */
-    Alert generateAlert(Alert.AlertType alertType, String title, String bodyText);
+    default Alert generateAlert(Alert.AlertType alertType, String title, String bodyText) {
+        Alert alert = new Alert(alertType);
+        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+        alert.contentTextProperty().addListener(observable -> resizeAlert(alert));
+
+        alert.setTitle(title);
+        alert.setHeaderText(title);
+        alert.setContentText(bodyText);
+        return alert;
+    }
 
     /**
      * Shows a pop-up alert of the given type, and awaits user input to dismiss it (blocking).

@@ -64,6 +64,7 @@ public class BaseCommand implements Runnable {
         this.outputStream = outputStream;
     }
 
+    @Override
     public void run() {
         outputStream.println("Invalid command");
     }

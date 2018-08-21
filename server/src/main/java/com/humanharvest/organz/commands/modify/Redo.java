@@ -21,6 +21,7 @@ public class Redo implements Runnable {
         this.invoker = invoker;
     }
 
+    @Override
     public void run() {
         outputStream.println(invoker.redo());
     }

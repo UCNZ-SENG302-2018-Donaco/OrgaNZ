@@ -80,6 +80,7 @@ public class DrugInteractionsHandler extends WebAPIHandler {
         return request.execute();
     }
 
+    @Override
     public List<String> getData(Object... arguments) throws IOException, BadDrugNameException, BadGatewayException {
         String drug1, drug2;
         if (arguments.length == 2 && arguments[0] instanceof String && arguments[1] instanceof String) {

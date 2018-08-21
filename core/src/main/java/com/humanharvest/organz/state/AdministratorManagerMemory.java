@@ -12,23 +12,25 @@ import com.humanharvest.organz.Administrator;
  */
 public class AdministratorManagerMemory implements AdministratorManager{
 
+    private static final String DEFAULT_ADMINISTRATOR_USERNAME = "admin";
+
     private final List<Administrator> administrators;
-    private String defaultAdministratorUsername = "admin";
 
     public AdministratorManagerMemory() {
         administrators = new ArrayList<>();
-        administrators.add(new Administrator(defaultAdministratorUsername, ""));
+        administrators.add(new Administrator(DEFAULT_ADMINISTRATOR_USERNAME, ""));
     }
 
     public AdministratorManagerMemory(List<Administrator> administrators) {
         this.administrators = administrators;
-        administrators.add(new Administrator(defaultAdministratorUsername, ""));
+        administrators.add(new Administrator(DEFAULT_ADMINISTRATOR_USERNAME, ""));
     }
 
     /**
      * Add an administrator
      * @param administrator Administrator to be added
      */
+    @Override
     public void addAdministrator(Administrator administrator) {
         if (doesUsernameExist(administrator.getUsername())) {
             throw new IllegalArgumentException("Username already exists or is invalid");
@@ -41,6 +43,7 @@ public class AdministratorManagerMemory implements AdministratorManager{
      * Get the list of administrators
      * @return ArrayList of current administrators
      */
+    @Override
     public List<Administrator> getAdministrators() {
         return Collections.unmodifiableList(administrators);
     }
@@ -49,6 +52,7 @@ public class AdministratorManagerMemory implements AdministratorManager{
      * Remove an administrator
      * @param administrator Administrator to be removed
      */
+    @Override
     public void removeAdministrator(Administrator administrator) {
         administrators.remove(administrator);
     }
@@ -57,6 +61,7 @@ public class AdministratorManagerMemory implements AdministratorManager{
      * Checks if an administrator already exists with that username
      * @param username The username of the administrator
      */
+    @Override
     public boolean doesUsernameExist(String username) {
         // Check if it is numeric (this could collide with a clinician ID)
         if (username.matches("[0-9]+")) {
@@ -77,6 +82,7 @@ public class AdministratorManagerMemory implements AdministratorManager{
      * @param username The username to be matched
      * @return Administrator or null if none exists
      */
+    @Override
     public Optional<Administrator> getAdministratorByUsername(String username) {
         return administrators.stream()
                 .filter(o -> o.getUsername().equals(username))
@@ -87,8 +93,9 @@ public class AdministratorManagerMemory implements AdministratorManager{
      * Return the default administrator
      * @return the default administrator
      */
+    @Override
     public Administrator getDefaultAdministrator() {
-        return getAdministratorByUsername(defaultAdministratorUsername).orElseThrow(RuntimeException::new);
+        return getAdministratorByUsername(DEFAULT_ADMINISTRATOR_USERNAME).orElseThrow(RuntimeException::new);
     }
 
     @Override

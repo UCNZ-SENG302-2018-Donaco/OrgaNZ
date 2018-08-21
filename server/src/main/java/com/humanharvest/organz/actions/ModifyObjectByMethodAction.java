@@ -63,7 +63,7 @@ public class ModifyObjectByMethodAction extends Action {
                 }
                 PrimitiveConverter converter = new PrimitiveConverter();
                 Class<?> expectedClass = converter.convertToWrapper(method.getParameterTypes()[0]);
-                if ((newValue != null && newValue.getClass() != expectedClass)
+                if (newValue != null && newValue.getClass() != expectedClass
                         || oldValue != null && oldValue.getClass() != expectedClass) {
                     throw new NoSuchFieldException("Method expects a different field type than the one given");
                 }

@@ -54,7 +54,7 @@ public class DBManager {
      */
     public Connection getStandardSqlConnection() throws SQLException {
         MysqlDataSource dataSource = new MysqlDataSource();
-        Configuration cfg = new Configuration().configure(("hibernate.cfg.xml"));
+        Configuration cfg = new Configuration().configure("hibernate.cfg.xml");
         dataSource.setURL(cfg.getProperty("hibernate.connection.url"));
         dataSource.setUser(cfg.getProperty("hibernate.connection.username"));
         dataSource.setPassword(cfg.getProperty("hibernate.connection.password"));

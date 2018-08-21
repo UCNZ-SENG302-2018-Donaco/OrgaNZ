@@ -58,6 +58,7 @@ public class ResolveOrgan implements Runnable {
     /**
      * Runs the resolve organ command
      */
+    @Override
     public void run() {
         //resolveorgan -u 1 -o liver -r "input error"
         Optional<Client> client = manager.getClientByID(uid);

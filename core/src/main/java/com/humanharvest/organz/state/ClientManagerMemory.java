@@ -38,7 +38,7 @@ import java.util.stream.Stream;
 /**
  * An in-memory implementation of {@link ClientManager} that uses a simple list to hold all clients.
  */
-public final class ClientManagerMemory implements ClientManager {
+public class ClientManagerMemory implements ClientManager {
 
     private final List<Client> clients = new ArrayList<>();
 
@@ -50,7 +50,7 @@ public final class ClientManagerMemory implements ClientManager {
     }
 
     @Override
-    public void setClients(Collection<Client> clients) {
+    public final void setClients(Collection<Client> clients) {
         this.clients.clear();
         for (Client client : clients) {
             addClient(client);

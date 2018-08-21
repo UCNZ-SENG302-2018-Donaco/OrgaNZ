@@ -77,6 +77,7 @@ public class Administrator implements ConcurrencyControlledEntity {
         return modifiedTimestamp;
     }
 
+    @Override
     public String getETag() {
         if (modifiedTimestamp == null) {
             return String.format("\"%d\"", createdTimestamp.hashCode());

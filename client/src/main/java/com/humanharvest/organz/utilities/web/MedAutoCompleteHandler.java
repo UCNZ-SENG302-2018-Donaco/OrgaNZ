@@ -44,6 +44,7 @@ public class MedAutoCompleteHandler extends WebAPIHandler {
         );
     }
 
+    @Override
     public List<String> getData(Object... arguments) {
         String queryString;
         if (arguments.length == 1 && arguments[0] instanceof String) {

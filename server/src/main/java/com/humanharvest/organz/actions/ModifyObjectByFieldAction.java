@@ -94,8 +94,8 @@ public class ModifyObjectByFieldAction extends Action {
     private void checkTypes() throws NoSuchFieldException {
         PrimitiveConverter converter = new PrimitiveConverter();
         Class<?> expectedClass = converter.convertToWrapper(field.getType());
-        if ((newValue != null && newValue.getClass() != expectedClass) || (oldValue != null
-                && oldValue.getClass() != expectedClass)) {
+        if (newValue != null && newValue.getClass() != expectedClass || oldValue != null
+                && oldValue.getClass() != expectedClass) {
             throw new NoSuchFieldException("Field expects a different field type than the one given");
         }
     }

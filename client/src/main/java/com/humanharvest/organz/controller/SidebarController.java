@@ -106,6 +106,7 @@ public class SidebarController extends SubController {
     /**
      * Refreshes the undo/redo buttons based on if there are changes to be made
      */
+    @Override
     public void refresh() {
         ActionResponseView responseView = State.getActionResolver().getUndo();
         undoButton.setDisable(!responseView.isCanUndo());

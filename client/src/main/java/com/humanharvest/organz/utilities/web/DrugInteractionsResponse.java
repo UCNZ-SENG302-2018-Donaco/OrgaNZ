@@ -94,7 +94,7 @@ public class DrugInteractionsResponse {
             String interaction = interactionEntry.getKey();
             List<String> durations = interactionEntry.getValue();
 
-            if (durations.isEmpty() || (durations.size() == 1 && "not specified".equals(durations.get(0)))) {
+            if (durations.isEmpty() || durations.size() == 1 && "not specified".equals(durations.get(0))) {
                 result.add(interaction);
             } else {
                 result.add(String.format("%s (%s)", interaction, prettifyDuration(durations)));

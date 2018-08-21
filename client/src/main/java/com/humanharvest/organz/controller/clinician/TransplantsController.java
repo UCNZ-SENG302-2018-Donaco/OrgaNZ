@@ -176,7 +176,7 @@ public class TransplantsController extends SubController {
         }
         regionChoice.getItems().add("International");
 
-        tableView.setOnSort((o) -> createPage(pagination.getCurrentPageIndex()));
+        tableView.setOnSort(o -> createPage(pagination.getCurrentPageIndex()));
 
         organChoice.getItems().addAll(Organ.values());
 

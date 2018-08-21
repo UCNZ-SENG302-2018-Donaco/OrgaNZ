@@ -27,7 +27,7 @@ public class DatePickerCell<T> extends TableCell<T, LocalDate> {
         datePicker = new DatePicker();
         datePicker.editableProperty().bind(column.editableProperty());
         datePicker.disableProperty().bind(column.editableProperty().not());
-        datePicker.focusedProperty().addListener(((observable, oldValue, newValue) -> {
+        datePicker.focusedProperty().addListener((observable, oldValue, newValue) -> {
             if (!oldValue && newValue) {
                 final TableView<T> tableView = getTableView();
                 tableView.getSelectionModel().select(getTableRow().getIndex());
@@ -37,7 +37,7 @@ public class DatePickerCell<T> extends TableCell<T, LocalDate> {
                     cancelEdit();
                 }
             }
-        }));
+        });
         datePicker.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (isEditing()) {
                 commitEdit(newValue);

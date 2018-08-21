@@ -22,6 +22,7 @@ public class ImageManagerMemory implements ImageManager{
      * @param uid id of the client
      * @return a byte array of the clients image
      */
+    @Override
     public byte[] getClientImage(int uid) {
         if (imageMap.get(uid) == null) {
             throw new NotFoundException();
@@ -30,6 +31,7 @@ public class ImageManagerMemory implements ImageManager{
         }
     }
 
+    @Override
     public byte[] getDefaultImage() throws IOException {
         byte[] res;
         try (InputStream in = getClass().getResourceAsStream("/images/ORGANZ.png")) {
@@ -44,6 +46,7 @@ public class ImageManagerMemory implements ImageManager{
      * @param image image the client is posting to the server
      * @return true if the image is successfully posted. false otherwise.
      */
+    @Override
     public boolean postClientImage(int uid, byte[] image) {
         if (State.getClientManager().getClientByID(uid).isPresent()) {
             imageMap.put(uid, image);
@@ -61,6 +64,7 @@ public class ImageManagerMemory implements ImageManager{
      * @param uid id of the client
      * @return true if the image is successfully deleted.
      */
+    @Override
     public boolean deleteClientImage(int uid) {
         if (State.getClientManager().getClientByID(uid).isPresent()) {
             imageMap.remove(uid);

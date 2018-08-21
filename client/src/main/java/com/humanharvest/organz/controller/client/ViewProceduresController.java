@@ -231,16 +231,16 @@ public class ViewProceduresController extends SubController {
 
         // Add listeners to clear the other table when anything is selected in each table (and enable/disable buttons).
         pendingProcedureView.getSelectionModel().selectedItemProperty().addListener(
-                (observable) -> enableAppropriateButtons());
+                observable -> enableAppropriateButtons());
         pastProcedureView.getSelectionModel().selectedItemProperty().addListener(
-                (observable) -> enableAppropriateButtons());
+                observable -> enableAppropriateButtons());
         pendingProcedureView.setOnMouseClicked(
-                (observable) -> {
+                observable -> {
                     selectedTableView = pendingProcedureView;
                     pastProcedureView.getSelectionModel().clearSelection();
                 });
         pastProcedureView.setOnMouseClicked(
-                (observable) -> {
+                observable -> {
                     selectedTableView = pastProcedureView;
                     pendingProcedureView.getSelectionModel().clearSelection();
                 });

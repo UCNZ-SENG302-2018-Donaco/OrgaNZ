@@ -123,7 +123,7 @@ public class SearchClientsController extends SubController {
 
         setupTable();
 
-        tableView.setOnSort((o) -> updateClientList());
+        tableView.setOnSort(o -> updateClientList());
 
         // Match values in text boxes beside age slider to the values on the slider
         ageMinField.setOnAction(event -> {
@@ -185,7 +185,7 @@ public class SearchClientsController extends SubController {
         organsRequestingFilter.getCheckModel().getCheckedItems().addListener(
                 (ListChangeListener<Organ>) change -> updateClientList());
 
-        searchBox.textProperty().addListener(((o) -> updateClientList()));
+        searchBox.textProperty().addListener(o -> updateClientList());
 
         //On pagination update call createPage
         pagination.setPageFactory(this::createPage);
