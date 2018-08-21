@@ -24,7 +24,7 @@ recent-artifacts:
     expire_in: 1 week
   except:
     - tags
-    - development@seng302-2018/team-700
+    - master@seng302-2018/team-700
 
 recent-artifacts-dev:
   stage: deploy
@@ -36,7 +36,7 @@ recent-artifacts-dev:
       - target/organz-*-*.jar
     expire_in: 1 week
   only:
-    - development@seng302-2018/team-700
+    - master@seng302-2018/team-700
 
 server-build-image:
   stage: build
@@ -46,7 +46,7 @@ server-build-image:
   - docker-compose build
   only:
   - deployment@seng302-2018/team-700
-  - development@seng302-2018/team-700
+  - master@seng302-2018/team-700
 
 server-deployment:
   stage: deploy
@@ -56,7 +56,7 @@ server-deployment:
   - docker-compose up -d
   only:
   - deployment@seng302-2018/team-700
-  - development@seng302-2018/team-700
+  - master@seng302-2018/team-700
 
 release-artifacts:
   stage: deploy
