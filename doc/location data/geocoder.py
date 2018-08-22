@@ -59,11 +59,20 @@ def print_hospital_data(in_filename):
                 
                 address = create_address(road, suburb, city, postcode)
                 lat, long = get_google_results(address)
-                print(name)
-                print(lat)
-                print(long)
-                print(address)
-                print()
+                
+                # Print normally
+                
+                #print(name)
+                #print(lat)
+                #print(long)
+                #print(address)
+                #print()
+                
+                # Print as an enum
+                
+                identifier = name.upper().replace(' ', '_').replace("'", '_')                
+                print('    {}("{}", {}, {}, "{}"),'.format(identifier, name, lat, long, address))
+                
     
 
 def get_addresses_to_geocode_from_stdin():
