@@ -3,32 +3,63 @@ package com.humanharvest.organz;
 import com.humanharvest.organz.skin.MTDatePickerSkin;
 import com.humanharvest.organz.utilities.ReflectionUtils;
 import com.sun.javafx.scene.NodeEventDispatcher;
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Timer;
+import java.util.TimerTask;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
-import javafx.collections.ObservableList;
 import javafx.event.Event;
 import javafx.event.EventTarget;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
 import javafx.scene.Node;
 import javafx.scene.Parent;
-import javafx.scene.control.*;
-import javafx.scene.input.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBoxBase;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.ListView;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.PopupControl;
+import javafx.scene.control.Skin;
+import javafx.scene.control.Skinnable;
+import javafx.scene.control.Slider;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TitledPane;
+import javafx.scene.input.GestureEvent;
+import javafx.scene.input.RotateEvent;
+import javafx.scene.input.ScrollEvent;
+import javafx.scene.input.TouchEvent;
+import javafx.scene.input.TouchPoint;
 import javafx.scene.layout.Pane;
-import javafx.scene.transform.*;
+import javafx.scene.transform.Affine;
+import javafx.scene.transform.Rotate;
+import javafx.scene.transform.Scale;
+import javafx.scene.transform.Transform;
+import javafx.scene.transform.Translate;
 import org.tuiofx.widgets.controls.KeyboardPane;
-import org.tuiofx.widgets.skin.*;
+import org.tuiofx.widgets.skin.ChoiceBoxSkinAndroid;
+import org.tuiofx.widgets.skin.KeyboardManager;
+import org.tuiofx.widgets.skin.MTComboBoxListViewSkin;
+import org.tuiofx.widgets.skin.MTContextMenuSkin;
+import org.tuiofx.widgets.skin.OnScreenKeyboard;
+import org.tuiofx.widgets.skin.TextAreaSkinAndroid;
+import org.tuiofx.widgets.skin.TextFieldSkinAndroid;
 import org.tuiofx.widgets.utils.Util;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
 import java.util.function.Consumer;
 
 public final class MultitouchHandler {
     private static final List<CurrentTouch> touches = new ArrayList<>();
     private static Pane rootPane;
-    private static Node backdropPane;
 
     private MultitouchHandler() {
     }
@@ -38,7 +69,6 @@ public final class MultitouchHandler {
      */
     public static void initialise(Pane root) {
         rootPane = root;
-        backdropPane = root.getChildren().get(0);
 
         root.addEventFilter(TouchEvent.ANY, MultitouchHandler::handleTouchEvent);
 
@@ -75,7 +105,9 @@ public final class MultitouchHandler {
             Point2D delta = touchPointPosition.subtract(currentTouch.getCurrentScreenPoint());
             delta = handleBoundsCheck(delta, pane);
 
-            currentTouch.getTransform().prepend(new Translate(delta.getX(), delta.getY()));
+            FocusAreaHandler focusAreaHandler = (FocusAreaHandler)pane.getUserData();
+
+            focusAreaHandler.prependTransform(new Translate(delta.getX(), delta.getY()));
             currentTouch.setCurrentScreenPoint(touchPointPosition);
         }
     }
@@ -121,6 +153,8 @@ public final class MultitouchHandler {
             CurrentTouch otherTouch,
             Pane pane) {
 
+        FocusAreaHandler focusAreaHandler = (FocusAreaHandler)pane.getUserData();
+
         // The angle between the old finger position and the new finger position.
         double angleDelta = calculateAngleDelta(currentTouch, otherTouch, touchPoint);
 
@@ -134,7 +168,7 @@ public final class MultitouchHandler {
             // Translate the pane
             Point2D delta = centre.subtract(currentTouch.getLastCentre());
             delta = handleBoundsCheck(delta, pane);
-            currentTouch.getTransform().prepend(new Translate(delta.getX(), delta.getY()));
+            focusAreaHandler.prependTransform(new Translate(delta.getX(), delta.getY()));
 
             // Scale the pane
             double scaleDifference =
@@ -142,19 +176,18 @@ public final class MultitouchHandler {
                             otherTouch.getCurrentScreenPoint()) /
                             currentTouch.getCurrentScreenPoint().distance(otherTouch.getCurrentScreenPoint());
 
-            Affine oldTransform = new Affine(currentTouch.getTransform());
-            currentTouch.getTransform()
-                    .prepend(new Scale(scaleDifference, scaleDifference, centre.getX(), centre.getY()));
-            double scaleX = Math.sqrt(currentTouch.getTransform().getMxx() * currentTouch.getTransform().getMxx()
-                    + currentTouch.getTransform().getMxy() * currentTouch.getTransform().getMxy());
+            Affine oldTransform = new Affine(focusAreaHandler.getTransform());
+            focusAreaHandler.prependTransform(new Scale(scaleDifference, scaleDifference, centre.getX(), centre.getY()));
+            double scaleX = Math.sqrt(focusAreaHandler.getTransform().getMxx() * focusAreaHandler.getTransform().getMxx()
+                    + focusAreaHandler.getTransform().getMxy() * focusAreaHandler.getTransform().getMxy());
 
             if (scaleX < 0.25 || scaleX > 2) {
-                currentTouch.setTransform(oldTransform);
+                focusAreaHandler.setTransform(oldTransform);
             }
         }
 
         // Rotate the pane
-        currentTouch.getTransform().prepend(new Rotate(Math.toDegrees(angleDelta), centre.getX(), centre.getY()));
+        focusAreaHandler.prependTransform(new Rotate(Math.toDegrees(angleDelta), centre.getX(), centre.getY()));
 
         // Update touch state
         currentTouch.setLastCentre(centre);
@@ -230,12 +263,7 @@ public final class MultitouchHandler {
             }
         }
 
-        // We don't count the backdrop as a pane.
-        if (Objects.equals(intersectNode, backdropPane)) {
-            return Optional.empty();
-        }
-
-        if (intersectNode instanceof Pane) {
+        if (intersectNode instanceof Pane && intersectNode.getUserData() instanceof FocusAreaHandler) {
             return Optional.of((Pane)intersectNode);
         }
 
@@ -413,30 +441,11 @@ public final class MultitouchHandler {
         private final Optional<Node> importantElement;
 
         private Point2D currentScreenPoint;
-        private Affine transform;
         private Point2D lastCentre;
 
         public CurrentTouch(Optional<Pane> pane, Optional<Node> importantElement) {
             this.pane = pane;
             this.importantElement = importantElement;
-            setupInitialTransforms();
-        }
-
-        /**
-         * Sets up or retrieves an affine transformation from the pane.
-         */
-        private void setupInitialTransforms() {
-            pane.ifPresent(pane -> {
-                ObservableList<Transform> transforms = pane.getTransforms();
-                if (transforms.isEmpty()) {
-                    transform = new Affine();
-                    transforms.add(transform);
-                } else if (transforms.size() == 1) {
-                    transform = (Affine)transforms.get(0);
-                } else {
-                    throw new RuntimeException();
-                }
-            });
         }
 
         /**
@@ -461,13 +470,6 @@ public final class MultitouchHandler {
         }
 
         /**
-         * Returns the affine transformation of the pane this finger controls.
-         */
-        public Affine getTransform() {
-            return transform;
-        }
-
-        /**
          * Returns the last centre point between this finger and another one.
          */
         public Point2D getLastCentre() {
@@ -480,27 +482,6 @@ public final class MultitouchHandler {
 
         public Optional<Node> getImportantElement() {
             return importantElement;
-        }
-
-        /**
-         * Sets the current transformation matrix to a new one.
-         */
-        public void setTransform(Affine newTransform) {
-            transform.setMxx(newTransform.getMxx());
-            transform.setMxy(newTransform.getMxy());
-            transform.setMxz(newTransform.getMxz());
-
-            transform.setMyx(newTransform.getMyx());
-            transform.setMyy(newTransform.getMyy());
-            transform.setMyz(newTransform.getMyz());
-
-            transform.setMzx(newTransform.getMzx());
-            transform.setMzy(newTransform.getMzy());
-            transform.setMzz(newTransform.getMzz());
-
-            transform.setTx(newTransform.getTx());
-            transform.setTy(newTransform.getTy());
-            transform.setTz(newTransform.getTz());
         }
     }
 
@@ -641,8 +622,26 @@ public final class MultitouchHandler {
         private final Pane pane;
         private boolean outOfDate = true;
 
+        private Affine transform;
+        private boolean transformDirty;
+
         public FocusAreaHandler(Pane pane) {
             this.pane = pane;
+            setupInitialTransforms();
+            setupTimer();
+        }
+
+        private void setupTimer() {
+            Timer timer = new Timer();
+            WeakReference<Pane> paneReference = new WeakReference<>(pane);
+            timer.schedule(new RenderUpdateTask(paneReference), 0, 30);
+        }
+
+        /**
+         * Sets up or retrieves an affine transformation from the pane.
+         */
+        private void setupInitialTransforms() {
+            transform = new Affine();
         }
 
         @Override
@@ -700,6 +699,62 @@ public final class MultitouchHandler {
 
         public void addPopup(PopupControl popupMenu, Consumer<EventTarget> eventHandler) {
             popupHandlers.add(eventHandler);
+        }
+
+        /**
+         * Returns the affine transformation of the pane this finger controls.
+         */
+        public Affine getTransform() {
+            return transform;
+        }
+
+        /**
+         * Prepends the transform onto the current transformation.
+         */
+        public void prependTransform(Transform transformDelta) {
+            transform.prepend(transformDelta);
+            transformDirty = true;
+        }
+
+        /**
+         * Sets the current transformation matrix to a new one.
+         */
+        public void setTransform(Affine newTransform) {
+            transform = newTransform;
+            transformDirty = true;
+        }
+
+        private void updatePaneTransform() {
+            if (transformDirty) {
+                List<Transform> transforms = pane.getTransforms();
+                if (!transforms.isEmpty()) {
+                    transforms.clear();
+                }
+                transforms.add(transform);
+                transformDirty = false;
+            }
+        }
+    }
+
+    private static class RenderUpdateTask extends TimerTask {
+
+        private final WeakReference<? extends Pane> paneReference;
+
+        public RenderUpdateTask(WeakReference<? extends Pane> paneReference) {
+
+            this.paneReference = paneReference;
+        }
+
+        @Override
+        public void run() {
+            Pane pane = paneReference.get();
+            if (pane == null) {
+                cancel();
+                return;
+            }
+
+            FocusAreaHandler focusAreaHandler = (FocusAreaHandler)pane.getUserData();
+            focusAreaHandler.updatePaneTransform();
         }
     }
 }
