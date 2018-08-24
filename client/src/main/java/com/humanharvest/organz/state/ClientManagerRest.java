@@ -4,7 +4,11 @@ import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.TransplantRequest;
-import com.humanharvest.organz.utilities.enums.*;
+import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
+import com.humanharvest.organz.utilities.enums.ClientType;
+import com.humanharvest.organz.utilities.enums.DonatedOrganSortOptionsEnum;
+import com.humanharvest.organz.utilities.enums.Gender;
+import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
@@ -15,11 +19,20 @@ import com.humanharvest.organz.views.client.PaginatedClientList;
 import com.humanharvest.organz.views.client.PaginatedDonatedOrgansList;
 import com.humanharvest.organz.views.client.PaginatedTransplantList;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.LocalDate;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ClientManagerRest implements ClientManager {
@@ -28,7 +41,7 @@ public class ClientManagerRest implements ClientManager {
     public List<Client> getClients() throws AuthenticationException {
 
         ResponseEntity<PaginatedClientList> clientResponse = State.getRestTemplate().exchange(
-                State.BASE_URI + "clients",
+                State.getBaseUri() + "clients",
                 HttpMethod.GET,
                 null,
                 PaginatedClientList.class);
@@ -44,17 +57,17 @@ public class ClientManagerRest implements ClientManager {
             Integer minimumAge,
             Integer maximumAge,
             Set<String> regions,
-            EnumSet<Gender> birthGenders,
+            Set<Gender> birthGenders,
             ClientType clientType,
-            EnumSet<Organ> donating,
-            EnumSet<Organ> requesting,
+            Set<Organ> donating,
+            Set<Organ> requesting,
             ClientSortOptionsEnum sortOption,
             Boolean isReversed) {
 
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set("Accept", MediaType.APPLICATION_JSON_VALUE);
 
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(State.BASE_URI + "/clients")
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(State.getBaseUri() + "/clients")
                 .queryParam("q", q)
                 .queryParam("offset", offset)
                 .queryParam("count", count)
@@ -97,9 +110,9 @@ public class ClientManagerRest implements ClientManager {
         httpHeaders.setIfMatch(State.getClientEtag());
         httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
         httpHeaders.set("X-Auth-Token", State.getToken());
-        HttpEntity entity = new HttpEntity<>(httpHeaders);
+        HttpEntity<?> entity = new HttpEntity<>(httpHeaders);
 
-        State.getRestTemplate().exchange(State.BASE_URI + "clients/{uid}", HttpMethod.DELETE,
+        State.getRestTemplate().exchange(State.getBaseUri() + "clients/{uid}", HttpMethod.DELETE,
                 entity,
                 String.class, client.getUid());
     }
@@ -122,8 +135,8 @@ public class ClientManagerRest implements ClientManager {
         ResponseEntity<Client> responseEntity;
         try {
             responseEntity = State.getRestTemplate()
-                    .exchange(State.BASE_URI + "clients/{id}", HttpMethod.GET, entity, Client.class, id);
-        } catch (NotFoundException e) {
+                    .exchange(State.getBaseUri() + "clients/{id}", HttpMethod.GET, entity, Client.class, id);
+        } catch (NotFoundException ignored) {
             return Optional.empty();
         }
         State.setClientEtag(responseEntity.getHeaders().getETag());
@@ -155,7 +168,8 @@ public class ClientManagerRest implements ClientManager {
         httpHeaders.set("X-Auth-Token", State.getToken());
         HttpEntity<String> entity = new HttpEntity<>(httpHeaders);
 
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(State.BASE_URI + "/clients/transplantRequests")
+        UriComponentsBuilder builder = UriComponentsBuilder
+                .fromHttpUrl(State.getBaseUri() + "/clients/transplantRequests")
                 .queryParam("offset", offset)
                 .queryParam("count", count);
 
@@ -186,6 +200,7 @@ public class ClientManagerRest implements ClientManager {
 
     /**
      * Gets all organs that are available for donation
+     *
      * @return a collection of all available organs for donation
      */
     @Override
@@ -195,7 +210,7 @@ public class ClientManagerRest implements ClientManager {
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
         ResponseEntity<PaginatedDonatedOrgansList> responseEntity = State.getRestTemplate().exchange(
-                State.BASE_URI + "/clients/organs",
+                State.getBaseUri() + "/clients/organs",
                 HttpMethod.GET,
                 entity, PaginatedDonatedOrgansList.class);
 
@@ -212,13 +227,19 @@ public class ClientManagerRest implements ClientManager {
      * @return A collection of the the organs available to donate based off the specified filters.
      */
     @Override
-    public PaginatedDonatedOrgansList getAllOrgansToDonate(Integer offset, Integer count, Set<String> regions,
-                                                           Set<Organ> organType, DonatedOrganSortOptionsEnum sortOption, Boolean reversed) {
+    public PaginatedDonatedOrgansList getAllOrgansToDonate(
+            Integer offset,
+            Integer count,
+            Set<String> regions,
+            Set<Organ> organType,
+            DonatedOrganSortOptionsEnum sortOption,
+            Boolean reversed) {
+
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-Auth-Token", State.getToken());
         headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
 
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(State.BASE_URI + "/clients/organs")
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(State.getBaseUri() + "/clients/organs")
                 .queryParam("offset", offset)
                 .queryParam("count", count)
                 .queryParam("regions", String.join(",", regions))
@@ -247,7 +268,7 @@ public class ClientManagerRest implements ClientManager {
 
         HttpEntity<String> entity = new HttpEntity<>(httpHeaders);
 
-        ResponseEntity<List<Client>> responseEntity = State.getRestTemplate().exchange(State.BASE_URI +
+        ResponseEntity<List<Client>> responseEntity = State.getRestTemplate().exchange(State.getBaseUri() +
                 "/matchOrganToRecipients/" + donatedOrgan.getId(), HttpMethod.GET, entity, new
                 ParameterizedTypeReference<List<Client>>() {
                 });

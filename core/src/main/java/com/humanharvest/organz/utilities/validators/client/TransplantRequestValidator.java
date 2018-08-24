@@ -1,12 +1,12 @@
 package com.humanharvest.organz.utilities.validators.client;
 
+import com.humanharvest.organz.TransplantRequest;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 
-import com.humanharvest.organz.TransplantRequest;
-
 public class TransplantRequestValidator {
-    
+
     public static void validateTransplantRequest(TransplantRequest request) {
         int clientId = request.getClient().getUid();
 

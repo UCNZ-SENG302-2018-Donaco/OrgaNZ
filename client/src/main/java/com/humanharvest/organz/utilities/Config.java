@@ -1,16 +1,16 @@
 package com.humanharvest.organz.utilities;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Locale;
-
 import com.sun.jna.Native;
 import com.sun.jna.platform.win32.Shell32;
 import com.sun.jna.platform.win32.ShlObj;
 import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.platform.win32.WinError;
 import com.sun.jna.platform.win32.WinNT;
+
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Locale;
 
 /**
  * Utility class to retrieve user configuration directories in a cross platform manner.

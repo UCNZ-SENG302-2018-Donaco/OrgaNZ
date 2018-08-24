@@ -46,6 +46,7 @@ public enum Organ {
 
     /**
      * Get an Organ object from a string
+     *
      * @param text Text to convert
      * @return The matching organ
      * @throws IllegalArgumentException Thrown when no matching organ is found

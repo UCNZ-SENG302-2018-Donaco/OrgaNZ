@@ -1,15 +1,15 @@
 package com.humanharvest.organz.controller;
 
-import static org.junit.Assert.assertEquals;
-
-import java.time.LocalDate;
-
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
 import org.junit.Test;
+
+import java.time.LocalDate;
+
+import static org.junit.Assert.assertEquals;
 
 public class MenuBarAdminViewClientTest extends ControllerTest {
 

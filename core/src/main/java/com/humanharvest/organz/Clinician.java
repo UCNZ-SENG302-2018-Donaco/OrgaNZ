@@ -4,7 +4,14 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.views.client.Views;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -55,14 +62,15 @@ public class Clinician implements ConcurrencyControlledEntity {
 
     /**
      * Create a new Clinician object
-     * @param firstName First name string
-     * @param middleName Middle name(s). May be null
-     * @param lastName Last name string
+     *
+     * @param firstName   First name string
+     * @param middleName  Middle name(s). May be null
+     * @param lastName    Last name string
      * @param workAddress Address string
-     * @param region Region either from the Region ENUM in NZ or a string.
-     * @param country Country of the clinician.
-     * @param staffId The unique staffId. Should be checked using the ClinicianManager to ensure uniqueness
-     * @param password The clinicians password for logins. Stored in plaintext
+     * @param region      Region either from the Region ENUM in NZ or a string.
+     * @param country     Country of the clinician.
+     * @param staffId     The unique staffId. Should be checked using the ClinicianManager to ensure uniqueness
+     * @param password    The clinicians password for logins. Stored in plaintext
      */
     public Clinician(
             String firstName,
@@ -161,6 +169,7 @@ public class Clinician implements ConcurrencyControlledEntity {
 
     /**
      * Get the full name of the clinician concatenating their names
+     *
      * @return The full name string
      */
     public String getFullName() {
@@ -186,6 +195,7 @@ public class Clinician implements ConcurrencyControlledEntity {
 
     /**
      * Clinician objects are identified by their staffID
+     *
      * @param obj The object to compare
      * @return If the Clinician is a match
      */

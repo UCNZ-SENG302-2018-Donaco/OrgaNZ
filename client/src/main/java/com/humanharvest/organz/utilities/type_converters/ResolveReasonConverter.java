@@ -9,7 +9,7 @@ public class ResolveReasonConverter implements CommandLine.ITypeConverter<Resolv
     public ResolveReason convert(String value) throws CommandLine.TypeConversionException {
         try {
             return ResolveReason.fromString(value);
-        } catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             throw new CommandLine.TypeConversionException(e.getMessage());
         }
     }

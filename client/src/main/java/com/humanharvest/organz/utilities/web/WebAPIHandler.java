@@ -1,11 +1,5 @@
 package com.humanharvest.organz.utilities.web;
 
-import java.io.IOException;
-import java.time.Instant;
-import java.time.Period;
-import java.util.List;
-import java.util.Optional;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
@@ -14,6 +8,12 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.humanharvest.organz.utilities.CacheManager;
 import com.humanharvest.organz.utilities.exceptions.BadDrugNameException;
 import com.humanharvest.organz.utilities.exceptions.BadGatewayException;
+
+import java.io.IOException;
+import java.time.Instant;
+import java.time.Period;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * An abstract class for a generic WebAPIHandler.
@@ -36,7 +36,8 @@ public abstract class WebAPIHandler {
 
     /**
      * Adds the given data to the cache, with the arguments as the key.
-     * @param value The value to be stored in the cache.
+     *
+     * @param value     The value to be stored in the cache.
      * @param arguments The key used to retrieve the cached value.
      * @return The value variable.
      */
@@ -48,7 +49,8 @@ public abstract class WebAPIHandler {
 
     /**
      * Retrieves the value from the cache, or an empty optional if it doesn't exist or is expired.
-     * @param type The type of the value in the cache. Must be deserialisable using the GSON library.
+     *
+     * @param type      The type of the value in the cache. Must be deserialisable using the GSON library.
      * @param arguments The key used to store the cached value.
      */
     protected <T> Optional<T> getCachedData(TypeReference<?> type, Object... arguments) {

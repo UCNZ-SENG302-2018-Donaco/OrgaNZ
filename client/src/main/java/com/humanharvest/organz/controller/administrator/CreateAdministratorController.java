@@ -51,6 +51,7 @@ public class CreateAdministratorController extends SubController {
 
     /**
      * Override so we can set the page title.
+     *
      * @param mainController The MainController
      */
     @Override
@@ -67,6 +68,7 @@ public class CreateAdministratorController extends SubController {
      * Invalid input:
      * * Username is numeric
      * * Username is already taken
+     *
      * @return true if all fields are valid
      */
     private boolean fieldsAreValid() {

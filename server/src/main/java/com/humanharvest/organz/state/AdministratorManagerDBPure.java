@@ -1,14 +1,14 @@
 package com.humanharvest.organz.state;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import javax.persistence.PersistenceException;
-import javax.persistence.RollbackException;
-
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.database.DBManager;
 import org.hibernate.Transaction;
+
+import javax.persistence.PersistenceException;
+import javax.persistence.RollbackException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public class AdministratorManagerDBPure implements AdministratorManager {
 
@@ -104,14 +104,14 @@ public class AdministratorManagerDBPure implements AdministratorManager {
         Transaction trns = null;
         Administrator result = null;
 
-        try (org.hibernate.Session session = dbManager.getDBSession()){
+        try (org.hibernate.Session session = dbManager.getDBSession()) {
             trns = session.beginTransaction();
 
             result = dbManager.getDBSession().find(Administrator.class, username);
 
             trns.commit();
-        } catch (RollbackException exc){
-            if(trns != null){
+        } catch (RollbackException exc) {
+            if (trns != null) {
                 trns.rollback();
             }
         }

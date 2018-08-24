@@ -4,14 +4,17 @@ import com.humanharvest.organz.views.ActionResponseView;
 
 public class ActionResolverMemory implements ActionResolver {
 
-    public ActionResponseView executeUndo(String ETag) {
+    @Override
+    public ActionResponseView executeUndo(String eTag) {
         return new ActionResponseView("Faked", false, false);
     }
 
-    public ActionResponseView executeRedo(String ETag) {
+    @Override
+    public ActionResponseView executeRedo(String eTag) {
         return new ActionResponseView("Faked", false, false);
     }
 
+    @Override
     public ActionResponseView getUndo() {
         return new ActionResponseView("Faked", false, false);
     }

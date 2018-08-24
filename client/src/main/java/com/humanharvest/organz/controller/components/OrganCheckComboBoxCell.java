@@ -1,9 +1,6 @@
 package com.humanharvest.organz.controller.components;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import com.humanharvest.organz.utilities.enums.Organ;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
@@ -11,13 +8,16 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.Tooltip;
-
-import com.humanharvest.organz.utilities.enums.Organ;
 import org.controlsfx.control.CheckComboBox;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * An editable table cell that holds a {@link CheckComboBox} for organ values. Changing the checked items triggers an
  * edit commit on the cell.
+ *
  * @param <T> The type of data record each row in the table represents.
  */
 public class OrganCheckComboBoxCell<T> extends TableCell<T, Set<Organ>> {
@@ -26,6 +26,7 @@ public class OrganCheckComboBoxCell<T> extends TableCell<T, Set<Organ>> {
     /**
      * Creates a new organ {@link CheckComboBox} cell for the given column. Also binds the disabled property to that of
      * the table.
+     *
      * @param column The {@link Set} of {@link Organ} column to create a date picker cell for.
      */
     public OrganCheckComboBoxCell(TableColumn<T, Set<Organ>> column) {
@@ -50,7 +51,8 @@ public class OrganCheckComboBoxCell<T> extends TableCell<T, Set<Organ>> {
     /**
      * Triggered whenever the {@link Set} of {@link Organ} value of the cell is updated; it sets that new value in the
      * {@link CheckComboBox}.
-     * @param item The new set of organs.
+     *
+     * @param item  The new set of organs.
      * @param empty Whether the cell is now empty or not.
      */
     @Override

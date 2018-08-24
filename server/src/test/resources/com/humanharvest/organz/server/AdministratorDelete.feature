@@ -1,4 +1,5 @@
 Feature: Does DELETE /administrators/ work?
+
   Scenario: Delete a non-existant administrator
     When I delete /administrators/test
     Then the result is not found

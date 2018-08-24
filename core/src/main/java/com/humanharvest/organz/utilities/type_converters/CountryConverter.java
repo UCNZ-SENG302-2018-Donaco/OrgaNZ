@@ -9,6 +9,7 @@ public class CountryConverter implements TypeConverter<Country> {
 
     /**
      * Convert a string to a Country, matches case insensitive
+     *
      * @param value String input from user via PicoCLI
      * @return Country object
      * @throws TypeConversionException Throws exception if country type

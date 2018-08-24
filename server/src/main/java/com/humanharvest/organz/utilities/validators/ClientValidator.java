@@ -1,14 +1,14 @@
 package com.humanharvest.organz.utilities.validators;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
-
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.ProcedureRecord;
 import com.humanharvest.organz.TransplantRequest;
+
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 
 public class ClientValidator {
 
@@ -21,6 +21,7 @@ public class ClientValidator {
 
     /**
      * Validates a {@link Client} and returns a string explaining the errors within it.
+     *
      * @param client The client to validate.
      * @return A string containing the errors within the client if it is invalid, else null if the client is valid.
      */

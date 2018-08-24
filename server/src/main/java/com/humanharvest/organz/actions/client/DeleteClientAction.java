@@ -10,7 +10,8 @@ public class DeleteClientAction extends ClientAction {
 
     /**
      * Create a new Action
-     * @param client The client to be removed
+     *
+     * @param client  The client to be removed
      * @param manager The ClientManager to apply changes to
      */
     public DeleteClientAction(Client client, ClientManager manager) {

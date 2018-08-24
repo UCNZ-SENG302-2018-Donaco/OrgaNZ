@@ -34,8 +34,16 @@ import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.Pagination;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.SortType;
+import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
@@ -48,7 +56,11 @@ import org.controlsfx.control.Notifications;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.Comparator;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -117,6 +129,7 @@ public class OrgansToDonateController extends SubController {
 
     /**
      * Sets up the page, setting its title, loading the menu bar and doing the first refresh of the data.
+     *
      * @param mainController The main controller that defines which window this subcontroller belongs to.
      */
     @Override
@@ -282,7 +295,7 @@ public class OrgansToDonateController extends SubController {
                     observableOrgansToDonate.removeIf(donatedOrgan ->
                             donatedOrgan.getOverrideReason() != null ||
                                     donatedOrgan.getDurationUntilExpiry() != null &&
-                            donatedOrgan.getDurationUntilExpiry().minusSeconds(1).isNegative());
+                                            donatedOrgan.getDurationUntilExpiry().minusSeconds(1).isNegative());
                 }));
         clock.setCycleCount(Animation.INDEFINITE);
         clock.play();

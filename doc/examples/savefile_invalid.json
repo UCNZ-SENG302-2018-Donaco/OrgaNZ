@@ -42,7 +42,11 @@
         "nano": 857000000
       }
     },
-    "organsDonating": ["LIVER", "KIDNEY", "PANCREAS"],
+    "organsDonating": [
+      "LIVER",
+      "KIDNEY",
+      "PANCREAS"
+    ],
     "transplantRequests": [
       {
         "requestedOrgan": "LIVER",
