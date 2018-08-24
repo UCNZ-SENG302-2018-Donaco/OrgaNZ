@@ -282,6 +282,7 @@ public enum Country {
 
     /**
      * Returns Country enum from input matched to either the name or code of a country
+     *
      * @param text name or code of country to return
      * @return country that matches the text given
      */

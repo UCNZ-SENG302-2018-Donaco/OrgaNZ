@@ -1,44 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
 <?import javafx.scene.Cursor?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
 <VBox xmlns:fx="http://javafx.com/fxml/1" prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121"
       fx:controller="com.humanharvest.organz.controller.administrator.StaffListController">
     <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
-    <HBox fx:id="menuBarPane" maxHeight="-Infinity" minHeight="-Infinity" />
+        <HBox fx:id="menuBarPane" maxHeight="-Infinity" minHeight="-Infinity"/>
         <SplitPane prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
-       <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
-           <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Staff list" VBox.vgrow="ALWAYS">
-              <font>
-                  <Font size="24.0"/>
-              </font>
-              <cursor>
-                  <Cursor fx:constant="NONE"/>
-              </cursor>
-              <VBox.margin>
-                  <Insets bottom="10.0" top="50.0"/>
-              </VBox.margin>
-           </Text>
-           <TableView fx:id="tableView" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
-              <VBox.margin>
-                  <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
-              </VBox.margin>
-               <columns>
-                   <TableColumn fx:id="idCol" prefWidth="116.0" resizable="false" text="Staff ID"/>
-                   <TableColumn fx:id="firstNameCol" prefWidth="287.00001525878906" resizable="false"
-                                text="First Name"/>
-                   <TableColumn fx:id="lastNameCol" prefWidth="573.0" resizable="false" text="Last Name"/>
-               </columns>
-               <columnResizePolicy>
-                   <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
-               </columnResizePolicy>
-           </TableView>
-       </VBox>
-   </SplitPane>
+            <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
+                <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Staff list" VBox.vgrow="ALWAYS">
+                    <font>
+                        <Font size="24.0"/>
+                    </font>
+                    <cursor>
+                        <Cursor fx:constant="NONE"/>
+                    </cursor>
+                    <VBox.margin>
+                        <Insets bottom="10.0" top="50.0"/>
+                    </VBox.margin>
+                </Text>
+                <TableView fx:id="tableView" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                    <VBox.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+                    </VBox.margin>
+                    <columns>
+                        <TableColumn fx:id="idCol" prefWidth="116.0" resizable="false" text="Staff ID"/>
+                        <TableColumn fx:id="firstNameCol" prefWidth="287.00001525878906" resizable="false"
+                                     text="First Name"/>
+                        <TableColumn fx:id="lastNameCol" prefWidth="573.0" resizable="false" text="Last Name"/>
+                    </columns>
+                    <columnResizePolicy>
+                        <TableView fx:constant="CONSTRAINED_RESIZE_POLICY"/>
+                    </columnResizePolicy>
+                </TableView>
+            </VBox>
+        </SplitPane>
     </SplitPane>
 
 </VBox>

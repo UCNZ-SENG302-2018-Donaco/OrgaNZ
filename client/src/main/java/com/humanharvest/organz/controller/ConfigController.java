@@ -9,8 +9,6 @@ import org.controlsfx.control.Notifications;
 
 import java.util.EnumSet;
 
-;
-
 public class ConfigController extends SubController {
 
     @FXML
@@ -41,7 +39,7 @@ public class ConfigController extends SubController {
     @Override
     public void refresh() {
         countries.getCheckModel().clearChecks();
-        for (Country country: State.getConfigManager().getAllowedCountries()) {
+        for (Country country : State.getConfigManager().getAllowedCountries()) {
             countries.getCheckModel().check(country);
         }
     }

@@ -1,10 +1,10 @@
 package com.humanharvest.organz.actions.client;
 
-import java.time.LocalDate;
-import java.util.Objects;
-
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.state.ClientManager;
+
+import java.time.LocalDate;
+import java.util.Objects;
 
 /**
  * A reversible action to modify a given medication record (specifically, its 'started' and 'stopped' dates).
@@ -20,6 +20,7 @@ public class ModifyMedicationRecordAction extends ClientAction {
     /**
      * Creates a new action to modify a medication record. Will initialise the new started/stopped dates to be the
      * same as the current ones.
+     *
      * @param record The medication record to modify.
      */
     public ModifyMedicationRecordAction(MedicationRecord record, ClientManager manager) {
@@ -33,6 +34,7 @@ public class ModifyMedicationRecordAction extends ClientAction {
 
     /**
      * Make the action change the medication record's started date to the one given.
+     *
      * @param newStarted The new started date.
      */
     public void changeStarted(LocalDate newStarted) {
@@ -41,6 +43,7 @@ public class ModifyMedicationRecordAction extends ClientAction {
 
     /**
      * Make the action change the medication record's stopped date to the one given.
+     *
      * @param newStopped The new started date.
      */
     public void changeStopped(LocalDate newStopped) {
@@ -49,6 +52,7 @@ public class ModifyMedicationRecordAction extends ClientAction {
 
     /**
      * Apply all changes to the medication record.
+     *
      * @throws IllegalStateException If no changes were made.
      */
     @Override

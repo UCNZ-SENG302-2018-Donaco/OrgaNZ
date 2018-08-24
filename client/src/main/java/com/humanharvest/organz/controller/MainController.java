@@ -70,6 +70,7 @@ public class MainController {
 
     /**
      * Replaces the page displayed in the page holder with a new page.
+     *
      * @param page the new current Page.
      * @param node the page node to be swapped in.
      */
@@ -100,6 +101,7 @@ public class MainController {
     /**
      * Method that can be called from other controllers to load the sidebar into that page.
      * Will set the sidebar as the child of the pane given.
+     *
      * @param sidebarPane The container pane for the sidebar, given by the importer.
      */
     public void loadSidebar(Pane sidebarPane) {
@@ -117,6 +119,7 @@ public class MainController {
     /**
      * Method that can be called from other controllers to load the sidebar into that page.
      * Will set the sidebar as the child of the pane given.
+     *
      * @param menuBarPane The container pane for the menu bar, given by the importer.
      */
     public void loadMenuBar(Pane menuBarPane) {
@@ -155,10 +158,13 @@ public class MainController {
         }
     }
 
-    public String getTitle() {return title;}
+    public String getTitle() {
+        return title;
+    }
 
     /**
      * Sets the title of the window to the given text.
+     *
      * @param title The new title of the window.
      */
     public void setTitle(String title) {

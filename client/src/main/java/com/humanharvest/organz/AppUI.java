@@ -55,9 +55,9 @@ public class AppUI extends Application {
         Map<String, String> parameters = getParameters().getNamed();
 
         if (parameters.containsKey("host")) {
-            State.BASE_URI = parameters.get("host");
+            State.setBaseUri(parameters.get("host"));
         } else if (System.getenv("HOST") != null) {
-            State.BASE_URI = System.getenv("HOST");
+            State.setBaseUri(System.getenv("HOST"));
         }
 
         primaryStage.setTitle("Organ Donor Management System");

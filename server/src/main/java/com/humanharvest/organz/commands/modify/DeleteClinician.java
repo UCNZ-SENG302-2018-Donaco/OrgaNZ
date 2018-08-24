@@ -1,8 +1,5 @@
 package com.humanharvest.organz.commands.modify;
 
-import java.io.PrintStream;
-import java.util.Optional;
-
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.actions.ActionInvoker;
@@ -11,6 +8,9 @@ import com.humanharvest.organz.state.ClinicianManager;
 import com.humanharvest.organz.state.State;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
+
+import java.io.PrintStream;
+import java.util.Optional;
 
 /**
  * Command line to modify attributes of clinicians, using their staff id as a reference key

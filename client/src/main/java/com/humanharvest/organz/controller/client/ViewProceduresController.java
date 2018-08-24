@@ -21,8 +21,13 @@ import javafx.collections.FXCollections;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableColumn.CellEditEvent;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.Pane;
@@ -80,6 +85,7 @@ public class ViewProceduresController extends SubController {
     /**
      * Sets the table's sort policy - default ordering is by date DESC, but if a column is selected for sorting then
      * that takes precedence.
+     *
      * @param table The table to set the sort policy for.
      * @return True.
      */
@@ -100,6 +106,7 @@ public class ViewProceduresController extends SubController {
 
     /**
      * Handles the edit event when a procedure summary cell is edited.
+     *
      * @param event The cell edit event.
      */
     private void editSummaryCell(CellEditEvent<ProcedureRecord, String> event) {
@@ -120,6 +127,7 @@ public class ViewProceduresController extends SubController {
 
     /**
      * Handles the edit event when a procedure description cell is edited.
+     *
      * @param event The cell edit event.
      */
     private void editDescriptionCell(CellEditEvent<ProcedureRecord, String> event) {
@@ -132,6 +140,7 @@ public class ViewProceduresController extends SubController {
 
     /**
      * Handles the edit event when a procedure date cell is edited.
+     *
      * @param event The cell edit event.
      */
     private void editDateCell(CellEditEvent<ProcedureRecord, LocalDate> event) {
@@ -155,6 +164,7 @@ public class ViewProceduresController extends SubController {
 
     /**
      * Handles the edit event when an affected organs cell is edited.
+     *
      * @param event The cell edit event.
      */
     private void editAffectedOrgansCell(CellEditEvent<ProcedureRecord, Set<Organ>> event) {
@@ -231,16 +241,16 @@ public class ViewProceduresController extends SubController {
 
         // Add listeners to clear the other table when anything is selected in each table (and enable/disable buttons).
         pendingProcedureView.getSelectionModel().selectedItemProperty().addListener(
-                (observable) -> enableAppropriateButtons());
+                observable -> enableAppropriateButtons());
         pastProcedureView.getSelectionModel().selectedItemProperty().addListener(
-                (observable) -> enableAppropriateButtons());
+                observable -> enableAppropriateButtons());
         pendingProcedureView.setOnMouseClicked(
-                (observable) -> {
+                observable -> {
                     selectedTableView = pendingProcedureView;
                     pastProcedureView.getSelectionModel().clearSelection();
                 });
         pastProcedureView.setOnMouseClicked(
-                (observable) -> {
+                observable -> {
                     selectedTableView = pastProcedureView;
                     pendingProcedureView.getSelectionModel().clearSelection();
                 });
@@ -259,6 +269,7 @@ public class ViewProceduresController extends SubController {
      * - Checks if the session login type is a client or a clinician, and sets the viewed client appropriately.
      * - Checks if the logged in user is a client, and if so, makes the page non-editable.
      * - Refreshes the procedure tables to set initial state based on the viewed client.
+     *
      * @param mainController The MainController for the window this page is loaded on.
      */
     @Override
@@ -356,6 +367,7 @@ public class ViewProceduresController extends SubController {
 
     /**
      * Gets the currently selected record in the currently selected table.
+     *
      * @return The selected procedure record.
      */
     private ProcedureRecord getSelectedRecord() {

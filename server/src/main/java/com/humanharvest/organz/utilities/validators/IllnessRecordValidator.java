@@ -1,14 +1,15 @@
 package com.humanharvest.organz.utilities.validators;
 
+import com.humanharvest.organz.IllnessRecord;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
-
-import com.humanharvest.organz.IllnessRecord;
 
 public class IllnessRecordValidator {
 
     /**
      * Validates a {@link IllnessRecord} and returns a string explaining the errors within it.
+     *
      * @param record The record to validate.
      * @return A string containing the errors within the record if it is invalid, else null if it is valid.
      */

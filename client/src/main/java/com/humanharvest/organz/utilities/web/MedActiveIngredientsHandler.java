@@ -1,11 +1,5 @@
 package com.humanharvest.organz.utilities.web;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequest;
@@ -14,6 +8,12 @@ import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpResponseException;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.json.JsonObjectParser;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * A handler for requests to the medication active ingredients web API provided by MAPI.
@@ -46,6 +46,7 @@ public class MedActiveIngredientsHandler extends WebAPIHandler {
         );
     }
 
+    @Override
     public List<String> getData(Object... arguments) throws IOException {
         String medicationName;
         if (arguments.length == 1 && arguments[0] instanceof String) {
@@ -58,7 +59,8 @@ public class MedActiveIngredientsHandler extends WebAPIHandler {
 
     public List<String> getActiveIngredients(String medicationName) throws IOException {
         Optional<List<String>> cachedResponse = getCachedData(
-                new TypeReference<List<String>>() {}
+                new TypeReference<List<String>>() {
+                }
                 , medicationName);
         if (cachedResponse.isPresent()) {
             return cachedResponse.get();

@@ -8,6 +8,8 @@ import com.humanharvest.organz.actions.Action;
 public interface ActionOccurredListener {
 
     void onActionExecuted(Action action);
+
     void onActionUndone(Action action);
+
     void onActionRedone(Action action);
 }

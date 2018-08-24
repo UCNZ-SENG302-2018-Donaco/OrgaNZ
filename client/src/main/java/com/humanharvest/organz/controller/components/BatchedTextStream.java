@@ -12,6 +12,7 @@ public class BatchedTextStream extends OutputStream {
 
     /**
      * Get the text since the last request
+     *
      * @return The text sent to the stream since the last getNewText request
      */
     public String getNewText() {
