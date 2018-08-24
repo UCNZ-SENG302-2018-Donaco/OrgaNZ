@@ -31,6 +31,7 @@ public class AppUI extends Application {
 
     public static void main(String[] args) {
         TuioFX.enableJavaFXTouchProperties();
+        System.setProperty("prism.maxvram", String.valueOf(Runtime.getRuntime().maxMemory() / 4));
         launch(args);
     }
 
