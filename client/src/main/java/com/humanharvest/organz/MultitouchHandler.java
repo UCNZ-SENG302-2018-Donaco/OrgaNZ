@@ -103,7 +103,7 @@ public final class MultitouchHandler {
             Point2D delta = touchPointPosition.subtract(currentTouch.getCurrentScreenPoint());
             delta = handleBoundsCheck(delta, pane);
 
-            FocusAreaHandler focusAreaHandler = (FocusAreaHandler)pane.getUserData();
+            FocusAreaHandler focusAreaHandler = (FocusAreaHandler) pane.getUserData();
 
             focusAreaHandler.prependTransform(new Translate(delta.getX(), delta.getY()));
             currentTouch.setCurrentScreenPoint(touchPointPosition);
@@ -152,7 +152,7 @@ public final class MultitouchHandler {
             CurrentTouch otherTouch,
             Pane pane) {
 
-        FocusAreaHandler focusAreaHandler = (FocusAreaHandler)pane.getUserData();
+        FocusAreaHandler focusAreaHandler = (FocusAreaHandler) pane.getUserData();
 
         // The angle between the old finger position and the new finger position.
         double angleDelta = calculateAngleDelta(currentTouch, otherTouch, touchPoint);
@@ -263,7 +263,7 @@ public final class MultitouchHandler {
         }
 
         if (intersectNode instanceof Pane && intersectNode.getUserData() instanceof FocusAreaHandler) {
-            return Optional.of((Pane)intersectNode);
+            return Optional.of((Pane) intersectNode);
         }
 
         // Also has org.tuiofx.widgets.controls.KeyboardPane
