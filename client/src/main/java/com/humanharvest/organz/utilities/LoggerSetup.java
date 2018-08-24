@@ -5,7 +5,12 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.logging.*;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.FileHandler;
+import java.util.logging.Formatter;
+import java.util.logging.Level;
+import java.util.logging.LogRecord;
+import java.util.logging.Logger;
 
 /**
  * Static logger setup. Should be called at launch before anything else
@@ -19,6 +24,7 @@ public class LoggerSetup {
 
     /**
      * Setup the logger. Writes to a file called "organz.log" in the app directory
+     *
      * @param logLevel The log level required
      */
     public static void setup(Level logLevel) {
@@ -47,7 +53,7 @@ public class LoggerSetup {
     }
 
     private static Formatter createCustomFormatter() {
-        return  new Formatter() {
+        return new Formatter() {
             @Override
             public String format(LogRecord record) {
                 Instant instant = Instant.EPOCH.plus(record.getMillis(), ChronoUnit.MILLIS);
@@ -64,7 +70,7 @@ public class LoggerSetup {
                 String throwable = "";
                 if (record.getThrown() != null) {
                     StringWriter sw = new StringWriter();
-                    try(PrintWriter pw = new PrintWriter(sw)) {
+                    try (PrintWriter pw = new PrintWriter(sw)) {
                         pw.println();
                         record.getThrown().printStackTrace(pw);
                     }

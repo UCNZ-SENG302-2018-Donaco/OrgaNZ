@@ -14,7 +14,7 @@ public final class ReflectionUtils {
             throws NoSuchFieldException, IllegalAccessException {
         Field field = o.getClass().getDeclaredField(fieldName);
         field.setAccessible(true);
-        return (T)field.get(o);
+        return (T) field.get(o);
     }
 
     public static <T> void setField(Object o, String fieldName, T value)
@@ -29,7 +29,7 @@ public final class ReflectionUtils {
         Method method = findMethod(o.getClass().getDeclaredMethods(), methodName, parameters.length);
         Objects.requireNonNull(method);
         method.setAccessible(true);
-        return (T)method.invoke(o, parameters);
+        return (T) method.invoke(o, parameters);
     }
 
     private static Method findMethod(Method[] methods, String name, int numberParameters) {
@@ -56,7 +56,7 @@ public final class ReflectionUtils {
     }
 
     private static Method findDeclaredMethod(Class<?> clazz, String methodName, Class<?>... parameterTypes)
-        throws NoSuchMethodException {
+            throws NoSuchMethodException {
         while (clazz != null) {
             try {
                 return clazz.getDeclaredMethod(methodName, parameterTypes);

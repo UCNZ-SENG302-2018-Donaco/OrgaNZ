@@ -19,7 +19,12 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.Pagination;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
+import javafx.scene.control.TableView;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
@@ -82,6 +87,7 @@ public class TransplantsController extends SubController {
 
     /**
      * Formats a table cell that holds a {@link LocalDateTime} value to display that value in the date time format.
+     *
      * @return The cell with the date time formatter set.
      */
     private static TableCell<TransplantRequest, LocalDateTime> formatDateTimeCell() {
@@ -101,6 +107,7 @@ public class TransplantsController extends SubController {
     /**
      * Formats a table row to be coloured if the {@link TransplantRequest} it holds is for an organ that the client
      * is also donating.
+     *
      * @return The row with the colouring callback set.
      */
     private TableRow<TransplantRequest> colourIfDonatedAndRequested() {
@@ -131,6 +138,7 @@ public class TransplantsController extends SubController {
 
     /**
      * Sets up the page, setting its title, loading the menu bar and doing the first refresh of the data.
+     *
      * @param mainController The main controller that defines which window this subcontroller belongs to.
      */
     @Override
@@ -176,7 +184,7 @@ public class TransplantsController extends SubController {
         }
         regionChoice.getItems().add("International");
 
-        tableView.setOnSort((o) -> createPage(pagination.getCurrentPageIndex()));
+        tableView.setOnSort(o -> createPage(pagination.getCurrentPageIndex()));
 
         organChoice.getItems().addAll(Organ.values());
 
@@ -298,6 +306,7 @@ public class TransplantsController extends SubController {
 
     /**
      * Upon pagination, update the table to show the correct items
+     *
      * @param pageIndex The page we're now on (starts at 0)
      * @return An empty pane as pagination requires a non null return. Not used.
      */
@@ -308,6 +317,7 @@ public class TransplantsController extends SubController {
 
     /**
      * Set the text that advises the currently viewed and pending amount of results
+     *
      * @param totalCount The total amount of current results matching filter options
      */
     private void setupDisplayingXToYOfZText(int totalCount) {

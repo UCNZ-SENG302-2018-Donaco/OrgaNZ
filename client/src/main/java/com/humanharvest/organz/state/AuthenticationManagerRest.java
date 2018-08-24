@@ -14,6 +14,8 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
 
+import java.util.Objects;
+
 public class AuthenticationManagerRest implements AuthenticationManager {
 
     @Override
@@ -22,8 +24,10 @@ public class AuthenticationManagerRest implements AuthenticationManager {
 
         try {
             ClientLoginResponse response = State.getRestTemplate().postForObject(
-                    State.BASE_URI + "login/client/", new HttpEntity<>(loginRequest),
+                    State.getBaseUri() + "login/client/", new HttpEntity<>(loginRequest),
                     ClientLoginResponse.class);
+            Objects.requireNonNull(response);
+
             State.setToken(response.getToken());
             State.login(response.getUserData());
             return response.getUserData();
@@ -42,8 +46,10 @@ public class AuthenticationManagerRest implements AuthenticationManager {
 
         try {
             ClinicianLoginResponse response = State.getRestTemplate().postForObject(
-                    State.BASE_URI + "login/clinician/", new HttpEntity<>(loginRequest),
+                    State.getBaseUri() + "login/clinician/", new HttpEntity<>(loginRequest),
                     ClinicianLoginResponse.class);
+            Objects.requireNonNull(response);
+
             State.setToken(response.getToken());
             State.login(response.getUserData());
             return response.getUserData();
@@ -62,8 +68,10 @@ public class AuthenticationManagerRest implements AuthenticationManager {
 
         try {
             AdministratorLoginResponse response = State.getRestTemplate().postForObject(
-                    State.BASE_URI + "login/administrator/", new HttpEntity<>(loginRequest),
+                    State.getBaseUri() + "login/administrator/", new HttpEntity<>(loginRequest),
                     AdministratorLoginResponse.class);
+            Objects.requireNonNull(response);
+
             State.setToken(response.getToken());
             State.login(response.getUserData());
             return response.getUserData();

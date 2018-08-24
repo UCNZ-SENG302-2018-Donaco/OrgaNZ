@@ -13,8 +13,8 @@ public class ModifyIllnessRecordByObjectAction extends ClientAction {
     private ModifyIllnessObject newIllnessDetails;
 
     public ModifyIllnessRecordByObjectAction(IllnessRecord oldRecord, ClientManager manager,
-            ModifyIllnessObject oldIllnessDetails,
-            ModifyIllnessObject newIllnessDetails) {
+                                             ModifyIllnessObject oldIllnessDetails,
+                                             ModifyIllnessObject newIllnessDetails) {
         super(oldRecord.getClient(), manager);
         this.oldIllnessDetails = oldIllnessDetails;
         this.newIllnessDetails = newIllnessDetails;

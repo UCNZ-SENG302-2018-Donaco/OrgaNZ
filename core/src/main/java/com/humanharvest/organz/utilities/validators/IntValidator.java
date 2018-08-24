@@ -18,10 +18,10 @@ public class IntValidator extends Validator {
 
     protected static OptionalInt getAsInt(Object value) {
         if (value instanceof Integer) {
-            return OptionalInt.of((Integer)value);
+            return OptionalInt.of((Integer) value);
         }
         if (value instanceof String) {
-            String sequence = (String)value;
+            String sequence = (String) value;
             if (!pattern.matcher(sequence).matches()) {
                 return OptionalInt.empty();
             }

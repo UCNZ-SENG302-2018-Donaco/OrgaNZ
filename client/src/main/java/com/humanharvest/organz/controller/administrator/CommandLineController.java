@@ -1,8 +1,9 @@
 package com.humanharvest.organz.controller.administrator;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.view.PageNavigator;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -12,10 +13,8 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 
-import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.view.PageNavigator;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CommandLineController extends SubController {
 
@@ -140,6 +139,7 @@ public class CommandLineController extends SubController {
      * then run the command using CommandLine.run.
      * Once the task has run, append the resulting text to the output text area
      * Run using a SingleThreadExecutor to ensure multiple commands are run in order rather than concurrently
+     *
      * @param commandText The string to run as a command
      */
     private void createAndRunCommand(String commandText) {

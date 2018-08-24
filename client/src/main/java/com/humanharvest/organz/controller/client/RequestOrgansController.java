@@ -25,7 +25,14 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.*;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
@@ -84,6 +91,7 @@ public class RequestOrgansController extends SubController {
 
     /**
      * Formats a table cell that holds a {@link LocalDateTime} value to display that value in the date time format.
+     *
      * @return The cell with the date time formatter set.
      */
     private static TableCell<TransplantRequest, LocalDateTime> formatDateTimeCell() {
@@ -91,7 +99,7 @@ public class RequestOrgansController extends SubController {
             @Override
             protected void updateItem(LocalDateTime item, boolean empty) {
                 super.updateItem(item, empty);
-                if (empty || (item == null)) {
+                if (empty || item == null) {
                     setText(null);
                 } else {
                     setText(item.format(dateTimeFormat));
@@ -103,6 +111,7 @@ public class RequestOrgansController extends SubController {
     /**
      * Formats a table row to be coloured if the {@link TransplantRequest} it holds is for an organ that the client
      * is also donating.
+     *
      * @return The row with the colouring callback set.
      */
     private TableRow<TransplantRequest> colourIfDonatedAndRequested() {
@@ -186,6 +195,7 @@ public class RequestOrgansController extends SubController {
     /**
      * Loads the sidebar, hides sections of the page according to which type of user is logged in, and sets the
      * window's title.
+     *
      * @param mainController The main controller that defines which window this subcontroller belongs to.
      */
     @Override

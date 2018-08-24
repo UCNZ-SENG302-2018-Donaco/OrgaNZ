@@ -6,22 +6,25 @@ import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.views.administrator.CreateAdministratorView;
 import com.humanharvest.organz.views.administrator.ModifyAdministratorObject;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
 public class AdministratorResolverRest implements AdministratorResolver {
 
     @Override
-    public Administrator createAdministrator(CreateAdministratorView createAdministratorView) {
+    public Administrator createAdministrator(CreateAdministratorView administratorView) {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
         httpHeaders.set("X-Auth-Token", State.getToken());
-        HttpEntity entity = new HttpEntity<>(createAdministratorView, httpHeaders);
-        System.out.println(State.getToken());
+        HttpEntity<CreateAdministratorView> entity = new HttpEntity<>(administratorView, httpHeaders);
 
         ResponseEntity<Administrator> responseEntity = State.getRestTemplate().exchange
-                (State.BASE_URI + "administrators",
+                (State.getBaseUri() + "administrators",
                         HttpMethod.POST,
                         entity,
                         Administrator.class);
@@ -31,14 +34,14 @@ public class AdministratorResolverRest implements AdministratorResolver {
 
     @Override
     public Administrator modifyAdministrator(Administrator administrator,
-            ModifyAdministratorObject modifyAdministratorObject) {
+                                             ModifyAdministratorObject modifyAdministratorObject) {
 
         HttpHeaders httpHeaders = createHeaders();
 
-        HttpEntity entity = new HttpEntity<>(modifyAdministratorObject, httpHeaders);
+        HttpEntity<ModifyAdministratorObject> entity = new HttpEntity<>(modifyAdministratorObject, httpHeaders);
 
         ResponseEntity<Administrator> responseEntity = State.getRestTemplate().exchange
-                (State.BASE_URI + "administrators",
+                (State.getBaseUri() + "administrators",
                         HttpMethod.PATCH,
                         entity,
                         Administrator.class);
@@ -53,11 +56,11 @@ public class AdministratorResolverRest implements AdministratorResolver {
         httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
         httpHeaders.set("X-Auth-Token", State.getToken());
 
-        HttpEntity entity = new HttpEntity<>(null, httpHeaders);
+        HttpEntity<?> entity = new HttpEntity<>(null, httpHeaders);
 
         ResponseEntity<List<HistoryItem>> responseEntity = State.getRestTemplate()
                 .exchange(
-                        State.BASE_URI + "history",
+                        State.getBaseUri() + "history",
                         HttpMethod.GET,
                         entity,
                         new ParameterizedTypeReference<List<HistoryItem>>() {
@@ -66,7 +69,7 @@ public class AdministratorResolverRest implements AdministratorResolver {
         return responseEntity.getBody();
     }
 
-    private HttpHeaders createHeaders() {
+    private static HttpHeaders createHeaders() {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
         httpHeaders.set("X-Auth-Token", State.getToken());

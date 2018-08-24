@@ -9,7 +9,6 @@ import com.humanharvest.organz.utilities.enums.Region;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class MatchOrganToRecipients {
@@ -67,9 +66,9 @@ public class MatchOrganToRecipients {
 
     }
 
-    public static List<Client> getListOfPotentialRecipients(DonatedOrgan donatedOrgan, Collection<TransplantRequest>
-            transplantRequests) {
-        List<TransplantRequest> potentialTransplantRequests = new ArrayList<>();
+    public static List<Client> getListOfPotentialRecipients(DonatedOrgan donatedOrgan,
+                                                            Iterable<TransplantRequest> transplantRequests) {
+
         List<Client> potentialMatches = new ArrayList<>();
 
         // If the organ trying to be matched has expired, then return an empty list
@@ -78,6 +77,7 @@ public class MatchOrganToRecipients {
         }
 
         // Create a list of eligible transplant requests
+        List<TransplantRequest> potentialTransplantRequests = new ArrayList<>();
         for (TransplantRequest transplantRequest : transplantRequests) {
             Client donor = donatedOrgan.getDonor();
             Client recipient = transplantRequest.getClient();

@@ -1,17 +1,16 @@
 package com.humanharvest.organz.controller.client;
 
-import static org.junit.Assert.assertEquals;
-
-import java.time.LocalDate;
-
-import javafx.scene.Node;
-
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.controller.ControllerTest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
+import javafx.scene.Node;
 import org.junit.Test;
+
+import java.time.LocalDate;
+
+import static org.junit.Assert.assertEquals;
 
 public class ClientLoginControllerTest extends ControllerTest {
     Client testClient = new Client("test", "", "er", LocalDate.now(), 1);

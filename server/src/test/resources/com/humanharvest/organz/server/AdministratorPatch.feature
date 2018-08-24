@@ -1,4 +1,5 @@
 Feature: Does PATCH /administrators/ work?
+
   Scenario: Update a non-existant administrator
     When I patch to /administrators/test using { "username": "New" }
     Then the result is not found

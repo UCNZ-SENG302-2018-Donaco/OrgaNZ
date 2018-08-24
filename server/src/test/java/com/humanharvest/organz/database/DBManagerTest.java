@@ -1,7 +1,5 @@
 package com.humanharvest.organz.database;
 
-import java.time.LocalDate;
-
 import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
@@ -16,6 +14,8 @@ import com.humanharvest.organz.utilities.enums.Region;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import java.time.LocalDate;
 
 @Ignore
 public class DBManagerTest extends BaseTest {

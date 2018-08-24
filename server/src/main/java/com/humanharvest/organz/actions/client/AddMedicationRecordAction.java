@@ -13,8 +13,9 @@ public class AddMedicationRecordAction extends ClientAction {
 
     /**
      * Creates a new action to add a medication record.
-     * @param client The client whose history to add it to.
-     * @param record The medication record to add.
+     *
+     * @param client  The client whose history to add it to.
+     * @param record  The medication record to add.
      * @param manager The ClientManager to apply the changes to
      */
     public AddMedicationRecordAction(Client client, MedicationRecord record, ClientManager manager) {

@@ -1,13 +1,13 @@
 package com.humanharvest.organz.utilities.validators;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import com.humanharvest.organz.Client;
+import org.junit.Test;
 
 import java.lang.reflect.Field;
 import java.time.LocalDate;
 
-import com.humanharvest.organz.Client;
-import org.junit.Test;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 public class ClientValidatorTest {
 

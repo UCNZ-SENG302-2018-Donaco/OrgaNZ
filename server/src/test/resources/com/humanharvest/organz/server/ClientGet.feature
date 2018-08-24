@@ -1,4 +1,5 @@
 Feature: Does GET /client/ work?
+
   Scenario: Getting the first client
     Given there is a test client named Jan Micheal Vincent
     When I get /clients/1

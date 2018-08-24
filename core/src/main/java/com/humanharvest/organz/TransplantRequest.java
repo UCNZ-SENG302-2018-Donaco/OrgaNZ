@@ -6,7 +6,17 @@ import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 import com.humanharvest.organz.views.client.Views;
 
-import javax.persistence.*;
+import javax.persistence.Access;
+import javax.persistence.AccessType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import java.time.LocalDateTime;
 
 /**
@@ -82,6 +92,7 @@ public class TransplantRequest {
     /**
      * This method should be called only when this record is added to/removed from a client's collection.
      * Therefore it is package-private so it may only be called from Client.
+     *
      * @param client The client to set this record as belonging to.
      */
     public void setClient(Client client) {
@@ -98,6 +109,7 @@ public class TransplantRequest {
 
     /**
      * Should only be used by ResolveTransplantRequestAction
+     *
      * @param resolvedReason reason that the transplant request was resolved
      */
     public void setResolvedReason(String resolvedReason) {

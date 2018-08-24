@@ -1,7 +1,5 @@
 package com.humanharvest.organz.server.controller.authentication;
 
-import java.util.Optional;
-
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.Client;
@@ -23,6 +21,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Optional;
 
 @RestController
 public class AuthenticationController {

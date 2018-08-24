@@ -1,7 +1,5 @@
 package com.humanharvest.organz.resolvers.clinician;
 
-import java.util.List;
-
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.state.State;
@@ -13,8 +11,11 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
+import java.util.List;
+
 public class ClinicianResolverRest implements ClinicianResolver {
 
+    @Override
     public Clinician modifyClinician(Clinician clinician, ModifyClinicianObject modifyClinicianObject) {
 
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -26,7 +27,7 @@ public class ClinicianResolverRest implements ClinicianResolver {
 
         ResponseEntity<Clinician> responseEntity = State.getRestTemplate()
                 .exchange(
-                        State.BASE_URI + "clinicians/{staffId}",
+                        State.getBaseUri() + "clinicians/{staffId}",
                         HttpMethod.PATCH,
                         entity,
                         Clinician.class,
@@ -46,7 +47,7 @@ public class ClinicianResolverRest implements ClinicianResolver {
 
         ResponseEntity<List<HistoryItem>> responseEntity = State.getRestTemplate()
                 .exchange(
-                        State.BASE_URI + "clinicians/{staffId}/history",
+                        State.getBaseUri() + "clinicians/{staffId}/history",
                         HttpMethod.GET,
                         entity,
                         new ParameterizedTypeReference<List<HistoryItem>>() {

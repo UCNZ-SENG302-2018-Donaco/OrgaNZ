@@ -1,9 +1,8 @@
 package com.humanharvest.organz.controller;
 
-import javafx.fxml.FXML;
-
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
+import javafx.fxml.FXML;
 
 /**
  * Controls the Landing Screen View.
@@ -12,6 +11,7 @@ public class LandingController extends SubController {
 
     /**
      * Override so we can set the page title.
+     *
      * @param mainController The MainController
      */
     @Override
@@ -43,5 +43,5 @@ public class LandingController extends SubController {
     private void goToStaffLogin() {
         PageNavigator.loadPage(Page.LOGIN_STAFF, mainController);
     }
-    
+
 }

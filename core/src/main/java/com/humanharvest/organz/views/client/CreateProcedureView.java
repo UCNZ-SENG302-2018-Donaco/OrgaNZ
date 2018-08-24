@@ -1,10 +1,10 @@
 package com.humanharvest.organz.views.client;
 
-import java.time.LocalDate;
-import java.util.Set;
-
 import com.humanharvest.organz.ProcedureRecord;
 import com.humanharvest.organz.utilities.enums.Organ;
+
+import java.time.LocalDate;
+import java.util.Set;
 
 public class CreateProcedureView {
 
@@ -27,17 +27,29 @@ public class CreateProcedureView {
         this.affectedOrgans = record.getAffectedOrgans();
     }
 
-    public String getSummary() { return summary; }
+    public String getSummary() {
+        return summary;
+    }
 
-    public void setSummary(String summary) { this.summary = summary; }
+    public void setSummary(String summary) {
+        this.summary = summary;
+    }
 
-    public String getDescription() { return description; }
+    public String getDescription() {
+        return description;
+    }
 
-    public void setDescription(String description) { this.description = description; }
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-    public LocalDate getDate() { return date; }
+    public LocalDate getDate() {
+        return date;
+    }
 
-    public void setDate(LocalDate date) { this.date = date; }
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
 
     public Set<Organ> getAffectedOrgans() {
         return affectedOrgans;

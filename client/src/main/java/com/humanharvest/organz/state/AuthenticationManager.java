@@ -7,6 +7,8 @@ import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 
 public interface AuthenticationManager {
     Client loginClient(int id) throws AuthenticationException;
+
     Clinician loginClinician(int staffId, String password) throws AuthenticationException;
+
     Administrator loginAdministrator(String username, String password) throws AuthenticationException;
 }

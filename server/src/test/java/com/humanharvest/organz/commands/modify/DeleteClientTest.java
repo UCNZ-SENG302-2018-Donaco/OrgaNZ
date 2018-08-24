@@ -1,12 +1,5 @@
 package com.humanharvest.organz.commands.modify;
 
-import static org.mockito.Mockito.*;
-
-import java.io.ByteArrayInputStream;
-import java.nio.charset.StandardCharsets;
-import java.time.LocalDate;
-import java.util.Optional;
-
 import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.actions.ActionInvoker;
@@ -15,6 +8,19 @@ import com.humanharvest.organz.state.ClientManagerMemory;
 import org.junit.Before;
 import org.junit.Test;
 import picocli.CommandLine;
+
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
+import java.util.Optional;
+
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyInt;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class DeleteClientTest extends BaseTest {
 
