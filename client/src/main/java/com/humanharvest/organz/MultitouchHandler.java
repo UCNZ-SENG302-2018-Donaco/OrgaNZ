@@ -17,6 +17,7 @@ import javafx.event.Event;
 import javafx.event.EventTarget;
 import javafx.geometry.Bounds;
 import javafx.geometry.Point2D;
+import javafx.scene.CacheHint;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
@@ -420,6 +421,12 @@ public final class MultitouchHandler {
             });
 
             removeCurrentTouch(touchPoint);
+
+            currentTouch.getPane().ifPresent(pane -> {
+                if (findPaneTouches(pane).isEmpty()) {
+                    pane.setCacheHint(CacheHint.QUALITY);
+                }
+            });
         } else {
             currentTouch.getPane().ifPresent(pane -> {
                 handleCurrentTouch(touchPoint, currentTouch, pane);
@@ -623,6 +630,8 @@ public final class MultitouchHandler {
         public FocusAreaHandler(Pane pane) {
             this.pane = pane;
             setupInitialTransforms();
+            pane.setCache(true);
+            pane.setCacheHint(CacheHint.QUALITY);
         }
 
         /**
@@ -713,6 +722,7 @@ public final class MultitouchHandler {
         }
 
         private void updatePaneTransform() {
+            pane.setCacheHint(CacheHint.SPEED);
             List<Transform> transforms = pane.getTransforms();
             if (transforms.size() == 1 && Objects.equals(transforms.get(0), transform)) {
                 return;

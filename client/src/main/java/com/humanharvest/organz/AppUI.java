@@ -4,12 +4,14 @@ import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.state.State.DataStorageType;
 import com.humanharvest.organz.utilities.LoggerSetup;
+import com.humanharvest.organz.utilities.ReflectionUtils;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.utilities.view.PageNavigatorStandard;
 import com.humanharvest.organz.utilities.view.PageNavigatorTouch;
 import com.humanharvest.organz.utilities.view.WindowContext;
 import com.sun.javafx.css.StyleManager;
+import com.sun.prism.impl.PrismSettings;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -29,9 +31,19 @@ import java.util.logging.Level;
  */
 public class AppUI extends Application {
 
-    public static void main(String[] args) {
+    static {
+        // Must be done here, since getting the property happends before the class is created
+        if (System.getProperty("prism.maxvram") == null) {
+            try {
+                ReflectionUtils.setStaticField(PrismSettings.class, "maxVram", 2147483648L); //2GB
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
+        }
         TuioFX.enableJavaFXTouchProperties();
-        System.setProperty("prism.maxvram", String.valueOf(Runtime.getRuntime().maxMemory() / 4));
+    }
+
+    public static void main(String[] args) {
         launch(args);
     }
 
