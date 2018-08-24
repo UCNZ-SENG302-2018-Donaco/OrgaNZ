@@ -3,14 +3,14 @@ package com.humanharvest.organz;
 import com.humanharvest.organz.skin.MTDatePickerSkin;
 import com.humanharvest.organz.utilities.ReflectionUtils;
 import com.sun.javafx.scene.NodeEventDispatcher;
-import java.lang.ref.WeakReference;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.function.Consumer;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.event.Event;
@@ -52,10 +52,6 @@ import org.tuiofx.widgets.skin.OnScreenKeyboard;
 import org.tuiofx.widgets.skin.TextAreaSkinAndroid;
 import org.tuiofx.widgets.skin.TextFieldSkinAndroid;
 import org.tuiofx.widgets.utils.Util;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.function.Consumer;
 
 public final class MultitouchHandler {
     private static final List<CurrentTouch> touches = new ArrayList<>();
@@ -623,18 +619,10 @@ public final class MultitouchHandler {
         private boolean outOfDate = true;
 
         private Affine transform;
-        private boolean transformDirty;
 
         public FocusAreaHandler(Pane pane) {
             this.pane = pane;
             setupInitialTransforms();
-            setupTimer();
-        }
-
-        private void setupTimer() {
-            Timer timer = new Timer();
-            WeakReference<Pane> paneReference = new WeakReference<>(pane);
-            timer.schedule(new RenderUpdateTask(paneReference), 0, 30);
         }
 
         /**
@@ -713,7 +701,7 @@ public final class MultitouchHandler {
          */
         public void prependTransform(Transform transformDelta) {
             transform.prepend(transformDelta);
-            transformDirty = true;
+            updatePaneTransform();
         }
 
         /**
@@ -721,40 +709,19 @@ public final class MultitouchHandler {
          */
         public void setTransform(Affine newTransform) {
             transform = newTransform;
-            transformDirty = true;
+            updatePaneTransform();
         }
 
         private void updatePaneTransform() {
-            if (transformDirty) {
-                List<Transform> transforms = pane.getTransforms();
-                if (!transforms.isEmpty()) {
-                    transforms.clear();
-                }
-                transforms.add(transform);
-                transformDirty = false;
-            }
-        }
-    }
-
-    private static class RenderUpdateTask extends TimerTask {
-
-        private final WeakReference<? extends Pane> paneReference;
-
-        public RenderUpdateTask(WeakReference<? extends Pane> paneReference) {
-
-            this.paneReference = paneReference;
-        }
-
-        @Override
-        public void run() {
-            Pane pane = paneReference.get();
-            if (pane == null) {
-                cancel();
+            List<Transform> transforms = pane.getTransforms();
+            if (transforms.size() == 1 && Objects.equals(transforms.get(0), transform)) {
                 return;
             }
 
-            FocusAreaHandler focusAreaHandler = (FocusAreaHandler)pane.getUserData();
-            focusAreaHandler.updatePaneTransform();
+            if (!transforms.isEmpty()) {
+                transforms.clear();
+            }
+            transforms.add(transform);
         }
     }
 }
