@@ -23,6 +23,7 @@ public enum Gender {
 
     /**
      * Get a Gender object from a string
+     *
      * @param text Text to convert
      * @return The matching gender
      * @throws IllegalArgumentException Thrown when no matching gender is found

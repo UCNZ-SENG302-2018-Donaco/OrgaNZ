@@ -1,11 +1,11 @@
 package com.humanharvest.organz.views.clinician;
 
-import java.lang.reflect.Member;
-import java.util.stream.Collectors;
-
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.views.ModifyBaseObject;
+
+import java.lang.reflect.Member;
+import java.util.stream.Collectors;
 
 @JsonSerialize(using = ModifyBaseObject.Serialiser.class)
 public class ModifyClinicianObject extends ModifyBaseObject {

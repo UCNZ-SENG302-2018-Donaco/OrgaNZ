@@ -1,8 +1,5 @@
 package com.humanharvest.organz.server.controller.client;
 
-import java.util.Collection;
-import java.util.Optional;
-
 import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.ProcedureRecord;
@@ -27,6 +24,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Collection;
+import java.util.Optional;
 
 /**
  * Provides handlers for requests to these endpoints:

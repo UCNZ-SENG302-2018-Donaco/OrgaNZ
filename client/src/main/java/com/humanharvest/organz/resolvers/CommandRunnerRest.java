@@ -19,7 +19,7 @@ public class CommandRunnerRest implements CommandRunner {
         HttpEntity<CommandView> entity = new HttpEntity<>(commandView, httpHeaders);
 
         ResponseEntity<String> responseEntity = State.getRestTemplate()
-                .postForEntity(State.BASE_URI + "commands", entity, String.class);
+                .postForEntity(State.getBaseUri() + "commands", entity, String.class);
 
         return responseEntity.getBody();
     }

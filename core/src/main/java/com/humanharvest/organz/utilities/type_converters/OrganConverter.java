@@ -9,6 +9,7 @@ public class OrganConverter implements TypeConverter<Organ> {
 
     /**
      * Convert a string to an Organ, matches case insensitive
+     *
      * @param value String input from user via PicoCLI
      * @return Organ object
      * @throws TypeConversionException Throws exception if invalid organ

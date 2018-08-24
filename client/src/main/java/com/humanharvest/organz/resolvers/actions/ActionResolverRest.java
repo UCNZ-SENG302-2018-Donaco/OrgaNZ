@@ -10,39 +10,42 @@ import org.springframework.http.ResponseEntity;
 
 public class ActionResolverRest implements ActionResolver {
 
-    public ActionResponseView executeUndo(String ETag) {
-        HttpEntity entity = setupEntity(ETag);
+    @Override
+    public ActionResponseView executeUndo(String eTag) {
+        HttpEntity<?> entity = setupEntity(eTag);
 
         ResponseEntity<ActionResponseView> responseEntity = State.getRestTemplate().exchange
-                (State.BASE_URI + "undo", HttpMethod.POST, entity, ActionResponseView.class);
+                (State.getBaseUri() + "undo", HttpMethod.POST, entity, ActionResponseView.class);
         return responseEntity.getBody();
     }
 
-    public ActionResponseView executeRedo(String ETag) {
-        HttpEntity entity = setupEntity(ETag);
+    @Override
+    public ActionResponseView executeRedo(String eTag) {
+        HttpEntity<?> entity = setupEntity(eTag);
 
         ResponseEntity<ActionResponseView> responseEntity = State.getRestTemplate().exchange
-                (State.BASE_URI + "redo", HttpMethod.POST, entity, ActionResponseView.class);
+                (State.getBaseUri() + "redo", HttpMethod.POST, entity, ActionResponseView.class);
         return responseEntity.getBody();
     }
 
+    @Override
     public ActionResponseView getUndo() {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
         httpHeaders.set("X-Auth-Token", State.getToken());
 
-        HttpEntity entity = new HttpEntity<>(null, httpHeaders);
+        HttpEntity<?> entity = new HttpEntity<>(null, httpHeaders);
 
         ResponseEntity<ActionResponseView> responseEntity = State.getRestTemplate().exchange
-                (State.BASE_URI + "undo", HttpMethod.GET, entity, ActionResponseView.class);
+                (State.getBaseUri() + "undo", HttpMethod.GET, entity, ActionResponseView.class);
         return responseEntity.getBody();
     }
 
-    private HttpEntity setupEntity(String ETag) {
+    private static HttpEntity<?> setupEntity(String eTag) {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
         httpHeaders.set("X-Auth-Token", State.getToken());
-        httpHeaders.setETag(ETag);
+        httpHeaders.setETag(eTag);
 
         return new HttpEntity<>(null, httpHeaders);
     }

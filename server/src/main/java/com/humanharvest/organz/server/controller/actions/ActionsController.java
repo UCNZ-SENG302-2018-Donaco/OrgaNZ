@@ -1,7 +1,5 @@
 package com.humanharvest.organz.server.controller.actions;
 
-import java.util.EmptyStackException;
-
 import com.humanharvest.organz.ConcurrencyControlledEntity;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.state.State;
@@ -13,6 +11,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.EmptyStackException;
 
 @RestController
 public class ActionsController {

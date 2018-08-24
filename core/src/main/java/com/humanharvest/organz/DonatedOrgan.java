@@ -7,7 +7,14 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.views.client.Views;
 
-import javax.persistence.*;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
@@ -101,7 +108,7 @@ public class DonatedOrgan {
             return null;
         }
         Duration timeToExpiry = organType.getMaxExpiration().minus(getTimeSinceDonation());
-        return timeToExpiry.isNegative() || getOverrideReason()!=null ? Duration.ZERO : timeToExpiry;
+        return timeToExpiry.isNegative() || getOverrideReason() != null ? Duration.ZERO : timeToExpiry;
     }
 
     /**
@@ -116,7 +123,7 @@ public class DonatedOrgan {
         } else if (timeToExpiry.isZero()) { // expired
             return 1;
         } else {
-            return 1 - ((double) timeToExpiry.getSeconds() / expiration.getSeconds());
+            return 1 - (double) timeToExpiry.getSeconds() / expiration.getSeconds();
         }
     }
 

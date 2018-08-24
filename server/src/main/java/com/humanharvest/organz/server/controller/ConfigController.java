@@ -1,8 +1,5 @@
 package com.humanharvest.organz.server.controller;
 
-import java.util.EnumSet;
-import java.util.Set;
-
 import com.humanharvest.organz.server.exceptions.GlobalControllerExceptionHandler;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Country;
@@ -14,11 +11,15 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.EnumSet;
+import java.util.Set;
+
 @RestController
 public class ConfigController {
 
     /**
      * The GET endpoint for getting the allowed countries that clients and clinicians can set
+     *
      * @return Response entity containing an EnumSet of the allowed countries
      */
     @GetMapping("/config/countries")
@@ -34,6 +35,7 @@ public class ConfigController {
 
     /**
      * The POST endpoint for setting the list of allowed countries
+     *
      * @param authToken authentication token - the allowed countries may only be set by an administrator
      * @param countries EnumSet of countries to set as the allowed countries
      * @return response entity containing the http status code

@@ -123,7 +123,7 @@ public class SearchClientsController extends SubController {
 
         setupTable();
 
-        tableView.setOnSort((o) -> updateClientList());
+        tableView.setOnSort(o -> updateClientList());
 
         // Match values in text boxes beside age slider to the values on the slider
         ageMinField.setOnAction(event -> {
@@ -185,7 +185,7 @@ public class SearchClientsController extends SubController {
         organsRequestingFilter.getCheckModel().getCheckedItems().addListener(
                 (ListChangeListener<Organ>) change -> updateClientList());
 
-        searchBox.textProperty().addListener(((o) -> updateClientList()));
+        searchBox.textProperty().addListener(o -> updateClientList());
 
         //On pagination update call createPage
         pagination.setPageFactory(this::createPage);
@@ -411,6 +411,7 @@ public class SearchClientsController extends SubController {
 
     /**
      * Used to detect the current sort policy of the table and convert it to a value that the server will understand
+     *
      * @return A ClientSortPolicy that maps to one of the SortOptions and a boolean if the sort should be reversed
      */
     private ClientSortPolicy getSortPolicy() {
@@ -435,6 +436,7 @@ public class SearchClientsController extends SubController {
 
     /**
      * Upon pagination, update the table to show the correct items
+     *
      * @param pageIndex The page we're now on (starts at 0)
      * @return An empty pane as pagination requires a non null return. Not used.
      */
@@ -445,6 +447,7 @@ public class SearchClientsController extends SubController {
 
     /**
      * Set the text that advises the currently viewed and pending amount of results
+     *
      * @param totalCount The total amount of current results matching filter options
      */
     private void setupDisplayingXToYOfZText(int totalCount) {

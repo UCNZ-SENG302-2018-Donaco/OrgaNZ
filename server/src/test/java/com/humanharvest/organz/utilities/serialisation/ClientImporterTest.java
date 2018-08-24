@@ -1,11 +1,11 @@
 package com.humanharvest.organz.utilities.serialisation;
 
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ClientImporterTest {
     @Test

@@ -1,7 +1,13 @@
 package com.humanharvest.organz.commands.view;
 
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.*;
+import com.humanharvest.organz.BaseTest;
+import com.humanharvest.organz.database.DBManager;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+import picocli.CommandLine;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -11,14 +17,13 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import com.humanharvest.organz.BaseTest;
-import com.humanharvest.organz.database.DBManager;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import picocli.CommandLine;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @Ignore
 public class SQLTest extends BaseTest {

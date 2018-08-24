@@ -1,18 +1,18 @@
 package com.humanharvest.organz.commands.modify;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.serialisation.JSONFileWriter;
 import picocli.CommandLine.Command;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Command line to save the current information of the Clients onto a JSON file using the GSON API.

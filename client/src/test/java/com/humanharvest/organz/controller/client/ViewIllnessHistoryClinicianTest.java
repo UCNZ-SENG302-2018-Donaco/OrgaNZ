@@ -1,16 +1,5 @@
 package com.humanharvest.organz.controller.client;
 
-import static org.hamcrest.CoreMatchers.not;
-import static org.junit.Assert.*;
-import static org.testfx.api.FxAssert.verifyThat;
-import static org.testfx.matcher.control.TableViewMatchers.containsRow;
-import static org.testfx.util.NodeQueryUtils.isVisible;
-
-import java.time.LocalDate;
-
-import javafx.scene.Node;
-import javafx.scene.input.KeyCode;
-
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.IllnessRecord;
@@ -20,9 +9,22 @@ import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
+import javafx.scene.Node;
+import javafx.scene.input.KeyCode;
 import org.junit.Before;
 import org.junit.Test;
 import org.testfx.util.NodeQueryUtils;
+
+import java.time.LocalDate;
+
+import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.testfx.api.FxAssert.verifyThat;
+import static org.testfx.matcher.control.TableViewMatchers.containsRow;
+import static org.testfx.util.NodeQueryUtils.isVisible;
 
 public class ViewIllnessHistoryClinicianTest extends ControllerTest {
 

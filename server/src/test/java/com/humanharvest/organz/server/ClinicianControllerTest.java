@@ -18,8 +18,13 @@ import org.springframework.web.context.WebApplicationContext;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 @RunWith(SpringRunner.class)
@@ -38,7 +43,7 @@ public class ClinicianControllerTest {
         State.reset();
         State.setAuthenticationManager(new AuthenticationManagerFake());
         this.mockMvc = webAppContextSetup(webApplicationContext).build();
-        testClinician = new Clinician("Shawn", "", "Michaels", "1", Region.UNSPECIFIED.toString(), null,1, "hi");
+        testClinician = new Clinician("Shawn", "", "Michaels", "1", Region.UNSPECIFIED.toString(), null, 1, "hi");
         State.setAuthenticationManager(new AuthenticationManagerFake());
 
     }
@@ -60,6 +65,7 @@ public class ClinicianControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)));
     }
+
     @Test
     public void getDefaultDetails() throws Exception {
         mockMvc.perform(get("/clinicians/0"))

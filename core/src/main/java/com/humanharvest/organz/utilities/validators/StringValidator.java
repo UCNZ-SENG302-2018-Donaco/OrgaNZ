@@ -18,7 +18,7 @@ public class StringValidator extends Validator {
             return Optional.empty();
         }
 
-        String stringValue = (String)value;
+        String stringValue = (String) value;
         if (stringValue.isEmpty()) {
             return Optional.empty();
         }

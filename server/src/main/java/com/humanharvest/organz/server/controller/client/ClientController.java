@@ -32,11 +32,28 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.awt.image.ImagingOpException;
-import java.io.*;
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -47,6 +64,7 @@ public class ClientController {
 
     /**
      * Returns all clients or some optional subset by filtering
+     *
      * @return A list of Client overviews
      * @throws AuthenticationException Thrown if the token supplied is invalid, or does not match a clinician or admin
      */
@@ -98,6 +116,7 @@ public class ClientController {
 
     /**
      * The POST endpoint for creating a new client
+     *
      * @param createClientView The POJO representation of the create client view
      * @return Returns a Client overview. Also contains an ETag header for updates
      * @throws InvalidRequestException Generic 400 exception if fields are malformed or inconsistent
@@ -133,6 +152,7 @@ public class ClientController {
 
     /**
      * The single client GET endpoint
+     *
      * @param uid The client UID to return
      * @return Returns a Client details object. Also contains an ETag header for updates
      */
@@ -158,13 +178,14 @@ public class ClientController {
 
     /**
      * The PATCH endpoint for updating a single client
-     * @param uid The client UID to update
+     *
+     * @param uid                The client UID to update
      * @param modifyClientObject The POJO object of the modifications
-     * @param etag The corresponding If-Match header to check for concurrent update handling
+     * @param etag               The corresponding If-Match header to check for concurrent update handling
      * @return Returns a Client overview. Also contains an ETag header for updates
      * @throws IfMatchRequiredException Thrown if there is no If-Match header, will result in a 428 error
-     * @throws IfMatchFailedException Thrown if the If-Match header does not match the Clients ETag. 412 error
-     * @throws InvalidRequestException Generic 400 exception if fields are malformed or inconsistent
+     * @throws IfMatchFailedException   Thrown if the If-Match header does not match the Clients ETag. 412 error
+     * @throws InvalidRequestException  Generic 400 exception if fields are malformed or inconsistent
      */
     @PatchMapping("/clients/{uid}")
     @JsonView(Views.Details.class)
@@ -261,12 +282,13 @@ public class ClientController {
 
     /**
      * The DELETE endpoint for removing a single client
-     * @param uid The client UID to delete
+     *
+     * @param uid  The client UID to delete
      * @param etag The corresponding If-Match header to check for concurrent update handling
      * @return Returns an empty body with a simple response code
      * @throws IfMatchRequiredException Thrown if there is no If-Match header, will result in a 428 error
-     * @throws IfMatchFailedException Thrown if the If-Match header does not match the Clients ETag. 412 error
-     * @throws InvalidRequestException Generic 400 exception if fields are malformed or inconsistent
+     * @throws IfMatchFailedException   Thrown if the If-Match header does not match the Clients ETag. 412 error
+     * @throws InvalidRequestException  Generic 400 exception if fields are malformed or inconsistent
      */
     @DeleteMapping("/clients/{uid}")
     public ResponseEntity deleteClient(
@@ -303,7 +325,8 @@ public class ClientController {
 
     /**
      * Returns the specified clients history
-     * @param uid identifier of the client
+     *
+     * @param uid       identifier of the client
      * @param authToken id token
      * @return The list of HistoryItems
      */

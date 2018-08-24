@@ -1,13 +1,5 @@
 package com.humanharvest.organz.controller.client;
 
-import static org.testfx.api.FxAssert.verifyThat;
-import static org.testfx.matcher.control.TableViewMatchers.containsRow;
-import static org.testfx.util.NodeQueryUtils.isVisible;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.ProcedureRecord;
 import com.humanharvest.organz.controller.ControllerTest;
@@ -15,6 +7,14 @@ import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
 import org.junit.Test;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
+
+import static org.testfx.api.FxAssert.verifyThat;
+import static org.testfx.matcher.control.TableViewMatchers.containsRow;
+import static org.testfx.util.NodeQueryUtils.isVisible;
 
 public class ViewProceduresControllerClientTest extends ControllerTest {
 
