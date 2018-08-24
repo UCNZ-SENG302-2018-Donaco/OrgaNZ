@@ -107,7 +107,8 @@ public class MTDatePickerSkin extends DatePickerSkin {
     }
 
     private boolean isComboBoxOrButton(EventTarget target, ComboBoxBase<LocalDate> comboBoxBase) {
-        return target instanceof Node && "arrow-button".equals(((Node) target).getId()) || comboBoxBase.equals(target);
+        return target instanceof Node
+                && ("arrow-button".equals(((Node) target).getId()) || comboBoxBase.equals(target));
     }
 
     private void handleAutoHidingEvents() {

@@ -294,8 +294,8 @@ public class OrgansToDonateController extends SubController {
                     tableView.refresh();
                     observableOrgansToDonate.removeIf(donatedOrgan ->
                             donatedOrgan.getOverrideReason() != null ||
-                                    donatedOrgan.getDurationUntilExpiry() != null &&
-                                            donatedOrgan.getDurationUntilExpiry().minusSeconds(1).isNegative());
+                                    (donatedOrgan.getDurationUntilExpiry() != null &&
+                                            donatedOrgan.getDurationUntilExpiry().minusSeconds(1).isNegative()));
                 }));
         clock.setCycleCount(Animation.INDEFINITE);
         clock.play();

@@ -295,7 +295,7 @@ public class SearchClientsController extends SubController {
             protected void updateItem(Boolean item, boolean empty) {
                 super.updateItem(item, empty);
                 setText(empty ? null :
-                        item ? "✓" : "");
+                        (item ? "✓" : ""));
             }
         });
         receiverCol.setCellFactory(tc -> new TableCell<Client, Boolean>() {
@@ -303,7 +303,7 @@ public class SearchClientsController extends SubController {
             protected void updateItem(Boolean item, boolean empty) {
                 super.updateItem(item, empty);
                 setText(empty ? null :
-                        item ? "✓" : "");
+                        (item ? "✓" : ""));
             }
         });
 

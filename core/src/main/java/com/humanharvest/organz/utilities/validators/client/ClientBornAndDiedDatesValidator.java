@@ -43,8 +43,8 @@ public class ClientBornAndDiedDatesValidator {
      */
     public static boolean timeOfDeathIsValid(LocalDate dateOfDeath, LocalTime timeOfDeath) {
         return dateOfDeath == null
-                || timeOfDeath != null &&
-                (!LocalDate.now().equals(dateOfDeath) || !timeOfDeath.isAfter(LocalTime.now().plusMinutes(1)));
+                || (timeOfDeath != null
+                && (!LocalDate.now().equals(dateOfDeath) || !timeOfDeath.isAfter(LocalTime.now().plusMinutes(1))));
     }
 
     private static boolean dateTimeOfDeathIsValid(LocalDate dateOfDeath, LocalTime timeOfDeath, LocalDate dateOfBirth) {
