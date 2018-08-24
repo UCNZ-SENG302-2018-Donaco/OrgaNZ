@@ -86,6 +86,13 @@ public class TransplantsController extends SubController {
     private SortedList<TransplantRequest> sortedTransplantRequests;
 
     /**
+     * Gets the client manager from the global state.
+     */
+    public TransplantsController() {
+        manager = State.getClientManager();
+    }
+
+    /**
      * Formats a table cell that holds a {@link LocalDateTime} value to display that value in the date time format.
      *
      * @return The cell with the date time formatter set.
@@ -127,13 +134,6 @@ public class TransplantsController extends SubController {
                 }
             }
         };
-    }
-
-    /**
-     * Gets the client manager from the global state.
-     */
-    public TransplantsController() {
-        manager = State.getClientManager();
     }
 
     /**

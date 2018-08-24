@@ -19,6 +19,12 @@ public class DeleteClient implements Runnable {
     private final ActionInvoker invoker;
     private final PrintStream outputStream;
 
+    @Option(names = {"-u", "--uid"}, description = "User ID", required = true)
+    private int uid;
+
+    @Option(names = "-y", description = "Confirms you would like to execute the removal")
+    private boolean yes;
+
     public DeleteClient(PrintStream outputStream, ActionInvoker invoker) {
         this.invoker = invoker;
         this.outputStream = outputStream;
@@ -30,12 +36,6 @@ public class DeleteClient implements Runnable {
         this.invoker = invoker;
         outputStream = System.out;
     }
-
-    @Option(names = {"-u", "--uid"}, description = "User ID", required = true)
-    private int uid;
-
-    @Option(names = "-y", description = "Confirms you would like to execute the removal")
-    private boolean yes;
 
     @Override
     public void run() {

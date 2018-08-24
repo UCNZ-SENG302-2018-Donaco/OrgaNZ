@@ -24,18 +24,6 @@ public class CreateClient implements Runnable {
     private final ActionInvoker invoker;
     private final PrintStream outputStream;
 
-    public CreateClient(PrintStream outputStream, ActionInvoker invoker) {
-        this.outputStream = outputStream;
-        this.invoker = invoker;
-        manager = State.getClientManager();
-    }
-
-    public CreateClient(ClientManager manager, ActionInvoker invoker) {
-        this.manager = manager;
-        this.invoker = invoker;
-        outputStream = System.out;
-    }
-
     @Option(names = {"-f", "--firstname"}, description = "First name.", required = true)
     private String firstName;
 
@@ -51,6 +39,18 @@ public class CreateClient implements Runnable {
 
     @Option(names = "--force", description = "Force even if a duplicate client is found")
     private boolean force;
+
+    public CreateClient(PrintStream outputStream, ActionInvoker invoker) {
+        this.outputStream = outputStream;
+        this.invoker = invoker;
+        manager = State.getClientManager();
+    }
+
+    public CreateClient(ClientManager manager, ActionInvoker invoker) {
+        this.manager = manager;
+        this.invoker = invoker;
+        outputStream = System.out;
+    }
 
     @Override
     public void run() {

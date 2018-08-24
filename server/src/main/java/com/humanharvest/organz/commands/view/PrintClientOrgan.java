@@ -20,6 +20,12 @@ public class PrintClientOrgan implements Runnable {
     private final ClientManager manager;
     private final PrintStream outputStream;
 
+    @Option(names = {"--id", "-u"}, description = "User ID", required = true)
+    private int uid;
+
+    @Option(names = {"-t", "-type"}, description = "Organ donations or requests", required = true)
+    private String type;
+
     public PrintClientOrgan() {
         manager = State.getClientManager();
         outputStream = System.out;
@@ -34,12 +40,6 @@ public class PrintClientOrgan implements Runnable {
         this.manager = manager;
         outputStream = System.out;
     }
-
-    @Option(names = {"--id", "-u"}, description = "User ID", required = true)
-    private int uid;
-
-    @Option(names = {"-t", "-type"}, description = "Organ donations or requests", required = true)
-    private String type;
 
     @Override
     public void run() {

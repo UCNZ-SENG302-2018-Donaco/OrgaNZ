@@ -26,6 +26,12 @@ public class RequestOrgan implements Runnable {
     private final ActionInvoker invoker;
     private final PrintStream outputStream;
 
+    @Option(names = {"-o", "-organ", "-organType"}, description = "Organ type", converter = PicoOrganConverter.class)
+    private Organ organType;
+
+    @Option(names = {"-u", "--uid"}, description = "User ID of user organ being requested", required = true)
+    private int uid;
+
     public RequestOrgan(PrintStream outputStream, ActionInvoker invoker) {
         this.invoker = invoker;
         this.outputStream = outputStream;
@@ -37,12 +43,6 @@ public class RequestOrgan implements Runnable {
         this.invoker = invoker;
         outputStream = System.out;
     }
-
-    @Option(names = {"-o", "-organ", "-organType"}, description = "Organ type", converter = PicoOrganConverter.class)
-    private Organ organType;
-
-    @Option(names = {"-u", "--uid"}, description = "User ID of user organ being requested", required = true)
-    private int uid;
 
     /**
      * Runs the request organ command

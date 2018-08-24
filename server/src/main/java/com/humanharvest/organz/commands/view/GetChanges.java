@@ -19,6 +19,9 @@ public class GetChanges implements Runnable {
     private final ClientManager manager;
     private final PrintStream outputStream;
 
+    @Option(names = {"--id", "-u"}, description = "User ID", required = true)
+    private int uid;
+
     public GetChanges() {
         manager = State.getClientManager();
         outputStream = System.out;
@@ -33,9 +36,6 @@ public class GetChanges implements Runnable {
         this.manager = manager;
         outputStream = System.out;
     }
-
-    @Option(names = {"--id", "-u"}, description = "User ID", required = true)
-    private int uid;
 
     @Override
     public void run() {

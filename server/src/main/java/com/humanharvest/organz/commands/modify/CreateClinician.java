@@ -28,18 +28,6 @@ public class CreateClinician implements Runnable {
     private final ActionInvoker invoker;
     private final PrintStream outputStream;
 
-    public CreateClinician(PrintStream outputStream, ActionInvoker invoker) {
-        this.invoker = invoker;
-        this.outputStream = outputStream;
-        manager = State.getClinicianManager();
-    }
-
-    public CreateClinician(ClinicianManager manager, ActionInvoker invoker) {
-        this.manager = manager;
-        this.invoker = invoker;
-        outputStream = System.out;
-    }
-
     @Option(names = {"-s", "--staffId"}, description = "Staff id", required = true)
     private int staffId; // staffId of the clinician
 
@@ -63,6 +51,18 @@ public class CreateClinician implements Runnable {
 
     @Option(names = {"-c", "--country"}, description = "Country", converter = PicoCountryConverter.class)
     private Country country;
+
+    public CreateClinician(PrintStream outputStream, ActionInvoker invoker) {
+        this.invoker = invoker;
+        this.outputStream = outputStream;
+        manager = State.getClinicianManager();
+    }
+
+    public CreateClinician(ClinicianManager manager, ActionInvoker invoker) {
+        this.manager = manager;
+        this.invoker = invoker;
+        outputStream = System.out;
+    }
 
     @Override
     public void run() {

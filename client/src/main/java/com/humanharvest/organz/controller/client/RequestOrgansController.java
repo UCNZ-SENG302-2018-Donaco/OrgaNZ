@@ -90,6 +90,14 @@ public class RequestOrgansController extends SubController {
     private TextField customReason;
 
     /**
+     * Creates a new controller for this page, getting the current session and invoker from the global state.
+     */
+    public RequestOrgansController() {
+        session = State.getSession();
+        resolver = State.getClientResolver();
+    }
+
+    /**
      * Formats a table cell that holds a {@link LocalDateTime} value to display that value in the date time format.
      *
      * @return The cell with the date time formatter set.
@@ -131,14 +139,6 @@ public class RequestOrgansController extends SubController {
                 }
             }
         };
-    }
-
-    /**
-     * Creates a new controller for this page, getting the current session and invoker from the global state.
-     */
-    public RequestOrgansController() {
-        session = State.getSession();
-        resolver = State.getClientResolver();
     }
 
     /**

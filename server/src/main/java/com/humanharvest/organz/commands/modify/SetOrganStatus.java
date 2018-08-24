@@ -31,18 +31,6 @@ public class SetOrganStatus implements Runnable {
     private final ActionInvoker invoker;
     private final PrintStream outputStream;
 
-    public SetOrganStatus(PrintStream outputStream, ActionInvoker invoker) {
-        this.invoker = invoker;
-        this.outputStream = outputStream;
-        manager = State.getClientManager();
-    }
-
-    public SetOrganStatus(ClientManager manager, ActionInvoker invoker) {
-        this.manager = manager;
-        this.invoker = invoker;
-        outputStream = System.out;
-    }
-
     @Option(names = {"--id", "-u"}, description = "User ID", required = true)
     private int uid;
 
@@ -81,6 +69,18 @@ public class SetOrganStatus implements Runnable {
 
     @Option(names = {"--connectivetissue", "--connective-tissue"}, description = "Connective tissue status")
     private Boolean connectivetissue;
+
+    public SetOrganStatus(PrintStream outputStream, ActionInvoker invoker) {
+        this.invoker = invoker;
+        this.outputStream = outputStream;
+        manager = State.getClientManager();
+    }
+
+    public SetOrganStatus(ClientManager manager, ActionInvoker invoker) {
+        this.manager = manager;
+        this.invoker = invoker;
+        outputStream = System.out;
+    }
 
 
     @Override

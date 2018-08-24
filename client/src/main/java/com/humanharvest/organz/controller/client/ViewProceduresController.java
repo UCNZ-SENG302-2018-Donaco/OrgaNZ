@@ -83,6 +83,13 @@ public class ViewProceduresController extends SubController {
     private TableView<ProcedureRecord> selectedTableView = null;
 
     /**
+     * Gets the current session from the global state.
+     */
+    public ViewProceduresController() {
+        session = State.getSession();
+    }
+
+    /**
      * Sets the table's sort policy - default ordering is by date DESC, but if a column is selected for sorting then
      * that takes precedence.
      *
@@ -195,13 +202,6 @@ public class ViewProceduresController extends SubController {
                             + "apply these changes please submit again, otherwise refresh the page to update the data.")
                     .showWarning();
         }
-    }
-
-    /**
-     * Gets the current session from the global state.
-     */
-    public ViewProceduresController() {
-        session = State.getSession();
     }
 
     /**

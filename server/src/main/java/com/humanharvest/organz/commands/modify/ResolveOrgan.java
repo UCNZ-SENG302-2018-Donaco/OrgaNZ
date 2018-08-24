@@ -29,18 +29,6 @@ public class ResolveOrgan implements Runnable {
     private final ActionInvoker invoker;
     private final PrintStream outputStream;
 
-    public ResolveOrgan(PrintStream outputStream, ActionInvoker invoker) {
-        this.invoker = invoker;
-        this.outputStream = outputStream;
-        manager = State.getClientManager();
-    }
-
-    public ResolveOrgan(ClientManager manager, ActionInvoker invoker) {
-        this.manager = manager;
-        this.invoker = invoker;
-        outputStream = System.out;
-    }
-
     @Option(names = {"-u", "--uid"}, description = "User ID of user organ being requested", required = true)
     private int uid;
 
@@ -54,6 +42,18 @@ public class ResolveOrgan implements Runnable {
 
     @Option(names = {"-m", "-message"}, description = "Message for why the request was resolved")
     private String message;
+
+    public ResolveOrgan(PrintStream outputStream, ActionInvoker invoker) {
+        this.invoker = invoker;
+        this.outputStream = outputStream;
+        manager = State.getClientManager();
+    }
+
+    public ResolveOrgan(ClientManager manager, ActionInvoker invoker) {
+        this.manager = manager;
+        this.invoker = invoker;
+        outputStream = System.out;
+    }
 
     /**
      * Runs the resolve organ command

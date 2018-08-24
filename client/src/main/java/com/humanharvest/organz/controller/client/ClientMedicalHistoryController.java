@@ -94,6 +94,14 @@ public class ClientMedicalHistoryController extends SubController {
     private static final Logger LOGGER = Logger.getLogger(ClientMedicalHistoryController.class.getName());
 
     /**
+     * Gets the current session and resolver from the global state.
+     */
+    public ClientMedicalHistoryController() {
+        session = State.getSession();
+        resolver = State.getClientResolver();
+    }
+
+    /**
      * Formats a table cell that holds a {@link LocalDate} value to display that value in the date time format.
      *
      * @return The cell with the date time formatter set.
@@ -159,14 +167,6 @@ public class ClientMedicalHistoryController extends SubController {
         };
         FXCollections.sort(table.getItems(), comparator);
         return true;
-    }
-
-    /**
-     * Gets the current session and resolver from the global state.
-     */
-    public ClientMedicalHistoryController() {
-        session = State.getSession();
-        resolver = State.getClientResolver();
     }
 
     /**

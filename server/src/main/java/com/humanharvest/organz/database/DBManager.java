@@ -19,6 +19,8 @@ public class DBManager {
 
     private static DBManager dbManager;
 
+    private SessionFactory sessionFactory;
+
     /**
      * Default no-args constructor that sets the manager's SessionFactory to the default one returned by
      * {@link #buildSessionFactory()}.
@@ -35,8 +37,6 @@ public class DBManager {
     public DBManager(SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
-
-    private SessionFactory sessionFactory;
 
     /**
      * Builds the default Hibernate SessionFactory based on the Hibernate config file.

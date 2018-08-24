@@ -31,18 +31,6 @@ public class ModifyClinician implements Runnable {
     private final ActionInvoker invoker;
     private final PrintStream outputStream;
 
-    public ModifyClinician(PrintStream outputStream, ActionInvoker invoker) {
-        this.invoker = invoker;
-        this.outputStream = outputStream;
-        manager = State.getClinicianManager();
-    }
-
-    public ModifyClinician(ClinicianManager manager, ActionInvoker invoker) {
-        this.manager = manager;
-        this.invoker = invoker;
-        outputStream = System.out;
-    }
-
     @Option(names = {"-s", "--staffId"}, description = "Staff id", required = true)
     private int id; // staffId of the clinician
 
@@ -66,6 +54,18 @@ public class ModifyClinician implements Runnable {
 
     @Option(names = {"-p", "--password"}, description = "Clinician Password.")
     private String password;
+
+    public ModifyClinician(PrintStream outputStream, ActionInvoker invoker) {
+        this.invoker = invoker;
+        this.outputStream = outputStream;
+        manager = State.getClinicianManager();
+    }
+
+    public ModifyClinician(ClinicianManager manager, ActionInvoker invoker) {
+        this.manager = manager;
+        this.invoker = invoker;
+        outputStream = System.out;
+    }
 
     @Override
     public void run() {

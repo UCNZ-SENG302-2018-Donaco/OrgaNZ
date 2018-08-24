@@ -20,6 +20,9 @@ public class PrintAllOrgan implements Runnable {
     private final ClientManager manager;
     private final PrintStream outputStream;
 
+    @Option(names = {"-t", "-type"}, description = "Organ donations or requests", required = true)
+    private String type;
+
     public PrintAllOrgan() {
         manager = State.getClientManager();
         outputStream = System.out;
@@ -34,9 +37,6 @@ public class PrintAllOrgan implements Runnable {
         this.manager = manager;
         outputStream = System.out;
     }
-
-    @Option(names = {"-t", "-type"}, description = "Organ donations or requests", required = true)
-    private String type;
 
     @Override
     public void run() {

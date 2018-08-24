@@ -38,18 +38,6 @@ public class SetAttribute implements Runnable {
     private final ActionInvoker invoker;
     private final PrintStream outputStream;
 
-    public SetAttribute(PrintStream outputStream, ActionInvoker invoker) {
-        this.invoker = invoker;
-        this.outputStream = outputStream;
-        manager = State.getClientManager();
-    }
-
-    public SetAttribute(ClientManager manager, ActionInvoker invoker) {
-        this.manager = manager;
-        this.invoker = invoker;
-        outputStream = System.out;
-    }
-
     @Option(names = {"--id", "-u"}, description = "User ID", required = true)
     private int uid;
 
@@ -90,6 +78,18 @@ public class SetAttribute implements Runnable {
     @Option(names = "--dateofdeath", description = "Date of death (dd/mm/yyyy)",
             converter = PicoLocalDateConverter.class)
     private LocalDate dateOfDeath;
+
+    public SetAttribute(PrintStream outputStream, ActionInvoker invoker) {
+        this.invoker = invoker;
+        this.outputStream = outputStream;
+        manager = State.getClientManager();
+    }
+
+    public SetAttribute(ClientManager manager, ActionInvoker invoker) {
+        this.manager = manager;
+        this.invoker = invoker;
+        outputStream = System.out;
+    }
 
 
     @Override

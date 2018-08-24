@@ -30,6 +30,9 @@ public class SQL implements Runnable {
     private DBManager dbManager;
     private final PrintStream outputStream;
 
+    @Parameters
+    private List<String> allParams;
+
     public SQL(DBManager dbManager) {
         this.dbManager = dbManager;
         outputStream = System.out;
@@ -42,9 +45,6 @@ public class SQL implements Runnable {
     public SQL() {
         outputStream = System.out;
     }
-
-    @Parameters
-    private List<String> allParams;
 
     @Override
     public void run() {
