@@ -63,7 +63,7 @@ public class ModifyAdministratorAction extends AdministratorAction {
                 .map(ModifyObjectByMethodAction::getExecuteText)
                 .collect(Collectors.joining("\n"));
 
-        return String.format("Updated details for administrator %s.\nThese changes were made:\n\n%s",
+        return String.format("Updated details for administrator %s.%nThese changes were made:\n\n%s",
                 administrator.getUsername(), changesText);
     }
 
@@ -73,7 +73,7 @@ public class ModifyAdministratorAction extends AdministratorAction {
                 .map(ModifyObjectByMethodAction::getExecuteText)
                 .collect(Collectors.joining("\n"));
 
-        return String.format("Reversed update for administrator %s.\nThese changes were reversed:\n\n%s",
+        return String.format("Reversed update for administrator %s.%nThese changes were reversed:%n%n%s",
                 administrator.getUsername(), changesText);
     }
 }

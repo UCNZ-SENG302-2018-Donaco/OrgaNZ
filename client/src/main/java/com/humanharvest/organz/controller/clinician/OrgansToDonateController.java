@@ -455,10 +455,10 @@ public class OrgansToDonateController extends SubController {
             StringBuilder overrideReason = new StringBuilder(reason);
             overrideReason.append("\n").append(LocalDateTime.now().format(dateTimeFormat));
             if (session.getLoggedInUserType() == UserType.CLINICIAN) {
-                overrideReason.append(String.format("\nOverriden by clinician %d (%s)",
+                overrideReason.append(String.format("%nOverriden by clinician %d (%s)",
                         session.getLoggedInClinician().getStaffId(), session.getLoggedInClinician().getFullName()));
             } else if (session.getLoggedInUserType() == UserType.ADMINISTRATOR) {
-                overrideReason.append(String.format("\nOverriden by admin '%s'.",
+                overrideReason.append(String.format("%nOverriden by admin '%s'.",
                         session.getLoggedInAdministrator().getUsername()));
             }
             State.getClientResolver().manuallyOverrideOrgan(selectedOrgan, overrideReason.toString());

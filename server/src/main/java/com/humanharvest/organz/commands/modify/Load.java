@@ -73,9 +73,9 @@ public class Load implements Runnable {
             }
 
             String message = String.format("Loaded clients from file '%s'."
-                            + "\n%d were valid, "
-                            + "\n%d were invalid."
-                            + "\n\n%s",
+                            + "%n%d were valid, "
+                            + "%n%d were invalid."
+                            + "%n%n%s",
                     file.getName(), importer.getValidCount(), importer.getInvalidCount(), errorSummary);
 
             outputStream.println(message);
@@ -86,7 +86,7 @@ public class Load implements Runnable {
             outputStream.println(String.format("Could not find file: '%s'.", file.getAbsolutePath()));
         } catch (IOException e) {
             LOGGER.log(Level.WARNING, e.getMessage(), e);
-            outputStream.println(String.format("An IO error occurred when loading from file: '%s'\n%s",
+            outputStream.println(String.format("An IO error occurred when loading from file: '%s'%n%s",
                     file.getName(), e.getMessage()));
         }
     }

@@ -71,7 +71,7 @@ public class ClientImporter {
                     // The client that was read was invalid
                     LOGGER.log(Level.WARNING, e.getMessage(), e);
                     invalidCount++;
-                    errorSummary.append(String.format("Record #%d was invalid because: \n%s\n",
+                    errorSummary.append(String.format("Record #%d was invalid because: %n%s%n",
                             validCount + invalidCount, e.getMessage()));
                 }
             }

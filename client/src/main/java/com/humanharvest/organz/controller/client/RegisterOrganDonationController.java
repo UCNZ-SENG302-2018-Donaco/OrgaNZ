@@ -171,10 +171,10 @@ public class RegisterOrganDonationController extends SubController {
             StringBuilder overrideReason = new StringBuilder(response);
             overrideReason.append("\n").append(LocalDateTime.now().format(dateTimeFormat));
             if (session.getLoggedInUserType() == UserType.CLINICIAN) {
-                overrideReason.append(String.format("\nOverriden by clinician %d (%s)",
+                overrideReason.append(String.format("%nOverriden by clinician %d (%s)",
                         session.getLoggedInClinician().getStaffId(), session.getLoggedInClinician().getFullName()));
             } else if (session.getLoggedInUserType() == UserType.ADMINISTRATOR) {
-                overrideReason.append(String.format("\nOverriden by admin '%s'.",
+                overrideReason.append(String.format("%nOverriden by admin '%s'.",
                         session.getLoggedInAdministrator().getUsername()));
             }
             State.getClientResolver().manuallyOverrideOrgan(donatedOrgan, overrideReason.toString());
@@ -225,10 +225,10 @@ public class RegisterOrganDonationController extends SubController {
             StringBuilder overrideReason = new StringBuilder(response);
             overrideReason.append("\n").append(LocalDateTime.now().format(dateTimeFormat));
             if (session.getLoggedInUserType() == UserType.CLINICIAN) {
-                overrideReason.append(String.format("\nOverriden by clinician %d (%s)",
+                overrideReason.append(String.format("%nOverriden by clinician %d (%s)",
                         session.getLoggedInClinician().getStaffId(), session.getLoggedInClinician().getFullName()));
             } else if (session.getLoggedInUserType() == UserType.ADMINISTRATOR) {
-                overrideReason.append(String.format("\nOverriden by admin '%s'.",
+                overrideReason.append(String.format("%nOverriden by admin '%s'.",
                         session.getLoggedInAdministrator().getUsername()));
             }
             State.getClientResolver().editManualOverrideForOrgan(donatedOrgan, overrideReason.toString());
@@ -407,7 +407,7 @@ public class RegisterOrganDonationController extends SubController {
                 .map(entry -> formatChange(entry.getKey(), entry.getValue()))
                 .collect(Collectors.joining("\n"));
 
-        return String.format("Changed organ donation registration for client %d: %s:\n\n%s",
+        return String.format("Changed organ donation registration for client %d: %s:%n%n%s",
                 client.getUid(), client.getFullName(), changesText);
     }
 

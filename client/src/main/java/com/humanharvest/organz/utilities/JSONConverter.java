@@ -57,7 +57,7 @@ public final class JSONConverter {
             }
         } catch (IOException e) {
             throw new IOException(
-                    String.format("An error occurred when creating this file: %s\n%s",
+                    String.format("An error occurred when creating this file: %s%n%s",
                             file.getName(), e.getMessage()),
                     e);
         }

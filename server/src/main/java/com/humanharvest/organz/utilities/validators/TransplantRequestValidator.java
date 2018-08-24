@@ -21,7 +21,7 @@ public class TransplantRequestValidator {
         StringBuilder errors = new StringBuilder();
 
         if (!requestedOrganValid(request)) {
-            errors.append(String.format("Requested organ must be one of these recognised organs: %s\n",
+            errors.append(String.format("Requested organ must be one of these recognised organs: %s%n",
                     Arrays.stream(Organ.values())
                             .map(Organ::toString)
                             .collect(Collectors.joining(", "))
@@ -34,7 +34,7 @@ public class TransplantRequestValidator {
                     + "point after the request date.\n");
         }
         if (!statusValid(request)) {
-            errors.append(String.format("Request status must be one of these values: %s\n",
+            errors.append(String.format("Request status must be one of these values: %s%n",
                     Arrays.stream(TransplantRequestStatus.values())
                             .map(TransplantRequestStatus::toString)
                             .collect(Collectors.joining(", "))

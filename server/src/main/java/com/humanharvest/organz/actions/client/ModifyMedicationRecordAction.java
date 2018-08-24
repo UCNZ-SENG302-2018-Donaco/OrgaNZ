@@ -88,10 +88,10 @@ public class ModifyMedicationRecordAction extends ClientAction {
         builder.append(String.format("Changed medication record for '%s':", record.getMedicationName()));
 
         if (!Objects.equals(newStarted, oldStarted)) {
-            builder.append(String.format("\nStarted date changed from %s to %s", oldStarted, newStarted));
+            builder.append(String.format("%nStarted date changed from %s to %s", oldStarted, newStarted));
         }
         if (!Objects.equals(newStopped, oldStopped)) {
-            builder.append(String.format("\nStopped date changed from %s to %s", oldStarted, newStarted));
+            builder.append(String.format("%nStopped date changed from %s to %s", oldStarted, newStarted));
         }
 
         return builder.toString();
@@ -104,10 +104,10 @@ public class ModifyMedicationRecordAction extends ClientAction {
                 record.getMedicationName()));
 
         if (!Objects.equals(newStarted, oldStarted)) {
-            builder.append(String.format("\nStarted date changed from %s to %s", oldStarted, newStarted));
+            builder.append(String.format("%nStarted date changed from %s to %s", oldStarted, newStarted));
         }
         if (!Objects.equals(newStopped, oldStopped)) {
-            builder.append(String.format("\nStopped date changed from %s to %s", oldStopped, newStopped));
+            builder.append(String.format("%nStopped date changed from %s to %s", oldStopped, newStopped));
         }
 
         return builder.toString();

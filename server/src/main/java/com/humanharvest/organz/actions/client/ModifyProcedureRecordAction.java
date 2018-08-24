@@ -115,17 +115,17 @@ public class ModifyProcedureRecordAction extends ClientAction {
         builder.append(String.format("Changed procedure record for '%s':", record.getSummary()));
 
         if (!Objects.equals(newSummary, oldSummary)) {
-            builder.append(String.format("\nProcedure summary changed from '%s' to '%s'", oldSummary, newSummary));
+            builder.append(String.format("%nProcedure summary changed from '%s' to '%s'", oldSummary, newSummary));
         }
         if (!Objects.equals(newDescription, oldDescription)) {
-            builder.append(String.format("\nProcedure description changed from '%s' to '%s'",
+            builder.append(String.format("%nProcedure description changed from '%s' to '%s'",
                     oldDescription, newDescription));
         }
         if (!Objects.equals(newDate, oldDate)) {
-            builder.append(String.format("\nProcedure date changed from %s to %s", oldDate, newDate));
+            builder.append(String.format("%nProcedure date changed from %s to %s", oldDate, newDate));
         }
         if (!Objects.equals(newAffectedOrgans, oldAffectedOrgans)) {
-            builder.append(String.format("\nAffected organs changed from '%s' to '%s'",
+            builder.append(String.format("%nAffected organs changed from '%s' to '%s'",
                     oldAffectedOrgans.stream().map(Organ::toString).collect(Collectors.joining(", ")),
                     newAffectedOrgans.stream().map(Organ::toString).collect(Collectors.joining(", "))));
         }
@@ -139,17 +139,17 @@ public class ModifyProcedureRecordAction extends ClientAction {
         builder.append(String.format("Reversed these changes to procedure record for '%s':", record.getSummary()));
 
         if (!Objects.equals(newSummary, oldSummary)) {
-            builder.append(String.format("\nProcedure summary changed from '%s' to '%s'", oldSummary, newSummary));
+            builder.append(String.format("%nProcedure summary changed from '%s' to '%s'", oldSummary, newSummary));
         }
         if (!Objects.equals(newDescription, oldDescription)) {
-            builder.append(String.format("\nProcedure description changed from '%s' to '%s'",
+            builder.append(String.format("%nProcedure description changed from '%s' to '%s'",
                     oldDescription, newDescription));
         }
         if (!Objects.equals(newDate, oldDate)) {
-            builder.append(String.format("\nProcedure date changed from %s to %s", oldDate, newDate));
+            builder.append(String.format("%nProcedure date changed from %s to %s", oldDate, newDate));
         }
         if (!Objects.equals(newAffectedOrgans, oldAffectedOrgans)) {
-            builder.append(String.format("\nAffected organs changed from '%s' to '%s'",
+            builder.append(String.format("%nAffected organs changed from '%s' to '%s'",
                     oldAffectedOrgans.stream().map(Organ::toString).collect(Collectors.joining(", ")),
                     newAffectedOrgans.stream().map(Organ::toString).collect(Collectors.joining(", "))));
         }

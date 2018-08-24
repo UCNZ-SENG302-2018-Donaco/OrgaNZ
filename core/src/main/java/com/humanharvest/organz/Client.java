@@ -338,12 +338,12 @@ public class Client implements ConcurrencyControlledEntity {
      * @return Formatted string with newlines
      */
     public String getUpdatesString() {
-        StringBuilder out = new StringBuilder(String.format("User: %s. Name: %s, updates:\n", uid, getFullName()));
+        StringBuilder out = new StringBuilder(String.format("User: %s. Name: %s, updates:%n", uid, getFullName()));
         if (Objects.isNull(changesHistory)) {
             changesHistory = new ArrayList<>();
         }
         for (HistoryItem item : changesHistory) {
-            out.append(String.format("%s: %s\n", item.getTimestamp(), item.getDetails()));
+            out.append(String.format("%s: %s%n", item.getTimestamp(), item.getDetails()));
         }
         return out.toString();
     }

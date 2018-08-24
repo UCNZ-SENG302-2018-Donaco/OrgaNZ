@@ -72,7 +72,7 @@ public class ModifyClientOrgansAction extends ClientAction {
                 .map(entry -> formatChange(entry.getKey(), entry.getValue()))
                 .collect(Collectors.joining("\n"));
 
-        return String.format("Changed organ donation registration for client %d: %s:\n\n%s",
+        return String.format("Changed organ donation registration for client %d: %s:%n%n%s",
                 client.getUid(), client.getFullName(), changesText);
     }
 
@@ -82,7 +82,7 @@ public class ModifyClientOrgansAction extends ClientAction {
                 .map(entry -> formatChange(entry.getKey(), entry.getValue()))
                 .collect(Collectors.joining("\n"));
 
-        return String.format("Reversed these changes to organ donation registration for client %d: %s:\n\n%s",
+        return String.format("Reversed these changes to organ donation registration for client %d: %s:%n%n%s",
                 client.getUid(), client.getFullName(), changesText);
     }
 
