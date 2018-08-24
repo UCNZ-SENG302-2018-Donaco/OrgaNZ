@@ -1,104 +1,127 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 <VBox xmlns:fx="http://javafx.com/fxml/1" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.121"
       fx:controller="com.humanharvest.organz.controller.client.CreateClientController">
-   <children>
-       <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
-          <items>
-              <HBox fx:id="menuBarPane" maxHeight="-Infinity" minHeight="-Infinity" />
-          <BorderPane VBox.vgrow="ALWAYS">
-            <center>
-                <GridPane hgap="50.0" prefHeight="475.0" prefWidth="507.0" BorderPane.alignment="CENTER">
-                <columnConstraints>
-                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="263.0" minWidth="10.0" prefWidth="263.0"/>
-                    <ColumnConstraints hgrow="SOMETIMES" maxWidth="309.0" minWidth="10.0" prefWidth="246.0"/>
-                </columnConstraints>
-                <rowConstraints>
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                  <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                </rowConstraints>
-                <BorderPane.margin>
-                  <Insets bottom="40.0" left="100.0" right="100.0" />
-                </BorderPane.margin>
-                <children>
-                    <Label text="Please fill in the details below:">
-                    <font>
-                      <Font size="16.0" />
-                    </font>
-                  </Label>
-                  <Label text="First Name*" GridPane.rowIndex="1">
-                    <font>
-                      <Font size="16.0" />
-                    </font>
-                  </Label>
-                  <Label text="Middle Name " GridPane.rowIndex="2">
-                    <font>
-                      <Font size="16.0" />
-                    </font>
-                  </Label>
-                  <Label text="Last Name*" GridPane.rowIndex="3">
-                    <font>
-                      <Font size="16.0" />
-                    </font>
-                  </Label>
-                  <Label text="Date Of Birth*" GridPane.rowIndex="4">
-                    <font>
-                      <Font size="16.0" />
-                    </font>
-                  </Label>
-                  <Label text="*required fields" GridPane.rowIndex="5">
-                    <font>
-                      <Font size="16.0" />
-                    </font>
-                  </Label>
-                  <Label fx:id="successLbl" text=" " textFill="RED" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-                  <TextField fx:id="firstNameFld" prefHeight="35.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                  <TextField fx:id="middleNamefld" prefHeight="35.0" promptText="(optional)" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                  <TextField fx:id="lastNamefld" prefHeight="35.0" GridPane.columnIndex="1" GridPane.rowIndex="3" />
-                  <DatePicker fx:id="dobFld" maxWidth="1.7976931348623157E308" prefHeight="35.0" promptText="(enter in dd/mm/yyyy)" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                  <Button fx:id="createButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#createClient" prefHeight="35.0" text="Create " GridPane.columnIndex="1" GridPane.rowIndex="6" />
-                </children>
-              </GridPane>
-            </center>
-               <top>
-                  <GridPane BorderPane.alignment="CENTER">
-                    <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
-                     <children>
-                         <Label alignment="CENTER" contentDisplay="CENTER" text="Create a client"
-                                GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.valignment="CENTER">
-                      <font>
-                        <Font size="24.0" />
-                      </font>
-                    </Label>
-                      <Button fx:id="goBackButton" mnemonicParsing="false" onAction="#goBack" prefHeight="30.0" prefWidth="120.0" style="-fx-base: rgba(173,216,230, 0.8);" text="Back">
-                           <GridPane.margin>
-                              <Insets />
-                           </GridPane.margin>
-                        </Button>
-                     </children>
-                     <padding>
-                        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
-                     </padding>
-                  </GridPane>
-               </top>
-          </BorderPane>
-          </items>
-       </SplitPane>
-   </children>
+    <children>
+        <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="200.0"
+                   VBox.vgrow="ALWAYS">
+            <items>
+                <HBox fx:id="menuBarPane" maxHeight="-Infinity" minHeight="-Infinity"/>
+                <BorderPane VBox.vgrow="ALWAYS">
+                    <center>
+                        <GridPane hgap="50.0" prefHeight="475.0" prefWidth="507.0" BorderPane.alignment="CENTER">
+                            <columnConstraints>
+                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="263.0" minWidth="10.0"
+                                                   prefWidth="263.0"/>
+                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="309.0" minWidth="10.0"
+                                                   prefWidth="246.0"/>
+                            </columnConstraints>
+                            <rowConstraints>
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                            </rowConstraints>
+                            <BorderPane.margin>
+                                <Insets bottom="40.0" left="100.0" right="100.0"/>
+                            </BorderPane.margin>
+                            <children>
+                                <Label text="Please fill in the details below:">
+                                    <font>
+                                        <Font size="16.0"/>
+                                    </font>
+                                </Label>
+                                <Label text="First Name*" GridPane.rowIndex="1">
+                                    <font>
+                                        <Font size="16.0"/>
+                                    </font>
+                                </Label>
+                                <Label text="Middle Name " GridPane.rowIndex="2">
+                                    <font>
+                                        <Font size="16.0"/>
+                                    </font>
+                                </Label>
+                                <Label text="Last Name*" GridPane.rowIndex="3">
+                                    <font>
+                                        <Font size="16.0"/>
+                                    </font>
+                                </Label>
+                                <Label text="Date Of Birth*" GridPane.rowIndex="4">
+                                    <font>
+                                        <Font size="16.0"/>
+                                    </font>
+                                </Label>
+                                <Label text="*required fields" GridPane.rowIndex="5">
+                                    <font>
+                                        <Font size="16.0"/>
+                                    </font>
+                                </Label>
+                                <Label fx:id="successLbl" text=" " textFill="RED" wrapText="true"
+                                       GridPane.columnIndex="1" GridPane.rowIndex="5"/>
+                                <TextField fx:id="firstNameFld" prefHeight="35.0" GridPane.columnIndex="1"
+                                           GridPane.rowIndex="1"/>
+                                <TextField fx:id="middleNamefld" prefHeight="35.0" promptText="(optional)"
+                                           GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                                <TextField fx:id="lastNamefld" prefHeight="35.0" GridPane.columnIndex="1"
+                                           GridPane.rowIndex="3"/>
+                                <DatePicker fx:id="dobFld" maxWidth="1.7976931348623157E308" prefHeight="35.0"
+                                            promptText="(enter in dd/mm/yyyy)" GridPane.columnIndex="1"
+                                            GridPane.rowIndex="4"/>
+                                <Button fx:id="createButton" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+                                        onAction="#createClient" prefHeight="35.0" text="Create "
+                                        GridPane.columnIndex="1" GridPane.rowIndex="6"/>
+                            </children>
+                        </GridPane>
+                    </center>
+                    <top>
+                        <GridPane BorderPane.alignment="CENTER">
+                            <columnConstraints>
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                            </columnConstraints>
+                            <rowConstraints>
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                            </rowConstraints>
+                            <children>
+                                <Label alignment="CENTER" contentDisplay="CENTER" text="Create a client"
+                                       GridPane.columnIndex="1" GridPane.halignment="CENTER"
+                                       GridPane.valignment="CENTER">
+                                    <font>
+                                        <Font size="24.0"/>
+                                    </font>
+                                </Label>
+                                <Button fx:id="goBackButton" mnemonicParsing="false" onAction="#goBack"
+                                        prefHeight="30.0" prefWidth="120.0" style="-fx-base: rgba(173,216,230, 0.8);"
+                                        text="Back">
+                                    <GridPane.margin>
+                                        <Insets/>
+                                    </GridPane.margin>
+                                </Button>
+                            </children>
+                            <padding>
+                                <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+                            </padding>
+                        </GridPane>
+                    </top>
+                </BorderPane>
+            </items>
+        </SplitPane>
+    </children>
 </VBox>

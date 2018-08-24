@@ -22,14 +22,17 @@ public class MTDatePickerSkin extends DatePickerSkin {
 
     private boolean isShowing;
     private BooleanProperty touchPressed = new BooleanPropertyBase(false) {
+        @Override
         protected void invalidated() {
             getPopupContent().pseudoClassStateChanged(PRESSED_PSEUDO_CLASS, this.get());
         }
 
+        @Override
         public Object getBean() {
             return this;
         }
 
+        @Override
         public String getName() {
             return "pressed";
         }

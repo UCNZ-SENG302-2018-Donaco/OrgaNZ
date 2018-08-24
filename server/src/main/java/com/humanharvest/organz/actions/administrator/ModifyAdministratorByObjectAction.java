@@ -17,9 +17,9 @@ public class ModifyAdministratorByObjectAction extends Action {
     private final ModifyAdministratorObject newDetails;
 
     public ModifyAdministratorByObjectAction(Administrator administrator,
-            AdministratorManager manager,
-            ModifyAdministratorObject oldDetails,
-            ModifyAdministratorObject newDetails) {
+                                             AdministratorManager manager,
+                                             ModifyAdministratorObject oldDetails,
+                                             ModifyAdministratorObject newDetails) {
         this.administrator = administrator;
         this.manager = manager;
         this.oldDetails = oldDetails;
@@ -67,6 +67,7 @@ public class ModifyAdministratorByObjectAction extends Action {
         String unCamelCased = inCamelCase.replaceAll("([a-z])([A-Z]+)", "$1 $2");
         return unCamelCased.substring(0, 1).toUpperCase() + unCamelCased.substring(1);
     }
+
     @Override
     public Object getModifiedObject() {
         return administrator;

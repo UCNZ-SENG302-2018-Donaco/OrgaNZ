@@ -1,13 +1,5 @@
 package com.humanharvest.organz.utilities.web;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
-import java.io.IOException;
-import java.time.LocalDate;
-import java.util.Collections;
-import java.util.List;
-
 import com.google.api.client.testing.http.MockHttpTransport;
 import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.Client;
@@ -15,6 +7,14 @@ import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.exceptions.BadDrugNameException;
 import com.humanharvest.organz.utilities.exceptions.BadGatewayException;
 import org.junit.Test;
+
+import java.io.IOException;
+import java.time.LocalDate;
+import java.util.Collections;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 public class DrugInteractionsHandlerTest extends BaseTest {
     public static final String EXPECTED_RESPONSE_BODY = "{\"age_interaction\":{\"0-1\":[\"foetal exposure during "

@@ -14,7 +14,7 @@ public class FileResolverRest implements FileResolver {
         httpHeaders.set("X-Auth-Token", State.getToken());
 
         return State.getRestTemplate().exchange(
-                State.BASE_URI + "clients/file",
+                State.getBaseUri() + "clients/file",
                 HttpMethod.GET,
                 new HttpEntity<>(httpHeaders),
                 byte[].class
@@ -27,7 +27,7 @@ public class FileResolverRest implements FileResolver {
         httpHeaders.set("X-Auth-Token", State.getToken());
 
         return State.getRestTemplate().exchange(
-                State.BASE_URI + "clinicians/file",
+                State.getBaseUri() + "clinicians/file",
                 HttpMethod.GET,
                 new HttpEntity<>(httpHeaders),
                 byte[].class
@@ -51,7 +51,7 @@ public class FileResolverRest implements FileResolver {
         HttpEntity<byte[]> request = new HttpEntity<>(data, httpHeaders);
 
         return State.getRestTemplate().exchange(
-                State.BASE_URI + "clients/file",
+                State.getBaseUri() + "clients/file",
                 HttpMethod.POST,
                 request,
                 String.class

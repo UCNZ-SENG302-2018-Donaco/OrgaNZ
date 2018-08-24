@@ -4,9 +4,9 @@ import com.humanharvest.organz.views.ActionResponseView;
 
 public interface ActionResolver {
 
-    ActionResponseView executeUndo(String ETag);
+    ActionResponseView executeUndo(String eTag);
 
-    ActionResponseView executeRedo(String ETag);
+    ActionResponseView executeRedo(String eTag);
 
     ActionResponseView getUndo();
 

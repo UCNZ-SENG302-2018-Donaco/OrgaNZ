@@ -13,8 +13,9 @@ public class DeleteIllnessRecordAction extends ClientAction {
 
     /**
      * Creates a new action to delete an illness record.
-     * @param client The client whose medical history to delete it from.
-     * @param record The illness record to delete.
+     *
+     * @param client  The client whose medical history to delete it from.
+     * @param record  The illness record to delete.
      * @param manager The ClientManager to apply the changes to
      */
     public DeleteIllnessRecordAction(Client client, IllnessRecord record, ClientManager manager) {

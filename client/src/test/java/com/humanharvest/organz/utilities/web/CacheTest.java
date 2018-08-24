@@ -1,12 +1,5 @@
 package com.humanharvest.organz.utilities.web;
 
-import static org.junit.Assert.*;
-
-import java.io.IOException;
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.api.client.testing.http.MockHttpTransport;
 import com.humanharvest.organz.BaseTest;
@@ -17,6 +10,16 @@ import com.humanharvest.organz.utilities.exceptions.BadDrugNameException;
 import com.humanharvest.organz.utilities.exceptions.BadGatewayException;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.io.IOException;
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 public class CacheTest extends BaseTest {
     @Test

@@ -8,6 +8,7 @@ import org.hibernate.Transaction;
 import javax.persistence.PersistenceException;
 import javax.persistence.RollbackException;
 import java.util.EnumSet;
+import java.util.Set;
 
 public class ConfigManagerDBPure implements ConfigManager {
 
@@ -26,7 +27,7 @@ public class ConfigManagerDBPure implements ConfigManager {
 
     private void tryInsertDefault() {
         Config config = new Config();
-        EnumSet<Country> countries = EnumSet.noneOf(Country.class);
+        Set<Country> countries = EnumSet.noneOf(Country.class);
         countries.add(Country.NZ);
         config.setCountries(countries);
         try {
@@ -58,7 +59,7 @@ public class ConfigManagerDBPure implements ConfigManager {
     }
 
     @Override
-    public EnumSet<Country> getAllowedCountries() {
+    public Set<Country> getAllowedCountries() {
         Transaction trns = null;
         Config config = null;
 
@@ -84,7 +85,7 @@ public class ConfigManagerDBPure implements ConfigManager {
     }
 
     @Override
-    public void setAllowedCountries(EnumSet<Country> countries) {
+    public void setAllowedCountries(Set<Country> countries) {
 
         configuration.setCountries(countries);
 

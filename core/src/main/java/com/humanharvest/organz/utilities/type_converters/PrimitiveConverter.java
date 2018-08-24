@@ -7,6 +7,7 @@ public class PrimitiveConverter {
 
     /**
      * Returns an object converted from it's respective primitive. If already an object just returns it
+     *
      * @param toConvert The primitive to convert
      * @return The converted primitive or the initial object if not primitive
      */

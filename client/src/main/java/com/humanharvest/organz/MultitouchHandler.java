@@ -3,14 +3,6 @@ package com.humanharvest.organz;
 import com.humanharvest.organz.skin.MTDatePickerSkin;
 import com.humanharvest.organz.utilities.ReflectionUtils;
 import com.sun.javafx.scene.NodeEventDispatcher;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Consumer;
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.event.Event;
@@ -54,6 +46,15 @@ import org.tuiofx.widgets.skin.TextAreaSkinAndroid;
 import org.tuiofx.widgets.skin.TextFieldSkinAndroid;
 import org.tuiofx.widgets.utils.Util;
 
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Consumer;
+
 public final class MultitouchHandler {
     private static final List<CurrentTouch> touches = new ArrayList<>();
     private static Pane rootPane;
@@ -76,9 +77,10 @@ public final class MultitouchHandler {
 
     /**
      * Handles a single new touch event. Will process both single touch events and multitouch events.
-     * @param touchPoint The touch point from the new event.
+     *
+     * @param touchPoint   The touch point from the new event.
      * @param currentTouch The state of the finger this event belongs to.
-     * @param pane The pane the finger is on.
+     * @param pane         The pane the finger is on.
      */
     private static void handleCurrentTouch(TouchPoint touchPoint, CurrentTouch currentTouch, Pane pane) {
         Point2D touchPointPosition = new Point2D(touchPoint.getX(), touchPoint.getY());
@@ -102,7 +104,7 @@ public final class MultitouchHandler {
             Point2D delta = touchPointPosition.subtract(currentTouch.getCurrentScreenPoint());
             delta = handleBoundsCheck(delta, pane);
 
-            FocusAreaHandler focusAreaHandler = (FocusAreaHandler)pane.getUserData();
+            FocusAreaHandler focusAreaHandler = (FocusAreaHandler) pane.getUserData();
 
             focusAreaHandler.prependTransform(new Translate(delta.getX(), delta.getY()));
             currentTouch.setCurrentScreenPoint(touchPointPosition);
@@ -111,8 +113,9 @@ public final class MultitouchHandler {
 
     /**
      * Checks if the delta results in the pane being out of bounds.
+     *
      * @param delta The desired delta based on touch events.
-     * @param pane The pane to bounds check.
+     * @param pane  The pane to bounds check.
      * @return The new bounds to apply.
      */
     private static Point2D handleBoundsCheck(Point2D delta, Pane pane) {
@@ -150,7 +153,7 @@ public final class MultitouchHandler {
             CurrentTouch otherTouch,
             Pane pane) {
 
-        FocusAreaHandler focusAreaHandler = (FocusAreaHandler)pane.getUserData();
+        FocusAreaHandler focusAreaHandler = (FocusAreaHandler) pane.getUserData();
 
         // The angle between the old finger position and the new finger position.
         double angleDelta = calculateAngleDelta(currentTouch, otherTouch, touchPoint);
@@ -261,7 +264,7 @@ public final class MultitouchHandler {
         }
 
         if (intersectNode instanceof Pane && intersectNode.getUserData() instanceof FocusAreaHandler) {
-            return Optional.of((Pane)intersectNode);
+            return Optional.of((Pane) intersectNode);
         }
 
         // Also has org.tuiofx.widgets.controls.KeyboardPane
@@ -359,8 +362,8 @@ public final class MultitouchHandler {
      */
     private static void addPaneListenerChildren(FocusAreaHandler focusAreaHandler, Node node) {
         if (node instanceof Parent) {
-            ((Parent)node).getChildrenUnmodifiable().addListener(focusAreaHandler);
-            for (Node child : ((Parent)node).getChildrenUnmodifiable()) {
+            ((Parent) node).getChildrenUnmodifiable().addListener(focusAreaHandler);
+            for (Node child : ((Parent) node).getChildrenUnmodifiable()) {
                 addPaneListenerChildren(focusAreaHandler, child);
             }
         }
@@ -372,7 +375,7 @@ public final class MultitouchHandler {
     public static Optional<FocusAreaHandler> getFocusAreaHandler(Node node) {
         Optional<Pane> pane = findPane(node);
         return pane.map(pane1 -> {
-            return (FocusAreaHandler)pane1.getUserData();
+            return (FocusAreaHandler) pane1.getUserData();
         });
     }
 
@@ -404,19 +407,19 @@ public final class MultitouchHandler {
             currentTouch.getPane().ifPresent(pane -> {
                 // Forwards the touch event to an important node.
                 currentTouch.getImportantElement().ifPresent(node -> {
-                    NodeEventDispatcher eventDispatcher = (NodeEventDispatcher)node.getEventDispatcher();
+                    NodeEventDispatcher eventDispatcher = (NodeEventDispatcher) node.getEventDispatcher();
                     eventDispatcher.dispatchCapturingEvent(event);
                 });
                 if (findPaneTouches(pane).size() == 1) {
                     // Informs the focus area nodes of a touch event
-                    FocusAreaHandler focusAreaHandler = (FocusAreaHandler)pane.getUserData();
+                    FocusAreaHandler focusAreaHandler = (FocusAreaHandler) pane.getUserData();
                     focusAreaHandler.propagateEvent(event.getTarget());
                 }
             });
         } else if (event.getEventType() == TouchEvent.TOUCH_RELEASED) {
             // Forwards the touch event to an important node.
             currentTouch.getImportantElement().ifPresent(node -> {
-                NodeEventDispatcher eventDispatcher = (NodeEventDispatcher)node.getEventDispatcher();
+                NodeEventDispatcher eventDispatcher = (NodeEventDispatcher) node.getEventDispatcher();
                 eventDispatcher.dispatchCapturingEvent(event);
             });
 
@@ -521,7 +524,7 @@ public final class MultitouchHandler {
         public TextAreaSkinConsumer(Skin<?> skin) {
             this.skin = skin;
             try {
-                keyboard = KeyboardManager.getInstance().getKeyboard(Util.getFocusAreaStartingNode((Node)skin.getSkinnable()));
+                keyboard = KeyboardManager.getInstance().getKeyboard(Util.getFocusAreaStartingNode((Node) skin.getSkinnable()));
                 detachKeyboard = ReflectionUtils.getMethodReference(skin, "detachKeyboard", OnScreenKeyboard.class, EventTarget.class);
             } catch (NoSuchMethodException e) {
                 throw new RuntimeException(e);
@@ -557,7 +560,7 @@ public final class MultitouchHandler {
         @Override
         public void accept(EventTarget t) {
             try {
-                if (!(Boolean)isComboBoxOrButton.invoke(skin, t, skin.getSkinnable())) {
+                if (!(Boolean) isComboBoxOrButton.invoke(skin, t, skin.getSkinnable())) {
                     handleAutoHidingEvents.invoke(skin);
                 }
             } catch (IllegalAccessException | InvocationTargetException e) {
@@ -681,14 +684,14 @@ public final class MultitouchHandler {
                 } else if (skin instanceof TextAreaSkinAndroid) {
                     skinHandlers.add(new TextAreaSkinConsumer(skin));
                 } else if (skin instanceof ChoiceBoxSkinAndroid) {
-                    skinHandlers.add(new ChoiceBoxSkinConsumer((Skin<ChoiceBox<?>>)skin));
+                    skinHandlers.add(new ChoiceBoxSkinConsumer((Skin<ChoiceBox<?>>) skin));
                 } else if (skin instanceof MTDatePickerSkin) {
                     skinHandlers.add(new DatePickerSkinConsumer((Skin<DatePicker>) skin));
                 }
             }
 
             if (node instanceof Parent) {
-                for (Node child : ((Parent)node).getChildrenUnmodifiable()) {
+                for (Node child : ((Parent) node).getChildrenUnmodifiable()) {
                     findSkinHandlers(child);
                 }
             }

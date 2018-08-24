@@ -8,7 +8,7 @@ import java.util.Set;
 
 public class ConfigManagerMemory implements ConfigManager {
 
-    private Config config;
+    private final Config config;
 
     public ConfigManagerMemory() {
         config = new Config();
@@ -23,7 +23,7 @@ public class ConfigManagerMemory implements ConfigManager {
     }
 
     @Override
-    public void setAllowedCountries(EnumSet<Country> allowedCountries) {
-        config.setCountries(allowedCountries);
+    public void setAllowedCountries(Set<Country> countries) {
+        config.setCountries(countries);
     }
 }

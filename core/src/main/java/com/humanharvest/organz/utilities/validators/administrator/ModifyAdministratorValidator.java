@@ -1,10 +1,10 @@
 package com.humanharvest.organz.utilities.validators.administrator;
 
-import java.util.Arrays;
-import java.util.List;
-
 import com.humanharvest.organz.utilities.validators.NotEmptyStringValidator;
 import com.humanharvest.organz.views.administrator.ModifyAdministratorObject;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class ModifyAdministratorValidator {
 

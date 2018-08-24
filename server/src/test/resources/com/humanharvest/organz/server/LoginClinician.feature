@@ -1,4 +1,5 @@
 Feature: Does POST /login/clinician/ work?
+
   Scenario: Login with valid credentials
     Given there is a test clinician with the staff-id 1 and password test
     When I post to /login/clinician/ using { "staffId": 1, "password": "test" }

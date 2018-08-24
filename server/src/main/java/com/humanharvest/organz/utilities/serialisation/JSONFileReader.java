@@ -6,13 +6,18 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.type.CollectionType;
 
-import java.io.*;
+import java.io.Closeable;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.List;
 
 /**
  * Provides functionality to read a JSON file as a stream of objects of a given datatype. Also provides the ability
  * to get the file's size and the reader's current position within it.
+ *
  * @param <T> The datatype stored in (and hence to read from) the JSON file.
  */
 public class JSONFileReader<T> implements Closeable {
@@ -25,7 +30,8 @@ public class JSONFileReader<T> implements Closeable {
     /**
      * Creates a new JSONFileReader to read from the given file. The class of the datatype must also be provided
      * because of Java's type erasure.
-     * @param file The JSON file to read from.
+     *
+     * @param file      The JSON file to read from.
      * @param dataClass The class of the datatype stored in the JSON file.
      * @throws FileNotFoundException If the given file cannot be found (or cannot be opened).
      */
@@ -41,6 +47,7 @@ public class JSONFileReader<T> implements Closeable {
 
     /**
      * Returns the size of the JSON file we are reading from.
+     *
      * @return The current size of the file, measured in bytes.
      * @throws IOException If some IO error occurs when measuring the file's size.
      */
@@ -50,6 +57,7 @@ public class JSONFileReader<T> implements Closeable {
 
     /**
      * Returns the current position of the JSONFileReader within the file.
+     *
      * @return The number of bytes from the start of the file to the current position.
      * @throws IOException If some IO error occurs when measuring the current position.
      */
@@ -60,6 +68,7 @@ public class JSONFileReader<T> implements Closeable {
     /**
      * Starts reading from the JSON file as a stream of objects of the given datatype. This assumes that the JSON file
      * contains a single JSON array, which holds only objects of the given datatype.
+     *
      * @throws IOException If the JSON file does not contain a single array, or some other IO error occurs.
      */
     public void startStream() throws IOException {
@@ -72,6 +81,7 @@ public class JSONFileReader<T> implements Closeable {
     /**
      * Reads the next object of the given datatype from the stream. This requires that {@link #startStream()} has
      * already been called, or an {@link IllegalStateException} will be thrown.
+     *
      * @return The next object of the given datatype in the stream, or null if there are no more objects left in the
      * stream.
      * @throws IOException If an IO error occurs when reading from the file.
@@ -93,6 +103,7 @@ public class JSONFileReader<T> implements Closeable {
      * Reads all of the objects of the given datatype in the JSON file. This assumes that the JSON file
      * contains a single JSON array, which holds only objects of the given datatype. {@link #startStream()} must NOT
      * have already been called, or an {@link IllegalStateException} will be thrown.
+     *
      * @return A list of all the objects of the given datatype in the JSON file.
      */
     public List<T> getAll() throws IOException {
@@ -106,6 +117,7 @@ public class JSONFileReader<T> implements Closeable {
 
     /**
      * Closes the JSONFileReader and its underlying file input stream.
+     *
      * @throws IOException If an IO error occurs while closing the JSONFileReader.
      */
     @Override

@@ -5,14 +5,45 @@ import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.humanharvest.organz.utilities.enums.*;
+import com.humanharvest.organz.utilities.enums.BloodType;
+import com.humanharvest.organz.utilities.enums.ClientType;
+import com.humanharvest.organz.utilities.enums.Country;
+import com.humanharvest.organz.utilities.enums.Gender;
+import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
 import com.humanharvest.organz.views.client.Views;
 
-import javax.persistence.*;
-import java.time.*;
-import java.util.*;
+import javax.persistence.Access;
+import javax.persistence.AccessType;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.Period;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -158,11 +189,12 @@ public class Client implements ConcurrencyControlledEntity {
 
     /**
      * Create a new client object
-     * @param firstName First name string
-     * @param middleName Middle name(s). May be null
-     * @param lastName Last name string
+     *
+     * @param firstName   First name string
+     * @param middleName  Middle name(s). May be null
+     * @param lastName    Last name string
      * @param dateOfBirth LocalDate formatted date of birth
-     * @param uid A unique user ID. Should be queried to ensure uniqueness
+     * @param uid         A unique user ID. Should be queried to ensure uniqueness
      */
     public Client(String firstName, String middleName, String lastName, LocalDate dateOfBirth, Integer uid) {
         this.uid = uid;
@@ -180,6 +212,7 @@ public class Client implements ConcurrencyControlledEntity {
 
     /**
      * Set a single organs donation status
+     *
      * @param organ The organ to be set
      * @param value Boolean value to set the status too
      * @throws OrganAlreadyRegisteredException Thrown if the organ is set to true when it already is
@@ -250,6 +283,7 @@ public class Client implements ConcurrencyControlledEntity {
     /**
      * Returns a string listing the organs that the client is currently donating, or a message that the client currently
      * has no organs registered for donation if that is the case.
+     *
      * @return The client's organ status string.
      * @throws IllegalArgumentException If the type is not either requests or donations
      */
@@ -281,6 +315,7 @@ public class Client implements ConcurrencyControlledEntity {
 
     /**
      * Returns a formatted string listing the client's ID number, full name, and the organs they are donating.
+     *
      * @return The formatted client info string.
      * @throws IllegalArgumentException If the type is not either requests or donations
      */
@@ -299,6 +334,7 @@ public class Client implements ConcurrencyControlledEntity {
 
     /**
      * Returns a preformatted string of the users change history
+     *
      * @return Formatted string with newlines
      */
     public String getUpdatesString() {
@@ -314,6 +350,7 @@ public class Client implements ConcurrencyControlledEntity {
 
     /**
      * Get a formatted string with the clients user information. Does not include organ donation status
+     *
      * @return Formatted string with the clients user information. Does not include organ donation status
      */
     public String getClientInfoString() {
@@ -326,6 +363,7 @@ public class Client implements ConcurrencyControlledEntity {
 
     /**
      * Get the full name of the client concatenating their names
+     *
      * @return The full name string
      */
     public String getFullName() {
@@ -587,6 +625,7 @@ public class Client implements ConcurrencyControlledEntity {
 
     /**
      * Returns a new list containing the medications which are currently being used by the Client.
+     *
      * @return The list of medications currently being used by the Client.
      */
     public List<MedicationRecord> getCurrentMedications() {
@@ -597,6 +636,7 @@ public class Client implements ConcurrencyControlledEntity {
 
     /**
      * Returns a new list containing the medications which were previously used by the Client.
+     *
      * @return The list of medications used by the Client in the past.
      */
     public List<MedicationRecord> getPastMedications() {
@@ -611,6 +651,7 @@ public class Client implements ConcurrencyControlledEntity {
 
     /**
      * Returns a new list containing all medications used by the Client, past and current.
+     *
      * @return The list of all medications used by the Client.
      */
     public List<MedicationRecord> getMedications() {
@@ -619,6 +660,7 @@ public class Client implements ConcurrencyControlledEntity {
 
     /**
      * Adds a new MedicationRecord to the client's history.
+     *
      * @param record The given MedicationRecord.
      */
     public void addMedicationRecord(MedicationRecord record) {
@@ -629,6 +671,7 @@ public class Client implements ConcurrencyControlledEntity {
 
     /**
      * Deletes the given MedicationRecord from the client's history.
+     *
      * @param record The given MedicationRecord.
      */
     public void deleteMedicationRecord(MedicationRecord record) {
@@ -639,6 +682,7 @@ public class Client implements ConcurrencyControlledEntity {
 
     /**
      * Returns the MedicationRecord for the client with the given index
+     *
      * @param index index of the MedicationRecord
      * @return the MedicationRecord with the given id
      */
@@ -649,6 +693,7 @@ public class Client implements ConcurrencyControlledEntity {
     /**
      * Calculates the BMI of the Client based off their height and weight - BMI = weight/height^2.
      * If either field is 0, the result returned is 0.
+     *
      * @return the users calculated BMI.
      */
     public double getBMI() {
@@ -665,6 +710,7 @@ public class Client implements ConcurrencyControlledEntity {
      * Calculates the users age based on their date of birth and date of death.
      * If the date of death is null the age is calculated base of the LocalDate.now().
      * If the date of birth is null, -1 is returned.
+     *
      * @return age of the Client.
      */
     public int getAge() {
@@ -682,6 +728,7 @@ public class Client implements ConcurrencyControlledEntity {
 
     /**
      * Returns a list of illnesses that Client currently has or previously had
+     *
      * @return List of illnesses held by Client
      */
     public List<IllnessRecord> getIllnesses() {
@@ -690,6 +737,7 @@ public class Client implements ConcurrencyControlledEntity {
 
     /**
      * Returns an illness given it's ID value.
+     *
      * @param id The id of the illness.
      * @return The illness record requested, or null if it doesn't exist.
      */
@@ -712,6 +760,7 @@ public class Client implements ConcurrencyControlledEntity {
 
     /**
      * Returns list of illnesses client currently has
+     *
      * @return List of illnesses client currently has
      */
     public List<IllnessRecord> getCurrentIllnesses() {
@@ -733,6 +782,7 @@ public class Client implements ConcurrencyControlledEntity {
 
     /**
      * Adds Illness history to Person
+     *
      * @param record IllnessRecord that is wanted to be added
      */
     public void addIllnessRecord(IllnessRecord record) {
@@ -743,6 +793,7 @@ public class Client implements ConcurrencyControlledEntity {
 
     /**
      * Deletes illness history from Person
+     *
      * @param record The illness history that is wanted to be deleted
      */
     public void deleteIllnessRecord(IllnessRecord record) {
@@ -753,6 +804,7 @@ public class Client implements ConcurrencyControlledEntity {
 
     /**
      * Returns a list of procedures that the client has undergone or is going to undergo.
+     *
      * @return A list of procedures for the client.
      */
     public List<ProcedureRecord> getProcedures() {
@@ -761,6 +813,7 @@ public class Client implements ConcurrencyControlledEntity {
 
     /**
      * Returns a list of procedures that the client is going to undergo.
+     *
      * @return A list of pending procedures for the client.
      */
     public List<ProcedureRecord> getPendingProcedures() {
@@ -775,6 +828,7 @@ public class Client implements ConcurrencyControlledEntity {
 
     /**
      * Adds the given procedure record to the list of procedures for this client.
+     *
      * @param record The procedure record to add.
      */
     public void addProcedureRecord(ProcedureRecord record) {
@@ -785,6 +839,7 @@ public class Client implements ConcurrencyControlledEntity {
 
     /**
      * Removes the given procedure record from the list of procedures for this client.
+     *
      * @param record The procedure record to delete.
      */
     public void deleteProcedureRecord(ProcedureRecord record) {
@@ -811,6 +866,7 @@ public class Client implements ConcurrencyControlledEntity {
 
     /**
      * Takes a string and checks if each space separated string section matches one of the names
+     *
      * @param searchParam The string to be checked
      * @return True if all sections of the passed string match any of the names of the client
      */
@@ -834,6 +890,7 @@ public class Client implements ConcurrencyControlledEntity {
 
     /**
      * Returns a HashSet of all names of the Client. If they do not have a middle/preferred name, this is set as "".
+     *
      * @return the Hashset of all the Clients names.
      */
     private HashSet<String> splitNames() {
@@ -864,6 +921,7 @@ public class Client implements ConcurrencyControlledEntity {
     /**
      * Takes a string and checks if each space separated string section begins with the same values as the search
      * parameter.
+     *
      * @param searchParam The string to be checked
      * @return True if all sections of the passed string match any of the names of the client
      */
@@ -896,6 +954,7 @@ public class Client implements ConcurrencyControlledEntity {
 
     /**
      * Client objects are identified by their uid
+     *
      * @param o The object to compare
      * @return If the Client is a match
      */
@@ -948,6 +1007,7 @@ public class Client implements ConcurrencyControlledEntity {
 
     /**
      * Indicates whether the client is a donor (has chosen to donate at least one organ)
+     *
      * @return boolean of whether the client has chosen to donate any organs
      */
     @JsonIgnore
@@ -985,6 +1045,7 @@ public class Client implements ConcurrencyControlledEntity {
 
     /**
      * Indicates whether the client is a receiver (has at least one transplant request)
+     *
      * @return boolean of whether the client has any organ transplant requests
      */
     @JsonIgnore
@@ -996,11 +1057,12 @@ public class Client implements ConcurrencyControlledEntity {
      * Marks the client as dead.
      * - Resolves any pending organ requests by this client.
      * - Marks all the organs they were willing to donate as donated.
-     * @param dateOfDeath Their date of death.
-     * @param timeOfDeath Their time of death.
+     *
+     * @param dateOfDeath    Their date of death.
+     * @param timeOfDeath    Their time of death.
      * @param countryOfDeath The country they died in.
-     * @param regionOfDeath The region they died in.
-     * @param cityOfDeath The city they died in.
+     * @param regionOfDeath  The region they died in.
+     * @param cityOfDeath    The city they died in.
      */
     public void markDead(LocalDate dateOfDeath, LocalTime timeOfDeath, Country countryOfDeath, String regionOfDeath,
                          String cityOfDeath) {
@@ -1054,9 +1116,9 @@ public class Client implements ConcurrencyControlledEntity {
     /**
      * Registers the given {@link Organ} as having been donated by this client at this moment.
      *
-     * @param organ The organ donated.
+     * @param organ       The organ donated.
      * @param timeDonated When the organ was removed from this client's body.
-     * @param id The id to use for the {@link DonatedOrgan}
+     * @param id          The id to use for the {@link DonatedOrgan}
      */
     public void donateOrgan(Organ organ, LocalDateTime timeDonated, Long id) {
         donatedOrgans.add(new DonatedOrgan(organ, this, timeDonated, id));
@@ -1065,6 +1127,7 @@ public class Client implements ConcurrencyControlledEntity {
     /**
      * Returns a hashed version of the latest timestamp for use in concurrency control
      * The hash is surrounded by double quotes as required for a valid ETag
+     *
      * @return The ETag string with double quotes
      */
     @Override
@@ -1078,6 +1141,7 @@ public class Client implements ConcurrencyControlledEntity {
 
     /**
      * Does the specified Client match the ClientType
+     *
      * @param type The ClientType to match
      * @return If the Client matches that type
      */

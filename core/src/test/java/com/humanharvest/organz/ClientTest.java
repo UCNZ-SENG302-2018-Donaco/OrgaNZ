@@ -11,7 +11,11 @@ import java.time.LocalTime;
 import java.time.Period;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ClientTest {
     private static final String FIRST_NAME = "First";
@@ -250,7 +254,7 @@ public class ClientTest {
     }
 
     @Test
-    void testClientIsDonor() throws OrganAlreadyRegisteredException{
+    void testClientIsDonor() throws OrganAlreadyRegisteredException {
         client = new Client(FIRST_NAME, null, FIRST_NAME, LocalDate.of(1970, 1, 1), 1);
         client.setOrganDonationStatus(Organ.HEART, true);
         assertTrue(client.isDonor());

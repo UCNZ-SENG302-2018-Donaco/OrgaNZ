@@ -1,4 +1,5 @@
 Feature: Does POST /login/client/ work?
+
   Scenario: Login with valid credentials
     Given there is a test client
     When I post to /login/client/ using { "id": 1 }

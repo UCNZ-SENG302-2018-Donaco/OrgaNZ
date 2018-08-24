@@ -1,15 +1,15 @@
 package com.humanharvest.organz.views.client;
 
-import java.lang.reflect.Member;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.stream.Collectors;
-
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.humanharvest.organz.utilities.enums.BloodType;
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.views.ModifyBaseObject;
+
+import java.lang.reflect.Member;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.stream.Collectors;
 
 @JsonSerialize(using = ModifyBaseObject.Serialiser.class)
 public class ModifyClientObject extends ModifyBaseObject {

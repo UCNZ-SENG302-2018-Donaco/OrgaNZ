@@ -1,10 +1,10 @@
 package com.humanharvest.organz.actions.client;
 
-import java.time.LocalDate;
-import java.util.Objects;
-
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.state.ClientManager;
+
+import java.time.LocalDate;
+import java.util.Objects;
 
 /**
  * A reversible action to modify a given illness record. Only the diagnosis date, cured date and chronic status
@@ -23,6 +23,7 @@ public class ModifyIllnessRecordAction extends ClientAction {
     /**
      * Creates a new action to modify a illness record. Will initialise the new diagnosis/cured dates and new chronic
      * status to be the same as the current ones.
+     *
      * @param record The illness record to modify.
      */
     public ModifyIllnessRecordAction(IllnessRecord record, ClientManager manager) {
@@ -38,6 +39,7 @@ public class ModifyIllnessRecordAction extends ClientAction {
 
     /**
      * Make the action change the illness record's diagnosis date to the one given.
+     *
      * @param newDiagnosisDate The new diagnosis date.
      */
     public void changeDiagnosisDate(LocalDate newDiagnosisDate) {
@@ -46,6 +48,7 @@ public class ModifyIllnessRecordAction extends ClientAction {
 
     /**
      * Make the action change the illness record's cured date to the one given.
+     *
      * @param newCuredDate The new diagnosis date.
      */
     public void changeCuredDate(LocalDate newCuredDate) {
@@ -54,6 +57,7 @@ public class ModifyIllnessRecordAction extends ClientAction {
 
     /**
      * Make the action change the illness record's chronic status to the status given.
+     *
      * @param newChronic The new chronic status.
      */
     public void changeChronicStatus(boolean newChronic) {
@@ -62,6 +66,7 @@ public class ModifyIllnessRecordAction extends ClientAction {
 
     /**
      * Apply all changes to the illness record.
+     *
      * @throws IllegalStateException If no changes were made.
      */
     @Override

@@ -36,6 +36,7 @@ public class ClientLoginController extends SubController {
 
     /**
      * Override so we can set the page title.
+     *
      * @param mainController The MainController
      */
     @Override

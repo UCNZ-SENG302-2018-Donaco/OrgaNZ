@@ -1,17 +1,15 @@
 package com.humanharvest.organz.database;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-import javax.persistence.PersistenceException;
-import javax.persistence.RollbackException;
-
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.state.State.DataStorageType;
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+
+import javax.persistence.PersistenceException;
+import javax.persistence.RollbackException;
+import java.sql.Connection;
+import java.sql.SQLException;
 
 /**
  * A handler for all database requests.
@@ -31,6 +29,7 @@ public class DBManager {
 
     /**
      * Constructor that can be used to dependency-inject the manager's SessionFactory.
+     *
      * @param sessionFactory The SessionFactory for this manager to use for its database interactions.
      */
     public DBManager(SessionFactory sessionFactory) {
@@ -41,6 +40,7 @@ public class DBManager {
 
     /**
      * Builds the default Hibernate SessionFactory based on the Hibernate config file.
+     *
      * @return A new Hibernate SessionFactory.
      */
     private static SessionFactory buildSessionFactory() {
@@ -49,12 +49,13 @@ public class DBManager {
 
     /**
      * Returns a standard JDBC SQL Connection
+     *
      * @return The connection object
      * @throws SQLException Thrown if there are any issues connecting to the database
      */
     public Connection getStandardSqlConnection() throws SQLException {
         MysqlDataSource dataSource = new MysqlDataSource();
-        Configuration cfg = new Configuration().configure(("hibernate.cfg.xml"));
+        Configuration cfg = new Configuration().configure("hibernate.cfg.xml");
         dataSource.setURL(cfg.getProperty("hibernate.connection.url"));
         dataSource.setUser(cfg.getProperty("hibernate.connection.username"));
         dataSource.setPassword(cfg.getProperty("hibernate.connection.password"));
@@ -73,6 +74,7 @@ public class DBManager {
      * Returns a new DB session that can be used for executing database requests. IMPORTANT: This should only by used
      * by classes that are inherently coupled to using a database, e.g. ClientManagerDBPure. You should always avoid
      * using this if there is any other alternative (e.g. using methods from a ClientManager instead).
+     *
      * @return A new DB session.
      */
     public Session getDBSession() {
@@ -83,8 +85,9 @@ public class DBManager {
      * Saves an entity (representing a record in a table) to the database.
      * If the entity is already present in the database, then its record is updated if necessary.
      * If the entity is not yet present in the database, then a record for it is inserted into its table.
+     *
      * @param entity The entity to save. Must be of a type that is annotated with the JPA @Entity tag, and that has a
-     * table within the database.
+     *               table within the database.
      * @throws PersistenceException If an error occurs when saving the entity to the database.
      */
     public void saveEntity(Object entity) throws PersistenceException {

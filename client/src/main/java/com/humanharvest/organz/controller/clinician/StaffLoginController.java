@@ -32,6 +32,7 @@ public class StaffLoginController extends SubController {
 
     /**
      * Override so we can set the page title.
+     *
      * @param mainController The MainController
      */
     @Override
@@ -50,6 +51,7 @@ public class StaffLoginController extends SubController {
 
     /**
      * Checks that the staff ID is an integer and is positive.
+     *
      * @return true if the staffID is a positive integer. False otherwise.
      */
     private boolean isValidStaffIdInput() {
@@ -112,7 +114,7 @@ public class StaffLoginController extends SubController {
      */
     @FXML
     private void signIn() {
-        if(isValidStaffIdInput()) {
+        if (isValidStaffIdInput()) {
             if (IS_NUMBER.matcher(staffId.getText()).matches()) {
                 signInClinician();
             } else {

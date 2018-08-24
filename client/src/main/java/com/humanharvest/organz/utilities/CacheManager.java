@@ -1,21 +1,5 @@
 package com.humanharvest.organz.utilities;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.Paths;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
@@ -34,6 +18,22 @@ import com.humanharvest.organz.utilities.exceptions.BadGatewayException;
 import com.humanharvest.organz.utilities.web.DrugInteractionsHandler;
 import com.humanharvest.organz.utilities.web.MedActiveIngredientsHandler;
 import com.humanharvest.organz.utilities.web.WebAPIHandler;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Stores and retrieves arbitrary values from a persistent location.
@@ -62,10 +62,11 @@ public abstract class CacheManager {
 
     /**
      * Adds data to a cache, given a category, key, value and optional expiry date.
+     *
      * @param categoryName The category of the cached value.
-     * @param arguments The key used to store/retrieve the cached value.
-     * @param value The cached value.
-     * @param expires An optional expiry date.
+     * @param arguments    The key used to store/retrieve the cached value.
+     * @param value        The cached value.
+     * @param expires      An optional expiry date.
      */
     public <T> void addCachedData(String categoryName, Object[] arguments, T value, Optional<Instant> expires) {
         if (Objects.isNull(arguments) || arguments.length == 0) {
@@ -87,15 +88,16 @@ public abstract class CacheManager {
         Key key = new Key(arguments);
         Value realValue =
                 new Value(JSONConverter.getObjectMapper().convertValue(value, JsonNode.class),
-                expires);
+                        expires);
         category.setData(key, realValue);
     }
 
     /**
      * Gets data from a cache, given a category and key.
+     *
      * @param categoryName The category of the cached value.
-     * @param type The type of the cached value, must be deserialisable using GSON.
-     * @param arguments The key used to store/retrieve the cached value.
+     * @param type         The type of the cached value, must be deserialisable using GSON.
+     * @param arguments    The key used to store/retrieve the cached value.
      * @return The stored data, or an empty optional if it cannot be found or has expired.
      */
     public <T> Optional<T> getCachedData(String categoryName, TypeReference<?> type, Object[] arguments) {
@@ -379,7 +381,7 @@ public abstract class CacheManager {
 
             try {
                 categories = JSONConverter.getObjectMapper().readValue(cacheFile,
-                        new TypeReference<Map<String, Category>>(){
+                        new TypeReference<Map<String, Category>>() {
                         });
             } catch (FileNotFoundException e) {
                 categories = new HashMap<>();
