@@ -32,7 +32,8 @@ public abstract class WebAPIHandler {
         this.httpTransport = httpTransport;
     }
 
-    public abstract List<String> getData(Object... arguments) throws IOException, BadDrugNameException, BadGatewayException;
+    public abstract List<String> getData(Object... arguments)
+            throws IOException, BadDrugNameException, BadGatewayException;
 
     /**
      * Adds the given data to the cache, with the arguments as the key.

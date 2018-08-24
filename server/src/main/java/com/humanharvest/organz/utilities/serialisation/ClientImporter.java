@@ -1,10 +1,6 @@
 package com.humanharvest.organz.utilities.serialisation;
 
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.IllnessRecord;
-import com.humanharvest.organz.MedicationRecord;
-import com.humanharvest.organz.ProcedureRecord;
-import com.humanharvest.organz.TransplantRequest;
+import com.humanharvest.organz.*;
 import com.humanharvest.organz.utilities.validators.ClientValidator;
 
 import java.io.File;
@@ -12,12 +8,16 @@ import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A class that can handle importing serialized clients from a file using a given {@link ReadClientStrategy}.
  * Provides functionality to count the number of valid and invalid records, and retrieve only the valid ones.
  */
 public class ClientImporter {
+
+    private static final Logger LOGGER = Logger.getLogger(ClientImporter.class.getName());
 
     private final ReadClientStrategy readStrategy;
     private final ClientValidator validator = new ClientValidator();
@@ -67,11 +67,12 @@ public class ClientImporter {
                         validClients.add(client);
                     }
 
-                } catch (InvalidObjectException exc) {
+                } catch (InvalidObjectException e) {
                     // The client that was read was invalid
+                    LOGGER.log(Level.WARNING, e.getMessage(), e);
                     invalidCount++;
                     errorSummary.append(String.format("Record #%d was invalid because: \n%s\n",
-                            validCount + invalidCount, exc.getMessage()));
+                            validCount + invalidCount, e.getMessage()));
                 }
             }
         } finally {

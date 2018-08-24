@@ -38,7 +38,8 @@ public class CommandFactory implements IFactory {
      * @throws InstantiationException    if the class that declares the underlying constructor represents an abstract
      *                                   class.
      * @throws NoSuchMethodException     if the given class does not have a constructor with either (PrintStream,
-     *                                   ActionInvoker) or (PrintStream) or (). Any command being injected must implement one of these constructors
+     *                                   ActionInvoker) or (PrintStream) or ().
+     *                                   Any command being injected must implement one of these constructors.
      */
     @Override
     public <K> K create(Class<K> aClass)

@@ -2,18 +2,18 @@ package com.humanharvest.organz.actions.images;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.actions.Action;
+import com.humanharvest.organz.server.controller.client.ClientController;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import org.apache.commons.io.IOUtils;
 
 import java.awt.image.ImagingOpException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class DeleteImageAction extends Action {
+
+    private static final Logger LOGGER = Logger.getLogger(DeleteImageAction.class.getName());
 
     private final String imagesDirectory;
     private Client client;
@@ -50,6 +50,7 @@ public class DeleteImageAction extends Action {
         try (OutputStream out = new FileOutputStream(imagesDirectory + client.getUid() + ".png")) {
             out.write(image);
         } catch (IOException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
             throw new ImagingOpException(e.getMessage());
         }
 

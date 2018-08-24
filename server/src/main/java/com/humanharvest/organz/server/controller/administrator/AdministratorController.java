@@ -149,7 +149,8 @@ public class AdministratorController {
         // duplicate code in tons of places but need to work it out
 
         //Fetch the administrator given by username
-        Optional<Administrator> optionalAdministrator = State.getAdministratorManager().getAdministratorByUsername(username);
+        Optional<Administrator> optionalAdministrator =
+                State.getAdministratorManager().getAdministratorByUsername(username);
         if (!optionalAdministrator.isPresent()) {
             //Return 404 if that administrator does not exist
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -215,7 +216,8 @@ public class AdministratorController {
         AdministratorManager administratorManager = State.getAdministratorManager();
 
         //Fetch the administrator given by username
-        Optional<Administrator> optionalAdministrator = State.getAdministratorManager().getAdministratorByUsername(username);
+        Optional<Administrator> optionalAdministrator =
+                State.getAdministratorManager().getAdministratorByUsername(username);
         if (!optionalAdministrator.isPresent()) {
             //Return 404 if that administrator does not exist
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

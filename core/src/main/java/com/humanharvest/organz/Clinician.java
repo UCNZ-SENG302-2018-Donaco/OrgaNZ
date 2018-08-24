@@ -51,9 +51,7 @@ public class Clinician implements ConcurrencyControlledEntity {
     @JsonView(Views.Details.class)
     private LocalDateTime modifiedOn;
 
-    @OneToMany(
-            cascade = CascadeType.ALL
-    )
+    @OneToMany(cascade = CascadeType.ALL)
     private List<HistoryItem> changesHistory = new ArrayList<>();
 
     protected Clinician() {
@@ -93,6 +91,11 @@ public class Clinician implements ConcurrencyControlledEntity {
         this.password = password;
     }
 
+    /**
+     * Returns true if the password is valid
+     * @param password the password to check
+     * @return true if the password is valid
+     */
     public boolean isPasswordValid(String password) {
         return Objects.equals(this.password, password);
     }

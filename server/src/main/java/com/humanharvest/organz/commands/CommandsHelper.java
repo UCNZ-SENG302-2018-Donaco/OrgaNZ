@@ -1,6 +1,7 @@
 package com.humanharvest.organz.commands;
 
 import com.humanharvest.organz.actions.ActionInvoker;
+import com.humanharvest.organz.server.controller.client.ClientController;
 import picocli.CommandLine;
 import picocli.CommandLine.Help.Ansi;
 
@@ -9,8 +10,12 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public final class CommandsHelper {
+
+    private static final Logger LOGGER = Logger.getLogger(CommandsHelper.class.getName());
 
     private CommandsHelper() {
     }
@@ -86,7 +91,7 @@ public final class CommandsHelper {
                     Ansi.AUTO,
                     commands);
         } catch (IllegalStateException e) {
-            e.printStackTrace(printStream);
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
         }
 
         return byteStream.toString();

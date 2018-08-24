@@ -49,7 +49,8 @@ public class ModifyObjectByMethodAction extends Action {
      * @throws NoSuchMethodException Thrown if the object does not have the field specified
      * @throws NoSuchFieldException  Thrown if the object setter expected type does not match one of the value types
      */
-    public ModifyObjectByMethodAction(Object toModify, String field, Object oldValue, Object newValue, boolean isPrivate)
+    public ModifyObjectByMethodAction(Object toModify, String field,
+                                      Object oldValue, Object newValue, boolean isPrivate)
             throws NoSuchMethodException, NoSuchFieldException {
         setupAction(toModify, field, oldValue, newValue);
         this.isPrivate = isPrivate;
@@ -65,8 +66,10 @@ public class ModifyObjectByMethodAction extends Action {
                 }
                 PrimitiveConverter converter = new PrimitiveConverter();
                 Class<?> expectedClass = converter.convertToWrapper(method.getParameterTypes()[0]);
-                if (newValue != null && newValue.getClass() != expectedClass
-                        || oldValue != null && oldValue.getClass() != expectedClass) {
+
+                // If the new value or old value: isn't null, and doesn't match the expected class
+                if ((newValue != null && newValue.getClass() != expectedClass)
+                        || (oldValue != null && oldValue.getClass() != expectedClass)) {
                     throw new NoSuchFieldException("Method expects a different field type than the one given");
                 }
                 this.toModify = toModify;

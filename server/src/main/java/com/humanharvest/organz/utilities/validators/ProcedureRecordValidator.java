@@ -20,7 +20,8 @@ public class ProcedureRecordValidator {
             errors.append("Procedure summary must not be empty.");
         }
         if (!dateValid(record)) {
-            errors.append("Procedure diagnosis date must be in a valid format and must represent a date in the past.\n");
+            errors.append(
+                    "Procedure diagnosis date must be in a valid format and must represent a date in the past.\n");
         }
 
         if (errors.length() == 0) {

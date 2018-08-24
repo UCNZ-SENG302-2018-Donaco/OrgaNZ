@@ -27,9 +27,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @RestController
 public class ClientIllnessesController {
+
+    private static final Logger LOGGER = Logger.getLogger(ClientController.class.getName());
 
     /**
      * Gets Clients Illnesses
@@ -38,17 +42,18 @@ public class ClientIllnessesController {
      * @return Returns list of Illnesses
      */
     @GetMapping("/clients/{id}/illnesses")
-    public ResponseEntity<List<IllnessRecord>> getClientCurrentIllnesses(@PathVariable int id,
-                                                                         @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {
+    public ResponseEntity<List<IllnessRecord>> getClientCurrentIllnesses(
+            @PathVariable int id,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {
 
-        Optional<Client> Optionalclient = State.getClientManager().getClientByID(id);
-        if (Optionalclient.isPresent()) {
-            Client client = Optionalclient.get();
+        Optional<Client> optionalClient = State.getClientManager().getClientByID(id);
+        if (optionalClient.isPresent()) {
+            Client client = optionalClient.get();
             //State.getAuthenticationManager().verifyClientAccess(authToken, client);
             HttpHeaders headers = new HttpHeaders();
             headers.setETag(client.getETag());
 
-            return new ResponseEntity<>(Optionalclient.get().getIllnesses(), headers, HttpStatus.OK);
+            return new ResponseEntity<>(optionalClient.get().getIllnesses(), headers, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -100,6 +105,7 @@ public class ClientIllnessesController {
             }
 
         } catch (NullPointerException e) {
+            LOGGER.log(Level.INFO, e.getMessage(), e);
             //Record does not exist
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -123,9 +129,10 @@ public class ClientIllnessesController {
     }
 
     @PostMapping("/clients/{uid}/illnesses")
-    public ResponseEntity<List<IllnessRecord>> postIllness(@RequestBody CreateIllnessView illnessView,
-                                                           @PathVariable int uid,
-                                                           @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
+    public ResponseEntity<List<IllnessRecord>> postIllness(
+            @RequestBody CreateIllnessView illnessView,
+            @PathVariable int uid,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws InvalidRequestException {
 
         Optional<Client> client = State.getClientManager().getClientByID(uid);
@@ -149,9 +156,10 @@ public class ClientIllnessesController {
     }
 
     @DeleteMapping("/clients/{uid}/illnesses/{id}")
-    public ResponseEntity<IllnessRecord> deleteIllness(@PathVariable int uid,
-                                                       @PathVariable int id,
-                                                       @RequestHeader(value = "X-Auth-Token", required = false) String authToken) throws InvalidRequestException {
+    public ResponseEntity<IllnessRecord> deleteIllness(
+            @PathVariable int uid,
+            @PathVariable int id,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken) throws InvalidRequestException {
         Optional<Client> client = State.getClientManager().getClientByID(uid);
         if (!client.isPresent()) {
             //Return 404 if that client does not exist

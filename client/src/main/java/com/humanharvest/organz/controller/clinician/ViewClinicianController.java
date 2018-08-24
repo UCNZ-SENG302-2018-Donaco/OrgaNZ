@@ -41,7 +41,6 @@ import java.util.logging.Logger;
 public class ViewClinicianController extends ViewBaseController {
 
     private static final Logger LOGGER = Logger.getLogger(ViewClinicianController.class.getName());
-
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.SHORT)
             .withZone(ZoneId.systemDefault());
 
@@ -333,7 +332,7 @@ public class ViewClinicianController extends ViewBaseController {
             return true;
 
         } catch (NotFoundException e) {
-            LOGGER.log(Level.WARNING, "Client not found");
+            LOGGER.log(Level.WARNING, "Client not found", e);
             PageNavigator.showAlert(AlertType.WARNING, "Clinician not found", "The clinician could not be found on "
                     + "the server, it may have been deleted", mainController.getStage());
             return false;
@@ -343,10 +342,11 @@ public class ViewClinicianController extends ViewBaseController {
                     + "please try again later", mainController.getStage());
             return false;
         } catch (IfMatchFailedException e) {
-            LOGGER.log(Level.INFO, "If-Match did not match");
+            LOGGER.log(Level.INFO, "If-Match did not match", e);
             PageNavigator.showAlert(AlertType.WARNING, "Outdated Data",
                     "The clinician has been modified since you retrieved the data.\nIf you would still like to "
-                            + "apply these changes please submit again, otherwise refresh the page to update the data.", mainController.getStage());
+                            + "apply these changes please submit again, otherwise refresh the page to update the data.",
+                    mainController.getStage());
             return false;
         }
     }

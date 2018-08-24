@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -80,11 +81,13 @@ public class Load implements Runnable {
             outputStream.println(message);
             //TODO: State.getSession().addToSessionHistory(new HistoryItem("LOAD", message));
 
-        } catch (FileNotFoundException exc) {
+        } catch (FileNotFoundException e) {
+            LOGGER.log(Level.INFO, e.getMessage(), e);
             outputStream.println(String.format("Could not find file: '%s'.", file.getAbsolutePath()));
-        } catch (IOException exc) {
+        } catch (IOException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
             outputStream.println(String.format("An IO error occurred when loading from file: '%s'\n%s",
-                    file.getName(), exc.getMessage()));
+                    file.getName(), e.getMessage()));
         }
     }
 

@@ -60,7 +60,8 @@ public class ClinicianManagerRest implements ClinicianManager {
         httpHeaders.set("X-Auth-Token", State.getToken());
         HttpEntity<Clinician> entity = new HttpEntity<>(null, httpHeaders);
 
-        ResponseEntity<Clinician> clinician = State.getRestTemplate().exchange(State.getBaseUri() + "clinicians/{staffId}",
+        ResponseEntity<Clinician> clinician = State.getRestTemplate().exchange(
+                State.getBaseUri() + "clinicians/{staffId}",
                 HttpMethod.GET, entity, Clinician.class, staffId);
         State.setClinicianEtag(clinician.getHeaders().getETag());
         return Optional.ofNullable(clinician.getBody());

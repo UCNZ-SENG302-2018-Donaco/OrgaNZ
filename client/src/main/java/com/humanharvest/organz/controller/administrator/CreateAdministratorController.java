@@ -18,7 +18,12 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import org.controlsfx.control.Notifications;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 public class CreateAdministratorController extends SubController {
+
+    private static final Logger LOGGER = Logger.getLogger(CreateAdministratorController.class.getName());
 
     @FXML
     private Label usernameLabel;
@@ -85,7 +90,8 @@ public class CreateAdministratorController extends SubController {
                 usernameLabel.setTextFill(Color.RED);
                 valid = false;
                 PageNavigator.showAlert(AlertType.ERROR, "Invalid username",
-                        "Username must not be an integer, so as not to clash with clincians' staff IDs.", mainController.getStage());
+                        "Username must not be an integer, so as not to clash with clincians' staff IDs.",
+                        mainController.getStage());
             } catch (NumberFormatException ex) {
                 // Non-numeric username - check if it already exists
                 if (administratorManager.doesUsernameExist(usernameTextField.getText())) {
@@ -130,6 +136,7 @@ public class CreateAdministratorController extends SubController {
 
                 PageNavigator.loadPage(Page.SEARCH, mainController);
             } catch (ServerRestException e) {
+                LOGGER.log(Level.INFO, e.getMessage(), e);
                 PageNavigator.showAlert(AlertType.ERROR,
                         "Error",
                         "An Administrator with this username exists. Please pick another", mainController.getStage());

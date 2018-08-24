@@ -29,8 +29,8 @@ public class ModifyAdministratorAction extends AdministratorAction {
      * @param oldValue The object the field initially had. Should be taken from the Administrator equivalent getter
      * @param newValue The object the field should be update to. Must match the setters Object type
      * @throws NoSuchMethodException Thrown if the Administrator does not have the specified setter
-     * @throws NoSuchFieldException  Thrown if the Administrator specified setter does not take the same type as given in
-     *                               one of the values
+     * @throws NoSuchFieldException  Thrown if the Administrator specified setter does not take the same type
+     *                               as given in one of the values
      */
     public void addChange(String field, Object oldValue, Object newValue)
             throws NoSuchMethodException, NoSuchFieldException {

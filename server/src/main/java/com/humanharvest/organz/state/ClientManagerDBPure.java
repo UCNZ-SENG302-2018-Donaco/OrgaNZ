@@ -5,6 +5,7 @@ import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.database.DBManager;
+import com.humanharvest.organz.server.controller.client.ClientController;
 import com.humanharvest.organz.utilities.algorithms.MatchOrganToRecipients;
 import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
 import com.humanharvest.organz.utilities.enums.ClientType;
@@ -36,6 +37,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.StringJoiner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -43,6 +46,8 @@ import java.util.stream.Collectors;
  * every time a request is made (no caching).
  */
 public class ClientManagerDBPure implements ClientManager {
+
+    private static final Logger LOGGER = Logger.getLogger(ClientController.class.getName());
 
     private final DBManager dbManager;
 
@@ -83,7 +88,8 @@ public class ClientManagerDBPure implements ClientManager {
                 session.replicate(client, ReplicationMode.OVERWRITE);
             }
             trns.commit();
-        } catch (RollbackException exc) {
+        } catch (RollbackException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
             if (trns != null) {
                 trns.rollback();
             }
@@ -107,10 +113,14 @@ public class ClientManagerDBPure implements ClientManager {
 
         Transaction trns = null;
 
-        String isDonor = "EXISTS (SELECT donating.Client_uid FROM Client_organsDonating AS donating WHERE donating.Client_uid=c.uid LIMIT 1)";
-        String notIsDonor = "NOT EXISTS (SELECT donating.Client_uid FROM Client_organsDonating AS donating WHERE donating.Client_uid=c.uid LIMIT 1)";
-        String isRequesting = "EXISTS (SELECT requesting.Client_uid FROM TransplantRequest AS requesting WHERE requesting.Client_uid=c.uid LIMIT 1)";
-        String notIsRequesting = "NOT EXISTS (SELECT requesting.Client_uid FROM TransplantRequest AS requesting WHERE requesting.Client_uid=c.uid LIMIT 1)";
+        String isDonor = "EXISTS (SELECT donating.Client_uid FROM Client_organsDonating AS donating " +
+                "WHERE donating.Client_uid=c.uid LIMIT 1)";
+        String notIsDonor = "NOT EXISTS (SELECT donating.Client_uid FROM Client_organsDonating AS donating " +
+                "WHERE donating.Client_uid=c.uid LIMIT 1)";
+        String isRequesting = "EXISTS (SELECT requesting.Client_uid FROM TransplantRequest AS requesting " +
+                "WHERE requesting.Client_uid=c.uid LIMIT 1)";
+        String notIsRequesting = "NOT EXISTS (SELECT requesting.Client_uid FROM TransplantRequest AS requesting " +
+                "WHERE requesting.Client_uid=c.uid LIMIT 1)";
 
         //TODO: Make this use the complex sort as in ClientNameSorter
         String nameSort = "lastName";
@@ -136,7 +146,8 @@ public class ClientManagerDBPure implements ClientManager {
                 params.put("maximumAge", maximumAge);
             }
 
-            //Setup region filter. We use region IN, then have to do some fancy string conversions as the Hibernate params weren't working
+            // Setup region filter.
+            // We use region IN, then have to do some fancy string conversions as the Hibernate params weren't working
             if (regions != null && regions.size() > 0) {
                 //TODO: Work out why the params didn't work with EnumSet or even when converting it to string so we can use that instead of this uglyness
                 whereJoiner.add("c.region IN (" + regions.stream().map(region -> "'" + region.replace("'", "''") + "'")
@@ -144,7 +155,8 @@ public class ClientManagerDBPure implements ClientManager {
 //                params.put("regions", regions);
             }
 
-            //Setup birth gender filter. We use gender IN, then have to do some fancy string conversions as the Hibernate params weren't working
+            // Setup birth gender filter.
+            // We use gender IN, then have to do some fancy string conversions as the Hibernate params weren't working
             if (birthGenders != null && birthGenders.size() > 0) {
                 //TODO: Work out why the params didn't work with EnumSet or even when converting it to string so we can use that instead of this uglyness
                 whereJoiner.add("c.gender IN (" + birthGenders.stream()
@@ -153,10 +165,14 @@ public class ClientManagerDBPure implements ClientManager {
 //                params.put("genders", birthGenders);
             }
 
-            //Setup donating filter. We use an INNER JOIN and therefor select only clients where they have an entry in the Client_organsDonating table that matches one of the given organs
+            // Setup donating filter.
+            // We use an INNER JOIN and therefor select only clients where they have an entry in
+            // the Client_organsDonating table that matches one of the given organs
             if (donating != null && donating.size() > 0) {
-                //TODO: Work out why the params didn't work with EnumSet or even when converting it to string so we can use that instead of this uglyness
-                String joinQuery = " INNER JOIN (SELECT donating.Client_uid FROM Client_organsDonating AS donating WHERE donating.organsDonating IN (";
+                //TODO: Work out why the params didn't work with EnumSet or even when converting it to string so we can
+                //TODO use that instead of this uglyness
+                String joinQuery = " INNER JOIN (SELECT donating.Client_uid FROM Client_organsDonating AS donating " +
+                        "WHERE donating.organsDonating IN (";
 
                 joinQuery += donating.stream().map(organ -> "'" + organ.name().replace("'", "''") + "'")
                         .collect(Collectors.joining(",")) + ")";
@@ -167,9 +183,12 @@ public class ClientManagerDBPure implements ClientManager {
 //                params.put("donating", donating);
             }
 
-            //Setup requesting filter. We use an INNER JOIN and therefor select only clients where they have an entry in the TransplantRequest table that matches one of the given organs and is status=WAITING
+            // Setup requesting filter.
+            // We use an INNER JOIN and therefor select only clients where they have an entry in
+            // the TransplantRequest table that matches one of the given organs and is status=WAITING
             if (requesting != null && requesting.size() > 0) {
-                //TODO: Work out why the params didn't work with EnumSet or even when converting it to string so we can use that instead of this uglyness
+                //TODO: Work out why the params didn't work with EnumSet or even when converting it to string so we can
+                //TODO use that instead of this ugliness
                 String joinQuery =
                         " INNER JOIN (SELECT requesting.Client_uid FROM TransplantRequest AS requesting WHERE" +
                                 " requesting.status='WAITING' AND " +
@@ -185,8 +204,9 @@ public class ClientManagerDBPure implements ClientManager {
 //                params.put("donating", donating);
             }
 
-            //Setup the client type filter. For this we use an EXISTS (or NOT) then a separate SELECT on the respective table where uid=uid.
-            //LIMIT 1 is an efficiency increase as we do not need to keep looking once we have a result (boolean true)
+            // Setup the client type filter. For this we use an EXISTS (or NOT) then a separate SELECT on
+            // the respective table where uid=uid.
+            // LIMIT 1 is an efficiency increase as we do not need to keep looking once we have a result (boolean true)
             if (clientType != null) {
                 switch (clientType) {
                     case BOTH:
@@ -303,7 +323,8 @@ public class ClientManagerDBPure implements ClientManager {
 
             return new PaginatedClientList(clients, totalCount);
 
-        } catch (RollbackException exc) {
+        } catch (RollbackException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
             if (trns != null) {
                 trns.rollback();
             }
@@ -324,8 +345,8 @@ public class ClientManagerDBPure implements ClientManager {
                 stmt.executeUpdate("DELETE FROM TransplantRequest");
                 stmt.executeUpdate("DELETE FROM Client");
             }
-        } catch (SQLException exc) {
-            exc.printStackTrace();
+        } catch (SQLException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
         }
     }
 
@@ -343,10 +364,8 @@ public class ClientManagerDBPure implements ClientManager {
             session.remove(client);
 
             trns.commit();
-        } catch (RollbackException exc) {
-            if (trns != null) {
-                trns.rollback();
-            }
+        } catch (RollbackException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
         }
     }
 
@@ -369,7 +388,8 @@ public class ClientManagerDBPure implements ClientManager {
                 }
             }
 
-        } catch (RollbackException exc) {
+        } catch (RollbackException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
             if (trns != null) {
                 trns.rollback();
             }
@@ -387,7 +407,8 @@ public class ClientManagerDBPure implements ClientManager {
             client = session.find(Client.class, id);
 
             trns.commit();
-        } catch (RollbackException exc) {
+        } catch (RollbackException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
             if (trns != null) {
                 trns.rollback();
             }
@@ -412,7 +433,8 @@ public class ClientManagerDBPure implements ClientManager {
                     .setParameter("dateOfBirth", dateOfBirth)
                     .getResultList().size() > 0;
             trns.commit();
-        } catch (RollbackException exc) {
+        } catch (RollbackException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
             if (trns != null) {
                 trns.rollback();
             }
@@ -432,7 +454,8 @@ public class ClientManagerDBPure implements ClientManager {
                     .createQuery("FROM TransplantRequest", TransplantRequest.class)
                     .getResultList();
             trns.commit();
-        } catch (RollbackException exc) {
+        } catch (RollbackException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
             if (trns != null) {
                 trns.rollback();
             }
@@ -455,7 +478,8 @@ public class ClientManagerDBPure implements ClientManager {
                             TransplantRequest.class)
                     .getResultList();
             trns.commit();
-        } catch (RollbackException exc) {
+        } catch (RollbackException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
             if (trns != null) {
                 trns.rollback();
             }
@@ -481,7 +505,8 @@ public class ClientManagerDBPure implements ClientManager {
                     .createQuery("SELECT item FROM HistoryItem item", HistoryItem.class)
                     .getResultList();
             trns.commit();
-        } catch (RollbackException exc) {
+        } catch (RollbackException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
             if (trns != null) {
                 trns.rollback();
             }
@@ -504,7 +529,8 @@ public class ClientManagerDBPure implements ClientManager {
                     .createQuery("FROM DonatedOrgan", DonatedOrgan.class)
                     .getResultList();
             trns.commit();
-        } catch (RollbackException exc) {
+        } catch (RollbackException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
             if (trns != null) {
                 trns.rollback();
             }
@@ -518,7 +544,8 @@ public class ClientManagerDBPure implements ClientManager {
      */
     @Override
     public PaginatedDonatedOrgansList getAllOrgansToDonate(Integer offset, Integer count, Set<String> regionsToFilter,
-                                                           Set<Organ> organType, DonatedOrganSortOptionsEnum sortOption, Boolean reversed) {
+                                                           Set<Organ> organType, DonatedOrganSortOptionsEnum sortOption,
+                                                           Boolean reversed) {
 
         // TODO implement using Hibernate queries instead of in-memory filtering/sorting
 
@@ -559,7 +586,8 @@ public class ClientManagerDBPure implements ClientManager {
                 .filter(organ -> organ.getOverrideReason() == null)
                 .filter(organ -> regionsToFilter.isEmpty()
                         || regionsToFilter.contains(organ.getDonor().getRegionOfDeath())
-                        || regionsToFilter.contains("International") && organ.getDonor().getCountryOfDeath() != Country.NZ)
+                        || (regionsToFilter.contains("International")
+                        && organ.getDonor().getCountryOfDeath() != Country.NZ))
                 .filter(organ -> organType == null || organType.isEmpty()
                         || organType.contains(organ.getOrganType()))
                 .collect(Collectors.toList());

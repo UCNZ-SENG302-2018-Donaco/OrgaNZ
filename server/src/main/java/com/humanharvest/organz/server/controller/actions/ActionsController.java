@@ -13,9 +13,13 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.EmptyStackException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @RestController
 public class ActionsController {
+
+    private static final Logger LOGGER = Logger.getLogger(ActionsController.class.getName());
 
     @GetMapping("/undo")
     public ResponseEntity<ActionResponseView> getUndoActionText(
@@ -28,6 +32,7 @@ public class ActionsController {
         try {
             actionText = actionInvoker.nextUndo().getUnexecuteText();
         } catch (EmptyStackException e) {
+            LOGGER.log(Level.INFO, e.getMessage(), e);
             actionText = "No more actions to undo";
         }
         boolean canUndo = actionInvoker.canUndo();
@@ -84,6 +89,7 @@ public class ActionsController {
         try {
             actionText = actionInvoker.nextRedo().getExecuteText();
         } catch (EmptyStackException e) {
+            LOGGER.log(Level.INFO, e.getMessage(), e);
             actionText = "No more actions to redo";
         }
         boolean canUndo = actionInvoker.canUndo();

@@ -74,8 +74,8 @@ public final class JSONConverter {
         File historyFile = new File(filename);
         try {
             createEmptyJSONFileIfNotExists(historyFile);
-        } catch (IOException exc) {
-            System.err.println(exc.getMessage());
+        } catch (IOException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
         }
 
         try {

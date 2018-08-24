@@ -180,14 +180,15 @@ public class ViewProceduresController extends SubController {
             State.getClientResolver().modifyProcedureRecord(client, procedureRecord, modification);
             PageNavigator.refreshAllWindows();
         } catch (ServerRestException e) {
-            LOGGER.severe(e.getMessage());
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
             PageNavigator.showAlert(AlertType.ERROR,
                     "Server Error",
-                    "An error occurred when trying to send data to the server.\nPlease try again later.", mainController.getStage());
+                    "An error occurred when trying to send data to the server.\nPlease try again later.",
+                    mainController.getStage());
         } catch (BadRequestException e) {
-            LOGGER.info("No changes were made to the procedure.");
+            LOGGER.log(Level.INFO, "No changes were made to the procedure.", e);
         } catch (IfMatchFailedException e) {
-            LOGGER.log(Level.INFO, "If-Match did not match");
+            LOGGER.log(Level.INFO, "If-Match did not match", e);
             Notifications.create()
                     .title("Outdated Data")
                     .text("The client has been modified since you retrieved the data. If you would still like to "
@@ -307,12 +308,14 @@ public class ViewProceduresController extends SubController {
         try {
             client.setProcedures(State.getClientResolver().getProcedureRecords(client));
         } catch (NotFoundException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
             Notifications.create()
                     .title("Client not found")
                     .text("The client could not be found on the server, it may have been deleted")
                     .showWarning();
             return;
         } catch (ServerRestException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
             Notifications.create()
                     .title("Server error")
                     .text("Could not apply changes on the server, please try again later")
@@ -387,11 +390,12 @@ public class ViewProceduresController extends SubController {
         if (record != null) {
             try {
                 State.getClientResolver().deleteProcedureRecord(client, record);
-            } catch (ServerRestException exc) {
-                LOGGER.severe(exc.getMessage());
+            } catch (ServerRestException e) {
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
                 PageNavigator.showAlert(AlertType.ERROR,
                         "Server Error",
-                        "An error occurred when trying to send data to the server.\nPlease try again later.", mainController.getStage());
+                        "An error occurred when trying to send data to the server.\nPlease try again later.",
+                        mainController.getStage());
                 return;
             }
 
@@ -426,11 +430,12 @@ public class ViewProceduresController extends SubController {
                 errorMessage.setText(null);
                 PageNavigator.refreshAllWindows();
 
-            } catch (ServerRestException exc) {
-                LOGGER.severe(exc.getMessage());
+            } catch (ServerRestException e) {
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
                 PageNavigator.showAlert(AlertType.ERROR,
                         "Server Error",
-                        "An error occurred when trying to send data to the server.\nPlease try again later.", mainController.getStage());
+                        "An error occurred when trying to send data to the server.\nPlease try again later.",
+                        mainController.getStage());
             }
         }
     }

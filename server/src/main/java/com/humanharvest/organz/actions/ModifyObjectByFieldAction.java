@@ -7,7 +7,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- * Create a new modification on any object using it's field name and the old and new values
+ * Create a new modification on any object using its field name and the old and new values
  * Exceptions are thrown if the object does not contain that field, or if the values are the wrong type
  * If you have a field such as a password, use the isPrivate boolean to ensure the values are not leaked
  */
@@ -97,8 +97,10 @@ public class ModifyObjectByFieldAction extends Action {
     private void checkTypes() throws NoSuchFieldException {
         PrimitiveConverter converter = new PrimitiveConverter();
         Class<?> expectedClass = converter.convertToWrapper(field.getType());
-        if (newValue != null && newValue.getClass() != expectedClass || oldValue != null
-                && oldValue.getClass() != expectedClass) {
+
+        // If the new value or old value: isn't null, and doesn't match the expected class
+        if ((newValue != null && newValue.getClass() != expectedClass)
+                || (oldValue != null && oldValue.getClass() != expectedClass)) {
             throw new NoSuchFieldException("Field expects a different field type than the one given");
         }
     }

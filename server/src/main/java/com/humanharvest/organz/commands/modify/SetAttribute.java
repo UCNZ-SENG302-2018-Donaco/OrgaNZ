@@ -22,6 +22,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Command line to set attributes of a Client, by using their ID as a reference key.
@@ -29,6 +31,8 @@ import java.util.Optional;
 
 @Command(name = "attribute", description = "Set the attributes of an existing client.", sortOptions = false)
 public class SetAttribute implements Runnable {
+
+    private static final Logger LOGGER = Logger.getLogger(SetAttribute.class.getName());
 
     private final ClientManager manager;
     private final ActionInvoker invoker;
@@ -126,7 +130,7 @@ public class SetAttribute implements Runnable {
             try {
                 action.addChange(entry.getKey(), entry.getValue()[0], entry.getValue()[1]);
             } catch (NoSuchFieldException e) {
-                e.printStackTrace(outputStream);
+                LOGGER.log(Level.WARNING, e.getMessage(), e);
             }
         }
 

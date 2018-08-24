@@ -112,9 +112,9 @@ public class MenuBarController extends SubController {
 
         // Menus/Menu items to hide from clinicians
         Menu menusHideFromClinicians[] = {medicationsPrimaryItem, staffPrimaryItem};
-        MenuItem menuItemsHideFromClinicians[] = {viewClientItem, donateOrganItem, requestOrganItem, viewMedicationsItem,
-                medicalHistoryItem, proceduresItem, saveClientsItem, saveCliniciansItem, loadItem, settingsItem,
-                staffListItem, createAdministratorItem, createClinicianItem, cliItem};
+        MenuItem menuItemsHideFromClinicians[] = {viewClientItem, donateOrganItem, requestOrganItem,
+                viewMedicationsItem, medicalHistoryItem, proceduresItem, saveClientsItem, saveCliniciansItem,
+                loadItem, settingsItem, staffListItem, createAdministratorItem, createClinicianItem, cliItem};
 
         // Menus/Menu items to hide from clinicians (or admins) viewing a client
         Menu menusHideFromClinViewClients[] = {staffPrimaryItem, profilePrimaryItem};
@@ -415,7 +415,8 @@ public class MenuBarController extends SubController {
         // Confirm that the user wants to overwrite current data with data from a file
         Property<Boolean> response = PageNavigator.showAlert(AlertType.CONFIRMATION,
                 "Confirm load from file",
-                "Loading from a file will overwrite all current data. Would you like to proceed?", mainController.getStage());
+                "Loading from a file will overwrite all current data. Would you like to proceed?",
+                mainController.getStage());
 
         if (response.getValue() != null) {
             if (response.getValue()) {
@@ -462,12 +463,14 @@ public class MenuBarController extends SubController {
                 mainController.resetWindowContext();
                 PageNavigator.loadPage(Page.LANDING, mainController);
 
-            } catch (IllegalArgumentException exc) {
-                PageNavigator.showAlert(AlertType.ERROR, "Load Failed", exc.getMessage(), mainController.getStage());
-            } catch (IOException | BadRequestException exc) {
+            } catch (IllegalArgumentException e) {
+                LOGGER.log(Level.WARNING, e.getMessage(), e);
+                PageNavigator.showAlert(AlertType.ERROR, "Load Failed", e.getMessage(), mainController.getStage());
+            } catch (IOException | BadRequestException e) {
+                LOGGER.log(Level.WARNING, e.getMessage(), e);
                 PageNavigator.showAlert(AlertType.ERROR, "Load Failed",
-                        String.format("An error occurred when loading from file: '%s'\n%s",
-                                file.getName(), exc.getMessage()), mainController.getStage());
+                        String.format("An error occurred when loading from file: '%s'%n%s",
+                                file.getName(), e.getMessage()), mainController.getStage());
             }
         }
     }
@@ -577,7 +580,8 @@ public class MenuBarController extends SubController {
             newMain.setWindowContext(mainController.getWindowContext());
             PageNavigator.loadPage(mainController.getCurrentPage(), newMain);
         } else {
-            PageNavigator.showAlert(AlertType.ERROR, "Error duplicating page", "The new page could not be created", mainController.getStage());
+            PageNavigator.showAlert(AlertType.ERROR, "Error duplicating page",
+                    "The new page could not be created", mainController.getStage());
         }
     }
 

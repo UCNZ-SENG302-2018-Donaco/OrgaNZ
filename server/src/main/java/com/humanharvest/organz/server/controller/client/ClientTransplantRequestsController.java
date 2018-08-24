@@ -34,6 +34,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 /**
@@ -44,6 +46,8 @@ import java.util.stream.Collectors;
  */
 @RestController
 public class ClientTransplantRequestsController {
+
+    private static final Logger LOGGER = Logger.getLogger(ClientController.class.getName());
 
     /**
      * Retrieves all transplant requests stored in the system matching the given criteria.
@@ -172,6 +176,7 @@ public class ClientTransplantRequestsController {
                 transplantRequest.setClient(client); //required for validation
                 TransplantRequestValidator.validateTransplantRequest(transplantRequest);
             } catch (IllegalArgumentException e) {
+                LOGGER.log(Level.WARNING, e.getMessage(), e);
                 return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
 
@@ -225,6 +230,7 @@ public class ClientTransplantRequestsController {
             originalTransplantRequest =
                     client.getTransplantRequestById(id).orElseThrow(IndexOutOfBoundsException::new);
         } catch (IndexOutOfBoundsException | NullPointerException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 

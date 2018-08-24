@@ -20,6 +20,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Provides handlers for requests to these endpoints:
@@ -29,6 +31,8 @@ import java.io.IOException;
  */
 @RestController
 public class ClientFileController {
+
+    private static final Logger LOGGER = Logger.getLogger(ClientController.class.getName());
 
     @GetMapping("/clients/file")
     public ResponseEntity<byte[]> exportClients(
@@ -70,9 +74,10 @@ public class ClientFileController {
 
             // Return OK with message detailing how many clients were valid and reasons some were invalid
             return new ResponseEntity<>(message, HttpStatus.OK);
-        } catch (IOException exc) {
+        } catch (IOException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
             // Return BAD_REQUEST with error message
-            return new ResponseEntity<>(exc.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 

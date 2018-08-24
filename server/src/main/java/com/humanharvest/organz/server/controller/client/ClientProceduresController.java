@@ -27,6 +27,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collection;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Provides handlers for requests to these endpoints:
@@ -37,6 +39,8 @@ import java.util.Optional;
  */
 @RestController
 public class ClientProceduresController {
+
+    private static final Logger LOGGER = Logger.getLogger(ClientProceduresController.class.getName());
 
     @GetMapping("/clients/{uid}/procedures")
     public ResponseEntity<Collection<ProcedureRecord>> getProceduresForClient(
@@ -146,7 +150,8 @@ public class ClientProceduresController {
                 // Execute the action
                 try {
                     State.getActionInvoker(authToken).execute(action);
-                } catch (IllegalStateException exc) {
+                } catch (IllegalStateException e) {
+                    LOGGER.log(Level.WARNING, e.getMessage(), e);
                     return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
                 }
 

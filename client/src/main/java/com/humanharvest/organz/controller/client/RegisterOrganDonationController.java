@@ -150,7 +150,8 @@ public class RegisterOrganDonationController extends SubController {
     private void handleOverride(DonatedOrgan donatedOrgan) {
         // Create a popup with a text field to enter the reason
 
-        TouchAlertTextController controller = PageNavigator.showTextAlert("Manually Override Organ", "Enter the reason for overriding this organ:", mainController.getStage());
+        TouchAlertTextController controller = PageNavigator.showTextAlert("Manually Override Organ",
+                "Enter the reason for overriding this organ:", mainController.getStage());
 
         if (controller.getResultProperty().getValue() != null) {
             if (controller.getResultProperty().getValue()) {
@@ -181,7 +182,7 @@ public class RegisterOrganDonationController extends SubController {
         } catch (IfMatchFailedException exc) {
             // TODO deal with outdated error
         } catch (NotFoundException exc) {
-            LOGGER.log(Level.WARNING, "Client/Organ Not Found");
+            LOGGER.log(Level.WARNING, "Client/Organ Not Found", exc);
             Notifications.create()
                     .title("Client/Organ Not Found")
                     .text("The client/donated organ could not be found on the server; it may have been deleted.")
@@ -203,7 +204,8 @@ public class RegisterOrganDonationController extends SubController {
      */
     private void handleEditOverride(DonatedOrgan donatedOrgan) {
 
-        TouchAlertTextController controller = PageNavigator.showTextAlert("Edit Manual Override", "Enter the reason for overriding this organ:", mainController.getStage());
+        TouchAlertTextController controller = PageNavigator.showTextAlert("Edit Manual Override",
+                "Enter the reason for overriding this organ:", mainController.getStage());
 
         if (controller.getResultProperty().getValue() != null) {
             if (controller.getResultProperty().getValue()) {
@@ -234,7 +236,7 @@ public class RegisterOrganDonationController extends SubController {
         } catch (IfMatchFailedException exc) {
             // TODO deal with outdated error
         } catch (NotFoundException exc) {
-            LOGGER.log(Level.WARNING, "Client/Organ Not Found");
+            LOGGER.log(Level.WARNING, "Client/Organ Not Found", exc);
             Notifications.create()
                     .title("Client/Organ Not Found")
                     .text("The client/donated organ could not be found on the server; it may have been deleted.")
@@ -260,7 +262,7 @@ public class RegisterOrganDonationController extends SubController {
         } catch (IfMatchFailedException exc) {
             // TODO deal with outdated error
         } catch (NotFoundException exc) {
-            LOGGER.log(Level.WARNING, "Client/Organ Not Found");
+            LOGGER.log(Level.WARNING, "Client/Organ Not Found", exc);
             Notifications.create()
                     .title("Client/Organ Not Found")
                     .text("The client/donated organ could not be found on the server; it may have been deleted.")
@@ -283,7 +285,7 @@ public class RegisterOrganDonationController extends SubController {
             client.setOrganDonationStatus(State.getClientResolver().getOrganDonationStatus(client));
             client.setDonatedOrgans(State.getClientResolver().getDonatedOrgans(client));
         } catch (NotFoundException e) {
-            LOGGER.log(Level.WARNING, "Client Not Found");
+            LOGGER.log(Level.WARNING, "Client Not Found", e);
             Notifications.create()
                     .title("Client Not Found")
                     .text("The client could not be found on the server; it may have been deleted.")
@@ -365,7 +367,7 @@ public class RegisterOrganDonationController extends SubController {
             try {
                 State.getClientResolver().modifyOrganDonation(client, changes);
             } catch (NotFoundException e) {
-                LOGGER.log(Level.WARNING, "Client Not Found");
+                LOGGER.log(Level.WARNING, "Client Not Found", e);
                 Notifications.create()
                         .title("Client Not Found")
                         .text("The client could not be found on the server; it may have been deleted.")
@@ -379,7 +381,7 @@ public class RegisterOrganDonationController extends SubController {
                         .showError();
                 return;
             } catch (IfMatchFailedException e) {
-                LOGGER.log(Level.INFO, "If-Match did not match");
+                LOGGER.log(Level.INFO, "If-Match did not match", e);
                 PageNavigator.showAlert(AlertType.WARNING,
                         "Outdated Data",
                         "The client has been modified since you retrieved the data. "

@@ -6,11 +6,15 @@ import com.humanharvest.organz.Client;
 import java.io.File;
 import java.io.IOException;
 import java.io.InvalidObjectException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * An implementation of {@link ReadClientStrategy} that can be used for reading clients serialized to JSON.
  */
 public class JSONReadClientStrategy implements ReadClientStrategy {
+
+    private static final Logger LOGGER = Logger.getLogger(ClientImporter.class.getName());
 
     private JSONFileReader<Client> jsonFileReader;
 
@@ -30,6 +34,7 @@ public class JSONReadClientStrategy implements ReadClientStrategy {
         try {
             return jsonFileReader.getNext();
         } catch (InvalidFormatException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
             throw new InvalidObjectException(e.getMessage());
         }
     }

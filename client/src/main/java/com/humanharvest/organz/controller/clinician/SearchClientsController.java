@@ -140,8 +140,8 @@ public class SearchClientsController extends SubController {
             int newMax;
             try {
                 newMax = Integer.min(Integer.parseInt(ageMaxField.getText()), AGE_UPPER_BOUND);
-            } catch (NumberFormatException exc) {
-                newMax = 0;
+            } catch (NumberFormatException ignored) {
+                newMax = 0; //todo should this be changed to AGE_UPPER_BOUND?
             }
             ageSlider.setHighValue(newMax);
             ageMaxField.setText("" + newMax);
@@ -228,7 +228,7 @@ public class SearchClientsController extends SubController {
         try {
             State.getClientManager().removeClient(client);
         } catch (NotFoundException e) {
-            LOGGER.log(Level.WARNING, "Client not found");
+            LOGGER.log(Level.WARNING, "Client not found", e);
             PageNavigator.showAlert(AlertType.WARNING, "Client not found", "The client could not be found on the "
                     + "server, it may have been deleted", mainController.getStage());
         } catch (ServerRestException e) {
@@ -236,10 +236,11 @@ public class SearchClientsController extends SubController {
             PageNavigator.showAlert(AlertType.WARNING, "Server error", "Could not apply changes on the server, "
                     + "please try again later", mainController.getStage());
         } catch (IfMatchFailedException e) {
-            LOGGER.log(Level.INFO, "If-Match did not match");
+            LOGGER.log(Level.INFO, "If-Match did not match", e);
             PageNavigator.showAlert(AlertType.WARNING, "Outdated Data",
                     "The client has been modified since you retrieved the data.\nIf you would still like to "
-                            + "apply these changes please submit again, otherwise refresh the page to update the data.", mainController.getStage());
+                            + "apply these changes please submit again, otherwise refresh the page to update the data.",
+                    mainController.getStage());
         }
     }
 

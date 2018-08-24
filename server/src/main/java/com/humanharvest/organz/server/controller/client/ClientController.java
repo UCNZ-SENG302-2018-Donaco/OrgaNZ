@@ -466,6 +466,7 @@ public class ClientController {
             State.getActionInvoker(authToken).execute(action);
             return new ResponseEntity<>(HttpStatus.OK);
         } catch (FileNotFoundException e) {
+            LOGGER.log(Level.INFO, e.getMessage(), e);
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
         } catch (IOException e) {

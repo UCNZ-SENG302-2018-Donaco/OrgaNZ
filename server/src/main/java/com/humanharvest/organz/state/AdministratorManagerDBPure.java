@@ -2,6 +2,7 @@ package com.humanharvest.organz.state;
 
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.database.DBManager;
+import com.humanharvest.organz.server.controller.client.ClientController;
 import org.hibernate.Transaction;
 
 import javax.persistence.PersistenceException;
@@ -9,8 +10,12 @@ import javax.persistence.RollbackException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class AdministratorManagerDBPure implements AdministratorManager {
+
+    private static final Logger LOGGER = Logger.getLogger(AdministratorManagerDBPure.class.getName());
 
     private final DBManager dbManager;
     private Administrator defaultAdministrator = new Administrator("admin", "");
@@ -48,7 +53,8 @@ public class AdministratorManagerDBPure implements AdministratorManager {
                     .createQuery("FROM Administrator ", Administrator.class)
                     .getResultList();
             trns.commit();
-        } catch (RollbackException exc) {
+        } catch (RollbackException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
             if (trns != null) {
                 trns.rollback();
             }
@@ -70,7 +76,8 @@ public class AdministratorManagerDBPure implements AdministratorManager {
             trns = session.beginTransaction();
             dbManager.getDBSession().remove(administrator);
             trns.commit();
-        } catch (RollbackException exc) {
+        } catch (RollbackException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
             if (trns != null) {
                 trns.rollback();
             }
@@ -90,7 +97,8 @@ public class AdministratorManagerDBPure implements AdministratorManager {
                     .setParameter("username", username)
                     .getResultList().isEmpty();
             trns.commit();
-        } catch (RollbackException exc) {
+        } catch (RollbackException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
             if (trns != null) {
                 trns.rollback();
             }
@@ -110,7 +118,8 @@ public class AdministratorManagerDBPure implements AdministratorManager {
             result = dbManager.getDBSession().find(Administrator.class, username);
 
             trns.commit();
-        } catch (RollbackException exc) {
+        } catch (RollbackException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
             if (trns != null) {
                 trns.rollback();
             }
@@ -134,7 +143,8 @@ public class AdministratorManagerDBPure implements AdministratorManager {
             dbManager.getDBSession().update(administrator);
 
             trns.commit();
-        } catch (RollbackException exc) {
+        } catch (RollbackException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
             if (trns != null) {
                 trns.rollback();
             }

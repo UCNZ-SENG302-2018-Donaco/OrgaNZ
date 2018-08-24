@@ -545,7 +545,8 @@ public final class MultitouchHandler {
             this.skin = skin;
             try {
                 keyboard = ReflectionUtils.getField(skin, "keyboard");
-                detachKeyboard = ReflectionUtils.getMethodReference(skin, "detachKeyboard", OnScreenKeyboard.class, EventTarget.class);
+                detachKeyboard = ReflectionUtils.getMethodReference(skin, "detachKeyboard",
+                        OnScreenKeyboard.class, EventTarget.class);
             } catch (NoSuchFieldException | NoSuchMethodException | IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
@@ -569,8 +570,10 @@ public final class MultitouchHandler {
         public TextAreaSkinConsumer(Skin<?> skin) {
             this.skin = skin;
             try {
-                keyboard = KeyboardManager.getInstance().getKeyboard(Util.getFocusAreaStartingNode((Node) skin.getSkinnable()));
-                detachKeyboard = ReflectionUtils.getMethodReference(skin, "detachKeyboard", OnScreenKeyboard.class, EventTarget.class);
+                keyboard = KeyboardManager.getInstance()
+                        .getKeyboard(Util.getFocusAreaStartingNode((Node) skin.getSkinnable()));
+                detachKeyboard = ReflectionUtils
+                        .getMethodReference(skin, "detachKeyboard", OnScreenKeyboard.class, EventTarget.class);
             } catch (NoSuchMethodException e) {
                 throw new RuntimeException(e);
             }
@@ -594,7 +597,8 @@ public final class MultitouchHandler {
 
         public ComboBoxListSkinConsumer(Skin<?> skin) {
             try {
-                isComboBoxOrButton = ReflectionUtils.getMethodReference(skin, "isComboBoxOrButton", EventTarget.class, ComboBoxBase.class);
+                isComboBoxOrButton = ReflectionUtils.getMethodReference(skin, "isComboBoxOrButton",
+                        EventTarget.class, ComboBoxBase.class);
                 handleAutoHidingEvents = ReflectionUtils.getMethodReference(skin, "handleAutoHidingEvents");
             } catch (NoSuchMethodException e) {
                 throw new RuntimeException(e);
@@ -620,7 +624,8 @@ public final class MultitouchHandler {
 
         public ContextMenuSkinConsumer(Skin<?> skin) {
             try {
-                handleAutoHidingEvents = ReflectionUtils.getMethodReference(skin, "handleAutoHidingEvents", Event.class);
+                handleAutoHidingEvents = ReflectionUtils
+                        .getMethodReference(skin, "handleAutoHidingEvents", Event.class);
             } catch (NoSuchMethodException e) {
                 throw new RuntimeException(e);
             }

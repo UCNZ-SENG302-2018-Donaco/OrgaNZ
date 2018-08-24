@@ -25,8 +25,8 @@ public interface ReadClientStrategy extends Closeable {
      *
      * @return The parsed client, or null if there are no more clients in the file.
      * @throws InvalidObjectException If the next record does not represent a valid client.
-     * @throws IOException            If a critical error occurrs which ends reading of the file (invalid syntax or input stream
-     *                                broken)
+     * @throws IOException            If a critical error occurrs which ends reading of the file
+     *                                (invalid syntax or input stream broken)
      */
     Client readNext() throws IOException;
 }

@@ -14,6 +14,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A handler for requests to the medication active ingredients web API provided by MAPI.
@@ -21,6 +23,7 @@ import java.util.Optional;
 public class MedActiveIngredientsHandler extends WebAPIHandler {
 
     private static final String ACTIVE_INGREDIENTS_ENDPOINT = "http://mapi-us.iterar.co/api/%s/substances.json";
+    private static final Logger LOGGER = Logger.getLogger(MedActiveIngredientsHandler.class.getName());
 
     private HttpRequestFactory requestFactory;
 
@@ -72,7 +75,8 @@ public class MedActiveIngredientsHandler extends WebAPIHandler {
             HttpRequest request = requestFactory.buildGetRequest(url);
             HttpResponse response = request.execute();
             activeIngredients = addCachedData(Arrays.asList(response.parseAs(String[].class)), medicationName);
-        } catch (HttpResponseException exc) {
+        } catch (HttpResponseException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
             // Any non 2xx response (e.g. 404)
             activeIngredients = Collections.emptyList();
         }

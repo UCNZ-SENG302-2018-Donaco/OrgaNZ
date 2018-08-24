@@ -54,8 +54,9 @@ public class ClientMedicationsController {
      * returned
      */
     @GetMapping("/clients/{uid}/medications")
-    public ResponseEntity<List<MedicationRecord>> getMedications(@PathVariable int uid,
-                                                                 @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {
+    public ResponseEntity<List<MedicationRecord>> getMedications(
+            @PathVariable int uid,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {
 
         Optional<Client> client = State.getClientManager().getClientByID(uid);
 

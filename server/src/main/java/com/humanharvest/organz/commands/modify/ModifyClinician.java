@@ -16,12 +16,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Command line for modifying attribute of a clinician
  */
 @Command(name = "modifyclinician", description = "Modify the attribute of an existing clinician", sortOptions = false)
 public class ModifyClinician implements Runnable {
+
+    private static final Logger LOGGER = Logger.getLogger(ModifyClinician.class.getName());
 
     private final ClinicianManager manager;
     private final ActionInvoker invoker;
@@ -95,7 +99,7 @@ public class ModifyClinician implements Runnable {
             try {
                 action.addChange(entry.getKey(), entry.getValue()[0], entry.getValue()[1]);
             } catch (NoSuchMethodException | NoSuchFieldException e) {
-                e.printStackTrace(outputStream);
+                LOGGER.log(Level.WARNING, e.getMessage(), e);
             }
         }
 

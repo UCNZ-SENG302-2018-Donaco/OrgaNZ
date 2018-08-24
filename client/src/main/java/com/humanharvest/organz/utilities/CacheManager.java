@@ -384,6 +384,7 @@ public abstract class CacheManager {
                         new TypeReference<Map<String, Category>>() {
                         });
             } catch (FileNotFoundException e) {
+                LOGGER.log(Level.INFO, e.getMessage(), e);
                 categories = new HashMap<>();
             } catch (IOException e) {
                 LOGGER.log(Level.SEVERE, "Unable to load cache data", e);

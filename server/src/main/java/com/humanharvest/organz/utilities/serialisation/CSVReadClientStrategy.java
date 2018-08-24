@@ -19,6 +19,8 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.NoSuchElementException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * An implementation of {@link ReadClientStrategy} that can be used for reading clients serialized to CSV. This
@@ -26,6 +28,8 @@ import java.util.NoSuchElementException;
  * {@link com.humanharvest.organz.MedicationRecord}s or {@link com.humanharvest.organz.TransplantRequest}s.
  */
 public class CSVReadClientStrategy implements ReadClientStrategy {
+
+    private static final Logger LOGGER = Logger.getLogger(CSVReadClientStrategy.class.getName());
 
     /**
      * Describes which columns represent which client data in the CSV format.
@@ -81,10 +85,12 @@ public class CSVReadClientStrategy implements ReadClientStrategy {
         try {
             try {
                 return deserialise(parser.iterator().next());
-            } catch (IllegalArgumentException exc) {
-                throw new InvalidObjectException(exc.getMessage());
+            } catch (IllegalArgumentException e) {
+                LOGGER.log(Level.WARNING, e.getMessage(), e);
+                throw new InvalidObjectException(e.getMessage());
             }
-        } catch (NoSuchElementException exc) {
+        } catch (NoSuchElementException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
             return null;
         }
     }
@@ -108,8 +114,9 @@ public class CSVReadClientStrategy implements ReadClientStrategy {
 
         try {
             return LocalDate.parse(dateString, dateFormat);
-        } catch (DateTimeParseException exc) {
-            throw new IllegalArgumentException(exc);
+        } catch (DateTimeParseException e) {
+            LOGGER.log(Level.INFO, e.getMessage(), e);
+            throw new IllegalArgumentException(e);
         }
     }
 

@@ -416,7 +416,7 @@ public class OrgansToDonateController extends SubController {
             }
 
         } catch (NotFoundException e) {
-            LOGGER.log(Level.WARNING, "Organ not found");
+            LOGGER.log(Level.WARNING, "Organ not found", e);
             Notifications.create()
                     .title("Organ not found")
                     .text("The organ could not be found on the server, it may have been deleted")
@@ -434,7 +434,8 @@ public class OrgansToDonateController extends SubController {
     private void openManuallyExpireDialog() {
         // Create a popup with a text field to enter the reason
 
-        TouchAlertTextController controller = PageNavigator.showTextAlert("Manually Override Organ", "Enter the reason for overriding this organ:", mainController.getStage());
+        TouchAlertTextController controller = PageNavigator.showTextAlert("Manually Override Organ",
+                "Enter the reason for overriding this organ:", mainController.getStage());
 
         if (controller.getResultProperty().getValue() != null) {
             if (controller.getResultProperty().getValue()) {
@@ -464,12 +465,14 @@ public class OrgansToDonateController extends SubController {
             PageNavigator.refreshAllWindows();
         } catch (IfMatchFailedException exc) {
             // TODO deal with outdated error
-        } catch (NotFoundException exc) {
+        } catch (NotFoundException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
             Notifications.create()
                     .title("Client/Organ Not Found")
                     .text("The client/donated organ could not be found on the server; it may have been deleted.")
                     .showWarning();
-        } catch (ServerRestException exc) {
+        } catch (ServerRestException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
             Notifications.create()
                     .title("Server Error")
                     .text("A server error occurred when overriding this donated organ; please try again later.")

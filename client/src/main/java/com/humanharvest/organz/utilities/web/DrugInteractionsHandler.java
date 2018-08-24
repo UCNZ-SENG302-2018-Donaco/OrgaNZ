@@ -105,14 +105,16 @@ public class DrugInteractionsHandler extends WebAPIHandler {
      * @param drug2  The name of the second drug to find interactions for.
      * @return A list of strings that each contain the details of one interaction symptom. May be empty if there are
      * no results for that request.
-     * @throws IOException          If the drug interactions web API cannot be reached, e.g. if there is no internet access.
+     * @throws IOException          If the drug interactions web API cannot be reached,
+     *                              e.g. if there is no internet access.
      * @throws BadDrugNameException If the API returns a 404 response saying that the drug names are invalid.
      * @throws BadGatewayException  If the API returns a 502 response.
      */
     public List<String> getInteractions(Client client, String drug1, String drug2)
             throws IOException, BadDrugNameException, BadGatewayException {
-        Optional<DrugInteractionsResponse> cachedResponse = getCachedData(new TypeReference<DrugInteractionsResponse>() {
-        }, drug1, drug2);
+        Optional<DrugInteractionsResponse> cachedResponse = getCachedData(
+                new TypeReference<DrugInteractionsResponse>() {
+                }, drug1, drug2);
         if (cachedResponse.isPresent()) {
             return cachedResponse.get().calculateClientInteractions(client);
         }

@@ -38,7 +38,9 @@ public class MatchOrgansToRecipientsController {
             throws AuthenticationException {
 
         // Check if there is a donated organ with that id - otherwise 404 not found
-        Optional<DonatedOrgan> donatedOrganOptional = State.getClientManager().getAllOrgansToDonate().stream().filter(donatedOrgan1 -> donatedOrgan1.getId().equals(id)).findFirst();
+        Optional<DonatedOrgan> donatedOrganOptional =
+                State.getClientManager().getAllOrgansToDonate().stream()
+                        .filter(donatedOrgan1 -> donatedOrgan1.getId().equals(id)).findFirst();
         DonatedOrgan donatedOrgan;
 
         // Verify that request has clinician/admin authorization - otherwise 401 Unauthorised

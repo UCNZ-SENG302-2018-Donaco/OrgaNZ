@@ -25,6 +25,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 
 import java.time.LocalDate;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -95,7 +96,8 @@ public class CreateClientController extends SubController {
             if (manager.doesClientExist(firstNameFld.getText(), lastNamefld.getText(), dobFld.getValue())) {
                 Property<Boolean> response = PageNavigator.showAlert(AlertType.CONFIRMATION,
                         "Duplicate Client Warning",
-                        "This client is a duplicate of one that already exists. Would you still like to create it?", mainController.getStage());
+                        "This client is a duplicate of one that already exists. Would you still like to create it?",
+                        mainController.getStage());
 
                 if (response.getValue() != null) {
                     if (response.getValue()) {
@@ -123,10 +125,11 @@ public class CreateClientController extends SubController {
         try {
             client = State.getClientResolver().createClient(newClient);
         } catch (ServerRestException e) {
-            LOGGER.severe(e.getMessage());
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
             PageNavigator.showAlert(AlertType.ERROR,
                     "Server Error",
-                    "An error occurred while trying to fetch from the server.\nPlease try again later.", mainController.getStage());
+                    "An error occurred while trying to fetch from the server.\nPlease try again later.",
+                    mainController.getStage());
             return;
         }
 
@@ -138,7 +141,7 @@ public class CreateClientController extends SubController {
             try {
                 State.getAuthenticationManager().loginClient(client.getUid());
             } catch (ServerRestException e) {
-                LOGGER.severe(e.getMessage());
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
                 PageNavigator.showAlert(AlertType.ERROR,
                         "Server Error",
                         "An error occurred while trying to fetch from the server.\nPlease try again later.", mainController.getStage());

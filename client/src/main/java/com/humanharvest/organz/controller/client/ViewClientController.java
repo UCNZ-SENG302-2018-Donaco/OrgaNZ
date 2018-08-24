@@ -353,18 +353,22 @@ public class ViewClientController extends ViewBaseController {
                         "The image size is too large. It must be under 2MB.", mainController.getStage());
             } else if (!selectedFile.canRead()) {
                 PageNavigator.showAlert(AlertType.WARNING, "File Couldn't Be Read",
-                        "This file could not be read. Ensure you are uploading a valid .png or .jpg", mainController.getStage());
+                        "This file could not be read. Ensure you are uploading a valid .png or .jpg",
+                        mainController.getStage());
             } else {
                 try (InputStream in = new FileInputStream(selectedFile)) {
                     uploadSuccess = State.getImageManager()
                             .postClientImage(viewedClient.getUid(), IOUtils.toByteArray(in));
 
-                } catch (FileNotFoundException ex) {
+                } catch (FileNotFoundException e) {
+                    LOGGER.log(Level.INFO, e.getMessage(), e);
                     PageNavigator.showAlert(AlertType.WARNING, "File Couldn't Be Found",
                             "This file was not found.", mainController.getStage());
-                } catch (IOException ex) {
+                } catch (IOException e) {
+                    LOGGER.log(Level.INFO, e.getMessage(), e);
                     PageNavigator.showAlert(AlertType.WARNING, "File Couldn't Be Read",
-                            "This file could not be read. Ensure you are uploading a valid .png or .jpg", mainController.getStage());
+                            "This file could not be read. Ensure you are uploading a valid .png or .jpg",
+                            mainController.getStage());
                 } catch (ServerRestException e) {
                     LOGGER.log(Level.SEVERE, e.getMessage(), e);
                     PageNavigator.showAlert(AlertType.ERROR, "Server Error", "Something went wrong with the server. "
@@ -374,7 +378,8 @@ public class ViewClientController extends ViewBaseController {
         }
         if (uploadSuccess) {
             refresh();
-            PageNavigator.showAlert(AlertType.CONFIRMATION, "Success", "The image has been posted.", mainController.getStage());
+            PageNavigator.showAlert(AlertType.CONFIRMATION, "Success", "The image has been posted.",
+                    mainController.getStage());
         }
     }
 
