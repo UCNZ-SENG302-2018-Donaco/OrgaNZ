@@ -1,17 +1,17 @@
 package com.humanharvest.organz;
 
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.humanharvest.organz.views.client.Views;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
-import com.fasterxml.jackson.annotation.JsonView;
-import com.humanharvest.organz.views.client.Views;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @Entity
 @Table
@@ -37,6 +37,7 @@ public class Administrator implements ConcurrencyControlledEntity {
 
     /**
      * Create a new Administrator object
+     *
      * @param username The unique username. Should be checked using the AdministratorManager to ensure uniqueness
      * @param password The administrators password for logins. Stored in plaintext
      */
@@ -66,6 +67,7 @@ public class Administrator implements ConcurrencyControlledEntity {
 
     /**
      * Returns true if the given password matches the stored password.
+     *
      * @param testPassword The given password to check.
      * @return If the two passwords are equal.
      */
@@ -104,6 +106,7 @@ public class Administrator implements ConcurrencyControlledEntity {
 
     /**
      * Administrator objects are identified by their administratorId
+     *
      * @param obj The object to compare
      * @return If the Administrator is a match
      */
@@ -115,7 +118,7 @@ public class Administrator implements ConcurrencyControlledEntity {
         if (!(obj instanceof Administrator)) {
             return false;
         }
-        Administrator administrator = (Administrator)obj;
+        Administrator administrator = (Administrator) obj;
         return administrator.username.equals(username);
     }
 

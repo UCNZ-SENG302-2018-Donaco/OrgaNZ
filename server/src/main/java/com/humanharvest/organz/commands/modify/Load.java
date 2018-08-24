@@ -1,11 +1,5 @@
 package com.humanharvest.organz.commands.modify;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintStream;
-import java.util.logging.Logger;
-
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.serialisation.CSVReadClientStrategy;
@@ -15,6 +9,12 @@ import com.humanharvest.organz.utilities.serialisation.ReadClientStrategy;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Parameters;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintStream;
+import java.util.logging.Logger;
 
 /**
  * Command line to load the information of all the clients from a JSON file,
@@ -91,6 +91,7 @@ public class Load implements Runnable {
     /**
      * Returns the file extension of the given file name string (in lowercase). The file extension is defined as the
      * characters after the last "." in the file name.
+     *
      * @param fileName The file name string.
      * @return The file extension of the given file name.
      */

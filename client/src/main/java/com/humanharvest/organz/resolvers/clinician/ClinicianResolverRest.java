@@ -1,7 +1,5 @@
 package com.humanharvest.organz.resolvers.clinician;
 
-import java.util.List;
-
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.state.State;
@@ -12,6 +10,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+
+import java.util.List;
 
 public class ClinicianResolverRest implements ClinicianResolver {
 

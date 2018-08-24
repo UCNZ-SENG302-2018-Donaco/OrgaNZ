@@ -15,12 +15,6 @@ import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.views.client.CreateIllnessView;
 import com.humanharvest.organz.views.client.ModifyIllnessObject;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Comparator;
-import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.collections.FXCollections;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
@@ -36,7 +30,12 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
-import org.controlsfx.control.Notifications;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
+import java.util.Objects;
+import java.util.logging.Logger;
 
 /**
  * Controller for the medical history page, which shows a list of all current and past illnesses for the client.
@@ -96,6 +95,7 @@ public class ClientMedicalHistoryController extends SubController {
 
     /**
      * Formats a table cell that holds a {@link LocalDate} value to display that value in the date time format.
+     *
      * @return The cell with the date time formatter set.
      */
     private static TableCell<IllnessRecord, LocalDate> formatDateTimeCell() {
@@ -115,6 +115,7 @@ public class ClientMedicalHistoryController extends SubController {
     /**
      * Formats a table cell that holds a {@link Boolean} to display "CHRONIC" in red text if the value is true, or
      * nothing otherwise.
+     *
      * @return The cell with the chronic formatter set.
      */
     private static TableCell<IllnessRecord, Boolean> formatChronicCell() {
@@ -136,6 +137,7 @@ public class ClientMedicalHistoryController extends SubController {
     /**
      * Creates a sort policy where records for chronic illnesses are always sorted first, then sorts by the table's
      * current comparator. If no table comparator is active, then the default sorting is by diagnosis date descending.
+     *
      * @param table The tableview to get the current comparator from.
      * @return The sort policy.
      */
@@ -216,6 +218,7 @@ public class ClientMedicalHistoryController extends SubController {
      * - Checks if the session login type is a client or a clinician, and sets the viewed client appropriately.
      * - Checks if the logged in user is a client, and if so, makes the page non-editable.
      * - Refreshes the illness tables to set initial state based on the viewed client.
+     *
      * @param mainController The MainController for the window this page is loaded on.
      */
     @Override
@@ -312,6 +315,7 @@ public class ClientMedicalHistoryController extends SubController {
 
     /**
      * Gets the currently selected record in the currently selected table.
+     *
      * @return The selected illness record.
      */
     private IllnessRecord getSelectedRecord() {
@@ -414,7 +418,6 @@ public class ClientMedicalHistoryController extends SubController {
     }
 
 
-
     /**
      * Adds a new illness record based on the information in the add new illness record inputs.
      */
@@ -429,14 +432,14 @@ public class ClientMedicalHistoryController extends SubController {
 
         if (illnessName == null || illnessName.isEmpty()) {
             errorMessage.setText("Illness name must not be blank.");
-        }   else if (beforeBirth) {
+        } else if (beforeBirth) {
             errorMessage.setText("Diagnosis date cannot be before person is born.");
         } else if (inFuture) {
             errorMessage.setText("Diagnosis date cannot be in the future.");
         } else {
             CreateIllnessView view = new CreateIllnessView(illnessName, dateDiagnosed, isChronic);
 
-            try{
+            try {
                 State.getClientResolver().addIllnessRecord(client, view);
             } catch (NotFoundException e) {
                 AlertHelper.showNotFoundAlert(LOGGER, e, mainController);

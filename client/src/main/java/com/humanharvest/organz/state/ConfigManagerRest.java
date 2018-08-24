@@ -1,12 +1,13 @@
 package com.humanharvest.organz.state;
 
 import com.humanharvest.organz.utilities.enums.Country;
-import java.util.Set;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+
+import java.util.Set;
 
 public class ConfigManagerRest implements ConfigManager {
 
@@ -18,8 +19,9 @@ public class ConfigManagerRest implements ConfigManager {
 
         ResponseEntity<Set<Country>> responseEntity = State.getRestTemplate()
                 .exchange(State.getBaseUri() + "/config/countries", HttpMethod.GET, entity, new
-                ParameterizedTypeReference<Set<Country>>
-                (){});
+                        ParameterizedTypeReference<Set<Country>>
+                                () {
+                        });
 
         return responseEntity.getBody();
     }
@@ -34,6 +36,7 @@ public class ConfigManagerRest implements ConfigManager {
 
         State.getRestTemplate()
                 .exchange(State.getBaseUri() + "/config/countries", HttpMethod.POST, entity,
-                        new ParameterizedTypeReference<Set<Country>>(){});
+                        new ParameterizedTypeReference<Set<Country>>() {
+                        });
     }
 }

@@ -32,7 +32,11 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.CoreMatchers.not;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -199,6 +203,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
 
     /**
      * Get the top modal window.
+     *
      * @return the top modal window
      */
     private Stage getTopModalStage() {
@@ -216,7 +221,8 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
 
     /**
      * Checks the current alert dialog displayed (on the top of the window stack) has the expected contents.
-     * @param expectedHeader Expected header of the dialog
+     *
+     * @param expectedHeader  Expected header of the dialog
      * @param expectedContent Expected content of the dialog
      */
     private void checkAlertHasHeaderAndContent(String expectedHeader, String expectedContent) {
@@ -231,7 +237,8 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
     /**
      * Create a mock ActiveIngredientsHandler that returns ingredients when passed medName.
      * If medName contains the string "throw IOException", it will throw an IOException.
-     * @param medName Name of medication
+     *
+     * @param medName     Name of medication
      * @param ingredients Ingredients in medication
      * @return mock MedActiveIngredientsHandler
      */
@@ -248,7 +255,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
 
     @Test
     public void viewActiveIngredientsTest() throws IOException {
-        ViewMedicationsController pageController = (ViewMedicationsController)super.pageController;
+        ViewMedicationsController pageController = (ViewMedicationsController) super.pageController;
         pageController.setActiveIngredientsHandler(createMockActiveIngredientsHandler(
                 "Ibuprofen",
                 Arrays.asList("Diphenhydramine citrate; ibuprofen",
@@ -285,7 +292,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
         verifyThat("#currentMedicationsView", hasListCell(toBeMoved));
         clickOn((Node) lookup(hasText(toBeMoved.toString())).query());
 
-        String medicationInfo = ((TextInputControl)lookup("#medicationIngredients").query()).getText();
+        String medicationInfo = ((TextInputControl) lookup("#medicationIngredients").query()).getText();
         assertEquals("No active ingredients found for Med C", medicationInfo);
     }
 
@@ -302,7 +309,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
         verifyThat("#currentMedicationsView", hasListCell(toBeMoved));
         clickOn((Node) lookup(hasText(toBeMoved.toString())).query());
 
-        String medicationInfo = ((TextInputControl)lookup("#medicationIngredients").query()).getText();
+        String medicationInfo = ((TextInputControl) lookup("#medicationIngredients").query()).getText();
         assertEquals("Error loading ingredients, please try again later", medicationInfo);
     }
 
@@ -314,21 +321,21 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
 
         if (drug1.contains("throw IOException") || drug2.contains("throw IOException")) {
             when(handler.getInteractions(any(), anyString(), anyString())).thenThrow(
-                new IOException("The drug interactions API could not be reached. Check your internet "
-                    + "connection and try again."));
+                    new IOException("The drug interactions API could not be reached. Check your internet "
+                            + "connection and try again."));
 
         } else if (drug1.contains("throw IllegalArgumentException") ||
-            drug2.contains("throw IllegalArgumentException")) {
+                drug2.contains("throw IllegalArgumentException")) {
             when(handler.getInteractions(any(), anyString(), anyString())).thenThrow(
-                new IllegalArgumentException("The drug interactions API responded in an unexpected way."));
+                    new IllegalArgumentException("The drug interactions API responded in an unexpected way."));
 
         } else if (drug1.contains("throw BadDrugNameException") || drug2.contains("throw BadDrugNameException")) {
             when(handler.getInteractions(any(), anyString(), anyString())).thenThrow(
-                new BadDrugNameException("One or both of the drug names are invalid."));
+                    new BadDrugNameException("One or both of the drug names are invalid."));
 
         } else if (drug1.contains("throw BadGatewayException") || drug2.contains("throw BadGatewayException")) {
             when(handler.getInteractions(any(), anyString(), anyString())).thenThrow(
-                new BadGatewayException("The drug interactions web API could not retrieve the results."));
+                    new BadGatewayException("The drug interactions web API could not retrieve the results."));
 
         } else {
             when(handler.getInteractions(testClient, drug1, drug2)).thenReturn(interactions);
@@ -345,7 +352,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
 
         clickOn((Node) lookup(hasText(drug0.toString())).query());
 
-        String interactionsInfo = ((TextInputControl)lookup("#medicationInteractions").query()).getText();
+        String interactionsInfo = ((TextInputControl) lookup("#medicationInteractions").query()).getText();
         assertEquals("", interactionsInfo);
     }
 
@@ -387,7 +394,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
         clickOn((Node) lookup(hasText(prednisoneRecord.toString())).query());
         release(KeyCode.CONTROL);
 
-        String interactionsInfo = ((TextInputControl)lookup("#medicationInteractions").query()).getText();
+        String interactionsInfo = ((TextInputControl) lookup("#medicationInteractions").query()).getText();
         assertEquals("Interactions between Ibuprofen and Prednisone: \n"
                 + "anxiety\n"
                 + "arthralgia\n"
@@ -416,7 +423,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
         clickOn((Node) lookup(hasText(pastDrug.toString())).query());
         release(KeyCode.CONTROL);
 
-        String interactionsInfo = ((TextInputControl)lookup("#medicationInteractions").query()).getText();
+        String interactionsInfo = ((TextInputControl) lookup("#medicationInteractions").query()).getText();
         assertEquals("Interactions between Med A and Med C: \n"
                 + "anxiety\n"
                 + "nausea", interactionsInfo);
@@ -439,7 +446,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
         clickOn((Node) lookup(hasText(prednisoneRecord.toString())).query());
         release(KeyCode.CONTROL);
 
-        String interactionsInfo = ((TextInputControl)lookup("#medicationInteractions").query()).getText();
+        String interactionsInfo = ((TextInputControl) lookup("#medicationInteractions").query()).getText();
         assertEquals("There is no information on interactions between Ibuprofen and Prednisone.", interactionsInfo);
     }
 
@@ -461,7 +468,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
         clickOn((Node) lookup(hasText(drug1.toString())).query());
         release(KeyCode.CONTROL);
 
-        String interactionsInfo = ((TextInputControl)lookup("#medicationInteractions").query()).getText();
+        String interactionsInfo = ((TextInputControl) lookup("#medicationInteractions").query()).getText();
         assertEquals("An error occurred when retrieving drug interactions: \n"
                 + "The drug interactions web API could not retrieve the results.", interactionsInfo);
     }
@@ -484,7 +491,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
         clickOn((Node) lookup(hasText(drug1.toString())).query());
         release(KeyCode.CONTROL);
 
-        String interactionsInfo = ((TextInputControl)lookup("#medicationInteractions").query()).getText();
+        String interactionsInfo = ((TextInputControl) lookup("#medicationInteractions").query()).getText();
         assertEquals("An error occurred when retrieving drug interactions: \n"
                 + "The drug interactions API could not be reached. Check your internet connection and try "
                 + "again.", interactionsInfo);
@@ -508,7 +515,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
         clickOn((Node) lookup(hasText(drug1.toString())).query());
         release(KeyCode.CONTROL);
 
-        String interactionsInfo = ((TextInputControl)lookup("#medicationInteractions").query()).getText();
+        String interactionsInfo = ((TextInputControl) lookup("#medicationInteractions").query()).getText();
         assertEquals("An error occurred when retrieving drug interactions: \n"
                 + "The drug interactions API responded in an unexpected way.", interactionsInfo);
     }

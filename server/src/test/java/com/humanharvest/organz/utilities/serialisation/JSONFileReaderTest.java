@@ -1,6 +1,12 @@
 package com.humanharvest.organz.utilities.serialisation;
 
-import static org.junit.jupiter.api.Assertions.*;
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.utilities.enums.BloodType;
+import com.humanharvest.organz.utilities.enums.Gender;
+import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.enums.Region;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,13 +18,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import com.fasterxml.jackson.databind.exc.InvalidFormatException;
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.utilities.enums.BloodType;
-import com.humanharvest.organz.utilities.enums.Gender;
-import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.enums.Region;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JSONFileReaderTest {
 
@@ -43,7 +48,7 @@ public class JSONFileReaderTest {
 
         // Test that the Client's organs set was also deserialized correctly.
         List<Organ> expectedOrgans = Arrays.asList(
-                Organ.HEART, Organ.LUNG, Organ.SKIN, Organ.PANCREAS, Organ.KIDNEY,Organ.BONE
+                Organ.HEART, Organ.LUNG, Organ.SKIN, Organ.PANCREAS, Organ.KIDNEY, Organ.BONE
         );
         Map<Organ, Boolean> testOrgans = testClient.getOrganDonationStatus();
         for (Entry<Organ, Boolean> organEntry : testOrgans.entrySet()) {

@@ -27,18 +27,18 @@ public interface ClientManager {
     List<Client> getClients();
 
     PaginatedClientList getClients(
-        String q,
-        Integer offset,
-        Integer count,
-        Integer minimumAge,
-        Integer maximumAge,
-        Set<String> regions,
-        Set<Gender> birthGenders,
-        ClientType clientType,
-        Set<Organ> donating,
-        Set<Organ> requesting,
-        ClientSortOptionsEnum sortOption,
-        Boolean isReversed);
+            String q,
+            Integer offset,
+            Integer count,
+            Integer minimumAge,
+            Integer maximumAge,
+            Set<String> regions,
+            Set<Gender> birthGenders,
+            ClientType clientType,
+            Set<Organ> donating,
+            Set<Organ> requesting,
+            ClientSortOptionsEnum sortOption,
+            Boolean isReversed);
 
     void setClients(Collection<Client> clients);
 
@@ -50,6 +50,7 @@ public interface ClientManager {
 
     /**
      * Returns the client that has the given id.
+     *
      * @param id The ID to match.
      * @return The client with that id, or empty if no such client exists.
      */
@@ -57,8 +58,9 @@ public interface ClientManager {
 
     /**
      * Checks if a client already exists with the same first name, last name, and date of birth.
-     * @param firstName First name
-     * @param lastName Last name
+     *
+     * @param firstName   First name
+     * @param lastName    Last name
      * @param dateOfBirth Date of birth
      * @return true if a colliding client exists in the manager, false otherwise.
      */
@@ -67,6 +69,7 @@ public interface ClientManager {
     /**
      * Gets all transplant requests for all clients stored by the manager, regardless of whether or not they are
      * current.
+     *
      * @return All transplant requests.
      */
     Collection<TransplantRequest> getAllTransplantRequests();
@@ -74,6 +77,7 @@ public interface ClientManager {
     /**
      * Gets all transplant requests for all clients stored by the manager that are CURRENT, i.e. have not yet taken
      * place/been cancelled.
+     *
      * @return All current transplant requests.
      */
     Collection<TransplantRequest> getAllCurrentTransplantRequests();

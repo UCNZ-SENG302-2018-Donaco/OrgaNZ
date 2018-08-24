@@ -2,11 +2,12 @@ package com.humanharvest.organz.resolvers.config;
 
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Country;
-import java.util.Set;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+
+import java.util.Set;
 
 public class SetAllowedCountriesResolver {
 
@@ -24,7 +25,8 @@ public class SetAllowedCountriesResolver {
         HttpEntity<Set<Country>> entity = new HttpEntity<>(countries, httpHeaders);
 
         State.getRestTemplate()
-            .exchange(State.getBaseUri() + "/config/countries", HttpMethod.POST, entity,
-                new ParameterizedTypeReference<Set<Country>>(){});
+                .exchange(State.getBaseUri() + "/config/countries", HttpMethod.POST, entity,
+                        new ParameterizedTypeReference<Set<Country>>() {
+                        });
     }
 }

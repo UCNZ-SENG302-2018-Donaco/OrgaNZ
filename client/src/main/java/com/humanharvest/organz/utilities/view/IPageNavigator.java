@@ -25,7 +25,8 @@ public interface IPageNavigator {
 
     /**
      * Open a new window with the given size as min and current
-     * @param width The width to set
+     *
+     * @param width  The width to set
      * @param height The height to set
      * @return The MainController for the new window, or null if the new window could not be created.
      */

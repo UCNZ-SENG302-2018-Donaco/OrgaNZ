@@ -19,19 +19,9 @@ import com.humanharvest.organz.utilities.web.MedActiveIngredientsHandler;
 import com.humanharvest.organz.utilities.web.MedAutoCompleteHandler;
 import com.humanharvest.organz.views.client.CreateMedicationRecordView;
 import impl.org.controlsfx.autocompletion.AutoCompletionTextFieldBinding;
-import java.io.IOException;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import javafx.collections.FXCollections;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
@@ -43,6 +33,15 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+
+import java.io.IOException;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Controller for the view/edit medications page.
@@ -59,17 +58,13 @@ public class ViewMedicationsController extends SubController {
     private DrugInteractionsHandler drugInteractionsHandler;
 
     @FXML
-    private Pane sidebarPane;
-    @FXML
-    private Pane menuBarPane;
+    private Pane sidebarPane, menuBarPane;
 
     @FXML
     private TextField newMedField;
 
     @FXML
-    private TextArea medicationIngredients;
-    @FXML
-    private TextArea medicationInteractions;
+    private TextArea medicationIngredients, medicationInteractions;
 
     @FXML
     private HBox newMedicationPane;
@@ -81,11 +76,9 @@ public class ViewMedicationsController extends SubController {
     private ListView<MedicationRecord> pastMedicationsView, currentMedicationsView;
 
     private ListView<MedicationRecord> selectedListView;
-    private boolean selectingMultiple;
 
     public ViewMedicationsController() {
         session = State.getSession();
-        selectingMultiple = false;
     }
 
     void setDrugInteractionsHandler(DrugInteractionsHandler handler) {
@@ -175,6 +168,7 @@ public class ViewMedicationsController extends SubController {
      * - Checks if the session login type is a client or a clinician, and sets the viewed client appropriately.
      * - Refreshes the medication list views to set initial state based on the viewed client.
      * - Checks if the logged in user is a client, and if so, makes the page non-editable.
+     *
      * @param mainController The MainController for the window this page is loaded on.
      */
     @Override
@@ -196,7 +190,6 @@ public class ViewMedicationsController extends SubController {
         refreshMedicationLists();
 
         refresh();
-        trackControlOrShiftKeyPressed();
     }
 
     /**
@@ -247,7 +240,8 @@ public class ViewMedicationsController extends SubController {
     /**
      * Creates and executes the resolver to update the given medication record, either setting it as a current
      * medication or a past one
-     * @param date date to set the stop date of the medication record to, either null or the current date
+     *
+     * @param date   date to set the stop date of the medication record to, either null or the current date
      * @param record the record to modify
      */
     private void updateMedicationHistory(LocalDate date, MedicationRecord record) {
@@ -298,6 +292,7 @@ public class ViewMedicationsController extends SubController {
     /**
      * Checks whether the key pressed was ENTER, and if so, adds a new medication with the current value of the new
      * medication text field.
+     *
      * @param keyEvent When a key is pressed and focus is on the new medication text field.
      */
     @FXML
@@ -305,23 +300,6 @@ public class ViewMedicationsController extends SubController {
         if (keyEvent.getCode() == KeyCode.ENTER) {
             addMedication(newMedField.getText());
         }
-    }
-
-    /**
-     * Tracks if the control key is pressed or released, and updates selectingMultiple accordingly.
-     */
-    private void trackControlOrShiftKeyPressed() {
-        Scene scene = mainController.getStage().getScene();
-        scene.setOnKeyPressed(e -> {
-            if (e.getCode() == KeyCode.CONTROL || e.getCode() == KeyCode.SHIFT) {
-                selectingMultiple = true;
-            }
-        });
-        scene.setOnKeyReleased(e -> {
-            if (e.getCode() == KeyCode.CONTROL || e.getCode() == KeyCode.SHIFT) {
-                selectingMultiple = false;
-            }
-        });
     }
 
     /**
@@ -335,6 +313,7 @@ public class ViewMedicationsController extends SubController {
     /**
      * Creates a new MedicationRecord for a medication with the given name, sets its 'started' date to the
      * current date, then adds it to the client's current medications list.
+     *
      * @param newMedName The name of the medication to add a new instance of.
      */
     private void addMedication(String newMedName) {
@@ -362,6 +341,7 @@ public class ViewMedicationsController extends SubController {
 
     /**
      * Returns the currently selected record from the currently selected list view.
+     *
      * @return The selected record, or null if no record is currently selected.
      */
     private MedicationRecord getSelectedRecord() {
@@ -448,9 +428,9 @@ public class ViewMedicationsController extends SubController {
                     // Build list of active ingredients into a string, each ingredient on a new line
                     String sb = String.join("\n", activeIngredients);
                     String formattedIngredients =
-                        String.format("Active ingredients in %s: %n%s",
-                            medicationName,
-                            sb);
+                            String.format("Active ingredients in %s: %n%s",
+                                    medicationName,
+                                    sb);
                     medicationIngredients.setText(formattedIngredients);
                 }
             });
@@ -467,6 +447,7 @@ public class ViewMedicationsController extends SubController {
 
     /**
      * Displays the interactions between the two currently selected medications, given that both are valid medications
+     *
      * @param selectedMedications The two currently selected medications
      */
     private void setInteractions(List<MedicationRecord> selectedMedications) {
@@ -502,10 +483,10 @@ public class ViewMedicationsController extends SubController {
             } else {
                 String interactionsText = String.join("\n", interactions);
                 String formattedInteractions =
-                    String.format("Interactions between %s and %s: %n%s",
-                        medication1,
-                        medication2,
-                        interactionsText);
+                        String.format("Interactions between %s and %s: %n%s",
+                                medication1,
+                                medication2,
+                                interactionsText);
                 medicationInteractions.setText(formattedInteractions);
             }
         });
@@ -515,6 +496,7 @@ public class ViewMedicationsController extends SubController {
 
     /**
      * Gets a list of medication suggestions for the given input from the autocomplete WebAPIHandler.
+     *
      * @param input The string to search for suggested drug names that start with this.
      * @return The list of suggested medication names.
      */

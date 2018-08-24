@@ -18,13 +18,6 @@ import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.validators.client.ClientBornAndDiedDatesValidator;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.views.client.ModifyClientObject;
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Objects;
 import javafx.beans.property.Property;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -49,12 +42,19 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import org.apache.commons.io.IOUtils;
 import org.controlsfx.control.Notifications;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.format.FormatStyle;
+import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -279,9 +279,9 @@ public class ViewClientController extends ViewBaseController {
     }
 
     private static void enableAppropriateRegionInput(
-        ChoiceBox<Country> countryChoice,
-        ChoiceBox<Region> regionChoice,
-        TextField regionTextField) {
+            ChoiceBox<Country> countryChoice,
+            ChoiceBox<Region> regionChoice,
+            TextField regionTextField) {
 
         if (countryChoice.getValue() == Country.NZ) {
             regionChoice.setVisible(true);
@@ -301,7 +301,7 @@ public class ViewClientController extends ViewBaseController {
         // We need to call all functions because they have side effects
         boolean mandatoryFields = checkMandatoryFields();
         boolean nonMandatoryFields = checkNonMandatoryFields();
-        boolean deathDetails =  checkDeathDetailsFields();
+        boolean deathDetails = checkDeathDetailsFields();
         if (mandatoryFields && nonMandatoryFields && deathDetails) {
             updateChanges();
         }
@@ -404,6 +404,7 @@ public class ViewClientController extends ViewBaseController {
     /**
      * Checks that all mandatory fields have valid arguments inside. Otherwise display red text on the invalidly entered
      * labels.
+     *
      * @return true if all mandatory fields have valid input.
      */
     private boolean checkMandatoryFields() {
@@ -428,6 +429,7 @@ public class ViewClientController extends ViewBaseController {
 
     /**
      * Checks that non mandatory fields have either valid input, or no input. Otherwise red text is shown.
+     *
      * @return true if all non mandatory fields have valid/no input.
      */
     private boolean checkNonMandatoryFields() {

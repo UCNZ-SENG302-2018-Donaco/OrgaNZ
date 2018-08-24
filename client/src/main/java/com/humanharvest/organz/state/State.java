@@ -26,15 +26,16 @@ import com.humanharvest.organz.resolvers.clinician.ClinicianResolver;
 import com.humanharvest.organz.resolvers.clinician.ClinicianResolverRest;
 import com.humanharvest.organz.utilities.RestErrorHandler;
 import com.humanharvest.organz.utilities.enums.Country;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
 import javafx.stage.Stage;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 
 /**
  * A static class to store the current state of the system.
@@ -259,7 +260,7 @@ public final class State {
         return restTemplate;
     }
 
-    public static void setRestTemplate(RestTemplate template ) {
+    public static void setRestTemplate(RestTemplate template) {
         restTemplate = template;
     }
 

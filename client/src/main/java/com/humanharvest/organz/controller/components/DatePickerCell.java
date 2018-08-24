@@ -1,8 +1,5 @@
 package com.humanharvest.organz.controller.components;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
@@ -10,8 +7,12 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 /**
  * An editable table cell that holds a date picker. Changing the date picker triggers an edit commit on the cell.
+ *
  * @param <T> The type of data record each row in the table represents.
  */
 public class DatePickerCell<T> extends TableCell<T, LocalDate> {
@@ -21,6 +22,7 @@ public class DatePickerCell<T> extends TableCell<T, LocalDate> {
 
     /**
      * Creates a new date picker cell for the given column. Binds editable/disabled properties to those of the table.
+     *
      * @param column The {@link LocalDate} column to create a date picker cell for.
      */
     public DatePickerCell(TableColumn<T, LocalDate> column) {
@@ -48,7 +50,8 @@ public class DatePickerCell<T> extends TableCell<T, LocalDate> {
 
     /**
      * Triggered whenever the {@link LocalDate} value of the cell is updated; it sets that new value in the date picker.
-     * @param item The new date.
+     *
+     * @param item  The new date.
      * @param empty Whether the cell is now empty or not.
      */
     @Override

@@ -1,15 +1,5 @@
 package com.humanharvest.organz.commands.view;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
-
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
-import java.time.LocalDate;
-import java.util.ArrayList;
-
 import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.state.ClientManager;
@@ -17,6 +7,16 @@ import com.humanharvest.organz.state.ClientManagerMemory;
 import org.junit.Before;
 import org.junit.Test;
 import picocli.CommandLine;
+
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
+import java.time.LocalDate;
+import java.util.ArrayList;
+
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 public class PrintAllInfoTest extends BaseTest {
 

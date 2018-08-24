@@ -1,8 +1,5 @@
 package com.humanharvest.organz.commands.modify;
 
-import java.io.PrintStream;
-import java.util.Optional;
-
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.actions.Action;
@@ -15,6 +12,9 @@ import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 import com.humanharvest.organz.utilities.pico_type_converters.PicoOrganConverter;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
+
+import java.io.PrintStream;
+import java.util.Optional;
 
 /**
  * A command to allow admins to request an organ for a specified client.
@@ -60,7 +60,7 @@ public class RequestOrgan implements Runnable {
         } else {
             boolean organCurrentlyRequested = false;
 
-            for (TransplantRequest tr: client.get().getTransplantRequests()) {
+            for (TransplantRequest tr : client.get().getTransplantRequests()) {
                 if (tr.getRequestedOrgan() == organType && tr.getStatus() == TransplantRequestStatus.WAITING) {
                     organCurrentlyRequested = true;
                     break;

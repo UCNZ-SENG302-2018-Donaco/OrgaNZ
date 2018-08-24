@@ -1,10 +1,10 @@
 package com.humanharvest.organz.actions;
 
+import com.humanharvest.organz.utilities.ActionOccurredListener;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
-
-import com.humanharvest.organz.utilities.ActionOccurredListener;
 
 /**
  * The main invoker class for all model modifying actions. All actions should be using the Action implementation and
@@ -20,6 +20,7 @@ public class ActionInvoker {
 
     /**
      * Undo the last action
+     *
      * @return Returns a string description of the action. Used for notifications, or null if there was no actions to
      * undo
      */
@@ -38,6 +39,7 @@ public class ActionInvoker {
 
     /**
      * Redo the last action
+     *
      * @return Returns a string description of the action. Used for notifications, or null if there was no actions to
      * redo
      */
@@ -56,6 +58,7 @@ public class ActionInvoker {
 
     /**
      * Pass an action object to be executed. Adds the action to the undo list.
+     *
      * @param action An object implementing the Action interface
      * @return Returns a string description of the action. Used for notifications.
      */
@@ -71,6 +74,7 @@ public class ActionInvoker {
 
     /**
      * Checks if there are any actions in the undo stack
+     *
      * @return Are there any actions do be undone
      */
     public boolean canUndo() {
@@ -79,6 +83,7 @@ public class ActionInvoker {
 
     /**
      * Checks if there are any actions in the redo stack
+     *
      * @return Are there any actions do be redone
      */
     public boolean canRedo() {
@@ -87,6 +92,7 @@ public class ActionInvoker {
 
     /**
      * Returns the next Action to be undone
+     *
      * @return The next Action that will be undone
      */
     public Action nextUndo() {
@@ -95,6 +101,7 @@ public class ActionInvoker {
 
     /**
      * Returns the next Action to be redone
+     *
      * @return The next Action that will be redone
      */
     public Action nextRedo() {
@@ -104,6 +111,7 @@ public class ActionInvoker {
 
     /**
      * Register a listener to be notified on any Action event
+     *
      * @param listener The listener to register
      */
     public void registerActionOccuredListener(ActionOccurredListener listener) {
@@ -112,6 +120,7 @@ public class ActionInvoker {
 
     /**
      * Unregister an action listener
+     *
      * @param listener The listener to unregister
      */
     public void unregisterActionOccuredListener(ActionOccurredListener listener) {

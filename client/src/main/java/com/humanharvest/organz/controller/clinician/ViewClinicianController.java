@@ -15,8 +15,13 @@ import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.views.clinician.ModifyClinicianObject;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import org.controlsfx.control.Notifications;
@@ -137,7 +142,7 @@ public class ViewClinicianController extends ViewBaseController {
      * and changes to a textfield input for any other country
      */
     private void checkClinicianCountry() {
-        if (viewedClinician.getCountry() == Country.NZ ) {
+        if (viewedClinician.getCountry() == Country.NZ) {
             regionCB.setVisible(true);
             regionTF.setVisible(false);
         } else {
@@ -184,7 +189,7 @@ public class ViewClinicianController extends ViewBaseController {
             getViewedClinicianData();
         } else {
             PageNavigator.showAlert(Alert.AlertType.ERROR, "Invalid Staff ID",
-                "This staff ID does not exist in the system.", mainController.getStage());
+                    "This staff ID does not exist in the system.", mainController.getStage());
         }
     }
 
@@ -246,6 +251,7 @@ public class ViewClinicianController extends ViewBaseController {
     /**
      * Checks that all mandatory fields have valid arguments inside. Otherwise display red text on the invalidly entered
      * labels.
+     *
      * @return true if all mandatory fields have valid input.
      */
     private boolean checkMandatoryFields() {
@@ -268,6 +274,7 @@ public class ViewClinicianController extends ViewBaseController {
     /**
      * Checks if the password has been updated. If the PasswordField is left blank, the old password remains current.
      * Otherwise the current password is updated to the newly entered value in the field.
+     *
      * @return the users password.
      */
     private String checkPassword() {
@@ -289,6 +296,7 @@ public class ViewClinicianController extends ViewBaseController {
 
     /**
      * Records the changes updated as a ModifyClinicianAction to trace the change in record.
+     *
      * @return If there were any changes made
      */
     private boolean updateChanges() {

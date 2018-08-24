@@ -9,6 +9,7 @@ public class GenderConverter implements TypeConverter<Gender> {
 
     /**
      * Convert a string to a Gender, matches case insensitive
+     *
      * @param value String input from user via PicoCLI
      * @return Gender object
      * @throws TypeConversionException Throws exception if gender type

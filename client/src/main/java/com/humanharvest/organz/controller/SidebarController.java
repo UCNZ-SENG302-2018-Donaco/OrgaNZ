@@ -1,8 +1,5 @@
 package com.humanharvest.organz.controller;
 
-import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
@@ -10,6 +7,8 @@ import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.views.ActionResponseView;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import org.controlsfx.control.Notifications;
 
 /**
@@ -72,6 +71,7 @@ public class SidebarController extends SubController {
 
     /**
      * Evaluates if the request organs button should be displayed for the current user.
+     *
      * @param userType the type of current user
      * @return true if the button should be shown, false otherwise
      */
@@ -86,6 +86,7 @@ public class SidebarController extends SubController {
 
     /**
      * Hides all the buttons in the passed-in array.
+     *
      * @param buttons The buttons to hide
      */
     private void hideButtons(Button buttons[]) {
@@ -96,6 +97,7 @@ public class SidebarController extends SubController {
 
     /**
      * Hides the button from the sidebar.
+     *
      * @param button the button to hide
      */
     private void hideButton(Button button) {

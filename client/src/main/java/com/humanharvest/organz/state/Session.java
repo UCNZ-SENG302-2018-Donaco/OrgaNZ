@@ -1,14 +1,14 @@
 package com.humanharvest.organz.state;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.utilities.JSONConverter;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class Session {
 
@@ -42,8 +42,8 @@ public class Session {
 
     public Client getLoggedInClient() {
         return State.getClientManager()
-            .getClientByID(loggedInClient.getUid())
-            .orElseThrow(IllegalStateException::new);
+                .getClientByID(loggedInClient.getUid())
+                .orElseThrow(IllegalStateException::new);
     }
 
     public Clinician getLoggedInClinician() {

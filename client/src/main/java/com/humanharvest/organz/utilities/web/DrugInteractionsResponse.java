@@ -1,5 +1,10 @@
 package com.humanharvest.organz.utilities.web;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.api.client.util.Key;
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.utilities.enums.Gender;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -12,11 +17,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.api.client.util.Key;
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.utilities.enums.Gender;
 
 /**
  * Handles parsing the response from a drug interactions API request and determining which symptoms apply to a given
@@ -225,6 +225,7 @@ public class DrugInteractionsResponse {
     /**
      * Converts a string in the format 10-20 into a range tuple.
      * Will convert nan to 0-0x7FFFFFFF and 30+ into 30-0x7FFFFFFF.
+     *
      * @param range A string describing a number range, in the format 10-20, 30+, or nan/
      */
     private static IntPair parseAgeRange(String range) {

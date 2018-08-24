@@ -1,8 +1,5 @@
 package com.humanharvest.organz.commands.modify;
 
-import java.io.PrintStream;
-import java.util.Optional;
-
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.actions.Action;
@@ -17,6 +14,9 @@ import com.humanharvest.organz.utilities.pico_type_converters.PicoOrganConverter
 import com.humanharvest.organz.utilities.pico_type_converters.PicoResolveReasonConverter;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
+
+import java.io.PrintStream;
+import java.util.Optional;
 
 /**
  * A command to allow admins to resolve the organ request of a client if it exists with reasoning of why it is being
@@ -86,6 +86,7 @@ public class ResolveOrgan implements Runnable {
 
     /**
      * Helper function to resolve a request and excecute the action if a valid custom reason has been given.
+     *
      * @param selectedTransplantRequest the transplant request potentially being resolved.
      */
     private void resolveRequest(TransplantRequest selectedTransplantRequest) {

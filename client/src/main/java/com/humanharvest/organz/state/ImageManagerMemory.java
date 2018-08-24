@@ -3,14 +3,12 @@ package com.humanharvest.organz.state;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import org.apache.commons.io.IOUtils;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ImageManagerMemory implements ImageManager{
+public class ImageManagerMemory implements ImageManager {
 
     private Map<Integer, byte[]> imageMap = new HashMap<>();
 
@@ -19,6 +17,7 @@ public class ImageManagerMemory implements ImageManager{
 
     /**
      * Retrieves the image of the clients profile
+     *
      * @param uid id of the client
      * @return a byte array of the clients image
      */
@@ -42,7 +41,8 @@ public class ImageManagerMemory implements ImageManager{
 
     /**
      * Posts an image to the clients profile to replace their existing one (which may be the default one)
-     * @param uid id of the client
+     *
+     * @param uid   id of the client
      * @param image image the client is posting to the server
      * @return true if the image is successfully posted. false otherwise.
      */
@@ -61,6 +61,7 @@ public class ImageManagerMemory implements ImageManager{
 
     /**
      * Deletes the image of a client so that it is set back to the default image.
+     *
      * @param uid id of the client
      * @return true if the image is successfully deleted.
      */

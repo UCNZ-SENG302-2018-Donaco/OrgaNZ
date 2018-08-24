@@ -6,13 +6,13 @@ import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.views.administrator.CreateAdministratorView;
 import com.humanharvest.organz.views.administrator.ModifyAdministratorObject;
 import org.springframework.core.ParameterizedTypeReference;
-
-import java.util.List;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+
+import java.util.List;
 
 public class AdministratorResolverRest implements AdministratorResolver {
 
@@ -34,7 +34,7 @@ public class AdministratorResolverRest implements AdministratorResolver {
 
     @Override
     public Administrator modifyAdministrator(Administrator administrator,
-            ModifyAdministratorObject modifyAdministratorObject) {
+                                             ModifyAdministratorObject modifyAdministratorObject) {
 
         HttpHeaders httpHeaders = createHeaders();
 
@@ -56,7 +56,7 @@ public class AdministratorResolverRest implements AdministratorResolver {
         httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
         httpHeaders.set("X-Auth-Token", State.getToken());
 
-        HttpEntity<Object> entity = new HttpEntity<>(null, httpHeaders);
+        HttpEntity<?> entity = new HttpEntity<>(null, httpHeaders);
 
         ResponseEntity<List<HistoryItem>> responseEntity = State.getRestTemplate()
                 .exchange(

@@ -1,16 +1,16 @@
 package com.humanharvest.organz.state;
 
+import com.humanharvest.organz.Administrator;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import com.humanharvest.organz.Administrator;
-
 /**
  * The class to handle the Administrators.
  */
-public class AdministratorManagerMemory implements AdministratorManager{
+public class AdministratorManagerMemory implements AdministratorManager {
 
     private static final String DEFAULT_ADMINISTRATOR_USERNAME = "admin";
 
@@ -28,6 +28,7 @@ public class AdministratorManagerMemory implements AdministratorManager{
 
     /**
      * Add an administrator
+     *
      * @param administrator Administrator to be added
      */
     @Override
@@ -41,6 +42,7 @@ public class AdministratorManagerMemory implements AdministratorManager{
 
     /**
      * Get the list of administrators
+     *
      * @return ArrayList of current administrators
      */
     @Override
@@ -50,6 +52,7 @@ public class AdministratorManagerMemory implements AdministratorManager{
 
     /**
      * Remove an administrator
+     *
      * @param administrator Administrator to be removed
      */
     @Override
@@ -59,6 +62,7 @@ public class AdministratorManagerMemory implements AdministratorManager{
 
     /**
      * Checks if an administrator already exists with that username
+     *
      * @param username The username of the administrator
      */
     @Override
@@ -79,6 +83,7 @@ public class AdministratorManagerMemory implements AdministratorManager{
 
     /**
      * Return an administrator matching that UID
+     *
      * @param username The username to be matched
      * @return Administrator or null if none exists
      */
@@ -91,6 +96,7 @@ public class AdministratorManagerMemory implements AdministratorManager{
 
     /**
      * Return the default administrator
+     *
      * @return the default administrator
      */
     @Override

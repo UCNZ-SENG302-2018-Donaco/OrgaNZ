@@ -18,12 +18,6 @@ import com.humanharvest.organz.views.client.DonatedOrganView;
 import com.humanharvest.organz.views.client.PaginatedClientList;
 import com.humanharvest.organz.views.client.PaginatedDonatedOrgansList;
 import com.humanharvest.organz.views.client.PaginatedTransplantList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -33,6 +27,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.time.LocalDate;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ClientManagerRest implements ClientManager {
@@ -169,9 +169,9 @@ public class ClientManagerRest implements ClientManager {
         HttpEntity<String> entity = new HttpEntity<>(httpHeaders);
 
         UriComponentsBuilder builder = UriComponentsBuilder
-            .fromHttpUrl(State.getBaseUri() + "/clients/transplantRequests")
-            .queryParam("offset", offset)
-            .queryParam("count", count);
+                .fromHttpUrl(State.getBaseUri() + "/clients/transplantRequests")
+                .queryParam("offset", offset)
+                .queryParam("count", count);
 
         if (regions != null && !regions.isEmpty()) {
             builder = builder.queryParam("regions", String.join(",", regions));
@@ -200,6 +200,7 @@ public class ClientManagerRest implements ClientManager {
 
     /**
      * Gets all organs that are available for donation
+     *
      * @return a collection of all available organs for donation
      */
     @Override
@@ -227,12 +228,12 @@ public class ClientManagerRest implements ClientManager {
      */
     @Override
     public PaginatedDonatedOrgansList getAllOrgansToDonate(
-        Integer offset,
-        Integer count,
-        Set<String> regions,
-        Set<Organ> organType,
-        DonatedOrganSortOptionsEnum sortOption,
-        Boolean reversed) {
+            Integer offset,
+            Integer count,
+            Set<String> regions,
+            Set<Organ> organType,
+            DonatedOrganSortOptionsEnum sortOption,
+            Boolean reversed) {
 
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-Auth-Token", State.getToken());

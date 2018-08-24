@@ -17,6 +17,7 @@ final class MockHelper {
      * Status: 200 OK
      * ContentType: application/json
      * Body: {jsonResponseBody}
+     *
      * @param jsonResponseBody The JSON string to put in the body of every response from this HttpTransport.
      * @return A new MockHttpTransport that will always return the described response.
      */

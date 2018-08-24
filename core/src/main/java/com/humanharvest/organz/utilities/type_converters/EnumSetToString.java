@@ -10,8 +10,8 @@ public final class EnumSetToString {
 
     public static String convert(Collection<? extends Enum<?>> set) {
         return set
-            .stream()
-            .map(Enum::name)
-            .collect(Collectors.joining(","));
+                .stream()
+                .map(Enum::name)
+                .collect(Collectors.joining(","));
     }
 }

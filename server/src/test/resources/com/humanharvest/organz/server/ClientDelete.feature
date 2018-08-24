@@ -1,4 +1,5 @@
 Feature: Does DELETE /client/ work?
+
   Scenario: Delete a non-existant client
     When I delete /clients/5
     Then the result is not found

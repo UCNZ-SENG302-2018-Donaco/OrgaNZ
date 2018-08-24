@@ -1,12 +1,5 @@
 package com.humanharvest.organz.commands.modify;
 
-import java.io.PrintStream;
-import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.actions.client.ModifyClientAction;
@@ -22,6 +15,13 @@ import com.humanharvest.organz.utilities.pico_type_converters.PicoLocalDateConve
 import com.humanharvest.organz.utilities.validators.RegionValidator;
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
+
+import java.io.PrintStream;
+import java.time.LocalDate;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
 
 /**
  * Command line to set attributes of a Client, by using their ID as a reference key.

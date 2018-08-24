@@ -16,15 +16,6 @@ import com.humanharvest.organz.views.client.DonatedOrganView;
 import com.humanharvest.organz.views.client.PaginatedClientList;
 import com.humanharvest.organz.views.client.PaginatedDonatedOrgansList;
 import com.humanharvest.organz.views.client.PaginatedTransplantList;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.StringJoiner;
 import org.hibernate.ReplicationMode;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -36,6 +27,15 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 /**
@@ -92,18 +92,18 @@ public class ClientManagerDBPure implements ClientManager {
 
     @Override
     public PaginatedClientList getClients(
-        String q,
-        Integer offset,
-        Integer count,
-        Integer minimumAge,
-        Integer maximumAge,
-        Set<String> regions,
-        Set<Gender> birthGenders,
-        ClientType clientType,
-        Set<Organ> donating,
-        Set<Organ> requesting,
-        ClientSortOptionsEnum sortOption,
-        Boolean isReversed) {
+            String q,
+            Integer offset,
+            Integer count,
+            Integer minimumAge,
+            Integer maximumAge,
+            Set<String> regions,
+            Set<Gender> birthGenders,
+            ClientType clientType,
+            Set<Organ> donating,
+            Set<Organ> requesting,
+            ClientSortOptionsEnum sortOption,
+            Boolean isReversed) {
 
         Transaction trns = null;
 

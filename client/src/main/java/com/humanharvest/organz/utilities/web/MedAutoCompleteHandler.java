@@ -57,6 +57,7 @@ public class MedAutoCompleteHandler extends WebAPIHandler {
 
     /**
      * Makes a request to the drug autocompletion web API and returns the results.
+     *
      * @param queryString The query string to send to the API.
      * @return A list of suggested drug names matching the query string.
      */

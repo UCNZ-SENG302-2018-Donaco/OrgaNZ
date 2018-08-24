@@ -1,9 +1,5 @@
 package com.humanharvest.organz.state;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
 import com.humanharvest.organz.Administrator;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -12,6 +8,10 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 public class AdministratorManagerRest implements AdministratorManager {
 
@@ -35,7 +35,7 @@ public class AdministratorManagerRest implements AdministratorManager {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
         httpHeaders.set("X-Auth-Token", State.getToken());
-        HttpEntity<Object> entity = new HttpEntity<>(null, httpHeaders);
+        HttpEntity<?> entity = new HttpEntity<>(null, httpHeaders);
 
         ResponseEntity<List<Administrator>> response = State.getRestTemplate().exchange(
                 State.getBaseUri() + "administrators",
@@ -104,7 +104,7 @@ public class AdministratorManagerRest implements AdministratorManager {
         httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
         httpHeaders.set("X-Auth-Token", State.getToken());
 
-        HttpEntity<Object> entity = new HttpEntity<>(null, httpHeaders);
+        HttpEntity<?> entity = new HttpEntity<>(null, httpHeaders);
 
         ResponseEntity<Administrator> responseEntity = State.getRestTemplate().exchange(
                 State.getBaseUri() + "administrators/{username}",

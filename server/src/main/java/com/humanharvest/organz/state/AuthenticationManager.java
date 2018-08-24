@@ -1,10 +1,5 @@
 package com.humanharvest.organz.state;
 
-import java.time.Instant;
-import java.util.Date;
-import java.util.Objects;
-import java.util.Optional;
-
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
@@ -14,6 +9,11 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
+
+import java.time.Instant;
+import java.util.Date;
+import java.util.Objects;
+import java.util.Optional;
 
 public class AuthenticationManager {
 
@@ -26,6 +26,7 @@ public class AuthenticationManager {
 
     /**
      * Given an authentication token, check if it is a valid administrator
+     *
      * @param authenticationToken The authentication token to check
      * @throws AuthenticationException Thrown if the authentication is invalid for any reason
      */
@@ -39,6 +40,7 @@ public class AuthenticationManager {
 
     /**
      * Given an authentication token, check if it is a valid administrator or clinician
+     *
      * @param authenticationToken The authentication token to check
      * @throws AuthenticationException Thrown if the authentication is invalid for any reason
      */
@@ -55,6 +57,7 @@ public class AuthenticationManager {
     /**
      * Given an authentication token and client, check if the token matches any administrator, any clinician, or the
      * given client
+     *
      * @param authenticationToken The authentication token to check
      * @throws AuthenticationException Thrown if the authentication is invalid for any reason
      */
@@ -74,6 +77,7 @@ public class AuthenticationManager {
     /**
      * Given an authentication token and clinician, check if the token matches any administrator or the
      * given clinician
+     *
      * @param authenticationToken The authentication token to check
      * @throws AuthenticationException Thrown if the authentication is invalid for any reason
      */

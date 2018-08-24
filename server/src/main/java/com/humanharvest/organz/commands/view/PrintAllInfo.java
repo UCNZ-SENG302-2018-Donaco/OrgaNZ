@@ -1,12 +1,12 @@
 package com.humanharvest.organz.commands.view;
 
-import java.io.PrintStream;
-import java.util.List;
-
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
 import picocli.CommandLine.Command;
+
+import java.io.PrintStream;
+import java.util.List;
 
 /**
  * Command line to print all of the information of all the clients, including their ID. Not Sorted.

@@ -11,12 +11,15 @@ import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
+import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
-
-import java.util.Optional;
 
 public class StaffListController extends SubController {
 
@@ -80,6 +83,7 @@ public class StaffListController extends SubController {
 
     /**
      * Gets the clinician that has been clicked on.
+     *
      * @return The clinician object of the clinician who has been clicked on
      */
     private Clinician getClinicianClickedOn() {
@@ -100,14 +104,15 @@ public class StaffListController extends SubController {
      */
     private void loadUser(Integer staffId) {
         Clinician clinician = clinicianManager
-            .getClinicianByStaffId(staffId)
-            .orElseThrow(IllegalStateException::new);
+                .getClinicianByStaffId(staffId)
+                .orElseThrow(IllegalStateException::new);
         State.setViewedClinician(clinician);
         PageNavigator.loadPage(Page.VIEW_CLINICIAN, mainController);
     }
 
     /**
      * Deletes the staff member clinician represented by "id".
+     *
      * @param id the staff member to delete
      */
     private void delete(int id) {

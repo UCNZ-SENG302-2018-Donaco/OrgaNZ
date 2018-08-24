@@ -6,11 +6,6 @@ import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.controller.components.TouchAlertController;
 import com.humanharvest.organz.controller.components.TouchAlertTextController;
 import com.humanharvest.organz.state.State;
-import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.fxml.FXMLLoader;
@@ -23,6 +18,12 @@ import javafx.scene.transform.Affine;
 import javafx.scene.transform.Transform;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Utility class for controlling navigation between pages.

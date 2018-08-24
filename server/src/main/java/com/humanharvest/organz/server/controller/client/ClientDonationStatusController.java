@@ -1,9 +1,5 @@
 package com.humanharvest.organz.server.controller.client;
 
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.actions.client.ModifyClientOrgansAction;
 import com.humanharvest.organz.state.State;
@@ -23,6 +19,10 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+
 @RestController
 public class ClientDonationStatusController {
 
@@ -31,15 +31,14 @@ public class ClientDonationStatusController {
             @PathVariable int id,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {
         Optional<Client> optionalClient = State.getClientManager().getClientByID(id);
-        
-        
-        
+
+
         if (optionalClient.isPresent()) {
             Client client = optionalClient.get();
 
             //Auth check
             State.getAuthenticationManager().verifyClientAccess(authToken, client);
-            
+
             //Add the ETag to the headers
             HttpHeaders headers = new HttpHeaders();
             headers.add("ETag", client.getETag());

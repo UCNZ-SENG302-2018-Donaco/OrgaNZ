@@ -13,7 +13,7 @@ import java.util.Optional;
  * setting attributes and updating the values of the client.
  */
 
-public class ClinicianManagerMemory implements ClinicianManager{
+public class ClinicianManagerMemory implements ClinicianManager {
 
     private static final int DEFAULT_CLINICIAN_ID = 0;
 
@@ -26,7 +26,7 @@ public class ClinicianManagerMemory implements ClinicianManager{
             "Unspecified",
             "Unspecified",
             null,
-        DEFAULT_CLINICIAN_ID,
+            DEFAULT_CLINICIAN_ID,
             "clinician");
 
     public ClinicianManagerMemory() {
@@ -41,6 +41,7 @@ public class ClinicianManagerMemory implements ClinicianManager{
 
     /**
      * Add a clinician
+     *
      * @param clinician Clinician to be added
      */
     @Override
@@ -50,6 +51,7 @@ public class ClinicianManagerMemory implements ClinicianManager{
 
     /**
      * Get the list of clinicians
+     *
      * @return ArrayList of current clinicians
      */
     @Override
@@ -59,6 +61,7 @@ public class ClinicianManagerMemory implements ClinicianManager{
 
     /**
      * Remove a client object
+     *
      * @param clinician Clinician to be removed
      */
     @Override
@@ -68,6 +71,7 @@ public class ClinicianManagerMemory implements ClinicianManager{
 
     /**
      * Checks if a user already exists with that staff id
+     *
      * @param staffId The id of the clinician
      * @return Boolean
      */
@@ -82,12 +86,13 @@ public class ClinicianManagerMemory implements ClinicianManager{
     }
 
     @Override
-    public void applyChangesTo(Clinician clinician){
+    public void applyChangesTo(Clinician clinician) {
         //Do Nothing for now....
     }
 
     /**
      * Return a clinician matching that UID
+     *
      * @param staffId To be matched
      * @return Clinician object or empty if none exists
      */
@@ -100,6 +105,7 @@ public class ClinicianManagerMemory implements ClinicianManager{
 
     /**
      * Return the default clinician
+     *
      * @return the default clinician
      */
     @Override

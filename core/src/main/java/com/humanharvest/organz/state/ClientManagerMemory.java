@@ -16,12 +16,12 @@ import com.humanharvest.organz.utilities.enums.DonatedOrganSortOptionsEnum;
 import com.humanharvest.organz.utilities.enums.Gender;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
-
 import com.humanharvest.organz.views.client.DonatedOrganView;
 import com.humanharvest.organz.views.client.PaginatedClientList;
 import com.humanharvest.organz.views.client.PaginatedDonatedOrgansList;
 import com.humanharvest.organz.views.client.PaginatedTransplantList;
 import com.humanharvest.organz.views.client.TransplantRequestView;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -59,6 +59,7 @@ public class ClientManagerMemory implements ClientManager {
 
     /**
      * Add a client
+     *
      * @param client Client to be added
      */
     @Override
@@ -71,6 +72,7 @@ public class ClientManagerMemory implements ClientManager {
 
     /**
      * Get the list of clients
+     *
      * @return ArrayList of current clients
      */
     @Override
@@ -182,6 +184,7 @@ public class ClientManagerMemory implements ClientManager {
 
     /**
      * Remove a client object
+     *
      * @param client Client to be removed
      */
     @Override
@@ -194,8 +197,8 @@ public class ClientManagerMemory implements ClientManager {
         // Ensure that all records associated with the client have an id
 
         long nextId = client.getTransplantRequests().stream()
-            .mapToLong(request -> request.getId() == null ? 0 : request.getId())
-            .max().orElse(0) + 1;
+                .mapToLong(request -> request.getId() == null ? 0 : request.getId())
+                .max().orElse(0) + 1;
         for (TransplantRequest request : client.getTransplantRequests()) {
             if (request.getId() == null) {
                 request.setId(nextId);
@@ -233,8 +236,9 @@ public class ClientManagerMemory implements ClientManager {
 
     /**
      * Checks if a user already exists with that first + last name and date of birth
-     * @param firstName First name
-     * @param lastName Last name
+     *
+     * @param firstName   First name
+     * @param lastName    Last name
      * @param dateOfBirth Date of birth (LocalDate)
      * @return Boolean
      */
@@ -242,8 +246,8 @@ public class ClientManagerMemory implements ClientManager {
     public boolean doesClientExist(String firstName, String lastName, LocalDate dateOfBirth) {
         for (Client client : clients) {
             if (Objects.equals(client.getFirstName(), firstName) &&
-                Objects.equals(client.getLastName(), lastName) &&
-                client.getDateOfBirth().isEqual(dateOfBirth)) {
+                    Objects.equals(client.getLastName(), lastName) &&
+                    client.getDateOfBirth().isEqual(dateOfBirth)) {
                 return true;
             }
         }
@@ -252,6 +256,7 @@ public class ClientManagerMemory implements ClientManager {
 
     /**
      * Return a client matching that UID
+     *
      * @param id To be matched
      * @return Client object or empty if none exists
      */
@@ -264,6 +269,7 @@ public class ClientManagerMemory implements ClientManager {
 
     /**
      * Returns the next unused id number for a new client.
+     *
      * @return The next free UID.
      */
     public int nextUid() {
@@ -280,6 +286,7 @@ public class ClientManagerMemory implements ClientManager {
 
     /**
      * Gets all transplant requests, regardless of whether or not they are current
+     *
      * @return List of all transplant requests
      */
     @Override
@@ -292,6 +299,7 @@ public class ClientManagerMemory implements ClientManager {
 
     /**
      * Gets all current transplant requests.
+     *
      * @return List of all current transplant requests
      */
     @Override
@@ -359,12 +367,12 @@ public class ClientManagerMemory implements ClientManager {
      */
     @Override
     public PaginatedDonatedOrgansList getAllOrgansToDonate(
-        Integer offset,
-        Integer count,
-        Set<String> regionsToFilter,
-        Set<Organ> organType,
-        DonatedOrganSortOptionsEnum sortOption,
-        Boolean reversed) {
+            Integer offset,
+            Integer count,
+            Set<String> regionsToFilter,
+            Set<Organ> organType,
+            DonatedOrganSortOptionsEnum sortOption,
+            Boolean reversed) {
 
         Comparator<DonatedOrgan> comparator;
         if (sortOption == null) {

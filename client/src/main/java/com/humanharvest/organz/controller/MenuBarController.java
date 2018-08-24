@@ -15,9 +15,14 @@ import javafx.application.Platform;
 import javafx.beans.property.Property;
 import javafx.concurrent.Task;
 import javafx.fxml.FXML;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.SeparatorMenuItem;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.controlsfx.control.Notifications;
@@ -162,6 +167,7 @@ public class MenuBarController extends SubController {
 
     /**
      * Hides all the menu items in the passed-in array.
+     *
      * @param items The menu items to hide
      */
     private void hideMenuItems(MenuItem items[]) {
@@ -172,6 +178,7 @@ public class MenuBarController extends SubController {
 
     /**
      * Hides the menu item from the menu.
+     *
      * @param menuItem the menu item to hide
      */
     private void hideMenuItem(MenuItem menuItem) {
@@ -181,6 +188,7 @@ public class MenuBarController extends SubController {
 
     /**
      * Hides all the menus in the passed-in array.
+     *
      * @param menus The menus to hide
      */
     private void hideMenus(Menu menus[]) {
@@ -191,6 +199,7 @@ public class MenuBarController extends SubController {
 
     /**
      * Hides the Primary menu from the menu bar.
+     *
      * @param menu the menu to hide
      */
     private void hideMenu(Menu menu) {
@@ -466,6 +475,7 @@ public class MenuBarController extends SubController {
     /**
      * Returns the file extension of the given file name string (in lowercase). The file extension is defined as the
      * characters after the last "." in the file name.
+     *
      * @param fileName The file name string.
      * @return The file extension of the given file name.
      */
@@ -579,7 +589,7 @@ public class MenuBarController extends SubController {
         if (State.getUiType() == UiType.TOUCH) {
             MultitouchHandler.removePane(mainController.getPane());
         } else {
-            Stage stage = (Stage)menuBar.getScene().getWindow();
+            Stage stage = (Stage) menuBar.getScene().getWindow();
             stage.close();
         }
     }

@@ -10,7 +10,8 @@ public class CreateClientAction extends ClientAction {
 
     /**
      * Create a new Action
-     * @param client The Client to be created
+     *
+     * @param client  The Client to be created
      * @param manager The ClientManager to apply changes to
      */
     public CreateClientAction(Client client, ClientManager manager) {

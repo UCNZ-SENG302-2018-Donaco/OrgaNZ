@@ -8,7 +8,7 @@ public class ResolveReasonConverter implements TypeConverter<ResolveReason> {
     public ResolveReason convert(Object value) throws Exception {
         try {
             return ResolveReason.fromString(value.toString());
-        } catch(IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             throw new TypeConversionException(e.getMessage());
         }
     }

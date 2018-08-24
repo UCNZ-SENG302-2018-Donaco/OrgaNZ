@@ -14,6 +14,7 @@ public abstract class SubController {
     /**
      * Method to setup the subcontroller after its window (main controller) has been assigned. Sets the
      * subcontroller's {@link MainController}, associated with the window it is in, also sets the window context.
+     *
      * @param mainController The main controller that defines which window this subcontroller belongs to.
      */
     public void setup(MainController mainController) {

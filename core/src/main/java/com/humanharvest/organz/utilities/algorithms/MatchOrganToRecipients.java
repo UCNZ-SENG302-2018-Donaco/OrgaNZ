@@ -9,7 +9,6 @@ import com.humanharvest.organz.utilities.enums.Region;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class MatchOrganToRecipients {
@@ -68,7 +67,7 @@ public class MatchOrganToRecipients {
     }
 
     public static List<Client> getListOfPotentialRecipients(DonatedOrgan donatedOrgan,
-        Iterable<TransplantRequest> transplantRequests) {
+                                                            Iterable<TransplantRequest> transplantRequests) {
 
         List<Client> potentialMatches = new ArrayList<>();
 

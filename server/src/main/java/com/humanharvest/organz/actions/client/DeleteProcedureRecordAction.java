@@ -13,8 +13,9 @@ public class DeleteProcedureRecordAction extends ClientAction {
 
     /**
      * Creates a new action to delete an procedure record.
-     * @param client The client whose medical history to delete it from.
-     * @param record The procedure record to delete.
+     *
+     * @param client  The client whose medical history to delete it from.
+     * @param record  The procedure record to delete.
      * @param manager The ClientManager to apply the changes to
      */
     public DeleteProcedureRecordAction(Client client, ProcedureRecord record, ClientManager manager) {
