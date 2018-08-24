@@ -122,7 +122,7 @@ public class RegisterOrganDonationController extends SubController {
         manualOverrideCol.setCellFactory(column -> new ManualOverrideCell(column,
                 this::handleOverride,
                 this::handleEditOverride,
-                this::handleCancelOverride));
+                RegisterOrganDonationController::handleCancelOverride));
 
         // Sets the comparator for sorting by time until expiry column.
         timeUntilExpiryCol.setComparator((dur1, dur2) -> {
@@ -255,7 +255,7 @@ public class RegisterOrganDonationController extends SubController {
      *
      * @param donatedOrgan The donated organ the user wants to cancel the override for.
      */
-    private void handleCancelOverride(DonatedOrgan donatedOrgan) {
+    private static void handleCancelOverride(DonatedOrgan donatedOrgan) {
         try {
             State.getClientResolver().cancelManualOverrideForOrgan(donatedOrgan);
             PageNavigator.refreshAllWindows();
@@ -411,7 +411,7 @@ public class RegisterOrganDonationController extends SubController {
                 client.getUid(), client.getFullName(), changesText);
     }
 
-    private String formatChange(Organ organ, boolean newValue) {
+    private static String formatChange(Organ organ, boolean newValue) {
         if (newValue) {
             return String.format("Registered %s for donation.", organ.toString());
         } else {

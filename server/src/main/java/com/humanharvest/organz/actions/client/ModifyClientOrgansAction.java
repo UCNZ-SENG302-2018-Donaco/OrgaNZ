@@ -58,7 +58,7 @@ public class ModifyClientOrgansAction extends ClientAction {
         manager.applyChangesTo(client);
     }
 
-    private String formatChange(Organ organ, boolean newValue) {
+    private static String formatChange(Organ organ, boolean newValue) {
         if (newValue) {
             return String.format("Registered %s for donation.", organ.toString());
         } else {

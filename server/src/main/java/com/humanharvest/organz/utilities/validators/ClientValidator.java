@@ -90,25 +90,25 @@ public class ClientValidator {
 
     // FIELD VALIDATORS
 
-    private boolean uidValid(Client client) {
+    private static boolean uidValid(Client client) {
         return client.getUid() == null || client.getUid() > 0;
     }
 
-    private boolean firstNameValid(Client client) {
+    private static boolean firstNameValid(Client client) {
         return client.getFirstName() != null && !client.getFirstName().equals("");
     }
 
-    private boolean lastNameValid(Client client) {
+    private static boolean lastNameValid(Client client) {
         return client.getLastName() != null && !client.getLastName().equals("");
     }
 
-    private boolean dateOfBirthValid(Client client) {
+    private static boolean dateOfBirthValid(Client client) {
         return client.getDateOfBirth() != null &&
                 dateIsValid(client.getDateOfBirth()) &&
                 !client.getDateOfBirth().isAfter(LocalDate.now());  // Catch future date of birth
     }
 
-    private boolean dateOfDeathValid(Client client) {
+    private static boolean dateOfDeathValid(Client client) {
         if (client.getDateOfDeath() != null) {
             // Catch date of death before date of birth
             return dateIsValid(client.getDateOfDeath()) &&
@@ -117,23 +117,23 @@ public class ClientValidator {
         return true;
     }
 
-    private boolean heightValid(Client client) {
+    private static boolean heightValid(Client client) {
         // Catch negative heights
         return client.getHeight() >= -DELTA;
     }
 
-    private boolean weightValid(Client client) {
+    private static boolean weightValid(Client client) {
         // Catch negative weights
         return client.getWeight() >= -DELTA;
     }
 
-    private boolean createdTimestampValid(Client client) {
+    private static boolean createdTimestampValid(Client client) {
         return client.getCreatedTimestamp() != null &&
                 datetimeIsValid(client.getCreatedTimestamp()) &&
                 !client.getCreatedTimestamp().isAfter(Instant.now());  // Catch future created timestamp
     }
 
-    private boolean modifiedTimestampValid(Client client) {
+    private static boolean modifiedTimestampValid(Client client) {
         if (client.getModifiedTimestamp() != null) {
             // Catch date of death before date of birth
             return datetimeIsValid(client.getModifiedTimestamp()) &&
@@ -145,7 +145,7 @@ public class ClientValidator {
     // HELPERS
 
     // TODO: Should this really be here? It should already be invalid by this stage
-    private boolean dateIsValid(LocalDate date) {
+    private static boolean dateIsValid(LocalDate date) {
         // Catch any invalid dates (eg date >31), or dates with null months, etc
         try {
             LocalDate.parse(date.toString());
@@ -156,7 +156,7 @@ public class ClientValidator {
     }
 
     // TODO: Should this really be here? It should already be invalid by this stage
-    private boolean datetimeIsValid(Instant datetime) {
+    private static boolean datetimeIsValid(Instant datetime) {
         try {
             Instant.parse(datetime.toString());
             return true;

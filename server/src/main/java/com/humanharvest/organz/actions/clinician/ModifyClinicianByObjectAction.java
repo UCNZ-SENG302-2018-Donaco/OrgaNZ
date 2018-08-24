@@ -44,7 +44,7 @@ public class ModifyClinicianByObjectAction extends ClinicianAction {
     public String getExecuteText() {
         String changesText = newClinicianDetails.getModifiedFields().stream()
                 .map(Field::getName)
-                .map(this::unCamelCase)
+                .map(ModifyClinicianByObjectAction::unCamelCase)
                 .collect(Collectors.joining("\n"));
 
         return String.format("Updated details for clinician %d: %s. \n"
@@ -56,7 +56,7 @@ public class ModifyClinicianByObjectAction extends ClinicianAction {
     public String getUnexecuteText() {
         String changesText = oldClinicianDetails.getModifiedFields().stream()
                 .map(Field::getName)
-                .map(this::unCamelCase)
+                .map(ModifyClinicianByObjectAction::unCamelCase)
                 .collect(Collectors.joining("\n"));
 
         return String.format("Reversed update for clinician %d: %s. \n"
@@ -64,7 +64,7 @@ public class ModifyClinicianByObjectAction extends ClinicianAction {
                 clinician.getStaffId(), clinician.getFullName(), changesText);
     }
 
-    private String unCamelCase(String inCamelCase) {
+    private static String unCamelCase(String inCamelCase) {
         String unCamelCased = inCamelCase.replaceAll("([a-z])([A-Z]+)", "$1 $2");
         return unCamelCased.substring(0, 1).toUpperCase() + unCamelCased.substring(1);
     }

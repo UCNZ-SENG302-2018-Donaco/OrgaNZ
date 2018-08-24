@@ -135,7 +135,7 @@ public class ActionsController {
     }
 
 
-    private void checkETag(String ETag, Object modifiedObject) throws IfMatchFailedException {
+    private static void checkETag(String ETag, Object modifiedObject) throws IfMatchFailedException {
         //Check the object matches the ETag
         //If the object is not a ConcurrencyControlledEntity, we will allow the action no matter what
         if (modifiedObject instanceof ConcurrencyControlledEntity) {

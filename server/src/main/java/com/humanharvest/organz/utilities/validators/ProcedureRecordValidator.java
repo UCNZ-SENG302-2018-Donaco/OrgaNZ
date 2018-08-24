@@ -33,19 +33,19 @@ public class ProcedureRecordValidator {
 
     // FIELD VALIDATORS
 
-    private boolean summaryValid(ProcedureRecord record) {
+    private static boolean summaryValid(ProcedureRecord record) {
         return record.getSummary() != null &&
                 !record.getSummary().equals("");
     }
 
-    private boolean dateValid(ProcedureRecord record) {
+    private static boolean dateValid(ProcedureRecord record) {
         return dateIsValid(record.getDate()) &&
                 !record.getDate().isAfter(LocalDate.now());
     }
 
     // HELPERS
 
-    private boolean dateIsValid(LocalDate date) {
+    private static boolean dateIsValid(LocalDate date) {
         // Catch any invalid dates (eg date >31), or dates with null months, etc
         try {
             LocalDate.parse(date.toString());

@@ -349,7 +349,7 @@ public class ClientManagerMemory implements ClientManager {
      * @param sortOption the sort option
      * @return the comparator that matches the sort option
      */
-    private Comparator<DonatedOrgan> getComparator(DonatedOrganSortOptionsEnum sortOption) {
+    private static Comparator<DonatedOrgan> getComparator(DonatedOrganSortOptionsEnum sortOption) {
         Comparator<DonatedOrgan> comparator;
         if (sortOption == null) {
             comparator = Comparator.comparing(DonatedOrgan::getDurationUntilExpiry,

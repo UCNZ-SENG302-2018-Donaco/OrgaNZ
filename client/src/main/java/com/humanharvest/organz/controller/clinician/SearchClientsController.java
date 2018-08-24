@@ -378,7 +378,7 @@ public class SearchClientsController extends SubController {
         updateClientList();
     }
 
-    private <T extends Enum<T>> EnumSet<T> filterToSet(CheckComboBox<T> filter, Class<T> enumType) {
+    private static <T extends Enum<T>> EnumSet<T> filterToSet(CheckComboBox<T> filter, Class<T> enumType) {
         EnumSet<T> enumSet = EnumSet.noneOf(enumType);
         enumSet.addAll(filter.getCheckModel().getCheckedItems());
         return enumSet;

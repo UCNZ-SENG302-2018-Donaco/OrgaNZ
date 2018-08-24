@@ -76,7 +76,7 @@ public class ModifyProcedureObject extends ModifyBaseObject {
 
     public String toString() {
         String changesText = modifiedFields.stream()
-                .map(this::fieldString)
+                .map(ModifyProcedureObject::fieldString)
                 .collect(Collectors.joining("\n"));
 
         return String.format("Updated details for client.\n"
@@ -84,7 +84,7 @@ public class ModifyProcedureObject extends ModifyBaseObject {
                 changesText);
     }
 
-    private String fieldString(Field field) {
+    private static String fieldString(Field field) {
         return String.format("Updated %s", field.getName());
     }
 }

@@ -50,16 +50,16 @@ public class TransplantRequestValidator {
 
     // FIELD VALIDATORS
 
-    private boolean requestedOrganValid(TransplantRequest request) {
+    private static boolean requestedOrganValid(TransplantRequest request) {
         return request.getRequestedOrgan() != null;
     }
 
-    private boolean requestDateValid(TransplantRequest request) {
+    private static boolean requestDateValid(TransplantRequest request) {
         return datetimeIsValid(request.getRequestDate()) &&
                 !request.getRequestDate().isAfter(LocalDateTime.now().plusMinutes(1));
     }
 
-    private boolean resolvedDateValid(TransplantRequest request) {
+    private static boolean resolvedDateValid(TransplantRequest request) {
         if (request.getResolvedDate() != null) {
             return datetimeIsValid(request.getResolvedDate()) &&
                     !request.getResolvedDate().isBefore(request.getRequestDate());
@@ -67,13 +67,13 @@ public class TransplantRequestValidator {
         return true;
     }
 
-    private boolean statusValid(TransplantRequest request) {
+    private static boolean statusValid(TransplantRequest request) {
         return request.getStatus() != null;
     }
 
     // HELPERS
 
-    private boolean datetimeIsValid(LocalDateTime datetime) {
+    private static boolean datetimeIsValid(LocalDateTime datetime) {
         try {
             LocalDateTime.parse(datetime.toString());
             return true;

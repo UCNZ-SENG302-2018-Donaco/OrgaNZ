@@ -36,7 +36,7 @@ public class ClientMedicationsController {
      * @throws IfMatchRequiredException Thrown if the Etag header is missing
      * @throws IfMatchFailedException   Thrown if the Etag does not match the clients current ETag
      */
-    private void checkClientEtag(Client client, String ETag)
+    private static void checkClientEtag(Client client, String ETag)
             throws IfMatchRequiredException, IfMatchFailedException {
 
         if (ETag == null) {

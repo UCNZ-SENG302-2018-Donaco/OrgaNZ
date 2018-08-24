@@ -35,17 +35,17 @@ public class IllnessRecordValidator {
 
     // FIELD VALIDATORS
 
-    private boolean illnessNameValid(IllnessRecord record) {
+    private static boolean illnessNameValid(IllnessRecord record) {
         return record.getIllnessName() != null &&
                 !record.getIllnessName().equals("");
     }
 
-    private boolean diagnosisDateValid(IllnessRecord record) {
+    private static boolean diagnosisDateValid(IllnessRecord record) {
         return dateIsValid(record.getDiagnosisDate()) &&
                 !record.getDiagnosisDate().isAfter(LocalDate.now());
     }
 
-    private boolean curedDateValid(IllnessRecord record) {
+    private static boolean curedDateValid(IllnessRecord record) {
         if (record.getCuredDate() != null) {
             return dateIsValid(record.getCuredDate()) &&
                     !record.getCuredDate().isBefore(record.getDiagnosisDate());
@@ -55,7 +55,7 @@ public class IllnessRecordValidator {
 
     // HELPERS
 
-    private boolean dateIsValid(LocalDate date) {
+    private static boolean dateIsValid(LocalDate date) {
         // Catch any invalid dates (eg date >31), or dates with null months, etc
         try {
             LocalDate.parse(date.toString());

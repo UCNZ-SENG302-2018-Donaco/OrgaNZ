@@ -46,7 +46,7 @@ public class ModifyClientByObjectAction extends ClientAction {
     public String getExecuteText() {
         String changesText = newClientDetails.getModifiedFields().stream()
                 .map(Field::getName)
-                .map(this::unCamelCase)
+                .map(ModifyClientByObjectAction::unCamelCase)
                 .collect(Collectors.joining("\n"));
 
         return String.format("Updated details for client %d: %s. \n"
@@ -58,7 +58,7 @@ public class ModifyClientByObjectAction extends ClientAction {
     public String getUnexecuteText() {
         String changesText = oldClientDetails.getModifiedFields().stream()
                 .map(Field::getName)
-                .map(this::unCamelCase)
+                .map(ModifyClientByObjectAction::unCamelCase)
                 .collect(Collectors.joining("\n"));
 
         return String.format("Reversed update for client %d: %s. \n"
@@ -66,7 +66,7 @@ public class ModifyClientByObjectAction extends ClientAction {
                 client.getUid(), client.getFullName(), changesText);
     }
 
-    private String unCamelCase(String inCamelCase) {
+    private static String unCamelCase(String inCamelCase) {
         String unCamelCased = inCamelCase.replaceAll("([a-z])([A-Z]+)", "$1 $2");
         return unCamelCased.substring(0, 1).toUpperCase() + unCamelCased.substring(1);
     }

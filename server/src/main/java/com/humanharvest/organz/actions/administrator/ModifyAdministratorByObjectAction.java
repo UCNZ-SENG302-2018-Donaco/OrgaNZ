@@ -43,7 +43,7 @@ public class ModifyAdministratorByObjectAction extends Action {
     public String getExecuteText() {
         String changesText = newDetails.getModifiedFields().stream()
                 .map(Field::getName)
-                .map(this::unCamelCase)
+                .map(ModifyAdministratorByObjectAction::unCamelCase)
                 .collect(Collectors.joining("\n"));
 
         return String.format("Updated details for admin %s. \n"
@@ -55,7 +55,7 @@ public class ModifyAdministratorByObjectAction extends Action {
     public String getUnexecuteText() {
         String changesText = oldDetails.getModifiedFields().stream()
                 .map(Field::getName)
-                .map(this::unCamelCase)
+                .map(ModifyAdministratorByObjectAction::unCamelCase)
                 .collect(Collectors.joining("\n"));
 
         return String.format("Reversed update for admin %s. \n"
@@ -63,7 +63,7 @@ public class ModifyAdministratorByObjectAction extends Action {
                 administrator.getUsername(), changesText);
     }
 
-    private String unCamelCase(String inCamelCase) {
+    private static String unCamelCase(String inCamelCase) {
         String unCamelCased = inCamelCase.replaceAll("([a-z])([A-Z]+)", "$1 $2");
         return unCamelCased.substring(0, 1).toUpperCase() + unCamelCased.substring(1);
     }

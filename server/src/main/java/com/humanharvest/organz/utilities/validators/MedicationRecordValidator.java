@@ -35,17 +35,17 @@ public class MedicationRecordValidator {
 
     // FIELD VALIDATORS
 
-    private boolean medicationNameValid(MedicationRecord record) {
+    private static boolean medicationNameValid(MedicationRecord record) {
         return record.getMedicationName() != null &&
                 !record.getMedicationName().equals("");
     }
 
-    private boolean startedDateValid(MedicationRecord record) {
+    private static boolean startedDateValid(MedicationRecord record) {
         return dateIsValid(record.getStarted()) &&
                 !record.getStarted().isAfter(LocalDate.now());
     }
 
-    private boolean stoppedDateValid(MedicationRecord record) {
+    private static boolean stoppedDateValid(MedicationRecord record) {
         if (record.getStopped() != null) {
             return dateIsValid(record.getStopped()) &&
                     !record.getStopped().isBefore(record.getStarted());
@@ -55,7 +55,7 @@ public class MedicationRecordValidator {
 
     // HELPERS
 
-    private boolean dateIsValid(LocalDate date) {
+    private static boolean dateIsValid(LocalDate date) {
         // Catch any invalid dates (eg date >31), or dates with null months, etc
         try {
             LocalDate.parse(date.toString());

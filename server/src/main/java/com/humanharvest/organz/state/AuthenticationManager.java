@@ -20,7 +20,7 @@ public class AuthenticationManager {
     /**
      * Gets the secret used to sign tokens.
      */
-    private String getSecret() {
+    private static String getSecret() {
         return "secret";
     }
 

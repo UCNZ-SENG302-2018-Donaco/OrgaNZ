@@ -48,7 +48,7 @@ public class ClientNameSorter implements Comparator<Client> {
      * @param name2      The second name to check
      * @return The resulting sort integer
      */
-    private int compareName(String searchTerm, String name1, String name2) {
+    private static int compareName(String searchTerm, String name1, String name2) {
         boolean name1Matches = name1 != null && name1.toLowerCase().startsWith(searchTerm);
         boolean name2Matches = name2 != null && name2.toLowerCase().startsWith(searchTerm);
 
