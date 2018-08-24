@@ -1,14 +1,14 @@
 package com.humanharvest.organz.commands;
 
+import com.humanharvest.organz.actions.ActionInvoker;
+import picocli.CommandLine;
+import picocli.CommandLine.Help.Ansi;
+
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
-import com.humanharvest.organz.actions.ActionInvoker;
-import picocli.CommandLine;
-import picocli.CommandLine.Help.Ansi;
 
 public final class CommandsHelper {
 
@@ -18,6 +18,7 @@ public final class CommandsHelper {
     /**
      * Takes a string line in the form of a command, and returns the space separated items. Double
      * quoted strings are considered one item. Also allows double quotes to be escaped using a backslash
+     *
      * @param input The string to parse
      * @return A string list of space separated items
      */
@@ -66,8 +67,9 @@ public final class CommandsHelper {
 
     /**
      * Takes a string of command text and
+     *
      * @param commands The string separated list of commands to execute
-     * @param invoker The ActionInvoker to apply changes to if applicable
+     * @param invoker  The ActionInvoker to apply changes to if applicable
      * @return The output of the command. This includes help and error text if applicable
      */
     public static String executeCommandAndReturnOutput(String[] commands, ActionInvoker invoker) {

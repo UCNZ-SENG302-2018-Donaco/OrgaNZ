@@ -1,7 +1,7 @@
 package com.humanharvest.organz;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Entity;
@@ -10,8 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 /**
  * Represents an instance of a user taking a medication for a period of time.
@@ -39,10 +39,11 @@ public class MedicationRecord implements Comparable<MedicationRecord> {
 
     /**
      * Creates a new MedicationRecord for a given medication name, with the given started date and stopped date.
+     *
      * @param medicationName The name of the medication to create a record for.
-     * @param started The date on which the user started taking this medication.
-     * @param stopped The date on which the user stopped taking this medication. If null, means the user is still
-     * taking this medication.
+     * @param started        The date on which the user started taking this medication.
+     * @param stopped        The date on which the user stopped taking this medication. If null, means the user is still
+     *                       taking this medication.
      */
     public MedicationRecord(String medicationName, LocalDate started, LocalDate stopped) {
         this.medicationName = medicationName;
@@ -77,6 +78,7 @@ public class MedicationRecord implements Comparable<MedicationRecord> {
     /**
      * This method should be called only when this record is added to/removed from a client's collection.
      * Therefore it is package-private so it may only be called from Client.
+     *
      * @param client The client to set this record as belonging to.
      */
     public void setClient(Client client) {

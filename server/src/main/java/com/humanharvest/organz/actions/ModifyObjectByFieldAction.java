@@ -23,8 +23,9 @@ public class ModifyObjectByFieldAction extends Action {
 
     /**
      * Create a new modification
+     *
      * @param toModify The object to be modified
-     * @param field The setter field of the object. Must match a valid setter
+     * @param field    The setter field of the object. Must match a valid setter
      * @param oldValue The object the field initially had. Should be taken from the objects equivalent getter
      * @param newValue The object the field should be update to. Must match the setters object type
      * @throws NoSuchFieldException Thrown if the object setter expected type does not match one of the value types
@@ -40,10 +41,11 @@ public class ModifyObjectByFieldAction extends Action {
 
     /**
      * Create a new modification with the option to hide the values
-     * @param toModify The object to be modified
-     * @param field The setter field of the object. Must match a valid setter
-     * @param oldValue The object the field initially had. Should be taken from the objects equivalent getter
-     * @param newValue The object the field should be update to. Must match the setters object type
+     *
+     * @param toModify  The object to be modified
+     * @param field     The setter field of the object. Must match a valid setter
+     * @param oldValue  The object the field initially had. Should be taken from the objects equivalent getter
+     * @param newValue  The object the field should be update to. Must match the setters object type
      * @param isPrivate If set to true, the text returns will only return the field, not the values
      * @throws NoSuchFieldException Thrown if the object setter expected type does not match one of the value types
      */
@@ -59,8 +61,9 @@ public class ModifyObjectByFieldAction extends Action {
 
     /**
      * Create a new modification
+     *
      * @param toModify The object to be modified
-     * @param field The setter field of the object. Must match a valid field
+     * @param field    The setter field of the object. Must match a valid field
      * @param newValue The object the field should be update to. Must match the setters object type
      * @throws NoSuchFieldException Thrown if the object setter expected type does not match one of the value types
      */
@@ -94,8 +97,8 @@ public class ModifyObjectByFieldAction extends Action {
     private void checkTypes() throws NoSuchFieldException {
         PrimitiveConverter converter = new PrimitiveConverter();
         Class<?> expectedClass = converter.convertToWrapper(field.getType());
-        if ((newValue != null && newValue.getClass() != expectedClass) || (oldValue != null
-                && oldValue.getClass() != expectedClass)) {
+        if (newValue != null && newValue.getClass() != expectedClass || oldValue != null
+                && oldValue.getClass() != expectedClass) {
             throw new NoSuchFieldException("Field expects a different field type than the one given");
         }
     }
@@ -147,6 +150,7 @@ public class ModifyObjectByFieldAction extends Action {
     /**
      * Execute a statement update on the object. Should not throw the errors from Statement as we check them in the
      * constructor
+     *
      * @param value Value to set
      */
     private void runChange(Object value) {

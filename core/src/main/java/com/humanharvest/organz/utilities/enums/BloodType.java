@@ -27,6 +27,7 @@ public enum BloodType {
 
     /**
      * Get a BloodType object from a string
+     *
      * @param text Text to convert, in the form A-
      * @return The matching bloodtype
      * @throws IllegalArgumentException Thrown when no matching bloodtype is found

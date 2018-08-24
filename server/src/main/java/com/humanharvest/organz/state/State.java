@@ -11,7 +11,6 @@ import java.util.Map;
 public final class State {
 
 
-
     public enum DataStorageType {
         MEMORY, PUREDB
     }

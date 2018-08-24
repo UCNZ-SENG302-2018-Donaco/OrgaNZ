@@ -1,4 +1,5 @@
 Feature: Does POST /administrators/ work?
+
   Scenario: Creating a valid administrator
     When I post to /administrators/ using { "username": "Test", "password": "Test" }
     Then the result is created

@@ -1,18 +1,5 @@
 package com.humanharvest.organz.server.controller.client;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
-
-import java.nio.charset.Charset;
-import java.time.LocalDate;
-
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.server.Application;
@@ -28,6 +15,19 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
+
+import java.nio.charset.Charset;
+import java.time.LocalDate;
+
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
@@ -78,18 +78,19 @@ public class ClientMedicationsControllerTest {
     //----------------------POST Create MedicationRecord------------------
 
     /**
-    public void createMedication() throws Exception {
-        String json = "{ \"name\": \"testmed\" }";
-
-        mockMvc.perform(post("/clients/1/medications")
-                .contentType(contentType)
-                .content(json)
-                .header("If-Match", testClient.getETag()))
-                .andExpect(status().isCreated())
-                .andExpect(content().contentType(contentType))
-                .andExpect(jsonPath("$[2].medicationName", is("testmed")))
-                .andExpect(jsonPath("$[2].stopped", is(((String) null))));
-    } **/
+     * public void createMedication() throws Exception {
+     * String json = "{ \"name\": \"testmed\" }";
+     * <p>
+     * mockMvc.perform(post("/clients/1/medications")
+     * .contentType(contentType)
+     * .content(json)
+     * .header("If-Match", testClient.getETag()))
+     * .andExpect(status().isCreated())
+     * .andExpect(content().contentType(contentType))
+     * .andExpect(jsonPath("$[2].medicationName", is("testmed")))
+     * .andExpect(jsonPath("$[2].stopped", is(((String) null))));
+     * }
+     **/
 
     @Test
     public void createMedicationMissingEtag() throws Exception {
@@ -111,19 +112,18 @@ public class ClientMedicationsControllerTest {
     }
 
     /**
-
-    public void testCreateMedicationInvalid() throws Exception {
-        String json = "{ \"invalid\": \"testmed\" }";
-
-        mockMvc.perform(post("/clients/1/medications")
-                .contentType(contentType)
-                .content(json)
-                .header("If-Match", testClient.getETag()))
-                .andExpect(status().isBadRequest());
-    } **/
+     * public void testCreateMedicationInvalid() throws Exception {
+     * String json = "{ \"invalid\": \"testmed\" }";
+     * <p>
+     * mockMvc.perform(post("/clients/1/medications")
+     * .contentType(contentType)
+     * .content(json)
+     * .header("If-Match", testClient.getETag()))
+     * .andExpect(status().isBadRequest());
+     * }
+     **/
 
     //------------------------DELETE-----------------------
-
     @Test
     public void testDeleteMedication() throws Exception {
         mockMvc.perform(delete("/clients/1/medications/2")

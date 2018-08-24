@@ -6,7 +6,12 @@ import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import org.apache.commons.io.IOUtils;
 
 import java.awt.image.ImagingOpException;
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 public class DeleteImageAction extends Action {
 

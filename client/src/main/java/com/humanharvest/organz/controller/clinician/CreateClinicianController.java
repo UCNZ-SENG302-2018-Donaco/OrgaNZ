@@ -14,7 +14,11 @@ import com.humanharvest.organz.utilities.view.PageNavigator;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 
@@ -50,6 +54,7 @@ public class CreateClinicianController extends SubController {
 
     /**
      * Override so we can set the page title.
+     *
      * @param mainController The MainController
      */
     @Override
@@ -62,6 +67,7 @@ public class CreateClinicianController extends SubController {
     /**
      * Checks that all mandatory fields have had valid input correctly input. Invalid input results in the text beside
      * the instigating field turning red.
+     *
      * @return if all mandatory fields have valid input. False otherwise
      */
     private boolean checkMandatoryFields() {

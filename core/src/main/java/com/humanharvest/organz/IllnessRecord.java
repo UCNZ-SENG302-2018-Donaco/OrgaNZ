@@ -1,7 +1,7 @@
 package com.humanharvest.organz;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Entity;
@@ -10,8 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 /**
  * Represents an instance of a user having an illness for a period of time.
@@ -40,10 +40,11 @@ public class IllnessRecord {
 
     /**
      * Creates a new IllnessRecord for a given illness.
-     * @param illnessName The name of the illness.
+     *
+     * @param illnessName   The name of the illness.
      * @param diagnosisDate The date the illness was diagnosed for the client.
-     * @param curedDate The date the illness was cured.
-     * @param isChronic Whether the illness is chronic or not.
+     * @param curedDate     The date the illness was cured.
+     * @param isChronic     Whether the illness is chronic or not.
      */
     public IllnessRecord(String illnessName, LocalDate diagnosisDate, LocalDate curedDate, boolean isChronic) {
         this.illnessName = illnessName;
@@ -54,9 +55,10 @@ public class IllnessRecord {
 
     /**
      * Creates a new IllnessRecord for a given illness.
-     * @param illnessName The name of the illness.
+     *
+     * @param illnessName   The name of the illness.
      * @param diagnosisDate The date the illness was diagnosed for the client.
-     * @param isChronic Whether the illness is chronic or not.
+     * @param isChronic     Whether the illness is chronic or not.
      */
     public IllnessRecord(String illnessName, LocalDate diagnosisDate, boolean isChronic) {
         this.illnessName = illnessName;
@@ -96,6 +98,7 @@ public class IllnessRecord {
     /**
      * This method should be called only when this record is added to/removed from a client's collection.
      * Therefore it is package-private so it may only be called from Client.
+     *
      * @param client The client to set this record as belonging to.
      */
     public void setClient(Client client) {

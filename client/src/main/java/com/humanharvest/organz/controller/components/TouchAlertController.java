@@ -1,7 +1,6 @@
 package com.humanharvest.organz.controller.components;
 
 import com.humanharvest.organz.MultitouchHandler;
-
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;

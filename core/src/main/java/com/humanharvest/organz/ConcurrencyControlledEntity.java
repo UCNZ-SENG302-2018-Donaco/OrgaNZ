@@ -8,6 +8,7 @@ public interface ConcurrencyControlledEntity {
 
     /**
      * Retrieve the ETag
+     *
      * @return The hashed ETag value
      */
     String getETag();

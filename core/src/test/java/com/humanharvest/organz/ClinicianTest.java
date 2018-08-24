@@ -1,10 +1,8 @@
 package com.humanharvest.organz;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import com.humanharvest.organz.utilities.enums.Region;
-
 import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ClinicianTest {
     @Test

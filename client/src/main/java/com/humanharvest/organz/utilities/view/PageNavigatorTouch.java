@@ -14,12 +14,14 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
+import javafx.scene.transform.Affine;
 import javafx.scene.transform.Transform;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -37,6 +39,7 @@ public class PageNavigatorTouch implements IPageNavigator {
      * @param page       the Page (enum including path to fxml file) to be loaded.
      * @param controller the MainController to load this page on to.
      */
+    @Override
     public void loadPage(Page page, MainController controller) {
         try {
             LOGGER.info("Loading page: " + page);
@@ -58,6 +61,7 @@ public class PageNavigatorTouch implements IPageNavigator {
     /**
      * Refreshes all windows, to be used when an update occurs. Only refreshes titles and sidebars
      */
+    @Override
     public void refreshAllWindows() {
         LOGGER.info("Refreshing all windows");
         for (MainController controller : State.getMainControllers()) {
@@ -104,32 +108,6 @@ public class PageNavigatorTouch implements IPageNavigator {
     }
 
     /**
-     * Sets the alert window at the right size so that all the text can be read.
-     */
-    private void resizeAlert(Alert alert) {
-        alert.getDialogPane().getScene().getWindow().sizeToScene();
-    }
-
-    /**
-     * Generates a pop-up alert of the given type.
-     *
-     * @param alertType the type of alert to show (can determine its style and button options).
-     * @param title     the text to show as the title and heading of the alert.
-     * @param bodyText  the text to show within the body of the alert.
-     * @return The generated alert.
-     */
-    public Alert generateAlert(Alert.AlertType alertType, String title, String bodyText) {
-        Alert alert = new Alert(alertType);
-        alert.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
-        alert.contentTextProperty().addListener(observable -> resizeAlert(alert));
-
-        alert.setTitle(title);
-        alert.setHeaderText(title);
-        alert.setContentText(bodyText);
-        return alert;
-    }
-
-    /**
      * Shows a pop-up alert of the given type, and awaits user input to dismiss it (blocking).
      *
      * @param alertType the type of alert to show (can determine its style and button options).
@@ -137,6 +115,7 @@ public class PageNavigatorTouch implements IPageNavigator {
      * @param bodyText  the text to show within the body of the alert.
      * @return an Optional for the button that was clicked to dismiss the alert.
      */
+    @Override
     public Property<Boolean> showAlert(Alert.AlertType alertType, String title, String bodyText, Window window) {
         LOGGER.info("Opening new window");
         try {
@@ -151,12 +130,9 @@ public class PageNavigatorTouch implements IPageNavigator {
             MultitouchHandler.setupPaneListener(mainPane);
 
             // Set the positioning based off the calling window if it is valid.
-            if (window != null && window.getScene() != null && window.getScene().getRoot() != null && window.getScene().getRoot().getTransforms().size() == 1) {
-                Parent root = window.getScene().getRoot();
-
-                Transform transforms = root.getTransforms().get(0).clone();
-                mainPane.getTransforms().add(transforms);
-            }
+            getWindowTransform(window).ifPresent(transform -> {
+                mainPane.getTransforms().add(new Affine(transform));
+            });
 
             return controller.getResultProperty();
 
@@ -168,6 +144,32 @@ public class PageNavigatorTouch implements IPageNavigator {
         }
     }
 
+    private static Optional<Transform> getWindowTransform(Window window) {
+        if (window == null) {
+            return Optional.empty();
+        }
+
+        Scene scene = window.getScene();
+
+        if (scene == null) {
+            return Optional.empty();
+        }
+
+
+        Parent root = scene.getRoot();
+        if (root == null) {
+            return Optional.empty();
+        }
+
+        List<Transform> transforms = root.getTransforms();
+        if (transforms.size() != 1) {
+            return Optional.empty();
+        }
+
+        return Optional.of(transforms.get(0));
+    }
+
+    @Override
     public TouchAlertTextController showAlertWithText(String title, String bodyText, Window window) {
         LOGGER.info("Opening new window");
         try {
@@ -182,17 +184,13 @@ public class PageNavigatorTouch implements IPageNavigator {
             MultitouchHandler.setupPaneListener(mainPane);
 
             // Set the positioning based off the calling window if it is valid.
-            if (window != null && window.getScene() != null && window.getScene().getRoot() != null && window.getScene().getRoot().getTransforms().size() == 1) {
-                Parent root = window.getScene().getRoot();
-
-                Transform transforms = root.getTransforms().get(0).clone();
-                mainPane.getTransforms().add(transforms);
-            }
+            getWindowTransform(window).ifPresent(transform -> {
+                mainPane.getTransforms().add(new Affine(transform));
+            });
 
             return controller;
 
         } catch (IOException e) {
-            e.printStackTrace();
             LOGGER.log(Level.SEVERE, "Error loading new window\n", e);
             return null;
         }

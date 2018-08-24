@@ -1,8 +1,8 @@
 package com.humanharvest.organz.views.client;
 
-import java.time.LocalDateTime;
-
 import com.humanharvest.organz.utilities.enums.Organ;
+
+import java.time.LocalDateTime;
 
 public class CreateTransplantRequestView {
 
@@ -12,7 +12,7 @@ public class CreateTransplantRequestView {
     public CreateTransplantRequestView() {
     }
 
-    public CreateTransplantRequestView( Organ requestedOrgan, LocalDateTime requestDate) {
+    public CreateTransplantRequestView(Organ requestedOrgan, LocalDateTime requestDate) {
         this.requestedOrgan = requestedOrgan;
         this.requestDate = requestDate;
     }

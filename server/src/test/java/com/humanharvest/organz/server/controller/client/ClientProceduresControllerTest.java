@@ -1,17 +1,5 @@
 package com.humanharvest.organz.server.controller.client;
 
-import static org.hamcrest.Matchers.is;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
-
-import java.time.LocalDate;
-
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.ProcedureRecord;
 import com.humanharvest.organz.server.Application;
@@ -29,6 +17,21 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
+
+import java.time.LocalDate;
+
+import static org.hamcrest.Matchers.is;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
@@ -55,7 +58,7 @@ public class ClientProceduresControllerTest {
     WebApplicationContext webApplicationContext;
 
     @Before
-    public void init(){
+    public void init() {
         State.reset();
         State.setAuthenticationManager(new AuthenticationManagerFake());
         mockMvc = webAppContextSetup(webApplicationContext).build();
@@ -102,7 +105,7 @@ public class ClientProceduresControllerTest {
                 "\"summary\": \"Heart Transplant\", \n" +
                 "\"description\": \"To fix my achy-breaky heart.\", \n" +
                 "\"date\": \"2017-06-01\", \n" +
-                "\"affectedOrgans\": [\"HEART\"] \n"+
+                "\"affectedOrgans\": [\"HEART\"] \n" +
                 " }";
         mockMvc.perform(post("/clients/1/procedures")
                 .header("If-Match", testClient.getETag())
@@ -118,12 +121,12 @@ public class ClientProceduresControllerTest {
     }
 
     @Test
-    public void createInvalidProcedureIncorrectDateFormat() throws Exception{
+    public void createInvalidProcedureIncorrectDateFormat() throws Exception {
         String invalidDateProcedureJson = "{ \n" +
                 "\"summary\": \"Heart Transplant\", \n" +
                 "\"description\": \"To fix my achy-breaky heart.\", \n" +
                 "\"date\": \"2017-060-01\", \n" +
-                "\"affectedOrgans\": [\"HEART\"] \n"+
+                "\"affectedOrgans\": [\"HEART\"] \n" +
                 " }";
         mockMvc.perform(post("/clients/1/procedures")
                 .header("If-Match", testClient.getETag())
@@ -134,12 +137,12 @@ public class ClientProceduresControllerTest {
     }
 
     @Test
-    public void createInvalidProcedureInvalidAuth() throws Exception{
+    public void createInvalidProcedureInvalidAuth() throws Exception {
         String validProcedureJson = "{ \n" +
                 "\"summary\": \"Heart Transplant\", \n" +
                 "\"description\": \"To fix my achy-breaky heart.\", \n" +
                 "\"date\": \"2017-06-01\", \n" +
-                "\"affectedOrgans\": [\"HEART\"] \n"+
+                "\"affectedOrgans\": [\"HEART\"] \n" +
                 " }";
         mockMvc.perform(post("/clients/1/procedures")
                 .header("If-Match", testClient.getETag())
@@ -150,12 +153,12 @@ public class ClientProceduresControllerTest {
     }
 
     @Test
-    public void createInvalidProcedureSummary() throws Exception{
+    public void createInvalidProcedureSummary() throws Exception {
         String validProcedureJson = "{ \n" +
                 "\"summary\": e, \n" +
                 "\"description\": \"To fix my achy-breaky heart.\", \n" +
                 "\"date\": \"2017-06-01\", \n" +
-                "\"affectedOrgans\": [\"HEART\"] \n"+
+                "\"affectedOrgans\": [\"HEART\"] \n" +
                 " }";
         mockMvc.perform(post("/clients/1/procedures")
                 .header("If-Match", testClient.getETag())
@@ -166,12 +169,12 @@ public class ClientProceduresControllerTest {
     }
 
     @Test
-    public void createInvalidProcedureDescription() throws Exception{
+    public void createInvalidProcedureDescription() throws Exception {
         String validProcedureJson = "{ \n" +
                 "\"summary\": \"summary\", \n" +
                 "\"description\": e, \n" +
                 "\"date\": \"2017-06-01\", \n" +
-                "\"affectedOrgans\": [\"HEART\"] \n"+
+                "\"affectedOrgans\": [\"HEART\"] \n" +
                 " }";
         mockMvc.perform(post("/clients/1/procedures")
                 .header("If-Match", testClient.getETag())
@@ -190,7 +193,7 @@ public class ClientProceduresControllerTest {
                 "\"summary\": \"Heart Transplant\", \n" +
                 "\"description\": \"New Description\", \n" +
                 "\"date\": \"2017-06-01\", \n" +
-                "\"affectedOrgans\": [\"HEART\"] \n"+
+                "\"affectedOrgans\": [\"HEART\"] \n" +
                 " }";
 
         mockMvc.perform(patch("/clients/" + testClient.getUid() + "/procedures/2")
@@ -208,7 +211,7 @@ public class ClientProceduresControllerTest {
                 "\"summary\": \"Heart Transplant\", \n" +
                 "\"description\": \"New Description\", \n" +
                 "\"date\": \"2017-06-01-9\", \n" +
-                "\"affectedOrgans\": [\"HEART\"] \n"+
+                "\"affectedOrgans\": [\"HEART\"] \n" +
                 " }";
 
         mockMvc.perform(patch("/clients/" + testClient.getUid() + "/procedures/2")

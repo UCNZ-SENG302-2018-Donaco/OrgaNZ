@@ -46,6 +46,7 @@ public class WindowContext {
 
         /**
          * Checks that the parameters given for the window would be valid, then creates the WindowContext if so.
+         *
          * @return the new WindowContext.
          */
         public WindowContext build() {
@@ -59,6 +60,7 @@ public class WindowContext {
 
     /**
      * Creates a default WindowContext.
+     *
      * @return a WindowContext with default parameters.
      */
     public static WindowContext defaultContext() {

@@ -1,11 +1,5 @@
 package com.humanharvest.organz.server.controller.client;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.file.Files;
-
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
@@ -21,6 +15,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 /**
  * Provides handlers for requests to these endpoints:
@@ -77,7 +76,7 @@ public class ClientFileController {
         }
     }
 
-    private String loadData(File file, String mimeType) throws IOException {
+    private static String loadData(File file, String mimeType) throws IOException {
         ReadClientStrategy strategy;
         switch (mimeType) {
             case "text/csv":
@@ -98,7 +97,7 @@ public class ClientFileController {
 
         String errorSummary = importer.getErrorSummary();
         if (errorSummary.length() > 500) {
-            errorSummary = errorSummary.substring(0, 500).concat("...");
+            errorSummary = errorSummary.substring(0, 500) + "...";
         }
 
         return String.format("Loaded clients from file."

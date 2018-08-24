@@ -6,7 +6,12 @@ import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.database.DBManager;
 import com.humanharvest.organz.utilities.algorithms.MatchOrganToRecipients;
-import com.humanharvest.organz.utilities.enums.*;
+import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
+import com.humanharvest.organz.utilities.enums.ClientType;
+import com.humanharvest.organz.utilities.enums.Country;
+import com.humanharvest.organz.utilities.enums.DonatedOrganSortOptionsEnum;
+import com.humanharvest.organz.utilities.enums.Gender;
+import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.views.client.DonatedOrganView;
 import com.humanharvest.organz.views.client.PaginatedClientList;
 import com.humanharvest.organz.views.client.PaginatedDonatedOrgansList;
@@ -22,7 +27,15 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 /**
@@ -34,7 +47,7 @@ public class ClientManagerDBPure implements ClientManager {
     private final DBManager dbManager;
 
     public ClientManagerDBPure() {
-        this.dbManager = DBManager.getInstance();
+        dbManager = DBManager.getInstance();
     }
 
     public ClientManagerDBPure(DBManager dbManager) {
@@ -43,19 +56,12 @@ public class ClientManagerDBPure implements ClientManager {
 
     @Override
     public List<Client> getClients() {
-        List<Client> clients = null;
-        Transaction trns = null;
+        List<Client> clients;
 
         try (Session session = dbManager.getDBSession()) {
-            trns = session.beginTransaction();
-            clients = dbManager.getDBSession()
+            clients = session
                     .createQuery("FROM Client", Client.class)
                     .getResultList();
-            trns.commit();
-        } catch (RollbackException exc) {
-            if (trns != null) {
-                trns.rollback();
-            }
         }
 
         return clients == null ? new ArrayList<>() : clients;
@@ -84,6 +90,7 @@ public class ClientManagerDBPure implements ClientManager {
         }
     }
 
+    @Override
     public PaginatedClientList getClients(
             String q,
             Integer offset,
@@ -91,10 +98,10 @@ public class ClientManagerDBPure implements ClientManager {
             Integer minimumAge,
             Integer maximumAge,
             Set<String> regions,
-            EnumSet<Gender> birthGenders,
+            Set<Gender> birthGenders,
             ClientType clientType,
-            EnumSet<Organ> donating,
-            EnumSet<Organ> requesting,
+            Set<Organ> donating,
+            Set<Organ> requesting,
             ClientSortOptionsEnum sortOption,
             Boolean isReversed) {
 
@@ -206,13 +213,13 @@ public class ClientManagerDBPure implements ClientManager {
 
             //Setup the name filter. For this we make a series of OR checks on the names, if any is true it's true.
             //Checks any portion of any name
-            if (q != null && q.length() > 0) {
+            if (q != null && !q.isEmpty()) {
                 StringJoiner qOrJoiner = new StringJoiner(" OR ");
                 qOrJoiner.add("UPPER(c.firstName) LIKE UPPER(:q)");
                 qOrJoiner.add("UPPER(c.middleName) LIKE UPPER(:q)");
                 qOrJoiner.add("UPPER(c.preferredName) LIKE UPPER(:q)");
                 qOrJoiner.add("UPPER(c.lastName) LIKE UPPER(:q)");
-                whereJoiner.add("(" + qOrJoiner.toString() + ")");
+                whereJoiner.add("(" + qOrJoiner + ")");
                 params.put("q", "%" + q + "%");
             }
 
@@ -277,7 +284,7 @@ public class ClientManagerDBPure implements ClientManager {
                     + "ORDER BY " + sort + " " + dir + ", " + nameSort + " ASC LIMIT :limit OFFSET :offset";
             String countString = "SELECT count(*) FROM Client c " + joinBuilder + whereJoiner.toString();
 
-            Query countQuery = session.createNativeQuery(countString);
+            Query<?> countQuery = session.createNativeQuery(countString);
             Query<Client> mainQuery = session.createNativeQuery(queryString, Client.class);
 
             // Go through the params and set the values.
@@ -291,7 +298,7 @@ public class ClientManagerDBPure implements ClientManager {
             mainQuery.setParameter("offset", offset);
 
             // Execute the queries
-            int totalCount = Integer.valueOf(countQuery.uniqueResult().toString());
+            int totalCount = Integer.parseInt(countQuery.uniqueResult().toString());
             List<Client> clients = mainQuery.getResultList();
 
             return new PaginatedClientList(clients, totalCount);

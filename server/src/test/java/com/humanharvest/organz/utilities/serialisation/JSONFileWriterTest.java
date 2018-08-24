@@ -1,6 +1,10 @@
 package com.humanharvest.organz.utilities.serialisation;
 
-import static org.junit.Assert.assertEquals;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.humanharvest.organz.Client;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -9,11 +13,7 @@ import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.humanharvest.organz.Client;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.TemporaryFolder;
+import static org.junit.Assert.assertEquals;
 
 public class JSONFileWriterTest {
 
@@ -27,7 +27,7 @@ public class JSONFileWriterTest {
     public TemporaryFolder tempFolder = new TemporaryFolder();
 
     private static List<Client> readClientsFromFile(File file) throws IOException {
-        return JSONMapper.Mapper.readValue(file, new TypeReference<List<Client>>(){
+        return JSONMapper.Mapper.readValue(file, new TypeReference<List<Client>>() {
         });
     }
 

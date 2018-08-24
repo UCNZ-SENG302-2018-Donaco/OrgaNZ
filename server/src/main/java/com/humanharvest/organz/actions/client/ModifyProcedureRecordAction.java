@@ -1,13 +1,13 @@
 package com.humanharvest.organz.actions.client;
 
+import com.humanharvest.organz.ProcedureRecord;
+import com.humanharvest.organz.state.ClientManager;
+import com.humanharvest.organz.utilities.enums.Organ;
+
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import com.humanharvest.organz.ProcedureRecord;
-import com.humanharvest.organz.state.ClientManager;
-import com.humanharvest.organz.utilities.enums.Organ;
 
 /**
  * A reversible action to modify a given procedure record.
@@ -23,6 +23,7 @@ public class ModifyProcedureRecordAction extends ClientAction {
     /**
      * Creates a new action to modify a procedure record. Will initialise all attributes to be the same as the
      * current ones.
+     *
      * @param record The procedure record to modify.
      */
     public ModifyProcedureRecordAction(ProcedureRecord record, ClientManager manager) {
@@ -50,6 +51,7 @@ public class ModifyProcedureRecordAction extends ClientAction {
 
     /**
      * Make the action change the procedure's date to the one given.
+     *
      * @param newDate The new procedure date.
      */
     public void changeDate(LocalDate newDate) {
@@ -62,6 +64,7 @@ public class ModifyProcedureRecordAction extends ClientAction {
 
     /**
      * Apply all changes to the procedure record.
+     *
      * @throws IllegalStateException If no changes were made.
      */
     @Override

@@ -25,7 +25,7 @@ public class ClinicianManagerDBPure implements ClinicianManager {
             0,
             "clinician");
 
-    public ClinicianManagerDBPure(){
+    public ClinicianManagerDBPure() {
         this.dbManager = DBManager.getInstance();
         tryInsertDefault();
     }
@@ -123,14 +123,14 @@ public class ClinicianManagerDBPure implements ClinicianManager {
         Transaction trns = null;
         Clinician result = null;
 
-        try (org.hibernate.Session session = dbManager.getDBSession()){
+        try (org.hibernate.Session session = dbManager.getDBSession()) {
             trns = session.beginTransaction();
 
             result = dbManager.getDBSession().find(Clinician.class, id);
 
             trns.commit();
-        } catch (RollbackException exc){
-            if(trns != null){
+        } catch (RollbackException exc) {
+            if (trns != null) {
                 trns.rollback();
             }
         }

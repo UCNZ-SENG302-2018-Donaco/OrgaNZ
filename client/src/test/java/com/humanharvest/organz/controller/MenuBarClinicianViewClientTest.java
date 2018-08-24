@@ -1,9 +1,5 @@
 package com.humanharvest.organz.controller;
 
-import static org.junit.Assert.assertEquals;
-
-import java.time.LocalDate;
-
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.state.State;
@@ -13,6 +9,10 @@ import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
 import org.junit.Test;
 
+import java.time.LocalDate;
+
+import static org.junit.Assert.assertEquals;
+
 public class MenuBarClinicianViewClientTest extends ControllerTest {
 
     private Clinician testClinician = new Clinician("Mr", null, "Tester",
@@ -20,7 +20,9 @@ public class MenuBarClinicianViewClientTest extends ControllerTest {
     private Client testClient1 = new Client("tom", "Delta", "1", LocalDate.now().minusYears(32), 1); // 100 years old
 
     @Override
-    protected Page getPage() { return Page.MENU_BAR;  }
+    protected Page getPage() {
+        return Page.MENU_BAR;
+    }
 
     @Override
     protected void initState() {

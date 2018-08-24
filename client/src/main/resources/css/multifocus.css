@@ -21,7 +21,6 @@
 
 /* All below are defaults from TuioFX. All above are custom */
 
-
 .button,
 .button:focused {
     -fx-background-color: -fx-shadow-highlight-color, -fx-outer-border, -fx-inner-border, -fx-body-color;
