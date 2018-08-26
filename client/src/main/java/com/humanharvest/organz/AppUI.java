@@ -35,7 +35,7 @@ public class AppUI extends Application {
         // Must be done here, since getting the property happends before the class is created
         if (System.getProperty("prism.maxvram") == null) {
             try {
-                ReflectionUtils.setStaticField(PrismSettings.class, "maxVram", 2147483648L); //2GB
+                ReflectionUtils.setStaticField(PrismSettings.class, "maxVram", 2L * 1024 * 1024 * 1024); //2GB
             } catch (NoSuchFieldException | IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
@@ -57,6 +57,7 @@ public class AppUI extends Application {
     @Override
     public void start(Stage primaryStage) throws IOException {
         LoggerSetup.setup(Level.INFO);
+        LoggerSetup.enableConsole(Level.WARNING);
 
         processArguments();
 
@@ -193,5 +194,4 @@ public class AppUI extends Application {
     private static void addCss(Scene scene) {
         scene.getStylesheets().add(AppUI.class.getResource("/css/validation.css").toExternalForm());
     }
-
 }
