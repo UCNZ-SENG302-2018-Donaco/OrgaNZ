@@ -1,5 +1,17 @@
 package com.humanharvest.organz.controller.client;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javafx.collections.FXCollections;
+import javafx.fxml.FXML;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.controller.MainController;
@@ -11,16 +23,6 @@ import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
-import javafx.collections.FXCollections;
-import javafx.fxml.FXML;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-
-import java.util.List;
-import java.util.Objects;
-import java.util.logging.Logger;
 
 /**
  * Controller for the login page.
@@ -76,7 +78,7 @@ public class ClientLoginController extends SubController {
             List<Client> clients = clientManager.getClients();
             clientList.setItems(FXCollections.observableArrayList(clients));
         } catch (ServerRestException e) {
-            LOGGER.severe(e.getMessage());
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
             PageNavigator.showAlert(AlertType.ERROR,
                     "Server Error",
                     "An error occurred while trying to fetch from the server.\nPlease try again later.",
@@ -97,7 +99,9 @@ public class ClientLoginController extends SubController {
             try {
                 selectedClient = State.getAuthenticationManager().loginClient(selectedClient.getUid());
             } catch (AuthenticationException e) {
-                PageNavigator.showAlert(AlertType.ERROR, "Invalid login", e.getLocalizedMessage(), mainController.getStage());
+                LOGGER.log(Level.WARNING, e.getMessage(), e);
+                PageNavigator.showAlert(AlertType.ERROR, "Invalid login", e.getLocalizedMessage(),
+                        mainController.getStage());
                 return;
             }
 

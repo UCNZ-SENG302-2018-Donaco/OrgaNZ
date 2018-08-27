@@ -5,6 +5,8 @@ import com.humanharvest.organz.utilities.enums.Country;
 
 import java.util.Set;
 
+import com.humanharvest.organz.utilities.enums.Country;
+
 public interface ConfigManager {
 
     Set<Country> getAllowedCountries();

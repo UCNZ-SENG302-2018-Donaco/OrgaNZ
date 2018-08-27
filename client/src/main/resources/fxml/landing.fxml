@@ -11,88 +11,88 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.text.Text?>
-<VBox prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.humanharvest.organz.controller.LandingController">
-    <children>
-        <BorderPane VBox.vgrow="ALWAYS">
-            <bottom>
-                <GridPane hgap="50.0" vgap="20.0" BorderPane.alignment="CENTER">
-                    <columnConstraints>
-                        <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" prefWidth="400.0"/>
-                        <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" prefWidth="400.0"/>
-                    </columnConstraints>
-                    <rowConstraints>
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                        <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
-                    </rowConstraints>
-                    <children>
-                        <Button fx:id="loginClientButton" maxHeight="1.7976931348623157E308"
-                                maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToClientLogin"
-                                text="Log in"/>
-                        <Button fx:id="createClientButton" maxHeight="1.7976931348623157E308"
-                                maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToCreateClient"
-                                text="Sign up" GridPane.columnIndex="1"/>
-                        <HBox alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1"
-                              GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER">
-                            <children>
-                                <Button fx:id="loginClinicianButton" maxHeight="1.7976931348623157E308"
-                                        maxWidth="1.7976931348623157E308" mnemonicParsing="false"
-                                        onAction="#goToStaffLogin" text="Staff login">
-                                    <HBox.margin>
-                                        <Insets right="10.0"/>
-                                    </HBox.margin>
-                                </Button>
-                            </children>
-                        </HBox>
-                    </children>
-                    <BorderPane.margin>
-                        <Insets/>
-                    </BorderPane.margin>
-                    <padding>
-                        <Insets bottom="30.0" left="50.0" right="50.0" top="30.0"/>
-                    </padding>
-                </GridPane>
-            </bottom>
-            <center>
+<VBox xmlns:fx="http://javafx.com/fxml/1" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.121"
+  fx:controller="com.humanharvest.organz.controller.LandingController">
+  <children>
+    <BorderPane VBox.vgrow="ALWAYS">
+      <bottom>
+        <GridPane BorderPane.alignment="CENTER" hgap="50.0" vgap="20.0">
+          <columnConstraints>
+            <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" prefWidth="400.0"/>
+            <ColumnConstraints hgrow="ALWAYS" maxWidth="1.7976931348623157E308" prefWidth="400.0"/>
+          </columnConstraints>
+          <rowConstraints>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+          </rowConstraints>
+          <children>
+            <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+              mnemonicParsing="false" onAction="#goToClientLogin" text="Log in"
+              fx:id="loginClientButton"/>
+            <Button GridPane.columnIndex="1" maxHeight="1.7976931348623157E308"
+              maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToCreateClient"
+              text="Sign up" fx:id="createClientButton"/>
+            <HBox GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="1" GridPane.valignment="CENTER"
+              alignment="CENTER_RIGHT" prefHeight="100.0" prefWidth="200.0">
+              <children>
+                <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                  mnemonicParsing="false" onAction="#goToStaffLogin"
+                  text="Staff login" fx:id="loginClinicianButton">
+                  <HBox.margin>
+                    <Insets right="10.0"/>
+                  </HBox.margin>
+                </Button>
+              </children>
+            </HBox>
+          </children>
+          <BorderPane.margin>
+            <Insets/>
+          </BorderPane.margin>
+          <padding>
+            <Insets bottom="30.0" left="50.0" right="50.0" top="30.0"/>
+          </padding>
+        </GridPane>
+      </bottom>
+      <center>
 
-            </center>
-            <top>
-                <VBox alignment="CENTER" prefHeight="146.0" prefWidth="800.0" BorderPane.alignment="CENTER">
-                    <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="OrgaNZ">
-                            <font>
-                                <Font name="System Bold" size="48.0"/>
-                            </font>
-                            <VBox.margin>
-                                <Insets bottom="15.0" top="30.0"/>
-                            </VBox.margin>
-                        </Text>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="by Human Harvest Inc."/>
-                    </children>
-                </VBox>
-            </top>
-            <center>
-                <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
-                    <children>
-                        <Label text="To create an account, press Sign up." textAlignment="CENTER" wrapText="true">
-                            <font>
-                                <Font size="24.0"/>
-                            </font>
-                            <VBox.margin>
-                                <Insets bottom="15.0"/>
-                            </VBox.margin>
-                        </Label>
-                        <Label text="For existing users, press Log in." textAlignment="CENTER" wrapText="true">
-                            <font>
-                                <Font size="24.0"/>
-                            </font>
-                            <VBox.margin>
-                                <Insets bottom="15.0"/>
-                            </VBox.margin>
-                        </Label>
-                    </children>
-                </VBox>
-            </center>
-        </BorderPane>
-    </children>
+      </center>
+      <top>
+        <VBox BorderPane.alignment="CENTER" alignment="CENTER" prefHeight="146.0" prefWidth="800.0">
+          <children>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="OrgaNZ">
+              <font>
+                <Font name="System Bold" size="48.0"/>
+              </font>
+              <VBox.margin>
+                <Insets bottom="15.0" top="30.0"/>
+              </VBox.margin>
+            </Text>
+            <Text strokeType="OUTSIDE" strokeWidth="0.0" text="by Human Harvest Inc."/>
+          </children>
+        </VBox>
+      </top>
+      <center>
+        <VBox BorderPane.alignment="CENTER" alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
+          <children>
+            <Label text="To create an account, press Sign up." textAlignment="CENTER" wrapText="true">
+              <font>
+                <Font size="24.0"/>
+              </font>
+              <VBox.margin>
+                <Insets bottom="15.0"/>
+              </VBox.margin>
+            </Label>
+            <Label text="For existing users, press Log in." textAlignment="CENTER" wrapText="true">
+              <font>
+                <Font size="24.0"/>
+              </font>
+              <VBox.margin>
+                <Insets bottom="15.0"/>
+              </VBox.margin>
+            </Label>
+          </children>
+        </VBox>
+      </center>
+    </BorderPane>
+  </children>
 </VBox>

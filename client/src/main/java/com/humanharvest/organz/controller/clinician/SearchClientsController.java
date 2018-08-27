@@ -1,23 +1,12 @@
 package com.humanharvest.organz.controller.clinician;
 
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.state.Session.UserType;
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
-import com.humanharvest.organz.utilities.enums.ClientType;
-import com.humanharvest.organz.utilities.enums.Gender;
-import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.enums.Region;
-import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
-import com.humanharvest.organz.utilities.exceptions.NotFoundException;
-import com.humanharvest.organz.utilities.exceptions.ServerRestException;
-import com.humanharvest.organz.utilities.view.Page;
-import com.humanharvest.organz.utilities.view.PageNavigator;
-import com.humanharvest.organz.utilities.view.WindowContext;
-import com.humanharvest.organz.views.client.ClientSortPolicy;
-import com.humanharvest.organz.views.client.PaginatedClientList;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableValueBase;
 import javafx.collections.FXCollections;
@@ -46,12 +35,24 @@ import javafx.scene.text.Text;
 import org.controlsfx.control.CheckComboBox;
 import org.controlsfx.control.RangeSlider;
 
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.state.Session.UserType;
+import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
+import com.humanharvest.organz.utilities.enums.ClientType;
+import com.humanharvest.organz.utilities.enums.Gender;
+import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.enums.Region;
+import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
+import com.humanharvest.organz.utilities.exceptions.NotFoundException;
+import com.humanharvest.organz.utilities.exceptions.ServerRestException;
+import com.humanharvest.organz.utilities.view.Page;
+import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.utilities.view.WindowContext;
+import com.humanharvest.organz.views.client.ClientSortPolicy;
+import com.humanharvest.organz.views.client.PaginatedClientList;
 
 public class SearchClientsController extends SubController {
 
@@ -111,6 +112,12 @@ public class SearchClientsController extends SubController {
 
     private ObservableList<Client> observableClientList = FXCollections.observableArrayList();
 
+    private static <T extends Enum<T>> EnumSet<T> filterToSet(CheckComboBox<T> filter, Class<T> enumType) {
+        EnumSet<T> enumSet = EnumSet.noneOf(enumType);
+        enumSet.addAll(filter.getCheckModel().getCheckedItems());
+        return enumSet;
+    }
+
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
@@ -140,8 +147,8 @@ public class SearchClientsController extends SubController {
             int newMax;
             try {
                 newMax = Integer.min(Integer.parseInt(ageMaxField.getText()), AGE_UPPER_BOUND);
-            } catch (NumberFormatException exc) {
-                newMax = 0;
+            } catch (NumberFormatException ignored) {
+                newMax = AGE_UPPER_BOUND;
             }
             ageSlider.setHighValue(newMax);
             ageMaxField.setText("" + newMax);
@@ -228,7 +235,7 @@ public class SearchClientsController extends SubController {
         try {
             State.getClientManager().removeClient(client);
         } catch (NotFoundException e) {
-            LOGGER.log(Level.WARNING, "Client not found");
+            LOGGER.log(Level.WARNING, "Client not found", e);
             PageNavigator.showAlert(AlertType.WARNING, "Client not found", "The client could not be found on the "
                     + "server, it may have been deleted", mainController.getStage());
         } catch (ServerRestException e) {
@@ -236,10 +243,11 @@ public class SearchClientsController extends SubController {
             PageNavigator.showAlert(AlertType.WARNING, "Server error", "Could not apply changes on the server, "
                     + "please try again later", mainController.getStage());
         } catch (IfMatchFailedException e) {
-            LOGGER.log(Level.INFO, "If-Match did not match");
+            LOGGER.log(Level.INFO, "If-Match did not match", e);
             PageNavigator.showAlert(AlertType.WARNING, "Outdated Data",
                     "The client has been modified since you retrieved the data.\nIf you would still like to "
-                            + "apply these changes please submit again, otherwise refresh the page to update the data.", mainController.getStage());
+                            + "apply these changes please submit again, otherwise refresh the page to update the data.",
+                    mainController.getStage());
         }
     }
 
@@ -294,7 +302,7 @@ public class SearchClientsController extends SubController {
             protected void updateItem(Boolean item, boolean empty) {
                 super.updateItem(item, empty);
                 setText(empty ? null :
-                        item ? "✓" : "");
+                        (item ? "✓" : ""));
             }
         });
         receiverCol.setCellFactory(tc -> new TableCell<Client, Boolean>() {
@@ -302,7 +310,7 @@ public class SearchClientsController extends SubController {
             protected void updateItem(Boolean item, boolean empty) {
                 super.updateItem(item, empty);
                 setText(empty ? null :
-                        item ? "✓" : "");
+                        (item ? "✓" : ""));
             }
         });
 
@@ -375,12 +383,6 @@ public class SearchClientsController extends SubController {
                 break;
         }
         updateClientList();
-    }
-
-    private <T extends Enum<T>> EnumSet<T> filterToSet(CheckComboBox<T> filter, Class<T> enumType) {
-        EnumSet<T> enumSet = EnumSet.noneOf(enumType);
-        enumSet.addAll(filter.getCheckModel().getCheckedItems());
-        return enumSet;
     }
 
     private void updateClientList() {
@@ -465,6 +467,7 @@ public class SearchClientsController extends SubController {
     }
 
     private static class ClientTableRow extends TableRow<Client> {
+
         private final Tooltip tooltip = new Tooltip();
 
         public ClientTableRow() {

@@ -1,5 +1,30 @@
 package com.humanharvest.organz.controller.client;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
+import javafx.fxml.FXML;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.Tooltip;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.Pane;
+import org.controlsfx.control.Notifications;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.TransplantRequest;
@@ -16,30 +41,6 @@ import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.PageNavigator;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.FXCollections;
-import javafx.fxml.FXML;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.Tooltip;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.Pane;
-import org.controlsfx.control.Notifications;
-
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 /**
  * Controller for the register organs page.
@@ -49,10 +50,11 @@ public class RegisterOrganDonationController extends SubController {
     private static final Logger LOGGER = Logger.getLogger(RegisterOrganDonationController.class.getName());
     private static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("d MMM yyyy hh:mm a");
 
+    private final Map<Organ, CheckBox> organCheckBoxes = new HashMap<>();
+
     private Session session;
     private Client client;
     private Map<Organ, Boolean> donationStatus;
-
     @FXML
     private Pane sidebarPane, menuBarPane, registerPane, donatedOrgansPane;
     @FXML
@@ -69,10 +71,43 @@ public class RegisterOrganDonationController extends SubController {
     @FXML
     private TableColumn<DonatedOrgan, DonatedOrgan> manualOverrideCol;
 
-    private final Map<Organ, CheckBox> organCheckBoxes = new HashMap<>();
-
     public RegisterOrganDonationController() {
         session = State.getSession();
+    }
+
+    /**
+     * Handles the event when the user wants to cancel the override on a given donated organ.
+     *
+     * @param donatedOrgan The donated organ the user wants to cancel the override for.
+     */
+    private static void handleCancelOverride(DonatedOrgan donatedOrgan) {
+        try {
+            State.getClientResolver().cancelManualOverrideForOrgan(donatedOrgan);
+            PageNavigator.refreshAllWindows();
+        } catch (IfMatchFailedException exc) {
+            // TODO deal with outdated error
+        } catch (NotFoundException exc) {
+            LOGGER.log(Level.WARNING, "Client/Organ Not Found", exc);
+            Notifications.create()
+                    .title("Client/Organ Not Found")
+                    .text("The client/donated organ could not be found on the server; it may have been deleted.")
+                    .showWarning();
+        } catch (ServerRestException exc) {
+            LOGGER.log(Level.WARNING, exc.getMessage(), exc);
+            Notifications.create()
+                    .title("Server Error")
+                    .text("A server error occurred when cancelling the override on this donated organ; please try "
+                            + "again later.")
+                    .showError();
+        }
+    }
+
+    private static String formatChange(Organ organ, boolean newValue) {
+        if (newValue) {
+            return String.format("Registered %s for donation.", organ.toString());
+        } else {
+            return String.format("Deregistered %s for donation.", organ.toString());
+        }
     }
 
     /**
@@ -122,7 +157,7 @@ public class RegisterOrganDonationController extends SubController {
         manualOverrideCol.setCellFactory(column -> new ManualOverrideCell(column,
                 this::handleOverride,
                 this::handleEditOverride,
-                this::handleCancelOverride));
+                RegisterOrganDonationController::handleCancelOverride));
 
         // Sets the comparator for sorting by time until expiry column.
         timeUntilExpiryCol.setComparator((dur1, dur2) -> {
@@ -138,7 +173,8 @@ public class RegisterOrganDonationController extends SubController {
         });
 
         // Sort by time until expiry column by default.
-        donatedOrgansTable.getSortOrder().setAll(timeUntilExpiryCol);
+        donatedOrgansTable.getSortOrder().clear();
+        donatedOrgansTable.getSortOrder().add(timeUntilExpiryCol);
     }
 
     /**
@@ -150,7 +186,8 @@ public class RegisterOrganDonationController extends SubController {
     private void handleOverride(DonatedOrgan donatedOrgan) {
         // Create a popup with a text field to enter the reason
 
-        TouchAlertTextController controller = PageNavigator.showTextAlert("Manually Override Organ", "Enter the reason for overriding this organ:", mainController.getStage());
+        TouchAlertTextController controller = PageNavigator.showTextAlert("Manually Override Organ",
+                "Enter the reason for overriding this organ:", mainController.getStage());
 
         if (controller.getResultProperty().getValue() != null) {
             if (controller.getResultProperty().getValue()) {
@@ -170,10 +207,10 @@ public class RegisterOrganDonationController extends SubController {
             StringBuilder overrideReason = new StringBuilder(response);
             overrideReason.append("\n").append(LocalDateTime.now().format(dateTimeFormat));
             if (session.getLoggedInUserType() == UserType.CLINICIAN) {
-                overrideReason.append(String.format("\nOverriden by clinician %d (%s)",
+                overrideReason.append(String.format("%nOverriden by clinician %d (%s)",
                         session.getLoggedInClinician().getStaffId(), session.getLoggedInClinician().getFullName()));
             } else if (session.getLoggedInUserType() == UserType.ADMINISTRATOR) {
-                overrideReason.append(String.format("\nOverriden by admin '%s'.",
+                overrideReason.append(String.format("%nOverriden by admin '%s'.",
                         session.getLoggedInAdministrator().getUsername()));
             }
             State.getClientResolver().manuallyOverrideOrgan(donatedOrgan, overrideReason.toString());
@@ -181,7 +218,7 @@ public class RegisterOrganDonationController extends SubController {
         } catch (IfMatchFailedException exc) {
             // TODO deal with outdated error
         } catch (NotFoundException exc) {
-            LOGGER.log(Level.WARNING, "Client/Organ Not Found");
+            LOGGER.log(Level.WARNING, "Client/Organ Not Found", exc);
             Notifications.create()
                     .title("Client/Organ Not Found")
                     .text("The client/donated organ could not be found on the server; it may have been deleted.")
@@ -203,7 +240,8 @@ public class RegisterOrganDonationController extends SubController {
      */
     private void handleEditOverride(DonatedOrgan donatedOrgan) {
 
-        TouchAlertTextController controller = PageNavigator.showTextAlert("Edit Manual Override", "Enter the reason for overriding this organ:", mainController.getStage());
+        TouchAlertTextController controller = PageNavigator.showTextAlert("Edit Manual Override",
+                "Enter the reason for overriding this organ:", mainController.getStage());
 
         if (controller.getResultProperty().getValue() != null) {
             if (controller.getResultProperty().getValue()) {
@@ -223,10 +261,10 @@ public class RegisterOrganDonationController extends SubController {
             StringBuilder overrideReason = new StringBuilder(response);
             overrideReason.append("\n").append(LocalDateTime.now().format(dateTimeFormat));
             if (session.getLoggedInUserType() == UserType.CLINICIAN) {
-                overrideReason.append(String.format("\nOverriden by clinician %d (%s)",
+                overrideReason.append(String.format("%nOverriden by clinician %d (%s)",
                         session.getLoggedInClinician().getStaffId(), session.getLoggedInClinician().getFullName()));
             } else if (session.getLoggedInUserType() == UserType.ADMINISTRATOR) {
-                overrideReason.append(String.format("\nOverriden by admin '%s'.",
+                overrideReason.append(String.format("%nOverriden by admin '%s'.",
                         session.getLoggedInAdministrator().getUsername()));
             }
             State.getClientResolver().editManualOverrideForOrgan(donatedOrgan, overrideReason.toString());
@@ -234,7 +272,7 @@ public class RegisterOrganDonationController extends SubController {
         } catch (IfMatchFailedException exc) {
             // TODO deal with outdated error
         } catch (NotFoundException exc) {
-            LOGGER.log(Level.WARNING, "Client/Organ Not Found");
+            LOGGER.log(Level.WARNING, "Client/Organ Not Found", exc);
             Notifications.create()
                     .title("Client/Organ Not Found")
                     .text("The client/donated organ could not be found on the server; it may have been deleted.")
@@ -248,33 +286,6 @@ public class RegisterOrganDonationController extends SubController {
         }
     }
 
-    /**
-     * Handles the event when the user wants to cancel the override on a given donated organ.
-     *
-     * @param donatedOrgan The donated organ the user wants to cancel the override for.
-     */
-    private void handleCancelOverride(DonatedOrgan donatedOrgan) {
-        try {
-            State.getClientResolver().cancelManualOverrideForOrgan(donatedOrgan);
-            PageNavigator.refreshAllWindows();
-        } catch (IfMatchFailedException exc) {
-            // TODO deal with outdated error
-        } catch (NotFoundException exc) {
-            LOGGER.log(Level.WARNING, "Client/Organ Not Found");
-            Notifications.create()
-                    .title("Client/Organ Not Found")
-                    .text("The client/donated organ could not be found on the server; it may have been deleted.")
-                    .showWarning();
-        } catch (ServerRestException exc) {
-            LOGGER.log(Level.WARNING, exc.getMessage(), exc);
-            Notifications.create()
-                    .title("Server Error")
-                    .text("A server error occurred when cancelling the override on this donated organ; please try "
-                            + "again later.")
-                    .showError();
-        }
-    }
-
     @Override
     public void refresh() {
         // Retrieve organ donation status and transplant requests from the server
@@ -283,7 +294,7 @@ public class RegisterOrganDonationController extends SubController {
             client.setOrganDonationStatus(State.getClientResolver().getOrganDonationStatus(client));
             client.setDonatedOrgans(State.getClientResolver().getDonatedOrgans(client));
         } catch (NotFoundException e) {
-            LOGGER.log(Level.WARNING, "Client Not Found");
+            LOGGER.log(Level.WARNING, "Client Not Found", e);
             Notifications.create()
                     .title("Client Not Found")
                     .text("The client could not be found on the server; it may have been deleted.")
@@ -365,7 +376,7 @@ public class RegisterOrganDonationController extends SubController {
             try {
                 State.getClientResolver().modifyOrganDonation(client, changes);
             } catch (NotFoundException e) {
-                LOGGER.log(Level.WARNING, "Client Not Found");
+                LOGGER.log(Level.WARNING, "Client Not Found", e);
                 Notifications.create()
                         .title("Client Not Found")
                         .text("The client could not be found on the server; it may have been deleted.")
@@ -379,7 +390,7 @@ public class RegisterOrganDonationController extends SubController {
                         .showError();
                 return;
             } catch (IfMatchFailedException e) {
-                LOGGER.log(Level.INFO, "If-Match did not match");
+                LOGGER.log(Level.INFO, "If-Match did not match", e);
                 PageNavigator.showAlert(AlertType.WARNING,
                         "Outdated Data",
                         "The client has been modified since you retrieved the data. "
@@ -405,16 +416,8 @@ public class RegisterOrganDonationController extends SubController {
                 .map(entry -> formatChange(entry.getKey(), entry.getValue()))
                 .collect(Collectors.joining("\n"));
 
-        return String.format("Changed organ donation registration for client %d: %s:\n\n%s",
+        return String.format("Changed organ donation registration for client %d: %s:%n%n%s",
                 client.getUid(), client.getFullName(), changesText);
-    }
-
-    private String formatChange(Organ organ, boolean newValue) {
-        if (newValue) {
-            return String.format("Registered %s for donation.", organ.toString());
-        } else {
-            return String.format("Deregistered %s for donation.", organ.toString());
-        }
     }
 
     /**

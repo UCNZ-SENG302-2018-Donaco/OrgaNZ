@@ -1,6 +1,12 @@
 package com.humanharvest.organz.server.controller.client;
 
-import com.fasterxml.jackson.annotation.JsonView;
+import static com.humanharvest.organz.utilities.validators.ClientValidator.checkClientETag;
+
+import java.util.Collection;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.ProcedureRecord;
 import com.humanharvest.organz.actions.Action;
@@ -13,6 +19,8 @@ import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
 import com.humanharvest.organz.views.client.ModifyProcedureObject;
 import com.humanharvest.organz.views.client.Views;
+
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,9 +33,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collection;
-import java.util.Optional;
-
 /**
  * Provides handlers for requests to these endpoints:
  * - GET /clients/{uid}/procedures
@@ -37,6 +42,8 @@ import java.util.Optional;
  */
 @RestController
 public class ClientProceduresController {
+
+    private static final Logger LOGGER = Logger.getLogger(ClientProceduresController.class.getName());
 
     @GetMapping("/clients/{uid}/procedures")
     public ResponseEntity<Collection<ProcedureRecord>> getProceduresForClient(
@@ -65,36 +72,33 @@ public class ClientProceduresController {
     public ResponseEntity<Collection<ProcedureRecord>> createProcedureRecord(
             @RequestBody ProcedureRecord procedureRecord,
             @PathVariable int uid,
-            @RequestHeader(value = "If-Match", required = false) String eTag,
+            @RequestHeader(value = "If-Match", required = false) String ETag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws AuthenticationException, IfMatchFailedException, IfMatchRequiredException {
 
         // Check request has authorization to create a procedure
         State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
 
-        Optional<Client> client = State.getClientManager().getClientByID(uid);
-        if (client.isPresent()) {
-            // Check that eTag is still valid
-            if (eTag == null) {
-                throw new IfMatchRequiredException();
-            } else if (!client.get().getETag().equals(eTag)) {
-                throw new IfMatchFailedException();
-            }
-
-            // Execute add procedure action
-            Action action = new AddProcedureRecordAction(client.get(), procedureRecord, State.getClientManager());
-            State.getActionInvoker(authToken).execute(action);
-
-            // Add the new ETag to the headers
-            HttpHeaders headers = new HttpHeaders();
-            headers.setETag(client.get().getETag());
-
-            // Return response containing list of client's procedures
-            return new ResponseEntity<>(client.get().getProcedures(), headers, HttpStatus.CREATED);
-        } else {
+        Optional<Client> optionalClient = State.getClientManager().getClientByID(uid);
+        if (!optionalClient.isPresent()) {
             // No client exists with that id, return 404
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        Client client = optionalClient.get();
+
+        //Check ETag
+        checkClientETag(client, ETag);
+
+        // Execute add procedure action
+        Action action = new AddProcedureRecordAction(client, procedureRecord, State.getClientManager());
+        State.getActionInvoker(authToken).execute(action);
+
+        // Add the new ETag to the headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.setETag(client.getETag());
+
+        // Return response containing list of client's procedures
+        return new ResponseEntity<>(client.getProcedures(), headers, HttpStatus.CREATED);
     }
 
     @PatchMapping("/clients/{uid}/procedures/{id}")
@@ -103,71 +107,73 @@ public class ClientProceduresController {
             @RequestBody ModifyProcedureObject modifyProcedureObject,
             @PathVariable int uid,
             @PathVariable int id,
-            @RequestHeader(value = "If-Match", required = false) String eTag,
+            @RequestHeader(value = "If-Match", required = false) String ETag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken) throws AuthenticationException {
 
         // Check request has authorization to patch a procedure
         State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
 
         // Try to find a client with matching uid
-        Optional<Client> client = State.getClientManager().getClientByID(uid);
-        if (client.isPresent()) {
-            // Try to find a procedure record with matching id
-            Optional<ProcedureRecord> toModify = client.get().getProcedures().stream()
-                    .filter(procedure -> procedure.getId() != null && procedure.getId() == id)
-                    .findFirst();
+        Optional<Client> optionalClient = State.getClientManager().getClientByID(uid);
+        if (!optionalClient.isPresent()) {
+            // No client exists with those ids, return 404
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        Client client = optionalClient.get();
 
-            if (toModify.isPresent()) {
-                // Check that eTag is still valid
-                if (eTag == null) {
-                    throw new IfMatchRequiredException();
-                } else if (!client.get().getETag().equals(eTag)) {
-                    throw new IfMatchFailedException();
-                }
+        //Check ETag
+        checkClientETag(client, ETag);
 
-                // Create action
-                ModifyProcedureRecordAction action = new ModifyProcedureRecordAction(
-                        toModify.get(), State.getClientManager());
+        // Try to find a procedure record with matching id
+        Optional<ProcedureRecord> optionalRecord = client.getProcedures().stream()
+                .filter(procedure -> procedure.getId() != null && procedure.getId() == id)
+                .findFirst();
 
-                // Register all changes
-                if (modifyProcedureObject.getSummary() != null) {
-                    action.changeSummary(modifyProcedureObject.getSummary());
-                }
-                if (modifyProcedureObject.getDescription() != null) {
-                    action.changeDescription(modifyProcedureObject.getDescription());
-                }
-                if (modifyProcedureObject.getDate() != null) {
-                    action.changeDate(modifyProcedureObject.getDate());
-                }
-                if (modifyProcedureObject.getAffectedOrgans() != null) {
-                    action.changeAffectedOrgans(modifyProcedureObject.getAffectedOrgans());
-                }
+        if (!optionalRecord.isPresent()) {
+            // No client exists with those ids, return 404
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        ProcedureRecord toModify = optionalRecord.get();
 
-                // Execute the action
-                try {
-                    State.getActionInvoker(authToken).execute(action);
-                } catch (IllegalStateException exc) {
-                    return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-                }
+        // Create action
+        ModifyProcedureRecordAction action = new ModifyProcedureRecordAction(
+                toModify, State.getClientManager());
 
-                // Add the new ETag to the headers
-                HttpHeaders headers = new HttpHeaders();
-                headers.setETag(client.get().getETag());
-
-                // Return OK response
-                return new ResponseEntity<>(toModify.get(), headers, HttpStatus.CREATED);
-            }
+        // Register all changes
+        if (modifyProcedureObject.getSummary() != null) {
+            action.changeSummary(modifyProcedureObject.getSummary());
+        }
+        if (modifyProcedureObject.getDescription() != null) {
+            action.changeDescription(modifyProcedureObject.getDescription());
+        }
+        if (modifyProcedureObject.getDate() != null) {
+            action.changeDate(modifyProcedureObject.getDate());
+        }
+        if (modifyProcedureObject.getAffectedOrgans() != null) {
+            action.changeAffectedOrgans(modifyProcedureObject.getAffectedOrgans());
         }
 
-        // No client/procedure exists with those ids, return 404
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        // Execute the action
+        try {
+            State.getActionInvoker(authToken).execute(action);
+        } catch (IllegalStateException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        // Add the new ETag to the headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.setETag(client.getETag());
+
+        // Return OK response
+        return new ResponseEntity<>(toModify, headers, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/clients/{uid}/procedures/{id}")
     public ResponseEntity deleteProcedureRecord(
             @PathVariable int uid,
             @PathVariable int id,
-            @RequestHeader(value = "If-Match", required = false) String eTag,
+            @RequestHeader(value = "If-Match", required = false) String ETag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws AuthenticationException, IfMatchFailedException, IfMatchRequiredException {
 
@@ -175,35 +181,35 @@ public class ClientProceduresController {
         State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
 
         // Try to find a client with matching uid
-        Optional<Client> client = State.getClientManager().getClientByID(uid);
-        if (client.isPresent()) {
-            // Try to find a procedure record with matching id
-            Optional<ProcedureRecord> toDelete = client.get().getProcedures().stream()
-                    .filter(procedure -> procedure.getId() != null && procedure.getId() == id)
-                    .findFirst();
-
-            if (toDelete.isPresent()) {
-                // Check that eTag is still valid
-                if (eTag == null) {
-                    throw new IfMatchRequiredException();
-                } else if (!client.get().getETag().equals(eTag)) {
-                    throw new IfMatchFailedException();
-                }
-
-                // Execute delete procedure action
-                Action action = new DeleteProcedureRecordAction(client.get(), toDelete.get(), State.getClientManager());
-                State.getActionInvoker(authToken).execute(action);
-
-                // Add the new ETag to the headers
-                HttpHeaders headers = new HttpHeaders();
-                headers.setETag(client.get().getETag());
-
-                // Return OK response
-                return new ResponseEntity<>(headers, HttpStatus.OK);
-            }
+        Optional<Client> optionalClient = State.getClientManager().getClientByID(uid);
+        if (!optionalClient.isPresent()) {
+            // No client exists with that id, return 404
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        Client client = optionalClient.get();
 
-        // No client/procedure exists with those ids, return 404
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        //Check ETag
+        checkClientETag(client, ETag);
+
+        // Try to find a procedure record with matching id
+        Optional<ProcedureRecord> optionalRecord = client.getProcedures().stream()
+                .filter(procedure -> procedure.getId() != null && procedure.getId() == id)
+                .findFirst();
+        if (!optionalRecord.isPresent()) {
+            // No procedure exists with that id, return 404
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        ProcedureRecord toDelete = optionalRecord.get();
+
+        // Execute delete procedure action
+        Action action = new DeleteProcedureRecordAction(client, toDelete, State.getClientManager());
+        State.getActionInvoker(authToken).execute(action);
+
+        // Add the new ETag to the headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.setETag(client.getETag());
+
+        // Return OK response
+        return new ResponseEntity<>(headers, HttpStatus.OK);
     }
 }

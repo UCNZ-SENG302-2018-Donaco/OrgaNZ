@@ -1,5 +1,30 @@
 package com.humanharvest.organz.controller.client;
 
+import java.io.IOException;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javafx.collections.FXCollections;
+import javafx.concurrent.Task;
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+import javafx.scene.control.SelectionMode;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import impl.org.controlsfx.autocompletion.AutoCompletionTextFieldBinding;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.controller.AlertHelper;
@@ -18,30 +43,6 @@ import com.humanharvest.organz.utilities.web.DrugInteractionsHandler;
 import com.humanharvest.organz.utilities.web.MedActiveIngredientsHandler;
 import com.humanharvest.organz.utilities.web.MedAutoCompleteHandler;
 import com.humanharvest.organz.views.client.CreateMedicationRecordView;
-import impl.org.controlsfx.autocompletion.AutoCompletionTextFieldBinding;
-import javafx.collections.FXCollections;
-import javafx.concurrent.Task;
-import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.SelectionMode;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
-import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-
-import java.io.IOException;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Controller for the view/edit medications page.
@@ -241,7 +242,7 @@ public class ViewMedicationsController extends SubController {
      * Creates and executes the resolver to update the given medication record, either setting it as a current
      * medication or a past one
      *
-     * @param date   date to set the stop date of the medication record to, either null or the current date
+     * @param date date to set the stop date of the medication record to, either null or the current date
      * @param record the record to modify
      */
     private void updateMedicationHistory(LocalDate date, MedicationRecord record) {

@@ -1,14 +1,15 @@
 package com.humanharvest.organz.actions.administrator;
 
+import static org.junit.Assert.assertEquals;
+
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.state.AdministratorManager;
 import com.humanharvest.organz.state.AdministratorManagerMemory;
+
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 public class DeleteAdministratorActionTest extends BaseTest {
 

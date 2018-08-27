@@ -1,5 +1,7 @@
 package com.humanharvest.organz.state;
 
+import java.util.Objects;
+
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
@@ -10,11 +12,10 @@ import com.humanharvest.organz.views.client.ClientLoginRequest;
 import com.humanharvest.organz.views.client.ClientLoginResponse;
 import com.humanharvest.organz.views.clinician.ClinicianLoginRequest;
 import com.humanharvest.organz.views.clinician.ClinicianLoginResponse;
+
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
-
-import java.util.Objects;
 
 public class AuthenticationManagerRest implements AuthenticationManager {
 

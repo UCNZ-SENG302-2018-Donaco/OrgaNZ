@@ -1,5 +1,7 @@
 package com.humanharvest.organz;
 
+import java.util.EnumSet;
+import java.util.Set;
 import com.humanharvest.organz.utilities.enums.Country;
 
 import javax.persistence.CascadeType;
@@ -10,6 +12,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+
+import com.humanharvest.organz.utilities.enums.Country;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
@@ -23,14 +27,14 @@ public class Config {
 
     @ElementCollection(targetClass = Country.class)
     @Enumerated(EnumType.STRING)
-    Set<Country> countries;
+    private Set<Country> countries;
 
     @OneToMany(
             mappedBy = "config",
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
-    Set<Hospital> hospitals;
+    private Set<Hospital> hospitals;
 
     public Config() {
         this.countries = EnumSet.noneOf(Country.class);

@@ -1,14 +1,15 @@
 package com.humanharvest.organz.utilities.web;
 
-import com.google.api.client.http.HttpTransport;
-import com.humanharvest.organz.BaseTest;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
+import com.humanharvest.organz.BaseTest;
+
+import com.google.api.client.http.HttpTransport;
+import org.junit.Test;
 
 /**
  * Tests for the medication autocompletion handler. These tests do not connect to the web API, they instead use a

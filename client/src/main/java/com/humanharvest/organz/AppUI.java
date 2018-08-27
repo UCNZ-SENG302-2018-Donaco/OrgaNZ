@@ -1,5 +1,17 @@
 package com.humanharvest.organz;
 
+import java.io.IOException;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+import java.util.logging.Level;
+
+import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.layout.Pane;
+import javafx.stage.Stage;
+
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.state.State.DataStorageType;
@@ -9,20 +21,10 @@ import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.utilities.view.PageNavigatorStandard;
 import com.humanharvest.organz.utilities.view.PageNavigatorTouch;
 import com.humanharvest.organz.utilities.view.WindowContext;
+
 import com.sun.javafx.css.StyleManager;
-import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.scene.layout.Pane;
-import javafx.stage.Stage;
 import org.tuiofx.TuioFX;
 import org.tuiofx.internal.base.TuioFXCanvas;
-
-import java.io.IOException;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.logging.Level;
 
 /**
  * The main class that runs the JavaFX GUI.
@@ -32,6 +34,29 @@ public class AppUI extends Application {
     public static void main(String[] args) {
         TuioFX.enableJavaFXTouchProperties();
         launch(args);
+    }
+
+    /**
+     * Loads a backdrop page.
+     */
+    private static void loadBackPane(Pane rootPane) throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        Pane backPane = loader.load(PageNavigatorTouch.class.getResourceAsStream(Page.BACKDROP.getPath()));
+
+        rootPane.getChildren().add(backPane);
+    }
+
+    /**
+     * Loads the landing page as the initial page.
+     */
+    private static void loadTouchMainPane() {
+        MainController mainController = PageNavigator.openNewWindow();
+        mainController.setWindowContext(WindowContext.defaultContext());
+        PageNavigator.loadPage(Page.LANDING, mainController);
+    }
+
+    private static void addCss(Scene scene) {
+        scene.getStylesheets().add(AppUI.class.getResource("/css/validation.css").toExternalForm());
     }
 
     /**
@@ -138,25 +163,6 @@ public class AppUI extends Application {
     }
 
     /**
-     * Loads a backdrop page.
-     */
-    private static void loadBackPane(Pane rootPane) throws IOException {
-        FXMLLoader loader = new FXMLLoader();
-        Pane backPane = loader.load(PageNavigatorTouch.class.getResourceAsStream(Page.BACKDROP.getPath()));
-
-        rootPane.getChildren().add(backPane);
-    }
-
-    /**
-     * Loads the landing page as the initial page.
-     */
-    private static void loadTouchMainPane() {
-        MainController mainController = PageNavigator.openNewWindow();
-        mainController.setWindowContext(WindowContext.defaultContext());
-        PageNavigator.loadPage(Page.LANDING, mainController);
-    }
-
-    /**
      * Loads the main FXML. Sets up the page-switching PageNavigator. Loads the landing page as the initial page.
      *
      * @param stage The stage to set the window to
@@ -175,10 +181,6 @@ public class AppUI extends Application {
         PageNavigator.loadPage(Page.LANDING, mainController);
 
         return mainPane;
-    }
-
-    private static void addCss(Scene scene) {
-        scene.getStylesheets().add(AppUI.class.getResource("/css/validation.css").toExternalForm());
     }
 
 }

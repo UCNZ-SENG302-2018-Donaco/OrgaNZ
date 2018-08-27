@@ -1,10 +1,10 @@
 package com.humanharvest.organz.utilities.validators.clinician;
 
-import com.humanharvest.organz.utilities.validators.NotEmptyStringValidator;
-import com.humanharvest.organz.views.clinician.ModifyClinicianObject;
-
 import java.util.Arrays;
 import java.util.List;
+
+import com.humanharvest.organz.utilities.validators.NotEmptyStringValidator;
+import com.humanharvest.organz.views.clinician.ModifyClinicianObject;
 
 public class ModifyClinicianValidator {
 

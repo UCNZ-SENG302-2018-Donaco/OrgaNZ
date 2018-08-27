@@ -1,5 +1,11 @@
 package com.humanharvest.organz.resolvers.client;
 
+import java.time.LocalDate;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.HistoryItem;
@@ -20,6 +26,7 @@ import com.humanharvest.organz.views.client.ModifyClientObject;
 import com.humanharvest.organz.views.client.ModifyIllnessObject;
 import com.humanharvest.organz.views.client.ModifyProcedureObject;
 import com.humanharvest.organz.views.client.ResolveTransplantRequestObject;
+
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -27,13 +34,77 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
-import java.time.LocalDate;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 public class ClientResolverRest implements ClientResolver {
+
+    //------------Templates----------------
+
+    private static HttpHeaders createHeaders(boolean addIfMatch) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.set("X-Auth-Token", State.getToken());
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        if (addIfMatch) {
+            httpHeaders.setIfMatch(State.getClientEtag());
+        }
+        return httpHeaders;
+    }
+
+    private static <T> ResponseEntity<T> sendQuery(HttpHeaders httpHeaders, String url, HttpMethod method,
+            ParameterizedTypeReference<T> typeReference,
+            Object... uriVariables) {
+
+        HttpEntity<?> entity = new HttpEntity<>(null, httpHeaders);
+
+        ResponseEntity<T> responseEntity = State.getRestTemplate().exchange
+                (url, method, entity, typeReference, uriVariables);
+
+        if (!method.equals(HttpMethod.GET) && !method.equals(HttpMethod.HEAD)) { // if the method isn't safe
+            State.setClientEtag(responseEntity.getHeaders().getETag());
+        }
+        return responseEntity;
+    }
+
+    private static <T> ResponseEntity<T> sendQuery(HttpHeaders httpHeaders, String url, HttpMethod method,
+            Class<T> typeReference, Object... uriVariables) {
+
+        HttpEntity<?> entity = new HttpEntity<>(null, httpHeaders);
+
+        ResponseEntity<T> responseEntity = State.getRestTemplate().exchange
+                (url, method, entity, typeReference, uriVariables);
+
+        if (!method.equals(HttpMethod.GET) && !method.equals(HttpMethod.HEAD)) { // if the method isn't safe
+            State.setClientEtag(responseEntity.getHeaders().getETag());
+        }
+        return responseEntity;
+    }
+
+    private static <T, Y> ResponseEntity<T> sendQuery(HttpHeaders httpHeaders, String url, HttpMethod method,
+            Y value, ParameterizedTypeReference<T> typeReference,
+            Object... uriVariables) {
+
+        HttpEntity<Y> entity = new HttpEntity<>(value, httpHeaders);
+
+        ResponseEntity<T> responseEntity = State.getRestTemplate().exchange
+                (url, method, entity, typeReference, uriVariables);
+
+        if (!method.equals(HttpMethod.GET) && !method.equals(HttpMethod.HEAD)) { // if the method isn't safe
+            State.setClientEtag(responseEntity.getHeaders().getETag());
+        }
+        return responseEntity;
+    }
+
+    private static <T, Y> ResponseEntity<T> sendQuery(HttpHeaders httpHeaders, String url, HttpMethod method,
+            Y value, Class<T> typeReference, Object... uriVariables) {
+
+        HttpEntity<Y> entity = new HttpEntity<>(value, httpHeaders);
+
+        ResponseEntity<T> responseEntity = State.getRestTemplate().exchange
+                (url, method, entity, typeReference, uriVariables);
+
+        if (!method.equals(HttpMethod.GET) && !method.equals(HttpMethod.HEAD)) { // if the method isn't safe
+            State.setClientEtag(responseEntity.getHeaders().getETag());
+        }
+        return responseEntity;
+    }
 
     //------------GETs----------------
 
@@ -232,7 +303,7 @@ public class ClientResolverRest implements ClientResolver {
 
     @Override
     public TransplantRequest resolveTransplantRequest(Client client, TransplantRequest request,
-                                                      ResolveTransplantRequestObject resolveTransplantRequestObject) {
+            ResolveTransplantRequestObject resolveTransplantRequestObject) {
         HttpHeaders httpHeaders = createHeaders(true);
         long id = request.getId();
         ResponseEntity<TransplantRequest> responseEntity = sendQuery(httpHeaders,
@@ -282,7 +353,7 @@ public class ClientResolverRest implements ClientResolver {
 
     @Override
     public IllnessRecord modifyIllnessRecord(Client client, IllnessRecord toModify,
-                                             ModifyIllnessObject modifyIllnessObject) {
+            ModifyIllnessObject modifyIllnessObject) {
         HttpHeaders httpHeaders = createHeaders(true);
         ResponseEntity<IllnessRecord> responseEntity = sendQuery(httpHeaders,
                 State.getBaseUri() + "clients/{id}/illnesses/{illnessId}",
@@ -375,73 +446,5 @@ public class ClientResolverRest implements ClientResolver {
                 donatedOrgan.getDonor().getUid(),
                 donatedOrgan.getId());
         return responseEntity.getBody();
-    }
-
-    //------------Templates----------------
-
-    private static HttpHeaders createHeaders(boolean addIfMatch) {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.set("X-Auth-Token", State.getToken());
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
-        if (addIfMatch) {
-            httpHeaders.setIfMatch(State.getClientEtag());
-        }
-        return httpHeaders;
-    }
-
-    private static <T> ResponseEntity<T> sendQuery(HttpHeaders httpHeaders, String url, HttpMethod method,
-                                                   ParameterizedTypeReference<T> typeReference, Object... uriVariables) {
-
-        HttpEntity<?> entity = new HttpEntity<>(null, httpHeaders);
-
-        ResponseEntity<T> responseEntity = State.getRestTemplate().exchange
-                (url, method, entity, typeReference, uriVariables);
-
-        if (!method.equals(HttpMethod.GET) && !method.equals(HttpMethod.HEAD)) { // if the method isn't safe
-            State.setClientEtag(responseEntity.getHeaders().getETag());
-        }
-        return responseEntity;
-    }
-
-    private static <T> ResponseEntity<T> sendQuery(HttpHeaders httpHeaders, String url, HttpMethod method,
-                                                   Class<T> typeReference, Object... uriVariables) {
-
-        HttpEntity<?> entity = new HttpEntity<>(null, httpHeaders);
-
-        ResponseEntity<T> responseEntity = State.getRestTemplate().exchange
-                (url, method, entity, typeReference, uriVariables);
-
-        if (!method.equals(HttpMethod.GET) && !method.equals(HttpMethod.HEAD)) { // if the method isn't safe
-            State.setClientEtag(responseEntity.getHeaders().getETag());
-        }
-        return responseEntity;
-    }
-
-    private static <T, Y> ResponseEntity<T> sendQuery(HttpHeaders httpHeaders, String url, HttpMethod method,
-                                                      Y value, ParameterizedTypeReference<T> typeReference, Object... uriVariables) {
-
-        HttpEntity<Y> entity = new HttpEntity<>(value, httpHeaders);
-
-        ResponseEntity<T> responseEntity = State.getRestTemplate().exchange
-                (url, method, entity, typeReference, uriVariables);
-
-        if (!method.equals(HttpMethod.GET) && !method.equals(HttpMethod.HEAD)) { // if the method isn't safe
-            State.setClientEtag(responseEntity.getHeaders().getETag());
-        }
-        return responseEntity;
-    }
-
-    private static <T, Y> ResponseEntity<T> sendQuery(HttpHeaders httpHeaders, String url, HttpMethod method,
-                                                      Y value, Class<T> typeReference, Object... uriVariables) {
-
-        HttpEntity<Y> entity = new HttpEntity<>(value, httpHeaders);
-
-        ResponseEntity<T> responseEntity = State.getRestTemplate().exchange
-                (url, method, entity, typeReference, uriVariables);
-
-        if (!method.equals(HttpMethod.GET) && !method.equals(HttpMethod.HEAD)) { // if the method isn't safe
-            State.setClientEtag(responseEntity.getHeaders().getETag());
-        }
-        return responseEntity;
     }
 }

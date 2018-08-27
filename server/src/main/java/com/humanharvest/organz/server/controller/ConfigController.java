@@ -1,8 +1,12 @@
 package com.humanharvest.organz.server.controller;
 
+import java.util.EnumSet;
+import java.util.Set;
+
 import com.humanharvest.organz.server.exceptions.GlobalControllerExceptionHandler;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Country;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,9 +14,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.EnumSet;
-import java.util.Set;
 
 @RestController
 public class ConfigController {

@@ -1,9 +1,10 @@
 package com.humanharvest.organz;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import com.humanharvest.organz.utilities.enums.Country;
-import com.humanharvest.organz.views.client.Views;
-
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -12,11 +13,11 @@ import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+
+import com.humanharvest.organz.utilities.enums.Country;
+import com.humanharvest.organz.views.client.Views;
+
+import com.fasterxml.jackson.annotation.JsonView;
 
 /**
  * The main Clinician class.
@@ -25,6 +26,8 @@ import java.util.Objects;
 @Table
 public class Clinician implements ConcurrencyControlledEntity {
 
+    @JsonView(Views.Details.class)
+    private final LocalDateTime createdOn;
     @Id
     @JsonView(Views.Overview.class)
     private Integer staffId;
@@ -47,13 +50,9 @@ public class Clinician implements ConcurrencyControlledEntity {
     private Country country;
 
     @JsonView(Views.Details.class)
-    private final LocalDateTime createdOn;
-    @JsonView(Views.Details.class)
     private LocalDateTime modifiedOn;
 
-    @OneToMany(
-            cascade = CascadeType.ALL
-    )
+    @OneToMany(cascade = CascadeType.ALL)
     private List<HistoryItem> changesHistory = new ArrayList<>();
 
     protected Clinician() {
@@ -63,14 +62,14 @@ public class Clinician implements ConcurrencyControlledEntity {
     /**
      * Create a new Clinician object
      *
-     * @param firstName   First name string
-     * @param middleName  Middle name(s). May be null
-     * @param lastName    Last name string
+     * @param firstName First name string
+     * @param middleName Middle name(s). May be null
+     * @param lastName Last name string
      * @param workAddress Address string
-     * @param region      Region either from the Region ENUM in NZ or a string.
-     * @param country     Country of the clinician.
-     * @param staffId     The unique staffId. Should be checked using the ClinicianManager to ensure uniqueness
-     * @param password    The clinicians password for logins. Stored in plaintext
+     * @param region Region either from the Region ENUM in NZ or a string.
+     * @param country Country of the clinician.
+     * @param staffId The unique staffId. Should be checked using the ClinicianManager to ensure uniqueness
+     * @param password The clinicians password for logins. Stored in plaintext
      */
     public Clinician(
             String firstName,
@@ -93,6 +92,12 @@ public class Clinician implements ConcurrencyControlledEntity {
         this.password = password;
     }
 
+    /**
+     * Returns true if the password is valid
+     *
+     * @param password the password to check
+     * @return true if the password is valid
+     */
     public boolean isPasswordValid(String password) {
         return Objects.equals(this.password, password);
     }

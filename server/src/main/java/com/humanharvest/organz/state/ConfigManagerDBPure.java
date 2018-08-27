@@ -1,9 +1,17 @@
 package com.humanharvest.organz.state;
 
+import java.util.EnumSet;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.persistence.PersistenceException;
+import javax.persistence.RollbackException;
+
 import com.humanharvest.organz.Config;
 import com.humanharvest.organz.Hospital;
 import com.humanharvest.organz.database.DBManager;
 import com.humanharvest.organz.utilities.enums.Country;
+
 import org.hibernate.Transaction;
 
 import javax.persistence.PersistenceException;
@@ -13,6 +21,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class ConfigManagerDBPure implements ConfigManager {
+
+    private static final Logger LOGGER = Logger.getLogger(ConfigManagerDBPure.class.getName());
 
     private final DBManager dbManager;
     private Config configuration;
@@ -57,7 +67,8 @@ public class ConfigManagerDBPure implements ConfigManager {
                     .createQuery("FROM Config", Config.class)
                     .getSingleResult();
             trns.commit();
-        } catch (RollbackException exc) {
+        } catch (RollbackException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
             if (trns != null) {
                 trns.rollback();
             }
@@ -76,7 +87,8 @@ public class ConfigManagerDBPure implements ConfigManager {
             dbManager.getDBSession().update(configuration);
 
             trns.commit();
-        } catch (RollbackException exc) {
+        } catch (RollbackException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
             if (trns != null) {
                 trns.rollback();
             }

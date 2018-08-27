@@ -1,13 +1,7 @@
 package com.humanharvest.organz.commands.view;
 
-import com.humanharvest.organz.BaseTest;
-import com.humanharvest.organz.database.DBManager;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import picocli.CommandLine;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -17,22 +11,23 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import com.humanharvest.organz.BaseTest;
+import com.humanharvest.organz.database.DBManager;
+
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
+import picocli.CommandLine;
 
 @Ignore
 public class SQLTest extends BaseTest {
 
-    private DBManager spyDBManager;
-    private SQL spySQL;
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
-
+    private DBManager spyDBManager;
+    private SQL spySQL;
     private Connection connection;
     private Statement statement;
     private ResultSet resultSet;
@@ -59,7 +54,6 @@ public class SQLTest extends BaseTest {
         when(resultSet.getMetaData()).thenReturn(resultSetMetaData);
         when(resultSetMetaData.getColumnCount()).thenReturn(0);
         when(resultSet.next()).thenReturn(false);
-
 
         spySQL = spy(new SQL(spyDBManager));
         System.setOut(new PrintStream(outContent));
@@ -93,7 +87,6 @@ public class SQLTest extends BaseTest {
         verify(statement, times(1)).executeQuery("SELECT * FROM TEST");
     }
 
-
     @Test
     public void CheckValidCommandWithEscapedQuotesIsExecutedTest() throws SQLException {
         String[] inputs = {"SELECT", "\"\"*\"\"", "FROM", "TEST"};
@@ -120,7 +113,6 @@ public class SQLTest extends BaseTest {
         assertTrue(outContent.toString().contains("First; Second; Third"));
         assertTrue(outContent.toString().contains("Row 2 First; Row 2 Second; Row 2 Third"));
     }
-
 
     @Test
     public void CheckCommandZeroRowsOutputTest() throws SQLException {

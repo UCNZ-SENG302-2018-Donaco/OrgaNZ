@@ -8,6 +8,9 @@ import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Set;
 
+import com.humanharvest.organz.Config;
+import com.humanharvest.organz.utilities.enums.Country;
+
 public class ConfigManagerMemory implements ConfigManager {
 
     private final Config config;

@@ -1,19 +1,20 @@
 package com.humanharvest.organz.controller.client;
 
+import static org.testfx.api.FxAssert.verifyThat;
+import static org.testfx.matcher.control.TableViewMatchers.containsRow;
+import static org.testfx.util.NodeQueryUtils.isVisible;
+
+import java.time.LocalDate;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.controller.ControllerTest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
+
 import org.junit.Before;
 import org.junit.Test;
-
-import java.time.LocalDate;
-
-import static org.testfx.api.FxAssert.verifyThat;
-import static org.testfx.matcher.control.TableViewMatchers.containsRow;
-import static org.testfx.util.NodeQueryUtils.isVisible;
 
 public class ViewIllnessHistoryClientTest extends ControllerTest {
 

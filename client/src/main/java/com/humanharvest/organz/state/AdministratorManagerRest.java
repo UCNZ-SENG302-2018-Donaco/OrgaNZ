@@ -1,6 +1,11 @@
 package com.humanharvest.organz.state;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
 import com.humanharvest.organz.Administrator;
+
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -8,10 +13,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 
 public class AdministratorManagerRest implements AdministratorManager {
 

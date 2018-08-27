@@ -1,14 +1,5 @@
 package com.humanharvest.organz.controller.administrator;
 
-import com.humanharvest.organz.Clinician;
-import com.humanharvest.organz.HistoryItem;
-import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.state.ClinicianManager;
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.JSONConverter;
-import com.humanharvest.organz.utilities.view.Page;
-import com.humanharvest.organz.utilities.view.PageNavigator;
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -20,6 +11,16 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
+
+import com.humanharvest.organz.Clinician;
+import com.humanharvest.organz.HistoryItem;
+import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.state.ClinicianManager;
+import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.JSONConverter;
+import com.humanharvest.organz.utilities.view.Page;
+import com.humanharvest.organz.utilities.view.PageNavigator;
 
 public class StaffListController extends SubController {
 
