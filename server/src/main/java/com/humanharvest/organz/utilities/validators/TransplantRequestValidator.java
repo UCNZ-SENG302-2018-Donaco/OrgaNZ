@@ -9,7 +9,11 @@ import java.time.format.DateTimeParseException;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-public class TransplantRequestValidator {
+/**
+ * A static TransplantRequest validator that checks integrity
+ * Class is abstract as it only contains static methods and should not be instantiated
+ */
+public abstract class TransplantRequestValidator {
 
     /**
      * Validates a {@link TransplantRequest} and returns a string explaining the errors within it.
@@ -17,7 +21,7 @@ public class TransplantRequestValidator {
      * @param request The request to validate.
      * @return A string containing the errors within the request if it is invalid, else null if it is valid.
      */
-    public String validate(TransplantRequest request) {
+    public static String validate(TransplantRequest request) {
         StringBuilder errors = new StringBuilder();
 
         if (!requestedOrganValid(request)) {

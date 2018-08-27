@@ -5,7 +5,11 @@ import com.humanharvest.organz.ProcedureRecord;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
-public class ProcedureRecordValidator {
+/**
+ * A static ProcedureRecord validator that checks integrity
+ * Class is abstract as it only contains static methods and should not be instantiated
+ */
+public abstract class ProcedureRecordValidator {
 
     /**
      * Validates a {@link ProcedureRecord} and returns a string explaining the errors within it.
@@ -13,7 +17,7 @@ public class ProcedureRecordValidator {
      * @param record The record to validate.
      * @return A string containing the errors within the record if it is invalid, else null if it is valid.
      */
-    public String validate(ProcedureRecord record) {
+    public static String validate(ProcedureRecord record) {
         StringBuilder errors = new StringBuilder();
 
         if (!summaryValid(record)) {

@@ -10,8 +10,6 @@ import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
-import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
-import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
 import com.humanharvest.organz.utilities.validators.client.TransplantRequestValidator;
 import com.humanharvest.organz.views.client.PaginatedTransplantList;
 import com.humanharvest.organz.views.client.ResolveTransplantRequestObject;
@@ -26,6 +24,8 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
+
+import static com.humanharvest.organz.utilities.validators.ClientValidator.checkClientETag;
 
 /**
  * Provides handlers for requests to these endpoints:
@@ -135,56 +135,50 @@ public class ClientTransplantRequestsController {
      *
      * @param transplantRequest the transplant request to add
      * @param id                the client's ID
-     * @param etag              A hashed value of the object used for optimistic concurrency control
+     * @param ETag              A hashed value of the object used for optimistic concurrency control
      * @return list of all transplant requests for that client
      */
     @PostMapping("/clients/{id}/transplantRequests")
     public ResponseEntity<Collection<TransplantRequest>> postTransplantRequest(
             @RequestBody TransplantRequest transplantRequest,
             @PathVariable int id,
-            @RequestHeader(value = "If-Match", required = false) String etag,
+            @RequestHeader(value = "If-Match", required = false) String ETag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {
+
+        // Check authentication
+        State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
 
         // Get the client given by the ID
         Optional<Client> optionalClient = State.getClientManager().getClientByID(id);
-        if (optionalClient.isPresent()) {
-            Client client = optionalClient.get();
-
-            // Check authentication
-            State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
-
-            // Check etag
-            if (etag == null) {
-                throw new IfMatchRequiredException();
-            }
-            if (!client.getETag().equals(etag)) {
-                throw new IfMatchFailedException();
-            }
-
-            // Validate the transplant request
-            try {
-                transplantRequest.setClient(client); //required for validation
-                TransplantRequestValidator.validateTransplantRequest(transplantRequest);
-            } catch (IllegalArgumentException e) {
-                LOGGER.log(Level.WARNING, e.getMessage(), e);
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            }
-
-            // Add transplant request to client
-            Action action = new AddTransplantRequestAction(client, transplantRequest, State.getClientManager());
-            State.getActionInvoker(authToken).execute(action);
-            Collection<TransplantRequest> transplantRequests = client.getTransplantRequests();
-
-            //Add the new ETag to the headers
-            HttpHeaders headers = new HttpHeaders();
-            headers.setETag(client.getETag());
-
-            return new ResponseEntity<>(transplantRequests, headers, HttpStatus.CREATED);
-
-        } else {
+        if (!optionalClient.isPresent()) {
             // no client exists with that ID - send a 404
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        Client client = optionalClient.get();
+
+        //Check ETag
+        checkClientETag(client, ETag);
+
+
+        // Validate the transplant request
+        try {
+            transplantRequest.setClient(client); //required for validation
+            TransplantRequestValidator.validateTransplantRequest(transplantRequest);
+        } catch (IllegalArgumentException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        // Add transplant request to client
+        Action action = new AddTransplantRequestAction(client, transplantRequest, State.getClientManager());
+        State.getActionInvoker(authToken).execute(action);
+        Collection<TransplantRequest> transplantRequests = client.getTransplantRequests();
+
+        //Add the new ETag to the headers
+        HttpHeaders headers = new HttpHeaders();
+        headers.setETag(client.getETag());
+
+        return new ResponseEntity<>(transplantRequests, headers, HttpStatus.CREATED);
     }
 
     /**
@@ -193,7 +187,7 @@ public class ClientTransplantRequestsController {
      * @param resolveRequestObject the resolve request object
      * @param uid                  the client's ID
      * @param id                   the transplant request's ID
-     * @param etag                 A hashed value of the object used for optimistic concurrency control
+     * @param ETag                 A hashed value of the object used for optimistic concurrency control
      * @return list of all transplant requests for that client
      */
     @PatchMapping("/clients/{uid}/transplantRequests/{id}")
@@ -202,8 +196,11 @@ public class ClientTransplantRequestsController {
             @RequestBody ResolveTransplantRequestObject resolveRequestObject,
             @PathVariable int uid,
             @PathVariable int id,
-            @RequestHeader(value = "If-Match", required = false) String etag,
+            @RequestHeader(value = "If-Match", required = false) String ETag,
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {
+
+        // Check authentication
+        State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
 
         // Get the client given by the ID
         Optional<Client> optionalClient = State.getClientManager().getClientByID(uid);
@@ -211,29 +208,21 @@ public class ClientTransplantRequestsController {
             // no client exists with that ID - send a 404
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-
         Client client = optionalClient.get();
-        TransplantRequest originalTransplantRequest;
+
+        //Check ETag
+        checkClientETag(client, ETag);
+
 
         // Get the original transplant request given by the ID
-        try {
-            originalTransplantRequest =
-                    client.getTransplantRequestById(id).orElseThrow(IndexOutOfBoundsException::new);
-        } catch (IndexOutOfBoundsException | NullPointerException e) {
-            LOGGER.log(Level.WARNING, e.getMessage(), e);
+        Optional<TransplantRequest> optionalRequest = client.getTransplantRequestById(id);
+        if (!optionalRequest.isPresent()) {
+            // No transplant exists with that ID
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        TransplantRequest originalTransplantRequest = optionalRequest.get();
 
-        // Check authentication
-        State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
 
-        // Check etag
-        if (etag == null) {
-            throw new IfMatchRequiredException();
-        }
-        if (!client.getETag().equals(etag)) {
-            throw new IfMatchFailedException();
-        }
 
         // Patch currently only allows resolution of requests, so throw an error if other things have changed.
         // Only the status, resolved reason, and resolved date (and time) are allowed to change.

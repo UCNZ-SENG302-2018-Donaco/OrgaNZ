@@ -12,39 +12,16 @@ import com.humanharvest.organz.views.client.CreateMedicationRecordView;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
+import static com.humanharvest.organz.utilities.validators.ClientValidator.checkClientETag;
+
 @RestController
 public class ClientMedicationsController {
-
-    /**
-     * Checks that the given ETag matches the current ETag for the client,
-     * and exception is thrown if the ETag is missing or does not match
-     *
-     * @param client client to validate the ETag for
-     * @param ETag   The corresponding If-Match header to check for concurrent update handling
-     * @throws IfMatchRequiredException Thrown if the Etag header is missing
-     * @throws IfMatchFailedException   Thrown if the Etag does not match the clients current ETag
-     */
-    private static void checkClientEtag(Client client, String ETag)
-            throws IfMatchRequiredException, IfMatchFailedException {
-
-        if (ETag == null) {
-            throw new IfMatchRequiredException();
-        } else if (!client.getETag().equals(ETag)) {
-            throw new IfMatchFailedException();
-        }
-    }
 
     /**
      * The GET endpoint for getting all medications for a given client
@@ -108,7 +85,7 @@ public class ClientMedicationsController {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        checkClientEtag(client.get(), ETag);
+        checkClientETag(client.get(), ETag);
 
         MedicationRecord record = new MedicationRecord(medicationRecordView.getName(),
                 medicationRecordView.getStarted(),
@@ -156,7 +133,7 @@ public class ClientMedicationsController {
         // Check authentication
         State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
 
-        checkClientEtag(client.get(), ETag);
+        checkClientETag(client.get(), ETag);
 
         MedicationRecord record = client.get().getMedicationRecord(id);
 
@@ -206,7 +183,7 @@ public class ClientMedicationsController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        checkClientEtag(client.get(), ETag);
+        checkClientETag(client.get(), ETag);
 
         MedicationRecord record = client.get().getMedicationRecord(id);
 
@@ -252,7 +229,7 @@ public class ClientMedicationsController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        checkClientEtag(client.get(), ETag);
+        checkClientETag(client.get(), ETag);
 
         MedicationRecord record = client.get().getMedicationRecord(id);
 

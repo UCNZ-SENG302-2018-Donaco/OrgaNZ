@@ -10,18 +10,13 @@ import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredExcept
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+
+import static com.humanharvest.organz.utilities.validators.ClientValidator.checkClientETag;
 
 @RestController
 public class ClientDonationStatusController {
@@ -78,14 +73,8 @@ public class ClientDonationStatusController {
         //Auth check
         State.getAuthenticationManager().verifyClientAccess(authToken, client);
 
-        //Check the ETag. These are handled in the exceptions class.
-        if (ETag == null) {
-            throw new IfMatchRequiredException();
-        }
-        if (!client.getETag().equals(ETag)) {
-            throw new
-                    IfMatchFailedException();
-        }
+        //Check ETag
+        checkClientETag(client, ETag);
 
         //Create the action
         ModifyClientOrgansAction action = new ModifyClientOrgansAction(client, State.getClientManager());

@@ -20,7 +20,6 @@ public class ClientImporter {
     private static final Logger LOGGER = Logger.getLogger(ClientImporter.class.getName());
 
     private final ReadClientStrategy readStrategy;
-    private final ClientValidator validator = new ClientValidator();
 
     private boolean imported;
     private long validCount;
@@ -56,7 +55,7 @@ public class ClientImporter {
                         finished = true;
                     } else {
                         // Check that retrieved client was valid
-                        String errors = validator.validate(client);
+                        String errors = ClientValidator.validate(client);
                         if (errors != null) {
                             throw new InvalidObjectException(errors);
                         }

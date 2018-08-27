@@ -32,30 +32,15 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.awt.image.ImagingOpException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.io.*;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static com.humanharvest.organz.utilities.validators.ClientValidator.checkClientETag;
 
 @RestController
 public class ClientController {
@@ -212,6 +197,9 @@ public class ClientController {
         //Check authentication
         State.getAuthenticationManager().verifyClientAccess(authToken, client);
 
+        //Check ETag
+        checkClientETag(client, etag);
+
         //Validate the request, if there are any errors an exception will be thrown.
         if (!ModifyClientValidator.isValid(client, modifyClientObject)) {
             throw new InvalidRequestException();
@@ -221,14 +209,6 @@ public class ClientController {
         // will not become inconsistent
         if (!ClientBornAndDiedDatesValidator.isValid(modifyClientObject, client)) {
             throw new InvalidRequestException();
-        }
-
-        //Check the ETag. These are handled in the exceptions class.
-        if (etag == null) {
-            throw new IfMatchRequiredException();
-        }
-        if (!Objects.equals(client.getETag(), etag)) {
-            throw new IfMatchFailedException();
         }
 
         //Create the old details to allow undoable action
@@ -308,13 +288,8 @@ public class ClientController {
 
         State.getAuthenticationManager().verifyClientAccess(authToken, client);
 
-        //Check the ETag. These are handled in the exceptions class.
-        if (etag == null) {
-            throw new IfMatchRequiredException();
-        }
-        if (!Objects.equals(client.getETag(), etag)) {
-            throw new IfMatchFailedException();
-        }
+        //Check ETag
+        checkClientETag(client, etag);
 
         DeleteClientAction action = new DeleteClientAction(client, State.getClientManager());
         State.getActionInvoker(authToken).execute(action);
@@ -411,13 +386,8 @@ public class ClientController {
         // Verify they are authenticated to access this client
         State.getAuthenticationManager().verifyClientAccess(authToken, client);
 
-        // Check the etag
-        if (etag == null) {
-            throw new IfMatchRequiredException();
-        }
-        if (!Objects.equals(client.getETag(), etag)) {
-            throw new IfMatchFailedException();
-        }
+        //Check ETag
+        checkClientETag(client, etag);
 
         AddImageAction action = new AddImageAction(client, image, State.getImageDirectory());
 
@@ -453,13 +423,8 @@ public class ClientController {
         // Verify they are authenticated to access this client
         State.getAuthenticationManager().verifyClientAccess(authToken, client);
 
-        // Check the etag
-        if (etag == null) {
-            throw new IfMatchRequiredException();
-        }
-        if (!Objects.equals(client.getETag(), etag)) {
-            throw new IfMatchFailedException();
-        }
+        //Check ETag
+        checkClientETag(client, etag);
 
         try {
             DeleteImageAction action = new DeleteImageAction(client, State.getImageDirectory());
