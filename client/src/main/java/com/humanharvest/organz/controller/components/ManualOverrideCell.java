@@ -20,8 +20,8 @@ public class ManualOverrideCell extends TableCell<DonatedOrgan, DonatedOrgan> {
     private DonatedOrganEventHandler onCancelPressed;
 
     public ManualOverrideCell(TableColumn<DonatedOrgan, DonatedOrgan> column,
-                              DonatedOrganEventHandler onOverridePressed, DonatedOrganEventHandler onEditPressed,
-                              DonatedOrganEventHandler onCancelPressed) {
+            DonatedOrganEventHandler onOverridePressed, DonatedOrganEventHandler onEditPressed,
+            DonatedOrganEventHandler onCancelPressed) {
         this.onOverridePressed = onOverridePressed;
         this.onEditPressed = onEditPressed;
         this.onCancelPressed = onCancelPressed;
@@ -88,6 +88,7 @@ public class ManualOverrideCell extends TableCell<DonatedOrgan, DonatedOrgan> {
 
     @FunctionalInterface
     public interface DonatedOrganEventHandler {
+
         void handle(DonatedOrgan donatedOrgan);
     }
 }

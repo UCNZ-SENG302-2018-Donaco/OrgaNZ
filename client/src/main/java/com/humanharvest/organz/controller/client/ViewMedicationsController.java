@@ -243,7 +243,7 @@ public class ViewMedicationsController extends SubController {
      * Creates and executes the resolver to update the given medication record, either setting it as a current
      * medication or a past one
      *
-     * @param date   date to set the stop date of the medication record to, either null or the current date
+     * @param date date to set the stop date of the medication record to, either null or the current date
      * @param record the record to modify
      */
     private void updateMedicationHistory(LocalDate date, MedicationRecord record) {

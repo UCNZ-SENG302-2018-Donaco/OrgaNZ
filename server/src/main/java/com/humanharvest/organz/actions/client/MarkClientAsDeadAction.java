@@ -29,16 +29,16 @@ public class MarkClientAsDeadAction extends ClientAction {
     /**
      * Creates a new action to mark the given client as dead.
      *
-     * @param client       The client to mark as dead.
-     * @param deathDate    Their date of death.
-     * @param deathTime    Their time of death.
-     * @param deathRegion  The region they died in.
-     * @param deathCity    The city they died in.
+     * @param client The client to mark as dead.
+     * @param deathDate Their date of death.
+     * @param deathTime Their time of death.
+     * @param deathRegion The region they died in.
+     * @param deathCity The city they died in.
      * @param deathCountry The country they died in.
-     * @param manager      The ClientManager to apply the changes to
+     * @param manager The ClientManager to apply the changes to
      */
     public MarkClientAsDeadAction(Client client, LocalDate deathDate, LocalTime deathTime, String deathRegion,
-                                  String deathCity, Country deathCountry, ClientManager manager) {
+            String deathCity, Country deathCountry, ClientManager manager) {
         super(client, manager);
         this.deathDate = deathDate;
         this.deathTime = deathTime;

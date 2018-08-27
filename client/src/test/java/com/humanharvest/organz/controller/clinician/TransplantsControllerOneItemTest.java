@@ -22,7 +22,6 @@ import org.junit.Test;
 
 public class TransplantsControllerOneItemTest extends ControllerTest {
 
-
     // Test data
 
     private Clinician testClinician = new Clinician("A", "B", "C", "D",

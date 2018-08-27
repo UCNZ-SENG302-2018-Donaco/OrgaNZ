@@ -23,29 +23,13 @@ public class ClientNameSorter implements Comparator<Client> {
     }
 
     /**
-     * Compare two clients based on their names in order:
-     * Last name - Pref name - First name - Middle name - Client ID
-     *
-     * @param client1 The first Client to compare
-     * @param client2 The second Client to compare
-     * @return An integer comparison value
-     */
-    @Override
-    public int compare(Client client1, Client client2) {
-        if (searchTerm == null) {
-            searchTerm = "";
-        }
-        return compareNames(client1, client2, searchTerm);
-    }
-
-    /**
      * Compare two string, and return an integer value representing which one is greater
      * Will always favor one name if it matches the search string, if both match it will compare the strings directly
      * If neither match, it will return 0 always.
      *
      * @param searchTerm The search term to consider
-     * @param name1      The first name to check
-     * @param name2      The second name to check
+     * @param name1 The first name to check
+     * @param name2 The second name to check
      * @return The resulting sort integer
      */
     private static int compareName(String searchTerm, String name1, String name2) {
@@ -64,11 +48,27 @@ public class ClientNameSorter implements Comparator<Client> {
     }
 
     /**
+     * Compare two clients based on their names in order:
+     * Last name - Pref name - First name - Middle name - Client ID
+     *
+     * @param client1 The first Client to compare
+     * @param client2 The second Client to compare
+     * @return An integer comparison value
+     */
+    @Override
+    public int compare(Client client1, Client client2) {
+        if (searchTerm == null) {
+            searchTerm = "";
+        }
+        return compareNames(client1, client2, searchTerm);
+    }
+
+    /**
      * Compares the names based off the priority Last name - Pref name - First name - Middle name - Client ID
      * Falls back to comparing the user id's if the names are identical to ensure a consistent order
      *
-     * @param client1    The first client object being compared
-     * @param client2    The second client object being compared
+     * @param client1 The first client object being compared
+     * @param client2 The second client object being compared
      * @param searchTerm The search term to consider
      * @return -1 if client1 is higher priority. 1 if client1 is lower priority. 0 only if they have the same user ID.
      */

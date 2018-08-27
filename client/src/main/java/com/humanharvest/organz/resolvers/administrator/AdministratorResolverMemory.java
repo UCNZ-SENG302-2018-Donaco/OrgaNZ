@@ -23,7 +23,7 @@ public class AdministratorResolverMemory implements AdministratorResolver {
 
     @Override
     public Administrator modifyAdministrator(Administrator administrator,
-                                             ModifyAdministratorObject modifyAdministratorObject) {
+            ModifyAdministratorObject modifyAdministratorObject) {
         BeanUtils.copyProperties(modifyAdministratorObject, administrator,
                 modifyAdministratorObject.getUnmodifiedFields());
         return administrator;

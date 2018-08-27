@@ -219,7 +219,6 @@ public class SearchClientsControllerTest extends ControllerTest {
         assertNotNull(lookup(testClient4.getFullName()).query());
     }
 
-
     @Test // There shouldn't be any of the test data in the results
     public void genderFilterOther() {
         expandFilterPane();

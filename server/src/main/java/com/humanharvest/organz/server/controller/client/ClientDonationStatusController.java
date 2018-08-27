@@ -35,7 +35,6 @@ public class ClientDonationStatusController {
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {
         Optional<Client> optionalClient = State.getClientManager().getClientByID(id);
 
-
         if (optionalClient.isPresent()) {
             Client client = optionalClient.get();
 

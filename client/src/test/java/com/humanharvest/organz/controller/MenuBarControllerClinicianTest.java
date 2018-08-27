@@ -103,7 +103,6 @@ public class MenuBarControllerClinicianTest extends ControllerTest {
         assertEquals(Page.VIEW_CLINICIAN, mainController.getCurrentPage());
     }
 
-
     @Test
     public void testTransplantRequest() {
         clickOn("#organPrimaryItem");

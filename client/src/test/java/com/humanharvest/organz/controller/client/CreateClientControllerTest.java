@@ -21,7 +21,6 @@ import org.springframework.http.ResponseEntity;
 
 public class CreateClientControllerTest extends ControllerTest {
 
-
     @Override
     protected Page getPage() {
         return Page.CREATE_CLIENT;

@@ -49,12 +49,39 @@ public class ClientManagerMemory implements ClientManager {
         setClients(clients);
     }
 
-    @Override
-    public final void setClients(Collection<Client> clients) {
-        this.clients.clear();
-        for (Client client : clients) {
-            addClient(client);
+    /**
+     * Returns the comparator that matches the sort option
+     *
+     * @param sortOption the sort option
+     * @return the comparator that matches the sort option
+     */
+    private static Comparator<DonatedOrgan> getComparator(DonatedOrganSortOptionsEnum sortOption) {
+        Comparator<DonatedOrgan> comparator;
+        if (sortOption == null) {
+            comparator = Comparator.comparing(DonatedOrgan::getDurationUntilExpiry,
+                    Comparator.nullsLast(Comparator.naturalOrder()));
+        } else {
+            switch (sortOption) {
+                case CLIENT:
+                    comparator = Comparator.comparing(organ -> organ.getDonor().getFullName());
+                    break;
+                case ORGAN_TYPE:
+                    comparator = Comparator.comparing(organ -> organ.getOrganType().toString());
+                    break;
+                case REGION_OF_DEATH:
+                    comparator = Comparator.comparing(organ -> organ.getDonor().getRegionOfDeath());
+                    break;
+                case TIME_OF_DEATH:
+                    comparator = Comparator.comparing(organ -> organ.getDonor().getDateOfDeath());
+                    break;
+                default:
+                case TIME_UNTIL_EXPIRY:
+                    comparator = Comparator.comparing(DonatedOrgan::getDurationUntilExpiry,
+                            Comparator.nullsLast(Comparator.naturalOrder()));
+                    break;
+            }
         }
+        return comparator;
     }
 
     /**
@@ -78,6 +105,14 @@ public class ClientManagerMemory implements ClientManager {
     @Override
     public List<Client> getClients() {
         return Collections.unmodifiableList(clients);
+    }
+
+    @Override
+    public final void setClients(Collection<Client> clients) {
+        this.clients.clear();
+        for (Client client : clients) {
+            addClient(client);
+        }
     }
 
     @Override
@@ -244,8 +279,8 @@ public class ClientManagerMemory implements ClientManager {
     /**
      * Checks if a user already exists with that first + last name and date of birth
      *
-     * @param firstName   First name
-     * @param lastName    Last name
+     * @param firstName First name
+     * @param lastName Last name
      * @param dateOfBirth Date of birth (LocalDate)
      * @return true if the client exists
      */
@@ -320,7 +355,7 @@ public class ClientManagerMemory implements ClientManager {
 
     @Override
     public PaginatedTransplantList getAllCurrentTransplantRequests(Integer offset, Integer count,
-                                                                   Set<String> regions, Set<Organ> organs) {
+            Set<String> regions, Set<Organ> organs) {
         // Determine requests that match filters
         List<TransplantRequestView> matchingRequests = getClients().stream()
                 .filter(client -> regions == null || regions.isEmpty() || regions.contains(client.getRegion()))
@@ -365,41 +400,6 @@ public class ClientManagerMemory implements ClientManager {
             donatedOrgans.addAll(client.getDonatedOrgans());
         }
         return donatedOrgans;
-    }
-
-    /**
-     * Returns the comparator that matches the sort option
-     *
-     * @param sortOption the sort option
-     * @return the comparator that matches the sort option
-     */
-    private static Comparator<DonatedOrgan> getComparator(DonatedOrganSortOptionsEnum sortOption) {
-        Comparator<DonatedOrgan> comparator;
-        if (sortOption == null) {
-            comparator = Comparator.comparing(DonatedOrgan::getDurationUntilExpiry,
-                    Comparator.nullsLast(Comparator.naturalOrder()));
-        } else {
-            switch (sortOption) {
-                case CLIENT:
-                    comparator = Comparator.comparing(organ -> organ.getDonor().getFullName());
-                    break;
-                case ORGAN_TYPE:
-                    comparator = Comparator.comparing(organ -> organ.getOrganType().toString());
-                    break;
-                case REGION_OF_DEATH:
-                    comparator = Comparator.comparing(organ -> organ.getDonor().getRegionOfDeath());
-                    break;
-                case TIME_OF_DEATH:
-                    comparator = Comparator.comparing(organ -> organ.getDonor().getDateOfDeath());
-                    break;
-                default:
-                case TIME_UNTIL_EXPIRY:
-                    comparator = Comparator.comparing(DonatedOrgan::getDurationUntilExpiry,
-                            Comparator.nullsLast(Comparator.naturalOrder()));
-                    break;
-            }
-        }
-        return comparator;
     }
 
     /**

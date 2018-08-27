@@ -44,6 +44,7 @@ import com.humanharvest.organz.views.client.ModifyIllnessObject;
 public class ClientMedicalHistoryController extends SubController {
 
     private static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("d MMM yyyy");
+    private static final Logger LOGGER = Logger.getLogger(ClientMedicalHistoryController.class.getName());
 
     private final Session session;
     private final ClientResolver resolver;
@@ -91,8 +92,6 @@ public class ClientMedicalHistoryController extends SubController {
     private Button toggleChronicButton;
 
     private TableView<IllnessRecord> selectedTableView;
-
-    private static final Logger LOGGER = Logger.getLogger(ClientMedicalHistoryController.class.getName());
 
     /**
      * Gets the current session and resolver from the global state.
@@ -417,7 +416,6 @@ public class ClientMedicalHistoryController extends SubController {
         }
 
     }
-
 
     /**
      * Adds a new illness record based on the information in the add new illness record inputs.

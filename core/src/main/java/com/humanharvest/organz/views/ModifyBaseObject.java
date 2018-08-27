@@ -16,32 +16,6 @@ import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
 public class ModifyBaseObject {
 
-    public static class Serialiser<T extends ModifyBaseObject> extends StdSerializer<T> {
-
-        public Serialiser() {
-            this(null);
-        }
-
-        public Serialiser(Class<T> t) {
-            super(t);
-        }
-
-        @Override
-        public void serialize(T t, JsonGenerator jsonGenerator, SerializerProvider serializerProvider)
-                throws IOException {
-            jsonGenerator.writeStartObject();
-            for (Field field : t.getModifiedFields()) {
-                try {
-                    field.setAccessible(true);
-                    jsonGenerator.writeObjectField(field.getName(), field.get(t));
-                } catch (IllegalAccessException e) {
-                    throw new IOException("Attempted to access an invalid field", e);
-                }
-            }
-            jsonGenerator.writeEndObject();
-        }
-    }
-
     @JsonIgnore
     protected final Set<Field> modifiedFields = new HashSet<>();
 
@@ -72,6 +46,32 @@ public class ModifyBaseObject {
             modifiedFields.remove(getClass().getDeclaredField(fieldName));
         } catch (NoSuchFieldException e) {
             throw new RuntimeException("Invalid field", e);
+        }
+    }
+
+    public static class Serialiser<T extends ModifyBaseObject> extends StdSerializer<T> {
+
+        public Serialiser() {
+            this(null);
+        }
+
+        public Serialiser(Class<T> t) {
+            super(t);
+        }
+
+        @Override
+        public void serialize(T t, JsonGenerator jsonGenerator, SerializerProvider serializerProvider)
+                throws IOException {
+            jsonGenerator.writeStartObject();
+            for (Field field : t.getModifiedFields()) {
+                try {
+                    field.setAccessible(true);
+                    jsonGenerator.writeObjectField(field.getName(), field.get(t));
+                } catch (IllegalAccessException e) {
+                    throw new IOException("Attempted to access an invalid field", e);
+                }
+            }
+            jsonGenerator.writeEndObject();
         }
     }
 }

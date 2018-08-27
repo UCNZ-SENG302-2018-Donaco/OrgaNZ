@@ -14,7 +14,9 @@ import com.humanharvest.organz.utilities.view.WindowContext;
 import org.junit.Test;
 
 public class StaffLoginControllerTest extends ControllerTest {
-    private Clinician testClinician = new Clinician("Mr", null, "Tester", "9 Fake St", Region.AUCKLAND.name(), Country.NZ, 3,
+
+    private Clinician testClinician = new Clinician("Mr", null, "Tester", "9 Fake St", Region.AUCKLAND.name(),
+            Country.NZ, 3,
             "k");
 
     private Administrator testAdministrator;

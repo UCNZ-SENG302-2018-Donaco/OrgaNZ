@@ -16,6 +16,7 @@ import javafx.scene.control.TableView;
  * @param <T> The type of data record each row in the table represents.
  */
 public class DatePickerCell<T> extends TableCell<T, LocalDate> {
+
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     private final DatePicker datePicker;
@@ -51,7 +52,7 @@ public class DatePickerCell<T> extends TableCell<T, LocalDate> {
     /**
      * Triggered whenever the {@link LocalDate} value of the cell is updated; it sets that new value in the date picker.
      *
-     * @param item  The new date.
+     * @param item The new date.
      * @param empty Whether the cell is now empty or not.
      */
     @Override

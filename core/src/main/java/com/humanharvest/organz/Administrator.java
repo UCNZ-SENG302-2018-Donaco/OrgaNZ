@@ -17,13 +17,14 @@ import com.fasterxml.jackson.annotation.JsonView;
 @Entity
 @Table
 public class Administrator implements ConcurrencyControlledEntity {
+
+    @JsonView(Views.Overview.class)
+    private final Instant createdTimestamp;
+
     @Id
     @JsonView(Views.Overview.class)
     private String username;
     private String password;
-
-    @JsonView(Views.Overview.class)
-    private final Instant createdTimestamp;
     @JsonView(Views.Overview.class)
     private Instant modifiedTimestamp;
 

@@ -18,6 +18,7 @@ import com.google.api.client.testing.http.MockHttpTransport;
 import org.junit.Test;
 
 public class DrugInteractionsHandlerTest extends BaseTest {
+
     public static final String EXPECTED_RESPONSE_BODY = "{\"age_interaction\":{\"0-1\":[\"foetal exposure during "
             + "pregnancy\","
             + "\"congenital arterial malformation\",\"premature baby\",\"ventricular septal defect\","

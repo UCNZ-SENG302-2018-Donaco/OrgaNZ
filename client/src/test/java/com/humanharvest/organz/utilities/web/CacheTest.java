@@ -20,6 +20,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class CacheTest extends BaseTest {
+
     @Test
     public void testCachingInteractions() {
         MockCacheManager mockCacheManager = MockCacheManager.Create();

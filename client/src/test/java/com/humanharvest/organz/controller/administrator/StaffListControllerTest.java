@@ -17,8 +17,8 @@ import org.junit.Test;
 public class StaffListControllerTest extends ControllerTest {
 
     private Administrator admin1 = new Administrator("admin1", "password");
-    private Clinician clinician1 = new Clinician("First", "Middle", "Last", "UC", Region.CANTERBURY.toString(), Country.NZ, 50,
-            "password");
+    private Clinician clinician1 = new Clinician("First", "Middle", "Last",
+            "UC", Region.CANTERBURY.toString(), Country.NZ, 50, "password");
 
     @Override
     protected Page getPage() {

@@ -18,7 +18,6 @@ public class ImageManagerRest implements ImageManager {
     protected ImageManagerRest() {
     }
 
-
     private static HttpHeaders generateHeaders() {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set("X-Auth-Token", State.getToken());
@@ -55,7 +54,7 @@ public class ImageManagerRest implements ImageManager {
     /**
      * Posts an image to the clients profile to replace their existing one (which may be the default one)
      *
-     * @param uid   id of the client
+     * @param uid id of the client
      * @param image image the client is posting to the server
      * @return true if the image is successfully posted. false otherwise.
      */

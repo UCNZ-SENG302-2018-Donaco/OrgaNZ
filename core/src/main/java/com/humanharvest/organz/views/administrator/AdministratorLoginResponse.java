@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 
 public class AdministratorLoginResponse {
+
     @JsonView(Views.Details.class)
     private final String token;
 

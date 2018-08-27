@@ -103,7 +103,6 @@ public class ClientIllnessesController {
             modifyIllnessObject.setDiagnosisDate(record.getDiagnosisDate());
         }
 
-
         //Create the old details to allow undoable action
         ModifyIllnessObject oldIllnessRecord = new ModifyIllnessObject();
         //Copy the values from the current record to our old record

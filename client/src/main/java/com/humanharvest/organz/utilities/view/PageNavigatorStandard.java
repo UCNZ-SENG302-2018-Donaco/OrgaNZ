@@ -33,7 +33,7 @@ public class PageNavigatorStandard implements IPageNavigator {
     /**
      * Loads the given page in the given MainController.
      *
-     * @param page       the Page (enum including path to fxml file) to be loaded.
+     * @param page the Page (enum including path to fxml file) to be loaded.
      * @param controller the MainController to load this page on to.
      */
     @Override
@@ -106,8 +106,8 @@ public class PageNavigatorStandard implements IPageNavigator {
      * Shows a pop-up alert of the given type, and awaits user input to dismiss it (blocking).
      *
      * @param alertType the type of alert to show (can determine its style and button options).
-     * @param title     the text to show as the title and heading of the alert.
-     * @param bodyText  the text to show within the body of the alert.
+     * @param title the text to show as the title and heading of the alert.
+     * @param bodyText the text to show within the body of the alert.
      * @return an Optional for the button that was clicked to dismiss the alert.
      */
     @Override

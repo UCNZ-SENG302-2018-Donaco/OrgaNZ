@@ -83,7 +83,6 @@ public class SetOrganStatus implements Runnable {
         outputStream = System.out;
     }
 
-
     @Override
     public void run() {
         Optional<Client> client = manager.getClientByID(uid);

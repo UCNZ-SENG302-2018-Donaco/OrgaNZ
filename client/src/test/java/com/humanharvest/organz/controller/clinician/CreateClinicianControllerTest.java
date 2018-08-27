@@ -11,6 +11,7 @@ import com.humanharvest.organz.utilities.view.WindowContext;
 import org.junit.Test;
 
 public class CreateClinicianControllerTest extends ControllerTest {
+
     private Administrator testAdmin = new Administrator("username", "password");
 
     @Override

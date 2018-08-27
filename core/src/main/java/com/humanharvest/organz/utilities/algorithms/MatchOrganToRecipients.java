@@ -69,8 +69,8 @@ public class MatchOrganToRecipients {
     /**
      * Compares which region is closest (r1 or r2) to the target region.
      *
-     * @param r1           the first region
-     * @param r2           the second region
+     * @param r1 the first region
+     * @param r2 the second region
      * @param targetRegion the target region
      * @param inNewZealand true if the target region is in New Zealand
      * @return a positive number if r2 is closest, a negative number if r1 is closest,
@@ -95,12 +95,11 @@ public class MatchOrganToRecipients {
         }
     }
 
-
     /**
      * Compares which country is closest (c1 or c2) to the target region.
      *
-     * @param c1            the first country
-     * @param c2            the second region
+     * @param c1 the first country
+     * @param c2 the second region
      * @param targetCountry the target country
      * @return a positive number if c2 is closest, or a negative number if c1 is closest
      */
@@ -167,7 +166,7 @@ public class MatchOrganToRecipients {
     }
 
     public static List<Client> getListOfPotentialRecipients(DonatedOrgan donatedOrgan,
-                                                            Iterable<TransplantRequest> transplantRequests) {
+            Iterable<TransplantRequest> transplantRequests) {
 
         List<Client> potentialMatches = new ArrayList<>();
 

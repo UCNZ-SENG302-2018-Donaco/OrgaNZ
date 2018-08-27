@@ -220,7 +220,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
     /**
      * Checks the current alert dialog displayed (on the top of the window stack) has the expected contents.
      *
-     * @param expectedHeader  Expected header of the dialog
+     * @param expectedHeader Expected header of the dialog
      * @param expectedContent Expected content of the dialog
      */
     private void checkAlertHasHeaderAndContent(String expectedHeader, String expectedContent) {
@@ -236,7 +236,7 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
      * Create a mock ActiveIngredientsHandler that returns ingredients when passed medName.
      * If medName contains the string "throw IOException", it will throw an IOException.
      *
-     * @param medName     Name of medication
+     * @param medName Name of medication
      * @param ingredients Ingredients in medication
      * @return mock MedActiveIngredientsHandler
      */
@@ -403,7 +403,8 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
     }
 
     @Test
-    public void viewInteractionsBetweenTwoDrugsDifferentListsTest() throws BadGatewayException, IOException, BadDrugNameException {
+    public void viewInteractionsBetweenTwoDrugsDifferentListsTest()
+            throws BadGatewayException, IOException, BadDrugNameException {
         ViewMedicationsController pageController = (ViewMedicationsController) super.pageController;
         pageController.setDrugInteractionsHandler(
                 createMockDrugInteractionsHandler("Med A", "Med C",
@@ -428,7 +429,8 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
     }
 
     @Test
-    public void viewInteractionsBetweenTwoDrugsNoResultsTest() throws BadGatewayException, IOException, BadDrugNameException {
+    public void viewInteractionsBetweenTwoDrugsNoResultsTest()
+            throws BadGatewayException, IOException, BadDrugNameException {
         ViewMedicationsController pageController = (ViewMedicationsController) super.pageController;
         pageController.setDrugInteractionsHandler(
                 createMockDrugInteractionsHandler("Ibuprofen", "Prednisone", Collections.emptyList()));
@@ -449,7 +451,8 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
     }
 
     @Test
-    public void viewInteractionsBadGatewayExceptionTest() throws BadGatewayException, IOException, BadDrugNameException {
+    public void viewInteractionsBadGatewayExceptionTest()
+            throws BadGatewayException, IOException, BadDrugNameException {
         ViewMedicationsController pageController = (ViewMedicationsController) super.pageController;
         pageController.setDrugInteractionsHandler(
                 createMockDrugInteractionsHandler("throw BadGatewayException", "Med C",
@@ -496,7 +499,8 @@ public class ViewMedicationsControllerClinicianTest extends ControllerTest {
     }
 
     @Test
-    public void viewInteractionsIllegalArgumentExceptionTest() throws BadGatewayException, IOException, BadDrugNameException {
+    public void viewInteractionsIllegalArgumentExceptionTest()
+            throws BadGatewayException, IOException, BadDrugNameException {
         ViewMedicationsController pageController = (ViewMedicationsController) super.pageController;
         pageController.setDrugInteractionsHandler(
                 createMockDrugInteractionsHandler("throw IllegalArgumentException", "Med C",

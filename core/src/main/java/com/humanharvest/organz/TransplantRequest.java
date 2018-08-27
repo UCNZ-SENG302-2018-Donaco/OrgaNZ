@@ -62,8 +62,22 @@ public class TransplantRequest {
         return id;
     }
 
+    public void setId(long id) {
+        this.id = id;
+    }
+
     public Client getClient() {
         return client;
+    }
+
+    /**
+     * This method should be called only when this record is added to/removed from a client's collection.
+     * Therefore it is package-private so it may only be called from Client.
+     *
+     * @param client The client to set this record as belonging to.
+     */
+    public void setClient(Client client) {
+        this.client = client;
     }
 
     public Organ getRequestedOrgan() {
@@ -78,34 +92,20 @@ public class TransplantRequest {
         return resolvedDate;
     }
 
-    public TransplantRequestStatus getStatus() {
-        return status;
-    }
-
-    public String getResolvedReason() {
-        return resolvedReason;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    /**
-     * This method should be called only when this record is added to/removed from a client's collection.
-     * Therefore it is package-private so it may only be called from Client.
-     *
-     * @param client The client to set this record as belonging to.
-     */
-    public void setClient(Client client) {
-        this.client = client;
-    }
-
     public void setResolvedDate(LocalDateTime resolvedDate) {
         this.resolvedDate = resolvedDate;
     }
 
+    public TransplantRequestStatus getStatus() {
+        return status;
+    }
+
     public void setStatus(TransplantRequestStatus status) {
         this.status = status;
+    }
+
+    public String getResolvedReason() {
+        return resolvedReason;
     }
 
     /**

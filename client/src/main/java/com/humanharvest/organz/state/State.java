@@ -152,12 +152,12 @@ public final class State {
         session = new Session(administrator);
     }
 
-    public static void setUnsavedChanges(boolean changes) {
-        unsavedChanges = changes;
-    }
-
     public static boolean isUnsavedChanges() {
         return unsavedChanges;
+    }
+
+    public static void setUnsavedChanges(boolean changes) {
+        unsavedChanges = changes;
     }
 
     public static Set<Country> getAllowedCountries() {
@@ -173,12 +173,12 @@ public final class State {
         session = null;
     }
 
-    public static void setToken(String t) {
-        token = t;
-    }
-
     public static String getToken() {
         return token;
+    }
+
+    public static void setToken(String t) {
+        token = t;
     }
 
     public static void reset() {
@@ -326,11 +326,11 @@ public final class State {
         State.viewedClinician = viewedClinician;
     }
 
-    public static void setUiType(UiType type) {
-        uiType = type;
-    }
-
     public static UiType getUiType() {
         return uiType;
+    }
+
+    public static void setUiType(UiType type) {
+        uiType = type;
     }
 }

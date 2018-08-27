@@ -13,6 +13,7 @@ import com.humanharvest.organz.utilities.JSONConverter;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 public class MockCacheManager extends CacheManager {
+
     public MockCacheManager() {
         categories = new HashMap<>();
     }

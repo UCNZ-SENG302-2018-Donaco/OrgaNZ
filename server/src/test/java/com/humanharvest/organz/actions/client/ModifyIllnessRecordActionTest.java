@@ -1,19 +1,20 @@
 package com.humanharvest.organz.actions.client;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.time.LocalDate;
+
 import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.ClientManagerMemory;
+
 import org.junit.Before;
 import org.junit.Test;
-
-import java.time.LocalDate;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 public class ModifyIllnessRecordActionTest extends BaseTest {
 
@@ -46,7 +47,6 @@ public class ModifyIllnessRecordActionTest extends BaseTest {
         assertTrue(baseClient.getCurrentIllnesses().get(0).isChronic());
     }
 
-
     @Test
     public void ModifySingleIllnessCurrentToPastTest() {
         ModifyIllnessRecordAction action = new ModifyIllnessRecordAction(record, manager);
@@ -60,7 +60,6 @@ public class ModifyIllnessRecordActionTest extends BaseTest {
         assertEquals(1, baseClient.getPastIllnesses().size());
         assertEquals(newDate, baseClient.getPastIllnesses().get(0).getCuredDate());
     }
-
 
     @Test
     public void ModifySingleIllnessCurrentUndoTest() {
@@ -77,7 +76,6 @@ public class ModifyIllnessRecordActionTest extends BaseTest {
         assertEquals(LocalDate.of(2018, 4, 9), baseClient.getCurrentIllnesses().get(0).getDiagnosisDate());
         assertFalse(baseClient.getCurrentIllnesses().get(0).isChronic());
     }
-
 
     @Test
     public void ModifySingleIllnessCurrentUndoRedoTest() {

@@ -22,6 +22,7 @@ import com.sun.javafx.scene.control.skin.ContextMenuSkin;
 import org.tuiofx.widgets.utils.Util;
 
 public class MTContextMenuSkin extends ContextMenuSkin {
+
     private final ContextMenu popupMenu;
 
     public MTContextMenuSkin(ContextMenu popupMenu) {

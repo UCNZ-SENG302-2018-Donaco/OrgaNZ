@@ -111,6 +111,45 @@ public class ViewClientController extends ViewBaseController {
         session = State.getSession();
     }
 
+    private static void enableAppropriateRegionInput(
+            ChoiceBox<Country> countryChoice,
+            ChoiceBox<Region> regionChoice,
+            TextField regionTextField) {
+
+        if (countryChoice.getValue() == Country.NZ) {
+            regionChoice.setVisible(true);
+            regionTextField.setVisible(false);
+        } else {
+            regionChoice.setVisible(false);
+            regionTextField.setVisible(true);
+        }
+    }
+
+    /**
+     * Given a field and it's corresponding label, check that it is a valid positive number.
+     * If it is not, set the label text to red. If it is, set it to black.
+     *
+     * @param field The field to check
+     * @param label The label to apply color to
+     * @return If the field value was a valid non negative number
+     */
+    private static boolean doubleFieldIsInvalid(TextField field, Label label) {
+        try {
+            double w = Double.parseDouble(field.getText());
+            if (w < 0) {
+                label.setTextFill(Color.RED);
+                return true;
+            } else {
+                label.setTextFill(Color.BLACK);
+                return false;
+            }
+
+        } catch (NumberFormatException ex) {
+            label.setTextFill(Color.RED);
+            return true;
+        }
+    }
+
     /**
      * Initializes the UI for this page.
      * - Loads the sidebar.
@@ -280,20 +319,6 @@ public class ViewClientController extends ViewBaseController {
         }
     }
 
-    private static void enableAppropriateRegionInput(
-            ChoiceBox<Country> countryChoice,
-            ChoiceBox<Region> regionChoice,
-            TextField regionTextField) {
-
-        if (countryChoice.getValue() == Country.NZ) {
-            regionChoice.setVisible(true);
-            regionTextField.setVisible(false);
-        } else {
-            regionChoice.setVisible(false);
-            regionTextField.setVisible(true);
-        }
-    }
-
     /**
      * Saves the changes a user makes to the viewed client if all their inputs are valid.
      * Otherwise the invalid fields text turns red.
@@ -453,31 +478,6 @@ public class ViewClientController extends ViewBaseController {
     }
 
     /**
-     * Given a field and it's corresponding label, check that it is a valid positive number.
-     * If it is not, set the label text to red. If it is, set it to black.
-     *
-     * @param field The field to check
-     * @param label The label to apply color to
-     * @return If the field value was a valid non negative number
-     */
-    private static boolean doubleFieldIsInvalid(TextField field, Label label) {
-        try {
-            double w = Double.parseDouble(field.getText());
-            if (w < 0) {
-                label.setTextFill(Color.RED);
-                return true;
-            } else {
-                label.setTextFill(Color.BLACK);
-                return false;
-            }
-
-        } catch (NumberFormatException ex) {
-            label.setTextFill(Color.RED);
-            return true;
-        }
-    }
-
-    /**
      * Checks that death details fields have either valid input, or no input. Otherwise red text is shown.
      *
      * @return true if all non mandatory fields have valid input (or the dead toggle button is not selected).
@@ -558,7 +558,6 @@ public class ViewClientController extends ViewBaseController {
      */
     private void updateChanges() {
         ModifyClientObject modifyClientObject = new ModifyClientObject();
-
 
         // Add the basic changes to the ModifyClientObject
         addChangesIfDifferent(modifyClientObject);

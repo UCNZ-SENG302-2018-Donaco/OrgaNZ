@@ -35,6 +35,37 @@ public class ClientFileController {
 
     private static final Logger LOGGER = Logger.getLogger(ClientController.class.getName());
 
+    private static String loadData(File file, String mimeType) throws IOException {
+        ReadClientStrategy strategy;
+        switch (mimeType) {
+            case "text/csv":
+                strategy = new CSVReadClientStrategy();
+                break;
+            case "application/json":
+                strategy = new JSONReadClientStrategy();
+                break;
+            default:
+                throw new IOException(String.format("Unsupported file format: '%s'", mimeType));
+        }
+
+        ClientImporter importer = new ClientImporter(file, strategy);
+        importer.importAll();
+
+        // Add all valid clients to the system
+        State.getClientManager().setClients(importer.getValidClients());
+
+        String errorSummary = importer.getErrorSummary();
+        if (errorSummary.length() > 500) {
+            errorSummary = errorSummary.substring(0, 500) + "...";
+        }
+
+        return String.format("Loaded clients from file."
+                        + "\n%d were valid, "
+                        + "\n%d were invalid."
+                        + "\n\n%s",
+                importer.getValidCount(), importer.getInvalidCount(), errorSummary);
+    }
+
     @GetMapping("/clients/file")
     public ResponseEntity<byte[]> exportClients(
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
@@ -80,36 +111,5 @@ public class ClientFileController {
             // Return BAD_REQUEST with error message
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-    }
-
-    private static String loadData(File file, String mimeType) throws IOException {
-        ReadClientStrategy strategy;
-        switch (mimeType) {
-            case "text/csv":
-                strategy = new CSVReadClientStrategy();
-                break;
-            case "application/json":
-                strategy = new JSONReadClientStrategy();
-                break;
-            default:
-                throw new IOException(String.format("Unsupported file format: '%s'", mimeType));
-        }
-
-        ClientImporter importer = new ClientImporter(file, strategy);
-        importer.importAll();
-
-        // Add all valid clients to the system
-        State.getClientManager().setClients(importer.getValidClients());
-
-        String errorSummary = importer.getErrorSummary();
-        if (errorSummary.length() > 500) {
-            errorSummary = errorSummary.substring(0, 500) + "...";
-        }
-
-        return String.format("Loaded clients from file."
-                        + "\n%d were valid, "
-                        + "\n%d were invalid."
-                        + "\n\n%s",
-                importer.getValidCount(), importer.getInvalidCount(), errorSummary);
     }
 }

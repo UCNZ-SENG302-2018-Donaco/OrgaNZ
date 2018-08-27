@@ -89,7 +89,6 @@ public class MenuBarController extends SubController {
     public Menu staffPrimaryItem;
     public Menu profilePrimaryItem;
 
-
     private Session session;
 
     /**
@@ -97,6 +96,29 @@ public class MenuBarController extends SubController {
      */
     public MenuBarController() {
         session = State.getSession();
+    }
+
+    /**
+     * Returns the file extension of the given file name string (in lowercase). The file extension is defined as the
+     * characters after the last "." in the file name.
+     *
+     * @param fileName The file name string.
+     * @return The file extension of the given file name.
+     */
+    private static String getFileExtension(String fileName) {
+        int lastIndex = fileName.lastIndexOf('.');
+        if (lastIndex >= 0) {
+            return fileName.substring(lastIndex + 1).toLowerCase();
+        } else {
+            return "";
+        }
+    }
+
+    /**
+     * Exit program.
+     */
+    private static void exit() {
+        Platform.exit();
     }
 
     @Override
@@ -477,22 +499,6 @@ public class MenuBarController extends SubController {
     }
 
     /**
-     * Returns the file extension of the given file name string (in lowercase). The file extension is defined as the
-     * characters after the last "." in the file name.
-     *
-     * @param fileName The file name string.
-     * @return The file extension of the given file name.
-     */
-    private static String getFileExtension(String fileName) {
-        int lastIndex = fileName.lastIndexOf('.');
-        if (lastIndex >= 0) {
-            return fileName.substring(lastIndex + 1).toLowerCase();
-        } else {
-            return "";
-        }
-    }
-
-    /**
      * Logs out the current user and sends them to the Landing page.
      */
     @FXML
@@ -627,12 +633,5 @@ public class MenuBarController extends SubController {
             exit();
         }
 
-    }
-
-    /**
-     * Exit program.
-     */
-    private static void exit() {
-        Platform.exit();
     }
 }

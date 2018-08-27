@@ -158,7 +158,7 @@ public class ClientResolverMemory implements ClientResolver {
 
     @Override
     public TransplantRequest resolveTransplantRequest(Client client, TransplantRequest request,
-                                                      ResolveTransplantRequestObject resolveTransplantRequestObject) {
+            ResolveTransplantRequestObject resolveTransplantRequestObject) {
         request.setStatus(resolveTransplantRequestObject.getStatus());
         request.setResolvedReason(resolveTransplantRequestObject.getResolvedReason());
         request.setResolvedDate(resolveTransplantRequestObject.getResolvedDate());
@@ -184,7 +184,7 @@ public class ClientResolverMemory implements ClientResolver {
 
     @Override
     public IllnessRecord modifyIllnessRecord(Client client, IllnessRecord toModify,
-                                             ModifyIllnessObject modifyIllnessObject) {
+            ModifyIllnessObject modifyIllnessObject) {
         BeanUtils.copyProperties(modifyIllnessObject, toModify, modifyIllnessObject.getUnmodifiedFields());
         return toModify;
     }

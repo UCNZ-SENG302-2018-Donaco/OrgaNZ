@@ -45,6 +45,22 @@ public class Load implements Runnable {
         outputStream = System.out;
     }
 
+    /**
+     * Returns the file extension of the given file name string (in lowercase). The file extension is defined as the
+     * characters after the last "." in the file name.
+     *
+     * @param fileName The file name string.
+     * @return The file extension of the given file name.
+     */
+    private static String getFileExtension(String fileName) {
+        int lastIndex = fileName.lastIndexOf('.');
+        if (lastIndex >= 0) {
+            return fileName.substring(lastIndex + 1).toLowerCase();
+        } else {
+            return "";
+        }
+    }
+
     @Override
     public void run() {
         if (format == null) {
@@ -89,22 +105,6 @@ public class Load implements Runnable {
             LOGGER.log(Level.WARNING, e.getMessage(), e);
             outputStream.println(String.format("An IO error occurred when loading from file: '%s'%n%s",
                     file.getName(), e.getMessage()));
-        }
-    }
-
-    /**
-     * Returns the file extension of the given file name string (in lowercase). The file extension is defined as the
-     * characters after the last "." in the file name.
-     *
-     * @param fileName The file name string.
-     * @return The file extension of the given file name.
-     */
-    private static String getFileExtension(String fileName) {
-        int lastIndex = fileName.lastIndexOf('.');
-        if (lastIndex >= 0) {
-            return fileName.substring(lastIndex + 1).toLowerCase();
-        } else {
-            return "";
         }
     }
 }

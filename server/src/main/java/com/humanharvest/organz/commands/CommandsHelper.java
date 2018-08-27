@@ -74,7 +74,7 @@ public final class CommandsHelper {
      * Takes a string of command text and
      *
      * @param commands The string separated list of commands to execute
-     * @param invoker  The ActionInvoker to apply changes to if applicable
+     * @param invoker The ActionInvoker to apply changes to if applicable
      * @return The output of the command. This includes help and error text if applicable
      */
     public static String executeCommandAndReturnOutput(String[] commands, ActionInvoker invoker) {

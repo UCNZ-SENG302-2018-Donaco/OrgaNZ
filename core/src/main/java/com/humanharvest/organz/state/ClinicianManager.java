@@ -12,6 +12,7 @@ import com.humanharvest.organz.Clinician;
  */
 
 public interface ClinicianManager {
+
     /**
      * Add a clinician
      *
@@ -19,15 +20,14 @@ public interface ClinicianManager {
      */
     void addClinician(Clinician clinician);
 
-    void setClinicians(Collection<Clinician> clinicians);
-
-
     /**
      * Get the list of clinicians
      *
      * @return ArrayList of current clinicians
      */
     List<Clinician> getClinicians();
+
+    void setClinicians(Collection<Clinician> clinicians);
 
     /**
      * Remove a client object

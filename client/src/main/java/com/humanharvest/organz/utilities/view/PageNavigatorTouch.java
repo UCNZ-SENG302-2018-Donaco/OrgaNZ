@@ -34,10 +34,34 @@ public class PageNavigatorTouch implements IPageNavigator {
 
     private static final Logger LOGGER = Logger.getLogger(PageNavigatorTouch.class.getName());
 
+    private static Optional<Transform> getWindowTransform(Window window) {
+        if (window == null) {
+            return Optional.empty();
+        }
+
+        Scene scene = window.getScene();
+
+        if (scene == null) {
+            return Optional.empty();
+        }
+
+        Parent root = scene.getRoot();
+        if (root == null) {
+            return Optional.empty();
+        }
+
+        List<Transform> transforms = root.getTransforms();
+        if (transforms.size() != 1) {
+            return Optional.empty();
+        }
+
+        return Optional.of(transforms.get(0));
+    }
+
     /**
      * Loads the given page in the given MainController.
      *
-     * @param page       the Page (enum including path to fxml file) to be loaded.
+     * @param page the Page (enum including path to fxml file) to be loaded.
      * @param controller the MainController to load this page on to.
      */
     @Override
@@ -112,8 +136,8 @@ public class PageNavigatorTouch implements IPageNavigator {
      * Shows a pop-up alert of the given type, and awaits user input to dismiss it (blocking).
      *
      * @param alertType the type of alert to show (can determine its style and button options).
-     * @param title     the text to show as the title and heading of the alert.
-     * @param bodyText  the text to show within the body of the alert.
+     * @param title the text to show as the title and heading of the alert.
+     * @param bodyText the text to show within the body of the alert.
      * @return an Optional for the button that was clicked to dismiss the alert.
      */
     @Override
@@ -143,31 +167,6 @@ public class PageNavigatorTouch implements IPageNavigator {
             result.setValue(false);
             return result;
         }
-    }
-
-    private static Optional<Transform> getWindowTransform(Window window) {
-        if (window == null) {
-            return Optional.empty();
-        }
-
-        Scene scene = window.getScene();
-
-        if (scene == null) {
-            return Optional.empty();
-        }
-
-
-        Parent root = scene.getRoot();
-        if (root == null) {
-            return Optional.empty();
-        }
-
-        List<Transform> transforms = root.getTransforms();
-        if (transforms.size() != 1) {
-            return Optional.empty();
-        }
-
-        return Optional.of(transforms.get(0));
     }
 
     @Override

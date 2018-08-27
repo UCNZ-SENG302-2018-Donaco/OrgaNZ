@@ -31,6 +31,7 @@ import org.apache.commons.csv.CSVRecord;
 public class CSVReadClientStrategy implements ReadClientStrategy {
 
     private static final Logger LOGGER = Logger.getLogger(CSVReadClientStrategy.class.getName());
+    private static final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("M/dd/yyyy");
 
     /**
      * Describes which columns represent which client data in the CSV format.
@@ -40,8 +41,6 @@ public class CSVReadClientStrategy implements ReadClientStrategy {
         street_number, street_name, neighborhood, city, region, zip_code, country, birth_country, home_number,
         mobile_number, email
     }
-
-    private static final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("M/dd/yyyy");
 
     private CSVParser parser;
 
@@ -81,26 +80,6 @@ public class CSVReadClientStrategy implements ReadClientStrategy {
         return client;
     }
 
-    @Override
-    public Client readNext() throws InvalidObjectException {
-        try {
-            try {
-                return deserialise(parser.iterator().next());
-            } catch (IllegalArgumentException e) {
-                LOGGER.log(Level.WARNING, e.getMessage(), e);
-                throw new InvalidObjectException(e.getMessage());
-            }
-        } catch (NoSuchElementException e) {
-            LOGGER.log(Level.WARNING, e.getMessage(), e);
-            return null;
-        }
-    }
-
-    @Override
-    public void close() throws IOException {
-        parser.close();
-    }
-
     /**
      * Creates a {@link LocalDate} object from a date in string format (M/dd/yyyy).
      *
@@ -119,6 +98,26 @@ public class CSVReadClientStrategy implements ReadClientStrategy {
             LOGGER.log(Level.INFO, e.getMessage(), e);
             throw new IllegalArgumentException(e);
         }
+    }
+
+    @Override
+    public Client readNext() throws InvalidObjectException {
+        try {
+            try {
+                return deserialise(parser.iterator().next());
+            } catch (IllegalArgumentException e) {
+                LOGGER.log(Level.WARNING, e.getMessage(), e);
+                throw new InvalidObjectException(e.getMessage());
+            }
+        } catch (NoSuchElementException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
+            return null;
+        }
+    }
+
+    @Override
+    public void close() throws IOException {
+        parser.close();
     }
 
     @Override

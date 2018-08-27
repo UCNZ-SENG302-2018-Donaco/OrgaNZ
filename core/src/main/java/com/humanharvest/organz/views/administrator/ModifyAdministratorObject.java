@@ -13,6 +13,10 @@ public class ModifyAdministratorObject extends ModifyBaseObject {
     private String username;
     private String password;
 
+    private static String fieldString(Member field) {
+        return String.format("Updated %s", field.getName());
+    }
+
     public String toString() {
         String changesText = getModifiedFields().stream()
                 .map(ModifyAdministratorObject::fieldString)
@@ -21,10 +25,6 @@ public class ModifyAdministratorObject extends ModifyBaseObject {
         return String.format("Updated details for administrator.\n"
                         + "These changes were made: \n\n%s",
                 changesText);
-    }
-
-    private static String fieldString(Member field) {
-        return String.format("Updated %s", field.getName());
     }
 
     public String getUsername() {

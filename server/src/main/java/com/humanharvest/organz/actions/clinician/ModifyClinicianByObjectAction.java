@@ -18,8 +18,8 @@ public class ModifyClinicianByObjectAction extends ClinicianAction {
     /**
      * Create a new Action
      *
-     * @param clinician           the clinician to be modified
-     * @param manager             the clinician manager
+     * @param clinician the clinician to be modified
+     * @param manager the clinician manager
      * @param oldClinicianDetails previous details of the clinician
      * @param newClinicianDetails updated details of the clinician
      */

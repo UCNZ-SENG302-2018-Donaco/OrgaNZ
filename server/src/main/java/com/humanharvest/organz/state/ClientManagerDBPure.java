@@ -490,7 +490,7 @@ public class ClientManagerDBPure implements ClientManager {
 
     @Override
     public PaginatedTransplantList getAllCurrentTransplantRequests(Integer offset, Integer count,
-                                                                   Set<String> regions, Set<Organ> organs) {
+            Set<String> regions, Set<Organ> organs) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
@@ -544,8 +544,8 @@ public class ClientManagerDBPure implements ClientManager {
      */
     @Override
     public PaginatedDonatedOrgansList getAllOrgansToDonate(Integer offset, Integer count, Set<String> regionsToFilter,
-                                                           Set<Organ> organType, DonatedOrganSortOptionsEnum sortOption,
-                                                           Boolean reversed) {
+            Set<Organ> organType, DonatedOrganSortOptionsEnum sortOption,
+            Boolean reversed) {
 
         // TODO implement using Hibernate queries instead of in-memory filtering/sorting
 

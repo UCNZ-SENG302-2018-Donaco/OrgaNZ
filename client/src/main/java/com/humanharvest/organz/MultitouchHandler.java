@@ -58,6 +58,7 @@ import org.tuiofx.widgets.skin.TextFieldSkinAndroid;
 import org.tuiofx.widgets.utils.Util;
 
 public final class MultitouchHandler {
+
     private static final List<CurrentTouch> touches = new ArrayList<>();
     private static Pane rootPane;
     private static Node backdropPane;
@@ -82,9 +83,9 @@ public final class MultitouchHandler {
     /**
      * Handles a single new touch event. Will process both single touch events and multitouch events.
      *
-     * @param touchPoint   The touch point from the new event.
+     * @param touchPoint The touch point from the new event.
      * @param currentTouch The state of the finger this event belongs to.
-     * @param pane         The pane the finger is on.
+     * @param pane The pane the finger is on.
      */
     private static void handleCurrentTouch(TouchPoint touchPoint, CurrentTouch currentTouch, Pane pane) {
         Point2D touchPointPosition = new Point2D(touchPoint.getX(), touchPoint.getY());
@@ -117,7 +118,7 @@ public final class MultitouchHandler {
      * Checks if the delta results in the pane being out of bounds.
      *
      * @param delta The desired delta based on touch events.
-     * @param pane  The pane to bounds check.
+     * @param pane The pane to bounds check.
      * @return The new bounds to apply.
      */
     private static Point2D handleBoundsCheck(Point2D delta, Pane pane) {
@@ -443,6 +444,7 @@ public final class MultitouchHandler {
      * The state of a finger touching the screen.
      */
     private static class CurrentTouch {
+
         private final Optional<Pane> pane;
         private final Optional<Node> importantElement;
 
@@ -502,21 +504,6 @@ public final class MultitouchHandler {
         }
 
         /**
-         * Returns the last centre point between this finger and another one.
-         */
-        public Point2D getLastCentre() {
-            return lastCentre;
-        }
-
-        public void setLastCentre(Point2D lastCentre) {
-            this.lastCentre = lastCentre;
-        }
-
-        public Optional<Node> getImportantElement() {
-            return importantElement;
-        }
-
-        /**
          * Sets the current transformation matrix to a new one.
          */
         public void setTransform(Affine newTransform) {
@@ -536,9 +523,25 @@ public final class MultitouchHandler {
             transform.setTy(newTransform.getTy());
             transform.setTz(newTransform.getTz());
         }
+
+        /**
+         * Returns the last centre point between this finger and another one.
+         */
+        public Point2D getLastCentre() {
+            return lastCentre;
+        }
+
+        public void setLastCentre(Point2D lastCentre) {
+            this.lastCentre = lastCentre;
+        }
+
+        public Optional<Node> getImportantElement() {
+            return importantElement;
+        }
     }
 
     private static final class TextFieldSkinConsumer implements Consumer<EventTarget> {
+
         private final OnScreenKeyboard<?> keyboard;
         private final Method detachKeyboard;
         private final Skin<?> skin;
@@ -565,6 +568,7 @@ public final class MultitouchHandler {
     }
 
     private static final class TextAreaSkinConsumer implements Consumer<EventTarget> {
+
         private final OnScreenKeyboard<?> keyboard;
         private final Method detachKeyboard;
         private final Skin<?> skin;
@@ -593,6 +597,7 @@ public final class MultitouchHandler {
     }
 
     private static final class ComboBoxListSkinConsumer implements Consumer<EventTarget> {
+
         private final Method isComboBoxOrButton;
         private final Method handleAutoHidingEvents;
         private final Skin<?> skin;
@@ -621,6 +626,7 @@ public final class MultitouchHandler {
     }
 
     private static final class ContextMenuSkinConsumer implements Consumer<EventTarget> {
+
         private final Method handleAutoHidingEvents;
         private final Skin<?> skin;
 
@@ -645,6 +651,7 @@ public final class MultitouchHandler {
     }
 
     private static final class ChoiceBoxSkinConsumer implements Consumer<EventTarget> {
+
         private final Skin<? extends ChoiceBox<?>> skin;
 
         public ChoiceBoxSkinConsumer(Skin<? extends ChoiceBox<?>> skin) {
@@ -660,6 +667,7 @@ public final class MultitouchHandler {
     }
 
     private static final class DatePickerSkinConsumer implements Consumer<EventTarget> {
+
         private final Skin<? extends DatePicker> skin;
 
         public DatePickerSkinConsumer(Skin<? extends DatePicker> skin) {
@@ -675,6 +683,7 @@ public final class MultitouchHandler {
     }
 
     public static class FocusAreaHandler implements InvalidationListener {
+
         private final Collection<Consumer<EventTarget>> skinHandlers = new ArrayList<>();
         private final Collection<Consumer<EventTarget>> popupHandlers = new ArrayList<>();
         private final Pane pane;

@@ -108,7 +108,6 @@ public class ActionInvoker {
         return redoStack.peek();
     }
 
-
     /**
      * Register a listener to be notified on any Action event
      *

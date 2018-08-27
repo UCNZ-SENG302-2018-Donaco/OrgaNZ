@@ -17,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 
 public class ClinicianManagerRest implements ClinicianManager {
 
-
     private static HttpHeaders newHttpHeaders() {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
@@ -46,6 +45,12 @@ public class ClinicianManagerRest implements ClinicianManager {
         } else {
             return new ArrayList<>(restClinicians);
         }
+    }
+
+    @Override
+    public void setClinicians(Collection<Clinician> clinicians) {
+        //Do nothing method
+        throw new UnsupportedOperationException();
     }
 
     /**
@@ -100,12 +105,5 @@ public class ClinicianManagerRest implements ClinicianManager {
     @Override
     public Clinician getDefaultClinician() {
         return getClinicianByStaffId(0).orElseThrow(IllegalStateException::new);
-    }
-
-
-    @Override
-    public void setClinicians(Collection<Clinician> clinicians) {
-        //Do nothing method
-        throw new UnsupportedOperationException();
     }
 }

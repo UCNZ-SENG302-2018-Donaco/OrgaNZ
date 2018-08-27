@@ -17,6 +17,14 @@ import org.springframework.http.ResponseEntity;
 
 public class AdministratorResolverRest implements AdministratorResolver {
 
+    private static HttpHeaders createHeaders() {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        httpHeaders.set("X-Auth-Token", State.getToken());
+        httpHeaders.setETag(State.getAdministratorEtag());
+        return httpHeaders;
+    }
+
     @Override
     public Administrator createAdministrator(CreateAdministratorView administratorView) {
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -35,7 +43,7 @@ public class AdministratorResolverRest implements AdministratorResolver {
 
     @Override
     public Administrator modifyAdministrator(Administrator administrator,
-                                             ModifyAdministratorObject modifyAdministratorObject) {
+            ModifyAdministratorObject modifyAdministratorObject) {
 
         HttpHeaders httpHeaders = createHeaders();
 
@@ -68,13 +76,5 @@ public class AdministratorResolverRest implements AdministratorResolver {
                         });
 
         return responseEntity.getBody();
-    }
-
-    private static HttpHeaders createHeaders() {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
-        httpHeaders.set("X-Auth-Token", State.getToken());
-        httpHeaders.setETag(State.getAdministratorEtag());
-        return httpHeaders;
     }
 }

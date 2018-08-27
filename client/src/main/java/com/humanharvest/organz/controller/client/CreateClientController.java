@@ -35,7 +35,7 @@ import com.humanharvest.organz.views.client.CreateClientView;
 public class CreateClientController extends SubController {
 
     private static final Logger LOGGER = Logger.getLogger(CreateClientController.class.getName());
-
+    private final ClientManager manager;
     @FXML
     private DatePicker dobFld;
     @FXML
@@ -44,8 +44,6 @@ public class CreateClientController extends SubController {
     private Button createButton, goBackButton;
     @FXML
     private Pane menuBarPane;
-
-    private final ClientManager manager;
     private UIValidation validation;
 
     /**
@@ -145,7 +143,8 @@ public class CreateClientController extends SubController {
                 LOGGER.log(Level.SEVERE, e.getMessage(), e);
                 PageNavigator.showAlert(AlertType.ERROR,
                         "Server Error",
-                        "An error occurred while trying to fetch from the server.\nPlease try again later.", mainController.getStage());
+                        "An error occurred while trying to fetch from the server.\nPlease try again later.",
+                        mainController.getStage());
                 return;
             }
             PageNavigator.loadPage(Page.VIEW_CLIENT, mainController);

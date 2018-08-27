@@ -20,6 +20,10 @@ public class ModifyClinicianObject extends ModifyBaseObject {
     private String region;
     private Country country;
 
+    private static String fieldString(Member field) {
+        return String.format("Updated %s", field.getName());
+    }
+
     public String getFirstName() {
         return firstName;
     }
@@ -91,9 +95,5 @@ public class ModifyClinicianObject extends ModifyBaseObject {
         return String.format("Updated details for clinician.\n"
                         + "These changes were made: \n\n%s",
                 changesText);
-    }
-
-    private static String fieldString(Member field) {
-        return String.format("Updated %s", field.getName());
     }
 }

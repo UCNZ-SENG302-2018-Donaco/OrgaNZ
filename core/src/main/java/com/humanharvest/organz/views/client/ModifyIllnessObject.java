@@ -53,7 +53,6 @@ public class ModifyIllnessObject extends ModifyBaseObject {
         isChronic = chronic;
     }
 
-
     public String toString() {
         if (curedDate == null && !isChronic) {
             return String.format("%s Diagnosed on: %s", illnessName, diagnosisDate.format(dateFormat));

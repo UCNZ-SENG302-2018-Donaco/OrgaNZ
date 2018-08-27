@@ -112,6 +112,12 @@ public class SearchClientsController extends SubController {
 
     private ObservableList<Client> observableClientList = FXCollections.observableArrayList();
 
+    private static <T extends Enum<T>> EnumSet<T> filterToSet(CheckComboBox<T> filter, Class<T> enumType) {
+        EnumSet<T> enumSet = EnumSet.noneOf(enumType);
+        enumSet.addAll(filter.getCheckModel().getCheckedItems());
+        return enumSet;
+    }
+
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
@@ -379,12 +385,6 @@ public class SearchClientsController extends SubController {
         updateClientList();
     }
 
-    private static <T extends Enum<T>> EnumSet<T> filterToSet(CheckComboBox<T> filter, Class<T> enumType) {
-        EnumSet<T> enumSet = EnumSet.noneOf(enumType);
-        enumSet.addAll(filter.getCheckModel().getCheckedItems());
-        return enumSet;
-    }
-
     private void updateClientList() {
         ClientSortPolicy sortPolicy = getSortPolicy();
         PaginatedClientList newClients = State.getClientManager().getClients(
@@ -467,6 +467,7 @@ public class SearchClientsController extends SubController {
     }
 
     private static class ClientTableRow extends TableRow<Client> {
+
         private final Tooltip tooltip = new Tooltip();
 
         public ClientTableRow() {

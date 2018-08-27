@@ -21,6 +21,10 @@ public class ModifyProcedureObject extends ModifyBaseObject {
     private LocalDate date;
     private Set<Organ> affectedOrgans;
 
+    private static String fieldString(Field field) {
+        return String.format("Updated %s", field.getName());
+    }
+
     public Long getId(Long id) {
         return id;
     }
@@ -83,9 +87,5 @@ public class ModifyProcedureObject extends ModifyBaseObject {
         return String.format("Updated details for client.\n"
                         + "These changes were made: \n\n%s",
                 changesText);
-    }
-
-    private static String fieldString(Field field) {
-        return String.format("Updated %s", field.getName());
     }
 }

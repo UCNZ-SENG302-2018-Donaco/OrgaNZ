@@ -27,9 +27,9 @@ public class SQL implements Runnable {
 
     private static final Logger LOGGER = Logger.getLogger(SQL.class.getName());
 
-    private DBManager dbManager;
     private final PrintStream outputStream;
 
+    private DBManager dbManager;
     @Parameters
     private List<String> allParams;
 
@@ -44,31 +44,6 @@ public class SQL implements Runnable {
 
     public SQL() {
         outputStream = System.out;
-    }
-
-    @Override
-    public void run() {
-        if (allParams == null) {
-            outputStream.print("No SQL input, please enter a valid SQL command");
-            return;
-        } else if (State.getCurrentStorageType() == DataStorageType.MEMORY) {
-            outputStream.print("Currently not connected to the database, cannot execute SQL");
-            return;
-        } else if (dbManager == null) {
-            dbManager = DBManager.getInstance();
-        }
-
-        String sql = String.join(" ", allParams);
-
-        //Standard implementation with normal connection
-        try (Connection connection = dbManager.getStandardSqlConnection()) {
-            connection.setReadOnly(true);
-
-            executeQuery(connection, sql, outputStream);
-        } catch (SQLException e) {
-            LOGGER.log(Level.WARNING, e.getMessage(), e);
-            outputStream.print("Couldn't connect to the database");
-        }
     }
 
     private static void executeQuery(Connection connection, String sql, PrintStream outputStream) {
@@ -100,6 +75,31 @@ public class SQL implements Runnable {
                     + "If you were using double quotes, please ensure they were escaped with a backslash and "
                     + "enclosed in a quoted string. The command as it was sent "
                     + "to the database was: " + sql);
+        }
+    }
+
+    @Override
+    public void run() {
+        if (allParams == null) {
+            outputStream.print("No SQL input, please enter a valid SQL command");
+            return;
+        } else if (State.getCurrentStorageType() == DataStorageType.MEMORY) {
+            outputStream.print("Currently not connected to the database, cannot execute SQL");
+            return;
+        } else if (dbManager == null) {
+            dbManager = DBManager.getInstance();
+        }
+
+        String sql = String.join(" ", allParams);
+
+        //Standard implementation with normal connection
+        try (Connection connection = dbManager.getStandardSqlConnection()) {
+            connection.setReadOnly(true);
+
+            executeQuery(connection, sql, outputStream);
+        } catch (SQLException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
+            outputStream.print("Couldn't connect to the database");
         }
     }
 }

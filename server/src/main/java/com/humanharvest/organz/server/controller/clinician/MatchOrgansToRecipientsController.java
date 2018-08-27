@@ -27,7 +27,7 @@ public class MatchOrgansToRecipientsController {
      * Retrieves a list of all clients who are potential recipients of the organ passed in.
      * They are sorted from most to least eligble, with most eligible being the first item in the list.
      *
-     * @param id        The id of the organ being donated.
+     * @param id The id of the organ being donated.
      * @param authToken The authentication token for the request.
      * @return HTTP response with a JSON body representing the potential recipients.
      * @throws AuthenticationException If the auth token does not belong to a clinician/admin.

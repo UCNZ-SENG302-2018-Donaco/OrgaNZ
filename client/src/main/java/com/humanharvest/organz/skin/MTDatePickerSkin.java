@@ -50,7 +50,6 @@ public class MTDatePickerSkin extends DatePickerSkin {
             }
         });
 
-
         getPopupContent().focusedProperty().addListener((observable, oldValue, newValue) -> {
             Node owner = getSkinnable();
             double offsetY = getSkinnable().prefHeight(-1.0D);

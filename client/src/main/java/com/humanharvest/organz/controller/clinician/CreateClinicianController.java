@@ -118,7 +118,6 @@ public class CreateClinicianController extends SubController {
         return update;
     }
 
-
     /**
      * Creates a Clinician if all of the fields have valid input.
      */
@@ -154,7 +153,6 @@ public class CreateClinicianController extends SubController {
             }
         }
     }
-
 
     /**
      * Takes the user back to the landing page.

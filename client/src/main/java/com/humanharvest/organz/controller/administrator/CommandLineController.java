@@ -19,6 +19,8 @@ import com.humanharvest.organz.utilities.view.PageNavigator;
 
 public class CommandLineController extends SubController {
 
+    private final List<String> commandHistoryList = new ArrayList<>();
+
     @FXML
     private HBox menuBarPane;
 
@@ -30,7 +32,6 @@ public class CommandLineController extends SubController {
     @FXML
     private BorderPane borderPane;
 
-    private final List<String> commandHistoryList = new ArrayList<>();
     private int currentHistoryIndex;
     private String unexecutedPreviousText = "";
 

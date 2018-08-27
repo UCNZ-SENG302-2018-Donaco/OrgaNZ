@@ -18,7 +18,7 @@ import com.fasterxml.jackson.databind.JavaType;
  * appending to it as required.
  *
  * @param <T> The datatype to serialize to the JSON file (must also be the datatype already stored in the file if
- *            appending to an existing file).
+ * appending to an existing file).
  */
 public class JSONFileWriter<T> implements Closeable {
 
@@ -32,7 +32,7 @@ public class JSONFileWriter<T> implements Closeable {
      * Creates a new JSONFileWriter to write to to the given stream. The class of the datatype must also be
      * provided because of Java's type erasure.
      *
-     * @param output    The JSON stream to write to.
+     * @param output The JSON stream to write to.
      * @param dataClass The class of the datatype to serialize to the JSON file.
      */
     public JSONFileWriter(OutputStream output, Class<T> dataClass) {
@@ -45,7 +45,7 @@ public class JSONFileWriter<T> implements Closeable {
      * Creates a new JSONFileWriter to write/append to to the given file. The class of the datatype must also be
      * provided because of Java's type erasure.
      *
-     * @param file      The JSON file to write/append to.
+     * @param file The JSON file to write/append to.
      * @param dataClass The class of the datatype to serialize to the JSON file.
      */
     public JSONFileWriter(File file, Class<T> dataClass) throws IOException {

@@ -11,6 +11,15 @@ import org.springframework.http.ResponseEntity;
 
 public class ActionResolverRest implements ActionResolver {
 
+    private static HttpEntity<?> setupEntity(String eTag) {
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
+        httpHeaders.set("X-Auth-Token", State.getToken());
+        httpHeaders.setETag(eTag);
+
+        return new HttpEntity<>(null, httpHeaders);
+    }
+
     @Override
     public ActionResponseView executeUndo(String eTag) {
         HttpEntity<?> entity = setupEntity(eTag);
@@ -40,15 +49,6 @@ public class ActionResolverRest implements ActionResolver {
         ResponseEntity<ActionResponseView> responseEntity = State.getRestTemplate().exchange
                 (State.getBaseUri() + "undo", HttpMethod.GET, entity, ActionResponseView.class);
         return responseEntity.getBody();
-    }
-
-    private static HttpEntity<?> setupEntity(String eTag) {
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON_UTF8);
-        httpHeaders.set("X-Auth-Token", State.getToken());
-        httpHeaders.setETag(eTag);
-
-        return new HttpEntity<>(null, httpHeaders);
     }
 
 }

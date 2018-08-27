@@ -40,6 +40,7 @@ import com.google.api.client.http.HttpTransport;
  * Stores and retrieves arbitrary values from a persistent location.
  */
 public abstract class CacheManager {
+
     /**
      * The instance of the cache.
      */
@@ -65,9 +66,9 @@ public abstract class CacheManager {
      * Adds data to a cache, given a category, key, value and optional expiry date.
      *
      * @param categoryName The category of the cached value.
-     * @param arguments    The key used to store/retrieve the cached value.
-     * @param value        The cached value.
-     * @param expires      An optional expiry date.
+     * @param arguments The key used to store/retrieve the cached value.
+     * @param value The cached value.
+     * @param expires An optional expiry date.
      */
     public <T> void addCachedData(String categoryName, Object[] arguments, T value, Optional<Instant> expires) {
         if (Objects.isNull(arguments) || arguments.length == 0) {
@@ -97,8 +98,8 @@ public abstract class CacheManager {
      * Gets data from a cache, given a category and key.
      *
      * @param categoryName The category of the cached value.
-     * @param type         The type of the cached value, must be deserialisable using GSON.
-     * @param arguments    The key used to store/retrieve the cached value.
+     * @param type The type of the cached value, must be deserialisable using GSON.
+     * @param arguments The key used to store/retrieve the cached value.
      * @return The stored data, or an empty optional if it cannot be found or has expired.
      */
     public <T> Optional<T> getCachedData(String categoryName, TypeReference<?> type, Object[] arguments) {
@@ -185,6 +186,7 @@ public abstract class CacheManager {
     @JsonSerialize(using = CategorySerialiser.class)
     @JsonDeserialize(using = CategoryDeserialiser.class)
     protected static final class Category {
+
         private final Map<Key, Value> values;
 
         public Category() {
@@ -234,6 +236,7 @@ public abstract class CacheManager {
     }
 
     private static final class CategorySerialiser extends JsonSerializer<Category> {
+
         @Override
         public void serialize(Category value, JsonGenerator gen, SerializerProvider serializers) throws IOException {
             gen.writeStartArray();
@@ -252,6 +255,7 @@ public abstract class CacheManager {
     }
 
     private static final class CategoryDeserialiser extends StdDeserializer<Category> {
+
         protected CategoryDeserialiser() {
             super(Category.class);
         }
@@ -312,6 +316,7 @@ public abstract class CacheManager {
     }
 
     private static final class Value {
+
         private final JsonNode value;
         private final Optional<Instant> expires;
 

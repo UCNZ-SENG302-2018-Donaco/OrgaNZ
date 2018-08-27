@@ -43,7 +43,7 @@ public class ImageManagerMemory implements ImageManager {
     /**
      * Posts an image to the clients profile to replace their existing one (which may be the default one)
      *
-     * @param uid   id of the client
+     * @param uid id of the client
      * @param image image the client is posting to the server
      * @return true if the image is successfully posted. false otherwise.
      */
@@ -56,7 +56,6 @@ public class ImageManagerMemory implements ImageManager {
         } else {
             throw new NotFoundException();
         }
-
 
     }
 

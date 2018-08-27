@@ -134,7 +134,8 @@ public class ModifyIllnessRecordAction extends ClientAction {
         builder.append(String.format("Reversed these changes to illness record for '%s':", record.getIllnessName()));
 
         if (!Objects.equals(newDiagnosisDate, oldDiagnosisDate)) {
-            builder.append(String.format("%nDiagnosisDate date changed from %s to %s", oldDiagnosisDate, newDiagnosisDate));
+            builder.append(
+                    String.format("%nDiagnosisDate date changed from %s to %s", oldDiagnosisDate, newDiagnosisDate));
         }
         if (!Objects.equals(newCuredDate, oldCuredDate)) {
             builder.append(String.format("%nCuredDate date changed from %s to %s", oldDiagnosisDate, newDiagnosisDate));

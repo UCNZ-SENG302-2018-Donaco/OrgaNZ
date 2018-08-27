@@ -53,11 +53,11 @@ public class ClientTransplantRequestsController {
     /**
      * Retrieves all transplant requests stored in the system matching the given criteria.
      *
-     * @param offset    The number of requests to skip.
-     * @param count     The number of requests to retrieve.
-     * @param regions   The list of regions to filter by. Only requests by a client that lives in one of these regions
-     *                  will be retrieved.
-     * @param organs    The list of organs to filter by. Only requests for one of these organs will be retrieved.
+     * @param offset The number of requests to skip.
+     * @param count The number of requests to retrieve.
+     * @param regions The list of regions to filter by. Only requests by a client that lives in one of these regions
+     * will be retrieved.
+     * @param organs The list of organs to filter by. Only requests for one of these organs will be retrieved.
      * @param authToken The authentication token for the request.
      * @return An HTTP response with a JSON body representing all the requests matching these criteria.
      * @throws AuthenticationException If the auth token does not belong to a clinician/admin.
@@ -116,11 +116,11 @@ public class ClientTransplantRequestsController {
     /**
      * Retrieves all transplant requests belonging to a client with a given id.
      *
-     * @param id        The id of the client whose requests to retrieve.
+     * @param id The id of the client whose requests to retrieve.
      * @param authToken The authentication token for the request.
      * @return An HTTP response with a JSON body representing all transplant requests belonging to the client.
      * @throws AuthenticationException If the auth token is not valid or does not belong to a user with view access
-     *                                 to this client.
+     * to this client.
      */
     @GetMapping("/clients/{id}/transplantRequests")
     public ResponseEntity<Collection<TransplantRequest>> getClientTransplantRequests(
@@ -146,8 +146,8 @@ public class ClientTransplantRequestsController {
      * Creates a transplant request.
      *
      * @param transplantRequest the transplant request to add
-     * @param id                the client's ID
-     * @param ETag              A hashed value of the object used for optimistic concurrency control
+     * @param id the client's ID
+     * @param ETag A hashed value of the object used for optimistic concurrency control
      * @return list of all transplant requests for that client
      */
     @PostMapping("/clients/{id}/transplantRequests")
@@ -170,7 +170,6 @@ public class ClientTransplantRequestsController {
 
         //Check ETag
         checkClientETag(client, ETag);
-
 
         // Validate the transplant request
         try {
@@ -197,9 +196,9 @@ public class ClientTransplantRequestsController {
      * Modifies a transplant request. Currently only allows resolution of requests.
      *
      * @param resolveRequestObject the resolve request object
-     * @param uid                  the client's ID
-     * @param id                   the transplant request's ID
-     * @param ETag                 A hashed value of the object used for optimistic concurrency control
+     * @param uid the client's ID
+     * @param id the transplant request's ID
+     * @param ETag A hashed value of the object used for optimistic concurrency control
      * @return list of all transplant requests for that client
      */
     @PatchMapping("/clients/{uid}/transplantRequests/{id}")
@@ -225,7 +224,6 @@ public class ClientTransplantRequestsController {
         //Check ETag
         checkClientETag(client, ETag);
 
-
         // Get the original transplant request given by the ID
         Optional<TransplantRequest> optionalRequest = client.getTransplantRequestById(id);
         if (!optionalRequest.isPresent()) {
@@ -233,8 +231,6 @@ public class ClientTransplantRequestsController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         TransplantRequest originalTransplantRequest = optionalRequest.get();
-
-
 
         // Patch currently only allows resolution of requests, so throw an error if other things have changed.
         // Only the status, resolved reason, and resolved date (and time) are allowed to change.

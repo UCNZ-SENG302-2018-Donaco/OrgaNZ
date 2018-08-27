@@ -29,13 +29,14 @@ public class GlobalControllerExceptionHandler {
     public void authenticationRequired() {
     }
 
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public static class InvalidRequestException extends RuntimeException {
-    }
-
     @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "The given resource could not be located.")
     @ExceptionHandler(NotFoundException.class)
     public void notFound() {
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public static class InvalidRequestException extends RuntimeException {
+
     }
 
 }

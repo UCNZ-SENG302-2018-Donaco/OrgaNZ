@@ -31,7 +31,7 @@ public class JSONFileReader<T> implements Closeable {
      * Creates a new JSONFileReader to read from the given file. The class of the datatype must also be provided
      * because of Java's type erasure.
      *
-     * @param file      The JSON file to read from.
+     * @param file The JSON file to read from.
      * @param dataClass The class of the datatype stored in the JSON file.
      * @throws FileNotFoundException If the given file cannot be found (or cannot be opened).
      */

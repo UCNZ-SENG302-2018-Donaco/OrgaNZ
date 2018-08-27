@@ -30,7 +30,8 @@ public class StateTest extends BaseTest {
 
     @Test
     public void LoginClinicianValidTest() {
-        Clinician clinician = new Clinician("First", null, "Last", "Address", Region.UNSPECIFIED.toString(), null, 1, "pass");
+        Clinician clinician = new Clinician("First", null, "Last", "Address", Region.UNSPECIFIED.toString(), null, 1,
+                "pass");
 
         State.login(clinician);
 

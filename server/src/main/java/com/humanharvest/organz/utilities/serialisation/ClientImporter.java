@@ -25,11 +25,12 @@ public class ClientImporter {
 
     private final ReadClientStrategy readStrategy;
 
+    private final StringBuilder errorSummary = new StringBuilder();
+    private final List<Client> validClients = new ArrayList<>();
+
     private boolean imported;
     private long validCount;
     private long invalidCount;
-    private final StringBuilder errorSummary = new StringBuilder();
-    private final List<Client> validClients = new ArrayList<>();
 
     public ClientImporter(File file, ReadClientStrategy readStrategy) throws IOException {
         this.readStrategy = readStrategy;
@@ -37,11 +38,33 @@ public class ClientImporter {
     }
 
     /**
+     * Sets the given client as "owner" on all records belonging to that client, such as {@link TransplantRequest}s and
+     * {@link MedicationRecord}s. This is necessary because the relationships are referenced from both sides, but are
+     * only serialized in terms of clients "owning" records (to avoid infinite recursion in serialized form).
+     *
+     * @param client The client to set as "owner" for all their records.
+     */
+    private static void setOwnerOnRelatedRecords(Client client) {
+        for (TransplantRequest request : client.getTransplantRequests()) {
+            request.setClient(client);
+        }
+        for (IllnessRecord record : client.getIllnesses()) {
+            record.setClient(client);
+        }
+        for (ProcedureRecord record : client.getProcedures()) {
+            record.setClient(client);
+        }
+        for (MedicationRecord record : client.getMedications()) {
+            record.setClient(client);
+        }
+    }
+
+    /**
      * Imports all valid clients from the file using the given {@link ReadClientStrategy}. These valid clients can
      * then be retrieved using {@link #getValidClients()}.
      *
      * @throws IOException If a critical error occurrs which ends reading of the file (invalid syntax or input stream
-     *                     broken)
+     * broken)
      */
     public void importAll() throws IOException {
         if (imported) {
@@ -81,28 +104,6 @@ public class ClientImporter {
         } finally {
             readStrategy.close();
             imported = true;
-        }
-    }
-
-    /**
-     * Sets the given client as "owner" on all records belonging to that client, such as {@link TransplantRequest}s and
-     * {@link MedicationRecord}s. This is necessary because the relationships are referenced from both sides, but are
-     * only serialized in terms of clients "owning" records (to avoid infinite recursion in serialized form).
-     *
-     * @param client The client to set as "owner" for all their records.
-     */
-    private static void setOwnerOnRelatedRecords(Client client) {
-        for (TransplantRequest request : client.getTransplantRequests()) {
-            request.setClient(client);
-        }
-        for (IllnessRecord record : client.getIllnesses()) {
-            record.setClient(client);
-        }
-        for (ProcedureRecord record : client.getProcedures()) {
-            record.setClient(client);
-        }
-        for (MedicationRecord record : client.getMedications()) {
-            record.setClient(client);
         }
     }
 

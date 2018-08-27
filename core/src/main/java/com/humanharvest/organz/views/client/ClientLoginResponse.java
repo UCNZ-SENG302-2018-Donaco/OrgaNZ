@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
 
 public class ClientLoginResponse {
+
     @JsonView(Views.Details.class)
     private final String token;
 

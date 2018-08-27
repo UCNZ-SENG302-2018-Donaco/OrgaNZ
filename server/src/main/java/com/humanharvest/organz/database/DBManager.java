@@ -47,6 +47,13 @@ public class DBManager {
         return new Configuration().configure("hibernate.cfg.xml").buildSessionFactory();
     }
 
+    public static DBManager getInstance() {
+        if (dbManager == null) {
+            dbManager = new DBManager();
+        }
+        return dbManager;
+    }
+
     /**
      * Returns a standard JDBC SQL Connection
      *
@@ -60,14 +67,6 @@ public class DBManager {
         dataSource.setUser(cfg.getProperty("hibernate.connection.username"));
         dataSource.setPassword(cfg.getProperty("hibernate.connection.password"));
         return dataSource.getConnection();
-    }
-
-
-    public static DBManager getInstance() {
-        if (dbManager == null) {
-            dbManager = new DBManager();
-        }
-        return dbManager;
     }
 
     /**
@@ -87,7 +86,7 @@ public class DBManager {
      * If the entity is not yet present in the database, then a record for it is inserted into its table.
      *
      * @param entity The entity to save. Must be of a type that is annotated with the JPA @Entity tag, and that has a
-     *               table within the database.
+     * table within the database.
      * @throws PersistenceException If an error occurs when saving the entity to the database.
      */
     public void saveEntity(Object entity) throws PersistenceException {

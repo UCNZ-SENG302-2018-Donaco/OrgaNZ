@@ -15,6 +15,7 @@ import com.humanharvest.organz.utilities.view.WindowContext;
 import org.junit.Test;
 
 public class ClientLoginControllerTest extends ControllerTest {
+
     Client testClient = new Client("test", "", "er", LocalDate.now(), 1);
 
     @Override

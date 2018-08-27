@@ -50,10 +50,11 @@ public class RegisterOrganDonationController extends SubController {
     private static final Logger LOGGER = Logger.getLogger(RegisterOrganDonationController.class.getName());
     private static final DateTimeFormatter dateTimeFormat = DateTimeFormatter.ofPattern("d MMM yyyy hh:mm a");
 
+    private final Map<Organ, CheckBox> organCheckBoxes = new HashMap<>();
+
     private Session session;
     private Client client;
     private Map<Organ, Boolean> donationStatus;
-
     @FXML
     private Pane sidebarPane, menuBarPane, registerPane, donatedOrgansPane;
     @FXML
@@ -70,10 +71,43 @@ public class RegisterOrganDonationController extends SubController {
     @FXML
     private TableColumn<DonatedOrgan, DonatedOrgan> manualOverrideCol;
 
-    private final Map<Organ, CheckBox> organCheckBoxes = new HashMap<>();
-
     public RegisterOrganDonationController() {
         session = State.getSession();
+    }
+
+    /**
+     * Handles the event when the user wants to cancel the override on a given donated organ.
+     *
+     * @param donatedOrgan The donated organ the user wants to cancel the override for.
+     */
+    private static void handleCancelOverride(DonatedOrgan donatedOrgan) {
+        try {
+            State.getClientResolver().cancelManualOverrideForOrgan(donatedOrgan);
+            PageNavigator.refreshAllWindows();
+        } catch (IfMatchFailedException exc) {
+            // TODO deal with outdated error
+        } catch (NotFoundException exc) {
+            LOGGER.log(Level.WARNING, "Client/Organ Not Found", exc);
+            Notifications.create()
+                    .title("Client/Organ Not Found")
+                    .text("The client/donated organ could not be found on the server; it may have been deleted.")
+                    .showWarning();
+        } catch (ServerRestException exc) {
+            LOGGER.log(Level.WARNING, exc.getMessage(), exc);
+            Notifications.create()
+                    .title("Server Error")
+                    .text("A server error occurred when cancelling the override on this donated organ; please try "
+                            + "again later.")
+                    .showError();
+        }
+    }
+
+    private static String formatChange(Organ organ, boolean newValue) {
+        if (newValue) {
+            return String.format("Registered %s for donation.", organ.toString());
+        } else {
+            return String.format("Deregistered %s for donation.", organ.toString());
+        }
     }
 
     /**
@@ -252,33 +286,6 @@ public class RegisterOrganDonationController extends SubController {
         }
     }
 
-    /**
-     * Handles the event when the user wants to cancel the override on a given donated organ.
-     *
-     * @param donatedOrgan The donated organ the user wants to cancel the override for.
-     */
-    private static void handleCancelOverride(DonatedOrgan donatedOrgan) {
-        try {
-            State.getClientResolver().cancelManualOverrideForOrgan(donatedOrgan);
-            PageNavigator.refreshAllWindows();
-        } catch (IfMatchFailedException exc) {
-            // TODO deal with outdated error
-        } catch (NotFoundException exc) {
-            LOGGER.log(Level.WARNING, "Client/Organ Not Found", exc);
-            Notifications.create()
-                    .title("Client/Organ Not Found")
-                    .text("The client/donated organ could not be found on the server; it may have been deleted.")
-                    .showWarning();
-        } catch (ServerRestException exc) {
-            LOGGER.log(Level.WARNING, exc.getMessage(), exc);
-            Notifications.create()
-                    .title("Server Error")
-                    .text("A server error occurred when cancelling the override on this donated organ; please try "
-                            + "again later.")
-                    .showError();
-        }
-    }
-
     @Override
     public void refresh() {
         // Retrieve organ donation status and transplant requests from the server
@@ -411,14 +418,6 @@ public class RegisterOrganDonationController extends SubController {
 
         return String.format("Changed organ donation registration for client %d: %s:%n%n%s",
                 client.getUid(), client.getFullName(), changesText);
-    }
-
-    private static String formatChange(Organ organ, boolean newValue) {
-        if (newValue) {
-            return String.format("Registered %s for donation.", organ.toString());
-        } else {
-            return String.format("Deregistered %s for donation.", organ.toString());
-        }
     }
 
     /**

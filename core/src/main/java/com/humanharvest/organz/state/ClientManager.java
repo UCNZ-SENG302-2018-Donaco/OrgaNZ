@@ -26,6 +26,8 @@ public interface ClientManager {
 
     List<Client> getClients();
 
+    void setClients(Collection<Client> clients);
+
     PaginatedClientList getClients(
             String q,
             Integer offset,
@@ -39,8 +41,6 @@ public interface ClientManager {
             Set<Organ> requesting,
             ClientSortOptionsEnum sortOption,
             Boolean isReversed);
-
-    void setClients(Collection<Client> clients);
 
     void addClient(Client client);
 
@@ -59,8 +59,8 @@ public interface ClientManager {
     /**
      * Checks if a client already exists with the same first name, last name, and date of birth.
      *
-     * @param firstName   First name
-     * @param lastName    Last name
+     * @param firstName First name
+     * @param lastName Last name
      * @param dateOfBirth Date of birth
      * @return true if a colliding client exists in the manager, false otherwise.
      */
@@ -83,7 +83,7 @@ public interface ClientManager {
     Collection<TransplantRequest> getAllCurrentTransplantRequests();
 
     PaginatedTransplantList getAllCurrentTransplantRequests(Integer offset, Integer count, Set<String> regions,
-                                                            Set<Organ> organs);
+            Set<Organ> organs);
 
     Collection<DonatedOrgan> getAllOrgansToDonate();
 

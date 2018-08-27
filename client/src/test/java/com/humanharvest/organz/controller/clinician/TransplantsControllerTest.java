@@ -65,7 +65,6 @@ public class TransplantsControllerTest extends ControllerTest {
     private Client client3 = new Client("Client", "Number", "Three", LocalDate.now(), 3);
     private TransplantRequest request3 = new TransplantRequest(client3, Organ.LIVER);
 
-
     private Client[] clients = {client1, client2, client3};
     private TransplantRequest[] requests1 = {request1a, request1b, request1c};
     private TransplantRequest[] requests2 = {request2a, request2b};
@@ -654,13 +653,13 @@ public class TransplantsControllerTest extends ControllerTest {
     /**
      * Verifies that the given {@link TableView} contains the given {@link TransplantRequest} at the given rowIndex.
      *
-     * @param table    The table to check within.
-     * @param request  The request to check for.
+     * @param table The table to check within.
+     * @param request The request to check for.
      * @param rowIndex The rowIndex to search at.
      * @return Whether the given rowIndex in the table holds a request with the same details as the given request.
      */
     private void assertTableContainsRequestAtIndex(TableView<TransplantRequest> table, TransplantRequest request,
-                                                   int rowIndex) {
+            int rowIndex) {
         TransplantRequest requestAtIndex = table.getItems().get(rowIndex);
 
         assertEquals(requestAtIndex.getClient().getFullName(), request.getClient().getFullName());

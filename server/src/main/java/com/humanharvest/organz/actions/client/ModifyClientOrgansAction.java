@@ -23,17 +23,25 @@ public class ModifyClientOrgansAction extends ClientAction {
     /**
      * Create a new Action
      *
-     * @param client  The client to be modified
+     * @param client The client to be modified
      * @param manager The ClientManager to apply the changes to
      */
     public ModifyClientOrgansAction(Client client, ClientManager manager) {
         super(client, manager);
     }
 
+    private static String formatChange(Organ organ, boolean newValue) {
+        if (newValue) {
+            return String.format("Registered %s for donation.", organ.toString());
+        } else {
+            return String.format("Deregistered %s for donation.", organ.toString());
+        }
+    }
+
     /**
      * Add a organ change to the client. Should check the value is not already set before adding the change
      *
-     * @param organ    The organ to be updated
+     * @param organ The organ to be updated
      * @param newValue The new value
      * @throws OrganAlreadyRegisteredException Thrown if the organ is already set to that value
      */
@@ -56,14 +64,6 @@ public class ModifyClientOrgansAction extends ClientAction {
         super.unExecute();
         runChanges(true);
         manager.applyChangesTo(client);
-    }
-
-    private static String formatChange(Organ organ, boolean newValue) {
-        if (newValue) {
-            return String.format("Registered %s for donation.", organ.toString());
-        } else {
-            return String.format("Deregistered %s for donation.", organ.toString());
-        }
     }
 
     @Override

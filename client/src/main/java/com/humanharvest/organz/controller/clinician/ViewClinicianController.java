@@ -106,7 +106,6 @@ public class ViewClinicianController extends ViewBaseController {
         }
     }
 
-
     /**
      * Initialize the page.
      */
@@ -135,7 +134,6 @@ public class ViewClinicianController extends ViewBaseController {
         getViewedClinicianData();
         updateCountries();
     }
-
 
     /**
      * Checks the clinicians country, changes region input to a choicebox of NZ regions if the country is New Zealand,
@@ -166,7 +164,6 @@ public class ViewClinicianController extends ViewBaseController {
             regionTF.setVisible(true);
         }
     }
-
 
     /**
      * Loads the clinician identified by the staff ID in loadStaffIdTextField.
@@ -216,7 +213,6 @@ public class ViewClinicianController extends ViewBaseController {
             regionTF.setText(viewedClinician.getRegion());
         }
         checkClinicianCountry();
-
 
         creationDate.setText(formatter.format(viewedClinician.getCreatedOn()));
         if (viewedClinician.getModifiedOn() == null) {
@@ -308,7 +304,6 @@ public class ViewClinicianController extends ViewBaseController {
         addChangeIfDifferent(modifyClinicianObject, viewedClinician, "workAddress", workAddress.getText());
         addChangeIfDifferent(modifyClinicianObject, viewedClinician, "password", updatedPassword);
         addChangeIfDifferent(modifyClinicianObject, viewedClinician, "country", country.getValue());
-
 
         if (country.getValue() != null && country.getValue() == Country.NZ) {
             addChangeIfDifferent(modifyClinicianObject, viewedClinician, "region", regionCB.getValue().toString());

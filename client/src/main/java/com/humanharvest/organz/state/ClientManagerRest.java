@@ -51,6 +51,11 @@ public class ClientManagerRest implements ClientManager {
     }
 
     @Override
+    public void setClients(Collection<Client> clients) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
     public PaginatedClientList getClients(
             String q,
             Integer offset,
@@ -92,11 +97,6 @@ public class ClientManagerRest implements ClientManager {
         );
 
         return response.getBody();
-    }
-
-    @Override
-    public void setClients(Collection<Client> clients) {
-        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -163,7 +163,7 @@ public class ClientManagerRest implements ClientManager {
 
     @Override
     public PaginatedTransplantList getAllCurrentTransplantRequests(Integer offset, Integer count,
-                                                                   Set<String> regions, Set<Organ> organs) {
+            Set<String> regions, Set<Organ> organs) {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set("Accept", MediaType.APPLICATION_JSON_VALUE);
         httpHeaders.set("X-Auth-Token", State.getToken());
@@ -223,7 +223,7 @@ public class ClientManagerRest implements ClientManager {
     /**
      * Gets all organs to donate for the specified regions and organTypes.
      *
-     * @param regions   regions to filter by. If empty, all regions are selected
+     * @param regions regions to filter by. If empty, all regions are selected
      * @param organType organ types to filter by. If empty, all types are selected
      * @return A collection of the the organs available to donate based off the specified filters.
      */

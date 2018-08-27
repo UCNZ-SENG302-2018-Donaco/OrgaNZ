@@ -25,9 +25,9 @@ public abstract class ClientValidator {
      * and exception is thrown if the ETag is missing or does not match
      *
      * @param client client to validate the ETag for
-     * @param ETag   The corresponding If-Match header to check for concurrent update handling
+     * @param ETag The corresponding If-Match header to check for concurrent update handling
      * @throws IfMatchRequiredException Thrown if the ETag header is missing
-     * @throws IfMatchFailedException   Thrown if the ETag does not match the clients current ETag
+     * @throws IfMatchFailedException Thrown if the ETag does not match the clients current ETag
      */
     public static void checkClientETag(Client client, String ETag)
             throws IfMatchRequiredException, IfMatchFailedException {

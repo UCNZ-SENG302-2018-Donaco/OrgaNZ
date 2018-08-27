@@ -25,9 +25,9 @@ import com.google.api.client.util.Key;
  */
 public class DrugInteractionsResponse {
 
+    public static final DrugInteractionsResponse EMPTY = new DrugInteractionsResponse();
     private static final Pattern AGE_RANGE_PATTERN
             = Pattern.compile("^(?:(?<nan>nan)|(?<singlePlus>\\d+)\\+|(?<lowerBound>\\d+)-(?<upperBound>\\d+))$");
-
     private static final Pattern DURATION_RANGE_PATTERN
             = Pattern.compile("^(?:(?:<\\s+(?<lessMonth>\\d+)\\s+months?)|"
             + "(?:<\\s+(?<lessYear>\\d+)\\s+years?)|"
@@ -35,8 +35,6 @@ public class DrugInteractionsResponse {
             + "(?:(?<greaterYear>\\d+)\\+ years?)|"
             + "(?:(?<lowMonth>\\d+)\\s+-\\s+(?<highMonth>\\d+)\\s+months?)|"
             + "(?:(?<lowYear>\\d+)\\s+-\\s+(?<highYear>\\d+)\\s+years?))$");
-    public static final DrugInteractionsResponse EMPTY = new DrugInteractionsResponse();
-
     @Key("co_existing_conditions")
     @JsonProperty("co_existing_conditions")
     private Map<String, Integer> coexistingConditions;
@@ -56,34 +54,6 @@ public class DrugInteractionsResponse {
     @Key("gender_interaction")
     @JsonProperty("gender_interaction")
     private Map<String, List<String>> genderInteraction;
-
-    /**
-     * Calculates a list of possible drug interactions given a client.
-     */
-    public List<String> calculateClientInteractions(Client client) {
-        // This happens when the drug interactions is not valid.
-        if (coexistingConditions == null) {
-            return Collections.emptyList();
-        }
-
-        int clientAge = client.getAge();
-        Set<String> ageInteractions = calculateAgeInteractions(clientAge);
-
-        Gender clientGender = client.getGender();
-        Set<String> genderInteractions = calculateGenderInteractions(clientGender);
-
-        // Get the intersection
-        ageInteractions.retainAll(genderInteractions);
-
-        Map<String, List<String>> interactions = new HashMap<>();
-        for (String interaction : ageInteractions) {
-            interactions.put(interaction, new ArrayList<>());
-        }
-
-        calculateDurations(interactions);
-
-        return prettifyDurations(interactions);
-    }
 
     /**
      * Converts a list of durations into a human readable format.
@@ -173,58 +143,6 @@ public class DrugInteractionsResponse {
     }
 
     /**
-     * Calculates the durations of the drug interactions, storing them in a list.
-     */
-    private void calculateDurations(Map<String, List<String>> interactions) {
-        for (Map.Entry<String, List<String>> durationEntry : durationInteraction.entrySet()) {
-            for (Entry<String, List<String>> interactionEntries : interactions.entrySet()) {
-                if (durationEntry.getValue().contains(interactionEntries.getKey())) {
-                    interactionEntries.getValue().add(durationEntry.getKey());
-                }
-            }
-        }
-    }
-
-    /**
-     * Calculates the intersection of the drug interactions for a given age.
-     */
-    private Set<String> calculateAgeInteractions(int age) {
-        Set<String> result = new HashSet<>();
-
-        for (Map.Entry<String, List<String>> pair : ageInteraction.entrySet()) {
-            IntPair range = parseAgeRange(pair.getKey());
-            if (range.value1 <= age && range.value2 >= age) {
-                result.addAll(pair.getValue());
-            }
-        }
-
-        return result;
-    }
-
-    /**
-     * Calculates the drug interactions for the given gender.
-     * Will calculate the intersection of male and female if the given gender is non-binary or unspecified.
-     */
-    private Set<String> calculateGenderInteractions(Gender gender) {
-        Set<String> results = new HashSet<>();
-
-        switch (gender) {
-            case MALE:
-                results.addAll(genderInteraction.get("male"));
-                break;
-            case FEMALE:
-                results.addAll(genderInteraction.get("female"));
-                break;
-            default:
-                results.addAll(genderInteraction.get("male"));
-                results.addAll(genderInteraction.get("female"));
-                break;
-        }
-
-        return results;
-    }
-
-    /**
      * Converts a string in the format 10-20 into a range tuple.
      * Will convert nan to 0-0x7FFFFFFF and 30+ into 30-0x7FFFFFFF.
      *
@@ -296,6 +214,86 @@ public class DrugInteractionsResponse {
         }
 
         throw new IllegalStateException("Should never get here");
+    }
+
+    /**
+     * Calculates a list of possible drug interactions given a client.
+     */
+    public List<String> calculateClientInteractions(Client client) {
+        // This happens when the drug interactions is not valid.
+        if (coexistingConditions == null) {
+            return Collections.emptyList();
+        }
+
+        int clientAge = client.getAge();
+        Set<String> ageInteractions = calculateAgeInteractions(clientAge);
+
+        Gender clientGender = client.getGender();
+        Set<String> genderInteractions = calculateGenderInteractions(clientGender);
+
+        // Get the intersection
+        ageInteractions.retainAll(genderInteractions);
+
+        Map<String, List<String>> interactions = new HashMap<>();
+        for (String interaction : ageInteractions) {
+            interactions.put(interaction, new ArrayList<>());
+        }
+
+        calculateDurations(interactions);
+
+        return prettifyDurations(interactions);
+    }
+
+    /**
+     * Calculates the durations of the drug interactions, storing them in a list.
+     */
+    private void calculateDurations(Map<String, List<String>> interactions) {
+        for (Map.Entry<String, List<String>> durationEntry : durationInteraction.entrySet()) {
+            for (Entry<String, List<String>> interactionEntries : interactions.entrySet()) {
+                if (durationEntry.getValue().contains(interactionEntries.getKey())) {
+                    interactionEntries.getValue().add(durationEntry.getKey());
+                }
+            }
+        }
+    }
+
+    /**
+     * Calculates the intersection of the drug interactions for a given age.
+     */
+    private Set<String> calculateAgeInteractions(int age) {
+        Set<String> result = new HashSet<>();
+
+        for (Map.Entry<String, List<String>> pair : ageInteraction.entrySet()) {
+            IntPair range = parseAgeRange(pair.getKey());
+            if (range.value1 <= age && range.value2 >= age) {
+                result.addAll(pair.getValue());
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Calculates the drug interactions for the given gender.
+     * Will calculate the intersection of male and female if the given gender is non-binary or unspecified.
+     */
+    private Set<String> calculateGenderInteractions(Gender gender) {
+        Set<String> results = new HashSet<>();
+
+        switch (gender) {
+            case MALE:
+                results.addAll(genderInteraction.get("male"));
+                break;
+            case FEMALE:
+                results.addAll(genderInteraction.get("female"));
+                break;
+            default:
+                results.addAll(genderInteraction.get("male"));
+                results.addAll(genderInteraction.get("female"));
+                break;
+        }
+
+        return results;
     }
 
     /**

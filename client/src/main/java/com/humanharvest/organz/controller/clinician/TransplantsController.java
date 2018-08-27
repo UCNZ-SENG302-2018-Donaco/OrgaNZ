@@ -52,7 +52,6 @@ public class TransplantsController extends SubController {
     @FXML
     private HBox menuBarPane;
 
-
     @FXML
     private TableView<TransplantRequest> tableView;
 
@@ -195,7 +194,6 @@ public class TransplantsController extends SubController {
         organChoice.getCheckModel().getCheckedItems().addListener(
                 (ListChangeListener<Organ>) change -> updateTransplantRequestList());
 
-
         //On pagination update call createPage
         pagination.setPageFactory(this::createPage);
     }
@@ -284,7 +282,6 @@ public class TransplantsController extends SubController {
         organsToFilter = EnumSet.noneOf(Organ.class);
         organsToFilter.addAll(organChoice.getCheckModel().getCheckedItems());
     }
-
 
     private void updateTransplantRequestList() {
         filterRegions();

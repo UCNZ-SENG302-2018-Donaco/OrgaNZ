@@ -19,29 +19,16 @@ public enum Organ {
     BONE_MARROW("Bone marrow", null, null),
     CONNECTIVE_TISSUE("Connective tissue", null, null);
 
+    private static String mismatchText;
+
     private final String text;
     private final Duration minExpiration;
     private final Duration maxExpiration;
-
-    private static String mismatchText;
 
     Organ(String text, Duration minExpiration, Duration maxExpiration) {
         this.text = text;
         this.minExpiration = minExpiration;
         this.maxExpiration = maxExpiration;
-    }
-
-    @Override
-    public String toString() {
-        return text;
-    }
-
-    public Duration getMinExpiration() {
-        return minExpiration;
-    }
-
-    public Duration getMaxExpiration() {
-        return maxExpiration;
     }
 
     /**
@@ -60,6 +47,8 @@ public enum Organ {
         }
 
         //No match
+        //We use a static text builder so this text is dynamically built based on the ENUM options, but only needs to
+        // be built once per runtime
         if (mismatchText != null) {
             throw new IllegalArgumentException(mismatchText);
         } else {
@@ -71,5 +60,18 @@ public enum Organ {
             mismatchText = mismatchTextBuilder.toString();
             throw new IllegalArgumentException(mismatchText);
         }
+    }
+
+    @Override
+    public String toString() {
+        return text;
+    }
+
+    public Duration getMinExpiration() {
+        return minExpiration;
+    }
+
+    public Duration getMaxExpiration() {
+        return maxExpiration;
     }
 }

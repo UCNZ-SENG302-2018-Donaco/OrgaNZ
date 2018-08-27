@@ -59,6 +59,12 @@ public class ClinicianManagerMemory implements ClinicianManager {
         return Collections.unmodifiableList(clinicians);
     }
 
+    @Override
+    public void setClinicians(Collection<Clinician> clinicians) {
+        this.clinicians.clear();
+        this.clinicians.addAll(clinicians);
+    }
+
     /**
      * Remove a client object
      *
@@ -111,12 +117,6 @@ public class ClinicianManagerMemory implements ClinicianManager {
     @Override
     public Clinician getDefaultClinician() {
         return getClinicianByStaffId(DEFAULT_CLINICIAN_ID).orElseThrow(IllegalStateException::new);
-    }
-
-    @Override
-    public void setClinicians(Collection<Clinician> clinicians) {
-        this.clinicians.clear();
-        this.clinicians.addAll(clinicians);
     }
 
 }

@@ -22,6 +22,7 @@ import com.humanharvest.organz.utilities.enums.Organ;
  * @param <T> The type of data record each row in the table represents.
  */
 public class OrganCheckComboBoxCell<T> extends TableCell<T, Set<Organ>> {
+
     private final CheckComboBox<Organ> checkComboBox;
 
     /**
@@ -53,7 +54,7 @@ public class OrganCheckComboBoxCell<T> extends TableCell<T, Set<Organ>> {
      * Triggered whenever the {@link Set} of {@link Organ} value of the cell is updated; it sets that new value in the
      * {@link CheckComboBox}.
      *
-     * @param item  The new set of organs.
+     * @param item The new set of organs.
      * @param empty Whether the cell is now empty or not.
      */
     @Override

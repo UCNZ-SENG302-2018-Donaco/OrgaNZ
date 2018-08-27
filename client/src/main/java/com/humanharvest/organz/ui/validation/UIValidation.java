@@ -16,6 +16,7 @@ import org.controlsfx.control.PopOver.ArrowLocation;
 import com.humanharvest.organz.utilities.validators.Validator;
 
 public class UIValidation {
+
     private final Collection<Watched> components = new ArrayList<>();
     private final Collection<Control> disables = new ArrayList<>();
 
@@ -74,6 +75,7 @@ public class UIValidation {
     }
 
     private abstract static class Watched {
+
         private final Validator validator;
         private final Control control;
 
@@ -182,6 +184,7 @@ public class UIValidation {
     }
 
     private class ValidationListener implements InvalidationListener {
+
         private final Watched watched;
 
         ValidationListener(Watched watched) {

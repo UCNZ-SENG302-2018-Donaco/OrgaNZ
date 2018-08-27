@@ -103,7 +103,7 @@ public class ClinicianController {
     /**
      * Edits the details of the specified clinician. Note that the staffId cannot be changed.
      *
-     * @param staffId         identifier of the clinician
+     * @param staffId identifier of the clinician
      * @param editedClinician the body containing all updated information
      * @return response status
      */
@@ -144,7 +144,7 @@ public class ClinicianController {
     /**
      * Deletes the specified clinician
      *
-     * @param staffId   identifier of the clinician
+     * @param staffId identifier of the clinician
      * @param authToken id token
      */
     @DeleteMapping("/clinicians/{staffId}")
@@ -173,7 +173,7 @@ public class ClinicianController {
     /**
      * Returns the specified clinicians history
      *
-     * @param staffId   identifier of the clinician
+     * @param staffId identifier of the clinician
      * @param authToken id token
      * @return The list of HistoryItems
      */

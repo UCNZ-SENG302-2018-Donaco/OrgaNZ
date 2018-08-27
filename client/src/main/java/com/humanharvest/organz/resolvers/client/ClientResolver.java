@@ -75,7 +75,7 @@ public interface ClientResolver {
     Map<Organ, Boolean> modifyOrganDonation(Client client, Map<Organ, Boolean> changes);
 
     TransplantRequest resolveTransplantRequest(Client client, TransplantRequest request,
-                                               ResolveTransplantRequestObject resolveTransplantRequestObject);
+            ResolveTransplantRequestObject resolveTransplantRequestObject);
 
     Client modifyClientDetails(Client client, ModifyClientObject modifyClientObject);
 
@@ -84,7 +84,7 @@ public interface ClientResolver {
     MedicationRecord modifyMedicationRecord(Client client, MedicationRecord record, LocalDate stopDate);
 
     ProcedureRecord modifyProcedureRecord(Client client, ProcedureRecord toModify,
-                                          ModifyProcedureObject modifyProcedureObject);
+            ModifyProcedureObject modifyProcedureObject);
 
     DonatedOrgan editManualOverrideForOrgan(DonatedOrgan donatedOrgan, String newOverrideReason);
 

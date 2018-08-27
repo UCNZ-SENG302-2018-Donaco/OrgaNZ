@@ -37,6 +37,29 @@ public class AppUI extends Application {
     }
 
     /**
+     * Loads a backdrop page.
+     */
+    private static void loadBackPane(Pane rootPane) throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        Pane backPane = loader.load(PageNavigatorTouch.class.getResourceAsStream(Page.BACKDROP.getPath()));
+
+        rootPane.getChildren().add(backPane);
+    }
+
+    /**
+     * Loads the landing page as the initial page.
+     */
+    private static void loadTouchMainPane() {
+        MainController mainController = PageNavigator.openNewWindow();
+        mainController.setWindowContext(WindowContext.defaultContext());
+        PageNavigator.loadPage(Page.LANDING, mainController);
+    }
+
+    private static void addCss(Scene scene) {
+        scene.getStylesheets().add(AppUI.class.getResource("/css/validation.css").toExternalForm());
+    }
+
+    /**
      * Starts the JavaFX GUI. Sets up the main stage and initialises the state of the system.
      * Loads from the save file or creates one if one does not yet exist.
      *
@@ -140,25 +163,6 @@ public class AppUI extends Application {
     }
 
     /**
-     * Loads a backdrop page.
-     */
-    private static void loadBackPane(Pane rootPane) throws IOException {
-        FXMLLoader loader = new FXMLLoader();
-        Pane backPane = loader.load(PageNavigatorTouch.class.getResourceAsStream(Page.BACKDROP.getPath()));
-
-        rootPane.getChildren().add(backPane);
-    }
-
-    /**
-     * Loads the landing page as the initial page.
-     */
-    private static void loadTouchMainPane() {
-        MainController mainController = PageNavigator.openNewWindow();
-        mainController.setWindowContext(WindowContext.defaultContext());
-        PageNavigator.loadPage(Page.LANDING, mainController);
-    }
-
-    /**
      * Loads the main FXML. Sets up the page-switching PageNavigator. Loads the landing page as the initial page.
      *
      * @param stage The stage to set the window to
@@ -177,10 +181,6 @@ public class AppUI extends Application {
         PageNavigator.loadPage(Page.LANDING, mainController);
 
         return mainPane;
-    }
-
-    private static void addCss(Scene scene) {
-        scene.getStylesheets().add(AppUI.class.getResource("/css/validation.css").toExternalForm());
     }
 
 }

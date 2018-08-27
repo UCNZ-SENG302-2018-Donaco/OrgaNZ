@@ -32,7 +32,6 @@ public class ConfigManagerRest implements ConfigManager {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set("X-Auth-Token", State.getToken());
 
-
         HttpEntity<Set<Country>> entity = new HttpEntity<>(countries, httpHeaders);
 
         State.getRestTemplate()

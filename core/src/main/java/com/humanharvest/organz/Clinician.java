@@ -26,6 +26,8 @@ import com.fasterxml.jackson.annotation.JsonView;
 @Table
 public class Clinician implements ConcurrencyControlledEntity {
 
+    @JsonView(Views.Details.class)
+    private final LocalDateTime createdOn;
     @Id
     @JsonView(Views.Overview.class)
     private Integer staffId;
@@ -48,8 +50,6 @@ public class Clinician implements ConcurrencyControlledEntity {
     private Country country;
 
     @JsonView(Views.Details.class)
-    private final LocalDateTime createdOn;
-    @JsonView(Views.Details.class)
     private LocalDateTime modifiedOn;
 
     @OneToMany(cascade = CascadeType.ALL)
@@ -62,14 +62,14 @@ public class Clinician implements ConcurrencyControlledEntity {
     /**
      * Create a new Clinician object
      *
-     * @param firstName   First name string
-     * @param middleName  Middle name(s). May be null
-     * @param lastName    Last name string
+     * @param firstName First name string
+     * @param middleName Middle name(s). May be null
+     * @param lastName Last name string
      * @param workAddress Address string
-     * @param region      Region either from the Region ENUM in NZ or a string.
-     * @param country     Country of the clinician.
-     * @param staffId     The unique staffId. Should be checked using the ClinicianManager to ensure uniqueness
-     * @param password    The clinicians password for logins. Stored in plaintext
+     * @param region Region either from the Region ENUM in NZ or a string.
+     * @param country Country of the clinician.
+     * @param staffId The unique staffId. Should be checked using the ClinicianManager to ensure uniqueness
+     * @param password The clinicians password for logins. Stored in plaintext
      */
     public Clinician(
             String firstName,
@@ -94,6 +94,7 @@ public class Clinician implements ConcurrencyControlledEntity {
 
     /**
      * Returns true if the password is valid
+     *
      * @param password the password to check
      * @return true if the password is valid
      */

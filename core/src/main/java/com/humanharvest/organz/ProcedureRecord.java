@@ -55,28 +55,12 @@ public class ProcedureRecord {
         return id;
     }
 
-    public Client getClient() {
-        return client;
-    }
-
-    public String getSummary() {
-        return summary;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public Set<Organ> getAffectedOrgans() {
-        return Collections.unmodifiableSet(affectedOrgans);
-    }
-
     public void setId(long id) {
         this.id = id;
+    }
+
+    public Client getClient() {
+        return client;
     }
 
     /**
@@ -89,16 +73,32 @@ public class ProcedureRecord {
         this.client = client;
     }
 
+    public String getSummary() {
+        return summary;
+    }
+
     public void setSummary(String procedureSummary) {
         this.summary = procedureSummary;
+    }
+
+    public String getDescription() {
+        return description;
     }
 
     public void setDescription(String description) {
         this.description = description;
     }
 
+    public LocalDate getDate() {
+        return date;
+    }
+
     public void setDate(LocalDate date) {
         this.date = date;
+    }
+
+    public Set<Organ> getAffectedOrgans() {
+        return Collections.unmodifiableSet(affectedOrgans);
     }
 
     public void setAffectedOrgans(Set<Organ> affectedOrgans) {

@@ -14,22 +14,19 @@ import com.humanharvest.organz.MultitouchHandler;
 
 public class TouchAlertController {
 
+    private final ObjectProperty<Boolean> resultProperty = new SimpleObjectProperty<>();
+
     @FXML
     private Text title;
-
     @FXML
     private Text body;
-
     @FXML
     private Button cancelButton;
-
     @FXML
     private Pane pageHolder;
 
     private Stage stage;
     private Pane pane;
-
-    private final ObjectProperty<Boolean> resultProperty = new SimpleObjectProperty<>();
 
     @FXML
     public void initialize() {

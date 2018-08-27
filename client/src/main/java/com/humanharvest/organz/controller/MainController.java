@@ -49,6 +49,10 @@ public class MainController {
         return stage;
     }
 
+    public void setStage(Stage stage) {
+        this.stage = stage;
+    }
+
     public Page getCurrentPage() {
         return currentPage;
     }
@@ -57,16 +61,16 @@ public class MainController {
         return windowContext;
     }
 
-    public void setStage(Stage stage) {
-        this.stage = stage;
-    }
-
-    public void setPane(Pane pane) {
-        this.pane = pane;
+    public void setWindowContext(WindowContext context) {
+        windowContext = context;
     }
 
     public Pane getPane() {
         return pane;
+    }
+
+    public void setPane(Pane pane) {
+        this.pane = pane;
     }
 
     /**
@@ -78,10 +82,6 @@ public class MainController {
     public void setPage(Page page, Node node) {
         currentPage = page;
         pageHolder.getChildren().setAll(node);
-    }
-
-    public void setWindowContext(WindowContext context) {
-        windowContext = context;
     }
 
     void resetWindowContext() {

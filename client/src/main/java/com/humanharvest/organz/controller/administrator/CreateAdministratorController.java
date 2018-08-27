@@ -46,7 +46,6 @@ public class CreateAdministratorController extends SubController {
 
     private AdministratorManager administratorManager;
 
-
     /**
      * Initialize the controller.
      */
@@ -117,7 +116,6 @@ public class CreateAdministratorController extends SubController {
         return valid;
     }
 
-
     @FXML
     void createUser() {
         if (fieldsAreValid()) {
@@ -133,7 +131,6 @@ public class CreateAdministratorController extends SubController {
                         .title("Created Administrator")
                         .text(String.format("Administrator was created with username:%s", username))
                         .showInformation();
-
 
                 PageNavigator.loadPage(Page.SEARCH, mainController);
             } catch (ServerRestException e) {

@@ -129,19 +129,6 @@ public class OrgansToDonateController extends SubController {
     // ---------------- Setup methods ----------------
 
     /**
-     * Sets up the page, setting its title, loading the menu bar and doing the first refresh of the data.
-     *
-     * @param mainController The main controller that defines which window this subcontroller belongs to.
-     */
-    @Override
-    public void setup(MainController mainController) {
-        super.setup(mainController);
-        mainController.setTitle("Organs to Donate");
-        mainController.loadMenuBar(menuBarPane);
-        refresh();
-    }
-
-    /**
      * Formats a table cell that holds a {@link LocalDateTime} value to display that value in the date time format.
      *
      * @return The cell with the date time formatter set.
@@ -158,6 +145,19 @@ public class OrgansToDonateController extends SubController {
                 }
             }
         };
+    }
+
+    /**
+     * Sets up the page, setting its title, loading the menu bar and doing the first refresh of the data.
+     *
+     * @param mainController The main controller that defines which window this subcontroller belongs to.
+     */
+    @Override
+    public void setup(MainController mainController) {
+        super.setup(mainController);
+        mainController.setTitle("Organs to Donate");
+        mainController.loadMenuBar(menuBarPane);
+        refresh();
     }
 
     /**
@@ -432,7 +432,6 @@ public class OrgansToDonateController extends SubController {
                     .showError();
         }
     }
-
 
     private void openManuallyExpireDialog() {
         // Create a popup with a text field to enter the reason

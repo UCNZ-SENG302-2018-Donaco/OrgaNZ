@@ -18,8 +18,8 @@ public final class AlertHelper {
     /**
      * Logs a warning, and shows an alert to the user about the client not being found.
      *
-     * @param logger         the logger to use
-     * @param e              the exception that was thrown to cause this error
+     * @param logger the logger to use
+     * @param e the exception that was thrown to cause this error
      * @param mainController the main controller, whose stage is passed to PageNavigator.showAlert()
      */
     public static void showNotFoundAlert(Logger logger, NotFoundException e, MainController mainController) {
@@ -30,12 +30,11 @@ public final class AlertHelper {
                 mainController.getStage());
     }
 
-
     /**
      * Logs a warning, and shows an alert to the user about not being able to apply changes on the server.
      *
-     * @param logger         the logger to use
-     * @param e              the exception that was thrown to cause this error
+     * @param logger the logger to use
+     * @param e the exception that was thrown to cause this error
      * @param mainController the main controller, whose stage is passed to PageNavigator.showAlert()
      */
     public static void showRestAlert(Logger logger, ServerRestException e, MainController mainController) {
@@ -48,8 +47,8 @@ public final class AlertHelper {
     /**
      * Logs a warning, and shows an alert to the user about the client being modified since you retrieved the data.
      *
-     * @param logger         the logger to use
-     * @param e              the exception that was thrown to cause this error
+     * @param logger the logger to use
+     * @param e the exception that was thrown to cause this error
      * @param mainController the main controller, whose stage is passed to PageNavigator.showAlert()
      */
     public static void showIfMatchAlert(Logger logger, IfMatchFailedException e, MainController mainController) {

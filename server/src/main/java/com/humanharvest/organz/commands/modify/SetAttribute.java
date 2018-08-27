@@ -92,7 +92,6 @@ public class SetAttribute implements Runnable {
         outputStream = System.out;
     }
 
-
     @Override
     public void run() {
         Optional<Client> possibleClient = manager.getClientByID(uid);

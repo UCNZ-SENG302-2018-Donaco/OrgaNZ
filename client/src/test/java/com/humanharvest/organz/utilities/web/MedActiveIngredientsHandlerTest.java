@@ -14,6 +14,7 @@ import com.google.api.client.http.HttpTransport;
 import org.junit.Test;
 
 public class MedActiveIngredientsHandlerTest extends BaseTest {
+
     private HttpTransport mockTransport;
     private MedActiveIngredientsHandler handler;
 

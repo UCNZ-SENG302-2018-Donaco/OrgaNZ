@@ -19,9 +19,9 @@ public class ModifyAdministratorByObjectAction extends Action {
     private final ModifyAdministratorObject newDetails;
 
     public ModifyAdministratorByObjectAction(Administrator administrator,
-                                             AdministratorManager manager,
-                                             ModifyAdministratorObject oldDetails,
-                                             ModifyAdministratorObject newDetails) {
+            AdministratorManager manager,
+            ModifyAdministratorObject oldDetails,
+            ModifyAdministratorObject newDetails) {
         this.administrator = administrator;
         this.manager = manager;
         this.oldDetails = oldDetails;
@@ -39,7 +39,6 @@ public class ModifyAdministratorByObjectAction extends Action {
         BeanUtils.copyProperties(oldDetails, administrator, oldDetails.getUnmodifiedFields());
         manager.applyChangesTo(administrator);
     }
-
 
     @Override
     public String getExecuteText() {

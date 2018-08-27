@@ -63,13 +63,13 @@ public class ClientMedicationsController {
     /**
      * The POST endpoint for adding a new medication for a given client
      *
-     * @param uid                  the uid of the client
+     * @param uid the uid of the client
      * @param medicationRecordView view to create MedicationRecord
-     * @param ETag                 The corresponding If-Match header to check for concurrent update handling
+     * @param ETag The corresponding If-Match header to check for concurrent update handling
      * @return If successful, a ResponseEntity containing all the clients past and current MedicationRecords is
      * returned
      * @throws IfMatchRequiredException Thrown if the Etag header is missing
-     * @throws IfMatchFailedException   Thrown if the Etag does not match the clients current ETag
+     * @throws IfMatchFailedException Thrown if the Etag does not match the clients current ETag
      */
     @PostMapping("/clients/{uid}/medications")
     public ResponseEntity<List<MedicationRecord>> postMedication(
@@ -116,12 +116,12 @@ public class ClientMedicationsController {
     /**
      * The DELETE endpoint for deleting a MedicationRecord for a client
      *
-     * @param uid  The uid of the client
-     * @param id   The id of the medication to delete
+     * @param uid The uid of the client
+     * @param id The id of the medication to delete
      * @param ETag The corresponding If-Match header to check for concurrent update handling
      * @return If successful, a ResponseEntity with status CREATED (DELETED) is returned
      * @throws IfMatchRequiredException Thrown if the Etag header is missing
-     * @throws IfMatchFailedException   Thrown if the Etag does not match the clients current ETag
+     * @throws IfMatchFailedException Thrown if the Etag does not match the clients current ETag
      */
     @DeleteMapping("/clients/{uid}/medications/{id}")
     public ResponseEntity deleteMedication(
@@ -166,12 +166,12 @@ public class ClientMedicationsController {
     /**
      * The POST endpoint for indicating that a medication has been started
      *
-     * @param uid  The uid of the client
-     * @param id   The id of the medication to delete
+     * @param uid The uid of the client
+     * @param id The id of the medication to delete
      * @param ETag The corresponding If-Match header to check for concurrent update handling
      * @return If successful, a ResponseEntity with the altered record is returned
      * @throws IfMatchRequiredException Thrown if the Etag header is missing
-     * @throws IfMatchFailedException   Thrown if the Etag does not match the clients current ETag
+     * @throws IfMatchFailedException Thrown if the Etag does not match the clients current ETag
      */
     @PostMapping("/clients/{uid}/medications/{id}/start")
     public ResponseEntity<MedicationRecord> postMedicationStart(
@@ -212,12 +212,12 @@ public class ClientMedicationsController {
     /**
      * The POST endpoint for indicating that a medication has been stopped
      *
-     * @param uid  The uid of the client
-     * @param id   The id of the medication to delete
+     * @param uid The uid of the client
+     * @param id The id of the medication to delete
      * @param ETag The corresponding If-Match header to check for concurrent update handling
      * @return If successful, a ResponseEntity with the altered record is returned
      * @throws IfMatchRequiredException Thrown if the Etag header is missing
-     * @throws IfMatchFailedException   Thrown if the Etag does not match the clients current ETag
+     * @throws IfMatchFailedException Thrown if the Etag does not match the clients current ETag
      */
     @PostMapping("/clients/{uid}/medications/{id}/stop")
     public ResponseEntity<MedicationRecord> postMedicationStop(

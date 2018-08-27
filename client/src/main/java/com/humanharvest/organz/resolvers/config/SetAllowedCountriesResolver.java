@@ -22,7 +22,6 @@ public class SetAllowedCountriesResolver {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set("X-Auth-Token", State.getToken());
 
-
         HttpEntity<Set<Country>> entity = new HttpEntity<>(countries, httpHeaders);
 
         State.getRestTemplate()
