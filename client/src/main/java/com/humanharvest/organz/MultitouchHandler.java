@@ -84,6 +84,9 @@ public final class MultitouchHandler {
      */
     private static void handleCurrentTouch(TouchPoint touchPoint, CurrentTouch currentTouch, Pane pane) {
         Point2D touchPointPosition = new Point2D(touchPoint.getX(), touchPoint.getY());
+        if (distance(touchPointPosition, currentTouch.getCurrentScreenPoint()) < 2) {
+            return;
+        }
 
         // Find other touches belonging to this pane.
         List<CurrentTouch> paneTouches = findPaneTouches(pane);
@@ -94,6 +97,11 @@ public final class MultitouchHandler {
             CurrentTouch otherTouch = getOtherTouch(currentTouch, paneTouches);
             handleDoubleTouch(touchPointPosition, touchPoint, currentTouch, otherTouch, pane);
         }
+    }
+
+    private static double distance(Point2D point1, Point2D point2D) {
+        Point2D delta = point1.subtract(point2D);
+        return Math.sqrt(delta.getX() * delta.getX() + delta.getY() * delta.getY());
     }
 
     /**
