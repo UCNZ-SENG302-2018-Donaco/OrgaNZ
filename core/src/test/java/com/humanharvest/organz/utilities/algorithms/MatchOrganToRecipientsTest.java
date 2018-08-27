@@ -13,7 +13,6 @@ import org.junit.Test;
 import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -78,9 +77,10 @@ public class MatchOrganToRecipientsTest {
         donor.setDateOfBirth(dateOfBirth);
 
         // Setup donor's organ to donate, and death
-        donor.donateOrgan(organ, LocalDateTime.now());
-        donor.setDateOfDeath(LocalDate.now());
-        donor.setTimeOfDeath(LocalTime.now());
+        LocalDateTime now = LocalDateTime.now();
+        donor.donateOrgan(organ, now);
+        donor.setDateOfDeath(now.toLocalDate());
+        donor.setTimeOfDeath(now.toLocalTime());
         donor.setCountryOfDeath(country);
         donor.setRegionOfDeath(region);
         donor.setCityOfDeath("Christchurch");
