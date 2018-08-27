@@ -1,9 +1,8 @@
 package com.humanharvest.organz;
 
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.Set;
-import com.humanharvest.organz.utilities.enums.Country;
-
 import javax.persistence.CascadeType;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -14,9 +13,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.humanharvest.organz.utilities.enums.Country;
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Table

@@ -1,6 +1,7 @@
 package com.humanharvest.organz.state;
 
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -13,12 +14,6 @@ import com.humanharvest.organz.database.DBManager;
 import com.humanharvest.organz.utilities.enums.Country;
 
 import org.hibernate.Transaction;
-
-import javax.persistence.PersistenceException;
-import javax.persistence.RollbackException;
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.Set;
 
 public class ConfigManagerDBPure implements ConfigManager {
 

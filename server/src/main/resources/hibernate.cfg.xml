@@ -36,17 +36,17 @@
       org.hibernate.context.internal.ThreadLocalSessionContext
     </property>
 
-        <!-- Mapping With Model Class Containing Annotations -->
-        <mapping class="com.humanharvest.organz.Client"/>
-        <mapping class="com.humanharvest.organz.TransplantRequest"/>
-        <mapping class="com.humanharvest.organz.MedicationRecord"/>
-        <mapping class="com.humanharvest.organz.IllnessRecord"/>
-        <mapping class="com.humanharvest.organz.ProcedureRecord"/>
-        <mapping class="com.humanharvest.organz.DonatedOrgan"/>
-        <mapping class="com.humanharvest.organz.Clinician"/>
-        <mapping class="com.humanharvest.organz.Administrator"/>
-        <mapping class="com.humanharvest.organz.HistoryItem"/>
-        <mapping class="com.humanharvest.organz.Config"/>
-        <mapping class="com.humanharvest.organz.Hospital"/>
-    </session-factory>
+    <!-- Mapping With Model Class Containing Annotations -->
+    <mapping class="com.humanharvest.organz.Client"/>
+    <mapping class="com.humanharvest.organz.TransplantRequest"/>
+    <mapping class="com.humanharvest.organz.MedicationRecord"/>
+    <mapping class="com.humanharvest.organz.IllnessRecord"/>
+    <mapping class="com.humanharvest.organz.ProcedureRecord"/>
+    <mapping class="com.humanharvest.organz.DonatedOrgan"/>
+    <mapping class="com.humanharvest.organz.Clinician"/>
+    <mapping class="com.humanharvest.organz.Administrator"/>
+    <mapping class="com.humanharvest.organz.HistoryItem"/>
+    <mapping class="com.humanharvest.organz.Config"/>
+    <mapping class="com.humanharvest.organz.Hospital"/>
+  </session-factory>
 </hibernate-configuration>

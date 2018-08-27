@@ -1,10 +1,8 @@
 package com.humanharvest.organz.state;
 
-import com.humanharvest.organz.Hospital;
-import com.humanharvest.organz.utilities.enums.Country;
-
 import java.util.Set;
 
+import com.humanharvest.organz.Hospital;
 import com.humanharvest.organz.utilities.enums.Country;
 
 public interface ConfigManager {
