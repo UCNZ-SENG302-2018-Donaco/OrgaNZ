@@ -98,7 +98,6 @@ public class MenuBarControllerAdminTest extends ControllerTest {
             throw new RuntimeException(e);
         }
 
-        // TODO: Change this to actual output
         when(commandRunnerMock.execute("help")).thenReturn("Usage: OrgaNZ\nCommands:\nload");
 
         clickOn("#profilePrimaryItem");

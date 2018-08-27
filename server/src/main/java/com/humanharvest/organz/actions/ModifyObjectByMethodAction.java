@@ -8,6 +8,8 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static com.humanharvest.organz.utilities.type_converters.StringFormatter.unCamelCase;
+
 /**
  * Create a new modification on any object using it's field name and the old and new values
  * Exceptions are thrown if the object does not contain that field, or if the values are the wrong type
@@ -90,11 +92,6 @@ public class ModifyObjectByMethodAction extends Action {
     @Override
     public void unExecute() {
         runChange(oldValue);
-    }
-
-    private static String unCamelCase(String inCamelCase) {
-        String unCamelCased = inCamelCase.replaceAll("([a-z])([A-Z]+)", "$1 $2");
-        return unCamelCased.substring(0, 1).toUpperCase() + unCamelCased.substring(1);
     }
 
     private static String formatValue(Object[] value) {

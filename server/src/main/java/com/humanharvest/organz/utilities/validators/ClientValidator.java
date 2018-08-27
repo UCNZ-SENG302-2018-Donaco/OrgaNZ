@@ -1,10 +1,6 @@
 package com.humanharvest.organz.utilities.validators;
 
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.IllnessRecord;
-import com.humanharvest.organz.MedicationRecord;
-import com.humanharvest.organz.ProcedureRecord;
-import com.humanharvest.organz.TransplantRequest;
+import com.humanharvest.organz.*;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -144,9 +140,8 @@ public class ClientValidator {
 
     // HELPERS
 
-    // TODO: Should this really be here? It should already be invalid by this stage
     private static boolean dateIsValid(LocalDate date) {
-        // Catch any invalid dates (eg date >31), or dates with null months, etc
+        // Catch any invalid dates (eg date >31), or dates with null months, etc which can be created via Jackson
         try {
             LocalDate.parse(date.toString());
             return true;
@@ -155,8 +150,8 @@ public class ClientValidator {
         }
     }
 
-    // TODO: Should this really be here? It should already be invalid by this stage
     private static boolean datetimeIsValid(Instant datetime) {
+        // Catch any invalid datetimes (eg date >31), or dates with null months, etc which can be created via Jackson
         try {
             Instant.parse(datetime.toString());
             return true;

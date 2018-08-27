@@ -46,7 +46,6 @@ public class CommandLineControllerTest extends ControllerTest {
             throw new RuntimeException(e);
         }
 
-        // TODO: Change this to actual output
         when(commandRunnerMock.execute("help")).thenReturn("Usage: OrgaNZ\nCommands:\nload");
 
         State.login(new Administrator("username", "password"));

@@ -24,14 +24,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -174,7 +167,6 @@ public abstract class CacheManager {
                             handler.getData(rawKey);
                         } catch (BadDrugNameException | BadGatewayException | IOException e) {
                             LOGGER.log(Level.WARNING, "Couldn't refresh " + rawKey[0] + " in cache.", e);
-                            //Todo: should the old data be kept if new data can't be retrieved? it currently is not.
                         }
                     }
                 }

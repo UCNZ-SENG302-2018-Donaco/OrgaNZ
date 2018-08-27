@@ -34,16 +34,8 @@ import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.control.ContextMenu;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.Pagination;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
+import javafx.scene.control.*;
 import javafx.scene.control.TableColumn.SortType;
-import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
@@ -56,11 +48,7 @@ import org.controlsfx.control.Notifications;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Comparator;
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -189,7 +177,9 @@ public class OrgansToDonateController extends SubController {
         //On pagination update call createPage
         pagination.setPageFactory(this::createPage);
 
-        tableView.getSortOrder().setAll(timeUntilExpiryCol);
+        // Sort by time until expiry column by default.
+        tableView.getSortOrder().clear();
+        tableView.getSortOrder().add(timeUntilExpiryCol);
     }
 
     /**

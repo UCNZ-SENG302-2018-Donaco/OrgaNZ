@@ -7,14 +7,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.views.client.Views;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.Duration;
 import java.time.LocalDateTime;
 
@@ -132,7 +125,13 @@ public class DonatedOrgan {
      * near the end)
      */
     public double getFullMarker() {
-        return (double) getOrganType().getMinExpiration().getSeconds() / getOrganType().getMaxExpiration().getSeconds();
+        Duration min = getOrganType().getMinExpiration();
+        Duration max = getOrganType().getMaxExpiration();
+        if (min == null || max == null) {
+            return 1;
+        } else {
+            return (double) min.getSeconds() / max.getSeconds();
+        }
     }
 
     public Long getId() {

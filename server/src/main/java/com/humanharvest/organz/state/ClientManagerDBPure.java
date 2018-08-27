@@ -7,12 +7,7 @@ import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.database.DBManager;
 import com.humanharvest.organz.server.controller.client.ClientController;
 import com.humanharvest.organz.utilities.algorithms.MatchOrganToRecipients;
-import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
-import com.humanharvest.organz.utilities.enums.ClientType;
-import com.humanharvest.organz.utilities.enums.Country;
-import com.humanharvest.organz.utilities.enums.DonatedOrganSortOptionsEnum;
-import com.humanharvest.organz.utilities.enums.Gender;
-import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.enums.*;
 import com.humanharvest.organz.views.client.DonatedOrganView;
 import com.humanharvest.organz.views.client.PaginatedClientList;
 import com.humanharvest.organz.views.client.PaginatedDonatedOrgansList;
@@ -28,15 +23,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.StringJoiner;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -247,10 +234,9 @@ public class ClientManagerDBPure implements ClientManager {
             if (offset == null || offset < 0) {
                 offset = 0;
             }
-            //Set count to just 30 if not given
+            //Set count to all if not given
             if (count == null || count < 0) {
-                //TODO: Should this be 30 or max if not specified
-                count = 30;
+                count = Integer.MAX_VALUE;
             }
 
             //Setup the sort order for the given sort option. Default to NAME if none is given

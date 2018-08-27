@@ -16,14 +16,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
@@ -87,6 +80,11 @@ public class ClientIllnessesController {
         try {
             Client client = optionalClient.get();
             record = client.getIllnessById(id);
+            if (record == null) {
+                //Return 404 if that illness does not exist
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+
             State.getAuthenticationManager().verifyClientAccess(authToken, client);
 
             if (!ModifyIllnessValidator.isValid(modifyIllnessObject)) {
@@ -167,6 +165,11 @@ public class ClientIllnessesController {
         }
 
         IllnessRecord removeRecord = client.get().getIllnessById(id);
+        if (removeRecord == null) {
+            //Return 404 if that illness does not exist
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
         State.getAuthenticationManager().verifyClientAccess(authToken, client.get());
         DeleteIllnessRecordAction action = new DeleteIllnessRecordAction(client.get(), removeRecord,
                 State.getClientManager());
