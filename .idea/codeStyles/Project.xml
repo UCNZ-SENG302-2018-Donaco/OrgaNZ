@@ -29,6 +29,7 @@
           <emptyLine />
           <package name="javafx" withSubpackages="true" static="false" />
           <package name="org.controlsfx" withSubpackages="true" static="false" />
+          <package name="impl.org.controlsfx" withSubpackages="true" static="false" />
           <emptyLine />
           <package name="com.humanharvest" withSubpackages="true" static="false" />
           <emptyLine />

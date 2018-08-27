@@ -4,10 +4,8 @@ import java.util.EmptyStackException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import com.humanharvest.organz.ConcurrencyControlledEntity;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.views.ActionResponseView;
 
 import org.springframework.http.HttpStatus;

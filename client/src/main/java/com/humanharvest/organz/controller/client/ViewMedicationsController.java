@@ -23,6 +23,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
+import impl.org.controlsfx.autocompletion.AutoCompletionTextFieldBinding;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.MedicationRecord;
@@ -42,8 +43,6 @@ import com.humanharvest.organz.utilities.web.DrugInteractionsHandler;
 import com.humanharvest.organz.utilities.web.MedActiveIngredientsHandler;
 import com.humanharvest.organz.utilities.web.MedAutoCompleteHandler;
 import com.humanharvest.organz.views.client.CreateMedicationRecordView;
-
-import impl.org.controlsfx.autocompletion.AutoCompletionTextFieldBinding;
 
 /**
  * Controller for the view/edit medications page.
