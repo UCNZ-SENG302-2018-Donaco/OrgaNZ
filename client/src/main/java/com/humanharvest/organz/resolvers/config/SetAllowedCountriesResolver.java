@@ -1,13 +1,14 @@
 package com.humanharvest.organz.resolvers.config;
 
+import java.util.Set;
+
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Country;
+
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-
-import java.util.Set;
 
 public class SetAllowedCountriesResolver {
 

@@ -1,7 +1,5 @@
 package com.humanharvest.organz.utilities.serialisation;
 
-import com.fasterxml.jackson.databind.JavaType;
-
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -12,6 +10,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.fasterxml.jackson.databind.JavaType;
 
 /**
  * Provides functionality to serialize objects of a given datatype to a JSON file, by either overwriting it or

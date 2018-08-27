@@ -1,15 +1,20 @@
 package com.humanharvest.organz.controller.clinician;
 
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.Clinician;
-import com.humanharvest.organz.TransplantRequest;
-import com.humanharvest.organz.controller.ControllerTest;
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.enums.Region;
-import com.humanharvest.organz.utilities.view.Page;
-import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
-import com.humanharvest.organz.views.client.CreateTransplantRequestView;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.testfx.api.FxAssert.verifyThat;
+import static org.testfx.matcher.base.NodeMatchers.isVisible;
+import static org.testfx.matcher.control.TableViewMatchers.hasNumRows;
+import static org.testfx.matcher.control.TextMatchers.hasText;
+
+import java.time.Duration;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
 import javafx.scene.Node;
 import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableView;
@@ -22,26 +27,23 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.Clinician;
+import com.humanharvest.organz.TransplantRequest;
+import com.humanharvest.organz.controller.ControllerTest;
+import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.enums.Region;
+import com.humanharvest.organz.utilities.view.Page;
+import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
+import com.humanharvest.organz.views.client.CreateTransplantRequestView;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.testfx.api.FxRobot;
 import org.testfx.util.NodeQueryUtils;
 import org.testfx.util.WaitForAsyncUtils;
-
-import java.time.Duration;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.testfx.api.FxAssert.verifyThat;
-import static org.testfx.matcher.base.NodeMatchers.isVisible;
-import static org.testfx.matcher.control.TableViewMatchers.hasNumRows;
-import static org.testfx.matcher.control.TextMatchers.hasText;
 
 @Ignore
 public class TransplantsControllerTest extends ControllerTest {

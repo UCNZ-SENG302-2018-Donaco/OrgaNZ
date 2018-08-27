@@ -1,6 +1,8 @@
 package com.humanharvest.organz.ui.validation;
 
-import com.humanharvest.organz.utilities.validators.Validator;
+import java.util.ArrayList;
+import java.util.Collection;
+
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.collections.ObservableList;
@@ -11,8 +13,7 @@ import javafx.scene.control.TextField;
 import org.controlsfx.control.PopOver;
 import org.controlsfx.control.PopOver.ArrowLocation;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import com.humanharvest.organz.utilities.validators.Validator;
 
 public class UIValidation {
     private final Collection<Watched> components = new ArrayList<>();

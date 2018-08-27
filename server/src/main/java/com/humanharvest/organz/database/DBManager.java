@@ -1,15 +1,15 @@
 package com.humanharvest.organz.database;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import javax.persistence.PersistenceException;
+import javax.persistence.RollbackException;
+
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
-
-import javax.persistence.PersistenceException;
-import javax.persistence.RollbackException;
-import java.sql.Connection;
-import java.sql.SQLException;
 
 /**
  * A handler for all database requests.

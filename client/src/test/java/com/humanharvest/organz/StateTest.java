@@ -1,14 +1,15 @@
 package com.humanharvest.organz;
 
-import com.humanharvest.organz.state.Session.UserType;
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.enums.Region;
-import org.junit.Before;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
 
 import java.time.LocalDate;
 
-import static org.junit.Assert.assertEquals;
+import com.humanharvest.organz.state.Session.UserType;
+import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.enums.Region;
+
+import org.junit.Before;
+import org.junit.Test;
 
 public class StateTest extends BaseTest {
 

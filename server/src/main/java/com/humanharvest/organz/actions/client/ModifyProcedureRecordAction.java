@@ -1,13 +1,13 @@
 package com.humanharvest.organz.actions.client;
 
-import com.humanharvest.organz.ProcedureRecord;
-import com.humanharvest.organz.state.ClientManager;
-import com.humanharvest.organz.utilities.enums.Organ;
-
 import java.time.LocalDate;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import com.humanharvest.organz.ProcedureRecord;
+import com.humanharvest.organz.state.ClientManager;
+import com.humanharvest.organz.utilities.enums.Organ;
 
 /**
  * A reversible action to modify a given procedure record.

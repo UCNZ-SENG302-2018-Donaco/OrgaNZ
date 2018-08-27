@@ -1,10 +1,11 @@
 package com.humanharvest.organz.utilities.view;
 
-import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.controller.components.TouchAlertTextController;
 import javafx.beans.property.Property;
 import javafx.scene.control.Alert;
 import javafx.stage.Window;
+
+import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.components.TouchAlertTextController;
 
 /**
  * Utility class for controlling navigation between pages.

@@ -1,8 +1,5 @@
 package com.humanharvest.organz.utilities.serialisation;
 
-import com.humanharvest.organz.*;
-import com.humanharvest.organz.utilities.validators.ClientValidator;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InvalidObjectException;
@@ -10,6 +7,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.IllnessRecord;
+import com.humanharvest.organz.MedicationRecord;
+import com.humanharvest.organz.ProcedureRecord;
+import com.humanharvest.organz.TransplantRequest;
+import com.humanharvest.organz.utilities.validators.ClientValidator;
 
 /**
  * A class that can handle importing serialized clients from a file using a given {@link ReadClientStrategy}.

@@ -1,5 +1,33 @@
 package com.humanharvest.organz.controller.client;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.testfx.api.FxAssert.verifyThat;
+import static org.testfx.matcher.control.ListViewMatchers.hasListCell;
+import static org.testfx.util.NodeQueryUtils.hasText;
+import static org.testfx.util.NodeQueryUtils.isVisible;
+
+import java.io.IOException;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+import javafx.scene.Node;
+import javafx.scene.control.Button;
+import javafx.scene.control.DialogPane;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextInputControl;
+import javafx.scene.input.KeyCode;
+import javafx.stage.Stage;
+import javafx.stage.Window;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.MedicationRecord;
@@ -12,39 +40,9 @@ import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
 import com.humanharvest.organz.utilities.web.DrugInteractionsHandler;
 import com.humanharvest.organz.utilities.web.MedActiveIngredientsHandler;
-import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.DialogPane;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextInputControl;
-import javafx.scene.input.KeyCode;
-import javafx.stage.Stage;
-import javafx.stage.Window;
+
 import org.junit.Test;
 import org.testfx.api.FxRobot;
-
-import java.io.IOException;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.CoreMatchers.not;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.testfx.api.FxAssert.verifyThat;
-import static org.testfx.matcher.control.ListViewMatchers.hasListCell;
-import static org.testfx.util.NodeQueryUtils.hasText;
-import static org.testfx.util.NodeQueryUtils.isVisible;
 
 public class ViewMedicationsControllerClinicianTest extends ControllerTest {
 

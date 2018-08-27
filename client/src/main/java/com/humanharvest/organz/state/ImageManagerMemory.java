@@ -1,12 +1,13 @@
 package com.humanharvest.organz.state;
 
-import com.humanharvest.organz.utilities.exceptions.NotFoundException;
-import org.apache.commons.io.IOUtils;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.humanharvest.organz.utilities.exceptions.NotFoundException;
+
+import org.apache.commons.io.IOUtils;
 
 public class ImageManagerMemory implements ImageManager {
 

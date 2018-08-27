@@ -1,12 +1,12 @@
 package com.humanharvest.organz.actions;
 
-import com.humanharvest.organz.utilities.type_converters.PrimitiveConverter;
+import static com.humanharvest.organz.utilities.type_converters.StringFormatter.unCamelCase;
 
 import java.lang.reflect.Field;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static com.humanharvest.organz.utilities.type_converters.StringFormatter.unCamelCase;
+import com.humanharvest.organz.utilities.type_converters.PrimitiveConverter;
 
 /**
  * Create a new modification on any object using its field name and the old and new values

@@ -1,5 +1,11 @@
 package com.humanharvest.organz.server.controller.client;
 
+import static com.humanharvest.organz.utilities.validators.ClientValidator.checkClientETag;
+
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Optional;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.actions.client.ModifyClientOrgansAction;
 import com.humanharvest.organz.state.State;
@@ -7,16 +13,18 @@ import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Optional;
-
-import static com.humanharvest.organz.utilities.validators.ClientValidator.checkClientETag;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class ClientDonationStatusController {

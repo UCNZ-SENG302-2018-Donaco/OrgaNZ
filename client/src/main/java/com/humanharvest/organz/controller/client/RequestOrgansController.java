@@ -1,5 +1,29 @@
 package com.humanharvest.organz.controller.client;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javafx.beans.property.Property;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.fxml.FXML;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.controller.MainController;
@@ -19,29 +43,6 @@ import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.utilities.view.WindowContext;
 import com.humanharvest.organz.views.client.CreateTransplantRequestView;
 import com.humanharvest.organz.views.client.ResolveTransplantRequestObject;
-import javafx.beans.property.Property;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
-import javafx.fxml.FXML;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Collection;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Controller for the Request Organs page. Handles the viewing of current and past organ transplant requests. If the

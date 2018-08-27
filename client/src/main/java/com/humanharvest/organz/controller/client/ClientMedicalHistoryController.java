@@ -1,20 +1,11 @@
 package com.humanharvest.organz.controller.client;
 
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.IllnessRecord;
-import com.humanharvest.organz.controller.AlertHelper;
-import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.resolvers.client.ClientResolver;
-import com.humanharvest.organz.state.Session;
-import com.humanharvest.organz.state.Session.UserType;
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
-import com.humanharvest.organz.utilities.exceptions.NotFoundException;
-import com.humanharvest.organz.utilities.exceptions.ServerRestException;
-import com.humanharvest.organz.utilities.view.PageNavigator;
-import com.humanharvest.organz.views.client.CreateIllnessView;
-import com.humanharvest.organz.views.client.ModifyIllnessObject;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
+import java.util.Objects;
+import java.util.logging.Logger;
+
 import javafx.collections.FXCollections;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
@@ -31,11 +22,21 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.Comparator;
-import java.util.Objects;
-import java.util.logging.Logger;
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.IllnessRecord;
+import com.humanharvest.organz.controller.AlertHelper;
+import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.resolvers.client.ClientResolver;
+import com.humanharvest.organz.state.Session;
+import com.humanharvest.organz.state.Session.UserType;
+import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
+import com.humanharvest.organz.utilities.exceptions.NotFoundException;
+import com.humanharvest.organz.utilities.exceptions.ServerRestException;
+import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.views.client.CreateIllnessView;
+import com.humanharvest.organz.views.client.ModifyIllnessObject;
 
 /**
  * Controller for the medical history page, which shows a list of all current and past illnesses for the client.

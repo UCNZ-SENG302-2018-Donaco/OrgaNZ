@@ -1,13 +1,8 @@
 package com.humanharvest.organz.controller.administrator;
 
-import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.state.AdministratorManager;
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.exceptions.ServerRestException;
-import com.humanharvest.organz.utilities.view.Page;
-import com.humanharvest.organz.utilities.view.PageNavigator;
-import com.humanharvest.organz.views.administrator.CreateAdministratorView;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -18,8 +13,14 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import org.controlsfx.control.Notifications;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.state.AdministratorManager;
+import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.exceptions.ServerRestException;
+import com.humanharvest.organz.utilities.view.Page;
+import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.views.administrator.CreateAdministratorView;
 
 public class CreateAdministratorController extends SubController {
 

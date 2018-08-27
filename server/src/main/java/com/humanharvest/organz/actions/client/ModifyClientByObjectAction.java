@@ -1,13 +1,14 @@
 package com.humanharvest.organz.actions.client;
 
+import java.lang.reflect.Field;
+import java.util.stream.Collectors;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.utilities.type_converters.StringFormatter;
 import com.humanharvest.organz.views.client.ModifyClientObject;
-import org.springframework.beans.BeanUtils;
 
-import java.lang.reflect.Field;
-import java.util.stream.Collectors;
+import org.springframework.beans.BeanUtils;
 
 public class ModifyClientByObjectAction extends ClientAction {
 

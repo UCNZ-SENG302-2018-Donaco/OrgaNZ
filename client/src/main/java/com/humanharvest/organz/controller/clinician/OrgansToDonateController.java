@@ -1,5 +1,47 @@
 package com.humanharvest.organz.controller.clinician;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.SortedList;
+import javafx.fxml.FXML;
+import javafx.geometry.Insets;
+import javafx.scene.Node;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.Pagination;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableColumn.SortType;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.input.MouseButton;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
+import org.controlsfx.control.CheckComboBox;
+import org.controlsfx.control.Notifications;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.controller.MainController;
@@ -23,35 +65,6 @@ import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder
 import com.humanharvest.organz.views.client.DonatedOrganView;
 import com.humanharvest.organz.views.client.PaginatedDonatedOrgansList;
 import com.humanharvest.organz.views.clinician.DonatedOrganSortPolicy;
-import javafx.animation.Animation;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
-import javafx.beans.property.SimpleStringProperty;
-import javafx.collections.FXCollections;
-import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
-import javafx.collections.transformation.SortedList;
-import javafx.fxml.FXML;
-import javafx.geometry.Insets;
-import javafx.scene.Node;
-import javafx.scene.control.*;
-import javafx.scene.control.TableColumn.SortType;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.input.MouseButton;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
-import org.controlsfx.control.CheckComboBox;
-import org.controlsfx.control.Notifications;
-
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 public class OrgansToDonateController extends SubController {
 

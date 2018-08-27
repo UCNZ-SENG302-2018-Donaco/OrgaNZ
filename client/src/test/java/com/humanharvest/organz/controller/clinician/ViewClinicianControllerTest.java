@@ -1,16 +1,18 @@
 package com.humanharvest.organz.controller.clinician;
 
+import static org.junit.Assert.assertEquals;
+
+import javafx.scene.input.KeyCode;
+
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.controller.ControllerTest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
-import javafx.scene.input.KeyCode;
+
 import org.junit.Test;
 import org.testfx.api.FxRobotException;
-
-import static org.junit.Assert.assertEquals;
 
 public class ViewClinicianControllerTest extends ControllerTest {
 

@@ -1,10 +1,11 @@
 package com.humanharvest.organz.views.client;
 
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.DonatedOrgan;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.DonatedOrgan;
 
 @JsonAutoDetect(fieldVisibility = Visibility.ANY,
         getterVisibility = Visibility.NONE,

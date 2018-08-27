@@ -1,11 +1,12 @@
 package com.humanharvest.organz.views.client;
 
+import com.humanharvest.organz.Client;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.humanharvest.organz.Client;
 
 public class ClientLoginResponse {
     @JsonView(Views.Details.class)

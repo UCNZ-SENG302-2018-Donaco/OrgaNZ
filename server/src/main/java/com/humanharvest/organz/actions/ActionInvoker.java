@@ -1,10 +1,10 @@
 package com.humanharvest.organz.actions;
 
-import com.humanharvest.organz.utilities.ActionOccurredListener;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Stack;
+
+import com.humanharvest.organz.utilities.ActionOccurredListener;
 
 /**
  * The main invoker class for all model modifying actions. All actions should be using the Action implementation and

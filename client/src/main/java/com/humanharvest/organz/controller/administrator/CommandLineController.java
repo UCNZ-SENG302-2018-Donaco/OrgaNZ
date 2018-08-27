@@ -1,9 +1,8 @@
 package com.humanharvest.organz.controller.administrator;
 
-import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.view.PageNavigator;
+import java.util.ArrayList;
+import java.util.List;
+
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -13,8 +12,10 @@ import javafx.scene.input.Clipboard;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.view.PageNavigator;
 
 public class CommandLineController extends SubController {
 

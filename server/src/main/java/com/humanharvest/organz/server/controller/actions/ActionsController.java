@@ -1,20 +1,21 @@
 package com.humanharvest.organz.server.controller.actions;
 
+import java.util.EmptyStackException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.humanharvest.organz.ConcurrencyControlledEntity;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.views.ActionResponseView;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.EmptyStackException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 @RestController
 public class ActionsController {

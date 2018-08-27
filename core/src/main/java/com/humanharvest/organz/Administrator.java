@@ -1,17 +1,18 @@
 package com.humanharvest.organz;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import com.humanharvest.organz.views.client.Views;
-
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import java.time.Instant;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+
+import com.humanharvest.organz.views.client.Views;
+
+import com.fasterxml.jackson.annotation.JsonView;
 
 @Entity
 @Table

@@ -1,17 +1,17 @@
 package com.humanharvest.organz.state;
 
-import com.humanharvest.organz.Administrator;
-import com.humanharvest.organz.database.DBManager;
-import com.humanharvest.organz.server.controller.client.ClientController;
-import org.hibernate.Transaction;
-
-import javax.persistence.PersistenceException;
-import javax.persistence.RollbackException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.persistence.PersistenceException;
+import javax.persistence.RollbackException;
+
+import com.humanharvest.organz.Administrator;
+import com.humanharvest.organz.database.DBManager;
+
+import org.hibernate.Transaction;
 
 public class AdministratorManagerDBPure implements AdministratorManager {
 

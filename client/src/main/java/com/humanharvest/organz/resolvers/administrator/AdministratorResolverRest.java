@@ -1,18 +1,19 @@
 package com.humanharvest.organz.resolvers.administrator;
 
+import java.util.List;
+
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.views.administrator.CreateAdministratorView;
 import com.humanharvest.organz.views.administrator.ModifyAdministratorObject;
+
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-
-import java.util.List;
 
 public class AdministratorResolverRest implements AdministratorResolver {
 

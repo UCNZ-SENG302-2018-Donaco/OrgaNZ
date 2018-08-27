@@ -1,9 +1,9 @@
 package com.humanharvest.organz.utilities.validators;
 
-import com.humanharvest.organz.MedicationRecord;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+
+import com.humanharvest.organz.MedicationRecord;
 
 /**
  * A static MedicationRecord validator that checks integrity

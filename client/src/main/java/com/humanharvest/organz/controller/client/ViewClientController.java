@@ -1,23 +1,21 @@
 package com.humanharvest.organz.controller.client;
 
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.controller.AlertHelper;
-import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.controller.clinician.ViewBaseController;
-import com.humanharvest.organz.state.ClientManager;
-import com.humanharvest.organz.state.Session;
-import com.humanharvest.organz.state.Session.UserType;
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.enums.BloodType;
-import com.humanharvest.organz.utilities.enums.Country;
-import com.humanharvest.organz.utilities.enums.Gender;
-import com.humanharvest.organz.utilities.enums.Region;
-import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
-import com.humanharvest.organz.utilities.exceptions.NotFoundException;
-import com.humanharvest.organz.utilities.exceptions.ServerRestException;
-import com.humanharvest.organz.utilities.validators.client.ClientBornAndDiedDatesValidator;
-import com.humanharvest.organz.utilities.view.PageNavigator;
-import com.humanharvest.organz.views.client.ModifyClientObject;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.format.FormatStyle;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javafx.beans.property.Property;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -39,24 +37,28 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
-import org.apache.commons.io.IOUtils;
 import org.controlsfx.control.Notifications;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.time.format.FormatStyle;
-import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.controller.AlertHelper;
+import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.clinician.ViewBaseController;
+import com.humanharvest.organz.state.ClientManager;
+import com.humanharvest.organz.state.Session;
+import com.humanharvest.organz.state.Session.UserType;
+import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.enums.BloodType;
+import com.humanharvest.organz.utilities.enums.Country;
+import com.humanharvest.organz.utilities.enums.Gender;
+import com.humanharvest.organz.utilities.enums.Region;
+import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
+import com.humanharvest.organz.utilities.exceptions.NotFoundException;
+import com.humanharvest.organz.utilities.exceptions.ServerRestException;
+import com.humanharvest.organz.utilities.validators.client.ClientBornAndDiedDatesValidator;
+import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.views.client.ModifyClientObject;
+
+import org.apache.commons.io.IOUtils;
 
 /**
  * Controller for the view/edit client page.

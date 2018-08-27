@@ -1,10 +1,11 @@
 package com.humanharvest.organz.utilities.type_converters;
 
-import com.humanharvest.organz.utilities.enums.ResolveReason;
-import picocli.CommandLine;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.humanharvest.organz.utilities.enums.ResolveReason;
+
+import picocli.CommandLine;
 
 public class ResolveReasonConverter implements CommandLine.ITypeConverter<ResolveReason> {
 

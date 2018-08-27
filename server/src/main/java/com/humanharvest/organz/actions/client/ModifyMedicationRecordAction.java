@@ -1,10 +1,10 @@
 package com.humanharvest.organz.actions.client;
 
-import com.humanharvest.organz.MedicationRecord;
-import com.humanharvest.organz.state.ClientManager;
-
 import java.time.LocalDate;
 import java.util.Objects;
+
+import com.humanharvest.organz.MedicationRecord;
+import com.humanharvest.organz.state.ClientManager;
 
 /**
  * A reversible action to modify a given medication record (specifically, its 'started' and 'stopped' dates).

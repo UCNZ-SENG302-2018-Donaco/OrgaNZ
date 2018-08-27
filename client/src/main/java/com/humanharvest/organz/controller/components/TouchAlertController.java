@@ -1,6 +1,5 @@
 package com.humanharvest.organz.controller.components;
 
-import com.humanharvest.organz.MultitouchHandler;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.Property;
 import javafx.beans.property.SimpleObjectProperty;
@@ -10,6 +9,8 @@ import javafx.scene.control.Button;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+
+import com.humanharvest.organz.MultitouchHandler;
 
 public class TouchAlertController {
 

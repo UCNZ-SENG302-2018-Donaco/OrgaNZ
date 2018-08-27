@@ -1,8 +1,13 @@
 package com.humanharvest.organz.controller;
 
-import com.humanharvest.organz.GUICategory;
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.view.Page;
+import static org.mockito.Mockito.mock;
+
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -12,20 +17,17 @@ import javafx.scene.control.DialogPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+
+import com.humanharvest.organz.GUICategory;
+import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.view.Page;
+
 import org.junit.After;
 import org.junit.BeforeClass;
 import org.junit.experimental.categories.Category;
 import org.springframework.web.client.RestTemplate;
 import org.testfx.api.FxRobot;
 import org.testfx.framework.junit.ApplicationTest;
-
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import static org.mockito.Mockito.mock;
 
 @Category(GUICategory.class)
 public abstract class ControllerTest extends ApplicationTest {

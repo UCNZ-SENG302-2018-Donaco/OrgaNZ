@@ -1,11 +1,11 @@
 package com.humanharvest.organz.state;
 
-import com.humanharvest.organz.Administrator;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
+import com.humanharvest.organz.Administrator;
 
 /**
  * The class to handle the Administrators.

@@ -1,7 +1,7 @@
 package com.humanharvest.organz;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Entity;
@@ -10,8 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 /**
  * Represents an instance of a user taking a medication for a period of time.

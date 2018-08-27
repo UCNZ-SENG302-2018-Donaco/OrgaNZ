@@ -1,13 +1,5 @@
 package com.humanharvest.organz.utilities.serialisation;
 
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.utilities.enums.BloodType;
-import com.humanharvest.organz.utilities.enums.Country;
-import com.humanharvest.organz.utilities.enums.Gender;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -21,6 +13,15 @@ import java.time.format.DateTimeParseException;
 import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.utilities.enums.BloodType;
+import com.humanharvest.organz.utilities.enums.Country;
+import com.humanharvest.organz.utilities.enums.Gender;
+
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 
 /**
  * An implementation of {@link ReadClientStrategy} that can be used for reading clients serialized to CSV. This

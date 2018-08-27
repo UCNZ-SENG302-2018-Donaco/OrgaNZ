@@ -1,5 +1,14 @@
 package com.humanharvest.organz.utilities.web;
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.utilities.exceptions.BadDrugNameException;
+import com.humanharvest.organz.utilities.exceptions.BadGatewayException;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequest;
@@ -8,14 +17,6 @@ import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonObjectParser;
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.utilities.exceptions.BadDrugNameException;
-import com.humanharvest.organz.utilities.exceptions.BadGatewayException;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * A handler for requests to a drug interaction API.

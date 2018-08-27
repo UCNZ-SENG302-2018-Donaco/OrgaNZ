@@ -1,16 +1,16 @@
 package com.humanharvest.organz.actions.client;
 
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.state.ClientManager;
-import com.humanharvest.organz.utilities.enums.Country;
-import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.state.ClientManager;
+import com.humanharvest.organz.utilities.enums.Country;
+import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 
 /**
  * A reversible action that will change the client's date of death to the date given, cancel all their currently

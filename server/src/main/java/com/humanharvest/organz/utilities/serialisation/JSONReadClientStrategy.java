@@ -1,13 +1,14 @@
 package com.humanharvest.organz.utilities.serialisation;
 
-import com.fasterxml.jackson.databind.exc.InvalidFormatException;
-import com.humanharvest.organz.Client;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InvalidObjectException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.humanharvest.organz.Client;
+
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 
 /**
  * An implementation of {@link ReadClientStrategy} that can be used for reading clients serialized to JSON.

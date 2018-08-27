@@ -1,5 +1,11 @@
 package com.humanharvest.organz.server.controller.client;
 
+import static com.humanharvest.organz.utilities.validators.ClientValidator.checkClientETag;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.actions.client.AddMedicationRecordAction;
@@ -9,16 +15,17 @@ import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
 import com.humanharvest.organz.views.client.CreateMedicationRecordView;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
-
-import static com.humanharvest.organz.utilities.validators.ClientValidator.checkClientETag;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class ClientMedicationsController {

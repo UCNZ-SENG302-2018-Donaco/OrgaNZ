@@ -1,11 +1,12 @@
 package com.humanharvest.organz.commands;
 
-import com.humanharvest.organz.actions.ActionInvoker;
-import picocli.CommandLine.IFactory;
-
 import java.io.PrintStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+
+import com.humanharvest.organz.actions.ActionInvoker;
+
+import picocli.CommandLine.IFactory;
 
 /**
  * Inject a PrintStream and ActionInvoker (if required) into PicoCLI Commands

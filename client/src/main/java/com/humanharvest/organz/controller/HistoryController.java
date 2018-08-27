@@ -1,9 +1,10 @@
 package com.humanharvest.organz.controller;
 
-import com.humanharvest.organz.HistoryItem;
-import com.humanharvest.organz.state.Session;
-import com.humanharvest.organz.state.Session.UserType;
-import com.humanharvest.organz.state.State;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.logging.Logger;
+
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableCell;
@@ -12,10 +13,10 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.logging.Logger;
+import com.humanharvest.organz.HistoryItem;
+import com.humanharvest.organz.state.Session;
+import com.humanharvest.organz.state.Session.UserType;
+import com.humanharvest.organz.state.State;
 
 /**
  * Controller for the history page.

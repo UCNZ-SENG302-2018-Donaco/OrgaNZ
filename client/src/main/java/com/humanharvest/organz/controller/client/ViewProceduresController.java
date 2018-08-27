@@ -1,22 +1,13 @@
 package com.humanharvest.organz.controller.client;
 
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.ProcedureRecord;
-import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.controller.components.DatePickerCell;
-import com.humanharvest.organz.controller.components.OrganCheckComboBoxCell;
-import com.humanharvest.organz.state.Session;
-import com.humanharvest.organz.state.Session.UserType;
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.exceptions.BadRequestException;
-import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
-import com.humanharvest.organz.utilities.exceptions.NotFoundException;
-import com.humanharvest.organz.utilities.exceptions.ServerRestException;
-import com.humanharvest.organz.utilities.view.PageNavigator;
-import com.humanharvest.organz.views.client.CreateProcedureView;
-import com.humanharvest.organz.views.client.ModifyProcedureObject;
+import java.time.LocalDate;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
 import javafx.collections.FXCollections;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
@@ -35,13 +26,23 @@ import javafx.scene.text.Text;
 import org.controlsfx.control.CheckComboBox;
 import org.controlsfx.control.Notifications;
 
-import java.time.LocalDate;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.ProcedureRecord;
+import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.controller.components.DatePickerCell;
+import com.humanharvest.organz.controller.components.OrganCheckComboBoxCell;
+import com.humanharvest.organz.state.Session;
+import com.humanharvest.organz.state.Session.UserType;
+import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.exceptions.BadRequestException;
+import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
+import com.humanharvest.organz.utilities.exceptions.NotFoundException;
+import com.humanharvest.organz.utilities.exceptions.ServerRestException;
+import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.views.client.CreateProcedureView;
+import com.humanharvest.organz.views.client.ModifyProcedureObject;
 
 /**
  * Controller for the medical history page, which shows a list of all pending and past procedures for the client.

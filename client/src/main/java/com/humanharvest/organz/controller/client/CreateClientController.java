@@ -1,5 +1,17 @@
 package com.humanharvest.organz.controller.client;
 
+import java.time.LocalDate;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javafx.beans.property.Property;
+import javafx.fxml.FXML;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.Pane;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.controller.MainController;
@@ -16,17 +28,6 @@ import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.utilities.view.WindowContext;
 import com.humanharvest.organz.views.client.CreateClientView;
-import javafx.beans.property.Property;
-import javafx.fxml.FXML;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.Pane;
-
-import java.time.LocalDate;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Controller for the create client page.

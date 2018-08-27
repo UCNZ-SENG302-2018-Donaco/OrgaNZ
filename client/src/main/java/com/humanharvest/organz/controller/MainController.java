@@ -1,9 +1,9 @@
 package com.humanharvest.organz.controller;
 
-import com.humanharvest.organz.MultitouchHandler;
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.view.Page;
-import com.humanharvest.organz.utilities.view.WindowContext;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -13,9 +13,10 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.humanharvest.organz.MultitouchHandler;
+import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.view.Page;
+import com.humanharvest.organz.utilities.view.WindowContext;
 
 /**
  * Main controller class for the application window.

@@ -1,12 +1,12 @@
 package com.humanharvest.organz.actions.client;
 
-import com.humanharvest.organz.TransplantRequest;
-import com.humanharvest.organz.state.ClientManager;
-import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
-
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
+
+import com.humanharvest.organz.TransplantRequest;
+import com.humanharvest.organz.state.ClientManager;
+import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 
 /**
  * A reversible action that will resolve the given transplant request with a given status. This status must be one of

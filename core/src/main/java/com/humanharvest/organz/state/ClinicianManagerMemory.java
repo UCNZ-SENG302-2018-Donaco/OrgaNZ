@@ -1,12 +1,12 @@
 package com.humanharvest.organz.state;
 
-import com.humanharvest.organz.Clinician;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
+import com.humanharvest.organz.Clinician;
 
 /**
  * The class to handle the Client inputs, including adding,

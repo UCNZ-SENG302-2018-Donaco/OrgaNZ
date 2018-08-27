@@ -1,5 +1,20 @@
 package com.humanharvest.organz.controller.client;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.testfx.api.FxAssert.verifyThat;
+import static org.testfx.matcher.control.TableViewMatchers.containsRow;
+import static org.testfx.util.NodeQueryUtils.isVisible;
+
+import java.time.LocalDate;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
+import javafx.scene.Node;
+import javafx.scene.control.CheckBox;
+import javafx.scene.input.KeyCode;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.ProcedureRecord;
@@ -11,22 +26,9 @@ import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
-import javafx.scene.Node;
-import javafx.scene.control.CheckBox;
-import javafx.scene.input.KeyCode;
+
 import org.junit.Test;
 import org.testfx.util.NodeQueryUtils;
-
-import java.time.LocalDate;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.testfx.api.FxAssert.verifyThat;
-import static org.testfx.matcher.control.TableViewMatchers.containsRow;
-import static org.testfx.util.NodeQueryUtils.isVisible;
 
 public class ViewProceduresControllerClinicianTest extends ControllerTest {
 

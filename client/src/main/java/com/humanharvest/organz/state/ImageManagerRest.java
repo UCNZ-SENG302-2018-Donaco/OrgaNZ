@@ -1,14 +1,14 @@
 package com.humanharvest.organz.state;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.apache.commons.io.IOUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
-import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * Deals with all image handling in with the server for the client.

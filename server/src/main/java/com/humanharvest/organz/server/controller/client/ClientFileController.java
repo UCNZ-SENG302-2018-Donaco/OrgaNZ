@@ -1,5 +1,12 @@
 package com.humanharvest.organz.server.controller.client;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
@@ -8,6 +15,7 @@ import com.humanharvest.organz.utilities.serialisation.ClientImporter;
 import com.humanharvest.organz.utilities.serialisation.JSONFileWriter;
 import com.humanharvest.organz.utilities.serialisation.JSONReadClientStrategy;
 import com.humanharvest.organz.utilities.serialisation.ReadClientStrategy;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,13 +23,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Provides handlers for requests to these endpoints:

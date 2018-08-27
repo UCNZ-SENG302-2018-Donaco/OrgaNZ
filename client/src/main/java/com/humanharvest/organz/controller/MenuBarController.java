@@ -1,16 +1,17 @@
 package com.humanharvest.organz.controller;
 
-import com.humanharvest.organz.AppUI;
-import com.humanharvest.organz.MultitouchHandler;
-import com.humanharvest.organz.state.Session;
-import com.humanharvest.organz.state.Session.UserType;
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.state.State.UiType;
-import com.humanharvest.organz.utilities.CacheManager;
-import com.humanharvest.organz.utilities.exceptions.BadRequestException;
-import com.humanharvest.organz.utilities.view.Page;
-import com.humanharvest.organz.utilities.view.PageNavigator;
-import com.humanharvest.organz.views.ActionResponseView;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javafx.application.Platform;
 import javafx.beans.property.Property;
 import javafx.concurrent.Task;
@@ -27,17 +28,17 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.controlsfx.control.Notifications;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.humanharvest.organz.AppUI;
+import com.humanharvest.organz.MultitouchHandler;
+import com.humanharvest.organz.state.Session;
+import com.humanharvest.organz.state.Session.UserType;
+import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.state.State.UiType;
+import com.humanharvest.organz.utilities.CacheManager;
+import com.humanharvest.organz.utilities.exceptions.BadRequestException;
+import com.humanharvest.organz.utilities.view.Page;
+import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.views.ActionResponseView;
 
 /**
  * Controller for the sidebar pane imported into every page in the main part of the GUI.

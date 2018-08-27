@@ -1,19 +1,20 @@
 package com.humanharvest.organz.server.controller.clinician;
 
+import java.util.List;
+import java.util.Optional;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import com.humanharvest.organz.utilities.validators.client.DonatedOrganValidator;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Provides handlers for requests to these endpoints:

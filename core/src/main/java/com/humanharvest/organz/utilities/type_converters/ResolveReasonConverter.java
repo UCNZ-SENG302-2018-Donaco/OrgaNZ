@@ -1,9 +1,9 @@
 package com.humanharvest.organz.utilities.type_converters;
 
-import com.humanharvest.organz.utilities.enums.ResolveReason;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.humanharvest.organz.utilities.enums.ResolveReason;
 
 public class ResolveReasonConverter implements TypeConverter<ResolveReason> {
 

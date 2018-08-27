@@ -1,9 +1,9 @@
 package com.humanharvest.organz.utilities.validators;
 
-import com.humanharvest.organz.IllnessRecord;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+
+import com.humanharvest.organz.IllnessRecord;
 
 /**
  * A static IllnessRecord validator that checks integrity

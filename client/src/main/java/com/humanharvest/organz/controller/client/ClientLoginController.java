@@ -1,5 +1,17 @@
 package com.humanharvest.organz.controller.client;
 
+import java.util.List;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javafx.collections.FXCollections;
+import javafx.fxml.FXML;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.ListCell;
+import javafx.scene.control.ListView;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.controller.MainController;
@@ -11,17 +23,6 @@ import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
-import javafx.collections.FXCollections;
-import javafx.fxml.FXML;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.ListView;
-
-import java.util.List;
-import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Controller for the login page.

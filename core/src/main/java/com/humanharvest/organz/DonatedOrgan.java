@@ -1,15 +1,23 @@
 package com.humanharvest.organz;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
+import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.views.client.Views;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.views.client.Views;
-
-import javax.persistence.*;
-import java.time.Duration;
-import java.time.LocalDateTime;
 
 @JsonAutoDetect(fieldVisibility = Visibility.ANY,
         getterVisibility = Visibility.NONE,

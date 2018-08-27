@@ -1,13 +1,14 @@
 package com.humanharvest.organz.controller;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javafx.scene.control.Alert.AlertType;
+
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.PageNavigator;
-import javafx.scene.control.Alert.AlertType;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public final class AlertHelper {
 

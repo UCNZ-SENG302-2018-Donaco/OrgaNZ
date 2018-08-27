@@ -1,11 +1,6 @@
 package com.humanharvest.organz;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonView;
-import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
-import com.humanharvest.organz.views.client.Views;
-
+import java.time.LocalDateTime;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Column;
@@ -17,7 +12,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import java.time.LocalDateTime;
+
+import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
+import com.humanharvest.organz.views.client.Views;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonView;
 
 /**
  * Represents a request for a client to receive a transplant for a given organ.

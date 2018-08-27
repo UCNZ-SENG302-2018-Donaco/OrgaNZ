@@ -1,5 +1,30 @@
 package com.humanharvest.organz.controller.client;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
+import javafx.fxml.FXML;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.Tooltip;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.Pane;
+import org.controlsfx.control.Notifications;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.TransplantRequest;
@@ -16,22 +41,6 @@ import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.PageNavigator;
-import javafx.beans.property.SimpleObjectProperty;
-import javafx.collections.FXCollections;
-import javafx.fxml.FXML;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.*;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.Pane;
-import org.controlsfx.control.Notifications;
-
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 /**
  * Controller for the register organs page.

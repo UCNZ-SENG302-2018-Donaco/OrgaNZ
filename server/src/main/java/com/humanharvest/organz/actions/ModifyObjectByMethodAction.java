@@ -1,6 +1,6 @@
 package com.humanharvest.organz.actions;
 
-import com.humanharvest.organz.utilities.type_converters.PrimitiveConverter;
+import static com.humanharvest.organz.utilities.type_converters.StringFormatter.unCamelCase;
 
 import java.beans.Statement;
 import java.lang.reflect.Method;
@@ -8,7 +8,7 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static com.humanharvest.organz.utilities.type_converters.StringFormatter.unCamelCase;
+import com.humanharvest.organz.utilities.type_converters.PrimitiveConverter;
 
 /**
  * Create a new modification on any object using it's field name and the old and new values

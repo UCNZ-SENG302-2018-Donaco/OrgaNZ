@@ -1,5 +1,17 @@
 package com.humanharvest.organz.controller.client;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.controller.ControllerTest;
@@ -9,18 +21,8 @@ import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
+
 import org.junit.Test;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 public class SubmitDeathDetailsControllerTest extends ControllerTest {
 

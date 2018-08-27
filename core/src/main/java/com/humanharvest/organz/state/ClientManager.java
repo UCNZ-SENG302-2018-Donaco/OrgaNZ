@@ -1,5 +1,11 @@
 package com.humanharvest.organz.state;
 
+import java.time.LocalDate;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.HistoryItem;
@@ -12,12 +18,6 @@ import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.views.client.PaginatedClientList;
 import com.humanharvest.organz.views.client.PaginatedDonatedOrgansList;
 import com.humanharvest.organz.views.client.PaginatedTransplantList;
-
-import java.time.LocalDate;
-import java.util.Collection;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
 
 /**
  * Handles the manipulation of the clients currently stored in the system.

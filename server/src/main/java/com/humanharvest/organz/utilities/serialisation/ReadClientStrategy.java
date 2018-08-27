@@ -1,11 +1,11 @@
 package com.humanharvest.organz.utilities.serialisation;
 
-import com.humanharvest.organz.Client;
-
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InvalidObjectException;
+
+import com.humanharvest.organz.Client;
 
 /**
  * A strategy that describes how to read the contents of a file as a series of {@link Client}s.

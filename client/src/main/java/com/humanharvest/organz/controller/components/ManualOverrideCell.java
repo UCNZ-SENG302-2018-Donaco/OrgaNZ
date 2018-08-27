@@ -1,6 +1,5 @@
 package com.humanharvest.organz.controller.components;
 
-import com.humanharvest.organz.DonatedOrgan;
 import javafx.beans.binding.NumberBinding;
 import javafx.scene.control.Button;
 import javafx.scene.control.Control;
@@ -11,6 +10,8 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+
+import com.humanharvest.organz.DonatedOrgan;
 
 public class ManualOverrideCell extends TableCell<DonatedOrgan, DonatedOrgan> {
 

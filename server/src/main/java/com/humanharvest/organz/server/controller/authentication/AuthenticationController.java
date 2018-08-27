@@ -1,6 +1,7 @@
 package com.humanharvest.organz.server.controller.authentication;
 
-import com.fasterxml.jackson.annotation.JsonView;
+import java.util.Optional;
+
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
@@ -15,14 +16,14 @@ import com.humanharvest.organz.views.client.ClientLoginResponse;
 import com.humanharvest.organz.views.client.Views;
 import com.humanharvest.organz.views.clinician.ClinicianLoginRequest;
 import com.humanharvest.organz.views.clinician.ClinicianLoginResponse;
+
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Optional;
 
 @RestController
 public class AuthenticationController {

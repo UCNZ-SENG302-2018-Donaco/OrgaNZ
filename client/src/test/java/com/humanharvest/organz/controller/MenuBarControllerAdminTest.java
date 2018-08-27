@@ -1,15 +1,16 @@
 package com.humanharvest.organz.controller;
 
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.resolvers.CommandRunner;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
-import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.junit.Test;
 
 public class MenuBarControllerAdminTest extends ControllerTest {
 

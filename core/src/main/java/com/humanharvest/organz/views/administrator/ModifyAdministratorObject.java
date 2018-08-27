@@ -1,10 +1,11 @@
 package com.humanharvest.organz.views.administrator;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.humanharvest.organz.views.ModifyBaseObject;
-
 import java.lang.reflect.Member;
 import java.util.stream.Collectors;
+
+import com.humanharvest.organz.views.ModifyBaseObject;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @JsonSerialize(using = ModifyBaseObject.Serialiser.class)
 public class ModifyAdministratorObject extends ModifyBaseObject {

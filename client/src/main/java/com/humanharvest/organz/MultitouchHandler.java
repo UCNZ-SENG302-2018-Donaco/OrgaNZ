@@ -1,8 +1,14 @@
 package com.humanharvest.organz;
 
-import com.humanharvest.organz.skin.MTDatePickerSkin;
-import com.humanharvest.organz.utilities.ReflectionUtils;
-import com.sun.javafx.scene.NodeEventDispatcher;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.function.Consumer;
+
 import javafx.beans.InvalidationListener;
 import javafx.beans.Observable;
 import javafx.collections.ObservableList;
@@ -36,6 +42,11 @@ import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Scale;
 import javafx.scene.transform.Transform;
 import javafx.scene.transform.Translate;
+
+import com.humanharvest.organz.skin.MTDatePickerSkin;
+import com.humanharvest.organz.utilities.ReflectionUtils;
+
+import com.sun.javafx.scene.NodeEventDispatcher;
 import org.tuiofx.widgets.controls.KeyboardPane;
 import org.tuiofx.widgets.skin.ChoiceBoxSkinAndroid;
 import org.tuiofx.widgets.skin.KeyboardManager;
@@ -45,15 +56,6 @@ import org.tuiofx.widgets.skin.OnScreenKeyboard;
 import org.tuiofx.widgets.skin.TextAreaSkinAndroid;
 import org.tuiofx.widgets.skin.TextFieldSkinAndroid;
 import org.tuiofx.widgets.utils.Util;
-
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.function.Consumer;
 
 public final class MultitouchHandler {
     private static final List<CurrentTouch> touches = new ArrayList<>();

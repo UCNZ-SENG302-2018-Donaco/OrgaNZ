@@ -1,12 +1,12 @@
 package com.humanharvest.organz.actions.client;
 
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.actions.ModifyObjectByFieldAction;
-import com.humanharvest.organz.state.ClientManager;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.actions.ModifyObjectByFieldAction;
+import com.humanharvest.organz.state.ClientManager;
 
 /**
  * A reversible client modification Action

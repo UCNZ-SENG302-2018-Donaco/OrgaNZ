@@ -1,5 +1,20 @@
 package com.humanharvest.organz.controller.administrator;
 
+import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertFalse;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.testfx.api.FxAssert.verifyThat;
+import static org.testfx.matcher.control.TextInputControlMatchers.hasText;
+
+import java.time.LocalDate;
+
+import javafx.application.Platform;
+import javafx.scene.control.TextArea;
+import javafx.scene.input.Clipboard;
+import javafx.scene.input.ClipboardContent;
+import javafx.scene.input.KeyCode;
+
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.controller.ControllerTest;
@@ -7,21 +22,8 @@ import com.humanharvest.organz.resolvers.CommandRunner;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
-import javafx.application.Platform;
-import javafx.scene.control.TextArea;
-import javafx.scene.input.Clipboard;
-import javafx.scene.input.ClipboardContent;
-import javafx.scene.input.KeyCode;
+
 import org.junit.Test;
-
-import java.time.LocalDate;
-
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertFalse;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.testfx.api.FxAssert.verifyThat;
-import static org.testfx.matcher.control.TextInputControlMatchers.hasText;
 
 public class CommandLineControllerTest extends ControllerTest {
 

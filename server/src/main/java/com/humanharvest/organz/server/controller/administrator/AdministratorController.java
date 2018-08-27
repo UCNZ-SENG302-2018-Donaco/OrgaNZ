@@ -1,6 +1,8 @@
 package com.humanharvest.organz.server.controller.administrator;
 
-import com.fasterxml.jackson.annotation.JsonView;
+import java.util.List;
+import java.util.Optional;
+
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.actions.ActionInvoker;
@@ -20,6 +22,8 @@ import com.humanharvest.organz.views.administrator.CommandView;
 import com.humanharvest.organz.views.administrator.CreateAdministratorView;
 import com.humanharvest.organz.views.administrator.ModifyAdministratorObject;
 import com.humanharvest.organz.views.client.Views;
+
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -33,9 +37,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
-import java.util.Optional;
 
 @RestController
 public class AdministratorController {

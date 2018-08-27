@@ -1,10 +1,10 @@
 package com.humanharvest.organz.actions.administrator;
 
-import com.humanharvest.organz.Administrator;
-import com.humanharvest.organz.actions.ModifyObjectByMethodAction;
-
 import java.util.ArrayList;
 import java.util.stream.Collectors;
+
+import com.humanharvest.organz.Administrator;
+import com.humanharvest.organz.actions.ModifyObjectByMethodAction;
 
 /**
  * A reversible administrator modification Action

@@ -1,10 +1,10 @@
 package com.humanharvest.organz.utilities.validators;
 
-import com.humanharvest.organz.utilities.enums.Country;
-import com.humanharvest.organz.utilities.enums.Region;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.humanharvest.organz.utilities.enums.Country;
+import com.humanharvest.organz.utilities.enums.Region;
 
 public final class RegionValidator {
 

@@ -1,21 +1,22 @@
 package com.humanharvest.organz.commands.modify;
 
-import com.humanharvest.organz.state.ClientManager;
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.serialisation.CSVReadClientStrategy;
-import com.humanharvest.organz.utilities.serialisation.ClientImporter;
-import com.humanharvest.organz.utilities.serialisation.JSONReadClientStrategy;
-import com.humanharvest.organz.utilities.serialisation.ReadClientStrategy;
-import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
-import picocli.CommandLine.Parameters;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.humanharvest.organz.state.ClientManager;
+import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.serialisation.CSVReadClientStrategy;
+import com.humanharvest.organz.utilities.serialisation.ClientImporter;
+import com.humanharvest.organz.utilities.serialisation.JSONReadClientStrategy;
+import com.humanharvest.organz.utilities.serialisation.ReadClientStrategy;
+
+import picocli.CommandLine.Command;
+import picocli.CommandLine.Option;
+import picocli.CommandLine.Parameters;
 
 /**
  * Command line to load the information of all the clients from a JSON file,

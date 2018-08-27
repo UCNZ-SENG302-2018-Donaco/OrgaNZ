@@ -1,10 +1,5 @@
 package com.humanharvest.organz.utilities.web;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.api.client.util.Key;
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.utilities.enums.Gender;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -17,6 +12,12 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.utilities.enums.Gender;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.api.client.util.Key;
 
 /**
  * Handles parsing the response from a drug interactions API request and determining which symptoms apply to a given

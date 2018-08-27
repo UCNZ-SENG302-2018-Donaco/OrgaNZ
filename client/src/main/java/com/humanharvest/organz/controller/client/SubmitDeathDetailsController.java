@@ -1,5 +1,22 @@
 package com.humanharvest.organz.controller.client;
 
+import static com.humanharvest.organz.controller.clinician.ViewBaseController.addChangeIfDifferent;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javafx.beans.property.Property;
+import javafx.collections.FXCollections;
+import javafx.fxml.FXML;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.TextField;
+import org.controlsfx.control.Notifications;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
@@ -11,22 +28,6 @@ import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.views.client.ModifyClientObject;
-import javafx.beans.property.Property;
-import javafx.collections.FXCollections;
-import javafx.fxml.FXML;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TextField;
-import org.controlsfx.control.Notifications;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.format.DateTimeParseException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import static com.humanharvest.organz.controller.clinician.ViewBaseController.addChangeIfDifferent;
 
 public class SubmitDeathDetailsController extends SubController {
 

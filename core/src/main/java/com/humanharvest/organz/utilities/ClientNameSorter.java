@@ -1,8 +1,8 @@
 package com.humanharvest.organz.utilities;
 
-import com.humanharvest.organz.Client;
-
 import java.util.Comparator;
+
+import com.humanharvest.organz.Client;
 
 /**
  * Compare and sort Clients based on the names in order:

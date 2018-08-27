@@ -1,15 +1,15 @@
 package com.humanharvest.organz;
 
-import com.humanharvest.organz.utilities.enums.Country;
-
+import java.util.EnumSet;
+import java.util.Set;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import java.util.EnumSet;
-import java.util.Set;
+
+import com.humanharvest.organz.utilities.enums.Country;
 
 @Entity
 @Table

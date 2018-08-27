@@ -1,5 +1,21 @@
 package com.humanharvest.organz.controller.clinician;
 
+import static org.junit.Assert.*;
+import static org.testfx.api.FxAssert.verifyThat;
+import static org.testfx.matcher.base.NodeMatchers.isNull;
+import static org.testfx.matcher.base.NodeMatchers.isVisible;
+import static org.testfx.matcher.control.TableViewMatchers.containsRowAtIndex;
+import static org.testfx.matcher.control.TableViewMatchers.hasNumRows;
+import static org.testfx.matcher.control.TableViewMatchers.hasTableCell;
+import static org.testfx.matcher.control.TextInputControlMatchers.hasText;
+
+import java.time.LocalDate;
+
+import javafx.scene.Node;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TitledPane;
+import javafx.scene.input.KeyCode;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.TransplantRequest;
@@ -12,28 +28,10 @@ import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
-import javafx.scene.Node;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TitledPane;
-import javafx.scene.input.KeyCode;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.testfx.matcher.control.TextMatchers;
-
-import java.time.LocalDate;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.testfx.api.FxAssert.verifyThat;
-import static org.testfx.matcher.base.NodeMatchers.isNull;
-import static org.testfx.matcher.base.NodeMatchers.isVisible;
-import static org.testfx.matcher.control.TableViewMatchers.containsRowAtIndex;
-import static org.testfx.matcher.control.TableViewMatchers.hasNumRows;
-import static org.testfx.matcher.control.TableViewMatchers.hasTableCell;
-import static org.testfx.matcher.control.TextInputControlMatchers.hasText;
 
 /**
  * Class to test the search clients controller.

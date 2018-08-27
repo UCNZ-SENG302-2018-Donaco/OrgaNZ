@@ -1,13 +1,13 @@
 package com.humanharvest.organz.actions.clinician;
 
-import com.humanharvest.organz.Clinician;
-import com.humanharvest.organz.actions.ModifyObjectByMethodAction;
-import com.humanharvest.organz.state.ClinicianManager;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import com.humanharvest.organz.Clinician;
+import com.humanharvest.organz.actions.ModifyObjectByMethodAction;
+import com.humanharvest.organz.state.ClinicianManager;
 
 /**
  * A reversible clinician modification Action

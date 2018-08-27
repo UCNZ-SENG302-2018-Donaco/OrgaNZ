@@ -1,13 +1,13 @@
 package com.humanharvest.organz.utilities.validators.client;
 
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.views.client.ModifyClientObject;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Arrays;
 import java.util.List;
+
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.views.client.ModifyClientObject;
 
 public class ClientBornAndDiedDatesValidator {
 

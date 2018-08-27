@@ -1,6 +1,16 @@
 package com.humanharvest.organz.server.controller.client;
 
-import com.fasterxml.jackson.annotation.JsonView;
+import static com.humanharvest.organz.utilities.validators.ClientValidator.checkClientETag;
+
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.actions.Action;
@@ -15,17 +25,19 @@ import com.humanharvest.organz.views.client.PaginatedTransplantList;
 import com.humanharvest.organz.views.client.ResolveTransplantRequestObject;
 import com.humanharvest.organz.views.client.TransplantRequestView;
 import com.humanharvest.organz.views.client.Views;
+
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
-
-import static com.humanharvest.organz.utilities.validators.ClientValidator.checkClientETag;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Provides handlers for requests to these endpoints:

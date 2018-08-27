@@ -1,13 +1,14 @@
 package com.humanharvest.organz.commands.view;
 
+import java.io.PrintStream;
+import java.util.Optional;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
+
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
-
-import java.io.PrintStream;
-import java.util.Optional;
 
 /**
  * Command line to print all of the information of a single client.

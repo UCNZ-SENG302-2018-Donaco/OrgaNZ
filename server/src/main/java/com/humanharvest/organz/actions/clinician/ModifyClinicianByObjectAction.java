@@ -1,13 +1,14 @@
 package com.humanharvest.organz.actions.clinician;
 
+import java.lang.reflect.Field;
+import java.util.stream.Collectors;
+
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.state.ClinicianManager;
 import com.humanharvest.organz.utilities.type_converters.StringFormatter;
 import com.humanharvest.organz.views.clinician.ModifyClinicianObject;
-import org.springframework.beans.BeanUtils;
 
-import java.lang.reflect.Field;
-import java.util.stream.Collectors;
+import org.springframework.beans.BeanUtils;
 
 public class ModifyClinicianByObjectAction extends ClinicianAction {
 

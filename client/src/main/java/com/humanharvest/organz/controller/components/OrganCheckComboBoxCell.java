@@ -1,6 +1,9 @@
 package com.humanharvest.organz.controller.components;
 
-import com.humanharvest.organz.utilities.enums.Organ;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ContentDisplay;
 import javafx.scene.control.Label;
@@ -10,9 +13,7 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.Tooltip;
 import org.controlsfx.control.CheckComboBox;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
+import com.humanharvest.organz.utilities.enums.Organ;
 
 /**
  * An editable table cell that holds a {@link CheckComboBox} for organ values. Changing the checked items triggers an

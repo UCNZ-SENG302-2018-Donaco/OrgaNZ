@@ -1,12 +1,13 @@
 package com.humanharvest.organz.controller.components;
 
-import com.humanharvest.organz.DonatedOrgan;
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.paint.Color;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
+import com.humanharvest.organz.DonatedOrgan;
 
 public class DurationUntilExpiryCell extends TableCell<DonatedOrgan, Duration> {
 

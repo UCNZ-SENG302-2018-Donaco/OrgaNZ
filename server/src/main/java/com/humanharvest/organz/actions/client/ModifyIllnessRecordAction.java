@@ -1,10 +1,10 @@
 package com.humanharvest.organz.actions.client;
 
-import com.humanharvest.organz.IllnessRecord;
-import com.humanharvest.organz.state.ClientManager;
-
 import java.time.LocalDate;
 import java.util.Objects;
+
+import com.humanharvest.organz.IllnessRecord;
+import com.humanharvest.organz.state.ClientManager;
 
 /**
  * A reversible action to modify a given illness record. Only the diagnosis date, cured date and chronic status

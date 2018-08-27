@@ -1,14 +1,15 @@
 package com.humanharvest.organz.actions.administrator;
 
+import java.lang.reflect.Field;
+import java.util.stream.Collectors;
+
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.state.AdministratorManager;
 import com.humanharvest.organz.utilities.type_converters.StringFormatter;
 import com.humanharvest.organz.views.administrator.ModifyAdministratorObject;
-import org.springframework.beans.BeanUtils;
 
-import java.lang.reflect.Field;
-import java.util.stream.Collectors;
+import org.springframework.beans.BeanUtils;
 
 public class ModifyAdministratorByObjectAction extends Action {
 

@@ -1,12 +1,16 @@
 package com.humanharvest.organz.utilities.validators;
 
-import com.humanharvest.organz.*;
-import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
-import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
-
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.IllnessRecord;
+import com.humanharvest.organz.MedicationRecord;
+import com.humanharvest.organz.ProcedureRecord;
+import com.humanharvest.organz.TransplantRequest;
+import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
+import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
 
 /**
  * A static validator class used to check the integrity of a Client object

@@ -1,9 +1,9 @@
 package com.humanharvest.organz.state;
 
-import com.humanharvest.organz.actions.ActionInvoker;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import com.humanharvest.organz.actions.ActionInvoker;
 
 /**
  * A static class to store the current state of the system.

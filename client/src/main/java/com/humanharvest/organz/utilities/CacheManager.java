@@ -1,5 +1,27 @@
 package com.humanharvest.organz.utilities;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Paths;
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import com.humanharvest.organz.utilities.exceptions.BadDrugNameException;
+import com.humanharvest.organz.utilities.exceptions.BadGatewayException;
+import com.humanharvest.organz.utilities.web.DrugInteractionsHandler;
+import com.humanharvest.organz.utilities.web.MedActiveIngredientsHandler;
+import com.humanharvest.organz.utilities.web.WebAPIHandler;
+
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonParser;
@@ -13,20 +35,6 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.api.client.http.HttpTransport;
-import com.humanharvest.organz.utilities.exceptions.BadDrugNameException;
-import com.humanharvest.organz.utilities.exceptions.BadGatewayException;
-import com.humanharvest.organz.utilities.web.DrugInteractionsHandler;
-import com.humanharvest.organz.utilities.web.MedActiveIngredientsHandler;
-import com.humanharvest.organz.utilities.web.WebAPIHandler;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.nio.file.Paths;
-import java.time.Instant;
-import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Stores and retrieves arbitrary values from a persistent location.

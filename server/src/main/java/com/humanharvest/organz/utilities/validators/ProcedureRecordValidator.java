@@ -1,9 +1,9 @@
 package com.humanharvest.organz.utilities.validators;
 
-import com.humanharvest.organz.ProcedureRecord;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+
+import com.humanharvest.organz.ProcedureRecord;
 
 /**
  * A static ProcedureRecord validator that checks integrity
