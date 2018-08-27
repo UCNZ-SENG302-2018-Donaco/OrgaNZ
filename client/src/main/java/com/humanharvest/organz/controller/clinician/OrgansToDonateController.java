@@ -1,28 +1,17 @@
 package com.humanharvest.organz.controller.clinician;
 
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.DonatedOrgan;
-import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.controller.SidebarController;
-import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.controller.components.DurationUntilExpiryCell;
-import com.humanharvest.organz.controller.components.TouchAlertTextController;
-import com.humanharvest.organz.state.ClientManager;
-import com.humanharvest.organz.state.Session;
-import com.humanharvest.organz.state.Session.UserType;
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.enums.DonatedOrganSortOptionsEnum;
-import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.enums.Region;
-import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
-import com.humanharvest.organz.utilities.exceptions.NotFoundException;
-import com.humanharvest.organz.utilities.exceptions.ServerRestException;
-import com.humanharvest.organz.utilities.view.Page;
-import com.humanharvest.organz.utilities.view.PageNavigator;
-import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
-import com.humanharvest.organz.views.client.DonatedOrganView;
-import com.humanharvest.organz.views.client.PaginatedDonatedOrgansList;
-import com.humanharvest.organz.views.clinician.DonatedOrganSortPolicy;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -53,17 +42,29 @@ import javafx.scene.text.Text;
 import org.controlsfx.control.CheckComboBox;
 import org.controlsfx.control.Notifications;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Comparator;
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.DonatedOrgan;
+import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.SidebarController;
+import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.controller.components.DurationUntilExpiryCell;
+import com.humanharvest.organz.controller.components.TouchAlertTextController;
+import com.humanharvest.organz.state.ClientManager;
+import com.humanharvest.organz.state.Session;
+import com.humanharvest.organz.state.Session.UserType;
+import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.enums.DonatedOrganSortOptionsEnum;
+import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.enums.Region;
+import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
+import com.humanharvest.organz.utilities.exceptions.NotFoundException;
+import com.humanharvest.organz.utilities.exceptions.ServerRestException;
+import com.humanharvest.organz.utilities.view.Page;
+import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
+import com.humanharvest.organz.views.client.DonatedOrganView;
+import com.humanharvest.organz.views.client.PaginatedDonatedOrgansList;
+import com.humanharvest.organz.views.clinician.DonatedOrganSortPolicy;
 
 public class OrgansToDonateController extends SubController {
 
@@ -128,19 +129,6 @@ public class OrgansToDonateController extends SubController {
     // ---------------- Setup methods ----------------
 
     /**
-     * Sets up the page, setting its title, loading the menu bar and doing the first refresh of the data.
-     *
-     * @param mainController The main controller that defines which window this subcontroller belongs to.
-     */
-    @Override
-    public void setup(MainController mainController) {
-        super.setup(mainController);
-        mainController.setTitle("Organs to Donate");
-        mainController.loadMenuBar(menuBarPane);
-        refresh();
-    }
-
-    /**
      * Formats a table cell that holds a {@link LocalDateTime} value to display that value in the date time format.
      *
      * @return The cell with the date time formatter set.
@@ -157,6 +145,19 @@ public class OrgansToDonateController extends SubController {
                 }
             }
         };
+    }
+
+    /**
+     * Sets up the page, setting its title, loading the menu bar and doing the first refresh of the data.
+     *
+     * @param mainController The main controller that defines which window this subcontroller belongs to.
+     */
+    @Override
+    public void setup(MainController mainController) {
+        super.setup(mainController);
+        mainController.setTitle("Organs to Donate");
+        mainController.loadMenuBar(menuBarPane);
+        refresh();
     }
 
     /**
@@ -189,7 +190,9 @@ public class OrgansToDonateController extends SubController {
         //On pagination update call createPage
         pagination.setPageFactory(this::createPage);
 
-        tableView.getSortOrder().setAll(timeUntilExpiryCol);
+        // Sort by time until expiry column by default.
+        tableView.getSortOrder().clear();
+        tableView.getSortOrder().add(timeUntilExpiryCol);
     }
 
     /**
@@ -294,8 +297,8 @@ public class OrgansToDonateController extends SubController {
                     tableView.refresh();
                     observableOrgansToDonate.removeIf(donatedOrgan ->
                             donatedOrgan.getOverrideReason() != null ||
-                                    donatedOrgan.getDurationUntilExpiry() != null &&
-                                            donatedOrgan.getDurationUntilExpiry().minusSeconds(1).isNegative());
+                                    (donatedOrgan.getDurationUntilExpiry() != null &&
+                                            donatedOrgan.getDurationUntilExpiry().minusSeconds(1).isNegative()));
                 }));
         clock.setCycleCount(Animation.INDEFINITE);
         clock.play();
@@ -416,7 +419,7 @@ public class OrgansToDonateController extends SubController {
             }
 
         } catch (NotFoundException e) {
-            LOGGER.log(Level.WARNING, "Organ not found");
+            LOGGER.log(Level.WARNING, "Organ not found", e);
             Notifications.create()
                     .title("Organ not found")
                     .text("The organ could not be found on the server, it may have been deleted")
@@ -430,11 +433,11 @@ public class OrgansToDonateController extends SubController {
         }
     }
 
-
     private void openManuallyExpireDialog() {
         // Create a popup with a text field to enter the reason
 
-        TouchAlertTextController controller = PageNavigator.showTextAlert("Manually Override Organ", "Enter the reason for overriding this organ:", mainController.getStage());
+        TouchAlertTextController controller = PageNavigator.showTextAlert("Manually Override Organ",
+                "Enter the reason for overriding this organ:", mainController.getStage());
 
         if (controller.getResultProperty().getValue() != null) {
             if (controller.getResultProperty().getValue()) {
@@ -454,22 +457,24 @@ public class OrgansToDonateController extends SubController {
             StringBuilder overrideReason = new StringBuilder(reason);
             overrideReason.append("\n").append(LocalDateTime.now().format(dateTimeFormat));
             if (session.getLoggedInUserType() == UserType.CLINICIAN) {
-                overrideReason.append(String.format("\nOverriden by clinician %d (%s)",
+                overrideReason.append(String.format("%nOverriden by clinician %d (%s)",
                         session.getLoggedInClinician().getStaffId(), session.getLoggedInClinician().getFullName()));
             } else if (session.getLoggedInUserType() == UserType.ADMINISTRATOR) {
-                overrideReason.append(String.format("\nOverriden by admin '%s'.",
+                overrideReason.append(String.format("%nOverriden by admin '%s'.",
                         session.getLoggedInAdministrator().getUsername()));
             }
             State.getClientResolver().manuallyOverrideOrgan(selectedOrgan, overrideReason.toString());
             PageNavigator.refreshAllWindows();
         } catch (IfMatchFailedException exc) {
             // TODO deal with outdated error
-        } catch (NotFoundException exc) {
+        } catch (NotFoundException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
             Notifications.create()
                     .title("Client/Organ Not Found")
                     .text("The client/donated organ could not be found on the server; it may have been deleted.")
                     .showWarning();
-        } catch (ServerRestException exc) {
+        } catch (ServerRestException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
             Notifications.create()
                     .title("Server Error")
                     .text("A server error occurred when overriding this donated organ; please try again later.")

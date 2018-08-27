@@ -4,17 +4,8 @@ import java.util.OptionalInt;
 import java.util.regex.Pattern;
 
 public class IntValidator extends Validator {
+
     private static final Pattern pattern = Pattern.compile("^\\d+$");
-
-    @Override
-    public boolean isValid(Object value) {
-        return getAsInt(value).isPresent();
-    }
-
-    @Override
-    public String getErrorMessage() {
-        return "Not a valid number";
-    }
 
     protected static OptionalInt getAsInt(Object value) {
         if (value instanceof Integer) {
@@ -34,6 +25,16 @@ public class IntValidator extends Validator {
         }
 
         return OptionalInt.empty();
+    }
+
+    @Override
+    public boolean isValid(Object value) {
+        return getAsInt(value).isPresent();
+    }
+
+    @Override
+    public String getErrorMessage() {
+        return "Not a valid number";
     }
 }
 

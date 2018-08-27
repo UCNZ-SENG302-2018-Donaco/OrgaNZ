@@ -1,9 +1,9 @@
 package com.humanharvest.organz.utilities.web;
 
+import java.util.List;
+
 import com.google.api.client.json.GenericJson;
 import com.google.api.client.util.Key;
-
-import java.util.List;
 
 public class MedAutoCompleteResponse extends GenericJson {
 

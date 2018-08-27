@@ -1,14 +1,14 @@
 package com.humanharvest.organz.utilities.validators.client;
 
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.validators.NotEmptyStringValidator;
 import com.humanharvest.organz.utilities.validators.RegionValidator;
 import com.humanharvest.organz.views.client.ModifyClientObject;
-
-import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
 
 public final class ModifyClientValidator {
 

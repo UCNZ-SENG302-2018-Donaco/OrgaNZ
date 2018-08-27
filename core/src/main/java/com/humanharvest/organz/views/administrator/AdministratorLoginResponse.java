@@ -1,14 +1,16 @@
 package com.humanharvest.organz.views.administrator;
 
+import com.humanharvest.organz.Administrator;
+import com.humanharvest.organz.views.client.Views;
+
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.humanharvest.organz.Administrator;
-import com.humanharvest.organz.views.client.Views;
 
 public class AdministratorLoginResponse {
+
     @JsonView(Views.Details.class)
     private final String token;
 

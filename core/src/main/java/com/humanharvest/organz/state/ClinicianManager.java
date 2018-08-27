@@ -1,10 +1,10 @@
 package com.humanharvest.organz.state;
 
-import com.humanharvest.organz.Clinician;
-
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+
+import com.humanharvest.organz.Clinician;
 
 /**
  * The class to handle the Client inputs, including adding,
@@ -12,6 +12,7 @@ import java.util.Optional;
  */
 
 public interface ClinicianManager {
+
     /**
      * Add a clinician
      *
@@ -19,15 +20,14 @@ public interface ClinicianManager {
      */
     void addClinician(Clinician clinician);
 
-    void setClinicians(Collection<Clinician> clinicians);
-
-
     /**
      * Get the list of clinicians
      *
      * @return ArrayList of current clinicians
      */
     List<Clinician> getClinicians();
+
+    void setClinicians(Collection<Clinician> clinicians);
 
     /**
      * Remove a client object

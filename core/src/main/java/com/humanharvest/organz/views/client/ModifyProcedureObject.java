@@ -1,14 +1,15 @@
 package com.humanharvest.organz.views.client;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.views.ModifyBaseObject;
-
 import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.views.ModifyBaseObject;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @JsonSerialize(using = ModifyBaseObject.Serialiser.class)
 public class ModifyProcedureObject extends ModifyBaseObject {
@@ -19,6 +20,10 @@ public class ModifyProcedureObject extends ModifyBaseObject {
     private String description;
     private LocalDate date;
     private Set<Organ> affectedOrgans;
+
+    private static String fieldString(Field field) {
+        return String.format("Updated %s", field.getName());
+    }
 
     public Long getId(Long id) {
         return id;
@@ -76,15 +81,11 @@ public class ModifyProcedureObject extends ModifyBaseObject {
 
     public String toString() {
         String changesText = modifiedFields.stream()
-                .map(this::fieldString)
+                .map(ModifyProcedureObject::fieldString)
                 .collect(Collectors.joining("\n"));
 
         return String.format("Updated details for client.\n"
                         + "These changes were made: \n\n%s",
                 changesText);
-    }
-
-    private String fieldString(Field field) {
-        return String.format("Updated %s", field.getName());
     }
 }

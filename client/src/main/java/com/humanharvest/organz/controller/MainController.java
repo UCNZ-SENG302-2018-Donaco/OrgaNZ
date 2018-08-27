@@ -1,9 +1,9 @@
 package com.humanharvest.organz.controller;
 
-import com.humanharvest.organz.MultitouchHandler;
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.view.Page;
-import com.humanharvest.organz.utilities.view.WindowContext;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -13,9 +13,10 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.humanharvest.organz.MultitouchHandler;
+import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.view.Page;
+import com.humanharvest.organz.utilities.view.WindowContext;
 
 /**
  * Main controller class for the application window.
@@ -48,6 +49,10 @@ public class MainController {
         return stage;
     }
 
+    public void setStage(Stage stage) {
+        this.stage = stage;
+    }
+
     public Page getCurrentPage() {
         return currentPage;
     }
@@ -56,16 +61,16 @@ public class MainController {
         return windowContext;
     }
 
-    public void setStage(Stage stage) {
-        this.stage = stage;
-    }
-
-    public void setPane(Pane pane) {
-        this.pane = pane;
+    public void setWindowContext(WindowContext context) {
+        windowContext = context;
     }
 
     public Pane getPane() {
         return pane;
+    }
+
+    public void setPane(Pane pane) {
+        this.pane = pane;
     }
 
     /**
@@ -77,10 +82,6 @@ public class MainController {
     public void setPage(Page page, Node node) {
         currentPage = page;
         pageHolder.getChildren().setAll(node);
-    }
-
-    public void setWindowContext(WindowContext context) {
-        windowContext = context;
     }
 
     void resetWindowContext() {

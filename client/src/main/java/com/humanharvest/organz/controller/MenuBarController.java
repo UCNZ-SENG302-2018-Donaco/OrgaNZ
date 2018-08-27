@@ -1,16 +1,17 @@
 package com.humanharvest.organz.controller;
 
-import com.humanharvest.organz.AppUI;
-import com.humanharvest.organz.MultitouchHandler;
-import com.humanharvest.organz.state.Session;
-import com.humanharvest.organz.state.Session.UserType;
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.state.State.UiType;
-import com.humanharvest.organz.utilities.CacheManager;
-import com.humanharvest.organz.utilities.exceptions.BadRequestException;
-import com.humanharvest.organz.utilities.view.Page;
-import com.humanharvest.organz.utilities.view.PageNavigator;
-import com.humanharvest.organz.views.ActionResponseView;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javafx.application.Platform;
 import javafx.beans.property.Property;
 import javafx.concurrent.Task;
@@ -27,17 +28,17 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.controlsfx.control.Notifications;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.humanharvest.organz.AppUI;
+import com.humanharvest.organz.MultitouchHandler;
+import com.humanharvest.organz.state.Session;
+import com.humanharvest.organz.state.Session.UserType;
+import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.state.State.UiType;
+import com.humanharvest.organz.utilities.CacheManager;
+import com.humanharvest.organz.utilities.exceptions.BadRequestException;
+import com.humanharvest.organz.utilities.view.Page;
+import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.views.ActionResponseView;
 
 /**
  * Controller for the sidebar pane imported into every page in the main part of the GUI.
@@ -88,7 +89,6 @@ public class MenuBarController extends SubController {
     public Menu staffPrimaryItem;
     public Menu profilePrimaryItem;
 
-
     private Session session;
 
     /**
@@ -96,6 +96,29 @@ public class MenuBarController extends SubController {
      */
     public MenuBarController() {
         session = State.getSession();
+    }
+
+    /**
+     * Returns the file extension of the given file name string (in lowercase). The file extension is defined as the
+     * characters after the last "." in the file name.
+     *
+     * @param fileName The file name string.
+     * @return The file extension of the given file name.
+     */
+    private static String getFileExtension(String fileName) {
+        int lastIndex = fileName.lastIndexOf('.');
+        if (lastIndex >= 0) {
+            return fileName.substring(lastIndex + 1).toLowerCase();
+        } else {
+            return "";
+        }
+    }
+
+    /**
+     * Exit program.
+     */
+    private static void exit() {
+        Platform.exit();
     }
 
     @Override
@@ -112,9 +135,9 @@ public class MenuBarController extends SubController {
 
         // Menus/Menu items to hide from clinicians
         Menu menusHideFromClinicians[] = {medicationsPrimaryItem, staffPrimaryItem};
-        MenuItem menuItemsHideFromClinicians[] = {viewClientItem, donateOrganItem, requestOrganItem, viewMedicationsItem,
-                medicalHistoryItem, proceduresItem, saveClientsItem, saveCliniciansItem, loadItem, settingsItem,
-                staffListItem, createAdministratorItem, createClinicianItem, cliItem};
+        MenuItem menuItemsHideFromClinicians[] = {viewClientItem, donateOrganItem, requestOrganItem,
+                viewMedicationsItem, medicalHistoryItem, proceduresItem, saveClientsItem, saveCliniciansItem,
+                loadItem, settingsItem, staffListItem, createAdministratorItem, createClinicianItem, cliItem};
 
         // Menus/Menu items to hide from clinicians (or admins) viewing a client
         Menu menusHideFromClinViewClients[] = {staffPrimaryItem, profilePrimaryItem};
@@ -415,7 +438,8 @@ public class MenuBarController extends SubController {
         // Confirm that the user wants to overwrite current data with data from a file
         Property<Boolean> response = PageNavigator.showAlert(AlertType.CONFIRMATION,
                 "Confirm load from file",
-                "Loading from a file will overwrite all current data. Would you like to proceed?", mainController.getStage());
+                "Loading from a file will overwrite all current data. Would you like to proceed?",
+                mainController.getStage());
 
         if (response.getValue() != null) {
             if (response.getValue()) {
@@ -462,29 +486,15 @@ public class MenuBarController extends SubController {
                 mainController.resetWindowContext();
                 PageNavigator.loadPage(Page.LANDING, mainController);
 
-            } catch (IllegalArgumentException exc) {
-                PageNavigator.showAlert(AlertType.ERROR, "Load Failed", exc.getMessage(), mainController.getStage());
-            } catch (IOException | BadRequestException exc) {
+            } catch (IllegalArgumentException e) {
+                LOGGER.log(Level.WARNING, e.getMessage(), e);
+                PageNavigator.showAlert(AlertType.ERROR, "Load Failed", e.getMessage(), mainController.getStage());
+            } catch (IOException | BadRequestException e) {
+                LOGGER.log(Level.WARNING, e.getMessage(), e);
                 PageNavigator.showAlert(AlertType.ERROR, "Load Failed",
-                        String.format("An error occurred when loading from file: '%s'\n%s",
-                                file.getName(), exc.getMessage()), mainController.getStage());
+                        String.format("An error occurred when loading from file: '%s'%n%s",
+                                file.getName(), e.getMessage()), mainController.getStage());
             }
-        }
-    }
-
-    /**
-     * Returns the file extension of the given file name string (in lowercase). The file extension is defined as the
-     * characters after the last "." in the file name.
-     *
-     * @param fileName The file name string.
-     * @return The file extension of the given file name.
-     */
-    private static String getFileExtension(String fileName) {
-        int lastIndex = fileName.lastIndexOf('.');
-        if (lastIndex >= 0) {
-            return fileName.substring(lastIndex + 1).toLowerCase();
-        } else {
-            return "";
         }
     }
 
@@ -577,7 +587,8 @@ public class MenuBarController extends SubController {
             newMain.setWindowContext(mainController.getWindowContext());
             PageNavigator.loadPage(mainController.getCurrentPage(), newMain);
         } else {
-            PageNavigator.showAlert(AlertType.ERROR, "Error duplicating page", "The new page could not be created", mainController.getStage());
+            PageNavigator.showAlert(AlertType.ERROR, "Error duplicating page",
+                    "The new page could not be created", mainController.getStage());
         }
     }
 
@@ -622,12 +633,5 @@ public class MenuBarController extends SubController {
             exit();
         }
 
-    }
-
-    /**
-     * Exit program.
-     */
-    private static void exit() {
-        Platform.exit();
     }
 }

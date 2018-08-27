@@ -1,6 +1,5 @@
 package com.humanharvest.organz.utilities.type_converters;
 
-
 public class DoubleConverter implements TypeConverter<Double> {
 
     @Override

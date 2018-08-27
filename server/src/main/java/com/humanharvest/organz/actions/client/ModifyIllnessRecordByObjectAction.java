@@ -3,6 +3,7 @@ package com.humanharvest.organz.actions.client;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.views.client.ModifyIllnessObject;
+
 import org.springframework.beans.BeanUtils;
 
 public class ModifyIllnessRecordByObjectAction extends ClientAction {
@@ -13,8 +14,8 @@ public class ModifyIllnessRecordByObjectAction extends ClientAction {
     private ModifyIllnessObject newIllnessDetails;
 
     public ModifyIllnessRecordByObjectAction(IllnessRecord oldRecord, ClientManager manager,
-                                             ModifyIllnessObject oldIllnessDetails,
-                                             ModifyIllnessObject newIllnessDetails) {
+            ModifyIllnessObject oldIllnessDetails,
+            ModifyIllnessObject newIllnessDetails) {
         super(oldRecord.getClient(), manager);
         this.oldIllnessDetails = oldIllnessDetails;
         this.newIllnessDetails = newIllnessDetails;

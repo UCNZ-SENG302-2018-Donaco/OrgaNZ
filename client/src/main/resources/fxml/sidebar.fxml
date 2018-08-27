@@ -4,130 +4,130 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<VBox prefHeight="600.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.humanharvest.organz.controller.SidebarController">
-    <children>
-        <VBox VBox.vgrow="ALWAYS">
-            <children>
-                <HBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" VBox.vgrow="ALWAYS">
-                    <children>
-                        <Button fx:id="undoButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-                                mnemonicParsing="false" onAction="#undo" style="-fx-base: rgba(255, 220, 188, 0.8);"
-                                text="Undo" HBox.hgrow="ALWAYS">
-                            <font>
-                                <Font size="16.0"/>
-                            </font>
-                        </Button>
-                        <Button fx:id="redoButton" layoutX="10.0" layoutY="10.0" maxHeight="1.7976931348623157E308"
-                                maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#redo"
-                                style="-fx-base: rgba(255, 220, 188, 0.8);" text="Redo" HBox.hgrow="ALWAYS">
-                            <font>
-                                <Font size="16.0"/>
-                            </font>
-                        </Button>
-                    </children>
-                </HBox>
-                <Button fx:id="viewClientButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-                        mnemonicParsing="false" onAction="#goToViewClient" text="Client details" VBox.vgrow="ALWAYS">
-                    <font>
-                        <Font size="16.0"/>
-                    </font>
-                </Button>
-                <Button fx:id="registerOrganDonationButton" maxHeight="1.7976931348623157E308"
-                        maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToRegisterOrganDonation"
-                        text="Donate organs" VBox.vgrow="ALWAYS">
-                    <font>
-                        <Font size="16.0"/>
-                    </font>
-                </Button>
-                <Button fx:id="requestOrganDonationButton" maxHeight="1.7976931348623157E308"
-                        maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToRequestOrganDonation"
-                        text="Request organs" VBox.vgrow="ALWAYS">
-                    <font>
-                        <Font size="16.0"/>
-                    </font>
-                </Button>
-                <Button fx:id="viewMedicationsButton" layoutX="10.0" layoutY="144.0" maxHeight="1.7976931348623157E308"
-                        maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToViewMedications"
-                        text="Medications" VBox.vgrow="ALWAYS">
-                    <font>
-                        <Font size="16.0"/>
-                    </font>
-                </Button>
-                <Button fx:id="illnessHistoryButton" maxHeight="1.7976931348623157E308"
-                        maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToIllnessHistory"
-                        text="Medical history" VBox.vgrow="ALWAYS">
-                    <font>
-                        <Font size="16.0"/>
-                    </font>
-                </Button>
-                <Button fx:id="viewProceduresButton" layoutX="10.0" layoutY="242.0" maxHeight="1.7976931348623157E308"
-                        maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToViewProcedures"
-                        text="Procedures" VBox.vgrow="ALWAYS">
-                    <font>
-                        <Font size="16.0"/>
-                    </font>
-                </Button>
-                <Button fx:id="viewClinicianButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-                        mnemonicParsing="false" onAction="#goToViewClinician" text="Clinician details"
-                        VBox.vgrow="ALWAYS">
-                    <font>
-                        <Font size="16.0"/>
-                    </font>
-                </Button>
-                <Button fx:id="searchButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-                        mnemonicParsing="false" onAction="#goToSearch" text="Clients" VBox.vgrow="ALWAYS">
-                    <font>
-                        <Font size="16.0"/>
-                    </font>
-                </Button>
-                <Button fx:id="staffListButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-                        mnemonicParsing="false" onAction="#goToStaffList" text="Staff list" VBox.vgrow="ALWAYS">
-                    <font>
-                        <Font size="16.0"/>
-                    </font>
-                </Button>
-                <Button fx:id="transplantsButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-                        mnemonicParsing="false" onAction="#goToTransplants" text="Transplant requests"
-                        VBox.vgrow="ALWAYS">
-                    <font>
-                        <Font size="16.0"/>
-                    </font>
-                </Button>
-                <Button fx:id="createAdminButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-                        mnemonicParsing="false" onAction="#goToCreateAdmin" text="Create administrator"
-                        VBox.vgrow="ALWAYS">
-                    <font>
-                        <Font size="16.0"/>
-                    </font>
-                </Button>
-                <Button fx:id="createClinicianButton" maxHeight="1.7976931348623157E308"
-                        maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToCreateClinician"
-                        text="Create clinician" VBox.vgrow="ALWAYS">
-                    <font>
-                        <Font size="16.0"/>
-                    </font>
-                </Button>
-                <Button fx:id="commandLineButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-                        mnemonicParsing="false" onAction="#goToCommandLine" text="Command line" VBox.vgrow="ALWAYS">
-                    <font>
-                        <Font size="16.0"/>
-                    </font>
-                </Button>
-                <Button maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
-                        onAction="#goToHistory" text="Action history" VBox.vgrow="ALWAYS">
-                    <font>
-                        <Font size="16.0"/>
-                    </font>
-                </Button>
-                <Button fx:id="logoutButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
-                        mnemonicParsing="false" onAction="#logout" style="-fx-base: rgba(255, 220, 188, 0.8);"
-                        text="Logout" VBox.vgrow="ALWAYS">
-                    <font>
-                        <Font size="16.0"/>
-                    </font>
-                </Button>
-            </children>
-        </VBox>
-    </children>
+<VBox xmlns:fx="http://javafx.com/fxml/1" prefHeight="600.0" prefWidth="200.0" xmlns="http://javafx.com/javafx/8"
+  fx:controller="com.humanharvest.organz.controller.SidebarController">
+  <children>
+    <VBox VBox.vgrow="ALWAYS">
+      <children>
+        <HBox VBox.vgrow="ALWAYS" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
+          <children>
+            <Button style="-fx-base: rgba(255, 220, 188, 0.8);" HBox.hgrow="ALWAYS" maxHeight="1.7976931348623157E308"
+              maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#undo"
+              text="Undo" fx:id="undoButton">
+              <font>
+                <Font size="16.0"/>
+              </font>
+            </Button>
+            <Button style="-fx-base: rgba(255, 220, 188, 0.8);" HBox.hgrow="ALWAYS" layoutX="10.0" layoutY="10.0"
+              maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false"
+              onAction="#redo" text="Redo" fx:id="redoButton">
+              <font>
+                <Font size="16.0"/>
+              </font>
+            </Button>
+          </children>
+        </HBox>
+        <Button VBox.vgrow="ALWAYS" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+          mnemonicParsing="false" onAction="#goToViewClient" text="Client details" fx:id="viewClientButton">
+          <font>
+            <Font size="16.0"/>
+          </font>
+        </Button>
+        <Button VBox.vgrow="ALWAYS" maxHeight="1.7976931348623157E308"
+          maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToRegisterOrganDonation"
+          text="Donate organs" fx:id="registerOrganDonationButton">
+          <font>
+            <Font size="16.0"/>
+          </font>
+        </Button>
+        <Button VBox.vgrow="ALWAYS" maxHeight="1.7976931348623157E308"
+          maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToRequestOrganDonation"
+          text="Request organs" fx:id="requestOrganDonationButton">
+          <font>
+            <Font size="16.0"/>
+          </font>
+        </Button>
+        <Button VBox.vgrow="ALWAYS" layoutX="10.0" layoutY="144.0" maxHeight="1.7976931348623157E308"
+          maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToViewMedications"
+          text="Medications" fx:id="viewMedicationsButton">
+          <font>
+            <Font size="16.0"/>
+          </font>
+        </Button>
+        <Button VBox.vgrow="ALWAYS" maxHeight="1.7976931348623157E308"
+          maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToIllnessHistory"
+          text="Medical history" fx:id="illnessHistoryButton">
+          <font>
+            <Font size="16.0"/>
+          </font>
+        </Button>
+        <Button VBox.vgrow="ALWAYS" layoutX="10.0" layoutY="242.0" maxHeight="1.7976931348623157E308"
+          maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToViewProcedures"
+          text="Procedures" fx:id="viewProceduresButton">
+          <font>
+            <Font size="16.0"/>
+          </font>
+        </Button>
+        <Button VBox.vgrow="ALWAYS" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+          mnemonicParsing="false" onAction="#goToViewClinician" text="Clinician details"
+          fx:id="viewClinicianButton">
+          <font>
+            <Font size="16.0"/>
+          </font>
+        </Button>
+        <Button VBox.vgrow="ALWAYS" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+          mnemonicParsing="false" onAction="#goToSearch" text="Clients" fx:id="searchButton">
+          <font>
+            <Font size="16.0"/>
+          </font>
+        </Button>
+        <Button VBox.vgrow="ALWAYS" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+          mnemonicParsing="false" onAction="#goToStaffList" text="Staff list" fx:id="staffListButton">
+          <font>
+            <Font size="16.0"/>
+          </font>
+        </Button>
+        <Button VBox.vgrow="ALWAYS" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+          mnemonicParsing="false" onAction="#goToTransplants" text="Transplant requests"
+          fx:id="transplantsButton">
+          <font>
+            <Font size="16.0"/>
+          </font>
+        </Button>
+        <Button VBox.vgrow="ALWAYS" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+          mnemonicParsing="false" onAction="#goToCreateAdmin" text="Create administrator"
+          fx:id="createAdminButton">
+          <font>
+            <Font size="16.0"/>
+          </font>
+        </Button>
+        <Button VBox.vgrow="ALWAYS" maxHeight="1.7976931348623157E308"
+          maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#goToCreateClinician"
+          text="Create clinician" fx:id="createClinicianButton">
+          <font>
+            <Font size="16.0"/>
+          </font>
+        </Button>
+        <Button VBox.vgrow="ALWAYS" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+          mnemonicParsing="false" onAction="#goToCommandLine" text="Command line" fx:id="commandLineButton">
+          <font>
+            <Font size="16.0"/>
+          </font>
+        </Button>
+        <Button VBox.vgrow="ALWAYS" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+          mnemonicParsing="false" onAction="#goToHistory" text="Action history">
+          <font>
+            <Font size="16.0"/>
+          </font>
+        </Button>
+        <Button style="-fx-base: rgba(255, 220, 188, 0.8);" VBox.vgrow="ALWAYS" maxHeight="1.7976931348623157E308"
+          maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#logout"
+          text="Logout" fx:id="logoutButton">
+          <font>
+            <Font size="16.0"/>
+          </font>
+        </Button>
+      </children>
+    </VBox>
+  </children>
 </VBox>

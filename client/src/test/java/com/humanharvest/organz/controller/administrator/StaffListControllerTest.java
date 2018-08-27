@@ -1,5 +1,8 @@
 package com.humanharvest.organz.controller.administrator;
 
+import static org.testfx.api.FxAssert.verifyThat;
+import static org.testfx.matcher.control.TableViewMatchers.hasNumRows;
+
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.controller.ControllerTest;
@@ -8,16 +11,14 @@ import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
-import org.junit.Test;
 
-import static org.testfx.api.FxAssert.verifyThat;
-import static org.testfx.matcher.control.TableViewMatchers.hasNumRows;
+import org.junit.Test;
 
 public class StaffListControllerTest extends ControllerTest {
 
     private Administrator admin1 = new Administrator("admin1", "password");
-    private Clinician clinician1 = new Clinician("First", "Middle", "Last", "UC", Region.CANTERBURY.toString(), Country.NZ, 50,
-            "password");
+    private Clinician clinician1 = new Clinician("First", "Middle", "Last",
+            "UC", Region.CANTERBURY.toString(), Country.NZ, 50, "password");
 
     @Override
     protected Page getPage() {

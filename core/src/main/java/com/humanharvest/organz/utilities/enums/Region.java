@@ -23,11 +23,11 @@ public enum Region {
     CHATHAM_ISLANDS("Chatham Islands", -44.03333333, -176.43333333),
     UNSPECIFIED("Unspecified", -200, -200);
 
+    private static String mismatchText;
+
     private final String text;
     private final double latitude;
     private final double longitude;
-
-    private static String mismatchText;
 
     Region(String text, double latitude, double longitude) {
         this.text = text;
@@ -50,6 +50,8 @@ public enum Region {
         }
 
         //No match
+        //We use a static text builder so this text is dynamically built based on the ENUM options, but only needs to
+        // be built once per runtime
         if (mismatchText != null) {
             throw new IllegalArgumentException(mismatchText);
         } else {

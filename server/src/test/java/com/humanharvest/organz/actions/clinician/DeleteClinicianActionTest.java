@@ -1,15 +1,16 @@
 package com.humanharvest.organz.actions.clinician;
 
+import static org.junit.Assert.assertEquals;
+
 import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.state.ClinicianManager;
 import com.humanharvest.organz.state.ClinicianManagerMemory;
 import com.humanharvest.organz.utilities.enums.Region;
+
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
 
 public class DeleteClinicianActionTest extends BaseTest {
 
@@ -42,7 +43,8 @@ public class DeleteClinicianActionTest extends BaseTest {
 
     @Test
     public void CheckClinicianMultipleDeletesOneUndoTest() {
-        Clinician second = new Clinician("First2", null, "Last2", "Address", Region.UNSPECIFIED.name(), null, 2, "pass");
+        Clinician second = new Clinician("First2", null, "Last2", "Address", Region.UNSPECIFIED.name(), null, 2,
+                "pass");
         manager.addClinician(second);
 
         DeleteClinicianAction action = new DeleteClinicianAction(baseClinician, manager);
@@ -58,7 +60,8 @@ public class DeleteClinicianActionTest extends BaseTest {
 
     @Test
     public void CheckClinicianMultipleDeletesOneUndoRedoTest() {
-        Clinician second = new Clinician("First2", null, "Last2", "Address", Region.UNSPECIFIED.name(), null, 2, "pass");
+        Clinician second = new Clinician("First2", null, "Last2", "Address", Region.UNSPECIFIED.name(), null, 2,
+                "pass");
         manager.addClinician(second);
 
         DeleteClinicianAction action = new DeleteClinicianAction(baseClinician, manager);
@@ -75,6 +78,5 @@ public class DeleteClinicianActionTest extends BaseTest {
 
         assertEquals(1, manager.getClinicians().size());
     }
-
 
 }

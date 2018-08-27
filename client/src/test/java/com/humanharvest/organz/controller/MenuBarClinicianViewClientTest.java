@@ -1,5 +1,9 @@
 package com.humanharvest.organz.controller;
 
+import static org.junit.Assert.assertEquals;
+
+import java.time.LocalDate;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.state.State;
@@ -7,11 +11,8 @@ import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
+
 import org.junit.Test;
-
-import java.time.LocalDate;
-
-import static org.junit.Assert.assertEquals;
 
 public class MenuBarClinicianViewClientTest extends ControllerTest {
 

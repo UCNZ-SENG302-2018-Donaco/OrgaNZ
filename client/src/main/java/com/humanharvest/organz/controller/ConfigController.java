@@ -1,13 +1,14 @@
 package com.humanharvest.organz.controller;
 
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.enums.Country;
+import java.util.EnumSet;
+
 import javafx.fxml.FXML;
 import javafx.scene.layout.HBox;
 import org.controlsfx.control.CheckComboBox;
 import org.controlsfx.control.Notifications;
 
-import java.util.EnumSet;
+import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.enums.Country;
 
 public class ConfigController extends SubController {
 

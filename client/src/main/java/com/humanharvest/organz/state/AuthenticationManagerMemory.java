@@ -1,11 +1,11 @@
 package com.humanharvest.organz.state;
 
+import java.util.Optional;
+
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
-
-import java.util.Optional;
 
 public class AuthenticationManagerMemory implements AuthenticationManager {
 

@@ -1,11 +1,11 @@
 package com.humanharvest.organz.utilities.serialisation;
 
-import com.humanharvest.organz.Client;
-
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InvalidObjectException;
+
+import com.humanharvest.organz.Client;
 
 /**
  * A strategy that describes how to read the contents of a file as a series of {@link Client}s.
@@ -25,8 +25,8 @@ public interface ReadClientStrategy extends Closeable {
      *
      * @return The parsed client, or null if there are no more clients in the file.
      * @throws InvalidObjectException If the next record does not represent a valid client.
-     * @throws IOException            If a critical error occurrs which ends reading of the file (invalid syntax or input stream
-     *                                broken)
+     * @throws IOException If a critical error occurrs which ends reading of the file
+     * (invalid syntax or input stream broken)
      */
     Client readNext() throws IOException;
 }

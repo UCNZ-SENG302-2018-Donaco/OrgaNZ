@@ -1,22 +1,13 @@
 package com.humanharvest.organz.controller.client;
 
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.ProcedureRecord;
-import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.controller.components.DatePickerCell;
-import com.humanharvest.organz.controller.components.OrganCheckComboBoxCell;
-import com.humanharvest.organz.state.Session;
-import com.humanharvest.organz.state.Session.UserType;
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.exceptions.BadRequestException;
-import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
-import com.humanharvest.organz.utilities.exceptions.NotFoundException;
-import com.humanharvest.organz.utilities.exceptions.ServerRestException;
-import com.humanharvest.organz.utilities.view.PageNavigator;
-import com.humanharvest.organz.views.client.CreateProcedureView;
-import com.humanharvest.organz.views.client.ModifyProcedureObject;
+import java.time.LocalDate;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
 import javafx.collections.FXCollections;
 import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
@@ -35,13 +26,23 @@ import javafx.scene.text.Text;
 import org.controlsfx.control.CheckComboBox;
 import org.controlsfx.control.Notifications;
 
-import java.time.LocalDate;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.ProcedureRecord;
+import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.controller.components.DatePickerCell;
+import com.humanharvest.organz.controller.components.OrganCheckComboBoxCell;
+import com.humanharvest.organz.state.Session;
+import com.humanharvest.organz.state.Session.UserType;
+import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.exceptions.BadRequestException;
+import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
+import com.humanharvest.organz.utilities.exceptions.NotFoundException;
+import com.humanharvest.organz.utilities.exceptions.ServerRestException;
+import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.views.client.CreateProcedureView;
+import com.humanharvest.organz.views.client.ModifyProcedureObject;
 
 /**
  * Controller for the medical history page, which shows a list of all pending and past procedures for the client.
@@ -81,6 +82,13 @@ public class ViewProceduresController extends SubController {
     private Button deleteButton;
 
     private TableView<ProcedureRecord> selectedTableView = null;
+
+    /**
+     * Gets the current session from the global state.
+     */
+    public ViewProceduresController() {
+        session = State.getSession();
+    }
 
     /**
      * Sets the table's sort policy - default ordering is by date DESC, but if a column is selected for sorting then
@@ -180,27 +188,21 @@ public class ViewProceduresController extends SubController {
             State.getClientResolver().modifyProcedureRecord(client, procedureRecord, modification);
             PageNavigator.refreshAllWindows();
         } catch (ServerRestException e) {
-            LOGGER.severe(e.getMessage());
+            LOGGER.log(Level.SEVERE, e.getMessage(), e);
             PageNavigator.showAlert(AlertType.ERROR,
                     "Server Error",
-                    "An error occurred when trying to send data to the server.\nPlease try again later.", mainController.getStage());
+                    "An error occurred when trying to send data to the server.\nPlease try again later.",
+                    mainController.getStage());
         } catch (BadRequestException e) {
-            LOGGER.info("No changes were made to the procedure.");
+            LOGGER.log(Level.INFO, "No changes were made to the procedure.", e);
         } catch (IfMatchFailedException e) {
-            LOGGER.log(Level.INFO, "If-Match did not match");
+            LOGGER.log(Level.INFO, "If-Match did not match", e);
             Notifications.create()
                     .title("Outdated Data")
                     .text("The client has been modified since you retrieved the data. If you would still like to "
                             + "apply these changes please submit again, otherwise refresh the page to update the data.")
                     .showWarning();
         }
-    }
-
-    /**
-     * Gets the current session from the global state.
-     */
-    public ViewProceduresController() {
-        session = State.getSession();
     }
 
     /**
@@ -307,12 +309,14 @@ public class ViewProceduresController extends SubController {
         try {
             client.setProcedures(State.getClientResolver().getProcedureRecords(client));
         } catch (NotFoundException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
             Notifications.create()
                     .title("Client not found")
                     .text("The client could not be found on the server, it may have been deleted")
                     .showWarning();
             return;
         } catch (ServerRestException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
             Notifications.create()
                     .title("Server error")
                     .text("Could not apply changes on the server, please try again later")
@@ -387,11 +391,12 @@ public class ViewProceduresController extends SubController {
         if (record != null) {
             try {
                 State.getClientResolver().deleteProcedureRecord(client, record);
-            } catch (ServerRestException exc) {
-                LOGGER.severe(exc.getMessage());
+            } catch (ServerRestException e) {
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
                 PageNavigator.showAlert(AlertType.ERROR,
                         "Server Error",
-                        "An error occurred when trying to send data to the server.\nPlease try again later.", mainController.getStage());
+                        "An error occurred when trying to send data to the server.\nPlease try again later.",
+                        mainController.getStage());
                 return;
             }
 
@@ -426,11 +431,12 @@ public class ViewProceduresController extends SubController {
                 errorMessage.setText(null);
                 PageNavigator.refreshAllWindows();
 
-            } catch (ServerRestException exc) {
-                LOGGER.severe(exc.getMessage());
+            } catch (ServerRestException e) {
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
                 PageNavigator.showAlert(AlertType.ERROR,
                         "Server Error",
-                        "An error occurred when trying to send data to the server.\nPlease try again later.", mainController.getStage());
+                        "An error occurred when trying to send data to the server.\nPlease try again later.",
+                        mainController.getStage());
             }
         }
     }

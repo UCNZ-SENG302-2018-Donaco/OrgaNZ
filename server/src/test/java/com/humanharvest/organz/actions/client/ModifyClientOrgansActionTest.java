@@ -1,14 +1,8 @@
 package com.humanharvest.organz.actions.client;
 
-import com.humanharvest.organz.BaseTest;
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.actions.ActionInvoker;
-import com.humanharvest.organz.state.ClientManager;
-import com.humanharvest.organz.state.ClientManagerMemory;
-import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
-import org.junit.Before;
-import org.junit.Test;
+import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -18,9 +12,16 @@ import java.util.logging.Handler;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import com.humanharvest.organz.BaseTest;
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.actions.ActionInvoker;
+import com.humanharvest.organz.state.ClientManager;
+import com.humanharvest.organz.state.ClientManagerMemory;
+import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
+
+import org.junit.Before;
+import org.junit.Test;
 
 public class ModifyClientOrgansActionTest extends BaseTest {
 
@@ -58,7 +59,6 @@ public class ModifyClientOrgansActionTest extends BaseTest {
         assertFalse(baseClient.getOrganDonationStatus().get(Organ.HEART));
     }
 
-
     @Test
     public void UpdateMultipleOrganValidUndoTest() throws OrganAlreadyRegisteredException {
         ModifyClientOrgansAction action = new ModifyClientOrgansAction(baseClient, manager);
@@ -74,7 +74,6 @@ public class ModifyClientOrgansActionTest extends BaseTest {
         assertFalse(baseClient.getOrganDonationStatus().get(Organ.BONE));
         assertFalse(baseClient.getOrganDonationStatus().get(Organ.HEART));
     }
-
 
     @Test
     public void UpdateTwoSeparateValidUndoTest() throws OrganAlreadyRegisteredException {
@@ -134,7 +133,6 @@ public class ModifyClientOrgansActionTest extends BaseTest {
         assertFalse(baseClient.getOrganDonationStatus().get(Organ.BONE));
         assertFalse(baseClient.getOrganDonationStatus().get(Organ.HEART));
     }
-
 
     @Test
     public void UpdateSingleOrganTrueThenFalseTest() throws OrganAlreadyRegisteredException {

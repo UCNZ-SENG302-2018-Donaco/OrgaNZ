@@ -1,8 +1,12 @@
 package com.humanharvest.organz.state;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
+import javafx.stage.Stage;
+
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
@@ -26,16 +30,14 @@ import com.humanharvest.organz.resolvers.clinician.ClinicianResolver;
 import com.humanharvest.organz.resolvers.clinician.ClinicianResolverRest;
 import com.humanharvest.organz.utilities.RestErrorHandler;
 import com.humanharvest.organz.utilities.enums.Country;
-import javafx.stage.Stage;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
 
 /**
  * A static class to store the current state of the system.
@@ -150,12 +152,12 @@ public final class State {
         session = new Session(administrator);
     }
 
-    public static void setUnsavedChanges(boolean changes) {
-        unsavedChanges = changes;
-    }
-
     public static boolean isUnsavedChanges() {
         return unsavedChanges;
+    }
+
+    public static void setUnsavedChanges(boolean changes) {
+        unsavedChanges = changes;
     }
 
     public static Set<Country> getAllowedCountries() {
@@ -171,12 +173,12 @@ public final class State {
         session = null;
     }
 
-    public static void setToken(String t) {
-        token = t;
-    }
-
     public static String getToken() {
         return token;
+    }
+
+    public static void setToken(String t) {
+        token = t;
     }
 
     public static void reset() {
@@ -324,11 +326,11 @@ public final class State {
         State.viewedClinician = viewedClinician;
     }
 
-    public static void setUiType(UiType type) {
-        uiType = type;
-    }
-
     public static UiType getUiType() {
         return uiType;
+    }
+
+    public static void setUiType(UiType type) {
+        uiType = type;
     }
 }

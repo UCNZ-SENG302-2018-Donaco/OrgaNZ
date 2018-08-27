@@ -1,7 +1,7 @@
 package com.humanharvest.organz;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
 import javax.persistence.Entity;
@@ -10,8 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 /**
  * Represents an instance of a user having an illness for a period of time.
@@ -41,10 +41,10 @@ public class IllnessRecord {
     /**
      * Creates a new IllnessRecord for a given illness.
      *
-     * @param illnessName   The name of the illness.
+     * @param illnessName The name of the illness.
      * @param diagnosisDate The date the illness was diagnosed for the client.
-     * @param curedDate     The date the illness was cured.
-     * @param isChronic     Whether the illness is chronic or not.
+     * @param curedDate The date the illness was cured.
+     * @param isChronic Whether the illness is chronic or not.
      */
     public IllnessRecord(String illnessName, LocalDate diagnosisDate, LocalDate curedDate, boolean isChronic) {
         this.illnessName = illnessName;
@@ -56,9 +56,9 @@ public class IllnessRecord {
     /**
      * Creates a new IllnessRecord for a given illness.
      *
-     * @param illnessName   The name of the illness.
+     * @param illnessName The name of the illness.
      * @param diagnosisDate The date the illness was diagnosed for the client.
-     * @param isChronic     Whether the illness is chronic or not.
+     * @param isChronic Whether the illness is chronic or not.
      */
     public IllnessRecord(String illnessName, LocalDate diagnosisDate, boolean isChronic) {
         this.illnessName = illnessName;
@@ -71,28 +71,12 @@ public class IllnessRecord {
         return id;
     }
 
-    public Client getClient() {
-        return client;
-    }
-
-    public String getIllnessName() {
-        return illnessName;
-    }
-
-    public LocalDate getDiagnosisDate() {
-        return diagnosisDate;
-    }
-
-    public LocalDate getCuredDate() {
-        return curedDate;
-    }
-
-    public boolean isChronic() {
-        return isChronic;
-    }
-
     public void setId(long id) {
         this.id = id;
+    }
+
+    public Client getClient() {
+        return client;
     }
 
     /**
@@ -105,12 +89,28 @@ public class IllnessRecord {
         this.client = client;
     }
 
+    public String getIllnessName() {
+        return illnessName;
+    }
+
+    public LocalDate getDiagnosisDate() {
+        return diagnosisDate;
+    }
+
     public void setDiagnosisDate(LocalDate diagnosisDate) {
         this.diagnosisDate = diagnosisDate;
     }
 
+    public LocalDate getCuredDate() {
+        return curedDate;
+    }
+
     public void setCuredDate(LocalDate curedDate) {
         this.curedDate = curedDate;
+    }
+
+    public boolean isChronic() {
+        return isChronic;
     }
 
     public void setChronic(boolean chronic) {

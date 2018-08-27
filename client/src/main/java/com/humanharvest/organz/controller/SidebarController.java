@@ -1,5 +1,9 @@
 package com.humanharvest.organz.controller;
 
+import javafx.fxml.FXML;
+import javafx.scene.control.Button;
+import org.controlsfx.control.Notifications;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.state.Session;
 import com.humanharvest.organz.state.Session.UserType;
@@ -7,9 +11,6 @@ import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.views.ActionResponseView;
-import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import org.controlsfx.control.Notifications;
 
 /**
  * Controller for the sidebar pane imported into every page in the main part of the GUI.
