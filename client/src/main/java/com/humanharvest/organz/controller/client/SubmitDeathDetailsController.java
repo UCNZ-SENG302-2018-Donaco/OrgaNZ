@@ -1,5 +1,22 @@
 package com.humanharvest.organz.controller.client;
 
+import static com.humanharvest.organz.controller.clinician.ViewBaseController.addChangeIfDifferent;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.format.DateTimeParseException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javafx.beans.property.Property;
+import javafx.collections.FXCollections;
+import javafx.fxml.FXML;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.TextField;
+import org.controlsfx.control.Notifications;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
@@ -11,22 +28,6 @@ import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.views.client.ModifyClientObject;
-import javafx.beans.property.Property;
-import javafx.collections.FXCollections;
-import javafx.fxml.FXML;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TextField;
-import org.controlsfx.control.Notifications;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.format.DateTimeParseException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-import static com.humanharvest.organz.controller.clinician.ViewBaseController.addChangeIfDifferent;
 
 public class SubmitDeathDetailsController extends SubController {
 
@@ -107,10 +108,12 @@ public class SubmitDeathDetailsController extends SubController {
             addChangeIfDifferent(modifyClientObject, client, "timeOfDeath",
                     LocalTime.parse(deathTimeField.getText()));
         } catch (DateTimeParseException e) {
+            LOGGER.log(Level.INFO, e.getMessage(), e);
             PageNavigator.showAlert(AlertType.WARNING, "Incorrect time format",
                     "Please enter the time of death in this format: 'HH:mm:ss'", mainController.getStage());
             return;
         } catch (NullPointerException e) {
+            LOGGER.log(Level.INFO, e.getMessage(), e);
             PageNavigator.showAlert(AlertType.WARNING, "Required data missing",
                     "Date of death and time of death are required.", mainController.getStage());
             return;
@@ -190,7 +193,7 @@ public class SubmitDeathDetailsController extends SubController {
             mainController.getStage().close();
             PageNavigator.refreshAllWindows();
         } catch (NotFoundException e) {
-            LOGGER.log(Level.WARNING, "Client not found");
+            LOGGER.log(Level.WARNING, "Client not found", e);
             PageNavigator.showAlert(
                     AlertType.WARNING,
                     "Client not found",
@@ -202,7 +205,7 @@ public class SubmitDeathDetailsController extends SubController {
                     "Server error",
                     "Could not apply changes on the server, please try again later", mainController.getStage());
         } catch (IfMatchFailedException e) {
-            LOGGER.log(Level.INFO, "If-Match did not match");
+            LOGGER.log(Level.INFO, "If-Match did not match", e);
             PageNavigator.showAlert(
                     AlertType.WARNING,
                     "Outdated Data",

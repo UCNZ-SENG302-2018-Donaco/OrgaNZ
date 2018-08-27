@@ -1,14 +1,16 @@
 package com.humanharvest.organz.controller.administrator;
 
+import static org.junit.Assert.assertEquals;
+
+import javafx.scene.input.KeyCode;
+
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.controller.ControllerTest;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
-import javafx.scene.input.KeyCode;
-import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 
 public class CreateAdministratorControllerTest extends ControllerTest {
 

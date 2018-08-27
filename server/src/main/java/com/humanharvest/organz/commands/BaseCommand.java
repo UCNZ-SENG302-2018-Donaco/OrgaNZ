@@ -1,5 +1,7 @@
 package com.humanharvest.organz.commands;
 
+import java.io.PrintStream;
+
 import com.humanharvest.organz.commands.modify.CreateClient;
 import com.humanharvest.organz.commands.modify.CreateClinician;
 import com.humanharvest.organz.commands.modify.DeleteClient;
@@ -19,10 +21,9 @@ import com.humanharvest.organz.commands.view.PrintAllOrgan;
 import com.humanharvest.organz.commands.view.PrintClientInfo;
 import com.humanharvest.organz.commands.view.PrintClientOrgan;
 import com.humanharvest.organz.commands.view.SQL;
+
 import picocli.CommandLine.Command;
 import picocli.CommandLine.HelpCommand;
-
-import java.io.PrintStream;
 
 /**
  * The main command hub used to access the other commands within the program such as save, help, createclient etc.

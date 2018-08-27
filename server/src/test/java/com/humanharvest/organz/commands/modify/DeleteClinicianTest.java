@@ -1,5 +1,10 @@
 package com.humanharvest.organz.commands.modify;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
+
 import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.actions.ActionInvoker;
@@ -7,15 +12,11 @@ import com.humanharvest.organz.state.ClinicianManager;
 import com.humanharvest.organz.state.ClinicianManagerMemory;
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Region;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 import picocli.CommandLine;
-
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
 
 public class DeleteClinicianTest extends BaseTest {
 

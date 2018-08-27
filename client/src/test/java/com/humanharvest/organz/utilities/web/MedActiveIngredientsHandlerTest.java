@@ -1,18 +1,20 @@
 package com.humanharvest.organz.utilities.web;
 
-import com.google.api.client.http.HttpTransport;
-import com.humanharvest.organz.BaseTest;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import com.humanharvest.organz.BaseTest;
+
+import com.google.api.client.http.HttpTransport;
+import org.junit.Test;
 
 public class MedActiveIngredientsHandlerTest extends BaseTest {
+
     private HttpTransport mockTransport;
     private MedActiveIngredientsHandler handler;
 

@@ -1,13 +1,5 @@
 package com.humanharvest.organz.utilities.serialisation;
 
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.utilities.enums.BloodType;
-import com.humanharvest.organz.utilities.enums.Country;
-import com.humanharvest.organz.utilities.enums.Gender;
-import org.apache.commons.csv.CSVFormat;
-import org.apache.commons.csv.CSVParser;
-import org.apache.commons.csv.CSVRecord;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -19,6 +11,17 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.NoSuchElementException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.utilities.enums.BloodType;
+import com.humanharvest.organz.utilities.enums.Country;
+import com.humanharvest.organz.utilities.enums.Gender;
+
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVParser;
+import org.apache.commons.csv.CSVRecord;
 
 /**
  * An implementation of {@link ReadClientStrategy} that can be used for reading clients serialized to CSV. This
@@ -26,6 +29,9 @@ import java.util.NoSuchElementException;
  * {@link com.humanharvest.organz.MedicationRecord}s or {@link com.humanharvest.organz.TransplantRequest}s.
  */
 public class CSVReadClientStrategy implements ReadClientStrategy {
+
+    private static final Logger LOGGER = Logger.getLogger(CSVReadClientStrategy.class.getName());
+    private static final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("M/dd/yyyy");
 
     /**
      * Describes which columns represent which client data in the CSV format.
@@ -35,8 +41,6 @@ public class CSVReadClientStrategy implements ReadClientStrategy {
         street_number, street_name, neighborhood, city, region, zip_code, country, birth_country, home_number,
         mobile_number, email
     }
-
-    private static final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("M/dd/yyyy");
 
     private CSVParser parser;
 
@@ -76,24 +80,6 @@ public class CSVReadClientStrategy implements ReadClientStrategy {
         return client;
     }
 
-    @Override
-    public Client readNext() throws InvalidObjectException {
-        try {
-            try {
-                return deserialise(parser.iterator().next());
-            } catch (IllegalArgumentException exc) {
-                throw new InvalidObjectException(exc.getMessage());
-            }
-        } catch (NoSuchElementException exc) {
-            return null;
-        }
-    }
-
-    @Override
-    public void close() throws IOException {
-        parser.close();
-    }
-
     /**
      * Creates a {@link LocalDate} object from a date in string format (M/dd/yyyy).
      *
@@ -108,9 +94,30 @@ public class CSVReadClientStrategy implements ReadClientStrategy {
 
         try {
             return LocalDate.parse(dateString, dateFormat);
-        } catch (DateTimeParseException exc) {
-            throw new IllegalArgumentException(exc);
+        } catch (DateTimeParseException e) {
+            LOGGER.log(Level.INFO, e.getMessage(), e);
+            throw new IllegalArgumentException(e);
         }
+    }
+
+    @Override
+    public Client readNext() throws InvalidObjectException {
+        try {
+            try {
+                return deserialise(parser.iterator().next());
+            } catch (IllegalArgumentException e) {
+                LOGGER.log(Level.WARNING, e.getMessage(), e);
+                throw new InvalidObjectException(e.getMessage());
+            }
+        } catch (NoSuchElementException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
+            return null;
+        }
+    }
+
+    @Override
+    public void close() throws IOException {
+        parser.close();
     }
 
     @Override

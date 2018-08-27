@@ -1,5 +1,14 @@
 package com.humanharvest.organz.controller.clinician;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Pattern;
+
+import javafx.fxml.FXML;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
+
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.HistoryItem;
@@ -10,12 +19,6 @@ import com.humanharvest.organz.utilities.JSONConverter;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
-import javafx.fxml.FXML;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
-
-import java.util.regex.Pattern;
 
 /**
  * Controller to handle the login of staff.
@@ -23,7 +26,9 @@ import java.util.regex.Pattern;
  * system, e.g. the default clinician.
  */
 public class StaffLoginController extends SubController {
+
     private static final Pattern IS_NUMBER = Pattern.compile("[0-9]+");
+    private static final Logger LOGGER = Logger.getLogger(StaffLoginController.class.getName());
 
     @FXML
     private TextField staffId;
@@ -78,7 +83,9 @@ public class StaffLoginController extends SubController {
         try {
             clinician = State.getAuthenticationManager().loginClinician(id, password.getText());
         } catch (AuthenticationException e) {
-            PageNavigator.showAlert(AlertType.ERROR, "Invalid login", e.getLocalizedMessage(), mainController.getStage());
+            LOGGER.log(Level.INFO, e.getMessage(), e);
+            PageNavigator.showAlert(AlertType.ERROR, "Invalid login", e.getLocalizedMessage(),
+                    mainController.getStage());
             return;
         }
 
@@ -98,7 +105,9 @@ public class StaffLoginController extends SubController {
         try {
             administrator = State.getAuthenticationManager().loginAdministrator(staffId.getText(), password.getText());
         } catch (AuthenticationException e) {
-            PageNavigator.showAlert(AlertType.ERROR, "Invalid login", e.getLocalizedMessage(), mainController.getStage());
+            LOGGER.log(Level.INFO, e.getMessage(), e);
+            PageNavigator.showAlert(AlertType.ERROR, "Invalid login", e.getLocalizedMessage(),
+                    mainController.getStage());
             return;
         }
 

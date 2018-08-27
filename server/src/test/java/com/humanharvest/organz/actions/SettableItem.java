@@ -6,12 +6,12 @@ public class SettableItem {
     private int anInt;
     private Integer integer;
 
-    public void setString(String string) {
-        this.string = string;
-    }
-
     public String getString() {
         return string;
+    }
+
+    public void setString(String string) {
+        this.string = string;
     }
 
     public int getAnInt() {

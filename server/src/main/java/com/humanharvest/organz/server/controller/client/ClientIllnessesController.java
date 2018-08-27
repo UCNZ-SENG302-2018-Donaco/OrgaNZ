@@ -1,5 +1,10 @@
 package com.humanharvest.organz.server.controller.client;
 
+import static com.humanharvest.organz.utilities.validators.ClientValidator.checkClientETag;
+
+import java.util.List;
+import java.util.Optional;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.actions.client.AddIllnessRecordAction;
@@ -12,6 +17,7 @@ import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
 import com.humanharvest.organz.utilities.validators.client.ModifyIllnessValidator;
 import com.humanharvest.organz.views.client.CreateIllnessView;
 import com.humanharvest.organz.views.client.ModifyIllnessObject;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -25,9 +31,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-import java.util.Optional;
-
 @RestController
 public class ClientIllnessesController {
 
@@ -38,17 +41,18 @@ public class ClientIllnessesController {
      * @return Returns list of Illnesses
      */
     @GetMapping("/clients/{id}/illnesses")
-    public ResponseEntity<List<IllnessRecord>> getClientCurrentIllnesses(@PathVariable int id,
-                                                                         @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {
+    public ResponseEntity<List<IllnessRecord>> getClientCurrentIllnesses(
+            @PathVariable int id,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken) {
 
-        Optional<Client> Optionalclient = State.getClientManager().getClientByID(id);
-        if (Optionalclient.isPresent()) {
-            Client client = Optionalclient.get();
+        Optional<Client> optionalClient = State.getClientManager().getClientByID(id);
+        if (optionalClient.isPresent()) {
+            Client client = optionalClient.get();
             //State.getAuthenticationManager().verifyClientAccess(authToken, client);
             HttpHeaders headers = new HttpHeaders();
             headers.setETag(client.getETag());
 
-            return new ResponseEntity<>(Optionalclient.get().getIllnesses(), headers, HttpStatus.OK);
+            return new ResponseEntity<>(client.getIllnesses(), headers, HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -69,45 +73,39 @@ public class ClientIllnessesController {
             //Return 404 if that client does not exist
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        Client client = optionalClient.get();
 
-        if (ETag == null) {
-            throw new IfMatchRequiredException();
-        }
+        //Auth check
+        State.getAuthenticationManager().verifyClientAccess(authToken, client);
 
-        if (!optionalClient.get().getETag().equals(ETag)) {
-            throw new IfMatchFailedException();
-        }
+        //Check ETag
+        checkClientETag(client, ETag);
 
-        IllnessRecord record;
-        try {
-            Client client = optionalClient.get();
-            record = client.getIllnessById(id);
-            State.getAuthenticationManager().verifyClientAccess(authToken, client);
+        IllnessRecord record = client.getIllnessById(id);
 
-            if (!ModifyIllnessValidator.isValid(modifyIllnessObject)) {
-                throw new InvalidRequestException();
-            }
-
-            if (record.isChronic() && modifyIllnessObject.getCuredDate() != null) {
-                //Cured date is trying to be set while disease is chronic.
-                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-            }
-            if (modifyIllnessObject.getIllnessName() == null) {
-                modifyIllnessObject.setIllnessName(record.getIllnessName());
-            }
-            if (modifyIllnessObject.getDiagnosisDate() == null) {
-                modifyIllnessObject.setDiagnosisDate(record.getDiagnosisDate());
-            }
-
-        } catch (NullPointerException e) {
-            //Record does not exist
+        if (record == null) {
+            //Return 404 if that illness does not exist
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
+        if (!ModifyIllnessValidator.isValid(modifyIllnessObject)) {
+            throw new InvalidRequestException();
+        }
+
+        if (record.isChronic() && modifyIllnessObject.getCuredDate() != null) {
+            //Cured date is trying to be set while disease is chronic.
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        if (modifyIllnessObject.getIllnessName() == null) {
+            modifyIllnessObject.setIllnessName(record.getIllnessName());
+        }
+        if (modifyIllnessObject.getDiagnosisDate() == null) {
+            modifyIllnessObject.setDiagnosisDate(record.getDiagnosisDate());
+        }
 
         //Create the old details to allow undoable action
         ModifyIllnessObject oldIllnessRecord = new ModifyIllnessObject();
-        //Copy the values from the current record to our oldrecord
+        //Copy the values from the current record to our old record
         BeanUtils.copyProperties(record, oldIllnessRecord, modifyIllnessObject.getUnmodifiedFields());
         //Make the action (this is a new action)
         ModifyIllnessRecordByObjectAction action = new ModifyIllnessRecordByObjectAction(record,
@@ -117,55 +115,64 @@ public class ClientIllnessesController {
 
         //Add the new ETag to the headers
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(optionalClient.get().getETag());
+        headers.setETag(client.getETag());
         return new ResponseEntity<>(record, headers, HttpStatus.OK);
 
     }
 
     @PostMapping("/clients/{uid}/illnesses")
-    public ResponseEntity<List<IllnessRecord>> postIllness(@RequestBody CreateIllnessView illnessView,
-                                                           @PathVariable int uid,
-                                                           @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
+    public ResponseEntity<List<IllnessRecord>> postIllness(
+            @RequestBody CreateIllnessView illnessView,
+            @PathVariable int uid,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws InvalidRequestException {
 
-        Optional<Client> client = State.getClientManager().getClientByID(uid);
-        if (client.isPresent()) {
-            State.getAuthenticationManager().verifyClientAccess(authToken, client.get());
-        } else {
+        Optional<Client> optionalClient = State.getClientManager().getClientByID(uid);
+        if (!optionalClient.isPresent()) {
             //Return 404 if that client does not exist
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        Client client = optionalClient.get();
+
+        State.getAuthenticationManager().verifyClientAccess(authToken, client);
 
         IllnessRecord record = new IllnessRecord(illnessView.getIllnessName(),
                 illnessView.getDiagnosisDate(), illnessView.isChronic());
 
-        AddIllnessRecordAction addIllnessRecordAction = new AddIllnessRecordAction(client.get(), record,
+        AddIllnessRecordAction addIllnessRecordAction = new AddIllnessRecordAction(client, record,
                 State.getClientManager());
 
         State.getActionInvoker(authToken).execute(addIllnessRecordAction);
         HttpHeaders headers = new HttpHeaders();
-        headers.setETag(client.get().getETag());
-        return new ResponseEntity<>(client.get().getIllnesses(), headers, HttpStatus.CREATED);
+        headers.setETag(client.getETag());
+        return new ResponseEntity<>(client.getIllnesses(), headers, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/clients/{uid}/illnesses/{id}")
-    public ResponseEntity<IllnessRecord> deleteIllness(@PathVariable int uid,
-                                                       @PathVariable int id,
-                                                       @RequestHeader(value = "X-Auth-Token", required = false) String authToken) throws InvalidRequestException {
-        Optional<Client> client = State.getClientManager().getClientByID(uid);
-        if (!client.isPresent()) {
+    public ResponseEntity<IllnessRecord> deleteIllness(
+            @PathVariable int uid,
+            @PathVariable int id,
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken) throws InvalidRequestException {
+        Optional<Client> optionalClient = State.getClientManager().getClientByID(uid);
+        if (!optionalClient.isPresent()) {
             //Return 404 if that client does not exist
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+        Client client = optionalClient.get();
 
-        IllnessRecord removeRecord = client.get().getIllnessById(id);
-        State.getAuthenticationManager().verifyClientAccess(authToken, client.get());
-        DeleteIllnessRecordAction action = new DeleteIllnessRecordAction(client.get(), removeRecord,
+        IllnessRecord removeRecord = client.getIllnessById(id);
+        if (removeRecord == null) {
+            //Return 404 if that illness does not exist
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        State.getAuthenticationManager().verifyClientAccess(authToken, client);
+        DeleteIllnessRecordAction action = new DeleteIllnessRecordAction(client, removeRecord,
                 State.getClientManager());
         State.getActionInvoker(authToken).execute(action);
 
         Client client1 = State.getClientManager()
-                .getClientByID(client.get().getUid())
+                .getClientByID(client.getUid())
                 .orElseThrow(IllegalStateException::new);
 
         HttpHeaders headers = new HttpHeaders();

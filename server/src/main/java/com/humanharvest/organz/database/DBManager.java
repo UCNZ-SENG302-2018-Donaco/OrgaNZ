@@ -1,15 +1,15 @@
 package com.humanharvest.organz.database;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import javax.persistence.PersistenceException;
+import javax.persistence.RollbackException;
+
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
-
-import javax.persistence.PersistenceException;
-import javax.persistence.RollbackException;
-import java.sql.Connection;
-import java.sql.SQLException;
 
 /**
  * A handler for all database requests.
@@ -18,6 +18,8 @@ import java.sql.SQLException;
 public class DBManager {
 
     private static DBManager dbManager;
+
+    private SessionFactory sessionFactory;
 
     /**
      * Default no-args constructor that sets the manager's SessionFactory to the default one returned by
@@ -36,8 +38,6 @@ public class DBManager {
         this.sessionFactory = sessionFactory;
     }
 
-    private SessionFactory sessionFactory;
-
     /**
      * Builds the default Hibernate SessionFactory based on the Hibernate config file.
      *
@@ -45,6 +45,13 @@ public class DBManager {
      */
     private static SessionFactory buildSessionFactory() {
         return new Configuration().configure("hibernate.cfg.xml").buildSessionFactory();
+    }
+
+    public static DBManager getInstance() {
+        if (dbManager == null) {
+            dbManager = new DBManager();
+        }
+        return dbManager;
     }
 
     /**
@@ -60,14 +67,6 @@ public class DBManager {
         dataSource.setUser(cfg.getProperty("hibernate.connection.username"));
         dataSource.setPassword(cfg.getProperty("hibernate.connection.password"));
         return dataSource.getConnection();
-    }
-
-
-    public static DBManager getInstance() {
-        if (dbManager == null) {
-            dbManager = new DBManager();
-        }
-        return dbManager;
     }
 
     /**
@@ -87,7 +86,7 @@ public class DBManager {
      * If the entity is not yet present in the database, then a record for it is inserted into its table.
      *
      * @param entity The entity to save. Must be of a type that is annotated with the JPA @Entity tag, and that has a
-     *               table within the database.
+     * table within the database.
      * @throws PersistenceException If an error occurs when saving the entity to the database.
      */
     public void saveEntity(Object entity) throws PersistenceException {

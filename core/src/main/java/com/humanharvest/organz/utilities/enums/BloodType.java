@@ -13,16 +13,12 @@ public enum BloodType {
     O_NEG("O-"),
     O_POS("O+");
 
-    private final String text;
-
     private static String mismatchText;
+
+    private final String text;
 
     BloodType(String text) {
         this.text = text;
-    }
-
-    public String toString() {
-        return text;
     }
 
     /**
@@ -40,6 +36,8 @@ public enum BloodType {
         }
 
         //No match
+        //We use a static text builder so this text is dynamically built based on the ENUM options, but only needs to
+        // be built once per runtime
         if (mismatchText != null) {
             throw new IllegalArgumentException(mismatchText);
         } else {
@@ -51,5 +49,9 @@ public enum BloodType {
             mismatchText = mismatchTextBuilder.toString();
             throw new IllegalArgumentException(mismatchText);
         }
+    }
+
+    public String toString() {
+        return text;
     }
 }

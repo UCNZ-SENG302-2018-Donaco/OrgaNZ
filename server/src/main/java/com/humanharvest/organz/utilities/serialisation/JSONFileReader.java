@@ -1,11 +1,5 @@
 package com.humanharvest.organz.utilities.serialisation;
 
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonToken;
-import com.fasterxml.jackson.databind.type.CollectionType;
-
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,6 +7,12 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.List;
+
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonToken;
+import com.fasterxml.jackson.databind.type.CollectionType;
 
 /**
  * Provides functionality to read a JSON file as a stream of objects of a given datatype. Also provides the ability
@@ -31,7 +31,7 @@ public class JSONFileReader<T> implements Closeable {
      * Creates a new JSONFileReader to read from the given file. The class of the datatype must also be provided
      * because of Java's type erasure.
      *
-     * @param file      The JSON file to read from.
+     * @param file The JSON file to read from.
      * @param dataClass The class of the datatype stored in the JSON file.
      * @throws FileNotFoundException If the given file cannot be found (or cannot be opened).
      */

@@ -1,10 +1,10 @@
 package com.humanharvest.organz.views.client;
 
-import com.humanharvest.organz.ProcedureRecord;
-import com.humanharvest.organz.utilities.enums.Organ;
-
 import java.time.LocalDate;
 import java.util.Set;
+
+import com.humanharvest.organz.ProcedureRecord;
+import com.humanharvest.organz.utilities.enums.Organ;
 
 public class CreateProcedureView {
 

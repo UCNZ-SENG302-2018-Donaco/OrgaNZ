@@ -1,5 +1,14 @@
 package com.humanharvest.organz.server;
 
+import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.actions.client.MarkClientAsDeadAction;
 import com.humanharvest.organz.state.AuthenticationManagerFake;
@@ -7,6 +16,7 @@ import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,15 +26,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
-
-import static org.hamcrest.Matchers.is;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
@@ -72,7 +73,6 @@ public class OrganControllerTest {
         State.getActionInvoker("").execute(action2);
         State.getActionInvoker("").execute(action3);
 
-
     }
 
     @Test
@@ -81,7 +81,6 @@ public class OrganControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.totalResults", is(5)));
     }
-
 
     @Test
     public void getFilteredOrgans() throws Exception {

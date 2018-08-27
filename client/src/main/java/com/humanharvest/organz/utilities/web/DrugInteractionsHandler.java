@@ -1,5 +1,14 @@
 package com.humanharvest.organz.utilities.web;
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.utilities.exceptions.BadDrugNameException;
+import com.humanharvest.organz.utilities.exceptions.BadGatewayException;
+
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpRequest;
@@ -8,14 +17,6 @@ import com.google.api.client.http.HttpResponse;
 import com.google.api.client.http.HttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonObjectParser;
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.utilities.exceptions.BadDrugNameException;
-import com.humanharvest.organz.utilities.exceptions.BadGatewayException;
-
-import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
 
 /**
  * A handler for requests to a drug interaction API.
@@ -101,18 +102,20 @@ public class DrugInteractionsHandler extends WebAPIHandler {
      * given that apply for the given client (based on age and gender).
      *
      * @param client The client to check that the interactions apply for.
-     * @param drug1  The name of the first drug to find interactions for.
-     * @param drug2  The name of the second drug to find interactions for.
+     * @param drug1 The name of the first drug to find interactions for.
+     * @param drug2 The name of the second drug to find interactions for.
      * @return A list of strings that each contain the details of one interaction symptom. May be empty if there are
      * no results for that request.
-     * @throws IOException          If the drug interactions web API cannot be reached, e.g. if there is no internet access.
+     * @throws IOException If the drug interactions web API cannot be reached,
+     * e.g. if there is no internet access.
      * @throws BadDrugNameException If the API returns a 404 response saying that the drug names are invalid.
-     * @throws BadGatewayException  If the API returns a 502 response.
+     * @throws BadGatewayException If the API returns a 502 response.
      */
     public List<String> getInteractions(Client client, String drug1, String drug2)
             throws IOException, BadDrugNameException, BadGatewayException {
-        Optional<DrugInteractionsResponse> cachedResponse = getCachedData(new TypeReference<DrugInteractionsResponse>() {
-        }, drug1, drug2);
+        Optional<DrugInteractionsResponse> cachedResponse = getCachedData(
+                new TypeReference<DrugInteractionsResponse>() {
+                }, drug1, drug2);
         if (cachedResponse.isPresent()) {
             return cachedResponse.get().calculateClientInteractions(client);
         }
@@ -142,7 +145,7 @@ public class DrugInteractionsHandler extends WebAPIHandler {
      * Using the response data, returns a formatted interaction response.
      */
     private List<String> handleInteractionsResponse(Client client, HttpResponse response, int statusCode,
-                                                    String drug1, String drug2)
+            String drug1, String drug2)
             throws IOException, BadDrugNameException, BadGatewayException {
         switch (statusCode) {
             case OK:

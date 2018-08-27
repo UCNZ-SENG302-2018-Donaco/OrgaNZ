@@ -1,13 +1,13 @@
 package com.humanharvest.organz;
 
-import com.humanharvest.organz.utilities.enums.Organ;
-import org.junit.Ignore;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import com.humanharvest.organz.utilities.enums.Organ;
+
+import org.junit.Test;
 
 public class DonatedOrganTest {
 
@@ -132,9 +132,7 @@ public class DonatedOrganTest {
         assertEquals((double) 3 / 10, donatedOrgan.getFullMarker());
     }
 
-    // todo This should not result in an NPE. Expiration times for organs such as bone marrow are not yet implemented
     @Test
-    @Ignore
     public void getFullMarkerBoneMarrowTest() {
         organ = Organ.BONE_MARROW;
         donatedOrgan = new DonatedOrgan(organ, donor, dateTimeOfDonation);

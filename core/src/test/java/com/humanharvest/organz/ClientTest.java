@@ -1,23 +1,21 @@
 package com.humanharvest.organz;
 
-import com.humanharvest.organz.utilities.enums.Country;
-import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Period;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import com.humanharvest.organz.utilities.enums.Country;
+import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class ClientTest {
+
     private static final String FIRST_NAME = "First";
     private static final String MIDDLE_NAME = "middlename";
     private static final String PREFERRED_NAME = "Preferred";
@@ -140,7 +138,6 @@ public class ClientTest {
         assertFalse(client.isReceiver());
     }
 
-
     @Test
     void validCurrentOrganRequestTest() {
         Organ o = Organ.HEART;
@@ -244,7 +241,6 @@ public class ClientTest {
         assertTrue(client.profileSearch("first michael"));
     }
 
-
     @Test
     void testClientIsReceiver() {
         client = new Client(FIRST_NAME, null, FIRST_NAME, LocalDate.of(1970, 1, 1), 1);
@@ -271,7 +267,8 @@ public class ClientTest {
         List<DonatedOrgan> donatedOrgans = client.getDonatedOrgans();
         assertEquals(3, donatedOrgans.size());
         assertTrue(donatedOrgans.stream().anyMatch(donatedOrgan -> donatedOrgan.getOrganType().equals(Organ.BONE)));
-        assertTrue(donatedOrgans.stream().anyMatch(donatedOrgan -> donatedOrgan.getOrganType().equals(Organ.BONE_MARROW)));
+        assertTrue(
+                donatedOrgans.stream().anyMatch(donatedOrgan -> donatedOrgan.getOrganType().equals(Organ.BONE_MARROW)));
         assertTrue(donatedOrgans.stream().anyMatch(donatedOrgan -> donatedOrgan.getOrganType().equals(Organ.SKIN)));
     }
 }

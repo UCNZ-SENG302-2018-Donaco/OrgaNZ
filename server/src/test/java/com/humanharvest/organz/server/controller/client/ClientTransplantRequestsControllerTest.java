@@ -1,27 +1,5 @@
 package com.humanharvest.organz.server.controller.client;
 
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.TransplantRequest;
-import com.humanharvest.organz.server.Application;
-import com.humanharvest.organz.state.AuthenticationManager;
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.web.context.WebApplicationContext;
-
-import java.nio.charset.Charset;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.isEmptyOrNullString;
 import static org.junit.Assert.assertEquals;
@@ -36,14 +14,38 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
 
+import java.nio.charset.Charset;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.TransplantRequest;
+import com.humanharvest.organz.server.Application;
+import com.humanharvest.organz.state.AuthenticationManager;
+import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
+
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.context.WebApplicationContext;
+
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
 @WebAppConfiguration
 public class ClientTransplantRequestsControllerTest {
 
+    @Autowired
+    WebApplicationContext webApplicationContext;
     private MediaType contentType = new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON
             .getSubtype(), Charset.forName("utf8"));
-
     private MockMvc mockMvc;
     private Client testClient;
     private long id;
@@ -51,9 +53,6 @@ public class ClientTransplantRequestsControllerTest {
     private String VALID_AUTH = "valid auth";
     private String INVALID_AUTH = "invalid auth";
     private LocalDateTime justAfterCreatedTime;
-
-    @Autowired
-    WebApplicationContext webApplicationContext;
 
     @Before
     public void init() {

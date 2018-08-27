@@ -1,12 +1,12 @@
 package com.humanharvest.organz.actions.client;
 
-import com.humanharvest.organz.TransplantRequest;
-import com.humanharvest.organz.state.ClientManager;
-import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
-
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Collection;
+
+import com.humanharvest.organz.TransplantRequest;
+import com.humanharvest.organz.state.ClientManager;
+import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 
 /**
  * A reversible action that will resolve the given transplant request with a given status. This status must be one of
@@ -26,18 +26,18 @@ public class ResolveTransplantRequestAction extends ClientAction {
     /**
      * Creates a new resolve transplant request action for the given request and given new status/reason.
      *
-     * @param request      The transplant request to resolve.
-     * @param status       The new status to give the request. Must be one of the valid {@link
-     *                     ResolveTransplantRequestAction#RESOLVED_STATUSES}.
-     * @param reason       The reason for this request being resolved.
+     * @param request The transplant request to resolve.
+     * @param status The new status to give the request. Must be one of the valid {@link
+     * ResolveTransplantRequestAction#RESOLVED_STATUSES}.
+     * @param reason The reason for this request being resolved.
      * @param resolvedTime The resolved time for this request.
-     * @param manager      The client manager
+     * @param manager The client manager
      */
     public ResolveTransplantRequestAction(TransplantRequest request,
-                                          TransplantRequestStatus status,
-                                          String reason,
-                                          LocalDateTime resolvedTime,
-                                          ClientManager manager) {
+            TransplantRequestStatus status,
+            String reason,
+            LocalDateTime resolvedTime,
+            ClientManager manager) {
         super(request.getClient(), manager);
         this.request = request;
         this.status = status;

@@ -1,13 +1,8 @@
 package com.humanharvest.organz.controller.administrator;
 
-import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.state.AdministratorManager;
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.exceptions.ServerRestException;
-import com.humanharvest.organz.utilities.view.Page;
-import com.humanharvest.organz.utilities.view.PageNavigator;
-import com.humanharvest.organz.views.administrator.CreateAdministratorView;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -18,7 +13,18 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import org.controlsfx.control.Notifications;
 
+import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.state.AdministratorManager;
+import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.exceptions.ServerRestException;
+import com.humanharvest.organz.utilities.view.Page;
+import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.views.administrator.CreateAdministratorView;
+
 public class CreateAdministratorController extends SubController {
+
+    private static final Logger LOGGER = Logger.getLogger(CreateAdministratorController.class.getName());
 
     @FXML
     private Label usernameLabel;
@@ -39,7 +45,6 @@ public class CreateAdministratorController extends SubController {
     private Pane menuBarPane;
 
     private AdministratorManager administratorManager;
-
 
     /**
      * Initialize the controller.
@@ -85,7 +90,8 @@ public class CreateAdministratorController extends SubController {
                 usernameLabel.setTextFill(Color.RED);
                 valid = false;
                 PageNavigator.showAlert(AlertType.ERROR, "Invalid username",
-                        "Username must not be an integer, so as not to clash with clincians' staff IDs.", mainController.getStage());
+                        "Username must not be an integer, so as not to clash with clincians' staff IDs.",
+                        mainController.getStage());
             } catch (NumberFormatException ex) {
                 // Non-numeric username - check if it already exists
                 if (administratorManager.doesUsernameExist(usernameTextField.getText())) {
@@ -110,7 +116,6 @@ public class CreateAdministratorController extends SubController {
         return valid;
     }
 
-
     @FXML
     void createUser() {
         if (fieldsAreValid()) {
@@ -127,9 +132,9 @@ public class CreateAdministratorController extends SubController {
                         .text(String.format("Administrator was created with username:%s", username))
                         .showInformation();
 
-
                 PageNavigator.loadPage(Page.SEARCH, mainController);
             } catch (ServerRestException e) {
+                LOGGER.log(Level.INFO, e.getMessage(), e);
                 PageNavigator.showAlert(AlertType.ERROR,
                         "Error",
                         "An Administrator with this username exists. Please pick another", mainController.getStage());

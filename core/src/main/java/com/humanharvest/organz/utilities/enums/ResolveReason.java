@@ -10,16 +10,12 @@ public enum ResolveReason {
     DECEASED("Client is deceased"),
     CUSTOM("Custom reason...");
 
-    private final String text;
-
     private static String mismatchText;
+
+    private final String text;
 
     ResolveReason(String text) {
         this.text = text;
-    }
-
-    public String toString() {
-        return text;
     }
 
     public static ResolveReason fromString(String text) {
@@ -30,6 +26,8 @@ public enum ResolveReason {
         }
 
         //No match
+        //We use a static text builder so this text is dynamically built based on the ENUM options, but only needs to
+        // be built once per runtime
         if (mismatchText != null) {
             throw new IllegalArgumentException(mismatchText);
         } else {
@@ -41,5 +39,9 @@ public enum ResolveReason {
             mismatchText = mismatchTextBuilder.toString();
             throw new IllegalArgumentException(mismatchText);
         }
+    }
+
+    public String toString() {
+        return text;
     }
 }

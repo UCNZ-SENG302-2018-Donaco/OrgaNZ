@@ -1,17 +1,18 @@
 package com.humanharvest.organz.server.controller.clinician;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
 import com.humanharvest.organz.utilities.serialisation.JSONFileWriter;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 
 /**
  * Provides handlers for requests to these endpoints:
