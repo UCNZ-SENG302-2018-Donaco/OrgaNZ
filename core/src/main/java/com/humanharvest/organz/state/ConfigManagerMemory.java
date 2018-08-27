@@ -1,9 +1,11 @@
 package com.humanharvest.organz.state;
 
 import com.humanharvest.organz.Config;
+import com.humanharvest.organz.Hospital;
 import com.humanharvest.organz.utilities.enums.Country;
 
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.Set;
 
 public class ConfigManagerMemory implements ConfigManager {
@@ -25,5 +27,16 @@ public class ConfigManagerMemory implements ConfigManager {
     @Override
     public void setAllowedCountries(Set<Country> countries) {
         config.setCountries(countries);
+    }
+
+    @Override
+    public Set<Hospital> getHospitals() {
+        return config.getHospitals();
+    }
+
+    @Override
+    public void setHospitals(Set<Hospital> hospitals) {
+        config.setHospitals(new HashSet<>(hospitals));
+
     }
 }
