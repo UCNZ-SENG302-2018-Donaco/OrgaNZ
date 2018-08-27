@@ -1,8 +1,8 @@
 package com.humanharvest.organz.views.client;
 
-import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
-
 import java.time.LocalDateTime;
+
+import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 
 public class ResolveTransplantRequestObject {
 

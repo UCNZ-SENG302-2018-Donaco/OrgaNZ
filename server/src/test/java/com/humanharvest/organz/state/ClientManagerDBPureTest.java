@@ -1,21 +1,21 @@
 package com.humanharvest.organz.state;
 
-import com.humanharvest.organz.BaseTest;
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.database.DBManager;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.humanharvest.organz.BaseTest;
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.database.DBManager;
+
+import org.junit.Assert;
+import org.junit.Ignore;
+import org.junit.Test;
 
 @Ignore
 public class ClientManagerDBPureTest extends BaseTest {
 
     private DBManager dbManager;
-
 
     @Test
     public void retrieveAllUsers() {
@@ -30,7 +30,6 @@ public class ClientManagerDBPureTest extends BaseTest {
         List<Client> result = test.getClients();
         Assert.assertEquals(clients, result);
 
-
     }
 
     @Test
@@ -41,7 +40,6 @@ public class ClientManagerDBPureTest extends BaseTest {
         test.addClient(client);
         Boolean result = test.doesClientExist("Thomas", "Kearsley", date);
         Assert.assertEquals(true, result);
-
 
     }
 

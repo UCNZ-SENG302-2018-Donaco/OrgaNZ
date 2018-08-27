@@ -6,22 +6,22 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<VBox minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1000.0"
-      xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.humanharvest.organz.controller.administrator.CommandLineController">
-    <SplitPane dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
-        <HBox fx:id="menuBarPane" maxHeight="20.0" minHeight="-Infinity"/>
-        <SplitPane prefHeight="200.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
-            <BorderPane fx:id="borderPane">
-                <center>
-                    <TextArea fx:id="outputTextArea" editable="false" prefHeight="200.0" prefWidth="200.0"
-                              BorderPane.alignment="CENTER">
-                        <BorderPane.margin>
-                            <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
-                        </BorderPane.margin>
-                    </TextArea>
-                </center>
-            </BorderPane>
-        </SplitPane>
+<VBox xmlns:fx="http://javafx.com/fxml/1" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0"
+  prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121"
+  fx:controller="com.humanharvest.organz.controller.administrator.CommandLineController">
+  <SplitPane VBox.vgrow="ALWAYS" dividerPositions="0.5" orientation="VERTICAL" prefHeight="200.0" prefWidth="200.0">
+    <HBox maxHeight="20.0" minHeight="-Infinity" fx:id="menuBarPane"/>
+    <SplitPane VBox.vgrow="ALWAYS" prefHeight="200.0" prefWidth="200.0">
+      <BorderPane fx:id="borderPane">
+        <center>
+          <TextArea BorderPane.alignment="CENTER" editable="false" prefHeight="200.0" prefWidth="200.0"
+            fx:id="outputTextArea">
+            <BorderPane.margin>
+              <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
+            </BorderPane.margin>
+          </TextArea>
+        </center>
+      </BorderPane>
     </SplitPane>
+  </SplitPane>
 </VBox>

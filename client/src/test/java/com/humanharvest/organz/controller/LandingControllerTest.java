@@ -1,11 +1,12 @@
 package com.humanharvest.organz.controller;
 
+import static org.junit.Assert.assertEquals;
+
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
-import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 
 /**
  * Testing that the landing page allows for navigation to the correct pages.

@@ -255,29 +255,17 @@ public enum Country {
     ZW("Zimbabwe", -19.015658999, 29.1528020000001),
     AX("Åland", 60.1978055, 20.164778);
 
+    private static String mismatchText;
+
     private final String text;
     private final double latitude;
     private final double longitude;
-
-    private static String mismatchText;
 
     Country(String text, double latitude, double longitude) {
         this.text = text;
         this.latitude = latitude;
         this.longitude = longitude;
 
-    }
-
-    public String toString() {
-        return text;
-    }
-
-    public double getLatitude() {
-        return latitude;
-    }
-
-    public double getLongitude() {
-        return longitude;
     }
 
     /**
@@ -294,6 +282,8 @@ public enum Country {
         }
 
         //No match
+        //We use a static text builder so this text is dynamically built based on the ENUM options, but only needs to
+        // be built once per runtime
         if (mismatchText != null) {
             throw new IllegalArgumentException(mismatchText);
         } else {
@@ -305,6 +295,18 @@ public enum Country {
             mismatchText = mismatchTextBuilder.toString();
             throw new IllegalArgumentException(mismatchText);
         }
+    }
+
+    public String toString() {
+        return text;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
     }
 
 }

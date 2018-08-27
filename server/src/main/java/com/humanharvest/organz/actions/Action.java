@@ -7,6 +7,7 @@ import com.humanharvest.organz.HistoryItem;
  * all objects necessary for its execution. Actions should always be executed by an {@link ActionInvoker}.
  */
 public abstract class Action {
+
     private HistoryItem executeHistoryItem;
 
     /**

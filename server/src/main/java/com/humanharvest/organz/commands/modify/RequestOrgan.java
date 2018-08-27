@@ -1,5 +1,8 @@
 package com.humanharvest.organz.commands.modify;
 
+import java.io.PrintStream;
+import java.util.Optional;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.actions.Action;
@@ -10,11 +13,9 @@ import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 import com.humanharvest.organz.utilities.pico_type_converters.PicoOrganConverter;
+
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
-
-import java.io.PrintStream;
-import java.util.Optional;
 
 /**
  * A command to allow admins to request an organ for a specified client.
@@ -25,6 +26,12 @@ public class RequestOrgan implements Runnable {
     private final ClientManager manager;
     private final ActionInvoker invoker;
     private final PrintStream outputStream;
+
+    @Option(names = {"-o", "-organ", "-organType"}, description = "Organ type", converter = PicoOrganConverter.class)
+    private Organ organType;
+
+    @Option(names = {"-u", "--uid"}, description = "User ID of user organ being requested", required = true)
+    private int uid;
 
     public RequestOrgan(PrintStream outputStream, ActionInvoker invoker) {
         this.invoker = invoker;
@@ -37,12 +44,6 @@ public class RequestOrgan implements Runnable {
         this.invoker = invoker;
         outputStream = System.out;
     }
-
-    @Option(names = {"-o", "-organ", "-organType"}, description = "Organ type", converter = PicoOrganConverter.class)
-    private Organ organType;
-
-    @Option(names = {"-u", "--uid"}, description = "User ID of user organ being requested", required = true)
-    private int uid;
 
     /**
      * Runs the request organ command

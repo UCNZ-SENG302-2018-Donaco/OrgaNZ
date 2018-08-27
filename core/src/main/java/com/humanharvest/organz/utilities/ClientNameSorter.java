@@ -1,8 +1,8 @@
 package com.humanharvest.organz.utilities;
 
-import com.humanharvest.organz.Client;
-
 import java.util.Comparator;
+
+import com.humanharvest.organz.Client;
 
 /**
  * Compare and sort Clients based on the names in order:
@@ -23,6 +23,31 @@ public class ClientNameSorter implements Comparator<Client> {
     }
 
     /**
+     * Compare two string, and return an integer value representing which one is greater
+     * Will always favor one name if it matches the search string, if both match it will compare the strings directly
+     * If neither match, it will return 0 always.
+     *
+     * @param searchTerm The search term to consider
+     * @param name1 The first name to check
+     * @param name2 The second name to check
+     * @return The resulting sort integer
+     */
+    private static int compareName(String searchTerm, String name1, String name2) {
+        boolean name1Matches = name1 != null && name1.toLowerCase().startsWith(searchTerm);
+        boolean name2Matches = name2 != null && name2.toLowerCase().startsWith(searchTerm);
+
+        if (name1Matches && name2Matches) {
+            return name1.compareTo(name2);
+        } else if (name1Matches) {
+            return -1;
+        } else if (name2Matches) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    /**
      * Compare two clients based on their names in order:
      * Last name - Pref name - First name - Middle name - Client ID
      *
@@ -39,36 +64,11 @@ public class ClientNameSorter implements Comparator<Client> {
     }
 
     /**
-     * Compare two string, and return an integer value representing which one is greater
-     * Will always favor one name if it matches the search string, if both match it will compare the strings directly
-     * If neither match, it will return 0 always.
-     *
-     * @param searchTerm The search term to consider
-     * @param name1      The first name to check
-     * @param name2      The second name to check
-     * @return The resulting sort integer
-     */
-    private int compareName(String searchTerm, String name1, String name2) {
-        boolean name1Matches = name1 != null && name1.toLowerCase().startsWith(searchTerm);
-        boolean name2Matches = name2 != null && name2.toLowerCase().startsWith(searchTerm);
-
-        if (name1Matches && name2Matches) {
-            return name1.compareTo(name2);
-        } else if (name1Matches) {
-            return -1;
-        } else if (name2Matches) {
-            return 1;
-        } else {
-            return 0;
-        }
-    }
-
-    /**
      * Compares the names based off the priority Last name - Pref name - First name - Middle name - Client ID
      * Falls back to comparing the user id's if the names are identical to ensure a consistent order
      *
-     * @param client1    The first client object being compared
-     * @param client2    The second client object being compared
+     * @param client1 The first client object being compared
+     * @param client2 The second client object being compared
      * @param searchTerm The search term to consider
      * @return -1 if client1 is higher priority. 1 if client1 is lower priority. 0 only if they have the same user ID.
      */

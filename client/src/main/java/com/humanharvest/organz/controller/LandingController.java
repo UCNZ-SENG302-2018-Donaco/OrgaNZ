@@ -1,8 +1,9 @@
 package com.humanharvest.organz.controller;
 
+import javafx.fxml.FXML;
+
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
-import javafx.fxml.FXML;
 
 /**
  * Controls the Landing Screen View.

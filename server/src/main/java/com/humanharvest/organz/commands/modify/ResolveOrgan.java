@@ -1,5 +1,8 @@
 package com.humanharvest.organz.commands.modify;
 
+import java.io.PrintStream;
+import java.util.Optional;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.actions.Action;
@@ -12,11 +15,9 @@ import com.humanharvest.organz.utilities.enums.ResolveReason;
 import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
 import com.humanharvest.organz.utilities.pico_type_converters.PicoOrganConverter;
 import com.humanharvest.organz.utilities.pico_type_converters.PicoResolveReasonConverter;
+
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
-
-import java.io.PrintStream;
-import java.util.Optional;
 
 /**
  * A command to allow admins to resolve the organ request of a client if it exists with reasoning of why it is being
@@ -28,18 +29,6 @@ public class ResolveOrgan implements Runnable {
     private final ClientManager manager;
     private final ActionInvoker invoker;
     private final PrintStream outputStream;
-
-    public ResolveOrgan(PrintStream outputStream, ActionInvoker invoker) {
-        this.invoker = invoker;
-        this.outputStream = outputStream;
-        manager = State.getClientManager();
-    }
-
-    public ResolveOrgan(ClientManager manager, ActionInvoker invoker) {
-        this.manager = manager;
-        this.invoker = invoker;
-        outputStream = System.out;
-    }
 
     @Option(names = {"-u", "--uid"}, description = "User ID of user organ being requested", required = true)
     private int uid;
@@ -54,6 +43,18 @@ public class ResolveOrgan implements Runnable {
 
     @Option(names = {"-m", "-message"}, description = "Message for why the request was resolved")
     private String message;
+
+    public ResolveOrgan(PrintStream outputStream, ActionInvoker invoker) {
+        this.invoker = invoker;
+        this.outputStream = outputStream;
+        manager = State.getClientManager();
+    }
+
+    public ResolveOrgan(ClientManager manager, ActionInvoker invoker) {
+        this.manager = manager;
+        this.invoker = invoker;
+        outputStream = System.out;
+    }
 
     /**
      * Runs the resolve organ command

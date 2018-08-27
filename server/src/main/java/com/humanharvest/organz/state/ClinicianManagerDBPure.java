@@ -1,18 +1,23 @@
 package com.humanharvest.organz.state;
 
-import com.humanharvest.organz.Clinician;
-import com.humanharvest.organz.database.DBManager;
-import com.humanharvest.organz.utilities.enums.Region;
-import org.hibernate.Transaction;
-
-import javax.persistence.PersistenceException;
-import javax.persistence.RollbackException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.persistence.PersistenceException;
+import javax.persistence.RollbackException;
+
+import com.humanharvest.organz.Clinician;
+import com.humanharvest.organz.database.DBManager;
+import com.humanharvest.organz.utilities.enums.Region;
+
+import org.hibernate.Transaction;
 
 public class ClinicianManagerDBPure implements ClinicianManager {
+
+    private static final Logger LOGGER = Logger.getLogger(ClinicianManagerDBPure.class.getName());
 
     private final DBManager dbManager;
     private Clinician defaultClinician = new Clinician(
@@ -53,7 +58,8 @@ public class ClinicianManagerDBPure implements ClinicianManager {
                     .createQuery("FROM Clinician ", Clinician.class)
                     .getResultList();
             trns.commit();
-        } catch (RollbackException exc) {
+        } catch (RollbackException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
             if (trns != null) {
                 trns.rollback();
             }
@@ -75,7 +81,8 @@ public class ClinicianManagerDBPure implements ClinicianManager {
             }
 
             trns.commit();
-        } catch (RollbackException exc) {
+        } catch (RollbackException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
             if (trns != null) {
                 trns.rollback();
             }
@@ -92,7 +99,8 @@ public class ClinicianManagerDBPure implements ClinicianManager {
             dbManager.getDBSession().update(clinician);
 
             trns.commit();
-        } catch (RollbackException exc) {
+        } catch (RollbackException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
             if (trns != null) {
                 trns.rollback();
             }
@@ -111,7 +119,8 @@ public class ClinicianManagerDBPure implements ClinicianManager {
             trns = session.beginTransaction();
             dbManager.getDBSession().remove(clinician);
             trns.commit();
-        } catch (RollbackException exc) {
+        } catch (RollbackException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
             if (trns != null) {
                 trns.rollback();
             }
@@ -129,7 +138,8 @@ public class ClinicianManagerDBPure implements ClinicianManager {
             result = dbManager.getDBSession().find(Clinician.class, id);
 
             trns.commit();
-        } catch (RollbackException exc) {
+        } catch (RollbackException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
             if (trns != null) {
                 trns.rollback();
             }
@@ -149,7 +159,8 @@ public class ClinicianManagerDBPure implements ClinicianManager {
                     .setParameter("id", id)
                     .getResultList().size() > 0;
             trns.commit();
-        } catch (RollbackException exc) {
+        } catch (RollbackException e) {
+            LOGGER.log(Level.WARNING, e.getMessage(), e);
             if (trns != null) {
                 trns.rollback();
             }

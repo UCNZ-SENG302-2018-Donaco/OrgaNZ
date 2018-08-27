@@ -1,6 +1,8 @@
 package com.humanharvest.organz.server.controller.administrator;
 
-import com.fasterxml.jackson.annotation.JsonView;
+import java.util.List;
+import java.util.Optional;
+
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.actions.ActionInvoker;
@@ -20,6 +22,8 @@ import com.humanharvest.organz.views.administrator.CommandView;
 import com.humanharvest.organz.views.administrator.CreateAdministratorView;
 import com.humanharvest.organz.views.administrator.ModifyAdministratorObject;
 import com.humanharvest.organz.views.client.Views;
+
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -33,9 +37,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
-import java.util.Optional;
 
 @RestController
 public class AdministratorController {
@@ -126,13 +127,13 @@ public class AdministratorController {
     /**
      * The PATCH endpoint for updating a single administrator
      *
-     * @param username                  The administrator username to update
+     * @param username The administrator username to update
      * @param modifyAdministratorObject The POJO object of the modifications
-     * @param etag                      The corresponding If-Match header to check for concurrent update handling
+     * @param etag The corresponding If-Match header to check for concurrent update handling
      * @return Returns an Administrator overview. Also contains an ETag header for updates
      * @throws IfMatchRequiredException Thrown if there is no If-Match header, will result in a 428 error
-     * @throws IfMatchFailedException   Thrown if the If-Match header does not match the ETag. 412 error
-     * @throws InvalidRequestException  Generic 400 exception if fields are malformed or inconsistent
+     * @throws IfMatchFailedException Thrown if the If-Match header does not match the ETag. 412 error
+     * @throws InvalidRequestException Generic 400 exception if fields are malformed or inconsistent
      */
     @PatchMapping("/administrators/{username}")
     @JsonView(Views.Overview.class)
@@ -149,7 +150,8 @@ public class AdministratorController {
         // duplicate code in tons of places but need to work it out
 
         //Fetch the administrator given by username
-        Optional<Administrator> optionalAdministrator = State.getAdministratorManager().getAdministratorByUsername(username);
+        Optional<Administrator> optionalAdministrator =
+                State.getAdministratorManager().getAdministratorByUsername(username);
         if (!optionalAdministrator.isPresent()) {
             //Return 404 if that administrator does not exist
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -197,11 +199,11 @@ public class AdministratorController {
      * The DELETE endpoint for removing a single administrator
      *
      * @param username The administrator username to delete
-     * @param etag     The corresponding If-Match header to check for concurrent update handling
+     * @param etag The corresponding If-Match header to check for concurrent update handling
      * @return Returns an empty body with a simple response code
      * @throws IfMatchRequiredException Thrown if there is no If-Match header, will result in a 428 error
-     * @throws IfMatchFailedException   Thrown if the If-Match header does not match the Administrators ETag. 412 error
-     * @throws InvalidRequestException  Generic 400 exception if fields are malformed or inconsistent
+     * @throws IfMatchFailedException Thrown if the If-Match header does not match the Administrators ETag. 412 error
+     * @throws InvalidRequestException Generic 400 exception if fields are malformed or inconsistent
      */
     @DeleteMapping("/administrators/{username}")
     public ResponseEntity<?> deleteAdministrator(
@@ -215,7 +217,8 @@ public class AdministratorController {
         AdministratorManager administratorManager = State.getAdministratorManager();
 
         //Fetch the administrator given by username
-        Optional<Administrator> optionalAdministrator = State.getAdministratorManager().getAdministratorByUsername(username);
+        Optional<Administrator> optionalAdministrator =
+                State.getAdministratorManager().getAdministratorByUsername(username);
         if (!optionalAdministrator.isPresent()) {
             //Return 404 if that administrator does not exist
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -247,7 +250,7 @@ public class AdministratorController {
      * Allows admin commands to be run via the server
      *
      * @param commandText The text object to execute
-     * @param authToken   The authentication token of a valid administrator
+     * @param authToken The authentication token of a valid administrator
      * @return The result string of a command execution
      */
     @PostMapping("/commands")

@@ -9,8 +9,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.paramnames.ParameterNamesModule;
 
 public final class JSONMapper {
-    private JSONMapper() {
-    }
 
     public static final ObjectMapper Mapper = new ObjectMapper()
             .enable(SerializationFeature.INDENT_OUTPUT)
@@ -20,4 +18,7 @@ public final class JSONMapper {
             .registerModule(new ParameterNamesModule())
             .registerModule(new Jdk8Module())
             .registerModule(new JavaTimeModule());
+
+    private JSONMapper() {
+    }
 }

@@ -7,6 +7,7 @@ import org.junit.Before;
  * It is currently extended by many classes so will not be removed.
  */
 public class BaseTest {
+
     @Before
     public void initialise() {
     }

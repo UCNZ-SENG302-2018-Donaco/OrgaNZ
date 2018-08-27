@@ -1,5 +1,13 @@
 package com.humanharvest.organz.controller.clinician;
 
+import static org.junit.Assert.fail;
+import static org.testfx.api.FxAssert.verifyThat;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.Collection;
+
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.controller.ControllerTest;
@@ -9,17 +17,10 @@ import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.testfx.matcher.control.TableViewMatchers;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Collection;
-
-import static org.junit.Assert.fail;
-import static org.testfx.api.FxAssert.verifyThat;
 
 public class OrgansToDonateControllerTest extends ControllerTest {
 

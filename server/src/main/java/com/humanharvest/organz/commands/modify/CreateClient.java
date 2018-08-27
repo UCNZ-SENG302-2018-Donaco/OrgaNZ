@@ -1,5 +1,8 @@
 package com.humanharvest.organz.commands.modify;
 
+import java.io.PrintStream;
+import java.time.LocalDate;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.actions.ActionInvoker;
@@ -7,11 +10,9 @@ import com.humanharvest.organz.actions.client.CreateClientAction;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.pico_type_converters.PicoLocalDateConverter;
+
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
-
-import java.io.PrintStream;
-import java.time.LocalDate;
 
 /**
  * Command line to create a Client with basic information, including their DOB and full name.
@@ -23,18 +24,6 @@ public class CreateClient implements Runnable {
     private final ClientManager manager;
     private final ActionInvoker invoker;
     private final PrintStream outputStream;
-
-    public CreateClient(PrintStream outputStream, ActionInvoker invoker) {
-        this.outputStream = outputStream;
-        this.invoker = invoker;
-        manager = State.getClientManager();
-    }
-
-    public CreateClient(ClientManager manager, ActionInvoker invoker) {
-        this.manager = manager;
-        this.invoker = invoker;
-        outputStream = System.out;
-    }
 
     @Option(names = {"-f", "--firstname"}, description = "First name.", required = true)
     private String firstName;
@@ -51,6 +40,18 @@ public class CreateClient implements Runnable {
 
     @Option(names = "--force", description = "Force even if a duplicate client is found")
     private boolean force;
+
+    public CreateClient(PrintStream outputStream, ActionInvoker invoker) {
+        this.outputStream = outputStream;
+        this.invoker = invoker;
+        manager = State.getClientManager();
+    }
+
+    public CreateClient(ClientManager manager, ActionInvoker invoker) {
+        this.manager = manager;
+        this.invoker = invoker;
+        outputStream = System.out;
+    }
 
     @Override
     public void run() {

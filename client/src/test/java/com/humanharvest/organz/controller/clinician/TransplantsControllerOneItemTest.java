@@ -1,5 +1,13 @@
 package com.humanharvest.organz.controller.clinician;
 
+import static org.testfx.api.FxAssert.verifyThat;
+import static org.testfx.matcher.base.NodeMatchers.isVisible;
+import static org.testfx.matcher.control.TableViewMatchers.containsRowAtIndex;
+import static org.testfx.matcher.control.TableViewMatchers.hasNumRows;
+import static org.testfx.matcher.control.TextMatchers.hasText;
+
+import java.time.LocalDate;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.TransplantRequest;
@@ -9,18 +17,10 @@ import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
+
 import org.junit.Test;
 
-import java.time.LocalDate;
-
-import static org.testfx.api.FxAssert.verifyThat;
-import static org.testfx.matcher.base.NodeMatchers.isVisible;
-import static org.testfx.matcher.control.TableViewMatchers.containsRowAtIndex;
-import static org.testfx.matcher.control.TableViewMatchers.hasNumRows;
-import static org.testfx.matcher.control.TextMatchers.hasText;
-
 public class TransplantsControllerOneItemTest extends ControllerTest {
-
 
     // Test data
 

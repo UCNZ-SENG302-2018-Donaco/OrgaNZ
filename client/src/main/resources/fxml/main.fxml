@@ -3,15 +3,15 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0"
-            prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.humanharvest.organz.controller.MainController">
-    <children>
-        <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
-              AnchorPane.topAnchor="0.0" VBox.vgrow="ALWAYS">
-            <children>
-                <StackPane fx:id="pageHolder" VBox.vgrow="ALWAYS"/>
-            </children>
-        </VBox>
-    </children>
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+  prefHeight="600.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.121"
+  fx:controller="com.humanharvest.organz.controller.MainController">
+  <children>
+    <VBox AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
+      AnchorPane.topAnchor="0.0" VBox.vgrow="ALWAYS">
+      <children>
+        <StackPane VBox.vgrow="ALWAYS" fx:id="pageHolder"/>
+      </children>
+    </VBox>
+  </children>
 </AnchorPane>

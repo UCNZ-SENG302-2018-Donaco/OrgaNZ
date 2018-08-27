@@ -1,16 +1,21 @@
 package com.humanharvest.organz.views.administrator;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.humanharvest.organz.views.ModifyBaseObject;
-
 import java.lang.reflect.Member;
 import java.util.stream.Collectors;
+
+import com.humanharvest.organz.views.ModifyBaseObject;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @JsonSerialize(using = ModifyBaseObject.Serialiser.class)
 public class ModifyAdministratorObject extends ModifyBaseObject {
 
     private String username;
     private String password;
+
+    private static String fieldString(Member field) {
+        return String.format("Updated %s", field.getName());
+    }
 
     public String toString() {
         String changesText = getModifiedFields().stream()
@@ -20,10 +25,6 @@ public class ModifyAdministratorObject extends ModifyBaseObject {
         return String.format("Updated details for administrator.\n"
                         + "These changes were made: \n\n%s",
                 changesText);
-    }
-
-    private static String fieldString(Member field) {
-        return String.format("Updated %s", field.getName());
     }
 
     public String getUsername() {
