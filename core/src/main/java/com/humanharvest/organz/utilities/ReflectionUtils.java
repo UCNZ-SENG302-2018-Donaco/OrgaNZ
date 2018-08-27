@@ -48,7 +48,8 @@ public final class ReflectionUtils {
         return field;
     }
 
-    public static Method getMethodReference(Object o, String methodName, Class<?>... parameterTypes) throws NoSuchMethodException {
+    public static Method getMethodReference(Object o, String methodName, Class<?>... parameterTypes)
+            throws NoSuchMethodException {
         Method method = findDeclaredMethod(o.getClass(), methodName, parameterTypes);
         Objects.requireNonNull(method);
         method.setAccessible(true);

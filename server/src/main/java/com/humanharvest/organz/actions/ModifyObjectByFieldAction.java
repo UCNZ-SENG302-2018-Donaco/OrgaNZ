@@ -1,13 +1,15 @@
 package com.humanharvest.organz.actions;
 
-import com.humanharvest.organz.utilities.type_converters.PrimitiveConverter;
+import static com.humanharvest.organz.utilities.type_converters.StringFormatter.unCamelCase;
 
 import java.lang.reflect.Field;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.humanharvest.organz.utilities.type_converters.PrimitiveConverter;
+
 /**
- * Create a new modification on any object using it's field name and the old and new values
+ * Create a new modification on any object using its field name and the old and new values
  * Exceptions are thrown if the object does not contain that field, or if the values are the wrong type
  * If you have a field such as a password, use the isPrivate boolean to ensure the values are not leaked
  */
@@ -25,7 +27,7 @@ public class ModifyObjectByFieldAction extends Action {
      * Create a new modification
      *
      * @param toModify The object to be modified
-     * @param field    The setter field of the object. Must match a valid setter
+     * @param field The setter field of the object. Must match a valid setter
      * @param oldValue The object the field initially had. Should be taken from the objects equivalent getter
      * @param newValue The object the field should be update to. Must match the setters object type
      * @throws NoSuchFieldException Thrown if the object setter expected type does not match one of the value types
@@ -42,10 +44,10 @@ public class ModifyObjectByFieldAction extends Action {
     /**
      * Create a new modification with the option to hide the values
      *
-     * @param toModify  The object to be modified
-     * @param field     The setter field of the object. Must match a valid setter
-     * @param oldValue  The object the field initially had. Should be taken from the objects equivalent getter
-     * @param newValue  The object the field should be update to. Must match the setters object type
+     * @param toModify The object to be modified
+     * @param field The setter field of the object. Must match a valid setter
+     * @param oldValue The object the field initially had. Should be taken from the objects equivalent getter
+     * @param newValue The object the field should be update to. Must match the setters object type
      * @param isPrivate If set to true, the text returns will only return the field, not the values
      * @throws NoSuchFieldException Thrown if the object setter expected type does not match one of the value types
      */
@@ -63,7 +65,7 @@ public class ModifyObjectByFieldAction extends Action {
      * Create a new modification
      *
      * @param toModify The object to be modified
-     * @param field    The setter field of the object. Must match a valid field
+     * @param field The setter field of the object. Must match a valid field
      * @param newValue The object the field should be update to. Must match the setters object type
      * @throws NoSuchFieldException Thrown if the object setter expected type does not match one of the value types
      */
@@ -74,6 +76,10 @@ public class ModifyObjectByFieldAction extends Action {
         setField(field);
         setOldValue();
         checkTypes();
+    }
+
+    private static String formatValue(Object value) {
+        return value != null ? String.format("'%s'", value.toString()) : "empty";
     }
 
     private void setOldValue() throws NoSuchFieldException {
@@ -97,8 +103,10 @@ public class ModifyObjectByFieldAction extends Action {
     private void checkTypes() throws NoSuchFieldException {
         PrimitiveConverter converter = new PrimitiveConverter();
         Class<?> expectedClass = converter.convertToWrapper(field.getType());
-        if (newValue != null && newValue.getClass() != expectedClass || oldValue != null
-                && oldValue.getClass() != expectedClass) {
+
+        // If the new value or old value: isn't null, and doesn't match the expected class
+        if ((newValue != null && newValue.getClass() != expectedClass)
+                || (oldValue != null && oldValue.getClass() != expectedClass)) {
             throw new NoSuchFieldException("Field expects a different field type than the one given");
         }
     }
@@ -111,15 +119,6 @@ public class ModifyObjectByFieldAction extends Action {
     @Override
     public void unExecute() {
         runChange(oldValue);
-    }
-
-    private String unCamelCase(String inCamelCase) {
-        String unCamelCased = inCamelCase.replaceAll("([a-z])([A-Z]+)", "$1 $2");
-        return unCamelCased.substring(0, 1).toUpperCase() + unCamelCased.substring(1);
-    }
-
-    private String formatValue(Object value) {
-        return value != null ? String.format("'%s'", value.toString()) : "empty";
     }
 
     @Override

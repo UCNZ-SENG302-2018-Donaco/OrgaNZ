@@ -1,6 +1,5 @@
 package com.humanharvest.organz.utilities.exceptions;
 
-
 /**
  * Thrown when the API returns a 500 level status code
  */

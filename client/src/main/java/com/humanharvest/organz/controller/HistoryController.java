@@ -1,9 +1,10 @@
 package com.humanharvest.organz.controller;
 
-import com.humanharvest.organz.HistoryItem;
-import com.humanharvest.organz.state.Session;
-import com.humanharvest.organz.state.Session.UserType;
-import com.humanharvest.organz.state.State;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.logging.Logger;
+
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.TableCell;
@@ -12,10 +13,10 @@ import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.Pane;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.logging.Logger;
+import com.humanharvest.organz.HistoryItem;
+import com.humanharvest.organz.state.Session;
+import com.humanharvest.organz.state.Session.UserType;
+import com.humanharvest.organz.state.State;
 
 /**
  * Controller for the history page.
@@ -38,6 +39,25 @@ public class HistoryController extends SubController {
 
     public HistoryController() {
         this.session = State.getSession();
+    }
+
+    /**
+     * Formats a table cell that holds a {@link LocalDateTime} value to display that value in the date time format.
+     *
+     * @return The cell with the date time formatter set.
+     */
+    private static TableCell<HistoryItem, LocalDateTime> formatDateTimeCell() {
+        return new TableCell<HistoryItem, LocalDateTime>() {
+            @Override
+            protected void updateItem(LocalDateTime item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                } else {
+                    setText(item.format(dateTimeFormat));
+                }
+            }
+        };
     }
 
     /**
@@ -86,24 +106,5 @@ public class HistoryController extends SubController {
         historyTable.setItems(FXCollections.observableArrayList(historyItems));
 
         FXCollections.sort(historyTable.getItems(), (h1, h2) -> h2.getTimestamp().compareTo(h1.getTimestamp()));
-    }
-
-    /**
-     * Formats a table cell that holds a {@link LocalDateTime} value to display that value in the date time format.
-     *
-     * @return The cell with the date time formatter set.
-     */
-    private static TableCell<HistoryItem, LocalDateTime> formatDateTimeCell() {
-        return new TableCell<HistoryItem, LocalDateTime>() {
-            @Override
-            protected void updateItem(LocalDateTime item, boolean empty) {
-                super.updateItem(item, empty);
-                if (empty || item == null) {
-                    setText(null);
-                } else {
-                    setText(item.format(dateTimeFormat));
-                }
-            }
-        };
     }
 }

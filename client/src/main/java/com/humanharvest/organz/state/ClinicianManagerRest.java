@@ -1,6 +1,13 @@
 package com.humanharvest.organz.state;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+
 import com.humanharvest.organz.Clinician;
+
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -8,14 +15,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-
 public class ClinicianManagerRest implements ClinicianManager {
-
 
     private static HttpHeaders newHttpHeaders() {
         HttpHeaders httpHeaders = new HttpHeaders();
@@ -47,6 +47,12 @@ public class ClinicianManagerRest implements ClinicianManager {
         }
     }
 
+    @Override
+    public void setClinicians(Collection<Clinician> clinicians) {
+        //Do nothing method
+        throw new UnsupportedOperationException();
+    }
+
     /**
      * Uses GET to retrieve details of the staff member who's staffId is supplied.
      *
@@ -60,7 +66,8 @@ public class ClinicianManagerRest implements ClinicianManager {
         httpHeaders.set("X-Auth-Token", State.getToken());
         HttpEntity<Clinician> entity = new HttpEntity<>(null, httpHeaders);
 
-        ResponseEntity<Clinician> clinician = State.getRestTemplate().exchange(State.getBaseUri() + "clinicians/{staffId}",
+        ResponseEntity<Clinician> clinician = State.getRestTemplate().exchange(
+                State.getBaseUri() + "clinicians/{staffId}",
                 HttpMethod.GET, entity, Clinician.class, staffId);
         State.setClinicianEtag(clinician.getHeaders().getETag());
         return Optional.ofNullable(clinician.getBody());
@@ -98,12 +105,5 @@ public class ClinicianManagerRest implements ClinicianManager {
     @Override
     public Clinician getDefaultClinician() {
         return getClinicianByStaffId(0).orElseThrow(IllegalStateException::new);
-    }
-
-
-    @Override
-    public void setClinicians(Collection<Clinician> clinicians) {
-        //Do nothing method
-        throw new UnsupportedOperationException();
     }
 }

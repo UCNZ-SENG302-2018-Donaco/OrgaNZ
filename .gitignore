@@ -114,6 +114,8 @@ nbactions.xml
 *.iml
 
 # Except the codeStyle file, which is used to set a consistent code style for the whole team.
+!.idea/codeStyles
+.idea/codeStyles/*
 !.idea/codeStyles/codeStyleConfig.xml
 !.idea/codeStyles/Project.xml
 

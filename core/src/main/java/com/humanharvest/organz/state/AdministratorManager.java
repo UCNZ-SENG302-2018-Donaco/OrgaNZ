@@ -1,11 +1,11 @@
 package com.humanharvest.organz.state;
 
-import com.humanharvest.organz.Administrator;
-
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import com.humanharvest.organz.Administrator;
 
 public interface AdministratorManager {
 

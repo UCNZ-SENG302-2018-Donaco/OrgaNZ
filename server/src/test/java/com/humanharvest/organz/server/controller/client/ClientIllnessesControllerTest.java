@@ -1,5 +1,16 @@
 package com.humanharvest.organz.server.controller.client;
 
+import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
+
+import java.time.LocalDate;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.server.Application;
@@ -7,6 +18,7 @@ import com.humanharvest.organz.state.AuthenticationManager;
 import com.humanharvest.organz.state.AuthenticationManagerFake;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,40 +30,22 @@ import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.context.WebApplicationContext;
 
-import java.time.LocalDate;
-
-import static org.hamcrest.Matchers.hasSize;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.setup.MockMvcBuilders.webAppContextSetup;
-
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = Application.class)
 @WebAppConfiguration
 public class ClientIllnessesControllerTest {
 
+    IllnessRecord record1 = new IllnessRecord("Tuberculosis", LocalDate.of(2018, 4, 2),
+            null, false);
+    IllnessRecord record2 = new IllnessRecord("Influenza", LocalDate.of(2015, 2, 2),
+            LocalDate.of(2015, 6, 6), false);
+    @Autowired
+    WebApplicationContext webApplicationContext;
     private MockMvc mockMvc;
     private Client testClient;
     private String validProcedureJson;
     private String VALID_AUTH = "valid auth";
     private String INVALID_AUTH = "invalid auth";
-
-
-    IllnessRecord record1 = new IllnessRecord("Tuberculosis", LocalDate.of(2018, 4, 2),
-            null, false);
-    IllnessRecord record2 = new IllnessRecord("Influenza", LocalDate.of(2015, 2, 2),
-            LocalDate.of(2015, 6, 6), false);
-
-
-    @Autowired
-    WebApplicationContext webApplicationContext;
 
     @Before
     public void init() {
@@ -86,7 +80,6 @@ public class ClientIllnessesControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)));
         //.andExpect(jsonPath("$.illnessName", is("Tuberculosis")));
-
 
     }
 
@@ -124,7 +117,6 @@ public class ClientIllnessesControllerTest {
         mockMvc.perform(delete("/clients/illnesses/10"))
                 .andExpect(status().isNotFound());
     }
-
 
     @Test
     public void nonExistingClient() throws Exception {

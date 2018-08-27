@@ -1,12 +1,13 @@
 package com.humanharvest.organz.controller.components;
 
-import com.humanharvest.organz.DonatedOrgan;
+import java.time.Duration;
+import java.time.LocalDateTime;
+
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.paint.Color;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
+import com.humanharvest.organz.DonatedOrgan;
 
 public class DurationUntilExpiryCell extends TableCell<DonatedOrgan, Duration> {
 
@@ -14,76 +15,11 @@ public class DurationUntilExpiryCell extends TableCell<DonatedOrgan, Duration> {
         super();
     }
 
-    private DonatedOrgan getDonatedOrganForRow() {
-        return getTableView().getItems().get(getIndex());
-    }
-
-    @Override
-    protected void updateItem(Duration item, boolean empty) {
-        super.updateItem(item, empty);
-
-        if (empty) {
-            setText(null);
-            setStyle(null);
-
-        } else if (item == null) { // no expiration
-            Duration timeSinceDeath = Duration.between(
-                    getDonatedOrganForRow().getDateTimeOfDonation(),
-                    LocalDateTime.now());
-            setText("N/A (" + getFormattedDuration(timeSinceDeath) + " since death)");
-            setStyle(null);
-            setTextFill(Color.BLACK);
-
-        } else if (item.isZero() || item.isNegative() || item.equals(Duration.ZERO) ||
-                item.minusSeconds(1).isNegative()) {
-            // Duration is essentially zero, or is zero, or the organ was overridden
-            if (getDonatedOrganForRow().getOverrideReason() == null) {
-                Duration timeSinceExpiry = Duration.between(
-                        getDonatedOrganForRow().getDateTimeOfDonation()
-                                .plus(getDonatedOrganForRow().getOrganType().getMaxExpiration()),
-                        LocalDateTime.now());
-                setText(String.format("Expired (%s ago)", getFormattedDuration(timeSinceExpiry)));
-            } else {
-                setText("Overridden");
-            }
-            setStyle("-fx-background-color: #202020");
-            setTextFill(Color.WHITE);
-
-        } else {
-            // Split duration string into words, e.g. ["3", "days", "2", "hours", "10", "minutes",...]
-            // It then takes the first 4 words (except for seconds, then it just takes up to the seconds)
-            // and stores that in displayedDuration, e.g. "3 days 2 hours"
-            String displayedDuration = getFormattedDuration(item);
-
-            // Progress as a decimal. starts at 0 (at time of death) and goes to 1.
-            double progressDecimal = getDonatedOrganForRow().getProgressDecimal();
-            double fullMarker = getDonatedOrganForRow().getFullMarker();
-
-            // Calculate colour
-            String style = getStyleForProgress(progressDecimal, fullMarker);
-
-            if (progressDecimal >= fullMarker) {
-                setTextFill(Color.WHITE);
-                if (isSelected()) {
-                    setTextFill(Color.BLACK);
-                }
-            } else {
-                setTextFill(Color.BLACK);
-                if (isSelected()) {
-                    setTextFill(Color.WHITE);
-                }
-            }
-
-            setText(displayedDuration);
-            setStyle(style);
-        }
-    }
-
     /**
      * Generates a stylesheet instruction for setting the background colour of a cell.
      * The colour is based on progressForColour, and how much the cell is filled in is based on totalProgress.
      *
-     * @param progress   how far along the bar should be, from 0 to 1: 0 maps to empty, and 1 maps to full
+     * @param progress how far along the bar should be, from 0 to 1: 0 maps to empty, and 1 maps to full
      * @param fullMarker how far along the lower bound starts; this area will be grey (e.g. 0.9 for near the end)
      * @return stylesheet instruction, in the form "-fx-background-color: linear-gradient(...)"
      */
@@ -177,5 +113,70 @@ public class DurationUntilExpiryCell extends TableCell<DonatedOrgan, Duration> {
             formattedDuration += minutes + " minutes";
         }
         return formattedDuration;
+    }
+
+    private DonatedOrgan getDonatedOrganForRow() {
+        return getTableView().getItems().get(getIndex());
+    }
+
+    @Override
+    protected void updateItem(Duration item, boolean empty) {
+        super.updateItem(item, empty);
+
+        if (empty) {
+            setText(null);
+            setStyle(null);
+
+        } else if (item == null) { // no expiration
+            Duration timeSinceDeath = Duration.between(
+                    getDonatedOrganForRow().getDateTimeOfDonation(),
+                    LocalDateTime.now());
+            setText("N/A (" + getFormattedDuration(timeSinceDeath) + " since death)");
+            setStyle(null);
+            setTextFill(Color.BLACK);
+
+        } else if (item.isZero() || item.isNegative() || item.equals(Duration.ZERO) ||
+                item.minusSeconds(1).isNegative()) {
+            // Duration is essentially zero, or is zero, or the organ was overridden
+            if (getDonatedOrganForRow().getOverrideReason() == null) {
+                Duration timeSinceExpiry = Duration.between(
+                        getDonatedOrganForRow().getDateTimeOfDonation()
+                                .plus(getDonatedOrganForRow().getOrganType().getMaxExpiration()),
+                        LocalDateTime.now());
+                setText(String.format("Expired (%s ago)", getFormattedDuration(timeSinceExpiry)));
+            } else {
+                setText("Overridden");
+            }
+            setStyle("-fx-background-color: #202020");
+            setTextFill(Color.WHITE);
+
+        } else {
+            // Split duration string into words, e.g. ["3", "days", "2", "hours", "10", "minutes",...]
+            // It then takes the first 4 words (except for seconds, then it just takes up to the seconds)
+            // and stores that in displayedDuration, e.g. "3 days 2 hours"
+            String displayedDuration = getFormattedDuration(item);
+
+            // Progress as a decimal. starts at 0 (at time of death) and goes to 1.
+            double progressDecimal = getDonatedOrganForRow().getProgressDecimal();
+            double fullMarker = getDonatedOrganForRow().getFullMarker();
+
+            // Calculate colour
+            String style = getStyleForProgress(progressDecimal, fullMarker);
+
+            if (progressDecimal >= fullMarker) {
+                setTextFill(Color.WHITE);
+                if (isSelected()) {
+                    setTextFill(Color.BLACK);
+                }
+            } else {
+                setTextFill(Color.BLACK);
+                if (isSelected()) {
+                    setTextFill(Color.WHITE);
+                }
+            }
+
+            setText(displayedDuration);
+            setStyle(style);
+        }
     }
 }

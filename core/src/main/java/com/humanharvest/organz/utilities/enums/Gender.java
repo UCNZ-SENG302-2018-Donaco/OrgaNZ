@@ -9,16 +9,12 @@ public enum Gender {
     OTHER("Other"),
     UNSPECIFIED("Unspecified");
 
-    private final String text;
-
     private static String mismatchText;
+
+    private final String text;
 
     Gender(String text) {
         this.text = text;
-    }
-
-    public String toString() {
-        return text;
     }
 
     /**
@@ -36,6 +32,8 @@ public enum Gender {
         }
 
         //No match
+        //We use a static text builder so this text is dynamically built based on the ENUM options, but only needs to
+        // be built once per runtime
         if (mismatchText != null) {
             throw new IllegalArgumentException(mismatchText);
         } else {
@@ -47,6 +45,10 @@ public enum Gender {
             mismatchText = mismatchTextBuilder.toString();
             throw new IllegalArgumentException(mismatchText);
         }
+    }
+
+    public String toString() {
+        return text;
     }
 }
 

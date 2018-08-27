@@ -1,29 +1,30 @@
 package com.humanharvest.organz.commands.view;
 
-import com.humanharvest.organz.BaseTest;
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.state.ClientManager;
-import com.humanharvest.organz.state.ClientManagerMemory;
-import org.junit.Before;
-import org.junit.Test;
-import picocli.CommandLine;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.junit.Assert.assertThat;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
+import com.humanharvest.organz.BaseTest;
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.state.ClientManager;
+import com.humanharvest.organz.state.ClientManagerMemory;
+
+import org.junit.Before;
+import org.junit.Test;
+import picocli.CommandLine;
 
 public class PrintAllInfoTest extends BaseTest {
 
-    private ClientManager spyClientManager;
-    private PrintAllInfo spyPrintAllInfo;
     private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+    private ClientManager spyClientManager;
+    private PrintAllInfo spyPrintAllInfo;
 
     @Before
     public void init() {

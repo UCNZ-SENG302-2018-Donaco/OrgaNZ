@@ -1,31 +1,5 @@
 package com.humanharvest.organz;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
-import com.fasterxml.jackson.annotation.JsonView;
-import com.humanharvest.organz.utilities.enums.BloodType;
-import com.humanharvest.organz.utilities.enums.ClientType;
-import com.humanharvest.organz.utilities.enums.Country;
-import com.humanharvest.organz.utilities.enums.Gender;
-import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
-import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
-import com.humanharvest.organz.views.client.Views;
-
-import javax.persistence.Access;
-import javax.persistence.AccessType;
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -45,6 +19,33 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.persistence.Access;
+import javax.persistence.AccessType;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.ElementCollection;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+import com.humanharvest.organz.utilities.enums.BloodType;
+import com.humanharvest.organz.utilities.enums.ClientType;
+import com.humanharvest.organz.utilities.enums.Country;
+import com.humanharvest.organz.utilities.enums.Gender;
+import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.enums.TransplantRequestStatus;
+import com.humanharvest.organz.utilities.exceptions.OrganAlreadyRegisteredException;
+import com.humanharvest.organz.views.client.Views;
+
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonView;
 
 /**
  * The main Client class.
@@ -56,6 +57,9 @@ import java.util.stream.Collectors;
 @Table
 @Access(AccessType.FIELD)
 public class Client implements ConcurrencyControlledEntity {
+
+    @JsonView(Views.Details.class)
+    private final Instant createdTimestamp;
 
     @Id
     @GeneratedValue
@@ -110,8 +114,6 @@ public class Client implements ConcurrencyControlledEntity {
     @JsonView(Views.Details.class)
     private boolean dateOfDeathIsEditable = true;
 
-    @JsonView(Views.Details.class)
-    private final Instant createdTimestamp;
     @JsonView(Views.Details.class)
     private Instant modifiedTimestamp;
 
@@ -190,11 +192,11 @@ public class Client implements ConcurrencyControlledEntity {
     /**
      * Create a new client object
      *
-     * @param firstName   First name string
-     * @param middleName  Middle name(s). May be null
-     * @param lastName    Last name string
+     * @param firstName First name string
+     * @param middleName Middle name(s). May be null
+     * @param lastName Last name string
      * @param dateOfBirth LocalDate formatted date of birth
-     * @param uid         A unique user ID. Should be queried to ensure uniqueness
+     * @param uid A unique user ID. Should be queried to ensure uniqueness
      */
     public Client(String firstName, String middleName, String lastName, LocalDate dateOfBirth, Integer uid) {
         this.uid = uid;
@@ -231,27 +233,6 @@ public class Client implements ConcurrencyControlledEntity {
         updateModifiedTimestamp();
     }
 
-    public void setOrganDonationStatus(Map<Organ, Boolean> map) {
-        for (Entry<Organ, Boolean> entry : map.entrySet()) {
-            if (entry.getValue()) {
-                organsDonating.add(entry.getKey());
-            } else {
-                organsDonating.remove(entry.getKey());
-            }
-        }
-        isDonor = !organsDonating.isEmpty();
-        updateModifiedTimestamp();
-    }
-
-    public void setDonatedOrgans(Collection<DonatedOrgan> donatedOrgans) {
-        this.donatedOrgans = new ArrayList<>(donatedOrgans);
-        for (DonatedOrgan donatedOrgan : donatedOrgans) {
-            donatedOrgan.setDonor(this);
-        }
-        isDonor = !organsDonating.isEmpty();
-        updateModifiedTimestamp();
-    }
-
     public void setMedicationHistory(List<MedicationRecord> medicationHistory) {
         this.medicationHistory = new ArrayList<>(medicationHistory);
         for (MedicationRecord record : medicationHistory) {
@@ -264,14 +245,6 @@ public class Client implements ConcurrencyControlledEntity {
         this.illnessHistory = new ArrayList<>(illnessHistory);
         for (IllnessRecord illnessRecord : illnessHistory) {
             illnessRecord.setClient(this);
-        }
-        updateModifiedTimestamp();
-    }
-
-    public void setProcedures(List<ProcedureRecord> procedures) {
-        this.procedures = new ArrayList<>(procedures);
-        for (ProcedureRecord record : procedures) {
-            record.setClient(this);
         }
         updateModifiedTimestamp();
     }
@@ -338,12 +311,12 @@ public class Client implements ConcurrencyControlledEntity {
      * @return Formatted string with newlines
      */
     public String getUpdatesString() {
-        StringBuilder out = new StringBuilder(String.format("User: %s. Name: %s, updates:\n", uid, getFullName()));
+        StringBuilder out = new StringBuilder(String.format("User: %s. Name: %s, updates:%n", uid, getFullName()));
         if (Objects.isNull(changesHistory)) {
             changesHistory = new ArrayList<>();
         }
         for (HistoryItem item : changesHistory) {
-            out.append(String.format("%s: %s\n", item.getTimestamp(), item.getDetails()));
+            out.append(String.format("%s: %s%n", item.getTimestamp(), item.getDetails()));
         }
         return out.toString();
     }
@@ -434,13 +407,21 @@ public class Client implements ConcurrencyControlledEntity {
         return dateOfDeath;
     }
 
-    public LocalTime getTimeOfDeath() {
-        return timeOfDeath;
+    public void setDateOfDeath(LocalDate newDateOfDeath) {
+        updateModifiedTimestamp();
+        // Check if date/time of donation needs to be updated for any DonatedOrgans
+        if (timeOfDeath != null && dateOfDeath != null) {
+            for (DonatedOrgan organ : donatedOrgans) {
+                if (organ.getDateTimeOfDonation().equals(LocalDateTime.of(dateOfDeath, timeOfDeath))) {
+                    organ.setDateTimeOfDonation(LocalDateTime.of(newDateOfDeath, timeOfDeath));
+                }
+            }
+        }
+        this.dateOfDeath = newDateOfDeath;
     }
 
-    @JsonIgnore
-    public LocalDateTime getDatetimeOfDeath() {
-        return LocalDateTime.of(dateOfDeath, timeOfDeath);
+    public LocalTime getTimeOfDeath() {
+        return timeOfDeath;
     }
 
     public void setTimeOfDeath(LocalTime newTimeOfDeath) {
@@ -454,6 +435,11 @@ public class Client implements ConcurrencyControlledEntity {
             }
         }
         this.timeOfDeath = newTimeOfDeath;
+    }
+
+    @JsonIgnore
+    public LocalDateTime getDatetimeOfDeath() {
+        return LocalDateTime.of(dateOfDeath, timeOfDeath);
     }
 
     public String getRegionOfDeath() {
@@ -491,19 +477,6 @@ public class Client implements ConcurrencyControlledEntity {
     @JsonIgnore
     public boolean isDead() {
         return dateOfDeath != null;
-    }
-
-    public void setDateOfDeath(LocalDate newDateOfDeath) {
-        updateModifiedTimestamp();
-        // Check if date/time of donation needs to be updated for any DonatedOrgans
-        if (timeOfDeath != null && dateOfDeath != null) {
-            for (DonatedOrgan organ : donatedOrgans) {
-                if (organ.getDateTimeOfDonation().equals(LocalDateTime.of(dateOfDeath, timeOfDeath))) {
-                    organ.setDateTimeOfDonation(LocalDateTime.of(newDateOfDeath, timeOfDeath));
-                }
-            }
-        }
-        this.dateOfDeath = newDateOfDeath;
     }
 
     public Gender getGender() {
@@ -591,6 +564,18 @@ public class Client implements ConcurrencyControlledEntity {
             organDonationStatus.put(organ, organsDonating.contains(organ));
         }
         return organDonationStatus;
+    }
+
+    public void setOrganDonationStatus(Map<Organ, Boolean> map) {
+        for (Entry<Organ, Boolean> entry : map.entrySet()) {
+            if (entry.getValue()) {
+                organsDonating.add(entry.getKey());
+            } else {
+                organsDonating.remove(entry.getKey());
+            }
+        }
+        isDonor = !organsDonating.isEmpty();
+        updateModifiedTimestamp();
     }
 
     public Set<Organ> getCurrentlyRequestedOrgans() {
@@ -742,7 +727,6 @@ public class Client implements ConcurrencyControlledEntity {
      * @return The illness record requested, or null if it doesn't exist.
      */
     public IllnessRecord getIllnessById(long id) {
-        // TODO: Should be optional? Usages don't seem to take into account the null case.
         return illnessHistory
                 .stream()
                 .filter(record -> record.getId() == id)
@@ -811,6 +795,14 @@ public class Client implements ConcurrencyControlledEntity {
         return Collections.unmodifiableList(procedures);
     }
 
+    public void setProcedures(List<ProcedureRecord> procedures) {
+        this.procedures = new ArrayList<>(procedures);
+        for (ProcedureRecord record : procedures) {
+            record.setClient(this);
+        }
+        updateModifiedTimestamp();
+    }
+
     /**
      * Returns a list of procedures that the client is going to undergo.
      *
@@ -824,6 +816,15 @@ public class Client implements ConcurrencyControlledEntity {
 
     public List<TransplantRequest> getTransplantRequests() {
         return Collections.unmodifiableList(transplantRequests);
+    }
+
+    public void setTransplantRequests(List<TransplantRequest> requests) {
+        transplantRequests = new ArrayList<>(requests);
+        for (TransplantRequest request : requests) {
+            request.setClient(this);
+        }
+        isReceiver = !transplantRequests.isEmpty();
+        updateModifiedTimestamp();
     }
 
     /**
@@ -852,6 +853,15 @@ public class Client implements ConcurrencyControlledEntity {
         return Collections.unmodifiableList(donatedOrgans);
     }
 
+    public void setDonatedOrgans(Collection<DonatedOrgan> donatedOrgans) {
+        this.donatedOrgans = new ArrayList<>(donatedOrgans);
+        for (DonatedOrgan donatedOrgan : donatedOrgans) {
+            donatedOrgan.setDonor(this);
+        }
+        isDonor = !organsDonating.isEmpty();
+        updateModifiedTimestamp();
+    }
+
     public List<DonatedOrgan> getReceivedOrgans() {
         return Collections.unmodifiableList(receivedOrgans);
     }
@@ -876,7 +886,7 @@ public class Client implements ConcurrencyControlledEntity {
 
         boolean isMatch = true;
         for (String string : splitSearchItems) {
-            if (firstName == null || !firstName.toLowerCase().contains(string) &&
+            if ((firstName == null || !firstName.toLowerCase().contains(string)) &&
                     (middleName == null || !middleName.toLowerCase().contains(string)) &&
                     (preferredName == null || !preferredName.toLowerCase().contains(string)) &&
                     !lastName.toLowerCase().contains(string)) {
@@ -978,15 +988,6 @@ public class Client implements ConcurrencyControlledEntity {
         return Objects.hash(uid);
     }
 
-    public void setTransplantRequests(List<TransplantRequest> requests) {
-        transplantRequests = new ArrayList<>(requests);
-        for (TransplantRequest request : requests) {
-            request.setClient(this);
-        }
-        isReceiver = !transplantRequests.isEmpty();
-        updateModifiedTimestamp();
-    }
-
     public Optional<TransplantRequest> getTransplantRequestById(long id) {
         return transplantRequests.stream()
                 .filter(transplantRequest -> transplantRequest.getId() == id)
@@ -1058,14 +1059,14 @@ public class Client implements ConcurrencyControlledEntity {
      * - Resolves any pending organ requests by this client.
      * - Marks all the organs they were willing to donate as donated.
      *
-     * @param dateOfDeath    Their date of death.
-     * @param timeOfDeath    Their time of death.
+     * @param dateOfDeath Their date of death.
+     * @param timeOfDeath Their time of death.
      * @param countryOfDeath The country they died in.
-     * @param regionOfDeath  The region they died in.
-     * @param cityOfDeath    The city they died in.
+     * @param regionOfDeath The region they died in.
+     * @param cityOfDeath The city they died in.
      */
     public void markDead(LocalDate dateOfDeath, LocalTime timeOfDeath, Country countryOfDeath, String regionOfDeath,
-                         String cityOfDeath) {
+            String cityOfDeath) {
         this.dateOfDeath = dateOfDeath;
         this.timeOfDeath = timeOfDeath;
         this.countryOfDeath = countryOfDeath;
@@ -1097,7 +1098,7 @@ public class Client implements ConcurrencyControlledEntity {
      * Registers the given {@link Organ} as having been donated by this client at this moment.
      *
      * @param organ The organ donated.
-     * @param id    The id to use for the {@link DonatedOrgan}
+     * @param id The id to use for the {@link DonatedOrgan}
      */
     public void donateOrgan(Organ organ, Long id) {
         donatedOrgans.add(new DonatedOrgan(organ, this, LocalDateTime.now(), id));
@@ -1106,7 +1107,7 @@ public class Client implements ConcurrencyControlledEntity {
     /**
      * Registers the given {@link Organ} as having been donated by this client at the given time.
      *
-     * @param organ       The organ donated.
+     * @param organ The organ donated.
      * @param timeDonated When the organ was removed from this client's body.
      */
     public void donateOrgan(Organ organ, LocalDateTime timeDonated) {
@@ -1116,9 +1117,9 @@ public class Client implements ConcurrencyControlledEntity {
     /**
      * Registers the given {@link Organ} as having been donated by this client at this moment.
      *
-     * @param organ       The organ donated.
+     * @param organ The organ donated.
      * @param timeDonated When the organ was removed from this client's body.
-     * @param id          The id to use for the {@link DonatedOrgan}
+     * @param id The id to use for the {@link DonatedOrgan}
      */
     public void donateOrgan(Organ organ, LocalDateTime timeDonated, Long id) {
         donatedOrgans.add(new DonatedOrgan(organ, this, timeDonated, id));

@@ -1,13 +1,14 @@
 package com.humanharvest.organz.commands.view;
 
+import java.io.PrintStream;
+import java.util.List;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
+
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
-
-import java.io.PrintStream;
-import java.util.List;
 
 /**
  * Command line to print all of the information of all the client, including their ID. Not Sorted.
@@ -19,6 +20,9 @@ public class PrintAllOrgan implements Runnable {
 
     private final ClientManager manager;
     private final PrintStream outputStream;
+
+    @Option(names = {"-t", "-type"}, description = "Organ donations or requests", required = true)
+    private String type;
 
     public PrintAllOrgan() {
         manager = State.getClientManager();
@@ -34,9 +38,6 @@ public class PrintAllOrgan implements Runnable {
         this.manager = manager;
         outputStream = System.out;
     }
-
-    @Option(names = {"-t", "-type"}, description = "Organ donations or requests", required = true)
-    private String type;
 
     @Override
     public void run() {

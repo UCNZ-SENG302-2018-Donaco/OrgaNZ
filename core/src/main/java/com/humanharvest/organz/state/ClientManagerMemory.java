@@ -1,5 +1,18 @@
 package com.humanharvest.organz.state;
 
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.OptionalInt;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.HistoryItem;
@@ -22,19 +35,6 @@ import com.humanharvest.organz.views.client.PaginatedDonatedOrgansList;
 import com.humanharvest.organz.views.client.PaginatedTransplantList;
 import com.humanharvest.organz.views.client.TransplantRequestView;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.OptionalInt;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
 /**
  * An in-memory implementation of {@link ClientManager} that uses a simple list to hold all clients.
  */
@@ -49,12 +49,39 @@ public class ClientManagerMemory implements ClientManager {
         setClients(clients);
     }
 
-    @Override
-    public final void setClients(Collection<Client> clients) {
-        this.clients.clear();
-        for (Client client : clients) {
-            addClient(client);
+    /**
+     * Returns the comparator that matches the sort option
+     *
+     * @param sortOption the sort option
+     * @return the comparator that matches the sort option
+     */
+    private static Comparator<DonatedOrgan> getComparator(DonatedOrganSortOptionsEnum sortOption) {
+        Comparator<DonatedOrgan> comparator;
+        if (sortOption == null) {
+            comparator = Comparator.comparing(DonatedOrgan::getDurationUntilExpiry,
+                    Comparator.nullsLast(Comparator.naturalOrder()));
+        } else {
+            switch (sortOption) {
+                case CLIENT:
+                    comparator = Comparator.comparing(organ -> organ.getDonor().getFullName());
+                    break;
+                case ORGAN_TYPE:
+                    comparator = Comparator.comparing(organ -> organ.getOrganType().toString());
+                    break;
+                case REGION_OF_DEATH:
+                    comparator = Comparator.comparing(organ -> organ.getDonor().getRegionOfDeath());
+                    break;
+                case TIME_OF_DEATH:
+                    comparator = Comparator.comparing(organ -> organ.getDonor().getDateOfDeath());
+                    break;
+                default:
+                case TIME_UNTIL_EXPIRY:
+                    comparator = Comparator.comparing(DonatedOrgan::getDurationUntilExpiry,
+                            Comparator.nullsLast(Comparator.naturalOrder()));
+                    break;
+            }
         }
+        return comparator;
     }
 
     /**
@@ -78,6 +105,14 @@ public class ClientManagerMemory implements ClientManager {
     @Override
     public List<Client> getClients() {
         return Collections.unmodifiableList(clients);
+    }
+
+    @Override
+    public final void setClients(Collection<Client> clients) {
+        this.clients.clear();
+        for (Client client : clients) {
+            addClient(client);
+        }
     }
 
     @Override
@@ -196,6 +231,7 @@ public class ClientManagerMemory implements ClientManager {
     public void applyChangesTo(Client client) {
         // Ensure that all records associated with the client have an id
 
+        // Add IDs to all transplant requests
         long nextId = client.getTransplantRequests().stream()
                 .mapToLong(request -> request.getId() == null ? 0 : request.getId())
                 .max().orElse(0) + 1;
@@ -205,6 +241,8 @@ public class ClientManagerMemory implements ClientManager {
                 nextId++;
             }
         }
+
+        // Add IDs to each medication
         nextId = client.getMedications().stream()
                 .mapToLong(record -> record.getId() == null ? 0 : record.getId())
                 .max().orElse(0) + 1;
@@ -214,6 +252,8 @@ public class ClientManagerMemory implements ClientManager {
                 nextId++;
             }
         }
+
+        // Add IDs to each illness
         nextId = client.getIllnesses().stream()
                 .mapToLong(record -> record.getId() == null ? 0 : record.getId())
                 .max().orElse(0) + 1;
@@ -223,6 +263,8 @@ public class ClientManagerMemory implements ClientManager {
                 nextId++;
             }
         }
+
+        // Add IDs to each procedure
         nextId = client.getProcedures().stream()
                 .mapToLong(record -> record.getId() == null ? 0 : record.getId())
                 .max().orElse(0) + 1;
@@ -237,10 +279,10 @@ public class ClientManagerMemory implements ClientManager {
     /**
      * Checks if a user already exists with that first + last name and date of birth
      *
-     * @param firstName   First name
-     * @param lastName    Last name
+     * @param firstName First name
+     * @param lastName Last name
      * @param dateOfBirth Date of birth (LocalDate)
-     * @return Boolean
+     * @return true if the client exists
      */
     @Override
     public boolean doesClientExist(String firstName, String lastName, LocalDate dateOfBirth) {
@@ -313,7 +355,7 @@ public class ClientManagerMemory implements ClientManager {
 
     @Override
     public PaginatedTransplantList getAllCurrentTransplantRequests(Integer offset, Integer count,
-                                                                   Set<String> regions, Set<Organ> organs) {
+            Set<String> regions, Set<Organ> organs) {
         // Determine requests that match filters
         List<TransplantRequestView> matchingRequests = getClients().stream()
                 .filter(client -> regions == null || regions.isEmpty() || regions.contains(client.getRegion()))
@@ -374,31 +416,7 @@ public class ClientManagerMemory implements ClientManager {
             DonatedOrganSortOptionsEnum sortOption,
             Boolean reversed) {
 
-        Comparator<DonatedOrgan> comparator;
-        if (sortOption == null) {
-            comparator = Comparator.comparing(DonatedOrgan::getDurationUntilExpiry,
-                    Comparator.nullsLast(Comparator.naturalOrder()));
-        } else {
-            switch (sortOption) {
-                case CLIENT:
-                    comparator = Comparator.comparing(organ -> organ.getDonor().getFullName());
-                    break;
-                case ORGAN_TYPE:
-                    comparator = Comparator.comparing(organ -> organ.getOrganType().toString());
-                    break;
-                case REGION_OF_DEATH:
-                    comparator = Comparator.comparing(organ -> organ.getDonor().getRegionOfDeath());
-                    break;
-                case TIME_OF_DEATH:
-                    comparator = Comparator.comparing(organ -> organ.getDonor().getDateOfDeath());
-                    break;
-                default:
-                case TIME_UNTIL_EXPIRY:
-                    comparator = Comparator.comparing(DonatedOrgan::getDurationUntilExpiry,
-                            Comparator.nullsLast(Comparator.naturalOrder()));
-                    break;
-            }
-        }
+        Comparator<DonatedOrgan> comparator = getComparator(sortOption);
 
         if (reversed != null && reversed) {
             comparator = comparator.reversed();
@@ -413,7 +431,8 @@ public class ClientManagerMemory implements ClientManager {
                 .filter(organ -> organ.getOverrideReason() == null)
                 .filter(organ -> regionsToFilter.isEmpty()
                         || regionsToFilter.contains(organ.getDonor().getRegionOfDeath())
-                        || regionsToFilter.contains("International") && organ.getDonor().getCountryOfDeath() != Country.NZ)
+                        || (regionsToFilter.contains("International")
+                        && organ.getDonor().getCountryOfDeath() != Country.NZ))
                 .filter(organ -> organType == null || organType.isEmpty()
                         || organType.contains(organ.getOrganType()))
                 .collect(Collectors.toList());

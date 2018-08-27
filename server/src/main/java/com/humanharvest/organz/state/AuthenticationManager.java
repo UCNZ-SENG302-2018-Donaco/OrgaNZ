@@ -1,26 +1,27 @@
 package com.humanharvest.organz.state;
 
+import java.time.Instant;
+import java.util.Date;
+import java.util.Objects;
+import java.util.Optional;
+
 import com.humanharvest.organz.Administrator;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.SignatureException;
 
-import java.time.Instant;
-import java.util.Date;
-import java.util.Objects;
-import java.util.Optional;
-
 public class AuthenticationManager {
 
     /**
      * Gets the secret used to sign tokens.
      */
-    private String getSecret() {
+    private static String getSecret() {
         return "secret";
     }
 

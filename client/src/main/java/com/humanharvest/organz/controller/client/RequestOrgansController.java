@@ -1,5 +1,29 @@
 package com.humanharvest.organz.controller.client;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javafx.beans.property.Property;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.collections.transformation.FilteredList;
+import javafx.fxml.FXML;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TableCell;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableRow;
+import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.controller.MainController;
@@ -19,29 +43,6 @@ import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.utilities.view.WindowContext;
 import com.humanharvest.organz.views.client.CreateTransplantRequestView;
 import com.humanharvest.organz.views.client.ResolveTransplantRequestObject;
-import javafx.beans.property.Property;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.collections.transformation.FilteredList;
-import javafx.fxml.FXML;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
-import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Collection;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Controller for the Request Organs page. Handles the viewing of current and past organ transplant requests. If the
@@ -90,6 +91,14 @@ public class RequestOrgansController extends SubController {
     private TextField customReason;
 
     /**
+     * Creates a new controller for this page, getting the current session and invoker from the global state.
+     */
+    public RequestOrgansController() {
+        session = State.getSession();
+        resolver = State.getClientResolver();
+    }
+
+    /**
      * Formats a table cell that holds a {@link LocalDateTime} value to display that value in the date time format.
      *
      * @return The cell with the date time formatter set.
@@ -131,14 +140,6 @@ public class RequestOrgansController extends SubController {
                 }
             }
         };
-    }
-
-    /**
-     * Creates a new controller for this page, getting the current session and invoker from the global state.
-     */
-    public RequestOrgansController() {
-        session = State.getSession();
-        resolver = State.getClientResolver();
     }
 
     /**
@@ -228,7 +229,7 @@ public class RequestOrgansController extends SubController {
         try {
             allRequests = resolver.getTransplantRequests(client);
         } catch (NotFoundException e) {
-            LOGGER.log(Level.WARNING, "Client not found");
+            LOGGER.log(Level.WARNING, "Client not found", e);
             PageNavigator.showAlert(AlertType.ERROR,
                     "Client not found",
                     "The client could not be found on the server, it may have been deleted", mainController.getStage());
@@ -307,13 +308,14 @@ public class RequestOrgansController extends SubController {
             try {
                 resolver.createTransplantRequest(client, newRequest);
             } catch (ServerRestException e) { //500
-                LOGGER.severe(e.getMessage());
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
                 PageNavigator.showAlert(AlertType.ERROR,
                         "Server Error",
                         "An error occurred on the server while trying to create the transplant request.\n"
                                 + "Please try again later.", mainController.getStage());
                 return;
             } catch (IfMatchFailedException e) { //412
+                LOGGER.log(Level.INFO, e.getMessage(), e);
                 PageNavigator.showAlert(
                         AlertType.WARNING,
                         "Outdated Data",
@@ -322,7 +324,7 @@ public class RequestOrgansController extends SubController {
                                 + "otherwise refresh the page to update the data.", mainController.getStage());
                 return;
             } catch (NotFoundException e) { //404
-                LOGGER.log(Level.WARNING, "Client not found");
+                LOGGER.log(Level.WARNING, "Client not found", e);
                 PageNavigator.showAlert(AlertType.WARNING, "Client not found", "The client could not be found on the "
                         + "server, it may have been deleted", mainController.getStage());
                 return;
@@ -387,13 +389,14 @@ public class RequestOrgansController extends SubController {
                         selectedRequest,
                         request);
             } catch (ServerRestException e) { //500
-                LOGGER.severe(e.getMessage());
+                LOGGER.log(Level.SEVERE, e.getMessage(), e);
                 PageNavigator.showAlert(AlertType.ERROR,
                         "Server Error",
                         "An error occurred on the server while trying to create the transplant request.\n"
                                 + "Please try again later.", mainController.getStage());
                 return;
             } catch (IfMatchFailedException e) { //412
+                LOGGER.log(Level.INFO, e.getMessage(), e);
                 PageNavigator.showAlert(
                         AlertType.WARNING,
                         "Outdated Data",
@@ -402,7 +405,7 @@ public class RequestOrgansController extends SubController {
                                 + "otherwise refresh the page to update the data.", mainController.getStage());
                 return;
             } catch (NotFoundException e) { //404
-                LOGGER.log(Level.WARNING, "Client not found");
+                LOGGER.log(Level.WARNING, "Client not found", e);
                 PageNavigator.showAlert(AlertType.WARNING, "Client not found", "The client could not be found on the "
                         + "server, it may have been deleted", mainController.getStage());
                 return;
@@ -419,7 +422,8 @@ public class RequestOrgansController extends SubController {
             if (resolvedReasonDropdownChoice == ResolveReason.CURED) { // "Disease was cured"
                 Property<Boolean> response = PageNavigator.showAlert(AlertType.CONFIRMATION,
                         "Go to Medical History Page",
-                        "Do you want to go to the medical history page to mark the disease that was cured?", mainController.getStage());
+                        "Do you want to go to the medical history page to mark the disease that was cured?",
+                        mainController.getStage());
 
                 if (response.getValue() != null) {
                     if (response.getValue()) {

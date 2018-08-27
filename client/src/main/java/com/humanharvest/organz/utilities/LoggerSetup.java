@@ -94,7 +94,7 @@ public class LoggerSetup {
         Formatter formatter = new Formatter() {
             @Override
             public String format(LogRecord record) {
-                return String.format("%s\n", record.getMessage());
+                return String.format("%s%n", record.getMessage());
             }
         };
         handler.setFormatter(formatter);

@@ -1,12 +1,12 @@
 package com.humanharvest.organz.state;
 
-import com.humanharvest.organz.Clinician;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
+import com.humanharvest.organz.Clinician;
 
 /**
  * The class to handle the Client inputs, including adding,
@@ -57,6 +57,12 @@ public class ClinicianManagerMemory implements ClinicianManager {
     @Override
     public List<Clinician> getClinicians() {
         return Collections.unmodifiableList(clinicians);
+    }
+
+    @Override
+    public void setClinicians(Collection<Clinician> clinicians) {
+        this.clinicians.clear();
+        this.clinicians.addAll(clinicians);
     }
 
     /**
@@ -111,12 +117,6 @@ public class ClinicianManagerMemory implements ClinicianManager {
     @Override
     public Clinician getDefaultClinician() {
         return getClinicianByStaffId(DEFAULT_CLINICIAN_ID).orElseThrow(IllegalStateException::new);
-    }
-
-    @Override
-    public void setClinicians(Collection<Clinician> clinicians) {
-        this.clinicians.clear();
-        this.clinicians.addAll(clinicians);
     }
 
 }

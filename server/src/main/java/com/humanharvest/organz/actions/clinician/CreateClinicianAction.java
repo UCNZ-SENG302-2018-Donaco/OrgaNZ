@@ -12,7 +12,7 @@ public class CreateClinicianAction extends ClinicianAction {
      * Create a new Action
      *
      * @param clinician The Clinician to be created
-     * @param manager   The ClinicianManager to apply changes to
+     * @param manager The ClinicianManager to apply changes to
      */
     public CreateClinicianAction(Clinician clinician, ClinicianManager manager) {
         super(clinician, manager);

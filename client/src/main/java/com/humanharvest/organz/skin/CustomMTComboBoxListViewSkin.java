@@ -1,6 +1,7 @@
 package com.humanharvest.organz.skin;
 
 import javafx.scene.control.ComboBox;
+
 import org.tuiofx.widgets.skin.MTComboBoxListViewSkin;
 
 public class CustomMTComboBoxListViewSkin<T> extends MTComboBoxListViewSkin<T> {

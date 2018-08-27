@@ -1,17 +1,18 @@
 package com.humanharvest.organz.actions.client;
 
+import static org.junit.Assert.assertEquals;
+
+import java.time.LocalDate;
+
 import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.ClientManagerMemory;
+
 import org.junit.Before;
 import org.junit.Test;
-
-import java.time.LocalDate;
-
-import static org.junit.Assert.assertEquals;
 
 public class DeleteMedicationRecordActionTest extends BaseTest {
 
@@ -55,7 +56,6 @@ public class DeleteMedicationRecordActionTest extends BaseTest {
         assertEquals(0, baseClient.getPastMedications().size());
     }
 
-
     @Test
     public void DeleteSingleMedicationCurrentUndoTest() {
         DeleteMedicationRecordAction action = new DeleteMedicationRecordAction(baseClient, record, manager);
@@ -65,7 +65,6 @@ public class DeleteMedicationRecordActionTest extends BaseTest {
 
         assertEquals(1, baseClient.getCurrentMedications().size());
     }
-
 
     @Test
     public void DeleteSingleMedicationCurrentUndoRedoTest() {
