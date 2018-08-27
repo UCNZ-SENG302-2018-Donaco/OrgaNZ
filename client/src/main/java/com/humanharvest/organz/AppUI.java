@@ -25,11 +25,6 @@ import com.humanharvest.organz.utilities.view.WindowContext;
 
 import com.sun.javafx.css.StyleManager;
 import com.sun.prism.impl.PrismSettings;
-import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.scene.layout.Pane;
-import javafx.stage.Stage;
 import org.tuiofx.TuioFX;
 import org.tuiofx.internal.base.TuioFXCanvas;
 

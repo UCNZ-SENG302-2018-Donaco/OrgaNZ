@@ -26,14 +26,16 @@ public final class ReflectionUtils {
         field.set(o, value);
     }
 
-    public static <T> void setStaticField(Class<?> clazz, String fieldName, T value) throws NoSuchFieldException, IllegalAccessException {
+    public static <T> void setStaticField(Class<?> clazz, String fieldName, T value)
+            throws NoSuchFieldException, IllegalAccessException {
         Field field = clazz.getDeclaredField(fieldName);
         field.setAccessible(true);
         removeFieldFinal(field);
         field.set(null, value);
     }
 
-    private static void removeFieldFinal(@SuppressWarnings("TypeMayBeWeakened") Field field) throws NoSuchFieldException, IllegalAccessException {
+    private static void removeFieldFinal(@SuppressWarnings("TypeMayBeWeakened") Field field)
+            throws NoSuchFieldException, IllegalAccessException {
         if ((field.getModifiers() & Modifier.FINAL) != 0) {
             Field modifiersField = Field.class.getDeclaredField("modifiers");
             modifiersField.setAccessible(true);
@@ -51,10 +53,10 @@ public final class ReflectionUtils {
 
     private static Method findMethod(Method[] methods, String name, int numberParameters) {
         return Arrays.stream(methods)
-            .filter(method -> {
-                return Objects.equals(method.getName(), name) && method.getParameterCount() == numberParameters;
-            }).findFirst()
-            .orElse(null);
+                .filter(method -> {
+                    return Objects.equals(method.getName(), name) && method.getParameterCount() == numberParameters;
+                }).findFirst()
+                .orElse(null);
 
     }
 

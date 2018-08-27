@@ -188,9 +188,13 @@ public final class MultitouchHandler {
                             currentTouch.getCurrentScreenPoint().distance(otherTouch.getCurrentScreenPoint());
 
             Affine oldTransform = new Affine(focusAreaHandler.getTransform());
-            focusAreaHandler.prependTransform(new Scale(scaleDifference, scaleDifference, centre.getX(), centre.getY()));
-            double scaleX = Math.sqrt(focusAreaHandler.getTransform().getMxx() * focusAreaHandler.getTransform().getMxx()
-                    + focusAreaHandler.getTransform().getMxy() * focusAreaHandler.getTransform().getMxy());
+
+            Scale scaleTransform = new Scale(scaleDifference, scaleDifference, centre.getX(), centre.getY());
+            focusAreaHandler.prependTransform(scaleTransform);
+
+            double currentMxx = focusAreaHandler.getTransform().getMxx();
+            double currentMxy = focusAreaHandler.getTransform().getMxy();
+            double scaleX = Math.sqrt(currentMxx * currentMxx + currentMxy * currentMxy);
 
             if (scaleX < 0.25 || scaleX > 2) {
                 focusAreaHandler.setTransform(oldTransform);
@@ -209,15 +213,17 @@ public final class MultitouchHandler {
     /**
      * Calculates the angle delta between two previous touches and a new touch.
      */
-    private static double calculateAngleDelta(
-            CurrentTouch currentTouch,
-            CurrentTouch otherTouch,
+    private static double calculateAngleDelta(CurrentTouch currentTouch, CurrentTouch otherTouch,
             TouchPoint touchPoint) {
-        double oldAngle = calculateAngle(currentTouch.getCurrentScreenPoint(),
+
+        double oldAngle = calculateAngle(
+                currentTouch.getCurrentScreenPoint(),
                 otherTouch.getCurrentScreenPoint());
+
         double newAngle = calculateAngle(
                 new Point2D(touchPoint.getX(), touchPoint.getY()),
                 otherTouch.getCurrentScreenPoint());
+
         return newAngle - oldAngle;
     }
 
@@ -385,9 +391,7 @@ public final class MultitouchHandler {
      */
     public static Optional<FocusAreaHandler> getFocusAreaHandler(Node node) {
         Optional<Pane> pane = findPane(node);
-        return pane.map(pane1 -> {
-            return (FocusAreaHandler) pane1.getUserData();
-        });
+        return pane.map(pane1 -> (FocusAreaHandler) pane1.getUserData());
     }
 
     public static void addPane(Pane pane) {
@@ -733,18 +737,18 @@ public final class MultitouchHandler {
         }
 
         /**
-         * Prepends the transform onto the current transformation.
-         */
-        public void prependTransform(Transform transformDelta) {
-            transform.prepend(transformDelta);
-            updatePaneTransform();
-        }
-
-        /**
          * Sets the current transformation matrix to a new one.
          */
         public void setTransform(Affine newTransform) {
             transform = newTransform;
+            updatePaneTransform();
+        }
+
+        /**
+         * Prepends the transform onto the current transformation.
+         */
+        public void prependTransform(Transform transformDelta) {
+            transform.prepend(transformDelta);
             updatePaneTransform();
         }
 
