@@ -12,43 +12,58 @@ public final class ReflectionUtils {
     private ReflectionUtils() {
     }
 
-    public static <T> T getField(Object o, String fieldName)
-            throws NoSuchFieldException, IllegalAccessException {
-        Field field = o.getClass().getDeclaredField(fieldName);
-        field.setAccessible(true);
-        return (T) field.get(o);
-    }
-
-    public static <T> void setField(Object o, String fieldName, T value)
-            throws NoSuchFieldException, IllegalAccessException {
-        Field field = o.getClass().getDeclaredField(fieldName);
-        field.setAccessible(true);
-        field.set(o, value);
-    }
-
-    public static <T> void setStaticField(Class<?> clazz, String fieldName, T value)
-            throws NoSuchFieldException, IllegalAccessException {
-        Field field = clazz.getDeclaredField(fieldName);
-        field.setAccessible(true);
-        removeFieldFinal(field);
-        field.set(null, value);
-    }
-
-    private static void removeFieldFinal(@SuppressWarnings("TypeMayBeWeakened") Field field)
-            throws NoSuchFieldException, IllegalAccessException {
-        if ((field.getModifiers() & Modifier.FINAL) != 0) {
-            Field modifiersField = Field.class.getDeclaredField("modifiers");
-            modifiersField.setAccessible(true);
-            modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+    public static <T> T getField(Object o, String fieldName) {
+        try {
+            Field field = o.getClass().getDeclaredField(fieldName);
+            field.setAccessible(true);
+            return (T) field.get(o);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new ReflectionException(e);
         }
     }
 
-    public static <T> T invoke(Object o, String methodName, Object... parameters)
-            throws InvocationTargetException, IllegalAccessException {
+    public static <T> void setField(Object o, String fieldName, T value) {
+        try {
+            Field field = o.getClass().getDeclaredField(fieldName);
+            field.setAccessible(true);
+            field.set(o, value);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new ReflectionException(e);
+        }
+    }
+
+    public static <T> void setStaticField(Class<?> clazz, String fieldName, T value) {
+        try {
+            Field field = clazz.getDeclaredField(fieldName);
+            field.setAccessible(true);
+            removeFieldFinal(field);
+            field.set(null, value);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new ReflectionException(e);
+        }
+    }
+
+    private static void removeFieldFinal(@SuppressWarnings("TypeMayBeWeakened") Field field) {
+        if ((field.getModifiers() & Modifier.FINAL) != 0) {
+            try {
+                Field modifiersField = Field.class.getDeclaredField("modifiers");
+                modifiersField.setAccessible(true);
+                modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                throw new ReflectionException(e);
+            }
+        }
+    }
+
+    public static <T> T invoke(Object o, String methodName, Object... parameters) {
         Method method = findMethod(o.getClass().getDeclaredMethods(), methodName, parameters.length);
         Objects.requireNonNull(method);
         method.setAccessible(true);
-        return (T) method.invoke(o, parameters);
+        try {
+            return (T) method.invoke(o, parameters);
+        } catch (IllegalAccessException | InvocationTargetException e) {
+            throw new ReflectionException(e);
+        }
     }
 
     private static Method findMethod(Method[] methods, String name, int numberParameters) {
@@ -60,18 +75,25 @@ public final class ReflectionUtils {
 
     }
 
-    public static Field getFieldReference(Object o, String fieldName) throws NoSuchFieldException {
-        Field field = o.getClass().getDeclaredField(fieldName);
-        field.setAccessible(true);
-        return field;
+    public static Field getFieldReference(Object o, String fieldName) {
+        try {
+            Field field = o.getClass().getDeclaredField(fieldName);
+            field.setAccessible(true);
+            return field;
+        } catch (NoSuchFieldException e) {
+            throw new ReflectionException(e);
+        }
     }
 
-    public static Method getMethodReference(Object o, String methodName, Class<?>... parameterTypes)
-            throws NoSuchMethodException {
-        Method method = findDeclaredMethod(o.getClass(), methodName, parameterTypes);
-        Objects.requireNonNull(method);
-        method.setAccessible(true);
-        return method;
+    public static Method getMethodReference(Object o, String methodName, Class<?>... parameterTypes) {
+        try {
+            Method method = findDeclaredMethod(o.getClass(), methodName, parameterTypes);
+            Objects.requireNonNull(method);
+            method.setAccessible(true);
+            return method;
+        } catch (NoSuchMethodException e) {
+            throw new ReflectionException(e);
+        }
     }
 
     private static Method findDeclaredMethod(Class<?> clazz, String methodName, Class<?>... parameterTypes)
@@ -87,3 +109,4 @@ public final class ReflectionUtils {
         throw new NoSuchMethodException("Unable to find declared method " + methodName);
     }
 }
+
