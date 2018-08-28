@@ -27,6 +27,7 @@ public class DeleteMedicationRecordActionTest extends BaseTest {
         manager = new ClientManagerMemory();
         baseClient = new Client("First", null, "Last", LocalDate.of(1970, 1, 1), 1);
         record = new MedicationRecord("Generic Name", LocalDate.of(2018, 4, 9), null);
+        record.setId(1);
         baseClient.addMedicationRecord(record);
     }
 
@@ -45,8 +46,7 @@ public class DeleteMedicationRecordActionTest extends BaseTest {
     public void DeleteSingleMedicationPastTest() {
         MedicationRecord newRecord = new MedicationRecord("Generic Name", LocalDate.of(2018, 4, 9), LocalDate.of(2018,
                 4, 10));
-
-        assertEquals(0, baseClient.getPastMedications().size());
+        newRecord.setId(2);
 
         baseClient.addMedicationRecord(newRecord);
 
