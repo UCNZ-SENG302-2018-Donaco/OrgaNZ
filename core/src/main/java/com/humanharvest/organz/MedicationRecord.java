@@ -104,6 +104,18 @@ public class MedicationRecord implements Comparable<MedicationRecord> {
 
     @Override
     public int compareTo(MedicationRecord other) {
-        return this.getMedicationName().compareTo(other.medicationName);
+        return this.medicationName.compareTo(other.medicationName);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof MedicationRecord)) {
+            return false;
+        }
+        MedicationRecord other = (MedicationRecord) o;
+        return this.medicationName.equals(other.medicationName);
     }
 }

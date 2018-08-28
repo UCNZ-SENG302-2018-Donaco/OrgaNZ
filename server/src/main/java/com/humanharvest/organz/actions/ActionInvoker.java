@@ -1,8 +1,9 @@
 package com.humanharvest.organz.actions;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.List;
-import java.util.Stack;
 
 import com.humanharvest.organz.utilities.ActionOccurredListener;
 
@@ -14,8 +15,8 @@ import com.humanharvest.organz.utilities.ActionOccurredListener;
  */
 public class ActionInvoker {
 
-    private Stack<Action> undoStack = new Stack<>();
-    private Stack<Action> redoStack = new Stack<>();
+    private Deque<Action> undoStack = new ArrayDeque<>();
+    private Deque<Action> redoStack = new ArrayDeque<>();
     private List<ActionOccurredListener> listeners = new ArrayList<>();
 
     /**
