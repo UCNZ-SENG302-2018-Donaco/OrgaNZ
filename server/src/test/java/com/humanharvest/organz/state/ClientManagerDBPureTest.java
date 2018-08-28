@@ -1,5 +1,7 @@
 package com.humanharvest.organz.state;
 
+import static org.junit.Assert.assertTrue;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +41,7 @@ public class ClientManagerDBPureTest extends BaseTest {
         Client client = new Client("Thomas", "Declan", "Kearsley", date, 3);
         test.addClient(client);
         Boolean result = test.doesClientExist("Thomas", "Kearsley", date);
-        Assert.assertEquals(true, result);
+        assertTrue(result);
 
     }
 

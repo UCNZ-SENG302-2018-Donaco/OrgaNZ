@@ -1,5 +1,7 @@
 package com.humanharvest.organz.state;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,7 +63,7 @@ public class ClinicianManagerDBPureTest extends BaseTest {
         ClinicianManagerDBPure test = new ClinicianManagerDBPure();
         test.addClinician(c);
         Boolean result = test.doesStaffIdExist(3);
-        Assert.assertEquals(true, result);
+        assertTrue(result);
 
     }
 

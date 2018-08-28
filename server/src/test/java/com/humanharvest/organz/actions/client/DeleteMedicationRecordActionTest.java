@@ -45,6 +45,9 @@ public class DeleteMedicationRecordActionTest extends BaseTest {
     public void DeleteSingleMedicationPastTest() {
         MedicationRecord newRecord = new MedicationRecord("Generic Name", LocalDate.of(2018, 4, 9), LocalDate.of(2018,
                 4, 10));
+
+        assertEquals(0, baseClient.getPastMedications().size());
+
         baseClient.addMedicationRecord(newRecord);
 
         DeleteMedicationRecordAction action = new DeleteMedicationRecordAction(baseClient, newRecord, manager);
