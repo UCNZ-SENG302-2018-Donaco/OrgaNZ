@@ -1,6 +1,7 @@
 package com.humanharvest.organz.commands.view;
 
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.*;
 
 import java.io.ByteArrayOutputStream;
@@ -17,15 +18,13 @@ import com.humanharvest.organz.database.DBManager;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import picocli.CommandLine;
 
-@Ignore
 public class SQLTest extends BaseTest {
 
-    private final ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-    private final ByteArrayOutputStream errContent = new ByteArrayOutputStream();
+    private PrintStream printStream;
+    private ByteArrayOutputStream outputStream;
     private DBManager spyDBManager;
     private SQL spySQL;
     private Connection connection;
@@ -55,16 +54,17 @@ public class SQLTest extends BaseTest {
         when(resultSetMetaData.getColumnCount()).thenReturn(0);
         when(resultSet.next()).thenReturn(false);
 
-        spySQL = spy(new SQL(spyDBManager));
-        System.setOut(new PrintStream(outContent));
-        System.setErr(new PrintStream(errContent));
+        outputStream = new ByteArrayOutputStream();
+        printStream = new PrintStream(outputStream);
+
+        spySQL = spy(new SQL(spyDBManager, printStream));
     }
 
     @Test
     public void CheckValidCommandIsExecutedTest() throws SQLException {
         String[] inputs = {"SELECT * FROM TEST"};
 
-        CommandLine.run(spySQL, System.out, inputs);
+        CommandLine.run(spySQL, printStream, inputs);
 
         verify(statement, times(1)).executeQuery("SELECT * FROM TEST");
     }
@@ -73,7 +73,7 @@ public class SQLTest extends BaseTest {
     public void CheckEmptyCommandIsNotExecutedTest() throws SQLException {
         String[] inputs = {};
 
-        CommandLine.run(spySQL, System.out, inputs);
+        CommandLine.run(spySQL, printStream, inputs);
 
         verify(spyDBManager, times(0)).getStandardSqlConnection();
     }
@@ -82,7 +82,7 @@ public class SQLTest extends BaseTest {
     public void CheckValidCommandWithSpacesIsExecutedTest() throws SQLException {
         String[] inputs = {"SELECT", "*", "FROM", "TEST"};
 
-        CommandLine.run(spySQL, System.out, inputs);
+        CommandLine.run(spySQL, printStream, inputs);
 
         verify(statement, times(1)).executeQuery("SELECT * FROM TEST");
     }
@@ -91,7 +91,7 @@ public class SQLTest extends BaseTest {
     public void CheckValidCommandWithEscapedQuotesIsExecutedTest() throws SQLException {
         String[] inputs = {"SELECT", "\"\"*\"\"", "FROM", "TEST"};
 
-        CommandLine.run(spySQL, System.out, inputs);
+        CommandLine.run(spySQL, printStream, inputs);
 
         verify(statement, times(1)).executeQuery("SELECT \"*\" FROM TEST");
     }
@@ -107,11 +107,11 @@ public class SQLTest extends BaseTest {
         when(resultSet.getString(2)).thenReturn("Second").thenReturn("Row 2 Second");
         when(resultSet.getString(3)).thenReturn("Third").thenReturn("Row 2 Third");
 
-        CommandLine.run(spySQL, System.out, inputs);
+        CommandLine.run(spySQL, printStream, inputs);
 
         verify(statement, times(1)).executeQuery("SELECT * FROM TEST");
-        assertTrue(outContent.toString().contains("First; Second; Third"));
-        assertTrue(outContent.toString().contains("Row 2 First; Row 2 Second; Row 2 Third"));
+        assertThat(outputStream.toString(), containsString("First; Second; Third"));
+        assertThat(outputStream.toString(), containsString("Row 2 First; Row 2 Second; Row 2 Third"));
     }
 
     @Test
@@ -120,11 +120,10 @@ public class SQLTest extends BaseTest {
         //Setup fake empty ResultSet
         when(resultSet.isBeforeFirst()).thenReturn(false);
 
-        CommandLine.run(spySQL, System.out, inputs);
+        CommandLine.run(spySQL, printStream, inputs);
 
         verify(statement, times(1)).executeQuery("SELECT * FROM TEST");
-        assertTrue(outContent.toString().contains("No rows"));
-        System.out.println(outContent.toString());
+        assertThat(outputStream.toString(), containsString("No rows"));
     }
 
     @Test
@@ -133,10 +132,10 @@ public class SQLTest extends BaseTest {
         //Setup fake ResultSet with three columns and 2 rows
         when(statement.executeQuery(anyString())).thenThrow(new SQLException("Fake Exception Message"));
 
-        CommandLine.run(spySQL, System.out, inputs);
+        CommandLine.run(spySQL, printStream, inputs);
 
         verify(statement, times(1)).executeQuery("Invalid SQL");
-        assertTrue(outContent.toString().contains("An error occurred with your query."));
-        assertTrue(outContent.toString().contains("\nInvalid SQL\nFake Exception Message"));
+        assertThat(outputStream.toString(), containsString("An error occurred with your query."));
+        assertThat(outputStream.toString(), containsString("Invalid SQL"));
     }
 }
