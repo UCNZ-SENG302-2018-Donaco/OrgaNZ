@@ -15,10 +15,8 @@ import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.enums.Region;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore
 public class DBManagerTest extends BaseTest {
 
     private DBManager dbManager;
@@ -37,9 +35,9 @@ public class DBManagerTest extends BaseTest {
                 LocalDate.now(), false);
 
         ProcedureRecord procRecord = new ProcedureRecord("got cut open", "etc", LocalDate.now());
-        procRecord.getAffectedOrgans().add(Organ.HEART);
-        procRecord.getAffectedOrgans().add(Organ.LIVER);
-        procRecord.getAffectedOrgans().add(Organ.SKIN);
+        procRecord.addAffectedOrgan(Organ.HEART);
+        procRecord.addAffectedOrgan(Organ.LIVER);
+        procRecord.addAffectedOrgan(Organ.SKIN);
 
         Client client = new Client("Testboi", null, "Testerson", LocalDate.now().minusYears(49), 1);
         client.setDateOfDeath(LocalDate.now());
