@@ -3,6 +3,7 @@ package com.humanharvest.organz.server.controller;
 import java.util.EnumSet;
 import java.util.Set;
 
+import com.humanharvest.organz.Hospital;
 import com.humanharvest.organz.server.exceptions.GlobalControllerExceptionHandler;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Country;
@@ -51,6 +52,23 @@ public class ConfigController {
         State.getConfigManager().setAllowedCountries(countries);
 
         return new ResponseEntity(HttpStatus.OK);
+    }
+
+    /**
+     * The GET endpoint for getting the hospitals.
+     *
+     * @param authToken authentication token - hospitals are only accessible to clinicians (or admins)
+     * @return Response entity containing an Set of the hospitals
+     */
+    @GetMapping("/config/hospitals")
+    public ResponseEntity<Set<Hospital>> getHospitals(
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
+            throws GlobalControllerExceptionHandler.InvalidRequestException {
+
+        State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
+
+        Set<Hospital> hospitals = State.getConfigManager().getHospitals();
+        return new ResponseEntity<>(hospitals, HttpStatus.OK);
     }
 
 }
