@@ -29,6 +29,8 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -43,6 +45,7 @@ import com.humanharvest.organz.views.client.Views;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonView;
@@ -76,6 +79,11 @@ public class Client implements ConcurrencyControlledEntity {
     @JsonView(Views.Details.class)
     @Column(columnDefinition = "text")
     private String currentAddress;
+//    @ManyToOne
+//    @JoinColumn(name = "hospital_id")
+//    @JsonBackReference
+//    @JsonView(Views.Details.class)
+//    private Hospital hospital;
 
     @JsonView(Views.Overview.class)
     private String region = "Unspecified";
@@ -532,6 +540,14 @@ public class Client implements ConcurrencyControlledEntity {
         updateModifiedTimestamp();
         this.currentAddress = currentAddress;
     }
+//
+//    public Hospital getHospital() {
+//        return hospital;
+//    }
+//
+//    public void setHospital(Hospital hospital) {
+//        this.hospital = hospital;
+//    }
 
     public String getRegion() {
         return region;
