@@ -71,4 +71,23 @@ public class ConfigController {
         return new ResponseEntity<>(hospitals, HttpStatus.OK);
     }
 
+    /**
+     * The POST endpoint for setting the list of hospitals
+     *
+     * @param authToken authentication token - the allowed countries may only be set by an administrator
+     * @param hospitals Set of hospitals to set
+     * @return response entity containing the http status code
+     */
+    @PostMapping("/config/hospitals")
+    public ResponseEntity postCountries(
+            @RequestHeader(value = "X-Auth-Token", required = false) String authToken,
+            @RequestBody Set<Hospital> hospitals)
+            throws GlobalControllerExceptionHandler.InvalidRequestException {
+
+        State.getAuthenticationManager().verifyAdminAccess(authToken);
+        State.getConfigManager().setHospitals(hospitals);
+
+        return new ResponseEntity(HttpStatus.OK);
+    }
+
 }
