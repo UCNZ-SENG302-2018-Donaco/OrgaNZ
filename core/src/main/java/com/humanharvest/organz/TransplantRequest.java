@@ -41,7 +41,7 @@ public class TransplantRequest {
     @JsonView(Views.Overview.class)
     private LocalDateTime requestDate;
     @JsonView(Views.Overview.class)
-    private LocalDateTime resolvedDate;
+    private LocalDateTime resolvedDateTime;
     @Enumerated(EnumType.STRING)
     @JsonView(Views.Overview.class)
     private TransplantRequestStatus status = TransplantRequestStatus.WAITING;
@@ -88,12 +88,12 @@ public class TransplantRequest {
         return requestDate;
     }
 
-    public LocalDateTime getResolvedDate() {
-        return resolvedDate;
+    public LocalDateTime getResolvedDateTime() {
+        return resolvedDateTime;
     }
 
-    public void setResolvedDate(LocalDateTime resolvedDate) {
-        this.resolvedDate = resolvedDate;
+    public void setResolvedDateTime(LocalDateTime resolvedDateTime) {
+        this.resolvedDateTime = resolvedDateTime;
     }
 
     public TransplantRequestStatus getStatus() {
@@ -115,5 +115,11 @@ public class TransplantRequest {
      */
     public void setResolvedReason(String resolvedReason) {
         this.resolvedReason = resolvedReason;
+    }
+
+    public void resolveRequest(LocalDateTime dateTime, String resolvedReason, TransplantRequestStatus status) {
+        this.resolvedDateTime = dateTime;
+        this.resolvedReason = resolvedReason;
+        this.status = status;
     }
 }

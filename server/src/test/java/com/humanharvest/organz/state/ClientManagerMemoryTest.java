@@ -139,7 +139,7 @@ public class ClientManagerMemoryTest extends BaseTest {
         TransplantRequest transplantRequest = new TransplantRequest(client1, Organ.LIVER);
         TransplantRequest transplantRequest2 = new TransplantRequest(client2, Organ.HEART);
         transplantRequest2.setStatus(TransplantRequestStatus.COMPLETED);
-        transplantRequest2.setResolvedDate(LocalDateTime.now());
+        transplantRequest2.setResolvedDateTime(LocalDateTime.now());
         client1.addTransplantRequest(transplantRequest);
         client2.addTransplantRequest(transplantRequest2);
 

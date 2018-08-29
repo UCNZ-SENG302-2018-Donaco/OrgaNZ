@@ -161,7 +161,7 @@ public class ClientResolverMemory implements ClientResolver {
             ResolveTransplantRequestObject resolveTransplantRequestObject) {
         request.setStatus(resolveTransplantRequestObject.getStatus());
         request.setResolvedReason(resolveTransplantRequestObject.getResolvedReason());
-        request.setResolvedDate(resolveTransplantRequestObject.getResolvedDate());
+        request.setResolvedDateTime(resolveTransplantRequestObject.getResolvedDate());
         return request;
     }
 

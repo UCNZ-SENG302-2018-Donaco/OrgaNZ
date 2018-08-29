@@ -1076,7 +1076,7 @@ public class Client implements ConcurrencyControlledEntity {
         for (TransplantRequest request : transplantRequests) {
             if (request.getStatus() == TransplantRequestStatus.WAITING) {
                 request.setStatus(TransplantRequestStatus.CANCELLED);
-                request.setResolvedDate(LocalDateTime.now());
+                request.setResolvedDateTime(LocalDateTime.now());
                 request.setResolvedReason("The client died.");
             }
         }

@@ -58,7 +58,7 @@ public class ResolveTransplantRequestAction extends ClientAction {
     protected void execute() {
         super.execute();
         request.setStatus(status);
-        request.setResolvedDate(resolvedTime);
+        request.setResolvedDateTime(resolvedTime);
         request.setResolvedReason(reason);
         manager.applyChangesTo(request.getClient());
     }
@@ -67,7 +67,7 @@ public class ResolveTransplantRequestAction extends ClientAction {
     protected void unExecute() {
         super.unExecute();
         request.setStatus(TransplantRequestStatus.WAITING);
-        request.setResolvedDate(null);
+        request.setResolvedDateTime(null);
         request.setResolvedReason(null);
         manager.applyChangesTo(request.getClient());
     }
