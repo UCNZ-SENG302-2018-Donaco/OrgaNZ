@@ -19,7 +19,7 @@ public class TransplantRequestValidator {
 
         // Check for valid request date
         try {
-            LocalDateTime.parse(request.getRequestDate().toString());
+            LocalDateTime.parse(request.getRequestDateTime().toString());
         } catch (DateTimeParseException e) {
             throw new IllegalArgumentException("Not a valid clients file: "
                     + "all transplant requests should have valid dates.\n"
@@ -27,7 +27,7 @@ public class TransplantRequestValidator {
         }
 
         // Catch any future request dates
-        if (request.getRequestDate().isAfter(LocalDateTime.now().plusMinutes(1))) {
+        if (request.getRequestDateTime().isAfter(LocalDateTime.now().plusMinutes(1))) {
             throw new IllegalArgumentException("Not a valid clients file: "
                     + "all transplant requests should have dates in the past.\n"
                     + "Currently, user " + clientId + " has at least one that isn't.");
@@ -60,7 +60,7 @@ public class TransplantRequestValidator {
             }
 
             // Catch any resolve dates before the request date
-            if (request.getResolvedDateTime().isBefore(request.getRequestDate())) {
+            if (request.getResolvedDateTime().isBefore(request.getRequestDateTime())) {
                 throw new IllegalArgumentException("Not a valid clients file: "
                         + "all transplant requests should have resolution dates "
                         + "after the request date (if they have a resolution date).\n"

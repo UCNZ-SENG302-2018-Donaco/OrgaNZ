@@ -2622,10 +2622,10 @@ components:
           type: number
         requestedOrgan:
           $ref: '#/components/schemas/organEnum'
-        requestDate:
-          $ref: '#/components/schemas/date'
-        resolvedDate:
-          $ref: '#/components/schemas/date'
+        requestDateTime:
+          $ref: '#/components/schemas/dateTime'
+        resolvedDateTime:
+          $ref: '#/components/schemas/dateTime'
         status:
           $ref: '#/components/schemas/transplantRequestStatusEnum'
         resolvedReason:
@@ -2636,10 +2636,10 @@ components:
       properties:
         requestedOrgan:
           $ref: '#/components/schemas/organEnum'
-        requestDate:
-          $ref: '#/components/schemas/date'
-        resolvedDate:
-          $ref: '#/components/schemas/date'
+        requestDateTime:
+          $ref: '#/components/schemas/dateTime'
+        resolvedDateTime:
+          $ref: '#/components/schemas/dateTime'
         status:
           $ref: '#/components/schemas/transplantRequestStatusEnum'
         resolvedReason:

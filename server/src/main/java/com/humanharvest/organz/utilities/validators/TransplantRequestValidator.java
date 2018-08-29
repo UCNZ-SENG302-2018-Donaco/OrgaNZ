@@ -59,14 +59,14 @@ public abstract class TransplantRequestValidator {
     }
 
     private static boolean requestDateValid(TransplantRequest request) {
-        return datetimeIsValid(request.getRequestDate()) &&
-                !request.getRequestDate().isAfter(LocalDateTime.now().plusMinutes(1));
+        return datetimeIsValid(request.getRequestDateTime()) &&
+                !request.getRequestDateTime().isAfter(LocalDateTime.now().plusMinutes(1));
     }
 
     private static boolean resolvedDateValid(TransplantRequest request) {
         if (request.getResolvedDateTime() != null) {
             return datetimeIsValid(request.getResolvedDateTime()) &&
-                    !request.getResolvedDateTime().isBefore(request.getRequestDate());
+                    !request.getResolvedDateTime().isBefore(request.getRequestDateTime());
         }
         return true;
     }
