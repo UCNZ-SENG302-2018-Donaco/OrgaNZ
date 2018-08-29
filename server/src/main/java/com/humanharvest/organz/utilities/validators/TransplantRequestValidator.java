@@ -31,9 +31,9 @@ public abstract class TransplantRequestValidator {
                             .collect(Collectors.joining(", "))
             ));
         }
-        if (!requestDateValid(request)) {
+        if (!requestDateTimeValid(request)) {
             errors.append("Request datetime must be in a valid format and must represent a point in the past.\n");
-        } else if (!resolvedDateValid(request)) {
+        } else if (!resolvedDateTimeValid(request)) {
             errors.append("Resolved date/time must be either empty, or a datetime in a valid format that represents a "
                     + "point after the request date.\n");
         }
@@ -58,14 +58,14 @@ public abstract class TransplantRequestValidator {
         return request.getRequestedOrgan() != null;
     }
 
-    private static boolean requestDateValid(TransplantRequest request) {
-        return datetimeIsValid(request.getRequestDateTime()) &&
+    private static boolean requestDateTimeValid(TransplantRequest request) {
+        return dateTimeIsValid(request.getRequestDateTime()) &&
                 !request.getRequestDateTime().isAfter(LocalDateTime.now().plusMinutes(1));
     }
 
-    private static boolean resolvedDateValid(TransplantRequest request) {
+    private static boolean resolvedDateTimeValid(TransplantRequest request) {
         if (request.getResolvedDateTime() != null) {
-            return datetimeIsValid(request.getResolvedDateTime()) &&
+            return dateTimeIsValid(request.getResolvedDateTime()) &&
                     !request.getResolvedDateTime().isBefore(request.getRequestDateTime());
         }
         return true;
@@ -77,7 +77,7 @@ public abstract class TransplantRequestValidator {
 
     // HELPERS
 
-    private static boolean datetimeIsValid(LocalDateTime datetime) {
+    private static boolean dateTimeIsValid(LocalDateTime datetime) {
         try {
             LocalDateTime.parse(datetime.toString());
             return true;

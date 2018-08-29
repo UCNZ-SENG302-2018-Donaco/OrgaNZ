@@ -65,7 +65,7 @@ public class TransplantsController extends SubController {
     private TableColumn<TransplantRequest, String> regionCol;
 
     @FXML
-    private TableColumn<TransplantRequest, LocalDateTime> dateCol;
+    private TableColumn<TransplantRequest, LocalDateTime> dateTimeCol;
 
     @FXML
     private Pagination pagination;
@@ -208,10 +208,10 @@ public class TransplantsController extends SubController {
         organCol.setCellValueFactory(new PropertyValueFactory<>("requestedOrgan"));
         regionCol.setCellValueFactory(cellData -> new SimpleStringProperty(
                 cellData.getValue().getClient().getRegion()));
-        dateCol.setCellValueFactory(new PropertyValueFactory<>("requestDate"));
+        dateTimeCol.setCellValueFactory(new PropertyValueFactory<>("requestDateTime"));
 
         // Format all the datetime cells
-        dateCol.setCellFactory(cell -> formatDateTimeCell());
+        dateTimeCol.setCellFactory(cell -> formatDateTimeCell());
 
         // Colour each row if it is a request for an organ that the client is also registered to donate.
         tableView.setRowFactory(row -> colourIfDonatedAndRequested());

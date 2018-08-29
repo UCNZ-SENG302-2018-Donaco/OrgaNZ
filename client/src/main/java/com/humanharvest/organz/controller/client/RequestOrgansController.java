@@ -76,11 +76,11 @@ public class RequestOrgansController extends SubController {
     @FXML
     private TableColumn<TransplantRequest, Organ> organPastCol;
     @FXML
-    private TableColumn<TransplantRequest, LocalDateTime> requestDateCurrCol;
+    private TableColumn<TransplantRequest, LocalDateTime> requestDateTimeCurrCol;
     @FXML
-    private TableColumn<TransplantRequest, LocalDateTime> requestDatePastCol;
+    private TableColumn<TransplantRequest, LocalDateTime> requestDateTimePastCol;
     @FXML
-    private TableColumn<TransplantRequest, LocalDateTime> resolvedDatePastCol;
+    private TableColumn<TransplantRequest, LocalDateTime> resolvedDateTimePastCol;
     @FXML
     private TableColumn<TransplantRequest, TransplantRequestStatus> requestStatusPastCol;
     @FXML
@@ -156,17 +156,17 @@ public class RequestOrgansController extends SubController {
 
         // Setup all cell value factories
         organCurrCol.setCellValueFactory(new PropertyValueFactory<>("requestedOrgan"));
-        requestDateCurrCol.setCellValueFactory(new PropertyValueFactory<>("requestDate"));
+        requestDateTimeCurrCol.setCellValueFactory(new PropertyValueFactory<>("requestDateTime"));
         organPastCol.setCellValueFactory(new PropertyValueFactory<>("requestedOrgan"));
-        requestDatePastCol.setCellValueFactory(new PropertyValueFactory<>("requestDate"));
+        requestDateTimePastCol.setCellValueFactory(new PropertyValueFactory<>("requestDateTime"));
         requestStatusPastCol.setCellValueFactory(new PropertyValueFactory<>("status"));
-        resolvedDatePastCol.setCellValueFactory(new PropertyValueFactory<>("resolvedDate"));
+        resolvedDateTimePastCol.setCellValueFactory(new PropertyValueFactory<>("resolvedDateTime"));
         resolvedReasonPastCol.setCellValueFactory(new PropertyValueFactory<>("resolvedReason"));
 
         // Format all the datetime cells
-        requestDateCurrCol.setCellFactory(cell -> formatDateTimeCell());
-        requestDatePastCol.setCellFactory(cell -> formatDateTimeCell());
-        resolvedDatePastCol.setCellFactory(cell -> formatDateTimeCell());
+        requestDateTimeCurrCol.setCellFactory(cell -> formatDateTimeCell());
+        requestDateTimePastCol.setCellFactory(cell -> formatDateTimeCell());
+        resolvedDateTimePastCol.setCellFactory(cell -> formatDateTimeCell());
 
         // Colour each row if it is a request for an organ that the client is also registered to donate.
         currentRequestsTable.setRowFactory(row -> colourIfDonatedAndRequested());

@@ -32,7 +32,7 @@
               <TableColumn prefWidth="75.0" text="Client" fx:id="clientCol"/>
               <TableColumn prefWidth="75.0" text="Organ" fx:id="organCol"/>
               <TableColumn prefWidth="75.0" text="Region" fx:id="regionCol"/>
-              <TableColumn prefWidth="75.0" text="Date" fx:id="dateCol"/>
+              <TableColumn prefWidth="75.0" text="Date" fx:id="dateTimeCol"/>
             </columns>
             <BorderPane.margin>
               <Insets top="10.0"/>
