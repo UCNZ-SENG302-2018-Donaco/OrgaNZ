@@ -9,15 +9,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.EnumMap;
 import java.util.EnumSet;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.persistence.Access;
 import javax.persistence.AccessType;
@@ -60,6 +62,8 @@ import com.fasterxml.jackson.annotation.JsonView;
 @Table
 @Access(AccessType.FIELD)
 public class Client implements ConcurrencyControlledEntity {
+
+    private static final Pattern whiteSpace = Pattern.compile("\\s+");
 
     @JsonView(Views.Details.class)
     private final Instant createdTimestamp;
@@ -108,7 +112,7 @@ public class Client implements ConcurrencyControlledEntity {
     @JsonView(Views.Overview.class)
     private LocalDate dateOfBirth;
 
-    @JsonView(Views.Details.class)
+    @JsonView(Views.Overview.class)
     private LocalDate dateOfDeath;
     @JsonView(Views.Details.class)
     private LocalTime timeOfDeath;
@@ -126,9 +130,9 @@ public class Client implements ConcurrencyControlledEntity {
     private Instant modifiedTimestamp;
 
     @JsonView(Views.Overview.class)
-    private boolean isDonor = false;
+    private boolean isDonor;
     @JsonView(Views.Overview.class)
-    private boolean isReceiver = false;
+    private boolean isReceiver;
 
     @ElementCollection(targetClass = Organ.class)
     @Enumerated(EnumType.STRING)
@@ -269,7 +273,6 @@ public class Client implements ConcurrencyControlledEntity {
      * @throws IllegalArgumentException If the type is not either requests or donations
      */
     public String getOrganStatusString(String type) throws IllegalArgumentException {
-        StringBuilder builder = new StringBuilder();
         Set<Organ> organSet;
         switch (type) {
             case "requests":
@@ -281,6 +284,7 @@ public class Client implements ConcurrencyControlledEntity {
             default:
                 throw new IllegalArgumentException("Organ type should either be \"donations\" or \"requests\"");
         }
+        StringBuilder builder = new StringBuilder();
         for (Organ organ : organSet) {
             if (builder.length() != 0) {
                 builder.append(", ");
@@ -303,10 +307,10 @@ public class Client implements ConcurrencyControlledEntity {
     public String getClientOrganStatusString(String type) throws IllegalArgumentException {
         switch (type) {
             case "donations":
-                return String.format("User: %s. Name: %s. Donation status: %s", uid, getFullName(),
+                return String.format(Locale.UK, "User: %s. Name: %s. Donation status: %s", uid, getFullName(),
                         getOrganStatusString(type));
             case "requests":
-                return String.format("User: %s. Name: %s. Request status: %s", uid, getFullName(),
+                return String.format(Locale.UK, "User: %s. Name: %s. Request status: %s", uid, getFullName(),
                         getOrganStatusString(type));
             default:
                 throw new IllegalArgumentException("Organ type should either be \"donations\" or \"requests\"");
@@ -319,12 +323,13 @@ public class Client implements ConcurrencyControlledEntity {
      * @return Formatted string with newlines
      */
     public String getUpdatesString() {
-        StringBuilder out = new StringBuilder(String.format("User: %s. Name: %s, updates:%n", uid, getFullName()));
+        StringBuilder out = new StringBuilder(
+                String.format(Locale.UK, "User: %s. Name: %s, updates:%n", uid, getFullName()));
         if (Objects.isNull(changesHistory)) {
             changesHistory = new ArrayList<>();
         }
         for (HistoryItem item : changesHistory) {
-            out.append(String.format("%s: %s%n", item.getTimestamp(), item.getDetails()));
+            out.append(String.format(Locale.UK, "%s: %s%n", item.getTimestamp(), item.getDetails()));
         }
         return out.toString();
     }
@@ -335,7 +340,7 @@ public class Client implements ConcurrencyControlledEntity {
      * @return Formatted string with the clients user information. Does not include organ donation status
      */
     public String getClientInfoString() {
-        return String.format("User: %s. Name: %s, date of birth: %tF, date of death: %tF, gender: %s," +
+        return String.format(Locale.UK, "User: %s. Name: %s, date of birth: %tF, date of death: %tF, gender: %s," +
                         " height: %scm, weight: %skg, blood type: %s, current address: %s, region: %s," +
                         " created on: %s, modified on: %s",
                 uid, getFullName(), dateOfBirth, dateOfDeath, gender,
@@ -575,7 +580,7 @@ public class Client implements ConcurrencyControlledEntity {
     }
 
     public Map<Organ, Boolean> getOrganDonationStatus() {
-        Map<Organ, Boolean> organDonationStatus = new HashMap<>();
+        Map<Organ, Boolean> organDonationStatus = new EnumMap<>(Organ.class);
         for (Organ organ : Organ.values()) {
             organDonationStatus.put(organ, organsDonating.contains(organ));
         }
@@ -615,7 +620,7 @@ public class Client implements ConcurrencyControlledEntity {
     }
 
     public Map<Organ, Boolean> getOrganRequestStatus() {
-        Map<Organ, Boolean> organStatus = new HashMap<>();
+        Map<Organ, Boolean> organStatus = new EnumMap<>(Organ.class);
         Set<Organ> requestedOrgans = getCurrentlyRequestedOrgans();
 
         for (Organ organ : Organ.values()) {
@@ -718,13 +723,11 @@ public class Client implements ConcurrencyControlledEntity {
         if (dateOfBirth == null) {
             return -1;
         }
-        int age;
         if (dateOfDeath == null) {
-            age = Period.between(dateOfBirth, LocalDate.now()).getYears();
+            return Period.between(dateOfBirth, LocalDate.now()).getYears();
         } else {
-            age = Period.between(dateOfBirth, dateOfDeath).getYears();
+            return Period.between(dateOfBirth, dateOfDeath).getYears();
         }
-        return age;
     }
 
     /**
@@ -897,15 +900,15 @@ public class Client implements ConcurrencyControlledEntity {
      * @return True if all sections of the passed string match any of the names of the client
      */
     public boolean nameContains(String searchParam) {
-        String lowerSearch = searchParam.toLowerCase();
-        String[] splitSearchItems = lowerSearch.split("\\s+");
+        String lowerSearch = searchParam.toLowerCase(Locale.UK);
+        String[] splitSearchItems = whiteSpace.split(lowerSearch);
 
         boolean isMatch = true;
         for (String string : splitSearchItems) {
-            if ((firstName == null || !firstName.toLowerCase().contains(string)) &&
-                    (middleName == null || !middleName.toLowerCase().contains(string)) &&
-                    (preferredName == null || !preferredName.toLowerCase().contains(string)) &&
-                    !lastName.toLowerCase().contains(string)) {
+            if ((firstName == null || !firstName.toLowerCase(Locale.UK).contains(string)) &&
+                    (middleName == null || !middleName.toLowerCase(Locale.UK).contains(string)) &&
+                    (preferredName == null || !preferredName.toLowerCase(Locale.UK).contains(string)) &&
+                    !lastName.toLowerCase(Locale.UK).contains(string)) {
                 isMatch = false;
                 break;
             }
@@ -921,20 +924,20 @@ public class Client implements ConcurrencyControlledEntity {
      */
     private HashSet<String> splitNames() {
 
-        String[] fname = firstName.split("\\s+");
-        String[] lname = lastName.split("\\s+");
+        String[] fname = whiteSpace.split(firstName);
+        String[] lname = whiteSpace.split(lastName);
         String[] mname;
         String[] pname;
 
         if (middleName == null) {
             mname = new String[0];
         } else {
-            mname = middleName.split("\\s+");
+            mname = whiteSpace.split(middleName);
         }
         if (preferredName == null) {
             pname = new String[0];
         } else {
-            pname = preferredName.split("\\s+");
+            pname = whiteSpace.split(preferredName);
         }
 
         HashSet<String> names = new HashSet<>(Arrays.asList(fname));
@@ -953,7 +956,7 @@ public class Client implements ConcurrencyControlledEntity {
      */
     public boolean profileSearch(String searchParam) {
         String lowerSearch = searchParam.toLowerCase();
-        String[] splitSearchItems = lowerSearch.split("\\s+");
+        String[] splitSearchItems = whiteSpace.split(lowerSearch);
 
         Collection<String> searched = new ArrayList<>(Arrays.asList(splitSearchItems));
 
