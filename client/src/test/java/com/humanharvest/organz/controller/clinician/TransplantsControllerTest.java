@@ -1,7 +1,6 @@
 package com.humanharvest.organz.controller.clinician;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.testfx.api.FxAssert.verifyThat;
 import static org.testfx.matcher.base.NodeMatchers.isVisible;
 import static org.testfx.matcher.control.TableViewMatchers.hasNumRows;
@@ -12,18 +11,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javafx.scene.Node;
-import javafx.scene.control.SplitPane;
 import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.input.MouseButton;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import org.controlsfx.control.CheckComboBox;
@@ -173,24 +166,6 @@ public class TransplantsControllerTest extends ControllerTest {
         return stringBuilder.toString();
     }
 
-    /**
-     * Get the top modal window.
-     *
-     * @return the top modal window
-     */
-    private Stage getTopModalStage() {
-        // Get a list of windows but ordered from top[0] to bottom[n] ones.
-        List<Window> allWindows = new ArrayList<>(new FxRobot().robotContext().getWindowFinder().listWindows());
-        Collections.reverse(allWindows);
-
-        // Return the first found modal window.
-        return (Stage) allWindows
-                .stream()
-                .filter(window -> window instanceof Stage)
-                .findFirst()
-                .orElse(null);
-    }
-
     @Before
     public void startup() {
         //Make sure the filters are open
@@ -238,99 +213,38 @@ public class TransplantsControllerTest extends ControllerTest {
     }
 
     @Test
-    @Ignore
     public void testDoubleClickToOpenClient() {
         // Select Client 1 and double click on them
         clickOn((Node) lookup(NodeQueryUtils.hasText(request1a.getClient().getFullName())).query());
         press(MouseButton.PRIMARY);
         release(MouseButton.PRIMARY);
 
-        // Get the top pane
-        final Stage topModalStage = getTopModalStage();
-        assertNotNull(topModalStage);
-        final AnchorPane pane = (AnchorPane) topModalStage.getScene().getRoot();
+        // Get a list of windows but ordered from top[0] to bottom[n] ones.
+        List<Window> allWindows = new ArrayList<>(new FxRobot().robotContext().getWindowFinder().listWindows());
+        Collections.reverse(allWindows);
 
-        // Check each subnode is there
-        VBox mainVbox = (VBox) pane.getChildren().get(0); // Main pane
-        assertNotNull(mainVbox);
+        // Get all the windows that are stages
+        List<Window> stages = allWindows
+                .stream()
+                .filter(window -> window instanceof Stage)
+                .collect(Collectors.toList());
 
-        StackPane stackPane = (StackPane) mainVbox.getChildren().get(0); // page holder
-        assertNotNull(stackPane);
-        assertEquals("pageHolder", stackPane.getId());
+        assertEquals(2, stages.size());
 
-        VBox clientVbox = (VBox) stackPane.getChildren().get(0); // Main VBox in client viewer
-        assertNotNull(clientVbox);
+        WaitForAsyncUtils.asyncFx(((Stage) stages.get(0))::close);
+    }
 
-        SplitPane splitPane = (SplitPane) clientVbox.getChildren().get(0); // Main SplitPane
-        assertNotNull(splitPane);
+    @Test
+    public void testOneWindowIsOpen() {
+        List<Window> allWindows = new ArrayList<>(new FxRobot().robotContext().getWindowFinder().listWindows());
+        Collections.reverse(allWindows);
 
-        SplitPane splitPane2 = (SplitPane) splitPane.getItems().get(1); // Secondary SplitPane
-        assertNotNull(splitPane2);
+        List<Window> stages = allWindows
+                .stream()
+                .filter(window -> window instanceof Stage)
+                .collect(Collectors.toList());
 
-        VBox vbox2 = (VBox) splitPane2.getItems().get(1); // Vbox containing a borderpane
-        assertNotNull(vbox2);
-
-        BorderPane borderPane = (BorderPane) vbox2.getChildren().get(0); //Borderpane containing header and data
-        assertNotNull(borderPane);
-
-        VBox vbox3 = (VBox) borderPane.getCenter(); // Vbox containing two gridpanes
-        assertNotNull(vbox3);
-
-        GridPane gridPaneId = (GridPane) vbox3.getChildren().get(0); //Gridpane containing ID fields
-        assertNotNull(gridPaneId);
-        assertEquals("imagePane", gridPaneId.getId());
-
-        GridPane gridPaneFields = (GridPane) vbox3.getChildren().get(1); //Gridpane containing all fields
-        assertNotNull(gridPaneFields);
-        assertEquals("inputsPane", gridPaneFields.getId());
-
-        // Check all nodes we need to look in are visible
-        verifyThat("#fname", isVisible());
-        verifyThat("#mname", isVisible());
-        verifyThat("#lname", isVisible());
-
-        // Create a list of all nodes to search in to find user's details
-        ArrayList<Node> nodes = new ArrayList<>();
-        nodes.addAll(gridPaneFields.getChildren());
-        nodes.addAll(gridPaneId.getChildren());
-
-        // Iterate through nodes in both grid panes, check if they are one that we want, and if so, check they are
-        // as expected.
-        String expectedString = "";
-        boolean gotAField;
-        int totalChecks = 0;
-        for (Node node : nodes) {
-            if (node.getId() != null) {
-                switch (node.getId()) {
-                    case "id":
-                        expectedString = Integer.toString(client1.getUid());
-                        gotAField = true;
-                        break;
-                    case "fname":
-                        expectedString = client1.getFirstName();
-                        gotAField = true;
-                        break;
-                    case "mname":
-                        expectedString = client1.getMiddleName();
-                        gotAField = true;
-                        break;
-                    case "lname":
-                        expectedString = client1.getLastName();
-                        gotAField = true;
-                        break;
-                    default:
-                        gotAField = false;
-                }
-                if (gotAField) {
-                    TextField textField = (TextField) node;
-                    assertEquals(expectedString, textField.getText());
-                    totalChecks++;
-                }
-            }
-        }
-        assertEquals(3, totalChecks); // it should have checked 4 fields
-
-        WaitForAsyncUtils.asyncFx(topModalStage::close);
+        assertEquals(1, stages.size());
     }
 
     @Test
