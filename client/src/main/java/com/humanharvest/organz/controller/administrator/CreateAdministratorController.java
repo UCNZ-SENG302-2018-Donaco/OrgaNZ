@@ -8,6 +8,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import org.controlsfx.control.Notifications;
 
 import com.humanharvest.organz.controller.MainController;
 import com.humanharvest.organz.controller.SubController;
@@ -17,7 +18,6 @@ import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.views.administrator.CreateAdministratorView;
-import org.controlsfx.control.Notifications;
 
 public class CreateAdministratorController extends SubController {
 
@@ -74,7 +74,7 @@ public class CreateAdministratorController extends SubController {
         boolean valid = true;
 
         // Username
-        if (usernameTextField.getText().equals("")) {
+        if ("".equals(usernameTextField.getText())) {
             usernameLabel.setTextFill(Color.RED);
             valid = false;
         } else {
@@ -99,7 +99,7 @@ public class CreateAdministratorController extends SubController {
         }
 
         // Password
-        if (passwordField.getText().equals("")) {
+        if ("".equals(passwordField.getText())) {
             passwordLabel.setTextFill(Color.RED);
             valid = false;
         } else {

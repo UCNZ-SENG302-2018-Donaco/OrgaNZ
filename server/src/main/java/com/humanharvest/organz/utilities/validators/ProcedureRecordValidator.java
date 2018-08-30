@@ -33,7 +33,7 @@ public class ProcedureRecordValidator {
 
     private boolean summaryValid(ProcedureRecord record) {
         return record.getSummary() != null &&
-                !record.getSummary().equals("");
+                !"".equals(record.getSummary());
     }
 
     private boolean dateValid(ProcedureRecord record) {

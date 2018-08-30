@@ -71,14 +71,14 @@ public class CreateClinicianController extends SubController {
      */
     private boolean checkMandatoryFields() {
         boolean update = true;
-        if (fname.getText().equals("")) {   // First name
+        if ("".equals(fname.getText())) {   // First name
             fnameLabel.setTextFill(Color.RED);
             update = false;
         } else {
             fnameLabel.setTextFill(Color.BLACK);
         }
 
-        if (lname.getText().equals("")) {   // Last name
+        if ("".equals(lname.getText())) {   // Last name
             lnameLabel.setTextFill(Color.RED);
             update = false;
         } else {
@@ -106,7 +106,7 @@ public class CreateClinicianController extends SubController {
             update = false;
         }
 
-        if (password.getText().equals("")) { // Password
+        if ("".equals(password.getText())) { // Password
             passwordLabel.setTextFill(Color.RED);
             update = false;
         } else {

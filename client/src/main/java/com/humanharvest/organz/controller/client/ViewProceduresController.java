@@ -23,6 +23,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
+import org.controlsfx.control.CheckComboBox;
+import org.controlsfx.control.Notifications;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.ProcedureRecord;
@@ -41,8 +43,6 @@ import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.views.client.CreateProcedureView;
 import com.humanharvest.organz.views.client.ModifyProcedureObject;
-import org.controlsfx.control.CheckComboBox;
-import org.controlsfx.control.Notifications;
 
 /**
  * Controller for the medical history page, which shows a list of all pending and past procedures for the client.
@@ -110,7 +110,7 @@ public class ViewProceduresController extends SubController {
      */
     private void editSummaryCell(CellEditEvent<ProcedureRecord, String> event) {
         String summary = event.getNewValue();
-        if (summary == null || summary.equals("")) {
+        if (summary == null || "".equals(summary)) {
             PageNavigator.showAlert(AlertType.ERROR,
                     "Invalid summary",
                     "New procedure summary must not be blank.");
@@ -401,7 +401,7 @@ public class ViewProceduresController extends SubController {
         String summary = summaryField.getText();
         LocalDate date = dateField.getValue();
 
-        if (summary == null || summary.equals("")) {
+        if (summary == null || "".equals(summary)) {
             errorMessage.setText("Procedure summary must not be blank.");
         } else if (date == null || date.isBefore(client.getDateOfBirth())) {
             errorMessage.setText("Procedure date cannot be before client was born.");

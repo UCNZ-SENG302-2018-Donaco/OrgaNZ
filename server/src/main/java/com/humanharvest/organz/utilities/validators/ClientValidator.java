@@ -94,11 +94,11 @@ public class ClientValidator {
     }
 
     private boolean firstNameValid(Client client) {
-        return client.getFirstName() != null && !client.getFirstName().equals("");
+        return client.getFirstName() != null && !"".equals(client.getFirstName());
     }
 
     private boolean lastNameValid(Client client) {
-        return client.getLastName() != null && !client.getLastName().equals("");
+        return client.getLastName() != null && !"".equals(client.getLastName());
     }
 
     private boolean dateOfBirthValid(Client client) {

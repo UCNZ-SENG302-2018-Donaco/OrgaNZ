@@ -7,7 +7,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.actions.Action;
@@ -24,6 +23,8 @@ import com.humanharvest.organz.views.client.PaginatedTransplantList;
 import com.humanharvest.organz.views.client.ResolveTransplantRequestObject;
 import com.humanharvest.organz.views.client.TransplantRequestView;
 import com.humanharvest.organz.views.client.Views;
+
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -241,7 +242,7 @@ public class ClientTransplantRequestsController {
         // If anything has illegally changed, it will return a 400.
         if (resolveRequestObject.getResolvedDate() == null ||
                 resolveRequestObject.getResolvedReason() == null ||
-                resolveRequestObject.getResolvedReason().equals("") ||
+                "".equals(resolveRequestObject.getResolvedReason()) ||
                 resolveRequestObject.getResolvedDate().isBefore(originalTransplantRequest.getRequestDate())) {
             // illegal changes
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

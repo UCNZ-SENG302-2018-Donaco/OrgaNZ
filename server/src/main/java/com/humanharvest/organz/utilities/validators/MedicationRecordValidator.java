@@ -36,7 +36,7 @@ public class MedicationRecordValidator {
 
     private boolean medicationNameValid(MedicationRecord record) {
         return record.getMedicationName() != null &&
-                !record.getMedicationName().equals("");
+                !"".equals(record.getMedicationName());
     }
 
     private boolean startedDateValid(MedicationRecord record) {
