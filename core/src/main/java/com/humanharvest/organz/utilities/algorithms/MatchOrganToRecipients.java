@@ -182,6 +182,7 @@ public class MatchOrganToRecipients {
             Client donor = donatedOrgan.getDonor();
             Client recipient = transplantRequest.getClient();
 
+            // Check they are requesting the organ, have the same blood type, and are the right age
             if (donatedOrgan.getOrganType().equals(transplantRequest.getRequestedOrgan())
                     && donor.getBloodType() != null && recipient.getBloodType() != null
                     && donor.getBloodType().equals(recipient.getBloodType())
