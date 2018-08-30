@@ -67,7 +67,7 @@ public abstract class MatchOrganToRecipients {
     }
 
     private static double distanceBetween(Region region1, Region region2) {
-        if (region1.equals(Region.UNSPECIFIED) || region2.equals(Region.UNSPECIFIED)) {
+        if (region1 == Region.UNSPECIFIED || region2 == Region.UNSPECIFIED) {
             // For at least one region, we don't know where it is
             return Double.MAX_VALUE;
         }
@@ -115,9 +115,9 @@ public abstract class MatchOrganToRecipients {
      */
     private static int compareCountryCloseness(Country c1, Country c2, Country targetCountry) {
         // Check if the one of the recipients is in the same country that the donor died
-        if (c1.equals(targetCountry)) {
+        if (c1 == targetCountry) {
             return -1;
-        } else if (c2.equals(targetCountry)) {
+        } else if (c2 == targetCountry) {
             return 1;
         } else { // Neither is in the same country, so calculate closest country
             double distanceToCountry1 = distanceBetween(c1, targetCountry);
@@ -142,12 +142,12 @@ public abstract class MatchOrganToRecipients {
         }
 
         // If they are in different countries, check which one is closest
-        if (!c1.getCountry().equals(c2.getCountry())) {
+        if (!(c1.getCountry() == c2.getCountry())) {
             return compareCountryCloseness(c1.getCountry(), c2.getCountry(), deathCountry);
         }
 
         // If they are in the same country, but the donated organ is in a different country
-        if (!c1.getCountry().equals(deathCountry)) {
+        if (!(c1.getCountry() == deathCountry)) {
             return 0;
         }
 
@@ -191,9 +191,9 @@ public abstract class MatchOrganToRecipients {
             Client donor = donatedOrgan.getDonor();
             Client recipient = transplantRequest.getClient();
 
-            if (donatedOrgan.getOrganType().equals(transplantRequest.getRequestedOrgan())
+            if ((donatedOrgan.getOrganType() == transplantRequest.getRequestedOrgan())
                     && donor.getBloodType() != null && recipient.getBloodType() != null
-                    && donor.getBloodType().equals(recipient.getBloodType())
+                    && (donor.getBloodType() == recipient.getBloodType())
                     && agesMatch(donor.getAge(), recipient.getAge())) {
                 potentialTransplantRequests.add(transplantRequest);
             }
