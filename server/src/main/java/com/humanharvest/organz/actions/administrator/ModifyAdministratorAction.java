@@ -34,7 +34,7 @@ public class ModifyAdministratorAction extends AdministratorAction {
      */
     public void addChange(String field, Object oldValue, Object newValue)
             throws NoSuchMethodException, NoSuchFieldException {
-        if (field.equals("setPassword")) {
+        if ("setPassword".equals(field)) {
             actions.add(new ModifyObjectByMethodAction(administrator, field, oldValue, newValue, true));
         } else {
             actions.add(new ModifyObjectByMethodAction(administrator, field, oldValue, newValue, false));
@@ -63,7 +63,7 @@ public class ModifyAdministratorAction extends AdministratorAction {
                 .map(ModifyObjectByMethodAction::getExecuteText)
                 .collect(Collectors.joining("\n"));
 
-        return String.format("Updated details for administrator %s.%nThese changes were made:\n\n%s",
+        return String.format("Updated details for administrator %s.%nThese changes were made:%n%n%s",
                 administrator.getUsername(), changesText);
     }
 

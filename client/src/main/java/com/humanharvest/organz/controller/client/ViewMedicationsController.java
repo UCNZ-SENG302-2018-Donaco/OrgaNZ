@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
@@ -452,7 +453,7 @@ public class ViewMedicationsController extends SubController {
      * @param selectedMedications The two currently selected medications
      */
     private void setInteractions(List<MedicationRecord> selectedMedications) {
-        Collections.sort(selectedMedications);
+        selectedMedications.sort(Comparator.comparing(MedicationRecord::getMedicationName));
         String medication1 = selectedMedications.get(0).getMedicationName();
         String medication2 = selectedMedications.get(1).getMedicationName();
 
