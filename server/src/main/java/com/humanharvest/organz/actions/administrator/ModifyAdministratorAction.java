@@ -1,10 +1,10 @@
 package com.humanharvest.organz.actions.administrator;
 
-import com.humanharvest.organz.Administrator;
-import com.humanharvest.organz.actions.ModifyObjectByMethodAction;
-
 import java.util.ArrayList;
 import java.util.stream.Collectors;
+
+import com.humanharvest.organz.Administrator;
+import com.humanharvest.organz.actions.ModifyObjectByMethodAction;
 
 /**
  * A reversible administrator modification Action
@@ -25,16 +25,16 @@ public class ModifyAdministratorAction extends AdministratorAction {
     /**
      * Add a modification to the administrator
      *
-     * @param field    The setter field of the administrator. Must match a valid setter in the Administrator object
+     * @param field The setter field of the administrator. Must match a valid setter in the Administrator object
      * @param oldValue The object the field initially had. Should be taken from the Administrator equivalent getter
      * @param newValue The object the field should be update to. Must match the setters Object type
      * @throws NoSuchMethodException Thrown if the Administrator does not have the specified setter
-     * @throws NoSuchFieldException  Thrown if the Administrator specified setter does not take the same type
-     *                               as given in one of the values
+     * @throws NoSuchFieldException Thrown if the Administrator specified setter does not take the same type
+     * as given in one of the values
      */
     public void addChange(String field, Object oldValue, Object newValue)
             throws NoSuchMethodException, NoSuchFieldException {
-        if (field.equals("setPassword")) {
+        if ("setPassword".equals(field)) {
             actions.add(new ModifyObjectByMethodAction(administrator, field, oldValue, newValue, true));
         } else {
             actions.add(new ModifyObjectByMethodAction(administrator, field, oldValue, newValue, false));
@@ -63,7 +63,7 @@ public class ModifyAdministratorAction extends AdministratorAction {
                 .map(ModifyObjectByMethodAction::getExecuteText)
                 .collect(Collectors.joining("\n"));
 
-        return String.format("Updated details for administrator %s.%nThese changes were made:\n\n%s",
+        return String.format("Updated details for administrator %s.%nThese changes were made:%n%n%s",
                 administrator.getUsername(), changesText);
     }
 

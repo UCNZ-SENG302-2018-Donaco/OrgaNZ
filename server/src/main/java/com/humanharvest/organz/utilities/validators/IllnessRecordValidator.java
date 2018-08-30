@@ -1,11 +1,22 @@
 package com.humanharvest.organz.utilities.validators;
 
-import com.humanharvest.organz.IllnessRecord;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
-public class IllnessRecordValidator {
+import com.humanharvest.organz.IllnessRecord;
+
+/**
+ * A static IllnessRecord validator that checks integrity
+ * Class is abstract as it only contains static methods and should not be instantiated
+ */
+public abstract class IllnessRecordValidator {
+
+    /**
+     * Private constructor to prevent instantiation of utility class
+     */
+    private IllnessRecordValidator() {
+        throw new IllegalStateException("Utility class");
+    }
 
     /**
      * Validates a {@link IllnessRecord} and returns a string explaining the errors within it.
@@ -13,7 +24,7 @@ public class IllnessRecordValidator {
      * @param record The record to validate.
      * @return A string containing the errors within the record if it is invalid, else null if it is valid.
      */
-    public String validate(IllnessRecord record) {
+    public static String validate(IllnessRecord record) {
         StringBuilder errors = new StringBuilder();
 
         if (!illnessNameValid(record)) {
@@ -37,7 +48,7 @@ public class IllnessRecordValidator {
 
     private static boolean illnessNameValid(IllnessRecord record) {
         return record.getIllnessName() != null &&
-                !record.getIllnessName().equals("");
+                !"".equals(record.getIllnessName());
     }
 
     private static boolean diagnosisDateValid(IllnessRecord record) {

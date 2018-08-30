@@ -1,10 +1,5 @@
 package com.humanharvest.organz.commands;
 
-import com.humanharvest.organz.actions.ActionInvoker;
-import com.humanharvest.organz.server.controller.client.ClientController;
-import picocli.CommandLine;
-import picocli.CommandLine.Help.Ansi;
-
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -13,11 +8,23 @@ import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public final class CommandsHelper {
+import com.humanharvest.organz.actions.ActionInvoker;
+
+import picocli.CommandLine;
+import picocli.CommandLine.Help.Ansi;
+
+/**
+ * Utility class that provides helper functions for executing PicoCLI commands
+ */
+public abstract class CommandsHelper {
 
     private static final Logger LOGGER = Logger.getLogger(CommandsHelper.class.getName());
 
+    /**
+     * Private constructor to prevent instantiation of utility class
+     */
     private CommandsHelper() {
+        throw new IllegalStateException("Utility class");
     }
 
     /**
@@ -74,7 +81,7 @@ public final class CommandsHelper {
      * Takes a string of command text and
      *
      * @param commands The string separated list of commands to execute
-     * @param invoker  The ActionInvoker to apply changes to if applicable
+     * @param invoker The ActionInvoker to apply changes to if applicable
      * @return The output of the command. This includes help and error text if applicable
      */
     public static String executeCommandAndReturnOutput(String[] commands, ActionInvoker invoker) {

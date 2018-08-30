@@ -1,28 +1,17 @@
 package com.humanharvest.organz.controller.clinician;
 
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.DonatedOrgan;
-import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.controller.SidebarController;
-import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.controller.components.DurationUntilExpiryCell;
-import com.humanharvest.organz.controller.components.TouchAlertTextController;
-import com.humanharvest.organz.state.ClientManager;
-import com.humanharvest.organz.state.Session;
-import com.humanharvest.organz.state.Session.UserType;
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.enums.DonatedOrganSortOptionsEnum;
-import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.enums.Region;
-import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
-import com.humanharvest.organz.utilities.exceptions.NotFoundException;
-import com.humanharvest.organz.utilities.exceptions.ServerRestException;
-import com.humanharvest.organz.utilities.view.Page;
-import com.humanharvest.organz.utilities.view.PageNavigator;
-import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
-import com.humanharvest.organz.views.client.DonatedOrganView;
-import com.humanharvest.organz.views.client.PaginatedDonatedOrgansList;
-import com.humanharvest.organz.views.clinician.DonatedOrganSortPolicy;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -53,17 +42,29 @@ import javafx.scene.text.Text;
 import org.controlsfx.control.CheckComboBox;
 import org.controlsfx.control.Notifications;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Comparator;
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.DonatedOrgan;
+import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.SidebarController;
+import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.controller.components.DurationUntilExpiryCell;
+import com.humanharvest.organz.controller.components.TouchAlertTextController;
+import com.humanharvest.organz.state.ClientManager;
+import com.humanharvest.organz.state.Session;
+import com.humanharvest.organz.state.Session.UserType;
+import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.enums.DonatedOrganSortOptionsEnum;
+import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.enums.Region;
+import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
+import com.humanharvest.organz.utilities.exceptions.NotFoundException;
+import com.humanharvest.organz.utilities.exceptions.ServerRestException;
+import com.humanharvest.organz.utilities.view.Page;
+import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
+import com.humanharvest.organz.views.client.DonatedOrganView;
+import com.humanharvest.organz.views.client.PaginatedDonatedOrgansList;
+import com.humanharvest.organz.views.clinician.DonatedOrganSortPolicy;
 
 public class OrgansToDonateController extends SubController {
 
@@ -128,19 +129,6 @@ public class OrgansToDonateController extends SubController {
     // ---------------- Setup methods ----------------
 
     /**
-     * Sets up the page, setting its title, loading the menu bar and doing the first refresh of the data.
-     *
-     * @param mainController The main controller that defines which window this subcontroller belongs to.
-     */
-    @Override
-    public void setup(MainController mainController) {
-        super.setup(mainController);
-        mainController.setTitle("Organs to Donate");
-        mainController.loadMenuBar(menuBarPane);
-        refresh();
-    }
-
-    /**
      * Formats a table cell that holds a {@link LocalDateTime} value to display that value in the date time format.
      *
      * @return The cell with the date time formatter set.
@@ -157,6 +145,19 @@ public class OrgansToDonateController extends SubController {
                 }
             }
         };
+    }
+
+    /**
+     * Sets up the page, setting its title, loading the menu bar and doing the first refresh of the data.
+     *
+     * @param mainController The main controller that defines which window this subcontroller belongs to.
+     */
+    @Override
+    public void setup(MainController mainController) {
+        super.setup(mainController);
+        mainController.setTitle("Organs to Donate");
+        mainController.loadMenuBar(menuBarPane);
+        refresh();
     }
 
     /**
@@ -189,7 +190,9 @@ public class OrgansToDonateController extends SubController {
         //On pagination update call createPage
         pagination.setPageFactory(this::createPage);
 
-        tableView.getSortOrder().setAll(timeUntilExpiryCol);
+        // Sort by time until expiry column by default.
+        tableView.getSortOrder().clear();
+        tableView.getSortOrder().add(timeUntilExpiryCol);
     }
 
     /**
@@ -429,7 +432,6 @@ public class OrgansToDonateController extends SubController {
                     .showError();
         }
     }
-
 
     private void openManuallyExpireDialog() {
         // Create a popup with a text field to enter the reason

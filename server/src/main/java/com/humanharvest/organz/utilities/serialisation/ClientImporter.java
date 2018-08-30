@@ -1,8 +1,5 @@
 package com.humanharvest.organz.utilities.serialisation;
 
-import com.humanharvest.organz.*;
-import com.humanharvest.organz.utilities.validators.ClientValidator;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.InvalidObjectException;
@@ -10,6 +7,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.IllnessRecord;
+import com.humanharvest.organz.MedicationRecord;
+import com.humanharvest.organz.ProcedureRecord;
+import com.humanharvest.organz.TransplantRequest;
+import com.humanharvest.organz.utilities.validators.ClientValidator;
 
 /**
  * A class that can handle importing serialized clients from a file using a given {@link ReadClientStrategy}.
@@ -20,65 +24,17 @@ public class ClientImporter {
     private static final Logger LOGGER = Logger.getLogger(ClientImporter.class.getName());
 
     private final ReadClientStrategy readStrategy;
-    private final ClientValidator validator = new ClientValidator();
+
+    private final StringBuilder errorSummary = new StringBuilder();
+    private final List<Client> validClients = new ArrayList<>();
 
     private boolean imported;
     private long validCount;
     private long invalidCount;
-    private final StringBuilder errorSummary = new StringBuilder();
-    private final List<Client> validClients = new ArrayList<>();
 
     public ClientImporter(File file, ReadClientStrategy readStrategy) throws IOException {
         this.readStrategy = readStrategy;
         readStrategy.setup(file);
-    }
-
-    /**
-     * Imports all valid clients from the file using the given {@link ReadClientStrategy}. These valid clients can
-     * then be retrieved using {@link #getValidClients()}.
-     *
-     * @throws IOException If a critical error occurrs which ends reading of the file (invalid syntax or input stream
-     *                     broken)
-     */
-    public void importAll() throws IOException {
-        if (imported) {
-            throw new IllegalStateException("Cannot import from the same file more than once.");
-        }
-
-        boolean finished = false;
-        try {
-            while (!finished) {
-                try {
-                    Client client = readStrategy.readNext();
-
-                    if (client == null) {
-                        // No more clients to read
-                        finished = true;
-                    } else {
-                        // Check that retrieved client was valid
-                        String errors = validator.validate(client);
-                        if (errors != null) {
-                            throw new InvalidObjectException(errors);
-                        }
-
-                        // Client is fully validated, add to results
-                        setOwnerOnRelatedRecords(client);
-                        validCount++;
-                        validClients.add(client);
-                    }
-
-                } catch (InvalidObjectException e) {
-                    // The client that was read was invalid
-                    LOGGER.log(Level.WARNING, e.getMessage(), e);
-                    invalidCount++;
-                    errorSummary.append(String.format("Record #%d was invalid because: %n%s%n",
-                            validCount + invalidCount, e.getMessage()));
-                }
-            }
-        } finally {
-            readStrategy.close();
-            imported = true;
-        }
     }
 
     /**
@@ -100,6 +56,54 @@ public class ClientImporter {
         }
         for (MedicationRecord record : client.getMedications()) {
             record.setClient(client);
+        }
+    }
+
+    /**
+     * Imports all valid clients from the file using the given {@link ReadClientStrategy}. These valid clients can
+     * then be retrieved using {@link #getValidClients()}.
+     *
+     * @throws IOException If a critical error occurrs which ends reading of the file (invalid syntax or input stream
+     * broken)
+     */
+    public void importAll() throws IOException {
+        if (imported) {
+            throw new IllegalStateException("Cannot import from the same file more than once.");
+        }
+
+        boolean finished = false;
+        try {
+            while (!finished) {
+                try {
+                    Client client = readStrategy.readNext();
+
+                    if (client == null) {
+                        // No more clients to read
+                        finished = true;
+                    } else {
+                        // Check that retrieved client was valid
+                        String errors = ClientValidator.validate(client);
+                        if (errors != null) {
+                            throw new InvalidObjectException(errors);
+                        }
+
+                        // Client is fully validated, add to results
+                        setOwnerOnRelatedRecords(client);
+                        validCount++;
+                        validClients.add(client);
+                    }
+
+                } catch (InvalidObjectException e) {
+                    // The client that was read was invalid
+                    LOGGER.log(Level.WARNING, e.getMessage(), e);
+                    invalidCount++;
+                    errorSummary.append(String.format("Record #%d was invalid because: %n%s%n",
+                            validCount + invalidCount, e.getMessage()));
+                }
+            }
+        } finally {
+            readStrategy.close();
+            imported = true;
         }
     }
 

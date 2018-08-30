@@ -1,20 +1,35 @@
 package com.humanharvest.organz.utilities.validators.client;
 
+import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.List;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.validators.NotEmptyStringValidator;
 import com.humanharvest.organz.utilities.validators.RegionValidator;
 import com.humanharvest.organz.views.client.ModifyClientObject;
 
-import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
+/**
+ * Class to ensure that a modified client is valid
+ * Class is abstract as it only contains static methods and should not be instantiated
+ */
+public abstract class ModifyClientValidator {
 
-public final class ModifyClientValidator {
-
+    /**
+     * Private constructor to prevent instantiation of utility class
+     */
     private ModifyClientValidator() {
+        throw new IllegalStateException("Utility class");
     }
 
+    /**
+     * Check all modified fields and ensure they are valid
+     *
+     * @param client The client being modified
+     * @param clientView The ModifyClientObject making the changes
+     * @return True if all changes are valid
+     */
     public static boolean isValid(Client client, ModifyClientObject clientView) {
         // Get a list of unmodified fields so we don't check fields that haven't changed
         List<String> unmodifiedFields = Arrays.asList(clientView.getUnmodifiedFields());

@@ -1,5 +1,24 @@
 package com.humanharvest.organz.state;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.StringJoiner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+import javax.persistence.OptimisticLockException;
+import javax.persistence.RollbackException;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.HistoryItem;
@@ -17,29 +36,11 @@ import com.humanharvest.organz.views.client.DonatedOrganView;
 import com.humanharvest.organz.views.client.PaginatedClientList;
 import com.humanharvest.organz.views.client.PaginatedDonatedOrgansList;
 import com.humanharvest.organz.views.client.PaginatedTransplantList;
+
 import org.hibernate.ReplicationMode;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
-
-import javax.persistence.OptimisticLockException;
-import javax.persistence.RollbackException;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.StringJoiner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
 
 /**
  * A pure database implementation of {@link ClientManager} that uses a database to store clients, then retrieves them
@@ -113,14 +114,13 @@ public class ClientManagerDBPure implements ClientManager {
 
         Transaction trns = null;
 
-        String isDonor = "EXISTS (SELECT donating.Client_uid FROM Client_organsDonating AS donating " +
-                "WHERE donating.Client_uid=c.uid LIMIT 1)";
-        String notIsDonor = "NOT EXISTS (SELECT donating.Client_uid FROM Client_organsDonating AS donating " +
-                "WHERE donating.Client_uid=c.uid LIMIT 1)";
-        String isRequesting = "EXISTS (SELECT requesting.Client_uid FROM TransplantRequest AS requesting " +
-                "WHERE requesting.Client_uid=c.uid LIMIT 1)";
-        String notIsRequesting = "NOT EXISTS (SELECT requesting.Client_uid FROM TransplantRequest AS requesting " +
-                "WHERE requesting.Client_uid=c.uid LIMIT 1)";
+        // Setup the client type filters. For this we use an EXISTS (or NOT) then a separate SELECT on
+        // the respective table where uid=uid.
+        // LIMIT 1 is an efficiency increase as we do not need to keep looking once we have a result (boolean true)
+        String isDonor = "EXISTS (SELECT donating.Client_uid FROM Client_organsDonating AS donating WHERE donating.Client_uid=c.uid LIMIT 1)";
+        String notIsDonor = "NOT EXISTS (SELECT donating.Client_uid FROM Client_organsDonating AS donating WHERE donating.Client_uid=c.uid LIMIT 1)";
+        String isRequesting = "EXISTS (SELECT requesting.Client_uid FROM TransplantRequest AS requesting WHERE requesting.Client_uid=c.uid LIMIT 1)";
+        String notIsRequesting = "NOT EXISTS (SELECT requesting.Client_uid FROM TransplantRequest AS requesting WHERE requesting.Client_uid=c.uid LIMIT 1)";
 
         //TODO: Make this use the complex sort as in ClientNameSorter
         String nameSort = "lastName";
@@ -147,61 +147,42 @@ public class ClientManagerDBPure implements ClientManager {
             }
 
             // Setup region filter.
-            // We use region IN, then have to do some fancy string conversions as the Hibernate params weren't working
             if (regions != null && regions.size() > 0) {
-                //TODO: Work out why the params didn't work with EnumSet or even when converting it to string so we can use that instead of this uglyness
-                whereJoiner.add("c.region IN (" + regions.stream().map(region -> "'" + region.replace("'", "''") + "'")
-                        .collect(Collectors.joining(",")) + ")");
-//                params.put("regions", regions);
+                whereJoiner.add("c.region IN (:regions)");
+                params.put("regions", regions);
             }
 
             // Setup birth gender filter.
-            // We use gender IN, then have to do some fancy string conversions as the Hibernate params weren't working
             if (birthGenders != null && birthGenders.size() > 0) {
-                //TODO: Work out why the params didn't work with EnumSet or even when converting it to string so we can use that instead of this uglyness
-                whereJoiner.add("c.gender IN (" + birthGenders.stream()
-                        .map(birthGender -> "'" + birthGender.name().replace("'", "''") + "'")
-                        .collect(Collectors.joining(",")) + ")");
-//                params.put("genders", birthGenders);
+                whereJoiner.add("c.gender IN (:genders)");
+                // Map the genders to strings as they are stored that way in the DB
+                params.put("genders", birthGenders.stream().map(Gender::name).collect(Collectors.toList()));
             }
 
             // Setup donating filter.
             // We use an INNER JOIN and therefor select only clients where they have an entry in
             // the Client_organsDonating table that matches one of the given organs
             if (donating != null && donating.size() > 0) {
-                //TODO: Work out why the params didn't work with EnumSet or even when converting it to string so we can
-                //TODO use that instead of this uglyness
-                String joinQuery = " INNER JOIN (SELECT donating.Client_uid FROM Client_organsDonating AS donating " +
-                        "WHERE donating.organsDonating IN (";
-
-                joinQuery += donating.stream().map(organ -> "'" + organ.name().replace("'", "''") + "'")
-                        .collect(Collectors.joining(",")) + ")";
-
-                joinQuery += " GROUP BY donating.Client_uid) donating ON c.uid=donating.Client_uid ";
+                String joinQuery = " INNER JOIN (SELECT donating.Client_uid FROM Client_organsDonating AS donating "
+                        + "WHERE donating.organsDonating IN (:donating) "
+                        + "GROUP BY donating.Client_uid) donating ON c.uid=donating.Client_uid ";
 
                 joinBuilder.append(joinQuery);
-//                params.put("donating", donating);
+                // Map the organs to strings as they are stored that way in the DB
+                params.put("donating", donating.stream().map(Organ::name).collect(Collectors.toList()));
             }
 
             // Setup requesting filter.
             // We use an INNER JOIN and therefor select only clients where they have an entry in
             // the TransplantRequest table that matches one of the given organs and is status=WAITING
             if (requesting != null && requesting.size() > 0) {
-                //TODO: Work out why the params didn't work with EnumSet or even when converting it to string so we can
-                //TODO use that instead of this ugliness
-                String joinQuery =
-                        " INNER JOIN (SELECT requesting.Client_uid FROM TransplantRequest AS requesting WHERE" +
-                                " requesting.status='WAITING' AND " +
-                                " requesting.requestedOrgan IN (";
-
-                joinQuery += requesting.stream()
-                        .map(organ -> "'" + organ.ordinal() + "'")
-                        .collect(Collectors.joining(",")) + ")";
-
-                joinQuery += " GROUP BY requesting.Client_uid) requesting ON c.uid=requesting.Client_uid ";
+                String joinQuery = " INNER JOIN (SELECT requesting.Client_uid FROM TransplantRequest AS requesting "
+                        + "WHERE requesting.status='WAITING' AND requesting.requestedOrgan IN (:requesting) "
+                        + "GROUP BY requesting.Client_uid) requesting ON c.uid=requesting.Client_uid ";
 
                 joinBuilder.append(joinQuery);
-//                params.put("donating", donating);
+                // Map the organs to strings as they are stored that way in the DB
+                params.put("requesting", requesting.stream().map(Organ::name).collect(Collectors.toList()));
             }
 
             // Setup the client type filter. For this we use an EXISTS (or NOT) then a separate SELECT on
@@ -247,10 +228,9 @@ public class ClientManagerDBPure implements ClientManager {
             if (offset == null || offset < 0) {
                 offset = 0;
             }
-            //Set count to just 30 if not given
+            //Set count to all if not given
             if (count == null || count < 0) {
-                //TODO: Should this be 30 or max if not specified
-                count = 30;
+                count = Integer.MAX_VALUE;
             }
 
             //Setup the sort order for the given sort option. Default to NAME if none is given
@@ -265,8 +245,8 @@ public class ClientManagerDBPure implements ClientManager {
                     sort = "uid";
                     break;
                 case AGE:
-                    //TODO: Also make this part handle DOD for age
-                    sort = "dateOfBirth";
+                    sort = "CASE WHEN dateOfDeath IS NULL THEN DATEDIFF(dateOfBirth, NOW()) "
+                            + "ELSE DATEDIFF(dateOfBirth, dateOfDeath) END";
                     break;
                 case DONOR:
                     sort = isDonor;
@@ -300,9 +280,9 @@ public class ClientManagerDBPure implements ClientManager {
             }
 
             // Quite a complex string build, but all defined as above, just simple string combinations
-            String queryString = "SELECT c.* FROM Client c " + joinBuilder + whereJoiner.toString() + " "
-                    + "ORDER BY " + sort + " " + dir + ", " + nameSort + " ASC LIMIT :limit OFFSET :offset";
-            String countString = "SELECT count(*) FROM Client c " + joinBuilder + whereJoiner.toString();
+            String queryString = "SELECT c.* FROM Client c " + joinBuilder + whereJoiner
+                    + " ORDER BY " + sort + " " + dir + ", " + nameSort + " ASC LIMIT :limit OFFSET :offset";
+            String countString = "SELECT count(*) FROM Client c " + joinBuilder + whereJoiner;
 
             Query<?> countQuery = session.createNativeQuery(countString);
             Query<Client> mainQuery = session.createNativeQuery(queryString, Client.class);
@@ -490,7 +470,7 @@ public class ClientManagerDBPure implements ClientManager {
 
     @Override
     public PaginatedTransplantList getAllCurrentTransplantRequests(Integer offset, Integer count,
-                                                                   Set<String> regions, Set<Organ> organs) {
+            Set<String> regions, Set<Organ> organs) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
@@ -544,8 +524,8 @@ public class ClientManagerDBPure implements ClientManager {
      */
     @Override
     public PaginatedDonatedOrgansList getAllOrgansToDonate(Integer offset, Integer count, Set<String> regionsToFilter,
-                                                           Set<Organ> organType, DonatedOrganSortOptionsEnum sortOption,
-                                                           Boolean reversed) {
+            Set<Organ> organType, DonatedOrganSortOptionsEnum sortOption,
+            Boolean reversed) {
 
         // TODO implement using Hibernate queries instead of in-memory filtering/sorting
 

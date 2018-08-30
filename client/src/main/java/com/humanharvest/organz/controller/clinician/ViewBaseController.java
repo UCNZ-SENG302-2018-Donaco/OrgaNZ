@@ -1,12 +1,12 @@
 package com.humanharvest.organz.controller.clinician;
 
-import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.views.ModifyBaseObject;
-
 import java.lang.reflect.Field;
 import java.util.Objects;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.views.ModifyBaseObject;
 
 public class ViewBaseController extends SubController {
 

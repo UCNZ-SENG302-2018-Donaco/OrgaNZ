@@ -1,6 +1,8 @@
 package com.humanharvest.organz.server.controller.clinician;
 
-import com.fasterxml.jackson.annotation.JsonView;
+import java.util.List;
+import java.util.Optional;
+
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.actions.ActionInvoker;
@@ -13,6 +15,8 @@ import com.humanharvest.organz.utilities.validators.clinician.CreateClinicianVal
 import com.humanharvest.organz.utilities.validators.clinician.ModifyClinicianValidator;
 import com.humanharvest.organz.views.client.Views;
 import com.humanharvest.organz.views.clinician.ModifyClinicianObject;
+
+import com.fasterxml.jackson.annotation.JsonView;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -25,9 +29,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
-import java.util.Optional;
 
 @RestController
 public class ClinicianController {
@@ -102,7 +103,7 @@ public class ClinicianController {
     /**
      * Edits the details of the specified clinician. Note that the staffId cannot be changed.
      *
-     * @param staffId         identifier of the clinician
+     * @param staffId identifier of the clinician
      * @param editedClinician the body containing all updated information
      * @return response status
      */
@@ -143,7 +144,7 @@ public class ClinicianController {
     /**
      * Deletes the specified clinician
      *
-     * @param staffId   identifier of the clinician
+     * @param staffId identifier of the clinician
      * @param authToken id token
      */
     @DeleteMapping("/clinicians/{staffId}")
@@ -172,7 +173,7 @@ public class ClinicianController {
     /**
      * Returns the specified clinicians history
      *
-     * @param staffId   identifier of the clinician
+     * @param staffId identifier of the clinician
      * @param authToken id token
      * @return The list of HistoryItems
      */

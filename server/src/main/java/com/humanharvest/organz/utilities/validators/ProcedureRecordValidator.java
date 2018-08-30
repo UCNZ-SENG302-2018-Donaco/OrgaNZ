@@ -1,11 +1,22 @@
 package com.humanharvest.organz.utilities.validators;
 
-import com.humanharvest.organz.ProcedureRecord;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
-public class ProcedureRecordValidator {
+import com.humanharvest.organz.ProcedureRecord;
+
+/**
+ * A static ProcedureRecord validator that checks integrity
+ * Class is abstract as it only contains static methods and should not be instantiated
+ */
+public abstract class ProcedureRecordValidator {
+
+    /**
+     * Private constructor to prevent instantiation of utility class
+     */
+    private ProcedureRecordValidator() {
+        throw new IllegalStateException("Utility class");
+    }
 
     /**
      * Validates a {@link ProcedureRecord} and returns a string explaining the errors within it.
@@ -13,7 +24,7 @@ public class ProcedureRecordValidator {
      * @param record The record to validate.
      * @return A string containing the errors within the record if it is invalid, else null if it is valid.
      */
-    public String validate(ProcedureRecord record) {
+    public static String validate(ProcedureRecord record) {
         StringBuilder errors = new StringBuilder();
 
         if (!summaryValid(record)) {
@@ -35,7 +46,7 @@ public class ProcedureRecordValidator {
 
     private static boolean summaryValid(ProcedureRecord record) {
         return record.getSummary() != null &&
-                !record.getSummary().equals("");
+                !"".equals(record.getSummary());
     }
 
     private static boolean dateValid(ProcedureRecord record) {

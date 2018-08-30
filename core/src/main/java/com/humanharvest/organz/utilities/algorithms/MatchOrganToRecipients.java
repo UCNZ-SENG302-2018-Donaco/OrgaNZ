@@ -1,17 +1,27 @@
 package com.humanharvest.organz.utilities.algorithms;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.DonatedOrgan;
 import com.humanharvest.organz.TransplantRequest;
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Region;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
+/**
+ * Provides static helper methods to match organs to recipients
+ */
+public abstract class MatchOrganToRecipients {
 
-public class MatchOrganToRecipients {
+    /**
+     * Private constructor to prevent instantiation of utility class
+     */
+    private MatchOrganToRecipients() {
+        throw new IllegalStateException("Utility class");
+    }
 
     private static boolean agesMatch(int donorAge, int recipientAge) {
         // If one is under 12, they must both be under 12
@@ -57,7 +67,7 @@ public class MatchOrganToRecipients {
     }
 
     private static double distanceBetween(Region region1, Region region2) {
-        if (region1.equals(Region.UNSPECIFIED) || region2.equals(Region.UNSPECIFIED)) {
+        if (region1 == Region.UNSPECIFIED || region2 == Region.UNSPECIFIED) {
             // For at least one region, we don't know where it is
             return Double.MAX_VALUE;
         }
@@ -69,8 +79,8 @@ public class MatchOrganToRecipients {
     /**
      * Compares which region is closest (r1 or r2) to the target region.
      *
-     * @param r1           the first region
-     * @param r2           the second region
+     * @param r1 the first region
+     * @param r2 the second region
      * @param targetRegion the target region
      * @param inNewZealand true if the target region is in New Zealand
      * @return a positive number if r2 is closest, a negative number if r1 is closest,
@@ -95,20 +105,19 @@ public class MatchOrganToRecipients {
         }
     }
 
-
     /**
      * Compares which country is closest (c1 or c2) to the target region.
      *
-     * @param c1            the first country
-     * @param c2            the second region
+     * @param c1 the first country
+     * @param c2 the second region
      * @param targetCountry the target country
      * @return a positive number if c2 is closest, or a negative number if c1 is closest
      */
     private static int compareCountryCloseness(Country c1, Country c2, Country targetCountry) {
         // Check if the one of the recipients is in the same country that the donor died
-        if (c1.equals(targetCountry)) {
+        if (c1 == targetCountry) {
             return -1;
-        } else if (c2.equals(targetCountry)) {
+        } else if (c2 == targetCountry) {
             return 1;
         } else { // Neither is in the same country, so calculate closest country
             double distanceToCountry1 = distanceBetween(c1, targetCountry);
@@ -133,12 +142,12 @@ public class MatchOrganToRecipients {
         }
 
         // If they are in different countries, check which one is closest
-        if (!c1.getCountry().equals(c2.getCountry())) {
+        if (!(c1.getCountry() == c2.getCountry())) {
             return compareCountryCloseness(c1.getCountry(), c2.getCountry(), deathCountry);
         }
 
         // If they are in the same country, but the donated organ is in a different country
-        if (!c1.getCountry().equals(deathCountry)) {
+        if (!(c1.getCountry() == deathCountry)) {
             return 0;
         }
 
@@ -167,7 +176,7 @@ public class MatchOrganToRecipients {
     }
 
     public static List<Client> getListOfPotentialRecipients(DonatedOrgan donatedOrgan,
-                                                            Iterable<TransplantRequest> transplantRequests) {
+            Iterable<TransplantRequest> transplantRequests) {
 
         List<Client> potentialMatches = new ArrayList<>();
 
@@ -183,9 +192,9 @@ public class MatchOrganToRecipients {
             Client recipient = transplantRequest.getClient();
 
             // Check they are requesting the organ, have the same blood type, and are the right age
-            if (donatedOrgan.getOrganType().equals(transplantRequest.getRequestedOrgan())
+            if ((donatedOrgan.getOrganType() == transplantRequest.getRequestedOrgan())
                     && donor.getBloodType() != null && recipient.getBloodType() != null
-                    && donor.getBloodType().equals(recipient.getBloodType())
+                    && (donor.getBloodType() == recipient.getBloodType())
                     && agesMatch(donor.getAge(), recipient.getAge())) {
                 potentialTransplantRequests.add(transplantRequest);
             }

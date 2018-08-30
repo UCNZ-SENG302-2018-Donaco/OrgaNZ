@@ -1,11 +1,12 @@
 package com.humanharvest.organz.state;
 
-import com.humanharvest.organz.Administrator;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Pattern;
+
+import com.humanharvest.organz.Administrator;
 
 /**
  * The class to handle the Administrators.
@@ -13,6 +14,7 @@ import java.util.Optional;
 public class AdministratorManagerMemory implements AdministratorManager {
 
     private static final String DEFAULT_ADMINISTRATOR_USERNAME = "admin";
+    private static final Pattern NUMBER = Pattern.compile("[0-9]+");
 
     private final List<Administrator> administrators;
 
@@ -68,7 +70,7 @@ public class AdministratorManagerMemory implements AdministratorManager {
     @Override
     public boolean doesUsernameExist(String username) {
         // Check if it is numeric (this could collide with a clinician ID)
-        if (username.matches("[0-9]+")) {
+        if (NUMBER.matcher(username).matches()) {
             return true;
         }
 

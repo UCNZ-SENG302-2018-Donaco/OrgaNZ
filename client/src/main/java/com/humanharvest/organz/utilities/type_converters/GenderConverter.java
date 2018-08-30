@@ -1,10 +1,11 @@
 package com.humanharvest.organz.utilities.type_converters;
 
-import com.humanharvest.organz.utilities.enums.Gender;
-import picocli.CommandLine;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.humanharvest.organz.utilities.enums.Gender;
+
+import picocli.CommandLine;
 
 /**
  * Converter used by PicoCLI options to select genders from strings

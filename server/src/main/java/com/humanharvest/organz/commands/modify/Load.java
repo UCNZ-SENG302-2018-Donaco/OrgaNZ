@@ -1,21 +1,22 @@
 package com.humanharvest.organz.commands.modify;
 
-import com.humanharvest.organz.state.ClientManager;
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.serialisation.CSVReadClientStrategy;
-import com.humanharvest.organz.utilities.serialisation.ClientImporter;
-import com.humanharvest.organz.utilities.serialisation.JSONReadClientStrategy;
-import com.humanharvest.organz.utilities.serialisation.ReadClientStrategy;
-import picocli.CommandLine.Command;
-import picocli.CommandLine.Option;
-import picocli.CommandLine.Parameters;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.humanharvest.organz.state.ClientManager;
+import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.serialisation.CSVReadClientStrategy;
+import com.humanharvest.organz.utilities.serialisation.ClientImporter;
+import com.humanharvest.organz.utilities.serialisation.JSONReadClientStrategy;
+import com.humanharvest.organz.utilities.serialisation.ReadClientStrategy;
+
+import picocli.CommandLine.Command;
+import picocli.CommandLine.Option;
+import picocli.CommandLine.Parameters;
 
 /**
  * Command line to load the information of all the clients from a JSON file,
@@ -42,6 +43,22 @@ public class Load implements Runnable {
     public Load(ClientManager manager) {
         this.manager = manager;
         outputStream = System.out;
+    }
+
+    /**
+     * Returns the file extension of the given file name string (in lowercase). The file extension is defined as the
+     * characters after the last "." in the file name.
+     *
+     * @param fileName The file name string.
+     * @return The file extension of the given file name.
+     */
+    private static String getFileExtension(String fileName) {
+        int lastIndex = fileName.lastIndexOf('.');
+        if (lastIndex >= 0) {
+            return fileName.substring(lastIndex + 1).toLowerCase();
+        } else {
+            return "";
+        }
     }
 
     @Override
@@ -88,22 +105,6 @@ public class Load implements Runnable {
             LOGGER.log(Level.WARNING, e.getMessage(), e);
             outputStream.println(String.format("An IO error occurred when loading from file: '%s'%n%s",
                     file.getName(), e.getMessage()));
-        }
-    }
-
-    /**
-     * Returns the file extension of the given file name string (in lowercase). The file extension is defined as the
-     * characters after the last "." in the file name.
-     *
-     * @param fileName The file name string.
-     * @return The file extension of the given file name.
-     */
-    private static String getFileExtension(String fileName) {
-        int lastIndex = fileName.lastIndexOf('.');
-        if (lastIndex >= 0) {
-            return fileName.substring(lastIndex + 1).toLowerCase();
-        } else {
-            return "";
         }
     }
 }

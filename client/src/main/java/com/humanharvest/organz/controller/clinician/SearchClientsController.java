@@ -1,29 +1,17 @@
 package com.humanharvest.organz.controller.clinician;
 
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.state.Session.UserType;
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
-import com.humanharvest.organz.utilities.enums.ClientType;
-import com.humanharvest.organz.utilities.enums.Gender;
-import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.enums.Region;
-import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
-import com.humanharvest.organz.utilities.exceptions.NotFoundException;
-import com.humanharvest.organz.utilities.exceptions.ServerRestException;
-import com.humanharvest.organz.utilities.view.Page;
-import com.humanharvest.organz.utilities.view.PageNavigator;
-import com.humanharvest.organz.utilities.view.WindowContext;
-import com.humanharvest.organz.views.client.ClientSortPolicy;
-import com.humanharvest.organz.views.client.PaginatedClientList;
+import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
+
 import javafx.beans.binding.Bindings;
 import javafx.beans.value.ObservableValueBase;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
-import javafx.collections.transformation.SortedList;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Alert.AlertType;
@@ -46,12 +34,24 @@ import javafx.scene.text.Text;
 import org.controlsfx.control.CheckComboBox;
 import org.controlsfx.control.RangeSlider;
 
-import java.util.EnumSet;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.state.Session.UserType;
+import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.enums.ClientSortOptionsEnum;
+import com.humanharvest.organz.utilities.enums.ClientType;
+import com.humanharvest.organz.utilities.enums.Gender;
+import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.enums.Region;
+import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
+import com.humanharvest.organz.utilities.exceptions.NotFoundException;
+import com.humanharvest.organz.utilities.exceptions.ServerRestException;
+import com.humanharvest.organz.utilities.view.Page;
+import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.utilities.view.WindowContext;
+import com.humanharvest.organz.views.client.ClientSortPolicy;
+import com.humanharvest.organz.views.client.PaginatedClientList;
 
 public class SearchClientsController extends SubController {
 
@@ -111,6 +111,12 @@ public class SearchClientsController extends SubController {
 
     private ObservableList<Client> observableClientList = FXCollections.observableArrayList();
 
+    private static <T extends Enum<T>> EnumSet<T> filterToSet(CheckComboBox<T> filter, Class<T> enumType) {
+        EnumSet<T> enumSet = EnumSet.noneOf(enumType);
+        enumSet.addAll(filter.getCheckModel().getCheckedItems());
+        return enumSet;
+    }
+
     @Override
     public void setup(MainController mainController) {
         super.setup(mainController);
@@ -141,7 +147,7 @@ public class SearchClientsController extends SubController {
             try {
                 newMax = Integer.min(Integer.parseInt(ageMaxField.getText()), AGE_UPPER_BOUND);
             } catch (NumberFormatException ignored) {
-                newMax = 0; //todo should this be changed to AGE_UPPER_BOUND?
+                newMax = AGE_UPPER_BOUND;
             }
             ageSlider.setHighValue(newMax);
             ageMaxField.setText("" + newMax);
@@ -190,15 +196,13 @@ public class SearchClientsController extends SubController {
         //On pagination update call createPage
         pagination.setPageFactory(this::createPage);
 
-        //Make the nameCol comparator always return zero as the list is already ordered by the server using custom sort
-        nameCol.setComparator((c1, c2) -> 0);
+        //Make the comparators always return zero as the list is already ordered by the server using custom sort
+        for (TableColumn<?, ?> column : tableView.getColumns()) {
+            column.setComparator((c1, c2) -> 0);
+        }
 
         //Bind the tableView to the observable list
-        //We must make an intermediate SortedList to prevent the table sort policy applying
-        SortedList<Client> sortedList = new SortedList<>(observableClientList);
-        //Bind the sortedList to the tableView to allow sorting
-        sortedList.comparatorProperty().bind(tableView.comparatorProperty());
-        tableView.setItems(sortedList);
+        tableView.setItems(observableClientList);
 
         if (State.getSession().getLoggedInUserType() == UserType.ADMINISTRATOR) {
 
@@ -378,12 +382,6 @@ public class SearchClientsController extends SubController {
         updateClientList();
     }
 
-    private static <T extends Enum<T>> EnumSet<T> filterToSet(CheckComboBox<T> filter, Class<T> enumType) {
-        EnumSet<T> enumSet = EnumSet.noneOf(enumType);
-        enumSet.addAll(filter.getCheckModel().getCheckedItems());
-        return enumSet;
-    }
-
     private void updateClientList() {
         ClientSortPolicy sortPolicy = getSortPolicy();
         PaginatedClientList newClients = State.getClientManager().getClients(
@@ -466,6 +464,7 @@ public class SearchClientsController extends SubController {
     }
 
     private static class ClientTableRow extends TableRow<Client> {
+
         private final Tooltip tooltip = new Tooltip();
 
         public ClientTableRow() {

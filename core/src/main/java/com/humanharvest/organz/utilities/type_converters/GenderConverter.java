@@ -1,9 +1,9 @@
 package com.humanharvest.organz.utilities.type_converters;
 
-import com.humanharvest.organz.utilities.enums.Gender;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.humanharvest.organz.utilities.enums.Gender;
 
 /**
  * Converter used by PicoCLI options to select genders from strings

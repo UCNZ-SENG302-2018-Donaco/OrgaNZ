@@ -1,9 +1,5 @@
 package com.humanharvest.organz.utilities.web;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.humanharvest.organz.utilities.CacheManager;
-import com.humanharvest.organz.utilities.JSONConverter;
-
 import java.io.IOException;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
@@ -11,7 +7,13 @@ import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.humanharvest.organz.utilities.CacheManager;
+import com.humanharvest.organz.utilities.JSONConverter;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+
 public class MockCacheManager extends CacheManager {
+
     public MockCacheManager() {
         categories = new HashMap<>();
     }

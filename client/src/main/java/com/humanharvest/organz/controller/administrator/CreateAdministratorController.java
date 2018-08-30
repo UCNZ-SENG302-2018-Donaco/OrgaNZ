@@ -1,13 +1,8 @@
 package com.humanharvest.organz.controller.administrator;
 
-import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.state.AdministratorManager;
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.exceptions.ServerRestException;
-import com.humanharvest.organz.utilities.view.Page;
-import com.humanharvest.organz.utilities.view.PageNavigator;
-import com.humanharvest.organz.views.administrator.CreateAdministratorView;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
@@ -18,8 +13,14 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import org.controlsfx.control.Notifications;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.state.AdministratorManager;
+import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.exceptions.ServerRestException;
+import com.humanharvest.organz.utilities.view.Page;
+import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.views.administrator.CreateAdministratorView;
 
 public class CreateAdministratorController extends SubController {
 
@@ -44,7 +45,6 @@ public class CreateAdministratorController extends SubController {
     private Pane menuBarPane;
 
     private AdministratorManager administratorManager;
-
 
     /**
      * Initialize the controller.
@@ -80,7 +80,7 @@ public class CreateAdministratorController extends SubController {
         boolean valid = true;
 
         // Username
-        if (usernameTextField.getText().equals("")) {
+        if ("".equals(usernameTextField.getText())) {
             usernameLabel.setTextFill(Color.RED);
             valid = false;
         } else {
@@ -106,7 +106,7 @@ public class CreateAdministratorController extends SubController {
         }
 
         // Password
-        if (passwordField.getText().equals("")) {
+        if ("".equals(passwordField.getText())) {
             passwordLabel.setTextFill(Color.RED);
             valid = false;
         } else {
@@ -115,7 +115,6 @@ public class CreateAdministratorController extends SubController {
 
         return valid;
     }
-
 
     @FXML
     void createUser() {
@@ -132,7 +131,6 @@ public class CreateAdministratorController extends SubController {
                         .title("Created Administrator")
                         .text(String.format("Administrator was created with username:%s", username))
                         .showInformation();
-
 
                 PageNavigator.loadPage(Page.SEARCH, mainController);
             } catch (ServerRestException e) {

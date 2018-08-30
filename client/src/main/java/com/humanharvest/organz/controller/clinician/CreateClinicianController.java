@@ -1,5 +1,16 @@
 package com.humanharvest.organz.controller.clinician;
 
+import javafx.collections.FXCollections;
+import javafx.fxml.FXML;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.Label;
+import javafx.scene.control.PasswordField;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
+
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.controller.MainController;
@@ -11,16 +22,6 @@ import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Region;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
-import javafx.collections.FXCollections;
-import javafx.fxml.FXML;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.Label;
-import javafx.scene.control.PasswordField;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 
 /**
  * This controller provides the user with an interface allowing them to enter clinician details. This creates a
@@ -72,14 +73,14 @@ public class CreateClinicianController extends SubController {
      */
     private boolean checkMandatoryFields() {
         boolean update = true;
-        if (fname.getText().equals("")) {   // First name
+        if ("".equals(fname.getText())) {   // First name
             fnameLabel.setTextFill(Color.RED);
             update = false;
         } else {
             fnameLabel.setTextFill(Color.BLACK);
         }
 
-        if (lname.getText().equals("")) {   // Last name
+        if ("".equals(lname.getText())) {   // Last name
             lnameLabel.setTextFill(Color.RED);
             update = false;
         } else {
@@ -108,7 +109,7 @@ public class CreateClinicianController extends SubController {
             update = false;
         }
 
-        if (password.getText().equals("")) { // Password
+        if ("".equals(password.getText())) { // Password
             passwordLabel.setTextFill(Color.RED);
             update = false;
         } else {
@@ -116,7 +117,6 @@ public class CreateClinicianController extends SubController {
         }
         return update;
     }
-
 
     /**
      * Creates a Clinician if all of the fields have valid input.
@@ -153,7 +153,6 @@ public class CreateClinicianController extends SubController {
             }
         }
     }
-
 
     /**
      * Takes the user back to the landing page.

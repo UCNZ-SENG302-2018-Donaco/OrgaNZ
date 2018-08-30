@@ -1,8 +1,8 @@
 package com.humanharvest.organz.skin;
 
-import com.humanharvest.organz.MultitouchHandler;
-import com.sun.javafx.scene.control.skin.ContextMenuContent;
-import com.sun.javafx.scene.control.skin.ContextMenuSkin;
+import java.util.Objects;
+import java.util.Optional;
+
 import javafx.event.Event;
 import javafx.event.EventTarget;
 import javafx.geometry.Point2D;
@@ -14,12 +14,15 @@ import javafx.scene.control.Menu;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TouchEvent;
 import javafx.scene.transform.Rotate;
+
+import com.humanharvest.organz.MultitouchHandler;
+
+import com.sun.javafx.scene.control.skin.ContextMenuContent;
+import com.sun.javafx.scene.control.skin.ContextMenuSkin;
 import org.tuiofx.widgets.utils.Util;
 
-import java.util.Objects;
-import java.util.Optional;
-
 public class MTContextMenuSkin extends ContextMenuSkin {
+
     private final ContextMenu popupMenu;
 
     public MTContextMenuSkin(ContextMenu popupMenu) {

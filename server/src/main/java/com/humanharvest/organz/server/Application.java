@@ -1,14 +1,15 @@
 package com.humanharvest.organz.server;
 
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.state.State.DataStorageType;
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.state.State.DataStorageType;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 /**
  * The main class for the Spring Boot web server.

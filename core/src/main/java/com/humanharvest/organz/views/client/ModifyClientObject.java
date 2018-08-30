@@ -1,15 +1,18 @@
 package com.humanharvest.organz.views.client;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.humanharvest.organz.utilities.enums.BloodType;
-import com.humanharvest.organz.utilities.enums.Country;
-import com.humanharvest.organz.utilities.enums.Gender;
-import com.humanharvest.organz.views.ModifyBaseObject;
+import static com.humanharvest.organz.utilities.type_converters.StringFormatter.unCamelCase;
 
 import java.lang.reflect.Member;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.stream.Collectors;
+
+import com.humanharvest.organz.utilities.enums.BloodType;
+import com.humanharvest.organz.utilities.enums.Country;
+import com.humanharvest.organz.utilities.enums.Gender;
+import com.humanharvest.organz.views.ModifyBaseObject;
+
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @JsonSerialize(using = ModifyBaseObject.Serialiser.class)
 public class ModifyClientObject extends ModifyBaseObject {
@@ -36,6 +39,10 @@ public class ModifyClientObject extends ModifyBaseObject {
     private String regionOfDeath;
     private String cityOfDeath;
     private Country countryOfDeath;
+
+    private static String fieldString(Member field) {
+        return String.format("Updated %s", unCamelCase(field.getName()));
+    }
 
     public String getFirstName() {
         return firstName;
@@ -198,15 +205,6 @@ public class ModifyClientObject extends ModifyBaseObject {
         return String.format("Updated details for client.\n"
                         + "These changes were made: \n\n%s",
                 changesText);
-    }
-
-    private static String unCamelCase(String inCamelCase) {
-        String unCamelCased = inCamelCase.replaceAll("([a-z])([A-Z]+)", "$1 $2");
-        return unCamelCased.substring(0, 1).toUpperCase() + unCamelCased.substring(1);
-    }
-
-    private static String fieldString(Member field) {
-        return String.format("Updated %s", unCamelCase(field.getName()));
     }
 
     public Country getCountry() {

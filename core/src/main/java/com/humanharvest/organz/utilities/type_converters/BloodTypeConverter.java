@@ -1,9 +1,9 @@
 package com.humanharvest.organz.utilities.type_converters;
 
-import com.humanharvest.organz.utilities.enums.BloodType;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import com.humanharvest.organz.utilities.enums.BloodType;
 
 /**
  * Converter used by PicoCLI options to select bloodtypes from strings

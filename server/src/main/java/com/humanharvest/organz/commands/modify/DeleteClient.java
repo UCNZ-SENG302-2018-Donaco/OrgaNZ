@@ -1,16 +1,17 @@
 package com.humanharvest.organz.commands.modify;
 
+import java.io.PrintStream;
+import java.util.Optional;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.actions.client.DeleteClientAction;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
+
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
-
-import java.io.PrintStream;
-import java.util.Optional;
 
 @Command(name = "deleteclient", description = "Deletes a client.")
 public class DeleteClient implements Runnable {

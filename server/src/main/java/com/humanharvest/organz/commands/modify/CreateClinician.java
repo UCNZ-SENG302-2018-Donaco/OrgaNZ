@@ -1,5 +1,9 @@
 package com.humanharvest.organz.commands.modify;
 
+import java.io.PrintStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.humanharvest.organz.Clinician;
 import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.actions.ActionInvoker;
@@ -9,12 +13,9 @@ import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.pico_type_converters.PicoCountryConverter;
 import com.humanharvest.organz.utilities.validators.RegionValidator;
+
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
-
-import java.io.PrintStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Command line to create a Clinician with basic information.

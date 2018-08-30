@@ -1,17 +1,12 @@
 package com.humanharvest.organz.controller.clinician;
 
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.TransplantRequest;
-import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.controller.SubController;
-import com.humanharvest.organz.state.ClientManager;
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.enums.Organ;
-import com.humanharvest.organz.utilities.enums.Region;
-import com.humanharvest.organz.utilities.view.Page;
-import com.humanharvest.organz.utilities.view.PageNavigator;
-import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
-import com.humanharvest.organz.views.client.PaginatedTransplantList;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
+import java.util.EnumSet;
+import java.util.HashSet;
+import java.util.Set;
+
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
@@ -32,12 +27,18 @@ import javafx.scene.layout.Pane;
 import javafx.scene.text.Text;
 import org.controlsfx.control.CheckComboBox;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Comparator;
-import java.util.EnumSet;
-import java.util.HashSet;
-import java.util.Set;
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.TransplantRequest;
+import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.SubController;
+import com.humanharvest.organz.state.ClientManager;
+import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.enums.Organ;
+import com.humanharvest.organz.utilities.enums.Region;
+import com.humanharvest.organz.utilities.view.Page;
+import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.utilities.view.WindowContext.WindowContextBuilder;
+import com.humanharvest.organz.views.client.PaginatedTransplantList;
 
 /**
  * Controller for the transplants waiting list page. Contains a table that shows all the current waiting requests for
@@ -50,7 +51,6 @@ public class TransplantsController extends SubController {
 
     @FXML
     private HBox menuBarPane;
-
 
     @FXML
     private TableView<TransplantRequest> tableView;
@@ -194,7 +194,6 @@ public class TransplantsController extends SubController {
         organChoice.getCheckModel().getCheckedItems().addListener(
                 (ListChangeListener<Organ>) change -> updateTransplantRequestList());
 
-
         //On pagination update call createPage
         pagination.setPageFactory(this::createPage);
     }
@@ -283,7 +282,6 @@ public class TransplantsController extends SubController {
         organsToFilter = EnumSet.noneOf(Organ.class);
         organsToFilter.addAll(organChoice.getCheckModel().getCheckedItems());
     }
-
 
     private void updateTransplantRequestList() {
         filterRegions();

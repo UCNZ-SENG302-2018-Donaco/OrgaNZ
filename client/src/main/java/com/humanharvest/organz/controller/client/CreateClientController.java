@@ -1,5 +1,17 @@
 package com.humanharvest.organz.controller.client;
 
+import java.time.LocalDate;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javafx.beans.property.Property;
+import javafx.fxml.FXML;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.Pane;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.HistoryItem;
 import com.humanharvest.organz.controller.MainController;
@@ -16,17 +28,6 @@ import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.utilities.view.WindowContext;
 import com.humanharvest.organz.views.client.CreateClientView;
-import javafx.beans.property.Property;
-import javafx.fxml.FXML;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.Button;
-import javafx.scene.control.DatePicker;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.Pane;
-
-import java.time.LocalDate;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Controller for the create client page.
@@ -34,7 +35,7 @@ import java.util.logging.Logger;
 public class CreateClientController extends SubController {
 
     private static final Logger LOGGER = Logger.getLogger(CreateClientController.class.getName());
-
+    private final ClientManager manager;
     @FXML
     private DatePicker dobFld;
     @FXML
@@ -43,8 +44,6 @@ public class CreateClientController extends SubController {
     private Button createButton, goBackButton;
     @FXML
     private Pane menuBarPane;
-
-    private final ClientManager manager;
     private UIValidation validation;
 
     /**
@@ -144,7 +143,8 @@ public class CreateClientController extends SubController {
                 LOGGER.log(Level.SEVERE, e.getMessage(), e);
                 PageNavigator.showAlert(AlertType.ERROR,
                         "Server Error",
-                        "An error occurred while trying to fetch from the server.\nPlease try again later.", mainController.getStage());
+                        "An error occurred while trying to fetch from the server.\nPlease try again later.",
+                        mainController.getStage());
                 return;
             }
             PageNavigator.loadPage(Page.VIEW_CLIENT, mainController);

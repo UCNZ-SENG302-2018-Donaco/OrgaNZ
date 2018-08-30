@@ -1,23 +1,21 @@
 package com.humanharvest.organz.controller.client;
 
-import com.humanharvest.organz.Client;
-import com.humanharvest.organz.controller.AlertHelper;
-import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.controller.clinician.ViewBaseController;
-import com.humanharvest.organz.state.ClientManager;
-import com.humanharvest.organz.state.Session;
-import com.humanharvest.organz.state.Session.UserType;
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.enums.BloodType;
-import com.humanharvest.organz.utilities.enums.Country;
-import com.humanharvest.organz.utilities.enums.Gender;
-import com.humanharvest.organz.utilities.enums.Region;
-import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
-import com.humanharvest.organz.utilities.exceptions.NotFoundException;
-import com.humanharvest.organz.utilities.exceptions.ServerRestException;
-import com.humanharvest.organz.utilities.validators.client.ClientBornAndDiedDatesValidator;
-import com.humanharvest.organz.utilities.view.PageNavigator;
-import com.humanharvest.organz.views.client.ModifyClientObject;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.time.format.FormatStyle;
+import java.util.Objects;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javafx.beans.property.Property;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -39,24 +37,28 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
-import org.apache.commons.io.IOUtils;
 import org.controlsfx.control.Notifications;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
-import java.time.format.FormatStyle;
-import java.util.Objects;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.humanharvest.organz.Client;
+import com.humanharvest.organz.controller.AlertHelper;
+import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.controller.clinician.ViewBaseController;
+import com.humanharvest.organz.state.ClientManager;
+import com.humanharvest.organz.state.Session;
+import com.humanharvest.organz.state.Session.UserType;
+import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.enums.BloodType;
+import com.humanharvest.organz.utilities.enums.Country;
+import com.humanharvest.organz.utilities.enums.Gender;
+import com.humanharvest.organz.utilities.enums.Region;
+import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
+import com.humanharvest.organz.utilities.exceptions.NotFoundException;
+import com.humanharvest.organz.utilities.exceptions.ServerRestException;
+import com.humanharvest.organz.utilities.validators.client.ClientBornAndDiedDatesValidator;
+import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.views.client.ModifyClientObject;
+
+import org.apache.commons.io.IOUtils;
 
 /**
  * Controller for the view/edit client page.
@@ -107,6 +109,45 @@ public class ViewClientController extends ViewBaseController {
     public ViewClientController() {
         manager = State.getClientManager();
         session = State.getSession();
+    }
+
+    private static void enableAppropriateRegionInput(
+            ChoiceBox<Country> countryChoice,
+            ChoiceBox<Region> regionChoice,
+            TextField regionTextField) {
+
+        if (countryChoice.getValue() == Country.NZ) {
+            regionChoice.setVisible(true);
+            regionTextField.setVisible(false);
+        } else {
+            regionChoice.setVisible(false);
+            regionTextField.setVisible(true);
+        }
+    }
+
+    /**
+     * Given a field and it's corresponding label, check that it is a valid positive number.
+     * If it is not, set the label text to red. If it is, set it to black.
+     *
+     * @param field The field to check
+     * @param label The label to apply color to
+     * @return If the field value was a valid non negative number
+     */
+    private static boolean doubleFieldIsInvalid(TextField field, Label label) {
+        try {
+            double w = Double.parseDouble(field.getText());
+            if (w < 0) {
+                label.setTextFill(Color.RED);
+                return true;
+            } else {
+                label.setTextFill(Color.BLACK);
+                return false;
+            }
+
+        } catch (NumberFormatException ex) {
+            label.setTextFill(Color.RED);
+            return true;
+        }
     }
 
     /**
@@ -278,20 +319,6 @@ public class ViewClientController extends ViewBaseController {
         }
     }
 
-    private static void enableAppropriateRegionInput(
-            ChoiceBox<Country> countryChoice,
-            ChoiceBox<Region> regionChoice,
-            TextField regionTextField) {
-
-        if (countryChoice.getValue() == Country.NZ) {
-            regionChoice.setVisible(true);
-            regionTextField.setVisible(false);
-        } else {
-            regionChoice.setVisible(false);
-            regionTextField.setVisible(true);
-        }
-    }
-
     /**
      * Saves the changes a user makes to the viewed client if all their inputs are valid.
      * Otherwise the invalid fields text turns red.
@@ -451,31 +478,6 @@ public class ViewClientController extends ViewBaseController {
     }
 
     /**
-     * Given a field and it's corresponding label, check that it is a valid positive number.
-     * If it is not, set the label text to red. If it is, set it to black.
-     *
-     * @param field The field to check
-     * @param label The label to apply color to
-     * @return If the field value was a valid non negative number
-     */
-    private static boolean doubleFieldIsInvalid(TextField field, Label label) {
-        try {
-            double w = Double.parseDouble(field.getText());
-            if (w < 0) {
-                label.setTextFill(Color.RED);
-                return true;
-            } else {
-                label.setTextFill(Color.BLACK);
-                return false;
-            }
-
-        } catch (NumberFormatException ex) {
-            label.setTextFill(Color.RED);
-            return true;
-        }
-    }
-
-    /**
      * Checks that death details fields have either valid input, or no input. Otherwise red text is shown.
      *
      * @return true if all non mandatory fields have valid input (or the dead toggle button is not selected).
@@ -556,7 +558,6 @@ public class ViewClientController extends ViewBaseController {
      */
     private void updateChanges() {
         ModifyClientObject modifyClientObject = new ModifyClientObject();
-
 
         // Add the basic changes to the ModifyClientObject
         addChangesIfDifferent(modifyClientObject);

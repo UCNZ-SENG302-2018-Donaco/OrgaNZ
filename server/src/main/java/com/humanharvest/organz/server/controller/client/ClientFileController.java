@@ -1,5 +1,12 @@
 package com.humanharvest.organz.server.controller.client;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
@@ -8,6 +15,7 @@ import com.humanharvest.organz.utilities.serialisation.ClientImporter;
 import com.humanharvest.organz.utilities.serialisation.JSONFileWriter;
 import com.humanharvest.organz.utilities.serialisation.JSONReadClientStrategy;
 import com.humanharvest.organz.utilities.serialisation.ReadClientStrategy;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,13 +23,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  * Provides handlers for requests to these endpoints:
@@ -33,6 +34,37 @@ import java.util.logging.Logger;
 public class ClientFileController {
 
     private static final Logger LOGGER = Logger.getLogger(ClientController.class.getName());
+
+    private static String loadData(File file, String mimeType) throws IOException {
+        ReadClientStrategy strategy;
+        switch (mimeType) {
+            case "text/csv":
+                strategy = new CSVReadClientStrategy();
+                break;
+            case "application/json":
+                strategy = new JSONReadClientStrategy();
+                break;
+            default:
+                throw new IOException(String.format("Unsupported file format: '%s'", mimeType));
+        }
+
+        ClientImporter importer = new ClientImporter(file, strategy);
+        importer.importAll();
+
+        // Add all valid clients to the system
+        State.getClientManager().setClients(importer.getValidClients());
+
+        String errorSummary = importer.getErrorSummary();
+        if (errorSummary.length() > 500) {
+            errorSummary = errorSummary.substring(0, 500) + "...";
+        }
+
+        return String.format("Loaded clients from file."
+                        + "\n%d were valid, "
+                        + "\n%d were invalid."
+                        + "\n\n%s",
+                importer.getValidCount(), importer.getInvalidCount(), errorSummary);
+    }
 
     @GetMapping("/clients/file")
     public ResponseEntity<byte[]> exportClients(
@@ -79,36 +111,5 @@ public class ClientFileController {
             // Return BAD_REQUEST with error message
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
-    }
-
-    private static String loadData(File file, String mimeType) throws IOException {
-        ReadClientStrategy strategy;
-        switch (mimeType) {
-            case "text/csv":
-                strategy = new CSVReadClientStrategy();
-                break;
-            case "application/json":
-                strategy = new JSONReadClientStrategy();
-                break;
-            default:
-                throw new IOException(String.format("Unsupported file format: '%s'", mimeType));
-        }
-
-        ClientImporter importer = new ClientImporter(file, strategy);
-        importer.importAll();
-
-        // Add all valid clients to the system
-        State.getClientManager().setClients(importer.getValidClients());
-
-        String errorSummary = importer.getErrorSummary();
-        if (errorSummary.length() > 500) {
-            errorSummary = errorSummary.substring(0, 500) + "...";
-        }
-
-        return String.format("Loaded clients from file."
-                        + "\n%d were valid, "
-                        + "\n%d were invalid."
-                        + "\n\n%s",
-                importer.getValidCount(), importer.getInvalidCount(), errorSummary);
     }
 }

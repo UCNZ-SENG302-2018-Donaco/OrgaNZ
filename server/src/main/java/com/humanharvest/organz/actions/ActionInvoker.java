@@ -1,10 +1,12 @@
 package com.humanharvest.organz.actions;
 
-import com.humanharvest.organz.utilities.ActionOccurredListener;
-
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
+import java.util.EmptyStackException;
 import java.util.List;
-import java.util.Stack;
+
+import com.humanharvest.organz.utilities.ActionOccurredListener;
 
 /**
  * The main invoker class for all model modifying actions. All actions should be using the Action implementation and
@@ -14,8 +16,8 @@ import java.util.Stack;
  */
 public class ActionInvoker {
 
-    private Stack<Action> undoStack = new Stack<>();
-    private Stack<Action> redoStack = new Stack<>();
+    private Deque<Action> undoStack = new ArrayDeque<>();
+    private Deque<Action> redoStack = new ArrayDeque<>();
     private List<ActionOccurredListener> listeners = new ArrayList<>();
 
     /**
@@ -96,6 +98,9 @@ public class ActionInvoker {
      * @return The next Action that will be undone
      */
     public Action nextUndo() {
+        if (!canUndo()) {
+            throw new EmptyStackException();
+        }
         return undoStack.peek();
     }
 
@@ -105,9 +110,11 @@ public class ActionInvoker {
      * @return The next Action that will be redone
      */
     public Action nextRedo() {
+        if (!canRedo()) {
+            throw new EmptyStackException();
+        }
         return redoStack.peek();
     }
-
 
     /**
      * Register a listener to be notified on any Action event

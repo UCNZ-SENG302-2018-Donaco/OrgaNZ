@@ -1,13 +1,14 @@
 package com.humanharvest.organz.commands.view;
 
+import java.io.PrintStream;
+import java.util.Optional;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.State;
+
 import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
-
-import java.io.PrintStream;
-import java.util.Optional;
 
 /**
  * Command line to print the donation information of a client.
@@ -49,7 +50,7 @@ public class PrintClientOrgan implements Runnable {
             outputStream.println("No client exists with that user ID");
             return;
         }
-        if (type.equals("requests") || type.equals("donations")) {
+        if ("requests".equals(type) || "donations".equals(type)) {
             outputStream.println(client.get().getClientOrganStatusString(type));
         } else {
             outputStream.println("Define if organs to print are donations or requests e.g. 'printuserorgan "

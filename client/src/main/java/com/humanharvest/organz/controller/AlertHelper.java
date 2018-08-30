@@ -1,13 +1,14 @@
 package com.humanharvest.organz.controller;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javafx.scene.control.Alert.AlertType;
+
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
 import com.humanharvest.organz.utilities.view.PageNavigator;
-import javafx.scene.control.Alert.AlertType;
-
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public final class AlertHelper {
 
@@ -17,8 +18,8 @@ public final class AlertHelper {
     /**
      * Logs a warning, and shows an alert to the user about the client not being found.
      *
-     * @param logger         the logger to use
-     * @param e              the exception that was thrown to cause this error
+     * @param logger the logger to use
+     * @param e the exception that was thrown to cause this error
      * @param mainController the main controller, whose stage is passed to PageNavigator.showAlert()
      */
     public static void showNotFoundAlert(Logger logger, NotFoundException e, MainController mainController) {
@@ -29,12 +30,11 @@ public final class AlertHelper {
                 mainController.getStage());
     }
 
-
     /**
      * Logs a warning, and shows an alert to the user about not being able to apply changes on the server.
      *
-     * @param logger         the logger to use
-     * @param e              the exception that was thrown to cause this error
+     * @param logger the logger to use
+     * @param e the exception that was thrown to cause this error
      * @param mainController the main controller, whose stage is passed to PageNavigator.showAlert()
      */
     public static void showRestAlert(Logger logger, ServerRestException e, MainController mainController) {
@@ -47,8 +47,8 @@ public final class AlertHelper {
     /**
      * Logs a warning, and shows an alert to the user about the client being modified since you retrieved the data.
      *
-     * @param logger         the logger to use
-     * @param e              the exception that was thrown to cause this error
+     * @param logger the logger to use
+     * @param e the exception that was thrown to cause this error
      * @param mainController the main controller, whose stage is passed to PageNavigator.showAlert()
      */
     public static void showIfMatchAlert(Logger logger, IfMatchFailedException e, MainController mainController) {

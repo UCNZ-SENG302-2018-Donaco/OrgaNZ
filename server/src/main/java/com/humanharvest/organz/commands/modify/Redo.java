@@ -1,9 +1,10 @@
 package com.humanharvest.organz.commands.modify;
 
-import com.humanharvest.organz.actions.ActionInvoker;
-import picocli.CommandLine.Command;
-
 import java.io.PrintStream;
+
+import com.humanharvest.organz.actions.ActionInvoker;
+
+import picocli.CommandLine.Command;
 
 @Command(name = "redo", description = "Redo an undone change.")
 public class Redo implements Runnable {

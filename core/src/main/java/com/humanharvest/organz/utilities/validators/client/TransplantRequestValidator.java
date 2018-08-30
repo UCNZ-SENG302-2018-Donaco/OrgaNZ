@@ -1,12 +1,34 @@
 package com.humanharvest.organz.utilities.validators.client;
 
-import com.humanharvest.organz.TransplantRequest;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 
-public class TransplantRequestValidator {
+import com.humanharvest.organz.TransplantRequest;
 
+/**
+ * A static TransplantRequest validator that checks integrity used in importing
+ * Class is abstract as it only contains static methods and should not be instantiated
+ */
+public abstract class TransplantRequestValidator {
+
+    /**
+     * Private constructor to prevent instantiation of utility class
+     */
+    private TransplantRequestValidator() {
+        throw new IllegalStateException("Utility class");
+    }
+
+    /**
+     * Given a TransplantRequest, check that it matches
+     * A valid organ,
+     * Valid request date that is not in the future
+     * Valid status
+     * If the request is resolved, that the resolution is not before the request
+     *
+     * If any of these fail, an IllegalArgumentException will be thrown
+     *
+     * @param request The TransplantRequest to check
+     */
     public static void validateTransplantRequest(TransplantRequest request) {
         int clientId = request.getClient().getUid();
 

@@ -1,14 +1,31 @@
 package com.humanharvest.organz.utilities.validators.client;
 
-import com.humanharvest.organz.utilities.validators.NotEmptyStringValidator;
-import com.humanharvest.organz.views.client.ModifyIllnessObject;
-
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
-public class ModifyIllnessValidator {
+import com.humanharvest.organz.utilities.validators.NotEmptyStringValidator;
+import com.humanharvest.organz.views.client.ModifyIllnessObject;
 
+/**
+ * Class to ensure that a modified illness is valid
+ * Class is abstract as it only contains static methods and should not be instantiated
+ */
+public abstract class ModifyIllnessValidator {
+
+    /**
+     * Private constructor to prevent instantiation of utility class
+     */
+    private ModifyIllnessValidator() {
+        throw new IllegalStateException("Utility class");
+    }
+
+    /**
+     * Check all modified fields and ensure they are valid
+     *
+     * @param illnessObject the ModifyIllnessObject making changes
+     * @return True if all changes are valid
+     */
     public static boolean isValid(ModifyIllnessObject illnessObject) {
         //Get a list of unmodified fields so we don't check fields that haven't changed
         List<String> unmodifiedFields = Arrays.asList(illnessObject.getUnmodifiedFields());

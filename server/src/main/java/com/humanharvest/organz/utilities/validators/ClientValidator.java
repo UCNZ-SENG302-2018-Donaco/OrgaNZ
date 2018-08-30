@@ -1,23 +1,50 @@
 package com.humanharvest.organz.utilities.validators;
 
+import java.time.Instant;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.IllnessRecord;
 import com.humanharvest.organz.MedicationRecord;
 import com.humanharvest.organz.ProcedureRecord;
 import com.humanharvest.organz.TransplantRequest;
+import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
+import com.humanharvest.organz.utilities.exceptions.IfMatchRequiredException;
 
-import java.time.Instant;
-import java.time.LocalDate;
-import java.time.format.DateTimeParseException;
+/**
+ * A static validator class used to check the integrity of a Client object
+ * Class is abstract as it only contains static methods and should not be instantiated
+ */
+public abstract class ClientValidator {
 
-public class ClientValidator {
+    /**
+     * Private constructor to prevent instantiation of utility class
+     */
+    private ClientValidator() {
+        throw new IllegalStateException("Utility class");
+    }
 
     private static final double DELTA = 1e-6;
 
-    private final TransplantRequestValidator transplantRequestValidator = new TransplantRequestValidator();
-    private final MedicationRecordValidator medicationRecordValidator = new MedicationRecordValidator();
-    private final IllnessRecordValidator illnessRecordValidator = new IllnessRecordValidator();
-    private final ProcedureRecordValidator procedureRecordValidator = new ProcedureRecordValidator();
+    /**
+     * Checks that the given ETag matches the current ETag for the client,
+     * and exception is thrown if the ETag is missing or does not match
+     *
+     * @param client client to validate the ETag for
+     * @param ETag The corresponding If-Match header to check for concurrent update handling
+     * @throws IfMatchRequiredException Thrown if the ETag header is missing
+     * @throws IfMatchFailedException Thrown if the ETag does not match the clients current ETag
+     */
+    public static void checkClientETag(Client client, String ETag)
+            throws IfMatchRequiredException, IfMatchFailedException {
+
+        if (ETag == null) {
+            throw new IfMatchRequiredException();
+        } else if (!client.getETag().equals(ETag)) {
+            throw new IfMatchFailedException();
+        }
+    }
 
     /**
      * Validates a {@link Client} and returns a string explaining the errors within it.
@@ -25,7 +52,7 @@ public class ClientValidator {
      * @param client The client to validate.
      * @return A string containing the errors within the client if it is invalid, else null if the client is valid.
      */
-    public String validate(Client client) {
+    public static String validate(Client client) {
         StringBuilder errors = new StringBuilder();
 
         if (!uidValid(client)) {
@@ -57,25 +84,25 @@ public class ClientValidator {
         }
 
         for (TransplantRequest request : client.getTransplantRequests()) {
-            String validationMsg = transplantRequestValidator.validate(request);
+            String validationMsg = TransplantRequestValidator.validate(request);
             if (validationMsg != null) {
                 errors.append(validationMsg);
             }
         }
         for (MedicationRecord record : client.getMedications()) {
-            String validationMsg = medicationRecordValidator.validate(record);
+            String validationMsg = MedicationRecordValidator.validate(record);
             if (validationMsg != null) {
                 errors.append(validationMsg);
             }
         }
         for (IllnessRecord record : client.getIllnesses()) {
-            String validationMsg = illnessRecordValidator.validate(record);
+            String validationMsg = IllnessRecordValidator.validate(record);
             if (validationMsg != null) {
                 errors.append(validationMsg);
             }
         }
         for (ProcedureRecord record : client.getProcedures()) {
-            String validationMsg = procedureRecordValidator.validate(record);
+            String validationMsg = ProcedureRecordValidator.validate(record);
             if (validationMsg != null) {
                 errors.append(validationMsg);
             }
@@ -95,11 +122,11 @@ public class ClientValidator {
     }
 
     private static boolean firstNameValid(Client client) {
-        return client.getFirstName() != null && !client.getFirstName().equals("");
+        return client.getFirstName() != null && !"".equals(client.getFirstName());
     }
 
     private static boolean lastNameValid(Client client) {
-        return client.getLastName() != null && !client.getLastName().equals("");
+        return client.getLastName() != null && !"".equals(client.getLastName());
     }
 
     private static boolean dateOfBirthValid(Client client) {
@@ -144,9 +171,8 @@ public class ClientValidator {
 
     // HELPERS
 
-    // TODO: Should this really be here? It should already be invalid by this stage
     private static boolean dateIsValid(LocalDate date) {
-        // Catch any invalid dates (eg date >31), or dates with null months, etc
+        // Catch any invalid dates (eg date >31), or dates with null months, etc which can be created via Jackson
         try {
             LocalDate.parse(date.toString());
             return true;
@@ -155,8 +181,8 @@ public class ClientValidator {
         }
     }
 
-    // TODO: Should this really be here? It should already be invalid by this stage
     private static boolean datetimeIsValid(Instant datetime) {
+        // Catch any invalid datetimes (eg date >31), or dates with null months, etc which can be created via Jackson
         try {
             Instant.parse(datetime.toString());
             return true;

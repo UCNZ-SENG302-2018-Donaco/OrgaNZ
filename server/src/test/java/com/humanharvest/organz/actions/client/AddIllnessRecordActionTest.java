@@ -1,5 +1,9 @@
 package com.humanharvest.organz.actions.client;
 
+import static org.junit.Assert.assertEquals;
+
+import java.time.LocalDate;
+
 import com.humanharvest.organz.BaseTest;
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.IllnessRecord;
@@ -7,15 +11,11 @@ import com.humanharvest.organz.actions.Action;
 import com.humanharvest.organz.actions.ActionInvoker;
 import com.humanharvest.organz.state.ClientManager;
 import com.humanharvest.organz.state.ClientManagerMemory;
+
 import org.junit.Before;
 import org.junit.Test;
 
-import java.time.LocalDate;
-
-import static org.junit.Assert.assertEquals;
-
 public class AddIllnessRecordActionTest extends BaseTest {
-
 
     private ActionInvoker invoker;
     private ClientManager manager;
@@ -52,7 +52,6 @@ public class AddIllnessRecordActionTest extends BaseTest {
         assertEquals(record, testClient.getPastIllnesses().get(0));
     }
 
-
     @Test
     public void AddMultipleIllnessTest() {
         IllnessRecord record = new IllnessRecord("Generic Name", LocalDate.of(2018, 4, 9), null, false);
@@ -71,7 +70,6 @@ public class AddIllnessRecordActionTest extends BaseTest {
         assertEquals(3, testClient.getCurrentIllnesses().size());
         assertEquals(record, testClient.getCurrentIllnesses().get(0));
     }
-
 
     @Test
     public void AddMultipleIllnessUndoOneTest() {

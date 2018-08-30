@@ -1,18 +1,13 @@
 package com.humanharvest.organz.controller.clinician;
 
-import com.humanharvest.organz.Clinician;
-import com.humanharvest.organz.HistoryItem;
-import com.humanharvest.organz.controller.MainController;
-import com.humanharvest.organz.state.Session;
-import com.humanharvest.organz.state.State;
-import com.humanharvest.organz.utilities.JSONConverter;
-import com.humanharvest.organz.utilities.enums.Country;
-import com.humanharvest.organz.utilities.enums.Region;
-import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
-import com.humanharvest.organz.utilities.exceptions.NotFoundException;
-import com.humanharvest.organz.utilities.exceptions.ServerRestException;
-import com.humanharvest.organz.utilities.view.PageNavigator;
-import com.humanharvest.organz.views.clinician.ModifyClinicianObject;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.util.EnumSet;
+import java.util.Optional;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
@@ -26,13 +21,19 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import org.controlsfx.control.Notifications;
 
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
-import java.util.EnumSet;
-import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import com.humanharvest.organz.Clinician;
+import com.humanharvest.organz.HistoryItem;
+import com.humanharvest.organz.controller.MainController;
+import com.humanharvest.organz.state.Session;
+import com.humanharvest.organz.state.State;
+import com.humanharvest.organz.utilities.JSONConverter;
+import com.humanharvest.organz.utilities.enums.Country;
+import com.humanharvest.organz.utilities.enums.Region;
+import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
+import com.humanharvest.organz.utilities.exceptions.NotFoundException;
+import com.humanharvest.organz.utilities.exceptions.ServerRestException;
+import com.humanharvest.organz.utilities.view.PageNavigator;
+import com.humanharvest.organz.views.clinician.ModifyClinicianObject;
 
 /**
  * Presents an interface displaying all information of the currently logged in Clinician. Clinicians are able to edit
@@ -105,7 +106,6 @@ public class ViewClinicianController extends ViewBaseController {
         }
     }
 
-
     /**
      * Initialize the page.
      */
@@ -134,7 +134,6 @@ public class ViewClinicianController extends ViewBaseController {
         getViewedClinicianData();
         updateCountries();
     }
-
 
     /**
      * Checks the clinicians country, changes region input to a choicebox of NZ regions if the country is New Zealand,
@@ -165,7 +164,6 @@ public class ViewClinicianController extends ViewBaseController {
             regionTF.setVisible(true);
         }
     }
-
 
     /**
      * Loads the clinician identified by the staff ID in loadStaffIdTextField.
@@ -215,7 +213,6 @@ public class ViewClinicianController extends ViewBaseController {
             regionTF.setText(viewedClinician.getRegion());
         }
         checkClinicianCountry();
-
 
         creationDate.setText(formatter.format(viewedClinician.getCreatedOn()));
         if (viewedClinician.getModifiedOn() == null) {
@@ -307,7 +304,6 @@ public class ViewClinicianController extends ViewBaseController {
         addChangeIfDifferent(modifyClinicianObject, viewedClinician, "workAddress", workAddress.getText());
         addChangeIfDifferent(modifyClinicianObject, viewedClinician, "password", updatedPassword);
         addChangeIfDifferent(modifyClinicianObject, viewedClinician, "country", country.getValue());
-
 
         if (country.getValue() != null && country.getValue() == Country.NZ) {
             addChangeIfDifferent(modifyClinicianObject, viewedClinician, "region", regionCB.getValue().toString());

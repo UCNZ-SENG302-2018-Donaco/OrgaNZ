@@ -1,16 +1,20 @@
 package com.humanharvest.organz.utilities.validators;
 
-import com.humanharvest.organz.utilities.enums.Country;
-import com.humanharvest.organz.utilities.enums.Region;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-public final class RegionValidator {
+import com.humanharvest.organz.utilities.enums.Country;
+import com.humanharvest.organz.utilities.enums.Region;
+
+public abstract class RegionValidator {
 
     private static final Logger LOGGER = Logger.getLogger(RegionValidator.class.getName());
 
+    /**
+     * Private constructor to prevent instantiation of utility class
+     */
     private RegionValidator() {
+        throw new IllegalStateException("Utility class");
     }
 
     public static boolean isValid(Country country, String region) {
