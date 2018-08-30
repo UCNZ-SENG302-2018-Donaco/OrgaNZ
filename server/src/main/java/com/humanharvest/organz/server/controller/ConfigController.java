@@ -5,8 +5,10 @@ import java.util.Set;
 
 import com.humanharvest.organz.Hospital;
 import com.humanharvest.organz.server.exceptions.GlobalControllerExceptionHandler;
+import com.humanharvest.organz.server.exceptions.GlobalControllerExceptionHandler.InvalidRequestException;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Country;
+import com.humanharvest.organz.utilities.validators.HospitalValidator;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -65,6 +67,7 @@ public class ConfigController {
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken)
             throws GlobalControllerExceptionHandler.InvalidRequestException {
 
+        // Check the user is a clinician or an admin
         State.getAuthenticationManager().verifyClinicianOrAdmin(authToken);
 
         Set<Hospital> hospitals = State.getConfigManager().getHospitals();
@@ -74,17 +77,23 @@ public class ConfigController {
     /**
      * The POST endpoint for setting the list of hospitals
      *
-     * @param authToken authentication token - the allowed countries may only be set by an administrator
+     * @param authToken authentication token - the hospital list may only be set by an administrator
      * @param hospitals Set of hospitals to set
      * @return response entity containing the http status code
      */
     @PostMapping("/config/hospitals")
-    public ResponseEntity postCountries(
+    public ResponseEntity postHospitals(
             @RequestHeader(value = "X-Auth-Token", required = false) String authToken,
             @RequestBody Set<Hospital> hospitals)
             throws GlobalControllerExceptionHandler.InvalidRequestException {
 
+        // Check the user is an admin and they have sent a valid set of hospitals
         State.getAuthenticationManager().verifyAdminAccess(authToken);
+        if (!HospitalValidator.areValid(hospitals)) { // if there are any invalid hospitals in the set
+            throw new InvalidRequestException();
+        }
+
+        // Set the hospitals to the provided set
         State.getConfigManager().setHospitals(hospitals);
 
         return new ResponseEntity(HttpStatus.OK);

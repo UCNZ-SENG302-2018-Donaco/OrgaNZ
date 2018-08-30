@@ -9,7 +9,7 @@ Feature: Does GET /config/hospitals work?
     Then the result is ok
     Then the content type is json
 
-  Scenario: Fail to get a list of recipients without authorisation
+  Scenario: Fail to get a list of hospitals without authorisation
     Given authentication is required
     When I get /config/hospitals
     Then the result is unauthenticated
