@@ -206,7 +206,6 @@ public class MenuBarController extends SubController {
      */
     private void hideMenuItem(MenuItem menuItem) {
         menuItem.setVisible(false);
-        //menuItem.setManaged(false);
     }
 
     /**
@@ -227,7 +226,6 @@ public class MenuBarController extends SubController {
      */
     private void hideMenu(Menu menu) {
         menu.setVisible(false);
-        //menu.setManaged(false);
     }
 
     /**
