@@ -166,8 +166,8 @@ public class ModifyClientOrgansActionTest extends BaseTest {
 
     @Test
     public void CheckExecuteTextOneChangeTest() throws OrganAlreadyRegisteredException {
-        final String expectedText = String.format("Changed organ donation registration for client %d: First Last:\n"
-                + "\n"
+        final String expectedText = String.format("Changed organ donation registration for client %d: First Last:%n"
+                + "%n"
                 + "Registered Liver for donation.", baseClient.getUid());
 
         ModifyClientOrgansAction action = new ModifyClientOrgansAction(baseClient, manager);
@@ -245,8 +245,8 @@ public class ModifyClientOrgansActionTest extends BaseTest {
     public void CheckUnexecuteTextOneChangeTest() throws OrganAlreadyRegisteredException {
         final String expectedText = String.format("Reversed these changes to organ donation registration for client "
                 + "%d: First "
-                + "Last:\n"
-                + "\n"
+                + "Last:%n"
+                + "%n"
                 + "Registered Liver for donation.", baseClient.getUid());
 
         ModifyClientOrgansAction action = new ModifyClientOrgansAction(baseClient, manager);
