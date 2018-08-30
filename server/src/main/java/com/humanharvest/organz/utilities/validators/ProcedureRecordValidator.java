@@ -45,8 +45,7 @@ public abstract class ProcedureRecordValidator {
     // FIELD VALIDATORS
 
     private static boolean summaryValid(ProcedureRecord record) {
-        return record.getSummary() != null &&
-                !"".equals(record.getSummary());
+        return !NotEmptyStringValidator.isInvalidString(record.getSummary());
     }
 
     private static boolean dateValid(ProcedureRecord record) {

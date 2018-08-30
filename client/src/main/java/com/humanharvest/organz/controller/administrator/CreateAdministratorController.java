@@ -18,6 +18,7 @@ import com.humanharvest.organz.controller.SubController;
 import com.humanharvest.organz.state.AdministratorManager;
 import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
+import com.humanharvest.organz.utilities.validators.NotEmptyStringValidator;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.views.administrator.CreateAdministratorView;
@@ -80,7 +81,7 @@ public class CreateAdministratorController extends SubController {
         boolean valid = true;
 
         // Username
-        if ("".equals(usernameTextField.getText())) {
+        if (NotEmptyStringValidator.isInvalidString(usernameTextField.getText())) {
             usernameLabel.setTextFill(Color.RED);
             valid = false;
         } else {
@@ -106,7 +107,7 @@ public class CreateAdministratorController extends SubController {
         }
 
         // Password
-        if ("".equals(passwordField.getText())) {
+        if (NotEmptyStringValidator.isInvalidString(passwordField.getText())) {
             passwordLabel.setTextFill(Color.RED);
             valid = false;
         } else {

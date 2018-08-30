@@ -20,6 +20,7 @@ import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.enums.Country;
 import com.humanharvest.organz.utilities.enums.Organ;
 import com.humanharvest.organz.utilities.exceptions.AuthenticationException;
+import com.humanharvest.organz.utilities.validators.NotEmptyStringValidator;
 import com.humanharvest.organz.utilities.validators.client.TransplantRequestValidator;
 import com.humanharvest.organz.views.client.PaginatedTransplantList;
 import com.humanharvest.organz.views.client.ResolveTransplantRequestObject;
@@ -237,8 +238,7 @@ public class ClientTransplantRequestsController {
         // The client, organ, and request date (and time) must stay the same.
         // If anything has illegally changed, it will return a 400.
         if (resolveRequestObject.getResolvedDate() == null ||
-                resolveRequestObject.getResolvedReason() == null ||
-                "".equals(resolveRequestObject.getResolvedReason()) ||
+                NotEmptyStringValidator.isInvalidString(resolveRequestObject.getResolvedReason()) ||
                 resolveRequestObject.getResolvedDate().isBefore(originalTransplantRequest.getRequestDate())) {
             // illegal changes
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

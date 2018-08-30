@@ -40,6 +40,7 @@ import com.humanharvest.organz.utilities.exceptions.BadRequestException;
 import com.humanharvest.organz.utilities.exceptions.IfMatchFailedException;
 import com.humanharvest.organz.utilities.exceptions.NotFoundException;
 import com.humanharvest.organz.utilities.exceptions.ServerRestException;
+import com.humanharvest.organz.utilities.validators.NotEmptyStringValidator;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.views.client.CreateProcedureView;
 import com.humanharvest.organz.views.client.ModifyProcedureObject;
@@ -119,7 +120,7 @@ public class ViewProceduresController extends SubController {
      */
     private void editSummaryCell(CellEditEvent<ProcedureRecord, String> event) {
         String summary = event.getNewValue();
-        if (summary == null || "".equals(summary)) {
+        if (NotEmptyStringValidator.isInvalidString(summary)) {
             PageNavigator.showAlert(AlertType.ERROR,
                     "Invalid summary",
                     "New procedure summary must not be blank.", mainController.getStage());
@@ -412,7 +413,7 @@ public class ViewProceduresController extends SubController {
         String summary = summaryField.getText();
         LocalDate date = dateField.getValue();
 
-        if (summary == null || "".equals(summary)) {
+        if (NotEmptyStringValidator.isInvalidString(summary)) {
             errorMessage.setText("Procedure summary must not be blank.");
         } else if (date == null || date.isBefore(client.getDateOfBirth())) {
             errorMessage.setText("Procedure date cannot be before client was born.");
