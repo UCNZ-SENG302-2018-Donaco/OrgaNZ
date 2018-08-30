@@ -30,7 +30,7 @@ import picocli.CommandLine.Option;
  * Command line to set attributes of a Client, by using their ID as a reference key.
  */
 
-@Command(name = "attribute", description = "Set the attributes of an existing client.", sortOptions = false)
+@Command(name = "setattribute", description = "Set the attributes of an existing client.", sortOptions = false)
 public class SetAttribute implements Runnable {
 
     private static final Logger LOGGER = Logger.getLogger(SetAttribute.class.getName());

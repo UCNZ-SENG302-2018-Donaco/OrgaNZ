@@ -34,6 +34,10 @@ public class TransplantRecord extends ProcedureRecord {
         return getClient();
     }
 
+    public boolean isCompleted() {
+        return completed;
+    }
+
     public void setCompleted(boolean completed) {
         this.completed = completed;
     }

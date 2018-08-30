@@ -21,7 +21,7 @@ public class ModifyObjectByFieldAction extends Action {
     private Field field;
     private Object oldValue;
     private Object newValue;
-    private boolean isPrivate = false;
+    private boolean isPrivate;
 
     /**
      * Create a new modification
