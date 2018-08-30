@@ -61,12 +61,12 @@ public class DrugInteractionsHandler extends WebAPIHandler {
      */
     private static GenericUrl createURL(String drug1, String drug2) {
         // Drug names containing '/' will mess with the urls of the web api
-        drug1 = drug1.replaceAll("/", "");
-        drug2 = drug2.replaceAll("/", "");
+        drug1 = drug1.replace("/", "");
+        drug2 = drug2.replace("/", "");
 
         // Drug names with spaces are represented with dashes in the API
-        drug1 = drug1.replaceAll(" ", "-");
-        drug2 = drug2.replaceAll(" ", "-");
+        drug1 = drug1.replace(" ", "-");
+        drug2 = drug2.replace(" ", "-");
 
         return new GenericUrl(String.format(INTERACTIONS_ENDPOINT, drug1, drug2));
     }
