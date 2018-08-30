@@ -2,6 +2,7 @@ package com.humanharvest.organz.controller;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import org.controlsfx.control.Notifications;
 
 import com.humanharvest.organz.Client;
 import com.humanharvest.organz.state.Session;
@@ -10,7 +11,6 @@ import com.humanharvest.organz.state.State;
 import com.humanharvest.organz.utilities.view.Page;
 import com.humanharvest.organz.utilities.view.PageNavigator;
 import com.humanharvest.organz.views.ActionResponseView;
-import org.controlsfx.control.Notifications;
 
 /**
  * Controller for the sidebar pane imported into every page in the main part of the GUI.
@@ -37,10 +37,10 @@ public class SidebarController extends SubController {
         super.setup(controller);
         UserType userType = session.getLoggedInUserType();
 
-        Button staffButtons[] = {viewClinicianButton, searchButton, transplantsButton};
-        Button adminButtons[] = {createAdminButton, createClinicianButton, staffListButton, commandLineButton};
-        Button clinicianButtons[] = {};
-        Button clientButtons[] = {viewClientButton, registerOrganDonationButton, viewMedicationsButton,
+        Button[] staffButtons = {viewClinicianButton, searchButton, transplantsButton};
+        Button[] adminButtons = {createAdminButton, createClinicianButton, staffListButton, commandLineButton};
+        Button[] clinicianButtons = {};
+        Button[] clientButtons = {viewClientButton, registerOrganDonationButton, viewMedicationsButton,
                 illnessHistoryButton, viewProceduresButton};
 
         // Hide buttons depending on the type of user logged in/the view window type
@@ -88,7 +88,7 @@ public class SidebarController extends SubController {
      * Hides all the buttons in the passed-in array.
      * @param buttons The buttons to hide
      */
-    private void hideButtons(Button buttons[]) {
+    private void hideButtons(Button[] buttons) {
         for (Button button : buttons) {
             hideButton(button);
         }
